@@ -1,0 +1,51 @@
+# backend/pyproject.toml
+# Hilo People backend — minimal project manifest.
+#
+# Slice: P00-S01-T001 — Repo scaffold + scripts + env
+# Phase: P00 — Scaffold + Design System
+#
+# Only bootstrap deps are declared here. Full dependency set (SQLAlchemy,
+# Alembic, Celery, LiteLLM, LangChain, structlog, etc.) is added in T003.
+# Versions pinned to current stable on 2026-05-08 (verified against PyPI in /verify-slice).
+# Real install/compat verification lands in T003 (pip install + dependency_smoke).
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "hilo-people-backend"
+version = "0.0.0"
+description = "Hilo People — internal AI-powered HR assistant backend"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi==0.136.1",
+    "uvicorn[standard]==0.46.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff==0.15.12",
+    "mypy==2.0.0",
+    "pytest==9.0.3",
+    "pytest-asyncio==1.3.0",
+    "httpx==0.28.1",
+]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "C4", "SIM"]
+ignore = ["B008"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = false
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]

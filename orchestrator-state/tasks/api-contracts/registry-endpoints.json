@@ -1,0 +1,980 @@
+{
+  "generated_at": "2026-05-08T20:51:47+00:00",
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/ai/agents",
+      "operation_id": "getApiV1AdminAiAgents",
+      "request_schema": "GetApiV1AdminAiAgentsRequest",
+      "response_schema": "GetApiV1AdminAiAgentsResponse",
+      "path_params": [],
+      "slice_ids": [
+        "P02-S08-T001",
+        "P04-S02-T005",
+        "P05-S01-T006"
+      ],
+      "journey_refs": [
+        "J105"
+      ],
+      "tables": [
+        "agents",
+        "mcp_agent_bindings",
+        "agent_runs",
+        "mcp_tool_invocations",
+        "mcp_servers",
+        "mcp_credentials",
+        "mcp_tools",
+        "audit_logs"
+      ],
+      "routes": [
+        "/admin/ai/agents",
+        "/admin/ai/mcp → /admin/ai/mcp/new → /admin/ai/agents"
+      ],
+      "first_task_kind": "api"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/admin/ai/agents/{id}/tools",
+      "operation_id": "patchApiV1AdminAiAgentsIdTools",
+      "request_schema": "PatchApiV1AdminAiAgentsIdToolsRequest",
+      "response_schema": "PatchApiV1AdminAiAgentsIdToolsResponse",
+      "path_params": [
+        "id"
+      ],
+      "slice_ids": [
+        "P02-S08-T001",
+        "P04-S02-T005",
+        "P05-S01-T006"
+      ],
+      "journey_refs": [
+        "J105"
+      ],
+      "tables": [
+        "agents",
+        "mcp_agent_bindings",
+        "agent_runs",
+        "mcp_tool_invocations",
+        "mcp_servers",
+        "mcp_credentials",
+        "mcp_tools",
+        "audit_logs"
+      ],
+      "routes": [
+        "/admin/ai/agents",
+        "/admin/ai/mcp → /admin/ai/mcp/new → /admin/ai/agents"
+      ],
+      "first_task_kind": "api"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/ai/mcp/servers",
+      "operation_id": "getApiV1AdminAiMcpServers",
+      "request_schema": "GetApiV1AdminAiMcpServersRequest",
+      "response_schema": "GetApiV1AdminAiMcpServersResponse",
+      "path_params": [],
+      "slice_ids": [
+        "P02-S07-T001",
+        "P04-S02-T003",
+        "P05-S01-T006"
+      ],
+      "journey_refs": [
+        "J105"
+      ],
+      "tables": [
+        "mcp_servers",
+        "mcp_credentials",
+        "mcp_tools",
+        "mcp_resources",
+        "mcp_prompts",
+        "audit_logs",
+        "mcp_agent_bindings",
+        "agents",
+        "agent_runs"
+      ],
+      "routes": [
+        "/admin/ai/mcp",
+        "/admin/ai/mcp → /admin/ai/mcp/new → /admin/ai/agents"
+      ],
+      "first_task_kind": "api"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/ai/mcp/servers",
+      "operation_id": "postApiV1AdminAiMcpServers",
+      "request_schema": "PostApiV1AdminAiMcpServersRequest",
+      "response_schema": "PostApiV1AdminAiMcpServersResponse",
+      "path_params": [],
+      "slice_ids": [
+        "P02-S07-T001",
+        "P04-S02-T004",
+        "P05-S01-T006"
+      ],
+      "journey_refs": [
+        "J105"
+      ],
+      "tables": [
+        "mcp_servers",
+        "mcp_credentials",
+        "mcp_tools",
+        "mcp_resources",
+        "mcp_prompts",
+        "audit_logs",
+        "mcp_agent_bindings",
+        "agents",
+        "agent_runs"
+      ],
+      "routes": [
+        "/admin/ai/mcp/new",
+        "/admin/ai/mcp → /admin/ai/mcp/new → /admin/ai/agents"
+      ],
+      "first_task_kind": "api"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/ai/mcp/servers/{id}/sync",
+      "operation_id": "postApiV1AdminAiMcpServersIdSync",
+      "request_schema": "PostApiV1AdminAiMcpServersIdSyncRequest",
+      "response_schema": "PostApiV1AdminAiMcpServersIdSyncResponse",
+      "path_params": [
+        "id"
+      ],
+      "slice_ids": [
+        "P02-S07-T001",
+        "P04-S02-T003",
+        "P05-S01-T006"
+      ],
+      "journey_refs": [
+        "J105"
+      ],
+      "tables": [
+        "mcp_servers",
+        "mcp_credentials",
+        "mcp_tools",
+        "mcp_resources",
+        "mcp_prompts",
+        "audit_logs",
+        "mcp_agent_bindings",
+        "agents",
+        "agent_runs"
+      ],
+      "routes": [
+        "/admin/ai/mcp",
+        "/admin/ai/mcp → /admin/ai/mcp/new → /admin/ai/agents"
+      ],
+      "first_task_kind": "api"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/admin/ai/mcp/tools/{id}",
+      "operation_id": "patchApiV1AdminAiMcpToolsId",
+      "request_schema": "PatchApiV1AdminAiMcpToolsIdRequest",
+      "response_schema": "PatchApiV1AdminAiMcpToolsIdResponse",
+      "path_params": [
+        "id"
+      ],
+      "slice_ids": [
+        "P02-S07-T001",
+        "P05-S01-T006"
+      ],
+      "journey_refs": [
+        "J105"
+      ],
+      "tables": [
+        "mcp_servers",
+        "mcp_credentials",
+        "mcp_tools",
+        "mcp_resources",
+        "mcp_prompts",
+        "audit_logs",
+        "mcp_agent_bindings",
+        "agents",
+        "agent_runs"
+      ],
+      "routes": [
+        "/admin/ai/mcp → /admin/ai/mcp/new → /admin/ai/agents"
+      ],
+      "first_task_kind": "api"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/ai/models",
+      "operation_id": "getApiV1AdminAiModels",
+      "request_schema": "GetApiV1AdminAiModelsRequest",
+      "response_schema": "GetApiV1AdminAiModelsResponse",
+      "path_params": [],
+      "slice_ids": [
+        "P02-S05-T001",
+        "P04-S01-T002",
+        "P04-S01-T003",
+        "P05-S01-T004"
+      ],
+      "journey_refs": [
+        "J103"
+      ],
+      "tables": [
+        "ai_providers",
+        "ai_provider_credentials",
+        "ai_models",
+        "audit_logs",
+        "ai_model_tests",
+        "llm_usage_logs"
+      ],
+      "routes": [
+        "/admin/ai/models",
+        "/admin/ai/models/new",
+        "/admin/ai/models → /admin/ai/models/new → /admin/ai/models/:modelId/test"
+      ],
+      "first_task_kind": "api"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/admin/ai/models/{id}",
+      "operation_id": "patchApiV1AdminAiModelsId",
+      "request_schema": "PatchApiV1AdminAiModelsIdRequest",
+      "response_schema": "PatchApiV1AdminAiModelsIdResponse",
+      "path_params": [
+        "id"
+      ],
+      "slice_ids": [
+        "P02-S05-T001",
+        "P04-S01-T004",
+        "P05-S01-T004"
+      ],
+      "journey_refs": [
+        "J103"
+      ],
+      "tables": [
+        "ai_providers",
+        "ai_provider_credentials",
+        "ai_models",
+        "audit_logs",
+        "ai_model_tests",
+        "llm_usage_logs"
+      ],
+      "routes": [
+        "/admin/ai/models/:modelId/test",
+        "/admin/ai/models → /admin/ai/models/new → /admin/ai/models/:modelId/test"
+      ],
+      "first_task_kind": "api"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/ai/models/{id}/test",
+      "operation_id": "postApiV1AdminAiModelsIdTest",
+      "request_schema": "PostApiV1AdminAiModelsIdTestRequest",
+      "response_schema": "PostApiV1AdminAiModelsIdTestResponse",
+      "path_params": [
+        "id"
+      ],
+      "slice_ids": [
+        "P02-S05-T002",
+        "P04-S01-T004",
+        "P05-S01-T004"
+      ],
+      "journey_refs": [
+        "J103"
+      ],
+      "tables": [
+        "ai_model_tests",
+        "llm_usage_logs",
+        "ai_models",
+        "ai_providers",
+        "ai_provider_credentials",
+        "audit_logs"
+      ],
+      "routes": [
+        "/admin/ai/models/:modelId/test",
+        "/admin/ai/models → /admin/ai/models/new → /admin/ai/models/:modelId/test"
+      ],
+      "first_task_kind": "api"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/ai/providers",
+      "operation_id": "getApiV1AdminAiProviders",
+      "request_schema": "GetApiV1AdminAiProvidersRequest",
+      "response_schema": "GetApiV1AdminAiProvidersResponse",
+      "path_params": [],
+      "slice_ids": [
+        "P02-S05-T001",
+        "P04-S01-T002",
+        "P05-S01-T004"
+      ],
+      "journey_refs": [
+        "J103"
+      ],
+      "tables": [
+        "ai_providers",
+        "ai_provider_credentials",
+        "ai_models",
+        "audit_logs",
+        "ai_model_tests",
+        "llm_usage_logs"
+      ],
+      "routes": [
+        "/admin/ai/models",
+        "/admin/ai/models → /admin/ai/models/new → /admin/ai/models/:modelId/test"
+      ],
+      "first_task_kind": "api"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/ai/providers",
+      "operation_id": "postApiV1AdminAiProviders",
+      "request_schema": "PostApiV1AdminAiProvidersRequest",
+      "response_schema": "PostApiV1AdminAiProvidersResponse",
+      "path_params": [],
+      "slice_ids": [
+        "P02-S05-T001",
+        "P04-S01-T003",
+        "P05-S01-T004"
+      ],
+      "journey_refs": [
+        "J103"
+      ],
+      "tables": [
+        "ai_providers",
+        "ai_provider_credentials",
+        "ai_models",
+        "audit_logs",
+        "ai_model_tests",
+        "llm_usage_logs"
+      ],
+      "routes": [
+        "/admin/ai/models/new",
+        "/admin/ai/models → /admin/ai/models/new → /admin/ai/models/:modelId/test"
+      ],
+      "first_task_kind": "api"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/audit",
+      "operation_id": "getApiV1AdminAudit",
+      "request_schema": "GetApiV1AdminAuditRequest",
+      "response_schema": "GetApiV1AdminAuditResponse",
+      "path_params": [],
+      "slice_ids": [
+        "P04-S03-T001",
+        "P05-S02-T001"
+      ],
+      "journey_refs": [
+        "J103",
+        "J104",
+        "J105"
+      ],
+      "tables": [
+        "audit_logs"
+      ],
+      "routes": [
+        "/admin/audit"
+      ],
+      "first_task_kind": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/rag/collections",
+      "operation_id": "getApiV1AdminRagCollections",
+      "request_schema": "GetApiV1AdminRagCollectionsRequest",
+      "response_schema": "GetApiV1AdminRagCollectionsResponse",
+      "path_params": [],
+      "slice_ids": [
+        "P02-S06-T002",
+        "P04-S02-T002",
+        "P05-S01-T005"
+      ],
+      "journey_refs": [
+        "J104"
+      ],
+      "tables": [
+        "rag_collections",
+        "audit_logs",
+        "documents",
+        "document_versions",
+        "document_chunks",
+        "document_embeddings",
+        "vectorization_jobs"
+      ],
+      "routes": [
+        "/admin/rag/collections",
+        "/admin/rag/documents → /admin/rag/collections"
+      ],
+      "first_task_kind": "api"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/admin/rag/collections/{id}",
+      "operation_id": "patchApiV1AdminRagCollectionsId",
+      "request_schema": "PatchApiV1AdminRagCollectionsIdRequest",
+      "response_schema": "PatchApiV1AdminRagCollectionsIdResponse",
+      "path_params": [
+        "id"
+      ],
+      "slice_ids": [
+        "P02-S06-T002",
+        "P04-S02-T002",
+        "P05-S01-T005"
+      ],
+      "journey_refs": [
+        "J104"
+      ],
+      "tables": [
+        "rag_collections",
+        "audit_logs",
+        "documents",
+        "document_versions",
+        "document_chunks",
+        "document_embeddings",
+        "vectorization_jobs"
+      ],
+      "routes": [
+        "/admin/rag/collections",
+        "/admin/rag/documents → /admin/rag/collections"
+      ],
+      "first_task_kind": "api"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/rag/documents",
+      "operation_id": "getApiV1AdminRagDocuments",
+      "request_schema": "GetApiV1AdminRagDocumentsRequest",
+      "response_schema": "GetApiV1AdminRagDocumentsResponse",
+      "path_params": [],
+      "slice_ids": [
+        "P02-S06-T001",
+        "P04-S02-T001",
+        "P05-S01-T005"
+      ],
+      "journey_refs": [
+        "J104"
+      ],
+      "tables": [
+        "documents",
+        "document_versions",
+        "vectorization_jobs",
+        "rag_collections",
+        "document_chunks",
+        "document_embeddings"
+      ],
+      "routes": [
+        "/admin/rag/documents",
+        "/admin/rag/documents → /admin/rag/collections"
+      ],
+      "first_task_kind": "api"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/rag/documents",
+      "operation_id": "postApiV1AdminRagDocuments",
+      "request_schema": "PostApiV1AdminRagDocumentsRequest",
+      "response_schema": "PostApiV1AdminRagDocumentsResponse",
+      "path_params": [],
+      "slice_ids": [
+        "P02-S06-T001",
+        "P04-S02-T001",
+        "P05-S01-T005"
+      ],
+      "journey_refs": [
+        "J104"
+      ],
+      "tables": [
+        "documents",
+        "document_versions",
+        "vectorization_jobs",
+        "rag_collections",
+        "document_chunks",
+        "document_embeddings"
+      ],
+      "routes": [
+        "/admin/rag/documents",
+        "/admin/rag/documents → /admin/rag/collections"
+      ],
+      "first_task_kind": "api"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/rag/documents/{id}/index",
+      "operation_id": "postApiV1AdminRagDocumentsIdIndex",
+      "request_schema": "PostApiV1AdminRagDocumentsIdIndexRequest",
+      "response_schema": "PostApiV1AdminRagDocumentsIdIndexResponse",
+      "path_params": [
+        "id"
+      ],
+      "slice_ids": [
+        "P02-S06-T001",
+        "P04-S02-T001",
+        "P05-S01-T005"
+      ],
+      "journey_refs": [
+        "J104"
+      ],
+      "tables": [
+        "documents",
+        "document_versions",
+        "vectorization_jobs",
+        "rag_collections",
+        "document_chunks",
+        "document_embeddings"
+      ],
+      "routes": [
+        "/admin/rag/documents",
+        "/admin/rag/documents → /admin/rag/collections"
+      ],
+      "first_task_kind": "api"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/usage",
+      "operation_id": "getApiV1AdminUsage",
+      "request_schema": "GetApiV1AdminUsageRequest",
+      "response_schema": "GetApiV1AdminUsageResponse",
+      "path_params": [],
+      "slice_ids": [
+        "P02-S05-T002",
+        "P04-S01-T001",
+        "P04-S03-T002"
+      ],
+      "journey_refs": [
+        "J103"
+      ],
+      "tables": [
+        "ai_model_tests",
+        "llm_usage_logs"
+      ],
+      "routes": [
+        "/admin",
+        "/admin/usage"
+      ],
+      "first_task_kind": "api"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/agents/runs",
+      "operation_id": "postApiV1AgentsRuns",
+      "request_schema": "PostApiV1AgentsRunsRequest",
+      "response_schema": "PostApiV1AgentsRunsResponse",
+      "path_params": [],
+      "slice_ids": [
+        "P02-S08-T001",
+        "P04-S02-T005"
+      ],
+      "journey_refs": [
+        "J105"
+      ],
+      "tables": [
+        "agents",
+        "mcp_agent_bindings",
+        "agent_runs",
+        "mcp_tool_invocations"
+      ],
+      "routes": [
+        "/admin/ai/agents"
+      ],
+      "first_task_kind": "api"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/2fa/verify",
+      "operation_id": "postApiV1Auth2faVerify",
+      "request_schema": "PostApiV1Auth2faVerifyRequest",
+      "response_schema": "PostApiV1Auth2faVerifyResponse",
+      "path_params": [],
+      "slice_ids": [
+        "P01-S02-T006",
+        "P03-S01-T005",
+        "P05-S01-T001"
+      ],
+      "journey_refs": [
+        "J100"
+      ],
+      "tables": [
+        "mfa_totp_secrets",
+        "refresh_tokens",
+        "audit_logs",
+        "users",
+        "employee_profiles"
+      ],
+      "routes": [
+        "/auth/2fa",
+        "/auth/sign-in → /auth/2fa → /chat"
+      ],
+      "first_task_kind": "api"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/forgot-password",
+      "operation_id": "postApiV1AuthForgotPassword",
+      "request_schema": "PostApiV1AuthForgotPasswordRequest",
+      "response_schema": "PostApiV1AuthForgotPasswordResponse",
+      "path_params": [],
+      "slice_ids": [
+        "P01-S02-T005",
+        "P03-S01-T003"
+      ],
+      "journey_refs": [
+        "J100"
+      ],
+      "tables": [
+        "users",
+        "password_reset_tokens",
+        "audit_logs"
+      ],
+      "routes": [
+        "/auth/forgot-password"
+      ],
+      "first_task_kind": "api"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/logout",
+      "operation_id": "postApiV1AuthLogout",
+      "request_schema": "PostApiV1AuthLogoutRequest",
+      "response_schema": "PostApiV1AuthLogoutResponse",
+      "path_params": [],
+      "slice_ids": [
+        "P01-S02-T004",
+        "P03-S02-T004"
+      ],
+      "journey_refs": [
+        "J102"
+      ],
+      "tables": [
+        "refresh_tokens",
+        "audit_logs",
+        "users",
+        "employee_profiles"
+      ],
+      "routes": [
+        "/account"
+      ],
+      "first_task_kind": "api"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/refresh",
+      "operation_id": "postApiV1AuthRefresh",
+      "request_schema": "PostApiV1AuthRefreshRequest",
+      "response_schema": "PostApiV1AuthRefreshResponse",
+      "path_params": [],
+      "slice_ids": [
+        "P01-S02-T003",
+        "P01-S03-T001"
+      ],
+      "journey_refs": [
+        "J100",
+        "J102"
+      ],
+      "tables": [
+        "refresh_tokens",
+        "users"
+      ],
+      "routes": [],
+      "first_task_kind": "api"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/reset-password",
+      "operation_id": "postApiV1AuthResetPassword",
+      "request_schema": "PostApiV1AuthResetPasswordRequest",
+      "response_schema": "PostApiV1AuthResetPasswordResponse",
+      "path_params": [],
+      "slice_ids": [
+        "P01-S02-T005"
+      ],
+      "journey_refs": [
+        "J100"
+      ],
+      "tables": [
+        "users",
+        "password_reset_tokens",
+        "audit_logs"
+      ],
+      "routes": [],
+      "first_task_kind": "api"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/sign-in",
+      "operation_id": "postApiV1AuthSignIn",
+      "request_schema": "PostApiV1AuthSignInRequest",
+      "response_schema": "PostApiV1AuthSignInResponse",
+      "path_params": [],
+      "slice_ids": [
+        "P01-S02-T002",
+        "P03-S01-T001",
+        "P05-S01-T001"
+      ],
+      "journey_refs": [
+        "J100"
+      ],
+      "tables": [
+        "users",
+        "refresh_tokens",
+        "audit_logs",
+        "employee_profiles",
+        "mfa_totp_secrets"
+      ],
+      "routes": [
+        "/auth/sign-in",
+        "/auth/sign-in → /auth/2fa → /chat"
+      ],
+      "first_task_kind": "api"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/sign-up",
+      "operation_id": "postApiV1AuthSignUp",
+      "request_schema": "PostApiV1AuthSignUpRequest",
+      "response_schema": "PostApiV1AuthSignUpResponse",
+      "path_params": [],
+      "slice_ids": [
+        "P01-S02-T001",
+        "P03-S01-T002"
+      ],
+      "journey_refs": [
+        "J100"
+      ],
+      "tables": [
+        "users",
+        "employee_profiles",
+        "audit_logs"
+      ],
+      "routes": [
+        "/auth/sign-up"
+      ],
+      "first_task_kind": "api"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/chat/conversations",
+      "operation_id": "getApiV1ChatConversations",
+      "request_schema": "GetApiV1ChatConversationsRequest",
+      "response_schema": "GetApiV1ChatConversationsResponse",
+      "path_params": [],
+      "slice_ids": [
+        "P02-S03-T001",
+        "P03-S02-T003",
+        "P05-S01-T003"
+      ],
+      "journey_refs": [
+        "J101",
+        "J102"
+      ],
+      "tables": [
+        "conversations",
+        "messages",
+        "message_citations",
+        "users"
+      ],
+      "routes": [
+        "/history",
+        "/history → /chat/:conversationId → /account"
+      ],
+      "first_task_kind": "api"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/chat/conversations",
+      "operation_id": "postApiV1ChatConversations",
+      "request_schema": "PostApiV1ChatConversationsRequest",
+      "response_schema": "PostApiV1ChatConversationsResponse",
+      "path_params": [],
+      "slice_ids": [
+        "P02-S03-T001",
+        "P03-S02-T001",
+        "P05-S01-T002"
+      ],
+      "journey_refs": [
+        "J101",
+        "J102",
+        "J100"
+      ],
+      "tables": [
+        "conversations",
+        "messages",
+        "message_citations",
+        "users",
+        "llm_usage_logs",
+        "document_chunks"
+      ],
+      "routes": [
+        "/chat",
+        "/chat → /chat/:conversationId"
+      ],
+      "first_task_kind": "api"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/chat/conversations/{id}",
+      "operation_id": "getApiV1ChatConversationsId",
+      "request_schema": "GetApiV1ChatConversationsIdRequest",
+      "response_schema": "GetApiV1ChatConversationsIdResponse",
+      "path_params": [
+        "id"
+      ],
+      "slice_ids": [
+        "P02-S03-T001",
+        "P03-S02-T002",
+        "P05-S01-T002",
+        "P05-S01-T003"
+      ],
+      "journey_refs": [
+        "J101",
+        "J102"
+      ],
+      "tables": [
+        "conversations",
+        "messages",
+        "message_citations",
+        "llm_usage_logs",
+        "document_chunks",
+        "users"
+      ],
+      "routes": [
+        "/chat/:conversationId",
+        "/chat → /chat/:conversationId",
+        "/history → /chat/:conversationId → /account"
+      ],
+      "first_task_kind": "api"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/chat/conversations/{id}/stream",
+      "operation_id": "postApiV1ChatConversationsIdStream",
+      "request_schema": "PostApiV1ChatConversationsIdStreamRequest",
+      "response_schema": "PostApiV1ChatConversationsIdStreamResponse",
+      "path_params": [
+        "id"
+      ],
+      "slice_ids": [
+        "P02-S03-T002",
+        "P03-S02-T002",
+        "P05-S01-T002"
+      ],
+      "journey_refs": [
+        "J101",
+        "J102"
+      ],
+      "tables": [
+        "messages",
+        "message_citations",
+        "llm_usage_logs",
+        "document_chunks",
+        "conversations"
+      ],
+      "routes": [
+        "/chat/:conversationId",
+        "/chat → /chat/:conversationId"
+      ],
+      "first_task_kind": "api"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/users/me",
+      "operation_id": "getApiV1UsersMe",
+      "request_schema": "GetApiV1UsersMeRequest",
+      "response_schema": "GetApiV1UsersMeResponse",
+      "path_params": [],
+      "slice_ids": [
+        "P01-S02-T007",
+        "P01-S03-T001",
+        "P03-S02-T001",
+        "P03-S02-T004",
+        "P05-S01-T001"
+      ],
+      "journey_refs": [
+        "J100",
+        "J102",
+        "J101"
+      ],
+      "tables": [
+        "users",
+        "employee_profiles",
+        "refresh_tokens",
+        "conversations",
+        "mfa_totp_secrets",
+        "audit_logs"
+      ],
+      "routes": [
+        "/chat",
+        "/account",
+        "/auth/sign-in → /auth/2fa → /chat"
+      ],
+      "first_task_kind": "api"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/users/me/language",
+      "operation_id": "patchApiV1UsersMeLanguage",
+      "request_schema": "PatchApiV1UsersMeLanguageRequest",
+      "response_schema": "PatchApiV1UsersMeLanguageResponse",
+      "path_params": [],
+      "slice_ids": [
+        "P01-S02-T007",
+        "P03-S02-T004",
+        "P05-S01-T003"
+      ],
+      "journey_refs": [
+        "J100",
+        "J102"
+      ],
+      "tables": [
+        "users",
+        "employee_profiles",
+        "refresh_tokens",
+        "conversations",
+        "messages"
+      ],
+      "routes": [
+        "/account",
+        "/history → /chat/:conversationId → /account"
+      ],
+      "first_task_kind": "api"
+    },
+    {
+      "method": "GET",
+      "path": "/health",
+      "operation_id": "getHealth",
+      "request_schema": "GetHealthRequest",
+      "response_schema": "GetHealthResponse",
+      "path_params": [],
+      "slice_ids": [
+        "P00-S01-T001",
+        "P00-S02-T002"
+      ],
+      "journey_refs": [],
+      "tables": [],
+      "routes": [],
+      "first_task_kind": "setup"
+    },
+    {
+      "method": "GET",
+      "path": "/live",
+      "operation_id": "getLive",
+      "request_schema": "GetLiveRequest",
+      "response_schema": "GetLiveResponse",
+      "path_params": [],
+      "slice_ids": [
+        "P00-S02-T002"
+      ],
+      "journey_refs": [],
+      "tables": [],
+      "routes": [],
+      "first_task_kind": "api"
+    },
+    {
+      "method": "GET",
+      "path": "/ready",
+      "operation_id": "getReady",
+      "request_schema": "GetReadyRequest",
+      "response_schema": "GetReadyResponse",
+      "path_params": [],
+      "slice_ids": [
+        "P00-S02-T002"
+      ],
+      "journey_refs": [],
+      "tables": [],
+      "routes": [],
+      "first_task_kind": "api"
+    }
+  ]
+}

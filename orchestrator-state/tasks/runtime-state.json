@@ -1,0 +1,29 @@
+{
+  "generated_at": "2026-05-08T21:19:03+00:00",
+  "active_phase_id": "P00",
+  "active_task_id": "P00-S01-T002",
+  "last_worker": "validator",
+  "last_event": "subagent_stop",
+  "pending_journey_verifications": [],
+  "journey_gate_mode": "frontier",
+  "last_journey_verified": null,
+  "spawn_budget": 20,
+  "spawns_in_current_slice": {
+    "P00-S01-T001": 8,
+    "agent:planner": 1,
+    "agent:official-docs-researcher": 1,
+    "agent:developer": 1,
+    "agent:validator": 2,
+    "agent:tester": 2,
+    "agent:debugger": 1
+  },
+  "open_followups": [],
+  "last_claimed_task_id": "P00-S01-T001",
+  "last_trailer": {
+    "task_id": "P00-S01-T001",
+    "outcome": "approved",
+    "next_status": "ready_for_close",
+    "handoff": "orchestrator-state/tasks/handoffs/P00-S01-T001.md"
+  },
+  "last_stop_at": "2026-05-08T21:19:03+00:00"
+}

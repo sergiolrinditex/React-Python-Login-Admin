@@ -1,0 +1,37 @@
+id: P03-S01-T001
+phase_id: P03
+step_id: P03-S01
+title: "SignInPage"
+status: blocked
+kind: "frontend"
+target: "SignInPage"
+product_increment: "v1"
+build_state: "planned"
+risk_level: "medium"
+verify_mode: "human"
+route: "/auth/sign-in"
+endpoint: "POST /api/v1/auth/sign-in"
+journey_refs:
+  - "J100"
+tables:
+  - "users"
+  - "refresh_tokens"
+depends_on:
+  - P01-S03-T001
+  - P00-S01-T004
+  - P00-S01-T005
+acceptance:
+  - "Editorial mobile sign-in with validation, error states and next action"
+verification_commands:
+  - "/verify-slice P03-S01-T001 in Chrome with seed user"
+allowed_paths:
+  - "frontend/src/pages/auth/SignInPage.tsx"
+  - "frontend/src/features/auth/**"
+conflict_groups:
+  - "front:auth"
+write_set:
+  - "frontend/src/pages/auth/SignInPage.tsx"
+  - "frontend/src/features/auth/**"
+handoff_path: orchestrator-state/tasks/handoffs/P03-S01-T001.md
+evidence_dir: orchestrator-state/tasks/evidence/P03-S01-T001
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 3.1 — Login pages"

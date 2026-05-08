@@ -1,0 +1,39 @@
+id: P03-S02-T002
+phase_id: P03
+step_id: P03-S02
+title: "ConversationPage"
+status: blocked
+kind: "frontend"
+target: "ConversationPage"
+product_increment: "v1"
+build_state: "planned"
+risk_level: "high"
+verify_mode: "human"
+route: "/chat/:conversationId"
+endpoint: "GET /api/v1/chat/conversations/{id}, POST /api/v1/chat/conversations/{id}/stream"
+journey_refs:
+  - "J101"
+  - "J102"
+tables:
+  - "conversations"
+  - "messages"
+  - "message_citations"
+  - "llm_usage_logs"
+depends_on:
+  - P02-S03-T002
+  - P03-S02-T001
+acceptance:
+  - "Streaming response, citations inline, no bubble design, retry on network error"
+verification_commands:
+  - "/verify-slice P03-S02-T002 in Chrome with prod-like prompt"
+allowed_paths:
+  - "frontend/src/pages/chat/ConversationPage.tsx"
+  - "frontend/src/features/chat/stream.ts"
+conflict_groups:
+  - "front:chat"
+write_set:
+  - "frontend/src/pages/chat/ConversationPage.tsx"
+  - "frontend/src/features/chat/stream.ts"
+handoff_path: orchestrator-state/tasks/handoffs/P03-S02-T002.md
+evidence_dir: orchestrator-state/tasks/evidence/P03-S02-T002
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 3.2 — Chat pages"

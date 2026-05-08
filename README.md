@@ -14,7 +14,7 @@ ChatGPT Pro rellena templates
   -> bootstrap_three_docs.py
   -> registry.json canonical + derived views (work-items/*.yaml, task-dag.json/md, execution-graph.json)
   -> /next-wave propone nodos DAG seguros
-  -> /next-slice <TASK_ID> ejecuta agentes en un terminal aislado
+  -> claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice <TASK_ID>" ejecuta agentes en un terminal aislado
   -> /verify-slice valida con datos reales/prod-like
   -> closer genera report + sync baseline + commit + configured Git workflow + limpia worktrees
   -> /phase-gate valida phase completa
@@ -43,15 +43,15 @@ Si Terminal B ya está ejecutando otra task, no se interrumpe. Si Terminal B est
 ./scripts/next-wave.sh --limit 4
 ```
 
-y copiar el nuevo `export CLAUDE_ACTIVE_TASK_ID=... CLAUDE_TASK_PACK=...`. El `claim_task.py` vuelve a comprobar dependencias, conflictos y write sets bajo lock, por lo que si alguien intenta reclamar demasiado pronto recibe un rechazo seguro en vez de corromper el DAG.
+y copiar el nuevo `export CLAUDE_ACTIVE_TASK_ID=... CLAUDE_TASK_PACK=...`; después lanza `claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice <TASK_ID>"` en ese worker. El `claim_task.py` vuelve a comprobar dependencias, conflictos y write sets bajo lock, por lo que si alguien intenta reclamar demasiado pronto recibe un rechazo seguro en vez de corromper el DAG.
 
 Para continuar desde el mismo terminal después de cerrar una task:
 
 ```bash
 unset CLAUDE_ACTIVE_TASK_ID CLAUDE_TASK_PACK
 ./scripts/next-wave.sh --limit 1
-# copiar el export recomendado
-/next-slice <NEXT_TASK_ID>
+# copiar el export recomendado y lanzar Claude Code así:
+claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice <NEXT_TASK_ID>"
 ```
 
 Si el cierre genera `JOURNEY_PENDING_VERIFY`, `/next-wave` aplica `journey_gate_mode=frontier` por defecto: difiere solo tasks que referencian ese journey pendiente. `journey_gate_mode=strict` conserva el bloqueo global legacy. Los follow-ups bloqueantes y conflictos activos sí impiden abrir terminales inseguras.
@@ -190,16 +190,42 @@ El smoke crea dos apps temporales por perfil (`minimal`, `large-without-base`, `
 El script imprime bloques copiables:
 
 ```bash
-export CLAUDE_ACTIVE_TASK_ID=P02-S03-T001 CLAUDE_TASK_PACK=orchestrator-state/tasks/task-packs/P02-S03-T001.md && echo 'Ahora ejecuta en Claude Code: /next-slice P02-S03-T001'
+export CLAUDE_ACTIVE_TASK_ID=P02-S03-T001 CLAUDE_TASK_PACK=orchestrator-state/tasks/task-packs/P02-S03-T001.md && echo 'Ahora ejecuta: claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice P02-S03-T001"'
 ```
 
-En ese terminal de Claude Code:
+En ese terminal worker, lanza Claude Code con el orquestador explícito:
+
+```bash
+claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice P02-S03-T001"
+```
+
+Ese `export` vive solo en ese terminal worker. La regla segura es:
 
 ```text
-/next-slice P02-S03-T001
+1 terminal worker = 1 TASK_ID activo
 ```
 
-`/next-slice` hace:
+No hagas `unset` al terminar `/next-slice` si vas a verificar la misma task: conserva el mismo `CLAUDE_ACTIVE_TASK_ID` y `CLAUDE_TASK_PACK`, haz `/clear` dentro de Claude Code si necesitas liberar contexto, y lanza la verificación de esa misma slice:
+
+```bash
+claude --agent main-orchestrator --permission-mode bypassPermissions "/verify-slice P02-S03-T001"
+```
+
+Cuando `/verify-slice` haya ejecutado el `closer` y la task quede cerrada, limpia el terminal antes de reclamar otra task:
+
+```bash
+unset CLAUDE_ACTIVE_TASK_ID CLAUDE_TASK_PACK
+```
+
+Cerrar el terminal hace el mismo efecto práctico que `unset`. Si reutilizas la terminal sin limpiar, puedes quedarte con un `TASK_ID` viejo y ejecutar comandos sobre la slice incorrecta.
+
+Para comprobar el contexto activo del terminal:
+
+```bash
+printf 'CLAUDE_ACTIVE_TASK_ID=%s\nCLAUDE_TASK_PACK=%s\n' "$CLAUDE_ACTIVE_TASK_ID" "$CLAUDE_TASK_PACK"
+```
+
+`claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice ..."` hace:
 
 ```text
 planner
@@ -300,7 +326,8 @@ Bloquea si faltan tasks `done`, handoffs, evidence, reports, journeys verified/w
 
 ```text
 /next-wave                         lista nodos DAG ready y seguros
-/next-slice <TASK_ID>              ejecuta pipeline hasta tester pass
+claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice <TASK_ID>"
+                                  ejecuta pipeline hasta tester pass
 /verify-slice <TASK_ID>            gate humano + closer si verified
 /auto-verify-slice <TASK_ID>       verificación automática solo low+auto y sin cierre de journey
 /revise-slice <TASK_ID> "motivo"   corrección sobre slice canónica

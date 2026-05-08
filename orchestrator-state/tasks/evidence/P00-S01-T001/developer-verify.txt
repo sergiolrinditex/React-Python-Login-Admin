@@ -1,0 +1,35 @@
+=== P00-S01-T001 Developer Evidence ===
+Timestamp: 2026-05-08T21:02:47Z
+
+--- Primary: bash scripts/setup-from-scratch.sh --check ---
+WARN: .env no existe. Continúo porque el stack profile puede apuntar a servicios externos o comandos no locales.
+==> DB migrations: declared (skipped in --check mode): alembic upgrade head
+==> DB seed: declared (skipped in --check mode): python -m app.seeds.bootstrap_verification_data --source data/verification
+
+==> ✓ Setup declarativo completado.
+
+Comandos declarados para arrancar dev:
+  Backend:  uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+  Frontend: npm run dev -- --host 0.0.0.0
+  Health:   curl http://localhost:8000/health
+
+Usa scripts/run-all-tests.sh para ejecutar los checks declarados por STACK_PROFILE.yaml.
+Exit code: 0
+
+--- AST parse: backend/app/main.py ---
+OK
+
+--- Structural checks ---
+.env.example: OK
+frontend/package.json: OK
+backend/pyproject.toml: OK
+frontend/src/: OK
+backend/app/: OK
+backend/app/main.py: OK
+backend/app/__init__.py: OK
+backend/tests/: OK
+backend/alembic/: OK
+frontend/public/: OK
+
+--- No 'no existe' warns for backend/app or frontend/src ---
+PASS: no root-missing warnings

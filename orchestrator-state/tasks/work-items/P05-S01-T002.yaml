@@ -1,0 +1,38 @@
+id: P05-S01-T002
+phase_id: P05
+step_id: P05-S01
+title: "J101 chat RAG e2e"
+status: blocked
+kind: "journey"
+target: "J101 chat RAG e2e"
+product_increment: "v1"
+build_state: "planned"
+risk_level: "high"
+verify_mode: "human"
+route: "/chat → /chat/:conversationId"
+endpoint: "POST /api/v1/chat/conversations, POST /api/v1/chat/conversations/{id}/stream, GET /api/v1/chat/conversations/{id}"
+journey_refs:
+  - "J101"
+tables:
+  - "conversations"
+  - "messages"
+  - "message_citations"
+  - "llm_usage_logs"
+  - "document_chunks"
+depends_on:
+  - P03-S02-T001
+  - P03-S02-T002
+  - P02-S04-T001
+acceptance:
+  - "Employee asks People policy and sees streamed response with citations"
+verification_commands:
+  - "/verify-journey J101"
+allowed_paths:
+  - "orchestrator-state/tasks/evidence/journeys/J101/**"
+conflict_groups:
+  - "journey:J101"
+write_set:
+  - "orchestrator-state/tasks/evidence/journeys/J101/**"
+handoff_path: orchestrator-state/tasks/handoffs/P05-S01-T002.md
+evidence_dir: orchestrator-state/tasks/evidence/P05-S01-T002
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 5.1 — Journey integration"

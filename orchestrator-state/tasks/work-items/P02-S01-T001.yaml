@@ -1,0 +1,60 @@
+id: P02-S01-T001
+phase_id: P02
+step_id: P02-S01
+title: "0002_ai_chat_rag_mcp_agents.py"
+status: blocked
+kind: "db"
+target: "0002_ai_chat_rag_mcp_agents.py"
+product_increment: "v1"
+build_state: "planned"
+risk_level: "medium"
+verify_mode: "human"
+route: ""
+endpoint: ""
+journey_refs:
+  - "J101"
+  - "J103"
+  - "J104"
+  - "J105"
+tables:
+  - "conversations"
+  - "messages"
+  - "message_citations"
+  - "ai_providers"
+  - "ai_provider_credentials"
+  - "ai_models"
+  - "ai_model_tests"
+  - "llm_usage_logs"
+  - "rag_collections"
+  - "documents"
+  - "document_versions"
+  - "document_chunks"
+  - "document_embeddings"
+  - "vectorization_jobs"
+  - "mcp_servers"
+  - "mcp_credentials"
+  - "mcp_tools"
+  - "mcp_resources"
+  - "mcp_prompts"
+  - "agents"
+  - "mcp_agent_bindings"
+  - "agent_runs"
+  - "mcp_tool_invocations"
+  - "mcp_approvals"
+depends_on:
+  - P01-S01-T001
+acceptance:
+  - "Migration creates AI/chat/RAG/MCP/agent tables and pgvector index"
+verification_commands:
+  - "alembic upgrade head && alembic downgrade -1 && alembic upgrade head"
+allowed_paths:
+  - "backend/alembic/versions/0002_ai_chat_rag_mcp_agents.py"
+  - "backend/app/db/models/**"
+conflict_groups:
+  - "db:migrations"
+write_set:
+  - "backend/alembic/versions/0002_ai_chat_rag_mcp_agents.py"
+  - "backend/app/db/models/**"
+handoff_path: orchestrator-state/tasks/handoffs/P02-S01-T001.md
+evidence_dir: orchestrator-state/tasks/evidence/P02-S01-T001
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 2.1 — Data model and migrations"

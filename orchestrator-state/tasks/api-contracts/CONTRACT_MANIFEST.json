@@ -1,0 +1,14 @@
+{
+  "generated_at": "2026-05-08T20:51:47+00:00",
+  "generator": ".claude/bin/generate_api_contracts.py",
+  "source": "orchestrator-state/tasks/registry.json",
+  "source_digest": "2939b1570c7c2240b2f844bee39562d100ecbc8444618332d2e7813f7f72d768",
+  "endpoint_count": 35,
+  "artifacts": [
+    "orchestrator-state/tasks/api-contracts/registry-endpoints.json",
+    "orchestrator-state/tasks/api-contracts/openapi.json",
+    "orchestrator-state/tasks/api-contracts/openapi.yaml",
+    "orchestrator-state/tasks/api-contracts/frontend/typescript/apiClient.generated.ts",
+    "orchestrator-state/tasks/api-contracts/frontend/dart/api_client.g.dart"
+  ]
+}

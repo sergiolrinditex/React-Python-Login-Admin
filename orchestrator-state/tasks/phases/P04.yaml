@@ -1,0 +1,18 @@
+id: P04
+title: "Admin UX"
+status: blocked
+depends_on:
+  - P03
+task_ids:
+  - P04-S01-T001
+  - P04-S01-T002
+  - P04-S01-T003
+  - P04-S01-T004
+  - P04-S02-T001
+  - P04-S02-T002
+  - P04-S02-T003
+  - P04-S02-T004
+  - P04-S02-T005
+  - P04-S03-T001
+  - P04-S03-T002
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Phase 4 — Admin UX"

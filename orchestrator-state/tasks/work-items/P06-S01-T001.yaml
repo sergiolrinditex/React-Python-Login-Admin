@@ -1,0 +1,42 @@
+id: P06-S01-T001
+phase_id: P06
+step_id: P06-S01
+title: "Production build and compose smoke"
+status: blocked
+kind: "release"
+target: "Production build and compose smoke"
+product_increment: "v1"
+build_state: "planned"
+risk_level: "high"
+verify_mode: "human"
+route: ""
+endpoint: ""
+journey_refs:
+  - "J100"
+  - "J101"
+  - "J102"
+  - "J103"
+  - "J104"
+  - "J105"
+tables:
+depends_on:
+  - P05-S02-T001
+  - P05-S02-T002
+  - P05-S02-T003
+acceptance:
+  - "Frontend build, backend image and compose smoke pass"
+verification_commands:
+  - "npm --prefix frontend run build && docker compose build && bash scripts/run-all-tests.sh"
+allowed_paths:
+  - "frontend/dist/**"
+  - "backend/Dockerfile"
+  - "docker-compose.yml"
+conflict_groups:
+  - "release:build"
+write_set:
+  - "frontend/dist/**"
+  - "backend/Dockerfile"
+  - "docker-compose.yml"
+handoff_path: orchestrator-state/tasks/handoffs/P06-S01-T001.md
+evidence_dir: orchestrator-state/tasks/evidence/P06-S01-T001
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 6.1 — Build and release readiness"

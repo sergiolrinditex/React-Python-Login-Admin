@@ -1,0 +1,34 @@
+id: P03-S01-T005
+phase_id: P03
+step_id: P03-S01
+title: "TwoFactorPage"
+status: blocked
+kind: "frontend"
+target: "TwoFactorPage"
+product_increment: "v1"
+build_state: "planned"
+risk_level: "medium"
+verify_mode: "human"
+route: "/auth/2fa"
+endpoint: "POST /api/v1/auth/2fa/verify"
+journey_refs:
+  - "J100"
+tables:
+  - "mfa_totp_secrets"
+  - "refresh_tokens"
+depends_on:
+  - P01-S02-T006
+  - P03-S01-T001
+acceptance:
+  - "Six digit 2FA UI supports paste, validation and success redirect"
+verification_commands:
+  - "/verify-slice P03-S01-T005 in Chrome with TOTP generated from data/verification/auth/mfa_primary.json"
+allowed_paths:
+  - "frontend/src/pages/auth/TwoFactorPage.tsx"
+conflict_groups:
+  - "front:auth"
+write_set:
+  - "frontend/src/pages/auth/TwoFactorPage.tsx"
+handoff_path: orchestrator-state/tasks/handoffs/P03-S01-T005.md
+evidence_dir: orchestrator-state/tasks/evidence/P03-S01-T005
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 3.1 — Login pages"

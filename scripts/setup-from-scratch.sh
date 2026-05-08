@@ -1,10 +1,21 @@
 #!/usr/bin/env bash
 # Stack-aware development setup. Commands and roots come from STACK_PROFILE.yaml.
+#
+# --check mode (P00-S01-T001 verify): validates that declared paths and roots exist
+# without running migrations, seeds or dev servers. Exits 0 if structure is correct,
+# non-zero and prints WARN lines for any missing root that STACK_PROFILE.yaml declares.
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 PROJECT_ROOT="${CLAUDE_PROJECT_DIR:-$ROOT_DIR}"
 STACK="$ROOT_DIR/.claude/bin/stack_profile.py"
+
+CHECK_MODE=0
+for arg in "$@"; do
+  if [ "$arg" = "--check" ]; then
+    CHECK_MODE=1
+  fi
+done
 
 log()  { echo "==> $1"; }
 warn() { echo "WARN: $1" >&2; }
@@ -19,6 +30,10 @@ run_if_declared() {
   local cmd="$2"
   if [ -z "$cmd" ] || [ "$cmd" = "none" ]; then
     log "$label: no command declared, skip"
+    return
+  fi
+  if [ "$CHECK_MODE" -eq 1 ]; then
+    log "$label: declared (skipped in --check mode): $cmd"
     return
   fi
   log "$label: $cmd"

@@ -6,7 +6,7 @@
 5 source-of-truth docs
   -> bootstrap_three_docs.py
   -> registry.json + task-packs + DAG derivado
-  -> next-wave / next-slice
+  -> next-wave / claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice <TASK_ID>"
   -> verify-slice
   -> closer: report + baseline + git workflow + cleanup
 ```
@@ -42,16 +42,57 @@ python3 -B -S .claude/bin/bootstrap_three_docs.py --refresh
 ./scripts/next-wave.sh --limit 4
 ```
 
-Copia el `export CLAUDE_ACTIVE_TASK_ID=... CLAUDE_TASK_PACK=...` que imprime el script en cada terminal worker y lanza:
+Copia el `export CLAUDE_ACTIVE_TASK_ID=... CLAUDE_TASK_PACK=...` que imprime el script en cada terminal worker. El bloque imprimirá también el comando completo para lanzar Claude Code:
+
+```bash
+claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice <TASK_ID>"
+```
+
+Ejemplo de salida/copy-paste esperado:
+
+```bash
+export CLAUDE_ACTIVE_TASK_ID=P02-S03-T001 CLAUDE_TASK_PACK=orchestrator-state/tasks/task-packs/P02-S03-T001.md && echo 'Ahora ejecuta: claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice P02-S03-T001"'
+```
+
+### Uso correcto del terminal worker
+
+El `export` es **por terminal**. Solo afecta a la shell donde lo pegas y se queda activo hasta que cierres ese terminal o ejecutes `unset`.
+
+Regla práctica:
 
 ```text
-/next-slice <TASK_ID>
+1 terminal worker = 1 TASK_ID activo
+```
+
+Flujo recomendado en cada terminal worker:
+
+```bash
+# 1) Pega el export que te dio next-wave en ESTE terminal.
+export CLAUDE_ACTIVE_TASK_ID=P02-S03-T001 CLAUDE_TASK_PACK=orchestrator-state/tasks/task-packs/P02-S03-T001.md
+
+# 2) Lanza la slice en ese mismo terminal.
+claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice P02-S03-T001"
+
+# 3) Cuando /next-slice termine en tester pass, NO limpies aun el entorno si vas a verificar esa misma task.
+#    Haz /clear dentro de Claude Code si lo necesitas y verifica la misma task con el mismo TASK_ID.
+claude --agent main-orchestrator --permission-mode bypassPermissions "/verify-slice P02-S03-T001"
+
+# 4) Tras /verify-slice + closer/commit, ya puedes reutilizar el terminal.
+unset CLAUDE_ACTIVE_TASK_ID CLAUDE_TASK_PACK
+```
+
+Cerrar el terminal equivale a limpiar esos exports. Si reutilizas la misma terminal para otra task, haz siempre el `unset` antes de pegar el nuevo `export`, para no ejecutar una slice con un `TASK_ID` viejo.
+
+Para comprobar qué task tiene activa un terminal:
+
+```bash
+printf 'CLAUDE_ACTIVE_TASK_ID=%s\nCLAUDE_TASK_PACK=%s\n' "$CLAUDE_ACTIVE_TASK_ID" "$CLAUDE_TASK_PACK"
 ```
 
 ## 3. Ciclo de una slice
 
-```text
-/next-slice <TASK_ID>
+```bash
+claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice <TASK_ID>"
   planner
   developer ‖ official-docs-researcher
   validator ‖ tester

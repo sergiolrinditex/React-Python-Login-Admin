@@ -1,0 +1,12 @@
+WARN: .env no existe. Continúo porque el stack profile puede apuntar a servicios externos o comandos no locales.
+==> DB migrations: declared (skipped in --check mode): alembic upgrade head
+==> DB seed: declared (skipped in --check mode): python -m app.seeds.bootstrap_verification_data --source data/verification
+
+==> ✓ Setup declarativo completado.
+
+Comandos declarados para arrancar dev:
+  Backend:  uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+  Frontend: npm run dev -- --host 0.0.0.0
+  Health:   curl http://localhost:8000/health
+
+Usa scripts/run-all-tests.sh para ejecutar los checks declarados por STACK_PROFILE.yaml.
