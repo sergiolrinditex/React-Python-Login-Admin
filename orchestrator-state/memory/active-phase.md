@@ -2,7 +2,7 @@
 
 - ID: P00
 - Title: Bootstrap / foundation propia
-- Status: blocked
+- Status: active
 
 ## Tasks
 - P00-S01-T001

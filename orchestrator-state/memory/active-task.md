@@ -1,26 +1,25 @@
 # Active task
 
-- ID: P00-S01-T002
-- Title: Frontend dependency pack
-- Status: blocked
+- ID: P00-S01-T004
+- Title: Design tokens and editorial system
+- Status: ready
 - Phase: P00
 
 ## Acceptance
-- React Router, TanStack Query, forms and i18n deps installed
-- first provider wired
+- Tokens match Hilo editorial system
+- no rounded corners
+- showcase visible
 
 ## Allowed paths
-- frontend/package.json
-- frontend/package-lock.json
-- frontend/src/app/providers.tsx
+- frontend/src/shared/styles/**
+- frontend/src/shared/design-system/**
 
 ## DAG conflict guardrails
 ### Conflict groups
-- dependency:frontend
+- theme
 ### Write set
-- frontend/package.json
-- frontend/package-lock.json
-- frontend/src/app/providers.tsx
+- frontend/src/shared/styles/**
+- frontend/src/shared/design-system/**
 
 ## Verification commands
-- `bash -lc "npm --prefix frontend run test -- --run"`
+- `npm --prefix frontend run build and visual check /showcase`
