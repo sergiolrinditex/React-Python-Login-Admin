@@ -1,0 +1,16 @@
+=== ENABLE_VERBOSE_LOGGING=true (DEBUG level) ===
+Server startup log shows:
+  [debug] AFTER configure_logging: structlog configured [app.core.logging] log_level=DEBUG verbose=True
+  INFO:     Started server process
+  INFO:     Waiting for application startup.
+  INFO:     Application startup complete.
+  INFO:     Uvicorn running on http://127.0.0.1:8003
+  [debug] BEFORE health check: computing uptime [app.main]
+  [debug] AFTER health check: status=%s uptime=%s [app.main] positional_args=('ok', 3.034)
+  INFO:     127.0.0.1:62978 - "GET /health HTTP/1.1" 200 OK
+  INFO:     Shutting down
+  INFO:     Application shutdown complete.
+
+STRUCTLOG DEBUG LINES: VISIBLE (correct)
+BEFORE/AFTER health logs: VISIBLE as structured log lines (correct)
+PII/SECRETS in logs: NONE

@@ -43,4 +43,24 @@ Block ONLY if the slice ships product code that should be testable but has zero 
 
 ## Red flags learned
 
-(none yet — first slice)
+### From P00-S01-T003 (backend dependency pack)
+
+- **Eager module-level engine init at last line of file** is a recurring smell when developers want to "expose engine for Alembic" before Alembic exists. Pattern: `engine: AsyncEngine = _get_engine()` at file bottom. Tests then need `Settings.model_construct()` workarounds to dodge env reads. Fix: replace with `def get_engine() -> AsyncEngine: return _get_engine()` — lazy public accessor. Catch this pattern on any `core/db.py`-like file and any `core/queue.py`/`core/redis.py` future analogs. The smell signature is "module-level annotated assignment that calls a builder right before the module ends."
+
+- **Docstring lies about pinned versions** when the developer copy-pastes from researcher pin table without re-verifying after a forced downgrade. Specifically: when a constraint forces a downgrade (e.g. litellm forces pydantic 2.12.5 instead of 2.13.4), the developer must update both pyproject.toml AND every docstring that references the version. Grep for `\d+\.\d+\.\d+` in changed docstrings vs the actual pinned version in pyproject.toml.
+
+- **Direct dep count > non-negotiable cap when source-of-truth genuinely demands it**: do NOT block. The cap in `01-non-negotiables.md §Dependencies` is a default ceiling, not a hard veto over an explicit product contract. Flag as a follow-up to record an ADR in `TECHNICAL_GUIDE §Architectural Decision Records` (cannot be done in active task; main-orchestrator promotes the followup). This pattern will repeat for any AI/RAG/MCP-heavy product.
+
+### Logging gate refinements
+
+- **`structlog` setup itself can skip BEFORE log** (only AFTER inside `configure_logging()`). Acceptable for self-bootstrap functions — they have no logger to log BEFORE. Do NOT flag.
+- **`_REDACTED_KEYS` audit**: must include all SecretStr field names declared in `core/config.py` (jwt_secret, provider_encryption_key, litellm_master_key, resend_api_key, etc.) PLUS the generic ones (password, token, secret, api_key). Cross-check the config.py SecretStr declarations against the redaction set every slice that adds a new SecretStr.
+
+### Smoke test realness checks (sampling)
+
+When a slice has 30+ smoke tests covering a dep pack, sample 4–5 across categories and verify each does ONE of:
+1. Import + assert symbol exists (acceptable for huge libs like boto3, langchain).
+2. Import + real round-trip (preferred for security libs: argon2 hash+verify, pyjwt encode+decode, Fernet encrypt+decrypt).
+3. Import + minimal in-memory instantiation (Celery with `broker="memory://"`, FastAPI app instantiation, tiktoken encoding).
+
+NEVER acceptable: `try: import x except ImportError: pass` — that pattern PASSES even if the import broke. Flag as critical.

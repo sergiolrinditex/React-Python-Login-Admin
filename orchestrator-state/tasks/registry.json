@@ -15,7 +15,7 @@
       "id": "P00",
       "phase_number": 0,
       "title": "Bootstrap / foundation propia",
-      "status": "active",
+      "status": "ready",
       "depends_on": [],
       "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Phase 0 — Bootstrap / foundation propia",
       "task_ids": [
@@ -233,7 +233,7 @@
       "phase_id": "P00",
       "step_id": "P00-S01",
       "title": "Frontend dependency pack",
-      "status": "ready_for_close",
+      "status": "done",
       "build_state": "planned",
       "product_increment": "v1",
       "risk_level": "low",
@@ -293,18 +293,24 @@
       "claimed_by": "sergiolr",
       "claim_terminal_task_env": "P00-S01-T002",
       "task_pack_path": "orchestrator-state/tasks/task-packs/P00-S01-T002.md",
-      "last_outcome": "pass",
-      "last_updated_by": "tester",
-      "last_stop_at": "2026-05-08T21:49:19+00:00",
+      "last_outcome": "committed",
+      "last_updated_by": "closer",
+      "last_stop_at": "2026-05-08T22:07:27+00:00",
       "validator_outcome": "approved",
-      "validator_next_status": "ready_for_close"
+      "validator_next_status": "ready_for_close",
+      "last_blocker": {
+        "reason": "blocked",
+        "agent": "closer",
+        "at": "2026-05-08T21:59:58+00:00"
+      },
+      "report_path": "orchestrator-state/tasks/reports/P00-S01-T002.md"
     },
     {
       "id": "P00-S01-T003",
       "phase_id": "P00",
       "step_id": "P00-S01",
       "title": "Backend dependency pack",
-      "status": "needs_debug",
+      "status": "ready_for_close",
       "build_state": "planned",
       "product_increment": "v1",
       "risk_level": "low",
@@ -365,9 +371,9 @@
       "task_pack_path": "orchestrator-state/tasks/task-packs/P00-S01-T003.md",
       "last_outcome": "pass",
       "last_updated_by": "tester",
-      "last_stop_at": "2026-05-08T21:56:12+00:00",
-      "validator_outcome": "changes_requested",
-      "validator_next_status": "needs_debug"
+      "last_stop_at": "2026-05-08T22:02:42+00:00",
+      "validator_outcome": "approved",
+      "validator_next_status": "ready_for_close"
     },
     {
       "id": "P00-S01-T004",

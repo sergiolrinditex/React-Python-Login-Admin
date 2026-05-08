@@ -1,0 +1,12 @@
+[2m2026-05-08T22:08:24.998697Z[0m [[32m[1mdebug    [0m] [1mAFTER configure_logging: structlog configured[0m [[0m[1m[34mapp.core.logging[0m][0m [36mlog_level[0m=[35mDEBUG[0m [36mverbose[0m=[35mTrue[0m
+INFO:     Started server process [29683]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8051 (Press CTRL+C to quit)
+[2m2026-05-08T22:08:27.616112Z[0m [[32m[1mdebug    [0m] [1mBEFORE health check: computing uptime[0m [[0m[1m[34mapp.main[0m][0m
+[2m2026-05-08T22:08:27.617049Z[0m [[32m[1mdebug    [0m] [1mAFTER health check: status=%s uptime=%s[0m [[0m[1m[34mapp.main[0m][0m [36mpositional_args[0m=[35m('ok', 2.382)[0m
+INFO:     127.0.0.1:49366 - "GET /health HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [29683]

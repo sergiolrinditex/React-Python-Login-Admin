@@ -1,26 +1,31 @@
 {
-  "generated_at": "2026-05-08T21:56:13+00:00",
+  "generated_at": "2026-05-08T22:07:27+00:00",
   "active_phase_id": "P00",
   "active_task_id": "P00-S01-T004",
-  "last_worker": "tester",
+  "last_worker": "closer",
   "last_event": "subagent_stop",
   "pending_journey_verifications": [],
   "journey_gate_mode": "frontier",
   "last_journey_verified": null,
   "spawn_budget": 20,
   "spawns_in_current_slice": {
-    "P00-S01-T003": 2,
-    "agent:validator": 1,
-    "agent:tester": 1
+    "P00-S01-T002": 1,
+    "agent:closer": 1
   },
   "open_followups": [],
   "last_claimed_task_id": "P00-S01-T002",
   "last_trailer": {
-    "task_id": "P00-S01-T003",
-    "outcome": "pass",
-    "next_status": "needs_debug",
-    "handoff": "orchestrator-state/tasks/handoffs/P00-S01-T003.md",
-    "evidence": "orchestrator-state/tasks/evidence/P00-S01-T003/"
+    "task_id": "P00-S01-T002",
+    "outcome": "committed",
+    "next_status": "done",
+    "handoff": "orchestrator-state/tasks/handoffs/P00-S01-T002.md",
+    "evidence": "orchestrator-state/tasks/evidence/P00-S01-T002/",
+    "report": "orchestrator-state/tasks/reports/P00-S01-T002.md",
+    "report_ready": "yes",
+    "baseline_sync_ready": "yes",
+    "git_ready": "yes",
+    "push_ready": "yes",
+    "worktrees_cleaned": "yes"
   },
-  "last_stop_at": "2026-05-08T21:56:13+00:00"
+  "last_stop_at": "2026-05-08T22:07:27+00:00"
 }

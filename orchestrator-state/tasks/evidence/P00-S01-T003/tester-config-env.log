@@ -1,0 +1,5 @@
+enable_verbose_logging: True
+log_level: DEBUG
+api_port: 8000
+SecretStr check: PASS (secrets are not plain strings)
+Config load from env: PASS

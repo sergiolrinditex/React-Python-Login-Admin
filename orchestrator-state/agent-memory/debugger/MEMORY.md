@@ -13,3 +13,28 @@
   2. `python3 -c "import json; json.load(open('frontend/package.json'))"` → exit 0.
   3. `bash scripts/setup-from-scratch.sh --check` → exit 0 (only `.env no existe` warn is expected).
   4. `python3 -m py_compile backend/app/__init__.py backend/app/main.py` → exit 0.
+
+## P00-S01-T003 (2026-05-08) — Eager module-level engine + docstring drift
+
+- **Symptom**: validator `OUTCOME: changes_requested` (tester was already `pass`). Two findings: (a) `backend/app/core/db.py` exported `engine: AsyncEngine = _get_engine()` at module top-level, contradicting its own docstring claim of "no import-time side effects" and forcing tests to use `Settings.model_construct()` as a workaround; (b) `config.py` docstring claimed `pydantic 2.13.4` while the actual pin (forced by litellm transitive constraint) is `2.12.5`.
+- **Root cause (a)**: speculative "future-proofing for Alembic in P01-S01-T001" added a module-level export that ran the factory at import time. The function does not connect to the DB, but it does build the engine, instantiate the pool object, read settings, etc. — all of these are import-time side effects that the docstring promised the module would NOT have. YAGNI violation: the consumer (Alembic env) does not exist yet, and when it lands it can call a public accessor.
+- **Root cause (b)**: developer wrote the docstring before resolving the pin conflict, then forgot to update it after litellm forced the downgrade. Pure documentation drift.
+- **Fix applied**: replace `engine: AsyncEngine = _get_engine()` (last line of file) with a public `get_engine() -> AsyncEngine` lazy accessor that delegates to the existing memoized `_get_engine()`. Docstring for the module updated to describe `get_engine()` instead of `engine`. Single character fix in `config.py` docstring. **Tests untouched** — they only imported `get_session`, never the deleted `engine` symbol.
+- **Pattern — lazy-singleton in Python at module level**: when a module needs to expose a "singleton" expensive resource (DB engine, HTTP client, Redis connection, LLM client), prefer this triple:
+  ```python
+  _resource: T | None = None  # private cache, NOT a public symbol
+
+  def _get_resource() -> T:  # private builder + memoizer
+      global _resource
+      if _resource is None:
+          _resource = build_expensive_thing()
+      return _resource
+
+  def get_resource() -> T:  # public lazy accessor
+      """Public lazy accessor — first call builds, all calls return same."""
+      return _get_resource()
+  ```
+  Never `resource: T = _get_resource()` at module top-level. That builds the resource at import time and breaks (a) tests that need to override config before first use, (b) cold-start performance, (c) the documented invariant that "import is side-effect-free".
+- **Pattern — SQLAlchemy async testing without a live DB**: smoke tests should `from app.core.db import get_session` and assert the symbol is callable. Do NOT call `get_session()` (it requires a live engine + pool). Do NOT call `_get_engine()` from tests unless the test fixture injects a working DSN (e.g. SQLite in-memory aiosqlite). The smoke pattern is import-only, exercise-real-symbol-elsewhere.
+- **Pattern — pin-version drift in docstrings**: any docstring or comment that names a version number is a future debt. Either omit the version (`Dependencies: pydantic-settings, pydantic`) or accept that you must update both `pyproject.toml` AND every docstring/comment when bumping. There is no `ruff` rule that catches this; only manual review or grep audits do. For T003 this caught 1 drift; future audits should `grep -rn "pydantic 2\." backend/app/` etc. before the validator does.
+- **Anti-pattern that caused this**: docstring written aspirationally ("This module does NOT connect at import time") while code does have an import-time side effect of building the engine. If the docstring describes a contract, the code must enforce it. Use a quick `python -c "import app.core.db; print('ok')"` with a deliberately broken DATABASE_URL to verify the contract (it should still print 'ok' if there are no import-time side effects beyond settings read).
