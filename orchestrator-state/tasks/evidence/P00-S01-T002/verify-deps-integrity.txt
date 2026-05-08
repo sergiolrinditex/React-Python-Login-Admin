@@ -1,0 +1,15 @@
+=== Pin discipline (no caret/tilde) ===
+OK: no caret/tilde
+
+=== Lockfile integrity (no file: paths) ===
+0
+OK: no file: paths
+
+=== Pin count ===
+runtime: 10
+dev: 10
+
+=== Lockfile resolution sanity (first 3 deps) ===
+node_modules/@adobe/css-tools -> 4.4.4
+node_modules/@asamuzakjp/css-color -> 5.1.11
+node_modules/@asamuzakjp/dom-selector -> 7.1.1
