@@ -1,0 +1,229 @@
+name: Orchestrator tests
+
+# Validates the three-doc orchestrator framework that lives outside any
+# concrete app — hooks, skills, scripts and the bootstrap parser. Runs on
+# every push and PR. Four independent jobs (each on a fresh runner) so a
+# failure in one path does not mask another.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".claude/**"
+      - "scripts/**"
+      - "docs/base-app/**"
+      - "docs/templates/**"
+      - "docs/LEGACY_AND_DAG_RUNBOOK.md"
+      - "docs/CHATGPT_DAG_SOURCE_OF_TRUTH_GUIDE.md"
+      - "docs/prompts/**"
+      - "AUDIT_REPORT.md"
+      - ".github/workflows/orchestrator-tests.yml"
+  pull_request:
+    paths:
+      - ".claude/**"
+      - "scripts/**"
+      - "docs/base-app/**"
+      - "docs/templates/**"
+      - "docs/LEGACY_AND_DAG_RUNBOOK.md"
+      - "docs/CHATGPT_DAG_SOURCE_OF_TRUTH_GUIDE.md"
+      - "docs/prompts/**"
+      - "AUDIT_REPORT.md"
+      - ".github/workflows/orchestrator-tests.yml"
+  workflow_dispatch:
+
+jobs:
+  # ----------------------------------------------------------------------
+  # 1) Lint: Python compile, JSON validation, bash syntax + shellcheck.
+  # ----------------------------------------------------------------------
+  lint:
+    name: Lint (python + json + bash + shellcheck)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Python compile (.claude/bin)
+        # python3 -B affects implicit imports only, NOT explicit `compileall`,
+        # so __pycache__ would land in the working tree. We clean it up below.
+        run: python3 -m compileall -q .claude/bin
+
+      - name: Clean compileall byproducts
+        run: |
+          find .claude -type d -name '__pycache__' -prune -exec rm -rf {} +
+          find .claude -type f -name '*.pyc' -delete
+
+      - name: Validate settings JSON
+        run: |
+          python3 -m json.tool .claude/settings.json > /dev/null
+          if [ -f .claude/settings.local.example.json ]; then
+            python3 -m json.tool .claude/settings.local.example.json > /dev/null
+          fi
+
+      - name: Bash syntax check (bash -n)
+        run: |
+          set -e
+          for f in scripts/*.sh .claude/scripts/*.sh; do
+            [ -f "$f" ] || continue
+            bash -n "$f"
+            echo "ok: $f"
+          done
+
+      - name: Install shellcheck
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq shellcheck
+
+      - name: Shellcheck
+        # SC1091: do not follow `source`d files (they are runtime-conditional).
+        # SC2088: tildes inside quoted strings are user-facing log messages
+        #         (uninstall scripts show "~/.claude" as a hint), not paths
+        #         meant to expand — the actual paths use $HOME explicitly.
+        run: |
+          set -e
+          for f in scripts/*.sh .claude/scripts/*.sh; do
+            [ -f "$f" ] || continue
+            shellcheck --severity=warning -e SC1091 -e SC2088 "$f"
+          done
+
+  # ----------------------------------------------------------------------
+  # 2) Tests: full suite on Python 3.11 + 3.12.
+  #
+  # The suite mixes two styles — unittest.TestCase classes and pytest-style
+  # plain functions that rely on conftest.py fixtures. unittest discover
+  # ONLY picks up the former (88 tests at the time of writing); pytest
+  # picks up both (139). We run pytest as the canonical runner so neither
+  # half is silently lost. The unittest discover step is kept as a
+  # belt-and-braces sanity check so a regression that breaks the unittest
+  # branch (e.g. someone removes inheritance from TestCase) is still loud.
+  # ----------------------------------------------------------------------
+  tests:
+    name: Unit tests (python ${{ matrix.python }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Install pytest
+        run: python3 -m pip install --quiet pytest
+
+      - name: Run pytest (canonical — picks up unittest.TestCase + pytest-style)
+        run: python3 -m pytest .claude/bin/tests/ -v
+
+      - name: Run unittest discover (sanity check, subset of pytest)
+        # If this fails but pytest passes, someone broke a TestCase
+        # inheritance and the test is still being seen by pytest as a
+        # plain function — visible warning that the contract drifted.
+        run: python3 -m unittest discover -s .claude/bin/tests -p 'test_*.py'
+
+  # ----------------------------------------------------------------------
+  # 3) Bootstrap end-to-end on the shipped base-app docs. Verifies that the
+  #    three-doc parser still generates registry+runtime-state, and that
+  #    NO mutable artifact lands inside `.claude/` (everything must end up
+  #    under `orchestrator-state/`).
+  # ----------------------------------------------------------------------
+  bootstrap-baseapp:
+    name: Bootstrap (base-app docs)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Promote base-app docs to source-of-truth
+        run: |
+          mkdir -p docs/source-of-truth
+          rm -rf docs/source-of-truth/*
+          cp docs/base-app/instrucciones.md \
+             docs/base-app/BASEAPP_IMPLEMENTATION_CHECKLIST.md \
+             docs/base-app/BASEAPP_TECHNICAL_GUIDE.md \
+             docs/source-of-truth/
+
+      - name: Run bootstrap (validate + refresh)
+        # `-B` disables bytecode writing on automatic imports — keeps
+        # __pycache__ from contaminating .claude/bin/ during this job.
+        run: |
+          set -e
+          python3 -B .claude/bin/bootstrap_three_docs.py --validate-only
+          python3 -B .claude/bin/bootstrap_three_docs.py --refresh
+
+      - name: Strict journey-matrix check
+        run: bash scripts/check-journey-matrix.sh --strict
+
+      - name: Strict task-DAG check
+        run: bash scripts/check-task-dag.sh --strict
+
+      - name: Strict wiring-contract check
+        run: bash scripts/check-wiring-contract.sh --strict --require-new-template-columns
+
+      - name: Defensive cleanup of any byproduct caches
+        # Belt-and-braces: even with -B, a sub-process could re-enable bytecode.
+        # Clean before asserting "no mutable artifacts under .claude/".
+        run: |
+          find .claude -type d -name '__pycache__' -prune -exec rm -rf {} +
+          find .claude -type f -name '*.pyc' -delete
+
+      - name: Assert orchestrator-state landed outside .claude/
+        run: |
+          set -e
+          # Mutable artifacts must NEVER land inside .claude/. Two separate
+          # finds: -type d for stray dirs, -type f for stray files.
+          dir_leaks="$(find .claude -type d \( -name '__pycache__' -o -name 'tasks' -o -name 'memory' \) -print)"
+          file_leaks="$(find .claude -type f \( -name '*.pyc' -o -name 'registry.json' -o -name 'runtime-state.json' -o -name 'ledger.jsonl' \) -print)"
+          if [ -n "$dir_leaks$file_leaks" ]; then
+            echo "❌ Unexpected mutable artifacts under .claude/:"
+            echo "$dir_leaks"
+            echo "$file_leaks"
+            exit 1
+          fi
+          # Registry + runtime-state must exist under orchestrator-state/.
+          test -f orchestrator-state/tasks/registry.json
+          test -f orchestrator-state/tasks/runtime-state.json
+          echo "ok: bootstrap landed under orchestrator-state/, .claude/ stayed static"
+
+  # ----------------------------------------------------------------------
+  # 4) Bootstrap MUST refuse to run when source-of-truth is empty. This
+  #    closes the contract loophole "the three-doc rule is enforced when
+  #    the docs are missing too", not just when present.
+  # ----------------------------------------------------------------------
+  bootstrap-rejects-empty:
+    name: Bootstrap rejects empty source-of-truth
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Empty source-of-truth
+        run: |
+          mkdir -p docs/source-of-truth
+          rm -rf docs/source-of-truth/*
+          # Keep the placeholder so the dir is not deleted.
+          touch docs/source-of-truth/.gitkeep
+
+      - name: Bootstrap must refuse
+        run: |
+          set +e
+          python3 .claude/bin/bootstrap_three_docs.py --validate-only
+          rc=$?
+          set -e
+          if [ "$rc" -eq 0 ]; then
+            echo "❌ Bootstrap returned 0 with no source-of-truth docs — the contract is broken."
+            exit 1
+          fi
+          echo "ok: bootstrap exited ${rc} as expected"

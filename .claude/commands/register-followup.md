@@ -1,0 +1,92 @@
+---
+description: Convierte hallazgos reales de validator/tester/verify en una propuesta formal y, con aprobación humana, en una task DAG + YAML + source-of-truth amendment.
+argument-hint: "propose|promote|waive|list ..."
+---
+
+# /register-followup
+
+## Rule loading
+
+Lee `.claude/rules/05-runtime-write-contract.md` y `.claude/orchestrator-contract.json` antes de actuar.
+
+Este comando existe para que ningún hallazgo productivo quede en el aire. Si validator, tester, debugger, `/verify-slice` o `/verify-journey` descubren trabajo real que NO pertenece al `TASK_ID` actual, no edites `registry.json` ni inventes una nota suelta: crea una propuesta y promuévela con aprobación humana.
+
+## Casos
+
+### 1. Proponer sin mutar DAG
+
+Seguro durante una slice activa:
+
+```bash
+./scripts/register-followup-task.sh propose \
+  --origin-task <TASK_ID> \
+  --severity high|medium|low \
+  --kind bug|ux|wiring|data|test|security|followup \
+  --product-increment <baseapp|v1|v2|current> \
+  --title "<título>" \
+  --description "<hallazgo real>" \
+  --journey-ref <JID> \
+  --conflict-group <grupo> \
+  --write-set '<path-o-glob>' \
+  --acceptance "<criterio de cierre>" \
+  --verify "<verificación con datos reales/prod-like>"
+```
+
+Esto escribe:
+
+```text
+orchestrator-state/tasks/follow-ups/<FOLLOWUP_ID>.yaml
+orchestrator-state/tasks/runtime-state.json.open_followups[]
+orchestrator-state/tasks/ledger.jsonl
+```
+
+### 2. Promover a task DAG real
+
+Solo después de aprobación humana explícita:
+
+```bash
+./scripts/register-followup-task.sh promote <FOLLOWUP_ID>
+```
+
+Esto escribe bajo locks:
+
+```text
+docs/source-of-truth/*_IMPLEMENTATION_CHECKLIST.md  Runtime Follow-up Coverage Registry
+  (incluye Product increment + Build state)
+orchestrator-state/tasks/registry.json
+orchestrator-state/tasks/work-items/<TASK_ID>.yaml
+orchestrator-state/memory/task-dag.json
+orchestrator-state/memory/task-dag.md
+orchestrator-state/tasks/runtime-state.json
+orchestrator-state/tasks/ledger.jsonl
+```
+
+Luego ejecuta:
+
+```bash
+./scripts/check-task-dag.sh --strict
+./scripts/check-journey-matrix.sh --strict
+./scripts/check-wiring-contract.sh --strict --require-new-template-columns
+./scripts/next-wave.sh
+```
+
+### 3. Waive explícito
+
+Solo si el usuario decide no convertirlo en trabajo:
+
+```bash
+./scripts/register-followup-task.sh waive <FOLLOWUP_ID> --reason "<motivo>"
+```
+
+## JSON
+
+`--json` puede ir antes o después del subcomando, por ejemplo:
+
+```bash
+./scripts/register-followup-task.sh --json list
+./scripts/register-followup-task.sh list --json
+```
+
+## Regla de bloqueo
+
+Las propuestas `high`, `critical` o `blocker` bloquean `/next-wave`, `claim_task.py` y el `closer` del `origin_task_id` hasta estar `promoted` o `waived`.

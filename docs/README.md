@@ -1,0 +1,82 @@
+# Docs layout
+
+- `templates/`: tres perfiles (`minimal`, `large-without-base`, `large-with-base`), cada uno con cinco templates.
+- `prompts/`: prompt maestro para generar los cinco source-of-truth acumulativos en modo DAG explícito.
+- `guides/`: guía de generación con ChatGPT y runbook legacy/DAG.
+- `base-app/`: baseline construido opcional + `BASELINE_MANIFEST.json`. Solo se usa cuando eliges `large-with-base`.
+- `source-of-truth/`: los cinco documentos vivos de la app actual. Son acumulativos: baseline real + v1 + v2 + ... + vN.
+- `reports/`: auditorías, validaciones y reportes de fixes.
+
+Contrato activo esperado en `docs/source-of-truth/`:
+
+```text
+instrucciones.md
+<APP>_TECHNICAL_GUIDE.md
+<APP>_IMPLEMENTATION_CHECKLIST.md
+STACK_PROFILE.yaml
+UX_CONTRACT.md
+```
+
+El checklist debe tener `Canonical Coverage Registry` con estas columnas mínimas:
+
+```text
+Slice ID | Tipo | Target | Step | Product increment | Build state | Risk level | Verify mode | Depends on | Conflict group | Write set | Journey refs | Pantalla/Ruta | Endpoint | Tablas DB | Origen-Instr | Origen-TechGuide | Acceptance mínimo | Verify mínimo
+```
+
+`Product increment` y `Build state` permiten construir productos grandes por versiones: filas ya construidas quedan `done`; filas nuevas de v1/v2/vN quedan `planned`. El DAG runtime canónico vive en `orchestrator-state/tasks/registry.json` (`tasks[]` + `task_dag.source_digest`); `task-dag.json/md` y `execution-graph.json` son vistas derivadas verificadas por `check-task-dag --strict`.
+
+## Perfiles de templates
+
+```text
+docs/templates/minimal/             app pequeña sin BaseApp, AnyStack, pocos slices
+docs/templates/large-without-base/  producto grande desde cero, AnyStack
+docs/templates/large-with-base/     evolución de docs/base-app, stack fijado a Flutter/FastAPI/Postgres
+```
+
+Cada perfil contiene exactamente:
+
+```text
+instrucciones.template.md
+PROJECT_TECHNICAL_GUIDE.template.md
+PROJECT_IMPLEMENTATION_CHECKLIST.template.md
+UX_CONTRACT.template.md
+STACK_PROFILE.template.yaml
+```
+
+`large-with-base` hereda `docs/base-app/` y mantiene compatibilidad con su stack real: Flutter + FastAPI + Postgres/Supabase-compatible. No lo conviertas a React/Node. Para apps nuevas grandes usa `large-without-base`.
+
+## Comandos de validación
+
+```bash
+python3 -B -S .claude/bin/bootstrap_three_docs.py --validate-only
+python3 -B -S .claude/bin/bootstrap_three_docs.py --refresh
+./scripts/check-task-dag.sh --strict
+./scripts/check-journey-matrix.sh --strict
+./scripts/check-wiring-contract.sh --strict --require-new-template-columns
+./scripts/generate-api-contracts.sh --validate-only
+```
+
+## Dónde escribe el bootstrap
+
+```text
+orchestrator-state/memory/PROGRESS.md
+orchestrator-state/memory/task-dag.json|md
+orchestrator-state/memory/execution-graph.json
+orchestrator-state/memory/stack-profile.json
+orchestrator-state/tasks/registry.json
+orchestrator-state/tasks/runtime-state.json
+orchestrator-state/tasks/phases/*.yaml
+orchestrator-state/tasks/work-items/*.yaml
+orchestrator-state/tasks/task-packs/*.md
+orchestrator-state/tasks/api-contracts/*
+```
+
+No edites `registry.json`, `runtime-state.json`, `task-dag.json` ni `task-dag.md` a mano. Son derivados por bootstrap y scripts con locks.
+
+## Journeys y frontier gate
+
+`journey_gate_mode=frontier` es el default: journeys pendientes solo difieren tasks que referencian esos journey IDs. `journey_gate_mode=strict` conserva el bloqueo global legacy.
+
+## Follow-ups formales
+
+Si durante ejecución aparece trabajo real nuevo, usa `./scripts/register-followup-task.sh propose|promote|waive|list`. Las promociones escriben una sección `Runtime Follow-up Coverage Registry` en el checklist para que futuros bootstrap no pierdan la task.

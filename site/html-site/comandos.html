@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Comandos — Orquestador DAG · AnyStack</title>
+    <meta property="article:author" content="Sergio Lopez Rapado">
+  <meta property="article:published_time" content="2026-05-07T00:00:00Z">
+  <meta name="author" content="Sergio Lopez Rapado">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/styles.css">
+  <style>pre.mermaid{background:transparent;border:0;padding:8px 0;text-align:center;color:#e5e7eb}</style>
+  <!-- Cloudflare Web Analytics -->
+  <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "592c05228d374062ac06009e38a56155"}'></script>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="index.html" class="brand">Orquestador DAG · AnyStack</a>
+  <a href="index.html">Inicio</a>
+  <a href="negocio.html">Negocio</a>
+  <a href="templates.html">Templates</a>
+  <a href="stack-ux.html">Stack/UX</a>
+  <a href="tecnico.html">Técnico</a>
+  <a data-tally-open="5BEA8v" data-tally-layout="modal" data-tally-width="600" data-tally-overlay="1" href="mailto:s.lopezrap@gmail.com?subject=OrquestadorFlutterDAG-AnyStack%20%E2%80%94%20quiero%20ayuda%20para%20implantarlo" class="topnav-cta">📧 Contacto</a>
+</nav>
+
+<main>
+
+  <span class="hero-eyebrow">Slash commands</span>
+  <h1>Comandos principales.</h1>
+  <p class="lead">
+    Cada comando se invoca dentro de Claude Code. Los gates humanos
+    (<code>/verify-slice</code>, <code>/verify-journey</code>) son intencionales:
+    ningún commit a main pasa sin verificación real.
+  </p>
+
+  <div class="grid cols-2">
+
+    <a class="card" href="flujo-dag.html">
+      <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 12px;">
+        <code style="font-size: 16px; padding: 6px 12px; background: var(--bg-2); border: 1px solid var(--border-accent);">/next-wave</code>
+        <span class="badge accent">Scheduler</span>
+      </div>
+      <h3>Lista nodos ready seguros</h3>
+      <p>Imprime exports copy/paste por terminal. Excluye nodos que pisan el mismo <code>Conflict group</code> o <code>Write set</code>. No hace claim, no muta estado.</p>
+    </a>
+
+    <a class="card" href="terminales.html">
+      <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 12px;">
+        <code style="font-size: 16px; padding: 6px 12px; background: var(--bg-2); border: 1px solid var(--border-accent);">/next-slice TASK_ID</code>
+        <span class="badge cyan">Pipeline</span>
+      </div>
+      <h3>Claim atómico + pipeline</h3>
+      <p>Ejecuta planner → developer ‖ docs-researcher → validator ‖ tester → debugger si falla. Pausa en tester pass; deja la verificación al humano. El planner inyecta <code>STACK_PROFILE</code> en el task pack para que el developer use los comandos correctos.</p>
+    </a>
+
+    <div class="card">
+      <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 12px;">
+        <code style="font-size: 16px; padding: 6px 12px; background: var(--bg-2); border: 1px solid var(--border-accent);">/verify-slice TASK_ID</code>
+        <span class="badge ok">Gate humano</span>
+      </div>
+      <h3>Verificación con datos reales o prod-like</h3>
+      <p>Hard reset, fixtures, reproducción humana usando el método declarado en <code>STACK_PROFILE.frontend.visual_check</code> (browser, emulador, simulador, device), logs vivos. Si encuentra hallazgos menores dentro del scope, llama a <code>debugger</code> y re-verifica.</p>
+    </div>
+
+    <div class="card">
+      <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 12px;">
+        <code style="font-size: 16px; padding: 6px 12px; background: var(--bg-2); border: 1px solid var(--border-accent);">/auto-verify-slice</code>
+        <span class="badge warn">Restringido</span>
+      </div>
+      <h3>Solo low+auto, sin cierre de journey</h3>
+      <p>Comandos deterministas y producir evidencia. Rechaza si la slice cierra journey, toca auth, pagos, PII o migraciones críticas.</p>
+    </div>
+
+    <div class="card">
+      <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 12px;">
+        <code style="font-size: 16px; padding: 6px 12px; background: var(--bg-2); border: 1px solid var(--border-accent);">/verify-journey JID</code>
+        <span class="badge accent">Manual</span>
+      </div>
+      <h3>Gate end-to-end por journey</h3>
+      <p>Rescate manual para journeys pendientes que no se verificaron inline en <code>/verify-slice</code>. Multi-pantalla, estados marginales (empty, error_network, permission_denied, deep_link, back, reload).</p>
+    </div>
+
+    <div class="card">
+      <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 12px;">
+        <code style="font-size: 16px; padding: 6px 12px; background: var(--bg-2); border: 1px solid var(--border-accent);">/phase-gate Pxx</code>
+        <span class="badge bad">Bloqueante</span>
+      </div>
+      <h3>Cierre real de phase</h3>
+      <p>Bloquea avance si faltan tasks <code>done</code>, journeys sin verificar, reports/evidence/handoffs ausentes o follow-ups bloqueantes sin promover.</p>
+    </div>
+
+    <div class="card">
+      <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 12px;">
+        <code style="font-size: 16px; padding: 6px 12px; background: var(--bg-2); border: 1px solid var(--border-accent);">/register-followup</code>
+        <span class="badge info">Promote/waive</span>
+      </div>
+      <h3>Trabajo nuevo descubierto en QA</h3>
+      <p>Convierte hallazgos mayores en task DAG real. Sub-comandos: <code>propose</code>, <code>promote</code>, <code>waive</code>, <code>list</code>. Severities <code>blocker|critical|high</code> bloquean nuevas waves.</p>
+    </div>
+
+    <div class="card">
+      <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 12px;">
+        <code style="font-size: 16px; padding: 6px 12px; background: var(--bg-2); border: 1px solid var(--border-accent);">/revise-slice</code>
+        <span class="badge muted">Corrección</span>
+      </div>
+      <h3>Reabrir slice canónica</h3>
+      <p>Sin cambiar el DAG ni crear IDs temporales. Corrige, revalida, re-verify y closer correctivo. Útil cuando aparece un bug menor tras el cierre.</p>
+    </div>
+
+    <div class="card">
+      <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 12px;">
+        <code style="font-size: 16px; padding: 6px 12px; background: var(--bg-2); border: 1px solid var(--border-accent);">/slice-maintain</code>
+        <span class="badge muted">Housekeeping</span>
+      </div>
+      <h3>Limpieza y compactación entre slices</h3>
+      <p>Sub-comandos: <code>clean</code> (worktrees done, ledger antiguo, orphan task-packs) y <code>compact</code> (PROGRESS.md preservando últimas N slices, decisions y risks). Dry-run obligatorio por defecto.</p>
+    </div>
+
+  </div>
+
+  <h2>Ciclo recomendado por slice</h2>
+  <pre class="mermaid">
+flowchart TB
+    A[1 /next-wave] --&gt; B[2 /next-slice TASK_ID]
+    B --&gt; C[3 /clear<br/>libera tokens]
+    C --&gt; D[4 /verify-slice TASK_ID]
+    D -- verified --&gt; E[5 closer<br/>commit + push main]
+    D -- issues --&gt; F[debugger]
+    F --&gt; B
+    E --&gt; G[6 /slice-maintain clean]
+    G --&gt; H[7 /clear]
+    H --&gt; A
+  </pre>
+
+  <h2>Pipeline de /next-slice</h2>
+  <p>Claim atómico + pipeline completo hasta tester pass. <b>No invoca closer</b> directamente — pausa en tester pass para que tú lances <code>/verify-slice</code>.</p>
+  <pre class="mermaid">
+flowchart LR
+    A[planner<br/>blocking] --&gt; B[developer ‖ docs-researcher]
+    B --&gt; C[validator ‖ tester]
+    C -- pass --&gt; D[pause<br/>→ /verify-slice]
+    C -- fail --&gt; E[debugger<br/>max 3 ciclos]
+    E --&gt; C
+  </pre>
+
+  <h2>Journey verify §5.bis — inline vs aparte</h2>
+  <p>Cuando una slice cierra journey y queda <code>verified</code>, <code>/verify-slice</code> pregunta: ¿verificas el journey ahora o aparte?</p>
+  <pre class="mermaid">
+flowchart TD
+    A[/verify-slice<br/>VERIFY_OUTCOME verified/] --&gt; B{Cierra journey?}
+    B -- No --&gt; Z[closer commit normal]
+    B -- Si --&gt; C{Pregunta usuario}
+    C -- ahora inline --&gt; D[Verifica journey<br/>entorno ya reseteado]
+    D --&gt; E[verify-journey en mismo handoff<br/>JOURNEY_VERIFY_OUTCOME verified]
+    E --&gt; F[closer<br/>JOURNEY_VERIFIED_INLINE: JID]
+    F --&gt; Z
+    C -- aparte --&gt; G[closer<br/>JOURNEY_PENDING_VERIFY: JID]
+    G --&gt; H[runtime-state pending<br/>+= JID]
+    H --&gt; I[planner BLOQUEA<br/>/next-slice]
+    I --&gt; J[/verify-journey JID/<br/>aparte]
+  </pre>
+
+  <h2>register-followup — backlog dinámico</h2>
+  <pre class="mermaid">
+flowchart LR
+    A[validator/tester/verify<br/>encuentra trabajo nuevo] --&gt; B[propose YAML]
+    B --&gt; C{Severidad}
+    C -- high/critical/blocker --&gt; D[BLOQUEA waves]
+    C -- medium/low --&gt; E[Backlog visible]
+    D --&gt; F[Decisión humana]
+    E --&gt; F
+    F -- promote --&gt; G[Task DAG real<br/>+ source-of-truth amendment]
+    F -- waive --&gt; H[Documentado<br/>+ razón]
+  </pre>
+
+  <h2>Orden recomendado por slice</h2>
+  <div class="panel">
+    <pre data-copy><code>1. /next-wave                          ← lista nodos ready seguros
+2. /next-slice TASK_ID                 ← claim + pipeline hasta tester pass
+3. /clear                              ← libera ~150k tokens (opcional)
+4. /verify-slice TASK_ID               ← gate humano con datos reales/prod-like
+   │
+   ├─ verified  → spawnea closer       ← commit + push origin main
+   └─ issues    → spawnea debugger     ← vuelve a paso 2
+5. /slice-maintain clean               ← housekeeping
+6. /clear                              ← prepara siguiente slice</code></pre>
+  </div>
+
+  <p class="notice">Los 26 diagramas Mermaid completos viven en <a href="https://github.com/slopezrap/OrquestadorFlutterDAG-AnyStack/blob/main/site/diagrams/comandos.md" target="_blank" rel="noopener">site/diagrams/comandos.md</a>.</p>
+
+</main>
+
+<footer>
+  <div>Documentación estática · Sin dependencias externas · Lista para GitHub Pages.</div>
+  <div><a href="https://github.com/slopezrap/OrquestadorFlutterDAG-AnyStack" target="_blank" rel="noopener">Repositorio →</a></div>
+</footer>
+
+<script src="assets/app.js"></script>
+<!-- Tally.so embed (popup forms + inline embeds) -->
+<script async src="https://tally.so/widgets/embed.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true,theme:'dark',themeVariables:{primaryColor:'#1f2937',primaryTextColor:'#e5e7eb',primaryBorderColor:'#8b5cf6',lineColor:'#94a3b8',background:'#0b1020'}});</script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+profile_version: stack-profile-v1
+frontend:
+  language: typescript
+  framework: react
+  module_root: frontend/src
+  theme_root: frontend/src/shared/styles
+  test_cmd: npm run test -- --run
+  dev_cmd: npm run dev -- --host 0.0.0.0
+  visual_check: browser
+backend:
+  language: python
+  framework: fastapi
+  module_root: backend/app
+  test_cmd: pytest backend/tests
+  dev_cmd: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+  health_url: http://localhost:8000/health
+db:
+  engine: postgres
+  migrate_cmd: alembic upgrade head
+  seed_cmd: python -m app.seeds.bootstrap_verification_data --source data/verification
+git_workflow: pr-flow
+design_tokens_enforcer: design_tokens_v1

@@ -1,0 +1,23 @@
+# STACK_PROFILE.yaml — Minimal app
+profile_version: stack-profile-v1
+frontend:
+  language: {{frontend_language}}
+  framework: {{frontend_framework}}
+  module_root: {{frontend_module_root}}
+  theme_root: {{frontend_theme_root}}
+  test_cmd: {{frontend_test_cmd}}
+  dev_cmd: {{frontend_dev_cmd}}
+  visual_check: {{visual_check}}
+backend:
+  language: {{backend_language}}
+  framework: {{backend_framework}}
+  module_root: {{backend_module_root}}
+  test_cmd: {{backend_test_cmd}}
+  dev_cmd: {{backend_dev_cmd}}
+  health_url: {{backend_health_url}}
+db:
+  engine: {{db_engine}}
+  migrate_cmd: {{db_migrate_cmd}}
+  seed_cmd: {{db_seed_cmd}}
+git_workflow: {{git_workflow}}
+design_tokens_enforcer: {{design_tokens_enforcer}}

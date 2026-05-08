@@ -1,0 +1,24 @@
+# STACK_PROFILE.yaml — Declarative stack profile
+# Replace every value with the real stack. This file is source-of-truth for paths, commands, token enforcer and git workflow.
+profile_version: stack-profile-v1
+frontend:
+  language: dart              # dart | typescript | swift | kotlin | none
+  framework: flutter            # flutter | nextjs | react | swiftui | none
+  module_root: app/lib        # app/lib | web/src | ios/App | none
+  theme_root: app/lib/core/theme          # app/lib/core/theme | web/src/theme | none
+  test_cmd: {{frontend_test_cmd}}              # flutter test | pnpm test | npm test | none
+  dev_cmd: {{frontend_dev_cmd}}                # flutter run -d chrome | pnpm dev | none
+  visual_check: {{visual_check}}               # browser | emulator | simulator | device | tui | none
+backend:
+  language: python               # python | typescript | go | none
+  framework: fastapi             # fastapi | express | nestjs | none
+  module_root: api/src         # api/src | server/src | none
+  test_cmd: {{backend_test_cmd}}               # pytest | pnpm test | go test ./... | none
+  dev_cmd: {{backend_dev_cmd}}                 # uvicorn ... | pnpm dev | none
+  health_url: {{backend_health_url}}           # http://localhost:8000/health | none
+db:
+  engine: postgres                        # postgres | sqlite | mysql | none
+  migrate_cmd: {{db_migrate_cmd}}              # alembic upgrade head | prisma migrate deploy | none
+  seed_cmd: {{db_seed_cmd}}                    # python -m ... | pnpm seed | none
+git_workflow: {{git_workflow}}                 # push-to-main/direct-main | pr-flow | gitflow
+design_tokens_enforcer: design_tokens_v1 # design_tokens_v1 | none | <project_plugin>
