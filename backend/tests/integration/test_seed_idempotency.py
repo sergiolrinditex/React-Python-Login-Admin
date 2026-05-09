@@ -29,6 +29,7 @@ Dependencies:
 """
 from __future__ import annotations
 
+import asyncio
 import subprocess
 import sys
 from pathlib import Path
@@ -38,9 +39,61 @@ import structlog.testing
 
 from tests.integration.conftest import _db_reachable
 
+
+def _users_table_exists() -> bool:
+    """Return True if the 'users' table exists (i.e. migration 0001 has been applied).
+
+    Purpose: gate the P00 "no_tables" path tests — once P01-S01-T001 migration
+    is applied, the 'users' table exists and these tests would crash (the
+    synthetic loader uses old column names).  Skip when tables already exist.
+
+    Added in P01-S01-T001 to avoid regression on P00 seed tests post-migration.
+    """
+    if not _db_reachable():
+        return False
+    try:
+        from sqlalchemy import text
+        from sqlalchemy.ext.asyncio import create_async_engine
+
+        async def _check() -> bool:
+            dsn = (
+                "postgresql+asyncpg://hilopeople:hilopeople_dev_pwd"
+                "@127.0.0.1:5433/hilopeople_dev"
+            )
+            engine = create_async_engine(dsn, pool_size=1, max_overflow=0)
+            try:
+                async with engine.connect() as conn:
+                    result = await conn.execute(
+                        text(
+                            "SELECT COUNT(*) FROM information_schema.tables "
+                            "WHERE table_schema = 'public' AND table_name = 'users'"
+                        )
+                    )
+                    return (result.scalar() or 0) > 0
+            finally:
+                await engine.dispose()
+
+        return asyncio.run(_check())
+    except Exception:
+        return False
+
+
+_USERS_TABLE_EXISTS = _users_table_exists()
+
 pytestmark = pytest.mark.skipif(
     not _db_reachable(),
     reason="compose postgres not reachable on :5433 — run 'docker compose up -d postgres' first",
+)
+
+_SKIP_WHEN_MIGRATION_APPLIED = pytest.mark.skipif(
+    _USERS_TABLE_EXISTS,
+    reason=(
+        "P01-S01-T001 migration applied: 'users' table exists with real §10.3 schema. "
+        "The P00 synthetic loader targets old column names (role, is_active, mfa_enabled) "
+        "and would fail against the real schema. These tests verify the 'table missing' "
+        "path which is no longer the current state. "
+        "Tracked by FU-20260509073000 (replace synthetic bundle with real fixtures)."
+    ),
 )
 
 
@@ -49,6 +102,7 @@ pytestmark = pytest.mark.skipif(
 # ---------------------------------------------------------------------------
 
 
+@_SKIP_WHEN_MIGRATION_APPLIED
 async def test_seed_auth_idempotent_when_no_tables(
     verification_bundle_dir: Path,
 ) -> None:
@@ -110,6 +164,7 @@ async def test_seed_auth_idempotent_when_no_tables(
 # ---------------------------------------------------------------------------
 
 
+@_SKIP_WHEN_MIGRATION_APPLIED
 async def test_seed_all_namespaces_idempotent_when_no_tables(
     verification_bundle_dir: Path,
 ) -> None:
@@ -166,6 +221,7 @@ async def test_seed_all_namespaces_idempotent_when_no_tables(
 # ---------------------------------------------------------------------------
 
 
+@_SKIP_WHEN_MIGRATION_APPLIED
 def test_seed_exit_0_when_tables_missing(
     verification_bundle_dir: Path,
 ) -> None:

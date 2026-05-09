@@ -1,23 +1,24 @@
 # Active task
 
-- ID: P00-S02-T003
-- Title: Seed data and reset verification bundle
-- Status: needs_debug
-- Phase: P00
+- ID: P01-S02-T001
+- Title: POST /api/v1/auth/sign-up
+- Status: blocked
+- Phase: P01
 
 ## Acceptance
-- Prod-like seed users/documents/providers/MCP/agents are idempotent and resettable
+- Sign-up validates corporate email and legal acceptance
+- audit log written
 
 ## Allowed paths
-- backend/app/seeds/**
-- scripts/dev-restart.sh
+- backend/app/auth/**
+- backend/tests/integration/test_auth_signup.py
 
 ## DAG conflict guardrails
 ### Conflict groups
-- seed:data
+- api:auth
 ### Write set
-- backend/app/seeds/**
-- scripts/dev-restart.sh
+- backend/app/auth/**
+- backend/tests/integration/test_auth_signup.py
 
 ## Verification commands
-- `python -m app.seeds.bootstrap_verification_data --source data/verification && bash scripts/dev-restart.sh --reset`
+- `pytest backend/tests/integration -k auth_signup && curl with prod-like user`

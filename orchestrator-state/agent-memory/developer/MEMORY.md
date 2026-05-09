@@ -296,3 +296,103 @@
 - If compose postgres is running but with different credentials than config.py expects, the test fails with InvalidPasswordError.
 - This failure exists in the T002 baseline (48 counted as baseline; this test was already failing).
 - T004 does NOT change this — still 51/52 pass (1 pre-existing auth fail unchanged).
+
+### P01-S01-T001 (2026-05-09) — DB auth baseline (Alembic + migration 0001)
+
+**JSONB import from dialect (CRITICAL)**:
+- `sqlalchemy.JSONB` does NOT exist. `AttributeError: module 'sqlalchemy' has no attribute 'JSONB'`.
+- Correct: `from sqlalchemy.dialects.postgresql import JSONB`.
+- All JSONB columns must use this dialect-specific import.
+
+**`metadata` column name collision in ORM**:
+- `Base.metadata` is a reserved attribute on all SQLAlchemy declarative classes.
+- If you name a column `metadata`, the Python attribute conflicts with the metaclass attribute.
+- Solution: use a different Python name + the positional string arg to `mapped_column`:
+  ```python
+  metadata_col: Mapped[dict] = mapped_column("metadata", JSONB, ...)
+  ```
+- This applies to BOTH `EmployeeProfile` and `AuditLog` (both have a `metadata` DB column).
+
+**TYPE_CHECKING for circular ORM cross-imports**:
+- `user.py` imports auth types for `relationship()` back-references; `auth.py` imports `User`.
+- Avoid circular imports at module load time by wrapping forward-reference imports in `TYPE_CHECKING`:
+  ```python
+  from typing import TYPE_CHECKING
+  if TYPE_CHECKING:
+      from app.db.models.auth import AuditLog, MfaTotpSecret, PasswordResetToken, RefreshToken
+  ```
+- The relationship `"ClassName"` string form (deferred resolution) works without runtime import.
+- SQLAlchemy 2.0.49 resolves all string class names at mapper finalization, not at class definition.
+
+**pytest-asyncio event loop isolation pattern**:
+- `asyncio_mode=auto` creates a NEW event loop per test function.
+- A shared module-scoped `AsyncEngine` fixture will throw `Future ... attached to a different loop`.
+- Pattern: `_fresh_conn()` asynccontextmanager creates a new engine+connection per test and disposes after:
+  ```python
+  @asynccontextmanager
+  async def _fresh_conn() -> AsyncGenerator[AsyncConnection, None]:
+      engine = create_async_engine(_DSN, pool_size=1, max_overflow=0)
+      try:
+          async with engine.connect() as conn:
+              yield conn
+      finally:
+          await engine.dispose()
+  ```
+- Module-level setup (alembic upgrade head) must use a SYNCHRONOUS autouse fixture that calls alembic as a subprocess, not an async fixture.
+
+**`_SKIP_WHEN_MIGRATION_APPLIED` pattern for schema-conditional tests**:
+- Some tests verify the "table missing → skip" path of seed loaders — these break when the real schema exists.
+- Pattern:
+  ```python
+  def _users_table_exists() -> bool:
+      async def _check() -> bool:
+          engine = create_async_engine(_DSN, pool_size=1, max_overflow=0)
+          try:
+              async with engine.connect() as conn:
+                  result = await conn.execute(text("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='public' AND table_name='users'"))
+                  return result.scalar() == 1
+          finally:
+              await engine.dispose()
+      try:
+          return asyncio.run(_check())
+      except Exception:
+          return False
+
+  _SKIP_WHEN_MIGRATION_APPLIED = pytest.mark.skipif(
+      _users_table_exists(),
+      reason="Real schema present: 'table missing → skip' path no longer applies."
+  )
+  ```
+- Mark P00 "no_tables" tests with `@_SKIP_WHEN_MIGRATION_APPLIED` so they skip gracefully.
+- Track in follow-up FU to replace synthetic bundle with real fixtures.
+
+**Alembic async env.py pattern (1.18.4)**:
+- Async env.py requires: `asyncio.run(run_async_migrations(engine))`.
+- `run_async_migrations` must use `async with engine.connect() as connection` then `await connection.run_sync(do_run_migrations)`.
+- `do_run_migrations(connection: Any)` — typed as `Any` to avoid mypy issues with the synchronous wrapper type.
+- `engine.dispose()` must be called in `run_async_migrations` after `run_sync` completes (inside `try...finally` ideally).
+- Logging configure call must happen BEFORE `from app.db.models import Base` (models trigger structlog setup).
+
+**Naming convention in Base.metadata**:
+- SQLAlchemy constraint naming convention ensures stable autogenerate:
+  ```python
+  NAMING_CONVENTION = {
+      "ix": "ix_%(table_name)s_%(column_0_name)s",
+      "uq": "uq_%(table_name)s_%(column_0_name)s",
+      "ck": "ck_%(table_name)s_%(constraint_name)s",
+      "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
+      "pk": "pk_%(table_name)s",
+  }
+  ```
+- CHECK constraint name passed to `CheckConstraint("condition", name="my_chk")` becomes `ck_<tablename>_my_chk`.
+- Partial index must be created explicitly in migration (not via ORM) — partial indexes require `postgresql_where=` kwarg in `op.create_index()`.
+
+**Migration downgrade ordering (child tables first)**:
+- Always drop child tables (FK side) before parent tables.
+- Order: audit_logs, password_reset_tokens, mfa_totp_secrets, refresh_tokens, user_roles, employee_profiles, permissions, roles, users.
+- Extensions (pgcrypto, vector) should NOT be dropped in downgrade — they may be used by other schemas/extensions.
+
+**Alembic `revision` (string not integer)**:
+- `revision = "0001"` (quoted string), NOT `revision = 0001` (integer).
+- `down_revision = None` for the first migration (no parent).
+- `branch_labels = None`, `depends_on = None` (standard for linear history).

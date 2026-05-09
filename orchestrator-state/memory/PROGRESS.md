@@ -6,12 +6,12 @@
 
 ## Current State
 
-- **Phase**: Phase 0 — Scaffold + Design System
-- **Last completed slices**: P00-S01-T001..T005 (all done, committed), P00-S02-T001 (Docker compose — done), P00-S02-T002 (health live/ready endpoints — done, committed a6a3d86), **P00-S02-T004 (CWE-532 logging fix — done, committed 1b218fe)**, **P00-S02-T003 (seed data + reset bundle — developer done, validator/tester pending)**
-- **Next pending slices**: P00-S02-T003 validator/tester
+- **Phase**: Phase 1 — Auth + Base Capabilities
+- **Last completed slices**: P00-S01-T001..T005 (all done, committed), P00-S02-T001..T004 (all done, committed), **P01-S01-T001 (DB auth baseline — done, committed)**
+- **Next pending slices**: P01-S02-T001 (POST /api/v1/auth/sign-up)
 - **Blockers**: none
-- **Follow-ups pending**: FU-20260508225027 (medium, wiring — env var name drift in config.py vs TECHNICAL_GUIDE §11.1, non-blocking)
-- **Generated at**: 2026-05-09T08:30:00Z
+- **Follow-ups pending**: FU-20260508225027 (medium, wiring — env var name drift in config.py vs TECHNICAL_GUIDE §11.1, non-blocking); FU-20260509073000 (medium — replace synthetic P00 seed bundle with real §10.3 prod-like fixtures for P01+ verification)
+- **Generated at**: 2026-05-09T10:50:00Z
 
 ## Docker Compose Stack (P00-S02-T001)
 
@@ -57,9 +57,9 @@ Rancher-ready compose stack ADR preserved in handoff P00-S02-T001.md (pending fo
 | Health check | verified | curl http://127.0.0.1:8001/health → 200 {status:ok, version, uptime} |
 | Endpoints implemented | 3 live | GET /health (flat shape, backward-compat), GET /live (no-DB), GET /ready (DB probe + placeholders) |
 | Request-ID middleware | live | X-Request-ID echoed; uuid4 hex generated when missing; bound in structlog contextvars |
-| Migrations applied | 0 | First migration: P01-S01-T001 |
+| Migrations applied | 1 | Revision 0001: Auth / profile / audit baseline (9 tables, 22 indexes) |
 | Seed data | CLI READY (table-tolerant) | `python -m app.seeds.bootstrap_verification_data --source data/verification [--only auth]`; exits 0 when tables missing (P00 state); exits 0 with upserts when tables exist |
-| Backend tests | 63 total (62 pass + 1 pre-existing fail) | 39 smoke + 9 health + 4 logging + 11 new seed tests; test_ready_db_ok pre-existing auth fail (app env != test env credentials) |
+| Backend tests | 81 total (77 pass + 4 skipped) | 39 smoke + 9 health + 4 logging + 11 seed + 12 auth migration + 6 seed-loader-after-migration; 4 skipped (P00 "no_tables" synthetic tests incompatible with real §10.3 schema) |
 | Deps installed | YES | pip install -e ".[dev]" clean in .venv-t003 |
 
 ### Backend Dependencies (exact pins, verified against PyPI 2026-05-08)
@@ -158,9 +158,34 @@ Rancher-ready compose stack ADR preserved in handoff P00-S02-T001.md (pending fo
 
 ## Database
 
-| Table | Migration | Seed | Status |
-|-------|-----------|------|--------|
-| (none yet) | — | — | First migration: P01-S01-T001 |
+Migration 0001 applied: `alembic upgrade head` → `0001 (head)`. Round-trip verified: upgrade → downgrade -1 → upgrade head all exit 0.
+
+| Table | Migration | FK / ON DELETE | Status |
+|-------|-----------|----------------|--------|
+| users | 0001 | parent (root) | EXISTS |
+| employee_profiles | 0001 | users(id) CASCADE | EXISTS |
+| roles | 0001 | — | EXISTS |
+| permissions | 0001 | — | EXISTS |
+| user_roles | 0001 | users(id) CASCADE, roles(id) CASCADE | EXISTS |
+| refresh_tokens | 0001 | users(id) CASCADE | EXISTS |
+| mfa_totp_secrets | 0001 | users(id) CASCADE | EXISTS |
+| password_reset_tokens | 0001 | users(id) CASCADE | EXISTS |
+| audit_logs | 0001 | users(id) SET NULL | EXISTS |
+
+Explicit indexes created (8 + PKs/UQs = 22 total per `\di`):
+- `refresh_tokens_user_id_idx`, `refresh_tokens_active_expires_idx` (partial WHERE revoked_at IS NULL)
+- `user_roles_role_id_idx`
+- `password_reset_tokens_user_id_idx`, `password_reset_tokens_expires_idx`
+- `audit_logs_actor_created_idx`, `audit_logs_created_idx`, `audit_logs_entity_idx`
+
+Extensions: `pgcrypto` (gen_random_uuid), `vector` (pgvector) — both idempotent CREATE IF NOT EXISTS.
+
+Check constraint: `ck_users_users_language_chk` — `preferred_language IN ('es', 'en', 'fr')`.
+
+Alembic files:
+- `backend/alembic.ini` — blank sqlalchemy.url; DSN from env
+- `backend/alembic/env.py` — async Alembic wired to `app.core.db.get_engine()`
+- `backend/alembic/versions/0001_auth_users_employee_audit.py` — migration with upgrade/downgrade
 
 ## Seed Data Bundle (P00-S02-T003)
 
@@ -205,15 +230,15 @@ Rancher-ready compose stack ADR preserved in handoff P00-S02-T001.md (pending fo
 | Level | Count | Status |
 |-------|-------|--------|
 | Backend unit | 0 | — |
-| Backend integration | 24 | 23 PASS (9 health + 4 logging + 11 seed); 1 pre-existing infra fail (test_ready_db_ok — DB auth issue) |
+| Backend integration | 42 | 38 PASS (9 health + 4 logging + 11 seed + 12 auth migration + 6 seed-loader-after-migration); 4 skipped (P00 "no_tables" tests — real schema now present) |
 | Backend smoke | 39 | PASS (dependency smoke) |
 | Frontend unit | 7 | PASS (tokens TS mirror + component tests) |
 | Frontend component | 9 | PASS (providers smoke + showcase) |
 | i18n | 10 | PASS (P00-S01-T005) |
 | E2E | 0 | — |
-| **Total** | **89** | **88 PASS, 1 pre-existing infra fail** |
+| **Total** | **107** | **103 PASS, 4 skipped (expected), 0 failures** |
 
-Note: Backend total 63 tests (39 smoke + 9 health + 4 logging + 11 seed). 62/63 pass; test_ready_db_ok fails pre-existing (app-level DB auth uses env vars different from test-direct asyncpg credentials). Frontend Vitest: 57 tests. Grand total: 120 tests declared.
+Note: Backend total 81 tests (39 smoke + 42 integration). 77/81 pass, 4 skipped. Frontend Vitest: 57 tests.
 
 ## Milestones
 
@@ -234,6 +259,7 @@ Note: Backend total 63 tests (39 smoke + 9 health + 4 logging + 11 seed). 62/63 
 
 ## Recent Decisions
 
+- **P01-S01-T001 (2026-05-09)**: DB auth baseline. Alembic 1.18.4 async env bootstrapped (asyncio.run + run_sync pattern). 9 tables created per §10.3 verbatim. KEY DECISIONS: (1) D1 — audit_logs implements §10.3 shape (actor_user_id, action, entity_type, entity_id, metadata, created_at); ip/user_agent/request_id deferred to follow-up (01-non-negotiables conflict tracked); (2) JSONB must be imported from `sqlalchemy.dialects.postgresql` not from `sqlalchemy` directly; (3) TYPE_CHECKING guards for circular ORM references (user.py↔auth.py); (4) Python attribute `metadata_col` → DB column `"metadata"` via positional arg to avoid shadowing `Base.metadata`; (5) pytest-asyncio asyncio_mode=auto creates new event loop per test — AsyncEngine cannot be shared across tests; use `_fresh_conn()` asynccontextmanager per test; (6) P00 "no_tables" seed tests now skipped when real schema exists (FU-20260509073000); (7) Check constraint name: `ck_users_users_language_chk` (follows naming convention pattern); (8) partial index `refresh_tokens_active_expires_idx WHERE revoked_at IS NULL` for janitor sweep efficiency; (9) Extensions declared in migration but NOT dropped on downgrade (DROP EXTENSION would affect other schemas). Evidence: 18/18 T001-targeted tests pass; 77/81 total backend pass, 4 skipped expected; ruff+mypy clean; round-trip upgrade→downgrade→upgrade verified.
 - **P00-S02-T004 (2026-05-09)**: CWE-532 architectural fix — structlog frame-locals leak prevention. Key decisions: (1) Option C hybrid chosen: ConsoleRenderer configured with RichTracebackFormatter(show_locals=False) as primary fix + _REDACTED_KEYS extended with pwd, dsn, database_url, connection_string as defense-in-depth. (2) structlog 25.5.0 API confirmed: RichTracebackFormatter(show_locals=False) and ConsoleRenderer(exception_formatter=...) are both stable kwargs. (3) No changes to call sites (router.py, main.py) — global config change protects ALL future exc_info=True callers (P01 auth slices etc.). (4) Test isolation fix: _save_logging_state()/_restore_logging_state() helpers close and remove handlers after each test to prevent "I/O operation on closed file" error between tests. (5) Pre-existing test_ready_db_ok auth failure (InvalidPasswordError) was already failing in T002 baseline — unchanged, not introduced by T004. Evidence: 51/52 tests pass; 12/12 grep checks OK; ruff+mypy clean.
 - **P00-S02-T002 (2026-05-09)**: Health live/ready endpoints. Key decisions: (1) D1 — flat shape {status, version, uptime} preserved on /health and /live for T001 compose backward-compat; NOT migrated to {data:{...}} envelope; a follow-up will reconcile TECHNICAL_GUIDE §6.2. (2) D2 — redis and litellm checks declared as not_implemented (not removed, not faked as "ok"); shape is forward-compatible for downstream slices. (3) D3 — minimal request_id middleware using @app.middleware("http") (FastAPI-idiomatic per official doc note); uses structlog.contextvars.clear/bind/clear pattern. (4) Exception handling in /ready: SQLAlchemyError as primary catch; bare Exception as last-resort so probe always returns 503 not 500. (5) _sanitize_db_error() strips DSN components from error detail before returning. (6) Test 3 (DB-up) requires compose postgres at 5433 with correct credentials hilopeople:hilopeople_dev_pwd — verified with real DB.
 - **P00-S02-T001 (2026-05-09)**: Docker compose stack (Rancher-ready). 7 services declared. Key decisions: (1) pgvector/pgvector:pg18-bookworm (researcher confirmed pg18 available; `pg18-bookworm` explicit Debian stable); (2) redis:8-alpine (researcher confirmed Redis 8.6.3 is current stable, not 7.4); (3) litellm:v1.83.14-stable (pin to exact version matching Python lib, not floating main-stable); (4) nginx-unprivileged:1.29-alpine (researcher found 1.27 does NOT exist, 1.29 is current); (5) python:3.13-slim-bookworm (explicit Bookworm); (6) postgres host port 5433 (avoids conflict with local PG on 5432); (7) litellm healthcheck uses python3 urllib (no curl/wget in LiteLLM image); (8) LiteLLM start_period 120s (image needs ~2min to initialize); (9) worker healthcheck disabled (inherits /health from Dockerfile which fails since worker has no HTTP port — real Celery healthcheck in P02-S04-T002); (10) postgres volume mount at /var/lib/postgresql not /data (PG18 changed data dir layout per github.com/docker-library/postgres/pull/1259).
@@ -286,5 +312,5 @@ Singleton: `frontend/src/i18n/index.ts` — eager loading, fallbackLng:'es', `re
 Languages: `frontend/src/i18n/languages.ts` — `SUPPORTED_LANGUAGES`, `NAMESPACES`, `isSupportedLanguage()`.
 Test gate: `frontend/src/i18n/__tests__/i18n.test.ts` — 10 assertions (parse+load, drift-detector, productive copy, functional t(), fallback, hasResourceBundle, constants shape).
 
-> Last updated: 2026-05-09T07:40:00Z
-> Updated by: developer (P00-S02-T004) — CWE-532 architectural fix: RichTracebackFormatter(show_locals=False) global config + _REDACTED_KEYS extended + 4 new logging tests; 51/52 backend tests passing (1 pre-existing auth fail).
+> Last updated: 2026-05-09T10:50:00Z
+> Updated by: developer (P01-S01-T001) — DB auth baseline: Alembic bootstrapped, 9 tables created per §10.3, 22 indexes, round-trip upgrade/downgrade verified, 18/18 T001-targeted tests passing, 77/81 total backend passing (4 skipped expected).

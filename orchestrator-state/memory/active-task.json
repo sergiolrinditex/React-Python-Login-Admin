@@ -1,83 +1,66 @@
 {
-  "id": "P00-S02-T003",
-  "phase_id": "P00",
-  "step_id": "P00-S02",
-  "title": "Seed data and reset verification bundle",
-  "status": "needs_debug",
+  "id": "P01-S02-T001",
+  "phase_id": "P01",
+  "step_id": "P01-S02",
+  "title": "POST /api/v1/auth/sign-up",
+  "status": "blocked",
   "build_state": "planned",
   "product_increment": "v1",
   "risk_level": "medium",
   "verify_mode": "human",
   "depends_on": [
-    "P00-S02-T002"
+    "P01-S01-T001"
   ],
-  "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 0.2 — Infra, health and seed",
+  "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 1.2 — Auth APIs",
   "acceptance": [
-    "Prod-like seed users/documents/providers/MCP/agents are idempotent and resettable"
+    "Sign-up validates corporate email and legal acceptance",
+    "audit log written"
   ],
   "verification_commands": [
-    "python -m app.seeds.bootstrap_verification_data --source data/verification && bash scripts/dev-restart.sh --reset"
+    "pytest backend/tests/integration -k auth_signup && curl with prod-like user"
   ],
-  "kind": "setup",
-  "target": "Seed data and reset verification bundle",
+  "kind": "api",
+  "target": "POST /api/v1/auth/sign-up",
   "journey_refs": [
-    "J100",
-    "J101",
-    "J102",
-    "J103",
-    "J104",
-    "J105"
+    "J100"
   ],
   "route": "",
-  "endpoint": "",
+  "endpoint": "POST /api/v1/auth/sign-up",
   "tables": [
     "users",
     "employee_profiles",
-    "rag_collections",
-    "documents",
-    "ai_providers",
-    "mcp_servers",
-    "agents"
+    "audit_logs"
   ],
-  "origin_instr": "§15#seed-data",
-  "origin_techguide": "§6.5#verification-data",
+  "origin_instr": "§3.1#auth-perfiles",
+  "origin_techguide": "§6.2#POST-/api/v1/auth/sign-up",
   "allowed_paths": [
-    "backend/app/seeds/**",
-    "scripts/dev-restart.sh"
+    "backend/app/auth/**",
+    "backend/tests/integration/test_auth_signup.py"
   ],
   "conflict_groups": [
-    "seed:data"
+    "api:auth"
   ],
   "write_set": [
-    "backend/app/seeds/**",
-    "scripts/dev-restart.sh"
+    "backend/app/auth/**",
+    "backend/tests/integration/test_auth_signup.py"
   ],
-  "handoff_path": "orchestrator-state/tasks/handoffs/P00-S02-T003.md",
-  "evidence_dir": "orchestrator-state/tasks/evidence/P00-S02-T003/",
+  "handoff_path": "orchestrator-state/tasks/handoffs/P01-S02-T001.md",
+  "evidence_dir": "orchestrator-state/tasks/evidence/P01-S02-T001",
   "notes": [],
   "dependency_mode": "explicit_dag",
-  "depends_on_raw": "P00-S02-T002",
-  "conflict_groups_raw": "seed:data",
-  "write_set_raw": "backend/app/seeds/**, scripts/dev-restart.sh",
+  "depends_on_raw": "P01-S01-T001",
+  "conflict_groups_raw": "api:auth",
+  "write_set_raw": "backend/app/auth/**, backend/tests/integration/test_auth_signup.py",
   "product_increment_raw": "v1",
   "build_state_raw": "planned",
   "risk_level_raw": "medium",
   "verify_mode_raw": "human",
-  "kind_raw": "setup",
-  "target_raw": "Seed data and reset verification bundle",
-  "journey_refs_raw": "J100,J101,J102,J103,J104,J105",
+  "kind_raw": "api",
+  "target_raw": "POST /api/v1/auth/sign-up",
+  "journey_refs_raw": "J100",
   "screen_route_raw": "—",
-  "endpoint_raw": "—",
-  "tables_raw": "users, employee_profiles, rag_collections, documents, ai_providers, mcp_servers, agents",
-  "origin_instr_raw": "§15#seed-data",
-  "origin_techguide_raw": "§6.5#verification-data",
-  "claimed_at": "2026-05-09T05:24:59+00:00",
-  "claimed_by": "sergiolr",
-  "claim_terminal_task_env": "P00-S02-T003",
-  "task_pack_path": "orchestrator-state/tasks/task-packs/P00-S02-T003.md",
-  "last_outcome": "pass",
-  "last_updated_by": "tester",
-  "last_stop_at": "2026-05-09T06:04:42+00:00",
-  "validator_outcome": "changes_requested",
-  "validator_next_status": "needs_debug"
+  "endpoint_raw": "POST /api/v1/auth/sign-up",
+  "tables_raw": "users, employee_profiles, audit_logs",
+  "origin_instr_raw": "§3.1#auth-perfiles",
+  "origin_techguide_raw": "§6.2#POST-/api/v1/auth/sign-up"
 }

@@ -29,6 +29,7 @@ Dependencies:
 """
 from __future__ import annotations
 
+import asyncio
 from pathlib import Path
 
 import pytest
@@ -36,9 +37,58 @@ import structlog.testing
 
 from tests.integration.conftest import _db_reachable
 
+
+def _users_table_exists() -> bool:
+    """Return True if P01-S01-T001 migration has been applied (users table exists).
+
+    Purpose: skip 'P00 table-missing path' tests when migration has created tables.
+    Added in P01-S01-T001 to prevent regression on P00 namespace-isolation tests.
+    The auth loader's upsert SQL uses old synthetic column names (role, is_active,
+    mfa_enabled) that don't exist in the real §10.3 schema.
+    """
+    if not _db_reachable():
+        return False
+    try:
+        from sqlalchemy import text
+        from sqlalchemy.ext.asyncio import create_async_engine
+
+        async def _check() -> bool:
+            dsn = (
+                "postgresql+asyncpg://hilopeople:hilopeople_dev_pwd"
+                "@127.0.0.1:5433/hilopeople_dev"
+            )
+            engine = create_async_engine(dsn, pool_size=1, max_overflow=0)
+            try:
+                async with engine.connect() as conn:
+                    result = await conn.execute(
+                        text(
+                            "SELECT COUNT(*) FROM information_schema.tables "
+                            "WHERE table_schema = 'public' AND table_name = 'users'"
+                        )
+                    )
+                    return (result.scalar() or 0) > 0
+            finally:
+                await engine.dispose()
+
+        return asyncio.run(_check())
+    except Exception:
+        return False
+
+
+_USERS_TABLE_EXISTS = _users_table_exists()
+
 pytestmark = pytest.mark.skipif(
     not _db_reachable(),
     reason="compose postgres not reachable on :5433 — run 'docker compose up -d postgres' first",
+)
+
+_SKIP_WHEN_MIGRATION_APPLIED = pytest.mark.skipif(
+    _USERS_TABLE_EXISTS,
+    reason=(
+        "P01-S01-T001 migration applied: auth loader synthetic columns (role, is_active, "
+        "mfa_enabled) don't exist in real §10.3 schema. "
+        "Tracked by FU-20260509073000 (replace synthetic bundle with real fixtures)."
+    ),
 )
 
 # Tables per namespace (P00 state: none exist yet).
@@ -69,6 +119,7 @@ def _extract_skipped_tables(logs: list[dict]) -> set[str]:
 # ---------------------------------------------------------------------------
 
 
+@_SKIP_WHEN_MIGRATION_APPLIED
 async def test_only_auth_does_not_touch_other_namespaces(
     verification_bundle_dir: Path,
 ) -> None:

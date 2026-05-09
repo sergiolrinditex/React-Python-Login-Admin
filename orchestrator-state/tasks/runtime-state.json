@@ -1,18 +1,15 @@
 {
-  "generated_at": "2026-05-09T06:04:42+00:00",
-  "active_phase_id": "P00",
-  "active_task_id": "P00-S02-T003",
-  "last_worker": "tester",
+  "generated_at": "2026-05-09T11:01:50+00:00",
+  "active_phase_id": "P01",
+  "active_task_id": "P01-S02-T001",
+  "last_worker": "",
   "last_event": "subagent_stop",
   "pending_journey_verifications": [],
   "journey_gate_mode": "frontier",
   "last_journey_verified": null,
   "spawn_budget": 20,
   "spawns_in_current_slice": {
-    "P00-S02-T003": 4,
-    "agent:developer": 1,
-    "agent:validator": 1,
-    "agent:tester": 1
+    "P01-S02-T001": 3
   },
   "open_followups": [
     {
@@ -42,16 +39,28 @@
       "path": "orchestrator-state/tasks/follow-ups/FU-20260509044829-disable-structlog-rich-traceback-show-locals-glo.yaml",
       "created_at": "2026-05-09T04:48:29+00:00",
       "promoted_task_id": "P00-S02-T004"
+    },
+    {
+      "id": "FU-20260509073000-replace-synthetic-verification-bundle-with-peopl",
+      "status": "proposed",
+      "severity": "medium",
+      "origin_task_id": "P00-S02-T003",
+      "title": "Replace synthetic verification bundle with People Tech delivery",
+      "path": "orchestrator-state/tasks/follow-ups/FU-20260509073000-replace-synthetic-verification-bundle-with-peopl.yaml",
+      "created_at": "2026-05-09T07:30:00+00:00"
+    },
+    {
+      "id": "FU-20260509105319-audit-logs-add-ip-user-agent-request-id-columns-",
+      "status": "proposed",
+      "severity": "medium",
+      "origin_task_id": "P01-S01-T001",
+      "title": "audit_logs: add ip, user_agent, request_id columns (non-negotiable audit fields)",
+      "path": "orchestrator-state/tasks/follow-ups/FU-20260509105319-audit-logs-add-ip-user-agent-request-id-columns-.yaml",
+      "created_at": "2026-05-09T10:53:19+00:00"
     }
   ],
-  "last_claimed_task_id": "P00-S02-T003",
-  "last_trailer": {
-    "task_id": "P00-S02-T003",
-    "outcome": "pass",
-    "next_status": "needs_debug",
-    "handoff": "orchestrator-state/tasks/handoffs/P00-S02-T003.md",
-    "evidence": "orchestrator-state/tasks/evidence/P00-S02-T003/"
-  },
-  "last_stop_at": "2026-05-09T06:04:42+00:00",
-  "last_followup_id": "FU-20260509044829-disable-structlog-rich-traceback-show-locals-glo"
+  "last_claimed_task_id": "P01-S01-T001",
+  "last_trailer": {},
+  "last_stop_at": "2026-05-09T11:36:02+00:00",
+  "last_followup_id": "FU-20260509105319-audit-logs-add-ip-user-agent-request-id-columns-"
 }

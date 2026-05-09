@@ -74,3 +74,36 @@ This test uses the app's DATABASE_URL env var (port 5432 in .env) while compose 
 
 Per MEMORY.md rule: `OUTCOME: pass, NEXT_STATUS: needs_debug`. The debugger must apply the fix, then re-run validator+tester. The closer requires validator `approved` before committing.
 
+## Lessons from P01-S01-T001 (2026-05-09)
+
+### Alembic migration testing pattern
+
+- The `.env` file may have `DATABASE_URL` pointing to port 5432 (or other mismatch), but tests MUST use the compose port (5433 in this project). Always override `DATABASE_URL` explicitly when running alembic/pytest:
+  ```bash
+  export DATABASE_URL="postgresql+asyncpg://hilopeople:hilopeople_dev_pwd@localhost:5433/hilopeople_dev"
+  ```
+- The test files themselves use `_ALEMBIC_ENV` dict with port 5433 hardcoded — this is correct and overrides any `.env` mismatch.
+
+### Alembic stdlib logging vs structlog
+
+- Alembic's `[loggers]` section in `alembic.ini` controls stdlib logging for `alembic.runtime.migration` events (INFO/WARN). These appear even with `ENABLE_VERBOSE_LOGGING=false`.
+- Task pack §8 explicitly exempts migration files from BEFORE/AFTER structlog requirements. The alembic.runtime.migration INFO events are the expected log output for verbose=false mode.
+- env.py adds structlog BEFORE/AFTER at `run_migrations_online`, `run_async_migrations`, `_get_engine` — these only appear with verbose=true.
+
+### DB-down negative test pattern
+
+- Stop postgres: `docker compose stop postgres`
+- Run pytest: should produce ERRORS (not SKIPs) — tests that use `skipif(not _db_reachable())` will skip on TCP check, but tests that succeed at the TCP check (port still responds during grace period) will error at the DB level with ConnectionResetError/asyncpg errors.
+- The key requirement: NO SILENT PASS with DB down. Either SKIP (if `_db_reachable()` returns False) or ERROR. Both are acceptable.
+
+### Backend /ready 503 pre-existing issue
+
+- Backend running process may have `DATABASE_URL=...@localhost:5432/hilopeople_dev` while compose postgres is on 5433. This causes `/ready` to return 503 with InvalidPasswordError.
+- This is pre-existing (FU-20260508225027). Do NOT classify as a T001 tester finding.
+- Integration tests are not affected — they override DATABASE_URL explicitly.
+
+### docker compose exec -T psql note
+
+- `docker compose exec -T postgres psql -U hilopeople -d hilopeople_dev ...` works when the user is `hilopeople` and the database is `hilopeople_dev` (not `hilopeople`). The `POSTGRES_DB` in compose is `hilopeople_dev`.
+- The `-T` flag is required in non-interactive mode (piped/captured output).
+

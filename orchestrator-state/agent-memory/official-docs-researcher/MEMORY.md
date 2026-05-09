@@ -444,3 +444,67 @@ When using `structlog.processors.format_exc_info` (converts exc_info to formatte
 #### Discrepancies: NONE
 
 The planner's intended pattern (Option C) is correct and consistent with structlog 25.5.0 official API. No discrepancy note required.
+
+---
+
+### Entry 2026-05-09 — P01-S01-T001 Alembic async env.py + SQLAlchemy 2 DeclarativeBase + pgcrypto/pgvector (DEEP PASS — targeted patterns)
+
+**Freshness window**: Alembic/SQLAlchemy stable — re-verify after 7 days (2026-05-16). pgvector/pgcrypto: PG18 behavior is stable — re-verify after 30 days.
+
+#### Sources consulted
+
+- Context7 `/websites/alembic_sqlalchemy` — async env.py pattern, op.create_table, op.create_index, op.execute, downgrade
+- Context7 `/websites/sqlalchemy_en_20_orm` — DeclarativeBase, Mapped, mapped_column, MetaData naming_convention
+- WebFetch `https://www.postgresql.org/docs/18/functions-uuid.html` — gen_random_uuid() native status in PG18, pgcrypto vs uuid-ossp
+
+#### Verified API patterns (2026-05-09)
+
+| # | Pattern | Verdict | Finding |
+|---|---|---|---|
+| 1 | Alembic async env.py — canonical form | VERIFIED | `async_engine_from_config(...)` + `async with connectable.connect() as connection: await connection.run_sync(do_run_migrations)` + `asyncio.run(run_async_migrations())` in `run_migrations_online()`. **NOT** `connectable.connect_async()` — the canonical method is `connectable.connect()` used inside `async with` (which returns an async context). |
+| 2 | Alembic `do_run_migrations(connection)` sync helper | VERIFIED | `context.configure(connection=connection, target_metadata=target_metadata); with context.begin_transaction(): context.run_migrations()` — synchronous; called via `run_sync`. |
+| 3 | Alembic `target_metadata` wiring | VERIFIED | `target_metadata = Base.metadata` is the canonical pattern — imported at module level from the declarative base. |
+| 4 | SQLAlchemy 2 `DeclarativeBase` + `MetaData(naming_convention=...)` | VERIFIED | **CANONICAL FORM**: `class Base(DeclarativeBase): metadata = MetaData(naming_convention=constraint_naming_conventions)`. The naming_convention dict is passed to `MetaData()` and assigned as a class attribute of `Base`. NOT passed to `DeclarativeBase.__init__`. |
+| 5 | SQLAlchemy 2 `Mapped[...]` + `mapped_column(...)` | VERIFIED | Canonical annotated declarative style: `id: Mapped[UUID] = mapped_column(primary_key=True)`. Type hints drive nullability (bare `Mapped[X]` = NOT NULL; `Mapped[X \| None]` = nullable). |
+| 6 | `op.create_table` in version file | VERIFIED | `op.create_table('table_name', sa.Column(...), ...)` — takes the table name as first arg, then `sa.Column()` objects and constraints. Constraints added inline as positional args (e.g. `sa.PrimaryKeyConstraint`, `sa.ForeignKeyConstraint`, `sa.CheckConstraint`, `sa.UniqueConstraint`). |
+| 7 | `op.create_index` | VERIFIED | `op.create_index('ix_name', 'table', ['col'], unique=False)`. Reverse: `op.drop_index('ix_name', table_name='table')`. |
+| 8 | `op.execute("CREATE EXTENSION IF NOT EXISTS ...")` | VERIFIED | `op.execute(...)` accepts raw SQL strings. Standard pattern for extensions. No special import needed. |
+| 9 | `downgrade()` order discipline | VERIFIED | Drop indexes BEFORE drop_table. Drop tables in reverse FK dependency order (children first). `op.drop_index` before `op.drop_table`. Extensions NOT dropped in downgrade (idempotent on next upgrade). |
+| 10 | PG18 `gen_random_uuid()` — native vs pgcrypto | VERIFIED WITH NUANCE | PG18 ships `gen_random_uuid()` natively (no extension). The §10.3 source-of-truth mandates `CREATE EXTENSION IF NOT EXISTS pgcrypto;` for backward compat with PG<13. This is SAFE (idempotent) and CORRECT per project spec. pgcrypto does NOT conflict with PG18 native UUID. uuid-ossp is NOT needed. |
+| 11 | `CREATE EXTENSION IF NOT EXISTS vector;` | VERIFIED (from cache P00-S02-T001) | `pgvector/pgvector:pg18-bookworm` provides the extension. `IF NOT EXISTS` makes it idempotent. Correct to include in T001 foundation migration. |
+
+#### CRITICAL FINDING — Async env.py API correction
+
+The task pack §7.5 says:
+> `async def run_async_migrations()` with `connectable.connect_async()` and `connection.run_sync(do_run_migrations)`
+
+The **official Alembic docs** show the correct method is:
+```python
+async with connectable.connect() as connection:
+    await connection.run_sync(do_run_migrations)
+```
+
+NOT `connectable.connect_async()`. The `connect_async()` method does not exist in the SQLAlchemy 2.x async API — the correct pattern is `async_engine.connect()` used as an async context manager. This is a **task pack phrasing issue** (the planner used imprecise wording), NOT a blocker for the developer — the correct pattern is what the official docs show, which is what any competent developer would write. No source-of-truth edit needed; note here for developer clarity.
+
+**IMPACT**: LOW — developer should use `async with connectable.connect() as connection:` (official pattern). The `connect_async()` phrasing in the task pack description is pseudo-code, not a real API call. Task pack §7.5 intent is correct; only the method name in the description was imprecise.
+
+#### Naming convention key format — minor discrepancy
+
+Task pack §7.1 shows:
+```python
+"ix": "ix_%(table_name)s_%(column_0_name)s",
+```
+
+Official SQLAlchemy 2.x docs show (for index):
+```python
+"ix": "ix_%(column_0_label)s",
+```
+
+The task pack form (`ix_%(table_name)s_%(column_0_name)s`) is also valid — both formats are accepted by SQLAlchemy's naming convention engine. The task pack form is actually more explicit and avoids potential ambiguity with multi-table scenarios. **No blocker.** Developer may use the task pack form — it produces stable names.
+
+#### Discrepancies found (for developer awareness)
+
+1. Task pack §7.5 uses pseudo-code `connectable.connect_async()` — correct API is `async with connectable.connect() as connection:`. LOW severity, developer guidance only. NOT a blocker.
+2. `ix` naming key format differs between task pack and official docs example — both valid. NO action needed.
+
+#### No note file needed — not a blocker, developer guidance inline above. No RESOLVED line required.
