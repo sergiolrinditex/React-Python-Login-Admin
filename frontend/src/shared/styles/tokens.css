@@ -1,0 +1,125 @@
+/**
+ * Hilo People — Design token declarations (CSS custom properties).
+ *
+ * What: Single source of truth for all visual literals.
+ *       All colour, typography, spacing and motion values MUST be declared here
+ *       as CSS custom properties and consumed via var(--token-name) everywhere else.
+ *       Hex / rgb / rgba / hsl literals are FORBIDDEN outside this file and reset.css.
+ *
+ * Phase/Slice: P00 / P00-S01-T004 — Design tokens and editorial system
+ *
+ * Source: instrucciones.md §7 + TECHNICAL_GUIDE §7 (TECHNICAL_GUIDE wins for
+ *         exact values; instrucciones is descriptive/normative for the system).
+ *
+ * Design identity:
+ *   Hilo uses the Inditex/Zara editorial code — raw linen background, deep ink,
+ *   pure white for editorial laminates, 1 px hairlines at 22 % opacity,
+ *   zero decorative shadows, ZERO rounded corners, solid black CTAs,
+ *   uppercase labels with high tracking, serif overlap wordmark, Helvetica body.
+ *
+ * Scanner note (design_tokens_v1):
+ *   This file lives under frontend.theme_root (frontend/src/shared/styles/) which
+ *   the scanner auto-excludes. Hex literals here are therefore intentional and will
+ *   NOT trigger enforcer warnings on other files.
+ */
+
+/* ignore: design-tokens(reason: "This IS the token source; all hex values here are intentional") */
+:root {
+  /* ── Colour palette ──────────────────────────────────────────────────── */
+  --color-bg:    #f5f3ee; /* raw linen / crudo — page background            */
+  --color-ink:   #0a0a0a; /* near-black ink — primary text and borders       */
+  --color-paper: #ffffff; /* pure white — editorial laminate / card surface  */
+
+  /* Semantic colour aliases — derived from palette, no new hex literals */
+  --color-text-primary:   var(--color-ink);
+  --color-text-secondary: rgba(10, 10, 10, 0.56); /* 56 % ink — secondary text */
+  --color-text-disabled:  rgba(10, 10, 10, 0.34); /* 34 % ink — disabled       */
+  --color-border:         rgba(10, 10, 10, 0.22); /* hairline opacity           */
+  --color-bg-hover:       rgba(10, 10, 10, 0.04); /* subtle hover surface       */
+  --color-focus-ring:     var(--color-ink);
+
+  /* ── Typography ─────────────────────────────────────────────────────── */
+  /*  TECHNICAL_GUIDE §7: --font-display Bodoni Moda/Didot/serif            */
+  /*                      --font-sans   Helvetica Neue/Arial/system          */
+  --font-display: 'Bodoni Moda', 'Didot', 'GFS Didot', 'Bodoni MT', serif;
+  --font-sans:    'Helvetica Neue', Arial, system-ui, -apple-system, sans-serif;
+  --font-mono:    ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, monospace;
+
+  /* Type scale — expressed in rem; base = 16 px */
+  --text-xs:   0.75rem;   /* 12 px — micro labels                           */
+  --text-sm:   0.875rem;  /* 14 px — caption / metadata                     */
+  --text-base: 1rem;      /* 16 px — body copy                              */
+  --text-lg:   1.125rem;  /* 18 px — large body / subheading                */
+  --text-xl:   1.25rem;   /* 20 px — section heading                        */
+  --text-2xl:  1.5rem;    /* 24 px — page title                             */
+  --text-3xl:  1.875rem;  /* 30 px — hero / display                         */
+  --text-4xl:  2.25rem;   /* 36 px — editorial hero                         */
+
+  /* Line heights */
+  --leading-tight:  1.25;
+  --leading-normal: 1.5;
+  --leading-loose:  1.75;
+
+  /* Font weights */
+  --weight-normal:   400;
+  --weight-medium:   500;
+  --weight-semibold: 600;
+  --weight-bold:     700;
+
+  /* ── Tracking (letter-spacing) ──────────────────────────────────────── */
+  /*  TECHNICAL_GUIDE §7: --tracking-label .18em                            */
+  --tracking-tight:  -0.01em;
+  --tracking-normal:  0em;
+  --tracking-label:   0.18em;  /* uppercase tracked labels — canonical Hilo identity */
+  --tracking-wide:    0.08em;
+
+  /* ── Spacing scale (multiples of 4 px) ─────────────────────────────── */
+  --space-0:  0;
+  --space-1:  0.25rem;   /* 4 px  */
+  --space-2:  0.5rem;    /* 8 px  */
+  --space-3:  0.75rem;   /* 12 px */
+  --space-4:  1rem;      /* 16 px */
+  --space-5:  1.25rem;   /* 20 px */
+  --space-6:  1.5rem;    /* 24 px */
+  --space-8:  2rem;      /* 32 px */
+  --space-10: 2.5rem;    /* 40 px */
+  --space-12: 3rem;      /* 48 px */
+  --space-16: 4rem;      /* 64 px */
+  --space-20: 5rem;      /* 80 px */
+  --space-24: 6rem;      /* 96 px */
+
+  /* ── Borders and hairlines ──────────────────────────────────────────── */
+  /*  TECHNICAL_GUIDE §7: --hairline 1px solid rgba(10,10,10,.22)           */
+  --hairline: 1px solid rgba(10, 10, 10, 0.22);
+
+  /* ── Border radius ──────────────────────────────────────────────────── */
+  /*  TECHNICAL_GUIDE §7: --radius 0 — zero rounded corners, editorial code */
+  --radius: 0;
+
+  /* ── Z-index layers ─────────────────────────────────────────────────── */
+  --z-below:    -1;
+  --z-base:      0;
+  --z-raised:   10;
+  --z-dropdown: 100;
+  --z-sticky:   200;
+  --z-overlay:  300;
+  --z-modal:    400;
+  --z-toast:    500;
+
+  /* ── Motion / transitions ───────────────────────────────────────────── */
+  --duration-fast:   100ms;
+  --duration-normal: 200ms;
+  --duration-slow:   350ms;
+  --ease-standard:   cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-enter:      cubic-bezier(0, 0, 0.2, 1);
+  --ease-exit:       cubic-bezier(0.4, 0, 1, 1);
+
+  /* ── Layout breakpoints (CSS custom props for documentation; use in media queries as raw values) */
+  /* mobile-first: 375 px base; tablet: 768 px; admin: 1440 px              */
+
+  /* ── Shadows ────────────────────────────────────────────────────────── */
+  /*  Hilo editorial code: zero decorative shadows. The shadow tokens exist  */
+  /*  ONLY for functional feedback (focus ring, modal scrim) — not as        */
+  /*  decorative elevation.                                                  */
+  --shadow-none: none;
+}

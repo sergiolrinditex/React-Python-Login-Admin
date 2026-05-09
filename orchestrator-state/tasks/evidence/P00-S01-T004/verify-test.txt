@@ -1,0 +1,13 @@
+
+> hilo-people-frontend@0.0.0 test
+> vitest --run
+
+
+ RUN  v4.1.5 /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/frontend
+
+
+ Test Files  4 passed (4)
+      Tests  47 passed (47)
+   Start at  05:53:31
+   Duration  2.47s (transform 346ms, setup 1.13s, import 375ms, tests 544ms, environment 5.44s)
+
