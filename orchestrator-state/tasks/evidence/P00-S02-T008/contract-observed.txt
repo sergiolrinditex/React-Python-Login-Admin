@@ -1,0 +1,36 @@
+## Contract Observed — P00-S02-T008
+
+### Domain contracts introduced in T008
+
+| Item | Path | Status |
+|------|------|--------|
+| AgentSpec (domain dataclass) | backend/app/agents/specs.py::AgentSpec | NEW, observed in 10 test_specs tests |
+| RoutingDecision (domain dataclass) | backend/app/agents/routing.py::RoutingDecision | NEW, observed in 10 test_routing tests |
+| SubagentExecutor (Protocol) | backend/app/agents/_executor.py::SubagentExecutor | NEW, verified by test_build_supervisor_accepts_custom_executor |
+| StubExecutor | backend/app/agents/_executor.py::StubExecutor | NEW, used in all 10 test_supervisor tests |
+| DeepAgentsSupervisor | backend/app/agents/deepagents_runtime.py::DeepAgentsSupervisor | NEW, end-to-end in test_supervisor.py |
+| build_supervisor() | backend/app/agents/deepagents_runtime.py::build_supervisor | NEW, used in test_supervisor + logging smoke |
+| load_specs_from_json() | backend/app/agents/specs.py::load_specs_from_json | NEW, loads from real JSON fixture |
+| select_subagent() | backend/app/agents/routing.py::select_subagent | NEW, pure routing function, no I/O |
+
+### Existing contracts consumed in T008
+
+| Item | Path | Used as |
+|------|------|---------|
+| AgentSeed | backend/app/seeds/schemas/mcp_agents.py::AgentSeed | Imported for JSON validation (DRY) |
+| data/verification/mcp_agents/agents.json | fixture | Loaded by load_specs_from_json() |
+| app.core.logging.get_logger | backend/app/core/logging.py | Structlog logger factory |
+| configure_logging() | backend/app/core/logging.py | Called in standalone test runs |
+
+### Routing algorithm observed
+
+- Message tokenization: re.findall(r"\w+", msg.lower()) → set intersection with subagent_topics
+- Score = cardinality of intersection
+- Tie-break: larger len(subagent_topics) wins, then name ascending
+- Fallback: RoutingDecision(selected_subagent=None, score=0, matched_topics=[], fallback_used=True)
+
+### Test asserted routing with real fixture data
+
+- "vacaciones" → score=1 → hr-policies-agent CONFIRMED
+- "langgraph" → score=1 → langchain-docs-agent CONFIRMED
+- "hola, ¿qué tiempo hace?" → fallback_used=True CONFIRMED

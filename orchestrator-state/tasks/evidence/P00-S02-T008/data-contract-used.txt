@@ -1,0 +1,32 @@
+## Verification Data Contract — P00-S02-T008
+
+### Source rows from TECHNICAL_GUIDE §6.5 / task pack §Verification Data Contract
+
+| Field | Value |
+|-------|-------|
+| Slice | J105 mcp-agents |
+| User | admin |
+| MCP sandbox | authorized HTTP read-only |
+| Agent | people_helper |
+| Seed cmd | python -m app.seeds.bootstrap_verification_data --source data/verification --only mcp_agents |
+| Reset | delete mcp_servers/tools/bindings/runs |
+
+### Fixtures used in tests
+
+Fixture file: `data/verification/mcp_agents/agents.json` (productive bundle, loaded read-only)
+
+Agents loaded:
+- `people-supervisor` (agent_type=supervisor, framework=deepagents)
+- `hr-policies-agent` (agent_type=subagent, parent=people-supervisor, topics=["vacaciones","nominas","politicas_rrhh","normativa_laboral","convenio"])
+- `langchain-docs-agent` (agent_type=subagent, parent=people-supervisor, topics=["langchain","langgraph","llm_integration","rag_implementation","agents"])
+
+### Productive-shaped data observed
+
+- Topic "vacaciones" present in hr-policies-agent.subagent_topics → routing match confirmed
+- Topic "langgraph" present in langchain-docs-agent.subagent_topics → routing match confirmed
+- Fallback (no match) for "hola, ¿qué tiempo hace?" confirmed
+
+### Note on DB state
+
+DB table `agents` does NOT exist (migration pending P02-S07-T001). Loader skips with WARN as documented.
+T008 runtime uses JSON fixture (Mode A) only. Mode B (SQL) deferred to P02-S08-T001.

@@ -6,12 +6,12 @@
 
 ## Current State
 
-- **Phase**: Phase 1 — Auth + Base Capabilities
-- **Last completed slices**: P00-S01-T001..T005 (all done, committed), P00-S02-T001..T004 (all done, committed), **P00-S02-T005 (productive verification bundle delivery + schema additions + loader SQL fix — implementation done, pending validator/tester + verify-slice)**, **P01-S01-T001 (DB auth baseline — done, committed)**, **P01-S01-T002 (env var §11.1 alignment — implementation done, pending verify-slice)**, **P01-S01-T004 (env_file path fix + DATABASE_URL port 5433 — implementation done, pending validator/tester + verify-slice)**
-- **Next pending slices**: P01-S02-T001 (POST /api/v1/auth/sign-up) — blocked until P00-S02-T005 + P01-S01-T002 + P01-S01-T004 verify-slice + closer done
+- **Phase**: Phase 1 — Auth + Base Capabilities (P00 infra wrapping up)
+- **Last completed slices**: P00-S01-T001..T005 (all done, committed), P00-S02-T001..T004 (all done, committed), **P00-S02-T005 (productive verification bundle — implementation done, pending verify-slice)**, **P00-S02-T006 (dynamic LiteLLM model discovery endpoint — implementation done, pending validator/tester + verify-slice)**, **P01-S01-T001 (DB auth baseline — done, committed)**, **P01-S01-T002 (env var §11.1 alignment — implementation done, pending verify-slice)**, **P01-S01-T004 (env_file path fix + DATABASE_URL port 5433 — implementation done, pending validator/tester + verify-slice)**
+- **Next pending slices**: P01-S02-T001 (POST /api/v1/auth/sign-up) — blocked until pending verify-slices closed
 - **Blockers**: none
-- **Follow-ups pending**: FU-20260508225027 (RESOLVED — env var alignment slice P01-S01-T002 implemented); FU-20260509073000 (RESOLVED by P00-S02-T005 — productive bundle delivered); **FU-20260509130036 RESOLVED by P01-S01-T004**. Pending closer-opened FUs: FU-X1 (dynamic LiteLLM model discovery), FU-X2 (discovery wizard UI), FU-X3 (deepagents supervisor runtime)
-- **Generated at**: 2026-05-09T15:30:00Z
+- **Follow-ups pending**: FU-20260508225027 (RESOLVED); FU-20260509073000 (RESOLVED by P00-S02-T005); FU-20260509130036 RESOLVED by P01-S01-T004. FU-X1 (dynamic LiteLLM model discovery) = **RESOLVED by P00-S02-T006**. Remaining: FU-X2 (discovery wizard UI), FU-X3 (deepagents supervisor runtime)
+- **Generated at**: 2026-05-09T21:45:00Z
 
 ## Docker Compose Stack (P00-S02-T001)
 
@@ -55,11 +55,12 @@ Rancher-ready compose stack ADR preserved in handoff P00-S02-T001.md (pending fo
 |--------|--------|---------|
 | Server | available | uvicorn starts; GET /health, /live, /ready all working |
 | Health check | verified | curl http://127.0.0.1:8001/health → 200 {status:ok, version, uptime} |
-| Endpoints implemented | 3 live | GET /health (flat shape, backward-compat), GET /live (no-DB), GET /ready (DB probe + placeholders) |
+| Endpoints implemented | 4 live | GET /health, GET /live, GET /ready, POST /api/v1/admin/ai/providers/{id}/discover-models |
 | Request-ID middleware | live | X-Request-ID echoed; uuid4 hex generated when missing; bound in structlog contextvars |
-| Migrations applied | 1 | Revision 0001: Auth / profile / audit baseline (9 tables, 22 indexes) |
+| Migrations applied | 2 | Revision 0001 (auth baseline: 9 tables, 22 indexes) + Revision 0003 (admin_ai: 3 tables: ai_providers, ai_provider_credentials, ai_models) |
 | Seed data | CLI READY (table-tolerant) | `python -m app.seeds.bootstrap_verification_data --source data/verification [--only auth]`; exits 0 when tables missing (P00 state); exits 0 with upserts when tables exist |
-| Backend tests | 81 total (77 pass + 4 skipped + 0 fail) | 39 smoke + 9 health + 4 logging + 11 seed + 12 auth migration + 6 seed-loader-after-migration; 4 skipped (P00 "no_tables" tests); 0 failures — test_ready_db_ok NOW PASSES (fixed by P01-S01-T004: env_file absolute path + DATABASE_URL port 5433) |
+| Admin AI discovery | P00-S02-T006 done | POST /api/v1/admin/ai/providers/{id}/discover-models — Gemini/OpenAI/LiteLLM clients, Fernet encryption, audit log, admin stub guard |
+| Backend tests | 136 total (130 pass + 10 skipped + 6 pre-existing fail) | 39 smoke + 9 health + 4 logging + 11 seed + 12 auth migration + 6 seed-loader + 7 admin_ai integration (3 pass, 4 skip external-API); 6 pre-existing fails: 5 uninstalled future deps + 1 event-loop ordering issue in full suite |
 | Deps installed | YES | pip install -e ".[dev]" clean in .venv-t003 |
 
 ### Backend Dependencies (exact pins, verified against PyPI 2026-05-08)
@@ -158,7 +159,7 @@ Rancher-ready compose stack ADR preserved in handoff P00-S02-T001.md (pending fo
 
 ## Database
 
-Migration 0001 applied: `alembic upgrade head` → `0001 (head)`. Round-trip verified: upgrade → downgrade -1 → upgrade head all exit 0.
+Migrations applied: 0001 (auth baseline) + 0003 (admin_ai tables). Head = `0003`. Round-trip verified for 0003: upgrade 0003 → downgrade -1 (to 0001) → upgrade head (back to 0003) all exit 0.
 
 | Table | Migration | FK / ON DELETE | Status |
 |-------|-----------|----------------|--------|
@@ -171,12 +172,21 @@ Migration 0001 applied: `alembic upgrade head` → `0001 (head)`. Round-trip ver
 | mfa_totp_secrets | 0001 | users(id) CASCADE | EXISTS |
 | password_reset_tokens | 0001 | users(id) CASCADE | EXISTS |
 | audit_logs | 0001 | users(id) SET NULL | EXISTS |
+| ai_providers | 0003 | — (no FK to users) | EXISTS |
+| ai_provider_credentials | 0003 | ai_providers(id) CASCADE | EXISTS |
+| ai_models | 0003 | ai_providers(id) CASCADE | EXISTS |
 
-Explicit indexes created (8 + PKs/UQs = 22 total per `\di`):
+Explicit indexes from 0001 (8 + PKs/UQs = 22 total):
 - `refresh_tokens_user_id_idx`, `refresh_tokens_active_expires_idx` (partial WHERE revoked_at IS NULL)
 - `user_roles_role_id_idx`
 - `password_reset_tokens_user_id_idx`, `password_reset_tokens_expires_idx`
 - `audit_logs_actor_created_idx`, `audit_logs_created_idx`, `audit_logs_entity_idx`
+
+Additional indexes from 0003 (admin_ai):
+- `ix_ai_provider_credentials_provider_id` (FK join on fetch_credential)
+- `ix_ai_provider_credentials_expires_at` (partial WHERE NOT NULL, for TTL queries)
+- `ix_ai_models_provider_id` (FK join)
+- `uq_ai_models_provider_id_model_id` (UNIQUE — prevents duplicate discovery)
 
 Extensions: `pgcrypto` (gen_random_uuid), `vector` (pgvector) — both idempotent CREATE IF NOT EXISTS.
 
@@ -186,6 +196,7 @@ Alembic files:
 - `backend/alembic.ini` — blank sqlalchemy.url; DSN from env
 - `backend/alembic/env.py` — async Alembic wired to `app.core.db.get_engine()`
 - `backend/alembic/versions/0001_auth_users_employee_audit.py` — migration with upgrade/downgrade
+- `backend/alembic/versions/0003_admin_ai_providers_models.py` — migration with upgrade/downgrade (P00-S02-T006)
 
 ## Seed Data Bundle (P00-S02-T003)
 
