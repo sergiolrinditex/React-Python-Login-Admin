@@ -1,0 +1,230 @@
+ai_models: count=50, all auto_discovered=True? True
+first 5:
+  models/aqa                                         type=unknown    auto=True
+  models/deep-research-max-preview-04-2026           type=chat       auto=True
+  models/deep-research-preview-04-2026               type=chat       auto=True
+  models/deep-research-pro-preview-12-2025           type=chat       auto=True
+  models/gemini-2.0-flash                            type=chat       auto=True
+Traceback (most recent call last):
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 526, in _prepare_and_execute
+    prepared_stmt, attributes = await adapt_connection._prepare(
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 773, in _prepare
+    prepared_stmt = await self._connection.prepare(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/asyncpg/connection.py", line 638, in prepare
+    return await self._prepare(
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/asyncpg/connection.py", line 657, in _prepare
+    stmt = await self._get_statement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/asyncpg/connection.py", line 443, in _get_statement
+    statement = await self._protocol.prepare(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "asyncpg/protocol/protocol.pyx", line 165, in prepare
+asyncpg.exceptions.UndefinedColumnError: column "metadata_col" does not exist
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 585, in execute
+    self._adapt_connection.await_(
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 132, in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 196, in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 563, in _prepare_and_execute
+    self._handle_exception(error)
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 513, in _handle_exception
+    self._adapt_connection._handle_exception(error)
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 797, in _handle_exception
+    raise translated_error from error
+sqlalchemy.dialects.postgresql.asyncpg.AsyncAdapt_asyncpg_dbapi.ProgrammingError: <class 'asyncpg.exceptions.UndefinedColumnError'>: column "metadata_col" does not exist
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "<stdin>", line 31, in <module>
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/runners.py", line 190, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 653, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "<stdin>", line 19, in main
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/ext/asyncio/engine.py", line 659, in execute
+    result = await greenlet_spawn(
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 201, in greenlet_spawn
+    result = context.throw(*sys.exc_info())
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1419, in execute
+    return meth(
+           ^^^^^
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/sql/elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 585, in execute
+    self._adapt_connection.await_(
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 132, in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 196, in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 563, in _prepare_and_execute
+    self._handle_exception(error)
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 513, in _handle_exception
+    self._adapt_connection._handle_exception(error)
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 797, in _handle_exception
+    raise translated_error from error
+sqlalchemy.exc.ProgrammingError: (sqlalchemy.dialects.postgresql.asyncpg.ProgrammingError) <class 'asyncpg.exceptions.UndefinedColumnError'>: column "metadata_col" does not exist
+[SQL: 
+            SELECT action, entity_id, entity_type, metadata_col
+            FROM audit_logs
+            WHERE action='ai.provider.discover_models'
+            ORDER BY created_at DESC
+        ]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+audit_logs schema:
+  id                        uuid
+  actor_user_id             uuid
+  action                    text
+  entity_type               text
+  entity_id                 uuid
+  metadata                  jsonb
+  created_at                timestamp with time zone
+
+metadata column = 'metadata'
+Traceback (most recent call last):
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 526, in _prepare_and_execute
+    prepared_stmt, attributes = await adapt_connection._prepare(
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 773, in _prepare
+    prepared_stmt = await self._connection.prepare(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/asyncpg/connection.py", line 638, in prepare
+    return await self._prepare(
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/asyncpg/connection.py", line 657, in _prepare
+    stmt = await self._get_statement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/asyncpg/connection.py", line 443, in _get_statement
+    statement = await self._protocol.prepare(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "asyncpg/protocol/protocol.pyx", line 165, in prepare
+asyncpg.exceptions.UndefinedColumnError: column "occurred_at" does not exist
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 585, in execute
+    self._adapt_connection.await_(
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 132, in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 196, in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 563, in _prepare_and_execute
+    self._handle_exception(error)
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 513, in _handle_exception
+    self._adapt_connection._handle_exception(error)
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 797, in _handle_exception
+    raise translated_error from error
+sqlalchemy.dialects.postgresql.asyncpg.AsyncAdapt_asyncpg_dbapi.ProgrammingError: <class 'asyncpg.exceptions.UndefinedColumnError'>: column "occurred_at" does not exist
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "<stdin>", line 34, in <module>
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/runners.py", line 190, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 653, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "<stdin>", line 23, in main
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/ext/asyncio/engine.py", line 659, in execute
+    result = await greenlet_spawn(
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 201, in greenlet_spawn
+    result = context.throw(*sys.exc_info())
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1419, in execute
+    return meth(
+           ^^^^^
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/sql/elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 585, in execute
+    self._adapt_connection.await_(
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 132, in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 196, in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 563, in _prepare_and_execute
+    self._handle_exception(error)
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 513, in _handle_exception
+    self._adapt_connection._handle_exception(error)
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 797, in _handle_exception
+    raise translated_error from error
+sqlalchemy.exc.ProgrammingError: (sqlalchemy.dialects.postgresql.asyncpg.ProgrammingError) <class 'asyncpg.exceptions.UndefinedColumnError'>: column "occurred_at" does not exist
+[SQL: 
+                SELECT action, entity_id, entity_type, metadata
+                FROM audit_logs WHERE action='ai.provider.discover_models'
+                ORDER BY occurred_at DESC NULLS LAST, action DESC
+            ]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+
+=== audit_logs rows for 'ai.provider.discover_models': 2 ===
+[1] entity_id=a1115871-101e-4157-9ad3-22c9389eb472 entity_type=ai_provider created_at=2026-05-09 22:26:40.780148+00:00
+    metadata={'request_id': 'fe9f182e828a4688883a5f6b0a7f8591', 'total_seen': 50, 'added_count': 0, 'provider_type': 'gemini', 'skipped_count': 0, 'existing_count': 50}
+[2] entity_id=a1115871-101e-4157-9ad3-22c9389eb472 entity_type=ai_provider created_at=2026-05-09 22:26:30.455213+00:00
+    metadata={'request_id': 'd5a7c12e63d54041bca3fc4b59c74c38', 'total_seen': 50, 'added_count': 50, 'provider_type': 'gemini', 'skipped_count': 0, 'existing_count': 0}

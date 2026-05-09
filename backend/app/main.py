@@ -51,6 +51,7 @@ import structlog.contextvars  # noqa: E402
 from fastapi import FastAPI, Request, Response  # noqa: E402
 
 from app.api.router import router as ops_router  # noqa: E402
+from app.features.admin_ai.routes import router as admin_ai_router  # noqa: E402
 
 APP_VERSION: str = os.getenv("APP_VERSION", "0.0.0")
 
@@ -120,3 +121,9 @@ async def request_id_middleware(
 # Ops router — /health, /live, /ready (P00-S02-T002)
 # ---------------------------------------------------------------------------
 app.include_router(ops_router)
+
+# ---------------------------------------------------------------------------
+# Admin AI router — /api/v1/admin/ai/... (P00-S02-T006)
+# POST /api/v1/admin/ai/providers/{provider_id}/discover-models
+# ---------------------------------------------------------------------------
+app.include_router(admin_ai_router, prefix="/api/v1/admin/ai")

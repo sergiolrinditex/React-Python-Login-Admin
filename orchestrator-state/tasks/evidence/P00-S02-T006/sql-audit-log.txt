@@ -1,0 +1,13 @@
+audit_logs rows with action='ai.provider.discover_models': 5
+  entity_type=ai_provider entity_id=d6d8f277-5794-47ca-a1e9-394e147b55d3
+  metadata: {"request_id": "sql-verify-check", "total_seen": 50, "added_count": 50, "provider_type": "gemini", "skipped_count": 0, "existing_count": 0}
+  entity_type=ai_provider entity_id=cc187aa4-ab15-4d5c-9408-b5b0071d4478
+  metadata: {"request_id": "161f170f-3603-45ae-8a21-714ba67c0348", "total_seen": 0, "added_count": 0, "provider_type": "litellm", "skipped_count": 0, "existing_count": 0}
+  entity_type=ai_provider entity_id=65cf5475-38f5-415c-8793-aed8720070b5
+  metadata: {"request_id": "4e3b493a-89d8-4f7c-b385-1405b94135a3", "total_seen": 50, "added_count": 50, "provider_type": "gemini", "skipped_count": 0, "existing_count": 0}
+  entity_type=ai_provider entity_id=7dd0cf08-a3b9-4656-9fd9-c19b45063d16
+  metadata: {"request_id": "b54a9abe-c4b4-43c7-b366-dea2923230ae", "total_seen": 50, "added_count": 0, "provider_type": "gemini", "skipped_count": 0, "existing_count": 50}
+  entity_type=ai_provider entity_id=7dd0cf08-a3b9-4656-9fd9-c19b45063d16
+  metadata: {"request_id": "20bdcf89-c17b-439f-96f8-98c6c8065174", "total_seen": 50, "added_count": 50, "provider_type": "gemini", "skipped_count": 0, "existing_count": 0}
+
+Total auto_discovered=true rows in ai_models (after cleanup): 50

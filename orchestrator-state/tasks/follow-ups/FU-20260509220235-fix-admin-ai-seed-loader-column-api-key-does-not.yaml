@@ -1,0 +1,39 @@
+{
+  "id": "FU-20260509220235-fix-admin-ai-seed-loader-column-api-key-does-not",
+  "schema_version": 1,
+  "status": "proposed",
+  "created_at": "2026-05-09T22:02:35+00:00",
+  "created_by": "sergiolr",
+  "origin_task_id": "P00-S02-T006",
+  "origin_phase_id": "P00",
+  "origin_step_id": "P00-S02",
+  "kind": "bug",
+  "product_increment": "current",
+  "build_state": "planned",
+  "severity": "medium",
+  "title": "Fix admin_ai seed loader: column api_key does not exist in ai_providers (should use ai_provider_credentials)",
+  "description": "The seed loader (backend/app/seeds/loader.py:load_admin_ai) tries to INSERT api_key into ai_providers, but that column does not exist after T006 migration. The T006 migration correctly stores credentials in ai_provider_credentials.encrypted_secret (Fernet-encrypted). The seed loader needs to be updated to: (1) INSERT the provider row into ai_providers, (2) Fernet-encrypt the api_key_env value, (3) INSERT the credential into ai_provider_credentials. This is a seed data wiring fix, not a schema change.",
+  "journey_refs": [
+    "J103"
+  ],
+  "screen_route": "—",
+  "endpoint": "—",
+  "tables": [],
+  "depends_on": [
+    "P00-S02-T006"
+  ],
+  "conflict_groups": [
+    "admin_ai_endpoints"
+  ],
+  "write_set": [
+    "backend/app/seeds/loader.py"
+  ],
+  "acceptance": [
+    "python -m app.seeds.bootstrap_verification_data --source data/verification --only admin_ai exits 0 with upsert success log (no ProgrammingError)"
+  ],
+  "verify": [
+    "Run seed loader with real DB and admin_ai tables present → SELECT count(*) FROM ai_providers returns >= 1"
+  ],
+  "notes": [],
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260509220235-fix-admin-ai-seed-loader-column-api-key-does-not.yaml"
+}

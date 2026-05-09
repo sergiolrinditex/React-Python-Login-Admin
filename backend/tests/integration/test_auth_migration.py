@@ -171,9 +171,15 @@ def test_alembic_round_trip_upgrade_downgrade_upgrade() -> None:
 
 
 @SKIP_IF_NO_DB
-async def test_all_nine_tables_exist() -> None:
-    """All 9 auth-baseline tables must be present after upgrade head."""
+async def test_all_twelve_tables_exist() -> None:
+    """All 12 baseline tables (9 auth + 3 admin_ai) must be present after upgrade head.
+
+    Updated from test_all_nine_tables_exist (P00-S02-T006): migration 0003 added
+    ai_providers, ai_provider_credentials, ai_models. The test name and expected
+    set reflect the accumulated schema through 0003.
+    """
     expected_tables = {
+        # Auth baseline (0001)
         "users",
         "employee_profiles",
         "roles",
@@ -183,6 +189,10 @@ async def test_all_nine_tables_exist() -> None:
         "mfa_totp_secrets",
         "password_reset_tokens",
         "audit_logs",
+        # Admin AI (0003 — P00-S02-T006)
+        "ai_providers",
+        "ai_provider_credentials",
+        "ai_models",
     }
     async with _fresh_conn() as conn:
         result = await conn.execute(
@@ -197,13 +207,17 @@ async def test_all_nine_tables_exist() -> None:
 
 
 @SKIP_IF_NO_DB
-async def test_alembic_version_is_0001() -> None:
-    """alembic_version table must contain exactly '0001' after upgrade head."""
+async def test_alembic_version_is_0003() -> None:
+    """alembic_version table must contain exactly '0003' after upgrade head.
+
+    Updated from test_alembic_version_is_0001 (P00-S02-T006): migration 0003
+    (admin_ai tables) is now the head revision. 0002 is reserved for P02-S01-T001.
+    """
     async with _fresh_conn() as conn:
         result = await conn.execute(text("SELECT version_num FROM alembic_version"))
         rows = result.fetchall()
     assert len(rows) == 1, f"Expected 1 row in alembic_version, got {rows}"
-    assert rows[0][0] == "0001", f"Expected revision '0001', got '{rows[0][0]}'"
+    assert rows[0][0] == "0003", f"Expected revision '0003', got '{rows[0][0]}'"
 
 
 @SKIP_IF_NO_DB

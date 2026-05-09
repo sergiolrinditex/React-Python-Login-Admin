@@ -1,0 +1,24 @@
+[logging] BEFORE configure_logging: verbose=False
+[SETUP] Fernet key generated for smoke session (length=44)
+{"event": "ERROR require_admin: Authorization header missing or malformed", "request_id": "7c0a601bc70e436d80a1e83489404999", "level": "warning", "logger": "app.core.security", "timestamp": "2026-05-09T21:59:01.032274Z"}
+
+[CHECK 1] 401 No Auth: status=401 (PASS)
+{"token_prefix": "not-an-adm", "event": "ERROR require_admin: non-admin token rejected", "request_id": "86761d42a8644abd927ddd553cda796f", "level": "warning", "logger": "app.core.security", "timestamp": "2026-05-09T21:59:01.033024Z"}
+[CHECK 2] 403 Non-Admin: status=403 (PASS)
+{"provider_id": "57146717-6e4b-4c17-b992-269b319859a1", "event": "ERROR discover_models: provider not found", "request_id": "5df93381975e4b78ba5fcc6667c3c543", "level": "warning", "logger": "app.features.admin_ai.service", "timestamp": "2026-05-09T21:59:01.078036Z"}
+{"event": "ERROR get_session: rolling back transaction", "request_id": "5df93381975e4b78ba5fcc6667c3c543", "level": "warning", "logger": "app.core.db", "timestamp": "2026-05-09T21:59:01.078145Z"}
+[CHECK 3] 404 Unknown Provider: status=404 (PASS)
+          body.detail.error.code=provider_not_found
+[CHECK 4] Gemini Real: status=200 PASS
+          total_seen=50 added=50 existing=0 skipped=0
+          total_seen >= 3: PASS
+[CHECK 5] LiteLLM Empty: status=200 total_seen=0 (PASS)
+
+[CHECK 6] SQL: auto_discovered=true rows in ai_models: 0
+
+[CHECK 7] Audit log rows with action='ai.provider.discover_models': 3
+          entity_type=ai_provider meta_keys=['request_id', 'total_seen', 'added_count', 'provider_type', 'skipped_count', 'existing_count']
+          entity_type=ai_provider meta_keys=['request_id', 'total_seen', 'added_count', 'provider_type', 'skipped_count', 'existing_count']
+          entity_type=ai_provider meta_keys=['request_id', 'total_seen', 'added_count', 'provider_type', 'skipped_count', 'existing_count']
+
+[SMOKE] All checks complete.

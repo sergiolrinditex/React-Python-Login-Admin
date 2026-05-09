@@ -1,0 +1,55 @@
+# Verification Data Contract — T006
+
+## Source: TECHNICAL_GUIDE §6.5 / task-pack §3
+
+### Verification Data Used
+
+V1 — Gemini Real Call:
+  - Provider type: gemini
+  - Base URL: https://generativelanguage.googleapis.com
+  - Key source: VERIFICATION_GEMINI_API_KEY (.env.local)
+  - Key pattern: AIza* (39 chars)
+  - Result: total_seen=50, added=50, existing=0, skipped=0
+  - Assertion: total_seen >= 3 → PASS
+
+V2 — DB Persistence:
+  - SQL: SELECT model_id, model_type, auto_discovered FROM ai_models WHERE provider_id=<test-uuid>
+  - Result: 15 rows shown (50 total), all auto_discovered=True, enabled=False, is_default=False
+  - Sample rows: models/gemini-2.5-flash (chat), models/gemini-2.0-flash (chat), etc.
+
+V3 — Idempotency (test in isolation):
+  - First call: added=50, existing=0
+  - Second call: added=0, existing=50 (verified by test_discover_models_idempotent in isolation PASS)
+
+V4 — Negative paths:
+  - Unknown provider_id → 404 {error.code: provider_not_found}
+  - No auth → 401
+  - Non-admin token → 403
+
+V5 — LiteLLM Empty:
+  - Provider type: litellm
+  - Key source: LITELLM_MASTER_KEY (.env)
+  - Key: sk-dev-master-key-test-only
+  - Result: total_seen=0 (correct — model_list:[] in config.yaml)
+
+V6 — Logging:
+  - ENABLE_VERBOSE_LOGGING=true: BEFORE+AFTER visible per function/endpoint/use-case
+  - ENABLE_VERBOSE_LOGGING=false: only BEFORE configure_logging + STATUS visible
+  - NOTE: httpx internal logger leaks Gemini API key in URL at INFO level
+    (see curl-httpx-key-leak.txt) — out-of-scope finding proposed as follow-up
+
+V7 — Audit log:
+  - SQL: SELECT action, entity_type, entity_id, metadata FROM audit_logs WHERE action='ai.provider.discover_models'
+  - Result: 5 rows found (3 from smoke tests, 2 from integration tests)
+  - Metadata keys present: request_id, total_seen, added_count, provider_type, skipped_count, existing_count
+
+### Fixtures Used
+- test ai_provider rows inserted via Python asyncpg (NOT via the endpoint under test)
+- Fernet key generated fresh per test session (autouse fixture in test file)
+- Credentials encrypted with Fernet before DB insert (real encrypt/decrypt cycle)
+- Cleanup: CASCADE DELETE via DELETE FROM ai_providers WHERE id = <test-uuid>
+
+### Persisted Data Observed
+- ai_models: 50 Gemini models with auto_discovered=True (from test in isolation)
+- ai_provider_credentials: encrypted_secret column stores Fernet ciphertext
+- audit_logs: 5 rows with action='ai.provider.discover_models'

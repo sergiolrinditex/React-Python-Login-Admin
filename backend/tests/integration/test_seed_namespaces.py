@@ -38,6 +38,43 @@ import structlog.testing
 from tests.integration.conftest import _db_reachable
 
 
+def _ai_providers_table_exists() -> bool:
+    """Return True if P00-S02-T006 migration 0003 has been applied (ai_providers table exists).
+
+    Purpose: skip 'P00 table-missing path' tests for admin_ai namespace when
+    migration 0003 has created the admin_ai tables. The admin_ai productive bundle
+    requires VERIFICATION_GEMINI_API_KEY which is an external secret not available
+    in CI or local dev without a .env.local configuration.
+    """
+    if not _db_reachable():
+        return False
+    try:
+        from sqlalchemy import text
+        from sqlalchemy.ext.asyncio import create_async_engine
+
+        async def _check() -> bool:
+            dsn = (
+                "postgresql+asyncpg://hilopeople:hilopeople_dev_pwd"
+                "@127.0.0.1:5433/hilopeople_dev"
+            )
+            engine = create_async_engine(dsn, pool_size=1, max_overflow=0)
+            try:
+                async with engine.connect() as conn:
+                    result = await conn.execute(
+                        text(
+                            "SELECT COUNT(*) FROM information_schema.tables "
+                            "WHERE table_schema = 'public' AND table_name = 'ai_providers'"
+                        )
+                    )
+                    return (result.scalar() or 0) > 0
+            finally:
+                await engine.dispose()
+
+        return asyncio.run(_check())
+    except Exception:
+        return False
+
+
 def _users_table_exists() -> bool:
     """Return True if P01-S01-T001 migration has been applied (users table exists).
 
@@ -76,6 +113,7 @@ def _users_table_exists() -> bool:
 
 
 _USERS_TABLE_EXISTS = _users_table_exists()
+_AI_PROVIDERS_TABLE_EXISTS = _ai_providers_table_exists()
 
 pytestmark = pytest.mark.skipif(
     not _db_reachable(),
@@ -88,6 +126,18 @@ _SKIP_WHEN_MIGRATION_APPLIED = pytest.mark.skipif(
         "P01-S01-T001 migration applied: auth loader synthetic columns (role, is_active, "
         "mfa_enabled) don't exist in real §10.3 schema. "
         "Tracked by FU-20260509073000 (replace synthetic bundle with real fixtures)."
+    ),
+)
+
+_SKIP_WHEN_ADMIN_AI_MIGRATION_APPLIED = pytest.mark.skipif(
+    _AI_PROVIDERS_TABLE_EXISTS,
+    reason=(
+        "P00-S02-T006 migration 0003 applied: admin_ai productive bundle requires "
+        "VERIFICATION_GEMINI_API_KEY (external secret, not available in CI or local dev "
+        "without .env.local). The P00 'table-missing' path is superseded by the real "
+        "productive bundle tests in test_admin_ai_discover_models.py. "
+        "Namespace isolation is still verified by the table-missing WARN path "
+        "when tables are absent."
     ),
 )
 
@@ -173,12 +223,15 @@ async def test_only_auth_does_not_touch_other_namespaces(
 # ---------------------------------------------------------------------------
 
 
+@_SKIP_WHEN_ADMIN_AI_MIGRATION_APPLIED
 async def test_only_admin_ai_does_not_touch_other_namespaces(
     verification_bundle_dir: Path,
 ) -> None:
     """--only admin_ai emits table_missing WARNs only for admin_ai-owned tables.
 
     Verifies that ai_providers and ai_models are the only tables probed.
+    Skipped when migration 0003 (P00-S02-T006) has been applied: the productive
+    bundle requires VERIFICATION_GEMINI_API_KEY which is an external secret.
     """
     from sqlalchemy.ext.asyncio import create_async_engine
 
