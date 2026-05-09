@@ -2,9 +2,9 @@ id: P01-S01-T004
 phase_id: P01
 step_id: P01-S01
 title: "Fix .env DATABASE_URL host port + pydantic env_file path resolution for native dev workflow"
-status: ready
-kind: "unspecified"
-target: ""
+status: done
+kind: "wiring"
+target: "Fix .env DATABASE_URL host port + pydantic env_file path resolution for native dev workflow"
 product_increment: "current"
 build_state: "planned"
 risk_level: "medium"
@@ -16,20 +16,30 @@ tables:
 depends_on:
   - P01-S01-T002
 acceptance:
-  - "(1) DATABASE_URL host:port aligned to hilo-postgres exposure (localhost:5433 for native dev or postgres:5432 for compose)"
-  - ".env.example documents both modes clearly. (2) Settings env_file resolves robustly regardless of cwd (e.g. absolute path resolution from the project root"
-  - "or env_file as a list with project-root anchor"
-  - "or pydantic-settings model_config.env_file with explicit Path). (3) Cold-boot native uvicorn from project root + native pytest from cd backend/ both report /ready 200 against hilo-postgres. (4) dev-restart.sh --reset succeeds end-to-end on a clean checkout. (5) test_ready_returns_200_when_db_ok turns from FAIL to PASS without any test-side change."
+  - "(1) DATABASE_URL host:port aligned to hilo-postgres exposure (localhost:5433 for native dev or postgres:5432 for compose), .env.example documents both modes clearly. (2) Settings env_file resolves robustly regardless of cwd (e.g. absolute path resolution from the project root, or env_file as a list with project-root anchor, or pydantic-settings model_config.env_file with explicit Path). (3) Cold-boot native uvicorn from project root + native pytest from cd backend/ both report /ready 200 against hilo-postgres. (4) dev-restart.sh --reset succeeds end-to-end on a clean checkout. (5) test_ready_returns_200_when_db_ok turns from FAIL to PASS without any test-side change."
 verification_commands:
   - "Run from a fresh shell with no env vars set: 1) bash scripts/dev-restart.sh --reset succeeds. 2) cd backend && pytest tests/test_health.py::test_ready_returns_200_when_db_ok passes. 3) Cold-boot uvicorn from project root: curl /ready returns 200 with checks.db.status=ok. 4) Run pytest from project root AND cd backend/ — Settings.database_url loaded with the right credentials in both cases."
 allowed_paths:
+  - ".env.example"
+  - "backend/alembic/env.py"
+  - "backend/app/core/config.py"
+  - "scripts/dev-restart.profile.sh"
+  - ".github/workflows/**"
 conflict_groups:
   - "backend:config"
+  - "infra:env"
+  - "ci:workflows"
 write_set:
   - ".env.example"
   - "backend/alembic/env.py"
   - "backend/app/core/config.py"
   - "scripts/dev-restart.profile.sh"
+  - ".github/workflows/**"
+scope_inferred_from_acceptance:
+  - ".env.example"
+  - ".github/workflows/**"
+  - "infra:env"
+  - "ci:workflows"
 handoff_path: orchestrator-state/tasks/handoffs/P01-S01-T004.md
 evidence_dir: orchestrator-state/tasks/evidence/P01-S01-T004
-source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry"
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime follow-up P01-S01-T002"

@@ -1,38 +1,50 @@
 {
-  "_comment": "Conversation history fixtures for J102 (history + language journey) verification. At least 2 conversations required for employee_primary.",
+  "_comment": "Conversation history fixtures for J102 (history + language) — productive bundle. Owner: s.lopezrap+employee@gmail.com. Tono retail_hr productivo. 2 conversaciones: ES + EN.",
   "conversations": [
     {
-      "user_email": "employee.primary@hilopeople.com",
-      "title": "Consulta sobre política de vacaciones",
+      "user_email": "s.lopezrap+employee@gmail.com",
+      "title": "Consulta vacaciones y permisos 2026",
       "language": "es",
       "messages": [
         {
           "role": "user",
-          "content": "¿Cuántos días de vacaciones tengo disponibles este año?"
+          "content": "Hola, cuantos dias de vacaciones me corresponden este ano segun el convenio?"
         },
         {
           "role": "assistant",
-          "content": "Según la Política de Vacaciones y Permisos 2026, los empleados con más de 1 año de antigüedad tienen derecho a 23 días laborables de vacaciones anuales. ¿Deseas consultar el documento completo?"
+          "content": "Segun la Politica de Vacaciones 2026 de Hilo People, los empleados de tienda con mas de un ano de antiguedad tienen derecho a 23 dias habiles de vacaciones anuales retribuidas, conforme al convenio colectivo del comercio minorista. Puedes solicitar tus vacaciones a traves del modulo de RRHH o hablar con tu responsable de tienda. Quieres que te muestre el documento completo?"
         },
         {
           "role": "user",
-          "content": "Sí, muéstrame el documento completo."
+          "content": "Si, y tambien quiero saber si puedo acumular dias no disfrutados al siguiente ano."
+        },
+        {
+          "role": "assistant",
+          "content": "Segun la politica vigente, se permite trasladar hasta 5 dias habiles no disfrutados al primer trimestre del ano siguiente, siempre que la solicitud se tramite antes del 15 de diciembre. El acuerdo debe formalizarse con tu responsable de tienda y RRHH."
         }
       ],
       "collection_name": "politicas_tienda"
     },
     {
-      "user_email": "employee.primary@hilopeople.com",
-      "title": "Question about vacation policy",
+      "user_email": "s.lopezrap+employee@gmail.com",
+      "title": "Question about schedule and shift swaps",
       "language": "en",
       "messages": [
         {
           "role": "user",
-          "content": "Can I carry over unused vacation days to next year?"
+          "content": "Hi, how do I request a shift swap with a colleague?"
         },
         {
           "role": "assistant",
-          "content": "According to the 2026 Vacation and Leave Policy, up to 5 unused vacation days can be carried over to the following calendar year. The carry-over request must be submitted before December 15th. Would you like to see the full policy document?"
+          "content": "To request a shift swap at Hilo People, you need to: (1) agree on the swap with your colleague in advance, (2) submit a shift-swap request via the HR portal at least 48 hours before the affected shift, (3) get approval from your store manager. Both employees must have equivalent role qualifications for the swap to be approved. Do you need help navigating the HR portal?"
+        },
+        {
+          "role": "user",
+          "content": "Yes, can you guide me step by step?"
+        },
+        {
+          "role": "assistant",
+          "content": "Sure! Log in to the People Helper portal, go to Schedule > My Shifts, select the shift you want to swap, click Propose Swap, search for your colleague by name, and submit. Your manager will receive an automatic notification and must approve within 24 hours. You will get a confirmation email once approved."
         }
       ],
       "collection_name": "politicas_tienda"

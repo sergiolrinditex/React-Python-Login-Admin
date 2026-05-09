@@ -1,0 +1,14 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.5, pytest-9.0.3, pluggy-1.6.0 -- /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/bin/python3.11
+cachedir: .pytest_cache
+rootdir: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend
+configfile: pyproject.toml
+plugins: cov-7.1.0, asyncio-1.3.0, langsmith-0.8.3, anyio-4.13.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 3 items
+
+backend/tests/integration/test_seed_namespaces.py::test_only_auth_does_not_touch_other_namespaces SKIPPED [ 33%]
+backend/tests/integration/test_seed_namespaces.py::test_only_admin_ai_does_not_touch_other_namespaces PASSED [ 66%]
+backend/tests/integration/test_seed_namespaces.py::test_only_mcp_agents_does_not_touch_other_namespaces PASSED [100%]
+
+========================= 2 passed, 1 skipped in 0.29s =========================

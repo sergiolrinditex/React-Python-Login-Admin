@@ -1,0 +1,10 @@
+=== Pre-seed: confirm tables empty ===
+  users                          = 0
+  employee_profiles              = 0
+  mfa_totp_secrets               = 0
+  roles                          = 0
+  user_roles                     = 0
+  audit_logs                     = 0
+  sessions                       = ERR relation "sessions" does not exist
+  refresh_tokens                 = 0
+  password_reset_tokens          = 0

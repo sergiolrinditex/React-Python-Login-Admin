@@ -1,7 +1,7 @@
 """
 CLI entry point for the verification seed bundle loader.
 
-Slice: P00-S02-T003 — Seed data and reset verification bundle
+Slice: P00-S02-T005 — Replace synthetic verification bundle with People Tech delivery
 Phase: P00 — Scaffold + Design System
 
 Usage:
@@ -12,19 +12,27 @@ Usage:
                    admin_ai, rag_docs, mcp_agents. Omit to load all six.
   --dry-run        Validate fixtures and schemas; do NOT write to DB.
 
+CHANGE from T003:
+  - Reads MANIFEST.json to extract _bundle_type ('synthetic' or 'productive').
+  - Propagates bundle_type to each namespace loader so schema guards are enforced.
+  - Fails fast if bundle_type is 'productive' and required env vars are missing
+    (delegated to resolve_env_var in loaders).
+  - MANIFEST._bundle_type defaults to 'synthetic' when field is absent
+    (backward-compat for old bundles without the field).
+
 Exit codes:
   0  All consumed namespaces either persisted rows OR cleanly skipped (table missing).
-  1  A fixture failed JSON/Pydantic validation, or a required namespace directory is missing.
+  1  A fixture failed JSON/Pydantic validation, or a required namespace directory is
+     missing, or a required productive env var is not set.
   2  The --source directory does not exist.
 
 Logging:
   Every namespace logs BEFORE/AFTER under ENABLE_VERBOSE_LOGGING=true.
   ENABLE_VERBOSE_LOGGING=false shows only WARN/ERROR.
-  No PII (emails hashed), no raw credentials (masked to first 4 chars).
+  No PII (emails hashed), no raw credentials (masked to env var name only).
   request_id bound at CLI entry — consistent with /ready middleware convention.
 
-Security (CWE-532): do NOT log exc_info=True. Use structured fields (error_class,
-  detail) only. No DSN/password/secret ever surfaces in log output.
+Security (CWE-532): do NOT log exc_info=True. No DSN/password/secret in logs.
 
 Dependencies:
   - structlog 25.5.0
@@ -36,6 +44,7 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import json
 import os
 import sys
 import uuid
@@ -55,6 +64,7 @@ from app.seeds.loader import (
     load_rag_chat,
     load_rag_docs,
 )
+from app.seeds.loader._common import BundleType
 
 # Canonical namespace set (matches TECHNICAL_GUIDE §6.5 column 4 exactly).
 _ALL_NAMESPACES: tuple[str, ...] = (
@@ -76,18 +86,46 @@ _NAMESPACE_LOADERS = {
 }
 
 
-def _build_parser() -> argparse.ArgumentParser:
-    """Construct the CLI argument parser.
+def _read_bundle_type(source_dir: Path) -> BundleType:
+    """Read _bundle_type from MANIFEST.json; default 'synthetic' if absent.
 
-    Purpose: argparse (stdlib) — no new dep needed (task pack §Notes for developer).
-    Returns: configured ArgumentParser.
+    Purpose: propagate bundle_type to each namespace loader so schema guards
+    (synthetic/productive) are correctly applied.
+
+    Params:
+      source_dir — verified bundle root path.
+    Returns: 'synthetic' or 'productive'.
+    Errors: BundleLoadError if MANIFEST.json is malformed JSON.
     """
+    manifest_path = source_dir / "MANIFEST.json"
+    if not manifest_path.exists():
+        return "synthetic"
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        raise BundleLoadError(
+            manifest_path,
+            f"MANIFEST.json is not valid JSON: {exc}",
+        ) from exc
+
+    bundle_type = manifest.get("_bundle_type", "synthetic")
+    if bundle_type not in ("synthetic", "productive"):
+        raise BundleLoadError(
+            manifest_path,
+            f"MANIFEST._bundle_type must be 'synthetic' or 'productive', got: {bundle_type!r}",
+        )
+    return bundle_type  # type: ignore[return-value]
+
+
+def _build_parser() -> argparse.ArgumentParser:
+    """Construct the CLI argument parser."""
     parser = argparse.ArgumentParser(
         prog="python -m app.seeds.bootstrap_verification_data",
         description=(
             "Idempotent loader for the data/verification/ bundle. "
             "Loads all six namespaces or a single one via --only. "
-            "Table-tolerant: skips namespaces whose tables do not yet exist."
+            "Table-tolerant: skips namespaces whose tables do not yet exist. "
+            "Reads MANIFEST._bundle_type to enforce synthetic/productive guards."
         ),
     )
     parser.add_argument(
@@ -120,16 +158,17 @@ async def _run(
     namespaces: tuple[str, ...],
     *,
     dry_run: bool,
+    bundle_type: BundleType,
 ) -> int:
     """Async main: load each namespace and collect reports.
 
     Purpose: inner async coroutine so the sync _main() can call asyncio.run().
     Params:
-      source_dir — verified bundle root path.
-      namespaces — namespaces to load in order.
-      dry_run    — if True, no DB writes.
-    Returns: exit code (0 = ok, 1 = fixture/schema error, 2 = dir missing).
-    Errors: any unexpected error is caught here; logged with error_class only (no DSN/traceback).
+      source_dir  — verified bundle root path.
+      namespaces  — namespaces to load in order.
+      dry_run     — if True, no DB writes.
+      bundle_type — 'synthetic' or 'productive'; forwarded to each loader.
+    Returns: exit code (0 = ok, 1 = fixture/schema/env error, 2 = dir missing).
     """
     _logger = get_logger(__name__)
 
@@ -140,6 +179,7 @@ async def _run(
         source=str(source_dir),
         namespaces=list(namespaces),
         dry_run=dry_run,
+        bundle_type=bundle_type,
         db_host_redacted="[redacted]",
     )
 
@@ -150,7 +190,9 @@ async def _run(
         loader_fn = _NAMESPACE_LOADERS[ns]
         _logger.debug("seed.dispatch.before", namespace=ns)
         try:
-            report = await loader_fn(engine, source_dir, dry_run=dry_run)
+            report = await loader_fn(
+                engine, source_dir, dry_run=dry_run, bundle_type=bundle_type
+            )
             reports.append(report)
             _logger.debug(
                 "seed.dispatch.after",
@@ -186,10 +228,10 @@ async def _run(
         total_rows_inserted=total_inserted,
         total_skipped_tables=total_skipped_tables,
         dry_run=dry_run,
+        bundle_type=bundle_type,
         exit_code=exit_code,
     )
 
-    # Cleanup engine connections.
     await engine.dispose()
 
     return exit_code
@@ -199,18 +241,17 @@ def main() -> None:
     """Synchronous entry point for module invocation.
 
     Purpose: parse args, configure logging, bind request_id, run async loader.
+    Reads MANIFEST._bundle_type and propagates to all loaders.
     Exits with the appropriate code (0/1/2).
     """
     parser = _build_parser()
     args = parser.parse_args()
 
-    # Configure logging before anything else.
     verbose = os.getenv("ENABLE_VERBOSE_LOGGING", "false").lower() in ("1", "true", "yes")
     configure_logging(verbose=verbose)
 
     _logger = get_logger(__name__)
 
-    # Bind a request_id for this CLI run — consistent with /ready middleware pattern.
     request_id = uuid.uuid4().hex
     structlog.contextvars.clear_contextvars()
     structlog.contextvars.bind_contextvars(request_id=request_id)
@@ -225,7 +266,6 @@ def main() -> None:
 
     source_dir = Path(args.source).resolve()
 
-    # Guard 1: --source directory must exist. Exit 2 (not 1) per spec.
     try:
         check_bundle_dir(source_dir)
     except FileNotFoundError as exc:
@@ -238,12 +278,26 @@ def main() -> None:
         print(f"ERROR: {exc}", file=sys.stderr)  # noqa: T201
         sys.exit(2)
 
-    # Determine which namespaces to run.
+    # Read bundle type from MANIFEST.
+    try:
+        bundle_type = _read_bundle_type(source_dir)
+    except BundleLoadError as exc:
+        _logger.error(
+            "seed.cli.manifest_error",
+            error_class="BundleLoadError",
+            detail=str(exc),
+        )
+        print(f"ERROR: {exc}", file=sys.stderr)  # noqa: T201
+        sys.exit(1)
+
+    _logger.info("seed.cli.bundle_type_detected", bundle_type=bundle_type)
+
     namespaces = (args.only,) if args.only else _ALL_NAMESPACES
 
-    # Run the async loader.
     try:
-        exit_code = asyncio.run(_run(source_dir, namespaces, dry_run=args.dry_run))
+        exit_code = asyncio.run(
+            _run(source_dir, namespaces, dry_run=args.dry_run, bundle_type=bundle_type)
+        )
     except BundleLoadError as exc:
         _logger.error(
             "seed.cli.bundle_error",

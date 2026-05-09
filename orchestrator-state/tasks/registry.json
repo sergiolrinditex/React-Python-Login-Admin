@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-09T11:57:58+00:00",
+  "generated_at": "2026-05-09T20:56:33+00:00",
   "project_prefix": "HILO_PEOPLE",
   "phase_order": [
     "P00",
@@ -15,7 +15,7 @@
       "id": "P00",
       "phase_number": 0,
       "title": "Bootstrap / foundation propia",
-      "status": "ready",
+      "status": "blocked",
       "depends_on": [],
       "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Phase 0 — Bootstrap / foundation propia",
       "task_ids": [
@@ -27,8 +27,11 @@
         "P00-S02-T001",
         "P00-S02-T002",
         "P00-S02-T003",
+        "P00-S02-T004",
         "P00-S02-T005",
-        "P00-S02-T004"
+        "P00-S02-T008",
+        "P00-S02-T007",
+        "P00-S02-T006"
       ]
     },
     {
@@ -42,7 +45,6 @@
       "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Phase 1 — Auth / base capabilities",
       "task_ids": [
         "P01-S01-T001",
-        "P01-S01-T005",
         "P01-S02-T001",
         "P01-S02-T002",
         "P01-S02-T003",
@@ -52,8 +54,9 @@
         "P01-S02-T007",
         "P01-S03-T001",
         "P01-S01-T002",
+        "P01-S01-T003",
         "P01-S01-T004",
-        "P01-S01-T003"
+        "P01-S01-T005"
       ]
     },
     {
@@ -671,57 +674,6 @@
       "origin_techguide_raw": "§6.5#verification-data"
     },
     {
-      "id": "P00-S02-T005",
-      "phase_id": "P00",
-      "step_id": "P00-S02",
-      "title": "Replace synthetic verification bundle with People Tech delivery",
-      "status": "ready",
-      "build_state": "planned",
-      "product_increment": "current",
-      "depends_on": [
-        "P00-S02-T003"
-      ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry",
-      "acceptance": [
-        "data/verification/ contains files exactly matching People Tech delivery (signed manifest)",
-        "loader's synthetic- guard relaxed or moved to env-flag",
-        "J100..J105 verified end-to-end with the real bundle."
-      ],
-      "verification_commands": [
-        "Journey verifications J100..J105 reproduced against the People Tech bundle",
-        "pytest backend/tests/integration -k seed green",
-        "no synthetic- placeholders remaining in data/verification/."
-      ],
-      "allowed_paths": [],
-      "conflict_groups": [
-        "seed:data"
-      ],
-      "write_set": [
-        "data/verification/**"
-      ],
-      "journey_refs": [
-        "J100",
-        "J101",
-        "J102",
-        "J103",
-        "J104",
-        "J105"
-      ],
-      "handoff_path": "orchestrator-state/tasks/handoffs/P00-S02-T005.md",
-      "evidence_dir": "orchestrator-state/tasks/evidence/P00-S02-T005",
-      "origin": {
-        "type": "runtime_followup",
-        "followup_id": "FU-20260509073000-replace-synthetic-verification-bundle-with-peopl",
-        "origin_task_id": "P00-S02-T003",
-        "severity": "medium",
-        "kind": "data"
-      },
-      "notes": [
-        "Runtime follow-up promoted from FU-20260509073000-replace-synthetic-verification-bundle-with-peopl",
-        "Description: data/verification/ ships with synthetic prod-like fixtures (synthetic- credential prefix, @hilopeople.com emails, generated TOTP). When People Tech delivers the real prod-like bundle (per instrucciones §15), replace the JSON files in data/verification/ and the loader's defense-in-depth 'synthetic-' guard must be relocated or lifted under explicit human approval. Until then, journeys verify against the synthetic bundle, which is acceptable scaffolding but not the final productive contract."
-      ]
-    },
-    {
       "id": "P00-S02-T004",
       "phase_id": "P00",
       "step_id": "P00-S02",
@@ -779,6 +731,210 @@
       "tables_raw": "—",
       "origin_instr_raw": "runtime-followup#FU-20260509044829-disable-structlog-rich-traceback-show-locals-glo",
       "origin_techguide_raw": "runtime-followup#FU-20260509044829-disable-structlog-rich-traceback-show-locals-glo"
+    },
+    {
+      "id": "P00-S02-T005",
+      "phase_id": "P00",
+      "step_id": "P00-S02",
+      "title": "Replace synthetic verification bundle with People Tech delivery",
+      "status": "ready_for_close",
+      "build_state": "planned",
+      "product_increment": "current",
+      "risk_level": "medium",
+      "verify_mode": "human",
+      "depends_on": [
+        "P00-S02-T003"
+      ],
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime follow-up P00-S02-T003",
+      "acceptance": [
+        "data/verification/ contains files exactly matching People Tech delivery (signed manifest), loader's synthetic- guard relaxed or moved to env-flag, J100..J105 schema-valid + seed-loadable",
+        "UI end-to-end verification deferred to per-journey gates as features ship."
+      ],
+      "verification_commands": [
+        "Journey verifications J100..J105 reproduced against the People Tech bundle, pytest backend/tests/integration -k seed green, no synthetic- placeholders remaining in data/verification/."
+      ],
+      "kind": "data",
+      "target": "Replace synthetic verification bundle with People Tech delivery",
+      "journey_refs": [
+        "J100",
+        "J101",
+        "J102",
+        "J103",
+        "J104",
+        "J105"
+      ],
+      "route": "",
+      "endpoint": "",
+      "tables": [],
+      "origin_instr": "runtime-followup#FU-20260509073000-replace-synthetic-verification-bundle-with-peopl",
+      "origin_techguide": "runtime-followup#FU-20260509073000-replace-synthetic-verification-bundle-with-peopl",
+      "allowed_paths": [
+        "data/verification/**"
+      ],
+      "conflict_groups": [
+        "seed:data"
+      ],
+      "write_set": [
+        "data/verification/**"
+      ],
+      "handoff_path": "orchestrator-state/tasks/handoffs/P00-S02-T005.md",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P00-S02-T005",
+      "notes": [],
+      "dependency_mode": "explicit_dag",
+      "depends_on_raw": "P00-S02-T003",
+      "conflict_groups_raw": "seed:data",
+      "write_set_raw": "data/verification/**",
+      "product_increment_raw": "current",
+      "build_state_raw": "planned",
+      "risk_level_raw": "medium",
+      "verify_mode_raw": "human",
+      "kind_raw": "data",
+      "target_raw": "Replace synthetic verification bundle with People Tech delivery",
+      "journey_refs_raw": "J100, J101, J102, J103, J104, J105",
+      "screen_route_raw": "—",
+      "endpoint_raw": "—",
+      "tables_raw": "—",
+      "origin_instr_raw": "runtime-followup#FU-20260509073000-replace-synthetic-verification-bundle-with-peopl",
+      "origin_techguide_raw": "runtime-followup#FU-20260509073000-replace-synthetic-verification-bundle-with-peopl",
+      "claimed_by": "sergiolr",
+      "claimed_at": "2026-05-09T14:51:40+00:00",
+      "last_stop_at": "2026-05-09T20:47:12+00:00",
+      "validator_outcome": "approved",
+      "last_updated_by": "tester",
+      "validator_next_status": "ready_for_close",
+      "last_outcome": "pass"
+    },
+    {
+      "id": "P00-S02-T008",
+      "phase_id": "P00",
+      "step_id": "P00-S02",
+      "title": "deepagents Supervisor + topic-routing runtime",
+      "status": "blocked",
+      "build_state": "planned",
+      "product_increment": "current",
+      "depends_on": [
+        "P00-S02-T005"
+      ],
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry",
+      "acceptance": [
+        "agents/deepagents_runtime.py implemented",
+        "supervisor routes user messages to subagents based on subagent_topics overlap"
+      ],
+      "verification_commands": [
+        "real flow: user asks vacaciones question -> supervisor routes to hr-policies-agent -> returns answer",
+        "user asks langchain question -> routes to langchain-docs-agent"
+      ],
+      "allowed_paths": [],
+      "conflict_groups": [
+        "agents_runtime"
+      ],
+      "write_set": [
+        "backend/app/agents/**"
+      ],
+      "journey_refs": [
+        "J105"
+      ],
+      "handoff_path": "orchestrator-state/tasks/handoffs/P00-S02-T008.md",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P00-S02-T008",
+      "origin": {
+        "type": "runtime_followup",
+        "followup_id": "FU-20260509205710-deepagents-supervisor-topic-routing-runtime",
+        "origin_task_id": "P00-S02-T005",
+        "severity": "medium",
+        "kind": "feature"
+      },
+      "notes": [
+        "Runtime follow-up promoted from FU-20260509205710-deepagents-supervisor-topic-routing-runtime",
+        "Description: agents/deepagents_runtime.py implemented using the deepagents Supervisor pattern (LangGraph-based); supervisor routes user messages to subagents based on subagent_topics keyword overlap. Required by ADR-002 and the AgentsPage (J105). Depends on P02-S08-T001."
+      ]
+    },
+    {
+      "id": "P00-S02-T007",
+      "phase_id": "P00",
+      "step_id": "P00-S02",
+      "title": "AdminAiModelsPage discover wizard UI",
+      "status": "blocked",
+      "build_state": "planned",
+      "product_increment": "current",
+      "depends_on": [
+        "P00-S02-T005"
+      ],
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry",
+      "acceptance": [
+        "wizard mode in AdminAiModelsPage calls FU-X1 endpoint",
+        "user can review the diff and approve/reject"
+      ],
+      "verification_commands": [
+        "manual run hits FU-X1 endpoint and persists models on user approval"
+      ],
+      "allowed_paths": [],
+      "conflict_groups": [
+        "admin_ai_ui"
+      ],
+      "write_set": [
+        "frontend/src/features/admin_ai/**"
+      ],
+      "journey_refs": [
+        "J103"
+      ],
+      "handoff_path": "orchestrator-state/tasks/handoffs/P00-S02-T007.md",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P00-S02-T007",
+      "origin": {
+        "type": "runtime_followup",
+        "followup_id": "FU-20260509205703-adminaimodelspage-discover-wizard-ui",
+        "origin_task_id": "P00-S02-T005",
+        "severity": "medium",
+        "kind": "feature"
+      },
+      "notes": [
+        "Runtime follow-up promoted from FU-20260509205703-adminaimodelspage-discover-wizard-ui",
+        "Description: Wizard mode in AdminAiModelsPage calls the dynamic model discovery endpoint (FU-X1); user can review the diff of discovered vs existing models and approve/reject each before persisting. Depends on P04-S01-T002."
+      ]
+    },
+    {
+      "id": "P00-S02-T006",
+      "phase_id": "P00",
+      "step_id": "P00-S02",
+      "title": "Dynamic LiteLLM model discovery endpoint",
+      "status": "blocked",
+      "build_state": "planned",
+      "product_increment": "current",
+      "depends_on": [
+        "P00-S02-T005"
+      ],
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry",
+      "acceptance": [
+        "POST /api/v1/admin/ai/providers/{id}/discover-models implemented",
+        "reconciles against ai_models",
+        "returns the diff"
+      ],
+      "verification_commands": [
+        "real call against gemini-direct provider returns >= 3 chat models",
+        "persists rows in ai_models with auto_discovered=true"
+      ],
+      "allowed_paths": [],
+      "conflict_groups": [
+        "admin_ai_endpoints"
+      ],
+      "write_set": [
+        "backend/app/features/admin_ai/**"
+      ],
+      "journey_refs": [
+        "J103"
+      ],
+      "handoff_path": "orchestrator-state/tasks/handoffs/P00-S02-T006.md",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P00-S02-T006",
+      "origin": {
+        "type": "runtime_followup",
+        "followup_id": "FU-20260509205658-dynamic-litellm-model-discovery-endpoint",
+        "origin_task_id": "P00-S02-T005",
+        "severity": "medium",
+        "kind": "feature"
+      },
+      "notes": [
+        "Runtime follow-up promoted from FU-20260509205658-dynamic-litellm-model-discovery-endpoint",
+        "Description: POST /api/v1/admin/ai/providers/{id}/discover-models calls the provider's models endpoint and reconciles against ai_models; returns the diff of new vs existing models with auto_discovered=true on new rows. Required by ADR-001 and the AdminAiModelsPage discover wizard (FU-X2)."
+      ]
     },
     {
       "id": "P01-S01-T001",
@@ -853,57 +1009,6 @@
       "tables_raw": "users, employee_profiles, roles, permissions, user_roles, refresh_tokens, mfa_totp_secrets, password_reset_tokens, audit_logs",
       "origin_instr_raw": "§3.1#auth-perfiles",
       "origin_techguide_raw": "§10.3#users"
-    },
-    {
-      "id": "P01-S01-T005",
-      "phase_id": "P01",
-      "step_id": "P01-S01",
-      "title": "audit_logs: add ip, user_agent, request_id columns (non-negotiable audit fields)",
-      "status": "ready",
-      "build_state": "planned",
-      "product_increment": "current",
-      "depends_on": [
-        "P01-S01-T001"
-      ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry",
-      "acceptance": [
-        "NEW migration 0002 adds nullable ip (INET), user_agent (TEXT), request_id (TEXT), resource (TEXT) columns to audit_logs",
-        "migration 0001 file remains untouched (immutable post-commit 99d555b)",
-        "round-trip 0001 -> 0002 -> 0001 -> 0002 exit 0",
-        "AuditLog ORM model in auth.py exposes the new columns (Mapped[str | None] etc.)",
-        "auth service populates them on every sensitive action via X-Request-ID middleware + request.client + request.headers['User-Agent']",
-        "integration test verifies non-null values in audit_logs rows written by auth endpoints"
-      ],
-      "verification_commands": [
-        "alembic upgrade head -> 0002 (head)",
-        "alembic downgrade -1 -> 0001 (preserves audit rows; new cols dropped)",
-        "alembic upgrade head -> 0002 again, no errors",
-        "integration test inserts audit_log row via auth endpoint and verifies ip / user_agent / request_id / resource are non-null",
-        "psql shows nullable=YES on the 4 new columns (backward-compat for any pre-existing rows that may exist by then)"
-      ],
-      "allowed_paths": [],
-      "conflict_groups": [
-        "db:migrations"
-      ],
-      "write_set": [
-        "backend/alembic/versions/0002_audit_logs_add_compliance_cols.py",
-        "backend/app/db/models/auth.py",
-        "backend/tests/integration/test_audit_logs_compliance_cols.py"
-      ],
-      "journey_refs": [],
-      "handoff_path": "orchestrator-state/tasks/handoffs/P01-S01-T005.md",
-      "evidence_dir": "orchestrator-state/tasks/evidence/P01-S01-T005",
-      "origin": {
-        "type": "runtime_followup",
-        "followup_id": "FU-20260509105319-audit-logs-add-ip-user-agent-request-id-columns-",
-        "origin_task_id": "P01-S01-T001",
-        "severity": "medium",
-        "kind": "followup"
-      },
-      "notes": [
-        "Runtime follow-up promoted from FU-20260509105319-audit-logs-add-ip-user-agent-request-id-columns-",
-        "Description: 01-non-negotiables.md §Audit log mandates ip, user_agent, request_id, resource in audit_logs. Migration 0001 implements §10.3 verbatim (actor_user_id, action, entity_type, entity_id, metadata, created_at) as source-of-truth wins for schema shape. These columns must arrive via NEW non-destructive ADD COLUMN migration 0002 before P02-S02-T001 (security/audit middleware) to satisfy compliance requirements. Migration 0001 is committed (99d555b) and IMMUTABLE — must NOT be modified; the fix is a new revision 0002 that adds nullable columns then backfills from request middleware (no breaking change for existing rows)."
-      ]
     },
     {
       "id": "P01-S02-T001",
@@ -1435,7 +1540,7 @@
       "id": "P01-S01-T002",
       "phase_id": "P01",
       "step_id": "P01-S01",
-      "title": "Align env var names in config.py to TECHNICAL_GUIDE §11.1 (atomic across config + .env + compose + logging redaction keys)",
+      "title": "Align env var names in config.py to TECHNICAL_GUIDE §11.1",
       "status": "done",
       "build_state": "planned",
       "product_increment": "current",
@@ -1446,17 +1551,13 @@
       ],
       "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime follow-up P00-S02-T001",
       "acceptance": [
-        "config.py field names match TECHNICAL_GUIDE §11.1 exactly (incl. JWT_SECRET reshape into JWT_PRIVATE_KEY+JWT_PUBLIC_KEY for RS256, ENCRYPTION_KEY rename, LITELLM_BASE_URL rename, S3_BUCKET_DOCUMENTS rename)",
-        ".env.example mirrors §11.1 keys",
-        "docker-compose.yml env overrides for backend+worker services use the renamed keys (LITELLM_BASE_URL, not LITELLM_PROXY_BASE_URL)",
-        "backend/app/core/logging.py _REDACTED_KEYS list updated to use the canonical §11.1 names so no orphan literals remain",
-        "all existing smoke + auth-migration tests still pass"
+        "config.py field names match TECHNICAL_GUIDE §11.1 exactly, all existing smoke tests still pass, docker-compose.yml env overrides updated to match"
       ],
       "verification_commands": [
-        "grep jwt_private_key backend/app/core/config.py && grep jwt_public_key backend/app/core/config.py && grep encryption_key backend/app/core/config.py && grep litellm_base_url backend/app/core/config.py && grep s3_bucket_documents backend/app/core/config.py && grep \"JWT_PRIVATE_KEY=\" .env.example && grep \"JWT_PUBLIC_KEY=\" .env.example && grep \"ENCRYPTION_KEY=\" .env.example && grep \"LITELLM_BASE_URL=\" .env.example && grep \"S3_BUCKET_DOCUMENTS=\" .env.example && grep \"LITELLM_BASE_URL:\" docker-compose.yml && cd backend && pytest -q"
+        "grep JWT_PRIVATE_KEY backend/app/core/config.py && grep ENCRYPTION_KEY backend/app/core/config.py"
       ],
       "kind": "wiring",
-      "target": "Align env var names in config.py to TECHNICAL_GUIDE §11.1 (atomic across config + .env + compose + logging redaction keys)",
+      "target": "Align env var names in config.py to TECHNICAL_GUIDE §11.1",
       "journey_refs": [],
       "route": "",
       "endpoint": "",
@@ -1467,97 +1568,56 @@
         "backend/app/core/config.py",
         ".env.example",
         "docker-compose.yml",
-        "backend/app/core/logging.py"
+        "docker-compose.yaml",
+        "compose.yml",
+        "compose.yaml"
       ],
       "conflict_groups": [
-        "backend:config"
+        "backend:config",
+        "infra:compose",
+        "infra:env"
       ],
       "write_set": [
         "backend/app/core/config.py",
         ".env.example",
         "docker-compose.yml",
-        "backend/app/core/logging.py"
+        "docker-compose.yaml",
+        "compose.yml",
+        "compose.yaml"
       ],
       "handoff_path": "orchestrator-state/tasks/handoffs/P01-S01-T002.md",
-      "evidence_dir": "orchestrator-state/tasks/evidence/P01-S01-T002/",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P01-S01-T002",
       "notes": [],
       "dependency_mode": "explicit_dag",
       "depends_on_raw": "P01-S01-T001",
       "conflict_groups_raw": "backend:config",
-      "write_set_raw": "backend/app/core/config.py, .env.example, docker-compose.yml, backend/app/core/logging.py",
+      "write_set_raw": "backend/app/core/config.py, .env.example",
       "product_increment_raw": "current",
       "build_state_raw": "planned",
       "risk_level_raw": "medium",
       "verify_mode_raw": "human",
       "kind_raw": "wiring",
-      "target_raw": "Align env var names in config.py to TECHNICAL_GUIDE §11.1 (atomic across config + .env + compose + logging redaction keys)",
+      "target_raw": "Align env var names in config.py to TECHNICAL_GUIDE §11.1",
       "journey_refs_raw": "—",
       "screen_route_raw": "—",
       "endpoint_raw": "—",
       "tables_raw": "—",
       "origin_instr_raw": "runtime-followup#FU-20260508225027-align-env-var-names-in-config-py-to-technical-gu",
       "origin_techguide_raw": "runtime-followup#FU-20260508225027-align-env-var-names-in-config-py-to-technical-gu",
-      "last_outcome": "committed",
-      "last_updated_by": "closer",
+      "scope_inferred_from_acceptance": [
+        "docker-compose.yml",
+        "docker-compose.yaml",
+        "compose.yml",
+        "compose.yaml",
+        ".env.example",
+        "infra:compose",
+        "infra:env"
+      ],
       "last_stop_at": "2026-05-09T13:04:56+00:00",
       "validator_outcome": "approved",
+      "last_updated_by": "closer",
       "validator_next_status": "ready_for_close",
-      "report_path": "orchestrator-state/tasks/reports/P01-S01-T002.md"
-    },
-    {
-      "id": "P01-S01-T004",
-      "phase_id": "P01",
-      "step_id": "P01-S01",
-      "title": "Fix .env DATABASE_URL host port + pydantic env_file path resolution for native dev workflow",
-      "status": "ready_for_close",
-      "build_state": "planned",
-      "product_increment": "current",
-      "depends_on": [
-        "P01-S01-T002"
-      ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry",
-      "acceptance": [
-        "(1) DATABASE_URL host:port aligned to hilo-postgres exposure (localhost:5433 for native dev or postgres:5432 for compose)",
-        ".env.example documents both modes clearly. (2) Settings env_file resolves robustly regardless of cwd (e.g. absolute path resolution from the project root",
-        "or env_file as a list with project-root anchor",
-        "or pydantic-settings model_config.env_file with explicit Path). (3) Cold-boot native uvicorn from project root + native pytest from cd backend/ both report /ready 200 against hilo-postgres. (4) dev-restart.sh --reset succeeds end-to-end on a clean checkout. (5) test_ready_returns_200_when_db_ok turns from FAIL to PASS without any test-side change."
-      ],
-      "verification_commands": [
-        "Run from a fresh shell with no env vars set: 1) bash scripts/dev-restart.sh --reset succeeds. 2) cd backend && pytest tests/test_health.py::test_ready_returns_200_when_db_ok passes. 3) Cold-boot uvicorn from project root: curl /ready returns 200 with checks.db.status=ok. 4) Run pytest from project root AND cd backend/ — Settings.database_url loaded with the right credentials in both cases."
-      ],
-      "allowed_paths": [],
-      "conflict_groups": [
-        "backend:config"
-      ],
-      "write_set": [
-        ".env.example",
-        "backend/alembic/env.py",
-        "backend/app/core/config.py",
-        "scripts/dev-restart.profile.sh"
-      ],
-      "journey_refs": [],
-      "handoff_path": "orchestrator-state/tasks/handoffs/P01-S01-T004.md",
-      "evidence_dir": "orchestrator-state/tasks/evidence/P01-S01-T004/",
-      "origin": {
-        "type": "runtime_followup",
-        "followup_id": "FU-20260509130036-fix-env-database-url-host-port-pydantic-env-file",
-        "origin_task_id": "P01-S01-T002",
-        "severity": "medium",
-        "kind": "wiring"
-      },
-      "notes": [
-        "Runtime follow-up promoted from FU-20260509130036-fix-env-database-url-host-port-pydantic-env-file",
-        "Description: Two pre-existing infra issues surfaced during /verify-slice for P01-S01-T002. (1) .env DATABASE_URL points to host port 5432, but hilo-postgres exposes 5433 (5432 belongs to a different project's apn-postgres). Causes /ready=503 from a cold-boot native uvicorn and aborts dev-restart.sh --reset at db_reset. (2) pydantic-settings env_file=\".env\" is relative; when invoked from cd backend/ (Alembic, pytest), it cannot find the project-root .env and falls back to defaults (change-me password). Together these are the documented root cause of the persistent test_ready_returns_200_when_db_ok failure across multiple slices. Live compose stack is unaffected (compose env_file: .env resolves at project root). Out of scope for the rename slice; tracking here so it does not perpetuate."
-      ],
-      "claimed_at": "2026-05-09T13:20:35+00:00",
-      "claimed_by": "sergiolr",
-      "claim_terminal_task_env": "P01-S01-T004",
-      "task_pack_path": "orchestrator-state/tasks/task-packs/P01-S01-T004.md",
-      "last_outcome": "pass",
-      "last_updated_by": "tester",
-      "last_stop_at": "2026-05-09T13:40:55+00:00",
-      "validator_outcome": "approved",
-      "validator_next_status": "ready_for_close"
+      "last_outcome": "committed"
     },
     {
       "id": "P01-S01-T003",
@@ -1614,7 +1674,153 @@
       "endpoint_raw": "—",
       "tables_raw": "—",
       "origin_instr_raw": "runtime-followup#FU-20260508230723-quote-mail-from-name-in-env-example-to-fix-bash-",
-      "origin_techguide_raw": "runtime-followup#FU-20260508230723-quote-mail-from-name-in-env-example-to-fix-bash-"
+      "origin_techguide_raw": "runtime-followup#FU-20260508230723-quote-mail-from-name-in-env-example-to-fix-bash-",
+      "scope_inferred_from_acceptance": [
+        ".env.example",
+        "infra:env"
+      ]
+    },
+    {
+      "id": "P01-S01-T004",
+      "phase_id": "P01",
+      "step_id": "P01-S01",
+      "title": "Fix .env DATABASE_URL host port + pydantic env_file path resolution for native dev workflow",
+      "status": "done",
+      "build_state": "planned",
+      "product_increment": "current",
+      "risk_level": "medium",
+      "verify_mode": "human",
+      "depends_on": [
+        "P01-S01-T002"
+      ],
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime follow-up P01-S01-T002",
+      "acceptance": [
+        "(1) DATABASE_URL host:port aligned to hilo-postgres exposure (localhost:5433 for native dev or postgres:5432 for compose), .env.example documents both modes clearly. (2) Settings env_file resolves robustly regardless of cwd (e.g. absolute path resolution from the project root, or env_file as a list with project-root anchor, or pydantic-settings model_config.env_file with explicit Path). (3) Cold-boot native uvicorn from project root + native pytest from cd backend/ both report /ready 200 against hilo-postgres. (4) dev-restart.sh --reset succeeds end-to-end on a clean checkout. (5) test_ready_returns_200_when_db_ok turns from FAIL to PASS without any test-side change."
+      ],
+      "verification_commands": [
+        "Run from a fresh shell with no env vars set: 1) bash scripts/dev-restart.sh --reset succeeds. 2) cd backend && pytest tests/test_health.py::test_ready_returns_200_when_db_ok passes. 3) Cold-boot uvicorn from project root: curl /ready returns 200 with checks.db.status=ok. 4) Run pytest from project root AND cd backend/ — Settings.database_url loaded with the right credentials in both cases."
+      ],
+      "kind": "wiring",
+      "target": "Fix .env DATABASE_URL host port + pydantic env_file path resolution for native dev workflow",
+      "journey_refs": [],
+      "route": "",
+      "endpoint": "",
+      "tables": [],
+      "origin_instr": "runtime-followup#FU-20260509130036-fix-env-database-url-host-port-pydantic-env-file",
+      "origin_techguide": "runtime-followup#FU-20260509130036-fix-env-database-url-host-port-pydantic-env-file",
+      "allowed_paths": [
+        ".env.example",
+        "backend/alembic/env.py",
+        "backend/app/core/config.py",
+        "scripts/dev-restart.profile.sh",
+        ".github/workflows/**"
+      ],
+      "conflict_groups": [
+        "backend:config",
+        "infra:env",
+        "ci:workflows"
+      ],
+      "write_set": [
+        ".env.example",
+        "backend/alembic/env.py",
+        "backend/app/core/config.py",
+        "scripts/dev-restart.profile.sh",
+        ".github/workflows/**"
+      ],
+      "handoff_path": "orchestrator-state/tasks/handoffs/P01-S01-T004.md",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P01-S01-T004",
+      "notes": [],
+      "dependency_mode": "explicit_dag",
+      "depends_on_raw": "P01-S01-T002",
+      "conflict_groups_raw": "backend:config",
+      "write_set_raw": ".env.example, backend/alembic/env.py, backend/app/core/config.py, scripts/dev-restart.profile.sh",
+      "product_increment_raw": "current",
+      "build_state_raw": "planned",
+      "risk_level_raw": "medium",
+      "verify_mode_raw": "human",
+      "kind_raw": "wiring",
+      "target_raw": "Fix .env DATABASE_URL host port + pydantic env_file path resolution for native dev workflow",
+      "journey_refs_raw": "—",
+      "screen_route_raw": "—",
+      "endpoint_raw": "—",
+      "tables_raw": "—",
+      "origin_instr_raw": "runtime-followup#FU-20260509130036-fix-env-database-url-host-port-pydantic-env-file",
+      "origin_techguide_raw": "runtime-followup#FU-20260509130036-fix-env-database-url-host-port-pydantic-env-file",
+      "scope_inferred_from_acceptance": [
+        ".env.example",
+        ".github/workflows/**",
+        "infra:env",
+        "ci:workflows"
+      ],
+      "claimed_by": "sergiolr",
+      "claimed_at": "2026-05-09T13:20:35+00:00",
+      "last_stop_at": "2026-05-09T14:02:48+00:00",
+      "validator_outcome": "approved",
+      "last_updated_by": "closer",
+      "validator_next_status": "ready_for_close",
+      "last_outcome": "committed"
+    },
+    {
+      "id": "P01-S01-T005",
+      "phase_id": "P01",
+      "step_id": "P01-S01",
+      "title": "audit_logs: add ip, user_agent, request_id columns (non-negotiable audit fields)",
+      "status": "ready",
+      "build_state": "planned",
+      "product_increment": "current",
+      "risk_level": "medium",
+      "verify_mode": "human",
+      "depends_on": [
+        "P01-S01-T001"
+      ],
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime follow-up P01-S01-T001",
+      "acceptance": [
+        "NEW migration 0002 adds nullable ip (INET), user_agent (TEXT), request_id (TEXT), resource (TEXT) columns to audit_logs, migration 0001 file remains untouched (immutable post-commit 99d555b), round-trip 0001 -> 0002 -> 0001 -> 0002 exit 0, AuditLog ORM model in auth.py exposes the new columns (Mapped[str | None] etc.), auth service populates them on every sensitive action via X-Request-ID middleware + request.client + request.headers['User-Agent'], integration test verifies non-null values in audit_logs rows written by auth endpoints"
+      ],
+      "verification_commands": [
+        "alembic upgrade head -> 0002 (head), alembic downgrade -1 -> 0001 (preserves audit rows",
+        "new cols dropped), alembic upgrade head -> 0002 again, no errors, integration test inserts audit_log row via auth endpoint and verifies ip / user_agent / request_id / resource are non-null, psql shows nullable=YES on the 4 new columns (backward-compat for any pre-existing rows that may exist by then)"
+      ],
+      "kind": "followup",
+      "target": "audit_logs: add ip, user_agent, request_id columns (non-negotiable audit fields)",
+      "journey_refs": [],
+      "route": "",
+      "endpoint": "",
+      "tables": [],
+      "origin_instr": "runtime-followup#FU-20260509105319-audit-logs-add-ip-user-agent-request-id-columns-",
+      "origin_techguide": "runtime-followup#FU-20260509105319-audit-logs-add-ip-user-agent-request-id-columns-",
+      "allowed_paths": [
+        "backend/alembic/versions/0002_audit_logs_add_compliance_cols.py",
+        "backend/app/db/models/auth.py",
+        "backend/tests/integration/test_audit_logs_compliance_cols.py"
+      ],
+      "conflict_groups": [
+        "db:migrations"
+      ],
+      "write_set": [
+        "backend/alembic/versions/0002_audit_logs_add_compliance_cols.py",
+        "backend/app/db/models/auth.py",
+        "backend/tests/integration/test_audit_logs_compliance_cols.py"
+      ],
+      "handoff_path": "orchestrator-state/tasks/handoffs/P01-S01-T005.md",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P01-S01-T005",
+      "notes": [],
+      "dependency_mode": "explicit_dag",
+      "depends_on_raw": "P01-S01-T001",
+      "conflict_groups_raw": "db:migrations",
+      "write_set_raw": "backend/alembic/versions/0002_audit_logs_add_compliance_cols.py, backend/app/db/models/auth.py, backend/tests/integration/test_audit_logs_compliance_cols.py",
+      "product_increment_raw": "current",
+      "build_state_raw": "planned",
+      "risk_level_raw": "medium",
+      "verify_mode_raw": "human",
+      "kind_raw": "followup",
+      "target_raw": "audit_logs: add ip, user_agent, request_id columns (non-negotiable audit fields)",
+      "journey_refs_raw": "—",
+      "screen_route_raw": "—",
+      "endpoint_raw": "—",
+      "tables_raw": "—",
+      "origin_instr_raw": "runtime-followup#FU-20260509105319-audit-logs-add-ip-user-agent-request-id-columns-",
+      "origin_techguide_raw": "runtime-followup#FU-20260509105319-audit-logs-add-ip-user-agent-request-id-columns-"
     },
     {
       "id": "P02-S01-T001",
@@ -4569,7 +4775,6 @@
         "i18nStore"
       ],
       "task_ids": [
-        "P00-S02-T005",
         "P01-S02-T001",
         "P01-S02-T002",
         "P01-S02-T003",
@@ -4582,7 +4787,6 @@
         "P05-S01-T001"
       ],
       "task_ids_source_order": [
-        "P00-S02-T005",
         "P01-S02-T001",
         "P01-S02-T002",
         "P01-S02-T003",
@@ -4603,7 +4807,6 @@
       "completion_policy": "all_task_ids_done",
       "task_order_policy": "dag_topological_order",
       "terminal_task_ids": [
-        "P00-S02-T005",
         "P01-S02-T004",
         "P01-S02-T005",
         "P01-S02-T007",
@@ -4641,7 +4844,6 @@
         "citationStore"
       ],
       "task_ids": [
-        "P00-S02-T005",
         "P02-S03-T001",
         "P02-S03-T002",
         "P02-S04-T001",
@@ -4651,7 +4853,6 @@
         "P05-S01-T002"
       ],
       "task_ids_source_order": [
-        "P00-S02-T005",
         "P02-S03-T001",
         "P02-S03-T002",
         "P02-S04-T001",
@@ -4669,7 +4870,6 @@
       "completion_policy": "all_task_ids_done",
       "task_order_policy": "dag_topological_order",
       "terminal_task_ids": [
-        "P00-S02-T005",
         "P02-S04-T002",
         "P05-S01-T002"
       ]
@@ -4704,7 +4904,6 @@
         "i18nStore"
       ],
       "task_ids": [
-        "P00-S02-T005",
         "P01-S02-T007",
         "P02-S03-T001",
         "P03-S02-T002",
@@ -4713,7 +4912,6 @@
         "P05-S01-T003"
       ],
       "task_ids_source_order": [
-        "P00-S02-T005",
         "P01-S02-T007",
         "P02-S03-T001",
         "P03-S02-T002",
@@ -4730,7 +4928,6 @@
       "completion_policy": "all_task_ids_done",
       "task_order_policy": "dag_topological_order",
       "terminal_task_ids": [
-        "P00-S02-T005",
         "P05-S01-T003"
       ]
     },
@@ -4770,7 +4967,8 @@
         "testDrawerStore"
       ],
       "task_ids": [
-        "P00-S02-T005",
+        "P00-S02-T007",
+        "P00-S02-T006",
         "P02-S05-T001",
         "P02-S05-T002",
         "P04-S01-T002",
@@ -4779,7 +4977,8 @@
         "P05-S01-T004"
       ],
       "task_ids_source_order": [
-        "P00-S02-T005",
+        "P00-S02-T007",
+        "P00-S02-T006",
         "P02-S05-T001",
         "P02-S05-T002",
         "P04-S01-T002",
@@ -4796,7 +4995,8 @@
       "completion_policy": "all_task_ids_done",
       "task_order_policy": "dag_topological_order",
       "terminal_task_ids": [
-        "P00-S02-T005",
+        "P00-S02-T007",
+        "P00-S02-T006",
         "P05-S01-T004"
       ]
     },
@@ -4834,7 +5034,6 @@
         "vectorizationStatus"
       ],
       "task_ids": [
-        "P00-S02-T005",
         "P02-S06-T001",
         "P02-S06-T002",
         "P04-S02-T001",
@@ -4842,7 +5041,6 @@
         "P05-S01-T005"
       ],
       "task_ids_source_order": [
-        "P00-S02-T005",
         "P02-S06-T001",
         "P02-S06-T002",
         "P04-S02-T001",
@@ -4858,7 +5056,6 @@
       "completion_policy": "all_task_ids_done",
       "task_order_policy": "dag_topological_order",
       "terminal_task_ids": [
-        "P00-S02-T005",
         "P05-S01-T005"
       ]
     },
@@ -4900,7 +5097,7 @@
         "agentsQuery"
       ],
       "task_ids": [
-        "P00-S02-T005",
+        "P00-S02-T008",
         "P02-S07-T001",
         "P02-S08-T001",
         "P04-S02-T003",
@@ -4909,13 +5106,13 @@
         "P05-S01-T006"
       ],
       "task_ids_source_order": [
-        "P00-S02-T005",
         "P02-S07-T001",
         "P02-S08-T001",
         "P04-S02-T003",
         "P04-S02-T004",
         "P04-S02-T005",
-        "P05-S01-T006"
+        "P05-S01-T006",
+        "P00-S02-T008"
       ],
       "slices_raw": "P02-S07, P02-S08, P04-S02-T003..T005, P05-S01-T006",
       "verification": "/verify-journey J105",
@@ -4926,7 +5123,7 @@
       "completion_policy": "all_task_ids_done",
       "task_order_policy": "dag_topological_order",
       "terminal_task_ids": [
-        "P00-S02-T005",
+        "P00-S02-T008",
         "P05-S01-T006"
       ]
     }
@@ -4942,10 +5139,12 @@
       "P00-S02-T001",
       "P00-S02-T002",
       "P00-S02-T003",
-      "P00-S02-T005",
       "P00-S02-T004",
+      "P00-S02-T005",
+      "P00-S02-T008",
+      "P00-S02-T007",
+      "P00-S02-T006",
       "P01-S01-T001",
-      "P01-S01-T005",
       "P01-S02-T001",
       "P01-S02-T002",
       "P01-S02-T003",
@@ -4955,8 +5154,9 @@
       "P01-S02-T007",
       "P01-S03-T001",
       "P01-S01-T002",
-      "P01-S01-T004",
       "P01-S01-T003",
+      "P01-S01-T004",
+      "P01-S01-T005",
       "P02-S01-T001",
       "P02-S02-T001",
       "P02-S03-T001",
@@ -5036,20 +5236,28 @@
         "P00-S02-T003"
       ],
       [
-        "P00-S02-T003",
-        "P00-S02-T005"
-      ],
-      [
         "P00-S02-T002",
         "P00-S02-T004"
       ],
       [
-        "P00-S02-T002",
-        "P01-S01-T001"
+        "P00-S02-T003",
+        "P00-S02-T005"
       ],
       [
-        "P01-S01-T001",
-        "P01-S01-T005"
+        "P00-S02-T005",
+        "P00-S02-T008"
+      ],
+      [
+        "P00-S02-T005",
+        "P00-S02-T007"
+      ],
+      [
+        "P00-S02-T005",
+        "P00-S02-T006"
+      ],
+      [
+        "P00-S02-T002",
+        "P01-S01-T001"
       ],
       [
         "P01-S01-T001",
@@ -5104,12 +5312,16 @@
         "P01-S01-T002"
       ],
       [
+        "P01-S01-T001",
+        "P01-S01-T003"
+      ],
+      [
         "P01-S01-T002",
         "P01-S01-T004"
       ],
       [
         "P01-S01-T001",
-        "P01-S01-T003"
+        "P01-S01-T005"
       ],
       [
         "P01-S01-T001",
@@ -5517,65 +5729,68 @@
       "P00-S02-T001": 5,
       "P00-S02-T002": 6,
       "P00-S02-T003": 7,
-      "P00-S02-T005": 8,
-      "P00-S02-T004": 9,
-      "P01-S01-T001": 10,
-      "P01-S01-T005": 11,
-      "P01-S02-T001": 12,
-      "P01-S02-T002": 13,
-      "P01-S02-T003": 14,
-      "P01-S02-T004": 15,
-      "P01-S02-T005": 16,
-      "P01-S02-T006": 17,
-      "P01-S02-T007": 18,
-      "P01-S03-T001": 19,
-      "P01-S01-T002": 20,
-      "P01-S01-T004": 21,
-      "P01-S01-T003": 22,
-      "P02-S01-T001": 23,
-      "P02-S02-T001": 24,
-      "P02-S03-T001": 25,
-      "P02-S03-T002": 26,
-      "P02-S04-T001": 27,
-      "P02-S04-T002": 28,
-      "P02-S05-T001": 29,
-      "P02-S05-T002": 30,
-      "P02-S06-T001": 31,
-      "P02-S06-T002": 32,
-      "P02-S07-T001": 33,
-      "P02-S08-T001": 34,
-      "P03-S01-T001": 35,
-      "P03-S01-T002": 36,
-      "P03-S01-T003": 37,
-      "P03-S01-T004": 38,
-      "P03-S01-T005": 39,
-      "P03-S02-T001": 40,
-      "P03-S02-T002": 41,
-      "P03-S02-T003": 42,
-      "P03-S02-T004": 43,
-      "P04-S01-T001": 44,
-      "P04-S01-T002": 45,
-      "P04-S01-T003": 46,
-      "P04-S01-T004": 47,
-      "P04-S02-T001": 48,
-      "P04-S02-T002": 49,
-      "P04-S02-T003": 50,
-      "P04-S02-T004": 51,
-      "P04-S02-T005": 52,
-      "P04-S03-T001": 53,
-      "P04-S03-T002": 54,
-      "P05-S01-T001": 55,
-      "P05-S01-T002": 56,
-      "P05-S01-T003": 57,
-      "P05-S01-T004": 58,
-      "P05-S01-T005": 59,
-      "P05-S01-T006": 60,
-      "P05-S02-T001": 61,
-      "P05-S02-T002": 62,
-      "P05-S02-T003": 63,
-      "P06-S01-T001": 64,
-      "P06-S01-T002": 65,
-      "P06-S01-T003": 66
+      "P00-S02-T004": 8,
+      "P00-S02-T005": 9,
+      "P00-S02-T008": 10,
+      "P00-S02-T007": 11,
+      "P00-S02-T006": 12,
+      "P01-S01-T001": 13,
+      "P01-S02-T001": 14,
+      "P01-S02-T002": 15,
+      "P01-S02-T003": 16,
+      "P01-S02-T004": 17,
+      "P01-S02-T005": 18,
+      "P01-S02-T006": 19,
+      "P01-S02-T007": 20,
+      "P01-S03-T001": 21,
+      "P01-S01-T002": 22,
+      "P01-S01-T003": 23,
+      "P01-S01-T004": 24,
+      "P01-S01-T005": 25,
+      "P02-S01-T001": 26,
+      "P02-S02-T001": 27,
+      "P02-S03-T001": 28,
+      "P02-S03-T002": 29,
+      "P02-S04-T001": 30,
+      "P02-S04-T002": 31,
+      "P02-S05-T001": 32,
+      "P02-S05-T002": 33,
+      "P02-S06-T001": 34,
+      "P02-S06-T002": 35,
+      "P02-S07-T001": 36,
+      "P02-S08-T001": 37,
+      "P03-S01-T001": 38,
+      "P03-S01-T002": 39,
+      "P03-S01-T003": 40,
+      "P03-S01-T004": 41,
+      "P03-S01-T005": 42,
+      "P03-S02-T001": 43,
+      "P03-S02-T002": 44,
+      "P03-S02-T003": 45,
+      "P03-S02-T004": 46,
+      "P04-S01-T001": 47,
+      "P04-S01-T002": 48,
+      "P04-S01-T003": 49,
+      "P04-S01-T004": 50,
+      "P04-S02-T001": 51,
+      "P04-S02-T002": 52,
+      "P04-S02-T003": 53,
+      "P04-S02-T004": 54,
+      "P04-S02-T005": 55,
+      "P04-S03-T001": 56,
+      "P04-S03-T002": 57,
+      "P05-S01-T001": 58,
+      "P05-S01-T002": 59,
+      "P05-S01-T003": 60,
+      "P05-S01-T004": 61,
+      "P05-S01-T005": 62,
+      "P05-S01-T006": 63,
+      "P05-S02-T001": 64,
+      "P05-S02-T002": 65,
+      "P05-S02-T003": 66,
+      "P06-S01-T001": 67,
+      "P06-S01-T002": 68,
+      "P06-S01-T003": 69
     },
     "adjacency_matrix": [
       [
@@ -5645,6 +5860,9 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         0
       ],
       [
@@ -5667,7 +5885,10 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
+        0,
         0,
         0,
         0,
@@ -5741,6 +5962,9 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         1,
         0,
         0,
@@ -5821,6 +6045,9 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         1,
         1,
         1,
@@ -5855,6 +6082,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -5890,6 +6118,8 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
         1,
         1,
@@ -5931,6 +6161,7 @@
         0,
         0,
         1,
+        0,
         0,
         0,
         0,
@@ -5990,6 +6221,8 @@
         0,
         0,
         0,
+        0,
+        0,
         0
       ],
       [
@@ -6001,8 +6234,11 @@
         0,
         0,
         1,
-        0,
         1,
+        0,
+        0,
+        0,
+        0,
         1,
         0,
         0,
@@ -6062,6 +6298,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -6071,6 +6308,8 @@
         0,
         0,
         1,
+        0,
+        0,
         0,
         0,
         0,
@@ -6197,6 +6436,9 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         0
       ],
       [
@@ -6210,6 +6452,9 @@
         0,
         0,
         0,
+        1,
+        1,
+        1,
         0,
         0,
         0,
@@ -6280,8 +6525,6 @@
         0,
         0,
         0,
-        1,
-        1,
         0,
         0,
         0,
@@ -6289,11 +6532,75 @@
         0,
         0,
         0,
-        1,
         0,
-        1,
-        1,
-        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -6335,9 +6642,62 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
         0
       ],
       [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -6367,6 +6727,38 @@
         0,
         0,
         0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        0,
         0,
         0,
         0,
@@ -6404,6 +6796,9 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         0
       ],
       [
@@ -6420,6 +6815,8 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
         0,
         0,
@@ -6443,6 +6840,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -6476,6 +6874,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -6490,6 +6889,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -6542,9 +6942,11 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -6560,7 +6962,9 @@
         0,
         0,
         0,
+        0,
         1,
+        0,
         0,
         0,
         0,
@@ -6614,6 +7018,8 @@
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -6657,6 +7063,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -6683,6 +7090,8 @@
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -6720,6 +7129,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -6752,6 +7162,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -6770,8 +7181,10 @@
         0,
         0,
         0,
+        0,
         1,
         1,
+        0,
         0,
         0,
         0,
@@ -6840,7 +7253,10 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
+        0,
         0,
         0,
         0,
@@ -6890,6 +7306,9 @@
         0
       ],
       [
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -6971,7 +7390,10 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
+        0,
         0,
         0,
         0,
@@ -6981,6 +7403,76 @@
         0,
         0,
         1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -7025,9 +7517,12 @@
         0,
         0,
         0,
+        0,
+        0,
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -7094,9 +7589,12 @@
         0,
         0,
         0,
+        0,
+        0,
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -7163,9 +7661,12 @@
         0,
         0,
         0,
+        0,
+        0,
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -7191,6 +7692,8 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
         0,
         1,
@@ -7235,6 +7738,8 @@
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -7264,6 +7769,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -7304,6 +7810,8 @@
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -7330,6 +7838,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -7373,6 +7882,9 @@
         0
       ],
       [
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -7468,6 +7980,9 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         1,
         0,
         1,
@@ -7542,6 +8057,9 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         1,
         0,
         0,
@@ -7580,6 +8098,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -7606,6 +8125,8 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
         1,
         0,
@@ -7649,6 +8170,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -7693,6 +8215,8 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
         0,
         0,
@@ -7718,6 +8242,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -7750,6 +8275,8 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
         0,
         0,
@@ -7787,6 +8314,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -7836,6 +8364,8 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
         0,
         0,
@@ -7856,6 +8386,8 @@
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -7890,6 +8422,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -7925,6 +8458,8 @@
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -7977,6 +8512,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -7994,6 +8530,8 @@
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -8033,6 +8571,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -8063,6 +8602,8 @@
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -8129,9 +8670,13 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -8267,9 +8812,15 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         0
       ],
       [
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -8380,6 +8931,9 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         1,
         0,
         1,
@@ -8450,6 +9004,9 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         1,
         0,
         0,
@@ -8477,6 +9034,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -8534,6 +9092,8 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
         0,
         0,
@@ -8546,6 +9106,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -8603,6 +9164,8 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
         0,
         0,
@@ -8615,6 +9178,8 @@
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -8660,6 +9225,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -8684,6 +9250,8 @@
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -8730,6 +9298,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -8753,6 +9322,9 @@
         0
       ],
       [
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -8880,6 +9452,9 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         1,
         0,
         0,
@@ -8891,6 +9466,9 @@
         0
       ],
       [
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -9019,6 +9597,9 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         1,
         0,
         0,
@@ -9080,6 +9661,9 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         1,
         1,
         0,
@@ -9098,6 +9682,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -9158,6 +9743,8 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
         0,
         0,
@@ -9167,6 +9754,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -9227,6 +9815,8 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
         0,
         0,
@@ -9236,6 +9826,8 @@
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -9302,9 +9894,12 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -9371,9 +9966,13 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -9505,6 +10104,9 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         1,
         1,
         0,
@@ -9512,6 +10114,9 @@
         0
       ],
       [
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -9642,6 +10247,9 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         1,
         1,
         1,
@@ -9711,6 +10319,9 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         1,
         0,
         1,
@@ -9719,6 +10330,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -9780,6 +10392,8 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
         0,
         1,
@@ -9788,6 +10402,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -9852,11 +10467,15 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
         0,
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -9921,11 +10540,14 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -9990,11 +10612,15 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0
       ],
       [
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -10130,9 +10756,15 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         1
       ],
       [
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -10245,17 +10877,23 @@
       "P00-S02-T003": [
         "P00-S02-T005"
       ],
-      "P00-S02-T005": [],
       "P00-S02-T004": [],
+      "P00-S02-T005": [
+        "P00-S02-T008",
+        "P00-S02-T007",
+        "P00-S02-T006"
+      ],
+      "P00-S02-T008": [],
+      "P00-S02-T007": [],
+      "P00-S02-T006": [],
       "P01-S01-T001": [
-        "P01-S01-T005",
         "P01-S02-T001",
         "P01-S01-T002",
         "P01-S01-T003",
+        "P01-S01-T005",
         "P02-S01-T001",
         "P02-S02-T001"
       ],
-      "P01-S01-T005": [],
       "P01-S02-T001": [
         "P01-S02-T002",
         "P01-S02-T005",
@@ -10294,8 +10932,9 @@
         "P01-S02-T001",
         "P01-S01-T004"
       ],
-      "P01-S01-T004": [],
       "P01-S01-T003": [],
+      "P01-S01-T004": [],
+      "P01-S01-T005": [],
       "P02-S01-T001": [
         "P02-S03-T001",
         "P02-S04-T001",
@@ -10478,17 +11117,23 @@
       "P00-S02-T003": [
         "P00-S02-T002"
       ],
-      "P00-S02-T005": [
-        "P00-S02-T003"
-      ],
       "P00-S02-T004": [
         "P00-S02-T002"
       ],
+      "P00-S02-T005": [
+        "P00-S02-T003"
+      ],
+      "P00-S02-T008": [
+        "P00-S02-T005"
+      ],
+      "P00-S02-T007": [
+        "P00-S02-T005"
+      ],
+      "P00-S02-T006": [
+        "P00-S02-T005"
+      ],
       "P01-S01-T001": [
         "P00-S02-T002"
-      ],
-      "P01-S01-T005": [
-        "P01-S01-T001"
       ],
       "P01-S02-T001": [
         "P01-S01-T001",
@@ -10521,10 +11166,13 @@
       "P01-S01-T002": [
         "P01-S01-T001"
       ],
+      "P01-S01-T003": [
+        "P01-S01-T001"
+      ],
       "P01-S01-T004": [
         "P01-S01-T002"
       ],
-      "P01-S01-T003": [
+      "P01-S01-T005": [
         "P01-S01-T001"
       ],
       "P02-S01-T001": [
@@ -10736,13 +11384,16 @@
       ],
       [
         "P00-S02-T005",
-        "P01-S01-T005",
         "P01-S01-T002",
         "P01-S01-T003",
+        "P01-S01-T005",
         "P02-S01-T001",
         "P02-S02-T001"
       ],
       [
+        "P00-S02-T008",
+        "P00-S02-T007",
+        "P00-S02-T006",
         "P01-S02-T001",
         "P01-S01-T004",
         "P02-S05-T001",
@@ -10845,16 +11496,22 @@
       "P00-S02-T003": [
         "seed:data"
       ],
-      "P00-S02-T005": [
-        "seed:data"
-      ],
       "P00-S02-T004": [
         "infra:logging"
       ],
-      "P01-S01-T001": [
-        "db:migrations"
+      "P00-S02-T005": [
+        "seed:data"
       ],
-      "P01-S01-T005": [
+      "P00-S02-T008": [
+        "agents_runtime"
+      ],
+      "P00-S02-T007": [
+        "admin_ai_ui"
+      ],
+      "P00-S02-T006": [
+        "admin_ai_endpoints"
+      ],
+      "P01-S01-T001": [
         "db:migrations"
       ],
       "P01-S02-T001": [
@@ -10884,13 +11541,20 @@
         "router"
       ],
       "P01-S01-T002": [
-        "backend:config"
-      ],
-      "P01-S01-T004": [
-        "backend:config"
+        "backend:config",
+        "infra:compose",
+        "infra:env"
       ],
       "P01-S01-T003": [
         "infra:env"
+      ],
+      "P01-S01-T004": [
+        "backend:config",
+        "infra:env",
+        "ci:workflows"
+      ],
+      "P01-S01-T005": [
+        "db:migrations"
       ],
       "P02-S01-T001": [
         "db:migrations"
@@ -11067,22 +11731,26 @@
         "backend/app/seeds/**",
         "scripts/dev-restart.sh"
       ],
-      "P00-S02-T005": [
-        "data/verification/**"
-      ],
       "P00-S02-T004": [
         "backend/app/core/logging.py",
         "backend/tests/test_logging.py"
+      ],
+      "P00-S02-T005": [
+        "data/verification/**"
+      ],
+      "P00-S02-T008": [
+        "backend/app/agents/**"
+      ],
+      "P00-S02-T007": [
+        "frontend/src/features/admin_ai/**"
+      ],
+      "P00-S02-T006": [
+        "backend/app/features/admin_ai/**"
       ],
       "P01-S01-T001": [
         "backend/alembic/versions/0001_auth_users_employee_audit.py",
         "backend/app/db/models/user.py",
         "backend/app/db/models/auth.py"
-      ],
-      "P01-S01-T005": [
-        "backend/alembic/versions/0002_audit_logs_add_compliance_cols.py",
-        "backend/app/db/models/auth.py",
-        "backend/tests/integration/test_audit_logs_compliance_cols.py"
       ],
       "P01-S02-T001": [
         "backend/app/auth/**",
@@ -11121,16 +11789,24 @@
         "backend/app/core/config.py",
         ".env.example",
         "docker-compose.yml",
-        "backend/app/core/logging.py"
+        "docker-compose.yaml",
+        "compose.yml",
+        "compose.yaml"
+      ],
+      "P01-S01-T003": [
+        ".env.example"
       ],
       "P01-S01-T004": [
         ".env.example",
         "backend/alembic/env.py",
         "backend/app/core/config.py",
-        "scripts/dev-restart.profile.sh"
+        "scripts/dev-restart.profile.sh",
+        ".github/workflows/**"
       ],
-      "P01-S01-T003": [
-        ".env.example"
+      "P01-S01-T005": [
+        "backend/alembic/versions/0002_audit_logs_add_compliance_cols.py",
+        "backend/app/db/models/auth.py",
+        "backend/tests/integration/test_audit_logs_compliance_cols.py"
       ],
       "P02-S01-T001": [
         "backend/alembic/versions/0002_ai_chat_rag_mcp_agents.py",
@@ -11301,10 +11977,12 @@
       "P00-S02-T001": "medium",
       "P00-S02-T002": "low",
       "P00-S02-T003": "medium",
-      "P00-S02-T005": "medium",
       "P00-S02-T004": "high",
+      "P00-S02-T005": "medium",
+      "P00-S02-T008": "medium",
+      "P00-S02-T007": "medium",
+      "P00-S02-T006": "medium",
       "P01-S01-T001": "medium",
-      "P01-S01-T005": "medium",
       "P01-S02-T001": "medium",
       "P01-S02-T002": "medium",
       "P01-S02-T003": "medium",
@@ -11314,8 +11992,9 @@
       "P01-S02-T007": "medium",
       "P01-S03-T001": "medium",
       "P01-S01-T002": "medium",
-      "P01-S01-T004": "medium",
       "P01-S01-T003": "low",
+      "P01-S01-T004": "medium",
+      "P01-S01-T005": "medium",
       "P02-S01-T001": "medium",
       "P02-S02-T001": "medium",
       "P02-S03-T001": "medium",
@@ -11370,10 +12049,12 @@
       "P00-S02-T001": "human",
       "P00-S02-T002": "auto",
       "P00-S02-T003": "human",
-      "P00-S02-T005": "human",
       "P00-S02-T004": "human",
+      "P00-S02-T005": "human",
+      "P00-S02-T008": "human",
+      "P00-S02-T007": "human",
+      "P00-S02-T006": "human",
       "P01-S01-T001": "human",
-      "P01-S01-T005": "human",
       "P01-S02-T001": "human",
       "P01-S02-T002": "human",
       "P01-S02-T003": "human",
@@ -11383,8 +12064,9 @@
       "P01-S02-T007": "human",
       "P01-S03-T001": "human",
       "P01-S01-T002": "human",
-      "P01-S01-T004": "human",
       "P01-S01-T003": "human",
+      "P01-S01-T004": "human",
+      "P01-S01-T005": "human",
       "P02-S01-T001": "human",
       "P02-S02-T001": "human",
       "P02-S03-T001": "human",
@@ -11431,7 +12113,7 @@
       "P06-S01-T003": "human"
     },
     "canonical_source": "registry.tasks",
-    "source_digest": "35833c755b3c5c0a373cb1cb0576d2c639fdea73f67def5c2c071a396ee0024f",
+    "source_digest": "135e75810a6b0c245e8276856f4b001633eb6f07af35854e76d16efb45f514de",
     "errors": []
   }
 }

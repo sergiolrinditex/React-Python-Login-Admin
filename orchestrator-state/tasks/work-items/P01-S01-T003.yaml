@@ -2,7 +2,7 @@ id: P01-S01-T003
 phase_id: P01
 step_id: P01-S01
 title: "Quote MAIL_FROM_NAME in .env.example to fix bash source failure"
-status: blocked
+status: ready
 kind: "bug"
 target: "Quote MAIL_FROM_NAME in .env.example to fix bash source failure"
 product_increment: "current"
@@ -25,6 +25,9 @@ conflict_groups:
   - "infra:env"
 write_set:
   - ".env.example"
+scope_inferred_from_acceptance:
+  - ".env.example"
+  - "infra:env"
 handoff_path: orchestrator-state/tasks/handoffs/P01-S01-T003.md
 evidence_dir: orchestrator-state/tasks/evidence/P01-S01-T003
 source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime follow-up P00-S02-T001"

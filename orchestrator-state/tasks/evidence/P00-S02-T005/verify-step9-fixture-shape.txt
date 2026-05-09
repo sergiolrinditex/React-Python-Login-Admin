@@ -1,0 +1,31 @@
+=== STEP 9: Schema fixture verification ===
+--- MANIFEST._bundle_type ---
+  bundle_type='productive'
+  files declared: 0
+
+--- employee_primary.json (debugger fix verification) ---
+  email=s.lopezrap+employee@gmail.com
+  role=employee
+  mfa_enabled=True
+  department='Recursos Humanos'  ← MUST be "Recursos Humanos"
+  job_title='Data Analytics'    ← MUST be "Data Analytics"
+  manager_email='s.lopezrap+admin@gmail.com'
+  hire_date='2022-03-15'
+  language_preference='es'
+
+--- agents.json (Supervisor + 2 subagents) ---
+  name=people-supervisor  type=supervisor  framework=deepagents  parent=None  topics=None
+  name=hr-policies-agent  type=subagent  framework=deepagents  parent=people-supervisor  topics=['vacaciones', 'nominas', 'politicas_rrhh', 'normativa_laboral', 'convenio']
+  name=langchain-docs-agent  type=subagent  framework=deepagents  parent=people-supervisor  topics=['langchain', 'langgraph', 'llm_integration', 'rag_implementation', 'agents']
+
+--- providers.json (3 providers, env-var refs) ---
+  name=gemini-direct  kind=None  is_active=True  api_key_env=VERIFICATION_GEMINI_API_KEY  api_key=NULL
+  name=openai-direct  kind=None  is_active=False  api_key_env=VERIFICATION_OPENAI_API_KEY  api_key=NULL
+  name=litellm-local  kind=None  is_active=False  api_key_env=VERIFICATION_LITELLM_MASTER_KEY  api_key=NULL
+
+--- mfa_primary.json (productive shape, 10 backup hashes) ---
+  user_email=None
+  synthetic_totp=False  ← MUST be False on productive
+  backup_codes_argon2 count: 10  ← MUST be 10
+  first code prefix: $argon2id$v=19$m=65536,t=3,p=4
+  totp_secret length: 32  ← MUST be 32 (Base32 RFC 6238)

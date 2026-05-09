@@ -1,0 +1,43 @@
+{
+  "id": "FU-20260509205703-adminaimodelspage-discover-wizard-ui",
+  "schema_version": 1,
+  "status": "promoted",
+  "created_at": "2026-05-09T20:57:03+00:00",
+  "created_by": "sergiolr",
+  "origin_task_id": "P00-S02-T005",
+  "origin_phase_id": "P00",
+  "origin_step_id": "P00-S02",
+  "kind": "feature",
+  "product_increment": "current",
+  "build_state": "planned",
+  "severity": "medium",
+  "title": "AdminAiModelsPage discover wizard UI",
+  "description": "Wizard mode in AdminAiModelsPage calls the dynamic model discovery endpoint (FU-X1); user can review the diff of discovered vs existing models and approve/reject each before persisting. Depends on P04-S01-T002.",
+  "journey_refs": [
+    "J103"
+  ],
+  "screen_route": "—",
+  "endpoint": "—",
+  "tables": [],
+  "depends_on": [
+    "P00-S02-T005"
+  ],
+  "conflict_groups": [
+    "admin_ai_ui"
+  ],
+  "write_set": [
+    "frontend/src/features/admin_ai/**"
+  ],
+  "acceptance": [
+    "wizard mode in AdminAiModelsPage calls FU-X1 endpoint",
+    "user can review the diff and approve/reject"
+  ],
+  "verify": [
+    "manual run hits FU-X1 endpoint and persists models on user approval"
+  ],
+  "notes": [],
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260509205703-adminaimodelspage-discover-wizard-ui.yaml",
+  "promoted_at": "2026-05-09T20:57:15+00:00",
+  "promoted_task_id": "P00-S02-T007",
+  "source_doc_updated": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md"
+}

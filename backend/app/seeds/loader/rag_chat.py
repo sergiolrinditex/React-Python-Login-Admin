@@ -1,10 +1,13 @@
 """
 Loader for the 'rag_chat' namespace.
 
-Slice: P00-S02-T003 — Seed data and reset verification bundle
+Slice: P00-S02-T005 — Replace synthetic verification bundle with People Tech delivery
 Phase: P00 — Scaffold + Design System
 
 Loads rag/collections.json into rag_collections (table-tolerant).
+
+CHANGE from T003: added bundle_type kwarg for API consistency with other loaders.
+  No bundle_type-specific logic needed for collections (no credentials).
 
 Dependencies:
   - sqlalchemy[asyncio] 2.0.49
@@ -21,7 +24,7 @@ from sqlalchemy.ext.asyncio import AsyncEngine
 
 from app.core.logging import get_logger
 from app.seeds.io import load_fixture
-from app.seeds.loader._common import LoadReport
+from app.seeds.loader._common import BundleType, LoadReport
 from app.seeds.schemas.rag import RagCollectionListSeed
 from app.seeds.table_probe import table_exists
 
@@ -33,6 +36,7 @@ async def load_rag_chat(
     source_dir: Path,
     *,
     dry_run: bool = False,
+    bundle_type: BundleType = "synthetic",
 ) -> LoadReport:
     """Load the 'rag_chat' namespace: rag/collections.json.
 
@@ -41,9 +45,10 @@ async def load_rag_chat(
     Table-tolerant: logs WARN and skips if the table does not exist.
 
     Params:
-      engine     — async engine.
-      source_dir — bundle root directory.
-      dry_run    — validate only; no DB writes.
+      engine      — async engine.
+      source_dir  — bundle root directory.
+      dry_run     — validate only; no DB writes.
+      bundle_type — propagated for API consistency (no credential guards here).
     Returns: LoadReport.
     Errors: BundleLoadError if fixture is missing or invalid.
     """
@@ -51,7 +56,7 @@ async def load_rag_chat(
     report = LoadReport(namespace="rag_chat", dry_run=dry_run)
     ns = "rag_chat"
 
-    _logger.info("seed.namespace.start", namespace=ns, dry_run=dry_run)
+    _logger.info("seed.namespace.start", namespace=ns, dry_run=dry_run, bundle_type=bundle_type)
 
     collections_data = load_fixture(source_dir, "rag", "collections.json", RagCollectionListSeed)
 

@@ -12,4 +12,5 @@ task_ids:
   - P00-S02-T002
   - P00-S02-T003
   - P00-S02-T004
+  - P00-S02-T005
 source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Phase 0 — Bootstrap / foundation propia"

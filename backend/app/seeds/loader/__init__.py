@@ -1,7 +1,7 @@
 """
 Namespace loaders for the verification seed bundle.
 
-Slice: P00-S02-T003 — Seed data and reset verification bundle
+Slice: P00-S02-T005 — Replace synthetic verification bundle with People Tech delivery
 Phase: P00 — Scaffold + Design System
 
 Each public async function loads one namespace. All loaders:
@@ -10,8 +10,11 @@ Each public async function loads one namespace. All loaders:
   3. Upsert rows idempotently using INSERT … ON CONFLICT DO UPDATE.
   4. Return a LoadReport with counts and skipped tables.
 
-Public API (re-exported here for backwards compatibility — callers keep using
-`from app.seeds.loader import load_auth, ...` exactly as before):
+CHANGE from T003: all loaders now accept bundle_type kwarg ('synthetic'/'productive').
+  The bootstrap CLI reads MANIFEST._bundle_type and passes it to all loaders.
+  Synthetic path remains unchanged for backward compatibility.
+
+Public API (re-exported here for backwards compatibility):
   - LoadReport
   - load_auth
   - load_rag_chat
@@ -19,11 +22,6 @@ Public API (re-exported here for backwards compatibility — callers keep using
   - load_admin_ai
   - load_rag_docs
   - load_mcp_agents
-
-NOTE on encryption: admin_ai loader writes plaintext synthetic credentials.
-  This is acceptable because they are labelled 'synthetic-' and have no real
-  value. When P02-S02-T001 adds encryption-at-rest, a follow-up will add
-  encrypt-on-write there. Documented per task pack §Security.
 
 Dependencies:
   - sqlalchemy[asyncio] 2.0.49

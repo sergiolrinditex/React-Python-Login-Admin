@@ -1,0 +1,433 @@
+=== Seed productive (verbose ON, full bundle) ===
+[logging] BEFORE configure_logging: verbose=True
+[2m2026-05-09T20:13:59.005763Z[0m [[32m[1mdebug    [0m] [1mAFTER configure_logging: structlog configured with CWE-532 mitigation[0m [[0m[1m[34mapp.core.logging[0m][0m [36mlog_level[0m=[35mDEBUG[0m [36mshow_locals[0m=[35m'False (security fix P00-S02-T004)'[0m [36mverbose[0m=[35mTrue[0m
+[2m2026-05-09T20:13:59.005877Z[0m [[32m[1minfo     [0m] [1mseed.cli.start                [0m [[0m[1m[34m__main__[0m][0m [36mdry_run[0m=[35mFalse[0m [36monly[0m=[35mNone[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36msource[0m=[35m/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/../data/verification[0m
+[2m2026-05-09T20:13:59.006186Z[0m [[32m[1minfo     [0m] [1mseed.cli.bundle_type_detected [0m [[0m[1m[34m__main__[0m][0m [36mbundle_type[0m=[35mproductive[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.006416Z[0m [[32m[1mdebug    [0m] [1mUsing selector: KqueueSelector[0m [[0m[1m[34masyncio[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.006569Z[0m [[32m[1mdebug    [0m] [1mBEFORE _get_engine: creating async engine[0m [[0m[1m[34mapp.core.db[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.006626Z[0m [[32m[1mdebug    [0m] [1mBEFORE get_settings: loading Settings (env_file=/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.env, exists=True)[0m [[0m[1m[34mapp.core.config[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.009511Z[0m [[32m[1mdebug    [0m] [1mAFTER get_settings: loaded (api_host=127.0.0.1, api_port=8000, verbose=True, db_host_port=localhost:5433/hilopeople_dev)[0m [[0m[1m[34mapp.core.config[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.042178Z[0m [[32m[1mdebug    [0m] [1mAFTER _get_engine: engine created (host redacted)[0m [[0m[1m[34mapp.core.db[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.042255Z[0m [[32m[1minfo     [0m] [1mseed.run.start                [0m [[0m[1m[34m__main__[0m][0m [36mbundle_type[0m=[35mproductive[0m [36mdb_host_redacted[0m=[35m[redacted][0m [36mdry_run[0m=[35mFalse[0m [36mnamespaces[0m=[35m['auth', 'rag_chat', 'history', 'admin_ai', 'rag_docs', 'mcp_agents'][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36msource[0m=[35m/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/data/verification[0m
+[2m2026-05-09T20:13:59.042302Z[0m [[32m[1mdebug    [0m] [1mseed.dispatch.before          [0m [[0m[1m[34m__main__[0m][0m [36mnamespace[0m=[35mauth[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.042346Z[0m [[32m[1minfo     [0m] [1mseed.namespace.start          [0m [[0m[1m[34mapp.seeds.loader.auth[0m][0m [36mbundle_type[0m=[35mproductive[0m [36mdry_run[0m=[35mFalse[0m [36mnamespace[0m=[35mauth[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.042395Z[0m [[32m[1mdebug    [0m] [1mBEFORE load_fixture: reading file[0m [[0m[1m[34mapp.seeds.io[0m][0m [36mfilename[0m=[35memployee_primary.json[0m [36mnamespace[0m=[35musers[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.042629Z[0m [[32m[1mdebug    [0m] [1mAFTER load_fixture: validated [0m [[0m[1m[34mapp.seeds.io[0m][0m [36mfilename[0m=[35memployee_primary.json[0m [36mmodel[0m=[35mUserSeed[0m [36mnamespace[0m=[35musers[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.042664Z[0m [[32m[1mdebug    [0m] [1mBEFORE load_fixture: reading file[0m [[0m[1m[34mapp.seeds.io[0m][0m [36mfilename[0m=[35madmin_peopletech.json[0m [36mnamespace[0m=[35musers[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.042865Z[0m [[32m[1mdebug    [0m] [1mAFTER load_fixture: validated [0m [[0m[1m[34mapp.seeds.io[0m][0m [36mfilename[0m=[35madmin_peopletech.json[0m [36mmodel[0m=[35mUserSeed[0m [36mnamespace[0m=[35musers[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.043132Z[0m [[32m[1mdebug    [0m] [1mBEFORE table_exists: probing  [0m [[0m[1m[34mapp.seeds.table_probe[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mschema[0m=[35mpublic[0m [36mtable[0m=[35musers[0m
+2026-05-09 22:13:59,067 INFO sqlalchemy.engine.Engine select pg_catalog.version()
+[2m2026-05-09T20:13:59.067616Z[0m [[32m[1minfo     [0m] [1mselect pg_catalog.version()   [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,067 INFO sqlalchemy.engine.Engine [raw sql] ()
+[2m2026-05-09T20:13:59.067679Z[0m [[32m[1minfo     [0m] [1m[raw sql] ()                  [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,071 INFO sqlalchemy.engine.Engine select current_schema()
+[2m2026-05-09T20:13:59.071862Z[0m [[32m[1minfo     [0m] [1mselect current_schema()       [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,071 INFO sqlalchemy.engine.Engine [raw sql] ()
+[2m2026-05-09T20:13:59.071908Z[0m [[32m[1minfo     [0m] [1m[raw sql] ()                  [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,075 INFO sqlalchemy.engine.Engine show standard_conforming_strings
+[2m2026-05-09T20:13:59.075842Z[0m [[32m[1minfo     [0m] [1mshow standard_conforming_strings[0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,075 INFO sqlalchemy.engine.Engine [raw sql] ()
+[2m2026-05-09T20:13:59.075885Z[0m [[32m[1minfo     [0m] [1m[raw sql] ()                  [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,078 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+[2m2026-05-09T20:13:59.078703Z[0m [[32m[1minfo     [0m] [1mBEGIN (implicit)              [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,078 INFO sqlalchemy.engine.Engine SELECT 1 FROM information_schema.tables WHERE table_schema = $1 AND table_name = $2 LIMIT 1
+[2m2026-05-09T20:13:59.078746Z[0m [[32m[1minfo     [0m] [1mSELECT 1 FROM information_schema.tables WHERE table_schema = $1 AND table_name = $2 LIMIT 1[0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,078 INFO sqlalchemy.engine.Engine [generated in 0.00012s] ('public', 'users')
+[2m2026-05-09T20:13:59.078998Z[0m [[32m[1minfo     [0m] [1m[generated in 0.00012s] ('public', 'users')[0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,084 INFO sqlalchemy.engine.Engine ROLLBACK
+[2m2026-05-09T20:13:59.084034Z[0m [[32m[1minfo     [0m] [1mROLLBACK                      [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.084854Z[0m [[32m[1mdebug    [0m] [1mAFTER table_exists: probe complete[0m [[0m[1m[34mapp.seeds.table_probe[0m][0m [36mexists[0m=[35mTrue[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mschema[0m=[35mpublic[0m [36mtable[0m=[35musers[0m
+[2m2026-05-09T20:13:59.084902Z[0m [[32m[1mdebug    [0m] [1mBEFORE table_exists: probing  [0m [[0m[1m[34mapp.seeds.table_probe[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mschema[0m=[35mpublic[0m [36mtable[0m=[35mroles[0m
+2026-05-09 22:13:59,086 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+[2m2026-05-09T20:13:59.086920Z[0m [[32m[1minfo     [0m] [1mBEGIN (implicit)              [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,086 INFO sqlalchemy.engine.Engine SELECT 1 FROM information_schema.tables WHERE table_schema = $1 AND table_name = $2 LIMIT 1
+[2m2026-05-09T20:13:59.086974Z[0m [[32m[1minfo     [0m] [1mSELECT 1 FROM information_schema.tables WHERE table_schema = $1 AND table_name = $2 LIMIT 1[0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,087 INFO sqlalchemy.engine.Engine [cached since 0.008346s ago] ('public', 'roles')
+[2m2026-05-09T20:13:59.087022Z[0m [[32m[1minfo     [0m] [1m[cached since 0.008346s ago] ('public', 'roles')[0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,088 INFO sqlalchemy.engine.Engine ROLLBACK
+[2m2026-05-09T20:13:59.088318Z[0m [[32m[1minfo     [0m] [1mROLLBACK                      [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.088855Z[0m [[32m[1mdebug    [0m] [1mAFTER table_exists: probe complete[0m [[0m[1m[34mapp.seeds.table_probe[0m][0m [36mexists[0m=[35mTrue[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mschema[0m=[35mpublic[0m [36mtable[0m=[35mroles[0m
+[2m2026-05-09T20:13:59.088907Z[0m [[32m[1mdebug    [0m] [1mseed.auth.upsert_role.before  [0m [[0m[1m[34mapp.seeds.loader.auth[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mrole_name[0m=[35memployee[0m
+2026-05-09 22:13:59,090 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+[2m2026-05-09T20:13:59.090313Z[0m [[32m[1minfo     [0m] [1mBEGIN (implicit)              [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,090 INFO sqlalchemy.engine.Engine 
+                    INSERT INTO roles (name)
+                    VALUES ($1)
+                    ON CONFLICT (name) DO NOTHING
+                    
+[2m2026-05-09T20:13:59.090445Z[0m [[32m[1minfo     [0m] [1m
+                    INSERT INTO roles (name)
+                    VALUES ($1)
+                    ON CONFLICT (name) DO NOTHING
+                    [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,090 INFO sqlalchemy.engine.Engine [generated in 0.00007s] ('employee',)
+[2m2026-05-09T20:13:59.090490Z[0m [[32m[1minfo     [0m] [1m[generated in 0.00007s] ('employee',)[0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,092 INFO sqlalchemy.engine.Engine COMMIT
+[2m2026-05-09T20:13:59.092754Z[0m [[32m[1minfo     [0m] [1mCOMMIT                        [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.093995Z[0m [[32m[1mdebug    [0m] [1mseed.auth.upsert_role.after   [0m [[0m[1m[34mapp.seeds.loader.auth[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mrole_name[0m=[35memployee[0m [36mrows[0m=[35m1[0m
+[2m2026-05-09T20:13:59.094039Z[0m [[32m[1mdebug    [0m] [1mseed.auth.upsert_role.before  [0m [[0m[1m[34mapp.seeds.loader.auth[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mrole_name[0m=[35madmin[0m
+2026-05-09 22:13:59,095 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+[2m2026-05-09T20:13:59.095512Z[0m [[32m[1minfo     [0m] [1mBEGIN (implicit)              [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,095 INFO sqlalchemy.engine.Engine 
+                    INSERT INTO roles (name)
+                    VALUES ($1)
+                    ON CONFLICT (name) DO NOTHING
+                    
+[2m2026-05-09T20:13:59.095615Z[0m [[32m[1minfo     [0m] [1m
+                    INSERT INTO roles (name)
+                    VALUES ($1)
+                    ON CONFLICT (name) DO NOTHING
+                    [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,095 INFO sqlalchemy.engine.Engine [cached since 0.005236s ago] ('admin',)
+[2m2026-05-09T20:13:59.095666Z[0m [[32m[1minfo     [0m] [1m[cached since 0.005236s ago] ('admin',)[0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,096 INFO sqlalchemy.engine.Engine COMMIT
+[2m2026-05-09T20:13:59.096828Z[0m [[32m[1minfo     [0m] [1mCOMMIT                        [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.098032Z[0m [[32m[1mdebug    [0m] [1mseed.auth.upsert_role.after   [0m [[0m[1m[34mapp.seeds.loader.auth[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mrole_name[0m=[35madmin[0m [36mrows[0m=[35m1[0m
+[2m2026-05-09T20:13:59.132654Z[0m [[32m[1mdebug    [0m] [1mseed.auth.upsert_user.before  [0m [[0m[1m[34mapp.seeds.loader.auth[0m][0m [36memail_hash[0m=[35m016d94a2c783[0m [36mpreferred_language[0m=[35mes[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mrole[0m=[35memployee[0m
+2026-05-09 22:13:59,136 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+[2m2026-05-09T20:13:59.136252Z[0m [[32m[1minfo     [0m] [1mBEGIN (implicit)              [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,136 INFO sqlalchemy.engine.Engine 
+                INSERT INTO users (email, password_hash, full_name, status, preferred_language)
+                VALUES ($1, $2, $3, 'active', $4)
+                ON CONFLICT (email) DO UPDATE SET
+                  password_hash = EXCLUDED.password_hash,
+                  full_name = EXCLUDED.full_name,
+                  status = EXCLUDED.status,
+                  preferred_language = EXCLUDED.preferred_language,
+                  updated_at = NOW()
+                RETURNING id
+                
+[2m2026-05-09T20:13:59.136494Z[0m [[32m[1minfo     [0m] [1m
+                INSERT INTO users (email, password_hash, full_name, status, preferred_language)
+                VALUES ($1, $2, $3, 'active', $4)
+                ON CONFLICT (email) DO UPDATE SET
+                  password_hash = EXCLUDED.password_hash,
+                  full_name = EXCLUDED.full_name,
+                  status = EXCLUDED.status,
+                  preferred_language = EXCLUDED.preferred_language,
+                  updated_at = NOW()
+                RETURNING id
+                [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,136 INFO sqlalchemy.engine.Engine [generated in 0.00010s] ('s.lopezrap+employee@gmail.com', '$argon2id$v=19$m=65536,t=3,p=4$SosKdhZy9ZDm08ir5iA0Jg$cWAOYlsLIX1lMMkx8Wv6mdYPULv9DPmWyrsR5OY8oIE', 'Sergio Lopez (Employee)', 'es')
+[2m2026-05-09T20:13:59.136543Z[0m [[32m[1minfo     [0m] [1m[generated in 0.00010s] ('s.lopezrap+employee@gmail.com', '$argon2id$v=19$m=65536,t=3,p=4$SosKdhZy9ZDm08ir5iA0Jg$cWAOYlsLIX1lMMkx8Wv6mdYPULv9DPmWyrsR5OY8oIE', 'Sergio Lopez (Employee)', 'es')[0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,139 INFO sqlalchemy.engine.Engine COMMIT
+[2m2026-05-09T20:13:59.139872Z[0m [[32m[1minfo     [0m] [1mCOMMIT                        [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.141098Z[0m [[32m[1mdebug    [0m] [1mseed.auth.upsert_user.after   [0m [[0m[1m[34mapp.seeds.loader.auth[0m][0m [36memail_hash[0m=[35m016d94a2c783[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36muser_id_present[0m=[35mTrue[0m
+[2m2026-05-09T20:13:59.141145Z[0m [[32m[1mdebug    [0m] [1mseed.auth.upsert_employee_profile.before[0m [[0m[1m[34mapp.seeds.loader.auth[0m][0m [36memail_hash[0m=[35m016d94a2c783[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,143 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+[2m2026-05-09T20:13:59.143082Z[0m [[32m[1minfo     [0m] [1mBEGIN (implicit)              [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.143110Z[0m [[32m[1mdebug    [0m] [1mBEFORE table_exists: probing  [0m [[0m[1m[34mapp.seeds.table_probe[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mschema[0m=[35mpublic[0m [36mtable[0m=[35memployee_profiles[0m
+2026-05-09 22:13:59,160 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+[2m2026-05-09T20:13:59.160960Z[0m [[32m[1minfo     [0m] [1mBEGIN (implicit)              [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,160 INFO sqlalchemy.engine.Engine SELECT 1 FROM information_schema.tables WHERE table_schema = $1 AND table_name = $2 LIMIT 1
+[2m2026-05-09T20:13:59.161017Z[0m [[32m[1minfo     [0m] [1mSELECT 1 FROM information_schema.tables WHERE table_schema = $1 AND table_name = $2 LIMIT 1[0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,161 INFO sqlalchemy.engine.Engine [cached since 0.08239s ago] ('public', 'employee_profiles')
+[2m2026-05-09T20:13:59.161066Z[0m [[32m[1minfo     [0m] [1m[cached since 0.08239s ago] ('public', 'employee_profiles')[0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,165 INFO sqlalchemy.engine.Engine ROLLBACK
+[2m2026-05-09T20:13:59.165362Z[0m [[32m[1minfo     [0m] [1mROLLBACK                      [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.165940Z[0m [[32m[1mdebug    [0m] [1mAFTER table_exists: probe complete[0m [[0m[1m[34mapp.seeds.table_probe[0m][0m [36mexists[0m=[35mTrue[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mschema[0m=[35mpublic[0m [36mtable[0m=[35memployee_profiles[0m
+2026-05-09 22:13:59,166 INFO sqlalchemy.engine.Engine 
+                        INSERT INTO employee_profiles
+                          (user_id, employee_id, brand, society, center, country, department)
+                        VALUES
+                          ($1, $2, $3, $4, $5, $6, $7)
+                        ON CONFLICT (user_id) DO UPDATE SET
+                          employee_id = EXCLUDED.employee_id,
+                          brand = EXCLUDED.brand,
+                          society = EXCLUDED.society,
+                          center = EXCLUDED.center,
+                          country = EXCLUDED.country,
+                          department = EXCLUDED.department
+                        
+[2m2026-05-09T20:13:59.166164Z[0m [[32m[1minfo     [0m] [1m
+                        INSERT INTO employee_profiles
+                          (user_id, employee_id, brand, society, center, country, department)
+                        VALUES
+                          ($1, $2, $3, $4, $5, $6, $7)
+                        ON CONFLICT (user_id) DO UPDATE SET
+                          employee_id = EXCLUDED.employee_id,
+                          brand = EXCLUDED.brand,
+                          society = EXCLUDED.society,
+                          center = EXCLUDED.center,
+                          country = EXCLUDED.country,
+                          department = EXCLUDED.department
+                        [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,166 INFO sqlalchemy.engine.Engine [generated in 0.00008s] ('1e9177e5-0163-4df5-843c-3ef24a53a6bc', 'EMP-016D94A2', 'Hilo', 'Hilo People', 'HQ', 'ES', 'Recursos Humanos')
+[2m2026-05-09T20:13:59.166213Z[0m [[32m[1minfo     [0m] [1m[generated in 0.00008s] ('1e9177e5-0163-4df5-843c-3ef24a53a6bc', 'EMP-016D94A2', 'Hilo', 'Hilo People', 'HQ', 'ES', 'Recursos Humanos')[0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.168251Z[0m [[32m[1mdebug    [0m] [1mseed.auth.upsert_employee_profile.after[0m [[0m[1m[34mapp.seeds.loader.auth[0m][0m [36memail_hash[0m=[35m016d94a2c783[0m [36memployee_id[0m=[35mEMP-016D94A2[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,168 INFO sqlalchemy.engine.Engine COMMIT
+[2m2026-05-09T20:13:59.168321Z[0m [[32m[1minfo     [0m] [1mCOMMIT                        [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.169050Z[0m [[32m[1mdebug    [0m] [1mBEFORE table_exists: probing  [0m [[0m[1m[34mapp.seeds.table_probe[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mschema[0m=[35mpublic[0m [36mtable[0m=[35mroles[0m
+2026-05-09 22:13:59,171 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+[2m2026-05-09T20:13:59.171030Z[0m [[32m[1minfo     [0m] [1mBEGIN (implicit)              [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,171 INFO sqlalchemy.engine.Engine SELECT 1 FROM information_schema.tables WHERE table_schema = $1 AND table_name = $2 LIMIT 1
+[2m2026-05-09T20:13:59.171067Z[0m [[32m[1minfo     [0m] [1mSELECT 1 FROM information_schema.tables WHERE table_schema = $1 AND table_name = $2 LIMIT 1[0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,171 INFO sqlalchemy.engine.Engine [cached since 0.09244s ago] ('public', 'roles')
+[2m2026-05-09T20:13:59.171105Z[0m [[32m[1minfo     [0m] [1m[cached since 0.09244s ago] ('public', 'roles')[0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,172 INFO sqlalchemy.engine.Engine ROLLBACK
+[2m2026-05-09T20:13:59.172416Z[0m [[32m[1minfo     [0m] [1mROLLBACK                      [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.173064Z[0m [[32m[1mdebug    [0m] [1mAFTER table_exists: probe complete[0m [[0m[1m[34mapp.seeds.table_probe[0m][0m [36mexists[0m=[35mTrue[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mschema[0m=[35mpublic[0m [36mtable[0m=[35mroles[0m
+[2m2026-05-09T20:13:59.173106Z[0m [[32m[1mdebug    [0m] [1mBEFORE table_exists: probing  [0m [[0m[1m[34mapp.seeds.table_probe[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mschema[0m=[35mpublic[0m [36mtable[0m=[35muser_roles[0m
+2026-05-09 22:13:59,174 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+[2m2026-05-09T20:13:59.174748Z[0m [[32m[1minfo     [0m] [1mBEGIN (implicit)              [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,174 INFO sqlalchemy.engine.Engine SELECT 1 FROM information_schema.tables WHERE table_schema = $1 AND table_name = $2 LIMIT 1
+[2m2026-05-09T20:13:59.174787Z[0m [[32m[1minfo     [0m] [1mSELECT 1 FROM information_schema.tables WHERE table_schema = $1 AND table_name = $2 LIMIT 1[0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,174 INFO sqlalchemy.engine.Engine [cached since 0.09616s ago] ('public', 'user_roles')
+[2m2026-05-09T20:13:59.174828Z[0m [[32m[1minfo     [0m] [1m[cached since 0.09616s ago] ('public', 'user_roles')[0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,176 INFO sqlalchemy.engine.Engine ROLLBACK
+[2m2026-05-09T20:13:59.176326Z[0m [[32m[1minfo     [0m] [1mROLLBACK                      [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.176876Z[0m [[32m[1mdebug    [0m] [1mAFTER table_exists: probe complete[0m [[0m[1m[34mapp.seeds.table_probe[0m][0m [36mexists[0m=[35mTrue[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mschema[0m=[35mpublic[0m [36mtable[0m=[35muser_roles[0m
+[2m2026-05-09T20:13:59.176926Z[0m [[32m[1mdebug    [0m] [1mseed.auth.upsert_user_role.before[0m [[0m[1m[34mapp.seeds.loader.auth[0m][0m [36memail_hash[0m=[35m016d94a2c783[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mrole[0m=[35memployee[0m
+2026-05-09 22:13:59,178 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+[2m2026-05-09T20:13:59.178491Z[0m [[32m[1minfo     [0m] [1mBEGIN (implicit)              [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,178 INFO sqlalchemy.engine.Engine SELECT id FROM roles WHERE name = $1
+[2m2026-05-09T20:13:59.178635Z[0m [[32m[1minfo     [0m] [1mSELECT id FROM roles WHERE name = $1[0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,178 INFO sqlalchemy.engine.Engine [generated in 0.00007s] ('employee',)
+[2m2026-05-09T20:13:59.178686Z[0m [[32m[1minfo     [0m] [1m[generated in 0.00007s] ('employee',)[0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,180 INFO sqlalchemy.engine.Engine 
+                        INSERT INTO user_roles (user_id, role_id)
+                        VALUES ($1, $2)
+                        ON CONFLICT (user_id, role_id) DO NOTHING
+                        
+[2m2026-05-09T20:13:59.180501Z[0m [[32m[1minfo     [0m] [1m
+                        INSERT INTO user_roles (user_id, role_id)
+                        VALUES ($1, $2)
+                        ON CONFLICT (user_id, role_id) DO NOTHING
+                        [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,180 INFO sqlalchemy.engine.Engine [generated in 0.00008s] ('1e9177e5-0163-4df5-843c-3ef24a53a6bc', '0f655e09-bd95-4554-b08c-959bf2ad7b21')
+[2m2026-05-09T20:13:59.180549Z[0m [[32m[1minfo     [0m] [1m[generated in 0.00008s] ('1e9177e5-0163-4df5-843c-3ef24a53a6bc', '0f655e09-bd95-4554-b08c-959bf2ad7b21')[0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,181 INFO sqlalchemy.engine.Engine COMMIT
+[2m2026-05-09T20:13:59.181988Z[0m [[32m[1minfo     [0m] [1mCOMMIT                        [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.182809Z[0m [[32m[1mdebug    [0m] [1mseed.auth.upsert_user_role.after[0m [[0m[1m[34mapp.seeds.loader.auth[0m][0m [36memail_hash[0m=[35m016d94a2c783[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mrole[0m=[35memployee[0m
+[2m2026-05-09T20:13:59.215593Z[0m [[32m[1mdebug    [0m] [1mseed.auth.upsert_user.before  [0m [[0m[1m[34mapp.seeds.loader.auth[0m][0m [36memail_hash[0m=[35ma899dd964ea4[0m [36mpreferred_language[0m=[35mes[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mrole[0m=[35madmin[0m
+2026-05-09 22:13:59,218 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+[2m2026-05-09T20:13:59.218810Z[0m [[32m[1minfo     [0m] [1mBEGIN (implicit)              [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,218 INFO sqlalchemy.engine.Engine 
+                INSERT INTO users (email, password_hash, full_name, status, preferred_language)
+                VALUES ($1, $2, $3, 'active', $4)
+                ON CONFLICT (email) DO UPDATE SET
+                  password_hash = EXCLUDED.password_hash,
+                  full_name = EXCLUDED.full_name,
+                  status = EXCLUDED.status,
+                  preferred_language = EXCLUDED.preferred_language,
+                  updated_at = NOW()
+                RETURNING id
+                
+[2m2026-05-09T20:13:59.218949Z[0m [[32m[1minfo     [0m] [1m
+                INSERT INTO users (email, password_hash, full_name, status, preferred_language)
+                VALUES ($1, $2, $3, 'active', $4)
+                ON CONFLICT (email) DO UPDATE SET
+                  password_hash = EXCLUDED.password_hash,
+                  full_name = EXCLUDED.full_name,
+                  status = EXCLUDED.status,
+                  preferred_language = EXCLUDED.preferred_language,
+                  updated_at = NOW()
+                RETURNING id
+                [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,218 INFO sqlalchemy.engine.Engine [cached since 0.08255s ago] ('s.lopezrap+admin@gmail.com', '$argon2id$v=19$m=65536,t=3,p=4$w4DWDw/OBuHnoZaPdiWcnQ$43OtAOVSonQ1eslHqcFI/XQD4PFye5kenKMPyG3XbnM', 'Sergio Lopez (Admin)', 'es')
+[2m2026-05-09T20:13:59.219003Z[0m [[32m[1minfo     [0m] [1m[cached since 0.08255s ago] ('s.lopezrap+admin@gmail.com', '$argon2id$v=19$m=65536,t=3,p=4$w4DWDw/OBuHnoZaPdiWcnQ$43OtAOVSonQ1eslHqcFI/XQD4PFye5kenKMPyG3XbnM', 'Sergio Lopez (Admin)', 'es')[0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,221 INFO sqlalchemy.engine.Engine COMMIT
+[2m2026-05-09T20:13:59.221027Z[0m [[32m[1minfo     [0m] [1mCOMMIT                        [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.222258Z[0m [[32m[1mdebug    [0m] [1mseed.auth.upsert_user.after   [0m [[0m[1m[34mapp.seeds.loader.auth[0m][0m [36memail_hash[0m=[35ma899dd964ea4[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36muser_id_present[0m=[35mTrue[0m
+[2m2026-05-09T20:13:59.222297Z[0m [[32m[1mdebug    [0m] [1mBEFORE table_exists: probing  [0m [[0m[1m[34mapp.seeds.table_probe[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mschema[0m=[35mpublic[0m [36mtable[0m=[35mroles[0m
+2026-05-09 22:13:59,224 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+[2m2026-05-09T20:13:59.224230Z[0m [[32m[1minfo     [0m] [1mBEGIN (implicit)              [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,224 INFO sqlalchemy.engine.Engine SELECT 1 FROM information_schema.tables WHERE table_schema = $1 AND table_name = $2 LIMIT 1
+[2m2026-05-09T20:13:59.224275Z[0m [[32m[1minfo     [0m] [1mSELECT 1 FROM information_schema.tables WHERE table_schema = $1 AND table_name = $2 LIMIT 1[0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,224 INFO sqlalchemy.engine.Engine [cached since 0.1456s ago] ('public', 'roles')
+[2m2026-05-09T20:13:59.224316Z[0m [[32m[1minfo     [0m] [1m[cached since 0.1456s ago] ('public', 'roles')[0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,225 INFO sqlalchemy.engine.Engine ROLLBACK
+[2m2026-05-09T20:13:59.225951Z[0m [[32m[1minfo     [0m] [1mROLLBACK                      [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.226455Z[0m [[32m[1mdebug    [0m] [1mAFTER table_exists: probe complete[0m [[0m[1m[34mapp.seeds.table_probe[0m][0m [36mexists[0m=[35mTrue[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mschema[0m=[35mpublic[0m [36mtable[0m=[35mroles[0m
+[2m2026-05-09T20:13:59.226515Z[0m [[32m[1mdebug    [0m] [1mBEFORE table_exists: probing  [0m [[0m[1m[34mapp.seeds.table_probe[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mschema[0m=[35mpublic[0m [36mtable[0m=[35muser_roles[0m
+2026-05-09 22:13:59,227 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+[2m2026-05-09T20:13:59.227731Z[0m [[32m[1minfo     [0m] [1mBEGIN (implicit)              [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,227 INFO sqlalchemy.engine.Engine SELECT 1 FROM information_schema.tables WHERE table_schema = $1 AND table_name = $2 LIMIT 1
+[2m2026-05-09T20:13:59.227766Z[0m [[32m[1minfo     [0m] [1mSELECT 1 FROM information_schema.tables WHERE table_schema = $1 AND table_name = $2 LIMIT 1[0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,227 INFO sqlalchemy.engine.Engine [cached since 0.1491s ago] ('public', 'user_roles')
+[2m2026-05-09T20:13:59.227801Z[0m [[32m[1minfo     [0m] [1m[cached since 0.1491s ago] ('public', 'user_roles')[0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,228 INFO sqlalchemy.engine.Engine ROLLBACK
+[2m2026-05-09T20:13:59.228709Z[0m [[32m[1minfo     [0m] [1mROLLBACK                      [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.229105Z[0m [[32m[1mdebug    [0m] [1mAFTER table_exists: probe complete[0m [[0m[1m[34mapp.seeds.table_probe[0m][0m [36mexists[0m=[35mTrue[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mschema[0m=[35mpublic[0m [36mtable[0m=[35muser_roles[0m
+[2m2026-05-09T20:13:59.229161Z[0m [[32m[1mdebug    [0m] [1mseed.auth.upsert_user_role.before[0m [[0m[1m[34mapp.seeds.loader.auth[0m][0m [36memail_hash[0m=[35ma899dd964ea4[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mrole[0m=[35madmin[0m
+2026-05-09 22:13:59,230 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+[2m2026-05-09T20:13:59.230228Z[0m [[32m[1minfo     [0m] [1mBEGIN (implicit)              [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,230 INFO sqlalchemy.engine.Engine SELECT id FROM roles WHERE name = $1
+[2m2026-05-09T20:13:59.230302Z[0m [[32m[1minfo     [0m] [1mSELECT id FROM roles WHERE name = $1[0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,230 INFO sqlalchemy.engine.Engine [cached since 0.05173s ago] ('admin',)
+[2m2026-05-09T20:13:59.230337Z[0m [[32m[1minfo     [0m] [1m[cached since 0.05173s ago] ('admin',)[0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,231 INFO sqlalchemy.engine.Engine 
+                        INSERT INTO user_roles (user_id, role_id)
+                        VALUES ($1, $2)
+                        ON CONFLICT (user_id, role_id) DO NOTHING
+                        
+[2m2026-05-09T20:13:59.231252Z[0m [[32m[1minfo     [0m] [1m
+                        INSERT INTO user_roles (user_id, role_id)
+                        VALUES ($1, $2)
+                        ON CONFLICT (user_id, role_id) DO NOTHING
+                        [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,231 INFO sqlalchemy.engine.Engine [cached since 0.05083s ago] ('2a5bfb1b-efa5-463c-8c56-8334b7a020c6', '42ee4390-cecf-4926-ab4e-5bdfd43bb08d')
+[2m2026-05-09T20:13:59.231301Z[0m [[32m[1minfo     [0m] [1m[cached since 0.05083s ago] ('2a5bfb1b-efa5-463c-8c56-8334b7a020c6', '42ee4390-cecf-4926-ab4e-5bdfd43bb08d')[0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,231 INFO sqlalchemy.engine.Engine COMMIT
+[2m2026-05-09T20:13:59.231790Z[0m [[32m[1minfo     [0m] [1mCOMMIT                        [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.232342Z[0m [[32m[1mdebug    [0m] [1mseed.auth.upsert_user_role.after[0m [[0m[1m[34mapp.seeds.loader.auth[0m][0m [36memail_hash[0m=[35ma899dd964ea4[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mrole[0m=[35madmin[0m
+[2m2026-05-09T20:13:59.232386Z[0m [[32m[1mdebug    [0m] [1mBEFORE table_exists: probing  [0m [[0m[1m[34mapp.seeds.table_probe[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mschema[0m=[35mpublic[0m [36mtable[0m=[35mmfa_totp_secrets[0m
+2026-05-09 22:13:59,233 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+[2m2026-05-09T20:13:59.233573Z[0m [[32m[1minfo     [0m] [1mBEGIN (implicit)              [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,233 INFO sqlalchemy.engine.Engine SELECT 1 FROM information_schema.tables WHERE table_schema = $1 AND table_name = $2 LIMIT 1
+[2m2026-05-09T20:13:59.233607Z[0m [[32m[1minfo     [0m] [1mSELECT 1 FROM information_schema.tables WHERE table_schema = $1 AND table_name = $2 LIMIT 1[0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,233 INFO sqlalchemy.engine.Engine [cached since 0.155s ago] ('public', 'mfa_totp_secrets')
+[2m2026-05-09T20:13:59.233642Z[0m [[32m[1minfo     [0m] [1m[cached since 0.155s ago] ('public', 'mfa_totp_secrets')[0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,234 INFO sqlalchemy.engine.Engine ROLLBACK
+[2m2026-05-09T20:13:59.234888Z[0m [[32m[1minfo     [0m] [1mROLLBACK                      [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.235419Z[0m [[32m[1mdebug    [0m] [1mAFTER table_exists: probe complete[0m [[0m[1m[34mapp.seeds.table_probe[0m][0m [36mexists[0m=[35mTrue[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mschema[0m=[35mpublic[0m [36mtable[0m=[35mmfa_totp_secrets[0m
+[2m2026-05-09T20:13:59.235470Z[0m [[32m[1mdebug    [0m] [1mseed.auth.upsert_mfa.before   [0m [[0m[1m[34mapp.seeds.loader.auth[0m][0m [36memail_hash[0m=[35m016d94a2c783[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,244 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+[2m2026-05-09T20:13:59.244184Z[0m [[32m[1minfo     [0m] [1mBEGIN (implicit)              [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,244 INFO sqlalchemy.engine.Engine SELECT id FROM users WHERE email = $1
+[2m2026-05-09T20:13:59.244301Z[0m [[32m[1minfo     [0m] [1mSELECT id FROM users WHERE email = $1[0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,244 INFO sqlalchemy.engine.Engine [generated in 0.00006s] ('s.lopezrap+employee@gmail.com',)
+[2m2026-05-09T20:13:59.244338Z[0m [[32m[1minfo     [0m] [1m[generated in 0.00006s] ('s.lopezrap+employee@gmail.com',)[0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,245 INFO sqlalchemy.engine.Engine COMMIT
+[2m2026-05-09T20:13:59.245906Z[0m [[32m[1minfo     [0m] [1mCOMMIT                        [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,247 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+[2m2026-05-09T20:13:59.247832Z[0m [[32m[1minfo     [0m] [1mBEGIN (implicit)              [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,247 INFO sqlalchemy.engine.Engine 
+                INSERT INTO mfa_totp_secrets (user_id, secret_encrypted, enabled)
+                VALUES ($1, $2, $3)
+                ON CONFLICT (user_id) DO UPDATE SET
+                  secret_encrypted = EXCLUDED.secret_encrypted,
+                  enabled = EXCLUDED.enabled
+                
+[2m2026-05-09T20:13:59.247983Z[0m [[32m[1minfo     [0m] [1m
+                INSERT INTO mfa_totp_secrets (user_id, secret_encrypted, enabled)
+                VALUES ($1, $2, $3)
+                ON CONFLICT (user_id) DO UPDATE SET
+                  secret_encrypted = EXCLUDED.secret_encrypted,
+                  enabled = EXCLUDED.enabled
+                [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,248 INFO sqlalchemy.engine.Engine [generated in 0.00006s] ('1e9177e5-0163-4df5-843c-3ef24a53a6bc', 'gAAAAABp_5WHU0U_5qcUoL3Z7cAxwVDVkBDX2vOghpDflPr6K2WxjXXb4iJ9svkEZc10aYR72z9-yJO_BQA9TpzMqrU8Z7BmWdZQT6n4nnv9YCI__m-fZaeroaVqRv3n6LhCaP9VrYb7', True)
+[2m2026-05-09T20:13:59.248030Z[0m [[32m[1minfo     [0m] [1m[generated in 0.00006s] ('1e9177e5-0163-4df5-843c-3ef24a53a6bc', 'gAAAAABp_5WHU0U_5qcUoL3Z7cAxwVDVkBDX2vOghpDflPr6K2WxjXXb4iJ9svkEZc10aYR72z9-yJO_BQA9TpzMqrU8Z7BmWdZQT6n4nnv9YCI__m-fZaeroaVqRv3n6LhCaP9VrYb7', True)[0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,249 INFO sqlalchemy.engine.Engine COMMIT
+[2m2026-05-09T20:13:59.249435Z[0m [[32m[1minfo     [0m] [1mCOMMIT                        [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.250094Z[0m [[32m[1mdebug    [0m] [1mseed.auth.upsert_mfa.after    [0m [[0m[1m[34mapp.seeds.loader.auth[0m][0m [36memail_hash[0m=[35m016d94a2c783[0m [36mencrypted[0m=[35mTrue[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.250140Z[0m [[32m[1minfo     [0m] [1mseed.namespace.done           [0m [[0m[1m[34mapp.seeds.loader.auth[0m][0m [36mduration_ms[0m=[35m207.8[0m [36mnamespace[0m=[35mauth[0m [36mpersisted[0m=[35m8[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mskipped_missing_table[0m=[35m0[0m
+[2m2026-05-09T20:13:59.250179Z[0m [[32m[1mdebug    [0m] [1mseed.dispatch.after           [0m [[0m[1m[34m__main__[0m][0m [36mnamespace[0m=[35mauth[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mrows_inserted[0m=[35m8[0m [36mskipped_tables[0m=[35m[][0m
+[2m2026-05-09T20:13:59.250211Z[0m [[32m[1mdebug    [0m] [1mseed.dispatch.before          [0m [[0m[1m[34m__main__[0m][0m [36mnamespace[0m=[35mrag_chat[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.250255Z[0m [[32m[1minfo     [0m] [1mseed.namespace.start          [0m [[0m[1m[34mapp.seeds.loader.rag_chat[0m][0m [36mbundle_type[0m=[35mproductive[0m [36mdry_run[0m=[35mFalse[0m [36mnamespace[0m=[35mrag_chat[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.250294Z[0m [[32m[1mdebug    [0m] [1mBEFORE load_fixture: reading file[0m [[0m[1m[34mapp.seeds.io[0m][0m [36mfilename[0m=[35mcollections.json[0m [36mnamespace[0m=[35mrag[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.251010Z[0m [[32m[1mdebug    [0m] [1mAFTER load_fixture: validated [0m [[0m[1m[34mapp.seeds.io[0m][0m [36mfilename[0m=[35mcollections.json[0m [36mmodel[0m=[35mRagCollectionListSeed[0m [36mnamespace[0m=[35mrag[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.251045Z[0m [[32m[1mdebug    [0m] [1mBEFORE table_exists: probing  [0m [[0m[1m[34mapp.seeds.table_probe[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mschema[0m=[35mpublic[0m [36mtable[0m=[35mrag_collections[0m
+2026-05-09 22:13:59,252 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+[2m2026-05-09T20:13:59.252533Z[0m [[32m[1minfo     [0m] [1mBEGIN (implicit)              [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,252 INFO sqlalchemy.engine.Engine SELECT 1 FROM information_schema.tables WHERE table_schema = $1 AND table_name = $2 LIMIT 1
+[2m2026-05-09T20:13:59.252569Z[0m [[32m[1minfo     [0m] [1mSELECT 1 FROM information_schema.tables WHERE table_schema = $1 AND table_name = $2 LIMIT 1[0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,252 INFO sqlalchemy.engine.Engine [cached since 0.1739s ago] ('public', 'rag_collections')
+[2m2026-05-09T20:13:59.252604Z[0m [[32m[1minfo     [0m] [1m[cached since 0.1739s ago] ('public', 'rag_collections')[0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,253 INFO sqlalchemy.engine.Engine ROLLBACK
+[2m2026-05-09T20:13:59.253744Z[0m [[32m[1minfo     [0m] [1mROLLBACK                      [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.254276Z[0m [[32m[1mdebug    [0m] [1mAFTER table_exists: probe complete[0m [[0m[1m[34mapp.seeds.table_probe[0m][0m [36mexists[0m=[35mFalse[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mschema[0m=[35mpublic[0m [36mtable[0m=[35mrag_collections[0m
+[2m2026-05-09T20:13:59.254317Z[0m [[33m[1mwarning  [0m] [1mseed.namespace.table_missing  [0m [[0m[1m[34mapp.seeds.loader.rag_chat[0m][0m [36maction[0m=[35mskipped[0m [36mnamespace[0m=[35mrag_chat[0m [36mreason[0m=[35mtable_missing[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mtable[0m=[35mrag_collections[0m
+[2m2026-05-09T20:13:59.254352Z[0m [[32m[1minfo     [0m] [1mseed.namespace.done           [0m [[0m[1m[34mapp.seeds.loader.rag_chat[0m][0m [36mduration_ms[0m=[35m4.1[0m [36mnamespace[0m=[35mrag_chat[0m [36mpersisted[0m=[35m0[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mskipped_missing_table[0m=[35m1[0m
+[2m2026-05-09T20:13:59.254382Z[0m [[32m[1mdebug    [0m] [1mseed.dispatch.after           [0m [[0m[1m[34m__main__[0m][0m [36mnamespace[0m=[35mrag_chat[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mrows_inserted[0m=[35m0[0m [36mskipped_tables[0m=[35m['rag_collections'][0m
+[2m2026-05-09T20:13:59.254411Z[0m [[32m[1mdebug    [0m] [1mseed.dispatch.before          [0m [[0m[1m[34m__main__[0m][0m [36mnamespace[0m=[35mhistory[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.254444Z[0m [[32m[1minfo     [0m] [1mseed.namespace.start          [0m [[0m[1m[34mapp.seeds.loader.history[0m][0m [36mbundle_type[0m=[35mproductive[0m [36mdry_run[0m=[35mFalse[0m [36mnamespace[0m=[35mhistory[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.254478Z[0m [[32m[1mdebug    [0m] [1mBEFORE load_fixture: reading file[0m [[0m[1m[34mapp.seeds.io[0m][0m [36mfilename[0m=[35mconversations.json[0m [36mnamespace[0m=[35mhistory[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.254949Z[0m [[32m[1mdebug    [0m] [1mAFTER load_fixture: validated [0m [[0m[1m[34mapp.seeds.io[0m][0m [36mfilename[0m=[35mconversations.json[0m [36mmodel[0m=[35mConversationListSeed[0m [36mnamespace[0m=[35mhistory[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.254979Z[0m [[32m[1mdebug    [0m] [1mBEFORE table_exists: probing  [0m [[0m[1m[34mapp.seeds.table_probe[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mschema[0m=[35mpublic[0m [36mtable[0m=[35mconversations[0m
+2026-05-09 22:13:59,256 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+[2m2026-05-09T20:13:59.256438Z[0m [[32m[1minfo     [0m] [1mBEGIN (implicit)              [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,256 INFO sqlalchemy.engine.Engine SELECT 1 FROM information_schema.tables WHERE table_schema = $1 AND table_name = $2 LIMIT 1
+[2m2026-05-09T20:13:59.256472Z[0m [[32m[1minfo     [0m] [1mSELECT 1 FROM information_schema.tables WHERE table_schema = $1 AND table_name = $2 LIMIT 1[0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,256 INFO sqlalchemy.engine.Engine [cached since 0.1778s ago] ('public', 'conversations')
+[2m2026-05-09T20:13:59.256508Z[0m [[32m[1minfo     [0m] [1m[cached since 0.1778s ago] ('public', 'conversations')[0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,257 INFO sqlalchemy.engine.Engine ROLLBACK
+[2m2026-05-09T20:13:59.257688Z[0m [[32m[1minfo     [0m] [1mROLLBACK                      [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.258232Z[0m [[32m[1mdebug    [0m] [1mAFTER table_exists: probe complete[0m [[0m[1m[34mapp.seeds.table_probe[0m][0m [36mexists[0m=[35mFalse[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mschema[0m=[35mpublic[0m [36mtable[0m=[35mconversations[0m
+[2m2026-05-09T20:13:59.258271Z[0m [[33m[1mwarning  [0m] [1mseed.namespace.table_missing  [0m [[0m[1m[34mapp.seeds.loader.history[0m][0m [36maction[0m=[35mskipped[0m [36mnamespace[0m=[35mhistory[0m [36mreason[0m=[35mtable_missing[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mtable[0m=[35mconversations[0m
+[2m2026-05-09T20:13:59.258305Z[0m [[32m[1minfo     [0m] [1mseed.namespace.done           [0m [[0m[1m[34mapp.seeds.loader.history[0m][0m [36mduration_ms[0m=[35m3.9[0m [36mnamespace[0m=[35mhistory[0m [36mpersisted[0m=[35m0[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mskipped_missing_table[0m=[35m1[0m
+[2m2026-05-09T20:13:59.258336Z[0m [[32m[1mdebug    [0m] [1mseed.dispatch.after           [0m [[0m[1m[34m__main__[0m][0m [36mnamespace[0m=[35mhistory[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mrows_inserted[0m=[35m0[0m [36mskipped_tables[0m=[35m['conversations'][0m
+[2m2026-05-09T20:13:59.258363Z[0m [[32m[1mdebug    [0m] [1mseed.dispatch.before          [0m [[0m[1m[34m__main__[0m][0m [36mnamespace[0m=[35madmin_ai[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.258395Z[0m [[32m[1minfo     [0m] [1mseed.namespace.start          [0m [[0m[1m[34mapp.seeds.loader.admin_ai[0m][0m [36mbundle_type[0m=[35mproductive[0m [36mdry_run[0m=[35mFalse[0m [36mnamespace[0m=[35madmin_ai[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.258426Z[0m [[32m[1mdebug    [0m] [1mBEFORE load_fixture: reading file[0m [[0m[1m[34mapp.seeds.io[0m][0m [36mfilename[0m=[35mproviders.json[0m [36mnamespace[0m=[35madmin_ai[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.258841Z[0m [[32m[1mdebug    [0m] [1mAFTER load_fixture: validated [0m [[0m[1m[34mapp.seeds.io[0m][0m [36mfilename[0m=[35mproviders.json[0m [36mmodel[0m=[35mAiProviderListSeed[0m [36mnamespace[0m=[35madmin_ai[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.258875Z[0m [[32m[1mdebug    [0m] [1mBEFORE load_fixture: reading file[0m [[0m[1m[34mapp.seeds.io[0m][0m [36mfilename[0m=[35mmodels.json[0m [36mnamespace[0m=[35madmin_ai[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.259268Z[0m [[32m[1mdebug    [0m] [1mAFTER load_fixture: validated [0m [[0m[1m[34mapp.seeds.io[0m][0m [36mfilename[0m=[35mmodels.json[0m [36mmodel[0m=[35mAiModelListSeed[0m [36mnamespace[0m=[35madmin_ai[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.259363Z[0m [[32m[1mdebug    [0m] [1mBEFORE table_exists: probing  [0m [[0m[1m[34mapp.seeds.table_probe[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mschema[0m=[35mpublic[0m [36mtable[0m=[35mai_providers[0m
+2026-05-09 22:13:59,260 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+[2m2026-05-09T20:13:59.260866Z[0m [[32m[1minfo     [0m] [1mBEGIN (implicit)              [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,260 INFO sqlalchemy.engine.Engine SELECT 1 FROM information_schema.tables WHERE table_schema = $1 AND table_name = $2 LIMIT 1
+[2m2026-05-09T20:13:59.260905Z[0m [[32m[1minfo     [0m] [1mSELECT 1 FROM information_schema.tables WHERE table_schema = $1 AND table_name = $2 LIMIT 1[0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,260 INFO sqlalchemy.engine.Engine [cached since 0.1823s ago] ('public', 'ai_providers')
+[2m2026-05-09T20:13:59.260939Z[0m [[32m[1minfo     [0m] [1m[cached since 0.1823s ago] ('public', 'ai_providers')[0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,262 INFO sqlalchemy.engine.Engine ROLLBACK
+[2m2026-05-09T20:13:59.262351Z[0m [[32m[1minfo     [0m] [1mROLLBACK                      [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.263658Z[0m [[32m[1mdebug    [0m] [1mAFTER table_exists: probe complete[0m [[0m[1m[34mapp.seeds.table_probe[0m][0m [36mexists[0m=[35mFalse[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mschema[0m=[35mpublic[0m [36mtable[0m=[35mai_providers[0m
+[2m2026-05-09T20:13:59.263711Z[0m [[33m[1mwarning  [0m] [1mseed.namespace.table_missing  [0m [[0m[1m[34mapp.seeds.loader.admin_ai[0m][0m [36maction[0m=[35mskipped[0m [36mnamespace[0m=[35madmin_ai[0m [36mreason[0m=[35mtable_missing[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mtable[0m=[35mai_providers[0m
+[2m2026-05-09T20:13:59.263751Z[0m [[32m[1mdebug    [0m] [1mBEFORE table_exists: probing  [0m [[0m[1m[34mapp.seeds.table_probe[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mschema[0m=[35mpublic[0m [36mtable[0m=[35mai_models[0m
+2026-05-09 22:13:59,265 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+[2m2026-05-09T20:13:59.265568Z[0m [[32m[1minfo     [0m] [1mBEGIN (implicit)              [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,265 INFO sqlalchemy.engine.Engine SELECT 1 FROM information_schema.tables WHERE table_schema = $1 AND table_name = $2 LIMIT 1
+[2m2026-05-09T20:13:59.265617Z[0m [[32m[1minfo     [0m] [1mSELECT 1 FROM information_schema.tables WHERE table_schema = $1 AND table_name = $2 LIMIT 1[0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,265 INFO sqlalchemy.engine.Engine [cached since 0.187s ago] ('public', 'ai_models')
+[2m2026-05-09T20:13:59.265660Z[0m [[32m[1minfo     [0m] [1m[cached since 0.187s ago] ('public', 'ai_models')[0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,266 INFO sqlalchemy.engine.Engine ROLLBACK
+[2m2026-05-09T20:13:59.266691Z[0m [[32m[1minfo     [0m] [1mROLLBACK                      [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.267205Z[0m [[32m[1mdebug    [0m] [1mAFTER table_exists: probe complete[0m [[0m[1m[34mapp.seeds.table_probe[0m][0m [36mexists[0m=[35mFalse[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mschema[0m=[35mpublic[0m [36mtable[0m=[35mai_models[0m
+[2m2026-05-09T20:13:59.267264Z[0m [[33m[1mwarning  [0m] [1mseed.namespace.table_missing  [0m [[0m[1m[34mapp.seeds.loader.admin_ai[0m][0m [36maction[0m=[35mskipped[0m [36mnamespace[0m=[35madmin_ai[0m [36mreason[0m=[35mtable_missing[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mtable[0m=[35mai_models[0m
+[2m2026-05-09T20:13:59.267308Z[0m [[32m[1minfo     [0m] [1mseed.namespace.done           [0m [[0m[1m[34mapp.seeds.loader.admin_ai[0m][0m [36mduration_ms[0m=[35m8.9[0m [36mnamespace[0m=[35madmin_ai[0m [36mpersisted[0m=[35m0[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mskipped_missing_table[0m=[35m2[0m
+[2m2026-05-09T20:13:59.267346Z[0m [[32m[1mdebug    [0m] [1mseed.dispatch.after           [0m [[0m[1m[34m__main__[0m][0m [36mnamespace[0m=[35madmin_ai[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mrows_inserted[0m=[35m0[0m [36mskipped_tables[0m=[35m['ai_providers', 'ai_models'][0m
+[2m2026-05-09T20:13:59.267376Z[0m [[32m[1mdebug    [0m] [1mseed.dispatch.before          [0m [[0m[1m[34m__main__[0m][0m [36mnamespace[0m=[35mrag_docs[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.267416Z[0m [[32m[1minfo     [0m] [1mseed.namespace.start          [0m [[0m[1m[34mapp.seeds.loader.rag_docs[0m][0m [36mbundle_type[0m=[35mproductive[0m [36mdry_run[0m=[35mFalse[0m [36mnamespace[0m=[35mrag_docs[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.267874Z[0m [[32m[1mdebug    [0m] [1mBEFORE load_fixture: reading file[0m [[0m[1m[34mapp.seeds.io[0m][0m [36mfilename[0m=[35mboe_cambio_q1_2026_es.json[0m [36mnamespace[0m=[35mrag/documents[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.268193Z[0m [[32m[1mdebug    [0m] [1mAFTER load_fixture: validated [0m [[0m[1m[34mapp.seeds.io[0m][0m [36mfilename[0m=[35mboe_cambio_q1_2026_es.json[0m [36mmodel[0m=[35mRagDocumentSeed[0m [36mnamespace[0m=[35mrag/documents[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.268240Z[0m [[32m[1mdebug    [0m] [1mBEFORE load_fixture: reading file[0m [[0m[1m[34mapp.seeds.io[0m][0m [36mfilename[0m=[35mpolitica_vacaciones_2026_es.json[0m [36mnamespace[0m=[35mrag/documents[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.268474Z[0m [[32m[1mdebug    [0m] [1mAFTER load_fixture: validated [0m [[0m[1m[34mapp.seeds.io[0m][0m [36mfilename[0m=[35mpolitica_vacaciones_2026_es.json[0m [36mmodel[0m=[35mRagDocumentSeed[0m [36mnamespace[0m=[35mrag/documents[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.268514Z[0m [[32m[1mdebug    [0m] [1mBEFORE load_fixture: reading file[0m [[0m[1m[34mapp.seeds.io[0m][0m [36mfilename[0m=[35mvigilancia_normativa_q1_2026_es.json[0m [36mnamespace[0m=[35mrag/documents[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.268765Z[0m [[32m[1mdebug    [0m] [1mAFTER load_fixture: validated [0m [[0m[1m[34mapp.seeds.io[0m][0m [36mfilename[0m=[35mvigilancia_normativa_q1_2026_es.json[0m [36mmodel[0m=[35mRagDocumentSeed[0m [36mnamespace[0m=[35mrag/documents[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.268799Z[0m [[32m[1minfo     [0m] [1mseed.rag_docs.docs_discovered [0m [[0m[1m[34mapp.seeds.loader.rag_docs[0m][0m [36mcount[0m=[35m3[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mtotal_files[0m=[35m3[0m
+[2m2026-05-09T20:13:59.268827Z[0m [[32m[1mdebug    [0m] [1mBEFORE table_exists: probing  [0m [[0m[1m[34mapp.seeds.table_probe[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mschema[0m=[35mpublic[0m [36mtable[0m=[35mdocuments[0m
+2026-05-09 22:13:59,270 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+[2m2026-05-09T20:13:59.270676Z[0m [[32m[1minfo     [0m] [1mBEGIN (implicit)              [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,270 INFO sqlalchemy.engine.Engine SELECT 1 FROM information_schema.tables WHERE table_schema = $1 AND table_name = $2 LIMIT 1
+[2m2026-05-09T20:13:59.270718Z[0m [[32m[1minfo     [0m] [1mSELECT 1 FROM information_schema.tables WHERE table_schema = $1 AND table_name = $2 LIMIT 1[0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,270 INFO sqlalchemy.engine.Engine [cached since 0.1921s ago] ('public', 'documents')
+[2m2026-05-09T20:13:59.270759Z[0m [[32m[1minfo     [0m] [1m[cached since 0.1921s ago] ('public', 'documents')[0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,272 INFO sqlalchemy.engine.Engine ROLLBACK
+[2m2026-05-09T20:13:59.272147Z[0m [[32m[1minfo     [0m] [1mROLLBACK                      [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.272865Z[0m [[32m[1mdebug    [0m] [1mAFTER table_exists: probe complete[0m [[0m[1m[34mapp.seeds.table_probe[0m][0m [36mexists[0m=[35mFalse[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mschema[0m=[35mpublic[0m [36mtable[0m=[35mdocuments[0m
+[2m2026-05-09T20:13:59.272908Z[0m [[33m[1mwarning  [0m] [1mseed.namespace.table_missing  [0m [[0m[1m[34mapp.seeds.loader.rag_docs[0m][0m [36maction[0m=[35mskipped[0m [36mnamespace[0m=[35mrag_docs[0m [36mreason[0m=[35mtable_missing[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mtable[0m=[35mdocuments[0m
+[2m2026-05-09T20:13:59.272950Z[0m [[32m[1minfo     [0m] [1mseed.namespace.done           [0m [[0m[1m[34mapp.seeds.loader.rag_docs[0m][0m [36mduration_ms[0m=[35m5.5[0m [36mnamespace[0m=[35mrag_docs[0m [36mpersisted[0m=[35m0[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mskipped_missing_table[0m=[35m1[0m
+[2m2026-05-09T20:13:59.272984Z[0m [[32m[1mdebug    [0m] [1mseed.dispatch.after           [0m [[0m[1m[34m__main__[0m][0m [36mnamespace[0m=[35mrag_docs[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mrows_inserted[0m=[35m0[0m [36mskipped_tables[0m=[35m['documents'][0m
+[2m2026-05-09T20:13:59.273014Z[0m [[32m[1mdebug    [0m] [1mseed.dispatch.before          [0m [[0m[1m[34m__main__[0m][0m [36mnamespace[0m=[35mmcp_agents[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.273051Z[0m [[32m[1minfo     [0m] [1mseed.namespace.start          [0m [[0m[1m[34mapp.seeds.loader.mcp_agents[0m][0m [36mbundle_type[0m=[35mproductive[0m [36mdry_run[0m=[35mFalse[0m [36mnamespace[0m=[35mmcp_agents[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.273086Z[0m [[32m[1mdebug    [0m] [1mBEFORE load_fixture: reading file[0m [[0m[1m[34mapp.seeds.io[0m][0m [36mfilename[0m=[35mservers.json[0m [36mnamespace[0m=[35mmcp_agents[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.273620Z[0m [[32m[1mdebug    [0m] [1mAFTER load_fixture: validated [0m [[0m[1m[34mapp.seeds.io[0m][0m [36mfilename[0m=[35mservers.json[0m [36mmodel[0m=[35mMcpServerListSeed[0m [36mnamespace[0m=[35mmcp_agents[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.273662Z[0m [[32m[1mdebug    [0m] [1mBEFORE load_fixture: reading file[0m [[0m[1m[34mapp.seeds.io[0m][0m [36mfilename[0m=[35magents.json[0m [36mnamespace[0m=[35mmcp_agents[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.274107Z[0m [[32m[1mdebug    [0m] [1mAFTER load_fixture: validated [0m [[0m[1m[34mapp.seeds.io[0m][0m [36mfilename[0m=[35magents.json[0m [36mmodel[0m=[35mAgentListSeed[0m [36mnamespace[0m=[35mmcp_agents[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.274160Z[0m [[32m[1mdebug    [0m] [1mBEFORE table_exists: probing  [0m [[0m[1m[34mapp.seeds.table_probe[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mschema[0m=[35mpublic[0m [36mtable[0m=[35mmcp_servers[0m
+2026-05-09 22:13:59,275 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+[2m2026-05-09T20:13:59.275999Z[0m [[32m[1minfo     [0m] [1mBEGIN (implicit)              [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,276 INFO sqlalchemy.engine.Engine SELECT 1 FROM information_schema.tables WHERE table_schema = $1 AND table_name = $2 LIMIT 1
+[2m2026-05-09T20:13:59.276038Z[0m [[32m[1minfo     [0m] [1mSELECT 1 FROM information_schema.tables WHERE table_schema = $1 AND table_name = $2 LIMIT 1[0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,276 INFO sqlalchemy.engine.Engine [cached since 0.1974s ago] ('public', 'mcp_servers')
+[2m2026-05-09T20:13:59.276079Z[0m [[32m[1minfo     [0m] [1m[cached since 0.1974s ago] ('public', 'mcp_servers')[0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,277 INFO sqlalchemy.engine.Engine ROLLBACK
+[2m2026-05-09T20:13:59.277309Z[0m [[32m[1minfo     [0m] [1mROLLBACK                      [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.277912Z[0m [[32m[1mdebug    [0m] [1mAFTER table_exists: probe complete[0m [[0m[1m[34mapp.seeds.table_probe[0m][0m [36mexists[0m=[35mFalse[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mschema[0m=[35mpublic[0m [36mtable[0m=[35mmcp_servers[0m
+[2m2026-05-09T20:13:59.277953Z[0m [[33m[1mwarning  [0m] [1mseed.namespace.table_missing  [0m [[0m[1m[34mapp.seeds.loader.mcp_agents[0m][0m [36maction[0m=[35mskipped[0m [36mnamespace[0m=[35mmcp_agents[0m [36mreason[0m=[35mtable_missing[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mtable[0m=[35mmcp_servers[0m
+[2m2026-05-09T20:13:59.277990Z[0m [[32m[1mdebug    [0m] [1mBEFORE table_exists: probing  [0m [[0m[1m[34mapp.seeds.table_probe[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mschema[0m=[35mpublic[0m [36mtable[0m=[35magents[0m
+2026-05-09 22:13:59,279 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+[2m2026-05-09T20:13:59.279756Z[0m [[32m[1minfo     [0m] [1mBEGIN (implicit)              [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,279 INFO sqlalchemy.engine.Engine SELECT 1 FROM information_schema.tables WHERE table_schema = $1 AND table_name = $2 LIMIT 1
+[2m2026-05-09T20:13:59.279796Z[0m [[32m[1minfo     [0m] [1mSELECT 1 FROM information_schema.tables WHERE table_schema = $1 AND table_name = $2 LIMIT 1[0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,279 INFO sqlalchemy.engine.Engine [cached since 0.2012s ago] ('public', 'agents')
+[2m2026-05-09T20:13:59.279839Z[0m [[32m[1minfo     [0m] [1m[cached since 0.2012s ago] ('public', 'agents')[0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+2026-05-09 22:13:59,281 INFO sqlalchemy.engine.Engine ROLLBACK
+[2m2026-05-09T20:13:59.281090Z[0m [[32m[1minfo     [0m] [1mROLLBACK                      [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m
+[2m2026-05-09T20:13:59.281800Z[0m [[32m[1mdebug    [0m] [1mAFTER table_exists: probe complete[0m [[0m[1m[34mapp.seeds.table_probe[0m][0m [36mexists[0m=[35mFalse[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mschema[0m=[35mpublic[0m [36mtable[0m=[35magents[0m
+[2m2026-05-09T20:13:59.281856Z[0m [[33m[1mwarning  [0m] [1mseed.namespace.table_missing  [0m [[0m[1m[34mapp.seeds.loader.mcp_agents[0m][0m [36maction[0m=[35mskipped[0m [36mnamespace[0m=[35mmcp_agents[0m [36mreason[0m=[35mtable_missing[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mtable[0m=[35magents[0m
+[2m2026-05-09T20:13:59.281900Z[0m [[32m[1minfo     [0m] [1mseed.namespace.done           [0m [[0m[1m[34mapp.seeds.loader.mcp_agents[0m][0m [36mduration_ms[0m=[35m8.9[0m [36mnamespace[0m=[35mmcp_agents[0m [36mpersisted[0m=[35m0[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mskipped_missing_table[0m=[35m2[0m
+[2m2026-05-09T20:13:59.281940Z[0m [[32m[1mdebug    [0m] [1mseed.dispatch.after           [0m [[0m[1m[34m__main__[0m][0m [36mnamespace[0m=[35mmcp_agents[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mrows_inserted[0m=[35m0[0m [36mskipped_tables[0m=[35m['mcp_servers', 'agents'][0m
+[2m2026-05-09T20:13:59.281985Z[0m [[32m[1minfo     [0m] [1mseed.run.done                 [0m [[0m[1m[34m__main__[0m][0m [36mbundle_type[0m=[35mproductive[0m [36mdry_run[0m=[35mFalse[0m [36mexit_code[0m=[35m0[0m [36mnamespaces_loaded[0m=[35m6[0m [36mrequest_id[0m=[35m5f93f91061ca4bfa871e6bacf255e14b[0m [36mtotal_rows_inserted[0m=[35m8[0m [36mtotal_skipped_tables[0m=[35m7[0m
+=== exit=0 ===

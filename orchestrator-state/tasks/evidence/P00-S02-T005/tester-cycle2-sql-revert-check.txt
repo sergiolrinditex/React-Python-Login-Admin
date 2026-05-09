@@ -1,0 +1,10 @@
+             email             |    department    | metadata 
+-------------------------------+------------------+----------
+ s.lopezrap+employee@gmail.com | Recursos Humanos | {}
+(1 row)
+
+             email             |    department    | job_title 
+-------------------------------+------------------+-----------
+ s.lopezrap+employee@gmail.com | Recursos Humanos | 
+(1 row)
+

@@ -1,0 +1,72 @@
+=== Run scrub script (reads .env.local dynamically) ===
+Loaded 5 candidate secrets to scrub: ['VERIFICATION_GEMINI_API_KEY', 'VERIFICATION_GEMINI_API_KEY_BACKUP', 'VERIFICATION_LITELLM_MASTER_KEY', 'VERIFICATION_MCP_TOKEN_SANDBOX', 'VERIFICATION_OPENAI_API_KEY']
+
+=== Scrub report ===
+  clean    orchestrator-state/tasks/evidence/P00-S02-T005/debugger-cycle2-diff.txt
+  clean    orchestrator-state/tasks/evidence/P00-S02-T005/debugger-cycle2-grep-proof.txt
+  SCRUBBED /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/orchestrator-state/tasks/evidence/P00-S02-T005/debugger-cycle2-residual-trace.txt: 1 occurrence(s)
+  clean    orchestrator-state/tasks/evidence/P00-S02-T005/debugger-cycle2-targeted-test.txt
+  clean    orchestrator-state/tasks/evidence/P00-S02-T005/debugger-cycle2-unit-suite.txt
+  clean    orchestrator-state/tasks/evidence/P00-S02-T005/debugger-diff-employee-primary.diff
+  clean    orchestrator-state/tasks/evidence/P00-S02-T005/debugger-regression-after-fix.txt
+  clean    orchestrator-state/tasks/evidence/P00-S02-T005/test-full-suite.txt
+  clean    orchestrator-state/tasks/evidence/P00-S02-T005/test-seed-all.txt
+  clean    orchestrator-state/tasks/evidence/P00-S02-T005/tester-cycle2-full-smoke.txt
+  clean    orchestrator-state/tasks/evidence/P00-S02-T005/tester-cycle2-namespaces.txt
+  clean    orchestrator-state/tasks/evidence/P00-S02-T005/tester-cycle2-productive.txt
+  clean    orchestrator-state/tasks/evidence/P00-S02-T005/tester-cycle2-reseed-stderr.txt
+  clean    orchestrator-state/tasks/evidence/P00-S02-T005/tester-cycle2-reseed-stdout.txt
+  clean    orchestrator-state/tasks/evidence/P00-S02-T005/tester-cycle2-reseed.txt
+  clean    orchestrator-state/tasks/evidence/P00-S02-T005/tester-cycle2-seed-smoke.txt
+  clean    orchestrator-state/tasks/evidence/P00-S02-T005/tester-cycle2-sql-revert-check.txt
+  clean    orchestrator-state/tasks/evidence/P00-S02-T005/tester-cycle2-unit.txt
+  clean    orchestrator-state/tasks/evidence/P00-S02-T005/tester-defense-in-depth-rejection.txt
+  clean    orchestrator-state/tasks/evidence/P00-S02-T005/tester-fail-fast-missing-enc-key.txt
+  clean    orchestrator-state/tasks/evidence/P00-S02-T005/tester-fail-fast-missing-env-real.txt
+  clean    orchestrator-state/tasks/evidence/P00-S02-T005/tester-fail-fast-missing-env.txt
+  clean    orchestrator-state/tasks/evidence/P00-S02-T005/tester-full-suite.txt
+  clean    orchestrator-state/tasks/evidence/P00-S02-T005/tester-integration-namespaces.txt
+  clean    orchestrator-state/tasks/evidence/P00-S02-T005/tester-integration-productive.txt
+  clean    orchestrator-state/tasks/evidence/P00-S02-T005/tester-integration-test7-with-key.txt
+  clean    orchestrator-state/tasks/evidence/P00-S02-T005/tester-logging-quiet.txt
+  clean    orchestrator-state/tasks/evidence/P00-S02-T005/tester-logging-verbose.txt
+  clean    orchestrator-state/tasks/evidence/P00-S02-T005/tester-mypy.txt
+  clean    orchestrator-state/tasks/evidence/P00-S02-T005/tester-pytest-summary.txt
+  clean    orchestrator-state/tasks/evidence/P00-S02-T005/tester-ruff-app.txt
+  clean    orchestrator-state/tasks/evidence/P00-S02-T005/tester-ruff.txt
+  clean    orchestrator-state/tasks/evidence/P00-S02-T005/tester-seed-dry-run.txt
+  clean    orchestrator-state/tasks/evidence/P00-S02-T005/tester-seed-real-auth.txt
+  clean    orchestrator-state/tasks/evidence/P00-S02-T005/tester-sql-auth-tables.txt
+  clean    orchestrator-state/tasks/evidence/P00-S02-T005/tester-sql-users.txt
+  clean    orchestrator-state/tasks/evidence/P00-S02-T005/tester-unit-tests.txt
+  clean    orchestrator-state/tasks/evidence/P00-S02-T005/verify-step10-scrub-residuals.txt
+  clean    orchestrator-state/tasks/evidence/P00-S02-T005/verify-step2-alembic-reset.txt
+  clean    orchestrator-state/tasks/evidence/P00-S02-T005/verify-step3-pre-seed-counts.txt
+  clean    orchestrator-state/tasks/evidence/P00-S02-T005/verify-step4-seed-verbose-on.txt
+  clean    orchestrator-state/tasks/evidence/P00-S02-T005/verify-step5-sql-probes.txt
+  clean    orchestrator-state/tasks/evidence/P00-S02-T005/verify-step6-logging-quiet.stderr
+  clean    orchestrator-state/tasks/evidence/P00-S02-T005/verify-step6-logging-quiet.stdout
+  clean    orchestrator-state/tasks/evidence/P00-S02-T005/verify-step6-logging-quiet.txt
+  clean    orchestrator-state/tasks/evidence/P00-S02-T005/verify-step7-security.txt
+  SCRUBBED /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/orchestrator-state/tasks/evidence/P00-S02-T005/verify-step7h-leak-investigation.txt: 4 occurrence(s)
+  clean    orchestrator-state/tasks/evidence/P00-S02-T005/verify-step8-defense-in-depth.txt
+  clean    orchestrator-state/tasks/evidence/P00-S02-T005/verify-step9-fixture-shape.txt
+  SCRUBBED /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/orchestrator-state/tasks/handoffs/P00-S02-T005.md: 1 occurrence(s)
+  SCRUBBED /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/orchestrator-state/tasks/ledger.jsonl: 4 occurrence(s)
+  clean    orchestrator-state/tasks/runtime-state.json
+
+Total occurrences scrubbed: 10
+Files modified:             4
+
+=== Verify zero remaining occurrences anywhere in repo ===
+  VERIFICATION_GEMINI_API_KEY              hits=0
+  VERIFICATION_GEMINI_API_KEY_BACKUP       hits=0
+  VERIFICATION_OPENAI_API_KEY              hits=0
+  VERIFICATION_LITELLM_MASTER_KEY          hits=0
+  VERIFICATION_MCP_TOKEN_SANDBOX           hits=0
+
+=== Confirm REDACTION markers in place ===
+orchestrator-state/tasks/ledger.jsonl
+orchestrator-state/tasks/evidence/P00-S02-T005/verify-step7h-leak-investigation.txt
+orchestrator-state/tasks/evidence/P00-S02-T005/debugger-cycle2-residual-trace.txt
+orchestrator-state/tasks/handoffs/P00-S02-T005.md

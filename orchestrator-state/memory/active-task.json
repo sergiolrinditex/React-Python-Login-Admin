@@ -1,51 +1,44 @@
 {
-  "id": "P00-S02-T005",
+  "id": "P00-S02-T008",
   "phase_id": "P00",
   "step_id": "P00-S02",
-  "title": "Replace synthetic verification bundle with People Tech delivery",
-  "status": "ready",
+  "title": "deepagents Supervisor + topic-routing runtime",
+  "status": "blocked",
   "build_state": "planned",
   "product_increment": "current",
   "depends_on": [
-    "P00-S02-T003"
+    "P00-S02-T005"
   ],
   "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry",
   "acceptance": [
-    "data/verification/ contains files exactly matching People Tech delivery (signed manifest)",
-    "loader's synthetic- guard relaxed or moved to env-flag",
-    "J100..J105 verified end-to-end with the real bundle."
+    "agents/deepagents_runtime.py implemented",
+    "supervisor routes user messages to subagents based on subagent_topics overlap"
   ],
   "verification_commands": [
-    "Journey verifications J100..J105 reproduced against the People Tech bundle",
-    "pytest backend/tests/integration -k seed green",
-    "no synthetic- placeholders remaining in data/verification/."
+    "real flow: user asks vacaciones question -> supervisor routes to hr-policies-agent -> returns answer",
+    "user asks langchain question -> routes to langchain-docs-agent"
   ],
   "allowed_paths": [],
   "conflict_groups": [
-    "seed:data"
+    "agents_runtime"
   ],
   "write_set": [
-    "data/verification/**"
+    "backend/app/agents/**"
   ],
   "journey_refs": [
-    "J100",
-    "J101",
-    "J102",
-    "J103",
-    "J104",
     "J105"
   ],
-  "handoff_path": "orchestrator-state/tasks/handoffs/P00-S02-T005.md",
-  "evidence_dir": "orchestrator-state/tasks/evidence/P00-S02-T005",
+  "handoff_path": "orchestrator-state/tasks/handoffs/P00-S02-T008.md",
+  "evidence_dir": "orchestrator-state/tasks/evidence/P00-S02-T008",
   "origin": {
     "type": "runtime_followup",
-    "followup_id": "FU-20260509073000-replace-synthetic-verification-bundle-with-peopl",
-    "origin_task_id": "P00-S02-T003",
+    "followup_id": "FU-20260509205710-deepagents-supervisor-topic-routing-runtime",
+    "origin_task_id": "P00-S02-T005",
     "severity": "medium",
-    "kind": "data"
+    "kind": "feature"
   },
   "notes": [
-    "Runtime follow-up promoted from FU-20260509073000-replace-synthetic-verification-bundle-with-peopl",
-    "Description: data/verification/ ships with synthetic prod-like fixtures (synthetic- credential prefix, @hilopeople.com emails, generated TOTP). When People Tech delivers the real prod-like bundle (per instrucciones §15), replace the JSON files in data/verification/ and the loader's defense-in-depth 'synthetic-' guard must be relocated or lifted under explicit human approval. Until then, journeys verify against the synthetic bundle, which is acceptable scaffolding but not the final productive contract."
+    "Runtime follow-up promoted from FU-20260509205710-deepagents-supervisor-topic-routing-runtime",
+    "Description: agents/deepagents_runtime.py implemented using the deepagents Supervisor pattern (LangGraph-based); supervisor routes user messages to subagents based on subagent_topics keyword overlap. Required by ADR-002 and the AgentsPage (J105). Depends on P02-S08-T001."
   ]
 }

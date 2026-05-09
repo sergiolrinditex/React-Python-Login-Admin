@@ -1,0 +1,93 @@
+=== SQL probe: post-seed counts + content ===
+--- COUNTS ---
+  users                          = 2
+  employee_profiles              = 1
+  mfa_totp_secrets               = 1
+  roles                          = 2
+  user_roles                     = 2
+  audit_logs                     = 0
+
+--- USERS (full row) ---
+Traceback (most recent call last):
+  File "<stdin>", line 53, in <module>
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/runners.py", line 190, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 653, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "<stdin>", line 15, in main
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/asyncpg/connection.py", line 694, in fetch
+    return await self._execute(
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/asyncpg/connection.py", line 1873, in _execute
+    result, _ = await self.__execute(
+                ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/asyncpg/connection.py", line 1970, in __execute
+    result, stmt = await self._do_execute(
+                   ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/asyncpg/connection.py", line 2013, in _do_execute
+    stmt = await self._get_statement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/asyncpg/connection.py", line 443, in _get_statement
+    statement = await self._protocol.prepare(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "asyncpg/protocol/protocol.pyx", line 165, in prepare
+asyncpg.exceptions.UndefinedColumnError: column "mfa_enabled" does not exist
+=== SQL probe (corrected) ===
+--- USERS column list ---
+  id                             uuid
+  email                          text
+  password_hash                  text
+  full_name                      text
+  status                         text
+  preferred_language             text
+  created_at                     timestamp with time zone
+  updated_at                     timestamp with time zone
+
+--- USERS (real) ---
+  email=s.lopezrap+admin@gmail.com  status=active  hash_prefix=$argon2id$v=19$m=6...  hash_len=97  lang=es
+  email=s.lopezrap+employee@gmail.com  status=active  hash_prefix=$argon2id$v=19$m=6...  hash_len=97  lang=es
+
+--- EMPLOYEE_PROFILES column list ---
+  columns: user_id, employee_id, brand, society, center, country, department, metadata
+
+--- EMPLOYEE_PROFILES (rows) ---
+Traceback (most recent call last):
+  File "<stdin>", line 58, in <module>
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/runners.py", line 190, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 653, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "<stdin>", line 22, in main
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/asyncpg/connection.py", line 694, in fetch
+    return await self._execute(
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/asyncpg/connection.py", line 1873, in _execute
+    result, _ = await self.__execute(
+                ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/asyncpg/connection.py", line 1970, in __execute
+    result, stmt = await self._do_execute(
+                   ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/asyncpg/connection.py", line 2013, in _do_execute
+    stmt = await self._get_statement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/asyncpg/connection.py", line 443, in _get_statement
+    statement = await self._protocol.prepare(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "asyncpg/protocol/protocol.pyx", line 165, in prepare
+asyncpg.exceptions.UndefinedColumnError: column p.manager_email does not exist
+=== SQL probe (employee_profiles real schema) ===
+--- EMPLOYEE_PROFILES (rows) ---
+  email=s.lopezrap+employee@gmail.com
+    department='Recursos Humanos'
+    employee_id=EMP-016D94A2  brand=Hilo  society=Hilo People  center=HQ  country=ES
+    metadata={}

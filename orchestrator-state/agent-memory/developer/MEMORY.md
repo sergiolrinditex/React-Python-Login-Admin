@@ -397,6 +397,70 @@
 - `down_revision = None` for the first migration (no parent).
 - `branch_labels = None`, `depends_on = None` (standard for linear history).
 
+### P01-S01-T004 (2026-05-09) — pydantic-settings env_file absolute path fix
+
+**pydantic-settings env_file is cwd-relative (CRITICAL gotcha)**:
+- `env_file=".env"` in `SettingsConfigDict` is resolved relative to the PROCESS cwd at `Settings()` instantiation time, NOT relative to the Python file declaring it.
+- This works when uvicorn runs from project root (`.env` is there), but breaks silently when pytest/alembic run from `cd backend/` (no `.env` there → Settings falls back to field defaults → wrong DB credentials → `InvalidPasswordError`).
+- Fix: anchor to `Path(__file__).resolve().parents[N]` where N = depth from project root:
+  ```python
+  _PROJECT_ROOT = Path(__file__).resolve().parents[3]  # backend/app/core/config.py
+  _ENV_FILE = _PROJECT_ROOT / ".env"
+  model_config = SettingsConfigDict(env_file=str(_ENV_FILE), ...)
+  ```
+- `.resolve()` handles symlinks. `parents[3]` is deterministic for `backend/app/core/config.py`.
+- pydantic-settings accepts `str | Path | os.PathLike | list[...]` for `env_file`. Using `str(_ENV_FILE)` is safe.
+- Real env vars (docker-compose, CI, shell exports) still take precedence over `.env` file.
+
+**Logging DATABASE_URL safely**:
+- DATABASE_URL contains a password → NEVER log the full value.
+- To log the host+port for debugging, split on `@`: `dsn.split("@", 1)[1]` gives `host:port/dbname`.
+- Log this only in verbose mode; gate with `if _VERBOSE:`.
+
+**Compose port mapping means two modes**:
+- When compose maps `"5433:5432"` for postgres, host processes (uvicorn, pytest, alembic) must use `localhost:5433`.
+- Containers in the compose network use the service name (`postgres:5432`).
+- Document both modes in `.env.example` as Mode A (native dev) and Mode B (in-compose). Mode B is overridden by docker-compose.yml env block; `.env` is not used there.
+- Default the `.env.example` to Mode A (the only case that reads `.env` directly).
+
+**POSTGRES_PASSWORD co-dependency**:
+- `POSTGRES_PASSWORD` in `.env` (used by compose to init the container) must match the password in `DATABASE_URL` in `.env`.
+- If they diverge, compose will create the postgres user with one password but the app will try to authenticate with another.
+- Always document this co-dependency in `.env.example` and link to `dev-restart.sh --reset`.
+
+### P00-S02-T005 (2026-05-09) — Productive verification bundle delivery
+
+**bundle_type default vs real bundle (CRITICAL gotcha)**:
+- Loader functions default to `bundle_type="synthetic"` to preserve back-compat.
+- Tests that call loaders against the real `data/verification/` directory MUST pass `bundle_type="productive"` explicitly.
+- If a test uses default bundle_type="synthetic" against the productive bundle, McpServerSeed/AiProviderSeed/MfaPrimarySeed validators raise ValueError (synthetic guard rejects productive shape).
+- Fix pattern: `report = await load_mcp_agents(engine, verification_bundle_dir, bundle_type="productive")`.
+
+**bundle_type propagation from MANIFEST**:
+- `bootstrap_verification_data.py` reads `MANIFEST._bundle_type` and propagates to ALL load_* calls.
+- Test fixtures that don't go through bootstrap_verification_data must pass bundle_type explicitly.
+- `_common.py BundleType = Literal["synthetic","productive"]` — always import this, not a raw string.
+
+**Auth loader §10.3 SQL shape (CRITICAL)**:
+- Real schema (migration 0001): `users.status='active'`, `users.password_hash`, `users.preferred_language`.
+- NOT legacy T003 shape: `users.role`, `users.is_active`, `users.mfa_enabled` (these columns DO NOT EXIST in real schema).
+- Fernet-encrypted TOTP secret: `mfa_totp_secrets.secret_encrypted` (not `mfa_totp_secrets.totp_secret`).
+- ENCRYPTION_KEY env var required at loader time — fail-fast with BundleLoadError if missing.
+
+**Argon2 defaults are OWASP-2024 compliant**:
+- `argon2.PasswordHasher()` with no args → m=65536 (64MB), t=3, p=4. These ARE OWASP-2024 compliant.
+- No need to set explicit parameters unless benchmark shows unacceptable latency on prod hardware.
+
+**SHA-256 checksum for PDFs (64 hex chars exactly)**:
+- `hashlib.sha256(pdf_bytes).hexdigest()` → 64 hex characters.
+- Always count: 64 = 32 bytes × 2 hex chars/byte. Not 63, not 66.
+
+**ruff venv false positive**:
+- `ruff check .` from `backend/` will flag `.venv-t003/bin/jp.py` and `.venv-verify-t003/bin/jp.py` (venv binary artifacts).
+- These are pre-existing and unrelated to project code.
+- Correct lint command: `ruff check app/ tests/` — scopes to project code only.
+- Or check pyproject.toml for exclude config and use that config if venv should be excluded.
+
 ### P01-S01-T002 (2026-05-09) — §11.1 env var alignment (4-file atomic rename)
 
 **git stash gotcha in worktrees**:

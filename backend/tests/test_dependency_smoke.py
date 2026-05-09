@@ -30,7 +30,6 @@ import importlib
 
 import pytest
 
-
 # ---------------------------------------------------------------------------
 # Category 1 — Web framework
 # ---------------------------------------------------------------------------
@@ -362,7 +361,6 @@ def test_deepagents_importable() -> None:
 
 def test_mcp_importable() -> None:
     """mcp (modelcontextprotocol/python-sdk) can be imported (no server bind)."""
-    import mcp
 
     assert importlib.import_module("mcp") is not None
 

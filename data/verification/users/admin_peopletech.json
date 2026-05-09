@@ -1,8 +1,8 @@
 {
-  "_comment": "Admin user for J103 admin-AI and J104 RAG-admin journey verification. Synthetic fixture.",
-  "email": "admin.peopletech@hilopeople.com",
-  "full_name": "Carlos Martínez Admin",
-  "password_plain_for_seed": "Hilo!Admin2026",
+  "_comment": "Admin user for J103 admin-AI and J104 RAG-admin journey verification. Real Gmail account of project owner.",
+  "email": "s.lopezrap+admin@gmail.com",
+  "full_name": "Sergio Lopez (Admin)",
+  "password_plain_for_seed": "Admin123456!",
   "role": "admin",
   "mfa_enabled": false,
   "is_active": true,

@@ -502,6 +502,20 @@ Docker Compose local con servicios `frontend`, `backend`, `postgres`, `redis`, `
 | `MAX_UPLOAD_MB` | 25 | 25 | 25 | límite documentos |
 | `MCP_ALLOWLIST_DOMAINS` | localhost | staging domains | approved domains | seguridad MCP |
 
+### 11.1.bis Variables de entorno del verification bundle
+
+Estos 5 valores viven solo en `.env.local` (gitignored); las JSON fixtures bajo `data/verification/` usan los campos `api_key_env` / `api_key_backup_env` / `access_token_env` para referenciarlos por nombre. El loader los resuelve en tiempo de ejecución mediante `resolve_env_var(name, required=True)`.
+
+| Variable | Descripción |
+|---|---|
+| `VERIFICATION_GEMINI_API_KEY` | API key de Gemini principal para el seed productivo |
+| `VERIFICATION_GEMINI_API_KEY_BACKUP` | API key de Gemini de backup |
+| `VERIFICATION_OPENAI_API_KEY` | API key de OpenAI (proveedor inactivo en seed productivo) |
+| `VERIFICATION_LITELLM_MASTER_KEY` | Master key del proxy LiteLLM local |
+| `VERIFICATION_MCP_TOKEN_SANDBOX` | Token de acceso al servidor MCP sandbox (inactivo en seed) |
+
+Defensa-en-profundidad: el validador `_REAL_KEY_PATTERNS` en `backend/app/seeds/schemas/admin_ai.py` rechaza claves que coincidan con los patrones `AIza.../sk-proj-.../sk-ant-...` como plaintext en el campo `api_key`. Las claves reales nunca se persisten en el repositorio ni se envían al frontend.
+
 ### 11.2 Build targets
 
 Frontend: `npm --prefix frontend run build`. Backend: `docker build -f backend/Dockerfile .`. Worker comparte imagen backend con comando Celery.
@@ -543,7 +557,21 @@ La visualización estática se genera en `dist/hilo-people-preview.html`. Captur
 
 ## 15. Architectural Decision Records
 
-(sin ADRs específicos todavía)
+### ADR-001 — LiteLLM dynamic model discovery
+
+- **Fecha**: 2026-05-09
+- **Contexto**: Los catálogos de modelos de los proveedores cambian continuamente; una lista de modelos hardcodeada en el bundle de seed deriva inevitablemente con el tiempo.
+- **Decisión**: En runtime, `POST /api/v1/admin/ai/providers/{id}/discover-models` llamará al endpoint de modelos del proveedor y reconciliará los resultados contra la tabla `ai_models`, actualizando `auto_discovered=true` en las filas nuevas.
+- **Alternativas descartadas**: (a) Hardcodear la lista de modelos por proveedor — rechazada: deriva en cuanto Google/OpenAI añade o retira modelos. (b) Exigir que el admin escriba el `model_id` manualmente — rechazada: UX hostil y propensa a errores tipográficos.
+- **Consecuencias**: Round-trip adicional en la primera conexión; depende de que el proveedor exponga un endpoint compatible con la forma `/v1/models`. Detallado en FU-X1 (feature follow-up, P02-S05).
+
+### ADR-002 — deepagents Supervisor + topic routing
+
+- **Fecha**: 2026-05-09
+- **Contexto**: El bundle de seed de P00-S02-T005 declara 1 supervisor + 2 subagents con `subagent_topics`, pero ningún runtime de orquestación existe todavía.
+- **Decisión**: P02-S08 implementará `agents/deepagents_runtime.py` usando el patrón deepagents Supervisor (LangGraph-based) donde el supervisor enruta mensajes del usuario al subagente cuyo `subagent_topics` tenga mayor solapamiento de palabras clave.
+- **Alternativas descartadas**: (a) Agente único con todas las herramientas — rechazada: context bloat insostenible en sesiones largas. (b) LangChain AgentExecutor — rechazada: deprecado en LangChain ≥ 0.2; deepagents es el sucesor soportado.
+- **Consecuencias**: Pinado a `deepagents>=0.5.7`; el supervisor añade 1 LLM hop por mensaje para el routing. Detallado en FU-X3 (feature follow-up, P02-S08).
 
 ## 16. Verificación de cableado pre-entrega
 

@@ -2,7 +2,7 @@ id: P00-S01-T003
 phase_id: P00
 step_id: P00-S01
 title: "Backend dependency pack"
-status: blocked
+status: done
 kind: "library"
 target: "Backend dependency pack"
 product_increment: "v1"

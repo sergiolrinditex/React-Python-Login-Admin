@@ -1,0 +1,2 @@
+[logging] BEFORE configure_logging: verbose=False
+{"namespace": "auth", "error_class": "BundleLoadError", "detail": "Bundle load error [.env]: ENCRYPTION_KEY is not a valid Fernet key (32-byte URL-safe base64). Generate with: python3 -c 'from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())'.", "event": "seed.fixture.error", "request_id": "b13acbfc29c647348257a3ac8b180dd2", "level": "error", "logger": "__main__", "timestamp": "2026-05-09T15:50:23.132937Z"}

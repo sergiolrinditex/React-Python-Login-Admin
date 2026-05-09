@@ -1,0 +1,18 @@
+=== Step 2: alembic downgrade base + upgrade head ===
+DATABASE_URL=postgresql+asyncpg://hilopeople:hilopeople_dev_pwd@localhost:5433/hilopeople_dev
+--- downgrade base ---
+[logging] BEFORE configure_logging: verbose=False
+{"event": "Context impl PostgresqlImpl.", "level": "info", "logger": "alembic.runtime.migration", "timestamp": "2026-05-09T20:13:39.206871Z"}
+{"event": "Will assume transactional DDL.", "level": "info", "logger": "alembic.runtime.migration", "timestamp": "2026-05-09T20:13:39.206931Z"}
+{"event": "Running downgrade 0001 -> , Auth / profile / audit baseline schema.", "level": "info", "logger": "alembic.runtime.migration", "timestamp": "2026-05-09T20:13:39.221821Z"}
+--- upgrade head ---
+[logging] BEFORE configure_logging: verbose=False
+{"event": "Context impl PostgresqlImpl.", "level": "info", "logger": "alembic.runtime.migration", "timestamp": "2026-05-09T20:13:39.798078Z"}
+{"event": "Will assume transactional DDL.", "level": "info", "logger": "alembic.runtime.migration", "timestamp": "2026-05-09T20:13:39.798133Z"}
+{"event": "Running upgrade  -> 0001, Auth / profile / audit baseline schema.", "level": "info", "logger": "alembic.runtime.migration", "timestamp": "2026-05-09T20:13:39.805312Z"}
+--- current rev ---
+[logging] BEFORE configure_logging: verbose=False
+{"event": "Context impl PostgresqlImpl.", "level": "info", "logger": "alembic.runtime.migration", "timestamp": "2026-05-09T20:13:40.407024Z"}
+{"event": "Will assume transactional DDL.", "level": "info", "logger": "alembic.runtime.migration", "timestamp": "2026-05-09T20:13:40.407080Z"}
+0001 (head)
+=== Done ===

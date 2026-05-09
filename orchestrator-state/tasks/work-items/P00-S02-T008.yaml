@@ -1,0 +1,32 @@
+id: P00-S02-T008
+phase_id: P00
+step_id: P00-S02
+title: "deepagents Supervisor + topic-routing runtime"
+status: blocked
+kind: "unspecified"
+target: ""
+product_increment: "current"
+build_state: "planned"
+risk_level: "medium"
+verify_mode: "human"
+route: ""
+endpoint: ""
+journey_refs:
+  - "J105"
+tables:
+depends_on:
+  - P00-S02-T005
+acceptance:
+  - "agents/deepagents_runtime.py implemented"
+  - "supervisor routes user messages to subagents based on subagent_topics overlap"
+verification_commands:
+  - "real flow: user asks vacaciones question -> supervisor routes to hr-policies-agent -> returns answer"
+  - "user asks langchain question -> routes to langchain-docs-agent"
+allowed_paths:
+conflict_groups:
+  - "agents_runtime"
+write_set:
+  - "backend/app/agents/**"
+handoff_path: orchestrator-state/tasks/handoffs/P00-S02-T008.md
+evidence_dir: orchestrator-state/tasks/evidence/P00-S02-T008
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry"

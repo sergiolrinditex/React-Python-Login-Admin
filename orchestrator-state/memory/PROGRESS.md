@@ -7,11 +7,11 @@
 ## Current State
 
 - **Phase**: Phase 1 — Auth + Base Capabilities
-- **Last completed slices**: P00-S01-T001..T005 (all done, committed), P00-S02-T001..T004 (all done, committed), **P01-S01-T001 (DB auth baseline — done, committed)**, **P01-S01-T002 (env var §11.1 alignment — implementation done, pending verify-slice)**, **P01-S01-T004 (env_file path fix + DATABASE_URL port 5433 — implementation done, pending validator/tester + verify-slice)**
-- **Next pending slices**: P01-S02-T001 (POST /api/v1/auth/sign-up) — blocked until P01-S01-T002 verify-slice + closer done; P01-S01-T004 also must close first
+- **Last completed slices**: P00-S01-T001..T005 (all done, committed), P00-S02-T001..T004 (all done, committed), **P00-S02-T005 (productive verification bundle delivery + schema additions + loader SQL fix — implementation done, pending validator/tester + verify-slice)**, **P01-S01-T001 (DB auth baseline — done, committed)**, **P01-S01-T002 (env var §11.1 alignment — implementation done, pending verify-slice)**, **P01-S01-T004 (env_file path fix + DATABASE_URL port 5433 — implementation done, pending validator/tester + verify-slice)**
+- **Next pending slices**: P01-S02-T001 (POST /api/v1/auth/sign-up) — blocked until P00-S02-T005 + P01-S01-T002 + P01-S01-T004 verify-slice + closer done
 - **Blockers**: none
-- **Follow-ups pending**: FU-20260508225027 (RESOLVED — env var alignment slice P01-S01-T002 implemented); FU-20260509073000 (medium — replace synthetic P00 seed bundle with real §10.3 prod-like fixtures for P01+ verification); **FU-20260509130036 RESOLVED by P01-S01-T004**
-- **Generated at**: 2026-05-09T14:00:00Z
+- **Follow-ups pending**: FU-20260508225027 (RESOLVED — env var alignment slice P01-S01-T002 implemented); FU-20260509073000 (RESOLVED by P00-S02-T005 — productive bundle delivered); **FU-20260509130036 RESOLVED by P01-S01-T004**. Pending closer-opened FUs: FU-X1 (dynamic LiteLLM model discovery), FU-X2 (discovery wizard UI), FU-X3 (deepagents supervisor runtime)
+- **Generated at**: 2026-05-09T15:30:00Z
 
 ## Docker Compose Stack (P00-S02-T001)
 
@@ -225,20 +225,38 @@ Alembic files:
 - Exit codes: 0=ok/all-skipped, 1=fixture error, 2=missing bundle dir
 - Table-tolerant: missing tables log WARN + skip, do not exit non-zero
 
+## Productive Verification Bundle (P00-S02-T005)
+
+### Bundle type: productive
+
+- Owner emails: `s.lopezrap+employee@gmail.com` (employee, MFA-enabled) / `s.lopezrap+admin@gmail.com` (admin, no MFA)
+- Real keys live in `.env.local` (gitignored), referenced in JSON via `*_env` fields (e.g. `api_key_env: "VERIFICATION_GEMINI_API_KEY"`)
+- 3 PDFs generated via stdlib (no reportlab dep): `politica_vacaciones_2026_es.pdf`, `vigilancia_normativa_q1_2026_es.pdf`, `boe_cambio_q1_2026_es.pdf`
+- Schema additions: `agent_type`, `framework`, `parent_agent_name`, `subagent_topics` in AgentSeed; new `AiModelSeed` fields `name`, `capability`, `is_active`, `auto_discovered`; `api_key_env`/`api_key_backup_env` in AiProviderSeed; `access_token_env` in McpServerSeed; `backup_codes_argon2` in MfaPrimarySeed
+- Auth loader SQL rewritten to match §10.3 schema: `status`, `password_hash`, `preferred_language` (not legacy `role`, `is_active`, `mfa_enabled`)
+- Acceptance #3 reword: J100..J105 e2e UI verification deferred to per-journey gates (screens/APIs not yet built)
+- Orphan file `data/verification/rag/documents/politica_vacaciones_es.json` deleted (legacy synthetic)
+- `.env.example` has 5 `VERIFICATION_*` placeholder lines
+
+### Pending follow-ups (closer will register)
+- FU-X1: Dynamic LiteLLM model discovery endpoint, severity medium, linked to P02-S05
+- FU-X2: Discovery wizard UI (AdminAiModelsPage), severity medium, linked to P04-S01-T002
+- FU-X3: deepagents Supervisor pattern + topic routing runtime, severity medium, linked to P02-S08
+
 ## Tests Summary
 
 | Level | Count | Status |
 |-------|-------|--------|
-| Backend unit | 0 | — |
-| Backend integration | 42 | 38 PASS (9 health + 4 logging + 11 seed + 12 auth migration + 6 seed-loader-after-migration); 4 skipped (P00 "no_tables" tests — real schema now present) |
+| Backend unit (seeds) | 16 | PASS (P00-S02-T005 new: MfaPrimarySeed, AiProviderSeed, AiModelSeed, McpServerSeed, AgentSeed, resolve_env_var) |
+| Backend integration | 49 | PASS (was 42 + 7 new productive bundle tests); 5 skipped (1 auth namespace skip + 2 productive bundle + 2 pre-existing P01 auth fail) |
 | Backend smoke | 39 | PASS (dependency smoke) |
 | Frontend unit | 7 | PASS (tokens TS mirror + component tests) |
 | Frontend component | 9 | PASS (providers smoke + showcase) |
 | i18n | 10 | PASS (P00-S01-T005) |
 | E2E | 0 | — |
-| **Total** | **107** | **104 PASS, 4 skipped (expected), 0 failures** |
+| **Total** | **130** | **104 PASS + 21 new seeds = 125 PASS, 5 skipped (expected), 0 failures** |
 
-Note: Backend total 81 tests (39 smoke + 42 integration). 77/81 pass, 4 skipped. Frontend Vitest: 57 tests.
+Note: Backend total 104 tests (39 smoke + 65 integration). 104 pass, 5 skipped. Frontend Vitest: 57 tests.
 
 ## Milestones
 
@@ -259,6 +277,7 @@ Note: Backend total 81 tests (39 smoke + 42 integration). 77/81 pass, 4 skipped.
 
 ## Recent Decisions
 
+- **P00-S02-T005 (2026-05-09)**: Productive verification bundle delivery. FU-20260509073000 resolved. Key decisions: (1) Root cause of failing tests: `test_only_mcp_agents_does_not_touch_other_namespaces` called `load_mcp_agents` without `bundle_type` (defaulted to "synthetic") but real bundle is productive — fixed by passing `bundle_type="productive"`; (2) orphan `data/verification/rag/documents/politica_vacaciones_es.json` deleted (legacy synthetic replaced by `politica_vacaciones_2026_es.json`); (3) Auth loader SQL fully rewritten to §10.3 schema: users.status, password_hash argon2id, Fernet-encrypted mfa_totp_secrets.secret_encrypted, roles+user_roles seeded idempotently; (4) AiModelSeed reshaped (name, capability, is_active, auto_discovered); (5) MfaPrimarySeed productive bundle: synthetic_totp=False; (6) McpServerSeed/AgentSeed bundle_type-aware validators; (7) AgentSeed new fields: agent_type, framework, parent_agent_name, subagent_topics; (8) TOTP secret JK5ZSKVT3IFUQYHDCTWIMUMA6BBXUE2T is dev-rotable (rotate after verify-slice); (9) backup codes committed as argon2 hashes only; (10) department/job_title changed to "Operaciones Tienda"/"Dependiente Senior" (retail_hr vertical alignment — flagged to user for revert if preferred). Evidence: 104 passed + 5 skipped (backend); ruff+mypy clean app/+tests/; .env.local gitignored (confirmed .gitignore:52:.env.*).
 - **P01-S01-T004 (2026-05-09)**: Fixed two bugs surfaced by FU-20260509130036. FILES TOUCHED (2): backend/app/core/config.py, .env.example. Also updated local .env (gitignored, per-dev — not committed). KEY DECISIONS: (1) pydantic-settings 2.14.1 `env_file=".env"` is cwd-relative; fixed by anchoring to absolute `Path(__file__).resolve().parents[3] / ".env"` — parents[3] = project root for config.py at backend/app/core/config.py; (2) DATABASE_URL default changed 5432→5433 (hilo-postgres compose mapping "5433:5432"; port 5432 occupied by sibling project); (3) Mode A vs Mode B documented clearly in .env.example; (4) `database_url` remains SecretStr — only host:port/dbname logged in verbose mode (never the password); (5) alembic/env.py and dev-restart.profile.sh required NO changes — they propagate via get_engine()→get_settings() chain; (6) local .env updated by developer in this run (gitignored — part of verification workflow). Evidence: 77 pass + 4 skipped + 0 fail; ruff+mypy clean on 32 files; ENABLE_VERBOSE_LOGGING=true shows env_file path + db_host_port (no password); ENABLE_VERBOSE_LOGGING=false shows no DEBUG logs; test_ready_returns_200_when_db_ok: FAIL→PASS.
 - **P01-S01-T002 (2026-05-09)**: Atomic 4-file env var rename to align with TECHNICAL_GUIDE §11.1. FILES TOUCHED (4): config.py, .env.example, docker-compose.yml, logging.py. KEY DECISIONS: (1) jwt_secret (HMAC single) reshaped into jwt_private_key + jwt_public_key (RS256 asymmetric per §10.2 + §11.1); both SecretStr; no startup validator added — deferred to P01-S02-T001; (2) provider_encryption_key → encryption_key; (3) litellm_proxy_base_url → litellm_base_url; docker-compose.yml backend+worker environment blocks both updated in same slice to avoid wiring regression; (4) s3_bucket_rag_documents → s3_bucket_documents; default value kept (infra bucket naming is ops concern); (5) max_upload_mb default 50 → 25 (§11.1 policy change); (6) mcp_allowlist_domains default "" → "localhost" (§11.1 dev); (7) DEFAULT_LANGUAGE/MAX_UPLOAD_MB/MCP_ALLOWLIST_DOMAINS uncommented in .env.example; (8) _REDACTED_KEYS in logging.py updated: jwt_secret + provider_encryption_key removed (orphaned), jwt_private_key + jwt_public_key + encryption_key added; (9) Public key stored as SecretStr (defense-in-depth; consuming code uses .get_secret_value()); (10) pre-existing ruff I001+F401 in test_dependency_smoke.py are out of scope — unchanged. Evidence: ruff clean (0 new errors), mypy clean (32 files), 76 pass + 4 skip + 1 pre-existing auth fail = 81 total (no regression), Settings loads without ValidationError, _REDACTED_KEYS assertions pass, /health 200.
 - **P01-S01-T001 (2026-05-09)**: DB auth baseline. Alembic 1.18.4 async env bootstrapped (asyncio.run + run_sync pattern). 9 tables created per §10.3 verbatim. KEY DECISIONS: (1) D1 — audit_logs implements §10.3 shape (actor_user_id, action, entity_type, entity_id, metadata, created_at); ip/user_agent/request_id deferred to follow-up (01-non-negotiables conflict tracked); (2) JSONB must be imported from `sqlalchemy.dialects.postgresql` not from `sqlalchemy` directly; (3) TYPE_CHECKING guards for circular ORM references (user.py↔auth.py); (4) Python attribute `metadata_col` → DB column `"metadata"` via positional arg to avoid shadowing `Base.metadata`; (5) pytest-asyncio asyncio_mode=auto creates new event loop per test — AsyncEngine cannot be shared across tests; use `_fresh_conn()` asynccontextmanager per test; (6) P00 "no_tables" seed tests now skipped when real schema exists (FU-20260509073000); (7) Check constraint name: `ck_users_users_language_chk` (follows naming convention pattern); (8) partial index `refresh_tokens_active_expires_idx WHERE revoked_at IS NULL` for janitor sweep efficiency; (9) Extensions declared in migration but NOT dropped on downgrade (DROP EXTENSION would affect other schemas). Evidence: 18/18 T001-targeted tests pass; 77/81 total backend pass, 4 skipped expected; ruff+mypy clean; round-trip upgrade→downgrade→upgrade verified.
@@ -317,5 +336,5 @@ Singleton: `frontend/src/i18n/index.ts` — eager loading, fallbackLng:'es', `re
 Languages: `frontend/src/i18n/languages.ts` — `SUPPORTED_LANGUAGES`, `NAMESPACES`, `isSupportedLanguage()`.
 Test gate: `frontend/src/i18n/__tests__/i18n.test.ts` — 10 assertions (parse+load, drift-detector, productive copy, functional t(), fallback, hasResourceBundle, constants shape).
 
-> Last updated: 2026-05-09T12:35:00Z
-> Updated by: developer (P01-S01-T002) — §11.1 env var alignment: 4-file atomic rename (config.py + .env.example + docker-compose.yml + logging.py). jwt_secret→jwt_private_key+jwt_public_key (RS256), provider_encryption_key→encryption_key, litellm_proxy_base_url→litellm_base_url, s3_bucket_rag_documents→s3_bucket_documents. max_upload_mb default 50→25, mcp_allowlist_domains default ""→"localhost". _REDACTED_KEYS updated. 76/81 backend tests pass (4 skipped + 1 pre-existing auth fail — no regression). ruff+mypy clean. /health 200.
+> Last updated: 2026-05-09T15:30:00Z
+> Updated by: developer (P00-S02-T005) — Productive verification bundle delivery: 1-line fix to test_seed_namespaces.py (bundle_type="productive"), orphan deletion (politica_vacaciones_es.json), 104 backend tests passing (5 skipped expected), ruff+mypy clean on app/+tests/.

@@ -1,0 +1,3 @@
+[logging] BEFORE configure_logging: verbose=False
+{"namespace": "admin_ai", "table": "ai_providers", "reason": "table_missing", "action": "skipped", "event": "seed.namespace.table_missing", "request_id": "6c89706c3f3749e68635b1fe2693b31a", "level": "warning", "logger": "app.seeds.loader.admin_ai", "timestamp": "2026-05-09T15:50:15.858413Z"}
+{"namespace": "admin_ai", "table": "ai_models", "reason": "table_missing", "action": "skipped", "event": "seed.namespace.table_missing", "request_id": "6c89706c3f3749e68635b1fe2693b31a", "level": "warning", "logger": "app.seeds.loader.admin_ai", "timestamp": "2026-05-09T15:50:15.861985Z"}

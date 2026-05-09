@@ -1,6 +1,6 @@
 id: P01
 title: "Auth / base capabilities"
-status: blocked
+status: ready
 depends_on:
   - P00
 task_ids:
@@ -15,4 +15,6 @@ task_ids:
   - P01-S03-T001
   - P01-S01-T002
   - P01-S01-T003
+  - P01-S01-T004
+  - P01-S01-T005
 source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Phase 1 — Auth / base capabilities"

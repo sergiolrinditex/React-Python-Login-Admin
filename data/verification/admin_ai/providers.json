@@ -1,13 +1,30 @@
 {
-  "_comment": "AI providers for J103 (admin AI journey) verification. All api_key values MUST be prefixed 'synthetic-'. Plaintext acceptable because these are synthetic fixtures with no real value.",
+  "_comment": "AI providers for J103 (admin AI journey) — productive bundle. API keys resolved from env vars at seed time (never committed). gemini-direct is the active default provider.",
   "providers": [
     {
-      "name": "verification-openai-sandbox",
-      "provider_type": "litellm",
-      "api_key": "synthetic-litellm-openai-sandbox-key-a1b2c3d4e5f6",
-      "base_url": "http://localhost:4000",
+      "name": "gemini-direct",
+      "provider_type": "gemini",
+      "api_key_env": "VERIFICATION_GEMINI_API_KEY",
+      "api_key_backup_env": "VERIFICATION_GEMINI_API_KEY_BACKUP",
+      "base_url": "https://generativelanguage.googleapis.com",
       "is_active": true,
-      "description": "Proveedor de verificación LiteLLM proxy (sandbox). Synthetic fixture — reemplazar con delivery de People Tech."
+      "description": "Google Gemini API — proveedor activo por defecto. Modelos: gemini-2.5-flash, gemini-2.5-flash-lite, gemini-embedding-001."
+    },
+    {
+      "name": "openai-direct",
+      "provider_type": "openai",
+      "api_key_env": "VERIFICATION_OPENAI_API_KEY",
+      "base_url": "https://api.openai.com",
+      "is_active": false,
+      "description": "OpenAI API — proveedor inactivo (starter set verificación). Modelos: gpt-4o-mini, text-embedding-3-small."
+    },
+    {
+      "name": "litellm-local",
+      "provider_type": "litellm",
+      "api_key_env": "VERIFICATION_LITELLM_MASTER_KEY",
+      "base_url": "http://localhost:4000",
+      "is_active": false,
+      "description": "LiteLLM proxy local — placeholder hasta P02-S05. Inactivo en verificación inicial."
     }
   ]
 }

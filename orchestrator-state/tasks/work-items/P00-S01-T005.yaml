@@ -2,7 +2,7 @@ id: P00-S01-T005
 phase_id: P00
 step_id: P00-S01
 title: "i18n resources ES/EN/FR"
-status: blocked
+status: done
 kind: "frontend"
 target: "i18n resources ES/EN/FR"
 product_increment: "v1"

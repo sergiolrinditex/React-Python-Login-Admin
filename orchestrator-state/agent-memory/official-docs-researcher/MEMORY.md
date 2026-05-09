@@ -2,6 +2,53 @@
 
 ## Session cache
 
+### Entry 2026-05-09 — P01-S01-T004 pydantic-settings 2.14.1 env_file absolute path + alembic 1.18.4 Settings injection (DEEP PASS)
+
+**Source**: Installed venv source `backend/.venv-t003/lib/python3.11/site-packages/pydantic_settings/` (version verified: 2.14.1). Context7 `/pydantic/pydantic-settings` + `/websites/alembic_sqlalchemy`.
+**Freshness window**: pydantic-settings 2.14.1 is pinned — stable until next bump; alembic 1.18.4 stable — re-verify after 7 days (2026-05-16).
+
+#### DotenvType (verified from installed source, types.py line 35)
+
+```python
+DotenvType = Path | str | Sequence[Path | str]
+```
+
+`env_file` in `SettingsConfigDict` accepts `Path | str | Sequence[Path | str]`. Both `Path` objects and strings are natively in the union — no conversion needed. The provider wraps all inputs in `Path(env_file).expanduser()` (dotenv.py line 105), so:
+- Relative `str` (`.env`) → cwd-relative (BAD for subdirectory invocations)
+- Absolute `Path` or `str(absolute_path)` → cwd-independent (CORRECT pattern)
+
+#### Idiomatic pattern for cwd-independent resolution (both options valid)
+
+Option A (str — slightly simpler in the `model_config` class body):
+```python
+_PROJECT_ROOT = Path(__file__).resolve().parents[3]
+model_config = SettingsConfigDict(env_file=str(_PROJECT_ROOT / ".env"), ...)
+```
+
+Option B (Path object — marginally cleaner, avoids str():
+```python
+_PROJECT_ROOT = Path(__file__).resolve().parents[3]
+model_config = SettingsConfigDict(env_file=_PROJECT_ROOT / ".env", ...)
+```
+
+Both are fully correct for pydantic-settings 2.14.1. Task pack recommends Option A (str). Either passes.
+
+#### Alembic 1.18.4 — Settings injection via get_engine()
+
+Already verified in P01-S01-T001 entry (2026-05-09): alembic env.py that reads `Settings.database_url` via `get_engine()` is canonical. The env.py pattern `async_engine_from_config(...)` with `async with connectable.connect() as connection: await connection.run_sync(do_run_migrations)` is current and unchanged in 1.18.4. If alembic env.py already uses the app's `get_engine()` (not raw `os.getenv`), no edit is needed in this slice — the config.py fix propagates automatically.
+
+#### env_file_encoding and case_sensitive defaults (pydantic-settings 2.14.1)
+
+- `env_file_encoding`: defaults to `None` (uses UTF-8 internally via python-dotenv's default). Explicitly setting `'utf-8'` is safe and correct.
+- `case_sensitive`: defaults to `False`. No change needed.
+- Neither defaulted to anything different in prior versions that would require a change here.
+
+#### Discrepancies: NONE
+
+Task pack §8 plan (Option A with `str(_PROJECT_ROOT / ".env")`) is correct and idiomatic. No deprecations. Path objects are first-class in `DotenvType`. No discrepancy note required.
+
+---
+
 ### Entry 2026-05-09 — P00-S02-T002 Health live/ready endpoints (SHALLOW PASS — all verified)
 
 **Note file**: `orchestrator-state/memory/official-doc-notes/P00-S02-T002-health-endpoints-patterns-2026-05-09.md`
@@ -122,6 +169,107 @@ ONE actionable finding (warn-only, not blocking): `@testing-library/jest-dom/vit
 
 All stack components verified 2026-05-09 — re-verify after 7 days (2026-05-16).
 react-router v7 still in active development — re-verify on any router-touching slice.
+
+---
+
+### Entry 2026-05-09 — P00-S02-T005 Gemini models, MCP LangChain, deepagents supervisor, argon2, Fernet (DEEP PASS)
+
+**Freshness window**: Gemini model IDs — re-verify after 7 days (2026-05-16) or before model bump.
+deepagents 0.5.7 — re-verify BEFORE ANY BUMP (AI/ML volatile).
+argon2-cffi 25.1.0 + cryptography 48.0.0 — stable; re-verify after 7 days (2026-05-16).
+
+#### Sources consulted
+
+- WebFetch `https://ai.google.dev/gemini-api/docs/models` — Gemini model catalog
+- WebFetch `https://ai.google.dev/gemini-api/docs/models/gemini` — Gemini model details
+- WebFetch `https://ai.google.dev/api/generate-content` — API base URL version
+- Context7 `/googleapis/python-genai` v1.33.0 — Gen AI Python SDK (current, NOT deprecated)
+- Context7 `/langchain-ai/deepagents` — deepagents GitHub repo
+- Context7 `/websites/langchain_oss_python_deepagents` — deepagents official docs
+- WebFetch `https://docs.langchain.com/mcp` — MCP server endpoint
+- WebFetch `https://pypi.org/pypi/argon2-cffi/25.1.0/json` — package info
+- WebFetch `https://argon2-cffi.readthedocs.io/en/stable/api.html` — PasswordHasher API
+- WebFetch `https://cryptography.io/en/latest/fernet/` — Fernet API
+- WebFetch `https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html` — OWASP 2024
+
+#### Unknown #1 — Gemini model IDs (VERIFIED — all correct)
+
+| Model ID | Status | Notes |
+|---|---|---|
+| `gemini-2.5-flash` | CURRENT | "Best price-performance, low-latency, high-volume tasks" |
+| `gemini-2.5-flash-lite` | CURRENT | "Fastest and most budget-friendly multimodal model" |
+| `gemini-embedding-001` | CURRENT | "Text classification and RAG systems" — NOT deprecated |
+| `gemini-embedding-2` | ALSO CURRENT | Newer multimodal embedding variant; `gemini-embedding-001` remains valid for text-only RAG |
+| `text-embedding-004` | NOT IN DOCS | Does NOT appear in current model catalog. Do not use. |
+| `v1beta` endpoint | CONFIRMED | `https://generativelanguage.googleapis.com/v1beta/` — still the active endpoint |
+
+All task pack model IDs for T005 are CORRECT. No changes needed.
+Note file: `orchestrator-state/memory/official-doc-notes/2026-05-09-gemini-models.md`
+
+#### Unknown #2 — OpenAI model IDs (PARTIALLY VERIFIED — platform docs 403)
+
+OpenAI platform docs returned 403 (auth required). PyPI openai SDK confirms v2.36.0 current
+(no deprecation info available without auth). Based on knowledge cutoff (August 2025):
+- `gpt-4o-mini` — was active and current as of August 2025.
+- `text-embedding-3-small` — was active as of August 2025.
+These are the `openai-direct` INACTIVE provider in T005 bundle. Low risk — provider inactive by default.
+Developer should spot-check against OpenAI changelog if bump to active provider is planned.
+
+#### Unknown #3 — LangChain MCP server `https://docs.langchain.com/mcp` (VERIFIED — ACTIVE)
+
+The URL responded with a valid MCP server configuration (not 404):
+- **Server name**: "Docs by LangChain"
+- **Tools**: `search_docs_by_lang_chain` + `query_docs_filesystem_docs_by_lang_chain`
+- **Auth**: PUBLIC — no access token required
+- **Status**: ACTIVE
+
+Implication for T005: `docs-langchain` server entry with `access_token=null` is CORRECT.
+Note file: `orchestrator-state/memory/official-doc-notes/2026-05-09-mcp-langchain-server.md`
+
+#### Unknown #4 — deepagents 0.5.7 Supervisor pattern (VERIFIED — important nuance)
+
+deepagents uses coordinator-worker pattern, NOT "Supervisor" class:
+- Main agent = `create_deep_agent(model=..., subagents=[...])` — this IS the coordinator
+- Subagents = typed dicts: `{"name": str, "description": str, "system_prompt": str, "tools": list, "model": str}`
+- No `Supervisor` class exists. No `subagent_topics` field in deepagents API.
+- `SubAgent` and `AsyncSubAgent` are TypedDicts (not classes).
+
+**AgentSeed schema assessment**: `agent_type`, `parent_agent_name`, `subagent_topics`, `framework`
+are PROJECT-LEVEL abstraction fields — NOT deepagents API fields. This is CORRECT design:
+the T005 seed declares config metadata; P02-S08 runtime interprets it to build the deepagents call.
+No renaming needed. The field names will NOT conflict with deepagents 0.5.7 API.
+
+Note file: `orchestrator-state/memory/official-doc-notes/2026-05-09-deepagents-supervisor.md`
+
+#### Unknown #5a — argon2-cffi 25.1.0 PasswordHasher API (VERIFIED)
+
+- `PasswordHasher().hash(password: str) -> str` — returns encoded string starting with `$argon2id$`
+- `PasswordHasher().verify(hash: str, password: str) -> bool` — True or raises VerifyMismatchError
+- `PasswordHasher().check_needs_rehash(hash: str) -> bool` — True if params changed
+- Default type: Argon2id (NOT Argon2d or Argon2i)
+- Default parameters (RFC_9106_LOW_MEMORY profile):
+  - `time_cost=3`, `memory_cost=65536` (64 MiB), `parallelism=4`, `hash_len=32`, `salt_len=16`
+- OWASP 2024 minimum: m=19456 (19 MiB), t=2, p=1
+- argon2-cffi defaults EXCEED OWASP minimum by 3.4x memory, 1.5x time — MORE conservative, COMPLIANT
+
+Developer can use `argon2.PasswordHasher()` with DEFAULT parameters — they are OWASP 2024 compliant
+and exceed minimums. No need to pass explicit parameters unless performance tuning is required.
+
+#### Unknown #5b — cryptography 48.0.0 Fernet API (VERIFIED)
+
+- `Fernet.generate_key() -> bytes` — returns URL-safe base64-encoded 32-byte key
+- `Fernet(key).encrypt(data: bytes) -> bytes` — encrypts, returns URL-safe base64-encoded ciphertext
+- `Fernet(key).decrypt(token: bytes | str) -> bytes` — decrypts, returns original plaintext bytes
+- `ENCRYPTION_KEY` env var must be a valid 32-byte URL-safe base64-encoded key
+  (generate with `Fernet.generate_key().decode()`, store as string in env)
+- API has NOT changed in 44.x or 48.x — stable since cryptography 2.x
+- IMPORTANT: `encrypt()/decrypt()` take and return BYTES. To store in DB as TEXT:
+  use `.decode('utf-8')` on encrypt result, `.encode('utf-8')` before decrypt.
+
+#### Discrepancies found
+
+NONE affecting implementation correctness. All task pack model IDs and API shapes confirmed.
+Three notes written as informational records (all have `RESOLVED: n/a`).
 
 ---
 

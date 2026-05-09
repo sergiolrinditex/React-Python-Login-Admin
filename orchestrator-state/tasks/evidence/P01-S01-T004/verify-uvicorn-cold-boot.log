@@ -52,3 +52,44 @@ INFO:     127.0.0.1:53270 - "GET /ready HTTP/1.1" 200 OK
 [2m2026-05-09T13:56:15.352395Z[0m [[32m[1mdebug    [0m] [1mAFTER health.db.ok: SELECT 1 succeeded[0m [[0m[1m[34mapp.api.router[0m][0m [36mrequest_id[0m=[35mdc4d1c61c1b94bdc94c004bee0244c69[0m
 [2m2026-05-09T13:56:15.352480Z[0m [[32m[1mdebug    [0m] [1mAFTER health.ready.ok: all wired probes passed[0m [[0m[1m[34mapp.api.router[0m][0m [36mdb_status[0m=[35mok[0m [36mrequest_id[0m=[35mdc4d1c61c1b94bdc94c004bee0244c69[0m
 INFO:     127.0.0.1:53415 - "GET /ready HTTP/1.1" 200 OK
+[2m2026-05-09T14:05:42.387914Z[0m [[32m[1mdebug    [0m] [1mBEFORE health.start: computing uptime[0m [[0m[1m[34mapp.api.router[0m][0m [36mrequest_id[0m=[35m7fe2e8ac06af4310894936300cb5e2b8[0m
+[2m2026-05-09T14:05:42.388767Z[0m [[32m[1mdebug    [0m] [1mAFTER health.ok: returning status[0m [[0m[1m[34mapp.api.router[0m][0m [36mrequest_id[0m=[35m7fe2e8ac06af4310894936300cb5e2b8[0m [36mstatus[0m=[35mok[0m [36muptime_s[0m=[35m658.24[0m
+INFO:     127.0.0.1:54490 - "GET /health HTTP/1.1" 200 OK
+[2m2026-05-09T14:51:35.601020Z[0m [[32m[1mdebug    [0m] [1mBEFORE health.start: computing uptime[0m [[0m[1m[34mapp.api.router[0m][0m [36mrequest_id[0m=[35m6a5181411f3d4b19b143aaa187e7e698[0m
+[2m2026-05-09T14:51:35.602355Z[0m [[32m[1mdebug    [0m] [1mAFTER health.ok: returning status[0m [[0m[1m[34mapp.api.router[0m][0m [36mrequest_id[0m=[35m6a5181411f3d4b19b143aaa187e7e698[0m [36mstatus[0m=[35mok[0m [36muptime_s[0m=[35m3411.454[0m
+INFO:     127.0.0.1:57575 - "GET /health HTTP/1.1" 200 OK
+[2m2026-05-09T14:51:35.699066Z[0m [[32m[1mdebug    [0m] [1mBEFORE health.start: computing uptime[0m [[0m[1m[34mapp.api.router[0m][0m [36mrequest_id[0m=[35me66ac7b6229943e6801ae0f015404845[0m
+[2m2026-05-09T14:51:35.699198Z[0m [[32m[1mdebug    [0m] [1mAFTER health.ok: returning status[0m [[0m[1m[34mapp.api.router[0m][0m [36mrequest_id[0m=[35me66ac7b6229943e6801ae0f015404845[0m [36mstatus[0m=[35mok[0m [36muptime_s[0m=[35m3411.551[0m
+INFO:     127.0.0.1:57577 - "GET /health HTTP/1.1" 200 OK
+[2m2026-05-09T14:51:35.741887Z[0m [[32m[1mdebug    [0m] [1mBEFORE health.start: computing uptime[0m [[0m[1m[34mapp.api.router[0m][0m [36mrequest_id[0m=[35m083c8480df69429e8d4f60e4c51f82cf[0m
+[2m2026-05-09T14:51:35.742008Z[0m [[32m[1mdebug    [0m] [1mAFTER health.ok: returning status[0m [[0m[1m[34mapp.api.router[0m][0m [36mrequest_id[0m=[35m083c8480df69429e8d4f60e4c51f82cf[0m [36mstatus[0m=[35mok[0m [36muptime_s[0m=[35m3411.593[0m
+INFO:     127.0.0.1:57579 - "GET /health HTTP/1.1" 200 OK
+[2m2026-05-09T14:51:35.755575Z[0m [[32m[1mdebug    [0m] [1mBEFORE health.ready.start: starting dependency probes[0m [[0m[1m[34mapp.api.router[0m][0m [36mrequest_id[0m=[35m4e623f33ffbc47e797636236996f5f27[0m
+[2m2026-05-09T14:51:35.755864Z[0m [[32m[1mdebug    [0m] [1mBEFORE health.db.start: connecting to DB for SELECT 1[0m [[0m[1m[34mapp.api.router[0m][0m [36mrequest_id[0m=[35m4e623f33ffbc47e797636236996f5f27[0m
+2026-05-09 16:51:35,781 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+[2m2026-05-09T14:51:35.782666Z[0m [[32m[1minfo     [0m] [1mBEGIN (implicit)              [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m4e623f33ffbc47e797636236996f5f27[0m
+2026-05-09 16:51:35,783 INFO sqlalchemy.engine.Engine SELECT 1
+[2m2026-05-09T14:51:35.783708Z[0m [[32m[1minfo     [0m] [1mSELECT 1                      [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m4e623f33ffbc47e797636236996f5f27[0m
+2026-05-09 16:51:35,783 INFO sqlalchemy.engine.Engine [cached since 3410s ago] ()
+[2m2026-05-09T14:51:35.784012Z[0m [[32m[1minfo     [0m] [1m[cached since 3410s ago] ()   [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m4e623f33ffbc47e797636236996f5f27[0m
+2026-05-09 16:51:35,789 INFO sqlalchemy.engine.Engine ROLLBACK
+[2m2026-05-09T14:51:35.789339Z[0m [[32m[1minfo     [0m] [1mROLLBACK                      [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35m4e623f33ffbc47e797636236996f5f27[0m
+[2m2026-05-09T14:51:35.790476Z[0m [[32m[1mdebug    [0m] [1mAFTER health.db.ok: SELECT 1 succeeded[0m [[0m[1m[34mapp.api.router[0m][0m [36mrequest_id[0m=[35m4e623f33ffbc47e797636236996f5f27[0m
+[2m2026-05-09T14:51:35.790558Z[0m [[32m[1mdebug    [0m] [1mAFTER health.ready.ok: all wired probes passed[0m [[0m[1m[34mapp.api.router[0m][0m [36mdb_status[0m=[35mok[0m [36mrequest_id[0m=[35m4e623f33ffbc47e797636236996f5f27[0m
+INFO:     127.0.0.1:57580 - "GET /ready HTTP/1.1" 200 OK
+[2m2026-05-09T15:47:45.226294Z[0m [[32m[1mdebug    [0m] [1mBEFORE health.start: computing uptime[0m [[0m[1m[34mapp.api.router[0m][0m [36mrequest_id[0m=[35ma137c2cc7c4d4824b14b97d33e0b10c2[0m
+[2m2026-05-09T15:47:45.227976Z[0m [[32m[1mdebug    [0m] [1mAFTER health.ok: returning status[0m [[0m[1m[34mapp.api.router[0m][0m [36mrequest_id[0m=[35ma137c2cc7c4d4824b14b97d33e0b10c2[0m [36mstatus[0m=[35mok[0m [36muptime_s[0m=[35m6781.08[0m
+INFO:     127.0.0.1:61736 - "GET /health HTTP/1.1" 200 OK
+[2m2026-05-09T18:08:11.009710Z[0m [[32m[1mdebug    [0m] [1mBEFORE health.start: computing uptime[0m [[0m[1m[34mapp.api.router[0m][0m [36mrequest_id[0m=[35me6134124163a46b686ac9c4cd2ab4a85[0m
+[2m2026-05-09T18:08:11.010362Z[0m [[32m[1mdebug    [0m] [1mAFTER health.ok: returning status[0m [[0m[1m[34mapp.api.router[0m][0m [36mrequest_id[0m=[35me6134124163a46b686ac9c4cd2ab4a85[0m [36mstatus[0m=[35mok[0m [36muptime_s[0m=[35m15206.863[0m
+INFO:     127.0.0.1:52878 - "GET /health HTTP/1.1" 200 OK
+[2m2026-05-09T18:11:20.648036Z[0m [[32m[1mdebug    [0m] [1mBEFORE health.start: computing uptime[0m [[0m[1m[34mapp.api.router[0m][0m [36mrequest_id[0m=[35m7ce90edf6c5647588f544a3497ddbda8[0m
+[2m2026-05-09T18:11:20.648464Z[0m [[32m[1mdebug    [0m] [1mAFTER health.ok: returning status[0m [[0m[1m[34mapp.api.router[0m][0m [36mrequest_id[0m=[35m7ce90edf6c5647588f544a3497ddbda8[0m [36mstatus[0m=[35mok[0m [36muptime_s[0m=[35m15396.501[0m
+INFO:     127.0.0.1:53063 - "GET /health HTTP/1.1" 200 OK
+[2m2026-05-09T20:10:29.762035Z[0m [[32m[1mdebug    [0m] [1mBEFORE health.start: computing uptime[0m [[0m[1m[34mapp.api.router[0m][0m [36mrequest_id[0m=[35meb0aea32a62a4ea1a07b4f6e57169d9a[0m
+[2m2026-05-09T20:10:29.764917Z[0m [[32m[1mdebug    [0m] [1mAFTER health.ok: returning status[0m [[0m[1m[34mapp.api.router[0m][0m [36mrequest_id[0m=[35meb0aea32a62a4ea1a07b4f6e57169d9a[0m [36mstatus[0m=[35mok[0m [36muptime_s[0m=[35m22545.467[0m
+INFO:     127.0.0.1:57901 - "GET /health HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [46520]

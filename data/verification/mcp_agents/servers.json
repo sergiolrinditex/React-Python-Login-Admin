@@ -1,14 +1,22 @@
 {
-  "_comment": "MCP server fixtures for J105 (MCP agents journey) verification. access_token MUST be prefixed 'synthetic-'.",
+  "_comment": "MCP server fixtures for J105 (MCP agents journey) — productive bundle. sandbox-mcp-http-readonly: local dev placeholder (inactive). docs-langchain: public MCP server for LangChain docs (active, no auth needed).",
   "servers": [
     {
       "name": "sandbox-mcp-http-readonly",
       "endpoint_url": "http://localhost:9090/mcp",
       "transport": "http",
-      "access_token": "synthetic-mcp-token-sandbox-readonly-a1b2c3d4",
+      "access_token_env": "VERIFICATION_MCP_TOKEN_SANDBOX",
+      "is_active": false,
+      "allowed_tools": ["read_employee_info", "list_hr_documents", "get_policy_text"],
+      "description": "MCP server sandbox HTTP local — placeholder hasta P02-S07. Inactivo en verificación inicial."
+    },
+    {
+      "name": "docs-langchain",
+      "endpoint_url": "https://mcp.langchain.com/mcp",
+      "transport": "https",
       "is_active": true,
-      "allowed_tools": ["read_file", "list_directory", "get_employee_info"],
-      "description": "MCP server sandbox HTTP read-only para verificación de J105. Synthetic fixture."
+      "allowed_tools": ["search_docs", "get_page_content"],
+      "description": "Servidor MCP público de documentación LangChain. Sin autenticación. Usado por agente documentación-langchain en verificación J105."
     }
   ]
 }

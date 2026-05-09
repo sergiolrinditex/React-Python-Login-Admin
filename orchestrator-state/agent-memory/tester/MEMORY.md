@@ -107,3 +107,60 @@ Per MEMORY.md rule: `OUTCOME: pass, NEXT_STATUS: needs_debug`. The debugger must
 - `docker compose exec -T postgres psql -U hilopeople -d hilopeople_dev ...` works when the user is `hilopeople` and the database is `hilopeople_dev` (not `hilopeople`). The `POSTGRES_DB` in compose is `hilopeople_dev`.
 - The `-T` flag is required in non-interactive mode (piped/captured output).
 
+## Lessons from P01-S01-T004 (2026-05-09)
+
+### Running uvicorn may have stale config from before the fix
+
+If the tester kills a running uvicorn and cold-boots a fresh one, the new process picks up the updated config.py. An old still-running process will NOT hot-reload config.py changes (only Pydantic model definitions reload, not module-level constants like `_ENV_FILE`). Always do a clean kill + cold-boot to verify acceptance #3 (cold-boot test).
+
+### dev-restart.sh --reset seed non-blocking WARN is expected
+
+`bootstrap_verification_data failed (non-blocking)` WARN during `dev-restart.sh --reset` is expected at P01 stage because the seed loader tries to insert a `role` column that doesn't exist in migration 0001 (tracked as FU-20260509073000). This is NOT a tester finding — the script uses `|| warn` and the exit code is still 0. Accept this WARN; do not mark acceptance #4 as fail.
+
+### pydantic-settings env_file cwd-relative pattern
+
+When testing a pydantic-settings env_file fix: always verify `_ENV_FILE` value printed at runtime equals the absolute project-root path, AND that `.exists()` returns True, from BOTH `cd backend/` and project root. Use a quick Python one-liner to check without starting the full server.
+
+### Password leak check pattern (DSN split)
+
+When config.py uses `split("@", 1)[1]` to extract host:port from a DSN, verify by:
+1. grep logs for the actual password string — should NOT appear
+2. grep logs for `://.*:.*@` pattern — should NOT appear
+3. Both verbose-on and verbose-off logs must pass the check
+
+## Lessons from P00-S02-T005 (2026-05-09)
+
+### ENCRYPTION_KEY for Fernet — env setup for tests
+
+- `.env` may have `ENCRYPTION_KEY=<change-me>` (placeholder string). `.env.local` may have only the `VERIFICATION_*` keys.
+- When a test needs Fernet encryption (e.g., MFA TOTP seed), it will fail with `BundleLoadError: ENCRYPTION_KEY is not a valid Fernet key` if the placeholder is sourced.
+- Pattern: generate ephemeral Fernet key for test run:
+  ```bash
+  VALID_FERNET_KEY=$(python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())")
+  ENCRYPTION_KEY="$VALID_FERNET_KEY" pytest ...
+  ```
+- A missing `skipif` guard for `ENCRYPTION_KEY` validity in test 7 of `test_seed_productive_bundle.py` is a quality gap — register as follow-up if found.
+
+### validate_with_bundle_type vs model_validate(context=...)
+
+- When a schema uses custom class method `validate_with_bundle_type()` instead of Pydantic 2's `model_validator` with context, calling `model_validate(data, context={'bundle_type': 'productive'})` does NOT trigger the guard.
+- Always use the intended entry point (`validate_with_bundle_type`) when testing bundle-type validation.
+- The unit tests in `test_schemas.py` correctly test via `validate_with_bundle_type`; the tester's defense-in-depth check must use the same path.
+
+### Defense-in-depth test for real key rejection
+
+- The correct test: call `AiProviderSeed.validate_with_bundle_type({..., 'api_key': 'sk-...'}, bundle_type='productive')` — should raise `ValueError`.
+- DO NOT test via `model_validate` with pydantic context for this pattern — the guard is not wired to pydantic's context mechanism.
+
+### OUTCOME/NEXT_STATUS with validator changes_requested (data-only issue)
+
+- Validator `changes_requested` for a 1-line data fix (not code) → tester still emits `OUTCOME: pass, NEXT_STATUS: needs_debug`.
+- Rationale: closer requires validator `approved`, so debugger must apply the fix + re-run validator+tester. The tests themselves pass; the gate is the validator approval.
+
+### seed CLI argument: --source is relative to cwd
+
+- `python -m app.seeds.bootstrap_verification_data --source data/verification` resolves `data/verification` relative to cwd.
+- When running from project root: `--source data/verification` (correct).
+- When running from `backend/`: `--source ../data/verification` (required).
+- Always run from project root for consistency with STACK_PROFILE.yaml `seed_cmd`.
+

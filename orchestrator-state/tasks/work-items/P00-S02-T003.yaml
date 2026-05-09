@@ -2,7 +2,7 @@ id: P00-S02-T003
 phase_id: P00
 step_id: P00-S02
 title: "Seed data and reset verification bundle"
-status: blocked
+status: done
 kind: "setup"
 target: "Seed data and reset verification bundle"
 product_increment: "v1"

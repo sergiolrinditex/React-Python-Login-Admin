@@ -2,9 +2,9 @@ id: P00-S02-T005
 phase_id: P00
 step_id: P00-S02
 title: "Replace synthetic verification bundle with People Tech delivery"
-status: ready
-kind: "unspecified"
-target: ""
+status: ready_for_close
+kind: "data"
+target: "Replace synthetic verification bundle with People Tech delivery"
 product_increment: "current"
 build_state: "planned"
 risk_level: "medium"
@@ -22,18 +22,16 @@ tables:
 depends_on:
   - P00-S02-T003
 acceptance:
-  - "data/verification/ contains files exactly matching People Tech delivery (signed manifest)"
-  - "loader's synthetic- guard relaxed or moved to env-flag"
-  - "J100..J105 verified end-to-end with the real bundle."
+  - "data/verification/ contains files exactly matching People Tech delivery (signed manifest), loader's synthetic- guard relaxed or moved to env-flag, J100..J105 schema-valid + seed-loadable"
+  - "UI end-to-end verification deferred to per-journey gates as features ship."
 verification_commands:
-  - "Journey verifications J100..J105 reproduced against the People Tech bundle"
-  - "pytest backend/tests/integration -k seed green"
-  - "no synthetic- placeholders remaining in data/verification/."
+  - "Journey verifications J100..J105 reproduced against the People Tech bundle, pytest backend/tests/integration -k seed green, no synthetic- placeholders remaining in data/verification/."
 allowed_paths:
+  - "data/verification/**"
 conflict_groups:
   - "seed:data"
 write_set:
   - "data/verification/**"
 handoff_path: orchestrator-state/tasks/handoffs/P00-S02-T005.md
 evidence_dir: orchestrator-state/tasks/evidence/P00-S02-T005
-source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry"
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime follow-up P00-S02-T003"

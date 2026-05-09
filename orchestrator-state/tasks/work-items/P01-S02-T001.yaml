@@ -2,7 +2,7 @@ id: P01-S02-T001
 phase_id: P01
 step_id: P01-S02
 title: "POST /api/v1/auth/sign-up"
-status: blocked
+status: ready
 kind: "api"
 target: "POST /api/v1/auth/sign-up"
 product_increment: "v1"

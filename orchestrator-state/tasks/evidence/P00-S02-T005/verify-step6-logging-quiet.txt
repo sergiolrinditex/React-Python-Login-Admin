@@ -1,0 +1,7 @@
+=== STEP 6a: Quiet logging mode (verbose=false) ===
+exit=0
+stdout lines:        0  stderr lines:        1
+--- stdout (must be empty for quiet mode) ---
+--- stderr (must be only [logging] BEFORE configure_logging line + zero structlog) ---
+[logging] BEFORE configure_logging: verbose=False
+structlog event count in quiet mode: all-zero

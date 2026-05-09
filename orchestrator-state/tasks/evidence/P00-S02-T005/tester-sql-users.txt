@@ -1,0 +1,6 @@
+             email             | hash_prefix  | status | preferred_language 
+-------------------------------+--------------+--------+--------------------
+ s.lopezrap+admin@gmail.com    | $argon2id$v= | active | es
+ s.lopezrap+employee@gmail.com | $argon2id$v= | active | es
+(2 rows)
+

@@ -189,7 +189,7 @@ async def test_only_admin_ai_does_not_touch_other_namespaces(
 
     try:
         with structlog.testing.capture_logs() as logs:
-            report = await load_admin_ai(engine, verification_bundle_dir)
+            report = await load_admin_ai(engine, verification_bundle_dir, bundle_type="productive")
     finally:
         await engine.dispose()
 
@@ -231,7 +231,9 @@ async def test_only_mcp_agents_does_not_touch_other_namespaces(
 
     try:
         with structlog.testing.capture_logs() as logs:
-            report = await load_mcp_agents(engine, verification_bundle_dir)
+            report = await load_mcp_agents(
+                engine, verification_bundle_dir, bundle_type="productive"
+            )
     finally:
         await engine.dispose()
 

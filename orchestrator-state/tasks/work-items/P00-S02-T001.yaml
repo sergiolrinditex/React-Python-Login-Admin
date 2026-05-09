@@ -2,7 +2,7 @@ id: P00-S02-T001
 phase_id: P00
 step_id: P00-S02
 title: "Docker compose services"
-status: blocked
+status: done
 kind: "setup"
 target: "Docker compose services"
 product_increment: "v1"

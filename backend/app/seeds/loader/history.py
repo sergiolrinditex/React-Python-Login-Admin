@@ -1,10 +1,13 @@
 """
 Loader for the 'history' namespace.
 
-Slice: P00-S02-T003 — Seed data and reset verification bundle
+Slice: P00-S02-T005 — Replace synthetic verification bundle with People Tech delivery
 Phase: P00 — Scaffold + Design System
 
 Loads history/conversations.json into conversations (table-tolerant).
+
+CHANGE from T003: added bundle_type kwarg for API consistency with other loaders.
+  No bundle_type-specific logic needed for conversations (no credentials).
 
 Dependencies:
   - sqlalchemy[asyncio] 2.0.49
@@ -21,7 +24,7 @@ from sqlalchemy.ext.asyncio import AsyncEngine
 
 from app.core.logging import get_logger
 from app.seeds.io import load_fixture
-from app.seeds.loader._common import LoadReport, _hash_email
+from app.seeds.loader._common import BundleType, LoadReport, _hash_email
 from app.seeds.schemas.history import ConversationListSeed
 from app.seeds.table_probe import table_exists
 
@@ -33,6 +36,7 @@ async def load_history(
     source_dir: Path,
     *,
     dry_run: bool = False,
+    bundle_type: BundleType = "synthetic",
 ) -> LoadReport:
     """Load the 'history' namespace: history/conversations.json.
 
@@ -46,7 +50,7 @@ async def load_history(
     report = LoadReport(namespace="history", dry_run=dry_run)
     ns = "history"
 
-    _logger.info("seed.namespace.start", namespace=ns, dry_run=dry_run)
+    _logger.info("seed.namespace.start", namespace=ns, dry_run=dry_run, bundle_type=bundle_type)
 
     convo_data = load_fixture(source_dir, ns, "conversations.json", ConversationListSeed)
 

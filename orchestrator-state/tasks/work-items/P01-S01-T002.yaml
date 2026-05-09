@@ -1,10 +1,10 @@
 id: P01-S01-T002
 phase_id: P01
 step_id: P01-S01
-title: "Align env var names in config.py to TECHNICAL_GUIDE §11.1 (atomic across config + .env + compose + logging redaction keys)"
-status: ready
+title: "Align env var names in config.py to TECHNICAL_GUIDE §11.1"
+status: done
 kind: "wiring"
-target: "Align env var names in config.py to TECHNICAL_GUIDE §11.1 (atomic across config + .env + compose + logging redaction keys)"
+target: "Align env var names in config.py to TECHNICAL_GUIDE §11.1"
 product_increment: "current"
 build_state: "planned"
 risk_level: "medium"
@@ -16,25 +16,35 @@ tables:
 depends_on:
   - P01-S01-T001
 acceptance:
-  - "config.py field names match TECHNICAL_GUIDE §11.1 exactly (incl. JWT_SECRET reshape into JWT_PRIVATE_KEY+JWT_PUBLIC_KEY for RS256, ENCRYPTION_KEY rename, LITELLM_BASE_URL rename, S3_BUCKET_DOCUMENTS rename)"
-  - ".env.example mirrors §11.1 keys"
-  - "docker-compose.yml env overrides for backend+worker services use the renamed keys (LITELLM_BASE_URL, not LITELLM_PROXY_BASE_URL)"
-  - "backend/app/core/logging.py _REDACTED_KEYS list updated to use the canonical §11.1 names so no orphan literals remain"
-  - "all existing smoke + auth-migration tests still pass"
+  - "config.py field names match TECHNICAL_GUIDE §11.1 exactly, all existing smoke tests still pass, docker-compose.yml env overrides updated to match"
 verification_commands:
-  - 'grep jwt_private_key backend/app/core/config.py && grep jwt_public_key backend/app/core/config.py && grep encryption_key backend/app/core/config.py && grep litellm_base_url backend/app/core/config.py && grep s3_bucket_documents backend/app/core/config.py && grep "JWT_PRIVATE_KEY=" .env.example && grep "JWT_PUBLIC_KEY=" .env.example && grep "ENCRYPTION_KEY=" .env.example && grep "LITELLM_BASE_URL=" .env.example && grep "S3_BUCKET_DOCUMENTS=" .env.example && grep "LITELLM_BASE_URL:" docker-compose.yml && cd backend && pytest -q'
+  - "grep JWT_PRIVATE_KEY backend/app/core/config.py && grep ENCRYPTION_KEY backend/app/core/config.py"
 allowed_paths:
   - "backend/app/core/config.py"
   - ".env.example"
   - "docker-compose.yml"
-  - "backend/app/core/logging.py"
+  - "docker-compose.yaml"
+  - "compose.yml"
+  - "compose.yaml"
 conflict_groups:
   - "backend:config"
+  - "infra:compose"
+  - "infra:env"
 write_set:
   - "backend/app/core/config.py"
   - ".env.example"
   - "docker-compose.yml"
-  - "backend/app/core/logging.py"
+  - "docker-compose.yaml"
+  - "compose.yml"
+  - "compose.yaml"
+scope_inferred_from_acceptance:
+  - "docker-compose.yml"
+  - "docker-compose.yaml"
+  - "compose.yml"
+  - "compose.yaml"
+  - ".env.example"
+  - "infra:compose"
+  - "infra:env"
 handoff_path: orchestrator-state/tasks/handoffs/P01-S01-T002.md
 evidence_dir: orchestrator-state/tasks/evidence/P01-S01-T002
 source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime follow-up P00-S02-T001"

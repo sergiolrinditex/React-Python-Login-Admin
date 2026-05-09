@@ -1,6 +1,6 @@
 # Architecture contract
 
-- Generated at: 2026-05-09T11:57:58+00:00
+- Generated at: 2026-05-09T20:56:33+00:00
 - Source: `docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md`
 
 ## Structural headings
@@ -39,11 +39,11 @@
 - H3: 10.5 Backend logging
 - H2: 11. Deploy
 - H3: 11.1 Variables de entorno adicionales
+- H3: 11.1.bis Variables de entorno del verification bundle
 - H3: 11.2 Build targets
 - H3: 11.3 Rollback strategy
 - H2: 12. Constraints & Invariants
 - H2: 12.1 Slice Traceability Contract
-- H2: 13. Milestones técnicos
 
 ## Constraint and invariant signals
 - | LangGraph | obligatorio en chat | disponible para workflows/approvals | chat simple no necesita complejidad de graph en V1 |

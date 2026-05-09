@@ -2,7 +2,7 @@ id: P00-S02-T004
 phase_id: P00
 step_id: P00-S02
 title: "Disable structlog Rich-traceback show_locals globally to prevent DSN/secret leaks in error logs"
-status: blocked
+status: done
 kind: "security"
 target: "Disable structlog Rich-traceback show_locals globally to prevent DSN/secret leaks in error logs"
 product_increment: "current"

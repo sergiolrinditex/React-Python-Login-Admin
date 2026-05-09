@@ -187,14 +187,21 @@ def test_corrupt_json_exits_1() -> None:
 
 
 def test_credential_without_synthetic_prefix_exits_1() -> None:
-    """Provider api_key not prefixed 'synthetic-' causes exit 1.
+    """Provider api_key not prefixed 'synthetic-' causes exit 1 for a synthetic bundle.
 
-    Defense-in-depth guard: the schema validator rejects any credential that
-    does not start with 'synthetic-', preventing accidental leakage of real keys.
+    Defense-in-depth guard: in a synthetic bundle (_bundle_type=synthetic), the schema
+    validator rejects any api_key that does not start with 'synthetic-'.
+    NOTE: the real bundle is productive; this test overrides MANIFEST to synthetic to
+    specifically test the synthetic-guard path.
     """
     with tempfile.TemporaryDirectory() as tmpdir:
         bundle_dir = Path(tmpdir)
         _make_bundle(bundle_dir)
+
+        # Override MANIFEST to synthetic so the synthetic-prefix guard fires.
+        (bundle_dir / "MANIFEST.json").write_text(
+            json.dumps({"_bundle_type": "synthetic"}), encoding="utf-8"
+        )
 
         # Write a provider with a non-synthetic api_key.
         bad_providers = {

@@ -1,15 +1,18 @@
 {
-  "generated_at": "2026-05-09T13:40:55+00:00",
+  "generated_at": "2026-05-09T20:57:17+00:00",
   "active_phase_id": "P00",
-  "active_task_id": "P00-S02-T005",
-  "last_worker": "",
-  "last_event": "subagent_stop",
+  "active_task_id": "P00-S02-T008",
+  "last_worker": "tester",
+  "last_event": "followup_promoted",
   "pending_journey_verifications": [],
   "journey_gate_mode": "frontier",
   "last_journey_verified": null,
   "spawn_budget": 20,
   "spawns_in_current_slice": {
-    "P00-S02-T005": 1
+    "P00-S02-T005": 3,
+    "agent:debugger": 1,
+    "agent:validator": 1,
+    "agent:tester": 1
   },
   "open_followups": [
     {
@@ -71,10 +74,46 @@
       "path": "orchestrator-state/tasks/follow-ups/FU-20260509130036-fix-env-database-url-host-port-pydantic-env-file.yaml",
       "created_at": "2026-05-09T13:00:36+00:00",
       "promoted_task_id": "P01-S01-T004"
+    },
+    {
+      "id": "FU-20260509205658-dynamic-litellm-model-discovery-endpoint",
+      "status": "promoted",
+      "severity": "medium",
+      "origin_task_id": "P00-S02-T005",
+      "title": "Dynamic LiteLLM model discovery endpoint",
+      "path": "orchestrator-state/tasks/follow-ups/FU-20260509205658-dynamic-litellm-model-discovery-endpoint.yaml",
+      "created_at": "2026-05-09T20:56:58+00:00",
+      "promoted_task_id": "P00-S02-T006"
+    },
+    {
+      "id": "FU-20260509205703-adminaimodelspage-discover-wizard-ui",
+      "status": "promoted",
+      "severity": "medium",
+      "origin_task_id": "P00-S02-T005",
+      "title": "AdminAiModelsPage discover wizard UI",
+      "path": "orchestrator-state/tasks/follow-ups/FU-20260509205703-adminaimodelspage-discover-wizard-ui.yaml",
+      "created_at": "2026-05-09T20:57:03+00:00",
+      "promoted_task_id": "P00-S02-T007"
+    },
+    {
+      "id": "FU-20260509205710-deepagents-supervisor-topic-routing-runtime",
+      "status": "promoted",
+      "severity": "medium",
+      "origin_task_id": "P00-S02-T005",
+      "title": "deepagents Supervisor + topic-routing runtime",
+      "path": "orchestrator-state/tasks/follow-ups/FU-20260509205710-deepagents-supervisor-topic-routing-runtime.yaml",
+      "created_at": "2026-05-09T20:57:10+00:00",
+      "promoted_task_id": "P00-S02-T008"
     }
   ],
-  "last_claimed_task_id": "P01-S01-T004",
-  "last_followup_id": "FU-20260509105319-audit-logs-add-ip-user-agent-request-id-columns-",
-  "last_trailer": {},
-  "last_stop_at": "2026-05-09T13:44:58+00:00"
+  "last_stop_at": "2026-05-09T20:47:12+00:00",
+  "last_claimed_task_id": "P00-S02-T005",
+  "last_trailer": {
+    "task_id": "P00-S02-T005",
+    "outcome": "pass",
+    "next_status": "ready_for_close",
+    "handoff": "orchestrator-state/tasks/handoffs/P00-S02-T005.md",
+    "evidence": "orchestrator-state/tasks/evidence/P00-S02-T005/"
+  },
+  "last_followup_id": "FU-20260509205710-deepagents-supervisor-topic-routing-runtime"
 }

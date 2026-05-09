@@ -1,0 +1,23 @@
+=== STEP 8: Defense-in-depth (validate_with_bundle_type rejection) ===
+--- Reject real Gemini-pattern key on productive ---
+  ✅ rejected: 1 validation error for AiProviderSeed
+kind
+  Extra inputs are not permitted [type=extra_forbidden, input_value='openai-c
+
+--- Reject sk-proj on productive ---
+  ✅ rejected: 1 validation error for AiProviderSeed
+kind
+  Extra inputs are not permitted [type=extra_forbidden, input_value='openai-c
+
+--- Accept api_key_env reference on productive ---
+  ❌ FAIL — accepted env-ref rejected: 1 validation error for AiProviderSeed
+kind
+  Extra inputs are not permitted [type=extra_forbidden, input_value='openai-compatible', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/extra_forbidden
+
+--- Synthetic key on synthetic bundle (allowed) ---
+  ❌ FAIL: 1 validation error for AiProviderSeed
+kind
+  Extra inputs are not permitted [type=extra_forbidden, input_value='openai-compatible', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/extra_forbidden
+

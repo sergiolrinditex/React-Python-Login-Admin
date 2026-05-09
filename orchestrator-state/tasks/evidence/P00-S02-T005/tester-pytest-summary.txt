@@ -1,0 +1,138 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.5, pytest-9.0.3, pluggy-1.6.0 -- /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/bin/python3.11
+cachedir: .pytest_cache
+rootdir: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend
+configfile: pyproject.toml
+plugins: cov-7.1.0, asyncio-1.3.0, langsmith-0.8.3, anyio-4.13.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 109 items
+
+backend/tests/integration/test_auth_migration.py::test_alembic_round_trip_upgrade_downgrade_upgrade PASSED [  0%]
+backend/tests/integration/test_auth_migration.py::test_all_nine_tables_exist PASSED [  1%]
+backend/tests/integration/test_auth_migration.py::test_alembic_version_is_0001 PASSED [  2%]
+backend/tests/integration/test_auth_migration.py::test_extensions_present PASSED [  3%]
+backend/tests/integration/test_auth_migration.py::test_users_email_is_unique PASSED [  4%]
+backend/tests/integration/test_auth_migration.py::test_users_language_check_constraint PASSED [  5%]
+backend/tests/integration/test_auth_migration.py::test_employee_profiles_user_id_cascade PASSED [  6%]
+backend/tests/integration/test_auth_migration.py::test_audit_logs_actor_user_id_set_null PASSED [  7%]
+backend/tests/integration/test_auth_migration.py::test_required_explicit_indexes_exist PASSED [  8%]
+backend/tests/integration/test_auth_migration.py::test_audit_logs_has_metadata_jsonb PASSED [  9%]
+backend/tests/integration/test_auth_migration.py::test_audit_logs_has_created_at_with_index PASSED [ 10%]
+backend/tests/integration/test_auth_migration.py::test_downgrade_drops_all_tables_and_leaves_alembic_version PASSED [ 11%]
+backend/tests/integration/test_seed_idempotency.py::test_seed_auth_idempotent_when_no_tables SKIPPED [ 11%]
+backend/tests/integration/test_seed_idempotency.py::test_seed_all_namespaces_idempotent_when_no_tables SKIPPED [ 12%]
+backend/tests/integration/test_seed_idempotency.py::test_seed_exit_0_when_tables_missing SKIPPED [ 13%]
+backend/tests/integration/test_seed_loader_after_migration.py::test_users_table_exists_after_migration PASSED [ 14%]
+backend/tests/integration/test_seed_loader_after_migration.py::test_employee_profiles_table_exists_after_migration PASSED [ 15%]
+backend/tests/integration/test_seed_loader_after_migration.py::test_users_row_insert_and_upsert_with_real_schema PASSED [ 16%]
+backend/tests/integration/test_seed_loader_after_migration.py::test_language_check_constraint_rejects_invalid_locale PASSED [ 17%]
+backend/tests/integration/test_seed_loader_after_migration.py::test_employee_profile_insert_with_real_schema PASSED [ 18%]
+backend/tests/integration/test_seed_loader_after_migration.py::test_table_probe_confirms_users_exists PASSED [ 19%]
+backend/tests/integration/test_seed_missing_bundle.py::test_missing_source_dir_exits_2 PASSED [ 20%]
+backend/tests/integration/test_seed_missing_bundle.py::test_truncated_fixture_missing_field_exits_1 PASSED [ 21%]
+backend/tests/integration/test_seed_missing_bundle.py::test_corrupt_json_exits_1 PASSED [ 22%]
+backend/tests/integration/test_seed_missing_bundle.py::test_credential_without_synthetic_prefix_exits_1 PASSED [ 22%]
+backend/tests/integration/test_seed_missing_bundle.py::test_real_key_pattern_credential_exits_1 PASSED [ 23%]
+backend/tests/integration/test_seed_namespaces.py::test_only_auth_does_not_touch_other_namespaces SKIPPED [ 24%]
+backend/tests/integration/test_seed_namespaces.py::test_only_admin_ai_does_not_touch_other_namespaces PASSED [ 25%]
+backend/tests/integration/test_seed_namespaces.py::test_only_mcp_agents_does_not_touch_other_namespaces PASSED [ 26%]
+backend/tests/integration/test_seed_productive_bundle.py::test_manifest_is_productive PASSED [ 27%]
+backend/tests/integration/test_seed_productive_bundle.py::test_dry_run_productive_bundle_exits_0 PASSED [ 28%]
+backend/tests/integration/test_seed_productive_bundle.py::test_mfa_fixture_productive_shape PASSED [ 29%]
+backend/tests/integration/test_seed_productive_bundle.py::test_providers_fixture_uses_env_refs PASSED [ 30%]
+backend/tests/integration/test_seed_productive_bundle.py::test_servers_fixture_env_or_public PASSED [ 31%]
+backend/tests/integration/test_seed_productive_bundle.py::test_rag_docs_no_deprecated_entries_active PASSED [ 32%]
+backend/tests/integration/test_seed_productive_bundle.py::test_seed_all_namespaces_table_tolerant_with_real_db PASSED [ 33%]
+backend/tests/test_dependency_smoke.py::test_fastapi_importable PASSED   [ 33%]
+backend/tests/test_dependency_smoke.py::test_uvicorn_importable PASSED   [ 34%]
+backend/tests/test_dependency_smoke.py::test_sqlalchemy_importable PASSED [ 35%]
+backend/tests/test_dependency_smoke.py::test_alembic_importable PASSED   [ 36%]
+backend/tests/test_dependency_smoke.py::test_asyncpg_importable PASSED   [ 37%]
+backend/tests/test_dependency_smoke.py::test_pydantic_importable PASSED  [ 38%]
+backend/tests/test_dependency_smoke.py::test_pydantic_settings_importable PASSED [ 39%]
+backend/tests/test_dependency_smoke.py::test_argon2_cffi_importable PASSED [ 40%]
+backend/tests/test_dependency_smoke.py::test_pyjwt_importable PASSED     [ 41%]
+backend/tests/test_dependency_smoke.py::test_cryptography_importable PASSED [ 42%]
+backend/tests/test_dependency_smoke.py::test_python_multipart_importable PASSED [ 43%]
+backend/tests/test_dependency_smoke.py::test_itsdangerous_importable PASSED [ 44%]
+backend/tests/test_dependency_smoke.py::test_httpx_importable PASSED     [ 44%]
+backend/tests/test_dependency_smoke.py::test_pypdf_importable PASSED     [ 45%]
+backend/tests/test_dependency_smoke.py::test_python_docx_importable PASSED [ 46%]
+backend/tests/test_dependency_smoke.py::test_celery_importable PASSED    [ 47%]
+backend/tests/test_dependency_smoke.py::test_redis_importable PASSED     [ 48%]
+backend/tests/test_dependency_smoke.py::test_resend_importable PASSED    [ 49%]
+backend/tests/test_dependency_smoke.py::test_structlog_importable PASSED [ 50%]
+backend/tests/test_dependency_smoke.py::test_prometheus_client_importable PASSED [ 51%]
+backend/tests/test_dependency_smoke.py::test_boto3_importable PASSED     [ 52%]
+backend/tests/test_dependency_smoke.py::test_pgvector_importable PASSED  [ 53%]
+backend/tests/test_dependency_smoke.py::test_litellm_importable PASSED   [ 54%]
+backend/tests/test_dependency_smoke.py::test_langchain_core_importable PASSED [ 55%]
+backend/tests/test_dependency_smoke.py::test_langchain_importable PASSED [ 55%]
+backend/tests/test_dependency_smoke.py::test_langchain_community_importable PASSED [ 56%]
+backend/tests/test_dependency_smoke.py::test_langchain_text_splitters_importable PASSED [ 57%]
+backend/tests/test_dependency_smoke.py::test_langgraph_importable PASSED [ 58%]
+backend/tests/test_dependency_smoke.py::test_deepagents_importable PASSED [ 59%]
+backend/tests/test_dependency_smoke.py::test_mcp_importable PASSED       [ 60%]
+backend/tests/test_dependency_smoke.py::test_tiktoken_importable PASSED  [ 61%]
+backend/tests/test_dependency_smoke.py::test_core_config_importable PASSED [ 62%]
+backend/tests/test_dependency_smoke.py::test_core_logging_importable PASSED [ 63%]
+backend/tests/test_dependency_smoke.py::test_core_db_importable PASSED   [ 64%]
+backend/tests/test_dependency_smoke.py::test_dev_tool_importable[ruff] PASSED [ 65%]
+backend/tests/test_dependency_smoke.py::test_dev_tool_importable[mypy] PASSED [ 66%]
+backend/tests/test_dependency_smoke.py::test_dev_tool_importable[pytest] PASSED [ 66%]
+backend/tests/test_dependency_smoke.py::test_dev_tool_importable[pytest_asyncio] PASSED [ 67%]
+backend/tests/test_dependency_smoke.py::test_dev_tool_importable[pytest_cov] PASSED [ 68%]
+backend/tests/test_health.py::test_health_returns_flat_shape_and_200 PASSED [ 69%]
+backend/tests/test_health.py::test_live_returns_200_without_db PASSED    [ 70%]
+backend/tests/test_health.py::test_ready_returns_200_when_db_ok PASSED   [ 71%]
+backend/tests/test_health.py::test_ready_returns_503_when_db_fails PASSED [ 72%]
+backend/tests/test_health.py::test_request_id_echoed_when_provided PASSED [ 73%]
+backend/tests/test_health.py::test_request_id_generated_when_missing PASSED [ 74%]
+backend/tests/test_health.py::test_logs_redact_secrets_under_verbose PASSED [ 75%]
+backend/tests/test_health.py::test_health_uptime_increases PASSED        [ 76%]
+backend/tests/test_health.py::test_ready_db_down_does_not_leak_dsn_in_logs PASSED [ 77%]
+backend/tests/test_logging.py::test_exc_info_does_not_leak_frame_locals_verbose PASSED [ 77%]
+backend/tests/test_logging.py::test_exc_info_does_not_leak_frame_locals_json PASSED [ 78%]
+backend/tests/test_logging.py::test_enable_verbose_logging_env_var_false PASSED [ 79%]
+backend/tests/test_logging.py::test_redaction_processor_still_scrubs_event_dict_keys PASSED [ 80%]
+backend/tests/unit/seeds/test_schemas.py::test_mfa_synthetic_valid PASSED [ 81%]
+backend/tests/unit/seeds/test_schemas.py::test_mfa_synthetic_real_totp_rejected PASSED [ 82%]
+backend/tests/unit/seeds/test_schemas.py::test_mfa_productive_valid PASSED [ 83%]
+backend/tests/unit/seeds/test_schemas.py::test_mfa_productive_synthetic_flag_rejected PASSED [ 84%]
+backend/tests/unit/seeds/test_schemas.py::test_mfa_none_bundle_type_rejected PASSED [ 85%]
+backend/tests/unit/seeds/test_schemas.py::test_provider_synthetic_valid PASSED [ 86%]
+backend/tests/unit/seeds/test_schemas.py::test_provider_synthetic_missing_prefix_rejected PASSED [ 87%]
+backend/tests/unit/seeds/test_schemas.py::test_provider_synthetic_real_sk_pattern_rejected PASSED [ 88%]
+backend/tests/unit/seeds/test_schemas.py::test_provider_productive_env_ref_valid PASSED [ 88%]
+backend/tests/unit/seeds/test_schemas.py::test_provider_productive_aiza_pattern_rejected PASSED [ 89%]
+backend/tests/unit/seeds/test_schemas.py::test_model_valid_chat PASSED   [ 90%]
+backend/tests/unit/seeds/test_schemas.py::test_model_reranker_capability_accepted PASSED [ 91%]
+backend/tests/unit/seeds/test_schemas.py::test_model_missing_model_id_raises PASSED [ 92%]
+backend/tests/unit/seeds/test_schemas.py::test_server_synthetic_valid PASSED [ 93%]
+backend/tests/unit/seeds/test_schemas.py::test_server_synthetic_missing_token_rejected PASSED [ 94%]
+backend/tests/unit/seeds/test_schemas.py::test_server_productive_public_server_valid PASSED [ 95%]
+backend/tests/unit/seeds/test_schemas.py::test_agent_supervisor_valid PASSED [ 96%]
+backend/tests/unit/seeds/test_schemas.py::test_agent_subagent_missing_parent_rejected PASSED [ 97%]
+backend/tests/unit/seeds/test_schemas.py::test_agent_subagent_with_parent_and_topics_valid PASSED [ 98%]
+backend/tests/unit/seeds/test_schemas.py::test_resolve_env_var_set_returns_value PASSED [ 99%]
+backend/tests/unit/seeds/test_schemas.py::test_resolve_env_var_missing_required_raises PASSED [100%]
+
+=============================== warnings summary ===============================
+tests/test_dependency_smoke.py::test_pyjwt_importable
+  /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/jwt/api_jwt.py:147: InsecureKeyLengthWarning: The HMAC key is 6 bytes long, which is below the minimum recommended length of 32 bytes for SHA256. See RFC 7518 Section 3.2.
+    return self._jws.encode(
+
+tests/test_dependency_smoke.py::test_pyjwt_importable
+  /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/jwt/api_jwt.py:365: InsecureKeyLengthWarning: The HMAC key is 6 bytes long, which is below the minimum recommended length of 32 bytes for SHA256. See RFC 7518 Section 3.2.
+    decoded = self.decode_complete(
+
+tests/test_dependency_smoke.py::test_python_multipart_importable
+  /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/importlib/__init__.py:126: PendingDeprecationWarning: Please use `import python_multipart` instead.
+    return _bootstrap._gcd_import(name[level:], package, level)
+
+tests/test_dependency_smoke.py::test_deepagents_importable
+  /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/langgraph/checkpoint/serde/encrypted.py:5: LangChainPendingDeprecationWarning: The default value of `allowed_objects` will change in a future version. Pass an explicit value (e.g., allowed_objects='messages' or allowed_objects='core') to suppress this warning.
+    from langgraph.checkpoint.serde.jsonplus import JsonPlusSerializer
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+================= 105 passed, 4 skipped, 4 warnings in 15.10s ==================

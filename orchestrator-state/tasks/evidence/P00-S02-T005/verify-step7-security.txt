@@ -1,0 +1,34 @@
+=== STEP 7a: .env.local gitignored ===
+.gitignore:52:.env.*	.env.local
+
+=== STEP 7b: .env.local NOT tracked ===
+(must be empty above; if not empty, .env.local is tracked)
+
+=== STEP 7c: scan data/verification/ for plaintext real keys ===
+--- AIza... pattern (Gemini live keys are >35 chars) ---
+(must be empty)
+--- sk-proj-/sk-ant-/sk- (OpenAI/Anthropic) patterns ---
+(must be empty)
+--- Bearer tokens ---
+(must be empty)
+
+=== STEP 7d: env-var refs present (api_key_env / access_token_env) ===
+data/verification/admin_ai/providers.json:      "api_key_env": "VERIFICATION_GEMINI_API_KEY",
+data/verification/admin_ai/providers.json:      "api_key_backup_env": "VERIFICATION_GEMINI_API_KEY_BACKUP",
+data/verification/admin_ai/providers.json:      "api_key_env": "VERIFICATION_OPENAI_API_KEY",
+data/verification/admin_ai/providers.json:      "api_key_env": "VERIFICATION_LITELLM_MASTER_KEY",
+data/verification/mcp_agents/servers.json:      "access_token_env": "VERIFICATION_MCP_TOKEN_SANDBOX",
+
+=== STEP 7e: actual .env.local secrets NOT leaking into repo ===
+Gemini real key hits in repo (excluding .env.local + venvs): 1
+backend/tests/unit/seeds/test_schemas.py
+OpenAI real key hits in repo (excluding .env.local + venvs): 0
+
+=== STEP 7f: PDF SHA-256 vs declared checksums ===
+  boe_cambio_q1_2026_es.pdf  actual=9105852cdf40c5a1166dfcdf78429da6f77e940272b933c2aac77b8d6568c00f  declared=9105852cdf40c5a1166dfcdf78429da6f77e940272b933c2aac77b8d6568c00f  OK
+  politica_vacaciones_2026_es.pdf  actual=ac46b602563e2ad08e5b955f8b8012115427327f4c7e8f51c1d52539690f2454  declared=ac46b602563e2ad08e5b955f8b8012115427327f4c7e8f51c1d52539690f2454  OK
+  vigilancia_normativa_q1_2026_es.pdf  actual=27fcaabb9a7c5ad95bb0f806dc125c09e0f659800941818cdc6819cbb392f9ae  declared=27fcaabb9a7c5ad95bb0f806dc125c09e0f659800941818cdc6819cbb392f9ae  OK
+
+=== STEP 7g: TOTP secret committed (dev-rotable shape) ===
+data/verification/MANIFEST.json
+data/verification/auth/mfa_primary.json

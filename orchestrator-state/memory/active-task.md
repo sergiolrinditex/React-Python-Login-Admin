@@ -1,24 +1,22 @@
 # Active task
 
-- ID: P00-S02-T005
-- Title: Replace synthetic verification bundle with People Tech delivery
-- Status: ready
+- ID: P00-S02-T008
+- Title: deepagents Supervisor + topic-routing runtime
+- Status: blocked
 - Phase: P00
 
 ## Acceptance
-- data/verification/ contains files exactly matching People Tech delivery (signed manifest)
-- loader's synthetic- guard relaxed or moved to env-flag
-- J100..J105 verified end-to-end with the real bundle.
+- agents/deepagents_runtime.py implemented
+- supervisor routes user messages to subagents based on subagent_topics overlap
 
 ## Allowed paths
 
 ## DAG conflict guardrails
 ### Conflict groups
-- seed:data
+- agents_runtime
 ### Write set
-- data/verification/**
+- backend/app/agents/**
 
 ## Verification commands
-- `Journey verifications J100..J105 reproduced against the People Tech bundle`
-- `pytest backend/tests/integration -k seed green`
-- `no synthetic- placeholders remaining in data/verification/.`
+- `real flow: user asks vacaciones question -> supervisor routes to hr-policies-agent -> returns answer`
+- `user asks langchain question -> routes to langchain-docs-agent`

@@ -1,0 +1,1 @@
+[logging] BEFORE configure_logging: verbose=False

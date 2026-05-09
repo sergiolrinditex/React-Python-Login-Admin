@@ -2,7 +2,7 @@ id: P02-S02-T001
 phase_id: P02
 step_id: P02-S02
 title: "Security encryption permissions rate limit"
-status: blocked
+status: ready
 kind: "api"
 target: "Security encryption permissions rate limit"
 product_increment: "v1"
