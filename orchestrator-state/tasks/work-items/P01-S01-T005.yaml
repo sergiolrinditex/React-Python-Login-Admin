@@ -1,0 +1,40 @@
+id: P01-S01-T005
+phase_id: P01
+step_id: P01-S01
+title: "audit_logs: add ip, user_agent, request_id columns (non-negotiable audit fields)"
+status: ready
+kind: "unspecified"
+target: ""
+product_increment: "current"
+build_state: "planned"
+risk_level: "medium"
+verify_mode: "human"
+route: ""
+endpoint: ""
+journey_refs:
+tables:
+depends_on:
+  - P01-S01-T001
+acceptance:
+  - "NEW migration 0002 adds nullable ip (INET), user_agent (TEXT), request_id (TEXT), resource (TEXT) columns to audit_logs"
+  - "migration 0001 file remains untouched (immutable post-commit 99d555b)"
+  - "round-trip 0001 -> 0002 -> 0001 -> 0002 exit 0"
+  - "AuditLog ORM model in auth.py exposes the new columns (Mapped[str | None] etc.)"
+  - "auth service populates them on every sensitive action via X-Request-ID middleware + request.client + request.headers['User-Agent']"
+  - "integration test verifies non-null values in audit_logs rows written by auth endpoints"
+verification_commands:
+  - "alembic upgrade head -> 0002 (head)"
+  - "alembic downgrade -1 -> 0001 (preserves audit rows; new cols dropped)"
+  - "alembic upgrade head -> 0002 again, no errors"
+  - "integration test inserts audit_log row via auth endpoint and verifies ip / user_agent / request_id / resource are non-null"
+  - "psql shows nullable=YES on the 4 new columns (backward-compat for any pre-existing rows that may exist by then)"
+allowed_paths:
+conflict_groups:
+  - "db:migrations"
+write_set:
+  - "backend/alembic/versions/0002_audit_logs_add_compliance_cols.py"
+  - "backend/app/db/models/auth.py"
+  - "backend/tests/integration/test_audit_logs_compliance_cols.py"
+handoff_path: orchestrator-state/tasks/handoffs/P01-S01-T005.md
+evidence_dir: orchestrator-state/tasks/evidence/P01-S01-T005
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry"

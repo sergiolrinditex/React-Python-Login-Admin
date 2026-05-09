@@ -1,15 +1,16 @@
 {
-  "generated_at": "2026-05-09T13:00:36+00:00",
-  "active_phase_id": "P01",
-  "active_task_id": "P01-S01-T003",
-  "last_worker": "",
-  "last_event": "followup_proposed",
+  "generated_at": "2026-05-09T13:08:13+00:00",
+  "active_phase_id": "P00",
+  "active_task_id": "P00-S02-T005",
+  "last_worker": "closer",
+  "last_event": "followup_promoted",
   "pending_journey_verifications": [],
   "journey_gate_mode": "frontier",
   "last_journey_verified": null,
   "spawn_budget": 20,
   "spawns_in_current_slice": {
-    "P01-S01-T003": 1
+    "P01-S01-T002": 1,
+    "agent:closer": 1
   },
   "open_followups": [
     {
@@ -44,34 +45,48 @@
     },
     {
       "id": "FU-20260509073000-replace-synthetic-verification-bundle-with-peopl",
-      "status": "proposed",
+      "status": "promoted",
       "severity": "medium",
       "origin_task_id": "P00-S02-T003",
       "title": "Replace synthetic verification bundle with People Tech delivery",
       "path": "orchestrator-state/tasks/follow-ups/FU-20260509073000-replace-synthetic-verification-bundle-with-peopl.yaml",
-      "created_at": "2026-05-09T07:30:00+00:00"
+      "created_at": "2026-05-09T07:30:00+00:00",
+      "promoted_task_id": "P00-S02-T005"
     },
     {
       "id": "FU-20260509105319-audit-logs-add-ip-user-agent-request-id-columns-",
-      "status": "proposed",
+      "status": "promoted",
       "severity": "medium",
       "origin_task_id": "P01-S01-T001",
       "title": "audit_logs: add ip, user_agent, request_id columns (non-negotiable audit fields)",
       "path": "orchestrator-state/tasks/follow-ups/FU-20260509105319-audit-logs-add-ip-user-agent-request-id-columns-.yaml",
-      "created_at": "2026-05-09T10:53:19+00:00"
+      "created_at": "2026-05-09T10:53:19+00:00",
+      "promoted_task_id": "P01-S01-T005"
     },
     {
       "id": "FU-20260509130036-fix-env-database-url-host-port-pydantic-env-file",
-      "status": "proposed",
+      "status": "promoted",
       "severity": "medium",
       "origin_task_id": "P01-S01-T002",
       "title": "Fix .env DATABASE_URL host port + pydantic env_file path resolution for native dev workflow",
       "path": "orchestrator-state/tasks/follow-ups/FU-20260509130036-fix-env-database-url-host-port-pydantic-env-file.yaml",
-      "created_at": "2026-05-09T13:00:36+00:00"
+      "created_at": "2026-05-09T13:00:36+00:00",
+      "promoted_task_id": "P01-S01-T004"
     }
   ],
   "last_claimed_task_id": "P01-S01-T001",
-  "last_followup_id": "FU-20260509130036-fix-env-database-url-host-port-pydantic-env-file",
-  "last_trailer": {},
-  "last_stop_at": "2026-05-09T12:45:57+00:00"
+  "last_followup_id": "FU-20260509105319-audit-logs-add-ip-user-agent-request-id-columns-",
+  "last_trailer": {
+    "task_id": "P01-S01-T002",
+    "outcome": "committed",
+    "next_status": "done",
+    "handoff": "orchestrator-state/tasks/handoffs/P01-S01-T002.md",
+    "report": "orchestrator-state/tasks/reports/P01-S01-T002.md",
+    "report_ready": "yes",
+    "baseline_sync_ready": "yes",
+    "git_ready": "yes",
+    "push_ready": "yes",
+    "worktrees_cleaned": "yes"
+  },
+  "last_stop_at": "2026-05-09T13:04:56+00:00"
 }

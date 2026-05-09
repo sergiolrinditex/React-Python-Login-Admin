@@ -1,21 +1,24 @@
 # Active task
 
-- ID: P01-S01-T003
-- Title: Quote MAIL_FROM_NAME in .env.example to fix bash source failure
+- ID: P00-S02-T005
+- Title: Replace synthetic verification bundle with People Tech delivery
 - Status: ready
-- Phase: P01
+- Phase: P00
 
 ## Acceptance
-- bash scripts/dev-restart.sh --check exits with backend UP, not 'command not found'
+- data/verification/ contains files exactly matching People Tech delivery (signed manifest)
+- loader's synthetic- guard relaxed or moved to env-flag
+- J100..J105 verified end-to-end with the real bundle.
 
 ## Allowed paths
-- .env.example
 
 ## DAG conflict guardrails
 ### Conflict groups
-- infra:env
+- seed:data
 ### Write set
-- .env.example
+- data/verification/**
 
 ## Verification commands
-- `grep 'MAIL_FROM_NAME="Hilo People"' .env.example`
+- `Journey verifications J100..J105 reproduced against the People Tech bundle`
+- `pytest backend/tests/integration -k seed green`
+- `no synthetic- placeholders remaining in data/verification/.`

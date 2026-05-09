@@ -1,7 +1,7 @@
 {
   "id": "FU-20260509073000-replace-synthetic-verification-bundle-with-peopl",
   "schema_version": 1,
-  "status": "proposed",
+  "status": "promoted",
   "created_at": "2026-05-09T07:30:00+00:00",
   "created_by": "sergiolr",
   "origin_task_id": "P00-S02-T003",
@@ -44,5 +44,8 @@
     "no synthetic- placeholders remaining in data/verification/."
   ],
   "notes": [],
-  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260509073000-replace-synthetic-verification-bundle-with-peopl.yaml"
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260509073000-replace-synthetic-verification-bundle-with-peopl.yaml",
+  "promoted_at": "2026-05-09T13:08:13+00:00",
+  "promoted_task_id": "P00-S02-T005",
+  "source_doc_updated": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md"
 }

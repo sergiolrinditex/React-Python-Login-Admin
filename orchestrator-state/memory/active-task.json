@@ -1,57 +1,51 @@
 {
-  "id": "P01-S01-T003",
-  "phase_id": "P01",
-  "step_id": "P01-S01",
-  "title": "Quote MAIL_FROM_NAME in .env.example to fix bash source failure",
+  "id": "P00-S02-T005",
+  "phase_id": "P00",
+  "step_id": "P00-S02",
+  "title": "Replace synthetic verification bundle with People Tech delivery",
   "status": "ready",
   "build_state": "planned",
   "product_increment": "current",
-  "risk_level": "low",
-  "verify_mode": "human",
   "depends_on": [
-    "P01-S01-T001"
+    "P00-S02-T003"
   ],
-  "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime follow-up P00-S02-T001",
+  "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry",
   "acceptance": [
-    "bash scripts/dev-restart.sh --check exits with backend UP, not 'command not found'"
+    "data/verification/ contains files exactly matching People Tech delivery (signed manifest)",
+    "loader's synthetic- guard relaxed or moved to env-flag",
+    "J100..J105 verified end-to-end with the real bundle."
   ],
   "verification_commands": [
-    "grep 'MAIL_FROM_NAME=\"Hilo People\"' .env.example"
+    "Journey verifications J100..J105 reproduced against the People Tech bundle",
+    "pytest backend/tests/integration -k seed green",
+    "no synthetic- placeholders remaining in data/verification/."
   ],
-  "kind": "bug",
-  "target": "Quote MAIL_FROM_NAME in .env.example to fix bash source failure",
-  "journey_refs": [],
-  "route": "",
-  "endpoint": "",
-  "tables": [],
-  "origin_instr": "runtime-followup#FU-20260508230723-quote-mail-from-name-in-env-example-to-fix-bash-",
-  "origin_techguide": "runtime-followup#FU-20260508230723-quote-mail-from-name-in-env-example-to-fix-bash-",
-  "allowed_paths": [
-    ".env.example"
-  ],
+  "allowed_paths": [],
   "conflict_groups": [
-    "infra:env"
+    "seed:data"
   ],
   "write_set": [
-    ".env.example"
+    "data/verification/**"
   ],
-  "handoff_path": "orchestrator-state/tasks/handoffs/P01-S01-T003.md",
-  "evidence_dir": "orchestrator-state/tasks/evidence/P01-S01-T003",
-  "notes": [],
-  "dependency_mode": "explicit_dag",
-  "depends_on_raw": "P01-S01-T001",
-  "conflict_groups_raw": "infra:env",
-  "write_set_raw": ".env.example",
-  "product_increment_raw": "current",
-  "build_state_raw": "planned",
-  "risk_level_raw": "low",
-  "verify_mode_raw": "human",
-  "kind_raw": "bug",
-  "target_raw": "Quote MAIL_FROM_NAME in .env.example to fix bash source failure",
-  "journey_refs_raw": "—",
-  "screen_route_raw": "—",
-  "endpoint_raw": "—",
-  "tables_raw": "—",
-  "origin_instr_raw": "runtime-followup#FU-20260508230723-quote-mail-from-name-in-env-example-to-fix-bash-",
-  "origin_techguide_raw": "runtime-followup#FU-20260508230723-quote-mail-from-name-in-env-example-to-fix-bash-"
+  "journey_refs": [
+    "J100",
+    "J101",
+    "J102",
+    "J103",
+    "J104",
+    "J105"
+  ],
+  "handoff_path": "orchestrator-state/tasks/handoffs/P00-S02-T005.md",
+  "evidence_dir": "orchestrator-state/tasks/evidence/P00-S02-T005",
+  "origin": {
+    "type": "runtime_followup",
+    "followup_id": "FU-20260509073000-replace-synthetic-verification-bundle-with-peopl",
+    "origin_task_id": "P00-S02-T003",
+    "severity": "medium",
+    "kind": "data"
+  },
+  "notes": [
+    "Runtime follow-up promoted from FU-20260509073000-replace-synthetic-verification-bundle-with-peopl",
+    "Description: data/verification/ ships with synthetic prod-like fixtures (synthetic- credential prefix, @hilopeople.com emails, generated TOTP). When People Tech delivers the real prod-like bundle (per instrucciones §15), replace the JSON files in data/verification/ and the loader's defense-in-depth 'synthetic-' guard must be relocated or lifted under explicit human approval. Until then, journeys verify against the synthetic bundle, which is acceptable scaffolding but not the final productive contract."
+  ]
 }
