@@ -1,0 +1,54 @@
+[logging] BEFORE configure_logging: verbose=True
+[2m2026-05-09T13:54:43.718722Z[0m [[32m[1mdebug    [0m] [1mAFTER configure_logging: structlog configured with CWE-532 mitigation[0m [[0m[1m[34mapp.core.logging[0m][0m [36mlog_level[0m=[35mDEBUG[0m [36mshow_locals[0m=[35m'False (security fix P00-S02-T004)'[0m [36mverbose[0m=[35mTrue[0m
+INFO:     Started server process [46520]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+[2m2026-05-09T13:54:45.772264Z[0m [[32m[1mdebug    [0m] [1mBEFORE health.start: computing uptime[0m [[0m[1m[34mapp.api.router[0m][0m [36mrequest_id[0m=[35m0aa6a5951f24407cab14f5ee03f9f729[0m
+[2m2026-05-09T13:54:45.772401Z[0m [[32m[1mdebug    [0m] [1mAFTER health.ok: returning status[0m [[0m[1m[34mapp.api.router[0m][0m [36mrequest_id[0m=[35m0aa6a5951f24407cab14f5ee03f9f729[0m [36mstatus[0m=[35mok[0m [36muptime_s[0m=[35m1.623[0m
+INFO:     127.0.0.1:53268 - "GET /health HTTP/1.1" 200 OK
+[2m2026-05-09T13:54:45.788902Z[0m [[32m[1mdebug    [0m] [1mBEFORE health.start: computing uptime[0m [[0m[1m[34mapp.api.router[0m][0m [36mrequest_id[0m=[35m9896a8c79ad94c529a4a3a2851670d33[0m
+[2m2026-05-09T13:54:45.789008Z[0m [[32m[1mdebug    [0m] [1mAFTER health.ok: returning status[0m [[0m[1m[34mapp.api.router[0m][0m [36mrequest_id[0m=[35m9896a8c79ad94c529a4a3a2851670d33[0m [36mstatus[0m=[35mok[0m [36muptime_s[0m=[35m1.64[0m
+INFO:     127.0.0.1:53269 - "GET /health HTTP/1.1" 200 OK
+[2m2026-05-09T13:54:45.844986Z[0m [[32m[1mdebug    [0m] [1mBEFORE health.ready.start: starting dependency probes[0m [[0m[1m[34mapp.api.router[0m][0m [36mrequest_id[0m=[35mad2a3772f1ce4236b38a49eaab46fd3d[0m
+[2m2026-05-09T13:54:45.845095Z[0m [[32m[1mdebug    [0m] [1mBEFORE health.db.start: connecting to DB for SELECT 1[0m [[0m[1m[34mapp.api.router[0m][0m [36mrequest_id[0m=[35mad2a3772f1ce4236b38a49eaab46fd3d[0m
+[2m2026-05-09T13:54:45.845158Z[0m [[32m[1mdebug    [0m] [1mBEFORE _get_engine: creating async engine[0m [[0m[1m[34mapp.core.db[0m][0m [36mrequest_id[0m=[35mad2a3772f1ce4236b38a49eaab46fd3d[0m
+[2m2026-05-09T13:54:45.845232Z[0m [[32m[1mdebug    [0m] [1mBEFORE get_settings: loading Settings (env_file=/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.env, exists=True)[0m [[0m[1m[34mapp.core.config[0m][0m [36mrequest_id[0m=[35mad2a3772f1ce4236b38a49eaab46fd3d[0m
+[2m2026-05-09T13:54:45.847919Z[0m [[32m[1mdebug    [0m] [1mAFTER get_settings: loaded (api_host=127.0.0.1, api_port=8000, verbose=True, db_host_port=localhost:5433/hilopeople_dev)[0m [[0m[1m[34mapp.core.config[0m][0m [36mrequest_id[0m=[35mad2a3772f1ce4236b38a49eaab46fd3d[0m
+[2m2026-05-09T13:54:45.897740Z[0m [[32m[1mdebug    [0m] [1mAFTER _get_engine: engine created (host redacted)[0m [[0m[1m[34mapp.core.db[0m][0m [36mrequest_id[0m=[35mad2a3772f1ce4236b38a49eaab46fd3d[0m
+2026-05-09 15:54:45,926 INFO sqlalchemy.engine.Engine select pg_catalog.version()
+[2m2026-05-09T13:54:45.926708Z[0m [[32m[1minfo     [0m] [1mselect pg_catalog.version()   [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35mad2a3772f1ce4236b38a49eaab46fd3d[0m
+2026-05-09 15:54:45,926 INFO sqlalchemy.engine.Engine [raw sql] ()
+[2m2026-05-09T13:54:45.926799Z[0m [[32m[1minfo     [0m] [1m[raw sql] ()                  [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35mad2a3772f1ce4236b38a49eaab46fd3d[0m
+2026-05-09 15:54:45,931 INFO sqlalchemy.engine.Engine select current_schema()
+[2m2026-05-09T13:54:45.931775Z[0m [[32m[1minfo     [0m] [1mselect current_schema()       [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35mad2a3772f1ce4236b38a49eaab46fd3d[0m
+2026-05-09 15:54:45,931 INFO sqlalchemy.engine.Engine [raw sql] ()
+[2m2026-05-09T13:54:45.931841Z[0m [[32m[1minfo     [0m] [1m[raw sql] ()                  [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35mad2a3772f1ce4236b38a49eaab46fd3d[0m
+2026-05-09 15:54:45,935 INFO sqlalchemy.engine.Engine show standard_conforming_strings
+[2m2026-05-09T13:54:45.935390Z[0m [[32m[1minfo     [0m] [1mshow standard_conforming_strings[0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35mad2a3772f1ce4236b38a49eaab46fd3d[0m
+2026-05-09 15:54:45,935 INFO sqlalchemy.engine.Engine [raw sql] ()
+[2m2026-05-09T13:54:45.935460Z[0m [[32m[1minfo     [0m] [1m[raw sql] ()                  [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35mad2a3772f1ce4236b38a49eaab46fd3d[0m
+2026-05-09 15:54:45,937 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+[2m2026-05-09T13:54:45.937871Z[0m [[32m[1minfo     [0m] [1mBEGIN (implicit)              [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35mad2a3772f1ce4236b38a49eaab46fd3d[0m
+2026-05-09 15:54:45,937 INFO sqlalchemy.engine.Engine SELECT 1
+[2m2026-05-09T13:54:45.937923Z[0m [[32m[1minfo     [0m] [1mSELECT 1                      [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35mad2a3772f1ce4236b38a49eaab46fd3d[0m
+2026-05-09 15:54:45,937 INFO sqlalchemy.engine.Engine [generated in 0.00013s] ()
+[2m2026-05-09T13:54:45.937974Z[0m [[32m[1minfo     [0m] [1m[generated in 0.00013s] ()    [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35mad2a3772f1ce4236b38a49eaab46fd3d[0m
+2026-05-09 15:54:45,940 INFO sqlalchemy.engine.Engine ROLLBACK
+[2m2026-05-09T13:54:45.940234Z[0m [[32m[1minfo     [0m] [1mROLLBACK                      [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35mad2a3772f1ce4236b38a49eaab46fd3d[0m
+[2m2026-05-09T13:54:45.940987Z[0m [[32m[1mdebug    [0m] [1mAFTER health.db.ok: SELECT 1 succeeded[0m [[0m[1m[34mapp.api.router[0m][0m [36mrequest_id[0m=[35mad2a3772f1ce4236b38a49eaab46fd3d[0m
+[2m2026-05-09T13:54:45.941027Z[0m [[32m[1mdebug    [0m] [1mAFTER health.ready.ok: all wired probes passed[0m [[0m[1m[34mapp.api.router[0m][0m [36mdb_status[0m=[35mok[0m [36mrequest_id[0m=[35mad2a3772f1ce4236b38a49eaab46fd3d[0m
+INFO:     127.0.0.1:53270 - "GET /ready HTTP/1.1" 200 OK
+[2m2026-05-09T13:56:15.338727Z[0m [[32m[1mdebug    [0m] [1mBEFORE health.ready.start: starting dependency probes[0m [[0m[1m[34mapp.api.router[0m][0m [36mrequest_id[0m=[35mdc4d1c61c1b94bdc94c004bee0244c69[0m
+[2m2026-05-09T13:56:15.339683Z[0m [[32m[1mdebug    [0m] [1mBEFORE health.db.start: connecting to DB for SELECT 1[0m [[0m[1m[34mapp.api.router[0m][0m [36mrequest_id[0m=[35mdc4d1c61c1b94bdc94c004bee0244c69[0m
+2026-05-09 15:56:15,348 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+[2m2026-05-09T13:56:15.348164Z[0m [[32m[1minfo     [0m] [1mBEGIN (implicit)              [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35mdc4d1c61c1b94bdc94c004bee0244c69[0m
+2026-05-09 15:56:15,348 INFO sqlalchemy.engine.Engine SELECT 1
+[2m2026-05-09T13:56:15.348271Z[0m [[32m[1minfo     [0m] [1mSELECT 1                      [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35mdc4d1c61c1b94bdc94c004bee0244c69[0m
+2026-05-09 15:56:15,348 INFO sqlalchemy.engine.Engine [cached since 89.41s ago] ()
+[2m2026-05-09T13:56:15.348426Z[0m [[32m[1minfo     [0m] [1m[cached since 89.41s ago] ()  [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35mdc4d1c61c1b94bdc94c004bee0244c69[0m
+2026-05-09 15:56:15,351 INFO sqlalchemy.engine.Engine ROLLBACK
+[2m2026-05-09T13:56:15.351207Z[0m [[32m[1minfo     [0m] [1mROLLBACK                      [0m [[0m[1m[34msqlalchemy.engine.Engine[0m][0m [36mrequest_id[0m=[35mdc4d1c61c1b94bdc94c004bee0244c69[0m
+[2m2026-05-09T13:56:15.352395Z[0m [[32m[1mdebug    [0m] [1mAFTER health.db.ok: SELECT 1 succeeded[0m [[0m[1m[34mapp.api.router[0m][0m [36mrequest_id[0m=[35mdc4d1c61c1b94bdc94c004bee0244c69[0m
+[2m2026-05-09T13:56:15.352480Z[0m [[32m[1mdebug    [0m] [1mAFTER health.ready.ok: all wired probes passed[0m [[0m[1m[34mapp.api.router[0m][0m [36mdb_status[0m=[35mok[0m [36mrequest_id[0m=[35mdc4d1c61c1b94bdc94c004bee0244c69[0m
+INFO:     127.0.0.1:53415 - "GET /ready HTTP/1.1" 200 OK

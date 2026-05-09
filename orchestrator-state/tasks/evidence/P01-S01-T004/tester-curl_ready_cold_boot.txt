@@ -1,0 +1,17 @@
+{
+    "status": "ready",
+    "checks": {
+        "db": {
+            "status": "ok"
+        },
+        "redis": {
+            "status": "not_implemented",
+            "reason": "client_not_wired"
+        },
+        "litellm": {
+            "status": "not_implemented",
+            "reason": "client_not_wired"
+        }
+    }
+}
+HTTP_STATUS=200

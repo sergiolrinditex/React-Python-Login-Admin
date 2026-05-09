@@ -1509,7 +1509,7 @@
       "phase_id": "P01",
       "step_id": "P01-S01",
       "title": "Fix .env DATABASE_URL host port + pydantic env_file path resolution for native dev workflow",
-      "status": "ready",
+      "status": "ready_for_close",
       "build_state": "planned",
       "product_increment": "current",
       "depends_on": [
@@ -1537,7 +1537,7 @@
       ],
       "journey_refs": [],
       "handoff_path": "orchestrator-state/tasks/handoffs/P01-S01-T004.md",
-      "evidence_dir": "orchestrator-state/tasks/evidence/P01-S01-T004",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P01-S01-T004/",
       "origin": {
         "type": "runtime_followup",
         "followup_id": "FU-20260509130036-fix-env-database-url-host-port-pydantic-env-file",
@@ -1548,7 +1548,16 @@
       "notes": [
         "Runtime follow-up promoted from FU-20260509130036-fix-env-database-url-host-port-pydantic-env-file",
         "Description: Two pre-existing infra issues surfaced during /verify-slice for P01-S01-T002. (1) .env DATABASE_URL points to host port 5432, but hilo-postgres exposes 5433 (5432 belongs to a different project's apn-postgres). Causes /ready=503 from a cold-boot native uvicorn and aborts dev-restart.sh --reset at db_reset. (2) pydantic-settings env_file=\".env\" is relative; when invoked from cd backend/ (Alembic, pytest), it cannot find the project-root .env and falls back to defaults (change-me password). Together these are the documented root cause of the persistent test_ready_returns_200_when_db_ok failure across multiple slices. Live compose stack is unaffected (compose env_file: .env resolves at project root). Out of scope for the rename slice; tracking here so it does not perpetuate."
-      ]
+      ],
+      "claimed_at": "2026-05-09T13:20:35+00:00",
+      "claimed_by": "sergiolr",
+      "claim_terminal_task_env": "P01-S01-T004",
+      "task_pack_path": "orchestrator-state/tasks/task-packs/P01-S01-T004.md",
+      "last_outcome": "pass",
+      "last_updated_by": "tester",
+      "last_stop_at": "2026-05-09T13:40:55+00:00",
+      "validator_outcome": "approved",
+      "validator_next_status": "ready_for_close"
     },
     {
       "id": "P01-S01-T003",

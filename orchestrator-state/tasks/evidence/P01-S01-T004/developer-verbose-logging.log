@@ -1,0 +1,2 @@
+DEBUG:app.core.config:BEFORE get_settings: loading Settings (env_file=/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.env, exists=True)
+DEBUG:app.core.config:AFTER get_settings: loaded (api_host=127.0.0.1, api_port=8000, verbose=True, db_host_port=localhost:5433/hilopeople_dev)

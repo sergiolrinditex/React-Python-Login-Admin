@@ -1,7 +1,7 @@
 """
 Application configuration via pydantic-settings.
 
-Slice: P01-S01-T002 — Align env var names to TECHNICAL_GUIDE §11.1
+Slice: P01-S01-T004 — Fix .env path resolution + DATABASE_URL host port for native dev
 Phase: P01 — Auth + Base Capabilities
 
 Originally created in P00-S01-T003. Field names aligned to TECHNICAL_GUIDE §11.1
@@ -15,6 +15,19 @@ Key renames (P01-S01-T002):
   - s3_bucket_rag_documents            → s3_bucket_documents
   - max_upload_mb default 50           → 25 (§11.1 dev/staging/prod)
   - mcp_allowlist_domains default ""   → "localhost" (§11.1 dev)
+
+env_file resolution fix (P01-S01-T004):
+  - pydantic-settings 2.14.1 interprets env_file relative to the process cwd at
+    Settings() instantiation time. This breaks when pytest/alembic run from
+    cd backend/ because there is no .env file there.
+  - Fix: resolve _ENV_FILE to an ABSOLUTE path anchored on __file__ so it works
+    regardless of cwd. config.py is at backend/app/core/config.py:
+      parents[0] = backend/app/core/
+      parents[1] = backend/app/
+      parents[2] = backend/
+      parents[3] = <project_root>  ← .env lives here
+  - Real environment variables (set by docker-compose, CI, shell exports) still
+    take precedence over the .env file per pydantic-settings priority rules.
 
 Reads all env vars from the environment (and from .env if present). Typed fields
 declared here for every var listed in HILO_PEOPLE_TECHNICAL_GUIDE.md §11.1 and
@@ -35,11 +48,13 @@ No startup validator is added here — deferred to P01-S02-T001 to avoid blockin
 the dev stack before keys are provisioned.
 
 Do NOT instantiate DB connections, Redis clients, or HTTP sessions here.
+Do NOT log DATABASE_URL — it contains credentials. Log only host+port if needed.
 """
 from __future__ import annotations
 
 import logging
 import os
+from pathlib import Path
 
 from pydantic import Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -47,6 +62,13 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 _logger = logging.getLogger(__name__)
 
 _VERBOSE = os.getenv("ENABLE_VERBOSE_LOGGING", "false").lower() in ("1", "true", "yes")
+
+# Resolve .env to an absolute path anchored from __file__ so it works regardless
+# of the process cwd (pytest from cd backend/, alembic from cd backend/,
+# uvicorn from project root — all resolve to the same file).
+# config.py depth: backend/app/core/config.py → parents[3] = project root.
+_PROJECT_ROOT: Path = Path(__file__).resolve().parents[3]
+_ENV_FILE: Path = _PROJECT_ROOT / ".env"
 
 
 class Settings(BaseSettings):
@@ -57,10 +79,13 @@ class Settings(BaseSettings):
 
     Purpose: central config store consumed by every feature module.
     Errors: pydantic ValidationError if a required field is missing at runtime.
+
+    env_file is an absolute path (P01-S01-T004 fix) so it resolves correctly
+    whether the process cwd is the project root, backend/, or any other directory.
     """
 
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=str(_ENV_FILE),  # absolute path — cwd-independent (P01-S01-T004)
         env_file_encoding="utf-8",
         case_sensitive=False,
         extra="ignore",
@@ -78,9 +103,16 @@ class Settings(BaseSettings):
     )
 
     # Database
+    # Default DSN for native dev (Mode A): localhost:5433 because docker-compose.yml
+    # maps host port 5433 → container port 5432 for hilo-postgres. Port 5432 on the
+    # host is occupied by a sibling project's postgres container.
+    # Inside compose containers (Mode B), DATABASE_URL is overridden by the
+    # docker-compose.yml environment block (postgres:5432) — the .env file value
+    # is not used there. See .env.example for the full Mode A / Mode B explanation.
+    # NEVER log this value — it contains credentials. Log only host:port/dbname.
     database_url: SecretStr = Field(
-        SecretStr("postgresql+asyncpg://hilopeople:change-me@localhost:5432/hilopeople_dev"),
-        description="PostgreSQL async DSN. Used by P01-S01-T001+.",
+        SecretStr("postgresql+asyncpg://hilopeople:change-me@localhost:5433/hilopeople_dev"),
+        description="PostgreSQL async DSN. Mode A (native dev) = localhost:5433.",
     )
 
     # Redis / Celery
@@ -193,15 +225,32 @@ def get_settings() -> Settings:
     Purpose: lazy factory so tests can override env vars before first call.
     Returns: Settings instance loaded from environment + .env file.
     Errors: pydantic.ValidationError if schema mismatch.
+
+    env_file is an absolute path (P01-S01-T004 fix); the path is logged at DEBUG
+    level so it can be verified in dev. The DSN itself is NEVER logged — it contains
+    credentials. Only host:port/dbname are safe to surface in logs.
     """
     if _VERBOSE:
-        _logger.debug("BEFORE get_settings: loading from environment")
+        _logger.debug(
+            "BEFORE get_settings: loading Settings (env_file=%s, exists=%s)",
+            _ENV_FILE,
+            _ENV_FILE.exists(),
+        )
     settings = Settings()  # type: ignore[call-arg]
     if _VERBOSE:
+        # Extract host:port/dbname from the DSN without logging the password.
+        # Format: postgresql+asyncpg://user:password@host:port/dbname
+        _dsn = settings.database_url.get_secret_value()
+        try:
+            _host_part = _dsn.split("@", 1)[1] if "@" in _dsn else "<unparseable>"
+        except Exception:  # noqa: BLE001
+            _host_part = "<unparseable>"
         _logger.debug(
-            "AFTER get_settings: loaded (api_host=%s, api_port=%s, verbose=%s)",
+            "AFTER get_settings: loaded ("
+            "api_host=%s, api_port=%s, verbose=%s, db_host_port=%s)",
             settings.api_host,
             settings.api_port,
             settings.enable_verbose_logging,
+            _host_part,  # host:port/dbname only — no password
         )
     return settings

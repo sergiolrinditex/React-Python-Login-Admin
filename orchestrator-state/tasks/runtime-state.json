@@ -1,16 +1,15 @@
 {
-  "generated_at": "2026-05-09T13:08:13+00:00",
+  "generated_at": "2026-05-09T13:40:55+00:00",
   "active_phase_id": "P00",
   "active_task_id": "P00-S02-T005",
-  "last_worker": "closer",
-  "last_event": "followup_promoted",
+  "last_worker": "",
+  "last_event": "subagent_stop",
   "pending_journey_verifications": [],
   "journey_gate_mode": "frontier",
   "last_journey_verified": null,
   "spawn_budget": 20,
   "spawns_in_current_slice": {
-    "P01-S01-T002": 1,
-    "agent:closer": 1
+    "P00-S02-T005": 1
   },
   "open_followups": [
     {
@@ -74,19 +73,8 @@
       "promoted_task_id": "P01-S01-T004"
     }
   ],
-  "last_claimed_task_id": "P01-S01-T001",
+  "last_claimed_task_id": "P01-S01-T004",
   "last_followup_id": "FU-20260509105319-audit-logs-add-ip-user-agent-request-id-columns-",
-  "last_trailer": {
-    "task_id": "P01-S01-T002",
-    "outcome": "committed",
-    "next_status": "done",
-    "handoff": "orchestrator-state/tasks/handoffs/P01-S01-T002.md",
-    "report": "orchestrator-state/tasks/reports/P01-S01-T002.md",
-    "report_ready": "yes",
-    "baseline_sync_ready": "yes",
-    "git_ready": "yes",
-    "push_ready": "yes",
-    "worktrees_cleaned": "yes"
-  },
-  "last_stop_at": "2026-05-09T13:04:56+00:00"
+  "last_trailer": {},
+  "last_stop_at": "2026-05-09T13:44:58+00:00"
 }
