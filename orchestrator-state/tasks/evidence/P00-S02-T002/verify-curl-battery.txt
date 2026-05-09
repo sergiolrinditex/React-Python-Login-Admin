@@ -1,0 +1,43 @@
+=== /health (no X-Request-ID) ===
+HTTP/1.1 200 OK
+date: Sat, 09 May 2026 04:42:44 GMT
+server: uvicorn
+content-length: 56
+content-type: application/json
+x-request-id: e37c6b463f4640b5a67fc7d0ce60e7aa
+
+{"status":"ok","version":"0.1.0-verify","uptime":21.823}=== /live ===
+HTTP/1.1 200 OK
+date: Sat, 09 May 2026 04:42:44 GMT
+server: uvicorn
+content-length: 59
+content-type: application/json
+x-request-id: 2e3b8e8e8f41488d8d97ce198d3635b2
+
+{"status":"alive","version":"0.1.0-verify","uptime":21.853}=== /ready (DB UP on 5433) ===
+HTTP/1.1 200 OK
+date: Sat, 09 May 2026 04:42:44 GMT
+server: uvicorn
+content-length: 182
+content-type: application/json
+x-request-id: 8245e9955f404e2691465cbe62a9e716
+
+{"status":"ready","checks":{"db":{"status":"ok"},"redis":{"status":"not_implemented","reason":"client_not_wired"},"litellm":{"status":"not_implemented","reason":"client_not_wired"}}}=== /health -H X-Request-ID: verify-slice-001 ===
+HTTP/1.1 200 OK
+date: Sat, 09 May 2026 04:42:44 GMT
+server: uvicorn
+content-length: 56
+content-type: application/json
+x-request-id: verify-slice-001
+
+{"status":"ok","version":"0.1.0-verify","uptime":22.045}=== /health (uptime test #1, then sleep 1, then #2) ===
+uptime#1=22.069 uptime#2=23.132 increased? True
+=== /unknown-route (middleware should still emit X-Request-ID, expect 404) ===
+HTTP/1.1 404 Not Found
+date: Sat, 09 May 2026 04:42:45 GMT
+server: uvicorn
+content-length: 22
+content-type: application/json
+x-request-id: 661b69a2dc3d4445a67aa7e5f265f7fd
+
+{"detail":"Not Found"}

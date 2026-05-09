@@ -1,0 +1,39 @@
+Debugger fix — leak counts in DB-down logs
+TASK_ID: P00-S02-T002
+TIMESTAMP: 2026-05-09T04:57:00Z
+
+Pre-fix log (verify-slice/verify-uvicorn-db-down.log, with exc_info=True + structlog Rich tb):
+  hilopeople_dev_pwd : 14
+  localhost          : 18
+  5499               : 16
+  postgresql+asyncpg :  5
+
+Post-fix log (debugger-fix-uvicorn-db-down-no-leak.log, exc_info=True dropped):
+  topsecret_pwd_xyz_8f3c1 : 0
+  hostxyz-debugger        : 0
+  54399                   : 0
+  baduser                 : 0
+  dbxyz                   : 0
+  postgresql+asyncpg      : 0
+
+Live reproduction commands:
+  ENABLE_VERBOSE_LOGGING=true \
+  DATABASE_URL=postgresql+asyncpg://baduser:topsecret_pwd_xyz_8f3c1@hostxyz-debugger:54399/dbxyz \
+  uvicorn app.main:app --host 127.0.0.1 --port 8005
+
+  curl -i http://127.0.0.1:8005/ready
+  -> 503, body sanitized
+     ("detail":"gaierror: [Errno 8] nodename nor servname provided, or not")
+
+Log lines emitted on /ready failure (verbose=true):
+  ERROR app.api.router  ERROR health.ready.db_failed: unexpected error on SELECT 1
+    db_detail='gaierror: [Errno 8] nodename nor servname provided, or not'
+    error_class=gaierror
+    request_id=b4679bd4536a44429410ad386057a681
+
+  ERROR app.api.router  AFTER health.ready.not_ready: critical probe failed
+    db_detail='gaierror: [Errno 8] nodename nor servname provided, or not'
+    failed_probe=db
+    request_id=b4679bd4536a44429410ad386057a681
+
+NO traceback rendered.  NO frame locals leaked.  CWE-532 closed.

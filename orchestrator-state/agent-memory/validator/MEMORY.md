@@ -109,3 +109,34 @@ NEVER acceptable: `try: import x except ImportError: pass` — that pattern PASS
 - **Untracked build artifacts predating the slice**: `frontend/*.tsbuildinfo`, `frontend/vite.config.{js,d.ts}`, `frontend/vitest.config.{js,d.ts}` typically appear during the first `tsc -b` / `vite build` run after T004. They are NOT introduced by an i18n slice; they predate it. Validator should: (a) confirm they appear in `git log` as predating via reasoning about when build artifacts were first generated, (b) flag for closer/maintenance to NOT stage them, (c) recommend (not block) adding them to `.gitignore` in a separate maintenance ticket. The repo `.gitignore` at root currently covers `node_modules/`, `dist/`, `*.log`, `.venv/` but misses these — recurring gap.
 - **`react: { useSuspense: false }` is a positive signal**: when a slice configures eager (synchronous) i18n loading, it MUST also set `react.useSuspense: false`. Without it, downstream hooks force consumers into Suspense boundaries even though resources are already in memory. If you see eager loading without `useSuspense: false`, flag it as a follow-up — P03 productive screens will hit unnecessary Suspense plumbing otherwise.
 - **Locale JSON files are exempt from `.md`-style docstring rule**: pure data files (JSON, YAML data, CSV) cannot carry docstrings (no comment syntax in standard JSON). The §Documentation rule applies to code files. Do not flag missing docstrings on locale bundles. The convention/inventory documentation belongs in the consuming module's docstring (here `frontend/src/i18n/index.ts` and `languages.ts`).
+
+### From P00-S02-T002 re-review (post-debugger CWE-532 fix)
+
+- **structlog `exc_info=True` + Rich tracebacks is a CWE-532 vector — auditable in EVERY slice.** structlog's `_redaction_processor` scrubs `event_dict` keys ONLY. When `exc_info=True` is set, `structlog.dev.ConsoleRenderer` invokes `RichTracebackFormatter` which defaults to `show_locals=True` and renders Python frame locals to stdout/stderr. The asyncpg/SQLAlchemy connect path stores `cparams = {host, user, password, port, database}` and `ConnectionParameters(...)` as frame locals — those bypass redaction entirely. Same pattern applies to any HTTP-client failure, secret-decoder failure, OAuth token-exchange failure, etc. **Mandatory validator check**: on EVERY slice, grep `exc_info=True` in changed code; for each occurrence, ask "what locals could the failing frame hold?" If the answer includes anything DSN-shaped, secret-shaped, or token-shaped → REJECT with `changes_requested` until either (a) `exc_info=True` is dropped and replaced with structured fields `error_class` + sanitized `detail`, OR (b) the slice configures `RichTracebackFormatter(show_locals=False)` globally. This trumps the docstring/redactor argument because redaction does NOT cover frame locals.
+- **Self-correction is OK and required**: my initial T002 review wrote "exc_info=True ... acceptable; structlog redaction processor still applies to dict keys" which was a false equivalence. The handoff is append-only, so the re-review section explicitly supersedes the initial gate. Document the why so future reviewers don't repeat the conflation.
+- **Test realness for log-leak regressions requires DELIBERATE frame-local binding.** A monkeypatched `OperationalError("simulated")` does NOT exercise the leak path because clean exception messages have clean stack frames. The regression test MUST build a fake call site whose failing frame deliberately binds secret values as locals before raising. Canonical pattern:
+  ```python
+  class _FakeAsyncConn:
+      def __init__(self, cparams: dict[str,str], dsn: str) -> None:
+          self.cparams = cparams; self.dsn = dsn
+      async def __aenter__(self):
+          cparams = self.cparams  # noqa: F841 — bound as local on purpose
+          dsn = self.dsn          # noqa: F841 — bound as local on purpose
+          raise OperationalError("connection refused", None, ...)  # generic str(exc)!
+  ```
+  The `# noqa: F841` is the signal: locals are intentional, secrets must be IN the frame and NOT in the exception message — otherwise the test could pass for the wrong reason (sanitizer cleaning the message).
+- **Capture both stdout and stderr in capsys**: structlog's ConsoleRenderer writes to stderr by default. `combined = captured.out + captured.err` is the correct way to validate against either stream.
+- **Verbose-mode forced reset for log-pipeline tests**: `configure_logging` is idempotent via a module-level `_configured` guard. Tests that need to validate a different verbose mode must reset the guard:
+  ```python
+  prev = core_logging._configured
+  core_logging._configured = False
+  try:
+      core_logging.configure_logging(verbose=True)
+      ... # exercise leak path
+  finally:
+      core_logging._configured = prev
+  ```
+  Not pristine (touches private), but acceptable for regression coverage. If the pattern recurs, recommend a `_reset_for_tests()` helper as a follow-up.
+- **In-scope CWE fix vs out-of-scope architectural fix split**: when a security finding has both (a) a leak at the immediate call site AND (b) an architectural-level enabler one layer down, the correct split is: (a) close the leak by adjusting the call site within the existing write_set, AND (b) register a `severity: high` follow-up for the enabler. Touching the lower layer from the wrong slice's write_set is illegal scope expansion. HIGH severity ensures `claim_task.py` + closer + `/next-wave` block until promotion/waiver. T002 closed CWE-532 in `router.py` + `main.py` (in-scope); FU-20260509044829 tackles the global `RichTracebackFormatter(show_locals=False)` tuning in `app/core/logging.py` (out-of-scope, deferred but blocking).
+- **Re-review trailer policy**: when a slice is reopened after `/verify-slice` issues_found + debugger fix, validator must append a NEW section to the handoff (header `## Validator re-review (post-debugger fix)`) — never edit the prior section. The trailer's OUTCOME on the re-review supersedes the initial trailer for closer's pre-check; closer reads the LAST validator section.
+- **Specific characters in test secrets**: irrepetible randomized suffixes (e.g. `topsecret_pwd_xyz_8f3c1`, `hostxyz-debugger-fix`, `54399`) prevent false-positive collisions with uvicorn banners, sqlalchemy connection strings, or unrelated structlog meta lines. Validate by hand-grep of evidence files: those tokens should appear ONLY where the test put them. A test that uses generic strings like "secret" or "password" as the needle would silently pass against unrelated lines.

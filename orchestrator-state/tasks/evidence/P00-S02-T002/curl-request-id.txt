@@ -1,0 +1,5 @@
+=== X-Request-ID echoed when provided ===
+x-request-id: testid-12345
+
+=== X-Request-ID generated (uuid4 hex) when missing ===
+x-request-id: a745f51aaa98422288748b72c5c46e7d

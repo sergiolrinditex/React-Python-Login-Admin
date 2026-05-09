@@ -1,0 +1,23 @@
+=== PII Check on verbose-on log ===
+
+Checking for 'password' pattern:
+NONE FOUND - OK
+
+Checking for 'hilopeople_dev_pwd' (actual password):
+NONE FOUND - OK
+
+Checking for 'change-me' (default password):
+NONE FOUND - OK
+
+Checking for JWT/token values:
+NONE FOUND - OK
+
+Checking for connection string with credentials (postgresql+asyncpg://user:pass):
+NONE FOUND - OK
+
+Safe entries (request_id, path, status code, duration):
+[2m2026-05-09T04:35:51.310469Z[0m [[32m[1mdebug    [0m] [1mBEFORE health.live.start: computing uptime[0m [[0m[1m[34mapp.api.router[0m][0m [36mrequest_id[0m=[35mtester-verbose-test[0m
+[2m2026-05-09T04:35:51.310700Z[0m [[32m[1mdebug    [0m] [1mAFTER health.live.ok: process alive[0m [[0m[1m[34mapp.api.router[0m][0m [36mrequest_id[0m=[35mtester-verbose-test[0m [36muptime_s[0m=[35m1.027[0m
+[2m2026-05-09T04:35:51.330336Z[0m [[32m[1mdebug    [0m] [1mBEFORE health.ready.start: starting dependency probes[0m [[0m[1m[34mapp.api.router[0m][0m [36mrequest_id[0m=[35mc70d54d666ac436d93dde0a6d4cdb706[0m
+[2m2026-05-09T04:35:51.330464Z[0m [[32m[1mdebug    [0m] [1mBEFORE health.db.start: connecting to DB for SELECT 1[0m [[0m[1m[34mapp.api.router[0m][0m [36mrequest_id[0m=[35mc70d54d666ac436d93dde0a6d4cdb706[0m
+[2m2026-05-09T04:35:51.330532Z[0m [[32m[1mdebug    [0m] [1mBEFORE _get_engine: creating async engine[0m [[0m[1m[34mapp.core.db[0m][0m [36mrequest_id[0m=[35mc70d54d666ac436d93dde0a6d4cdb706[0m

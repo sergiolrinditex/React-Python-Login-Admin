@@ -1,16 +1,18 @@
 {
-  "generated_at": "2026-05-09T04:03:14+00:00",
+  "generated_at": "2026-05-09T05:10:25+00:00",
   "active_phase_id": "P00",
-  "active_task_id": "P00-S01-T005",
-  "last_worker": "closer",
-  "last_event": "subagent_stop",
+  "active_task_id": "P00-S02-T004",
+  "last_worker": "tester",
+  "last_event": "followup_promoted",
   "pending_journey_verifications": [],
   "journey_gate_mode": "frontier",
   "last_journey_verified": null,
   "spawn_budget": 20,
   "spawns_in_current_slice": {
-    "P00-S01-T004": 1,
-    "agent:closer": 1
+    "P00-S02-T002": 3,
+    "agent:debugger": 1,
+    "agent:validator": 1,
+    "agent:tester": 1
   },
   "open_followups": [
     {
@@ -30,22 +32,26 @@
       "title": "Quote MAIL_FROM_NAME in .env.example to fix bash source failure",
       "path": "orchestrator-state/tasks/follow-ups/FU-20260508230723-quote-mail-from-name-in-env-example-to-fix-bash-.yaml",
       "created_at": "2026-05-08T23:07:23+00:00"
+    },
+    {
+      "id": "FU-20260509044829-disable-structlog-rich-traceback-show-locals-glo",
+      "status": "promoted",
+      "severity": "high",
+      "origin_task_id": "P00-S02-T002",
+      "title": "Disable structlog Rich-traceback show_locals globally to prevent DSN/secret leaks in error logs",
+      "path": "orchestrator-state/tasks/follow-ups/FU-20260509044829-disable-structlog-rich-traceback-show-locals-glo.yaml",
+      "created_at": "2026-05-09T04:48:29+00:00",
+      "promoted_task_id": "P00-S02-T004"
     }
   ],
-  "last_claimed_task_id": "P00-S01-T004",
+  "last_claimed_task_id": "P00-S01-T005",
   "last_trailer": {
-    "task_id": "P00-S01-T004",
-    "outcome": "committed",
-    "next_status": "done",
-    "handoff": "orchestrator-state/tasks/handoffs/P00-S01-T004.md",
-    "evidence": "orchestrator-state/tasks/evidence/P00-S01-T004/",
-    "report": "orchestrator-state/tasks/reports/P00-S01-T004.md",
-    "report_ready": "yes",
-    "baseline_sync_ready": "yes",
-    "git_ready": "yes",
-    "push_ready": "yes",
-    "worktrees_cleaned": "yes"
+    "task_id": "P00-S02-T002",
+    "outcome": "pass",
+    "next_status": "ready_for_close",
+    "handoff": "orchestrator-state/tasks/handoffs/P00-S02-T002.md",
+    "evidence": "orchestrator-state/tasks/evidence/P00-S02-T002/"
   },
-  "last_stop_at": "2026-05-09T04:03:14+00:00",
-  "last_followup_id": "FU-20260508230723-quote-mail-from-name-in-env-example-to-fix-bash-"
+  "last_stop_at": "2026-05-09T05:07:13+00:00",
+  "last_followup_id": "FU-20260509044829-disable-structlog-rich-traceback-show-locals-glo"
 }

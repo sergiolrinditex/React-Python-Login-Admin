@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "purpose": "Cumulative built baseline snapshot for ChatGPT/source-of-truth increments.",
-  "latest_version": "baseapp",
+  "latest_version": "current",
   "snapshots": [
     {
       "ts": "2026-05-08T21:22:09+00:00",
@@ -206,8 +206,42 @@
           "sha256": "8e8ab8edeb3831dd6b05e2d09d9ccf44719d3ea5dcc393a3ec5364a1c38b7d92"
         }
       }
+    },
+    {
+      "ts": "2026-05-09T05:12:29+00:00",
+      "version": "current",
+      "task_id": "P00-S02-T002",
+      "phase_id": null,
+      "reason": "verified slice closed",
+      "docs": {
+        "instructions": {
+          "source": "docs/source-of-truth/instrucciones.md",
+          "target": "docs/base-app/instrucciones.md",
+          "sha256": "422b7daa338ec118fcbd710de8b47027daf0943d1419ca549a20dde5883200c6"
+        },
+        "guide": {
+          "source": "docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md",
+          "target": "docs/base-app/HILO_PEOPLE_TECHNICAL_GUIDE.md",
+          "sha256": "ba0d2ec8cd6b3360bdcf60a5041fb6a019f0b7f925cadd5213916b4655c59ec3"
+        },
+        "checklist": {
+          "source": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md",
+          "target": "docs/base-app/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md",
+          "sha256": "2414740fa8fe94d708b3856f41c9f738e4b73f4ed271eb4bd24b2964593454d2"
+        },
+        "ux_contract": {
+          "source": "docs/source-of-truth/UX_CONTRACT.md",
+          "target": "docs/base-app/UX_CONTRACT.md",
+          "sha256": "cecb7afb922e2940268107bf546b4c731eec8069ab0abd084aaab1b1771a1c48"
+        },
+        "stack_profile": {
+          "source": "docs/source-of-truth/STACK_PROFILE.yaml",
+          "target": "docs/base-app/STACK_PROFILE.yaml",
+          "sha256": "8e8ab8edeb3831dd6b05e2d09d9ccf44719d3ea5dcc393a3ec5364a1c38b7d92"
+        }
+      }
     }
   ],
-  "latest_task_id": "P00-S01-T005",
-  "updated_at": "2026-05-09T04:42:30+00:00"
+  "latest_task_id": "P00-S02-T002",
+  "updated_at": "2026-05-09T05:12:29+00:00"
 }

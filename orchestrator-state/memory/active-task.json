@@ -1,66 +1,51 @@
 {
-  "id": "P00-S01-T005",
+  "id": "P00-S02-T004",
   "phase_id": "P00",
-  "step_id": "P00-S01",
-  "title": "i18n resources ES/EN/FR",
-  "status": "ready",
+  "step_id": "P00-S02",
+  "title": "Disable structlog Rich-traceback show_locals globally to prevent DSN/secret leaks in error logs",
+  "status": "blocked",
   "build_state": "planned",
-  "product_increment": "v1",
-  "risk_level": "medium",
-  "verify_mode": "human",
+  "product_increment": "current",
   "depends_on": [
-    "P00-S01-T002",
-    "P00-S01-T004"
+    "P00-S02-T002"
   ],
-  "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 0.1 — Project bootstrap",
+  "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry",
   "acceptance": [
-    "Namespaces common/auth/chat/account/admin-ai/rag/mcp/errors exist in es/en/fr with fallback es"
+    "1) app/core/logging.py configures structlog's traceback formatter with show_locals=False (or installs a frame-locals redaction processor that scrubs keys matching password|pwd|token|secret|api_key|encrypted_secret|dsn|database_url|connection_string and values matching DSN-like substrings). 2) New test in backend/tests/test_logging.py exercises a real exception with sensitive locals (e.g. asyncpg auth failure with a fake DSN) and asserts that the rendered log line does NOT contain the secret value",
+    "the host",
+    "the port",
+    "the user",
+    "or the password key value. 3) ENABLE_VERBOSE_LOGGING toggle still works correctly. 4) ruff + mypy clean. 5) Regression: existing 8 health tests + 39 dep-smoke tests still pass. 6) Existing /ready 503 path continues to log error_class + db_detail (sanitized) without exc_info=True OR with a configuration that no longer leaks."
   ],
   "verification_commands": [
-    "npm --prefix frontend run test -- --run -t i18n"
+    "Real reproduction: launch uvicorn with bad DATABASE_URL (port without listener)",
+    "curl /ready",
+    "grep stdout for 'password'",
+    "'pwd'",
+    "the actual password value",
+    "host",
+    "port — all must be absent. Run with both ENABLE_VERBOSE_LOGGING=true and =false. Also reproduce with a deliberate failing path elsewhere (any other use case that catches an exception and logs with exc_info=True). Capture logs in evidence dir."
   ],
-  "kind": "frontend",
-  "target": "i18n resources ES/EN/FR",
-  "journey_refs": [
-    "J100",
-    "J101",
-    "J102"
-  ],
-  "route": "",
-  "endpoint": "",
-  "tables": [
-    "users"
-  ],
-  "origin_instr": "§6#i18n",
-  "origin_techguide": "§6.5#verification-data",
-  "allowed_paths": [
-    "frontend/src/i18n/**",
-    "frontend/public/locales/**"
-  ],
+  "allowed_paths": [],
   "conflict_groups": [
-    "i18n"
+    "infra:logging"
   ],
   "write_set": [
-    "frontend/src/i18n/**",
-    "frontend/public/locales/**"
+    "backend/app/core/logging.py",
+    "backend/tests/test_logging.py"
   ],
-  "handoff_path": "orchestrator-state/tasks/handoffs/P00-S01-T005.md",
-  "evidence_dir": "orchestrator-state/tasks/evidence/P00-S01-T005",
-  "notes": [],
-  "dependency_mode": "explicit_dag",
-  "depends_on_raw": "P00-S01-T002,P00-S01-T004",
-  "conflict_groups_raw": "i18n",
-  "write_set_raw": "frontend/src/i18n/**, frontend/public/locales/**",
-  "product_increment_raw": "v1",
-  "build_state_raw": "planned",
-  "risk_level_raw": "medium",
-  "verify_mode_raw": "human",
-  "kind_raw": "frontend",
-  "target_raw": "i18n resources ES/EN/FR",
-  "journey_refs_raw": "J100,J101,J102",
-  "screen_route_raw": "—",
-  "endpoint_raw": "—",
-  "tables_raw": "users",
-  "origin_instr_raw": "§6#i18n",
-  "origin_techguide_raw": "§6.5#verification-data"
+  "journey_refs": [],
+  "handoff_path": "orchestrator-state/tasks/handoffs/P00-S02-T004.md",
+  "evidence_dir": "orchestrator-state/tasks/evidence/P00-S02-T004",
+  "origin": {
+    "type": "runtime_followup",
+    "followup_id": "FU-20260509044829-disable-structlog-rich-traceback-show-locals-glo",
+    "origin_task_id": "P00-S02-T002",
+    "severity": "high",
+    "kind": "security"
+  },
+  "notes": [
+    "Runtime follow-up promoted from FU-20260509044829-disable-structlog-rich-traceback-show-locals-glo",
+    "Description: Verify-slice for P00-S02-T002 found that any _logger.error(..., exc_info=True) call leaks Python frame locals into stdout via structlog's Rich RichTracebackFormatter. The /ready 503 path leaked the full asyncpg DSN (host, port, user, password) 14+ times in a single 503 log. Root cause is in app/core/logging.py (T003) — the structlog ConsoleRenderer / RichTracebackFormatter is not configured with show_locals=False, and the existing redaction processor only scrubs top-level event_dict keys, not traceback frame locals. T002 closes the immediate leak in router.py + main.py by removing exc_info=True from those two log calls (in-scope debugger fix). This follow-up addresses the architectural root cause: any future error log with exc_info=True (in any feature) will leak again. CWE-532. Violates 01-non-negotiables.md §Logging and §Security."
+  ]
 }

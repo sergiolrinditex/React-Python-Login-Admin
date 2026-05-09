@@ -1,0 +1,60 @@
+=== GET /health ===
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    48  100    48    0     0   5263      0 --:--:-- --:--:-- --:--:--  5333
+HTTP/1.1 200 OK
+date: Sat, 09 May 2026 04:27:43 GMT
+server: uvicorn
+content-length: 48
+content-type: application/json
+x-request-id: d243a8f67d214fb79fcdd426a7df22b3
+
+{"status":"ok","version":"0.0.0","uptime":1.365}
+=== GET /live ===
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    50  100    50    0     0  25458      0 --:--:-- --:--:-- --:--:-- 50000
+HTTP/1.1 200 OK
+date: Sat, 09 May 2026 04:27:43 GMT
+server: uvicorn
+content-length: 50
+content-type: application/json
+x-request-id: a4f10d4d81724b18a96b774761f8e709
+
+{"status":"alive","version":"0.0.0","uptime":1.39}
+=== GET /ready (DB up) ===
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   182  100   182    0     0   1498      0 --:--:-- --:--:-- --:--:--  1504
+HTTP/1.1 200 OK
+date: Sat, 09 May 2026 04:27:43 GMT
+server: uvicorn
+content-length: 182
+content-type: application/json
+x-request-id: 58fa5368ef5441f3b85628b74652b267
+
+{"status":"ready","checks":{"db":{"status":"ok"},"redis":{"status":"not_implemented","reason":"client_not_wired"},"litellm":{"status":"not_implemented","reason":"client_not_wired"}}}
+=== X-Request-ID echo ===
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    48  100    48    0     0  29906      0 --:--:-- --:--:-- --:--:-- 48000
+HTTP/1.1 200 OK
+date: Sat, 09 May 2026 04:27:43 GMT
+server: uvicorn
+content-length: 48
+content-type: application/json
+x-request-id: planner-smoke-1
+
+{"status":"ok","version":"0.0.0","uptime":1.566}
+=== X-Request-ID generated ===
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    48  100    48    0     0  34433      0 --:--:-- --:--:-- --:--:-- 48000
+HTTP/1.1 200 OK
+date: Sat, 09 May 2026 04:27:43 GMT
+server: uvicorn
+content-length: 48
+content-type: application/json
+x-request-id: d047987a43a74c548064b20dd929f248
+
+{"status":"ok","version":"0.0.0","uptime":1.585}

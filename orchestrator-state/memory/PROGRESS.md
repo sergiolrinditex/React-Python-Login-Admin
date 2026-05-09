@@ -59,7 +59,7 @@ Rancher-ready compose stack ADR preserved in handoff P00-S02-T001.md (pending fo
 | Request-ID middleware | live | X-Request-ID echoed; uuid4 hex generated when missing; bound in structlog contextvars |
 | Migrations applied | 0 | First migration: P01-S01-T001 |
 | Seed data | not loaded | Seed script: P00-S02-T003 |
-| Backend tests | 47 passing | 39 smoke + 8 health tests (all green, real DB probe verified with compose postgres) |
+| Backend tests | 48 passing | 39 smoke + 9 health tests (all green; #9 = CWE-532 regression guard added by debugger 2026-05-09) |
 | Deps installed | YES | pip install -e ".[dev]" clean in .venv-t003 |
 
 ### Backend Dependencies (exact pins, verified against PyPI 2026-05-08)
@@ -167,15 +167,15 @@ Rancher-ready compose stack ADR preserved in handoff P00-S02-T001.md (pending fo
 | Level | Count | Status |
 |-------|-------|--------|
 | Backend unit | 0 | — |
-| Backend integration | 8 | PASS (health endpoint tests: /health /live /ready + request_id + DB probe) |
+| Backend integration | 9 | PASS (8 health endpoint tests + 1 CWE-532 traceback-locals regression guard) |
 | Backend smoke | 39 | PASS (dependency smoke — all dep categories) |
 | Frontend unit | 7 | PASS (tokens TS mirror + component tests) |
 | Frontend component | 9 | PASS (providers smoke + showcase smoke: 1+8) |
 | i18n | 10 | PASS (P00-S01-T005) |
 | E2E | 0 | — |
-| **Total** | **73** | **73 PASS** |
+| **Total** | **74** | **74 PASS** |
 
-Note: Backend total 47 tests (39 smoke + 8 health). Frontend Vitest: 57 tests (47 previous + 10 i18n). Grand total: 104 tests passing.
+Note: Backend total 48 tests (39 smoke + 9 health). Frontend Vitest: 57 tests (47 previous + 10 i18n). Grand total: 105 tests passing.
 
 ## Milestones
 
@@ -223,6 +223,7 @@ Note: Backend total 47 tests (39 smoke + 8 health). Frontend Vitest: 57 tests (4
 - **P00-S02-T001**: Worker service inherits /health Dockerfile HEALTHCHECK from backend image; disabled in compose override since worker has no HTTP port. Real Celery healthcheck (`celery inspect ping`) lands in P02-S04-T002.
 - **P00-S02-T001**: postgres host port mapped to 5433 (not 5432) to avoid conflict with local Postgres instance on dev machines. alembic must use port 5433 when running from host.
 - **P00-S02-T001 env drift follow-up**: FU-20260508225027 (medium) registered — config.py field names don't match TECHNICAL_GUIDE §11.1 (jwt_secret vs JWT_PRIVATE_KEY/JWT_PUBLIC_KEY etc.). Non-blocking now; must be resolved before P01-S02-T001 (auth JWT implementation).
+- **P00-S02-T002 CWE-532 fix (2026-05-09)** — `/verify-slice` flagged a DSN/password leak via `_logger.error(..., exc_info=True)` in `_probe_db()`. Verbose-mode structlog uses `ConsoleRenderer` + `RichTracebackFormatter(show_locals=True)` and asyncpg/SQLAlchemy bind `cparams = {host, user, password, port, database}` as frame locals — those locals were being rendered to stdout. **Fix**: dropped `exc_info=True` from both `_probe_db()` except branches (and added a defensive NOTE comment in the request_id middleware exception path). Structured fields `error_class` + sanitized `db_detail` remain in the log. Test #9 `test_ready_db_down_does_not_leak_dsn_in_logs` is a regression guard with a fake engine that binds secret cparams as frame locals; the test FAILS if `exc_info=True` is reintroduced. **Out-of-scope follow-up `FU-20260509044829-disable-structlog-rich-traceback-show-locals-glo`** will configure `RichTracebackFormatter(show_locals=False)` globally so future agents can re-enable `exc_info=True` safely. Until that lands, **DO NOT re-add `exc_info=True` anywhere**: the structured-fields-only pattern is mandatory. Backend test count: 47 → 48. Evidence chain: `debugger-fix-pytest-health.log` (9/9), `debugger-fix-pytest-full.log` (48/48), `debugger-fix-uvicorn-db-down-no-leak.log` (0 secret leaks vs pre-fix 14+18+16+5).
 
 ---
 
@@ -245,5 +246,5 @@ Singleton: `frontend/src/i18n/index.ts` — eager loading, fallbackLng:'es', `re
 Languages: `frontend/src/i18n/languages.ts` — `SUPPORTED_LANGUAGES`, `NAMESPACES`, `isSupportedLanguage()`.
 Test gate: `frontend/src/i18n/__tests__/i18n.test.ts` — 10 assertions (parse+load, drift-detector, productive copy, functional t(), fallback, hasResourceBundle, constants shape).
 
-> Last updated: 2026-05-09T06:30:00Z
-> Updated by: developer (P00-S02-T002) — health live/ready endpoints + request_id middleware
+> Last updated: 2026-05-09T04:57:00Z
+> Updated by: debugger (P00-S02-T002) — verify-slice follow-up: CWE-532 traceback frame-locals leak fixed (drop exc_info=True in /ready DB-probe error logs); regression test #9 added; 48/48 backend tests passing.

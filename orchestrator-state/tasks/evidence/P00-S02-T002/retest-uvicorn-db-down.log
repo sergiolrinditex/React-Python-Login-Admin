@@ -1,0 +1,14 @@
+[2m2026-05-09T05:04:40.445668Z[0m [[32m[1mdebug    [0m] [1mAFTER configure_logging: structlog configured[0m [[0m[1m[34mapp.core.logging[0m][0m [36mlog_level[0m=[35mDEBUG[0m [36mverbose[0m=[35mTrue[0m
+INFO:     Started server process [96039]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8006 (Press CTRL+C to quit)
+[2m2026-05-09T05:04:48.220143Z[0m [[32m[1mdebug    [0m] [1mBEFORE health.ready.start: starting dependency probes[0m [[0m[1m[34mapp.api.router[0m][0m [36mrequest_id[0m=[35me1a312bc76ce4469aad680a526731efb[0m
+[2m2026-05-09T05:04:48.220702Z[0m [[32m[1mdebug    [0m] [1mBEFORE health.db.start: connecting to DB for SELECT 1[0m [[0m[1m[34mapp.api.router[0m][0m [36mrequest_id[0m=[35me1a312bc76ce4469aad680a526731efb[0m
+[2m2026-05-09T05:04:48.220814Z[0m [[32m[1mdebug    [0m] [1mBEFORE _get_engine: creating async engine[0m [[0m[1m[34mapp.core.db[0m][0m [36mrequest_id[0m=[35me1a312bc76ce4469aad680a526731efb[0m
+[2m2026-05-09T05:04:48.220908Z[0m [[32m[1mdebug    [0m] [1mBEFORE get_settings: loading from environment[0m [[0m[1m[34mapp.core.config[0m][0m [36mrequest_id[0m=[35me1a312bc76ce4469aad680a526731efb[0m
+[2m2026-05-09T05:04:48.227785Z[0m [[32m[1mdebug    [0m] [1mAFTER get_settings: loaded (api_host=127.0.0.1, api_port=8000, verbose=True)[0m [[0m[1m[34mapp.core.config[0m][0m [36mrequest_id[0m=[35me1a312bc76ce4469aad680a526731efb[0m
+[2m2026-05-09T05:04:48.410134Z[0m [[32m[1mdebug    [0m] [1mAFTER _get_engine: engine created (host redacted)[0m [[0m[1m[34mapp.core.db[0m][0m [36mrequest_id[0m=[35me1a312bc76ce4469aad680a526731efb[0m
+[2m2026-05-09T05:04:48.446436Z[0m [[31m[1merror    [0m] [1mERROR health.ready.db_failed: unexpected error on SELECT 1[0m [[0m[1m[34mapp.api.router[0m][0m [36mdb_detail[0m=[35m'gaierror: [Errno 8] nodename nor servname provided, or not'[0m [36merror_class[0m=[35mgaierror[0m [36mrequest_id[0m=[35me1a312bc76ce4469aad680a526731efb[0m
+[2m2026-05-09T05:04:48.446600Z[0m [[31m[1merror    [0m] [1mAFTER health.ready.not_ready: critical probe failed[0m [[0m[1m[34mapp.api.router[0m][0m [36mdb_detail[0m=[35m'gaierror: [Errno 8] nodename nor servname provided, or not'[0m [36mfailed_probe[0m=[35mdb[0m [36mrequest_id[0m=[35me1a312bc76ce4469aad680a526731efb[0m
+INFO:     127.0.0.1:54022 - "GET /ready HTTP/1.1" 503 Service Unavailable

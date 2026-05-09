@@ -1,0 +1,25 @@
+=== /live still 200 (no DB needed) ===
+HTTP/1.1 200 OK
+date: Sat, 09 May 2026 04:43:57 GMT
+server: uvicorn
+content-length: 58
+content-type: application/json
+x-request-id: 0cabbcc5852f4abd998264f5d62f141f
+
+{"status":"alive","version":"0.1.0-verify","uptime":1.275}=== /health still 200 (no DB needed) ===
+HTTP/1.1 200 OK
+date: Sat, 09 May 2026 04:43:57 GMT
+server: uvicorn
+content-length: 55
+content-type: application/json
+x-request-id: a0166bd043df4159aace6dad313cb487
+
+{"status":"ok","version":"0.1.0-verify","uptime":1.327}=== /ready expects 503 (DB DOWN — port 5499 has no listener) ===
+HTTP/1.1 503 Service Unavailable
+date: Sat, 09 May 2026 04:43:57 GMT
+server: uvicorn
+content-length: 267
+content-type: application/json
+x-request-id: 4d41ad50fd3041c4b04492a56265a3f5
+
+{"status":"not_ready","reason":"db","checks":{"db":{"status":"fail","detail":"ConnectionRefusedError: [Errno 61] Connection refused"},"redis":{"status":"not_implemented","reason":"client_not_wired"},"litellm":{"status":"not_implemented","reason":"client_not_wired"}}}

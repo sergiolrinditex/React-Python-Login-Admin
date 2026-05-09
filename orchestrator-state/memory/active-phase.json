@@ -2,7 +2,7 @@
   "id": "P00",
   "phase_number": 0,
   "title": "Bootstrap / foundation propia",
-  "status": "ready",
+  "status": "blocked",
   "depends_on": [],
   "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Phase 0 — Bootstrap / foundation propia",
   "task_ids": [
@@ -13,6 +13,7 @@
     "P00-S01-T005",
     "P00-S02-T001",
     "P00-S02-T002",
+    "P00-S02-T004",
     "P00-S02-T003"
   ]
 }
