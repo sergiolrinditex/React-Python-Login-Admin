@@ -33,7 +33,7 @@ Usa su salida como base. No inventes ready nodes a mano si el script dice que no
 
 - Si `runtime-state.pending_journey_verifications` no está vacío, aplica `journey_gate_mode`: en `frontier` difiere solo tasks con esos `Journey refs`; en `strict` devuelve bloqueo global y lista `/verify-journey <JID>`.
 - Si `runtime-state.open_followups` contiene propuestas `high|critical|blocker` en estado `proposed`, no abras wave: promueve con `/register-followup promote <ID>` o descarta con waiver humano explícito.
-- Valida con `./scripts/check-task-dag.sh --strict`; si el DAG tiene errores, no propongas paralelismo.
+- Valida con `./scripts/check-task-dag.sh --strict`; si el DAG tiene errores o `task_dag.mode != explicit_dag`, no propongas paralelismo. Este orquestador opera en production DAG-only; `legacy_linear` significa que el Coverage Registry debe corregirse.
 - Solo considera la earliest incomplete phase. No adelantes Phase N+1 si Phase N tiene tareas no `done`.
 
 ## Selección de wave
@@ -56,21 +56,21 @@ Devuelve:
 ```md
 # DAG wave propuesta
 
-- DAG mode: <explicit_dag|legacy_linear>
+- DAG mode: explicit_dag
 - Phase: <Pxx>
 - Ready nodes: <N>
 - Recomendación de paralelo: <N seguro> terminales
 
 | TASK_ID | Título | Depends on | Conflict group | Write set | Comando terminal |
 |---|---|---|---|---|---|
-| P.. | ... | — | api:auth | {{backend.module_root}}/**/auth* | `export CLAUDE_ACTIVE_TASK_ID=P.. CLAUDE_TASK_PACK=orchestrator-state/tasks/task-packs/P...md` → `/next-slice P..` |
+| P.. | ... | — | api:auth | {{backend.module_root}}/**/auth* | `export CLAUDE_ACTIVE_TASK_ID=P.. CLAUDE_TASK_PACK=orchestrator-state/tasks/task-packs/P...md` → `claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice P.."` |
 
 ## Orden sugerido si prefieres serializar
 1. <TASK_ID>
 2. <TASK_ID>
 
 ## Recordatorio
-Cada terminal debe mantener `CLAUDE_ACTIVE_TASK_ID=<TASK_ID>` durante todo el slice y pasar `CLAUDE_TASK_PACK=orchestrator-state/tasks/task-packs/<TASK_ID>.md` a los agentes. El script imprime el `export` copy/paste; `/next-slice <TASK_ID>` hará el claim atómico después de la aprobación humana y el `planner` enriquecerá ese pack por task.
+Cada terminal debe mantener `CLAUDE_ACTIVE_TASK_ID=<TASK_ID>` durante todo el slice y pasar `CLAUDE_TASK_PACK=orchestrator-state/tasks/task-packs/<TASK_ID>.md` a los agentes. El script imprime el `export` copy/paste y el comando `claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice <TASK_ID>"`; `/next-slice <TASK_ID>` hará el claim atómico después de la aprobación humana y el `planner` enriquecerá ese pack por task.
 ```
 
 No abras terminales tú. No spawnees agentes. No cambies registry. El script `next_wave.py` es read-only, imprime bloques copy/paste para más de dos terminales cuando el DAG lo permite, y mueve a "Serializados por conflicto" los nodos ready que comparten `Conflict group`/`Write set` con la wave segura.

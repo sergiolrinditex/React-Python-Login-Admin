@@ -46,6 +46,7 @@ from common import (
     memory_dir,
     now_iso,
     promote_ready_tasks,
+    active_conflict_blockers,
     registry_path,
     relpath,
     runtime_state_path,
@@ -386,7 +387,8 @@ def promote(args: argparse.Namespace) -> dict[str, Any]:
         task_id = args.task_id or _next_task_id(registry, phase_id, step_id)
         deps = _as_list(args.depends_on) or list(proposal.get("depends_on") or []) or ([origin["id"]] if origin else [])
         done = {t["id"] for t in registry.get("tasks", []) if t.get("status") == "done"}
-        status = "ready" if all(dep in done for dep in deps) else "blocked"
+        deps_ready = all(dep in done for dep in deps)
+        status = "ready" if deps_ready else "blocked"
         task = {
             "id": task_id,
             "phase_id": phase_id,
@@ -408,6 +410,21 @@ def promote(args: argparse.Namespace) -> dict[str, Any]:
             "origin": {"type": "runtime_followup", "followup_id": proposal.get("id"), "origin_task_id": proposal.get("origin_task_id"), "severity": proposal.get("severity"), "kind": proposal.get("kind")},
             "notes": [f"Runtime follow-up promoted from {proposal.get('id')}", f"Description: {proposal.get('description') or '—'}"],
         }
+        if deps_ready:
+            conflict_blockers = active_conflict_blockers(registry, task)
+            if conflict_blockers:
+                task["status"] = "blocked"
+                status = "blocked"
+                task["blocked_reason"] = "conflict_with_active_task"
+                task["blocked_by"] = [str(item.get("task_id")) for item in conflict_blockers if item.get("task_id")]
+                task["last_blocker"] = {
+                    "type": "conflict_with_active_task",
+                    "blockers": conflict_blockers,
+                    "ts": now_iso(),
+                }
+                task.setdefault("notes", []).append(
+                    "Promoted follow-up held blocked because its conflict group/write set overlaps an active DAG task."
+                )
         checklist_path = None if args.no_source_doc_update else _append_source_registry_row(task, proposal)
         if checklist_path:
             task["source_ref"] = f"{checklist_path}#Runtime Follow-up Coverage Registry"

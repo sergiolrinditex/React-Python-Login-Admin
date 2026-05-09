@@ -56,7 +56,7 @@ Before advancing to the next phase:
 
 ## DAG execution overlay
 
-Sequential execution is still valid and remains the fallback. DAG execution is enabled only by the Coverage Registry dependency column in the checklist. The planner must treat `depends_on` as a hard gate: a node can be selected only when every predecessor is `done`. Multiple ready nodes in the earliest incomplete phase form the current wave.
+Production execution is DAG-only. DAG execution is enabled by the Coverage Registry dependency column in the checklist; if `task_dag.mode` is `legacy_linear`, treat it as a source-of-truth defect and do not open workers. The planner must treat `depends_on` as a hard gate: a node can be selected only when every predecessor is `done`. Multiple ready nodes in the earliest incomplete phase form the current wave.
 
 Rules for DAG waves:
 

@@ -7,6 +7,10 @@ Phase: P00 — Scaffold + Design System
 Security fix: CWE-532 — sensitive data in log files.
 Origin: FU-20260509044829 promoted from T002 verify-slice BLOCKER finding #1.
 
+Updated in P01-S01-T002 (§11.1 alignment): replaced stale jwt_secret +
+provider_encryption_key entries in _REDACTED_KEYS with canonical names
+jwt_private_key, jwt_public_key, encryption_key.
+
 ARCHITECTURAL FIX:
   structlog's RichTracebackFormatter defaults to show_locals=True.  When any
   caller invokes _logger.error(..., exc_info=True) or _logger.exception(...),
@@ -36,6 +40,8 @@ Logging contract (HILO_PEOPLE_TECHNICAL_GUIDE.md §10.5):
   - ENABLE_VERBOSE_LOGGING=true  → DEBUG level (full flow visible).
   - ENABLE_VERBOSE_LOGGING=false → WARNING level (warning + error only).
   - Redacted keys: password, pwd, token, secret, api_key, encrypted_secret,
+    jwt_private_key, jwt_public_key, encryption_key (§11.1 canonical names, P01-S01-T002),
+    litellm_master_key, resend_api_key,
     dsn, database_url, connection_string, prompt (full), document.content.
   - request_id propagated end-to-end (middleware wired in P00-S02-T002).
   - No PII, tokens, or secrets in any log field or traceback frame locals.
@@ -55,6 +61,9 @@ import structlog
 # Keys that must never appear in log payloads.
 # Extended in P00-S02-T004 with pwd, dsn, database_url, connection_string
 # (acceptance criteria #1 — defense in depth for CWE-532 residual risk).
+# Updated in P01-S01-T002: replaced stale jwt_secret + provider_encryption_key
+# entries (orphaned after §11.1 field rename) with canonical jwt_private_key,
+# jwt_public_key, encryption_key. litellm_master_key / resend_api_key kept.
 _REDACTED_KEYS: frozenset[str] = frozenset(
     {
         "password",
@@ -65,8 +74,13 @@ _REDACTED_KEYS: frozenset[str] = frozenset(
         "secret",
         "api_key",
         "encrypted_secret",
-        "jwt_secret",
-        "provider_encryption_key",
+        # Canonical §11.1 names (aligned in P01-S01-T002; replaces stale jwt_secret +
+        # provider_encryption_key entries which would never match after the rename).
+        # jwt_private_key / jwt_public_key are also covered by the broader "secret" +
+        # "key" substring patterns, but listed explicitly for defense-in-depth.
+        "jwt_private_key",
+        "jwt_public_key",
+        "encryption_key",
         "litellm_master_key",
         "resend_api_key",
         "dsn",

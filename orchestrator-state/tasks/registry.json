@@ -15,7 +15,7 @@
       "id": "P00",
       "phase_number": 0,
       "title": "Bootstrap / foundation propia",
-      "status": "ready",
+      "status": "complete",
       "depends_on": [],
       "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Phase 0 — Bootstrap / foundation propia",
       "task_ids": [
@@ -34,7 +34,7 @@
       "id": "P01",
       "phase_number": 1,
       "title": "Auth / base capabilities",
-      "status": "blocked",
+      "status": "ready",
       "depends_on": [
         "P00"
       ],
@@ -57,7 +57,7 @@
       "id": "P02",
       "phase_number": 2,
       "title": "MOTOR / domain backend / AI",
-      "status": "blocked",
+      "status": "ready",
       "depends_on": [
         "P01"
       ],
@@ -1330,8 +1330,8 @@
       "id": "P01-S01-T002",
       "phase_id": "P01",
       "step_id": "P01-S01",
-      "title": "Align env var names in config.py to TECHNICAL_GUIDE §11.1",
-      "status": "ready",
+      "title": "Align env var names in config.py to TECHNICAL_GUIDE §11.1 (atomic across config + .env + compose + logging redaction keys)",
+      "status": "ready_for_close",
       "build_state": "planned",
       "product_increment": "current",
       "risk_level": "medium",
@@ -1341,13 +1341,17 @@
       ],
       "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime follow-up P00-S02-T001",
       "acceptance": [
-        "config.py field names match TECHNICAL_GUIDE §11.1 exactly, all existing smoke tests still pass, docker-compose.yml env overrides updated to match"
+        "config.py field names match TECHNICAL_GUIDE §11.1 exactly (incl. JWT_SECRET reshape into JWT_PRIVATE_KEY+JWT_PUBLIC_KEY for RS256, ENCRYPTION_KEY rename, LITELLM_BASE_URL rename, S3_BUCKET_DOCUMENTS rename)",
+        ".env.example mirrors §11.1 keys",
+        "docker-compose.yml env overrides for backend+worker services use the renamed keys (LITELLM_BASE_URL, not LITELLM_PROXY_BASE_URL)",
+        "backend/app/core/logging.py _REDACTED_KEYS list updated to use the canonical §11.1 names so no orphan literals remain",
+        "all existing smoke + auth-migration tests still pass"
       ],
       "verification_commands": [
-        "grep JWT_PRIVATE_KEY backend/app/core/config.py && grep ENCRYPTION_KEY backend/app/core/config.py"
+        "grep jwt_private_key backend/app/core/config.py && grep jwt_public_key backend/app/core/config.py && grep encryption_key backend/app/core/config.py && grep litellm_base_url backend/app/core/config.py && grep s3_bucket_documents backend/app/core/config.py && grep \"JWT_PRIVATE_KEY=\" .env.example && grep \"JWT_PUBLIC_KEY=\" .env.example && grep \"ENCRYPTION_KEY=\" .env.example && grep \"LITELLM_BASE_URL=\" .env.example && grep \"S3_BUCKET_DOCUMENTS=\" .env.example && grep \"LITELLM_BASE_URL:\" docker-compose.yml && cd backend && pytest -q"
       ],
       "kind": "wiring",
-      "target": "Align env var names in config.py to TECHNICAL_GUIDE §11.1",
+      "target": "Align env var names in config.py to TECHNICAL_GUIDE §11.1 (atomic across config + .env + compose + logging redaction keys)",
       "journey_refs": [],
       "route": "",
       "endpoint": "",
@@ -1356,34 +1360,43 @@
       "origin_techguide": "runtime-followup#FU-20260508225027-align-env-var-names-in-config-py-to-technical-gu",
       "allowed_paths": [
         "backend/app/core/config.py",
-        ".env.example"
+        ".env.example",
+        "docker-compose.yml",
+        "backend/app/core/logging.py"
       ],
       "conflict_groups": [
         "backend:config"
       ],
       "write_set": [
         "backend/app/core/config.py",
-        ".env.example"
+        ".env.example",
+        "docker-compose.yml",
+        "backend/app/core/logging.py"
       ],
       "handoff_path": "orchestrator-state/tasks/handoffs/P01-S01-T002.md",
-      "evidence_dir": "orchestrator-state/tasks/evidence/P01-S01-T002",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P01-S01-T002/",
       "notes": [],
       "dependency_mode": "explicit_dag",
       "depends_on_raw": "P01-S01-T001",
       "conflict_groups_raw": "backend:config",
-      "write_set_raw": "backend/app/core/config.py, .env.example",
+      "write_set_raw": "backend/app/core/config.py, .env.example, docker-compose.yml, backend/app/core/logging.py",
       "product_increment_raw": "current",
       "build_state_raw": "planned",
       "risk_level_raw": "medium",
       "verify_mode_raw": "human",
       "kind_raw": "wiring",
-      "target_raw": "Align env var names in config.py to TECHNICAL_GUIDE §11.1",
+      "target_raw": "Align env var names in config.py to TECHNICAL_GUIDE §11.1 (atomic across config + .env + compose + logging redaction keys)",
       "journey_refs_raw": "—",
       "screen_route_raw": "—",
       "endpoint_raw": "—",
       "tables_raw": "—",
       "origin_instr_raw": "runtime-followup#FU-20260508225027-align-env-var-names-in-config-py-to-technical-gu",
-      "origin_techguide_raw": "runtime-followup#FU-20260508225027-align-env-var-names-in-config-py-to-technical-gu"
+      "origin_techguide_raw": "runtime-followup#FU-20260508225027-align-env-var-names-in-config-py-to-technical-gu",
+      "last_outcome": "pass",
+      "last_updated_by": "tester",
+      "last_stop_at": "2026-05-09T12:40:32+00:00",
+      "validator_outcome": "approved",
+      "validator_next_status": "ready_for_close"
     },
     {
       "id": "P01-S01-T003",

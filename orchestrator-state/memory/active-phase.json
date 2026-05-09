@@ -6,11 +6,9 @@
   "depends_on": [
     "P00"
   ],
-  "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Phase 1 — Auth + Base Capabilities",
+  "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Phase 1 — Auth / base capabilities",
   "task_ids": [
     "P01-S01-T001",
-    "P01-S01-T002",
-    "P01-S01-T003",
     "P01-S02-T001",
     "P01-S02-T002",
     "P01-S02-T003",
@@ -18,6 +16,8 @@
     "P01-S02-T005",
     "P01-S02-T006",
     "P01-S02-T007",
-    "P01-S03-T001"
+    "P01-S03-T001",
+    "P01-S01-T002",
+    "P01-S01-T003"
   ]
 }

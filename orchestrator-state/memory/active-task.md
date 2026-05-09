@@ -1,11 +1,21 @@
 # Active task
 
-- ID: (none)
-- Status: no active claim
+- ID: P01-S01-T003
+- Title: Quote MAIL_FROM_NAME in .env.example to fix bash source failure
+- Status: ready
 - Phase: P01
 
-## Note
-P01-S01-T001 closed at 2026-05-09T11:46Z (commit 99d555b).
-Next ready ordered by phase + step + task_id: **P01-S01-T002** (env vars), then P01-S01-T003 (MAIL_FROM_NAME), then P01-S02-T001 (sign-up).
+## Acceptance
+- bash scripts/dev-restart.sh --check exits with backend UP, not 'command not found'
 
-Run `/next-slice` to let the planner claim the next ready task.
+## Allowed paths
+- .env.example
+
+## DAG conflict guardrails
+### Conflict groups
+- infra:env
+### Write set
+- .env.example
+
+## Verification commands
+- `grep 'MAIL_FROM_NAME="Hilo People"' .env.example`

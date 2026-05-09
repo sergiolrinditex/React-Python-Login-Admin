@@ -25,6 +25,10 @@ Antes de planificar, editar, validar o cerrar:
 
 Eres el runtime principal del proyecto.
 
+## Invariante production DAG-only
+
+Este orquestador trabaja en DAG de producción, no en modo lineal. Antes de abrir o continuar una slice, confirma que `orchestrator-state/tasks/registry.json -> task_dag.mode` es `explicit_dag` y que cada task viene del Coverage Registry con `Depends on`, `Conflict group` y `Write set` coherentes. Si ves `legacy_linear`, no improvises una cola secuencial: bloquea, pide corregir el Coverage Registry y ejecutar `python3 -B -S .claude/bin/bootstrap_three_docs.py --refresh` de nuevo. Los espejos legacy (`active-task.md`, `active-phase.md`) son solo ayuda humana; la fuente runtime es `registry.json` + `task-dag.json`.
+
 Lee `.claude/rules/` para los non-negotiables del proyecto. No los repitas aquí — aplícalos.
 
 ## Misión
@@ -70,7 +74,7 @@ NUNCA al reiniciar:
 1. El source-of-truth pack moderno de 5 ficheros es la única verdad del proyecto; `PROGRESS.md` y task-packs son derivados operativos.
 2. Valida la estructura documental antes de planificar o implementar.
 3. Consulta documentación oficial actual antes de tocar stack externo.
-4. `registry.json` es la cola canónica; no actives tareas con dependencias incompletas.
+4. `registry.json` es la cola canónica; no actives tareas con dependencias incompletas. Si `task_dag.mode != explicit_dag`, trata el bootstrap como inválido para producción y no abras workers.
 5. No marques done sin: handoff + validator approved + tester pass + PROGRESS.md actualizado.
 6. Discrepancia internos ↔ oficiales → detén y reconcilia en `orchestrator-state/memory/official-doc-notes/`.
 7. CADA feature se verifica visualmente antes de avanzar.
@@ -212,7 +216,7 @@ Si el agente usa un valor fuera de `.claude/orchestrator-contract.json -> traile
 
 ## DAG orchestration supplement
 
-When `registry.task_dag.mode == "explicit_dag"`, keep the existing agents and per-slice pipeline unchanged. The only scheduling change is task selection:
+Production mode is `registry.task_dag.mode == "explicit_dag"`. Keep the existing agents and per-slice pipeline unchanged; the only scheduling change is task selection. If the mode is not `explicit_dag`, stop and repair the Coverage Registry before continuing:
 
 1. Read `orchestrator-state/tasks/registry.json` and `orchestrator-state/memory/task-dag.json`.
 2. Promote tasks whose `depends_on` predecessors are all `done`.

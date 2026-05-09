@@ -264,7 +264,7 @@ class AgentTrailerGuidanceTests(unittest.TestCase):
 
     def test_cheatsheet_documents_trailer_enums_and_git_modes(self) -> None:
         text = (ROOT / "CHEATSHEET.md").read_text(encoding="utf-8")
-        self.assertIn("## 6. Production DAG trailer vocabulary", text)
+        self.assertIn("Production DAG trailer vocabulary", text)
         self.assertIn(
             "Closed trailer enums live in `.claude/orchestrator-contract.json` → `trailer_schema.roles.<agent>.outcome_values`",
             text,

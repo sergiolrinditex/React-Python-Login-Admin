@@ -162,9 +162,9 @@ def test_dependency_blocked_tasks_do_not_serialize_current_wave():
             import common
             import next_wave
             tasks = [
-                {"id": "P00-S01-T001", "title": "Ready A", "phase_id": "P00", "step_id": "P00-S01", "status": "ready", "depends_on": [], "conflict_groups": ["scripts"], "write_set": ["scripts/a.sh"]},
-                {"id": "P00-S01-T002", "title": "Blocked future", "phase_id": "P00", "step_id": "P00-S01", "status": "blocked", "depends_on": ["P99-S01-T001"], "conflict_groups": ["scripts"], "write_set": ["scripts/**"]},
-                {"id": "P99-S01-T001", "title": "Missing dep", "phase_id": "P99", "step_id": "P99-S01", "status": "blocked", "depends_on": [], "conflict_groups": [], "write_set": []},
+                {"id": "P00-S01-T001", "title": "Ready A", "phase_id": "P00", "step_id": "P00-S01", "status": "ready", "depends_on": [], "conflict_groups": ["scripts"], "write_set": ["scripts/a.sh"], "dependency_mode": "explicit_dag"},
+                {"id": "P00-S01-T002", "title": "Blocked future", "phase_id": "P00", "step_id": "P00-S01", "status": "blocked", "depends_on": ["P99-S01-T001"], "conflict_groups": ["scripts"], "write_set": ["scripts/**"], "dependency_mode": "explicit_dag"},
+                {"id": "P99-S01-T001", "title": "Missing dep", "phase_id": "P99", "step_id": "P99-S01", "status": "blocked", "depends_on": [], "conflict_groups": [], "write_set": [], "dependency_mode": "explicit_dag"},
             ]
             common.save_registry({
                 "generated_at": common.now_iso(),

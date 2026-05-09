@@ -17,6 +17,8 @@ from common import (
     ensure_parent,
     extract_headings,
     extract_items,
+    load_registry,
+    load_runtime_state,
     memory_dir,
     now_iso,
     phase_headings,
@@ -232,6 +234,54 @@ def _split_meta_refs(value: str) -> list[str]:
         if ref and ref.lower() not in _META_NONE_VALUES and ref not in refs:
             refs.append(ref)
     return refs
+
+
+_INFRA_SCOPE_RULES: tuple[tuple[re.Pattern[str], tuple[str, ...], tuple[str, ...]], ...] = (
+    (re.compile(r"(?i)\bdocker-compose\.ya?ml\b|\bcompose\.ya?ml\b"), ("docker-compose.yml", "docker-compose.yaml", "compose.yml", "compose.yaml"), ("infra:compose",)),
+    (re.compile(r"(?i)\bdockerfile\b"), ("Dockerfile*",), ("infra:docker",)),
+    (re.compile(r"(?i)(?<![\w])\.env\.example(?![\w])|\benv overrides?\b|\benvironment overrides?\b"), (".env.example",), ("infra:env",)),
+    (re.compile(r"(?i)\bgithub actions?\b|\bworkflow\b|\bci/cd\b"), (".github/workflows/**",), ("ci:workflows",)),
+)
+
+
+def _append_unique(values: list[str], additions: tuple[str, ...]) -> list[str]:
+    out = list(values or [])
+    for item in additions:
+        if item and item not in out:
+            out.append(item)
+    return out
+
+
+def _augment_task_scope_from_text(tasks: list[dict[str, Any]]) -> None:
+    """Add exact shared-config paths when acceptance text names them.
+
+    The Coverage Registry remains authoritative, but large-app generation can
+    drift by saying e.g. "docker-compose.yml env overrides updated" while the
+    row's Write set only contains a broad feature path. Without this small
+    repair, the developer prompt sees an impossible task: acceptance requires a
+    root config edit but `allowed_paths` omits that file. The inferred paths are
+    also added to `write_set`, so DAG wave selection serializes shared infra.
+    """
+    for task in tasks:
+        text = "\n".join([
+            str(task.get("title") or ""),
+            *[str(x) for x in (task.get("acceptance") or [])],
+            *[str(x) for x in (task.get("verification_commands") or [])],
+        ])
+        inferred_paths: list[str] = []
+        inferred_groups: list[str] = []
+        for regex, paths, groups in _INFRA_SCOPE_RULES:
+            if not regex.search(text):
+                continue
+            inferred_paths = _append_unique(inferred_paths, paths)
+            inferred_groups = _append_unique(inferred_groups, groups)
+        if not inferred_paths and not inferred_groups:
+            continue
+        task["allowed_paths"] = _append_unique(list(task.get("allowed_paths") or []), tuple(inferred_paths))
+        task["write_set"] = _append_unique(list(task.get("write_set") or []), tuple(inferred_paths))
+        task["conflict_groups"] = _append_unique(list(task.get("conflict_groups") or []), tuple(inferred_groups))
+        task.setdefault("scope_inferred_from_acceptance", [])
+        task["scope_inferred_from_acceptance"] = _append_unique(list(task.get("scope_inferred_from_acceptance") or []), tuple(inferred_paths + inferred_groups))
 
 
 # A canonical TASK_ID column value: "P00-S01-T001" (no backticks).
@@ -1837,17 +1887,140 @@ def write_task_yaml(path: Path, task: dict[str, Any]) -> None:
     lines.append("write_set:")
     for item in task.get("write_set", []):
         lines.append(f"  - {json.dumps(item, ensure_ascii=False)}")
+    if task.get("scope_inferred_from_acceptance"):
+        lines.append("scope_inferred_from_acceptance:")
+        for item in task.get("scope_inferred_from_acceptance", []):
+            lines.append(f"  - {json.dumps(item, ensure_ascii=False)}")
     lines.append(f"handoff_path: {task['handoff_path']}")
     lines.append(f"evidence_dir: {task['evidence_dir']}")
     lines.append(f"source_ref: {json.dumps(task['source_ref'], ensure_ascii=False)}")
     write_text(path, "\n".join(lines) + "\n")
 
 
-def generate_artifacts() -> dict[str, Any]:
+_RUNTIME_TASK_FIELDS_TO_PRESERVE = {
+    "status",
+    "last_updated_by",
+    "last_stop_at",
+    "last_outcome",
+    "last_note",
+    "last_blocker",
+    "blocked_reason",
+    "blocked_by",
+    "validator_outcome",
+    "validator_next_status",
+    "tester_outcome",
+    "debugger_outcome",
+    "closer_outcome",
+    "deployer_outcome",
+    "retry_count",
+    "debug_retry_count",
+    "claimed_by",
+    "claimed_at",
+    "worktree",
+    "branch",
+}
+
+_RUNTIME_KEYS_TO_PRESERVE = {
+    "active_phase_id",
+    "active_task_id",
+    "last_worker",
+    "last_event",
+    "pending_journey_verifications",
+    "journey_gate_mode",
+    "last_journey_verified",
+    "spawn_budget",
+    "spawns_in_current_slice",
+    "open_followups",
+    "last_trailer",
+    "last_stop_at",
+    "last_claimed_task_id",
+}
+
+
+def _apply_preserved_runtime(tasks: list[dict[str, Any]], phases: list[dict[str, Any]], previous_registry: dict[str, Any]) -> tuple[list[dict[str, Any]], list[dict[str, Any]], int]:
+    """Keep live DAG runtime fields for unchanged task IDs during bootstrap refresh.
+
+    Source-of-truth fields such as title, acceptance, Depends on, Write set and
+    Conflict group are still regenerated from docs. Only runtime/lifecycle
+    fields owned by claim/hooks are carried forward. This makes
+    `bootstrap_three_docs.py --refresh` safe to run inside an active DAG project.
+    """
+    old_by_id = {str(t.get("id")): t for t in previous_registry.get("tasks", []) if t.get("id")}
+    preserved = 0
+    for task in tasks:
+        old = old_by_id.get(str(task.get("id")))
+        if not old:
+            continue
+        for key in _RUNTIME_TASK_FIELDS_TO_PRESERVE:
+            if key in old:
+                task[key] = old[key]
+        preserved += 1
+    # Recompute phase status from preserved task statuses while keeping the
+    # bootstrap phase vocabulary (`done`, not the runtime helper's `complete`).
+    task_by_id = {str(t.get("id")): t for t in tasks if t.get("id")}
+    for phase in phases:
+        phase_tasks = [task_by_id.get(str(tid)) for tid in phase.get("task_ids", [])]
+        phase_tasks = [t for t in phase_tasks if t]
+        statuses = {str(t.get("status") or "") for t in phase_tasks}
+        if phase_tasks and all(st == "done" for st in statuses):
+            phase["status"] = "done"
+        elif statuses & {"ready", "claimed", "in_progress", "validator_tester_pending", "ready_for_close", "needs_debug", "test_pending", "qa_pending", "review_pending"}:
+            phase["status"] = "ready"
+        elif phase_tasks:
+            phase["status"] = "blocked"
+    return tasks, phases, preserved
+
+
+def _runtime_after_refresh(previous_runtime: dict[str, Any], tasks: list[dict[str, Any]], phases: list[dict[str, Any]], *, preserve_runtime_state: bool) -> dict[str, Any]:
+    task_ids = {str(t.get("id")) for t in tasks if t.get("id")}
+    phase_ids = {str(p.get("id")) for p in phases if p.get("id")}
+    first_phase = phases[0] if phases else {"id": None}
+    first_task = tasks[0] if tasks else {"id": None}
+
+    state = {
+        "generated_at": now_iso(),
+        "active_phase_id": first_phase.get("id"),
+        "active_task_id": first_task.get("id"),
+        "last_worker": None,
+        "last_event": "bootstrap_refresh",
+        "pending_journey_verifications": [],
+        "journey_gate_mode": "frontier",
+        "last_journey_verified": None,
+        "spawn_budget": 20,
+        "spawns_in_current_slice": {},
+        "open_followups": [],
+    }
+    if not preserve_runtime_state:
+        return state
+
+    for key in _RUNTIME_KEYS_TO_PRESERVE:
+        if key in previous_runtime:
+            state[key] = previous_runtime[key]
+
+    if state.get("active_task_id") not in task_ids:
+        state["active_task_id"] = first_task.get("id")
+    if state.get("active_phase_id") not in phase_ids:
+        active_task = next((t for t in tasks if t.get("id") == state.get("active_task_id")), None)
+        state["active_phase_id"] = (active_task or first_task).get("phase_id") or first_phase.get("id")
+    if not isinstance(state.get("pending_journey_verifications"), list):
+        state["pending_journey_verifications"] = []
+    if not isinstance(state.get("spawns_in_current_slice"), dict):
+        state["spawns_in_current_slice"] = {}
+    if not isinstance(state.get("open_followups"), list):
+        state["open_followups"] = []
+    state["generated_at"] = now_iso()
+    state["last_event"] = "bootstrap_refresh_preserve_runtime"
+    return state
+
+
+def generate_artifacts(*, preserve_runtime_state: bool = True) -> dict[str, Any]:
     docs = discover_source_docs(project_root())
     validation = validate_docs(docs)
     if validation["errors"]:
         return {"ok": False, "validation": validation, "docs": _serializable_doc_paths(docs)}
+
+    previous_registry = load_registry() if preserve_runtime_state else {"tasks": [], "phases": []}
+    previous_runtime = load_runtime_state() if preserve_runtime_state else {}
 
     instructions_path = docs["instructions"][0]
     checklist_path = docs["checklist"][0]
@@ -1861,6 +2034,7 @@ def generate_artifacts() -> dict[str, Any]:
 
     manifest = build_manifest(instructions_path, checklist_path, guide_path, validation, ux_path=ux_path, stack_profile_path=stack_profile_path)
     phases, tasks = build_phases_and_tasks(checklist_path, checklist_text)
+    _augment_task_scope_from_text(tasks)
     # Lift the coarse-synthetic warnings (if any) into validation so the
     # user sees them on the bootstrap CLI output and in source-manifest.
     coarse_warnings_local = phases[0].pop("_coarse_warnings", []) if phases else []
@@ -1869,6 +2043,10 @@ def generate_artifacts() -> dict[str, Any]:
         validation.setdefault("warnings", []).append(w)
     for err in dag_errors_local:
         validation.setdefault("errors", []).append(err)
+
+    preserved_task_count = 0
+    if preserve_runtime_state:
+        tasks, phases, preserved_task_count = _apply_preserved_runtime(tasks, phases, previous_registry)
 
     task_dag = build_task_dag(tasks)
     for err in task_dag.get("errors", []):
@@ -2026,23 +2204,12 @@ def generate_artifacts() -> dict[str, Any]:
     for task in tasks:
         write_task_yaml(tasks_root / "work-items" / f"{task['id']}.yaml", task)
 
-    first_phase = phases[0] if phases else {"id": None, "title": None, "status": "empty", "task_ids": []}
-    first_task = tasks[0] if tasks else {"id": None, "title": None, "status": "empty", "allowed_paths": [], "verification_commands": []}
-    save_active_phase(first_phase)
-    save_active_task(first_task)
-    save_runtime_state({
-        "generated_at": now_iso(),
-        "active_phase_id": first_phase.get("id"),
-        "active_task_id": first_task.get("id"),
-        "last_worker": None,
-        "last_event": "bootstrap_refresh",
-        "pending_journey_verifications": [],
-        "journey_gate_mode": "frontier",
-        "last_journey_verified": None,
-        "spawn_budget": 20,
-        "spawns_in_current_slice": {},
-        "open_followups": [],
-    })
+    runtime_state = _runtime_after_refresh(previous_runtime, tasks, phases, preserve_runtime_state=preserve_runtime_state)
+    active_phase = next((p for p in phases if p.get("id") == runtime_state.get("active_phase_id")), None)
+    active_task = next((t for t in tasks if t.get("id") == runtime_state.get("active_task_id")), None)
+    save_active_phase(active_phase or (phases[0] if phases else {"id": None, "title": None, "status": "empty", "task_ids": []}))
+    save_active_task(active_task or (tasks[0] if tasks else {"id": None, "title": None, "status": "empty", "allowed_paths": [], "verification_commands": []}))
+    save_runtime_state(runtime_state)
 
     # Materialize API contracts from the freshly-written registry. This closes
     # the front/back drift hole: if registry endpoints change,
@@ -2060,6 +2227,8 @@ def generate_artifacts() -> dict[str, Any]:
         "task_dag_wave_count": len(task_dag.get("topological_levels") or []),
         "project_prefix": manifest["project_prefix"],
         "api_contract_endpoint_count": api_contracts.get("endpoint_count", 0),
+        "preserve_runtime_state": preserve_runtime_state,
+        "preserved_task_count": preserved_task_count,
     })
 
     return {
@@ -2076,13 +2245,17 @@ def generate_artifacts() -> dict[str, Any]:
         "journeys": journeys,
         "task_dag": task_dag,
         "validation": validation,
+        "preserve_runtime_state": preserve_runtime_state,
+        "preserved_task_count": preserved_task_count,
     }
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Bootstrap a source-of-truth DAG project.")
     parser.add_argument("--validate-only", action="store_true", help="Only validate the source-of-truth contract.")
-    parser.add_argument("--refresh", action="store_true", help="Generate or refresh runtime artifacts.")
+    parser.add_argument("--refresh", action="store_true", help="Generate or refresh artifacts. Preserves live runtime state by default.")
+    parser.add_argument("--preserve-runtime-state", dest="preserve_runtime_state", action="store_true", default=True, help="Preserve existing task lifecycle/runtime metadata during refresh (default).")
+    parser.add_argument("--reset-runtime-state", dest="preserve_runtime_state", action="store_false", help="Explicitly reset runtime-state/task lifecycle metadata while refreshing.")
     parser.add_argument("--json", action="store_true", help="Print machine-readable JSON.")
     args = parser.parse_args()
 
@@ -2105,7 +2278,7 @@ def main() -> int:
             print(json.dumps(result["docs"], ensure_ascii=False, indent=2))
         return 0 if result["ok"] else 1
 
-    result = generate_artifacts()
+    result = generate_artifacts(preserve_runtime_state=args.preserve_runtime_state)
     if args.json:
         print(json.dumps(result, ensure_ascii=False, indent=2))
     else:
@@ -2115,6 +2288,8 @@ def main() -> int:
             print(f"Generated tasks: {result['task_count']}")
             print(f"Detected journeys: {result.get('journey_count', 0)}")
             print("Artifacts written under orchestrator-state/memory and orchestrator-state/tasks")
+            if result.get("preserve_runtime_state"):
+                print(f"Runtime state preserved by default ({result.get('preserved_task_count', 0)} matching task(s)). Use --reset-runtime-state only for intentional destructive resets.")
         else:
             print("Failed to bootstrap due to validation errors.")
             for err in result["validation"]["errors"]:

@@ -1,8 +1,57 @@
 {
-  "id": "",
+  "id": "P01-S01-T003",
   "phase_id": "P01",
-  "step_id": "",
-  "title": "(no active task — slice closed; next /next-slice will claim)",
-  "status": "none",
-  "note": "P01-S01-T001 closed at 2026-05-09T11:46Z. Next ready: P01-S01-T002 (env vars). Run /next-slice to claim."
+  "step_id": "P01-S01",
+  "title": "Quote MAIL_FROM_NAME in .env.example to fix bash source failure",
+  "status": "ready",
+  "build_state": "planned",
+  "product_increment": "current",
+  "risk_level": "low",
+  "verify_mode": "human",
+  "depends_on": [
+    "P01-S01-T001"
+  ],
+  "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime follow-up P00-S02-T001",
+  "acceptance": [
+    "bash scripts/dev-restart.sh --check exits with backend UP, not 'command not found'"
+  ],
+  "verification_commands": [
+    "grep 'MAIL_FROM_NAME=\"Hilo People\"' .env.example"
+  ],
+  "kind": "bug",
+  "target": "Quote MAIL_FROM_NAME in .env.example to fix bash source failure",
+  "journey_refs": [],
+  "route": "",
+  "endpoint": "",
+  "tables": [],
+  "origin_instr": "runtime-followup#FU-20260508230723-quote-mail-from-name-in-env-example-to-fix-bash-",
+  "origin_techguide": "runtime-followup#FU-20260508230723-quote-mail-from-name-in-env-example-to-fix-bash-",
+  "allowed_paths": [
+    ".env.example"
+  ],
+  "conflict_groups": [
+    "infra:env"
+  ],
+  "write_set": [
+    ".env.example"
+  ],
+  "handoff_path": "orchestrator-state/tasks/handoffs/P01-S01-T003.md",
+  "evidence_dir": "orchestrator-state/tasks/evidence/P01-S01-T003",
+  "notes": [],
+  "dependency_mode": "explicit_dag",
+  "depends_on_raw": "P01-S01-T001",
+  "conflict_groups_raw": "infra:env",
+  "write_set_raw": ".env.example",
+  "product_increment_raw": "current",
+  "build_state_raw": "planned",
+  "risk_level_raw": "low",
+  "verify_mode_raw": "human",
+  "kind_raw": "bug",
+  "target_raw": "Quote MAIL_FROM_NAME in .env.example to fix bash source failure",
+  "journey_refs_raw": "—",
+  "screen_route_raw": "—",
+  "endpoint_raw": "—",
+  "tables_raw": "—",
+  "origin_instr_raw": "runtime-followup#FU-20260508230723-quote-mail-from-name-in-env-example-to-fix-bash-",
+  "origin_techguide_raw": "runtime-followup#FU-20260508230723-quote-mail-from-name-in-env-example-to-fix-bash-"
 }

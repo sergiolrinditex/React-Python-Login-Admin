@@ -19,14 +19,17 @@ def test_design_token_enforcer_public_contract_is_agnostic():
 
 
 def test_stack_profiles_use_capability_named_enforcer():
-    for rel in [
-        "docs/source-of-truth/STACK_PROFILE.yaml",
-        "docs/base-app/STACK_PROFILE.yaml",
-        "docs/templates/minimal/STACK_PROFILE.template.yaml",
-        "docs/templates/large-with-base/STACK_PROFILE.template.yaml",
-        "docs/templates/large-without-base/STACK_PROFILE.template.yaml",
-    ]:
-        text = (ROOT / rel).read_text(encoding="utf-8")
+    optional_baseapp_profile = ROOT / "docs/base-app/STACK_PROFILE.yaml"
+    paths = [
+        ROOT / "docs/source-of-truth/STACK_PROFILE.yaml",
+        ROOT / "docs/templates/minimal/STACK_PROFILE.template.yaml",
+        ROOT / "docs/templates/large-with-base/STACK_PROFILE.template.yaml",
+        ROOT / "docs/templates/large-without-base/STACK_PROFILE.template.yaml",
+    ]
+    if optional_baseapp_profile.exists():
+        paths.append(optional_baseapp_profile)
+    for path in paths:
+        text = path.read_text(encoding="utf-8")
         assert "design_tokens_v1" in text or "{{design_tokens_enforcer}}" in text
         assert "flutter_v1" not in text
         assert "react_v1" not in text

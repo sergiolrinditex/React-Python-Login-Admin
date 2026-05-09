@@ -55,7 +55,7 @@ Transformar el source-of-truth pack moderno (`instrucciones.md`, `*_IMPLEMENTATI
 - Cada tarea pertenece a exactamente una fase y un step del checklist.
 - Todas las tareas de una fase N+1 dependen (mínimo) de alguna tarea de fase N — no se puede arrancar N+1 sin cerrar N.
 - Granularidad: una tarea debe ser cerrable en una sola slice del pipeline autónomo (planner → dev ‖ docs → val ‖ test → verify → closer). Si huele a >1 día humano equivalente, NO inventes sub-slices efímeros: marca warning de granularidad y exige que el Coverage Registry declare `Slice ID` canónicos más pequeños.
-- Si una tarea toca DB + backend + frontend, refleja los 3 en `allowed_paths` y `write_set`. Si toca solo backend, limita ambos. Usa `conflict_groups` para recursos compartidos como router, migraciones, API client, theme o workflows.
+- Si una tarea toca DB + backend + frontend, refleja los 3 en `allowed_paths` y `write_set`. Si toca solo backend, limita ambos. Usa `conflict_groups` para recursos compartidos como router, migraciones, API client, theme o workflows. Si la aceptación menciona ficheros raíz compartidos (`docker-compose.yml`, `docker-compose.yaml`, `compose.yaml`, `Dockerfile*`, `.env.example`, `.github/workflows/**`, lockfiles/manifiestos), esos paths exactos deben aparecer en `Write set` y compartir un `Conflict group` de infra/CI; no dejes un slice que exige editar compose/env fuera de scope.
 
 ## Schema canónico de `registry.json`
 

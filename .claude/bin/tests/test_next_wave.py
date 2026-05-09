@@ -135,5 +135,32 @@ def test_next_wave_terminal_command_exports_task_pack_and_does_not_preclaim():
     cmd = next_wave._terminal_command("P00-S01-T001")
     assert "CLAUDE_ACTIVE_TASK_ID=P00-S01-T001" in cmd
     assert "CLAUDE_TASK_PACK=orchestrator-state/tasks/task-packs/P00-S01-T001.md" in cmd
-    assert "/next-slice P00-S01-T001" in cmd
+    assert 'claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice P00-S01-T001"' in cmd
     assert "claim_task.py" not in cmd
+
+
+def test_next_wave_rejects_legacy_linear_in_production(tmp_project):
+    import bootstrap_three_docs as boot
+    import common
+    import next_wave
+
+    tasks = [
+        {"id": "P00-S01-T001", "title": "A", "phase_id": "P00", "step_id": "P00-S01", "status": "ready", "depends_on": []},
+        {"id": "P00-S01-T002", "title": "B", "phase_id": "P00", "step_id": "P00-S01", "status": "blocked", "depends_on": ["P00-S01-T001"]},
+    ]
+    common.save_registry({
+        "generated_at": common.now_iso(),
+        "project_prefix": "TEST",
+        "phase_order": ["P00"],
+        "phases": [{"id": "P00", "title": "P0", "status": "ready", "task_ids": [t["id"] for t in tasks]}],
+        "tasks": tasks,
+        "journeys": [],
+        "task_dag": boot.build_task_dag(tasks),
+    })
+    common.save_runtime_state({"pending_journey_verifications": [], "spawns_in_current_slice": {}})
+
+    result = next_wave.compute_wave(common.load_registry())
+    assert result["dag_mode"] == "legacy_linear"
+    assert result["ok"] is False
+    assert result["ready"] == []
+    assert any("explicit_dag" in e for e in result["errors"])

@@ -174,6 +174,8 @@ Reglas de las líneas `JOURNEY_*` (emite una por línea, repite la línea si hay
 
 Antes de emitir `NEXT_STATUS: done`, ejecuta mentalmente y, si hay duda, mecánicamente: `./scripts/register-followup-task.sh list`. Si existen propuestas `high|critical|blocker` en estado `proposed` cuyo `origin_task_id` sea este `TASK_ID`, NO cierres: `OUTCOME: blocked`, `NEXT_STATUS: blocked`, razón `blocking_followups`. El hook también lo bloqueará, pero tú debes detectarlo antes del trailer.
 
+El closer nunca ejecuta `promote` automáticamente. En modo DAG, promover una FU modifica source-of-truth, registry, work-item YAML, DAG y runtime; eso es una decisión explícita del main-orchestrator/usuario mediante `/register-followup promote <FOLLOWUP_ID>`. Si hay una FU bloqueante, bloquea el cierre y pide decisión humana; no la conviertas tú en task desde el cierre.
+
 ## Production DAG trailer vocabulary
 
 Closed trailer enums live in `.claude/orchestrator-contract.json` → `trailer_schema.roles.closer.outcome_values` and `trailer_schema.roles.closer.next_status_values`. Read that path before emitting the trailer. Scope writes by `CLAUDE_ACTIVE_TASK_ID`/`CLAUDE_TASK_PACK`; never edit generated registry/runtime/task-dag directly. Use `/register-followup` for discovered work outside current slice.

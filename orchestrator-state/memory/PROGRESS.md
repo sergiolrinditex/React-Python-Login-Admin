@@ -7,11 +7,11 @@
 ## Current State
 
 - **Phase**: Phase 1 — Auth + Base Capabilities
-- **Last completed slices**: P00-S01-T001..T005 (all done, committed), P00-S02-T001..T004 (all done, committed), **P01-S01-T001 (DB auth baseline — done, committed)**
-- **Next pending slices**: P01-S02-T001 (POST /api/v1/auth/sign-up)
+- **Last completed slices**: P00-S01-T001..T005 (all done, committed), P00-S02-T001..T004 (all done, committed), **P01-S01-T001 (DB auth baseline — done, committed)**, **P01-S01-T002 (env var §11.1 alignment — implementation done, pending verify-slice)**
+- **Next pending slices**: P01-S02-T001 (POST /api/v1/auth/sign-up) — blocked until P01-S01-T002 verify-slice + closer done
 - **Blockers**: none
-- **Follow-ups pending**: FU-20260508225027 (medium, wiring — env var name drift in config.py vs TECHNICAL_GUIDE §11.1, non-blocking); FU-20260509073000 (medium — replace synthetic P00 seed bundle with real §10.3 prod-like fixtures for P01+ verification)
-- **Generated at**: 2026-05-09T10:50:00Z
+- **Follow-ups pending**: FU-20260508225027 (RESOLVED — env var alignment slice P01-S01-T002 implemented); FU-20260509073000 (medium — replace synthetic P00 seed bundle with real §10.3 prod-like fixtures for P01+ verification)
+- **Generated at**: 2026-05-09T12:35:00Z
 
 ## Docker Compose Stack (P00-S02-T001)
 
@@ -59,7 +59,7 @@ Rancher-ready compose stack ADR preserved in handoff P00-S02-T001.md (pending fo
 | Request-ID middleware | live | X-Request-ID echoed; uuid4 hex generated when missing; bound in structlog contextvars |
 | Migrations applied | 1 | Revision 0001: Auth / profile / audit baseline (9 tables, 22 indexes) |
 | Seed data | CLI READY (table-tolerant) | `python -m app.seeds.bootstrap_verification_data --source data/verification [--only auth]`; exits 0 when tables missing (P00 state); exits 0 with upserts when tables exist |
-| Backend tests | 81 total (77 pass + 4 skipped) | 39 smoke + 9 health + 4 logging + 11 seed + 12 auth migration + 6 seed-loader-after-migration; 4 skipped (P00 "no_tables" synthetic tests incompatible with real §10.3 schema) |
+| Backend tests | 81 total (76 pass + 4 skipped + 1 pre-existing fail) | 39 smoke + 9 health + 4 logging + 11 seed + 12 auth migration + 6 seed-loader-after-migration; 4 skipped (P00 "no_tables" tests); 1 pre-existing auth fail (test_ready_db_ok — InvalidPasswordError on local dev postgres, pre-existing since T002) |
 | Deps installed | YES | pip install -e ".[dev]" clean in .venv-t003 |
 
 ### Backend Dependencies (exact pins, verified against PyPI 2026-05-08)
@@ -259,6 +259,7 @@ Note: Backend total 81 tests (39 smoke + 42 integration). 77/81 pass, 4 skipped.
 
 ## Recent Decisions
 
+- **P01-S01-T002 (2026-05-09)**: Atomic 4-file env var rename to align with TECHNICAL_GUIDE §11.1. FILES TOUCHED (4): config.py, .env.example, docker-compose.yml, logging.py. KEY DECISIONS: (1) jwt_secret (HMAC single) reshaped into jwt_private_key + jwt_public_key (RS256 asymmetric per §10.2 + §11.1); both SecretStr; no startup validator added — deferred to P01-S02-T001; (2) provider_encryption_key → encryption_key; (3) litellm_proxy_base_url → litellm_base_url; docker-compose.yml backend+worker environment blocks both updated in same slice to avoid wiring regression; (4) s3_bucket_rag_documents → s3_bucket_documents; default value kept (infra bucket naming is ops concern); (5) max_upload_mb default 50 → 25 (§11.1 policy change); (6) mcp_allowlist_domains default "" → "localhost" (§11.1 dev); (7) DEFAULT_LANGUAGE/MAX_UPLOAD_MB/MCP_ALLOWLIST_DOMAINS uncommented in .env.example; (8) _REDACTED_KEYS in logging.py updated: jwt_secret + provider_encryption_key removed (orphaned), jwt_private_key + jwt_public_key + encryption_key added; (9) Public key stored as SecretStr (defense-in-depth; consuming code uses .get_secret_value()); (10) pre-existing ruff I001+F401 in test_dependency_smoke.py are out of scope — unchanged. Evidence: ruff clean (0 new errors), mypy clean (32 files), 76 pass + 4 skip + 1 pre-existing auth fail = 81 total (no regression), Settings loads without ValidationError, _REDACTED_KEYS assertions pass, /health 200.
 - **P01-S01-T001 (2026-05-09)**: DB auth baseline. Alembic 1.18.4 async env bootstrapped (asyncio.run + run_sync pattern). 9 tables created per §10.3 verbatim. KEY DECISIONS: (1) D1 — audit_logs implements §10.3 shape (actor_user_id, action, entity_type, entity_id, metadata, created_at); ip/user_agent/request_id deferred to follow-up (01-non-negotiables conflict tracked); (2) JSONB must be imported from `sqlalchemy.dialects.postgresql` not from `sqlalchemy` directly; (3) TYPE_CHECKING guards for circular ORM references (user.py↔auth.py); (4) Python attribute `metadata_col` → DB column `"metadata"` via positional arg to avoid shadowing `Base.metadata`; (5) pytest-asyncio asyncio_mode=auto creates new event loop per test — AsyncEngine cannot be shared across tests; use `_fresh_conn()` asynccontextmanager per test; (6) P00 "no_tables" seed tests now skipped when real schema exists (FU-20260509073000); (7) Check constraint name: `ck_users_users_language_chk` (follows naming convention pattern); (8) partial index `refresh_tokens_active_expires_idx WHERE revoked_at IS NULL` for janitor sweep efficiency; (9) Extensions declared in migration but NOT dropped on downgrade (DROP EXTENSION would affect other schemas). Evidence: 18/18 T001-targeted tests pass; 77/81 total backend pass, 4 skipped expected; ruff+mypy clean; round-trip upgrade→downgrade→upgrade verified.
 - **P00-S02-T004 (2026-05-09)**: CWE-532 architectural fix — structlog frame-locals leak prevention. Key decisions: (1) Option C hybrid chosen: ConsoleRenderer configured with RichTracebackFormatter(show_locals=False) as primary fix + _REDACTED_KEYS extended with pwd, dsn, database_url, connection_string as defense-in-depth. (2) structlog 25.5.0 API confirmed: RichTracebackFormatter(show_locals=False) and ConsoleRenderer(exception_formatter=...) are both stable kwargs. (3) No changes to call sites (router.py, main.py) — global config change protects ALL future exc_info=True callers (P01 auth slices etc.). (4) Test isolation fix: _save_logging_state()/_restore_logging_state() helpers close and remove handlers after each test to prevent "I/O operation on closed file" error between tests. (5) Pre-existing test_ready_db_ok auth failure (InvalidPasswordError) was already failing in T002 baseline — unchanged, not introduced by T004. Evidence: 51/52 tests pass; 12/12 grep checks OK; ruff+mypy clean.
 - **P00-S02-T002 (2026-05-09)**: Health live/ready endpoints. Key decisions: (1) D1 — flat shape {status, version, uptime} preserved on /health and /live for T001 compose backward-compat; NOT migrated to {data:{...}} envelope; a follow-up will reconcile TECHNICAL_GUIDE §6.2. (2) D2 — redis and litellm checks declared as not_implemented (not removed, not faked as "ok"); shape is forward-compatible for downstream slices. (3) D3 — minimal request_id middleware using @app.middleware("http") (FastAPI-idiomatic per official doc note); uses structlog.contextvars.clear/bind/clear pattern. (4) Exception handling in /ready: SQLAlchemyError as primary catch; bare Exception as last-resort so probe always returns 503 not 500. (5) _sanitize_db_error() strips DSN components from error detail before returning. (6) Test 3 (DB-up) requires compose postgres at 5433 with correct credentials hilopeople:hilopeople_dev_pwd — verified with real DB.
@@ -278,6 +279,8 @@ Note: Backend total 81 tests (39 smoke + 42 integration). 77/81 pass, 4 skipped.
 
 ## Known Issues / Risks
 
+- **P01-S01-T002 (2026-05-09)**: Compose stack not yet restarted after env var rename. `LITELLM_BASE_URL` rename in docker-compose.yml is applied; running containers still use old env vars in memory. A fresh `docker compose up -d` after the closer commit will apply the new names. No runtime impact until compose is restarted.
+- **P01-S01-T002 (2026-05-09)**: Local `.env` files (gitignored, per-dev) still have old names (JWT_SECRET, PROVIDER_ENCRYPTION_KEY, LITELLM_PROXY_BASE_URL, S3_BUCKET_RAG_DOCUMENTS). pydantic-settings will silently ignore those keys after the rename and fall back to defaults. Developers must update their local `.env` by copying from `.env.example` after pulling this commit.
 - `setup-from-scratch.sh --check` still warns `.env no existe` (expected — .env is gitignored).
 - `npm run lint` not configured — ESLint not in T004 scope; follow-up ticket pending.
 - pip-audit: 5 findings in `setuptools==65.5.0` (system Python, not declared dep). No CVEs in declared backend deps.
@@ -312,5 +315,5 @@ Singleton: `frontend/src/i18n/index.ts` — eager loading, fallbackLng:'es', `re
 Languages: `frontend/src/i18n/languages.ts` — `SUPPORTED_LANGUAGES`, `NAMESPACES`, `isSupportedLanguage()`.
 Test gate: `frontend/src/i18n/__tests__/i18n.test.ts` — 10 assertions (parse+load, drift-detector, productive copy, functional t(), fallback, hasResourceBundle, constants shape).
 
-> Last updated: 2026-05-09T10:50:00Z
-> Updated by: developer (P01-S01-T001) — DB auth baseline: Alembic bootstrapped, 9 tables created per §10.3, 22 indexes, round-trip upgrade/downgrade verified, 18/18 T001-targeted tests passing, 77/81 total backend passing (4 skipped expected).
+> Last updated: 2026-05-09T12:35:00Z
+> Updated by: developer (P01-S01-T002) — §11.1 env var alignment: 4-file atomic rename (config.py + .env.example + docker-compose.yml + logging.py). jwt_secret→jwt_private_key+jwt_public_key (RS256), provider_encryption_key→encryption_key, litellm_proxy_base_url→litellm_base_url, s3_bucket_rag_documents→s3_bucket_documents. max_upload_mb default 50→25, mcp_allowlist_domains default ""→"localhost". _REDACTED_KEYS updated. 76/81 backend tests pass (4 skipped + 1 pre-existing auth fail — no regression). ruff+mypy clean. /health 200.

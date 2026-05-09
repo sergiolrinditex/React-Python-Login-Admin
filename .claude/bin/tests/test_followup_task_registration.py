@@ -81,6 +81,41 @@ def test_promote_followup_adds_registry_work_item_source_doc_and_dag(seeded_regi
     assert item["promoted_task_id"] == tid
 
 
+def test_promoted_followup_blocks_when_it_conflicts_with_active_task(seeded_registry, tmp_project):
+    docs = tmp_project / "docs" / "source-of-truth"
+    docs.mkdir(parents=True)
+    (docs / "TEST_IMPLEMENTATION_CHECKLIST.md").write_text("# TEST Checklist\n\n# Phase 0 — Base\n\n## Step 0.1 — Existing\n\n- [ ] existing\n", encoding="utf-8")
+
+    registry = common.load_registry()
+    origin = common.find_task(registry, "P00-S01-T001")
+    active = common.find_task(registry, "P00-S01-T002")
+    origin["status"] = "done"
+    active["status"] = "claimed"
+    active["conflict_groups"] = ["front:upload"]
+    active["write_set"] = ["app/lib/features/upload/**"]
+    common.save_registry(registry)
+
+    result = fut.propose(_args(severity="medium"))
+    promoted = fut.promote(Namespace(followup_id=result["followup_id"], task_id=None, origin_task=None, phase=None, step=None, depends_on=None, no_source_doc_update=False))
+    assert promoted["ok"] is True
+    assert promoted["status"] == "blocked"
+
+    reg = common.load_registry()
+    task = common.find_task(reg, promoted["task_id"])
+    assert task["status"] == "blocked"
+    assert task["blocked_reason"] == "conflict_with_active_task"
+    assert task["blocked_by"] == ["P00-S01-T002"]
+    assert task["last_blocker"]["type"] == "conflict_with_active_task"
+
+    active = common.find_task(reg, "P00-S01-T002")
+    active["status"] = "done"
+    reg = common.promote_ready_tasks(reg)
+    task = common.find_task(reg, promoted["task_id"])
+    assert task["status"] == "ready"
+    assert "blocked_reason" not in task
+    assert "last_blocker" not in task
+
+
 def test_closer_done_is_blocked_by_unpromoted_blocker_followup(seeded_registry, monkeypatch):
     fut.propose(_args(severity="blocker"))
     monkeypatch.setenv("CLAUDE_ACTIVE_TASK_ID", "P00-S01-T001")

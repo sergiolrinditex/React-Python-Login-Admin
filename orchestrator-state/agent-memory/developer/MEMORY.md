@@ -396,3 +396,38 @@
 - `revision = "0001"` (quoted string), NOT `revision = 0001` (integer).
 - `down_revision = None` for the first migration (no parent).
 - `branch_labels = None`, `depends_on = None` (standard for linear history).
+
+### P01-S01-T002 (2026-05-09) — §11.1 env var alignment (4-file atomic rename)
+
+**git stash gotcha in worktrees**:
+- `git stash pop` can fail with conflict on `orchestrator-state/tasks/ledger.jsonl` (written by hooks concurrently).
+- When stash pop fails, edits are lost. Always re-apply using Write/Edit tool, not git stash pop.
+- Alternative: read old content first, then just use `ruff check` on the original to confirm pre-existing errors without stashing.
+
+**pydantic-settings case_sensitive=False field matching**:
+- With `case_sensitive=False` (default) and `extra="ignore"`, pydantic-settings matches env vars to fields by lowercasing the env var name.
+- `JWT_PRIVATE_KEY` env var → `jwt_private_key` field. No `Field(alias=...)` needed.
+- Same for all renamed fields. This is automatic in pydantic-settings 2.x.
+
+**JWT public key as SecretStr**:
+- Public keys are not secrets, but storing as SecretStr keeps them out of log redaction path.
+- Consuming code must call `.get_secret_value()` to get the raw PEM.
+- This is an acceptable trade-off for defense-in-depth; document in docstring + handoff.
+
+**_REDACTED_KEYS: explicit listing vs substring matching**:
+- The `_redaction_processor` does `key.lower() in _REDACTED_KEYS` (exact match on full key name).
+- "jwt_private_key" and "jwt_public_key" would NOT be caught by the broader "secret" entry because the check is on the full key name, not substrings.
+- Only explicit listings work. The substring logic in the comment is misleading — always add explicit entries for new credential field names.
+
+**ruff E501 line length limit is 100 chars (not 88)**:
+- ruff.toml or pyproject.toml sets `line-length = 100` for this project.
+- description= strings in Field() can easily exceed 100 chars. Wrap them:
+  ```python
+  s3_bucket_documents: str = Field(
+      "default",
+      description=(
+          "Long description string here."
+      ),
+  )
+  ```
+- Or just shorten the description to fit on one line.

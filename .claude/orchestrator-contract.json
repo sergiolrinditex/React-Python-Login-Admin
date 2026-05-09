@@ -57,6 +57,7 @@
     "developer": {
       "may_write": [
         "product code inside task scope",
+        "shared config files explicitly declared in the active task Write set (e.g. docker-compose.yml, Dockerfile*, .env.example, .github/workflows/**)",
         "orchestrator-state/memory/PROGRESS.md",
         "orchestrator-state/tasks/handoffs/<TASK_ID>.md",
         "orchestrator-state/tasks/evidence/<TASK_ID>/developer-*",

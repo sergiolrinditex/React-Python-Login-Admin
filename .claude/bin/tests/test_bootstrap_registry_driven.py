@@ -436,14 +436,24 @@ class JourneyBackticksAreStrippedTests(unittest.TestCase):
 # ---------------------------------------------------------------------------
 class BootstrapEndToEndAgainstBaseappTests(unittest.TestCase):
 
-    @unittest.skipUnless((REPO_ROOT / "docs" / "base-app").is_dir(),
-                         "base-app docs only present in the live repo")
     def test_real_base_app_bootstrap(self):
+        required_baseapp_docs = (
+            "instrucciones.md",
+            "BASEAPP_IMPLEMENTATION_CHECKLIST.md",
+            "BASEAPP_TECHNICAL_GUIDE.md",
+        )
+        src = REPO_ROOT / "docs" / "base-app"
+        missing = [fname for fname in required_baseapp_docs if not (src / fname).is_file()]
+        if missing:
+            self.skipTest(
+                "base-app docs are optional; skipping base-app bootstrap fixture because missing: "
+                + ", ".join(missing)
+            )
+
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             (root / "docs" / "source-of-truth").mkdir(parents=True)
-            src = REPO_ROOT / "docs" / "base-app"
-            for fname in ("instrucciones.md", "BASEAPP_IMPLEMENTATION_CHECKLIST.md", "BASEAPP_TECHNICAL_GUIDE.md"):
+            for fname in required_baseapp_docs:
                 shutil.copy(src / fname, root / "docs" / "source-of-truth" / fname)
             (root / "orchestrator-state" / "tasks").mkdir(parents=True)
             (root / "orchestrator-state" / "memory").mkdir(parents=True)
@@ -629,3 +639,133 @@ class SyntheticSplitAndWarnTests(unittest.TestCase):
         p0 = [t for t in reg["tasks"] if t["step_id"] == "P00-S01"]
         self.assertEqual(len(p0), 1, "flat step (no sub-headings) must yield ONE synthetic task")
         self.assertEqual(p0[0]["id"], "P00-S01-T001")
+
+
+class BootstrapRuntimePreservationTests(unittest.TestCase):
+    GUIDE = "# Tech Guide\n\n## Stack\n\npython/react.\n\n## Architecture\n\nclean.\n"
+    INSTR = "# Instructions\n\n## Goals\n\nBuild a DAG app.\n"
+    CHECKLIST = (
+        "# Checklist\n\n"
+        "## Canonical Coverage Registry\n\n"
+        "| Slice ID | Tipo | Target | Step | Product increment | Build state | Risk level | Verify mode | Depends on | Conflict group | Write set | Journey refs | Pantalla/Ruta | Endpoint | Tablas DB | Origen-Instr | Origen-TechGuide | Acceptance mínimo | Verify mínimo |\n"
+        "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|\n"
+        "| P00-S01-T001 | setup | scaffold | Step 0.1 | v1 | planned | low | auto | — | infra:scaffold | scripts/** | — | — | — | — | §1 | §2 | create scaffold | python -m pytest |\n"
+        "| P00-S02-T001 | api | health | Step 0.2 | v1 | planned | low | auto | P00-S01-T001 | api:health | api/** | — | — | GET /health | — | §1 | §2 | health works | curl /health |\n\n"
+        "# Phase 0 — Bootstrap\n\n"
+        "## Step 0.1 — Scaffold\n\n- [ ] create scaffold\n\n"
+        "## Step 0.2 — Health\n\n- [ ] health works\n"
+    )
+
+    def _root(self):
+        td = tempfile.TemporaryDirectory()
+        root = Path(td.name)
+        sot = root / "docs/source-of-truth"
+        sot.mkdir(parents=True)
+        (sot / "instrucciones.md").write_text(self.INSTR, encoding="utf-8")
+        (sot / "APP_TECHNICAL_GUIDE.md").write_text(self.GUIDE, encoding="utf-8")
+        (sot / "APP_IMPLEMENTATION_CHECKLIST.md").write_text(self.CHECKLIST, encoding="utf-8")
+        (root / "orchestrator-state/tasks").mkdir(parents=True)
+        (root / "orchestrator-state/memory").mkdir(parents=True)
+        return td, root
+
+    def _with_root(self, root):
+        class EnvCtx:
+            def __enter__(ctx_self):
+                ctx_self.prev = os.environ.get("CLAUDE_PROJECT_DIR")
+                os.environ["CLAUDE_PROJECT_DIR"] = str(root)
+                common._LOCK_DEPTH.clear()
+                importlib.reload(common)
+                importlib.reload(boot)
+                return boot, common
+            def __exit__(ctx_self, exc_type, exc, tb):
+                if ctx_self.prev is None:
+                    os.environ.pop("CLAUDE_PROJECT_DIR", None)
+                else:
+                    os.environ["CLAUDE_PROJECT_DIR"] = ctx_self.prev
+                common._LOCK_DEPTH.clear()
+                importlib.reload(common)
+                importlib.reload(boot)
+        return EnvCtx()
+
+    def test_refresh_preserves_runtime_state_by_default(self):
+        td, root = self._root()
+        try:
+            with self._with_root(root) as (boot_mod, common_mod):
+                self.assertTrue(boot_mod.generate_artifacts()["ok"])
+                registry = common_mod.load_registry()
+                registry["tasks"][0]["status"] = "done"
+                registry["tasks"][0]["last_updated_by"] = "closer"
+                registry["tasks"][1]["status"] = "claimed"
+                registry["tasks"][1]["claimed_by"] = "worker-2"
+                common_mod.save_registry(registry)
+                common_mod.save_runtime_state({
+                    "active_phase_id": "P00",
+                    "active_task_id": "P00-S02-T001",
+                    "last_worker": "tester",
+                    "last_event": "subagent_stop",
+                    "pending_journey_verifications": ["J1"],
+                    "journey_gate_mode": "frontier",
+                    "open_followups": [{"id": "FU-test", "status": "proposed"}],
+                    "spawn_budget": 20,
+                    "spawns_in_current_slice": {"P00-S02-T001": 4},
+                })
+
+                result = boot_mod.generate_artifacts()
+                self.assertTrue(result["ok"])
+                self.assertTrue(result["preserve_runtime_state"])
+                self.assertEqual(result["preserved_task_count"], 2)
+                refreshed = common_mod.load_registry()
+                by_id = {t["id"]: t for t in refreshed["tasks"]}
+                self.assertEqual(by_id["P00-S01-T001"]["status"], "done")
+                self.assertEqual(by_id["P00-S01-T001"]["last_updated_by"], "closer")
+                self.assertEqual(by_id["P00-S02-T001"]["status"], "claimed")
+                self.assertEqual(by_id["P00-S02-T001"]["claimed_by"], "worker-2")
+                runtime = common_mod.load_runtime_state()
+                self.assertEqual(runtime["active_task_id"], "P00-S02-T001")
+                self.assertEqual(runtime["last_worker"], "tester")
+                self.assertEqual(runtime["pending_journey_verifications"], ["J1"])
+                self.assertEqual(runtime["open_followups"][0]["id"], "FU-test")
+        finally:
+            td.cleanup()
+
+    def test_reset_runtime_state_flag_is_explicitly_destructive(self):
+        td, root = self._root()
+        try:
+            with self._with_root(root) as (boot_mod, common_mod):
+                self.assertTrue(boot_mod.generate_artifacts()["ok"])
+                registry = common_mod.load_registry()
+                registry["tasks"][0]["status"] = "done"
+                common_mod.save_registry(registry)
+                common_mod.save_runtime_state({"active_task_id": "P00-S02-T001", "open_followups": [{"id": "FU-test"}]})
+
+                result = boot_mod.generate_artifacts(preserve_runtime_state=False)
+                self.assertTrue(result["ok"])
+                self.assertFalse(result["preserve_runtime_state"])
+                refreshed = common_mod.load_registry()
+                by_id = {t["id"]: t for t in refreshed["tasks"]}
+                self.assertEqual(by_id["P00-S01-T001"]["status"], "ready")
+                runtime = common_mod.load_runtime_state()
+                self.assertEqual(runtime["active_task_id"], "P00-S01-T001")
+                self.assertEqual(runtime["open_followups"], [])
+        finally:
+            td.cleanup()
+
+    def test_acceptance_mentions_of_compose_and_env_extend_write_scope(self):
+        td, root = self._root()
+        try:
+            sot = root / "docs/source-of-truth"
+            checklist = self.CHECKLIST.replace(
+                "create scaffold",
+                "docker-compose.yml env overrides updated to match .env.example"
+            )
+            (sot / "APP_IMPLEMENTATION_CHECKLIST.md").write_text(checklist, encoding="utf-8")
+            with self._with_root(root) as (boot_mod, common_mod):
+                self.assertTrue(boot_mod.generate_artifacts()["ok"])
+                task = common_mod.load_registry()["tasks"][0]
+                self.assertIn("docker-compose.yml", task["allowed_paths"])
+                self.assertIn("docker-compose.yml", task["write_set"])
+                self.assertIn(".env.example", task["allowed_paths"])
+                self.assertIn("infra:compose", task["conflict_groups"])
+                self.assertIn("infra:env", task["conflict_groups"])
+        finally:
+            td.cleanup()

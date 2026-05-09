@@ -1007,10 +1007,35 @@ def promote_ready_tasks(registry: dict[str, Any]) -> dict[str, Any]:
     done_ids = {t["id"] for t in registry.get("tasks", []) if t.get("status") == "done"}
     for task in registry.get("tasks", []):
         status = task.get("status")
-        explicit_block = status == "blocked" and bool(task.get("last_blocker"))
-        if status in {"planned", "ready"} or (status == "blocked" and not explicit_block):
-            if all(dep in done_ids for dep in task.get("depends_on", [])):
-                task["status"] = "ready"
+        deps_ready = all(dep in done_ids for dep in task.get("depends_on", []))
+        if not deps_ready:
+            continue
+        if status in {"planned", "ready"}:
+            task["status"] = "ready"
+            continue
+        if status != "blocked":
+            continue
+
+        last_blocker = task.get("last_blocker")
+        conflict_block = (
+            task.get("blocked_reason") == "conflict_with_active_task"
+            or (isinstance(last_blocker, dict) and last_blocker.get("type") == "conflict_with_active_task")
+        )
+        if conflict_block:
+            blockers = active_conflict_blockers(registry, task)
+            if blockers:
+                task["blocked_by"] = [str(item.get("task_id")) for item in blockers if item.get("task_id")]
+                task["last_blocker"] = {"type": "conflict_with_active_task", "blockers": blockers, "ts": now_iso()}
+                continue
+            task.pop("blocked_reason", None)
+            task.pop("blocked_by", None)
+            task.pop("last_blocker", None)
+            task["status"] = "ready"
+            continue
+
+        explicit_block = bool(last_blocker)
+        if not explicit_block:
+            task["status"] = "ready"
     return refresh_phase_statuses(registry)
 
 

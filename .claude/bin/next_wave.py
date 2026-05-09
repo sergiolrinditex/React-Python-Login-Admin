@@ -74,6 +74,9 @@ def compute_wave(registry: dict[str, Any], *, phase_id: str | None = None, limit
     strict_journey_block = bool(pending and gate_mode == "strict")
     blocking_followups = blocking_open_followups(runtime)
     dag, warnings, errors = validate_registry_dag(registry)
+    errors = list(errors or [])
+    if dag.get("mode") != "explicit_dag":
+        errors.append("production DAG-only requires task_dag.mode=explicit_dag; fix Coverage Registry Depends on and rerun bootstrap")
     selected_phase = phase_id or _earliest_incomplete_phase(registry)
     selected: list[dict[str, Any]] = []
     deferred_conflicts: list[dict[str, Any]] = []
@@ -135,10 +138,13 @@ def _terminal_command(task_id: str) -> str:
     # gives every downstream agent a per-node path instead of the legacy global
     # active-task.md singleton.
     pack = f"orchestrator-state/tasks/task-packs/{task_id}.md"
+    claude_cmd = (
+        f'claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice {task_id}"'
+    )
     return (
         f"export CLAUDE_ACTIVE_TASK_ID={task_id} "
         f"CLAUDE_TASK_PACK={pack} && "
-        f"echo 'Ahora ejecuta en Claude Code: /next-slice {task_id}'"
+        f"echo 'Ahora ejecuta en Claude Code: {claude_cmd}'"
     )
 
 
@@ -212,7 +218,10 @@ def print_markdown(result: dict[str, Any]) -> None:
             print("```bash")
             print(_terminal_command(tid))
             print("```")
-            print(f"Después, dentro de Claude Code en ese terminal: `/next-slice {tid}`")
+            print(
+                "Después, en ese terminal worker: "
+                f"`claude --agent main-orchestrator --permission-mode bypassPermissions \"/next-slice {tid}\"`"
+            )
 
     deferred_journey = result.get("deferred_due_journey_gate") or []
     if deferred_journey:

@@ -81,6 +81,8 @@ def validate_registry_dag(registry: dict[str, Any]) -> tuple[dict[str, Any], lis
 
     recomputed = build_task_dag(tasks)
     errors.extend(recomputed.get("errors") or [])
+    if recomputed.get("mode") != "explicit_dag":
+        warnings.append("production DAG-only requires task_dag.mode=explicit_dag; fill Coverage Registry Depends on before opening workers")
 
     stored = registry.get("task_dag") or {}
     if not stored:

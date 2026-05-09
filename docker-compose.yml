@@ -206,7 +206,7 @@ services:
       DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-hilopeople}:${POSTGRES_PASSWORD:-hilopeople_dev_pwd}@postgres:5432/${POSTGRES_DB:-hilopeople_dev}
       REDIS_URL: redis://redis:6379/0
       CELERY_BROKER_URL: redis://redis:6379/1
-      LITELLM_PROXY_BASE_URL: http://litellm:4000
+      LITELLM_BASE_URL: http://litellm:4000
       AWS_ENDPOINT_URL: http://minio:9000
       # Server config
       API_HOST: "0.0.0.0"
@@ -266,7 +266,7 @@ services:
       DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-hilopeople}:${POSTGRES_PASSWORD:-hilopeople_dev_pwd}@postgres:5432/${POSTGRES_DB:-hilopeople_dev}
       REDIS_URL: redis://redis:6379/0
       CELERY_BROKER_URL: redis://redis:6379/1
-      LITELLM_PROXY_BASE_URL: http://litellm:4000
+      LITELLM_BASE_URL: http://litellm:4000
       AWS_ENDPOINT_URL: http://minio:9000
       APP_VERSION: ${BUILD_VERSION:-0.1.0}
       PYTHONUNBUFFERED: "1"
