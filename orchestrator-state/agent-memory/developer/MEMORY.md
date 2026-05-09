@@ -220,6 +220,45 @@
 - /ready probe uses `engine.connect()` + `SELECT 1` to give an explicit per-request signal.
 - Both serve different purposes: pool_pre_ping detects stale connections; /ready validates current DB availability.
 
+### P00-S02-T003 (2026-05-09) — Seed data + verification bundle
+
+**`_comment` fields in JSON fixtures and Pydantic `extra="forbid"`**:
+- JSON fixtures use `_comment` as a documentation convention. With Pydantic `extra="forbid"`, these cause `ValidationError: Extra inputs are not permitted`.
+- Solution: in `io.py`, strip all `_`-prefixed keys from the raw dict BEFORE `model_cls.model_validate(raw)`. This preserves schema strictness while allowing underscore-prefixed metadata in fixture files.
+- Pattern: `raw = {k: v for k, v in raw.items() if not k.startswith("_")}`.
+
+**EmailStr requires email-validator (not in dep stack)**:
+- `pydantic.networks.EmailStr` calls `import email_validator` at schema BUILD time (not just validation time).
+- If `email-validator` is not installed, any import of a schema using `EmailStr` raises `ImportError`.
+- Project rule: no package for something doable in <20 lines.
+- Solution: `str` field + `field_validator` with regex `r"^[^@\s]+@[^@\s]+\.[^@\s]+$"`.
+
+**Synthetic credential guard pattern**:
+- All provider/MCP credentials in fixtures MUST start with `synthetic-` to prevent accidental real key commit.
+- Additional guard: reject keys matching patterns: `sk-[A-Za-z0-9]{20,}`, `sk-ant-[A-Za-z0-9-]{30,}`, `AIza[A-Za-z0-9-_]{35,}`, `Bearer [A-Za-z0-9-_]{40,}`.
+- Implemented in `backend/app/seeds/schemas/admin_ai.py._require_synthetic_prefix()` — imported by `mcp_agents.py`.
+
+**SHA256 checksum is exactly 64 hex characters**:
+- RagDocumentSeed enforces `min_length=64, max_length=64` for `checksum_sha256`.
+- SHA256 produces 256 bits = 32 bytes = 64 hex characters. Do not add/remove characters from synthetic checksums.
+- Common typo: counting wrong and getting 66 chars. Always `echo -n "<value>" | wc -c` to verify.
+
+**asyncpg connects fine even when SQLAlchemy app-level engine fails**:
+- The seed integration tests connect via asyncpg directly (correct DSN).
+- The health endpoint test fails because it goes through the app's SQLAlchemy engine which reads DATABASE_URL from env (set to `change-me` password default, not `hilopeople_dev_pwd`).
+- These are two separate connection paths. Seeds can pass while health test fails — expected in dev.
+
+**Seed exit codes**:
+- `0` = success (including "all tables missing" — table-tolerant in P00)
+- `1` = fixture schema validation error OR JSON parse error
+- `2` = bundle source directory not found (--source points to non-existent path)
+
+**structlog.testing.capture_logs() assertion pattern**:
+- `capture_logs()` context manager returns a list of dicts (one per log event).
+- Assert on `e.get("event")`, `e.get("log_level")`, `e.get("namespace")`, `e.get("table")`.
+- Log level in captured dict is `"warning"` (lowercase), not `"WARNING"`.
+- Only works for Python-path log calls (not subprocess output).
+
 ## Gotchas
 
 - `dev-restart.profile.sh` is a FLUTTER template not yet customized for React. Back-fill will happen in a future P00 slice. Don't rely on `back_start()` or `front_start()` functions there yet.
@@ -232,3 +271,28 @@
 - **python-multipart import name**: In 0.0.27, the package is still `import multipart`. Future versions may only export `python_multipart`. Watch for `PendingDeprecationWarning: Please use import python_multipart instead.` — update smoke test when the old name is removed.
 - **deepagents pulls langchain-anthropic as transitive dep**: This means anthropic SDK is in the transitive deps. If deepagents is removed, anthropic may disappear from the lock. Keep `langchain-anthropic` declared if anthropic SDK is needed directly.
 - **PYTHONPATH for pytest**: When running pytest from `backend/` dir, pytest finds `app/` via sys.path. But when running from repo root, set `PYTHONPATH=backend`. The pyproject.toml `testpaths = ["tests"]` means pytest runs relative to `backend/` if invoked from there.
+
+### P00-S02-T004 (2026-05-09) — CWE-532 structlog frame-locals leak fix
+
+**structlog 25.5.0 RichTracebackFormatter API**:
+- `structlog.dev.RichTracebackFormatter(show_locals=False)` — `show_locals` kwarg is boolean, stable since structlog 21.x.
+- `structlog.dev.ConsoleRenderer(exception_formatter=<formatter>)` — `exception_formatter` kwarg accepts any `ExceptionRenderer`, stable since structlog 22.x.
+- Pattern: `renderer = structlog.dev.ConsoleRenderer(exception_formatter=structlog.dev.RichTracebackFormatter(show_locals=False))`
+
+**Test isolation for configure_logging() tests**:
+- `configure_logging()` adds a `StreamHandler(sys.stdout)` to the root logger AND mutates global structlog state.
+- After capsys capture closes, the StreamHandler points to a closed file → "I/O operation on closed file" in subsequent tests.
+- Pattern: save handlers before test (`_save_logging_state()`), close/remove any added handlers in finally (`_restore_logging_state()`).
+- This is the same issue the existing test_health.py tests work around via the `prev_configured` restore + the fact they run in a specific order.
+
+**_configured guard and test isolation**:
+- `core_logging._configured = False` is required before calling `configure_logging()` in tests.
+- Restoring `core_logging._configured = prev` alone is NOT sufficient — you must also clean up root logger handlers.
+- Full pattern in `_save_logging_state()` / `_restore_logging_state()` in tests/test_logging.py.
+
+**Test_ready_db_ok pre-existing auth failure**:
+- `test_ready_db_ok` in test_health.py has `@pytest.mark.skipif(not _postgres_reachable(), ...)`.
+- `_postgres_reachable()` only checks if port 5433 is open — it does NOT check credentials.
+- If compose postgres is running but with different credentials than config.py expects, the test fails with InvalidPasswordError.
+- This failure exists in the T002 baseline (48 counted as baseline; this test was already failing).
+- T004 does NOT change this — still 51/52 pass (1 pre-existing auth fail unchanged).

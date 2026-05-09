@@ -351,3 +351,96 @@ Verified for: P00-S01-T002 (frontend dependency pack — 8 primary packages + 4 
 8. **T001 pinned versions**: fastapi 0.136.1, uvicorn 0.46.0, ruff 0.15.12, mypy 2.0.0, pytest 9.0.3, pytest-asyncio 1.3.0, httpx 0.28.1 — ALL still at latest. T001 pins were correct.
 9. **All 37 deps verified Python 3.11 compatible**: no gaps found.
 10. **litellm peer constraints**: also pins httpx==0.28.1 (matches our pin) and tiktoken==0.12.0 (matches our pin). Only pydantic is the conflict.
+
+---
+
+### Entry 2026-05-09 — P00-S02-T003 Seed data + verification bundle (SHALLOW/TARGETED PASS)
+
+**Freshness window**: All stable topics — re-verify after 7 days (2026-05-16). pyotp status: not in lockfile, confirmed 2026-05-09; re-verify only if lockfile changes.
+
+#### Topic verdicts (2026-05-09)
+
+| # | Topic | Verdict | Finding |
+|---|---|---|---|
+| 1 | SQLAlchemy 2.0 async upsert `INSERT...ON CONFLICT DO UPDATE` | OK | `from sqlalchemy.dialects.postgresql import insert` + `.on_conflict_do_update(index_elements=[...], set_={...})` confirmed canonical. `await session.execute(stmt)` works via `AsyncSession`. No version change in 2.0.49. |
+| 2 | `inspect(...).has_table(...)` over async engine | OK | Official pattern confirmed: `await conn.run_sync(lambda sync_conn: inspect(sync_conn).has_table('users'))`. Docs explicitly state "SQLAlchemy does not yet offer an asyncio version of Inspector" → must use `run_sync`. Also valid: `inspect(sync_conn).get_table_names()`. |
+| 3 | argparse vs typer/click on Python 3.13 | OK | argparse is NOT deprecated in 3.13. Python docs explicitly call it "the default recommended standard library module." Only enhancements in 3.13 (new `deprecated` param on `add_argument`). Stay with argparse for T003 CLI. |
+| 4 | pytest-asyncio 1.3.0 asyncio_mode | OK (cache) | `asyncio_mode="auto"` confirmed set in project's `pyproject.toml` line 122 (T002 cache). Auto mode picks up `async def test_*` without decorators. |
+| 5 | structlog 25.5.0 `capture_logs` | OK | `from structlog.testing import capture_logs` confirmed unchanged. Context manager returns list of dicts; each dict has `event`, `log_level`, and any bound keys. Pattern for assertion: `assert cap_logs[0]["event"] == "seed.namespace.start"`. |
+| 6 | Pydantic 2.12.5 `ConfigDict(extra='forbid', strict=True)` | OK | Both `extra` and `strict` are valid `ConfigDict` keys in Pydantic 2.x. `extra='forbid'` rejects unknown fields. `strict=True` disables type coercion. `model_config = ConfigDict(extra='forbid', strict=True)` is the canonical 2.x form. |
+| 7 | `docker compose down -v` semantics | OK (clarified) | `-v` removes ALL named volumes in the project (not per-service). BUT: `dev-restart.sh --reset` does NOT call `docker compose down -v` — it uses `alembic downgrade base + upgrade head` for DB reset, which is schema-only and does NOT touch Docker volumes at all. Safe pattern confirmed: the existing dev-restart.sh wiring is correct and does not risk minio/redis volumes. |
+| 8 | pyotp | DISCREPANCY | pyotp is NOT in `backend/pyproject.toml` and NOT a transitive dep of mcp==1.27.1 or any other package in the lockfile. Developer MUST NOT use `pyotp.random_base32()`. Use static base32 string in JSON fixture instead. Note written: `P00-S02-T003-pyotp-not-in-lockfile-2026-05-09.md`. |
+| 9 | asyncpg + ON CONFLICT + SQLAlchemy 2.0 | OK | SQLAlchemy docs show no asyncpg-specific gotchas for ON CONFLICT DO UPDATE. The upsert is a dialect-level feature; asyncpg receives it as a parameterized PostgreSQL statement. No parameter style issues documented. |
+
+#### Key findings
+
+- **SQLAlchemy upsert pattern**: `from sqlalchemy.dialects.postgresql import insert` → `.on_conflict_do_update(index_elements=[col_or_name], set_={...})` → `await session.execute(stmt)`. Confirmed for 2.0.49+asyncpg.
+- **Natural key upsert WITHOUT DB-side UNIQUE**: The SQLAlchemy ON CONFLICT requires a unique constraint or index on the conflict column(s) at the DB level. For `users.email` this is fine (UNIQUE per §10.3). For `ai_providers.name`, `mcp_servers.name`, `agents.name`, `rag_collections.name` — if these tables don't have UNIQUE constraints yet (they don't exist yet in T003), the `on_conflict_do_update(index_elements=['name'])` will FAIL at runtime unless the column has a unique constraint. Since T003's tables don't exist yet, this is deferred to when the tables land (P01-S01-T001, P02-S01-T001). The loader's "table missing" WARN path will be triggered for all namespaces except `auth`. No action needed for T003 scope — but developer should add a docstring explaining that upsert depends on a UNIQUE constraint that will exist when the migration lands.
+- **structlog capture_logs**: import path `from structlog.testing import capture_logs` unchanged in 25.5.0. Inside context manager all configured processors are disabled; captured records are plain dicts.
+- **pyotp**: NOT in lockfile; NOT transitive. Use static base32 string. Discrepancy note written.
+- **dev-restart.sh --reset**: already uses `alembic downgrade/upgrade` approach — does NOT touch Docker volumes. The compose file comment `docker compose down -v` → "DELETE volumes (data loss!)" is a developer warning in the usage docs, not a command that dev-restart.sh calls. T003 wiring verification should confirm loader is importable and the `python -c "import app.seeds.bootstrap_verification_data"` guard fires correctly.
+
+#### Sources consulted
+
+- Context7 `/websites/sqlalchemy_en_20` — async upsert, run_sync, AsyncSession.execute
+- Context7 `/hynek/structlog` — capture_logs, LogCapture, testing API
+- WebFetch `https://docs.sqlalchemy.org/en/20/orm/extensions/asyncio.html` — has_table via run_sync pattern
+- WebFetch `https://pydantic.dev/docs/validation/latest/api/pydantic/config/` — ConfigDict strict + extra
+- WebFetch `https://docs.python.org/3.13/library/argparse.html` — argparse status in 3.13
+- WebFetch `https://pypi.org/pypi/pyotp/json` — pyotp 2.9.0, no runtime deps
+- WebFetch `https://pypi.org/pypi/mcp/1.27.1/json` — mcp 1.27.1 deps (pyotp absent)
+- WebFetch `https://docs.docker.com/reference/cli/docker/compose/down/` — down -v semantics
+- Local file reads: `scripts/dev-restart.sh`, `scripts/dev-restart.profile.sh`, `docker-compose.yml`
+- T002 cache (2026-05-09): pytest-asyncio asyncio_mode=auto confirmed in pyproject.toml line 122
+
+---
+
+### Entry 2026-05-09 — P00-S02-T004 structlog 25.5.0 RichTracebackFormatter / ConsoleRenderer / frame-locals redaction (DEEP PASS)
+
+**Freshness window**: structlog is a stable framework — re-verify after 7 days (2026-05-16).
+
+#### Sources consulted
+
+- Context7 `/hynek/structlog` — ConsoleRenderer, RichTracebackFormatter, exception_formatter API
+- Context7 `/websites/structlog_en_stable` — stable docs processors, recipes
+- WebFetch `https://www.structlog.org/en/stable/api.html` — full constructor signatures
+- WebFetch `https://github.com/hynek/structlog/releases` — changelog 24.x → 25.5.0
+- WebFetch `https://rich.readthedocs.io/en/stable/traceback.html` — Rich Traceback show_locals cross-check
+
+#### Verified API surface for structlog 25.5.0
+
+| # | Question | Answer | Source |
+|---|---|---|---|
+| 1 | Import path for `RichTracebackFormatter` | `structlog.dev.RichTracebackFormatter` | structlog API docs + Context7 |
+| 2 | Constructor signature | `RichTracebackFormatter(color_system='truecolor', show_locals=True, max_frames=100, theme=None, word_wrap=True, extra_lines=3, width=None, code_width=88, indent_guides=True, locals_max_length=10, locals_max_string=80, locals_hide_dunder=True, locals_hide_sunder=False, suppress=())` | structlog API docs |
+| 3 | `show_locals` default | `True` — frame locals displayed by default | structlog API docs |
+| 4 | `show_locals=False` effect | Suppresses all frame-local variable display in Rich tracebacks | Rich docs + structlog docs |
+| 5 | `ConsoleRenderer` `exception_formatter=` kwarg | YES — confirmed present, accepts callable. In 25.5.0 it is also settable as mutable attribute post-instantiation via `ConsoleRenderer.get_active().exception_formatter = ...` | structlog 25.5.0 release notes + Context7 |
+| 6 | Built-in structlog redaction processor for frame locals | NONE — no built-in processor walks frame locals. `_redaction_processor` on event_dict keys is not sufficient; frame locals live inside the exc_info tuple, opaque to dict-level processors | structlog API docs |
+| 7 | JSONRenderer + frame locals | JSONRenderer uses stdlib `traceback.format_exception` — does NOT include frame locals by default. The leak is Console-renderer-only (verbose=true path) | task pack + confirmed |
+| 8 | ENABLE_VERBOSE_LOGGING competing structlog setting | NONE — structlog has no built-in verbose/quiet flag that would override `show_locals=False`. Project's env-var-based toggle is the only gate | structlog docs |
+| 9 | 24.x → 25.x breaking changes affecting this slice | NONE affecting `show_locals` or `exception_formatter`. Only breaking change in 25.x affecting ConsoleRenderer is `pad_event` → `pad_event_to` rename (not used in this project's logging.py) | structlog release changelog |
+| 10 | `ExceptionDictTransformer` (structured tracebacks) | Accepts `show_locals=True/False` also, but applies to JSONRenderer dict path only | Context7 |
+
+#### Planner's Option C validation
+
+The task pack recommends "Option C — Hybrid":
+```python
+renderer = structlog.dev.ConsoleRenderer(
+    exception_formatter=structlog.dev.RichTracebackFormatter(show_locals=False),
+)
+```
+This pattern is **fully correct** for structlog 25.5.0:
+- `structlog.dev.RichTracebackFormatter` — correct import.
+- `show_locals=False` — correct kwarg name, suppresses frame locals.
+- `ConsoleRenderer(exception_formatter=...)` — correct wiring kwarg.
+
+No newer redaction API exists in structlog 25.5.0 that would supersede this approach.
+
+#### Additional finding — `format_exc_info` processor (JSON path)
+
+When using `structlog.processors.format_exc_info` (converts exc_info to formatted string for JSON output), the stdlib `traceback.format_exception` is used internally — this does NOT include frame locals. Defense in depth for the JSON path is already satisfied. Confirmed not a concern.
+
+#### Discrepancies: NONE
+
+The planner's intended pattern (Option C) is correct and consistent with structlog 25.5.0 official API. No discrepancy note required.

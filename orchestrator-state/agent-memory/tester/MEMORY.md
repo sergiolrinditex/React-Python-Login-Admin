@@ -38,3 +38,39 @@ Re-activating the developer's `.venv-t003` is correct. No need to create a new v
 - `InsecureKeyLengthWarning` from pyjwt in smoke test: expected — smoke key is `"secret"` (6 bytes). P01-S02-T001 will use a real key.
 - `PendingDeprecationWarning` from python-multipart `importlib.import_module("multipart")`: watch on upgrade; import name changing to `python_multipart`.
 - `LangChainPendingDeprecationWarning` from deepagents/langgraph: upstream ecosystem deprecation; no action for T003.
+
+## Lessons from P00-S02-T003 (2026-05-09)
+
+### Exit code capture with tee
+
+`python ... 2>&1 | tee file.log; echo "exit=$?"` captures tee's exit code (usually 0), not Python's. Use this pattern instead:
+```bash
+python ... > file.log 2>&1
+EXIT=$?
+echo "exit=$EXIT" >> file.log
+echo "exit=$EXIT"
+```
+
+### Docker / Rancher Desktop path
+
+On this machine, Docker is via Rancher Desktop at `~/.rd/bin/docker`. Add to PATH:
+```bash
+export PATH="$HOME/.rd/bin:$PATH"
+```
+
+### DATA_DIR for seed CLI
+
+The `data/verification/` bundle is at the **project root**, NOT under `backend/`. Always run the seed CLI from the project root, or use an absolute path. Tests in `conftest.py` correctly resolve via `Path(__file__).parent.parent.parent.parent / "data" / "verification"`.
+
+### Seed loader closed-set design
+
+The loader only processes specific named fixture files (e.g., `providers.json`, `models.json`). Extra JSON files placed in a namespace directory are IGNORED. The credential guard is validated at Pydantic schema parse time on the files the loader explicitly reads. Testing the guard by injecting an extra file (`evil.json`) does not work — inject into the actual consumed file (`providers.json`).
+
+### Pre-existing test_ready_returns_200_when_db_ok failure
+
+This test uses the app's DATABASE_URL env var (port 5432 in .env) while compose postgres runs on 5433. The test skip-guard checks TCP port 5433 (reachable), so the test runs but the app-level connection fails. This is a config mismatch from T002. Future tester: if still failing, note it as pre-existing; check git log on test_health.py.
+
+### OUTCOME/NEXT_STATUS when validator says changes_requested
+
+Per MEMORY.md rule: `OUTCOME: pass, NEXT_STATUS: needs_debug`. The debugger must apply the fix, then re-run validator+tester. The closer requires validator `approved` before committing.
+

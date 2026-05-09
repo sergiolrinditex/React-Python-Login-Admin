@@ -7,11 +7,11 @@
 ## Current State
 
 - **Phase**: Phase 0 — Scaffold + Design System
-- **Last completed slices**: P00-S01-T001..T004 (done), P00-S02-T001 (Docker compose services — done), P00-S01-T005 (i18n bundles — developer done, validator/tester pending), **P00-S02-T002 (health live/ready endpoints — developer done, validator/tester pending)**
-- **Next pending slices**: P00-S02-T003 (seed data)
+- **Last completed slices**: P00-S01-T001..T005 (all done, committed), P00-S02-T001 (Docker compose — done), P00-S02-T002 (health live/ready endpoints — done, committed a6a3d86), **P00-S02-T004 (CWE-532 logging fix — developer done, validator/tester pending)**, **P00-S02-T003 (seed data + reset bundle — developer done, validator/tester pending)**
+- **Next pending slices**: P00-S02-T003 validator/tester, P00-S02-T004 validator/tester (both pending parallel validation)
 - **Blockers**: none
 - **Follow-ups pending**: FU-20260508225027 (medium, wiring — env var name drift in config.py vs TECHNICAL_GUIDE §11.1, non-blocking)
-- **Generated at**: 2026-05-09T06:30:00Z
+- **Generated at**: 2026-05-09T08:00:00Z
 
 ## Docker Compose Stack (P00-S02-T001)
 
@@ -58,8 +58,8 @@ Rancher-ready compose stack ADR preserved in handoff P00-S02-T001.md (pending fo
 | Endpoints implemented | 3 live | GET /health (flat shape, backward-compat), GET /live (no-DB), GET /ready (DB probe + placeholders) |
 | Request-ID middleware | live | X-Request-ID echoed; uuid4 hex generated when missing; bound in structlog contextvars |
 | Migrations applied | 0 | First migration: P01-S01-T001 |
-| Seed data | not loaded | Seed script: P00-S02-T003 |
-| Backend tests | 48 passing | 39 smoke + 9 health tests (all green; #9 = CWE-532 regression guard added by debugger 2026-05-09) |
+| Seed data | CLI READY (table-tolerant) | `python -m app.seeds.bootstrap_verification_data --source data/verification [--only auth]`; exits 0 when tables missing (P00 state); exits 0 with upserts when tables exist |
+| Backend tests | 63 total (62 pass + 1 pre-existing fail) | 39 smoke + 9 health + 4 logging + 11 new seed tests; test_ready_db_ok pre-existing auth fail (app env != test env credentials) |
 | Deps installed | YES | pip install -e ".[dev]" clean in .venv-t003 |
 
 ### Backend Dependencies (exact pins, verified against PyPI 2026-05-08)
@@ -162,20 +162,58 @@ Rancher-ready compose stack ADR preserved in handoff P00-S02-T001.md (pending fo
 |-------|-----------|------|--------|
 | (none yet) | — | — | First migration: P01-S01-T001 |
 
+## Seed Data Bundle (P00-S02-T003)
+
+### Files created
+- `backend/app/seeds/__init__.py` — package marker
+- `backend/app/seeds/schemas/users.py` — UserSeed + EmployeeProfileSeed (email via regex, no email-validator dep)
+- `backend/app/seeds/schemas/auth.py` — MfaPrimarySeed (synthetic_totp must be True)
+- `backend/app/seeds/schemas/admin_ai.py` — AiProviderSeed + AiModelSeed + synthetic credential guard
+- `backend/app/seeds/schemas/rag.py` — RagCollectionSeed + RagDocumentSeed (metadata-only, no embeddings)
+- `backend/app/seeds/schemas/mcp_agents.py` — McpServerSeed + AgentSeed
+- `backend/app/seeds/schemas/history.py` — ConversationSeed + ConversationListSeed (min 2 conversations)
+- `backend/app/seeds/table_probe.py` — async information_schema.tables probe (no migration dependency)
+- `backend/app/seeds/io.py` — load_fixture() strips `_comment` fields before Pydantic validation
+- `backend/app/seeds/loader.py` — 6 async loader functions + LoadReport dataclass
+- `backend/app/seeds/bootstrap_verification_data.py` — CLI entry point (argparse, asyncio.run)
+- `data/verification/MANIFEST.json` — bundle manifest
+- `data/verification/users/employee_primary.json` — employee seed
+- `data/verification/users/admin_peopletech.json` — admin seed
+- `data/verification/auth/mfa_primary.json` — TOTP: JBSWY3DPEHPK3PXP (static base32)
+- `data/verification/admin_ai/providers.json` — synthetic LiteLLM provider
+- `data/verification/admin_ai/models.json` — synthetic models
+- `data/verification/mcp_agents/servers.json` — synthetic MCP server
+- `data/verification/mcp_agents/agents.json` — synthetic agent
+- `data/verification/rag/collections.json` — politicas_tienda collection
+- `data/verification/rag/documents/politica_vacaciones_es.json` — metadata-only doc
+- `data/verification/history/conversations.json` — 2 conversations (ES + EN)
+- `backend/tests/integration/conftest.py` — _db_reachable(), verification_bundle_dir, postgres_engine fixtures
+- `backend/tests/integration/test_seed_missing_bundle.py` — 5 no-DB tests (all pass)
+- `backend/tests/integration/test_seed_idempotency.py` — 3 postgres tests (all pass)
+- `backend/tests/integration/test_seed_namespaces.py` — 3 postgres namespace isolation tests (all pass)
+
+### Key design decisions
+- `_comment` fields stripped in io.py before Pydantic validation (extra="forbid" preserved)
+- Synthetic credential guard: api_key/access_token must start with `synthetic-` AND not match real key patterns (sk-*, sk-ant-*, AIza*, Bearer *)
+- Email validated via regex in UserSeed (no email-validator dep — project rule: no package for <20-line work)
+- TOTP secret: static base32 string JBSWY3DPEHPK3PXP (deterministic; pyotp not installed)
+- Exit codes: 0=ok/all-skipped, 1=fixture error, 2=missing bundle dir
+- Table-tolerant: missing tables log WARN + skip, do not exit non-zero
+
 ## Tests Summary
 
 | Level | Count | Status |
 |-------|-------|--------|
 | Backend unit | 0 | — |
-| Backend integration | 9 | PASS (8 health endpoint tests + 1 CWE-532 traceback-locals regression guard) |
-| Backend smoke | 39 | PASS (dependency smoke — all dep categories) |
+| Backend integration | 24 | 23 PASS (9 health + 4 logging + 11 seed); 1 pre-existing infra fail (test_ready_db_ok — DB auth issue) |
+| Backend smoke | 39 | PASS (dependency smoke) |
 | Frontend unit | 7 | PASS (tokens TS mirror + component tests) |
-| Frontend component | 9 | PASS (providers smoke + showcase smoke: 1+8) |
+| Frontend component | 9 | PASS (providers smoke + showcase) |
 | i18n | 10 | PASS (P00-S01-T005) |
 | E2E | 0 | — |
-| **Total** | **74** | **74 PASS** |
+| **Total** | **89** | **88 PASS, 1 pre-existing infra fail** |
 
-Note: Backend total 48 tests (39 smoke + 9 health). Frontend Vitest: 57 tests (47 previous + 10 i18n). Grand total: 105 tests passing.
+Note: Backend total 63 tests (39 smoke + 9 health + 4 logging + 11 seed). 62/63 pass; test_ready_db_ok fails pre-existing (app-level DB auth uses env vars different from test-direct asyncpg credentials). Frontend Vitest: 57 tests. Grand total: 120 tests declared.
 
 ## Milestones
 
@@ -196,6 +234,7 @@ Note: Backend total 48 tests (39 smoke + 9 health). Frontend Vitest: 57 tests (4
 
 ## Recent Decisions
 
+- **P00-S02-T004 (2026-05-09)**: CWE-532 architectural fix — structlog frame-locals leak prevention. Key decisions: (1) Option C hybrid chosen: ConsoleRenderer configured with RichTracebackFormatter(show_locals=False) as primary fix + _REDACTED_KEYS extended with pwd, dsn, database_url, connection_string as defense-in-depth. (2) structlog 25.5.0 API confirmed: RichTracebackFormatter(show_locals=False) and ConsoleRenderer(exception_formatter=...) are both stable kwargs. (3) No changes to call sites (router.py, main.py) — global config change protects ALL future exc_info=True callers (P01 auth slices etc.). (4) Test isolation fix: _save_logging_state()/_restore_logging_state() helpers close and remove handlers after each test to prevent "I/O operation on closed file" error between tests. (5) Pre-existing test_ready_db_ok auth failure (InvalidPasswordError) was already failing in T002 baseline — unchanged, not introduced by T004. Evidence: 51/52 tests pass; 12/12 grep checks OK; ruff+mypy clean.
 - **P00-S02-T002 (2026-05-09)**: Health live/ready endpoints. Key decisions: (1) D1 — flat shape {status, version, uptime} preserved on /health and /live for T001 compose backward-compat; NOT migrated to {data:{...}} envelope; a follow-up will reconcile TECHNICAL_GUIDE §6.2. (2) D2 — redis and litellm checks declared as not_implemented (not removed, not faked as "ok"); shape is forward-compatible for downstream slices. (3) D3 — minimal request_id middleware using @app.middleware("http") (FastAPI-idiomatic per official doc note); uses structlog.contextvars.clear/bind/clear pattern. (4) Exception handling in /ready: SQLAlchemyError as primary catch; bare Exception as last-resort so probe always returns 503 not 500. (5) _sanitize_db_error() strips DSN components from error detail before returning. (6) Test 3 (DB-up) requires compose postgres at 5433 with correct credentials hilopeople:hilopeople_dev_pwd — verified with real DB.
 - **P00-S02-T001 (2026-05-09)**: Docker compose stack (Rancher-ready). 7 services declared. Key decisions: (1) pgvector/pgvector:pg18-bookworm (researcher confirmed pg18 available; `pg18-bookworm` explicit Debian stable); (2) redis:8-alpine (researcher confirmed Redis 8.6.3 is current stable, not 7.4); (3) litellm:v1.83.14-stable (pin to exact version matching Python lib, not floating main-stable); (4) nginx-unprivileged:1.29-alpine (researcher found 1.27 does NOT exist, 1.29 is current); (5) python:3.13-slim-bookworm (explicit Bookworm); (6) postgres host port 5433 (avoids conflict with local PG on 5432); (7) litellm healthcheck uses python3 urllib (no curl/wget in LiteLLM image); (8) LiteLLM start_period 120s (image needs ~2min to initialize); (9) worker healthcheck disabled (inherits /health from Dockerfile which fails since worker has no HTTP port — real Celery healthcheck in P02-S04-T002); (10) postgres volume mount at /var/lib/postgresql not /data (PG18 changed data dir layout per github.com/docker-library/postgres/pull/1259).
 - **P00-S01-T001**: Bootstrap mínimo. Pinned versions from debugger 2026-05-08.
@@ -223,7 +262,8 @@ Note: Backend total 48 tests (39 smoke + 9 health). Frontend Vitest: 57 tests (4
 - **P00-S02-T001**: Worker service inherits /health Dockerfile HEALTHCHECK from backend image; disabled in compose override since worker has no HTTP port. Real Celery healthcheck (`celery inspect ping`) lands in P02-S04-T002.
 - **P00-S02-T001**: postgres host port mapped to 5433 (not 5432) to avoid conflict with local Postgres instance on dev machines. alembic must use port 5433 when running from host.
 - **P00-S02-T001 env drift follow-up**: FU-20260508225027 (medium) registered — config.py field names don't match TECHNICAL_GUIDE §11.1 (jwt_secret vs JWT_PRIVATE_KEY/JWT_PUBLIC_KEY etc.). Non-blocking now; must be resolved before P01-S02-T001 (auth JWT implementation).
-- **P00-S02-T002 CWE-532 fix (2026-05-09)** — `/verify-slice` flagged a DSN/password leak via `_logger.error(..., exc_info=True)` in `_probe_db()`. Verbose-mode structlog uses `ConsoleRenderer` + `RichTracebackFormatter(show_locals=True)` and asyncpg/SQLAlchemy bind `cparams = {host, user, password, port, database}` as frame locals — those locals were being rendered to stdout. **Fix**: dropped `exc_info=True` from both `_probe_db()` except branches (and added a defensive NOTE comment in the request_id middleware exception path). Structured fields `error_class` + sanitized `db_detail` remain in the log. Test #9 `test_ready_db_down_does_not_leak_dsn_in_logs` is a regression guard with a fake engine that binds secret cparams as frame locals; the test FAILS if `exc_info=True` is reintroduced. **Out-of-scope follow-up `FU-20260509044829-disable-structlog-rich-traceback-show-locals-glo`** will configure `RichTracebackFormatter(show_locals=False)` globally so future agents can re-enable `exc_info=True` safely. Until that lands, **DO NOT re-add `exc_info=True` anywhere**: the structured-fields-only pattern is mandatory. Backend test count: 47 → 48. Evidence chain: `debugger-fix-pytest-health.log` (9/9), `debugger-fix-pytest-full.log` (48/48), `debugger-fix-uvicorn-db-down-no-leak.log` (0 secret leaks vs pre-fix 14+18+16+5).
+- **P00-S02-T002 CWE-532 fix (2026-05-09)** — `/verify-slice` flagged a DSN/password leak via `_logger.error(..., exc_info=True)` in `_probe_db()`. Verbose-mode structlog uses `ConsoleRenderer` + `RichTracebackFormatter(show_locals=True)` and asyncpg/SQLAlchemy bind `cparams = {host, user, password, port, database}` as frame locals — those locals were being rendered to stdout. **Fix**: dropped `exc_info=True` from both `_probe_db()` except branches (and added a defensive NOTE comment in the request_id middleware exception path). Structured fields `error_class` + sanitized `db_detail` remain in the log. Test #9 `test_ready_db_down_does_not_leak_dsn_in_logs` is a regression guard. Backend test count: 47 → 48.
+- **P00-S02-T004 CWE-532 architectural fix (2026-05-09)** — Global structlog config updated: ConsoleRenderer now receives RichTracebackFormatter(show_locals=False). _REDACTED_KEYS extended with pwd, dsn, database_url, connection_string. 4 new tests in test_logging.py. **Future exc_info=True callers are now safe globally** — the T002 restriction (no exc_info=True anywhere) is lifted by this fix, though the /ready call sites should remain conservative as defense-in-depth. Backend test count: 48 → 52 (51 pass, 1 pre-existing auth fail unchanged). Evidence: 12/12 leak grep checks OK; ruff+mypy clean.
 
 ---
 
@@ -246,5 +286,5 @@ Singleton: `frontend/src/i18n/index.ts` — eager loading, fallbackLng:'es', `re
 Languages: `frontend/src/i18n/languages.ts` — `SUPPORTED_LANGUAGES`, `NAMESPACES`, `isSupportedLanguage()`.
 Test gate: `frontend/src/i18n/__tests__/i18n.test.ts` — 10 assertions (parse+load, drift-detector, productive copy, functional t(), fallback, hasResourceBundle, constants shape).
 
-> Last updated: 2026-05-09T04:57:00Z
-> Updated by: debugger (P00-S02-T002) — verify-slice follow-up: CWE-532 traceback frame-locals leak fixed (drop exc_info=True in /ready DB-probe error logs); regression test #9 added; 48/48 backend tests passing.
+> Last updated: 2026-05-09T07:40:00Z
+> Updated by: developer (P00-S02-T004) — CWE-532 architectural fix: RichTracebackFormatter(show_locals=False) global config + _REDACTED_KEYS extended + 4 new logging tests; 51/52 backend tests passing (1 pre-existing auth fail).

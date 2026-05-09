@@ -1,0 +1,46 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.5, pytest-9.0.3, pluggy-1.6.0 -- /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/bin/python3.11
+cachedir: .pytest_cache
+rootdir: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend
+configfile: pyproject.toml
+plugins: cov-7.1.0, asyncio-1.3.0, langsmith-0.8.3, anyio-4.13.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 9 items
+
+tests/test_health.py::test_health_returns_flat_shape_and_200 PASSED      [ 11%]
+tests/test_health.py::test_live_returns_200_without_db PASSED            [ 22%]
+tests/test_health.py::test_ready_returns_200_when_db_ok FAILED           [ 33%]
+tests/test_health.py::test_ready_returns_503_when_db_fails PASSED        [ 44%]
+tests/test_health.py::test_request_id_echoed_when_provided PASSED        [ 55%]
+tests/test_health.py::test_request_id_generated_when_missing PASSED      [ 66%]
+tests/test_health.py::test_logs_redact_secrets_under_verbose PASSED      [ 77%]
+tests/test_health.py::test_health_uptime_increases PASSED                [ 88%]
+tests/test_health.py::test_ready_db_down_does_not_leak_dsn_in_logs PASSED [100%]
+
+=================================== FAILURES ===================================
+______________________ test_ready_returns_200_when_db_ok _______________________
+
+    @pytest.mark.skipif(not _postgres_reachable(), reason="compose postgres not reachable on :5433")
+    async def test_ready_returns_200_when_db_ok() -> None:
+        """GET /ready returns 200 with checks.db.status=="ok" when DB is up.
+    
+        Runs only when compose postgres is reachable.  The developer MUST capture
+        evidence in evidence/test-ready-db-up.log with compose up per acceptance.
+        """
+        async with _make_client() as client:
+            response = await client.get("/ready")
+    
+>       assert response.status_code == 200
+E       assert 503 == 200
+E        +  where 503 = <Response [503 Service Unavailable]>.status_code
+
+tests/test_health.py:145: AssertionError
+----------------------------- Captured stdout call -----------------------------
+{"error_class": "InvalidPasswordError", "db_detail": "InvalidPasswordError: authentication failed for user \"hilopeople\"", "event": "ERROR health.ready.db_failed: unexpected error on SELECT 1", "request_id": "0029935851bd4601a21f13213b634859", "level": "error", "logger": "app.api.router", "timestamp": "2026-05-09T05:42:33.093974Z"}
+{"failed_probe": "db", "db_detail": "InvalidPasswordError: authentication failed for user \"hilopeople\"", "event": "AFTER health.ready.not_ready: critical probe failed", "request_id": "0029935851bd4601a21f13213b634859", "level": "error", "logger": "app.api.router", "timestamp": "2026-05-09T05:42:33.094188Z"}
+------------------------------ Captured log call -------------------------------
+ERROR    app.api.router:router.py:209 {'error_class': 'InvalidPasswordError', 'db_detail': 'InvalidPasswordError: authentication failed for user "hilopeople"', 'event': 'ERROR health.ready.db_failed: unexpected error on SELECT 1', 'request_id': '0029935851bd4601a21f13213b634859', 'level': 'error', 'logger': 'app.api.router', 'timestamp': '2026-05-09T05:42:33.093974Z'}
+ERROR    app.api.router:router.py:157 {'failed_probe': 'db', 'db_detail': 'InvalidPasswordError: authentication failed for user "hilopeople"', 'event': 'AFTER health.ready.not_ready: critical probe failed', 'request_id': '0029935851bd4601a21f13213b634859', 'level': 'error', 'logger': 'app.api.router', 'timestamp': '2026-05-09T05:42:33.094188Z'}
+=========================== short test summary info ============================
+FAILED tests/test_health.py::test_ready_returns_200_when_db_ok - assert 503 =...
+========================= 1 failed, 8 passed in 0.50s ==========================

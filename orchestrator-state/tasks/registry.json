@@ -15,7 +15,7 @@
       "id": "P00",
       "phase_number": 0,
       "title": "Bootstrap / foundation propia",
-      "status": "blocked",
+      "status": "active",
       "depends_on": [],
       "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Phase 0 — Bootstrap / foundation propia",
       "task_ids": [
@@ -34,7 +34,7 @@
       "id": "P01",
       "phase_number": 1,
       "title": "Auth / base capabilities",
-      "status": "blocked",
+      "status": "ready",
       "depends_on": [
         "P00"
       ],
@@ -600,7 +600,7 @@
       "phase_id": "P00",
       "step_id": "P00-S02",
       "title": "Health live ready endpoints",
-      "status": "ready_for_close",
+      "status": "done",
       "build_state": "planned",
       "product_increment": "v1",
       "risk_level": "low",
@@ -659,18 +659,19 @@
       "claimed_by": "sergiolr",
       "claim_terminal_task_env": "P00-S02-T002",
       "task_pack_path": "orchestrator-state/tasks/task-packs/P00-S02-T002.md",
-      "last_outcome": "pass",
-      "last_updated_by": "tester",
-      "last_stop_at": "2026-05-09T05:07:13+00:00",
+      "last_outcome": "committed",
+      "last_updated_by": "closer",
+      "last_stop_at": "2026-05-09T05:15:28+00:00",
       "validator_outcome": "approved",
-      "validator_next_status": "ready_for_close"
+      "validator_next_status": "ready_for_close",
+      "report_path": "orchestrator-state/tasks/reports/P00-S02-T002.md"
     },
     {
       "id": "P00-S02-T004",
       "phase_id": "P00",
       "step_id": "P00-S02",
       "title": "Disable structlog Rich-traceback show_locals globally to prevent DSN/secret leaks in error logs",
-      "status": "blocked",
+      "status": "ready_for_close",
       "build_state": "planned",
       "product_increment": "current",
       "depends_on": [
@@ -703,7 +704,7 @@
       ],
       "journey_refs": [],
       "handoff_path": "orchestrator-state/tasks/handoffs/P00-S02-T004.md",
-      "evidence_dir": "orchestrator-state/tasks/evidence/P00-S02-T004",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P00-S02-T004/",
       "origin": {
         "type": "runtime_followup",
         "followup_id": "FU-20260509044829-disable-structlog-rich-traceback-show-locals-glo",
@@ -714,14 +715,23 @@
       "notes": [
         "Runtime follow-up promoted from FU-20260509044829-disable-structlog-rich-traceback-show-locals-glo",
         "Description: Verify-slice for P00-S02-T002 found that any _logger.error(..., exc_info=True) call leaks Python frame locals into stdout via structlog's Rich RichTracebackFormatter. The /ready 503 path leaked the full asyncpg DSN (host, port, user, password) 14+ times in a single 503 log. Root cause is in app/core/logging.py (T003) — the structlog ConsoleRenderer / RichTracebackFormatter is not configured with show_locals=False, and the existing redaction processor only scrubs top-level event_dict keys, not traceback frame locals. T002 closes the immediate leak in router.py + main.py by removing exc_info=True from those two log calls (in-scope debugger fix). This follow-up addresses the architectural root cause: any future error log with exc_info=True (in any feature) will leak again. CWE-532. Violates 01-non-negotiables.md §Logging and §Security."
-      ]
+      ],
+      "claimed_at": "2026-05-09T05:21:31+00:00",
+      "claimed_by": "sergiolr",
+      "claim_terminal_task_env": "P00-S02-T004",
+      "task_pack_path": "orchestrator-state/tasks/task-packs/P00-S02-T004.md",
+      "last_outcome": "pass",
+      "last_updated_by": "validator",
+      "last_stop_at": "2026-05-09T05:45:50+00:00",
+      "validator_outcome": "approved",
+      "validator_next_status": "ready_for_close"
     },
     {
       "id": "P00-S02-T003",
       "phase_id": "P00",
       "step_id": "P00-S02",
       "title": "Seed data and reset verification bundle",
-      "status": "blocked",
+      "status": "needs_debug",
       "build_state": "planned",
       "product_increment": "v1",
       "risk_level": "medium",
@@ -771,7 +781,7 @@
         "scripts/dev-restart.sh"
       ],
       "handoff_path": "orchestrator-state/tasks/handoffs/P00-S02-T003.md",
-      "evidence_dir": "orchestrator-state/tasks/evidence/P00-S02-T003",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P00-S02-T003/",
       "notes": [],
       "dependency_mode": "explicit_dag",
       "depends_on_raw": "P00-S02-T002",
@@ -788,14 +798,23 @@
       "endpoint_raw": "—",
       "tables_raw": "users, employee_profiles, rag_collections, documents, ai_providers, mcp_servers, agents",
       "origin_instr_raw": "§15#seed-data",
-      "origin_techguide_raw": "§6.5#verification-data"
+      "origin_techguide_raw": "§6.5#verification-data",
+      "claimed_at": "2026-05-09T05:24:59+00:00",
+      "claimed_by": "sergiolr",
+      "claim_terminal_task_env": "P00-S02-T003",
+      "task_pack_path": "orchestrator-state/tasks/task-packs/P00-S02-T003.md",
+      "last_outcome": "pass",
+      "last_updated_by": "tester",
+      "last_stop_at": "2026-05-09T06:04:42+00:00",
+      "validator_outcome": "changes_requested",
+      "validator_next_status": "needs_debug"
     },
     {
       "id": "P01-S01-T001",
       "phase_id": "P01",
       "step_id": "P01-S01",
       "title": "0001_auth_users_employee_audit.py",
-      "status": "blocked",
+      "status": "ready",
       "build_state": "planned",
       "product_increment": "v1",
       "risk_level": "medium",

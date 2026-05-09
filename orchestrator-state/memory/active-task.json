@@ -1,51 +1,83 @@
 {
-  "id": "P00-S02-T004",
+  "id": "P00-S02-T003",
   "phase_id": "P00",
   "step_id": "P00-S02",
-  "title": "Disable structlog Rich-traceback show_locals globally to prevent DSN/secret leaks in error logs",
-  "status": "blocked",
+  "title": "Seed data and reset verification bundle",
+  "status": "needs_debug",
   "build_state": "planned",
-  "product_increment": "current",
+  "product_increment": "v1",
+  "risk_level": "medium",
+  "verify_mode": "human",
   "depends_on": [
     "P00-S02-T002"
   ],
-  "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry",
+  "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 0.2 — Infra, health and seed",
   "acceptance": [
-    "1) app/core/logging.py configures structlog's traceback formatter with show_locals=False (or installs a frame-locals redaction processor that scrubs keys matching password|pwd|token|secret|api_key|encrypted_secret|dsn|database_url|connection_string and values matching DSN-like substrings). 2) New test in backend/tests/test_logging.py exercises a real exception with sensitive locals (e.g. asyncpg auth failure with a fake DSN) and asserts that the rendered log line does NOT contain the secret value",
-    "the host",
-    "the port",
-    "the user",
-    "or the password key value. 3) ENABLE_VERBOSE_LOGGING toggle still works correctly. 4) ruff + mypy clean. 5) Regression: existing 8 health tests + 39 dep-smoke tests still pass. 6) Existing /ready 503 path continues to log error_class + db_detail (sanitized) without exc_info=True OR with a configuration that no longer leaks."
+    "Prod-like seed users/documents/providers/MCP/agents are idempotent and resettable"
   ],
   "verification_commands": [
-    "Real reproduction: launch uvicorn with bad DATABASE_URL (port without listener)",
-    "curl /ready",
-    "grep stdout for 'password'",
-    "'pwd'",
-    "the actual password value",
-    "host",
-    "port — all must be absent. Run with both ENABLE_VERBOSE_LOGGING=true and =false. Also reproduce with a deliberate failing path elsewhere (any other use case that catches an exception and logs with exc_info=True). Capture logs in evidence dir."
+    "python -m app.seeds.bootstrap_verification_data --source data/verification && bash scripts/dev-restart.sh --reset"
   ],
-  "allowed_paths": [],
+  "kind": "setup",
+  "target": "Seed data and reset verification bundle",
+  "journey_refs": [
+    "J100",
+    "J101",
+    "J102",
+    "J103",
+    "J104",
+    "J105"
+  ],
+  "route": "",
+  "endpoint": "",
+  "tables": [
+    "users",
+    "employee_profiles",
+    "rag_collections",
+    "documents",
+    "ai_providers",
+    "mcp_servers",
+    "agents"
+  ],
+  "origin_instr": "§15#seed-data",
+  "origin_techguide": "§6.5#verification-data",
+  "allowed_paths": [
+    "backend/app/seeds/**",
+    "scripts/dev-restart.sh"
+  ],
   "conflict_groups": [
-    "infra:logging"
+    "seed:data"
   ],
   "write_set": [
-    "backend/app/core/logging.py",
-    "backend/tests/test_logging.py"
+    "backend/app/seeds/**",
+    "scripts/dev-restart.sh"
   ],
-  "journey_refs": [],
-  "handoff_path": "orchestrator-state/tasks/handoffs/P00-S02-T004.md",
-  "evidence_dir": "orchestrator-state/tasks/evidence/P00-S02-T004",
-  "origin": {
-    "type": "runtime_followup",
-    "followup_id": "FU-20260509044829-disable-structlog-rich-traceback-show-locals-glo",
-    "origin_task_id": "P00-S02-T002",
-    "severity": "high",
-    "kind": "security"
-  },
-  "notes": [
-    "Runtime follow-up promoted from FU-20260509044829-disable-structlog-rich-traceback-show-locals-glo",
-    "Description: Verify-slice for P00-S02-T002 found that any _logger.error(..., exc_info=True) call leaks Python frame locals into stdout via structlog's Rich RichTracebackFormatter. The /ready 503 path leaked the full asyncpg DSN (host, port, user, password) 14+ times in a single 503 log. Root cause is in app/core/logging.py (T003) — the structlog ConsoleRenderer / RichTracebackFormatter is not configured with show_locals=False, and the existing redaction processor only scrubs top-level event_dict keys, not traceback frame locals. T002 closes the immediate leak in router.py + main.py by removing exc_info=True from those two log calls (in-scope debugger fix). This follow-up addresses the architectural root cause: any future error log with exc_info=True (in any feature) will leak again. CWE-532. Violates 01-non-negotiables.md §Logging and §Security."
-  ]
+  "handoff_path": "orchestrator-state/tasks/handoffs/P00-S02-T003.md",
+  "evidence_dir": "orchestrator-state/tasks/evidence/P00-S02-T003/",
+  "notes": [],
+  "dependency_mode": "explicit_dag",
+  "depends_on_raw": "P00-S02-T002",
+  "conflict_groups_raw": "seed:data",
+  "write_set_raw": "backend/app/seeds/**, scripts/dev-restart.sh",
+  "product_increment_raw": "v1",
+  "build_state_raw": "planned",
+  "risk_level_raw": "medium",
+  "verify_mode_raw": "human",
+  "kind_raw": "setup",
+  "target_raw": "Seed data and reset verification bundle",
+  "journey_refs_raw": "J100,J101,J102,J103,J104,J105",
+  "screen_route_raw": "—",
+  "endpoint_raw": "—",
+  "tables_raw": "users, employee_profiles, rag_collections, documents, ai_providers, mcp_servers, agents",
+  "origin_instr_raw": "§15#seed-data",
+  "origin_techguide_raw": "§6.5#verification-data",
+  "claimed_at": "2026-05-09T05:24:59+00:00",
+  "claimed_by": "sergiolr",
+  "claim_terminal_task_env": "P00-S02-T003",
+  "task_pack_path": "orchestrator-state/tasks/task-packs/P00-S02-T003.md",
+  "last_outcome": "pass",
+  "last_updated_by": "tester",
+  "last_stop_at": "2026-05-09T06:04:42+00:00",
+  "validator_outcome": "changes_requested",
+  "validator_next_status": "needs_debug"
 }

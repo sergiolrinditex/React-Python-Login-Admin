@@ -1,0 +1,20 @@
+Verification Data Contract — P00-S02-T004
+==========================================
+
+Source: task-pack §Verification Data Contract
+Status: Not applicable for journey-scoped VDC (no journey refs).
+
+Synthetic edge-case fixture used (per orchestrator-contract.json allowed for labelled edge cases):
+  - Sentinel password: S3CRET-PASSWORD-DO-NOT-LEAK
+  - Synthetic DSN: postgresql+asyncpg://baduser:S3CRET-PASSWORD-DO-NOT-LEAK@127.0.0.1:1/baddb
+  - Purpose: test frame-local leak in structlog ConsoleRenderer when exc_info=True is used
+
+Label: edge-case (unreachable DB, bad DSN — not a production fixture)
+No fixtures inserted via the endpoint under test.
+No real DB data required for this slice (backend-infra/logging config change only).
+
+Real prod-like aspect of the reproduction:
+  - Real uvicorn subprocess launched (not test harness)
+  - Real curl /ready → real 503
+  - Real stdout captured and grepped
+  - Real ENABLE_VERBOSE_LOGGING environment variable controlling structlog renderer
