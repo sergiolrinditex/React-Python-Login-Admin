@@ -1,0 +1,10 @@
+WARNING: This output is designed for human readability. For machine-readable output, please use --format.
+IMAGE                     ID             DISK USAGE   CONTENT SIZE   EXTRA
+hilo-people-backend:dev   a46788066bd6        913MB          193MB   U    
+WARNING: This output is designed for human readability. For machine-readable output, please use --format.
+IMAGE   ID             DISK USAGE   CONTENT SIZE   EXTRA
+WARNING: This output is designed for human readability. For machine-readable output, please use --format.
+IMAGE            ID             DISK USAGE   CONTENT SIZE   EXTRA
+redis:7-alpine   ee64a64eaab6       61.4MB         17.7MB        
+redis:8-alpine   81b6f81d6a6c        133MB         34.9MB   U    
+redis:latest     d372cf7cd5ab        226MB         55.4MB        

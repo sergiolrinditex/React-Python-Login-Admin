@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-05-08T22:07:27+00:00",
+  "generated_at": "2026-05-09T04:03:14+00:00",
   "active_phase_id": "P00",
-  "active_task_id": "P00-S01-T004",
+  "active_task_id": "P00-S01-T005",
   "last_worker": "closer",
   "last_event": "subagent_stop",
   "pending_journey_verifications": [],
@@ -9,23 +9,43 @@
   "last_journey_verified": null,
   "spawn_budget": 20,
   "spawns_in_current_slice": {
-    "P00-S01-T002": 1,
+    "P00-S01-T004": 1,
     "agent:closer": 1
   },
-  "open_followups": [],
-  "last_claimed_task_id": "P00-S01-T002",
+  "open_followups": [
+    {
+      "id": "FU-20260508225027-align-env-var-names-in-config-py-to-technical-gu",
+      "status": "proposed",
+      "severity": "medium",
+      "origin_task_id": "P00-S02-T001",
+      "title": "Align env var names in config.py to TECHNICAL_GUIDE §11.1",
+      "path": "orchestrator-state/tasks/follow-ups/FU-20260508225027-align-env-var-names-in-config-py-to-technical-gu.yaml",
+      "created_at": "2026-05-08T22:50:27+00:00"
+    },
+    {
+      "id": "FU-20260508230723-quote-mail-from-name-in-env-example-to-fix-bash-",
+      "status": "proposed",
+      "severity": "low",
+      "origin_task_id": "P00-S02-T001",
+      "title": "Quote MAIL_FROM_NAME in .env.example to fix bash source failure",
+      "path": "orchestrator-state/tasks/follow-ups/FU-20260508230723-quote-mail-from-name-in-env-example-to-fix-bash-.yaml",
+      "created_at": "2026-05-08T23:07:23+00:00"
+    }
+  ],
+  "last_claimed_task_id": "P00-S01-T004",
   "last_trailer": {
-    "task_id": "P00-S01-T002",
+    "task_id": "P00-S01-T004",
     "outcome": "committed",
     "next_status": "done",
-    "handoff": "orchestrator-state/tasks/handoffs/P00-S01-T002.md",
-    "evidence": "orchestrator-state/tasks/evidence/P00-S01-T002/",
-    "report": "orchestrator-state/tasks/reports/P00-S01-T002.md",
+    "handoff": "orchestrator-state/tasks/handoffs/P00-S01-T004.md",
+    "evidence": "orchestrator-state/tasks/evidence/P00-S01-T004/",
+    "report": "orchestrator-state/tasks/reports/P00-S01-T004.md",
     "report_ready": "yes",
     "baseline_sync_ready": "yes",
     "git_ready": "yes",
     "push_ready": "yes",
     "worktrees_cleaned": "yes"
   },
-  "last_stop_at": "2026-05-08T22:07:27+00:00"
+  "last_stop_at": "2026-05-09T04:03:14+00:00",
+  "last_followup_id": "FU-20260508230723-quote-mail-from-name-in-env-example-to-fix-bash-"
 }

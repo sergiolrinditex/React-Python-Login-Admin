@@ -1,0 +1,4 @@
+=== 11 backend /health (via exec) ===
+{"status":"ok","version":"0.1.0","uptime":23.513}
+--- and from host ---
+{"status":"ok","version":"0.0.0","uptime":19988.914}

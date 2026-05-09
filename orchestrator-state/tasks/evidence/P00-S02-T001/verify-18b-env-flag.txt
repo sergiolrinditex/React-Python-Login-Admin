@@ -1,0 +1,4 @@
+=== current .env ENABLE_VERBOSE_LOGGING value ===
+-rw-r--r--  1 sergiolr  staff  1153  9 may 01:05 .env
+5:ENABLE_VERBOSE_LOGGING=false
+21:MAIL_FROM_NAME="Hilo People"

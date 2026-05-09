@@ -1,0 +1,9 @@
+REPOSITORY:TAG                                             IMAGE ID       SIZE
+hilo-people-backend:dev                                    81e654974feb   913MB
+ghcr.io/berriai/litellm:v1.83.14-stable                    c81eb79cd433   2.55GB
+redis:8-alpine                                             81b6f81d6a6c   133MB
+pgvector/pgvector:pg18                                     b48c110f4911   650MB
+pgvector/pgvector:pg18-bookworm                            b48c110f4911   650MB
+pgvector/pgvector:pg16                                     7d400e340efb   639MB
+minio/minio:RELEASE.2025-09-07T16-13-09Z                   14cea493d9a3   228MB
+minio/minio:latest                                         14cea493d9a3   228MB

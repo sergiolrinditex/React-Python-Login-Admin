@@ -1,0 +1,8 @@
+=== 21 FU-20260508230723 confirmation: MAIL_FROM_NAME in .env.example ===
+75:MAIL_FROM_NAME=Hilo People
+
+--- bash source test (expects 'command not found' if unquoted) ---
+.env.example: line 34: change-me: No such file or directory
+.env.example: line 39: syntax error near unexpected token `newline'
+.env.example: line 39: `JWT_SECRET=<change-me>'
+MAIL_FROM_NAME=

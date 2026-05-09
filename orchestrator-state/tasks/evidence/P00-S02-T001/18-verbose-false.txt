@@ -1,0 +1,7 @@
+=== VERBOSE=false logs (only warning+error expected) ===
+hilo-backend  | INFO:     Started server process [1]
+hilo-backend  | INFO:     Waiting for application startup.
+hilo-backend  | INFO:     Application startup complete.
+hilo-backend  | INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+hilo-backend  | INFO:     127.0.0.1:57674 - "GET /health HTTP/1.1" 200 OK
+STRUCTLOG_DEBUG_LINES: NOT FOUND (GOOD - suppressed as expected)

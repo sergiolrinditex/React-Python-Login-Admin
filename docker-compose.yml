@@ -1,0 +1,324 @@
+# docker-compose.yml — Hilo People local development stack
+#
+# Slice: P00-S02-T001 — Docker compose services (Rancher-ready)
+# Phase: P00 — Scaffold + Design System
+#
+# RANCHER / KUBERNETES PORTABILITY: Every constraint here maps directly to a
+# Kubernetes primitive. See HILO_PEOPLE_TECHNICAL_GUIDE.md §11 and handoff ADR.
+#
+# Services declared (7):
+#   postgres  — PostgreSQL 18 + pgvector 0.8.2 (required by P01-S01-T001 migration)
+#   redis     — Redis 8.6.3 (Celery broker + cache)
+#   minio     — MinIO S3-compatible storage
+#   litellm   — LiteLLM AI gateway proxy
+#   backend   — FastAPI (built from backend/Dockerfile)
+#   worker    — Celery worker (shares backend image; placeholder until P02-S04-T002)
+#   frontend  — Nginx serving Vite build (profiles: [frontend]; gated on T004)
+#
+# Usage:
+#   docker compose up -d                  # starts all except frontend (gated)
+#   docker compose --profile frontend up -d  # includes frontend (needs T004)
+#   docker compose down                   # stop (volumes preserved)
+#   docker compose down -v                # stop + DELETE volumes (data loss!)
+#
+# Build args (pass via .env or CLI):
+#   IMAGE_TAG     — image tag for local builds (default: dev)
+#   BUILD_VERSION — app version propagated into images (default: 0.1.0)
+#
+# Dependencies: none; ports/credentials via env_file (.env)
+
+---
+networks:
+  hilo-network:
+    driver: bridge
+    name: hilo-network
+
+volumes:
+  postgres-data:
+    name: hilo-postgres-data
+  redis-data:
+    name: hilo-redis-data
+  minio-data:
+    name: hilo-minio-data
+
+services:
+
+  # ---------------------------------------------------------------------------
+  # postgres — PostgreSQL 18 + pgvector 0.8.2 (bookworm = Debian stable)
+  # Mapped 1:1 to k8s PVC (postgres-data named volume).
+  # pgcrypto is NOT pre-created here; P01-S01-T001 migration runs CREATE EXTENSION.
+  # Researcher confirmed: pg18-bookworm is current (pgvector 0.8.2-pg18-bookworm).
+  # ---------------------------------------------------------------------------
+  postgres:
+    image: pgvector/pgvector:pg18-bookworm
+    container_name: hilo-postgres
+    restart: unless-stopped
+    stop_grace_period: 30s
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-hilopeople}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-hilopeople_dev_pwd}
+      POSTGRES_DB: ${POSTGRES_DB:-hilopeople_dev}
+      # Explicit initdb locale for consistent text search
+      POSTGRES_INITDB_ARGS: "--locale=en_US.utf8"
+    volumes:
+      # PG18+ changed the data dir layout: mount /var/lib/postgresql (not /data subdir).
+      # PG18 places data in /var/lib/postgresql/18/main automatically.
+      # See: https://github.com/docker-library/postgres/pull/1259
+      - postgres-data:/var/lib/postgresql
+    ports:
+      # Dev convenience: expose to host so 'alembic upgrade head' can run from host.
+      # Host port 5433 avoids conflict with any local postgres instance on 5432.
+      # In Rancher: remove host port; only in-cluster access via service hostname.
+      - "5433:5432"
+    healthcheck:
+      test:
+        - CMD
+        - pg_isready
+        - -U
+        - ${POSTGRES_USER:-hilopeople}
+        - -d
+        - ${POSTGRES_DB:-hilopeople_dev}
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - hilo-network
+    # No privileged, no cap_add, no network_mode: host
+
+  # ---------------------------------------------------------------------------
+  # redis — Redis 8.6.3 (Celery broker + cache)
+  # Researcher confirmed: redis:8-alpine = 8.6.3; 7.4 is outdated.
+  # Python client redis==6.4.0 is fully compatible with Redis 8 server.
+  # AOF persistence disabled in dev (fast restart). In prod: appendonly yes.
+  # ---------------------------------------------------------------------------
+  redis:
+    image: redis:8-alpine
+    container_name: hilo-redis
+    restart: unless-stopped
+    stop_grace_period: 30s
+    command: ["redis-server", "--save", "", "--appendonly", "no", "--loglevel", "notice"]
+    volumes:
+      - redis-data:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test:
+        - CMD
+        - redis-cli
+        - ping
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+    networks:
+      - hilo-network
+
+  # ---------------------------------------------------------------------------
+  # minio — MinIO S3-compatible storage
+  # Console bound to 127.0.0.1 only (not 0.0.0.0) per security checklist.
+  # Bucket creation is a later slice (P00-S02-T003 or dedicated bucket init slice).
+  # ---------------------------------------------------------------------------
+  minio:
+    image: minio/minio:RELEASE.2025-09-07T16-13-09Z
+    container_name: hilo-minio
+    restart: unless-stopped
+    stop_grace_period: 30s
+    command: ["server", "/data", "--address", ":9000", "--console-address", ":9001"]
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin_dev_pwd}
+    volumes:
+      - minio-data:/data
+    ports:
+      - "9000:9000"
+      # Console bound to 127.0.0.1 only — not accessible from network
+      - "127.0.0.1:9001:9001"
+    healthcheck:
+      test:
+        - CMD
+        - curl
+        - -fsS
+        - http://localhost:9000/minio/health/live
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    networks:
+      - hilo-network
+
+  # ---------------------------------------------------------------------------
+  # litellm — AI gateway proxy (volatile image; re-verify on each bump)
+  # Researcher confirmed: v1.83.14-stable matches pinned Python lib exactly.
+  # main-stable is a floating tag — NOT suitable for reproducible builds.
+  # Config file mounted readonly from infra/litellm/config.yaml.
+  # LITELLM_MASTER_KEY comes from env_file (.env) — never baked into image.
+  # ---------------------------------------------------------------------------
+  litellm:
+    image: ghcr.io/berriai/litellm:v1.83.14-stable
+    container_name: hilo-litellm
+    restart: unless-stopped
+    stop_grace_period: 30s
+    command: ["--config", "/app/config.yaml", "--port", "4000"]
+    environment:
+      LITELLM_MASTER_KEY: ${LITELLM_MASTER_KEY:-sk-dev-master-key-change-me}
+    volumes:
+      # Readonly bind-mount for config; in K8s: ConfigMap volume mount
+      - ./infra/litellm/config.yaml:/app/config.yaml:ro
+    ports:
+      - "4000:4000"
+    healthcheck:
+      # LiteLLM image has no curl/wget; use Python stdlib urllib (always available).
+      # /health/liveliness returns 200 + "I'm alive!" when the proxy is up.
+      test:
+        - CMD
+        - python3
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://localhost:4000/health/liveliness')"
+      interval: 20s
+      timeout: 10s
+      retries: 8
+      start_period: 120s
+    networks:
+      - hilo-network
+
+  # ---------------------------------------------------------------------------
+  # backend — FastAPI application
+  # Built from backend/Dockerfile (multi-stage, non-root appuser UID 1001).
+  # Depends on postgres + redis + minio + litellm being healthy first.
+  # PYTHONUNBUFFERED=1 ensures stdout is not buffered (required for structlog JSON).
+  # ---------------------------------------------------------------------------
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        IMAGE_TAG: ${IMAGE_TAG:-dev}
+        BUILD_VERSION: ${BUILD_VERSION:-0.1.0}
+    image: hilo-people-backend:${IMAGE_TAG:-dev}
+    container_name: hilo-backend
+    restart: unless-stopped
+    stop_grace_period: 30s
+    env_file:
+      - .env
+    environment:
+      # Override localhost URLs to use compose service hostnames
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-hilopeople}:${POSTGRES_PASSWORD:-hilopeople_dev_pwd}@postgres:5432/${POSTGRES_DB:-hilopeople_dev}
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/1
+      LITELLM_PROXY_BASE_URL: http://litellm:4000
+      AWS_ENDPOINT_URL: http://minio:9000
+      # Server config
+      API_HOST: "0.0.0.0"
+      API_PORT: "8000"
+      APP_VERSION: ${BUILD_VERSION:-0.1.0}
+      PYTHONUNBUFFERED: "1"
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      litellm:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - curl
+        - -fsS
+        - http://localhost:8000/health
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    networks:
+      - hilo-network
+
+  # ---------------------------------------------------------------------------
+  # worker — Celery worker (placeholder until P02-S04-T002)
+  # Shares backend image; only the command differs.
+  # Placeholder uses Python time.sleep (PID 1 discipline; NOT a shell wrapper).
+  # Label worker-placeholder=true documents this is a stub, not the real worker.
+  # Real command (P02-S04-T002): celery -A app.workers.celery_app worker -Q default,documents,embeddings -l INFO
+  # ---------------------------------------------------------------------------
+  worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        IMAGE_TAG: ${IMAGE_TAG:-dev}
+        BUILD_VERSION: ${BUILD_VERSION:-0.1.0}
+    image: hilo-people-backend:${IMAGE_TAG:-dev}
+    container_name: hilo-worker
+    restart: unless-stopped
+    stop_grace_period: 30s
+    # Placeholder: Python process as PID 1, logs to stdout, never writes to files
+    command:
+      - python
+      - -c
+      - "import time; print('worker placeholder — awaiting P02-S04-T002', flush=True); time.sleep(2**31)"
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-hilopeople}:${POSTGRES_PASSWORD:-hilopeople_dev_pwd}@postgres:5432/${POSTGRES_DB:-hilopeople_dev}
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/1
+      LITELLM_PROXY_BASE_URL: http://litellm:4000
+      AWS_ENDPOINT_URL: http://minio:9000
+      APP_VERSION: ${BUILD_VERSION:-0.1.0}
+      PYTHONUNBUFFERED: "1"
+    # Disable the healthcheck inherited from the Dockerfile (worker has no HTTP port).
+    # The real Celery worker healthcheck (celery inspect ping) lands in P02-S04-T002.
+    healthcheck:
+      disable: true
+    labels:
+      worker-placeholder: "true"
+      placeholder-reason: "app.workers.celery_app not yet created; real worker lands in P02-S04-T002"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - hilo-network
+
+  # ---------------------------------------------------------------------------
+  # frontend — Nginx serving Vite production build
+  # GATED on T004 (tsconfig.json + design tokens not yet added).
+  # Profile "frontend" means 'docker compose up' skips this service by default.
+  # Build will succeed once T004 delivers tsconfig.json.
+  # In K8s: Nginx serves SPA, /api/v1 proxied to backend service.
+  # ---------------------------------------------------------------------------
+  frontend:
+    profiles:
+      - frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        IMAGE_TAG: ${IMAGE_TAG:-dev}
+        BUILD_VERSION: ${BUILD_VERSION:-0.1.0}
+        BACKEND_URL: http://backend:8000
+    image: hilo-people-frontend:${IMAGE_TAG:-dev}
+    container_name: hilo-frontend
+    restart: unless-stopped
+    stop_grace_period: 30s
+    ports:
+      - "8080:8080"
+    depends_on:
+      - backend
+    healthcheck:
+      test:
+        - CMD
+        - curl
+        - -fsS
+        - http://localhost:8080/
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks:
+      - hilo-network

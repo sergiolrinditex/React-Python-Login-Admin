@@ -1,0 +1,72 @@
+# .dockerignore — Root build context ignore (used by docker compose build)
+#
+# Slice: P00-S02-T001 — Docker compose services (Rancher-ready)
+# Phase: P00 — Scaffold + Design System
+#
+# This file applies when the build context is the repo root.
+# Backend and frontend have their own .dockerignore in their respective dirs.
+# Aggressive ignore: minimize build context size + prevent secret leakage.
+
+# ── Secrets / environment ─────────────────────────────────────────────────────
+.env
+.env.*
+*.env
+secrets/
+
+# ── Version control ───────────────────────────────────────────────────────────
+.git
+.gitignore
+.gitattributes
+
+# ── Node / Frontend build artifacts ──────────────────────────────────────────
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/coverage/
+
+# ── Python artifacts ──────────────────────────────────────────────────────────
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+*.egg
+dist/
+build/
+.eggs/
+backend/.venv*/
+backend/venv*/
+backend/.tox/
+backend/.mypy_cache/
+backend/.ruff_cache/
+backend/.pytest_cache/
+backend/.coverage
+backend/htmlcov/
+backend/coverage.xml
+
+# ── IDE / editors ────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ── Orchestrator / docs (large dirs, never needed in image) ──────────────────
+orchestrator-state/
+docs/
+scripts/
+site/
+
+# ── Test / CI artifacts ───────────────────────────────────────────────────────
+*.log
+*.pid
+junit*.xml
+.coverage*
+
+# ── Temporary / editor backup ─────────────────────────────────────────────────
+*.tmp
+*.bak
+*.orig

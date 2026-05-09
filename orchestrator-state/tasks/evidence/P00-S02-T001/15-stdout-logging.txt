@@ -1,0 +1,13 @@
+=== Backend logs after /health hit ===
+hilo-backend  | INFO:     Started server process [1]
+hilo-backend  | INFO:     Waiting for application startup.
+hilo-backend  | INFO:     Application startup complete.
+hilo-backend  | INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+hilo-backend  | INFO:     127.0.0.1:40612 - "GET /health HTTP/1.1" 200 OK
+hilo-backend  | INFO:     127.0.0.1:39068 - "GET /health HTTP/1.1" 200 OK
+hilo-backend  | INFO:     127.0.0.1:54618 - "GET /health HTTP/1.1" 200 OK
+hilo-backend  | INFO:     127.0.0.1:41972 - "GET /health HTTP/1.1" 200 OK
+hilo-backend  | INFO:     127.0.0.1:36754 - "GET /health HTTP/1.1" 200 OK
+hilo-backend  | INFO:     127.0.0.1:46140 - "GET /health HTTP/1.1" 200 OK
+hilo-backend  | INFO:     127.0.0.1:53260 - "GET /health HTTP/1.1" 200 OK
+EXIT: 0

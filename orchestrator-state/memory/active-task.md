@@ -1,25 +1,23 @@
 # Active task
 
-- ID: P00-S01-T004
-- Title: Design tokens and editorial system
+- ID: P00-S01-T005
+- Title: i18n resources ES/EN/FR
 - Status: ready
 - Phase: P00
 
 ## Acceptance
-- Tokens match Hilo editorial system
-- no rounded corners
-- showcase visible
+- Namespaces common/auth/chat/account/admin-ai/rag/mcp/errors exist in es/en/fr with fallback es
 
 ## Allowed paths
-- frontend/src/shared/styles/**
-- frontend/src/shared/design-system/**
+- frontend/src/i18n/**
+- frontend/public/locales/**
 
 ## DAG conflict guardrails
 ### Conflict groups
-- theme
+- i18n
 ### Write set
-- frontend/src/shared/styles/**
-- frontend/src/shared/design-system/**
+- frontend/src/i18n/**
+- frontend/public/locales/**
 
 ## Verification commands
-- `npm --prefix frontend run build and visual check /showcase`
+- `npm --prefix frontend run test -- --run -t i18n`

@@ -1,0 +1,33 @@
+# infra/litellm/config.yaml — LiteLLM proxy minimal configuration (dev placeholder)
+#
+# Slice: P00-S02-T001 — Docker compose services (Rancher-ready)
+# Phase: P00 — Scaffold + Design System
+#
+# Mounted into the litellm container at /app/config.yaml (readonly bind-mount).
+# This is a PLACEHOLDER for development. No actual provider models are declared yet.
+# Model providers are configured in P02-S05-T001 (Admin AI model management slice).
+#
+# Schema source: https://docs.litellm.ai/docs/proxy/docker_quick_start
+# Verified by official-docs-researcher on 2026-05-09.
+#
+# SECURITY NOTE: LITELLM_MASTER_KEY is read from the environment variable
+# (os.environ/LITELLM_MASTER_KEY) — NEVER hardcoded here.
+# This file is committed to source control; secrets must NOT appear in it.
+
+model_list: []
+  # Models are added in P02-S05-T001 via the admin panel or direct config edit.
+  # Example (DO NOT uncomment — provider keys are not configured yet):
+  # - model_name: gpt-4o
+  #   litellm_params:
+  #     model: openai/gpt-4o
+  #     api_key: os.environ/OPENAI_API_KEY
+
+general_settings:
+  master_key: os.environ/LITELLM_MASTER_KEY
+  # database_url is optional; omit for file-only key management in dev.
+  # Add in P02-S05-T001 if virtual key management with Postgres is needed.
+
+litellm_settings:
+  # drop_params: true  # drop unsupported params instead of erroring (useful in dev)
+  # request_timeout: 600  # seconds
+  num_retries: 0  # no retries in dev (surface errors immediately)

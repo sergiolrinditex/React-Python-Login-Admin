@@ -1,0 +1,40 @@
+{
+  "id": "FU-20260508225027-align-env-var-names-in-config-py-to-technical-gu",
+  "schema_version": 1,
+  "status": "proposed",
+  "created_at": "2026-05-08T22:50:27+00:00",
+  "created_by": "sergiolr",
+  "origin_task_id": "P00-S02-T001",
+  "origin_phase_id": "P00",
+  "origin_step_id": "P00-S02",
+  "kind": "wiring",
+  "product_increment": "current",
+  "build_state": "planned",
+  "severity": "medium",
+  "title": "Align env var names in config.py to TECHNICAL_GUIDE §11.1",
+  "description": "backend/app/core/config.py uses jwt_secret/provider_encryption_key/s3_bucket_rag_documents/litellm_proxy_base_url but TECHNICAL_GUIDE §11.1 defines JWT_PRIVATE_KEY/JWT_PUBLIC_KEY/ENCRYPTION_KEY/S3_BUCKET_DOCUMENTS/LITELLM_BASE_URL. Auth slice (P01-S02-T001) will break if jwt field naming is wrong (HMAC vs RS256 distinction). Also .env.example uses same drifted names.",
+  "journey_refs": [],
+  "screen_route": "—",
+  "endpoint": "—",
+  "tables": [],
+  "depends_on": [
+    "P00-S02-T001"
+  ],
+  "conflict_groups": [
+    "backend:config"
+  ],
+  "write_set": [
+    "backend/app/core/config.py",
+    ".env.example"
+  ],
+  "acceptance": [
+    "config.py field names match TECHNICAL_GUIDE §11.1 exactly",
+    "all existing smoke tests still pass",
+    "docker-compose.yml env overrides updated to match"
+  ],
+  "verify": [
+    "grep JWT_PRIVATE_KEY backend/app/core/config.py && grep ENCRYPTION_KEY backend/app/core/config.py"
+  ],
+  "notes": [],
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260508225027-align-env-var-names-in-config-py-to-technical-gu.yaml"
+}

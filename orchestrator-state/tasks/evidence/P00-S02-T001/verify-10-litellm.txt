@@ -1,0 +1,3 @@
+=== 10 litellm /health/liveliness ===
+"I'm alive!"
+HTTP 200

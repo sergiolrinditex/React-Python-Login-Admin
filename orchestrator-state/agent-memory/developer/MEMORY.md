@@ -78,6 +78,79 @@
 - Since Alembic 1.11.0, async migrations work with asyncpg via `run_sync()`.
 - No psycopg2-binary needed. One driver covers both ORM and migrations.
 
+### P00-S01-T004 (2026-05-09) — Design tokens + editorial system
+
+**tsconfig.json project references + `composite: true`**:
+- `tsc -b` requires that referenced tsconfig files (via `"references"`) have `"composite": true` set.
+- Removing `"noEmit": true` from `tsconfig.node.json` is also required (composite and noEmit are incompatible).
+- Error TS6306 + TS6310 at build time are the diagnostic signals.
+
+**CSS imports in TypeScript with `verbatimModuleSyntax: true`**:
+- Side-effect CSS imports (`import './styles.css'`) cause TS2882 "Cannot find module" without a global CSS type declaration.
+- Solution: add `frontend/src/vite-env.d.ts` with `/// <reference types="vite/client" />`.
+- This is standard Vite template boilerplate that should be in every Vite+React project from day 1.
+
+**`verbatimModuleSyntax: true` forces `type` keyword on type imports**:
+- Any `import { SomeType }` where `SomeType` is a TypeScript type must use `import { type SomeType }` or `import type { SomeType }`.
+- Error TS1484 "X is a type and must be imported using a type-only import".
+- Affected: `providers.tsx` (ReactNode), any future file importing React types.
+
+**`toHaveStyle` + CSS custom properties in jsdom**:
+- jsdom does not resolve CSS custom properties. `toHaveStyle({ border: 'var(--hairline)' })` fails with the computed value (empty/default).
+- Correct pattern: `expect(el.getAttribute('style')).toContain('var(--hairline)')`.
+- This is the standard Testing Library approach for CSS variable assertions.
+
+**`afterEach(cleanup)` required when `globals: false`**:
+- When Vitest runs with `globals: false` (no global describe/it/expect), `@testing-library/react` does NOT auto-register cleanup via `afterEach`.
+- Without explicit cleanup, DOM state accumulates across tests in the same file → "Found multiple elements" errors.
+- Solution: add `afterEach(cleanup)` in `src/test/setup.ts` (the `setupFiles` entry).
+- With `globals: true`, Testing Library registers cleanup automatically.
+
+**`@testing-library/user-event` is NOT installed in this project**:
+- Only `@testing-library/react`, `@testing-library/dom`, `@testing-library/jest-dom` are installed.
+- Use `fireEvent` from `@testing-library/react` for interaction testing.
+- If user-event is needed later, install with `npm install --save-dev @testing-library/user-event` and add exact pin in package.json.
+
+**Vitest co-located vs separate config**:
+- This project keeps `vitest.config.ts` separate (not co-located in `vite.config.ts`).
+- `vitest.config.ts` must include the React plugin and `@` alias for test imports to resolve correctly.
+- If Vite plugin is missing from vitest.config, TSX files import fine but JSX transform fails.
+
+**Regex `/active/i` matches "Inactive"**:
+- When using Testing Library `getByRole` with a regex name, `/active/i` matches BOTH "Active" and "Inactive".
+- Use exact string match `{ name: 'Active' }` for disambiguation when there are substring overlaps.
+
+## P00-S02-T001 (2026-05-09) — Docker Compose + Dockerfiles
+
+**PostgreSQL 18 volume path change (CRITICAL)**:
+- PG18 requires volume at `/var/lib/postgresql` NOT `/var/lib/postgresql/data`.
+- PG18 auto-creates `/var/lib/postgresql/18/main/`. Wrong mount → startup error.
+- See: https://github.com/docker-library/postgres/pull/1259
+
+**LiteLLM image has no curl/wget**:
+- `ghcr.io/berriai/litellm` images ship without curl/wget.
+- Docker healthcheck: `python3 -c "import urllib.request; urllib.request.urlopen('...')"`.
+- v1.83.14-stable takes ~2min to initialize → `start_period: 120s`.
+
+**Worker healthcheck inheritance**:
+- Worker shares backend image which has `HEALTHCHECK CMD curl http://localhost:8000/health`.
+- Worker has no HTTP port → healthcheck always fails.
+- Override in compose: `healthcheck: disable: true`. Real check in P02-S04-T002.
+
+**Postgres host port conflict on macOS**:
+- macOS dev machines often have local Postgres on 5432.
+- Map compose postgres to host 5433: `5433:5432`. Inter-container still uses 5432.
+
+**nginx-unprivileged current stable is 1.29-alpine (1.27 DOES NOT EXIST)**:
+- Task packs may reference outdated 1.27 — always verify with researcher.
+
+**redis:8-alpine is current stable (7.4 is outdated)**:
+- Python `redis==6.4.0` compatible with Redis 8 server.
+
+**litellm image tag pinning**:
+- Use `ghcr.io/berriai/litellm:v<X.Y.Z>-stable` to match Python lib pin.
+- `main-stable` is floating; `main-latest` is for nightly testing only.
+
 ## Gotchas
 
 - `dev-restart.profile.sh` is a FLUTTER template not yet customized for React. Back-fill will happen in a future P00 slice. Don't rely on `back_start()` or `front_start()` functions there yet.

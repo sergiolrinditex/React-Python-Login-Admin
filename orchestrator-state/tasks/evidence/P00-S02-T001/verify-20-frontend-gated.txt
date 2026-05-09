@@ -1,0 +1,9 @@
+=== 20 frontend gating (default up skips frontend) ===
+backend
+litellm
+minio
+postgres
+redis
+worker
+
+--- compose config | grep frontend profile ---

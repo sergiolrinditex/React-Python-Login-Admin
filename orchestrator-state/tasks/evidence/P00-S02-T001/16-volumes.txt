@@ -1,0 +1,10 @@
+=== Named volumes ===
+DRIVER    VOLUME NAME
+local     hilo-minio-data
+local     hilo-postgres-data
+local     hilo-redis-data
+=== All hilo volumes ===
+local     hilo-minio-data
+local     hilo-postgres-data
+local     hilo-redis-data
+EXIT: 0

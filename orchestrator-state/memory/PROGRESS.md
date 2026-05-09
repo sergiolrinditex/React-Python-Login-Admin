@@ -7,7 +7,7 @@
 ## Current State
 
 - **Phase**: Phase 0 — Scaffold + Design System
-- **Last completed slices**: P00-S01-T002 (done), P00-S01-T003 (done), P00-S01-T004 (design tokens, done), **P00-S02-T001 (Docker compose services — developer done, validator/tester pending)**
+- **Last completed slices**: P00-S01-T002 (done), P00-S01-T003 (done), P00-S01-T004 (design tokens — committed 2026-05-09 SHA=78ef2ea, done), **P00-S02-T001 (Docker compose services — developer done, validator/tester pending)**
 - **Next pending slices**: P00-S01-T005 (i18n bundles), P00-S02-T002 (health endpoints /live /ready — depends on P00-S02-T001)
 - **Blockers**: none
 - **Follow-ups pending**: FU-20260508225027 (medium, wiring — env var name drift in config.py vs TECHNICAL_GUIDE §11.1, non-blocking)
@@ -222,5 +222,5 @@ Note: Vitest counts 47 tests (4 test files). Backend smoke 39 tests separate. Gr
 
 ---
 
-> Last updated: 2026-05-09T00:47:00Z
-> Updated by: developer (P00-S01-T004)
+> Last updated: 2026-05-09T06:02:00Z
+> Updated by: closer (P00-S01-T004) — post-commit sync; SHA=78ef2ea

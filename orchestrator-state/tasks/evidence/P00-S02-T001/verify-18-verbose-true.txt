@@ -1,0 +1,52 @@
+=== 18 VERBOSE=true (structlog BEFORE/AFTER visible) ===
+ Container hilo-backend Stopping 
+ Container hilo-backend Stopped 
+ Container hilo-postgres Healthy 
+ Container hilo-backend Starting 
+ Container hilo-backend Started 
+--- last 30 backend log lines ---
+hilo-backend  | INFO:     Started server process [1]
+hilo-backend  | INFO:     Waiting for application startup.
+hilo-backend  | INFO:     Application startup complete.
+hilo-backend  | INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+hilo-backend  | INFO:     127.0.0.1:42718 - "GET /health HTTP/1.1" 200 OK
+hilo-backend  | INFO:     127.0.0.1:57506 - "GET /health HTTP/1.1" 200 OK
+hilo-backend  | INFO:     127.0.0.1:47996 - "GET /health HTTP/1.1" 200 OK
+hilo-backend  | INFO:     127.0.0.1:48252 - "GET /health HTTP/1.1" 200 OK
+hilo-backend  | INFO:     127.0.0.1:52812 - "GET /health HTTP/1.1" 200 OK
+hilo-backend  | INFO:     127.0.0.1:36996 - "GET /health HTTP/1.1" 200 OK
+hilo-backend  | INFO:     Shutting down
+hilo-backend  | INFO:     Waiting for application shutdown.
+hilo-backend  | INFO:     Application shutdown complete.
+hilo-backend  | INFO:     Finished server process [1]
+hilo-backend  | INFO:     Started server process [1]
+hilo-backend  | INFO:     Waiting for application startup.
+hilo-backend  | INFO:     Application startup complete.
+hilo-backend  | INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+hilo-backend  | INFO:     127.0.0.1:39022 - "GET /health HTTP/1.1" 200 OK
+hilo-backend  | INFO:     127.0.0.1:39032 - "GET /health HTTP/1.1" 200 OK
+
+--- BEFORE/AFTER count ---
+0
+=== restart backend with VERBOSE=true ===
+ Container hilo-minio Healthy 
+ Container hilo-backend Starting 
+ Container hilo-backend Started 
+--- backend log (verbose=true) ---
+hilo-backend  | [2m2026-05-09T03:57:42.709990Z[0m [[32m[1mdebug    [0m] [1mAFTER configure_logging: structlog configured[0m [[0m[1m[34mapp.core.logging[0m][0m [36mlog_level[0m=[35mDEBUG[0m [36mverbose[0m=[35mTrue[0m
+hilo-backend  | INFO:     Started server process [1]
+hilo-backend  | INFO:     Waiting for application startup.
+hilo-backend  | INFO:     Application startup complete.
+hilo-backend  | INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+hilo-backend  | [2m2026-05-09T03:57:47.202404Z[0m [[32m[1mdebug    [0m] [1mBEFORE health check: computing uptime[0m [[0m[1m[34mapp.main[0m][0m
+hilo-backend  | [2m2026-05-09T03:57:47.205330Z[0m [[32m[1mdebug    [0m] [1mAFTER health check: status=%s uptime=%s[0m [[0m[1m[34mapp.main[0m][0m [36mpositional_args[0m=[35m('ok', 4.237)[0m
+hilo-backend  | INFO:     127.0.0.1:45550 - "GET /health HTTP/1.1" 200 OK
+hilo-backend  | [2m2026-05-09T03:57:47.276091Z[0m [[32m[1mdebug    [0m] [1mBEFORE health check: computing uptime[0m [[0m[1m[34mapp.main[0m][0m
+hilo-backend  | [2m2026-05-09T03:57:47.276252Z[0m [[32m[1mdebug    [0m] [1mAFTER health check: status=%s uptime=%s[0m [[0m[1m[34mapp.main[0m][0m [36mpositional_args[0m=[35m('ok', 4.308)[0m
+hilo-backend  | INFO:     127.0.0.1:45564 - "GET /health HTTP/1.1" 200 OK
+hilo-backend  | [2m2026-05-09T03:57:47.388496Z[0m [[32m[1mdebug    [0m] [1mBEFORE health check: computing uptime[0m [[0m[1m[34mapp.main[0m][0m
+hilo-backend  | [2m2026-05-09T03:57:47.388687Z[0m [[32m[1mdebug    [0m] [1mAFTER health check: status=%s uptime=%s[0m [[0m[1m[34mapp.main[0m][0m [36mpositional_args[0m=[35m('ok', 4.421)[0m
+hilo-backend  | INFO:     127.0.0.1:45578 - "GET /health HTTP/1.1" 200 OK
+
+--- BEFORE/AFTER count (verbose=true) ---
+7

@@ -1,0 +1,10 @@
+=== 09 minio /minio/health/live ===
+HTTP 200
+HTTP/1.1 200 OK
+Accept-Ranges: bytes
+Content-Length: 0
+Server: MinIO
+Strict-Transport-Security: max-age=31536000; includeSubDomains
+Vary: Origin
+X-Amz-Id-2: dd9025bab4ad464b049177c95eb6ebf374d3b3fd1af9251148b658df7ac2e3e8
+X-Amz-Request-Id: 18ADC97ECD933681

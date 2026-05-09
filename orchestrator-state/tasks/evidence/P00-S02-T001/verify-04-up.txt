@@ -1,0 +1,55 @@
+=== docker compose up -d ===
+time="2026-05-09T05:54:03+02:00" level=warning msg="No services to build"
+ Network hilo-network Creating 
+ Network hilo-network Created 
+ Volume hilo-postgres-data Creating 
+ Volume hilo-postgres-data Created 
+ Volume hilo-redis-data Creating 
+ Volume hilo-redis-data Created 
+ Volume hilo-minio-data Creating 
+ Volume hilo-minio-data Created 
+ Container hilo-redis Creating 
+ Container hilo-postgres Creating 
+ Container hilo-minio Creating 
+ Container hilo-litellm Creating 
+ Container hilo-minio Created 
+ Container hilo-litellm Created 
+ Container hilo-redis Created 
+ Container hilo-postgres Created 
+ Container hilo-backend Creating 
+ Container hilo-worker Creating 
+ Container hilo-backend Created 
+ Container hilo-worker Created 
+ Container hilo-minio Starting 
+ Container hilo-litellm Starting 
+ Container hilo-redis Starting 
+ Container hilo-postgres Starting 
+ Container hilo-minio Started 
+ Container hilo-postgres Started 
+ Container hilo-redis Started 
+ Container hilo-postgres Waiting 
+ Container hilo-redis Waiting 
+ Container hilo-litellm Started 
+ Container hilo-redis Waiting 
+ Container hilo-minio Waiting 
+ Container hilo-litellm Waiting 
+ Container hilo-postgres Waiting 
+ Container hilo-redis Healthy 
+ Container hilo-redis Healthy 
+ Container hilo-postgres Healthy 
+ Container hilo-minio Healthy 
+ Container hilo-postgres Healthy 
+ Container hilo-worker Starting 
+ Container hilo-worker Started 
+ Container hilo-litellm Healthy 
+ Container hilo-backend Starting 
+ Container hilo-backend Started 
+
+=== ps right after up (will not yet be healthy) ===
+NAME            IMAGE                                      COMMAND                  SERVICE    CREATED              STATUS                                     PORTS
+hilo-backend    hilo-people-backend:dev                    "uvicorn app.main:ap…"   backend    About a minute ago   Up Less than a second (health: starting)   0.0.0.0:8000->8000/tcp, [::]:8000->8000/tcp
+hilo-litellm    ghcr.io/berriai/litellm:v1.83.14-stable    "docker/prod_entrypo…"   litellm    About a minute ago   Up About a minute (healthy)                0.0.0.0:4000->4000/tcp, [::]:4000->4000/tcp
+hilo-minio      minio/minio:RELEASE.2025-09-07T16-13-09Z   "/usr/bin/docker-ent…"   minio      About a minute ago   Up About a minute (healthy)                0.0.0.0:9000->9000/tcp, [::]:9000->9000/tcp, 127.0.0.1:9001->9001/tcp
+hilo-postgres   pgvector/pgvector:pg18-bookworm            "docker-entrypoint.s…"   postgres   About a minute ago   Up About a minute (healthy)                0.0.0.0:5433->5432/tcp, [::]:5433->5432/tcp
+hilo-redis      redis:8-alpine                             "docker-entrypoint.s…"   redis      About a minute ago   Up About a minute (healthy)                0.0.0.0:6379->6379/tcp, [::]:6379->6379/tcp
+hilo-worker     hilo-people-backend:dev                    "python -c 'import t…"   worker     About a minute ago   Up About a minute                          8000/tcp

@@ -1,0 +1,9 @@
+=== 17 image tags pinned (no :latest) ===
+hilo-backend	hilo-people-backend:dev
+hilo-litellm	ghcr.io/berriai/litellm:v1.83.14-stable
+hilo-minio	minio/minio:RELEASE.2025-09-07T16-13-09Z
+hilo-postgres	pgvector/pgvector:pg18-bookworm
+hilo-redis	redis:8-alpine
+hilo-worker	hilo-people-backend:dev
+
+any :latest? -> 0

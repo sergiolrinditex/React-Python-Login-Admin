@@ -1,0 +1,75 @@
+#1 [internal] load local bake definitions
+#1 reading from stdin 1.31kB done
+#1 DONE 0.0s
+
+#2 [worker internal] load build definition from Dockerfile
+#2 transferring dockerfile: 4.13kB done
+#2 DONE 0.0s
+
+#3 [worker internal] load metadata for docker.io/library/python:3.13-slim-bookworm
+#3 DONE 0.2s
+
+#4 [backend internal] load .dockerignore
+#4 transferring context: 2.46kB done
+#4 DONE 0.0s
+
+#5 [worker internal] load build context
+#5 transferring context: 639B done
+#5 DONE 0.0s
+
+#6 [worker builder 1/5] FROM docker.io/library/python:3.13-slim-bookworm@sha256:bb73517d48bd32016e15eade0c009b2724ec3a025a9975b5cd9b251d0dcadb33
+#6 resolve docker.io/library/python:3.13-slim-bookworm@sha256:bb73517d48bd32016e15eade0c009b2724ec3a025a9975b5cd9b251d0dcadb33 0.0s done
+#6 DONE 0.0s
+
+#7 [backend runtime 3/6] RUN groupadd --gid 1001 appgroup &&     useradd --uid 1001 --gid appgroup --shell /bin/false --no-create-home appuser
+#7 CACHED
+
+#8 [backend builder 5/5] RUN pip install --no-cache-dir --upgrade pip &&     pip install --no-cache-dir --user -e .
+#8 CACHED
+
+#9 [backend builder 4/5] COPY pyproject.toml README.md ./
+#9 CACHED
+
+#10 [backend builder 2/5] RUN apt-get update -qq &&     apt-get install -y --no-install-recommends         gcc         libpq-dev         curl     && rm -rf /var/lib/apt/lists/*
+#10 CACHED
+
+#11 [backend builder 3/5] WORKDIR /build
+#11 CACHED
+
+#12 [backend runtime 5/6] WORKDIR /app
+#12 CACHED
+
+#13 [backend runtime 2/6] RUN apt-get update -qq &&     apt-get install -y --no-install-recommends         libpq5         curl     && rm -rf /var/lib/apt/lists/*     && apt-get clean
+#13 CACHED
+
+#14 [backend runtime 4/6] COPY --from=builder /root/.local /home/appuser/.local
+#14 CACHED
+
+#15 [backend runtime 6/6] COPY --chown=appuser:appgroup . .
+#15 CACHED
+
+#16 [worker] exporting to image
+#16 exporting layers done
+#16 exporting manifest sha256:d6404307f26c4558fbab8143c01c7b05f9c4c59269d8b5dcf609b9984c0eee3a done
+#16 exporting config sha256:613f53131fd8a5b0936f2d8125be002cd1031d213b55cb5ede330123fa256b37 done
+#16 exporting attestation manifest sha256:2115ab9b0346b5a6266fffe670cca24fc131dcbd8f73b840dde0cb96f181fa52 0.0s done
+#16 exporting manifest list sha256:33a038894d2318e5054509d1c08da87afbf799fccc0c6254aa41e6c59e561b3a 0.0s done
+#16 naming to docker.io/library/hilo-people-backend:dev done
+#16 unpacking to docker.io/library/hilo-people-backend:dev done
+#16 DONE 0.0s
+
+#17 [backend] exporting to image
+#17 exporting layers done
+#17 exporting manifest sha256:d17d92308fd766abb08a85d41a3c710438094a647d05b6e3fdb9a2463141e072 done
+#17 exporting config sha256:5189b0d030c45f6250da8a9eae8db6f862c335f8100ef8288cc4f952e63dc221 done
+#17 exporting attestation manifest sha256:b2921ae535b2b8dab6fca7bc62d80093d78fc6e9121f4fbbee6a7f55959f2169 0.0s done
+#17 exporting manifest list sha256:81e654974febc8f9669ea42ef64a1f03a2c616de95086bec5b5d000cfecef146 done
+#17 naming to docker.io/library/hilo-people-backend:dev done
+#17 unpacking to docker.io/library/hilo-people-backend:dev 0.0s done
+#17 DONE 0.1s
+
+#18 [worker] resolving provenance for metadata file
+#18 DONE 0.0s
+
+#19 [backend] resolving provenance for metadata file
+#19 DONE 0.0s

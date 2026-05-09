@@ -2,6 +2,44 @@
 
 ## Session cache
 
+### Entry 2026-05-09 — P00-S01-T004 Design tokens + editorial system (shallow pass)
+
+#### Sources consulted
+
+- Context7 `/vitejs/vite/v8.0.0` — Vite 8 entry pattern, vite.config.ts defineConfig, test config co-location
+- Context7 `/vitest-dev/vitest/v4.0.7` — Vitest 4 defineConfig, environment jsdom, setupFiles
+- Context7 `/remix-run/react-router` — v7 minimal createBrowserRouter + RouterProvider pattern
+- Context7 `/facebook/react/v19_2_0` — React 19 createRoot, main.tsx mount pattern
+- Context7 `/testing-library/jest-dom` — v6 Vitest-specific setup file import path
+
+#### Verified patterns (2026-05-09)
+
+| Topic | Finding | Status |
+|---|---|---|
+| Vite 8 entry | `index.html` at root + `<script type="module" src="/src/main.tsx">` — canonical, unchanged | OK |
+| vite.config.ts | `import { defineConfig } from 'vite'` — unchanged in Vite 8 | OK |
+| Vitest config split | Co-location in `vite.config.ts` test block AND separate `vitest.config.ts` both valid; separate NOT mandatory | OK |
+| TS 6 tsconfig | `"moduleResolution": "bundler"`, `"verbatimModuleSyntax": true`, `"jsx": "react-jsx"`, `"isolatedModules": true` — all confirmed; task pack R6 already correct | OK |
+| React 19 createRoot | `import { createRoot } from 'react-dom/client'` — canonical, unchanged. New additive: `onUncaughtError`/`onCaughtError` opts | OK |
+| react-router v7 minimal | `import { createBrowserRouter } from 'react-router'` + `import { RouterProvider } from 'react-router/dom'`; `<BrowserRouter>` not deprecated but `createBrowserRouter` is recommended | OK |
+| @testing-library/jest-dom v6 Vitest setup | **ACTIONABLE**: Setup file must use `import '@testing-library/jest-dom/vitest'` NOT `extend-expect`. Note written. | NOTE |
+
+#### Note file written
+
+`orchestrator-state/memory/official-doc-notes/P00-S01-T004-testing-library-vitest-setup.md`
+Severity: warn-only. Developer must use the correct import path. Note contains `RESOLVED:` line.
+
+#### Discrepancies found
+
+ONE actionable finding (warn-only, not blocking): `@testing-library/jest-dom/vitest` import path for Vitest setup. Not a version mismatch — a configuration pattern that could silently break if using the v5/Jest form. Task pack did not specify the exact import path. Note written with `RESOLVED:` line.
+
+#### Freshness window
+
+All stack components verified 2026-05-09 — re-verify after 7 days (2026-05-16).
+react-router v7 still in active development — re-verify on any router-touching slice.
+
+---
+
 ### Entry 2026-05-08 — P00-S01-T001 scaffold pass
 
 #### Sources consulted
@@ -126,6 +164,43 @@ Both notes have `RESOLVED: <placeholder>` — developer must fill after reconcil
 #### Task scope
 
 Verified for: P00-S01-T002 (frontend dependency pack — 8 primary packages + 4 testing packages).
+
+---
+
+### Entry 2026-05-09 — P00-S02-T001 Docker compose image tags (DEEP PASS — all new topics)
+
+**Note file**: `orchestrator-state/memory/official-doc-notes/P00-S02-T001-compose-images.md`
+**Freshness window**: Docker image tags — re-verify after 7 days (2026-05-16). LiteLLM — re-verify BEFORE ANY BUMP (AI/ML volatile).
+
+#### Cache stamps (2026-05-09)
+
+| Topic | Verified tag / finding | Re-verify |
+|---|---|---|
+| pgvector Docker image | `pgvector/pgvector:pg18-bookworm` (pgvector 0.8.2, PG18 stable) | 7 days |
+| Redis Docker image | `redis:8-alpine` = Redis 8.6.3 (current stable/latest) | 7 days |
+| redis:7.4-alpine | OUTDATED — task pack candidate was stale | 7 days |
+| kombu 5.6.2 redis client constraint | `>=4.5.2,<6.5` — redis==6.4.0 IS COMPATIBLE | 7 days |
+| Celery 5.6.3 | Still latest; no 5.6.4+ released as of 2026-05-09 | 7 days |
+| Redis server 8.x + kombu | Constraints are on Python client only; server 8.x compatible | 7 days |
+| LiteLLM proxy image | `ghcr.io/berriai/litellm:v1.83.14-stable` (NOT `main-stable`) | BEFORE ANY BUMP |
+| LiteLLM latest release | v1.83.14-stable.patch.3 (2026-05-07) | BEFORE ANY BUMP |
+| LiteLLM healthcheck | `/health/liveliness` (note: "liveliness" not "liveness") | BEFORE ANY BUMP |
+| LiteLLM config.yaml schema | `model_list`, `general_settings.master_key`, optional `litellm_settings` | BEFORE ANY BUMP |
+| MinIO Docker image | `minio/minio:RELEASE.2025-09-07T16-13-09Z` (or `latest` + digest) | 7 days |
+| MinIO healthcheck | `/minio/health/live` (liveness) — CORRECT per official docs | 7 days |
+| MinIO canonical registry | Docker Hub `minio/minio` | 7 days |
+| Python 3.13-slim | `python:3.13-slim-bookworm` = 3.13.13, digest sha256:bb73517d..., pushed 2026-04-22 | 7 days |
+| Python trixie drift | Trixie tags EXIST but bookworm is still stable default | 7 days |
+| nginx-unprivileged | `nginxinc/nginx-unprivileged:1.29-alpine` (1.27 does NOT exist, 1.29 is current) | 7 days |
+| nginx-unprivileged UID | 101 (nginx user); default port 8080 | 7 days |
+
+#### Discrepancies found (require developer action)
+
+1. **MEDIUM** — `redis:7.4-alpine` (task pack candidate) is outdated. Use `redis:8-alpine`.
+2. **MEDIUM** — `nginxinc/nginx-unprivileged:1.27-alpine` does NOT exist. Use `1.29-alpine`.
+3. **LOW** — `ghcr.io/berriai/litellm:main-stable` is floating/non-immutable. Pin to `v1.83.14-stable`.
+4. **LOW (note)** — `pgvector/pgvector:pg18` valid but `pg18-bookworm` is more explicit.
+5. **LOW (note)** — MinIO `latest` acceptable for dev; pin by SHA256 digest before P06 (production).
 
 ---
 
