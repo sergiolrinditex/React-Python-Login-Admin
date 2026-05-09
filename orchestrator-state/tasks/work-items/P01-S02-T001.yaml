@@ -19,6 +19,7 @@ tables:
   - "audit_logs"
 depends_on:
   - P01-S01-T001
+  - P01-S01-T002
 acceptance:
   - "Sign-up validates corporate email and legal acceptance"
   - "audit log written"

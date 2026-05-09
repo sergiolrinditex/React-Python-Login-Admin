@@ -1,34 +1,34 @@
 {
-  "generated_at": "2026-05-09T11:01:50+00:00",
+  "generated_at": "2026-05-09T11:57:58+00:00",
   "active_phase_id": "P01",
-  "active_task_id": "P01-S02-T001",
-  "last_worker": "",
+  "active_task_id": "",
+  "last_worker": "closer",
   "last_event": "subagent_stop",
   "pending_journey_verifications": [],
   "journey_gate_mode": "frontier",
   "last_journey_verified": null,
   "spawn_budget": 20,
-  "spawns_in_current_slice": {
-    "P01-S02-T001": 3
-  },
+  "spawns_in_current_slice": {},
   "open_followups": [
     {
       "id": "FU-20260508225027-align-env-var-names-in-config-py-to-technical-gu",
-      "status": "proposed",
+      "status": "promoted",
       "severity": "medium",
       "origin_task_id": "P00-S02-T001",
       "title": "Align env var names in config.py to TECHNICAL_GUIDE §11.1",
       "path": "orchestrator-state/tasks/follow-ups/FU-20260508225027-align-env-var-names-in-config-py-to-technical-gu.yaml",
-      "created_at": "2026-05-08T22:50:27+00:00"
+      "created_at": "2026-05-08T22:50:27+00:00",
+      "promoted_task_id": "P01-S01-T002"
     },
     {
       "id": "FU-20260508230723-quote-mail-from-name-in-env-example-to-fix-bash-",
-      "status": "proposed",
+      "status": "promoted",
       "severity": "low",
       "origin_task_id": "P00-S02-T001",
       "title": "Quote MAIL_FROM_NAME in .env.example to fix bash source failure",
       "path": "orchestrator-state/tasks/follow-ups/FU-20260508230723-quote-mail-from-name-in-env-example-to-fix-bash-.yaml",
-      "created_at": "2026-05-08T23:07:23+00:00"
+      "created_at": "2026-05-08T23:07:23+00:00",
+      "promoted_task_id": "P01-S01-T003"
     },
     {
       "id": "FU-20260509044829-disable-structlog-rich-traceback-show-locals-glo",
@@ -60,7 +60,7 @@
     }
   ],
   "last_claimed_task_id": "P01-S01-T001",
+  "last_followup_id": "FU-20260508230723-quote-mail-from-name-in-env-example-to-fix-bash-",
   "last_trailer": {},
-  "last_stop_at": "2026-05-09T11:36:02+00:00",
-  "last_followup_id": "FU-20260509105319-audit-logs-add-ip-user-agent-request-id-columns-"
+  "last_stop_at": "2026-05-09T11:46:00+00:00"
 }

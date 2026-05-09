@@ -1,24 +1,11 @@
 # Active task
 
-- ID: P01-S02-T001
-- Title: POST /api/v1/auth/sign-up
-- Status: blocked
+- ID: (none)
+- Status: no active claim
 - Phase: P01
 
-## Acceptance
-- Sign-up validates corporate email and legal acceptance
-- audit log written
+## Note
+P01-S01-T001 closed at 2026-05-09T11:46Z (commit 99d555b).
+Next ready ordered by phase + step + task_id: **P01-S01-T002** (env vars), then P01-S01-T003 (MAIL_FROM_NAME), then P01-S02-T001 (sign-up).
 
-## Allowed paths
-- backend/app/auth/**
-- backend/tests/integration/test_auth_signup.py
-
-## DAG conflict guardrails
-### Conflict groups
-- api:auth
-### Write set
-- backend/app/auth/**
-- backend/tests/integration/test_auth_signup.py
-
-## Verification commands
-- `pytest backend/tests/integration -k auth_signup && curl with prod-like user`
+Run `/next-slice` to let the planner claim the next ready task.

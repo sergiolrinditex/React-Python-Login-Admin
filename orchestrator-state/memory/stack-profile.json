@@ -22,7 +22,7 @@
     "migrate_cmd": "alembic upgrade head",
     "seed_cmd": "python -m app.seeds.bootstrap_verification_data --source data/verification"
   },
-  "git_workflow": "pr-flow",
+  "git_workflow": "push-to-main",
   "design_tokens_enforcer": "design_tokens_v1",
   "_source": "docs/source-of-truth/STACK_PROFILE.yaml"
 }

@@ -1,6 +1,6 @@
 # Architecture contract
 
-- Generated at: 2026-05-08T20:51:47+00:00
+- Generated at: 2026-05-09T11:57:58+00:00
 - Source: `docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md`
 
 ## Structural headings
