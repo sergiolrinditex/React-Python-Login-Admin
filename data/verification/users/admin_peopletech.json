@@ -1,0 +1,10 @@
+{
+  "_comment": "Admin user for J103 admin-AI and J104 RAG-admin journey verification. Synthetic fixture.",
+  "email": "admin.peopletech@hilopeople.com",
+  "full_name": "Carlos Martínez Admin",
+  "password_plain_for_seed": "Hilo!Admin2026",
+  "role": "admin",
+  "mfa_enabled": false,
+  "is_active": true,
+  "employee_profile": null
+}

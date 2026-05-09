@@ -1,0 +1,14 @@
+{
+  "_comment": "MCP server fixtures for J105 (MCP agents journey) verification. access_token MUST be prefixed 'synthetic-'.",
+  "servers": [
+    {
+      "name": "sandbox-mcp-http-readonly",
+      "endpoint_url": "http://localhost:9090/mcp",
+      "transport": "http",
+      "access_token": "synthetic-mcp-token-sandbox-readonly-a1b2c3d4",
+      "is_active": true,
+      "allowed_tools": ["read_file", "list_directory", "get_employee_info"],
+      "description": "MCP server sandbox HTTP read-only para verificación de J105. Synthetic fixture."
+    }
+  ]
+}

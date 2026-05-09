@@ -171,9 +171,17 @@ db_reset() {
     # shellcheck disable=SC1091
     source "${venv}/bin/activate"
     # The seed module path comes from STACK_PROFILE.yaml; landing slice is P00-S02-T003.
+    # NOTE (P00-S02-T003 debugger cycle 2): the verification bundle lives at the
+    # repo root (${ROOT_DIR}/data/verification/), NOT under backend/. We must cd
+    # into backend/ above so the venv activation + `python -m app.seeds.…`
+    # module import resolve correctly. Therefore --source MUST be an ABSOLUTE
+    # path; passing the relative literal `data/verification` made the loader
+    # resolve `backend/data/verification` (which does not exist), exit 2 with
+    # FileNotFoundError, and the `|| warn` swallow the failure — silent reseed
+    # skip. Surfaced live by /verify-slice on 2026-05-09.
     if python -c "import app.seeds.bootstrap_verification_data" 2>/dev/null; then
-      info "python -m app.seeds.bootstrap_verification_data --source data/verification"
-      python -m app.seeds.bootstrap_verification_data --source data/verification \
+      info "python -m app.seeds.bootstrap_verification_data --source ${ROOT_DIR}/data/verification"
+      python -m app.seeds.bootstrap_verification_data --source "${ROOT_DIR}/data/verification" \
         || warn "bootstrap_verification_data failed (non-blocking)"
     else
       info "app.seeds.bootstrap_verification_data not present yet — skipping (lands in P00-S02-T003)."

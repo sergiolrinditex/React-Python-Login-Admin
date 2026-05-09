@@ -1,0 +1,41 @@
+{
+  "_comment": "Conversation history fixtures for J102 (history + language journey) verification. At least 2 conversations required for employee_primary.",
+  "conversations": [
+    {
+      "user_email": "employee.primary@hilopeople.com",
+      "title": "Consulta sobre política de vacaciones",
+      "language": "es",
+      "messages": [
+        {
+          "role": "user",
+          "content": "¿Cuántos días de vacaciones tengo disponibles este año?"
+        },
+        {
+          "role": "assistant",
+          "content": "Según la Política de Vacaciones y Permisos 2026, los empleados con más de 1 año de antigüedad tienen derecho a 23 días laborables de vacaciones anuales. ¿Deseas consultar el documento completo?"
+        },
+        {
+          "role": "user",
+          "content": "Sí, muéstrame el documento completo."
+        }
+      ],
+      "collection_name": "politicas_tienda"
+    },
+    {
+      "user_email": "employee.primary@hilopeople.com",
+      "title": "Question about vacation policy",
+      "language": "en",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Can I carry over unused vacation days to next year?"
+        },
+        {
+          "role": "assistant",
+          "content": "According to the 2026 Vacation and Leave Policy, up to 5 unused vacation days can be carried over to the following calendar year. The carry-over request must be submitted before December 15th. Would you like to see the full policy document?"
+        }
+      ],
+      "collection_name": "politicas_tienda"
+    }
+  ]
+}

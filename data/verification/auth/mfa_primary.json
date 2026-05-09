@@ -1,0 +1,8 @@
+{
+  "_comment": "TOTP MFA configuration for employee_primary (J100). Static base32 secret — synthetic fixture. No pyotp dependency needed. Replace with People Tech delivery when available.",
+  "totp_secret": "JBSWY3DPEHPK3PXP",
+  "algorithm": "SHA1",
+  "digits": 6,
+  "period": 30,
+  "synthetic_totp": true
+}

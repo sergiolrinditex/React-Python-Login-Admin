@@ -1,0 +1,30 @@
+# Verification Data Contract Used — P00-S02-T003
+# Generated: 2026-05-09
+
+## Verification Data Contract rows consumed (from TECHNICAL_GUIDE §6.5)
+
+| Row | Persona/Rol | Seed used | Reset/Cleanup |
+|-----|-------------|-----------|---------------|
+| J100 auth-login | employee | data/verification/users/employee_primary.json (email=employee.primary@hilopeople.com) | scripts/dev-restart.sh --reset |
+| J103 admin-ai | admin | data/verification/users/admin_peopletech.json + data/verification/admin_ai/providers.json + models.json | delete ai_provider test rows |
+| J105 mcp-agents | admin | data/verification/mcp_agents/servers.json + agents.json | delete mcp_servers/tools/bindings/runs |
+
+## Fixtures used in tests
+
+- data/verification/users/employee_primary.json — loaded by test_seed_auth_idempotent_when_no_tables
+- data/verification/auth/mfa_primary.json — loaded by test_seed_auth_idempotent_when_no_tables
+- data/verification/admin_ai/providers.json — loaded by test_only_admin_ai_does_not_touch_other_namespaces
+- data/verification/admin_ai/models.json — loaded by test_only_admin_ai_does_not_touch_other_namespaces
+- data/verification/mcp_agents/servers.json — loaded by test_only_mcp_agents_does_not_touch_other_namespaces
+- data/verification/mcp_agents/agents.json — loaded by test_only_mcp_agents_does_not_touch_other_namespaces
+
+## Persisted data observed
+
+In P00 state: NO rows persisted (all tables missing). All namespaces log "seed.namespace.table_missing" WARN and skip.
+Evidence: cli-verbose-off.log shows 9 WARN lines (2 auth, 1 rag_chat, 1 history, 2 admin_ai, 1 rag_docs, 2 mcp_agents).
+
+## Note on P00 scaffolding scope
+
+The verification data bundle contains synthetic prod-like fixtures with synthetic- prefixed credentials.
+All fixtures pass Pydantic schema validation. Table writes are deferred until P01-S01-T001 creates the schema.
+The bundle is verified to be structurally correct and idempotent.

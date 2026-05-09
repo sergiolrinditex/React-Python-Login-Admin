@@ -1,0 +1,13 @@
+{
+  "_comment": "Agent fixtures for J105 (MCP agents journey) verification. References MCP server 'sandbox-mcp-http-readonly'.",
+  "agents": [
+    {
+      "name": "people_helper",
+      "description": "Agente de ayuda a empleados: responde preguntas sobre políticas de HR, consulta documentos y guía en procesos internos.",
+      "mcp_server_name": "sandbox-mcp-http-readonly",
+      "system_prompt": "Eres People Helper, un asistente de RRHH para empleados de Hilo People. Responde siempre en el idioma del usuario. Accede solo a los documentos y datos autorizados. No reveles información confidencial de otros empleados. Cuando no tengas suficiente información, indícalo claramente.",
+      "model_id": "gpt-4o-mini-verification",
+      "is_active": true
+    }
+  ]
+}

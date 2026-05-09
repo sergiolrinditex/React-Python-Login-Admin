@@ -1,0 +1,12 @@
+{
+  "_comment": "RAG document collections for J101 (chat) and J104 (RAG admin) journey verification.",
+  "collections": [
+    {
+      "name": "politicas_tienda",
+      "language": "es",
+      "vertical": "retail_hr",
+      "enabled": true,
+      "description": "Colección de políticas de la tienda para empleados de retail. Documentos en ES/EN/FR."
+    }
+  ]
+}

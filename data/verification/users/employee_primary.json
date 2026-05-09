@@ -1,0 +1,16 @@
+{
+  "_comment": "Primary employee user for J100 auth-login journey verification. Synthetic fixture — @hilopeople.com domain reserved for verification bundle.",
+  "email": "employee.primary@hilopeople.com",
+  "full_name": "Ana García López",
+  "password_plain_for_seed": "Hilo!Verify2026",
+  "role": "employee",
+  "mfa_enabled": true,
+  "is_active": true,
+  "employee_profile": {
+    "department": "Recursos Humanos",
+    "job_title": "HR Business Partner",
+    "manager_email": "admin.peopletech@hilopeople.com",
+    "hire_date": "2023-03-15",
+    "language_preference": "es"
+  }
+}

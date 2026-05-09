@@ -1,0 +1,19 @@
+{
+  "_comment": "AI model entries for J103 (admin AI journey) verification. References provider 'verification-openai-sandbox'.",
+  "models": [
+    {
+      "model_id": "gpt-4o-mini-verification",
+      "provider_name": "verification-openai-sandbox",
+      "display_name": "GPT-4o Mini (Verification)",
+      "enabled": true,
+      "context_window": 128000
+    },
+    {
+      "model_id": "gpt-4o-verification",
+      "provider_name": "verification-openai-sandbox",
+      "display_name": "GPT-4o (Verification)",
+      "enabled": true,
+      "context_window": 128000
+    }
+  ]
+}
