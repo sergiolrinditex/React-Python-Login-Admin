@@ -2,6 +2,91 @@
 
 ## Session cache
 
+### Entry 2026-05-09 — P00-S02-T002 Health live/ready endpoints (SHALLOW PASS — all verified)
+
+**Note file**: `orchestrator-state/memory/official-doc-notes/P00-S02-T002-health-endpoints-patterns-2026-05-09.md`
+**Freshness window**: All patterns stable — re-verify after 7 days (2026-05-16). structlog / SQLAlchemy / httpx / pytest-asyncio: stable; FastAPI 0.136.1 confirmed in project venv.
+
+#### Cache stamps (2026-05-09)
+
+| # | Pattern | Status | Finding |
+|---|---|---|---|
+| 1 | FastAPI router include + ops | VERIFIED | `app.include_router(router)` canonical; `@app.middleware("http")` for request_id middleware |
+| 2 | SQLAlchemy 2.0 async SELECT 1 | VERIFIED | `async with engine.connect() as conn: await conn.execute(text("SELECT 1"))` |
+| 3 | SQLAlchemy/asyncpg exception for DB down | VERIFIED | Catch `sqlalchemy.exc.SQLAlchemyError` — covers OperationalError + InterfaceError; asyncpg raw exceptions NOT exposed |
+| 4 | structlog 25.5.0 contextvars API | VERIFIED | `structlog.contextvars.bind_contextvars` / `clear_contextvars` confirmed present and unchanged |
+| 5 | httpx 0.28 ASGITransport | VERIFIED | `AsyncClient(transport=ASGITransport(app=app), base_url="http://test")` — `app=` param removed in 0.28 |
+| 6 | pytest-asyncio 1.3.0 auto mode | VERIFIED | `asyncio_mode="auto"` confirmed in pyproject.toml line 122; no decorator needed |
+
+#### Environment finding (non-blocking)
+
+System `python3` has FastAPI 0.135.2; project venv `.venv-t003` has 0.136.1 (correct). Developer must use project venv.
+
+#### Discrepancies: NONE
+
+---
+
+### Entry 2026-05-09 — P00-S01-T005 i18n resources ES/EN/FR (DEEP PASS — targeted)
+
+#### Sources consulted
+
+- Context7 `/i18next/i18next/v26.0.2` — init API, fallbackLng, ns, defaultNS, resources, supportedLngs, interpolation
+- Context7 `/i18next/react-i18next` — initReactI18next, useSuspense, I18nextProvider, TypeScript
+- Context7 `/websites/vite_dev` — JSON imports, publicDir behavior, import.meta.glob eager
+
+#### Pinned versions confirmed (from frontend/package.json read 2026-05-09)
+
+| Package | Pinned version | Status |
+|---|---|---|
+| i18next | 26.0.10 | Current stable in Context7 catalog (v26.0.2 docs apply — same major.minor) |
+| react-i18next | 17.0.7 | Current stable |
+| i18next-browser-languagedetector | 8.2.1 | Installed; NOT to be registered in T005 (see D4) |
+| vite | 8.0.11 | Confirmed; publicDir behavior verified |
+
+#### Verified API patterns for i18next 26 + react-i18next 17
+
+| Pattern | Confirmed | Notes |
+|---|---|---|
+| `i18n.use(initReactI18next).init({...})` | YES | Canonical chain; unchanged in v17 |
+| `fallbackLng: 'es'` (string, singular) | YES | Docs show `fallbackLng: 'en'` (string) as primary example; `string \| string[]` both valid |
+| `ns: ['common', 'auth', ...]` (array of strings) | YES | Confirmed property name; array accepted |
+| `defaultNS: 'common'` | YES | Confirmed property name |
+| `resources: { es: { common: {...} }, en: {...} }` | YES | Canonical inline/eager pattern, unchanged |
+| `supportedLngs: ['es', 'en', 'fr']` | YES | Current property name (replaced `whitelist` in i18next 21+) — NOT `whitelist` |
+| `interpolation: { escapeValue: false }` | YES | Documented: "React already escapes values" |
+| `react: { useSuspense: true }` | YES (but defer) | Property name confirmed as `useSuspense` inside `react:{}` option. Default is `true` in v17. Task D3 uses eager loading → sync → useSuspense default fine; OR set false explicitly |
+| `initReactI18next` import | YES | `import { initReactI18next } from 'react-i18next'` — unchanged |
+
+#### Deprecations / renamed props confirmed
+
+- `whitelist` → `supportedLngs` (changed in i18next 21, still current in v26) — developer must NOT use `whitelist`.
+- `cleanCode`/`lowerCaseLng`: no changes noted in v26 docs for these defaults.
+- `react.useSuspense` default is `true` in react-i18next v17. For eager/sync loading (D3), this is harmless — translations resolve before first render. No need to set `useSuspense: false` unless the developer wants explicit control.
+
+#### Critical finding — Vite publicDir + static import conflict
+
+**DISCREPANCY NOTE WRITTEN**: `orchestrator-state/memory/official-doc-notes/P00-S01-T005-i18n-vite-public-vs-src-import.md`
+
+Summary: Vite's official docs confirm `publicDir` files are "not referenced in source code" — they are copied as-is, not processed by Rollup. However, static `import` from `src/` that resolves via filesystem path into `public/locales/` DOES work (Rollup follows the filesystem, not the public-dir serving boundary). The result is double-shipping (bundled + copied). The planner's D3 is architecturally consistent but developer must choose explicitly between Option A (accept double-ship, keep `public/locales/`) or Option B (move to `src/i18n/locales/`, cleaner, no duplication).
+
+This is a medium-severity architectural note — NOT a blocker. Both options compile and test correctly.
+
+#### Vitest + JSON imports
+
+Static `import foo from '…/file.json'` works natively in Vitest (uses Vite's module resolver). No `transform` config needed. `import.meta.glob('./locales/**/*.json', { eager: true })` is also valid if developer prefers dynamic enumeration for the test file; both patterns confirmed.
+
+#### Note file written
+
+`orchestrator-state/memory/official-doc-notes/P00-S01-T005-i18n-vite-public-vs-src-import.md`
+Severity: medium. Requires developer to explicitly choose Option A or B and add RESOLVED line.
+
+#### Freshness window
+
+- i18next/react-i18next: stable; re-verify after 7 days (2026-05-16).
+- Vite 8 publicDir behavior: stable; re-verify after 7 days (2026-05-16).
+
+---
+
 ### Entry 2026-05-09 — P00-S01-T004 Design tokens + editorial system (shallow pass)
 
 #### Sources consulted

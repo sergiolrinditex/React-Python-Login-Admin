@@ -1,0 +1,10 @@
+{
+  "empty": {
+    "title": "Comment puis-je vous aider ?",
+    "promptVacation": "Combien de jours de congé me reste-t-il ?",
+    "promptMobility": "Politique de mobilité interne"
+  },
+  "citation": {
+    "label": "Source"
+  }
+}

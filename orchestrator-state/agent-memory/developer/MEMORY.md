@@ -151,6 +151,75 @@
 - Use `ghcr.io/berriai/litellm:v<X.Y.Z>-stable` to match Python lib pin.
 - `main-stable` is floating; `main-latest` is for nightly testing only.
 
+### P00-S01-T005 (2026-05-09) — i18n resources ES/EN/FR
+
+**i18next namespace vs key separator**:
+- The namespace separator in i18next is `:` — not `.`.
+- `t('common:productName')` → looks up key `productName` in namespace `common`.
+- `t('common.productName')` with `defaultNS:'common'` → looks for nested key `{ common: { productName: ... } }` in the `common` namespace. This is WRONG when the bundle is flat `{ "productName": "Hilo" }`.
+- In test files: always use `t('ns:key.nested')` form for cross-namespace assertions.
+- In production code: use `useTranslation('ns')` hook then `t('key.nested')` for clean ergonomics.
+
+**Eager vs lazy loading in i18next**:
+- Eager (static import JSON) is the right choice when bundles are small and test reliability matters.
+- Lazy (i18next-http-backend) requires fetch mocking in Vitest+jsdom — avoid until P03 hydration performance becomes a concern.
+- With eager loading, `i18n.isInitialized` is true synchronously after module import; no Suspense needed.
+
+**i18n module initialization pattern**:
+- The `frontend/src/i18n/index.ts` module holds the singleton.
+- `providers.tsx` imports it (`import i18n from '../i18n'`) — this import both initializes the singleton AND provides the instance for `I18nextProvider`.
+- NO need for a separate `import '../i18n'` side-effect import in providers.tsx when using a named import.
+- `if (!i18n.isInitialized)` guard in `index.ts` is still needed to survive HMR hot-reloads and Vitest module isolation edge cases.
+
+**Vite JSON imports**:
+- `resolveJsonModule: true` in tsconfig.json (already set in T004) enables `import esCommon from '../../public/locales/es/common.json'`.
+- JSON imports are typed: TypeScript infers the shape of the JSON object automatically.
+- In Vitest, JSON imports work natively without any configuration (Vitest respects Vite's JSON plugin).
+
+### P00-S02-T002 (2026-05-09) — Health live/ready endpoints + request_id middleware
+
+**structlog BoundLogger API with mypy**:
+- `_logger.debug("event string", key=val)` — event is POSITIONAL, not keyword.
+- `_logger.debug("event string", event="health.start")` raises mypy "multiple values for keyword argument 'event'" [misc].
+- Solution: use the event string as positional arg 1; extra context as keyword args.
+
+**@app.middleware("http") vs BaseHTTPMiddleware**:
+- Prefer `@app.middleware("http")` decorator over `add_middleware(BaseHTTPMiddleware)`.
+- BaseHTTPMiddleware.dispatch return type annotation causes mypy override error.
+- @app.middleware is cleaner, idiomatic FastAPI, and mypy-safe with `Callable[[Request], Awaitable[Response]]` annotation.
+
+**structlog contextvars pattern for per-request middleware**:
+- `structlog.contextvars.clear_contextvars()` — call at start of request to clear previous request's context.
+- `structlog.contextvars.bind_contextvars(key=val)` — bind new context.
+- `structlog.contextvars.clear_contextvars()` in finally — always clean up.
+- `merge_contextvars` processor must be in structlog.configure() chain (already in T003's core/logging.py).
+
+**SQLAlchemy error hierarchy for DB probe**:
+- `sqlalchemy.exc.SQLAlchemyError` covers ALL asyncpg DB-down cases (researcher confirmed).
+- asyncpg raw exceptions are always wrapped by SQLAlchemy — you do NOT need to import asyncpg.
+- Bare Exception fallback is acceptable as last resort in /ready to ensure 503 never becomes 500.
+
+**httpx 0.28 ASGITransport**:
+- `AsyncClient(app=app)` is REMOVED in httpx 0.28. The deprecated kwarg was removed, not just warned.
+- Correct: `AsyncClient(transport=ASGITransport(app=app), base_url="http://testserver")`.
+- `_make_client()` helper avoids repeating this pattern in every test.
+
+**Compose postgres credentials vs default config**:
+- Default config.py fallback: `change-me` password.
+- Compose POSTGRES_PASSWORD default: `hilopeople_dev_pwd`.
+- Tests that probe real DB must set DATABASE_URL with correct credentials.
+- `_postgres_reachable()` only checks if port 5433 is open, not if credentials are correct.
+- Real-DB test will fail if DATABASE_URL is not overridden with correct credentials.
+
+**OperationalError in tests**:
+- `sqlalchemy.exc.OperationalError(statement, params, orig)` — 3rd arg `orig` must be `BaseException`.
+- `None` triggers mypy [arg-type] error. Use `Exception("connection refused")` as the third arg.
+
+**pool_pre_ping and /ready probe**:
+- `pool_pre_ping=True` fires on pool checkout, not on every request.
+- /ready probe uses `engine.connect()` + `SELECT 1` to give an explicit per-request signal.
+- Both serve different purposes: pool_pre_ping detects stale connections; /ready validates current DB availability.
+
 ## Gotchas
 
 - `dev-restart.profile.sh` is a FLUTTER template not yet customized for React. Back-fill will happen in a future P00 slice. Don't rely on `back_start()` or `front_start()` functions there yet.

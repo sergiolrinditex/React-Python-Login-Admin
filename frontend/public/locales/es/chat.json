@@ -1,0 +1,10 @@
+{
+  "empty": {
+    "title": "¿En qué puedo ayudarte?",
+    "promptVacation": "¿Cuántos días de vacaciones me quedan?",
+    "promptMobility": "Política de movilidad interna"
+  },
+  "citation": {
+    "label": "Fuente"
+  }
+}

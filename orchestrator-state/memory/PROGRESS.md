@@ -7,11 +7,11 @@
 ## Current State
 
 - **Phase**: Phase 0 — Scaffold + Design System
-- **Last completed slices**: P00-S01-T002 (done), P00-S01-T003 (done), P00-S01-T004 (design tokens — committed 2026-05-09 SHA=78ef2ea, done), **P00-S02-T001 (Docker compose services — developer done, validator/tester pending)**
-- **Next pending slices**: P00-S01-T005 (i18n bundles), P00-S02-T002 (health endpoints /live /ready — depends on P00-S02-T001)
+- **Last completed slices**: P00-S01-T001..T004 (done), P00-S02-T001 (Docker compose services — done), P00-S01-T005 (i18n bundles — developer done, validator/tester pending), **P00-S02-T002 (health live/ready endpoints — developer done, validator/tester pending)**
+- **Next pending slices**: P00-S02-T003 (seed data)
 - **Blockers**: none
 - **Follow-ups pending**: FU-20260508225027 (medium, wiring — env var name drift in config.py vs TECHNICAL_GUIDE §11.1, non-blocking)
-- **Generated at**: 2026-05-09T01:00:00Z
+- **Generated at**: 2026-05-09T06:30:00Z
 
 ## Docker Compose Stack (P00-S02-T001)
 
@@ -53,12 +53,13 @@ Rancher-ready compose stack ADR preserved in handoff P00-S02-T001.md (pending fo
 
 | Aspect | Status | Details |
 |--------|--------|---------|
-| Server | available | uvicorn starts, GET /health returns {status, version, uptime} |
-| Health check | verified | curl http://127.0.0.1:8001/health → 200 |
-| Endpoints implemented | 1 live | GET /health (structlog wired in T003) |
+| Server | available | uvicorn starts; GET /health, /live, /ready all working |
+| Health check | verified | curl http://127.0.0.1:8001/health → 200 {status:ok, version, uptime} |
+| Endpoints implemented | 3 live | GET /health (flat shape, backward-compat), GET /live (no-DB), GET /ready (DB probe + placeholders) |
+| Request-ID middleware | live | X-Request-ID echoed; uuid4 hex generated when missing; bound in structlog contextvars |
 | Migrations applied | 0 | First migration: P01-S01-T001 |
 | Seed data | not loaded | Seed script: P00-S02-T003 |
-| Backend tests | 39 passing | 39 smoke tests (all dep categories) |
+| Backend tests | 47 passing | 39 smoke + 8 health tests (all green, real DB probe verified with compose postgres) |
 | Deps installed | YES | pip install -e ".[dev]" clean in .venv-t003 |
 
 ### Backend Dependencies (exact pins, verified against PyPI 2026-05-08)
@@ -120,7 +121,8 @@ Rancher-ready compose stack ADR preserved in handoff P00-S02-T001.md (pending fo
 | Providers | AppProviders wired | QueryClientProvider + I18nextProvider in frontend/src/app/providers.tsx |
 | Components | 8 shipped | Wordmark, TrackedLabel, StatusDot, EditorialInput, SolidCTA, HairlineTable, MobileFrame, AdminShell |
 | Design tokens | Implemented | CSS custom properties in shared/styles/tokens.css + TS mirror in shared/styles/index.ts |
-| Frontend tests | 47 passing | 1 providers smoke + 7 tokens/component unit tests + 8 showcase smoke |
+| i18n bundles | Implemented | 3 locales (es/en/fr) × 8 namespaces = 24 JSON files; fallbackLng: 'es'; eager loading |
+| Frontend tests | 57 passing | 1 providers smoke + 7 tokens/component unit tests + 8 showcase smoke + 10 i18n bundle tests |
 
 ### Frontend Dependencies (exact pins, as of 2026-05-08 npm registry)
 
@@ -165,14 +167,15 @@ Rancher-ready compose stack ADR preserved in handoff P00-S02-T001.md (pending fo
 | Level | Count | Status |
 |-------|-------|--------|
 | Backend unit | 0 | — |
-| Backend integration | 0 | — |
+| Backend integration | 8 | PASS (health endpoint tests: /health /live /ready + request_id + DB probe) |
 | Backend smoke | 39 | PASS (dependency smoke — all dep categories) |
 | Frontend unit | 7 | PASS (tokens TS mirror + component tests) |
 | Frontend component | 9 | PASS (providers smoke + showcase smoke: 1+8) |
+| i18n | 10 | PASS (P00-S01-T005) |
 | E2E | 0 | — |
-| **Total** | **55** | **55 PASS** |
+| **Total** | **73** | **73 PASS** |
 
-Note: Vitest counts 47 tests (4 test files). Backend smoke 39 tests separate. Grand total: 86 tests passing.
+Note: Backend total 47 tests (39 smoke + 8 health). Frontend Vitest: 57 tests (47 previous + 10 i18n). Grand total: 104 tests passing.
 
 ## Milestones
 
@@ -193,6 +196,7 @@ Note: Vitest counts 47 tests (4 test files). Backend smoke 39 tests separate. Gr
 
 ## Recent Decisions
 
+- **P00-S02-T002 (2026-05-09)**: Health live/ready endpoints. Key decisions: (1) D1 — flat shape {status, version, uptime} preserved on /health and /live for T001 compose backward-compat; NOT migrated to {data:{...}} envelope; a follow-up will reconcile TECHNICAL_GUIDE §6.2. (2) D2 — redis and litellm checks declared as not_implemented (not removed, not faked as "ok"); shape is forward-compatible for downstream slices. (3) D3 — minimal request_id middleware using @app.middleware("http") (FastAPI-idiomatic per official doc note); uses structlog.contextvars.clear/bind/clear pattern. (4) Exception handling in /ready: SQLAlchemyError as primary catch; bare Exception as last-resort so probe always returns 503 not 500. (5) _sanitize_db_error() strips DSN components from error detail before returning. (6) Test 3 (DB-up) requires compose postgres at 5433 with correct credentials hilopeople:hilopeople_dev_pwd — verified with real DB.
 - **P00-S02-T001 (2026-05-09)**: Docker compose stack (Rancher-ready). 7 services declared. Key decisions: (1) pgvector/pgvector:pg18-bookworm (researcher confirmed pg18 available; `pg18-bookworm` explicit Debian stable); (2) redis:8-alpine (researcher confirmed Redis 8.6.3 is current stable, not 7.4); (3) litellm:v1.83.14-stable (pin to exact version matching Python lib, not floating main-stable); (4) nginx-unprivileged:1.29-alpine (researcher found 1.27 does NOT exist, 1.29 is current); (5) python:3.13-slim-bookworm (explicit Bookworm); (6) postgres host port 5433 (avoids conflict with local PG on 5432); (7) litellm healthcheck uses python3 urllib (no curl/wget in LiteLLM image); (8) LiteLLM start_period 120s (image needs ~2min to initialize); (9) worker healthcheck disabled (inherits /health from Dockerfile which fails since worker has no HTTP port — real Celery healthcheck in P02-S04-T002); (10) postgres volume mount at /var/lib/postgresql not /data (PG18 changed data dir layout per github.com/docker-library/postgres/pull/1259).
 - **P00-S01-T001**: Bootstrap mínimo. Pinned versions from debugger 2026-05-08.
 - **P00-S01-T002 (2026-05-08)**: Frontend runtime deps installed. AppProviders wired (QueryClientProvider + I18nextProvider). 1 smoke test.
@@ -214,7 +218,7 @@ Note: Vitest counts 47 tests (4 test files). Backend smoke 39 tests separate. Gr
 - pip-audit: 5 findings in `setuptools==65.5.0` (system Python, not declared dep). No CVEs in declared backend deps.
 - `redis==6.4.0` is below latest 7.4.0 — constrained by celery/kombu. Will need upgrade when celery releases a kombu that supports redis>=7.
 - **dev FRONT_PORT=5174**: User's `.env` previously set FRONT_PORT=5174 to avoid sibling-project collision on 5173. Vite dev is currently running on 5174. If .env no longer contains this override, next `dev-restart.sh` will try 5173 (the vite default) — may conflict with sibling project. Orchestrator-level decision pending.
-- dev-restart.sh `--check` exits 1 when DB is UNKNOWN (no /ready endpoint yet). Cosmetic; not blocking but noisy.
+- dev-restart.sh `--check` exits 1 when DB is UNKNOWN — with /ready now live, this should resolve if dev-restart.sh is updated to use /ready instead of a raw DB check.
 - **P00-S02-T001**: LiteLLM v1.83.14-stable has ~2min startup time; compose healthcheck uses start_period: 120s. In CI this may slow pipelines — tracked for P05 hardening.
 - **P00-S02-T001**: Worker service inherits /health Dockerfile HEALTHCHECK from backend image; disabled in compose override since worker has no HTTP port. Real Celery healthcheck (`celery inspect ping`) lands in P02-S04-T002.
 - **P00-S02-T001**: postgres host port mapped to 5433 (not 5432) to avoid conflict with local Postgres instance on dev machines. alembic must use port 5433 when running from host.
@@ -222,5 +226,24 @@ Note: Vitest counts 47 tests (4 test files). Backend smoke 39 tests separate. Gr
 
 ---
 
-> Last updated: 2026-05-09T06:02:00Z
-> Updated by: closer (P00-S01-T004) — post-commit sync; SHA=78ef2ea
+## i18n Bundles (P00-S01-T005)
+
+24 JSON locale files across 3 locales × 8 namespaces. All productive keys from instrucciones.md §6 shipped verbatim.
+
+| Namespace | Keys (instrucciones.md §6) | Notes |
+|-----------|--------------------------|-------|
+| common | productName | "Hilo" in all 3 locales |
+| auth | signIn.{title,email,password}, forgot.title, twoFactor.title | 5 keys per locale |
+| chat | empty.{title,promptVacation,promptMobility}, citation.label | 4 keys per locale |
+| account | language | 1 key per locale |
+| admin-ai | models.title, mcp.title | 2 keys per locale |
+| rag | documents.title | 1 key per locale |
+| mcp | servers.title | D1: minimal seed; productive keys land in P02-S07/S08 |
+| errors | AUTH_INVALID_CREDENTIALS | 1 key per locale |
+
+Singleton: `frontend/src/i18n/index.ts` — eager loading, fallbackLng:'es', `react.useSuspense:false`.
+Languages: `frontend/src/i18n/languages.ts` — `SUPPORTED_LANGUAGES`, `NAMESPACES`, `isSupportedLanguage()`.
+Test gate: `frontend/src/i18n/__tests__/i18n.test.ts` — 10 assertions (parse+load, drift-detector, productive copy, functional t(), fallback, hasResourceBundle, constants shape).
+
+> Last updated: 2026-05-09T06:30:00Z
+> Updated by: developer (P00-S02-T002) — health live/ready endpoints + request_id middleware

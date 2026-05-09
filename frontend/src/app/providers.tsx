@@ -6,17 +6,19 @@
  * BrowserRouter lives in app/router.tsx, added in P01-S03-T001.
  *
  * Phase/Slice: P00 / P00-S01-T002 — Frontend dependency pack
+ * Updated:     P00 / P00-S01-T005 — i18n resources ES/EN/FR
  *
  * Dependencies (non-obvious):
  *   - @tanstack/react-query 5.100.9 — QueryClient, QueryClientProvider
  *   - i18next 26.0.10 — i18n singleton instance
  *   - react-i18next 17.0.7 — I18nextProvider
+ *   - ../i18n/index.ts — i18n singleton (P00-S01-T005)
  *
  * i18n bootstrap notes:
- *   - Resources are intentionally empty here. Namespaces (common, auth, chat,
- *     account, admin-ai, rag, mcp, errors) and translations land in P00-S01-T005.
- *   - `i18n.isInitialized` guard prevents re-init on hot reload.
- *   - lng + fallbackLng = 'es' per instrucciones.md §3.3.
+ *   - Resources loaded from `../i18n` (P00-S01-T005). The side-effect import
+ *     below triggers eager initialisation of all 8 namespaces in es/en/fr
+ *     per instrucciones.md §6 and §1.4.
+ *   - lng + fallbackLng = 'es' per instrucciones.md §6 + §1.4 (locale list, line 42).
  *
  * Logging decision:
  *   This file is purely declarative component composition with no action
@@ -31,19 +33,13 @@
 import { type ReactNode, useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { I18nextProvider } from 'react-i18next';
-import i18n from 'i18next';
+import i18n from '../i18n';
 
-// Bootstrap i18next at module load — runs once at import, idempotent guard below.
-// Resources empty: namespaces and translations land in P00-S01-T005.
-// fallbackLng=es per instrucciones.md §3.3 (español, inglés, francés; fallback español).
-if (!i18n.isInitialized) {
-  i18n.init({
-    lng: 'es',
-    fallbackLng: 'es',
-    resources: {},
-    interpolation: { escapeValue: false },
-  });
-}
+// Side-effect import ensures i18next is initialised before the provider mounts.
+// The singleton is configured in ../i18n/index.ts (P00-S01-T005):
+//   - 8 namespaces: common, auth, chat, account, admin-ai, rag, mcp, errors
+//   - 3 locales: es (default), en, fr  — fallbackLng: 'es'
+//   - Eager loading: all 24 JSON bundles preloaded at module import time
 
 /**
  * Root provider tree for the Hilo People frontend.

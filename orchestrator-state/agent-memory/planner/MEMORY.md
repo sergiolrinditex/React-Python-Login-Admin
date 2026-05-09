@@ -29,6 +29,18 @@
 - "First provider wired" intentionally excludes Router. Router lands with auth (P01-S03-T001) because `BrowserRouter` is coupled to redirect-after-login behavior. The pack must explicitly say "do NOT add BrowserRouter" or developer will pre-empt P01-S03.
 - T001 closer left frontend stack pinned to React 19 / TS 6 / Vite 8 / Vitest 4. T002 inherits these — pack must call them out as "do not regress" so dependency conflict resolution doesn't downgrade them.
 
+### i18n-bundle slices (P00-S01-T005 family)
+
+- For "i18n resources X locales × N namespaces" tasks, the registry write_set declares only `frontend/src/i18n/**` and `frontend/public/locales/**` but the slice ALWAYS needs a surgical edit on `frontend/src/app/providers.tsx` to migrate the inline `i18n.init({...})` (left as a stub by the dependency-pack slice) into the new `i18n/index.ts` module. Document this as `write_set_extension` in the pack with justification — same precedent as T004 Path A. Validator must treat as allowed scope, not drift.
+- `instrucciones.md §6` ships productive ES/EN/FR copy as a key×locale table. Treat it as authoritative key inventory: ship verbatim, do not invent extra keys. For namespaces with NO productive copy in §6 (e.g. `mcp`), seed exactly one minimal canonical key per locale that mirrors nearby patterns — empty bundles `{}` would vacuously satisfy a drift test (violating "tests are REAL").
+- `journey_refs` in the registry row can mean two different things: "this slice is consumed by these journeys" (infra) OR "this slice closes these journeys" (productive screens). Always cross-check with `python3 -B -S .claude/bin/list_journey_closures.py <TASK_ID> --json`. For infra slices that just provide assets, expect `closing_journeys: []` and record it explicitly so closer does not emit `JOURNEY_PENDING_VERIFY`.
+- `tables: <X>` in the registry row of an FE-infra slice is registry inheritance bookkeeping (the journey row that consumed the slice mentioned the table). It does NOT mean the slice touches DB. State this as Out-of-scope explicitly so developer doesn't preempt a migration.
+- Loading strategy default for i18next bundles: EAGER imports, not http-backend. Reasons: (a) bundles are tiny; (b) Vitest+jsdom needs no fetch mock; (c) `Suspense` not required; (d) future migration to lazy is trivial because JSON canonicals already live under `public/locales/`. Document this and pin the dep choice — http-backend is intentionally NOT in T002's package.json.
+- Browser language detector (`i18next-browser-languagedetector`): defer registration to the language-preference slice (account/language switcher), even though the dep is already installed. The default `lng:'es'` matches DB DEFAULT and DEFAULT_LANGUAGE env. Detector adds UX surface that doesn't belong to an infra slice.
+- Drift detector test pattern (real value-add of the slice): recursively flatten each bundle to dotted keys, compare set-equality across `es`/`en`/`fr` per namespace. This is the gate that catches "added a key in ES, forgot EN/FR" in future PRs.
+- The verify command `npm --prefix frontend run test -- --run -t i18n` filters by test-name regex, not file path. The describe-block name MUST contain `i18n` (e.g., `describe('i18n bundle structure', ...)`) for the filter to match. Pack must say this explicitly.
+- The previous slice (T002) may leave a stale doc-citation in `providers.tsx` (e.g. `instrucciones.md §3.3` pointing at the i18n config when the truth is `§6` + `§1.4`). Surface in the Discrepancies table so the developer fixes it as part of the surgical providers.tsx edit; do not let it ship to T005's commit unfixed.
+
 ### Design-token slices (P00-S01-T004 family)
 
 - The CHECKLIST registry write_set may be intentionally narrow (theme-only). When the verify command requires a build, the pack MUST record a `write_set_extension` block listing the bootstrap-completion paths (tsconfig, tsconfig.node, vite.config, index.html, main.tsx, the showcase route page itself). Justify with PROGRESS.md "Known Issues" + previous-handoff explicit deferrals. This is "Path A" in the planner pack template.
@@ -38,6 +50,16 @@
 - Component naming drift between `instrucciones.md §7` (descriptive) and `*_TECHNICAL_GUIDE §7` (architectural) — TECHNICAL_GUIDE wins for component identifiers (`MobileFrame`, not `MobileShell`). instrucciones is descriptive marketing copy; do not let a developer "harmonize" it back. Record in the pack `## Discrepancies` table.
 - `design_tokens_v1` excludes `tokens|theme|themes|design-system` directory names by default; `frontend.theme_root=frontend/src/shared/styles` is auto-excluded. Sanity-run before adding hex literals so the developer doesn't waste time chasing false negatives.
 
+### Health/ops slices (P00-S02-T002 family)
+
+- TECHNICAL_GUIDE §6.2 may declare envelope shape `{data:{...}}` for health endpoints, but a previous slice (T003 in this project) may have shipped flat shape `{status, version, uptime}` because the upstream compose healthcheck or k8s probe expects flat. **Precedent wins**, but the pack MUST surface the discrepancy explicitly in a Discrepancies table and recommend (not register) a follow-up to reconcile docs. Do NOT silently migrate to envelope inside the slice — that breaks downstream healthchecks atomically.
+- For multi-probe `/ready` endpoints where some dependencies (Redis, LiteLLM) don't have wired clients yet, return them with explicit `not_implemented` value, not a green "ok" lie and not omitted. This is forward-compatible: downstream slices flip the value to "ok"/"fail" without changing the response shape.
+- `app.core.db.get_engine()` is **lazy** (T003 design): builds engine on first call, no import-time side effect. Safe to call from a /ready handler. Tests must use DI (monkeypatch the module global or factory) to simulate DB-down without leaking a half-built singleton.
+- request_id middleware is naturally a P00-S02-T002 deliverable per the structlog docstring TODO at `app.core.logging.py:17`. Inline 4–6 lines in `main.py` is preferable over a new module — keeps the work-item write_set tight (3 paths).
+- For backend slices with no journey_refs and verify_mode=auto, the Verification Data Contract row is **n/a** — explicitly say so. Tester/verify will otherwise chase fixtures that don't apply.
+- `__init__.py` package markers added to satisfy a NEW package directory (`backend/app/api/__init__.py`) are a Python language requirement, not scope expansion. Document them in the pack as a write_set technicality so validator doesn't flag drift.
+- Curl verification on `localhost:8000/health` may hit either the compose container (`version: 0.1.0`) or a local dev uvicorn (`version: 0.0.0`) when both are running. Always capture the `version` field in evidence to disambiguate; in-process `httpx.AsyncClient` tests are immune to this shadow.
+
 ## Recurring unknowns / blockers
 
 - React Router v7 vs v6 published-stability on a given date — researcher decides per slice. Pack must capture the decision so downstream auth slice isn't surprised.
@@ -45,3 +67,5 @@
 - Frontend `tsconfig.json` is missing from T001's bootstrap. Bootstrap drift candidate; do NOT fix unilaterally in T002. Likely belongs to T004 design tokens. **Confirmed in T004**: lands here under Path A `write_set_extension`.
 - Frontend dev port: vite default 5173 may collide with a sibling project; project pinned `FRONT_PORT=5174` in `.env`. The vite.config must read it from env (not hardcode 5173).
 - STACK_PROFILE `git_workflow=push-to-main` overrides instrucciones §9 `pr-flow` (resolved 9b2a9f4). When the two source-of-truth docs disagree on a structural value, the YAML profile wins because it is the machine-readable contract; instrucciones can lag.
+- httpx 0.28 deprecated `AsyncClient(app=app)`; use `AsyncClient(transport=ASGITransport(app=app))`. pytest-asyncio 1.3 mode (auto vs strict) — researcher must confirm the project's `[tool.pytest.ini_options]` setting before tests are written.
+- pgvector pg18 image was the right call (T001) — sibling projects may still be on pg15/pg16. Don't downgrade to match older code.
