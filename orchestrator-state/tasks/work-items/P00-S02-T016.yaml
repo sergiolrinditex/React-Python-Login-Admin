@@ -1,0 +1,33 @@
+id: P00-S02-T016
+phase_id: P00
+step_id: P00-S02
+title: "test_admin_ai_discover_models event-loop conflict under live uvicorn"
+status: ready
+kind: "unspecified"
+target: ""
+product_increment: "current"
+build_state: "planned"
+risk_level: "medium"
+verify_mode: "human"
+route: ""
+endpoint: ""
+journey_refs:
+  - "J103"
+tables:
+depends_on:
+  - P00-S02-T012
+acceptance:
+  - "Both tests pass deterministically when run with .env.local loaded AND dev uvicorn :8000 up (or skip cleanly with explanatory marker)"
+verification_commands:
+  - "1) Start dev backend"
+  - "2) source .env + .env.local"
+  - "3) pytest tests/integration/test_admin_ai_discover_models.py -v -> all pass or skip-with-reason"
+  - "0 RuntimeError event-loop errors"
+allowed_paths:
+conflict_groups:
+  - "admin_ai_endpoints"
+write_set:
+  - "backend/tests/integration/test_admin_ai_discover_models.py"
+handoff_path: orchestrator-state/tasks/handoffs/P00-S02-T016.md
+evidence_dir: orchestrator-state/tasks/evidence/P00-S02-T016
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry"

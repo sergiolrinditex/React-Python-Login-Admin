@@ -15,7 +15,7 @@
       "id": "P00",
       "phase_number": 0,
       "title": "Bootstrap / foundation propia",
-      "status": "blocked",
+      "status": "ready",
       "depends_on": [],
       "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Phase 0 — Bootstrap / foundation propia",
       "task_ids": [
@@ -34,8 +34,11 @@
         "P00-S02-T006",
         "P00-S02-T011",
         "P00-S02-T013",
+        "P00-S02-T015",
+        "P00-S02-T014",
         "P00-S02-T010",
         "P00-S02-T012",
+        "P00-S02-T016",
         "P00-S02-T009"
       ]
     },
@@ -1048,7 +1051,7 @@
       "phase_id": "P00",
       "step_id": "P00-S02",
       "title": "Quote or remove <change-me> placeholders in .env.example to fix bash source on fresh clones",
-      "status": "ready_for_close",
+      "status": "done",
       "build_state": "planned",
       "product_increment": "current",
       "depends_on": [
@@ -1097,11 +1100,124 @@
       "claimed_by": "sergiolr",
       "claim_terminal_task_env": "P00-S02-T013",
       "task_pack_path": "orchestrator-state/tasks/task-packs/P00-S02-T013.md",
-      "last_outcome": "pass",
-      "last_updated_by": "tester",
-      "last_stop_at": "2026-05-10T09:47:48+00:00",
+      "last_outcome": "committed",
+      "last_updated_by": "closer",
+      "last_stop_at": "2026-05-10T10:01:55+00:00",
       "validator_outcome": "approved",
-      "validator_next_status": "ready_for_close"
+      "validator_next_status": "ready_for_close",
+      "report_path": "orchestrator-state/tasks/reports/P00-S02-T013.md"
+    },
+    {
+      "id": "P00-S02-T015",
+      "phase_id": "P00",
+      "step_id": "P00-S02",
+      "title": "Add bash -n .env.example pre-commit/CI lint to prevent placeholder regression",
+      "status": "done",
+      "build_state": "planned",
+      "product_increment": "current",
+      "depends_on": [
+        "P00-S02-T013"
+      ],
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry",
+      "acceptance": [
+        "Pre-commit hook (or CI lint job",
+        "or both) executes 'bash -n .env.example' on every PR/commit that touches .env.example",
+        "fails the check on non-zero exit. Hook config is committed to the repo so it is active for all developers without manual setup."
+      ],
+      "verification_commands": [
+        "1) Introduce a deliberate regression in .env.example (e.g. NEWVAR=<broken>) on a feature branch",
+        "2) Run pre-commit (or push and watch CI)",
+        "3) Confirm the check fails with non-zero exit and a clear message",
+        "4) Revert the regression and confirm the check passes again."
+      ],
+      "allowed_paths": [],
+      "conflict_groups": [
+        "dev_env_setup"
+      ],
+      "write_set": [
+        ".pre-commit-config.yaml",
+        ".github/workflows/"
+      ],
+      "journey_refs": [],
+      "handoff_path": "orchestrator-state/tasks/handoffs/P00-S02-T015.md",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P00-S02-T015/",
+      "origin": {
+        "type": "runtime_followup",
+        "followup_id": "FU-20260510095809-add-bash-n-env-example-pre-commit-ci-lint-to-pre",
+        "origin_task_id": "P00-S02-T013",
+        "severity": "low",
+        "kind": "test"
+      },
+      "notes": [
+        "Runtime follow-up promoted from FU-20260510095809-add-bash-n-env-example-pre-commit-ci-lint-to-pre",
+        "Description: Discovered during /verify-slice P00-S02-T013 (R1). The fix in T013 replaced 11 angle-bracket placeholders so 'set -a; source .env; set +a' succeeds. There is no automated guard preventing a future dev from adding a new variable with shell metacharacters (<, >, |, (, ), unquoted) and silently breaking 'source .env' on the next clean clone. Mitigation is a one-line bash -n check on .env.example in pre-commit (or CI lint) so any future regression is caught before merge. Out of T013 write_set (T013 only allowed editing .env.example itself)."
+      ],
+      "claimed_at": "2026-05-10T11:05:53+00:00",
+      "claimed_by": "sergiolr",
+      "claim_terminal_task_env": "P00-S02-T015",
+      "task_pack_path": "orchestrator-state/tasks/task-packs/P00-S02-T015.md",
+      "last_outcome": "committed",
+      "last_updated_by": "closer",
+      "last_stop_at": "2026-05-10T11:37:13+00:00",
+      "validator_outcome": "approved",
+      "validator_next_status": "ready_for_close",
+      "report_path": "orchestrator-state/tasks/reports/P00-S02-T015.md"
+    },
+    {
+      "id": "P00-S02-T014",
+      "phase_id": "P00",
+      "step_id": "P00-S02",
+      "title": "ensure_jwt_keypair: auto-generate dev RSA keypair in setup-from-scratch.sh",
+      "status": "ready",
+      "build_state": "planned",
+      "product_increment": "current",
+      "depends_on": [
+        "P00-S02-T013"
+      ],
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry",
+      "acceptance": [
+        "After 'rm .env",
+        "bash scripts/setup-from-scratch.sh' on a fresh clone",
+        ".env contains a real RSA keypair (PEM blocks with -----BEGIN/-----END markers",
+        "valid 2048+ bits) for JWT_PRIVATE_KEY and JWT_PUBLIC_KEY",
+        "AND backend startup loads them without error AND POST /api/v1/auth/sign-up issues a token signable by JWT_PRIVATE_KEY and verifiable by JWT_PUBLIC_KEY end-to-end. Idempotent: re-running setup-from-scratch.sh on an existing valid keypair leaves it untouched (matcher logic analogous to ensure_encryption_key)."
+      ],
+      "verification_commands": [
+        "1) rm .env",
+        "rm -f .keys/jwt_*.pem (or wherever the new function stores them)",
+        "2) bash scripts/setup-from-scratch.sh",
+        "3) grep -E '^JWT_PRIVATE_KEY=' .env | head -1 → must contain a real PEM (or path to one)",
+        "4) bash scripts/dev-restart.sh --reset",
+        "5) curl -X POST /api/v1/auth/sign-up with a real test user",
+        "expect 201 + JWT in response",
+        "6) Decode the JWT header (jwt.io or jwt-cli) and confirm RS256 algorithm",
+        "7) Re-run setup-from-scratch.sh",
+        "confirm idempotency log line."
+      ],
+      "allowed_paths": [],
+      "conflict_groups": [
+        "dev_env_setup"
+      ],
+      "write_set": [
+        "scripts/setup-from-scratch.sh",
+        ".env.example"
+      ],
+      "journey_refs": [
+        "J100"
+      ],
+      "handoff_path": "orchestrator-state/tasks/handoffs/P00-S02-T014.md",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P00-S02-T014",
+      "origin": {
+        "type": "runtime_followup",
+        "followup_id": "FU-20260510095827-ensure-jwt-keypair-auto-generate-dev-rsa-keypair",
+        "origin_task_id": "P00-S02-T013",
+        "severity": "medium",
+        "kind": "data"
+      },
+      "notes": [
+        "Runtime follow-up promoted from FU-20260510095827-ensure-jwt-keypair-auto-generate-dev-rsa-keypair",
+        "Description: Discovered during /verify-slice P00-S02-T013 (R3). The fresh-clone dev workflow auto-generates ENCRYPTION_KEY via setup-from-scratch.sh::ensure_encryption_key but does NOT auto-generate a JWT keypair. JWT_PRIVATE_KEY/JWT_PUBLIC_KEY in .env.example are literal placeholders ('dev-rsa-private-key-pem-placeholder' after T013) that pydantic-settings accepts as SecretStr at startup but will fail at runtime when sign-up/sign-in tries to sign or verify a JWT (PEM parse error). T013 did not introduce this — it is pre-existing behavior documented in .env.example lines 65-72 expecting the human dev to run openssl genrsa manually. With sign-up already implemented (P01-S02-T001 commit 04914a9) and sign-in (P01-S02-T002) imminent, this becomes an actual blocker for journey J100 verification on any fresh clone. Add an ensure_jwt_keypair function analogous to ensure_encryption_key: detect placeholder values, run 'openssl genrsa -out .keys/jwt_private.pem 4096' + 'openssl rsa -in .keys/jwt_private.pem -pubout -out .keys/jwt_public.pem' (or PEM-as-string in .env), inject the result into .env, and update .env.example to document the new placeholders/format if needed."
+      ]
     },
     {
       "id": "P00-S02-T010",
@@ -1160,7 +1276,7 @@
       "phase_id": "P00",
       "step_id": "P00-S02",
       "title": "Disable SQLAlchemy echo in verbose mode to prevent Fernet token exposure in logs",
-      "status": "ready_for_close",
+      "status": "done",
       "build_state": "planned",
       "product_increment": "current",
       "depends_on": [
@@ -1202,9 +1318,64 @@
       "claimed_by": "sergiolr",
       "claim_terminal_task_env": "P00-S02-T012",
       "task_pack_path": "orchestrator-state/tasks/task-packs/P00-S02-T012.md",
+      "last_outcome": "committed",
+      "last_updated_by": "closer",
+      "last_stop_at": "2026-05-10T10:57:04+00:00",
+      "validator_outcome": "approved",
+      "validator_next_status": "ready_for_close",
+      "report_path": "orchestrator-state/tasks/reports/P00-S02-T012.md"
+    },
+    {
+      "id": "P00-S02-T016",
+      "phase_id": "P00",
+      "step_id": "P00-S02",
+      "title": "test_admin_ai_discover_models event-loop conflict under live uvicorn",
+      "status": "ready_for_close",
+      "build_state": "planned",
+      "product_increment": "current",
+      "depends_on": [
+        "P00-S02-T012"
+      ],
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry",
+      "acceptance": [
+        "Both tests pass deterministically when run with .env.local loaded AND dev uvicorn :8000 up (or skip cleanly with explanatory marker)"
+      ],
+      "verification_commands": [
+        "1) Start dev backend",
+        "2) source .env + .env.local",
+        "3) pytest tests/integration/test_admin_ai_discover_models.py -v -> all pass or skip-with-reason",
+        "0 RuntimeError event-loop errors"
+      ],
+      "allowed_paths": [],
+      "conflict_groups": [
+        "admin_ai_endpoints"
+      ],
+      "write_set": [
+        "backend/tests/integration/test_admin_ai_discover_models.py"
+      ],
+      "journey_refs": [
+        "J103"
+      ],
+      "handoff_path": "orchestrator-state/tasks/handoffs/P00-S02-T016.md",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P00-S02-T016/",
+      "origin": {
+        "type": "runtime_followup",
+        "followup_id": "FU-20260510104826-test-admin-ai-discover-models-event-loop-conflic",
+        "origin_task_id": "P00-S02-T012",
+        "severity": "medium",
+        "kind": "test"
+      },
+      "notes": [
+        "Runtime follow-up promoted from FU-20260510104826-test-admin-ai-discover-models-event-loop-conflic",
+        "Description: Two T006 tests (test_discover_models_idempotent, test_discover_models_404_unknown_provider) raise 'Task got Future attached to a different loop' when run with VERIFICATION_GEMINI_API_KEY loaded AND the dev uvicorn backend up on :8000. They use httpx.AsyncClient(transport=ASGITransport(app=app)) on a different asyncio event loop than the live uvicorn pool that already holds asyncpg connections to the same Postgres :5433. Surface during P00-S02-T012 verify run when .env.local was loaded. Pre-existing fragility outside T012 scope (T012 diff is single-line echo=False in db.py)."
+      ],
+      "claimed_at": "2026-05-10T11:05:50+00:00",
+      "claimed_by": "sergiolr",
+      "claim_terminal_task_env": "P00-S02-T016",
+      "task_pack_path": "orchestrator-state/tasks/task-packs/P00-S02-T016.md",
       "last_outcome": "pass",
       "last_updated_by": "tester",
-      "last_stop_at": "2026-05-10T09:59:50+00:00",
+      "last_stop_at": "2026-05-10T11:39:43+00:00",
       "validator_outcome": "approved",
       "validator_next_status": "ready_for_close"
     },
@@ -5413,6 +5584,7 @@
       "task_ids": [
         "P00-S02-T011",
         "P00-S02-T013",
+        "P00-S02-T014",
         "P01-S02-T001",
         "P01-S02-T012",
         "P01-S02-T011",
@@ -5432,7 +5604,9 @@
       "task_ids_source_order": [
         "P00-S02-T011",
         "P00-S02-T013",
+        "P00-S02-T014",
         "P01-S02-T001",
+        "P01-S02-T012",
         "P01-S02-T011",
         "P01-S02-T010",
         "P01-S02-T009",
@@ -5445,8 +5619,7 @@
         "P01-S02-T007",
         "P03-S01-T001",
         "P03-S01-T005",
-        "P05-S01-T001",
-        "P01-S02-T012"
+        "P05-S01-T001"
       ],
       "slices_raw": "P01-S02, P03-S01-T001, P03-S01-T005, P05-S01-T001",
       "verification": "/verify-journey J100",
@@ -5457,7 +5630,7 @@
       "completion_policy": "all_task_ids_done",
       "task_order_policy": "dag_topological_order",
       "terminal_task_ids": [
-        "P00-S02-T013",
+        "P00-S02-T014",
         "P01-S02-T012",
         "P01-S02-T011",
         "P01-S02-T010",
@@ -5628,6 +5801,7 @@
         "P00-S02-T011",
         "P00-S02-T010",
         "P00-S02-T012",
+        "P00-S02-T016",
         "P00-S02-T009",
         "P02-S05-T001",
         "P02-S05-T002",
@@ -5648,7 +5822,8 @@
         "P04-S01-T002",
         "P04-S01-T003",
         "P04-S01-T004",
-        "P05-S01-T004"
+        "P05-S01-T004",
+        "P00-S02-T016"
       ],
       "slices_raw": "P02-S05, P04-S01-T002..T004, P05-S01-T004",
       "verification": "/verify-journey J103",
@@ -5661,7 +5836,7 @@
       "terminal_task_ids": [
         "P00-S02-T007",
         "P00-S02-T011",
-        "P00-S02-T012",
+        "P00-S02-T016",
         "P00-S02-T009",
         "P05-S01-T004"
       ]
@@ -5812,8 +5987,11 @@
       "P00-S02-T006",
       "P00-S02-T011",
       "P00-S02-T013",
+      "P00-S02-T015",
+      "P00-S02-T014",
       "P00-S02-T010",
       "P00-S02-T012",
+      "P00-S02-T016",
       "P00-S02-T009",
       "P01-S01-T001",
       "P01-S02-T001",
@@ -5941,12 +6119,24 @@
         "P00-S02-T013"
       ],
       [
+        "P00-S02-T013",
+        "P00-S02-T015"
+      ],
+      [
+        "P00-S02-T013",
+        "P00-S02-T014"
+      ],
+      [
         "P00-S02-T006",
         "P00-S02-T010"
       ],
       [
         "P00-S02-T010",
         "P00-S02-T012"
+      ],
+      [
+        "P00-S02-T012",
+        "P00-S02-T016"
       ],
       [
         "P00-S02-T006",
@@ -6457,72 +6647,75 @@
       "P00-S02-T006": 12,
       "P00-S02-T011": 13,
       "P00-S02-T013": 14,
-      "P00-S02-T010": 15,
-      "P00-S02-T012": 16,
-      "P00-S02-T009": 17,
-      "P01-S01-T001": 18,
-      "P01-S02-T001": 19,
-      "P01-S02-T012": 20,
-      "P01-S02-T011": 21,
-      "P01-S02-T010": 22,
-      "P01-S02-T009": 23,
-      "P01-S02-T008": 24,
-      "P01-S02-T002": 25,
-      "P01-S02-T003": 26,
-      "P01-S02-T004": 27,
-      "P01-S02-T005": 28,
-      "P01-S02-T006": 29,
-      "P01-S02-T007": 30,
-      "P01-S03-T001": 31,
-      "P01-S01-T002": 32,
-      "P01-S01-T003": 33,
-      "P01-S01-T004": 34,
-      "P01-S01-T005": 35,
-      "P01-S01-T006": 36,
-      "P02-S01-T001": 37,
-      "P02-S02-T001": 38,
-      "P02-S03-T001": 39,
-      "P02-S03-T002": 40,
-      "P02-S04-T001": 41,
-      "P02-S04-T002": 42,
-      "P02-S05-T001": 43,
-      "P02-S05-T002": 44,
-      "P02-S06-T001": 45,
-      "P02-S06-T002": 46,
-      "P02-S07-T001": 47,
-      "P02-S08-T001": 48,
-      "P03-S01-T001": 49,
-      "P03-S01-T002": 50,
-      "P03-S01-T003": 51,
-      "P03-S01-T004": 52,
-      "P03-S01-T005": 53,
-      "P03-S02-T001": 54,
-      "P03-S02-T002": 55,
-      "P03-S02-T003": 56,
-      "P03-S02-T004": 57,
-      "P04-S01-T001": 58,
-      "P04-S01-T002": 59,
-      "P04-S01-T003": 60,
-      "P04-S01-T004": 61,
-      "P04-S02-T001": 62,
-      "P04-S02-T002": 63,
-      "P04-S02-T003": 64,
-      "P04-S02-T004": 65,
-      "P04-S02-T005": 66,
-      "P04-S03-T001": 67,
-      "P04-S03-T002": 68,
-      "P05-S01-T001": 69,
-      "P05-S01-T002": 70,
-      "P05-S01-T003": 71,
-      "P05-S01-T004": 72,
-      "P05-S01-T005": 73,
-      "P05-S01-T006": 74,
-      "P05-S02-T001": 75,
-      "P05-S02-T002": 76,
-      "P05-S02-T003": 77,
-      "P06-S01-T001": 78,
-      "P06-S01-T002": 79,
-      "P06-S01-T003": 80
+      "P00-S02-T015": 15,
+      "P00-S02-T014": 16,
+      "P00-S02-T010": 17,
+      "P00-S02-T012": 18,
+      "P00-S02-T016": 19,
+      "P00-S02-T009": 20,
+      "P01-S01-T001": 21,
+      "P01-S02-T001": 22,
+      "P01-S02-T012": 23,
+      "P01-S02-T011": 24,
+      "P01-S02-T010": 25,
+      "P01-S02-T009": 26,
+      "P01-S02-T008": 27,
+      "P01-S02-T002": 28,
+      "P01-S02-T003": 29,
+      "P01-S02-T004": 30,
+      "P01-S02-T005": 31,
+      "P01-S02-T006": 32,
+      "P01-S02-T007": 33,
+      "P01-S03-T001": 34,
+      "P01-S01-T002": 35,
+      "P01-S01-T003": 36,
+      "P01-S01-T004": 37,
+      "P01-S01-T005": 38,
+      "P01-S01-T006": 39,
+      "P02-S01-T001": 40,
+      "P02-S02-T001": 41,
+      "P02-S03-T001": 42,
+      "P02-S03-T002": 43,
+      "P02-S04-T001": 44,
+      "P02-S04-T002": 45,
+      "P02-S05-T001": 46,
+      "P02-S05-T002": 47,
+      "P02-S06-T001": 48,
+      "P02-S06-T002": 49,
+      "P02-S07-T001": 50,
+      "P02-S08-T001": 51,
+      "P03-S01-T001": 52,
+      "P03-S01-T002": 53,
+      "P03-S01-T003": 54,
+      "P03-S01-T004": 55,
+      "P03-S01-T005": 56,
+      "P03-S02-T001": 57,
+      "P03-S02-T002": 58,
+      "P03-S02-T003": 59,
+      "P03-S02-T004": 60,
+      "P04-S01-T001": 61,
+      "P04-S01-T002": 62,
+      "P04-S01-T003": 63,
+      "P04-S01-T004": 64,
+      "P04-S02-T001": 65,
+      "P04-S02-T002": 66,
+      "P04-S02-T003": 67,
+      "P04-S02-T004": 68,
+      "P04-S02-T005": 69,
+      "P04-S03-T001": 70,
+      "P04-S03-T002": 71,
+      "P05-S01-T001": 72,
+      "P05-S01-T002": 73,
+      "P05-S01-T003": 74,
+      "P05-S01-T004": 75,
+      "P05-S01-T005": 76,
+      "P05-S01-T006": 77,
+      "P05-S02-T001": 78,
+      "P05-S02-T002": 79,
+      "P05-S02-T003": 80,
+      "P06-S01-T001": 81,
+      "P06-S01-T002": 82,
+      "P06-S01-T003": 83
     },
     "adjacency_matrix": [
       [
@@ -6606,6 +6799,9 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         0
       ],
       [
@@ -6640,6 +6836,9 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         1,
         0,
         0,
@@ -6692,6 +6891,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -6730,6 +6930,8 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
         0,
         0,
@@ -6780,6 +6982,8 @@
         0,
         0,
         1,
+        0,
+        0,
         0,
         0,
         0,
@@ -6824,6 +7028,7 @@
         0,
         0,
         0,
+        0,
         1,
         1,
         1,
@@ -6858,6 +7063,9 @@
         0
       ],
       [
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -7021,6 +7229,9 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         0
       ],
       [
@@ -7042,6 +7253,9 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         1,
         0,
         0,
@@ -7117,6 +7331,7 @@
         0,
         0,
         1,
+        0,
         0,
         0,
         0,
@@ -7187,9 +7402,13 @@
         0,
         0,
         0,
+        0,
+        0,
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -7270,6 +7489,7 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
@@ -7286,6 +7506,9 @@
         1,
         1,
         1,
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -7436,6 +7659,9 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         0
       ],
       [
@@ -7519,9 +7745,13 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -7534,12 +7764,98 @@
         0,
         0,
         0,
+        1,
+        0,
         0,
+        0,
         1,
+        0,
         0,
         1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
         0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
         1,
+        0,
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -7602,9 +7918,12 @@
         0,
         0,
         0,
+        0,
+        0,
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -7620,6 +7939,127 @@
         0,
         0,
         1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -7652,6 +8092,37 @@
         0,
         0,
         0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -7685,9 +8156,32 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -7705,6 +8199,8 @@
         0,
         0,
         0,
+        1,
+        0,
         0,
         0,
         0,
@@ -7771,6 +8267,8 @@
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -7787,6 +8285,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -7854,6 +8353,9 @@
         0
       ],
       [
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -8017,6 +8519,9 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         0
       ],
       [
@@ -8039,6 +8544,9 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         1,
         0,
         0,
@@ -8103,6 +8611,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -8123,6 +8632,8 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
         1,
         1,
@@ -8186,6 +8697,8 @@
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -8266,9 +8779,13 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -8432,9 +8949,13 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -8515,9 +9036,13 @@
         0,
         0,
         0,
+        0,
+        0,
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -8598,9 +9123,13 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -8711,6 +9240,9 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         1,
         0,
         0,
@@ -8767,6 +9299,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -8824,6 +9357,8 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
         0,
         0,
@@ -8850,6 +9385,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -8901,6 +9437,8 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
         0,
         0,
@@ -8933,6 +9471,8 @@
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -8963,6 +9503,7 @@
         0,
         0,
         0,
+        0,
         1,
         1,
         0,
@@ -9016,6 +9557,9 @@
         0
       ],
       [
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -9148,6 +9692,9 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         1,
         0,
         0,
@@ -9182,6 +9729,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -9201,6 +9749,8 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
         0,
         0,
@@ -9265,6 +9815,8 @@
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -9345,9 +9897,13 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -9467,6 +10023,9 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         1,
         0,
         0,
@@ -9514,6 +10073,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -9594,9 +10154,13 @@
         0,
         0,
         0,
+        0,
+        0,
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -9636,6 +10200,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         1,
@@ -9680,6 +10245,8 @@
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -9723,6 +10290,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -9763,6 +10331,9 @@
         0
       ],
       [
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -9901,6 +10472,9 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         1,
         0,
         0,
@@ -9929,6 +10503,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -9969,6 +10544,8 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
         0,
         1,
@@ -10012,6 +10589,8 @@
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -10057,6 +10636,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -10095,6 +10675,9 @@
         0
       ],
       [
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -10236,6 +10819,9 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         1,
         0,
         0,
@@ -10261,6 +10847,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -10307,6 +10894,8 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
         0,
         0,
@@ -10344,6 +10933,8 @@
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -10407,6 +10998,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -10427,6 +11019,9 @@
         0
       ],
       [
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -10576,6 +11171,9 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         1,
         0,
         0,
@@ -10646,6 +11244,9 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         1,
         0,
         0,
@@ -10676,6 +11277,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -10756,9 +11358,13 @@
         0,
         0,
         0,
+        0,
+        0,
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -10811,6 +11417,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -10842,6 +11449,9 @@
         0
       ],
       [
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -10994,6 +11604,9 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         1,
         0,
         0,
@@ -11008,6 +11621,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -11063,6 +11677,8 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
         0,
         1,
@@ -11091,6 +11707,8 @@
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -11147,6 +11765,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -11174,6 +11793,9 @@
         0
       ],
       [
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -11328,6 +11950,9 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         1,
         0,
         0,
@@ -11340,6 +11965,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -11399,6 +12025,8 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
         0,
         0,
@@ -11423,6 +12051,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -11483,6 +12112,8 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
         0,
         0,
@@ -11506,6 +12137,8 @@
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -11567,6 +12200,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -11589,6 +12223,9 @@
         0
       ],
       [
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -11735,6 +12372,9 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         1,
         0,
         0,
@@ -11755,6 +12395,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -11828,6 +12469,8 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
         0,
         0,
@@ -11838,6 +12481,8 @@
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -11903,6 +12548,7 @@
         0,
         0,
         0,
+        0,
         1,
         1,
         0,
@@ -11921,6 +12567,9 @@
         0
       ],
       [
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -12078,6 +12727,9 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         1,
         0,
         0,
@@ -12087,6 +12739,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -12167,9 +12820,13 @@
         0,
         0,
         0,
+        0,
+        0,
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -12250,9 +12907,12 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -12330,12 +12990,16 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
         0
       ],
       [
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -12496,12 +13160,16 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         1,
         0,
         0,
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -12577,6 +13245,8 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
         1,
         1,
@@ -12585,6 +13255,8 @@
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -12660,6 +13332,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         1,
@@ -12668,6 +13341,9 @@
         0
       ],
       [
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -12829,11 +13505,15 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         1,
         0,
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -12912,11 +13592,15 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
         0,
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -12995,11 +13679,15 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0
       ],
       [
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -13163,9 +13851,15 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         1
       ],
       [
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -13308,11 +14002,19 @@
       "P00-S02-T011": [
         "P00-S02-T013"
       ],
-      "P00-S02-T013": [],
+      "P00-S02-T013": [
+        "P00-S02-T015",
+        "P00-S02-T014"
+      ],
+      "P00-S02-T015": [],
+      "P00-S02-T014": [],
       "P00-S02-T010": [
         "P00-S02-T012"
       ],
-      "P00-S02-T012": [],
+      "P00-S02-T012": [
+        "P00-S02-T016"
+      ],
+      "P00-S02-T016": [],
       "P00-S02-T009": [],
       "P01-S01-T001": [
         "P01-S02-T001",
@@ -13579,11 +14281,20 @@
       "P00-S02-T013": [
         "P00-S02-T011"
       ],
+      "P00-S02-T015": [
+        "P00-S02-T013"
+      ],
+      "P00-S02-T014": [
+        "P00-S02-T013"
+      ],
       "P00-S02-T010": [
         "P00-S02-T006"
       ],
       "P00-S02-T012": [
         "P00-S02-T010"
+      ],
+      "P00-S02-T016": [
+        "P00-S02-T012"
       ],
       "P00-S02-T009": [
         "P00-S02-T006"
@@ -13903,6 +14614,9 @@
         "P04-S03-T002"
       ],
       [
+        "P00-S02-T015",
+        "P00-S02-T014",
+        "P00-S02-T016",
         "P01-S02-T004",
         "P01-S02-T007",
         "P02-S06-T001",
@@ -14002,10 +14716,19 @@
       "P00-S02-T013": [
         "dev_env_setup"
       ],
+      "P00-S02-T015": [
+        "dev_env_setup"
+      ],
+      "P00-S02-T014": [
+        "dev_env_setup"
+      ],
       "P00-S02-T010": [
         "admin_ai_endpoints"
       ],
       "P00-S02-T012": [
+        "admin_ai_endpoints"
+      ],
+      "P00-S02-T016": [
         "admin_ai_endpoints"
       ],
       "P00-S02-T009": [
@@ -14273,11 +14996,22 @@
       "P00-S02-T013": [
         ".env.example"
       ],
+      "P00-S02-T015": [
+        ".pre-commit-config.yaml",
+        ".github/workflows/"
+      ],
+      "P00-S02-T014": [
+        "scripts/setup-from-scratch.sh",
+        ".env.example"
+      ],
       "P00-S02-T010": [
         "backend/app/seeds/loader.py"
       ],
       "P00-S02-T012": [
         "backend/app/core/db.py"
+      ],
+      "P00-S02-T016": [
+        "backend/tests/integration/test_admin_ai_discover_models.py"
       ],
       "P00-S02-T009": [
         "backend/app/core/logging.py"
@@ -14550,8 +15284,11 @@
       "P00-S02-T006": "medium",
       "P00-S02-T011": "medium",
       "P00-S02-T013": "medium",
+      "P00-S02-T015": "medium",
+      "P00-S02-T014": "medium",
       "P00-S02-T010": "medium",
       "P00-S02-T012": "medium",
+      "P00-S02-T016": "medium",
       "P00-S02-T009": "medium",
       "P01-S01-T001": "medium",
       "P01-S02-T001": "medium",
@@ -14633,8 +15370,11 @@
       "P00-S02-T006": "human",
       "P00-S02-T011": "human",
       "P00-S02-T013": "human",
+      "P00-S02-T015": "human",
+      "P00-S02-T014": "human",
       "P00-S02-T010": "human",
       "P00-S02-T012": "human",
+      "P00-S02-T016": "human",
       "P00-S02-T009": "human",
       "P01-S01-T001": "human",
       "P01-S02-T001": "human",
@@ -14701,7 +15441,7 @@
       "P06-S01-T003": "human"
     },
     "canonical_source": "registry.tasks",
-    "source_digest": "2b896fd856c39e020388740750e01fc5fbd8eae88fda709d575a72ab886da52a",
+    "source_digest": "a23c3cb336da04d70aed14cc8f574d2a77ea0e1d5c8c54aece031558414229c1",
     "errors": []
   },
   "updated_at": "2026-05-09T22:16:54+00:00"

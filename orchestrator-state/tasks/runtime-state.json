@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-05-10T09:59:50+00:00",
-  "active_phase_id": "P01",
-  "active_task_id": "P01-S02-T012",
+  "generated_at": "2026-05-10T11:39:43+00:00",
+  "active_phase_id": "P00",
+  "active_task_id": "P00-S02-T014",
   "last_worker": "",
   "last_event": "subagent_stop",
   "pending_journey_verifications": [],
@@ -9,7 +9,7 @@
   "last_journey_verified": null,
   "spawn_budget": 20,
   "spawns_in_current_slice": {
-    "P01-S02-T012": 1
+    "P00-S02-T014": 1
   },
   "open_followups": [
     {
@@ -214,25 +214,37 @@
     },
     {
       "id": "FU-20260510095809-add-bash-n-env-example-pre-commit-ci-lint-to-pre",
-      "status": "proposed",
+      "status": "promoted",
       "severity": "low",
       "origin_task_id": "P00-S02-T013",
       "title": "Add bash -n .env.example pre-commit/CI lint to prevent placeholder regression",
       "path": "orchestrator-state/tasks/follow-ups/FU-20260510095809-add-bash-n-env-example-pre-commit-ci-lint-to-pre.yaml",
-      "created_at": "2026-05-10T09:58:09+00:00"
+      "created_at": "2026-05-10T09:58:09+00:00",
+      "promoted_task_id": "P00-S02-T015"
     },
     {
       "id": "FU-20260510095827-ensure-jwt-keypair-auto-generate-dev-rsa-keypair",
-      "status": "proposed",
+      "status": "promoted",
       "severity": "medium",
       "origin_task_id": "P00-S02-T013",
       "title": "ensure_jwt_keypair: auto-generate dev RSA keypair in setup-from-scratch.sh",
       "path": "orchestrator-state/tasks/follow-ups/FU-20260510095827-ensure-jwt-keypair-auto-generate-dev-rsa-keypair.yaml",
-      "created_at": "2026-05-10T09:58:27+00:00"
+      "created_at": "2026-05-10T09:58:27+00:00",
+      "promoted_task_id": "P00-S02-T014"
+    },
+    {
+      "id": "FU-20260510104826-test-admin-ai-discover-models-event-loop-conflic",
+      "status": "promoted",
+      "severity": "medium",
+      "origin_task_id": "P00-S02-T012",
+      "title": "test_admin_ai_discover_models event-loop conflict under live uvicorn",
+      "path": "orchestrator-state/tasks/follow-ups/FU-20260510104826-test-admin-ai-discover-models-event-loop-conflic.yaml",
+      "created_at": "2026-05-10T10:48:26+00:00",
+      "promoted_task_id": "P00-S02-T016"
     }
   ],
-  "last_stop_at": "2026-05-10T10:00:25+00:00",
-  "last_claimed_task_id": "P00-S02-T013",
+  "last_stop_at": "2026-05-10T11:43:24+00:00",
+  "last_claimed_task_id": "P00-S02-T015",
   "last_trailer": {},
-  "last_followup_id": "FU-20260510095827-ensure-jwt-keypair-auto-generate-dev-rsa-keypair"
+  "last_followup_id": "FU-20260510104826-test-admin-ai-discover-models-event-loop-conflic"
 }
