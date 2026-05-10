@@ -502,6 +502,17 @@ Docker Compose local con servicios `frontend`, `backend`, `postgres`, `redis`, `
 | `MAX_UPLOAD_MB` | 25 | 25 | 25 | límite documentos |
 | `MCP_ALLOWLIST_DOMAINS` | localhost | staging domains | approved domains | seguridad MCP |
 
+> **Dev workflow — ENCRYPTION_KEY**: `bash scripts/setup-from-scratch.sh` genera
+> automáticamente un `ENCRYPTION_KEY` Fernet válido si `.env` carece del campo o lleva
+> el placeholder `<change-me>` / legacy `PROVIDER_ENCRYPTION_KEY=...`. La clave nunca se
+> imprime ni se commitea (`.env` está en `.gitignore`). El backend mantiene un fallback
+> transitorio `ENCRYPTION_KEY → PROVIDER_ENCRYPTION_KEY → settings.encryption_key` en
+> `app/core/security.py` que se retira en P02-S02-T001 cuando entren credenciales
+> productivas. El seed loader `bootstrap_verification_data` lee `ENCRYPTION_KEY` directamente
+> (sin fallback): asegúrate de que la clave esté presente antes de ejecutar seeds (el script
+> garantiza esto cuando se corre desde cero). **Rotación**: cambiar `ENCRYPTION_KEY` invalida
+> todos los datos cifrados existentes — planificado con re-encrypt en P02-S02-T001.
+
 ### 11.1.bis Variables de entorno del verification bundle
 
 Estos 5 valores viven solo en `.env.local` (gitignored); las JSON fixtures bajo `data/verification/` usan los campos `api_key_env` / `api_key_backup_env` / `access_token_env` para referenciarlos por nombre. El loader los resuelve en tiempo de ejecución mediante `resolve_env_var(name, required=True)`.

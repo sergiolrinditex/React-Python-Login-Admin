@@ -1,0 +1,236 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.5, pytest-9.0.3, pluggy-1.6.0 -- /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/bin/python3.11
+cachedir: .pytest_cache
+rootdir: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend
+configfile: pyproject.toml
+plugins: cov-7.1.0, asyncio-1.3.0, langsmith-0.8.3, anyio-4.13.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 151 items
+
+tests/integration/test_admin_ai_discover_models.py::test_discover_models_gemini_real SKIPPED [  0%]
+tests/integration/test_admin_ai_discover_models.py::test_discover_models_idempotent SKIPPED [  1%]
+tests/integration/test_admin_ai_discover_models.py::test_discover_models_litellm_empty SKIPPED [  1%]
+tests/integration/test_admin_ai_discover_models.py::test_discover_models_404_unknown_provider PASSED [  2%]
+tests/integration/test_admin_ai_discover_models.py::test_discover_models_401_no_auth PASSED [  3%]
+tests/integration/test_admin_ai_discover_models.py::test_discover_models_403_non_admin PASSED [  3%]
+tests/integration/test_admin_ai_discover_models.py::test_audit_log_written SKIPPED [  4%]
+tests/integration/test_auth_migration.py::test_alembic_round_trip_upgrade_downgrade_upgrade PASSED [  5%]
+tests/integration/test_auth_migration.py::test_all_twelve_tables_exist PASSED [  5%]
+tests/integration/test_auth_migration.py::test_alembic_version_is_0003 PASSED [  6%]
+tests/integration/test_auth_migration.py::test_extensions_present PASSED [  7%]
+tests/integration/test_auth_migration.py::test_users_email_is_unique PASSED [  7%]
+tests/integration/test_auth_migration.py::test_users_language_check_constraint PASSED [  8%]
+tests/integration/test_auth_migration.py::test_employee_profiles_user_id_cascade PASSED [  9%]
+tests/integration/test_auth_migration.py::test_audit_logs_actor_user_id_set_null PASSED [  9%]
+tests/integration/test_auth_migration.py::test_required_explicit_indexes_exist PASSED [ 10%]
+tests/integration/test_auth_migration.py::test_audit_logs_has_metadata_jsonb PASSED [ 11%]
+tests/integration/test_auth_migration.py::test_audit_logs_has_created_at_with_index PASSED [ 11%]
+tests/integration/test_auth_migration.py::test_downgrade_drops_all_tables_and_leaves_alembic_version PASSED [ 12%]
+tests/integration/test_seed_idempotency.py::test_seed_auth_idempotent_when_no_tables SKIPPED [ 13%]
+tests/integration/test_seed_idempotency.py::test_seed_all_namespaces_idempotent_when_no_tables SKIPPED [ 13%]
+tests/integration/test_seed_idempotency.py::test_seed_exit_0_when_tables_missing SKIPPED [ 14%]
+tests/integration/test_seed_loader_after_migration.py::test_users_table_exists_after_migration PASSED [ 15%]
+tests/integration/test_seed_loader_after_migration.py::test_employee_profiles_table_exists_after_migration PASSED [ 15%]
+tests/integration/test_seed_loader_after_migration.py::test_users_row_insert_and_upsert_with_real_schema PASSED [ 16%]
+tests/integration/test_seed_loader_after_migration.py::test_language_check_constraint_rejects_invalid_locale PASSED [ 17%]
+tests/integration/test_seed_loader_after_migration.py::test_employee_profile_insert_with_real_schema PASSED [ 17%]
+tests/integration/test_seed_loader_after_migration.py::test_table_probe_confirms_users_exists PASSED [ 18%]
+tests/integration/test_seed_missing_bundle.py::test_missing_source_dir_exits_2 PASSED [ 19%]
+tests/integration/test_seed_missing_bundle.py::test_truncated_fixture_missing_field_exits_1 PASSED [ 19%]
+tests/integration/test_seed_missing_bundle.py::test_corrupt_json_exits_1 PASSED [ 20%]
+tests/integration/test_seed_missing_bundle.py::test_credential_without_synthetic_prefix_exits_1 PASSED [ 21%]
+tests/integration/test_seed_missing_bundle.py::test_real_key_pattern_credential_exits_1 PASSED [ 21%]
+tests/integration/test_seed_namespaces.py::test_only_auth_does_not_touch_other_namespaces SKIPPED [ 22%]
+tests/integration/test_seed_namespaces.py::test_only_admin_ai_does_not_touch_other_namespaces SKIPPED [ 23%]
+tests/integration/test_seed_namespaces.py::test_only_mcp_agents_does_not_touch_other_namespaces PASSED [ 23%]
+tests/integration/test_seed_productive_bundle.py::test_manifest_is_productive PASSED [ 24%]
+tests/integration/test_seed_productive_bundle.py::test_dry_run_productive_bundle_exits_0 PASSED [ 25%]
+tests/integration/test_seed_productive_bundle.py::test_mfa_fixture_productive_shape PASSED [ 25%]
+tests/integration/test_seed_productive_bundle.py::test_providers_fixture_uses_env_refs PASSED [ 26%]
+tests/integration/test_seed_productive_bundle.py::test_servers_fixture_env_or_public PASSED [ 27%]
+tests/integration/test_seed_productive_bundle.py::test_rag_docs_no_deprecated_entries_active PASSED [ 27%]
+tests/integration/test_seed_productive_bundle.py::test_seed_all_namespaces_table_tolerant_with_real_db SKIPPED [ 28%]
+tests/test_dependency_smoke.py::test_fastapi_importable PASSED           [ 29%]
+tests/test_dependency_smoke.py::test_uvicorn_importable PASSED           [ 29%]
+tests/test_dependency_smoke.py::test_sqlalchemy_importable PASSED        [ 30%]
+tests/test_dependency_smoke.py::test_alembic_importable PASSED           [ 31%]
+tests/test_dependency_smoke.py::test_asyncpg_importable PASSED           [ 31%]
+tests/test_dependency_smoke.py::test_pydantic_importable PASSED          [ 32%]
+tests/test_dependency_smoke.py::test_pydantic_settings_importable PASSED [ 33%]
+tests/test_dependency_smoke.py::test_argon2_cffi_importable PASSED       [ 33%]
+tests/test_dependency_smoke.py::test_pyjwt_importable PASSED             [ 34%]
+tests/test_dependency_smoke.py::test_cryptography_importable PASSED      [ 35%]
+tests/test_dependency_smoke.py::test_python_multipart_importable PASSED  [ 35%]
+tests/test_dependency_smoke.py::test_itsdangerous_importable PASSED      [ 36%]
+tests/test_dependency_smoke.py::test_httpx_importable PASSED             [ 37%]
+tests/test_dependency_smoke.py::test_pypdf_importable PASSED             [ 37%]
+tests/test_dependency_smoke.py::test_python_docx_importable PASSED       [ 38%]
+tests/test_dependency_smoke.py::test_celery_importable PASSED            [ 39%]
+tests/test_dependency_smoke.py::test_redis_importable PASSED             [ 39%]
+tests/test_dependency_smoke.py::test_resend_importable PASSED            [ 40%]
+tests/test_dependency_smoke.py::test_structlog_importable PASSED         [ 41%]
+tests/test_dependency_smoke.py::test_prometheus_client_importable PASSED [ 41%]
+tests/test_dependency_smoke.py::test_boto3_importable PASSED             [ 42%]
+tests/test_dependency_smoke.py::test_pgvector_importable PASSED          [ 43%]
+tests/test_dependency_smoke.py::test_litellm_importable PASSED           [ 43%]
+tests/test_dependency_smoke.py::test_langchain_core_importable PASSED    [ 44%]
+tests/test_dependency_smoke.py::test_langchain_importable PASSED         [ 45%]
+tests/test_dependency_smoke.py::test_langchain_community_importable PASSED [ 45%]
+tests/test_dependency_smoke.py::test_langchain_text_splitters_importable PASSED [ 46%]
+tests/test_dependency_smoke.py::test_langgraph_importable PASSED         [ 47%]
+tests/test_dependency_smoke.py::test_deepagents_importable PASSED        [ 47%]
+tests/test_dependency_smoke.py::test_mcp_importable PASSED               [ 48%]
+tests/test_dependency_smoke.py::test_tiktoken_importable PASSED          [ 49%]
+tests/test_dependency_smoke.py::test_core_config_importable PASSED       [ 49%]
+tests/test_dependency_smoke.py::test_core_logging_importable PASSED      [ 50%]
+tests/test_dependency_smoke.py::test_core_db_importable PASSED           [ 50%]
+tests/test_dependency_smoke.py::test_dev_tool_importable[ruff] PASSED    [ 51%]
+tests/test_dependency_smoke.py::test_dev_tool_importable[mypy] PASSED    [ 52%]
+tests/test_dependency_smoke.py::test_dev_tool_importable[pytest] PASSED  [ 52%]
+tests/test_dependency_smoke.py::test_dev_tool_importable[pytest_asyncio] PASSED [ 53%]
+tests/test_dependency_smoke.py::test_dev_tool_importable[pytest_cov] PASSED [ 54%]
+tests/test_health.py::test_health_returns_flat_shape_and_200 PASSED      [ 54%]
+tests/test_health.py::test_live_returns_200_without_db PASSED            [ 55%]
+tests/test_health.py::test_ready_returns_200_when_db_ok FAILED           [ 56%]
+tests/test_health.py::test_ready_returns_503_when_db_fails PASSED        [ 56%]
+tests/test_health.py::test_request_id_echoed_when_provided PASSED        [ 57%]
+tests/test_health.py::test_request_id_generated_when_missing PASSED      [ 58%]
+tests/test_health.py::test_logs_redact_secrets_under_verbose PASSED      [ 58%]
+tests/test_health.py::test_health_uptime_increases PASSED                [ 59%]
+tests/test_health.py::test_ready_db_down_does_not_leak_dsn_in_logs PASSED [ 60%]
+tests/test_logging.py::test_exc_info_does_not_leak_frame_locals_verbose PASSED [ 60%]
+tests/test_logging.py::test_exc_info_does_not_leak_frame_locals_json PASSED [ 61%]
+tests/test_logging.py::test_enable_verbose_logging_env_var_false PASSED  [ 62%]
+tests/test_logging.py::test_redaction_processor_still_scrubs_event_dict_keys PASSED [ 62%]
+tests/test_logging.py::test_httpx_logger_suppressed_in_verbose_mode PASSED [ 63%]
+tests/test_logging.py::test_httpx_logger_warning_still_propagates PASSED [ 64%]
+tests/test_logging.py::test_httpx_logger_already_silent_in_production_mode PASSED [ 64%]
+tests/test_logging.py::test_openai_bearer_pattern_not_in_logs PASSED     [ 65%]
+tests/test_logging.py::test_httpx_real_gemini_request_no_key_leak SKIPPED [ 66%]
+tests/unit/agents/test_routing.py::test_single_token_match_selects_correct_agent PASSED [ 66%]
+tests/unit/agents/test_routing.py::test_multi_token_match_selects_higher_score PASSED [ 67%]
+tests/unit/agents/test_routing.py::test_no_overlap_returns_fallback PASSED [ 68%]
+tests/unit/agents/test_routing.py::test_empty_message_returns_fallback PASSED [ 68%]
+tests/unit/agents/test_routing.py::test_empty_subagent_list_returns_fallback PASSED [ 69%]
+tests/unit/agents/test_routing.py::test_tiebreak_prefers_larger_topic_list PASSED [ 70%]
+tests/unit/agents/test_routing.py::test_tiebreak_same_topic_count_prefers_alphabetical_first PASSED [ 70%]
+tests/unit/agents/test_routing.py::test_subagent_with_empty_topics_is_skipped PASSED [ 71%]
+tests/unit/agents/test_routing.py::test_vacaciones_routes_to_hr_policies_agent PASSED [ 72%]
+tests/unit/agents/test_routing.py::test_langchain_routes_to_langchain_docs_agent PASSED [ 72%]
+tests/unit/agents/test_specs.py::test_supervisor_spec_has_no_topics PASSED [ 73%]
+tests/unit/agents/test_specs.py::test_subagent_spec_has_topics PASSED    [ 74%]
+tests/unit/agents/test_specs.py::test_agent_spec_is_frozen PASSED        [ 74%]
+tests/unit/agents/test_specs.py::test_load_specs_from_json_returns_three_specs PASSED [ 75%]
+tests/unit/agents/test_specs.py::test_load_specs_from_json_one_supervisor PASSED [ 76%]
+tests/unit/agents/test_specs.py::test_load_specs_from_json_two_subagents PASSED [ 76%]
+tests/unit/agents/test_specs.py::test_hr_agent_topics_contain_vacaciones PASSED [ 77%]
+tests/unit/agents/test_specs.py::test_langchain_agent_topics_contain_langchain PASSED [ 78%]
+tests/unit/agents/test_specs.py::test_load_specs_file_not_found_raises PASSED [ 78%]
+tests/unit/agents/test_specs.py::test_load_specs_wrong_json_shape_raises PASSED [ 79%]
+tests/unit/agents/test_supervisor.py::test_build_supervisor_from_mixed_specs PASSED [ 80%]
+tests/unit/agents/test_supervisor.py::test_build_supervisor_raises_with_no_subagents PASSED [ 80%]
+tests/unit/agents/test_supervisor.py::test_build_supervisor_accepts_custom_executor PASSED [ 81%]
+tests/unit/agents/test_supervisor.py::test_supervisor_vacaciones_routes_to_hr_agent PASSED [ 82%]
+tests/unit/agents/test_supervisor.py::test_supervisor_langchain_routes_to_langchain_agent PASSED [ 82%]
+tests/unit/agents/test_supervisor.py::test_supervisor_no_overlap_returns_fallback_response PASSED [ 83%]
+tests/unit/agents/test_supervisor.py::test_supervisor_empty_message_returns_fallback_response PASSED [ 84%]
+tests/unit/agents/test_supervisor.py::test_supervisor_executor_exception_propagates PASSED [ 84%]
+tests/unit/agents/test_supervisor.py::test_supervisor_init_empty_subagents_raises PASSED [ 85%]
+tests/unit/agents/test_supervisor.py::test_supervisor_routes_inactive_agents_no_filtering PASSED [ 86%]
+tests/unit/seeds/test_schemas.py::test_mfa_synthetic_valid PASSED        [ 86%]
+tests/unit/seeds/test_schemas.py::test_mfa_synthetic_real_totp_rejected PASSED [ 87%]
+tests/unit/seeds/test_schemas.py::test_mfa_productive_valid PASSED       [ 88%]
+tests/unit/seeds/test_schemas.py::test_mfa_productive_synthetic_flag_rejected PASSED [ 88%]
+tests/unit/seeds/test_schemas.py::test_mfa_none_bundle_type_rejected PASSED [ 89%]
+tests/unit/seeds/test_schemas.py::test_provider_synthetic_valid PASSED   [ 90%]
+tests/unit/seeds/test_schemas.py::test_provider_synthetic_missing_prefix_rejected PASSED [ 90%]
+tests/unit/seeds/test_schemas.py::test_provider_synthetic_real_sk_pattern_rejected PASSED [ 91%]
+tests/unit/seeds/test_schemas.py::test_provider_productive_env_ref_valid PASSED [ 92%]
+tests/unit/seeds/test_schemas.py::test_provider_productive_aiza_pattern_rejected PASSED [ 92%]
+tests/unit/seeds/test_schemas.py::test_model_valid_chat PASSED           [ 93%]
+tests/unit/seeds/test_schemas.py::test_model_reranker_capability_accepted PASSED [ 94%]
+tests/unit/seeds/test_schemas.py::test_model_missing_model_id_raises PASSED [ 94%]
+tests/unit/seeds/test_schemas.py::test_server_synthetic_valid PASSED     [ 95%]
+tests/unit/seeds/test_schemas.py::test_server_synthetic_missing_token_rejected PASSED [ 96%]
+tests/unit/seeds/test_schemas.py::test_server_productive_public_server_valid PASSED [ 96%]
+tests/unit/seeds/test_schemas.py::test_agent_supervisor_valid PASSED     [ 97%]
+tests/unit/seeds/test_schemas.py::test_agent_subagent_missing_parent_rejected PASSED [ 98%]
+tests/unit/seeds/test_schemas.py::test_agent_subagent_with_parent_and_topics_valid PASSED [ 98%]
+tests/unit/seeds/test_schemas.py::test_resolve_env_var_set_returns_value PASSED [ 99%]
+tests/unit/seeds/test_schemas.py::test_resolve_env_var_missing_required_raises PASSED [100%]
+
+=================================== FAILURES ===================================
+______________________ test_ready_returns_200_when_db_ok _______________________
+
+    @pytest.mark.skipif(not _postgres_reachable(), reason="compose postgres not reachable on :5433")
+    async def test_ready_returns_200_when_db_ok() -> None:
+        """GET /ready returns 200 with checks.db.status=="ok" when DB is up.
+    
+        Runs only when compose postgres is reachable.  The developer MUST capture
+        evidence in evidence/test-ready-db-up.log with compose up per acceptance.
+        """
+        async with _make_client() as client:
+            response = await client.get("/ready")
+    
+>       assert response.status_code == 200
+E       assert 503 == 200
+E        +  where 503 = <Response [503 Service Unavailable]>.status_code
+
+tests/test_health.py:145: AssertionError
+----------------------------- Captured stdout call -----------------------------
+{"event": "Exception terminating connection <AdaptedConnection <asyncpg.connection.Connection object at 0x109e625c0>>", "exc_info": ["<class 'RuntimeError'>", "RuntimeError('Event loop is closed')", "<traceback object at 0x138786c40>"], "request_id": "ff27c82ee9244d8086e39efa42895844", "level": "error", "logger": "sqlalchemy.pool.impl.AsyncAdaptedQueuePool", "timestamp": "2026-05-10T04:58:17.509711Z"}
+{"error_class": "RuntimeError", "db_detail": "RuntimeError: Task <Task pending name='starlette.middleware.base.BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.coro' coro=<BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.coro() running at /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/starlette/middleware/base.py:144>", "event": "ERROR health.ready.db_failed: unexpected error on SELECT 1", "request_id": "ff27c82ee9244d8086e39efa42895844", "level": "error", "logger": "app.api.router", "timestamp": "2026-05-10T04:58:17.514568Z"}
+{"failed_probe": "db", "db_detail": "RuntimeError: Task <Task pending name='starlette.middleware.base.BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.coro' coro=<BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.coro() running at /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/starlette/middleware/base.py:144>", "event": "AFTER health.ready.not_ready: critical probe failed", "request_id": "ff27c82ee9244d8086e39efa42895844", "level": "error", "logger": "app.api.router", "timestamp": "2026-05-10T04:58:17.514652Z"}
+------------------------------ Captured log call -------------------------------
+ERROR    sqlalchemy.pool.impl.AsyncAdaptedQueuePool:base.py:377 Exception terminating connection <AdaptedConnection <asyncpg.connection.Connection object at 0x109e625c0>>
+Traceback (most recent call last):
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 373, in _close_connection
+    self._dialect.do_terminate(connection)
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 1127, in do_terminate
+    dbapi_connection.terminate()
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/connectors/asyncio.py", line 402, in terminate
+    self.await_(asyncio.shield(self._terminate_graceful_close()))  # type: ignore[attr-defined] # noqa: E501
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 132, in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 196, in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 912, in _terminate_graceful_close
+    await self._connection.close(timeout=2)
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/asyncpg/connection.py", line 1513, in close
+    await self._protocol.close(timeout)
+  File "asyncpg/protocol/protocol.pyx", line 617, in close
+  File "asyncpg/protocol/protocol.pyx", line 650, in asyncpg.protocol.protocol.BaseProtocol._request_cancel
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/asyncpg/connection.py", line 1682, in _cancel_current_command
+    self._cancellations.add(self._loop.create_task(self._cancel(waiter)))
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 434, in create_task
+    self._check_closed()
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 519, in _check_closed
+    raise RuntimeError('Event loop is closed')
+RuntimeError: Event loop is closed
+ERROR    app.api.router:router.py:209 {'error_class': 'RuntimeError', 'db_detail': "RuntimeError: Task <Task pending name='starlette.middleware.base.BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.coro' coro=<BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.coro() running at /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/starlette/middleware/base.py:144>", 'event': 'ERROR health.ready.db_failed: unexpected error on SELECT 1', 'request_id': 'ff27c82ee9244d8086e39efa42895844', 'level': 'error', 'logger': 'app.api.router', 'timestamp': '2026-05-10T04:58:17.514568Z'}
+ERROR    app.api.router:router.py:157 {'failed_probe': 'db', 'db_detail': "RuntimeError: Task <Task pending name='starlette.middleware.base.BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.coro' coro=<BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.coro() running at /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/starlette/middleware/base.py:144>", 'event': 'AFTER health.ready.not_ready: critical probe failed', 'request_id': 'ff27c82ee9244d8086e39efa42895844', 'level': 'error', 'logger': 'app.api.router', 'timestamp': '2026-05-10T04:58:17.514652Z'}
+=============================== warnings summary ===============================
+tests/test_dependency_smoke.py::test_pyjwt_importable
+  /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/jwt/api_jwt.py:147: InsecureKeyLengthWarning: The HMAC key is 6 bytes long, which is below the minimum recommended length of 32 bytes for SHA256. See RFC 7518 Section 3.2.
+    return self._jws.encode(
+
+tests/test_dependency_smoke.py::test_pyjwt_importable
+  /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/jwt/api_jwt.py:365: InsecureKeyLengthWarning: The HMAC key is 6 bytes long, which is below the minimum recommended length of 32 bytes for SHA256. See RFC 7518 Section 3.2.
+    decoded = self.decode_complete(
+
+tests/test_dependency_smoke.py::test_python_multipart_importable
+  /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/importlib/__init__.py:126: PendingDeprecationWarning: Please use `import python_multipart` instead.
+    return _bootstrap._gcd_import(name[level:], package, level)
+
+tests/test_dependency_smoke.py::test_deepagents_importable
+  /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/langgraph/checkpoint/serde/encrypted.py:5: LangChainPendingDeprecationWarning: The default value of `allowed_objects` will change in a future version. Pass an explicit value (e.g., allowed_objects='messages' or allowed_objects='core') to suppress this warning.
+    from langgraph.checkpoint.serde.jsonplus import JsonPlusSerializer
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_health.py::test_ready_returns_200_when_db_ok - assert 503 =...
+============ 1 failed, 139 passed, 11 skipped, 4 warnings in 12.27s ============

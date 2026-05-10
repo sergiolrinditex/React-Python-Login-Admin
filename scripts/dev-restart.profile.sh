@@ -91,10 +91,17 @@ back_start() {
     echo $! >"${BACK_PID_FILE}"
   )
 
-  # Persist the actual ENCRYPTION_KEY used for back, so db_reseed_admin_ai can
-  # re-encrypt credentials with the same key the running backend will decrypt.
-  printf '%s\n' "${enc_key}" >"${LOG_DIR}/encryption-key.runtime"
-  chmod 600 "${LOG_DIR}/encryption-key.runtime" 2>/dev/null || true
+  # NOTE (P00-S02-T011 security fix): we do NOT persist ENCRYPTION_KEY to disk.
+  # Previously this profile wrote the plaintext Fernet key to
+  #   ${LOG_DIR}/encryption-key.runtime
+  # That cache was untracked but not gitignored — one accidental `git add .`
+  # away from leaking the master key. The single consumer was operator-side
+  # `cat` for debug; downstream tools (db_reseed_admin_ai, seeds bootstrap)
+  # already read ENCRYPTION_KEY from .env via pydantic-settings, so the cache
+  # is redundant. If the env supplied the placeholder and we generated a fresh
+  # key in-memory, it lives only in this profile's environment and the spawned
+  # uvicorn process — exactly the desired blast radius.
+  :
 
   if wait_for back_health 30 "Backend"; then
     info "backend up at $(back_url)/health"

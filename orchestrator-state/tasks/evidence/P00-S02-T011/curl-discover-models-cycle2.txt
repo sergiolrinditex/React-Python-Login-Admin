@@ -1,0 +1,1 @@
+{"detail":{"error":{"code":"upstream_provider_error","message":"Gemini API returned HTTP 400"}}}

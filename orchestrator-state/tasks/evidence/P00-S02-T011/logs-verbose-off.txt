@@ -1,0 +1,17 @@
+Verbose Logging Test — ENABLE_VERBOSE_LOGGING=false
+P00-S02-T011 — Tester pass
+Timestamp: 2026-05-10T04:37:00Z
+
+=== Auth seed with VERBOSE OFF ===
+Command: ENABLE_VERBOSE_LOGGING=false python -m app.seeds.bootstrap_verification_data --source data/verification --only auth
+
+Output observed:
+[logging] BEFORE configure_logging: verbose=False
+(then clean exit, exit_code=0)
+
+No debug/info lines emitted to stdout/stderr.
+Only warning+error would appear if present. None in this run.
+
+=== Confirmed ===
+ENABLE_VERBOSE_LOGGING=false: PASS — only warning+error visible (clean output for seed run).
+No ENCRYPTION_KEY or other secrets in output: PASS.

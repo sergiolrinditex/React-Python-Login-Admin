@@ -1,0 +1,31 @@
+Verbose Logging Test — ENABLE_VERBOSE_LOGGING=true
+P00-S02-T011 — Tester pass
+Timestamp: 2026-05-10T04:37:00Z
+
+=== Auth seed with VERBOSE ON ===
+Command: ENABLE_VERBOSE_LOGGING=true python -m app.seeds.bootstrap_verification_data --source data/verification --only auth
+
+Key log lines observed:
+
+[configure_logging] verbose=True, httpx_loggers_pinned_to_warning=['httpx','httpcore'], httpx_suppressed=True, show_locals='False (security fix P00-S02-T004)'
+
+[seed.cli.start] dry_run=False  only=auth
+[seed.cli.bundle_type_detected] bundle_type=productive
+[seed.auth.upsert_mfa.before] email_hash=016d94a2c783   <-- BEFORE log
+[seed.auth.upsert_mfa.after] email_hash=016d94a2c783  encrypted=True   <-- AFTER log
+[seed.namespace.done] namespace=auth  persisted=6  duration_ms=234.1
+[seed.run.done] exit_code=0  total_rows_inserted=6
+
+=== Security verification ===
+ENCRYPTION_KEY value NOT found in verbose output: PASS
+No sensitive patterns (AIza*, sk-ant-*, Bearer tokens, passwords): PASS
+No httpx URL logs (suppressed by T009 fix): confirmed httpx_suppressed=True in configure_logging
+
+=== Encrypt/Decrypt security logging ===
+Command: ENABLE_VERBOSE_LOGGING=true python3 -c "from app.core.security import encrypt_secret, decrypt_secret; ..."
+
+key_source=ENCRYPTION_KEY (canonical name — not fallback)
+BEFORE encrypt_secret: encrypting credential (no key value logged)
+AFTER encrypt_secret: credential encrypted successfully
+BEFORE decrypt_secret: decrypting credential
+AFTER decrypt_secret: credential decrypted successfully
