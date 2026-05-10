@@ -1,0 +1,55 @@
+# .github/workflows/env-example-lint.yml
+#
+# Slice: P00-S02-T015 — bash -n .env.example regression guard (CI layer)
+# Phase: P00 — Scaffold + Design System (hardening follow-up)
+# Origin: FU-20260510095809 (severity low, kind test)
+#
+# Purpose: Unconditional CI gate that validates .env.example is bash-source-able.
+#   Runs on every push/PR that touches .env.example or this workflow file.
+#   Does NOT depend on pre-commit being installed locally — catches regressions
+#   introduced via --no-verify, fork contributors or direct pushes to main.
+#
+# Design decisions:
+#   D2 — Separate workflow (not a job in orchestrator-tests.yml). Reason: that
+#        workflow's paths-filter covers .claude/**+scripts/**+docs/... — adding
+#        .env.example there would trigger all 4 existing jobs on every env change.
+#        A dedicated workflow keeps scoping clean.
+#   D4 — paths-filter dual: .env.example AND this workflow file itself, so
+#        edits to the workflow also re-validate.
+#   D5 — Least-privilege permissions: contents: read at workflow level.
+#        Validator-flagged hardening (FU-CANDIDATE-1) applied in-scope per user
+#        policy "in-scope follow-ups should be fixed in this flow". This job
+#        only needs to read repo contents to run `bash -n`; no other GitHub API
+#        access is required. Project-wide application to existing workflows
+#        (orchestrator-tests.yml, pages.yml) deferred to a separate slice.
+
+name: Env example lint
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".env.example"
+      - ".github/workflows/env-example-lint.yml"
+  pull_request:
+    paths:
+      - ".env.example"
+      - ".github/workflows/env-example-lint.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  bash-syntax:
+    name: bash -n .env.example
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: bash -n .env.example
+        run: |
+          set -e
+          bash -n .env.example
+          echo "ok: .env.example parses with exit 0"
