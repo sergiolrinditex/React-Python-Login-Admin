@@ -1,0 +1,42 @@
+[logging] BEFORE configure_logging: verbose=True
+[2m2026-05-10T15:14:25.356133Z[0m [[32m[1mdebug    [0m] [1mAFTER configure_logging: structlog configured with CWE-532 mitigation[0m [[0m[1m[34mapp.core.logging[0m][0m [36mhttpx_loggers_pinned_to_warning[0m=[35m['httpx', 'httpcore'][0m [36mhttpx_suppressed[0m=[35mTrue[0m [36mlog_level[0m=[35mDEBUG[0m [36mshow_locals[0m=[35m'False (security fix P00-S02-T004)'[0m [36mverbose[0m=[35mTrue[0m
+INFO:     Started server process [19847]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8012 (Press CTRL+C to quit)
+[2m2026-05-10T15:14:28.742972Z[0m [[32m[1mdebug    [0m] [1mBEFORE health.start: computing uptime[0m [[0m[1m[34mapp.api.router[0m][0m [36mrequest_id[0m=[35me6f7bb6308a94012825c8e411b6058be[0m
+[2m2026-05-10T15:14:28.743110Z[0m [[32m[1mdebug    [0m] [1mAFTER health.ok: returning status[0m [[0m[1m[34mapp.api.router[0m][0m [36mrequest_id[0m=[35me6f7bb6308a94012825c8e411b6058be[0m [36mstatus[0m=[35mok[0m [36muptime_s[0m=[35m2.261[0m
+INFO:     127.0.0.1:54540 - "GET /health HTTP/1.1" 200 OK
+[2m2026-05-10T15:14:34.425358Z[0m [[32m[1mdebug    [0m] [1mBEFORE get_session: opening db session[0m [[0m[1m[34mapp.core.db[0m][0m [36mrequest_id[0m=[35mp011-v-happy-1778426074[0m
+[2m2026-05-10T15:14:34.425867Z[0m [[32m[1mdebug    [0m] [1mBEFORE _get_session_factory: creating session factory[0m [[0m[1m[34mapp.core.db[0m][0m [36mrequest_id[0m=[35mp011-v-happy-1778426074[0m
+[2m2026-05-10T15:14:34.425941Z[0m [[32m[1mdebug    [0m] [1mBEFORE _get_engine: creating async engine[0m [[0m[1m[34mapp.core.db[0m][0m [36mrequest_id[0m=[35mp011-v-happy-1778426074[0m
+[2m2026-05-10T15:14:34.426046Z[0m [[32m[1mdebug    [0m] [1mBEFORE get_settings: loading Settings (env_file=/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.env, exists=True)[0m [[0m[1m[34mapp.core.config[0m][0m [36mrequest_id[0m=[35mp011-v-happy-1778426074[0m
+[2m2026-05-10T15:14:34.429615Z[0m [[32m[1mdebug    [0m] [1mAFTER get_settings: loaded (api_host=127.0.0.1, api_port=8000, verbose=True, db_host_port=127.0.0.1:5433/hilopeople_dev)[0m [[0m[1m[34mapp.core.config[0m][0m [36mrequest_id[0m=[35mp011-v-happy-1778426074[0m
+[2m2026-05-10T15:14:34.551334Z[0m [[32m[1mdebug    [0m] [1mAFTER _get_engine: engine created (host redacted)[0m [[0m[1m[34mapp.core.db[0m][0m [36mrequest_id[0m=[35mp011-v-happy-1778426074[0m
+[2m2026-05-10T15:14:34.551486Z[0m [[32m[1mdebug    [0m] [1mAFTER _get_session_factory: session factory ready[0m [[0m[1m[34mapp.core.db[0m][0m [36mrequest_id[0m=[35mp011-v-happy-1778426074[0m
+[2m2026-05-10T15:14:34.615155Z[0m [[32m[1mdebug    [0m] [1mBEFORE auth.sign_up.start: validating sign-up request[0m [[0m[1m[34mapp.features.auth.service[0m][0m [36memail_masked[0m=[35mp***@example.com[0m [36mrequest_id[0m=[35mp011-v-happy-1778426074[0m
+[2m2026-05-10T15:14:34.615322Z[0m [[32m[1mdebug    [0m] [1mBEFORE get_settings: loading Settings (env_file=/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.env, exists=True)[0m [[0m[1m[34mapp.core.config[0m][0m [36mrequest_id[0m=[35mp011-v-happy-1778426074[0m
+[2m2026-05-10T15:14:34.617556Z[0m [[32m[1mdebug    [0m] [1mAFTER get_settings: loaded (api_host=127.0.0.1, api_port=8000, verbose=True, db_host_port=127.0.0.1:5433/hilopeople_dev)[0m [[0m[1m[34mapp.core.config[0m][0m [36mrequest_id[0m=[35mp011-v-happy-1778426074[0m
+[2m2026-05-10T15:14:34.657169Z[0m [[32m[1mdebug    [0m] [1mBEFORE auth.repository.insert_user[0m [[0m[1m[34mapp.features.auth.repository[0m][0m [36memail_masked[0m=[35mp***@example.com[0m [36mrequest_id[0m=[35mp011-v-happy-1778426074[0m
+[2m2026-05-10T15:14:34.711742Z[0m [[32m[1mdebug    [0m] [1mAFTER auth.repository.insert_user[0m [[0m[1m[34mapp.features.auth.repository[0m][0m [36mrequest_id[0m=[35mp011-v-happy-1778426074[0m [36muser_id[0m=[35ma33de137-a2e3-4387-a750-da921dc4c13d[0m
+[2m2026-05-10T15:14:34.711889Z[0m [[32m[1mdebug    [0m] [1mBEFORE auth.repository.insert_employee_profile[0m [[0m[1m[34mapp.features.auth.repository[0m][0m [36mrequest_id[0m=[35mp011-v-happy-1778426074[0m [36muser_id[0m=[35ma33de137-a2e3-4387-a750-da921dc4c13d[0m
+[2m2026-05-10T15:14:34.715570Z[0m [[32m[1mdebug    [0m] [1mAFTER auth.repository.insert_employee_profile[0m [[0m[1m[34mapp.features.auth.repository[0m][0m [36memployee_id[0m=[35mEMP-75BA6C8A[0m [36mrequest_id[0m=[35mp011-v-happy-1778426074[0m [36muser_id[0m=[35ma33de137-a2e3-4387-a750-da921dc4c13d[0m
+[2m2026-05-10T15:14:34.715686Z[0m [[32m[1mdebug    [0m] [1mBEFORE auth.repository.insert_audit_log[0m [[0m[1m[34mapp.features.auth.repository[0m][0m [36maction[0m=[35mauth.sign_up[0m [36mrequest_id[0m=[35mp011-v-happy-1778426074[0m [36muser_id[0m=[35ma33de137-a2e3-4387-a750-da921dc4c13d[0m
+[2m2026-05-10T15:14:34.718693Z[0m [[32m[1mdebug    [0m] [1mAFTER auth.repository.insert_audit_log[0m [[0m[1m[34mapp.features.auth.repository[0m][0m [36maudit_log_id[0m=[35m9e8e22ac-dec0-4bb7-af6f-9a6d0b31f3fc[0m [36mrequest_id[0m=[35mp011-v-happy-1778426074[0m [36muser_id[0m=[35ma33de137-a2e3-4387-a750-da921dc4c13d[0m
+[2m2026-05-10T15:14:34.718795Z[0m [[32m[1mdebug    [0m] [1mAFTER auth.sign_up.ok: user created[0m [[0m[1m[34mapp.features.auth.service[0m][0m [36mmfa_required[0m=[35mTrue[0m [36mrequest_id[0m=[35mp011-v-happy-1778426074[0m [36muser_id[0m=[35ma33de137-a2e3-4387-a750-da921dc4c13d[0m
+INFO:     127.0.0.1:54544 - "POST /api/v1/auth/sign-up HTTP/1.1" 201 Created
+[2m2026-05-10T15:14:34.719348Z[0m [[32m[1mdebug    [0m] [1mAFTER get_session: session yielded, committing[0m [[0m[1m[34mapp.core.db[0m][0m [36mrequest_id[0m=[35mp011-v-happy-1778426074[0m
+[2m2026-05-10T15:14:34.720554Z[0m [[32m[1mdebug    [0m] [1mAFTER get_session: session closed[0m [[0m[1m[34mapp.core.db[0m][0m [36mrequest_id[0m=[35mp011-v-happy-1778426074[0m
+[2m2026-05-10T15:14:34.746020Z[0m [[32m[1mdebug    [0m] [1mBEFORE get_session: opening db session[0m [[0m[1m[34mapp.core.db[0m][0m [36mrequest_id[0m=[35mp011-v-dup-1778426074[0m
+[2m2026-05-10T15:14:34.746327Z[0m [[32m[1mdebug    [0m] [1mBEFORE auth.sign_up.start: validating sign-up request[0m [[0m[1m[34mapp.features.auth.service[0m][0m [36memail_masked[0m=[35mp***@example.com[0m [36mrequest_id[0m=[35mp011-v-dup-1778426074[0m
+[2m2026-05-10T15:14:34.746424Z[0m [[32m[1mdebug    [0m] [1mBEFORE get_settings: loading Settings (env_file=/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.env, exists=True)[0m [[0m[1m[34mapp.core.config[0m][0m [36mrequest_id[0m=[35mp011-v-dup-1778426074[0m
+[2m2026-05-10T15:14:34.748573Z[0m [[32m[1mdebug    [0m] [1mAFTER get_settings: loaded (api_host=127.0.0.1, api_port=8000, verbose=True, db_host_port=127.0.0.1:5433/hilopeople_dev)[0m [[0m[1m[34mapp.core.config[0m][0m [36mrequest_id[0m=[35mp011-v-dup-1778426074[0m
+[2m2026-05-10T15:14:34.787726Z[0m [[32m[1mdebug    [0m] [1mBEFORE auth.repository.insert_user[0m [[0m[1m[34mapp.features.auth.repository[0m][0m [36memail_masked[0m=[35mp***@example.com[0m [36mrequest_id[0m=[35mp011-v-dup-1778426074[0m
+[2m2026-05-10T15:14:34.799730Z[0m [[33m[1mwarning  [0m] [1mERROR auth.repository.insert_user: IntegrityError (duplicate email)[0m [[0m[1m[34mapp.features.auth.repository[0m][0m [36memail_masked[0m=[35mp***@example.com[0m [36merror_class[0m=[35mIntegrityError[0m [36mrequest_id[0m=[35mp011-v-dup-1778426074[0m
+INFO:     127.0.0.1:54546 - "POST /api/v1/auth/sign-up HTTP/1.1" 409 Conflict
+[2m2026-05-10T15:14:34.800516Z[0m [[32m[1mdebug    [0m] [1mAFTER get_session: session yielded, committing[0m [[0m[1m[34mapp.core.db[0m][0m [36mrequest_id[0m=[35mp011-v-dup-1778426074[0m
+[2m2026-05-10T15:14:34.800638Z[0m [[32m[1mdebug    [0m] [1mAFTER get_session: session closed[0m [[0m[1m[34mapp.core.db[0m][0m [36mrequest_id[0m=[35mp011-v-dup-1778426074[0m
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [19847]

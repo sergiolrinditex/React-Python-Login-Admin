@@ -247,6 +247,7 @@ Envelope general: `{data, meta, errors}`. Errores: `{code, message, field, detai
 | GET | /live | — | `{data:{status}}` | No | 500 | health checks | no DB | P00-S02-T002 |
 | GET | /ready | — | `{data:{db,redis,litellm}}` | No | 503 | health checks | DB/Redis ping | P00-S02-T002 |
 | POST | /api/v1/auth/sign-up | `{email,password,full_name,legal_acceptance}` | `{data:{mfa_required,user_id}}` | No | 400,409,422 | SignUpPage / J100 | users, employee_profiles, audit_logs | P01-S02-T001 |
+| POST | /api/v1/auth/2fa/enroll | `{email,password}` | `{data:{otpauth_url,qr_png_base64}}` | No | 400,401,422 | (backend-only — T009) / J100 | mfa_totp_secrets upsert, audit_logs | P01-S02-T009 |
 | POST | /api/v1/auth/sign-in | `{email,password}` | `{data:{mfa_required,access_token?}}` | No | 400,401,423 | SignInPage / J100 | refresh_tokens, audit_logs | P01-S02-T002 |
 | POST | /api/v1/auth/refresh | cookie refresh | `{data:{access_token}}` | Refresh cookie | 401 | authStore | refresh_tokens | P01-S02-T003 |
 | POST | /api/v1/auth/logout | — | 204 | Sí | 401 | AccountPage | refresh_tokens revoke, audit_logs | P01-S02-T004 |
@@ -583,6 +584,14 @@ La visualización estática se genera en `dist/hilo-people-preview.html`. Captur
 - **Decisión**: P02-S08 implementará `agents/deepagents_runtime.py` usando el patrón deepagents Supervisor (LangGraph-based) donde el supervisor enruta mensajes del usuario al subagente cuyo `subagent_topics` tenga mayor solapamiento de palabras clave.
 - **Alternativas descartadas**: (a) Agente único con todas las herramientas — rechazada: context bloat insostenible en sesiones largas. (b) LangChain AgentExecutor — rechazada: deprecado en LangChain ≥ 0.2; deepagents es el sucesor soportado.
 - **Consecuencias**: Pinado a `deepagents>=0.5.7`; el supervisor añade 1 LLM hop por mensaje para el routing. Detallado en FU-X3 (feature follow-up, P02-S08).
+
+### ADR-003 — MFA enrollment re-auth scheme and rotation policy (P01-S02-T009)
+
+- **Fecha**: 2026-05-10
+- **Contexto**: `POST /api/v1/auth/2fa/enroll` needs re-authentication before issuing a TOTP secret. At enrollment time no Bearer JWT has been issued yet (sign-in / JWT issuance = T002, does not exist). Two independent decisions: (A) how to re-auth the user, and (B) what to do when a user re-enrolls.
+- **Decisión**: (A) Re-auth uses `{email, password}` in the request body — the same credentials the user provided at sign-up. No Bearer JWT required, no challenge_id. (B) Rotation policy is `rotate`: if a row already exists in `mfa_totp_secrets` for the user, the secret is replaced (UPDATE secret_encrypted + enabled=false) and a new `audit_log` row is inserted with `metadata.rotation=true`. No 409 Conflict is returned.
+- **Alternativas descartadas**: (A1) Bearer JWT for re-auth — rejected: JWT issuance lives in T002 which is not yet implemented; chicken-and-egg dependency. (A2) Separate challenge_id step — rejected: over-engineering; out of scope for this slice. (B1) Reject re-enrollment with 409 — rejected: UX hostile; legitimate use case is re-keying a lost device. (B2) Require admin reset before re-enroll — rejected: operational overhead with no security gain at this stage.
+- **Consecuencias**: Re-auth uses password verification via argon2 `PasswordHasher.verify()`. Secret never stored in plain text — encrypted with Fernet AEAD (`encrypt_secret`). `secret_b32`, `otpauth_url`, and `qr_png_base64` are never bound to any logger (CWE-532). `AlreadyEnrolledError` domain error exists in `errors.py` but is unused under the default `rotate` policy; reserved for a future strict-mode flag.
 
 ## 16. Verificación de cableado pre-entrega
 

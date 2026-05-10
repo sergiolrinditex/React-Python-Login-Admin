@@ -18,6 +18,14 @@ at INFO level.  Our _redaction_processor only scrubs structlog event_dict keys,
 NOT the body of foreign log messages, so without this layer the api key leaks
 through ProcessorFormatter.foreign_pre_chain verbatim.
 
+Updated in P01-S02-T011 (FU-20260510090824): fifth-layer CWE-532 defense for
+auth/argon2 — adds `password_hash` to _REDACTED_KEYS (Variant B belt-and-suspenders).
+Root cause (argon2id hash leaking via SA echo bind-params) was already closed by
+P00-S02-T012 (echo=False permanent, commit 4ccf7b0). This line extends the dict-level
+structlog redactor so that if any future code path ever logs `password_hash=...` as a
+structlog key, it is automatically redacted. Non-negotiable §Logging: argon2 hashes
+are authentication-derived secrets and must never appear in logs (CWE-532).
+
 BEFORE (T009): httpx INFO logger emits request URLs → api keys appear in verbose logs.
 AFTER  (T009): logging.getLogger("httpx").setLevel(WARNING) — URL info lines silenced;
                WARNING/ERROR from httpx still propagate (actionable failures).
@@ -53,7 +61,7 @@ Logging contract (HILO_PEOPLE_TECHNICAL_GUIDE.md §10.5):
   - ENABLE_VERBOSE_LOGGING=false → WARNING level (warning + error only).
   - Redacted keys: password, pwd, token, secret, api_key, encrypted_secret,
     jwt_private_key, jwt_public_key, encryption_key (§11.1 canonical names, P01-S01-T002),
-    litellm_master_key, resend_api_key,
+    litellm_master_key, resend_api_key, password_hash (argon2id auth secret, P01-S02-T011),
     dsn, database_url, connection_string, prompt (full), document.content.
   - request_id propagated end-to-end (middleware wired in P00-S02-T002).
   - No PII, tokens, or secrets in any log field or traceback frame locals.
@@ -83,6 +91,10 @@ import structlog
 # Updated in P01-S01-T002: replaced stale jwt_secret + provider_encryption_key
 # entries (orphaned after §11.1 field rename) with canonical jwt_private_key,
 # jwt_public_key, encryption_key. litellm_master_key / resend_api_key kept.
+# Updated in P01-S02-T011 (FU-20260510090824): added password_hash — argon2id
+# hashes stored in users.password_hash qualify as authentication-derived secrets
+# per non-negotiable §Logging. Engine-level fix already in T012 (echo=False);
+# this is belt-and-suspenders to cover any future direct structlog use.
 _REDACTED_KEYS: frozenset[str] = frozenset(
     {
         "password",
@@ -102,6 +114,9 @@ _REDACTED_KEYS: frozenset[str] = frozenset(
         "encryption_key",
         "litellm_master_key",
         "resend_api_key",
+        # P01-S02-T011 (FU-20260510090824): argon2id authentication-derived secret.
+        # Belt-and-suspenders vs T012 engine-level echo=False fix.
+        "password_hash",
         "dsn",
         "database_url",
         "connection_string",
@@ -151,9 +166,13 @@ def configure_logging(verbose: bool = False) -> None:
          prevents frame-local secrets from leaking via exc_info tracebacks.
          See module docstring (FU-20260509044829 / T004).
       2. _REDACTED_KEYS dict-level scrubber: redacts top-level event_dict keys.
+         Includes `password_hash` (P01-S02-T011) for argon2id auth secrets.
       3. httpx/httpcore stdlib loggers pinned to WARNING (T009 / FU-20260509220224):
          prevents api keys embedded in request URLs from leaking via foreign
          log message bodies (INFO "HTTP Request: GET ...?key=AIza...").
+      4. SQLAlchemy engine echo=False permanently (T012 / FU-20260510044529):
+         prevents bind-param tuples (including password_hash/Fernet ciphertext)
+         from leaking through the sqlalchemy.engine stdlib logger.
 
     Purpose: wire structlog processors, set log level based on verbose flag.
     Params:

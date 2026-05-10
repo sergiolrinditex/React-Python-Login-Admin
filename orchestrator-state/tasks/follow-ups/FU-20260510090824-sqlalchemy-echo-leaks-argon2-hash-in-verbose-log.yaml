@@ -1,7 +1,7 @@
 {
   "id": "FU-20260510090824-sqlalchemy-echo-leaks-argon2-hash-in-verbose-log",
   "schema_version": 1,
-  "status": "proposed",
+  "status": "promoted",
   "created_at": "2026-05-10T09:08:24+00:00",
   "created_by": "sergiolr",
   "origin_task_id": "P01-S02-T001",
@@ -38,6 +38,11 @@
     "Run /verify-slice on a future auth slice with ENABLE_VERBOSE_LOGGING=true",
     "assert grep '$argon2id$' on back.log returns 0 across happy + duplicate paths."
   ],
-  "notes": [],
-  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260510090824-sqlalchemy-echo-leaks-argon2-hash-in-verbose-log.yaml"
+  "notes": [
+    "RESOLVED (P01-S02-T011, 2026-05-10): Root cause closed by P00-S02-T012 commit 4ccf7b0 (echo=False permanent on the singleton engine in backend/app/core/db.py). Acceptance branch 'SQLAlchemy echo disabled' is satisfied engine-wide. Regression test at backend/tests/integration/test_signup_no_argon2_hash_in_logs.py (T2 happy-path, T3 duplicate-409) asserts $argon2id$ is absent from both structlog stdout and sqlalchemy.engine handler records during ENABLE_VERBOSE_LOGGING=true sign-up flows. Belt-and-suspenders: 'password_hash' added to _REDACTED_KEYS in backend/app/core/logging.py (Variant B) covering the 'password_hash field redacted at logging layer' OR-branch of the acceptance criteria."
+  ],
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260510090824-sqlalchemy-echo-leaks-argon2-hash-in-verbose-log.yaml",
+  "promoted_at": "2026-05-10T09:22:01+00:00",
+  "promoted_task_id": "P01-S02-T011",
+  "source_doc_updated": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md"
 }
