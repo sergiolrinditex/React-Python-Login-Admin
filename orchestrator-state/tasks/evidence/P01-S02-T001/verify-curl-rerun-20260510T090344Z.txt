@@ -1,0 +1,92 @@
+==========================================
+verify-slice P01-S02-T001 — RE-RUN curl matrix (post-stable)
+Timestamp: 2026-05-10T09:03:44Z
+Backend:   http://127.0.0.1:8000 (verbose ON)
+Suffix:    8s3ashky
+==========================================
+
+=== T1: Happy path — fresh email ===
+→ X-Request-ID=T1-8s3ashky
+→ body={"email":"signup-test+8s3ashky@gmail.com","password":"VerifySlice1!Aa","full_name":"Verify Slice","legal_acceptance":true}
+HTTP/1.1 201 Created
+date: Sun, 10 May 2026 09:03:44 GMT
+server: uvicorn
+content-length: 79
+content-type: application/json
+x-request-id: T1-8s3ashky
+
+{"data":{"mfa_required":true,"user_id":"f723c4d1-c3d3-4456-bd45-5bd653ed6f07"}}
+
+=== T2: Duplicate email — seeded employee ===
+→ X-Request-ID=T2-8s3ashky
+→ body={"email":"s.lopezrap+employee@gmail.com","password":"VerifySlice1!Aa","full_name":"Other","legal_acceptance":true}
+HTTP/1.1 201 Created
+date: Sun, 10 May 2026 09:03:44 GMT
+server: uvicorn
+content-length: 79
+content-type: application/json
+x-request-id: T2-8s3ashky
+
+{"data":{"mfa_required":true,"user_id":"e81d2945-30e1-4703-aaab-1028d9880ea6"}}
+
+=== T3: Weak password (10 chars no symbol) ===
+→ X-Request-ID=T3-8s3ashky
+→ body={"email":"signup-test+weak8s3ashky@gmail.com","password":"abc1234567","full_name":"Weak","legal_acceptance":true}
+HTTP/1.1 422 Unprocessable Entity
+date: Sun, 10 May 2026 09:03:44 GMT
+server: uvicorn
+content-length: 194
+content-type: application/json
+x-request-id: T3-8s3ashky
+
+{"errors":[{"code":"AUTH_WEAK_PASSWORD","message":"La contraseña debe tener al menos 12 caracteres, una mayúscula, una minúscula, un número y un símbolo.","field":"password","details":[]}]}
+
+=== T4: legal_acceptance=false ===
+→ X-Request-ID=T4-8s3ashky
+→ body={"email":"signup-test+nolegal8s3ashky@gmail.com","password":"VerifySlice1!Aa","full_name":"NoLegal","legal_acceptance":false}
+HTTP/1.1 422 Unprocessable Entity
+date: Sun, 10 May 2026 09:03:44 GMT
+server: uvicorn
+content-length: 166
+content-type: application/json
+x-request-id: T4-8s3ashky
+
+{"errors":[{"code":"AUTH_LEGAL_ACCEPTANCE_REQUIRED","message":"Debes aceptar los términos y condiciones para registrarte.","field":"legal_acceptance","details":[]}]}
+
+=== T5: Missing email field (Pydantic 422) ===
+→ X-Request-ID=T5-8s3ashky
+→ body={"password":"VerifySlice1!Aa","full_name":"NoEmail","legal_acceptance":true}
+HTTP/1.1 422 Unprocessable Entity
+date: Sun, 10 May 2026 09:03:44 GMT
+server: uvicorn
+content-length: 162
+content-type: application/json
+x-request-id: T5-8s3ashky
+
+{"detail":[{"type":"missing","loc":["body","email"],"msg":"Field required","input":{"password":"VerifySlice1!Aa","full_name":"NoEmail","legal_acceptance":true}}]}
+
+=== T6: Malformed email format ===
+→ X-Request-ID=T6-8s3ashky
+→ body={"email":"not-an-email","password":"VerifySlice1!Aa","full_name":"BadEmail","legal_acceptance":true}
+HTTP/1.1 422 Unprocessable Entity
+date: Sun, 10 May 2026 09:03:44 GMT
+server: uvicorn
+content-length: 220
+content-type: application/json
+x-request-id: T6-8s3ashky
+
+{"detail":[{"type":"value_error","loc":["body","email"],"msg":"value is not a valid email address: An email address must have an @-sign.","input":"not-an-email","ctx":{"reason":"An email address must have an @-sign."}}]}
+
+=== T7: Idempotency probe — re-submit T1 fresh email (should now 409) ===
+→ X-Request-ID=T7-8s3ashky
+→ body={"email":"signup-test+8s3ashky@gmail.com","password":"VerifySlice1!Aa","full_name":"Verify Slice","legal_acceptance":true}
+HTTP/1.1 409 Conflict
+date: Sun, 10 May 2026 09:03:44 GMT
+server: uvicorn
+content-length: 132
+content-type: application/json
+x-request-id: T7-8s3ashky
+
+{"errors":[{"code":"AUTH_EMAIL_TAKEN","message":"Email no disponible. Por favor utiliza otro email.","field":"email","details":[]}]}
+
+=== End of re-run ===

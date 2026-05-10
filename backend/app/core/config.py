@@ -208,6 +208,34 @@ class Settings(BaseSettings):
         description="Comma-separated domain whitelist for MCP tool calls (§11.1).",
     )
 
+    # Corporate email domains (P01-S02-T001 — sign-up corporate-email rule)
+    # Empty default = permissive in dev (allows any domain, including gmail.com).
+    # Non-empty = strict allowlist; comma-separated (e.g. "hilo.com,hilopeople.com").
+    # Production deployment MUST set this to the company's real domain(s).
+    # Source: instrucciones.md §3.1 + task-pack P01-S02-T001 §9 R3.
+    # Pattern mirrors cors_allowed_origins: raw str field + list property.
+    corporate_email_domains: str = Field(
+        "",
+        description=(
+            "Comma-separated corporate email domain allowlist. "
+            "Empty = permissive (dev). Non-empty = strict allowlist. "
+            "Env var: CORPORATE_EMAIL_DOMAINS."
+        ),
+    )
+
+    @property
+    def corporate_email_domains_list(self) -> list[str]:
+        """Parse CORPORATE_EMAIL_DOMAINS into a list of domain strings.
+
+        Purpose: convenience property; mirrors cors_origins_list pattern.
+        Returns: list of lowercase domain strings; empty list when unset/empty.
+        """
+        return [
+            d.strip().lower()
+            for d in self.corporate_email_domains.split(",")
+            if d.strip()
+        ]
+
     # Observability
     sentry_dsn: SecretStr = Field(
         SecretStr(""), description="Sentry DSN for error tracking."

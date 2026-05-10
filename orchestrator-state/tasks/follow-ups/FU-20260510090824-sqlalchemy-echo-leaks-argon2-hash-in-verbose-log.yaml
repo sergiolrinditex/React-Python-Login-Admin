@@ -1,0 +1,43 @@
+{
+  "id": "FU-20260510090824-sqlalchemy-echo-leaks-argon2-hash-in-verbose-log",
+  "schema_version": 1,
+  "status": "proposed",
+  "created_at": "2026-05-10T09:08:24+00:00",
+  "created_by": "sergiolr",
+  "origin_task_id": "P01-S02-T001",
+  "origin_phase_id": "P01",
+  "origin_step_id": "P01-S02",
+  "kind": "security",
+  "product_increment": "current",
+  "build_state": "planned",
+  "severity": "medium",
+  "title": "SQLAlchemy echo leaks argon2 hash in verbose logs (CWE-532)",
+  "description": "When ENABLE_VERBOSE_LOGGING=true, sqlalchemy.engine.Engine logger emits SQL parameters including password_hash column values as raw argon2id strings (e.g. $argon2id$v=19$m=65536,t=3,p=4$...). Confirmed during /verify-slice for P01-S02-T001 (4 occurrences in back-verbose.log for V1+V2 sign-up runs). If verbose logs are shipped to a centralized aggregator (Datadog, ELK, CloudWatch) this leaks every user's argon2 hash to log readers. CWE-532 (Insertion of Sensitive Information into Log File). Per non-negotiable §Logging: 'Never log tokens, passwords, or PII' — argon2 hashes qualify as authentication-derived secrets. Tester originally flagged as low severity informal finding for P01-S02-T001; no YAML was filed. Promoting now to medium.",
+  "journey_refs": [
+    "J100"
+  ],
+  "screen_route": "—",
+  "endpoint": "—",
+  "tables": [],
+  "depends_on": [
+    "P01-S02-T001"
+  ],
+  "conflict_groups": [
+    "app:logging"
+  ],
+  "write_set": [
+    "backend/app/core/logging.py",
+    "backend/app/core/db.py"
+  ],
+  "acceptance": [
+    "ENABLE_VERBOSE_LOGGING=true must NOT emit raw password_hash values in any logger output. SQLAlchemy echo either disabled",
+    "restricted to non-INSERT/UPDATE on auth tables",
+    "or password_hash field redacted at logging layer. Test: grep '$argon2id$' on backend stdout during a sign-up flow returns 0."
+  ],
+  "verify": [
+    "Run /verify-slice on a future auth slice with ENABLE_VERBOSE_LOGGING=true",
+    "assert grep '$argon2id$' on back.log returns 0 across happy + duplicate paths."
+  ],
+  "notes": [],
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260510090824-sqlalchemy-echo-leaks-argon2-hash-in-verbose-log.yaml"
+}

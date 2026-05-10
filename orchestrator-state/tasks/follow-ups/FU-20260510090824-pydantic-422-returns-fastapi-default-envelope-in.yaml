@@ -1,0 +1,45 @@
+{
+  "id": "FU-20260510090824-pydantic-422-returns-fastapi-default-envelope-in",
+  "schema_version": 1,
+  "status": "proposed",
+  "created_at": "2026-05-10T09:08:24+00:00",
+  "created_by": "sergiolr",
+  "origin_task_id": "P01-S02-T001",
+  "origin_phase_id": "P01",
+  "origin_step_id": "P01-S02",
+  "kind": "ux",
+  "product_increment": "current",
+  "build_state": "planned",
+  "severity": "medium",
+  "title": "Pydantic 422 returns FastAPI default envelope instead of project errors envelope",
+  "description": "TECHNICAL_GUIDE §6.2 specifies project-wide error envelope { data, meta, errors[{code, message, field, details}] }. Business-rule errors (AUTH_WEAK_PASSWORD, AUTH_LEGAL_ACCEPTANCE_REQUIRED, AUTH_NON_CORPORATE_EMAIL, AUTH_EMAIL_TAKEN) correctly use this envelope. Pydantic-level validation errors (RequestValidationError — missing email field, malformed email format) leak the FastAPI default envelope { detail: [{type, loc, msg, input}] }. Verified during /verify-slice P01-S02-T001 — T5 (missing email) and T6 (invalid email) return the wrong shape. Frontend SignUpPage (P03-S01-T002) will need to handle two distinct error shapes, doubling client-side error mapping logic. Fix: add a global FastAPI exception_handler(RequestValidationError) that re-shapes Pydantic errors into the project envelope with synthesized error codes (e.g. AUTH_VALIDATION_ERROR or per-field codes).",
+  "journey_refs": [
+    "J100"
+  ],
+  "screen_route": "—",
+  "endpoint": "—",
+  "tables": [],
+  "depends_on": [
+    "P01-S02-T001"
+  ],
+  "conflict_groups": [
+    "app:errors"
+  ],
+  "write_set": [
+    "backend/app/main.py",
+    "backend/app/core/errors.py"
+  ],
+  "acceptance": [
+    "All 422 responses from any endpoint return the envelope { errors: [{code",
+    "message",
+    "field",
+    "details}] }. RequestValidationError is mapped via centralized exception handler. Existing tests for business-rule 422s remain green",
+    "new test asserts envelope shape for malformed payload."
+  ],
+  "verify": [
+    "curl POST /api/v1/auth/sign-up with missing email field",
+    "assert response.json contains errors[] (not detail[])."
+  ],
+  "notes": [],
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260510090824-pydantic-422-returns-fastapi-default-envelope-in.yaml"
+}

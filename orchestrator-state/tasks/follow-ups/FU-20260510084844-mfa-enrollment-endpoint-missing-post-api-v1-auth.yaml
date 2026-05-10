@@ -1,0 +1,50 @@
+{
+  "id": "FU-20260510084844-mfa-enrollment-endpoint-missing-post-api-v1-auth",
+  "schema_version": 1,
+  "status": "proposed",
+  "created_at": "2026-05-10T08:48:44+00:00",
+  "created_by": "sergiolr",
+  "origin_task_id": "P01-S02-T001",
+  "origin_phase_id": "P01",
+  "origin_step_id": "P01-S02",
+  "kind": "followup",
+  "product_increment": "current",
+  "build_state": "planned",
+  "severity": "medium",
+  "title": "MFA enrollment endpoint missing — POST /api/v1/auth/2fa/enroll (TOTP secret generation)",
+  "description": "Task-pack §9 D3 R5 + §13 R5: TECHNICAL_GUIDE §6.2 declares POST /api/v1/auth/2fa/verify (T006) but NO endpoint that generates+persists the TOTP secret with QR. mfa_totp_secrets.secret_encrypted is NOT NULL — verify cannot work without enrollment first. T001 sign-up returns mfa_required=true and the frontend is supposed to navigate to /auth/2fa, but until enrollment exists the user is stuck. Need POST /api/v1/auth/2fa/enroll: generates 32-byte TOTP secret, Fernet-encrypts via app.core.security.encrypt_secret, INSERTs into mfa_totp_secrets, returns {data:{otpauth_url, qr_png_base64, recovery_codes:[...]}}. Audit-log on success.",
+  "journey_refs": [
+    "J100"
+  ],
+  "screen_route": "—",
+  "endpoint": "—",
+  "tables": [],
+  "depends_on": [
+    "P01-S02-T001"
+  ],
+  "conflict_groups": [
+    "api:auth"
+  ],
+  "write_set": [
+    "backend/app/features/auth/mfa_routes.py",
+    "backend/app/features/auth/mfa_service.py",
+    "backend/app/features/auth/mfa_repository.py",
+    "backend/app/features/auth/schemas.py",
+    "backend/tests/integration/test_auth_mfa_enroll.py",
+    "docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md"
+  ],
+  "acceptance": [
+    "POST /api/v1/auth/2fa/enroll generates a real TOTP secret",
+    "encrypts it",
+    "persists the row in mfa_totp_secrets",
+    "returns otpauth_url + base64 QR. Real integration test verifies the row is decrypt-roundtrip equal to the original. Subsequent T006 verify against the same secret + a real pyotp.TOTP code returns 200."
+  ],
+  "verify": [
+    "real curl: POST /api/v1/auth/2fa/enroll → 201 with otpauth_url",
+    "psql confirms mfa_totp_secrets row exists with non-null secret_encrypted",
+    "decrypt_secret returns a 32-byte secret",
+    "pyotp.TOTP(secret).now() generates a code that POST /api/v1/auth/2fa/verify accepts"
+  ],
+  "notes": [],
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260510084844-mfa-enrollment-endpoint-missing-post-api-v1-auth.yaml"
+}

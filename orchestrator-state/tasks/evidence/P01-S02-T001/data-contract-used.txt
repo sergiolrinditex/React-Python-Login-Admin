@@ -1,0 +1,35 @@
+=== DATA CONTRACT USED — P01-S02-T001 ===
+Tester agent. Run: 2026-05-10
+
+Contract rows used (from task-pack §5 Verification Data Contract):
+  - Source: J100 auth-login row (TECHNICAL_GUIDE §6.5 lines 345-356)
+  - Employee verification user: s.lopezrap+employee@gmail.com (seeded via bootstrap_verification_data)
+
+Fixtures injected:
+  - Seeded employee (s.lopezrap+employee@gmail.com) used for duplicate-email (409) test case
+    (employee_primary.json — bootstrap verification data)
+  - Fresh unique emails generated per test (signup-test+<uuid>@testdomain.com pattern)
+    per task-pack §5: "Use a deterministic prefix signup-test+<random>@<domain>"
+
+Persisted data observed (from curl + DB inspection):
+  1. users: 1 new row per successful sign-up
+     - id: UUID (gen_random_uuid())
+     - email: from request
+     - full_name: from request
+     - status: active (default)
+     - preferred_language: es (default)
+  2. employee_profiles: 1 new row per successful sign-up
+     - user_id: FK → users.id
+     - employee_id: EMP-<UUID-8hex> (hash-derived)
+     - brand: Hilo, society: Hilo People, center: HQ, country: ES, department: ""
+  3. audit_logs: 1 new row per successful sign-up
+     - action: auth.sign_up
+     - entity_type: user
+     - entity_id: user_id
+     - ip: client IP (native T005 column, not JSONB stash)
+     - user_agent: from HTTP header (native T005 column)
+     - request_id: from X-Request-ID header (native T005 column)
+     - resource: POST /api/v1/auth/sign-up (native T005 column)
+
+Rollback strategy: integration tests use SAVEPOINT-rollback fixture (NullPool + rollback_only)
+  so test-created users do NOT persist. The curl test user (dead875f) persists as expected.

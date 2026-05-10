@@ -1,0 +1,69 @@
+=== TESTER CURL SMOKE TESTS — P01-S02-T001 ===
+Tester agent. Run: 2026-05-10T08:48:56Z
+Backend: http://127.0.0.1:8001 (uvicorn with auth routes)
+Test email prefix: signup-tester-p01s02t001-dead875f@testdomain.com
+
+--- HAPPY PATH (expect 201) ---
+Request:
+  POST /api/v1/auth/sign-up
+  X-Request-ID: tester-p01s02t001-23b0d16b
+  Body: {"email":"signup-tester-p01s02t001-dead875f@testdomain.com","password":"Aa1!Secure$Pass","full_name":"Tester P01S02T001","legal_acceptance":true}
+
+Response:
+  HTTP/1.1 201 Created
+  date: Sun, 10 May 2026 08:48:56 GMT
+  server: uvicorn
+  content-type: application/json
+  x-request-id: tester-p01s02t001-23b0d16b
+  {"data":{"mfa_required":true,"user_id":"71b65c91-b4d7-4bbd-8a46-b482c982878a"}}
+
+RESULT: PASS — 201 received, mfa_required=true, user_id is valid UUID
+
+--- DUPLICATE EMAIL (expect 409) ---
+Request:
+  POST /api/v1/auth/sign-up (same email as above)
+  X-Request-ID: tester-dup-912c5373
+
+Response:
+  HTTP/1.1 409 Conflict
+  {"errors":[{"code":"AUTH_EMAIL_TAKEN","message":"Email no disponible. Por favor utiliza otro email.","field":"email","details":[]}]}
+
+RESULT: PASS — 409 received, code=AUTH_EMAIL_TAKEN, non-leaky message (no "exists" or "already")
+
+--- MISSING LEGAL_ACCEPTANCE (expect 422) ---
+Request:
+  POST /api/v1/auth/sign-up
+  Body: {..."legal_acceptance":false}
+  X-Request-ID: tester-nolegal-61327f29
+
+Response:
+  HTTP/1.1 422 Unprocessable Entity
+  {"errors":[{"code":"AUTH_LEGAL_ACCEPTANCE_REQUIRED","message":"Debes aceptar los términos y condiciones para registrarte.","field":"legal_acceptance","details":[]}]}
+
+RESULT: PASS — 422 received, code=AUTH_LEGAL_ACCEPTANCE_REQUIRED, field=legal_acceptance
+
+--- WEAK PASSWORD (expect 422) ---
+Request:
+  POST /api/v1/auth/sign-up
+  Body: {..."password":"tooshort1A"}
+  X-Request-ID: tester-weakpw-b22355e9
+
+Response:
+  HTTP/1.1 422 Unprocessable Entity
+  {"errors":[{"code":"AUTH_WEAK_PASSWORD","message":"La contraseña debe tener al menos 12 caracteres, una mayúscula, una minúscula, un número y un símbolo.","field":"password","details":[]}]}
+
+RESULT: PASS — 422 received, code=AUTH_WEAK_PASSWORD, field=password
+
+--- MALFORMED EMAIL (expect 422) ---
+Request:
+  POST /api/v1/auth/sign-up
+  Body: {..."email":"not-an-email"}
+  X-Request-ID: tester-badmail-a771ea9e
+
+Response:
+  HTTP/1.1 422 Unprocessable Entity
+  {"detail":[{"type":"value_error","loc":["body","email"],"msg":"value is not a valid email address: An email address must have an @-sign.","input":"not-an-email","ctx":{"reason":"An email address must have an @-sign."}}]}
+
+RESULT: PASS — 422 received, email validation error present
+
+=== ALL CURL CHECKS: 5/5 PASS ===

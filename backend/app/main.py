@@ -52,6 +52,7 @@ from fastapi import FastAPI, Request, Response  # noqa: E402
 
 from app.api.router import router as ops_router  # noqa: E402
 from app.features.admin_ai.routes import router as admin_ai_router  # noqa: E402
+from app.features.auth.routes import router as auth_router  # noqa: E402
 
 APP_VERSION: str = os.getenv("APP_VERSION", "0.0.0")
 
@@ -127,3 +128,9 @@ app.include_router(ops_router)
 # POST /api/v1/admin/ai/providers/{provider_id}/discover-models
 # ---------------------------------------------------------------------------
 app.include_router(admin_ai_router, prefix="/api/v1/admin/ai")
+
+# ---------------------------------------------------------------------------
+# Auth router — /api/v1/auth/... (P01-S02-T001)
+# POST /api/v1/auth/sign-up
+# ---------------------------------------------------------------------------
+app.include_router(auth_router, prefix="/api/v1/auth")

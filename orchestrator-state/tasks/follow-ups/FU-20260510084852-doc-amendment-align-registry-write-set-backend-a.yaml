@@ -1,0 +1,40 @@
+{
+  "id": "FU-20260510084852-doc-amendment-align-registry-write-set-backend-a",
+  "schema_version": 1,
+  "status": "proposed",
+  "created_at": "2026-05-10T08:48:52+00:00",
+  "created_by": "sergiolr",
+  "origin_task_id": "P01-S02-T001",
+  "origin_phase_id": "P01",
+  "origin_step_id": "P01-S02",
+  "kind": "followup",
+  "product_increment": "current",
+  "build_state": "planned",
+  "severity": "low",
+  "title": "Doc-amendment: align registry write_set 'backend/app/auth/**' with codebase 'backend/app/features/auth/**'",
+  "description": "Task-pack §6.2 D1: registry write_set for P01-S02-T001 says backend/app/auth/** but the codebase pattern (matching admin_ai precedent) is backend/app/features/auth/**. Same precedent as P00-S02-T010. Path-of-record imprecision. Amend the Coverage Registry Write set cell for P01-S02-T001 in HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md, then rerun bootstrap_three_docs.py --refresh + check-task-dag.sh --strict. Future auth slices (T002 sign-in, T003 refresh, T004 logout, T005 reset, T006 2fa-verify, T007 me-language) should use the same convention so the planner does not have to re-derive the path each slice.",
+  "journey_refs": [
+    "J100"
+  ],
+  "screen_route": "—",
+  "endpoint": "—",
+  "tables": [],
+  "depends_on": [
+    "P01-S02-T001"
+  ],
+  "conflict_groups": [
+    "docs:source-of-truth"
+  ],
+  "write_set": [
+    "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md"
+  ],
+  "acceptance": [
+    "HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md Coverage Registry rows for P01-S02-T001..T007 use Write set 'backend/app/features/auth/**' instead of 'backend/app/auth/**'. bootstrap_three_docs.py --refresh + check-task-dag.sh --strict pass clean."
+  ],
+  "verify": [
+    "grep -n 'backend/app/auth/' docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md returns 0 hits in P01 rows",
+    "grep -n 'backend/app/features/auth/' returns hits for T001..T007 rows."
+  ],
+  "notes": [],
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260510084852-doc-amendment-align-registry-write-set-backend-a.yaml"
+}

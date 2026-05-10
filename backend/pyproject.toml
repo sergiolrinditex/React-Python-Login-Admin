@@ -36,8 +36,12 @@ dependencies = [
     # NOTE: pydantic pinned to 2.12.5 to satisfy litellm==1.83.14 strict constraint.
     # litellm 1.83.14 requires pydantic==2.12.5 exactly. pydantic-settings 2.14.1
     # is compatible with pydantic>=2.7.0, so it works with 2.12.5.
+    # email-validator added in P01-S02-T001: required by pydantic[email]/EmailStr.
+    # pydantic v2 docs: EmailStr requires 'pip install pydantic[email]' (email-validator>=2.0.0).
+    # It is NOT a transitive dep of pydantic core — must be explicit. official-doc-note 2026-05-10.
     "pydantic==2.12.5",
     "pydantic-settings==2.14.1",
+    "email-validator==2.2.0",
 
     # --- Auth / security ---
     "argon2-cffi==25.1.0",        # Argon2 password hashing
