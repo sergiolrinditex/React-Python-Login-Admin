@@ -34,7 +34,7 @@ Lee `orchestrator-state/agent-memory/task-planner/MEMORY.md` AL ARRANCAR. Acumul
 AL TERMINAR (después de diseñar/refrescar la cola mediante bootstrap), apendiza al MEMORY.md cualquier:
 - Patrón de checklist que tuviste que re-interpretar (ej. "items con `🔍 VERIFY:` se mapean a verification_commands, no a tareas separadas").
 - Granularidad descubierta para dominios concretos (ej. "auth debe ir por endpoint: register/login/refresh/logout, no Auth completa").
-- Errores que cometiste y aprendiste (ej. "no expandir items >10 dentro de un step a tareas, agruparlos como acceptance del step").
+- Errores que cometiste y aprendiste (ej. "no expandir items >15 dentro de un step a tareas, agruparlos como acceptance del step").
 
 ## Objetivo
 

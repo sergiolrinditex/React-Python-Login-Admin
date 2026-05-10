@@ -16,12 +16,14 @@ def test_next_slice_repeats_dag_mode_before_plan_and_spawns() -> None:
     assert "legacy_linear` es error operativo" in text
 
 
-def test_templates_do_not_suggest_demo_seed_or_bundle_data() -> None:
+def test_templates_and_smoke_do_not_suggest_demo_seed_or_bundle_data() -> None:
     forbidden = [
         "datos demo",
         "dataset demo",
         "seed de datos",
         "seeds demo",
+        "seed deterministic",
+        "seed/fixture",
         "demo bundles",
         "prod-like",
         "prod_like",
@@ -29,12 +31,45 @@ def test_templates_do_not_suggest_demo_seed_or_bundle_data() -> None:
         "PDFs sample",
         "lorem ipsum",
     ]
-    for path in (ROOT / "docs/templates").rglob("*"):
-        if not path.is_file() or path.suffix not in {".md", ".yaml", ".yml"}:
+    paths = list((ROOT / "docs/templates").rglob("*")) + [ROOT / "scripts/smoke-template-profiles.py"]
+    for path in paths:
+        if not path.is_file() or path.suffix not in {".md", ".yaml", ".yml", ".py"}:
             continue
         text = path.read_text(encoding="utf-8").lower()
         for needle in forbidden:
             assert needle.lower() not in text, f"{path}: {needle}"
+
+
+def test_large_without_base_template_is_stack_and_domain_neutral() -> None:
+    forbidden = [
+        "flutter/f",
+        "fastapi/s",
+        "supabase storage",
+        "contractuploadpage",
+        "/contracts",
+        "/api/v1/contracts",
+        "contract_analysis_graph",
+        "legal_corpus",
+        "pdf_parser",
+        "clause_extractor",
+        "jurisprudencia",
+    ]
+    for path in (ROOT / "docs/templates/large-without-base").rglob("*"):
+        if not path.is_file() or path.suffix not in {".md", ".yaml", ".yml"}:
+            continue
+        text = path.read_text(encoding="utf-8").lower()
+        for needle in forbidden:
+            assert needle not in text, f"{path}: {needle}"
+
+
+def test_templates_explain_phase_step_slice_sizing_without_over_fragmenting() -> None:
+    for profile in ["minimal", "large-with-base", "large-without-base"]:
+        path = ROOT / f"docs/templates/{profile}/PROJECT_IMPLEMENTATION_CHECKLIST.template.md"
+        text = path.read_text(encoding="utf-8")
+        assert "Modelo Phase / Step / Slice" in text
+        assert "phase <=20 slices" in text
+        assert "<=15 máximo" in text
+        assert "No dividas un step coherente sólo por tener 11-12 slices" in text
 
 
 def test_templates_say_missing_verification_data_must_be_provided() -> None:

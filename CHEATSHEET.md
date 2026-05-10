@@ -229,6 +229,13 @@ Si `pr-flow` se ejecuta desde `main`, fallará correctamente. Para push directo 
 
 ## 9. Follow-ups formales
 
+Regla anti-spam:
+
+```text
+Defecto dentro del TASK_ID -> debugger/retest, NO FU.
+Trabajo nuevo fuera de scope -> FU triageada.
+```
+
 Crear propuesta:
 
 ```bash
@@ -236,12 +243,16 @@ Crear propuesta:
   --origin-task P00-S01-T001 \
   --severity medium \
   --kind bug \
+  --scope-classification out_of_scope|missing_coverage|missing_real_data|external_dependency|future_enhancement|scope_expansion|blocked_by_human_decision \
+  --why-not-debugger "por qué debugger/retest no lo puede arreglar dentro del TASK_ID" \
   --title "Titulo corto" \
   --description "Descripcion" \
   --product-increment v1 \
   --acceptance "Criterio" \
   --verify "Comando o verify esperado"
 ```
+
+El script rechaza `--scope-classification in_scope_defect`. Para `high|critical|blocker`, `--why-not-debugger` es obligatorio.
 
 Listar/promover/waivear:
 
@@ -309,3 +320,11 @@ python3 -B -S scripts/audit-agent-reality.py
 python3 -B -S scripts/audit-agent-trailer-vocabulary.py
 ```
 
+
+## Phase / Step / Slice sizing para templates
+
+- **Phase** = milestone o módulo de producto con visión completa; máximo operativo recomendado: `<=20` slices.
+- **Step** = lane coherente dentro de la phase: pantalla, API lane, módulo de dominio, foundation lane o journey lane. Objetivo sano: `6-12` slices; máximo: `<=15`.
+- **Slice/Task** = unidad ejecutable/verificable por worker, con `Depends on`, `Write set`, `Conflict group`, `Journey refs` y `Verify mínimo` claros.
+- No dividas un step coherente sólo por tener 11-12 slices. Divide cuando mezcle lanes no relacionadas, toque write sets incompatibles o pierda trazabilidad de producto.
+- Los templates deben sustituir todos los ejemplos por el dominio real de la app y usar datos reales/proporcionados; si faltan datos, bloquea o registra follow-up.

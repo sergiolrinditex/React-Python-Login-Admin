@@ -20,6 +20,8 @@ def _args(**kwargs):
         description="Verify found that the error state uses decorative data instead of persisted sandbox data.",
         kind="data",
         severity="high",
+        scope_classification="missing_coverage",
+        why_not_debugger="requires new coverage registry row outside current TASK_ID",
         phase=None,
         step=None,
         depends_on=None,
@@ -138,6 +140,44 @@ def test_closer_done_is_blocked_by_unpromoted_blocker_followup(seeded_registry, 
     runtime = common.load_runtime_state()
     assert runtime["last_trailer"]["closer_guardrail"] == "blocked_false_done"
     assert "blocking_followups" in runtime["last_trailer"]
+
+
+def test_rejects_in_scope_defect_followup_spam(seeded_registry):
+    import pytest
+    with pytest.raises(SystemExit) as exc:
+        fut.propose(_args(
+            severity="medium",
+            scope_classification="in_scope_defect",
+            why_not_debugger="should not matter",
+        ))
+    assert "debugger" in str(exc.value)
+    assert "same TASK_ID" in str(exc.value)
+
+
+def test_blocking_followup_requires_triage_reason(seeded_registry):
+    import pytest
+    args = _args(
+        severity="high",
+        scope_classification="missing_coverage",
+        why_not_debugger="",
+    )
+    with pytest.raises(SystemExit) as exc:
+        fut.propose(args)
+    assert "--why-not-debugger" in str(exc.value)
+
+
+def test_nonblocking_untriaged_followup_is_marked_with_warning(seeded_registry):
+    result = fut.propose(_args(
+        severity="medium",
+        scope_classification="unspecified",
+        why_not_debugger="",
+    ))
+    assert result["ok"] is True
+    assert result["scope_classification"] == "unspecified"
+    assert result["triage_warnings"]
+    proposal_path = common.project_root() / result["proposal_path"]
+    text = proposal_path.read_text(encoding="utf-8")
+    assert "follow-up triage is unspecified" in text
 
 
 def test_cli_json_flag_is_accepted_after_subcommand(seeded_registry, capsys):

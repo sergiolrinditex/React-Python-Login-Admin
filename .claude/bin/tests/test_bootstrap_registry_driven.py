@@ -509,12 +509,12 @@ class BootstrapEndToEndAgainstBaseappTests(unittest.TestCase):
                 f"every journey task_id must resolve to a real registry task; unresolved={unresolved[:5]}")
 
             # Production-hardened BASEAPP is split into reviewable DAG lanes.
-            # No phase may exceed 20 slices and no step may exceed 10.
+            # No phase may exceed 20 slices and no step may exceed 15.
             from collections import Counter
             phase_counts = Counter(t["phase_id"] for t in reg["tasks"])
             step_counts = Counter(t["step_id"] for t in reg["tasks"])
             self.assertLessEqual(max(phase_counts.values()), 20, phase_counts)
-            self.assertLessEqual(max(step_counts.values()), 10, step_counts)
+            self.assertLessEqual(max(step_counts.values()), 15, step_counts)
             self.assertEqual(len(reg.get("journeys") or []), 8)
             self.assertEqual(reg["task_dag"]["mode"], "explicit_dag")
 

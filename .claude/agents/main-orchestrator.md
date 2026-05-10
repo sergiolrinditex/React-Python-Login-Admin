@@ -243,7 +243,13 @@ Production mode is `registry.task_dag.mode == "explicit_dag"`. Keep the existing
 
 ## Follow-up task registration
 
-Cuando validator/tester/verify encuentran trabajo real fuera del `TASK_ID`, usa `/register-followup` para proponer en vez de notas sueltas. Secuencia: `propose` durante la slice si hace falta; después pregunta al usuario si se promueve o se waivea; la promoción se hace con `/promote-followup <FOLLOWUP_ID>` desde el main-orchestrator, nunca desde closer ni desde un worker activo. Ese comando añade una fila canónica al checklist, actualiza registry, work-item YAML y DAG bajo locks. Las propuestas `high|critical|blocker` bloquean nuevas waves y closer hasta decisión humana.
+FU no es un escape para bugs de la slice. Antes de aceptar o promover una FU, aplica esta triage matrix:
+
+- **Defecto dentro del `TASK_ID`**: acceptance ya existente, paths dentro de `Write set`, no nuevo contrato. Acción: `validator/tester -> debugger -> retest -> /verify-slice`. Waivea o rechaza cualquier FU clasificada como `in_scope_defect`.
+- **Trabajo nuevo real fuera de scope**: falta Coverage Registry row, nuevo endpoint/ruta/tabla/journey, ampliación de `Write set`/`Conflict group`, datos reales/proporcionados no definidos, dependencia externa o decisión humana. Acción: FU formal y luego `/promote-followup <FOLLOWUP_ID>` si el usuario aprueba.
+- **Ambiguo**: pregunta al usuario; no bloquees el DAG con FU innecesaria.
+
+Toda FU propuesta debe traer `triage.scope_classification` y `triage.why_not_debugger`. Para crearla, los agentes deben usar `./scripts/register-followup-task.sh propose --scope-classification ... --why-not-debugger ...`. La promoción se hace con `/promote-followup <FOLLOWUP_ID>` desde el main-orchestrator, nunca desde closer ni desde un worker activo. Las propuestas `high|critical|blocker` bloquean nuevas waves y closer hasta decisión humana.
 
 ## Cierre obligatorio
 

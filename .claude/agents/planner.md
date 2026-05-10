@@ -248,6 +248,14 @@ When `registry.task_dag.mode == "explicit_dag"`, keep the existing agents and pe
 5. Write/read `orchestrator-state/tasks/task-packs/<TASK_ID>.md`; do not rely on the global `orchestrator-state/memory/active-task.md` while several terminals run.
 6. Never relax the journey gate, spawn budget, hooks, lock order, handoff contract or closer verification. DAG is a scheduling layer, not a quality shortcut.
 
+## Follow-up triage gate
+
+El planner no crea FU por bugs de implementación: esos van por `validator/tester -> debugger -> retest`. Su rol es detectar huecos de planificación antes de ejecutar:
+
+- Si el task pack está incompleto para la propia slice pero se puede enriquecer desde source-of-truth existente, prepara el pack; no abras FU.
+- Si falta coverage real en source-of-truth (nueva lane/slice, dependency, write_set/conflict_group, data contract o journey no declarado), devuelve `CONTEXT_READY: no` y pide corregir docs o crear FU triageada.
+- No uses FU para partir una task a mitad de ejecución salvo que la unidad canónica sea inviable y haya aprobación humana para source-of-truth amendment.
+
 ## Open follow-ups gate
 
 Al reconstruir contexto, lee `runtime-state.open_followups`. Si hay propuestas `high|critical|blocker` en estado `proposed`, devuelve `CONTEXT_READY: no` y pide `/promote-followup <ID>` o waiver humano. Si hay follow-ups promovidos, trátalos como tasks DAG normales: el source-of-truth amendment ya está en el checklist y el work-item YAML existe.

@@ -61,6 +61,17 @@ from common import (
 )
 
 BLOCKING_SEVERITIES = {"blocker", "critical", "high"}
+FOLLOWUP_SCOPE_CLASSIFICATIONS = {
+    "out_of_scope",
+    "missing_coverage",
+    "missing_real_data",
+    "external_dependency",
+    "future_enhancement",
+    "scope_expansion",
+    "blocked_by_human_decision",
+    "in_scope_defect",
+    "unspecified",
+}
 DEFAULT_COLUMNS = [
     "Slice ID", "Tipo", "Target", "Step", "Product increment", "Build state",
     "Risk level", "Verify mode",
@@ -136,6 +147,64 @@ def _normalise_severity(value: str | None) -> str:
     return aliases.get(value, value)
 
 
+def _normalise_scope_classification(value: str | None) -> str:
+    value = str(value or "unspecified").strip().lower().replace("-", "_")
+    aliases = {
+        "outside_scope": "out_of_scope",
+        "outofscope": "out_of_scope",
+        "coverage_gap": "missing_coverage",
+        "missing_data": "missing_real_data",
+        "real_data_missing": "missing_real_data",
+        "external": "external_dependency",
+        "enhancement": "future_enhancement",
+        "scope_change": "scope_expansion",
+        "human_decision": "blocked_by_human_decision",
+        "in_scope": "in_scope_defect",
+        "slice_defect": "in_scope_defect",
+        "debugger": "in_scope_defect",
+    }
+    value = aliases.get(value, value)
+    if value not in FOLLOWUP_SCOPE_CLASSIFICATIONS:
+        raise SystemExit(
+            "invalid --scope-classification: "
+            f"{value}. Use one of: {', '.join(sorted(FOLLOWUP_SCOPE_CLASSIFICATIONS - {'unspecified'}))}"
+        )
+    return value
+
+
+def _validate_followup_triage(severity: str, classification: str, why_not_debugger: str | None) -> list[str]:
+    """Return warnings; raise for proposals that should be handled in-slice.
+
+    A follow-up is source-of-truth work, not a substitute for debugger/retest.
+    Blocking follow-ups must explicitly explain why they cannot be repaired inside
+    the active TASK_ID.
+    """
+    why = str(why_not_debugger or "").strip()
+    if classification == "in_scope_defect":
+        raise SystemExit(
+            "Refusing follow-up proposal classified as in_scope_defect. "
+            "Use validator/tester -> debugger -> retest inside the same TASK_ID instead. "
+            "Only propose FU for work outside the current task pack/write_set or missing coverage/data."
+        )
+    warnings: list[str] = []
+    if classification == "unspecified":
+        msg = (
+            "follow-up triage is unspecified; add --scope-classification and --why-not-debugger "
+            "so this does not become FU spam"
+        )
+        if severity in BLOCKING_SEVERITIES:
+            raise SystemExit(msg)
+        warnings.append(msg)
+    if severity in BLOCKING_SEVERITIES and not why:
+        raise SystemExit(
+            "blocking follow-up proposals require --why-not-debugger explaining why debugger/retest "
+            "cannot resolve the finding inside the current slice"
+        )
+    if not why:
+        warnings.append("missing --why-not-debugger; reviewers must confirm this is not an in-scope defect")
+    return warnings
+
+
 def _append_open_followup(runtime: dict[str, Any], proposal: dict[str, Any]) -> dict[str, Any]:
     runtime.setdefault("open_followups", [])
     entry = {
@@ -146,6 +215,8 @@ def _append_open_followup(runtime: dict[str, Any], proposal: dict[str, Any]) -> 
         "title": proposal.get("title"),
         "path": proposal.get("proposal_path"),
         "created_at": proposal.get("created_at"),
+        "scope_classification": (proposal.get("triage") or {}).get("scope_classification"),
+        "why_not_debugger": (proposal.get("triage") or {}).get("why_not_debugger"),
     }
     runtime["open_followups"] = [x for x in runtime.get("open_followups", []) if x.get("id") != proposal["id"]]
     runtime["open_followups"].append(entry)
@@ -191,6 +262,9 @@ def propose(args: argparse.Namespace) -> dict[str, Any]:
     if args.origin_task and not origin_task:
         raise SystemExit(f"origin TASK_ID not found: {args.origin_task}")
     severity = _normalise_severity(args.severity)
+    scope_classification = _normalise_scope_classification(getattr(args, "scope_classification", None))
+    why_not_debugger = getattr(args, "why_not_debugger", None)
+    triage_warnings = _validate_followup_triage(severity, scope_classification, why_not_debugger)
     fid = args.id or _now_id(args.title)
     proposal = {
         "id": fid,
@@ -217,6 +291,13 @@ def propose(args: argparse.Namespace) -> dict[str, Any]:
         "acceptance": _as_list(args.acceptance) or [args.title],
         "verify": _as_list(args.verify) or ["Reproducir con datos reales/proporcionados según Verification Data Contract"],
         "notes": _as_list(args.note),
+        "triage": {
+            "scope_classification": scope_classification,
+            "why_not_debugger": str(why_not_debugger or "").strip(),
+            "decision": "followup_only_when_outside_current_slice",
+            "debugger_path": "in_scope_defects_use_validator_tester_debugger_retest",
+            "warnings": triage_warnings,
+        },
     }
     path = _proposal_path(fid)
     proposal["proposal_path"] = relpath(path)
@@ -224,8 +305,8 @@ def propose(args: argparse.Namespace) -> dict[str, Any]:
     with file_lock(runtime_state_path()):
         runtime = _append_open_followup(load_runtime_state(), proposal)
         save_runtime_state(runtime)
-    append_jsonl(ledger_path(), {"ts": now_iso(), "event": "followup_proposed", "followup_id": fid, "origin_task_id": args.origin_task, "severity": severity, "path": relpath(path)})
-    return {"ok": True, "followup_id": fid, "proposal_path": relpath(path), "blocking": severity in BLOCKING_SEVERITIES}
+    append_jsonl(ledger_path(), {"ts": now_iso(), "event": "followup_proposed", "followup_id": fid, "origin_task_id": args.origin_task, "severity": severity, "scope_classification": scope_classification, "path": relpath(path)})
+    return {"ok": True, "followup_id": fid, "proposal_path": relpath(path), "blocking": severity in BLOCKING_SEVERITIES, "scope_classification": scope_classification, "triage_warnings": triage_warnings}
 
 
 def _next_task_id(registry: dict[str, Any], phase_id: str, step_id: str) -> str:
@@ -407,8 +488,8 @@ def promote(args: argparse.Namespace) -> dict[str, Any]:
             "journey_refs": list(proposal.get("journey_refs") or []),
             "handoff_path": f"orchestrator-state/tasks/handoffs/{task_id}.md",
             "evidence_dir": f"orchestrator-state/tasks/evidence/{task_id}",
-            "origin": {"type": "runtime_followup", "followup_id": proposal.get("id"), "origin_task_id": proposal.get("origin_task_id"), "severity": proposal.get("severity"), "kind": proposal.get("kind")},
-            "notes": [f"Runtime follow-up promoted from {proposal.get('id')}", f"Description: {proposal.get('description') or '—'}"],
+            "origin": {"type": "runtime_followup", "followup_id": proposal.get("id"), "origin_task_id": proposal.get("origin_task_id"), "severity": proposal.get("severity"), "kind": proposal.get("kind"), "triage": proposal.get("triage") or {}},
+            "notes": [f"Runtime follow-up promoted from {proposal.get('id')}", f"Description: {proposal.get('description') or '—'}", f"Triage: {(proposal.get('triage') or {}).get('scope_classification') or 'unspecified'}; why_not_debugger={(proposal.get('triage') or {}).get('why_not_debugger') or '—'}"],
         }
         if deps_ready:
             conflict_blockers = active_conflict_blockers(registry, task)
@@ -486,12 +567,14 @@ def print_human(result: dict[str, Any]) -> None:
     if "followups" in result:
         print(f"FOLLOWUPS count={result.get('count')}")
         for item in result.get("followups", []):
-            print(f"- {item.get('id')} status={item.get('status')} severity={item.get('severity')} origin={item.get('origin_task_id')} title={item.get('title')}")
+            triage = item.get("triage") or {}
+            classification = item.get("scope_classification") or triage.get("scope_classification") or "unspecified"
+            print(f"- {item.get('id')} status={item.get('status')} severity={item.get('severity')} scope={classification} origin={item.get('origin_task_id')} title={item.get('title')}")
         blocking = result.get("blocking") or []
         if blocking:
             print("BLOCKING_FOLLOWUPS:")
             for item in blocking:
-                print(f"- {item.get('id')} severity={item.get('severity')} origin={item.get('origin_task_id')} title={item.get('title')}")
+                print(f"- {item.get('id')} severity={item.get('severity')} scope={item.get('scope_classification') or 'unspecified'} origin={item.get('origin_task_id')} title={item.get('title')}")
         return
     if result.get("ok"):
         print("OK " + " ".join(f"{k}={v}" for k, v in result.items() if k != "ok"))
@@ -511,6 +594,8 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--product-increment", default=None, help="v1/v2/current; stored in Coverage Registry for cumulative product docs.")
     p.add_argument("--build-state", default="planned", help="planned|ready|done; promoted follow-ups normally stay planned.")
     p.add_argument("--severity", default="medium", choices=["low", "medium", "high", "critical", "blocker", "bajo", "media", "alto", "critico", "crítico"])
+    p.add_argument("--scope-classification", choices=sorted(FOLLOWUP_SCOPE_CLASSIFICATIONS), default="unspecified", help="Why this is a FU instead of debugger/retest: out_of_scope|missing_coverage|missing_real_data|external_dependency|future_enhancement|scope_expansion|blocked_by_human_decision. in_scope_defect is rejected.")
+    p.add_argument("--why-not-debugger", default="", help="Required for blocking FU; explain why validator/tester -> debugger -> retest cannot fix this inside the current TASK_ID.")
     p.add_argument("--phase")
     p.add_argument("--step")
     p.add_argument("--depends-on", action="append")

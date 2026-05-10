@@ -114,7 +114,28 @@ EVIDENCE: orchestrator-state/tasks/evidence/<TASK_ID>/
 
 ## Follow-up findings
 
-Si el fallo pertenece al `TASK_ID`, devuelve `OUTCOME: fail` y `NEXT_STATUS: needs_debug`. Si el test revela un hueco real fuera de scope —datos reales no definidos, fixture productivo ausente, journey no cubierto, estado UX no especificado, endpoint sin consumidor— crea propuesta formal con `./scripts/register-followup-task.sh propose` y referencia el `FOLLOWUP_ID` en la sección tester del handoff. No edites `registry.json` ni source-of-truth a mano; la promoción a task DAG la hace el main-orchestrator tras aprobación humana.
+Antes de crear FU, clasifica el fallo:
+
+- **In-scope defect**: endpoint, pantalla, test, log, estado UI o wiring ya pertenecen a este `TASK_ID` y se pueden corregir dentro del `Write set`. Resultado: `OUTCOME: fail`, `NEXT_STATUS: needs_debug`. No crees FU; llama a `debugger`, luego repite `validator ‖ tester` y `/verify-slice`.
+- **Out-of-scope work**: falta contrato de datos reales/proporcionados, falta journey, nuevo endpoint/pantalla/tabla, consumidor no cubierto, o se requiere ampliar source-of-truth. Resultado: FU formal con triage explícito.
+- **Duda**: devuelve `blocked` con la pregunta; no conviertas incertidumbre en FU bloqueante.
+
+Al proponer FU, incluye siempre:
+
+```bash
+./scripts/register-followup-task.sh propose \
+  --origin-task <TASK_ID> \
+  --severity high|medium|low \
+  --kind bug|ux|wiring|data|test|security|followup \
+  --scope-classification out_of_scope|missing_coverage|missing_real_data|external_dependency|future_enhancement|scope_expansion|blocked_by_human_decision \
+  --why-not-debugger "<por qué debugger/retest no lo puede arreglar dentro del TASK_ID>" \
+  --title "..." \
+  --description "..." \
+  --acceptance "..." \
+  --verify "..."
+```
+
+Referencia el `FOLLOWUP_ID` en la sección tester del handoff. No edites `registry.json` ni source-of-truth a mano; la promoción a task DAG la hace el main-orchestrator tras aprobación humana.
 
 ## Production DAG trailer vocabulary
 

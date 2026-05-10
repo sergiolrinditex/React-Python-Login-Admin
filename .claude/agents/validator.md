@@ -240,7 +240,28 @@ HANDOFF: orchestrator-state/tasks/handoffs/<TASK_ID>.md
 
 ## Follow-up findings
 
-Si detectas un problema dentro del alcance del `TASK_ID`, falla la validación normal y deja que `debugger` lo corrija en la misma slice. Si detectas trabajo real pero fuera del alcance —missing slice, wiring no cubierto, UX state omitido, real-data contract incompleto, riesgo de producción— no lo dejes solo como prose: ejecuta `./scripts/register-followup-task.sh propose ...` y añade el `FOLLOWUP_ID` al handoff. Usa `severity high|critical|blocker` solo cuando no debe seguir una nueva wave sin promover/waive; esas severidades bloquean `closer` y `claim_task.py` hasta decisión humana.
+Antes de crear FU, clasifica el hallazgo:
+
+- **In-scope defect**: el criterio ya está en el task pack, el fix cabe en `Write set`/`allowed_paths` y no exige nueva ruta/endpoint/tabla/journey/contrato de datos. Resultado: `OUTCOME: changes_requested`, `NEXT_STATUS: needs_debug`. No crees FU; deja que `debugger` arregle y que se repita `validator ‖ tester`.
+- **Out-of-scope work**: falta cobertura en source-of-truth, falta lane/slice, se requiere ampliar `Write set`/`Conflict group`, falta contrato de datos reales/proporcionados, o hay decisión de producto fuera de esta slice. Resultado: crea FU formal.
+- **Duda**: bloquea con pregunta concreta al main-orchestrator/usuario; no uses FU para mover el problema de sitio.
+
+Cuando crees FU, usa siempre triage explícito:
+
+```bash
+./scripts/register-followup-task.sh propose \
+  --origin-task <TASK_ID> \
+  --severity high|medium|low \
+  --kind bug|ux|wiring|data|test|security|followup \
+  --scope-classification out_of_scope|missing_coverage|missing_real_data|external_dependency|future_enhancement|scope_expansion|blocked_by_human_decision \
+  --why-not-debugger "<por qué debugger/retest no lo puede arreglar dentro del TASK_ID>" \
+  --title "..." \
+  --description "..." \
+  --acceptance "..." \
+  --verify "..."
+```
+
+El script rechaza `--scope-classification in_scope_defect` y exige `--why-not-debugger` para FU bloqueantes. Usa `severity high|critical|blocker` solo cuando no debe seguir ninguna nueva wave ni cerrar la slice sin decisión humana.
 
 ## Production DAG trailer vocabulary
 

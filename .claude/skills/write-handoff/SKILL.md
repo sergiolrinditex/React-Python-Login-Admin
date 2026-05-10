@@ -50,6 +50,11 @@ Sections are appended in execution order; workers never overwrite earlier sectio
 
 Important: the chat trailer and the handoff section are different artifacts. A worker must emit the chat trailer so hooks can sync registry, and must also write the equivalent result lines inside the handoff so `closer` can audit after `/clear`. Do not rely on one to replace the other.
 
+
+## Follow-up entries
+
+If a worker references a `FOLLOWUP_ID`, the handoff must record why it is a real out-of-scope FU, not an in-scope defect: `scope_classification`, `why_not_debugger`, affected `write_set`/`conflict_group`, and whether the slice is blocked until human decision. In-scope defects belong to `debugger` + retest, not FU.
+
 ## Trailer lines
 
 At the end of each worker's FINAL assistant message (not in the handoff file — in the chat), always add machine-readable lines. The SubagentStop hook parses them and syncs registry.

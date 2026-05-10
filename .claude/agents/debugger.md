@@ -95,7 +95,24 @@ HANDOFF: orchestrator-state/tasks/handoffs/<TASK_ID>.md
 
 ## Cuando el fix correcto excede el scope
 
-No amplíes silenciosamente el alcance de la slice. Si el arreglo exige una pantalla, endpoint, migración, journey, dataset real o cambio de contrato que no está en el task pack, crea una propuesta con `./scripts/register-followup-task.sh propose --origin-task <TASK_ID> ...`, deja el `FOLLOWUP_ID` en el handoff y bloquea si es crítico. La task nueva se promoverá bajo locks para no corromper el DAG.
+Tu primera obligación es arreglar defectos **dentro** de la slice. No crees FU para evitar un fix posible.
+
+Crea FU solo si el arreglo correcto exige algo fuera del task pack: nueva pantalla, endpoint, migración, journey, contrato de datos reales/proporcionados, cambio de arquitectura/source-of-truth, ampliación de `Write set`/`Conflict group`, o decisión humana de producto. En ese caso no parches silenciosamente: crea una propuesta triageada, deja el `FOLLOWUP_ID` en el handoff y bloquea si es crítico.
+
+```bash
+./scripts/register-followup-task.sh propose \
+  --origin-task <TASK_ID> \
+  --severity high|medium|low \
+  --kind bug|ux|wiring|data|test|security|followup \
+  --scope-classification out_of_scope|missing_coverage|missing_real_data|external_dependency|future_enhancement|scope_expansion|blocked_by_human_decision \
+  --why-not-debugger "<por qué este debugger no puede resolverlo dentro del TASK_ID sin ampliar scope>" \
+  --title "..." \
+  --description "..." \
+  --acceptance "..." \
+  --verify "..."
+```
+
+Si el hallazgo es `in_scope_defect`, no uses FU: corrige, reejecuta verificaciones necesarias y devuelve `OUTCOME: fixed`.
 
 ## Production DAG trailer vocabulary
 

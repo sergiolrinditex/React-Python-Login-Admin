@@ -97,31 +97,38 @@ For UI work, the task pack must include the journey, route/page, endpoints consu
 
 `hook_write_scope_guard.py` blocks the dangerous cases: writing static `.claude/` config during app execution, writing another task's handoff/evidence/report/task-pack, editing source-of-truth/base-app during an active task, hand-writing follow-up YAML, or directly editing generated core state. `hook_capture_subagent_stop.py` also rejects false `done` from closer unless report, commit, push and worktree cleanup proof are present.
 
-## Follow-up tasks from validator/tester findings
+## Follow-up tasks from validator/tester/verify findings
 
-A real production finding must never remain only as prose in a handoff. Use this split:
+A production finding must never remain only as prose in a handoff, but a follow-up is also **not** a substitute for debugger/retest. Use this split before creating any FU:
 
-- **In-scope bug for the current TASK_ID**: keep the same slice, mark the lifecycle `needs_debug`, run `debugger`, then rerun `validator ‖ tester` and `/verify-slice`.
-- **Out-of-scope gap, missing wiring, missing real-data fixture, UX gap, or future production risk**: create a formal follow-up proposal YAML:
+- **In-scope defect for the current `TASK_ID`**: acceptance is already in the task pack, paths are in `Write set`/`allowed_paths`, no new route/endpoint/table/journey/data contract is needed. Do **not** create FU. Mark lifecycle `needs_debug`, run `debugger`, rerun `validator ‖ tester`, then rerun `/verify-slice`.
+- **Out-of-scope work / missing coverage**: requires source-of-truth amendment, new screen/endpoint/table/journey, `Write set` or `Conflict group` expansion, missing real/provided data contract, external dependency, or explicit human product decision. Create FU.
+- **Unclear classification**: stop and ask the main-orchestrator/user. Do not create a blocking FU just to move on.
+
+Every FU proposal must explain why it is not going through debugger/retest:
 
 ```bash
 ./scripts/register-followup-task.sh propose \
   --origin-task <TASK_ID> \
   --severity high|medium|low \
   --kind bug|ux|wiring|data|test|security|followup \
+  --scope-classification out_of_scope|missing_coverage|missing_real_data|external_dependency|future_enhancement|scope_expansion|blocked_by_human_decision \
+  --why-not-debugger "<why validator/tester -> debugger -> retest cannot fix this inside TASK_ID>" \
   --title "<short title>" \
   --description "<what was found and why it matters>" \
   --journey-ref <JID> \
   --conflict-group <group> \
   --write-set '<path-or-glob>' \
   --acceptance "<done means>" \
-  --verify "<real/prod-like verification>"
+  --verify "<verification with real/provided data>"
 ```
+
+The script rejects `--scope-classification in_scope_defect` and requires `--why-not-debugger` for `high|critical|blocker` proposals. That prevents FU spam while keeping real out-of-scope debt visible.
 
 Only the main orchestrator promotes or waives it after explicit human decision:
 
 ```bash
-./scripts/register-followup-task.sh promote <FOLLOWUP_ID>
+/promote-followup <FOLLOWUP_ID>
 ./scripts/register-followup-task.sh waive <FOLLOWUP_ID> --reason "<human decision>"
 ```
 

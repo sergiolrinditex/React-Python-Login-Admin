@@ -26,7 +26,7 @@ def _norm_edges(edges: list[list[str]] | list[tuple[str, str]] | None) -> list[l
 
 
 MAX_TASKS_PER_PHASE = 20
-MAX_TASKS_PER_STEP = 10
+MAX_TASKS_PER_STEP = 15
 
 
 def validate_phase_budgets(registry: dict[str, Any]) -> list[str]:
@@ -44,7 +44,7 @@ def validate_phase_budgets(registry: dict[str, Any]) -> list[str]:
             warnings.append(f"{phase}: {count} tasks exceeds max {MAX_TASKS_PER_PHASE}; split by screen/module lane")
     for step, count in sorted(by_step.items()):
         if count > MAX_TASKS_PER_STEP:
-            warnings.append(f"{step}: {count} tasks exceeds max {MAX_TASKS_PER_STEP}; split the step into smaller screen/API lanes")
+            warnings.append(f"{step}: {count} tasks exceeds max {MAX_TASKS_PER_STEP}; split the step only if it mixes unrelated screen/API lanes")
     return warnings
 
 

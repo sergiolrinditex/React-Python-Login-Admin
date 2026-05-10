@@ -47,7 +47,8 @@
         "orchestrator-state/tasks/task-packs/<TASK_ID>.md",
         "orchestrator-state/memory/active-task.md legacy mirror",
         "orchestrator-state/memory/active-phase.md legacy mirror",
-        "orchestrator-state/agent-memory/planner/MEMORY.md"
+        "orchestrator-state/agent-memory/planner/MEMORY.md",
+        "orchestrator-state/agent-memory/planner/archive/**"
       ],
       "must_not_write": [
         "product code",
@@ -61,7 +62,8 @@
         "orchestrator-state/memory/PROGRESS.md",
         "orchestrator-state/tasks/handoffs/<TASK_ID>.md",
         "orchestrator-state/tasks/evidence/<TASK_ID>/developer-*",
-        "orchestrator-state/agent-memory/developer/MEMORY.md"
+        "orchestrator-state/agent-memory/developer/MEMORY.md",
+        "orchestrator-state/agent-memory/developer/archive/**"
       ],
       "must_not_write": [
         "registry/runtime JSON directly",
@@ -71,7 +73,8 @@
     "official-docs-researcher": {
       "may_write": [
         "orchestrator-state/memory/official-doc-notes/*.md",
-        "orchestrator-state/agent-memory/official-docs-researcher/MEMORY.md"
+        "orchestrator-state/agent-memory/official-docs-researcher/MEMORY.md",
+        "orchestrator-state/agent-memory/official-docs-researcher/archive/**"
       ],
       "must_not_write": [
         "product code",
@@ -82,6 +85,7 @@
       "may_write": [
         "append-only sections in orchestrator-state/tasks/handoffs/<TASK_ID>.md",
         "orchestrator-state/agent-memory/validator/MEMORY.md",
+        "orchestrator-state/agent-memory/validator/archive/**",
         "orchestrator-state/tasks/follow-ups/<FOLLOWUP_ID>.yaml via register_followup_task.py propose"
       ],
       "must_not_write": [
@@ -94,6 +98,7 @@
         "orchestrator-state/tasks/evidence/<TASK_ID>/*",
         "append-only sections in orchestrator-state/tasks/handoffs/<TASK_ID>.md",
         "orchestrator-state/agent-memory/tester/MEMORY.md",
+        "orchestrator-state/agent-memory/tester/archive/**",
         "orchestrator-state/tasks/follow-ups/<FOLLOWUP_ID>.yaml via register_followup_task.py propose"
       ],
       "must_not_write": [
@@ -107,6 +112,7 @@
         "orchestrator-state/tasks/handoffs/<TASK_ID>.md",
         "orchestrator-state/tasks/evidence/<TASK_ID>/debugger-*",
         "orchestrator-state/agent-memory/debugger/MEMORY.md",
+        "orchestrator-state/agent-memory/debugger/archive/**",
         "orchestrator-state/tasks/follow-ups/<FOLLOWUP_ID>.yaml via register_followup_task.py propose"
       ],
       "must_not_write": [
@@ -123,7 +129,8 @@
         "safe worktree cleanup",
         "docs/base-app/* via sync_product_baseline.py",
         "docs/base-app/BASELINE_MANIFEST.json via sync_product_baseline.py",
-        "orchestrator-state/agent-memory/closer/MEMORY.md"
+        "orchestrator-state/agent-memory/closer/MEMORY.md",
+        "orchestrator-state/agent-memory/closer/archive/**"
       ],
       "must_not_write": [
         "product code",
@@ -147,7 +154,8 @@
         "orchestrator-state/memory/decisions.md",
         "orchestrator-state/memory/risk-register.md",
         "orchestrator-state/agent-memory/document-analyzer/MEMORY.md",
-        "orchestrator-state/agent-memory/project-architect/MEMORY.md"
+        "orchestrator-state/agent-memory/project-architect/MEMORY.md",
+        "orchestrator-state/agent-memory/bootstrap_agents/archive/**"
       ],
       "must_not_write": [
         "active DAG task artifacts"
@@ -158,7 +166,8 @@
         "deployment manifests/config/scripts inside task scope when deployment is explicitly in scope",
         "orchestrator-state/tasks/handoffs/<TASK_ID>.md",
         "orchestrator-state/tasks/evidence/<TASK_ID>/deploy-*",
-        "orchestrator-state/agent-memory/deployer/MEMORY.md"
+        "orchestrator-state/agent-memory/deployer/MEMORY.md",
+        "orchestrator-state/agent-memory/deployer/archive/**"
       ],
       "must_not_write": [
         "registry/runtime JSON directly",
@@ -170,7 +179,8 @@
       "may_write": [
         "docs/source-of-truth before execution starts",
         "orchestrator-state/memory/source-manifest.json",
-        "orchestrator-state/agent-memory/document-analyzer/MEMORY.md"
+        "orchestrator-state/agent-memory/document-analyzer/MEMORY.md",
+        "orchestrator-state/agent-memory/document-analyzer/archive/**"
       ],
       "must_not_write": [
         "product code",
@@ -183,7 +193,8 @@
         "orchestrator-state/memory/architecture-contract.md",
         "orchestrator-state/memory/decisions.md",
         "orchestrator-state/memory/risk-register.md",
-        "orchestrator-state/agent-memory/project-architect/MEMORY.md"
+        "orchestrator-state/agent-memory/project-architect/MEMORY.md",
+        "orchestrator-state/agent-memory/project-architect/archive/**"
       ],
       "must_not_write": [
         "product code",
@@ -194,7 +205,8 @@
     "task-planner": {
       "may_write": [
         "docs/source-of-truth before execution starts when user-approved planning changes are required",
-        "orchestrator-state/agent-memory/task-planner/MEMORY.md"
+        "orchestrator-state/agent-memory/task-planner/MEMORY.md",
+        "orchestrator-state/agent-memory/task-planner/archive/**"
       ],
       "must_not_write": [
         "product code",
@@ -205,6 +217,7 @@
     "main-orchestrator": {
       "may_write": [
         "orchestrator-state/agent-memory/main-orchestrator/MEMORY.md",
+        "orchestrator-state/agent-memory/main-orchestrator/archive/**",
         "orchestration notes in handoffs only through the scoped agent/command workflow"
       ],
       "must_not_write": [
@@ -281,11 +294,11 @@
     }
   },
   "followup_tasks": {
-    "purpose": "Validator/tester/debugger findings that are real but outside current TASK_ID become formal DAG work, not loose handoff notes.",
+    "purpose": "Only real out-of-scope work becomes formal DAG follow-up. In-scope defects stay in the same TASK_ID and go through validator/tester -> debugger -> retest.",
     "proposal_dir": "orchestrator-state/tasks/follow-ups/<FOLLOWUP_ID>.yaml",
     "source_patch_dir": "orchestrator-state/tasks/source-doc-patches/<FOLLOWUP_ID>.md",
-    "proposal_command": "./scripts/register-followup-task.sh propose --origin-task <TASK_ID> --title <title> --severity high|medium|low ...",
-    "promotion_command": "./scripts/register-followup-task.sh promote <FOLLOWUP_ID>",
+    "proposal_command": "./scripts/register-followup-task.sh propose --origin-task <TASK_ID> --scope-classification <out_of_scope|missing_coverage|missing_real_data|external_dependency|future_enhancement|scope_expansion|blocked_by_human_decision> --why-not-debugger <reason> --title <title> --severity high|medium|low ...",
+    "promotion_command": "claude --agent main-orchestrator --permission-mode bypassPermissions \"/promote-followup <FOLLOWUP_ID>\"",
     "waiver_command": "./scripts/register-followup-task.sh waive <FOLLOWUP_ID> --reason <human decision>",
     "blocking_severities": [
       "blocker",
@@ -303,7 +316,20 @@
       "Coverage Registry Product increment column",
       "Coverage Registry Build state column"
     ],
-    "policy": "Agents may propose follow-ups. Only the main orchestrator promotes/waives after human approval. Promotion persists the task into source-of-truth so future bootstrap runs do not lose it."
+    "policy": "Agents may propose follow-ups. Only the main orchestrator promotes/waives after human approval. Promotion persists the task into source-of-truth so future bootstrap runs do not lose it.",
+    "promotion_script": "./scripts/register-followup-task.sh promote <FOLLOWUP_ID>",
+    "promotion_policy": "Use /promote-followup as the safe main-orchestrator command. The script is the low-level implementation and must not be called by closer automatically. Main-orchestrator must reject/waive FU spam that should have gone through debugger/retest.",
+    "triage_policy": "Do not create FU for in_scope_defect. Use debugger/retest inside the current slice. Every FU must explain why debugger cannot fix it inside TASK_ID; blocking severities require --why-not-debugger.",
+    "scope_classifications": [
+      "out_of_scope",
+      "missing_coverage",
+      "missing_real_data",
+      "external_dependency",
+      "future_enhancement",
+      "scope_expansion",
+      "blocked_by_human_decision"
+    ],
+    "rejected_scope_classification": "in_scope_defect"
   },
   "product_baseline": {
     "purpose": "docs/base-app/ stores the built cumulative baseline snapshot passed to ChatGPT before planning the next increment.",

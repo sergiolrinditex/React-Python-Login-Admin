@@ -193,6 +193,8 @@ Antes de emitir `NEXT_STATUS: done`, ejecuta mentalmente y, si hay duda, mecáni
 
 El closer nunca ejecuta `promote` automáticamente. En modo DAG, promover una FU modifica source-of-truth, registry, work-item YAML, DAG y runtime; eso es una decisión explícita del main-orchestrator/usuario mediante `/promote-followup <FOLLOWUP_ID>`. Si hay una FU bloqueante, bloquea el cierre y pide decisión humana; no la conviertas tú en task desde el cierre.
 
+Si una FU bloqueante parece realmente un `in_scope_defect`, no la promociones ni la arregles desde closer: bloquea y pide al main-orchestrator que decida waiver/retest/debugger. El closer es gate de cierre, no clasificador ni parcheador de deuda.
+
 ## Production DAG trailer vocabulary
 
 Closed trailer enums live in `.claude/orchestrator-contract.json` → `trailer_schema.roles.closer.outcome_values` and `trailer_schema.roles.closer.next_status_values`. Read that path before emitting the trailer. Scope writes by `CLAUDE_ACTIVE_TASK_ID`/`CLAUDE_TASK_PACK`; never edit generated registry/runtime/task-dag directly. Use `/register-followup` for discovered work outside current slice.

@@ -44,28 +44,10 @@ def _parse_sections(text: str) -> Dict[str, List[Tuple[str, str]]]:
     return sections
 
 
-def _latest(sections: Dict[str, List[Tuple[str, str]]], *names: str) -> Dict[str, str]:
-    """Return last key occurrence across all sections whose title starts with any of ``names``.
-
-    Re-run sections must override their predecessors in the same handoff:
-      - Validator: ``Validator review`` and ``Validator review (re-run after ...)`` share the base title.
-      - Tester:    ``Tester run`` and ``Tester verification (re-run after ...)`` use DIFFERENT base titles
-                   intentionally, so callers pass both names.
-      - Verify:    ``verify-slice`` and ``verify-slice (re-run after ...)`` share the base title.
-    Insertion order in ``sections`` (Python 3.7+ dict) is the document order; the LAST matching
-    section wins.
-    """
-    needles = [n.lower() for n in names]
+def _latest(sections: Dict[str, List[Tuple[str, str]]], name: str) -> Dict[str, str]:
+    """Return last key occurrence in a named section."""
     out: Dict[str, str] = {}
-    matched_section: str | None = None
-    for section_title in sections:
-        for needle in needles:
-            if section_title == needle or section_title.startswith(needle + " ("):
-                matched_section = section_title
-                break
-    if matched_section is None:
-        return out
-    for key, value in sections.get(matched_section, []):
+    for key, value in sections.get(name.lower(), []):
         out[key] = value
     return out
 
@@ -93,7 +75,7 @@ def validate(task_id: str, *, require_ready_for_close: bool, require_verify_slic
         errors.append("handoff contains TASK_ID lines for another task: " + ", ".join(f"{sec}={val}" for sec, val in mismatches))
 
     validator = _latest(sections, "validator review")
-    tester = _latest(sections, "tester run", "tester verification")
+    tester = _latest(sections, "tester run")
     verify = _latest(sections, "verify-slice")
     details["validator"] = validator
     details["tester"] = tester

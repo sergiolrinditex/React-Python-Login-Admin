@@ -47,6 +47,16 @@ unset CLAUDE_ACTIVE_TASK_ID CLAUDE_TASK_PACK
   - `orchestrator-state/tasks/source-doc-patches/<FOLLOWUP_ID>.md`
 - `register_followup_task.py promote` ya evalúa dependencias y conflictos activos. Si la FU promovida pisa `Conflict group` o `Write set` de una task activa/claimed/in_progress, la task nueva debe quedar `blocked` con `blocked_reason: conflict_with_active_task` hasta que `promote_ready_tasks()` pueda desbloquearla.
 
+## Triage antes de promover
+
+Antes de promover, inspecciona `triage.scope_classification` y `triage.why_not_debugger` de la FU:
+
+- Si `scope_classification` falta o es `unspecified`, no promociones sin preguntar. Pide completar triage con `/register-followup propose --scope-classification ... --why-not-debugger ...` o waiver humano.
+- Si el hallazgo realmente es `in_scope_defect`, no promociones: waivea/rechaza la FU y reabre el flujo `debugger -> validator ‖ tester -> /verify-slice`.
+- Si `scope_classification` es `out_of_scope|missing_coverage|missing_real_data|external_dependency|future_enhancement|scope_expansion|blocked_by_human_decision` y `why_not_debugger` es claro, puedes pedir confirmación `PROMOTE <FOLLOWUP_ID>`.
+
+Esto evita FU spam: el DAG sólo recibe trabajo nuevo real, no bugs reparables dentro de la slice.
+
 ## Modo de uso
 
 ### Listar
@@ -59,8 +69,8 @@ Si `$ARGUMENTS` está vacío o es `--list`, no promociones nada. Ejecuta:
 
 Muestra al usuario una tabla con:
 
-| FU | status | severity | origin_task_id | title | action |
-|---|---|---|---|---|---|
+| FU | status | severity | scope | origin_task_id | title | action |
+|---|---|---|---|---|---|---|
 
 Prioriza `status=proposed` y `severity=blocker|critical|high`. Recomienda el comando exacto:
 
@@ -77,6 +87,7 @@ Si `$ARGUMENTS` contiene un `FU-...`, haz:
 3. Si `status != proposed`, no promociones de nuevo; muestra estado actual (`promoted`, `waived`, etc.).
 4. Muestra plan antes de mutar:
    - FU id, severidad, origen, título.
+   - `triage.scope_classification` y `triage.why_not_debugger`.
    - `depends_on`, `conflict_groups`, `write_set`, `journey_refs`.
    - Rutas que se van a escribir.
    - Nota: si hay conflicto activo, la task promovida quedará `blocked` automáticamente.

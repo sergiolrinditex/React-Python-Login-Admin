@@ -22,6 +22,15 @@ claude --agent main-orchestrator --permission-mode bypassPermissions "/promote-f
 
 Ese flujo inspecciona la FU, pide confirmación humana literal, llama al script de promoción bajo locks y revalida DAG/wiring. El closer nunca lo ejecuta automáticamente.
 
+## Triage anti-spam
+
+Antes de proponer una FU decide si el hallazgo es realmente fuera de scope:
+
+- `in_scope_defect`: pertenece al TASK_ID actual y debe ir por `validator/tester -> debugger -> retest`; no crees FU.
+- `out_of_scope|missing_coverage|missing_real_data|external_dependency|future_enhancement|scope_expansion|blocked_by_human_decision`: puede ser FU si explicas `--why-not-debugger`.
+
+El script rechaza `--scope-classification in_scope_defect`. Para `high|critical|blocker`, `--why-not-debugger` es obligatorio.
+
 ## Casos
 
 ### 1. Proponer sin mutar DAG
@@ -33,6 +42,8 @@ Seguro durante una slice activa:
   --origin-task <TASK_ID> \
   --severity high|medium|low \
   --kind bug|ux|wiring|data|test|security|followup \
+  --scope-classification out_of_scope|missing_coverage|missing_real_data|external_dependency|future_enhancement|scope_expansion|blocked_by_human_decision \
+  --why-not-debugger "<por qué debugger/retest no lo puede arreglar dentro del TASK_ID>" \
   --product-increment <baseapp|v1|v2|current> \
   --title "<título>" \
   --description "<hallazgo real>" \
@@ -40,7 +51,7 @@ Seguro durante una slice activa:
   --conflict-group <grupo> \
   --write-set '<path-o-glob>' \
   --acceptance "<criterio de cierre>" \
-  --verify "<verificación con datos reales/prod-like>"
+  --verify "<verificación con datos reales/proporcionados>"
 ```
 
 Esto escribe:
