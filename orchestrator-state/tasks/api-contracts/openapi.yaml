@@ -1263,6 +1263,64 @@
         }
       }
     },
+    "/api/v1/auth/2fa/enroll": {
+      "post": {
+        "operationId": "postApiV1Auth2faEnroll",
+        "tags": [
+          "followup"
+        ],
+        "x-slice-ids": [
+          "P01-S02-T009"
+        ],
+        "x-journey-refs": [
+          "J100"
+        ],
+        "x-tables": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostApiV1Auth2faEnrollResponse"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Client error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostApiV1Auth2faEnrollRequest"
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/auth/2fa/verify": {
       "post": {
         "operationId": "postApiV1Auth2faVerify",
@@ -2711,6 +2769,26 @@
         "x-generated-from": [
           "P02-S08-T001",
           "P04-S02-T005"
+        ]
+      },
+      "PostApiV1Auth2faEnrollRequest": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/GenericJson"
+          }
+        ],
+        "x-generated-from": [
+          "P01-S02-T009"
+        ]
+      },
+      "PostApiV1Auth2faEnrollResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/GenericJson"
+          }
+        ],
+        "x-generated-from": [
+          "P01-S02-T009"
         ]
       },
       "PostApiV1Auth2faVerifyRequest": {

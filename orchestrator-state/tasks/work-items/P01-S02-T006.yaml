@@ -24,12 +24,12 @@ acceptance:
 verification_commands:
   - "pytest backend/tests/integration -k mfa_verify && curl with seed challenge"
 allowed_paths:
-  - "backend/app/auth/mfa.py"
+  - "backend/app/features/auth/mfa.py"
   - "backend/tests/integration/test_mfa.py"
 conflict_groups:
   - "api:auth"
 write_set:
-  - "backend/app/auth/mfa.py"
+  - "backend/app/features/auth/mfa.py"
   - "backend/tests/integration/test_mfa.py"
 handoff_path: orchestrator-state/tasks/handoffs/P01-S02-T006.md
 evidence_dir: orchestrator-state/tasks/evidence/P01-S02-T006

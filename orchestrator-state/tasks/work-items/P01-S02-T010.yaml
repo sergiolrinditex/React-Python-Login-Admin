@@ -1,0 +1,31 @@
+id: P01-S02-T010
+phase_id: P01
+step_id: P01-S02
+title: "Doc-amendment: align registry write_set 'backend/app/auth/**' with codebase 'backend/app/features/auth/**'"
+status: validator_tester_pending
+kind: "followup"
+target: "Doc-amendment: align registry write_set 'backend/app/auth/**' with codebase 'backend/app/features/auth/**'"
+product_increment: "current"
+build_state: "planned"
+risk_level: "low"
+verify_mode: "human"
+route: ""
+endpoint: ""
+journey_refs:
+  - "J100"
+tables:
+depends_on:
+  - P01-S02-T001
+acceptance:
+  - "HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md Coverage Registry rows for P01-S02-T001..T007 use Write set 'backend/app/features/auth/**' instead of 'backend/app/auth/**'. bootstrap_three_docs.py --refresh + check-task-dag.sh --strict pass clean."
+verification_commands:
+  - "grep -n 'backend/app/auth/' docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md returns 0 hits in P01 rows, grep -n 'backend/app/features/auth/' returns hits for T001..T007 rows."
+allowed_paths:
+  - "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md"
+conflict_groups:
+  - "docs:source-of-truth"
+write_set:
+  - "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md"
+handoff_path: orchestrator-state/tasks/handoffs/P01-S02-T010.md
+evidence_dir: orchestrator-state/tasks/evidence/P01-S02-T010
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime follow-up P01-S02-T001"

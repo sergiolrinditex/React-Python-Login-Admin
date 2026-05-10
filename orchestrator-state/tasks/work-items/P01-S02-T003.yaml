@@ -22,12 +22,12 @@ acceptance:
 verification_commands:
   - "pytest backend/tests/integration -k auth_refresh"
 allowed_paths:
-  - "backend/app/auth/refresh_tokens.py"
+  - "backend/app/features/auth/refresh_tokens.py"
   - "backend/tests/integration/test_auth_refresh.py"
 conflict_groups:
   - "api:auth"
 write_set:
-  - "backend/app/auth/refresh_tokens.py"
+  - "backend/app/features/auth/refresh_tokens.py"
   - "backend/tests/integration/test_auth_refresh.py"
 handoff_path: orchestrator-state/tasks/handoffs/P01-S02-T003.md
 evidence_dir: orchestrator-state/tasks/evidence/P01-S02-T003

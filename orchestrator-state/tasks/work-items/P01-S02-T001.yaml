@@ -2,7 +2,7 @@ id: P01-S02-T001
 phase_id: P01
 step_id: P01-S02
 title: "POST /api/v1/auth/sign-up"
-status: ready
+status: done
 kind: "api"
 target: "POST /api/v1/auth/sign-up"
 product_increment: "v1"
@@ -26,12 +26,12 @@ acceptance:
 verification_commands:
   - "pytest backend/tests/integration -k auth_signup && curl with prod-like user"
 allowed_paths:
-  - "backend/app/auth/**"
+  - "backend/app/features/auth/**"
   - "backend/tests/integration/test_auth_signup.py"
 conflict_groups:
   - "api:auth"
 write_set:
-  - "backend/app/auth/**"
+  - "backend/app/features/auth/**"
   - "backend/tests/integration/test_auth_signup.py"
 handoff_path: orchestrator-state/tasks/handoffs/P01-S02-T001.md
 evidence_dir: orchestrator-state/tasks/evidence/P01-S02-T001

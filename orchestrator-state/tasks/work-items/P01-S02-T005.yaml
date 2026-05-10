@@ -2,7 +2,7 @@ id: P01-S02-T005
 phase_id: P01
 step_id: P01-S02
 title: "Forgot and reset password endpoints"
-status: blocked
+status: ready
 kind: "api"
 target: "Forgot and reset password endpoints"
 product_increment: "v1"
@@ -24,15 +24,15 @@ acceptance:
 verification_commands:
   - "pytest backend/tests/integration -k password_reset"
 allowed_paths:
-  - "backend/app/auth/reset_tokens.py"
-  - "backend/app/mail/**"
+  - "backend/app/features/auth/reset_tokens.py"
+  - "backend/app/features/mail/**"
   - "backend/tests/integration/test_password_reset.py"
 conflict_groups:
   - "api:auth"
   - "mail"
 write_set:
-  - "backend/app/auth/reset_tokens.py"
-  - "backend/app/mail/**"
+  - "backend/app/features/auth/reset_tokens.py"
+  - "backend/app/features/mail/**"
   - "backend/tests/integration/test_password_reset.py"
 handoff_path: orchestrator-state/tasks/handoffs/P01-S02-T005.md
 evidence_dir: orchestrator-state/tasks/evidence/P01-S02-T005

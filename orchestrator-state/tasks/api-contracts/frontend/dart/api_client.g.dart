@@ -34,6 +34,7 @@ const apiEndpoints = <ApiEndpointMeta>[
   ApiEndpointMeta(operationId: "postApiV1AdminRagDocumentsIdIndex", method: "POST", path: "/api/v1/admin/rag/documents/{id}/index", sliceIds: ["P02-S06-T001", "P04-S02-T001", "P05-S01-T005"], journeyRefs: ["J104"], pathParams: ["id"]),
   ApiEndpointMeta(operationId: "getApiV1AdminUsage", method: "GET", path: "/api/v1/admin/usage", sliceIds: ["P02-S05-T002", "P04-S01-T001", "P04-S03-T002"], journeyRefs: ["J103"], pathParams: []),
   ApiEndpointMeta(operationId: "postApiV1AgentsRuns", method: "POST", path: "/api/v1/agents/runs", sliceIds: ["P02-S08-T001", "P04-S02-T005"], journeyRefs: ["J105"], pathParams: []),
+  ApiEndpointMeta(operationId: "postApiV1Auth2faEnroll", method: "POST", path: "/api/v1/auth/2fa/enroll", sliceIds: ["P01-S02-T009"], journeyRefs: ["J100"], pathParams: []),
   ApiEndpointMeta(operationId: "postApiV1Auth2faVerify", method: "POST", path: "/api/v1/auth/2fa/verify", sliceIds: ["P01-S02-T006", "P03-S01-T005", "P05-S01-T001"], journeyRefs: ["J100"], pathParams: []),
   ApiEndpointMeta(operationId: "postApiV1AuthForgotPassword", method: "POST", path: "/api/v1/auth/forgot-password", sliceIds: ["P01-S02-T005", "P03-S01-T003"], journeyRefs: ["J100"], pathParams: []),
   ApiEndpointMeta(operationId: "postApiV1AuthLogout", method: "POST", path: "/api/v1/auth/logout", sliceIds: ["P01-S02-T004", "P03-S02-T004"], journeyRefs: ["J102"], pathParams: []),
@@ -117,6 +118,9 @@ class ApiClient {
   }
   Future<Map<String, dynamic>> postApiV1AgentsRuns({Map<String, Object?> pathParams = const {}, Map<String, Object?> query = const {}, Object? body}) {
     return requestByOperation('postApiV1AgentsRuns', pathParams: pathParams, query: query, body: body);
+  }
+  Future<Map<String, dynamic>> postApiV1Auth2faEnroll({Map<String, Object?> pathParams = const {}, Map<String, Object?> query = const {}, Object? body}) {
+    return requestByOperation('postApiV1Auth2faEnroll', pathParams: pathParams, query: query, body: body);
   }
   Future<Map<String, dynamic>> postApiV1Auth2faVerify({Map<String, Object?> pathParams = const {}, Map<String, Object?> query = const {}, Object? body}) {
     return requestByOperation('postApiV1Auth2faVerify', pathParams: pathParams, query: query, body: body);

@@ -23,12 +23,12 @@ acceptance:
 verification_commands:
   - "pytest backend/tests/integration -k auth_logout"
 allowed_paths:
-  - "backend/app/auth/router.py"
+  - "backend/app/features/auth/router.py"
   - "backend/tests/integration/test_auth_logout.py"
 conflict_groups:
   - "api:auth"
 write_set:
-  - "backend/app/auth/router.py"
+  - "backend/app/features/auth/router.py"
   - "backend/tests/integration/test_auth_logout.py"
 handoff_path: orchestrator-state/tasks/handoffs/P01-S02-T004.md
 evidence_dir: orchestrator-state/tasks/evidence/P01-S02-T004

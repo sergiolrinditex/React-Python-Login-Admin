@@ -24,12 +24,12 @@ acceptance:
 verification_commands:
   - "pytest backend/tests/integration -k users_me"
 allowed_paths:
-  - "backend/app/users/**"
+  - "backend/app/features/users/**"
   - "backend/tests/integration/test_users_me.py"
 conflict_groups:
   - "api:users"
 write_set:
-  - "backend/app/users/**"
+  - "backend/app/features/users/**"
   - "backend/tests/integration/test_users_me.py"
 handoff_path: orchestrator-state/tasks/handoffs/P01-S02-T007.md
 evidence_dir: orchestrator-state/tasks/evidence/P01-S02-T007
