@@ -44,7 +44,7 @@ from datetime import datetime
 from typing import TYPE_CHECKING
 
 import sqlalchemy as sa
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.dialects.postgresql import INET, JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.models.base import Base
@@ -247,16 +247,23 @@ class AuditLog(Base):
     """ORM model for the `audit_logs` table.
 
     Table: audit_logs (HILO_PEOPLE_TECHNICAL_GUIDE.md §10.3 lines 103-111)
-    Slice: P01-S01-T001
+    Slice: P01-S01-T001 (base columns) + P01-S01-T005 (compliance columns)
 
-    Compliance audit trail for sensitive actions.
+    Compliance audit trail for sensitive actions (GDPR Art. 30).
 
     D1 DECISION (task-pack §6 + handoff ##Discrepancies):
-      This migration implements §10.3 verbatim:
+      Migration 0001 implements §10.3 verbatim:
         actor_user_id, action, entity_type, entity_id, metadata, created_at
-      The 01-non-negotiables.md §Audit log fields (ip, user_agent, request_id)
-      will arrive via a non-destructive ADD COLUMN medium follow-up before
-      P02-S02-T001 (security/audit middleware).
+      D1 partially closed by P01-S01-T005: 4 compliance columns now exist:
+        ip, user_agent, request_id, resource — all nullable (back-compat).
+      Population of these columns by sensitive auth endpoints is deferred
+      to P01-S02-T001 (sign-up = first endpoint writing audit_logs) per
+      §"Waiver acotado" pre-approved 2026-05-10 (FU-20260509105319).
+
+    Naming note — entity_type vs resource:
+      entity_type: DB table name (e.g. "user", "ai_provider").
+      resource: REST-style path/identifier (e.g. "POST /api/v1/auth/sign-up",
+                "users:42"). Both serve different audit lookup axes.
 
     ON DELETE: actor_user_id → SET NULL.
       Audit entries survive user deletion. GDPR Art. 17 pseudonymisation
@@ -307,6 +314,54 @@ class AuditLog(Base):
         nullable=False,
         server_default=sa.text("now()"),
         doc="Event timestamp (UTC); immutable after creation.",
+    )
+
+    # ------------------------------------------------------------------
+    # P01-S01-T005 compliance columns (migration 0002 — all nullable)
+    # ------------------------------------------------------------------
+    # asyncpg behavior note (official-doc-note 2026-05-10):
+    #   asyncpg 0.31.0 decodes INET as ipaddress.IPv4Address (not str) when
+    #   native_inet_types is active (default). INSERT with plain str is fine
+    #   (inet_encode accepts str). SELECT returns IPv4Address — callers must
+    #   use str(row.ip) for string comparison. ORM annotation Mapped[str | None]
+    #   is runtime-safe (SQLAlchemy does not enforce annotations at runtime).
+    ip: Mapped[str | None] = mapped_column(
+        INET(),
+        nullable=True,
+        doc=(
+            "Client IP address from request.client.host (FastAPI). "
+            "NULL for rows written before P01-S01-T005 migration. "
+            "Populated by auth endpoints in P01-S02-T001+ per Waiver acotado. "
+            "asyncpg decodes INET as ipaddress.IPv4Address — use str() for comparison."
+        ),
+    )
+    user_agent: Mapped[str | None] = mapped_column(
+        sa.Text(),
+        nullable=True,
+        doc=(
+            "HTTP User-Agent header value from request.headers.get('user-agent'). "
+            "NULL for rows written before P01-S01-T005 migration."
+        ),
+    )
+    request_id: Mapped[str | None] = mapped_column(
+        sa.Text(),
+        nullable=True,
+        doc=(
+            "X-Request-ID correlation ID from structlog contextvar "
+            "(bound by main.py:77-117 X-Request-ID middleware). "
+            "NULL for rows written before P01-S01-T005 migration."
+        ),
+    )
+    resource: Mapped[str | None] = mapped_column(
+        sa.Text(),
+        nullable=True,
+        doc=(
+            "Free-form REST-style resource identifier "
+            "(e.g. 'POST /api/v1/auth/sign-up', 'users:42'). "
+            "Distinct from entity_type (DB table name). "
+            "See §Naming reconciliation in task-pack P01-S01-T005. "
+            "NULL for rows written before P01-S01-T005 migration."
+        ),
     )
 
     actor_user: Mapped[User | None] = relationship(  # type: ignore[name-defined]

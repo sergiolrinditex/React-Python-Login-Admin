@@ -2,7 +2,7 @@
 
 - ID: P01
 - Title: Auth / base capabilities
-- Status: active
+- Status: blocked
 
 ## Tasks
 - P01-S01-T001

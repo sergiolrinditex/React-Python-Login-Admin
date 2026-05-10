@@ -1,16 +1,17 @@
 {
-  "generated_at": "2026-05-10T08:30:57+00:00",
+  "generated_at": "2026-05-10T09:08:24+00:00",
   "active_phase_id": "P01",
-  "active_task_id": "P01-S02-T001",
-  "last_worker": "developer",
-  "last_event": "subagent_stop",
+  "active_task_id": "P01-S02-T002",
+  "last_worker": "tester",
+  "last_event": "followup_proposed",
   "pending_journey_verifications": [],
   "journey_gate_mode": "frontier",
   "last_journey_verified": null,
   "spawn_budget": 20,
   "spawns_in_current_slice": {
-    "P01-S01-T005": 1,
-    "agent:developer": 1
+    "P01-S02-T001": 2,
+    "agent:validator": 1,
+    "agent:tester": 1
   },
   "open_followups": [
     {
@@ -150,16 +151,70 @@
       "title": "Quote or remove <change-me> placeholders in .env.example to fix bash source on fresh clones",
       "path": "orchestrator-state/tasks/follow-ups/FU-20260510071705-quote-or-remove-change-me-placeholders-in-env-ex.yaml",
       "created_at": "2026-05-10T07:17:05+00:00"
+    },
+    {
+      "id": "FU-20260510083509-planner-write-set-should-include-sibling-migrati",
+      "status": "proposed",
+      "severity": "low",
+      "origin_task_id": "P01-S01-T005",
+      "title": "Planner write_set should include sibling migrations when inserting a new Alembic revision N between existing revisions",
+      "path": "orchestrator-state/tasks/follow-ups/FU-20260510083509-planner-write-set-should-include-sibling-migrati.yaml",
+      "created_at": "2026-05-10T08:35:09+00:00"
+    },
+    {
+      "id": "FU-20260510084833-rate-limit-public-auth-endpoints-sign-up-sign-in",
+      "status": "proposed",
+      "severity": "medium",
+      "origin_task_id": "P01-S02-T001",
+      "title": "Rate-limit public auth endpoints (sign-up, sign-in, reset)",
+      "path": "orchestrator-state/tasks/follow-ups/FU-20260510084833-rate-limit-public-auth-endpoints-sign-up-sign-in.yaml",
+      "created_at": "2026-05-10T08:48:33+00:00"
+    },
+    {
+      "id": "FU-20260510084844-mfa-enrollment-endpoint-missing-post-api-v1-auth",
+      "status": "proposed",
+      "severity": "medium",
+      "origin_task_id": "P01-S02-T001",
+      "title": "MFA enrollment endpoint missing — POST /api/v1/auth/2fa/enroll (TOTP secret generation)",
+      "path": "orchestrator-state/tasks/follow-ups/FU-20260510084844-mfa-enrollment-endpoint-missing-post-api-v1-auth.yaml",
+      "created_at": "2026-05-10T08:48:44+00:00"
+    },
+    {
+      "id": "FU-20260510084852-doc-amendment-align-registry-write-set-backend-a",
+      "status": "proposed",
+      "severity": "low",
+      "origin_task_id": "P01-S02-T001",
+      "title": "Doc-amendment: align registry write_set 'backend/app/auth/**' with codebase 'backend/app/features/auth/**'",
+      "path": "orchestrator-state/tasks/follow-ups/FU-20260510084852-doc-amendment-align-registry-write-set-backend-a.yaml",
+      "created_at": "2026-05-10T08:48:52+00:00"
+    },
+    {
+      "id": "FU-20260510090824-sqlalchemy-echo-leaks-argon2-hash-in-verbose-log",
+      "status": "proposed",
+      "severity": "medium",
+      "origin_task_id": "P01-S02-T001",
+      "title": "SQLAlchemy echo leaks argon2 hash in verbose logs (CWE-532)",
+      "path": "orchestrator-state/tasks/follow-ups/FU-20260510090824-sqlalchemy-echo-leaks-argon2-hash-in-verbose-log.yaml",
+      "created_at": "2026-05-10T09:08:24+00:00"
+    },
+    {
+      "id": "FU-20260510090824-pydantic-422-returns-fastapi-default-envelope-in",
+      "status": "proposed",
+      "severity": "medium",
+      "origin_task_id": "P01-S02-T001",
+      "title": "Pydantic 422 returns FastAPI default envelope instead of project errors envelope",
+      "path": "orchestrator-state/tasks/follow-ups/FU-20260510090824-pydantic-422-returns-fastapi-default-envelope-in.yaml",
+      "created_at": "2026-05-10T09:08:24+00:00"
     }
   ],
-  "last_stop_at": "2026-05-10T08:30:57+00:00",
+  "last_stop_at": "2026-05-10T08:54:18+00:00",
   "last_claimed_task_id": "P01-S02-T001",
   "last_trailer": {
-    "task_id": "P01-S01-T005",
-    "outcome": "success",
-    "next_status": "validator_tester_pending",
-    "handoff": "orchestrator-state/tasks/handoffs/P01-S01-T005.md",
-    "evidence": "orchestrator-state/tasks/evidence/P01-S01-T005"
+    "task_id": "P01-S02-T001",
+    "outcome": "pass",
+    "next_status": "ready_for_close",
+    "handoff": "orchestrator-state/tasks/handoffs/P01-S02-T001.md",
+    "evidence": "orchestrator-state/tasks/evidence/P01-S02-T001/"
   },
-  "last_followup_id": "FU-20260510071705-quote-or-remove-change-me-placeholders-in-env-ex"
+  "last_followup_id": "FU-20260510090824-pydantic-422-returns-fastapi-default-envelope-in"
 }

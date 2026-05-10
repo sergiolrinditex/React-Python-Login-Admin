@@ -84,6 +84,21 @@ Compact operational memory. No history was deleted.
 - ### Pre-existing failure: test_ready_returns_200_when_db_ok
 - ### Total test count evolution
 
+## Lessons from P01-S01-T005 (2026-05-10)
+### structlog in test files without configure_logging()
+- If a test file uses `structlog.get_logger(__name__)` at module level WITHOUT calling `configure_logging()`, INFO logs will appear regardless of `ENABLE_VERBOSE_LOGGING=false`.
+- This violates `01-non-negotiables.md §Logging`: "ENABLE_VERBOSE_LOGGING=false → only warning+error visible".
+- The fix: call `configure_logging(verbose=os.environ.get("ENABLE_VERBOSE_LOGGING", "false").lower() == "true")` in a fixture or at import time (the `_configured` flag in `app.core.logging` makes it idempotent).
+- OUTCOME in such cases: `OUTCOME: fail, NEXT_STATUS: needs_debug` (logging non-compliance is a non-negotiable violation).
+
+### Logging check for test files
+- When checking verbose-false logs, grep for BOTH: (a) `[info]` lines — should NOT appear when verbose=false; (b) PII in `[warning]`/`[error]` — should NOT appear in either mode.
+- The presence of `[info]` lines with verbose=false is a fail regardless of whether those lines contain PII.
+
+### asyncpg DB inspection (psql not in PATH)
+- Use `asyncpg.connect()` + `information_schema.columns` query to verify column structure when psql CLI is not available.
+- Pattern established in T005 and T010.
+
 ## Canonical references
 - `.claude/orchestrator-contract.json`
 - `.claude/rules/00-source-of-truth.md`

@@ -1,0 +1,20 @@
+# Data contract used — P01-S01-T005
+
+## Verification Data Contract
+Per task pack §"Verification data contract":
+- No TECHNICAL_GUIDE Verification Data Contract row applies (DB schema only, no journey/UI/endpoint surface).
+- The "real-data" requirement reduces to: real Postgres at 127.0.0.1:5433 (compose hilo-postgres).
+
+## Fixtures used
+- No pre-seeded fixtures required.
+- Test data: synthetic rows inserted directly via SQLAlchemy:
+  * Test 3: row_id=UUID, action='test.compliance.insert_with_cols', ip='192.168.1.1', user_agent='Mozilla/5.0 (pytest; P01-S01-T005)', request_id='req_<uuid[:12]>', resource='POST /api/v1/auth/sign-up'
+  * Test 4: row_id=UUID, action='test.compliance.backcompat_insert', (no ip/user_agent/request_id/resource)
+  * Test 2 (round-trip): row_id=UUID, action='test.compliance.roundtrip', ip='10.0.0.1', user_agent='pytest-roundtrip/1.0'
+
+## Persisted data observed
+- audit_logs confirmed at 10 columns (6 original + 4 new nullable) via information_schema.columns
+- ip column: data_type='inet', udt_name='inet', is_nullable='YES'
+- user_agent, request_id, resource: data_type='text', is_nullable='YES'
+- Non-null insert verified: str(row.ip)='192.168.1.1' (asyncpg returns IPv4Address, str() used for comparison)
+- NULL insert verified: ip=None, user_agent=None, request_id=None, resource=None for §10.3-only insert

@@ -183,3 +183,63 @@ When inserting a new revision (0002) between two existing ones (0001 and 0003 bo
 - Forbidden patterns: `EXPORT KEY=<literal>`, `cat > .env <<EOF\nENCRYPTION_KEY=<literal>\nEOF`, any echo or print of full secret to stdout. Verification steps must use masked form (`****<last4>`).
 - Side fix: `scripts/dev-restart.profile.sh` no longer persists the Fernet key to `orchestrator-state/dev-logs/encryption-key.runtime`. The blast radius is now the dev-restart shell process and the spawned uvicorn (pydantic-settings reads ENCRYPTION_KEY from `.env` directly).
 - `.gitignore` now covers `orchestrator-state/dev-logs/*` (except `.gitkeep`) so any future runtime cache cannot accidentally be `git add`-ed.
+
+## P01-S02-T001 (2026-05-10) — POST /api/v1/auth/sign-up
+
+### email-validator dep (CRITICAL — always required with Pydantic EmailStr)
+- `pydantic v2 EmailStr` requires `pip install 'pydantic[email]'` (email-validator>=2.0.0). This is NOT a transitive dep of pydantic-core.
+- Without it: `ImportError: install pydantic[email] for EmailStr support` at runtime.
+- Pin: `email-validator==2.2.0` in pyproject.toml dependencies AND requirements.txt.
+- Always declare this dep whenever you add `from pydantic import EmailStr`.
+
+### pytest-asyncio event loop isolation (CRITICAL pattern)
+- `pytest-asyncio 1.3.0 asyncio_mode=auto` creates a **new event loop per test function**.
+- asyncpg connections are bound to their creating event loop — reusing them across test functions causes "Future attached to different loop".
+- The APP's SQLAlchemy singleton engine (`app.core.db._engine`) holds asyncpg connections. If one test creates it and a second test reuses it with a different loop → CRASH.
+- **FIX**: `reset_db_engine_singleton` autouse fixture:
+  ```python
+  @pytest.fixture(autouse=True)
+  def reset_db_engine_singleton() -> Generator[None, None, None]:
+      import app.core.db as db_module
+      db_module._engine = None
+      db_module._session_factory = None
+      yield
+      # post-teardown: dispose if still alive
+      import asyncio
+      if db_module._engine is not None:
+          asyncio.get_event_loop().run_until_complete(db_module._engine.dispose())
+      db_module._engine = None
+      db_module._session_factory = None
+  ```
+- This forces the app to create a fresh engine inside each test's own event loop.
+- This pattern is needed in every integration test file that uses the ASGITransport pattern.
+
+### ASGITransport (httpx) — not deprecated AsyncClient(app=app)
+- Deprecated (warnings): `AsyncClient(app=app, base_url="http://test")`
+- Current pattern: `AsyncClient(transport=ASGITransport(app=app), base_url="http://test")`
+- Import: `from httpx import AsyncClient, ASGITransport`
+
+### NullPool per-test DB engine
+- Use `NullPool` for function-scoped test engines — prevents asyncpg from caching connections across tests.
+- `engine = create_async_engine(_DB_DSN, poolclass=NullPool, echo=False)`
+
+### Typed domain errors pattern (FastAPI)
+- Domain errors: class hierarchy `AuthDomainError(Exception)` → `EmailAlreadyExistsError`, etc.
+- Route maps each typed error to an HTTPException with a specific status + AuthErrorCode enum.
+- Non-leaky 409: "Email no disponible" — does NOT reveal whether the email is registered.
+- ALL validation errors use the same `AuthErrorResponse(errors=[AuthErrorDetail(...)])` envelope.
+
+### Argon2id defaults (OWASP-2024 compliant)
+- `PasswordHasher()` uses library defaults: m=65536 (64MB), t=3, p=4 — no custom params needed.
+- Reuse the same instance in service.py (module-level `_PH = PasswordHasher()`).
+
+### capsys vs caplog for structlog
+- structlog writes to sys.stdout via StreamHandler, NOT into Python logging records.
+- `caplog` does NOT capture structlog output.
+- Use `capsys` to capture structlog output; reset `_configured` guard before reconfiguring if needed.
+
+### Corporate email config pattern
+- `corporate_email_domains: str = Field("", ...)` + `corporate_email_domains_list` property.
+- Empty = permissive (any domain allowed — dev mode).
+- Non-empty = strict allowlist (comma-separated).
+- This is the same pattern as `cors_allowed_origins` → `cors_origins_list`.

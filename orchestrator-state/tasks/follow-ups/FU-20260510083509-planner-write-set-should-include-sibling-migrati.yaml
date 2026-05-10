@@ -1,0 +1,41 @@
+{
+  "id": "FU-20260510083509-planner-write-set-should-include-sibling-migrati",
+  "schema_version": 1,
+  "status": "proposed",
+  "created_at": "2026-05-10T08:35:09+00:00",
+  "created_by": "sergiolr",
+  "origin_task_id": "P01-S01-T005",
+  "origin_phase_id": "P01",
+  "origin_step_id": "P01-S01",
+  "kind": "followup",
+  "product_increment": "current",
+  "build_state": "planned",
+  "severity": "low",
+  "title": "Planner write_set should include sibling migrations when inserting a new Alembic revision N between existing revisions",
+  "description": "T005 had to modify 0003_admin_ai_providers_models.py outside its declared write_set to keep a single Alembic head when inserting new revision 0002 between 0001 and 0003. 0003 was deliberately designed for this (its docstring lines 24-29 reserved revision 0002), but the planner did not include 0003 in T005's write_set. Generic rule for future Alembic-driven slices: when bootstrap_three_docs / planner sees a 'new migration N+1 is inserted before the current head' shape, write_set MUST include the sibling that currently points at the same down_revision. This avoids labelling mechanically-required edits as WRITE_SET_DRIFT and gives the validator a clean scope check. Could be a planner heuristic or a check in scripts/check-task-dag.sh.",
+  "journey_refs": [],
+  "screen_route": "—",
+  "endpoint": "—",
+  "tables": [],
+  "depends_on": [
+    "P01-S01-T005"
+  ],
+  "conflict_groups": [
+    "planner:heuristics"
+  ],
+  "write_set": [
+    ".claude/agents/planner.md",
+    ".claude/bin/bootstrap_three_docs.py",
+    "scripts/check-task-dag.sh"
+  ],
+  "acceptance": [
+    "When a planner builds a task pack for a new Alembic revision N that lands between existing revisions A→C",
+    "the write_set automatically includes C (the file whose down_revision must shift from A to N). Verified by re-planning a synthetic case."
+  ],
+  "verify": [
+    "Add unit test in .claude/bin/tests/ that simulates planning a slice that inserts a new migration mid-chain",
+    "assert generated write_set includes the sibling whose down_revision needs updating."
+  ],
+  "notes": [],
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260510083509-planner-write-set-should-include-sibling-migrati.yaml"
+}

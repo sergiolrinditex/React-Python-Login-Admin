@@ -50,7 +50,7 @@ from sqlalchemy.dialects.postgresql import JSONB
 
 # revision identifiers
 revision: str = "0003"
-down_revision: str | None = "0001"
+down_revision: str | None = "0002"  # updated by P01-S01-T005: maintains 0001→0002→0003 linear chain
 branch_labels: None = None
 depends_on: None = None
 
