@@ -1,15 +1,10 @@
 #!/usr/bin/env bash
 # scripts/dev-restart.profile.sh
 #
-# Stack profile: React/Vite (TypeScript) + FastAPI (uvicorn) + Postgres (alembic).
-# Aligned with docs/source-of-truth/STACK_PROFILE.yaml:
-#   backend.module_root  = backend/app
-#   backend.dev_cmd      = uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
-#   backend.health_url   = http://localhost:8000/health
-#   frontend.module_root = frontend/src
-#   frontend.dev_cmd     = npm run dev -- --host 0.0.0.0
-#   db.migrate_cmd       = alembic upgrade head
-#   db.seed_cmd          = python -m app.seeds.bootstrap_verification_data ...
+# Stack profile: React (Vite) + FastAPI (uvicorn) + Postgres (native :5433).
+# This file overrides the BaseflutterAppsEngineFeatures default so the dispatcher
+# (scripts/dev-restart.sh) can manage this project's real stack. Keep the
+# dispatcher untouched; only this profile is stack-specific.
 #
 # Required functions (contract enforced by scripts/dev-restart.sh):
 #   back_health   → exit 0 if backend healthy
@@ -18,40 +13,28 @@
 #   front_health  → exit 0 if frontend healthy
 #   front_start   → start frontend in background, write PID to FRONT_PID_FILE
 #   front_url     → human-readable URL for the status table
-#   db_health     → 0 = up, 1 = down, 2 = unknown (backend down or /ready missing)
+#   db_health     → 0 = up, 1 = down, 2 = unknown (backend down)
 #   db_reset      → migrate down + up + seed (only called by --reset)
 #
 # Reads from .env at the project root (auto-sourced by the dispatcher):
 #   API_HOST                 (default: 127.0.0.1)
-#   API_PORT                 (default: 8000)   # canonical per STACK_PROFILE.yaml
-#   FRONT_PORT               (default: 5173)   # vite default
+#   API_PORT                 (default: 8000)
+#   FRONT_PORT               (default: 5173)
 #   ENABLE_VERBOSE_LOGGING   (default: true while in dev)
+#   ENCRYPTION_KEY           (Fernet key — required for admin_ai endpoints;
+#                             auto-generated for the in-process backend if
+#                             the env-supplied value is the dev placeholder)
 
 API_HOST="${API_HOST:-127.0.0.1}"
 API_PORT="${API_PORT:-8000}"
 FRONT_PORT="${FRONT_PORT:-5173}"
 ENABLE_VERBOSE_LOGGING="${ENABLE_VERBOSE_LOGGING:-true}"
 
-# --- Backend venv resolution ------------------------------------------------
-# Canonical venv is backend/.venv. During scaffold phase a slice may keep an
-# isolated venv (backend/.venv-<slice>); we accept that as a fallback so the
-# dev loop never breaks on intermediate states. Order:
-#   1. backend/.venv                    (canonical)
-#   2. backend/.venv-* (alphabetical)   (slice-isolated, scaffold phase only)
-_resolve_backend_venv() {
-  local canon="${ROOT_DIR}/backend/.venv"
-  if [ -d "$canon" ]; then
-    printf '%s' "$canon"
-    return 0
-  fi
-  local match
-  match="$(find "${ROOT_DIR}/backend" -maxdepth 1 -type d -name '.venv-*' 2>/dev/null | sort | head -1)"
-  if [ -n "$match" ]; then
-    printf '%s' "$match"
-    return 0
-  fi
-  return 1
-}
+BACKEND_DIR="${ROOT_DIR}/backend"
+FRONTEND_DIR="${ROOT_DIR}/frontend"
+BACKEND_VENV="${BACKEND_DIR}/.venv-t003"
+DB_URL_DEFAULT="postgresql+asyncpg://hilopeople:hilopeople_dev_pwd@127.0.0.1:5433/hilopeople_dev"
+DATABASE_URL="${DATABASE_URL:-${DB_URL_DEFAULT}}"
 
 # --- Health probes ----------------------------------------------------------
 
@@ -60,32 +43,20 @@ back_health() {
 }
 
 front_health() {
-  # Liveness contract: the Vite dev server process is reachable on FRONT_PORT
-  # and speaks HTTP. We accept ANY HTTP response (including 404 while
-  # index.html has not been added yet, which is the case until T004 lands)
-  # so the dev loop is usable during the scaffold phase. Slice-level UI
-  # checks (200 on /showcase, /login, etc.) belong to the slice's own
-  # verification, not to the dev environment liveness probe.
-  # -I avoids dragging the bundle.
+  # Vite dev server returns 200 on /. -I avoids dragging the SPA bundle.
   curl -sI -m 2 "http://${API_HOST}:${FRONT_PORT}/" 2>/dev/null \
-    | head -1 | grep -qE '^HTTP/[0-9.]+ [0-9]{3}'
+    | head -1 | grep -qE 'HTTP/[0-9.]+ (200|304)'
 }
 
 db_health() {
   # Reachability proxy: does the backend's /ready report ok?
-  # If backend is down we cannot tell — return 2 (unknown).
-  # If /ready is not implemented yet (404), also return 2 — we don't want to
-  # report DOWN while the slice that adds /ready hasn't landed.
-  if ! back_health; then
+  # If backend is down we cannot tell — return 2 (unknown) so the dispatcher
+  # surfaces UNKNOWN instead of falsely reporting DOWN.
+  if back_health; then
+    curl -sf -m 2 "http://${API_HOST}:${API_PORT}/ready" >/dev/null 2>&1
+  else
     return 2
   fi
-  local code
-  code="$(curl -s -o /dev/null -w '%{http_code}' -m 2 "http://${API_HOST}:${API_PORT}/ready" 2>/dev/null || echo 000)"
-  case "${code}" in
-    200) return 0 ;;
-    404) return 2 ;;  # endpoint not built yet — don't lie as DOWN
-    *)   return 1 ;;
-  esac
 }
 
 # --- URLs (status table) ----------------------------------------------------
@@ -96,23 +67,34 @@ front_url() { printf 'http://%s:%s' "${API_HOST}" "${FRONT_PORT}"; }
 # --- Start helpers ----------------------------------------------------------
 
 back_start() {
-  [ -d "${ROOT_DIR}/backend" ] || fail "backend/ not found — run setup-from-scratch.sh first."
-  local venv
-  if ! venv="$(_resolve_backend_venv)"; then
-    fail "No backend venv found (expected backend/.venv or backend/.venv-*). Run pip install -e \".[dev]\" inside backend/ first."
-  fi
-  [ -x "${venv}/bin/python" ] || fail "Resolved venv ${venv} has no bin/python."
+  [ -d "${BACKEND_DIR}" ] || fail "backend/ not found."
+  [ -x "${BACKEND_VENV}/bin/uvicorn" ] || fail "backend venv missing. Expected ${BACKEND_VENV}/bin/uvicorn"
 
-  log "Starting backend on ${API_HOST}:${API_PORT} (venv: $(basename "${venv}"))..."
+  # Auto-generate a real Fernet key when the env supplies the dev placeholder.
+  # The legacy var name PROVIDER_ENCRYPTION_KEY (in .env) was renamed to
+  # ENCRYPTION_KEY in P01-S01-T002 §11.1; this profile honours the new name.
+  local enc_key="${ENCRYPTION_KEY:-${PROVIDER_ENCRYPTION_KEY:-}}"
+  if [ -z "${enc_key}" ] || [ "${enc_key}" = "dev-encryption-key-placeholder" ]; then
+    enc_key="$("${BACKEND_VENV}/bin/python" -c 'from cryptography.fernet import Fernet;print(Fernet.generate_key().decode())')"
+    info "ENCRYPTION_KEY auto-generated for verify-slice (Fernet)"
+  fi
+
+  log "Starting backend on ${API_HOST}:${API_PORT}..."
   (
-    cd "${ROOT_DIR}/backend" || exit 1
-    # shellcheck disable=SC1091
-    source "${venv}/bin/activate"
+    cd "${BACKEND_DIR}" || exit 1
     ENABLE_VERBOSE_LOGGING="${ENABLE_VERBOSE_LOGGING}" \
-      nohup uvicorn app.main:app --host "${API_HOST}" --port "${API_PORT}" --reload \
+    ENCRYPTION_KEY="${enc_key}" \
+    DATABASE_URL="${DATABASE_URL}" \
+      nohup "${BACKEND_VENV}/bin/uvicorn" app.main:app \
+        --host "${API_HOST}" --port "${API_PORT}" --reload \
         >"${BACK_LOG}" 2>&1 &
     echo $! >"${BACK_PID_FILE}"
   )
+
+  # Persist the actual ENCRYPTION_KEY used for back, so db_reseed_admin_ai can
+  # re-encrypt credentials with the same key the running backend will decrypt.
+  printf '%s\n' "${enc_key}" >"${LOG_DIR}/encryption-key.runtime"
+  chmod 600 "${LOG_DIR}/encryption-key.runtime" 2>/dev/null || true
 
   if wait_for back_health 30 "Backend"; then
     info "backend up at $(back_url)/health"
@@ -122,71 +104,71 @@ back_start() {
 }
 
 front_start() {
-  [ -d "${ROOT_DIR}/frontend" ] || fail "frontend/ not found — run setup-from-scratch.sh first."
-  [ -d "${ROOT_DIR}/frontend/node_modules" ] || fail "frontend/node_modules not found — run npm install inside frontend/ first."
+  [ -d "${FRONTEND_DIR}" ] || fail "frontend/ not found."
+  [ -d "${FRONTEND_DIR}/node_modules" ] || fail "frontend/node_modules missing — run npm ci."
 
-  log "Starting Vite dev server on ${API_HOST}:${FRONT_PORT}..."
+  log "Starting Vite on ${API_HOST}:${FRONT_PORT}..."
   (
-    cd "${ROOT_DIR}/frontend" || exit 1
-    # vite reads VITE_* env vars; surface API_URL + verbose flag for the app.
-    VITE_API_URL="http://${API_HOST}:${API_PORT}" \
-    VITE_ENABLE_VERBOSE_LOGGING="${ENABLE_VERBOSE_LOGGING}" \
-      nohup npm run dev -- --host "${API_HOST}" --port "${FRONT_PORT}" --strictPort \
-        >"${FRONT_LOG}" 2>&1 &
+    cd "${FRONTEND_DIR}" || exit 1
+    nohup npm run dev -- --host "${API_HOST}" --port "${FRONT_PORT}" --strictPort \
+      >"${FRONT_LOG}" 2>&1 &
     echo $! >"${FRONT_PID_FILE}"
   )
 
-  # Vite cold start can take 10–20s when node_modules is fresh. Wait up to 60s.
-  if wait_for front_health 60 "Frontend"; then
+  if wait_for front_health 30 "Frontend"; then
     info "frontend up at $(front_url)/"
   else
-    fail "Frontend did not respond within 60s. See ${FRONT_LOG}"
+    fail "Frontend did not respond within 30s. See ${FRONT_LOG}"
   fi
 }
 
 # --- DB reset (only --reset) ------------------------------------------------
 
 db_reset() {
-  [ -d "${ROOT_DIR}/backend" ] || fail "backend/ not found"
-  local venv
-  if ! venv="$(_resolve_backend_venv)"; then
-    warn "No backend venv — skipping DB reset."
-    return 0
-  fi
-  log "Resetting DB schema (alembic downgrade base + upgrade head)..."
+  [ -d "${BACKEND_DIR}" ] || fail "backend/ not found"
+  [ -x "${BACKEND_VENV}/bin/python" ] || fail "backend venv missing. Expected ${BACKEND_VENV}/bin/python"
+
+  # Per Verification Data Contract §6.5 row J103: "delete ai_provider test rows".
+  # We do not drop the whole schema for verify-slice — auth/users/conversations
+  # state from prior journeys must survive. Only the admin_ai surface is reset.
+  log "Resetting admin_ai surface (ai_models / ai_provider_credentials / ai_providers)..."
+  "${BACKEND_VENV}/bin/python" - <<'PY' || warn "admin_ai truncate failed (non-blocking)"
+import asyncio, os, asyncpg, re
+url = os.environ.get(
+    "DATABASE_URL",
+    "postgresql+asyncpg://hilopeople:hilopeople_dev_pwd@127.0.0.1:5433/hilopeople_dev",
+)
+# asyncpg expects vanilla postgres:// not the SQLAlchemy variant
+url = re.sub(r"^postgresql\+asyncpg://", "postgresql://", url)
+
+async def main():
+    c = await asyncpg.connect(url)
+    try:
+        await c.execute("TRUNCATE ai_models, ai_provider_credentials, ai_providers RESTART IDENTITY CASCADE")
+        print("   admin_ai tables truncated")
+    finally:
+        await c.close()
+asyncio.run(main())
+PY
+
+  # Apply migrations (no-op if already at head).
+  log "Applying alembic migrations to head..."
   (
-    cd "${ROOT_DIR}/backend" || exit 1
-    # shellcheck disable=SC1091
-    source "${venv}/bin/activate"
-    if [ ! -f "alembic.ini" ]; then
-      warn "backend/alembic.ini missing — skipping DB reset (first migration is P01-S01-T001)."
-      return 0
-    fi
-    alembic downgrade base || warn "alembic downgrade base failed (non-blocking on first run)"
-    alembic upgrade head
-  )
-  log "Reseeding DB (idempotent seeds)..."
+    cd "${BACKEND_DIR}" || exit 1
+    "${BACKEND_VENV}/bin/alembic" upgrade head >/dev/null
+  ) || warn "alembic upgrade failed (non-blocking)"
+
+  # Reseed only the admin_ai namespace per J103 row of the data contract.
+  # The seed loader is table-tolerant: it inserts what it can and skips the rest.
+  log "Reseeding admin_ai (verification bundle, P00-S02-T005)..."
   (
-    cd "${ROOT_DIR}/backend" || exit 1
-    # shellcheck disable=SC1091
-    source "${venv}/bin/activate"
-    # The seed module path comes from STACK_PROFILE.yaml; landing slice is P00-S02-T003.
-    # NOTE (P00-S02-T003 debugger cycle 2): the verification bundle lives at the
-    # repo root (${ROOT_DIR}/data/verification/), NOT under backend/. We must cd
-    # into backend/ above so the venv activation + `python -m app.seeds.…`
-    # module import resolve correctly. Therefore --source MUST be an ABSOLUTE
-    # path; passing the relative literal `data/verification` made the loader
-    # resolve `backend/data/verification` (which does not exist), exit 2 with
-    # FileNotFoundError, and the `|| warn` swallow the failure — silent reseed
-    # skip. Surfaced live by /verify-slice on 2026-05-09.
-    if python -c "import app.seeds.bootstrap_verification_data" 2>/dev/null; then
-      info "python -m app.seeds.bootstrap_verification_data --source ${ROOT_DIR}/data/verification"
-      python -m app.seeds.bootstrap_verification_data --source "${ROOT_DIR}/data/verification" \
-        || warn "bootstrap_verification_data failed (non-blocking)"
-    else
-      info "app.seeds.bootstrap_verification_data not present yet — skipping (lands in P00-S02-T003)."
-    fi
-  )
+    cd "${BACKEND_DIR}" || exit 1
+    DATABASE_URL="${DATABASE_URL}" \
+    ENCRYPTION_KEY="${ENCRYPTION_KEY:-${PROVIDER_ENCRYPTION_KEY:-}}" \
+      "${BACKEND_VENV}/bin/python" -m app.seeds.bootstrap_verification_data \
+        --source ../data/verification --only admin_ai \
+        2>&1 | tail -15
+  ) || warn "admin_ai seed failed (non-blocking — verify-slice can fall back to SQL recipe)"
 
   # Orphan port reapers — only fire on reset; the soft path leaves them alone.
   stop_orphan_on_port "${FRONT_PORT}" "frontend"

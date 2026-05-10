@@ -1,0 +1,35 @@
+Contract Observed — P00-S02-T007
+Generated: 2026-05-10T01:12:30Z
+
+== Route / Provider / API Client / DTO / Endpoint / Repository / Table ==
+
+Frontend routes:
+  - /admin/ai/models       → AdminAiModelsPage   (shell + CTA to /admin/ai/models/new)
+  - /admin/ai/models/new   → ModelWizardPage     (3-step discover wizard)
+  Both routes return HTTP 200 from Vite dev server (SPA — confirmed via curl -sI)
+
+API Client:
+  - frontend/src/features/admin_ai/data/discoverModels.ts
+    discoverModels(providerId) → Promise<Result<DiscoverModelsData, AdminAiError>>
+    BEFORE log: event='discover_models.before', provider_id_prefix (8 chars), request_id
+    AFTER log: event='discover_models.after', status, latency_ms, added/existing/skipped counts
+    ERROR log: event='discover_models.error', error_code, http_status, latency_ms, request_id
+
+DTOs (TypeScript mirrors of backend Pydantic schemas):
+  - AiModelOut: id, provider_id, model_id, model_type, capabilities, enabled, is_default, auto_discovered
+  - SkippedModel: model_id, reason
+  - DiscoverModelsData: added[], existing[], skipped[], total_seen
+
+Backend endpoint (from curl smoke):
+  POST /api/v1/admin/ai/providers/{provider_id}/discover-models
+  - No auth (missing Authorization header)    → 401 {"error":{"code":"unauthorized",...}}
+  - Wrong scheme (Basic)                       → 401 {"error":{"code":"unauthorized",...}}
+  - Unknown provider UUID 000...0             → 404 {"error":{"code":"provider_not_found",...}}
+  - Unsupported provider type (anthropic)      → 422 {"error":{"code":"unsupported_provider_type",...}}
+  - X-Request-ID echoed in response header:    yes (test-req-id-001 echoed)
+
+DB tables (observed via asyncpg query):
+  - ai_providers: 4 rows (gemini-direct, litellm-local, unsupported-test, gemini-nocred)
+  - ai_provider_credentials: not directly queried (R1/R2 known gap for verify-slice)
+  - ai_models: not directly queried (no positive discovery ran in tester scope)
+  - audit_logs: not queried (only error paths hit in curl checks)

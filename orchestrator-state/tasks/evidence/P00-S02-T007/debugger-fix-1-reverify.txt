@@ -1,0 +1,33 @@
+=== Debugger fix #1 — re-verification ===
+TIMESTAMP: 2026-05-09T23:18:28Z
+
+=== vitest --run ===
+ RUN  v4.1.5 /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/frontend
+
+
+ Test Files  9 passed (9)
+      Tests  87 passed (87)
+   Start at  01:18:29
+   Duration  2.07s (transform 859ms, setup 1.83s, import 1.17s, tests 899ms, environment 10.23s)
+
+
+=== build ===
+[2Ktransforming...✓ 221 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.90 kB │ gzip:   0.56 kB
+dist/assets/index-BBalGu9p.css    2.56 kB │ gzip:   1.07 kB
+dist/assets/index-BCIbEvjh.js   423.74 kB │ gzip: 130.93 kB
+
+✓ built in 181ms
+
+=== i18n parity (admin-ai namespace) ===
+es keys: 29
+en keys: 29
+fr keys: 29
+es^en symdiff: set()
+es^fr symdiff: set()
+en^fr symdiff: set()
+
+=== design_tokens_v1 enforcer ===
+OK Design tokens - web literals are outside app code or inside token/theme modules.

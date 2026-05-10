@@ -1,0 +1,130 @@
+Evidence: P00-S02-T007 — verify-slice (human reproduction)
+Generated: 2026-05-09T23:34:00Z
+Verifier: main-orchestrator (browser via chrome-devtools MCP)
+
+== Environment hard reset ==
+- bash scripts/dev-restart.sh --reset → backend UP :8000, frontend UP :5173, db UP
+- ENCRYPTION_KEY auto-generated (Fernet); persisted to dev-logs/encryption-key.runtime
+- Pre-existing seed loader bug (FU-20260509220235): admin_ai seed fails with
+  "column 'api_key' of relation 'ai_providers' does not exist". NOT a T007 regression.
+- Workaround per handoff R1+R2: providers + encrypted credential inserted via
+  asyncpg using the active runtime ENCRYPTION_KEY:
+    PROVIDER_ID_OK         = ecd828ef-f221-48be-b135-86f179b45e67  (gemini, with cred)
+    PROVIDER_ID_UNSUPPORTED = 4a625d60-e210-4c0c-8b2c-3bba43273026  (anthropic, no cred)
+    PROVIDER_ID_NOCRED      = 44255914-5fa0-4174-afe9-fff564803d4a  (gemini, no cred)
+- VERIFICATION_GEMINI_API_KEY sourced from .env.local (real Google AI Studio key)
+
+== Backend smoke (direct curl on :8000, bypassing wizard) ==
+- POST /api/v1/admin/ai/providers/{ok}/discover-models  Bearer dev-admin-localhost  → 200 OK
+  Response: { added: 50 Gemini models, existing: 0, skipped: 0, total_seen: 50 }
+  Examples: gemini-2.5-flash, gemini-2.5-pro, gemini-3-pro-preview, gemini-embedding-001,
+            imagen-4.0-generate-001, veo-3.1-generate-preview …
+  Persistence: 50 rows inserted into ai_models with auto_discovered=true
+  Audit log: 'ai.provider.discover_models' action recorded, 3 entries observed across runs
+- POST {ok}/discover-models  no-auth                    → 401 Unauthorized
+- POST {ok}/discover-models  Authorization: Basic …     → 401 Unauthorized
+- POST {00000000…}/discover-models  Bearer dev-admin    → 404 Not Found
+- POST {unsupported}/discover-models  Bearer dev-admin  → 502 Bad Gateway
+  Body: { detail: { error: { code: 'upstream_provider_error',
+                              message: 'No active credential found for provider …' } } }
+  Note: 502 returned because credential check fires before provider-type guard.
+  This is an upstream T006 endpoint behaviour; not a T007 regression. T007 wizard
+  surfaces it correctly as the upstream error path.
+
+== Browser walkthrough (Chrome DevTools MCP, ES default locale) ==
+1. GET /admin/ai/models → AdminAiModelsPage renders:
+     Wordmark "Hilo People", TrackedLabel "/ADMIN/AI/MODELS",
+     heading "Modelos LiteLLM", empty state "Aún no hay modelos." (i18n key models.empty),
+     SolidCTA "DESCUBRIR MODELOS" (i18n key wizard.title), TrackedLabel
+     "MVP — TABLA COMPLETA EN P04-S01-T002" (i18n key models.deferredScope).
+     ✅ a11y: nav has aria-label, CTA is link+button.
+     ✅ design tokens: editorial Inditex/Zara look (no rounded corners, hairlines,
+        uppercase tracking).
+     Screenshot: orchestrator-state/tasks/evidence/P00-S02-T007/verify-01-shell.png
+
+2. Click "DESCUBRIR MODELOS" → /admin/ai/models/new (ModelWizardPage):
+     Heading "Descubrir modelos", StepIndicator with 3 steps
+       (PROVEEDOR → DESCUBRIENDO… → REVISAR DIFERENCIAS),
+     EditorialInput "UUID DEL PROVEEDOR" + helper
+       "Pega el UUID del proveedor — selector de proveedor disponible en P02-S05.",
+     SolidCTA "DESCUBRIR".
+     ✅ All copy localized via t('admin-ai:…').
+
+3. Empty submit (validation branch):
+     Click DESCUBRIR with empty input.
+     Result: input gets aria-invalid=true; aria-describedby points to alert with
+       "FORMATO UUID NO VÁLIDO" (live-region role=alert, aria-live=assertive).
+     Network: NO request issued (validation before fetch).
+     ✅ A4 error_validation wired and localized; A12 a11y compliance verified.
+
+4. Valid UUID format / unknown provider (404 branch):
+     Filled input with 00000000-0000-0000-0000-000000000000 → DESCUBRIR.
+     Network: POST http://127.0.0.1:5173/api/v1/admin/ai/providers/00000…/discover-models
+              returned 404 from VITE (not from backend — see Finding #1).
+     UI: alert "PROVEEDOR NO ENCONTRADO" (i18n key).
+     ✅ Wizard maps fetch failure to error_not_found; ❌ root cause is wrong target.
+
+5. Valid UUID, real provider (happy path attempt):
+     Filled input with ecd828ef-f221-48be-b135-86f179b45e67 → DESCUBRIR.
+     Network: POST http://127.0.0.1:5173/api/v1/admin/ai/providers/{ok}/discover-models
+              returned 404 from VITE (Vary: Origin, Content-Length: 0).
+     Backend log: NO POST /api/v1/admin/ai/providers/{ok}/… 200 OK from this attempt
+                  (only earlier curl-based 200s are present).
+     UI: alert "PROVEEDOR NO ENCONTRADO" → indistinguishable from a real not-found.
+     ❌ Step 3 (REVISAR DIFERENCIAS) NEVER REACHED in browser. Acceptance A3
+        ("Wizard POST against FU-X1 with Bearer dev-admin-localhost; renders
+        response") is BROKEN under human-verify mode.
+
+6. Back navigation:
+     Clicked "APROBAR Y VOLVER" inside the alert → returned to /admin/ai/models.
+     Shell empty state preserved; back button works.
+     ✅ A1 / A12 navigation OK.
+
+== Logs verification (verbose=true) ==
+- Backend back.log shows structured warnings:
+    "ERROR require_admin: Authorization header missing or malformed" (no auth body)
+    "ERROR discover_models: provider not found" (provider_id, request_id)
+    "ERROR discover_models: no active credential" (provider_id, provider_type, request_id)
+- Authorization header value NEVER appears in logs.
+- request_id present in every entry (X-Request-ID middleware OK).
+- Frontend console: only React DevTools tip, [info] [object Object] (BEFORE log of
+  discoverModels — payload masked) and the network 404 error from Vite.
+  No PII, no Bearer literal.
+
+== Verification Data Contract rows used ==
+- TECHNICAL_GUIDE §6.5 row J103 (admin-ai): admin persona, productive Gemini provider
+  with prod-like encrypted credential, real Gemini model list returned by Google.
+- Reset: TRUNCATE ai_models, ai_provider_credentials, ai_providers RESTART IDENTITY CASCADE.
+- Real api_key sourced from .env.local (gitignored, not committed).
+
+== Findings ==
+F1. (medium, in-scope spirit, write_set drift candidate) Wizard cannot reach FU-X1
+    in localhost dev because frontend uses relative URL '/api/v1/...' and the Vite
+    dev server has NO proxy entry for /api/v1. Result: every wizard request lands
+    on Vite (which returns 404 with empty body and Vary: Origin), never on the
+    backend at :8000. A3 acceptance ("Wizard POST against FU-X1 … renders response")
+    is verified by Vitest mocks but BROKEN in real-browser dev. Production path
+    (Docker / nginx) would proxy correctly via infra/nginx/default.conf, but the
+    documented verify-slice command (open http://127.0.0.1:5174/admin/ai/models/new)
+    cannot exercise the happy path.
+    Files involved: frontend/vite.config.ts (no server.proxy block) and/or
+                    frontend/src/features/admin_ai/data/discoverModels.ts
+                    (API_BASE = '/api/v1' hardcoded, no env-var fallback).
+    Recommended fix (smallest safe): add to vite.config.ts:
+        server: {
+          host: '0.0.0.0',
+          port: Number(process.env.FRONT_PORT) || 5173,
+          proxy: { '/api/v1': { target: 'http://127.0.0.1:8000', changeOrigin: true } },
+        }
+    Path-A semantic: dev-tooling change required to satisfy A3 in human-verify mode,
+    symmetric to the existing T007 Path-A drift (main.tsx + 3 locale JSONs).
+
+F2. (medium, pre-existing, NOT a T007 regression) admin_ai seed loader fails at
+    runtime with ProgrammingError on column "api_key" of relation "ai_providers".
+    Already tracked as FU-20260509220235 (admin_ai seed loader column). Verify-slice
+    fell back to manual asyncpg insert. T007 closer should NOT be blocked on this.
+
+F3. (low, observational, T006 territory not T007) GET on the unsupported-test
+    provider hit "no active credential" before the provider-type guard, returning
+    502 instead of 422. The wizard surfaces it as upstream error correctly. Cosmetic
+    error-classification ordering inside T006 endpoint; out of scope for T007.

@@ -7,10 +7,10 @@
 ## Current State
 
 - **Phase**: Phase 1 — Auth + Base Capabilities (P00 infra wrapping up)
-- **Last completed slices**: P00-S01-T001..T005 (all done, committed), P00-S02-T001..T004 (all done, committed), **P00-S02-T005 (productive verification bundle — done, committed `ae3dfc7`, registry reconciled post-closer 2026-05-09T22:16Z)**, **P00-S02-T006 (dynamic LiteLLM model discovery endpoint — implementation done, pending validator/tester + verify-slice)**, **P01-S01-T001 (DB auth baseline — done, committed)**, **P01-S01-T002 (env var §11.1 alignment — implementation done, pending verify-slice)**, **P01-S01-T004 (env_file path fix + DATABASE_URL port 5433 — implementation done, pending validator/tester + verify-slice)**, **P00-S02-T008 (deepagents Supervisor + topic-routing runtime — done, committed `9aacaca`)**
+- **Last completed slices**: P00-S01-T001..T005 (all done, committed), P00-S02-T001..T004 (all done, committed), **P00-S02-T005 (productive verification bundle — done, committed `ae3dfc7`, registry reconciled post-closer 2026-05-09T22:16Z)**, **P00-S02-T006 (dynamic LiteLLM model discovery endpoint — implementation done, pending validator/tester + verify-slice)**, **P01-S01-T001 (DB auth baseline — done, committed)**, **P01-S01-T002 (env var §11.1 alignment — implementation done, pending verify-slice)**, **P01-S01-T004 (env_file path fix + DATABASE_URL port 5433 — implementation done, pending validator/tester + verify-slice)**, **P00-S02-T008 (deepagents Supervisor + topic-routing runtime — done, committed `9aacaca`)**, **P00-S02-T007 (AdminAiModelsPage discover wizard UI — implementation done 2026-05-10, pending validator/tester + verify-slice)**
 - **Next pending slices**: P01-S02-T001 (POST /api/v1/auth/sign-up) — blocked until pending verify-slices closed
 - **Blockers**: none
-- **Follow-ups pending**: FU-20260508225027 (RESOLVED); FU-20260509073000 (RESOLVED by P00-S02-T005, registry reconciled); FU-20260509130036 RESOLVED by P01-S01-T004. FU-X1 (dynamic LiteLLM model discovery) = **RESOLVED by P00-S02-T006**. FU-X3 (deepagents supervisor runtime) = **RESOLVED by P00-S02-T008**. Remaining: FU-X2 (discovery wizard UI = P00-S02-T007 in flight); plus 2 *proposed* (httpx logger leak, admin_ai seed loader column). Owed: rotate `VERIFICATION_GEMINI_API_KEY` in GCP (post-T005 hygiene).
+- **Follow-ups pending**: FU-20260508225027 (RESOLVED); FU-20260509073000 (RESOLVED by P00-S02-T005, registry reconciled); FU-20260509130036 RESOLVED by P01-S01-T004. FU-X1 (dynamic LiteLLM model discovery) = **RESOLVED by P00-S02-T006**. FU-X2 (discovery wizard UI) = **RESOLVED by P00-S02-T007** (implementation done, pending verify-slice). FU-X3 (deepagents supervisor runtime) = **RESOLVED by P00-S02-T008**. Remaining: 2 *proposed* (httpx logger leak FU-20260509220224, admin_ai seed loader column FU-20260509220235). Owed: rotate `VERIFICATION_GEMINI_API_KEY` in GCP (post-T005 hygiene).
 - **Generated at**: 2026-05-09T22:16:54Z (T005 reconciliation)
 
 ## Docker Compose Stack (P00-S02-T001)
@@ -118,12 +118,12 @@ Rancher-ready compose stack ADR preserved in handoff P00-S02-T001.md (pending fo
 | App running | vite up at :5174 | Port 5174 per local .env FRONT_PORT override (default 5173 collides with sibling project) |
 | Build | PASSING | `npm run build` exits 0; dist/ created (fixed in T004 via tsconfig.json + tsconfig.node.json) |
 | npm deps installed | DONE | 10 runtime + 10 dev deps (exact pins, no ^ ~) |
-| Routes implemented | 1 (/showcase) | /showcase route wired in src/main.tsx; productive routes in P01-S03-T001 |
+| Routes implemented | 3 (/showcase, /admin/ai/models, /admin/ai/models/new) | /showcase + 2 admin-AI MVP routes wired in src/main.tsx (P00-S02-T007); full productive routes in P01-S03-T001 |
 | Providers | AppProviders wired | QueryClientProvider + I18nextProvider in frontend/src/app/providers.tsx |
 | Components | 8 shipped | Wordmark, TrackedLabel, StatusDot, EditorialInput, SolidCTA, HairlineTable, MobileFrame, AdminShell |
 | Design tokens | Implemented | CSS custom properties in shared/styles/tokens.css + TS mirror in shared/styles/index.ts |
 | i18n bundles | Implemented | 3 locales (es/en/fr) × 8 namespaces = 24 JSON files; fallbackLng: 'es'; eager loading |
-| Frontend tests | 57 passing | 1 providers smoke + 7 tokens/component unit tests + 8 showcase smoke + 10 i18n bundle tests |
+| Frontend tests | 87 passing | +30 new (P00-S02-T007): 9 API client (discoverModels + auth helper) + 6 wizard step transitions + 8 DiffReviewTable component + 5 AdminAiModelsPage shell + 2 domain (via component) = 30 new admin_ai tests |
 
 ### Frontend Dependencies (exact pins, as of 2026-05-08 npm registry)
 

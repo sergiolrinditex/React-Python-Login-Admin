@@ -1,0 +1,83 @@
+Evidence: P00-S02-T007 — AdminAiModelsPage discover wizard UI
+Generated: 2026-05-10T01:05:47Z
+Agent: developer
+
+== Test run (all 87 tests, 9 files) ==
+  Test Files  9 passed (9)
+  Tests  87 passed (87)
+  Duration: 2.24s
+
+== Admin_ai targeted tests ==
+  Test Files  4 passed | 5 skipped (9)
+  Tests  30 passed | 57 skipped (87)
+
+== i18n drift detector ==
+  Test Files  1 passed | 8 skipped (9)
+  Tests  10 passed | 77 skipped (87)
+  Key-set parity confirmed across es/en/fr for admin-ai namespace.
+
+== Design-tokens enforcer ==
+  OK Design tokens - web literals are outside app code or inside token/theme modules.
+  Result: 0 findings.
+
+== Build ==
+  vite v8.0.11 — 221 modules transformed.
+  dist/assets/index-DHI0sALN.js 422.77 kB | gzip: 130.67 kB
+  Exit: 0
+
+== Security grep (Authorization/api_key leak check) ==
+  grep -RE "Authorization|api_key" frontend/src/features/admin_ai/ → only docstring comments.
+  No header values logged. No PII in logs.
+
+== Hex/RGB literal check ==
+  grep -rE "#[0-9a-fA-F]{3,6}|rgb\(|rgba\(|hsl\(" frontend/src/features/admin_ai/ → 0 matches.
+
+== File-size compliance ==
+  auth.ts:              39 lines  (cap: 200)
+  types.ts:             88 lines  (cap: 200)
+  diffSummary.ts:       48 lines  (cap: 200)
+  discoverModels.ts:   188 lines  (cap: 200)
+  auth.ts (data):       39 lines
+  StepIndicator.tsx:   119 lines  (cap: 300)
+  Step1ProviderInput:   87 lines  (cap: 300)
+  DiffReviewTable:     220 lines  (cap: 300)
+  AdminAiModelsPage:   133 lines  (cap: 300)
+  ModelWizardPage:     237 lines  (cap: 300)
+  All tests files < 300 lines.
+
+== Acceptance criteria (A1-A12) ==
+  A1: AdminAiModelsPage renders CTA → /admin/ai/models/new — VERIFIED (test + build)
+  A2: ModelWizardPage renders 3 logical steps — VERIFIED (test)
+  A3: Real POST + DiscoverModelsResponse data rendered — VERIFIED (mocked fetch happy path)
+  A4: error_network + error_validation + permission_denied wired — VERIFIED (tests)
+  A5: design_tokens_v1 enforcer green — VERIFIED
+  A6: Vitest tests cover all required layers — 30 new tests PASS
+  A7: main.tsx routes added, existing /showcase and / intact — build PASS (221 modules)
+  A8: No auth header value in logs — VERIFIED (grep)
+  A9: i18n admin-ai namespace extended ES/EN/FR; existing keys preserved; drift test PASS
+  A10: File sizes all within cap — VERIFIED (wc -l)
+  A11: Docstrings + public function docs — VERIFIED (manual review during write)
+  A12: EditorialInput has label + aria-describedby; CTAs have accessible names — VERIFIED
+
+== Route smoke notes ==
+  /admin/ai/models     → AdminAiModelsPage (shell + CTA "Descubrir modelos")
+  /admin/ai/models/new → ModelWizardPage (3-step: UUID input → spinner → diff review)
+  /showcase            → ShowcasePage (unchanged)
+  /                    → ShowcasePage (unchanged)
+
+== Verify-slice instructions (R1 + R2 workaround) ==
+  R1 (no seeded provider): Insert a Gemini provider via raw SQL:
+    INSERT INTO ai_providers (id, name, type, base_url, is_active, created_at, updated_at)
+    VALUES (gen_random_uuid(), 'gemini-direct', 'gemini', 'https://generativelanguage.googleapis.com', true, now(), now())
+    RETURNING id;
+    -- Use returned UUID as the provider_id in the wizard input.
+
+  R2 (invalid Fernet key): Before launching backend for verify-slice, export a real key:
+    export ENCRYPTION_KEY=$(python3 -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())")
+    -- Then insert the credential with that key via Python:
+    from cryptography.fernet import Fernet
+    import os
+    f = Fernet(os.environ['ENCRYPTION_KEY'].encode())
+    encrypted = f.encrypt(os.environ['VERIFICATION_GEMINI_API_KEY'].encode()).decode()
+    -- INSERT INTO ai_provider_credentials (id, provider_id, api_key, created_at, updated_at)
+    -- VALUES (gen_random_uuid(), '<provider_id_from_R1>', '<encrypted>', now(), now());

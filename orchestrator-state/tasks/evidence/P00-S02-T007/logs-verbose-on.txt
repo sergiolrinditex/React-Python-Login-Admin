@@ -1,0 +1,296 @@
+
+> hilo-people-frontend@0.0.0 test
+> vitest --run --reporter=verbose
+
+
+ RUN  v4.1.5 /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/frontend
+
+ ✓ src/shared/design-system/__tests__/tokens.test.ts > tokens — TS mirror > exports the --radius token name (value = 0 in CSS) 1ms
+ ✓ src/shared/design-system/__tests__/tokens.test.ts > tokens — TS mirror > exports the primary colour tokens 0ms
+ ✓ src/shared/design-system/__tests__/tokens.test.ts > tokens — TS mirror > exports the editorial tracking-label token 0ms
+ ✓ src/shared/design-system/__tests__/tokens.test.ts > tokens — TS mirror > exports the font stacks 0ms
+ ✓ src/shared/design-system/__tests__/tokens.test.ts > tokens — TS mirror > exports the hairline token 0ms
+ ✓ src/shared/design-system/__tests__/tokens.test.ts > tokens — TS mirror > exports type scale tokens 0ms
+ ✓ src/shared/design-system/__tests__/tokens.test.ts > tokens — TS mirror > all token values start with -- 1ms
+stdout | src/features/admin_ai/data/__tests__/discoverModels.test.ts > admin_ai / discoverModels API client > happy path: returns ok=true with DiscoverModelsData on 200
+{
+  event: 'discover_models.before',
+  provider_id_prefix: '12345678',
+  request_id: '98548dca-20a0-4c16-970f-142b0304c474'
+}
+
+stdout | src/features/admin_ai/data/__tests__/discoverModels.test.ts > admin_ai / discoverModels API client > happy path: returns ok=true with DiscoverModelsData on 200
+{
+  event: 'discover_models.after',
+  status: 200,
+  latency_ms: 1,
+  request_id: '98548dca-20a0-4c16-970f-142b0304c474',
+  added_count: 1,
+  existing_count: 1,
+  skipped_count: 1
+}
+
+stdout | src/features/admin_ai/data/__tests__/discoverModels.test.ts > admin_ai / discoverModels API client > maps 401 to error_code=unauthorized
+{
+  event: 'discover_models.before',
+  provider_id_prefix: '12345678',
+  request_id: 'cb517a11-0aef-4e9b-b529-2b39c56cf0ae'
+}
+
+stderr | src/features/admin_ai/data/__tests__/discoverModels.test.ts > admin_ai / discoverModels API client > maps 401 to error_code=unauthorized
+{
+  event: 'discover_models.error',
+  error_code: 'unauthorized',
+  http_status: 401,
+  latency_ms: 0,
+  request_id: 'cb517a11-0aef-4e9b-b529-2b39c56cf0ae'
+}
+
+stdout | src/features/admin_ai/data/__tests__/discoverModels.test.ts > admin_ai / discoverModels API client > maps 403 to error_code=forbidden
+{
+  event: 'discover_models.before',
+  provider_id_prefix: '12345678',
+  request_id: 'fe4a704a-d7b1-435e-a258-4d476f0f462c'
+}
+
+stderr | src/features/admin_ai/data/__tests__/discoverModels.test.ts > admin_ai / discoverModels API client > maps 403 to error_code=forbidden
+{
+  event: 'discover_models.error',
+  error_code: 'forbidden',
+  http_status: 403,
+  latency_ms: 0,
+  request_id: 'fe4a704a-d7b1-435e-a258-4d476f0f462c'
+}
+
+stdout | src/features/admin_ai/data/__tests__/discoverModels.test.ts > admin_ai / discoverModels API client > maps 404 to error_code=provider_not_found
+{
+  event: 'discover_models.before',
+  provider_id_prefix: '12345678',
+  request_id: 'db968565-6815-421a-b90f-291b3363f208'
+}
+
+stderr | src/features/admin_ai/data/__tests__/discoverModels.test.ts > admin_ai / discoverModels API client > maps 404 to error_code=provider_not_found
+{
+  event: 'discover_models.error',
+  error_code: 'provider_not_found',
+  http_status: 404,
+  latency_ms: 0,
+  request_id: 'db968565-6815-421a-b90f-291b3363f208'
+}
+
+stdout | src/features/admin_ai/data/__tests__/discoverModels.test.ts > admin_ai / discoverModels API client > maps 422 to error_code=validation_error
+{
+  event: 'discover_models.before',
+  provider_id_prefix: '12345678',
+  request_id: 'd0bf81c5-005a-4ef4-b1bf-bda7732ff2f2'
+}
+
+stderr | src/features/admin_ai/data/__tests__/discoverModels.test.ts > admin_ai / discoverModels API client > maps 422 to error_code=validation_error
+{
+  event: 'discover_models.error',
+  error_code: 'validation_error',
+  http_status: 422,
+  latency_ms: 1,
+  request_id: 'd0bf81c5-005a-4ef4-b1bf-bda7732ff2f2'
+}
+
+stdout | src/features/admin_ai/data/__tests__/discoverModels.test.ts > admin_ai / discoverModels API client > maps 502 to error_code=upstream_error
+{
+  event: 'discover_models.before',
+  provider_id_prefix: '12345678',
+  request_id: '380ab20b-c685-4abf-8f2a-ab0f8e481602'
+}
+
+stderr | src/features/admin_ai/data/__tests__/discoverModels.test.ts > admin_ai / discoverModels API client > maps 502 to error_code=upstream_error
+{
+  event: 'discover_models.error',
+  error_code: 'upstream_error',
+  http_status: 502,
+  latency_ms: 0,
+  request_id: '380ab20b-c685-4abf-8f2a-ab0f8e481602'
+}
+
+stdout | src/features/admin_ai/data/__tests__/discoverModels.test.ts > admin_ai / discoverModels API client > maps network transport failure to error_code=network_error
+{
+  event: 'discover_models.before',
+  provider_id_prefix: '12345678',
+  request_id: 'fb648080-b7db-4e6b-9f30-5181cb8af9bd'
+}
+
+stderr | src/features/admin_ai/data/__tests__/discoverModels.test.ts > admin_ai / discoverModels API client > maps network transport failure to error_code=network_error
+{
+  event: 'discover_models.error',
+  error_code: 'network_error',
+  latency_ms: 0,
+  request_id: 'fb648080-b7db-4e6b-9f30-5181cb8af9bd',
+  reason: 'fetch failed'
+}
+
+ ✓ src/features/admin_ai/data/__tests__/discoverModels.test.ts > admin_ai / discoverModels API client > happy path: returns ok=true with DiscoverModelsData on 200 4ms
+ ✓ src/features/admin_ai/data/__tests__/discoverModels.test.ts > admin_ai / discoverModels API client > maps 401 to error_code=unauthorized 0ms
+ ✓ src/features/admin_ai/data/__tests__/discoverModels.test.ts > admin_ai / discoverModels API client > maps 403 to error_code=forbidden 0ms
+ ✓ src/features/admin_ai/data/__tests__/discoverModels.test.ts > admin_ai / discoverModels API client > maps 404 to error_code=provider_not_found 0ms
+ ✓ src/features/admin_ai/data/__tests__/discoverModels.test.ts > admin_ai / discoverModels API client > maps 422 to error_code=validation_error 0ms
+ ✓ src/features/admin_ai/data/__tests__/discoverModels.test.ts > admin_ai / discoverModels API client > maps 502 to error_code=upstream_error 0ms
+ ✓ src/features/admin_ai/data/__tests__/discoverModels.test.ts > admin_ai / discoverModels API client > maps network transport failure to error_code=network_error 0ms
+ ✓ src/features/admin_ai/data/__tests__/discoverModels.test.ts > admin_ai / getAdminAuthHeader > returns an object with an Authorization key 0ms
+ ✓ src/features/admin_ai/data/__tests__/discoverModels.test.ts > admin_ai / getAdminAuthHeader > Authorization value starts with "Bearer dev-admin-" 0ms
+ ✓ src/features/admin_ai/data/__tests__/discoverModels.test.ts > admin_ai / getAdminAuthHeader > does not expose any production-looking token (no sk-, no AIza*) 0ms
+ ✓ src/app/providers.test.tsx > AppProviders smoke > mounts and exposes QueryClient + i18n to children 18ms
+ ✓ src/shared/design-system/__tests__/components.test.tsx > Wordmark > renders the HILO text 64ms
+ ✓ src/shared/design-system/__tests__/components.test.tsx > Wordmark > has role="img" with accessible label 3ms
+ ✓ src/shared/design-system/__tests__/components.test.tsx > Wordmark > uses the display font token on inline style 3ms
+ ✓ src/shared/design-system/__tests__/components.test.tsx > Wordmark > applies border-radius token (= 0) 2ms
+ ✓ src/shared/design-system/__tests__/components.test.tsx > TrackedLabel > renders children text 3ms
+ ✓ src/shared/design-system/__tests__/components.test.tsx > TrackedLabel > renders as <label> when htmlFor is provided 1ms
+ ✓ src/shared/design-system/__tests__/components.test.tsx > TrackedLabel > renders as <span> when htmlFor is absent 1ms
+ ✓ src/shared/design-system/__tests__/components.test.tsx > TrackedLabel > applies tracking-label token 1ms
+ ✓ src/shared/design-system/__tests__/components.test.tsx > StatusDot > has role="status" with accessible label 3ms
+ ✓ src/shared/design-system/__tests__/components.test.tsx > StatusDot > renders the visible label text 1ms
+ ✓ src/shared/design-system/__tests__/components.test.tsx > StatusDot > uses aria-label derived from status when no label prop 2ms
+ ✓ src/shared/design-system/__tests__/components.test.tsx > StatusDot > renders the decorative dot with aria-hidden 1ms
+ ✓ src/shared/design-system/__tests__/components.test.tsx > EditorialInput > renders an input element 7ms
+ ✓ src/shared/design-system/__tests__/components.test.tsx > EditorialInput > shows label associated with input via htmlFor/id 2ms
+ ✓ src/shared/design-system/__tests__/components.test.tsx > EditorialInput > renders error message and sets aria-invalid 4ms
+ ✓ src/shared/design-system/__tests__/components.test.tsx > EditorialInput > calls onChange when value changes 4ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n bundle structure > all 24 locale bundles import as non-empty objects 2ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n bundle structure > key sets are identical across es/en/fr for all 8 namespaces 1ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n bundle structure > contains productive keys from instrucciones.md §6 verbatim in all 3 locales 1ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n bundle structure > i18next resolves common:productName in all 3 locales 1ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n bundle structure > i18next resolves auth.signIn.title in all 3 locales 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n bundle structure > i18next falls back to es for unsupported locale 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n bundle structure > i18next instance has all 8 namespaces registered with resource bundles 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n bundle structure > SUPPORTED_LANGUAGES contains exactly es, en, fr 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n bundle structure > NAMESPACES contains all 8 expected namespaces 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n bundle structure > isSupportedLanguage type-guard returns correct values 0ms
+ ✓ src/app/showcase/showcase.test.tsx > ShowcasePage > renders without throwing 48ms
+ ✓ src/app/showcase/showcase.test.tsx > ShowcasePage > has a data-testid="showcase-page" root element 27ms
+ ✓ src/shared/design-system/__tests__/components.test.tsx > EditorialInput > applies hairline border token via inline style 4ms
+ ✓ src/shared/design-system/__tests__/components.test.tsx > EditorialInput > applies zero border-radius token 2ms
+ ✓ src/shared/design-system/__tests__/components.test.tsx > SolidCTA > renders a button with children text 8ms
+ ✓ src/shared/design-system/__tests__/components.test.tsx > SolidCTA > calls onClick when clicked 4ms
+ ✓ src/shared/design-system/__tests__/components.test.tsx > SolidCTA > is disabled when disabled prop is true 3ms
+ ✓ src/shared/design-system/__tests__/components.test.tsx > SolidCTA > is disabled when loading is true 3ms
+ ✓ src/shared/design-system/__tests__/components.test.tsx > SolidCTA > applies solid black background token (no hex literal) 3ms
+ ✓ src/shared/design-system/__tests__/components.test.tsx > SolidCTA > applies zero border-radius 3ms
+ ✓ src/shared/design-system/__tests__/components.test.tsx > SolidCTA > uses uppercase tracking via letterSpacing token 3ms
+ ✓ src/shared/design-system/__tests__/components.test.tsx > HairlineTable > renders a table with columnHeaders 10ms
+ ✓ src/shared/design-system/__tests__/components.test.tsx > HairlineTable > renders row data 2ms
+ ✓ src/shared/design-system/__tests__/components.test.tsx > HairlineTable > renders caption element when caption prop provided 2ms
+ ✓ src/shared/design-system/__tests__/components.test.tsx > MobileFrame > renders children inside a <main> landmark 2ms
+ ✓ src/shared/design-system/__tests__/components.test.tsx > AdminShell > renders sidebar content inside a <nav> landmark 3ms
+ ✓ src/shared/design-system/__tests__/components.test.tsx > AdminShell > renders main content inside a <main> landmark 3ms
+ ✓ src/features/admin_ai/presentation/__tests__/DiffReviewTable.test.tsx > admin_ai / DiffReviewTable > renders summary counts for full data 35ms
+ ✓ src/features/admin_ai/presentation/__tests__/DiffReviewTable.test.tsx > admin_ai / DiffReviewTable > renders added section with model IDs 8ms
+ ✓ src/features/admin_ai/presentation/__tests__/DiffReviewTable.test.tsx > admin_ai / DiffReviewTable > renders existing section with model ID 6ms
+ ✓ src/features/admin_ai/presentation/__tests__/DiffReviewTable.test.tsx > admin_ai / DiffReviewTable > renders skipped section with reason 6ms
+ ✓ src/features/admin_ai/presentation/__tests__/DiffReviewTable.test.tsx > admin_ai / DiffReviewTable > renders TODO reject label for added models 8ms
+ ✓ src/features/admin_ai/presentation/__tests__/DiffReviewTable.test.tsx > admin_ai / DiffReviewTable > shows empty state message when total_seen=0 2ms
+ ✓ src/features/admin_ai/presentation/__tests__/DiffReviewTable.test.tsx > admin_ai / DiffReviewTable > does not render added section when added is empty 2ms
+ ✓ src/features/admin_ai/presentation/__tests__/DiffReviewTable.test.tsx > admin_ai / DiffReviewTable > summary counts show 0 for empty data 2ms
+ ✓ src/features/admin_ai/presentation/__tests__/AdminAiModelsPage.test.tsx > admin_ai / AdminAiModelsPage shell > renders without crashing 29ms
+ ✓ src/features/admin_ai/presentation/__tests__/AdminAiModelsPage.test.tsx > admin_ai / AdminAiModelsPage shell > renders the models title from i18n admin-ai namespace 12ms
+ ✓ src/features/admin_ai/presentation/__tests__/AdminAiModelsPage.test.tsx > admin_ai / AdminAiModelsPage shell > renders a CTA that links to /admin/ai/models/new 57ms
+ ✓ src/features/admin_ai/presentation/__tests__/AdminAiModelsPage.test.tsx > admin_ai / AdminAiModelsPage shell > renders the route breadcrumb TrackedLabel 5ms
+ ✓ src/features/admin_ai/presentation/__tests__/AdminAiModelsPage.test.tsx > admin_ai / AdminAiModelsPage shell > renders the deferred scope notice 4ms
+ ✓ src/app/showcase/showcase.test.tsx > ShowcasePage > renders the HILO wordmark 71ms
+ ✓ src/app/showcase/showcase.test.tsx > ShowcasePage > renders the HairlineTable with component registry 36ms
+ ✓ src/app/showcase/showcase.test.tsx > ShowcasePage > renders StatusDot variants 18ms
+ ✓ src/app/showcase/showcase.test.tsx > ShowcasePage > renders EditorialInput fields 21ms
+ ✓ src/app/showcase/showcase.test.tsx > ShowcasePage > renders SolidCTA buttons 29ms
+ ✓ src/app/showcase/showcase.test.tsx > ShowcasePage > renders AdminShell nav landmark 15ms
+ ✓ src/features/admin_ai/presentation/__tests__/ModelWizardPage.test.tsx > admin_ai / ModelWizardPage step transitions > renders step 1 with provider UUID input on initial mount 95ms
+stdout | src/features/admin_ai/presentation/__tests__/ModelWizardPage.test.tsx > admin_ai / ModelWizardPage step transitions > advances to step 3 (diff review) on 200 response
+{ event: 'wizard.step_transition', from: 1, to: 2 }
+{
+  event: 'discover_models.before',
+  provider_id_prefix: '12345678',
+  request_id: 'c16004b3-a126-424c-9c21-c35f837f9c65'
+}
+
+stdout | src/features/admin_ai/presentation/__tests__/ModelWizardPage.test.tsx > admin_ai / ModelWizardPage step transitions > advances to step 3 (diff review) on 200 response
+{
+  event: 'discover_models.after',
+  status: 200,
+  latency_ms: 3,
+  request_id: 'c16004b3-a126-424c-9c21-c35f837f9c65',
+  added_count: 1,
+  existing_count: 0,
+  skipped_count: 0
+}
+
+stdout | src/features/admin_ai/presentation/__tests__/ModelWizardPage.test.tsx > admin_ai / ModelWizardPage step transitions > advances to step 3 (diff review) on 200 response
+{ event: 'wizard.step_transition', from: 2, to: 3 }
+
+stdout | src/features/admin_ai/presentation/__tests__/ModelWizardPage.test.tsx > admin_ai / ModelWizardPage step transitions > shows permission_denied message on 401 response (stays on step 2)
+{ event: 'wizard.step_transition', from: 1, to: 2 }
+{
+  event: 'discover_models.before',
+  provider_id_prefix: '12345678',
+  request_id: '1e6790df-a504-4e2a-9e24-af18cf5e56b7'
+}
+
+stderr | src/features/admin_ai/presentation/__tests__/ModelWizardPage.test.tsx > admin_ai / ModelWizardPage step transitions > shows permission_denied message on 401 response (stays on step 2)
+{
+  event: 'discover_models.error',
+  error_code: 'unauthorized',
+  http_status: 401,
+  latency_ms: 4,
+  request_id: '1e6790df-a504-4e2a-9e24-af18cf5e56b7'
+}
+
+stderr | src/features/admin_ai/presentation/__tests__/ModelWizardPage.test.tsx > admin_ai / ModelWizardPage step transitions > shows permission_denied message on 401 response (stays on step 2)
+{ event: 'wizard.error', kind: 'permission_denied' }
+
+stdout | src/features/admin_ai/presentation/__tests__/ModelWizardPage.test.tsx > admin_ai / ModelWizardPage step transitions > shows upstream error message on 502 response
+{ event: 'wizard.step_transition', from: 1, to: 2 }
+{
+  event: 'discover_models.before',
+  provider_id_prefix: '12345678',
+  request_id: 'db89fda5-698d-470d-9b07-a4aaf0d27f13'
+}
+
+stderr | src/features/admin_ai/presentation/__tests__/ModelWizardPage.test.tsx > admin_ai / ModelWizardPage step transitions > shows upstream error message on 502 response
+{
+  event: 'discover_models.error',
+  error_code: 'upstream_error',
+  http_status: 502,
+  latency_ms: 2,
+  request_id: 'db89fda5-698d-470d-9b07-a4aaf0d27f13'
+}
+
+stderr | src/features/admin_ai/presentation/__tests__/ModelWizardPage.test.tsx > admin_ai / ModelWizardPage step transitions > shows upstream error message on 502 response
+{ event: 'wizard.error', kind: 'upstream' }
+
+stdout | src/features/admin_ai/presentation/__tests__/ModelWizardPage.test.tsx > admin_ai / ModelWizardPage step transitions > shows network error message on transport failure
+{ event: 'wizard.step_transition', from: 1, to: 2 }
+{
+  event: 'discover_models.before',
+  provider_id_prefix: '12345678',
+  request_id: '590e72cd-87c5-44f6-8ea8-e2c4868c4222'
+}
+
+stderr | src/features/admin_ai/presentation/__tests__/ModelWizardPage.test.tsx > admin_ai / ModelWizardPage step transitions > shows network error message on transport failure
+{
+  event: 'discover_models.error',
+  error_code: 'network_error',
+  latency_ms: 2,
+  request_id: '590e72cd-87c5-44f6-8ea8-e2c4868c4222',
+  reason: 'Network failed'
+}
+
+stderr | src/features/admin_ai/presentation/__tests__/ModelWizardPage.test.tsx > admin_ai / ModelWizardPage step transitions > shows network error message on transport failure
+{ event: 'wizard.error', kind: 'network' }
+
+ ✓ src/features/admin_ai/presentation/__tests__/ModelWizardPage.test.tsx > admin_ai / ModelWizardPage step transitions > shows validation error for empty input without calling fetch 20ms
+ ✓ src/features/admin_ai/presentation/__tests__/ModelWizardPage.test.tsx > admin_ai / ModelWizardPage step transitions > shows validation error for malformed UUID input 16ms
+ ✓ src/features/admin_ai/presentation/__tests__/ModelWizardPage.test.tsx > admin_ai / ModelWizardPage step transitions > advances to step 3 (diff review) on 200 response 26ms
+ ✓ src/features/admin_ai/presentation/__tests__/ModelWizardPage.test.tsx > admin_ai / ModelWizardPage step transitions > shows permission_denied message on 401 response (stays on step 2) 22ms
+ ✓ src/features/admin_ai/presentation/__tests__/ModelWizardPage.test.tsx > admin_ai / ModelWizardPage step transitions > shows upstream error message on 502 response 15ms
+ ✓ src/features/admin_ai/presentation/__tests__/ModelWizardPage.test.tsx > admin_ai / ModelWizardPage step transitions > shows network error message on transport failure 13ms
+
+ Test Files  9 passed (9)
+      Tests  87 passed (87)
+   Start at  01:11:55
+   Duration  1.98s (transform 1.17s, setup 2.17s, import 1.36s, tests 839ms, environment 8.77s)
+

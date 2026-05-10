@@ -1,0 +1,25 @@
+ES-EN diff: set()
+ES-FR diff: set()
+Total keys ES: 21
+Total keys EN: 21
+Total keys FR: 21
+Wizard keys (ES):
+  wizard.errors.invalidUuid
+  wizard.errors.network
+  wizard.errors.providerNotFound
+  wizard.errors.unauthorized
+  wizard.errors.upstream
+  wizard.step1.input.help
+  wizard.step1.input.label
+  wizard.step1.submit
+  wizard.step1.title
+  wizard.step2.spinner
+  wizard.step3.added
+  wizard.step3.approve
+  wizard.step3.existing
+  wizard.step3.skipped
+  wizard.step3.summary.totalPersisted
+  wizard.step3.summary.totalSeen
+  wizard.step3.summary.totalSkipped
+  wizard.step3.title
+  wizard.title

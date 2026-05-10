@@ -1,0 +1,8 @@
+HTTP/1.1 404 Not Found
+date: Sat, 09 May 2026 23:20:22 GMT
+server: uvicorn
+content-length: 119
+content-type: application/json
+x-request-id: df94ebdc8395472f8567a4238e325fc9
+
+{"detail":{"error":{"code":"provider_not_found","message":"Provider 00000000-0000-0000-0000-000000000000 not found."}}}
