@@ -1,0 +1,27 @@
+=== Naked <...> placeholders in .env.example (should be empty) ===
+OK no naked angle-bracket placeholders
+
+=== Same check on live .env ===
+OK no naked angle-bracket placeholders
+
+=== Strategy verification: ENCRYPTION_KEY value in .env.example ===
+93:ENCRYPTION_KEY=dev-encryption-key-placeholder
+
+=== Matcher logic from setup-from-scratch.sh (lines 99-115) ===
+  current_key="$(grep -E '^ENCRYPTION_KEY=' "$env_file" | head -1 | cut -d= -f2- || true)"
+  current_key="${current_key%$'\r'}"  # strip Windows CR if present
+
+  local needs_new=0
+  if [ -z "$current_key" ] \
+      || [ "$current_key" = "<change-me>" ] \
+      || [ "$current_key" = "dev-encryption-key-placeholder" ]; then
+    needs_new=1
+  fi
+
+  if [ "$needs_new" -eq 0 ]; then
+    # Key already present and not a placeholder — idempotent, nothing to do.
+    local masked
+    masked="${current_key: -4}"
+    log "ensure_encryption_key: ENCRYPTION_KEY already set (masked: ****${masked}) — no change"
+    return 0
+  fi

@@ -1,0 +1,9 @@
+
+ RUN  v4.1.5 /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/frontend
+
+
+ Test Files  9 passed (9)
+      Tests  87 passed (87)
+   Start at  11:41:05
+   Duration  2.29s (transform 1.22s, setup 2.89s, import 1.45s, tests 1.10s, environment 9.73s)
+

@@ -1,0 +1,12 @@
+=== Tester independent source reproduction ===
+Timestamp: 2026-05-10T09:45:49Z
+
+--- Step (a): bash -n syntax check ---
+exit: 0
+
+--- Step (b): source from .env copy (AC1 reproduction) ---
+OK source from .env copy
+exit: 0
+
+--- Step (c): scan for naked angle-bracket placeholders ---
+OK no naked angle-bracket placeholders

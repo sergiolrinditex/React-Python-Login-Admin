@@ -1,0 +1,10 @@
+=== bash -n .env (live file) ===
+exit=0
+
+=== source .env.example directly ===
+OK
+exit=0
+
+=== source .env (live) via copy ===
+OK
+exit=0

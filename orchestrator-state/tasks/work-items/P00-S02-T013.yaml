@@ -1,0 +1,39 @@
+id: P00-S02-T013
+phase_id: P00
+step_id: P00-S02
+title: "Quote or remove <change-me> placeholders in .env.example to fix bash source on fresh clones"
+status: ready
+kind: "unspecified"
+target: ""
+product_increment: "current"
+build_state: "planned"
+risk_level: "medium"
+verify_mode: "human"
+route: ""
+endpoint: ""
+journey_refs:
+  - "J100"
+tables:
+depends_on:
+  - P00-S02-T011
+acceptance:
+  - "After fresh git clone + bash scripts/setup-from-scratch.sh"
+  - "'set -a"
+  - "source .env"
+  - "set +a' succeeds with exit 0"
+  - "bash scripts/dev-restart.sh --reset succeeds end-to-end (back+front+seed) without manual .env edits"
+verification_commands:
+  - "rm .env then bash scripts/setup-from-scratch.sh"
+  - "( set -a"
+  - "source .env"
+  - "set +a"
+  - "echo ok ) returns exit 0"
+  - "bash scripts/dev-restart.sh --reset starts back :8000 healthy and front :5173 reachable"
+allowed_paths:
+conflict_groups:
+  - "dev_env_setup"
+write_set:
+  - ".env.example"
+handoff_path: orchestrator-state/tasks/handoffs/P00-S02-T013.md
+evidence_dir: orchestrator-state/tasks/evidence/P00-S02-T013
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry"

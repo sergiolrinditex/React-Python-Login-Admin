@@ -1,0 +1,5 @@
+=== TIMESTAMP ===
+2026-05-10T09:51:02Z
+
+=== bash -n .env.example ===
+exit=0
