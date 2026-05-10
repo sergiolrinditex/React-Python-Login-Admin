@@ -26,10 +26,21 @@ __pycache__/
 *.egg-info/
 .venv/
 venv/
+# Per-task throwaway venvs (e.g. backend/.venv-t003, .venv-verify-t003)
+.venv-*/
+**/.venv-*/
 
 # ─── Node (por si CI/scripts lo usan) ────────────────────────────────────────
 node_modules/
 npm-debug.log*
+
+# ─── TypeScript / Vite build outputs ─────────────────────────────────────────
+# tsbuildinfo es cache incremental de tsc; se regenera. vitest.config.{d.ts,js}
+# se generan a partir de vitest.config.ts (TS source) — no versionar derivados.
+*.tsbuildinfo
+**/*.tsbuildinfo
+frontend/vitest.config.js
+frontend/vitest.config.d.ts
 
 # ─── Flutter / Dart (cuando exista app/) ─────────────────────────────────────
 app/.dart_tool/
