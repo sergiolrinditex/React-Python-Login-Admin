@@ -1,0 +1,25 @@
+## Verification Data Contract Used — P01-S02-T009
+
+Source: HILO_PEOPLE_TECHNICAL_GUIDE.md §6.5 J100 auth-login
+
+Per task pack §4: T009 does NOT use the seed bundle directly.
+The seed bundle prepopulates mfa_totp_secrets for s.lopezrap+employee@gmail.com;
+T009 tests the INITIAL generation path, so tests create fresh users via sign-up.
+
+### Approach Applied
+- Persona: empleado nuevo (created via POST /sign-up in tests, NOT via seed bundle)
+- Credentials generated: tester-mfa-t009-<timestamp>@gmail.com (synthetic, real domain)
+- Fixtures injected: none (autouse reset_db_engine_singleton handles reset)
+- Data contract row covered: J100 auth-login (re-auth pattern)
+- Productive bundle: NOT required for generation path
+
+### Test User Created (curl smoke)
+- Email: tester-mfa-t009-1778426752@gmail.com
+- User ID: 81d2e527-529d-4579-b6f7-d1184eebf48d
+- Created via: POST /api/v1/auth/sign-up (real endpoint, real DB)
+
+### Data Observed (DB verification)
+- mfa_totp_secrets row: user_id=81d2e527..., secret_len=140, enabled=False
+- audit_logs rows: 2 rows with action=auth.2fa_enroll, req_ok=True
+  - Row 1: metadata={"enabled": false, "rotation": false}
+  - Row 2: metadata={"enabled": false, "rotation": true}

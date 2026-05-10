@@ -93,3 +93,48 @@ class LegalAcceptanceMissingError(AuthDomainError):
     def __init__(self) -> None:
         """Initialize with a fixed message."""
         super().__init__("Legal acceptance must be True to complete sign-up")
+
+
+class InvalidCredentialsError(AuthDomainError):
+    """Raised when re-auth credentials are invalid (user not found OR wrong password).
+
+    Purpose: intentionally generic — callers MUST return the same HTTP 401
+    response for both cases (email not found and password mismatch) to prevent
+    user-enumeration attacks.
+
+    Slice: P01-S02-T009 — POST /api/v1/auth/2fa/enroll (re-auth scheme D1)
+    Error code: AUTH_INVALID_CREDENTIALS
+    Source: HILO_PEOPLE_TECHNICAL_GUIDE.md §6.4 + task-pack §5.3
+    """
+
+    def __init__(self, reason: str = "email not found or password incorrect") -> None:
+        """Initialize with an internal reason (NOT exposed to callers/HTTP responses).
+
+        Params:
+          reason — internal description; NEVER sent to the client to prevent enumeration.
+        """
+        super().__init__(f"Re-auth failed: {reason}")
+        self.reason = reason
+
+
+class AlreadyEnrolledError(AuthDomainError):
+    """Raised when a user already has a row in mfa_totp_secrets AND the policy is 'reject'.
+
+    Slice: P01-S02-T009 — POST /api/v1/auth/2fa/enroll
+    Error code: AUTH_2FA_ALREADY_ENROLLED (409)
+
+    Note: The default policy (D2) is 'rotate' (silently update the secret + audit_log),
+    NOT 'reject'. This error is raised only if the caller selects policy='reject'.
+    T009 does NOT select 'reject' — it uses the rotate policy. This class is kept
+    for completeness and for future T008/config-driven policy switch.
+    Source: task-pack §5.3 + §9 D2
+    """
+
+    def __init__(self, user_id: str) -> None:
+        """Initialize with masked user_id for internal logging.
+
+        Params:
+          user_id — UUID string of the already-enrolled user.
+        """
+        super().__init__(f"User {user_id} already has MFA enrolled")
+        self.user_id = user_id

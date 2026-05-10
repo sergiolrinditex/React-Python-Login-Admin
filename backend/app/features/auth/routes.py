@@ -1,15 +1,15 @@
 """
 FastAPI router for the auth feature — POST /api/v1/auth/sign-up.
 
-Slice: P01-S02-T001 — POST /api/v1/auth/sign-up
+Slice: P01-S02-T001 — POST /api/v1/auth/sign-up (base)
+       P01-S02-T009 — POST /api/v1/auth/2fa/enroll (extended — mfa_router wired here)
 Phase: P01 — Auth + Base Capabilities
 
-Endpoint:
-  POST /sign-up
-  (mounted in main.py under prefix /api/v1/auth → full path:
-   POST /api/v1/auth/sign-up)
+Endpoints registered on this module's `router` (prefix /api/v1/auth in main.py):
+  POST /sign-up        — user registration (T001)
+  POST /2fa/enroll     — MFA TOTP enrollment (T009, via mfa_router sub-router)
 
-Status codes:
+Status codes (sign-up):
   201 Created          — success; body: {data: {mfa_required: true, user_id: UUID}}
   400 Bad Request      — malformed JSON (FastAPI default)
   409 Conflict         — email already registered; NON-LEAKY message
@@ -27,14 +27,22 @@ Security (task-pack §4.7 UX table + instrucciones §3.2):
   - 409 message MUST be generic ("Email no disponible") — never say "user exists".
   - code 'AUTH_EMAIL_TAKEN' lets the frontend localize differently without leaking info.
 
+Wiring note (T009):
+  mfa_router is imported from mfa_routes.py and included here with prefix='/2fa'.
+  This avoids touching main.py (task-pack §6.1: "ideal evitarlo").
+  Result: POST /api/v1/auth/2fa/enroll (prefix /api/v1/auth from main.py
+          + prefix /2fa from include_router below + path /enroll from mfa_router).
+
 Dependencies:
   - fastapi 0.136.1
   - sqlalchemy.ext.asyncio.AsyncSession (via app.core.db.get_session)
   - app.features.auth.service (sign_up use case)
+  - app.features.auth.mfa_routes (mfa_router — T009)
   - app.features.auth.errors (typed domain errors)
   - app.features.auth.schemas (request/response models)
 
 Source: task-pack P01-S02-T001 §6.1 + §6.2
+        task-pack P01-S02-T009 §6.1 (wiring)
 HILO_PEOPLE_TECHNICAL_GUIDE.md §6.2 + §6.4
 """
 from __future__ import annotations
@@ -51,6 +59,7 @@ from app.features.auth.errors import (
     NonCorporateEmailError,
     WeakPasswordError,
 )
+from app.features.auth.mfa_routes import mfa_router
 from app.features.auth.schemas import (
     AuthErrorCode,
     AuthErrorDetail,
@@ -61,6 +70,10 @@ from app.features.auth.schemas import (
 )
 
 router = APIRouter(tags=["auth"])
+
+# Mount MFA sub-router at /2fa (T009).
+# Combined with main.py prefix /api/v1/auth → final: /api/v1/auth/2fa/...
+router.include_router(mfa_router, prefix="/2fa")
 
 
 @router.post(

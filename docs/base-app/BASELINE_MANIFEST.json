@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "purpose": "Cumulative built baseline snapshot for ChatGPT/source-of-truth increments.",
-  "latest_version": "current",
+  "latest_version": "v1",
   "snapshots": [
     {
       "ts": "2026-05-08T21:22:09+00:00",
@@ -988,8 +988,42 @@
           "sha256": "8e8ab8edeb3831dd6b05e2d09d9ccf44719d3ea5dcc393a3ec5364a1c38b7d92"
         }
       }
+    },
+    {
+      "ts": "2026-05-10T16:30:04+00:00",
+      "version": "v1",
+      "task_id": "P01-S02-T009",
+      "phase_id": null,
+      "reason": "verified slice closed",
+      "docs": {
+        "instructions": {
+          "source": "docs/source-of-truth/instrucciones.md",
+          "target": "docs/base-app/instrucciones.md",
+          "sha256": "422b7daa338ec118fcbd710de8b47027daf0943d1419ca549a20dde5883200c6"
+        },
+        "guide": {
+          "source": "docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md",
+          "target": "docs/base-app/HILO_PEOPLE_TECHNICAL_GUIDE.md",
+          "sha256": "fb209c22e5d8c54d5a3c03e21b7e3e55ba255ed798b6917fba04383aebfac82c"
+        },
+        "checklist": {
+          "source": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md",
+          "target": "docs/base-app/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md",
+          "sha256": "6e8635e1903085b014e259dfded510066d0995838090172abeb547e320f3aa63"
+        },
+        "ux_contract": {
+          "source": "docs/source-of-truth/UX_CONTRACT.md",
+          "target": "docs/base-app/UX_CONTRACT.md",
+          "sha256": "cecb7afb922e2940268107bf546b4c731eec8069ab0abd084aaab1b1771a1c48"
+        },
+        "stack_profile": {
+          "source": "docs/source-of-truth/STACK_PROFILE.yaml",
+          "target": "docs/base-app/STACK_PROFILE.yaml",
+          "sha256": "8e8ab8edeb3831dd6b05e2d09d9ccf44719d3ea5dcc393a3ec5364a1c38b7d92"
+        }
+      }
     }
   ],
-  "latest_task_id": "P01-S02-T011",
-  "updated_at": "2026-05-10T15:29:44+00:00"
+  "latest_task_id": "P01-S02-T009",
+  "updated_at": "2026-05-10T16:30:04+00:00"
 }

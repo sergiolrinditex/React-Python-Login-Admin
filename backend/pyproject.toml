@@ -47,6 +47,13 @@ dependencies = [
     "argon2-cffi==25.1.0",        # Argon2 password hashing
     "pyjwt[crypto]==2.12.1",      # JWT (own implementation — no Clerk/Auth0)
     "cryptography==48.0.0",       # Fernet for credential cipher (§10.2)
+    # TOTP + QR code generation (P01-S02-T009 MFA enrollment)
+    # pyotp: TOTP secret generation + provisioning_uri. 2.9.0 is latest stable (2026-05).
+    # qrcode[pil]: QR PNG generation; Pillow dependency (~5MB). No native-code build.
+    # WRITE_SET_DRIFT: these were not in the original write_set but are mandatory deps
+    # for the endpoint (same precedent as email-validator==2.2.0 in T001).
+    "pyotp==2.9.0",
+    "qrcode[pil]==8.2",
 
     # --- HTTP client (runtime) ---
     "httpx==0.28.1",              # LiteLLM client + Resend HTTP + tests
