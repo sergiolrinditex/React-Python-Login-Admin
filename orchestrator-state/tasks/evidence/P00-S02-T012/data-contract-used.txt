@@ -1,0 +1,28 @@
+## Data Contract Evidence — P00-S02-T012
+
+### Verification Data Contract Rows Used
+- TECHNICAL_GUIDE §6.5 J103 admin-ai bundle: `data/verification/admin_ai/`
+- Seed CLI: `python -m app.seeds.bootstrap_verification_data --source data/verification --only admin_ai`
+- Fernet ciphertext: generated from valid ENCRYPTION_KEY (Fernet.generate_key() in test env)
+
+### Fixtures Used
+- T1: no fixtures — unit test only (engine attribute check)
+- T2: DB live at 127.0.0.1:5433, generated Fernet key (Obt5b... synthetic for test), simulated token = Fernet.encrypt(b"sk-fake-api-key-do-not-log")
+- T3: SKIPPED — VERIFICATION_GEMINI_API_KEY not present in environment (acceptable per task pack)
+
+### Persisted Data Observed
+- No new data persisted by tester run. T2 executes a SELECT with bound token, does not INSERT.
+
+### AC1 Check Result
+- grep -c 'gAAAAA' in SA engine output: 0 (PASS)
+- SA engine log records captured: 0 (no bind-param leakage)
+
+### AC2 Check Result
+- engine.echo is False: True (PASS)
+
+### Note on T3 skip
+T3 requires VERIFICATION_GEMINI_API_KEY to run the productive admin_ai seed bundle.
+The key is not set in this terminal. This matches the same guard pattern as T010 T6
+(test_load_admin_ai_no_plaintext_secret_in_logs T6 skipped for same reason).
+T2 provides the mechanistic causal proof (echo=True leaks, echo=False does not).
+T3 is the gold-standard gold acceptance but is redundant given T1+T2 for CI without GEMINI.

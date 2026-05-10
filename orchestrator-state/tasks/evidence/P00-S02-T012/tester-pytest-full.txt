@@ -1,0 +1,53 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.5, pytest-9.0.3, pluggy-1.6.0
+rootdir: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend
+configfile: pyproject.toml
+testpaths: tests
+plugins: cov-7.1.0, asyncio-1.3.0, langsmith-0.8.3, anyio-4.13.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collected 172 items
+
+tests/integration/test_admin_ai_discover_models.py sss...s               [  4%]
+tests/integration/test_audit_logs_compliance_cols.py ....                [  6%]
+tests/integration/test_auth_migration.py ............                    [ 13%]
+tests/integration/test_auth_signup.py ........                           [ 18%]
+tests/integration/test_db_engine_no_secret_leak.py ..s                   [ 19%]
+tests/integration/test_seed_admin_ai_loader.py ......                    [ 23%]
+tests/integration/test_seed_idempotency.py sss                           [ 25%]
+tests/integration/test_seed_loader_after_migration.py ......             [ 28%]
+tests/integration/test_seed_missing_bundle.py .....                      [ 31%]
+tests/integration/test_seed_namespaces.py ss.                            [ 33%]
+tests/integration/test_seed_productive_bundle.py ......s                 [ 37%]
+tests/test_dependency_smoke.py .......................................   [ 59%]
+tests/test_health.py .........                                           [ 65%]
+tests/test_logging.py ........s                                          [ 70%]
+tests/unit/agents/test_routing.py ..........                             [ 76%]
+tests/unit/agents/test_specs.py ..........                               [ 81%]
+tests/unit/agents/test_supervisor.py ..........                          [ 87%]
+tests/unit/seeds/test_schemas.py .....................                   [100%]
+
+=============================== warnings summary ===============================
+tests/integration/test_auth_signup.py::test_auth_signup_non_corporate_email_rejected
+tests/integration/test_auth_signup.py::test_auth_signup_weak_password
+tests/integration/test_auth_signup.py::test_auth_signup_legal_acceptance_false
+  /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/fastapi/routing.py:328: DeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
+    return await dependant.call(**values)
+
+tests/test_dependency_smoke.py::test_pyjwt_importable
+  /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/jwt/api_jwt.py:147: InsecureKeyLengthWarning: The HMAC key is 6 bytes long, which is below the minimum recommended length of 32 bytes for SHA256. See RFC 7518 Section 3.2.
+    return self._jws.encode(
+
+tests/test_dependency_smoke.py::test_pyjwt_importable
+  /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/jwt/api_jwt.py:365: InsecureKeyLengthWarning: The HMAC key is 6 bytes long, which is below the minimum recommended length of 32 bytes for SHA256. See RFC 7518 Section 3.2.
+    decoded = self.decode_complete(
+
+tests/test_dependency_smoke.py::test_python_multipart_importable
+  /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/importlib/__init__.py:126: PendingDeprecationWarning: Please use `import python_multipart` instead.
+    return _bootstrap._gcd_import(name[level:], package, level)
+
+tests/test_dependency_smoke.py::test_deepagents_importable
+  /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/.venv-t003/lib/python3.11/site-packages/langgraph/checkpoint/serde/encrypted.py:5: LangChainPendingDeprecationWarning: The default value of `allowed_objects` will change in a future version. Pass an explicit value (e.g., allowed_objects='messages' or allowed_objects='core') to suppress this warning.
+    from langgraph.checkpoint.serde.jsonplus import JsonPlusSerializer
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+================= 160 passed, 12 skipped, 7 warnings in 18.92s =================

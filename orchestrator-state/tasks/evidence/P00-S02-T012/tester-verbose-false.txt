@@ -1,0 +1,6 @@
+2026-05-10 11:58:48 [debug    ] BEFORE _get_engine: creating async engine
+2026-05-10 11:58:49 [debug    ] AFTER _get_engine: engine created (host redacted)
+engine.echo = False
+Total log records (should be warning/error only): 0
+Records with gAAAAA: 0 (expected: 0)
+VERBOSE_LOGGING=false check: PASS

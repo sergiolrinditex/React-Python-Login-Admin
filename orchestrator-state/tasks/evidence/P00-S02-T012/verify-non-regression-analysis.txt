@@ -1,0 +1,43 @@
+T012 verify — non-regression analysis of 2 failing tests outside T012 scope
+============================================================================
+
+Failing tests (both shipped by P00-S02-T006):
+  - tests/integration/test_admin_ai_discover_models.py::test_discover_models_idempotent
+  - tests/integration/test_admin_ai_discover_models.py::test_discover_models_404_unknown_provider
+
+Root cause: RuntimeError "Task got Future attached to a different loop" / "Event loop is closed"
+during asyncpg connection cleanup. This is the well-known asyncpg + httpx ASGITransport TestClient
+pattern colliding with the LIVE uvicorn dev backend (which holds its own asyncpg pool on a different
+event loop) when both target the same Postgres :5433.
+
+Why these tests didn't fail in tester's run (which had 160 passed + 12 skipped + 0 failed):
+  - Tester ran without VERIFICATION_GEMINI_API_KEY → these tests were SKIPPED via _GEMINI_SKIP
+    pytest.skipif at line 141 of the test file.
+  - This verify run loaded .env.local (productive bundle), making GEMINI key present, so the
+    tests now EXECUTE — and surface the pre-existing asyncpg/event-loop fragility.
+
+Evidence that the failure is not caused by T012's diff:
+  - T012 diff is a SINGLE LINE: backend/app/core/db.py:81 echo=settings.enable_verbose_logging
+    → echo=False. The diff also extends a docstring + inline comment + module docstring.
+  - The failing tests do not reference 'echo', 'sqlalchemy.engine', or 'enable_verbose_logging'
+    (verified via grep -nE 'echo|sqlalchemy\.engine|enable_verbose').
+  - The asyncpg pool, sessionmaker, and event-loop semantics are unchanged. SA echo controls
+    only stdlib INFO logging on the sqlalchemy.engine logger; it cannot affect asyncio loop
+    binding of asyncpg connections.
+
+Suite count parity:
+  tester run: 160 pass + 12 skip + 0 fail = 172 tests collected
+  verify run: 165 pass +  5 skip + 2 fail = 172 tests collected
+  delta:      +5 pass, -7 skip, +2 fail
+              → 7 previously-skipped tests now executing (T012 T3 + 2 discover_models, plus
+                4 other newly-enabled tests). Of those 7 newly-running tests, 2 fail because of
+                the unrelated event-loop conflict; 5 pass.
+
+Conclusion: NON-REGRESSION for T012. The 2 failures are an unrelated, pre-existing T006-test
+fragility surfaced only because .env.local was loaded for this verify run. T012's own regression
+suite (tests/integration/test_db_engine_no_secret_leak.py) shows 3/3 PASS including the previously
+skipped T3 (test_seed_cli_verbose_no_gaaaaa_in_output) which now runs the productive seed CLI as
+a real subprocess — exactly the gold-standard acceptance test from task pack §11.3.
+
+Recommendation: Register a follow-up for T006's discover_models test isolation under live-backend
+co-residence (test should fork a separate asyncpg pool or skip when uvicorn is up). Outside T012 scope.

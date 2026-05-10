@@ -3,6 +3,7 @@ Async SQLAlchemy engine and session factory.
 
 Slice: P00-S01-T003 — Backend dependency pack
 Phase: P00 — Scaffold + Design System
+Updated: P00-S02-T012 — CWE-532 defense-in-depth: SQLAlchemy echo=False permanent
 
 Provides:
   - get_engine() — lazy public accessor that returns the singleton AsyncEngine.
@@ -14,11 +15,18 @@ IMPORTANT: This module does NOT connect to the database at import time and
   itself opens on the first real query.
   No migrations are applied here — that is P01-S01-T001 (alembic upgrade head).
 
-DB contract (HILO_PEOPLE_TECHNICAL_GUIDE.md §10.3):
+DB contract (HILO_PEOPLE_TECHNICAL_GUIDE.md §10.3 + §10.5):
   - Driver: asyncpg
   - ORM: SQLAlchemy 2.x declarative async (no legacy Base.metadata.create_all).
   - Pool: AsyncAdaptedQueuePool (default for asyncpg).
   - Transactions: unit-of-work per request via get_session().
+  - SA engine.echo is permanently False (P00-S02-T012 / FU-20260510044529 / CWE-532
+    defense-in-depth). When echo=True, SQLAlchemy writes every bind-parameter tuple to
+    the sqlalchemy.engine stdlib logger — including the Fernet ciphertext stored in
+    ai_provider_credentials.encrypted_secret (the "fourth layer" of the CWE-532 chain,
+    following T002/T004/T009). Project SQL observability uses structlog with redaction
+    per §10.5; SA echo is a third-party channel that bypasses the redaction processor.
+    Re-enabling silently leaks Fernet ciphertext. See test_db_engine_no_secret_leak.py.
 
 Dependencies:
   - sqlalchemy[asyncio] 2.0.49
@@ -62,7 +70,15 @@ def _get_engine() -> AsyncEngine:
         _engine = create_async_engine(
             dsn,
             pool_pre_ping=True,
-            echo=settings.enable_verbose_logging,
+            # CWE-532 (FU-20260510044529 / P00-S02-T012): SQLAlchemy echo=True writes
+            # bind parameters (including Fernet ciphertext for
+            # ai_provider_credentials.encrypted_secret) to the sqlalchemy.engine stdlib
+            # logger. Project structured logs already cover SQL behavior with redaction
+            # per HILO_PEOPLE_TECHNICAL_GUIDE §10.5; SA echo is third-party noise that
+            # bypasses the redaction processor. Keep echo=False permanently.
+            # Re-enabling silently leaks credential ciphertext (regression guard:
+            # backend/tests/integration/test_db_engine_no_secret_leak.py).
+            echo=False,
         )
         _logger.debug("AFTER _get_engine: engine created (host redacted)")
     return _engine

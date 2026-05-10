@@ -1,0 +1,14 @@
+Simulated Fernet token starts with gAAAAA: True
+2026-05-10 11:58:41 [debug    ] BEFORE _get_engine: creating async engine
+2026-05-10 11:58:41 [debug    ] AFTER _get_engine: engine created (host redacted)
+engine.echo value: False
+SA engine log records captured: 0
+Records containing gAAAAA: 0
+
+=== AC1 VERIFICATION ===
+grep -c gAAAAA in SA engine output: 0 (expected: 0)
+AC1 RESULT: PASS
+
+=== AC2 VERIFICATION ===
+engine.echo is False: True (expected: True)
+AC2 RESULT: PASS
