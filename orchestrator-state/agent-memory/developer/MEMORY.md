@@ -137,6 +137,34 @@ Compact operational memory. No history was deleted.
 - ### alembic upgrade head in integration tests
 - ### Test cleanup pattern for seed tests
 
+## P01-S01-T005 (2026-05-10) — Alembic migration chain insert + asyncpg INET
+
+### Alembic chain insert (inserting revision between two existing revisions)
+
+When inserting a new revision (0002) between two existing ones (0001 and 0003 both branching from 0001):
+- If new revision 0002 has `down_revision="0001"` and existing 0003 also has `down_revision="0001"` → TWO HEADS → `alembic upgrade head` FAILS.
+- FIX: update the child (0003) `down_revision` from "0001" to "0002" → single linear chain 0001→0002→0003.
+- If the DB was stamped at 0003 (without ever applying 0002), you must `alembic stamp 0001` then `alembic upgrade head` to apply the full chain. Running `alembic upgrade head` from 0003 is a no-op (already at head); running `alembic downgrade -1` from 0003 goes to 0002 without ever having run 0002's upgrade.
+- WRITE_SET_DRIFT: updating child revision `down_revision` is necessary even if the child migration is outside the declared write set. Document in handoff as WRITE_SET_DRIFT.
+
+### asyncpg INET column decode (critical)
+- asyncpg 0.31.0 returns `ipaddress.IPv4Address` objects for INET columns (not `str`) when `native_inet_types` is active (default).
+- INSERT with plain `str` like `'192.168.1.1'` is fine — `inet_encode` accepts str.
+- SELECT assertions MUST use `str(row.ip)` or compare with `ipaddress.IPv4Address(...)`.
+- ORM annotation `Mapped[str | None]` is runtime-safe (SQLAlchemy does not enforce annotations). Keep for simplicity.
+- `native_inet_types=False` on `create_async_engine(...)` would force str returns everywhere — but this is a write to `db.py` which may be outside write set. Document trade-off.
+
+### PostgreSQL 18 `information_schema.columns` for INET
+- PG18 reports `data_type='inet'` for INET columns in `information_schema.columns`.
+- Older PG versions may report `data_type='USER-DEFINED', udt_name='inet'`.
+- Test assertion: `assert data_type == 'inet' OR udt_name == 'inet'` to be version-agnostic.
+
+### Test 2 (round-trip) design
+- Downgrade 0003→0002 removes AI tables but KEEPS audit_logs compliance cols (they're at 0002).
+- Downgrade 0002→0001 removes compliance cols. Row preserved with §10.3 shape.
+- Upgrade 0001→0002→0003: compliance cols re-added. Pre-existing rows get NULL (no DEFAULT).
+- Do NOT check for NULL at 0002 state (after only one downgrade from 0003) — cols still present.
+
 ## Canonical references
 - `.claude/orchestrator-contract.json`
 - `.claude/rules/00-source-of-truth.md`

@@ -1,7 +1,7 @@
 {
   "id": "FU-20260509220224-suppress-httpx-logger-to-prevent-gemini-api-key-",
   "schema_version": 1,
-  "status": "proposed",
+  "status": "promoted",
   "created_at": "2026-05-09T22:02:24+00:00",
   "created_by": "sergiolr",
   "origin_task_id": "P00-S02-T006",
@@ -35,5 +35,8 @@
     "ENABLE_VERBOSE_LOGGING=true pytest test_admin_ai_discover_models.py::test_discover_models_gemini_real -v && grep -E 'AIza' logs.txt | wc -l (expect 0)"
   ],
   "notes": [],
-  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260509220224-suppress-httpx-logger-to-prevent-gemini-api-key-.yaml"
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260509220224-suppress-httpx-logger-to-prevent-gemini-api-key-.yaml",
+  "promoted_at": "2026-05-10T04:04:49+00:00",
+  "promoted_task_id": "P00-S02-T009",
+  "source_doc_updated": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md"
 }

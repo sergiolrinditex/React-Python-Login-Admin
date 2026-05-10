@@ -1,0 +1,41 @@
+{
+  "id": "FU-20260510044529-disable-sqlalchemy-echo-in-verbose-mode-to-preve",
+  "schema_version": 1,
+  "status": "proposed",
+  "created_at": "2026-05-10T04:45:29+00:00",
+  "created_by": "sergiolr",
+  "origin_task_id": "P00-S02-T010",
+  "origin_phase_id": "P00",
+  "origin_step_id": "P00-S02",
+  "kind": "security",
+  "product_increment": "current",
+  "build_state": "planned",
+  "severity": "low",
+  "title": "Disable SQLAlchemy echo in verbose mode to prevent Fernet token exposure in logs",
+  "description": "When ENABLE_VERBOSE_LOGGING=true, db.py sets echo=settings.enable_verbose_logging which causes SQLAlchemy to log all SQL parameters including Fernet-encrypted secrets (gAAAAA tokens). While these are ciphertext and not plaintext API keys, they violate the defense-in-depth CWE-532 posture. Fix: set echo=False permanently or use a custom event listener that redacts bind parameters for sensitive tables.",
+  "journey_refs": [
+    "J103"
+  ],
+  "screen_route": "—",
+  "endpoint": "—",
+  "tables": [],
+  "depends_on": [
+    "P00-S02-T010"
+  ],
+  "conflict_groups": [
+    "admin_ai_endpoints"
+  ],
+  "write_set": [
+    "backend/app/core/db.py"
+  ],
+  "acceptance": [
+    "ENABLE_VERBOSE_LOGGING=true does not print any gAAAAA Fernet token bytes in logs",
+    "SQL echo is either disabled or parameter-redacted for credentials tables"
+  ],
+  "verify": [
+    "Run seed CLI with ENABLE_VERBOSE_LOGGING=true",
+    "grep for gAAAAA in output → zero matches"
+  ],
+  "notes": [],
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260510044529-disable-sqlalchemy-echo-in-verbose-mode-to-preve.yaml"
+}

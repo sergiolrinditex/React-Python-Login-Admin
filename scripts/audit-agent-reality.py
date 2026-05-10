@@ -26,7 +26,7 @@ NEXT_STATUS_PATTERN = re.compile(r"(?<![A-Z0-9_])NEXT_STATUS:\s*([a-z][a-z0-9_]*
 SCRIPT_REF_PATTERN = re.compile(r"(?<![\w/.-])(?:\.\/)?scripts/[A-Za-z0-9_.-]+")
 CLAUDE_BIN_REF_PATTERN = re.compile(r"(?<![\w/.-])\.claude/bin/[A-Za-z0-9_.-]+")
 RULE_REF_PATTERN = re.compile(r"(?<![\w/.-])\.claude/rules/[A-Za-z0-9_.-]+")
-COMMAND_REF_PATTERN = re.compile(r"(?<![\w:])/(auto-verify-slice|verify-slice|verify-journey|next-slice|next-wave|phase-gate|register-followup|revise-slice|slice-maintain|clear|bootstrap|helper|hook)\b")
+COMMAND_REF_PATTERN = re.compile(r"(?<![\w:])/(auto-verify-slice|verify-slice|verify-journey|next-slice|next-wave|phase-gate|register-followup|promote-followup|revise-slice|slice-maintain|clear|bootstrap|helper|hook)\b")
 HOOK_REF_PATTERN = re.compile(r"\bhook_[A-Za-z0-9_]+\.py\b")
 
 # These strings have caused runtime/tracing drift in the past. They should not
@@ -233,6 +233,8 @@ def audit_source_pack_language(role: str, text: str, errors: list[str], agent_pa
 
 def audit_settings_hooks(errors: list[str]) -> None:
     settings = load_json(SETTINGS_PATH)
+    if settings.get("agent") != "main-orchestrator":
+        fail(errors, ".claude/settings.json must set agent=main-orchestrator so the DAG controller runs as main thread")
     hooks = settings.get("hooks", {})
     for event, entries in hooks.items():
         for entry in entries:
@@ -242,6 +244,24 @@ def audit_settings_hooks(errors: list[str]) -> None:
                     rel = ".claude/bin/" + match.group(0)
                     if not (ROOT / rel).is_file():
                         fail(errors, f".claude/settings.json:{event}: hook command references missing {rel}")
+
+
+def audit_main_orchestrator_thread_contract(errors: list[str]) -> None:
+    path = AGENTS_DIR / "main-orchestrator.md"
+    text = path.read_text(encoding="utf-8")
+    fm = parse_frontmatter(text)
+    for restricted_key in ("tools", "disallowedTools"):
+        if restricted_key in fm:
+            fail(errors, f"{path}: must omit frontmatter {restricted_key!r}; main-orchestrator must inherit all available tools/MCPs")
+    required_phrases = [
+        "## Main-thread agent contract",
+        "No añadas `tools:` ni `disallowedTools:`",
+        "hereda todas las herramientas disponibles",
+        "claude --agent main-orchestrator --permission-mode bypassPermissions",
+    ]
+    for phrase in required_phrases:
+        if phrase not in text:
+            fail(errors, f"{path}: missing main-thread/all-tools contract phrase: {phrase}")
 
 
 def audit_contract_mirrors(contract: dict[str, Any], roles: dict[str, dict[str, Any]], errors: list[str]) -> None:
@@ -304,6 +324,7 @@ def main() -> int:
         ))
 
     audit_settings_hooks(errors)
+    audit_main_orchestrator_thread_contract(errors)
 
     headers = ("agent", "OUTCOME", "NEXT_STATUS", "info_only", "skills", "result")
     widths = [len(h) for h in headers]

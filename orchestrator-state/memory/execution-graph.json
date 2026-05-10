@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-09T20:57:17+00:00",
+  "generated_at": "2026-05-10T04:04:58+00:00",
   "phase_order": [
     "P00",
     "P01",
@@ -14,7 +14,7 @@
       "id": "P00",
       "phase_number": 0,
       "title": "Bootstrap / foundation propia",
-      "status": "blocked",
+      "status": "ready",
       "depends_on": [],
       "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Phase 0 — Bootstrap / foundation propia",
       "task_ids": [
@@ -30,7 +30,10 @@
         "P00-S02-T005",
         "P00-S02-T008",
         "P00-S02-T007",
-        "P00-S02-T006"
+        "P00-S02-T006",
+        "P00-S02-T011",
+        "P00-S02-T010",
+        "P00-S02-T009"
       ]
     },
     {
@@ -736,7 +739,7 @@
       "phase_id": "P00",
       "step_id": "P00-S02",
       "title": "Replace synthetic verification bundle with People Tech delivery",
-      "status": "ready_for_close",
+      "status": "done",
       "build_state": "planned",
       "product_increment": "current",
       "risk_level": "medium",
@@ -799,16 +802,25 @@
       "claimed_at": "2026-05-09T14:51:40+00:00",
       "last_stop_at": "2026-05-09T20:47:12+00:00",
       "validator_outcome": "approved",
-      "last_updated_by": "tester",
+      "last_updated_by": "main-orchestrator",
       "validator_next_status": "ready_for_close",
-      "last_outcome": "pass"
+      "last_outcome": "pass",
+      "last_note": "reconciled post-closer (commit ae3dfc7 on main; verify-slice cycle 2 verified)",
+      "completed_at": "2026-05-09T22:16:54+00:00",
+      "closed_at": "2026-05-09T22:16:54+00:00",
+      "tester_outcome": "pass",
+      "final_handoff": "orchestrator-state/tasks/handoffs/P00-S02-T005.md",
+      "final_evidence": "orchestrator-state/tasks/evidence/P00-S02-T005/",
+      "final_report": "orchestrator-state/tasks/reports/P00-S02-T005.md",
+      "commit_sha": "ae3dfc7",
+      "last_event": "reconciled_post_closer"
     },
     {
       "id": "P00-S02-T008",
       "phase_id": "P00",
       "step_id": "P00-S02",
       "title": "deepagents Supervisor + topic-routing runtime",
-      "status": "blocked",
+      "status": "done",
       "build_state": "planned",
       "product_increment": "current",
       "depends_on": [
@@ -834,7 +846,7 @@
         "J105"
       ],
       "handoff_path": "orchestrator-state/tasks/handoffs/P00-S02-T008.md",
-      "evidence_dir": "orchestrator-state/tasks/evidence/P00-S02-T008",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P00-S02-T008/",
       "origin": {
         "type": "runtime_followup",
         "followup_id": "FU-20260509205710-deepagents-supervisor-topic-routing-runtime",
@@ -845,14 +857,20 @@
       "notes": [
         "Runtime follow-up promoted from FU-20260509205710-deepagents-supervisor-topic-routing-runtime",
         "Description: agents/deepagents_runtime.py implemented using the deepagents Supervisor pattern (LangGraph-based); supervisor routes user messages to subagents based on subagent_topics keyword overlap. Required by ADR-002 and the AgentsPage (J105). Depends on P02-S08-T001."
-      ]
+      ],
+      "last_outcome": "committed",
+      "last_updated_by": "closer",
+      "last_stop_at": "2026-05-09T22:02:13+00:00",
+      "validator_outcome": "approved",
+      "validator_next_status": "ready_for_close",
+      "report_path": "orchestrator-state/tasks/reports/P00-S02-T008.md"
     },
     {
       "id": "P00-S02-T007",
       "phase_id": "P00",
       "step_id": "P00-S02",
       "title": "AdminAiModelsPage discover wizard UI",
-      "status": "blocked",
+      "status": "done",
       "build_state": "planned",
       "product_increment": "current",
       "depends_on": [
@@ -877,7 +895,7 @@
         "J103"
       ],
       "handoff_path": "orchestrator-state/tasks/handoffs/P00-S02-T007.md",
-      "evidence_dir": "orchestrator-state/tasks/evidence/P00-S02-T007",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P00-S02-T007/",
       "origin": {
         "type": "runtime_followup",
         "followup_id": "FU-20260509205703-adminaimodelspage-discover-wizard-ui",
@@ -888,14 +906,24 @@
       "notes": [
         "Runtime follow-up promoted from FU-20260509205703-adminaimodelspage-discover-wizard-ui",
         "Description: Wizard mode in AdminAiModelsPage calls the dynamic model discovery endpoint (FU-X1); user can review the diff of discovered vs existing models and approve/reject each before persisting. Depends on P04-S01-T002."
-      ]
+      ],
+      "claimed_at": "2026-05-09T22:49:00+00:00",
+      "claimed_by": "sergiolr",
+      "claim_terminal_task_env": "P00-S02-T007",
+      "task_pack_path": "orchestrator-state/tasks/task-packs/P00-S02-T007.md",
+      "last_outcome": "committed",
+      "last_updated_by": "closer",
+      "last_stop_at": "2026-05-10T03:31:52+00:00",
+      "validator_outcome": "approved",
+      "validator_next_status": "ready_for_close",
+      "report_path": "orchestrator-state/tasks/reports/P00-S02-T007.md"
     },
     {
       "id": "P00-S02-T006",
       "phase_id": "P00",
       "step_id": "P00-S02",
       "title": "Dynamic LiteLLM model discovery endpoint",
-      "status": "blocked",
+      "status": "done",
       "build_state": "planned",
       "product_increment": "current",
       "depends_on": [
@@ -922,7 +950,7 @@
         "J103"
       ],
       "handoff_path": "orchestrator-state/tasks/handoffs/P00-S02-T006.md",
-      "evidence_dir": "orchestrator-state/tasks/evidence/P00-S02-T006",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P00-S02-T006/",
       "origin": {
         "type": "runtime_followup",
         "followup_id": "FU-20260509205658-dynamic-litellm-model-discovery-endpoint",
@@ -933,6 +961,150 @@
       "notes": [
         "Runtime follow-up promoted from FU-20260509205658-dynamic-litellm-model-discovery-endpoint",
         "Description: POST /api/v1/admin/ai/providers/{id}/discover-models calls the provider's models endpoint and reconciles against ai_models; returns the diff of new vs existing models with auto_discovered=true on new rows. Required by ADR-001 and the AdminAiModelsPage discover wizard (FU-X2)."
+      ],
+      "validator_outcome": "approved",
+      "validator_next_status": "ready_for_close",
+      "last_updated_by": "closer",
+      "last_stop_at": "2026-05-09T22:38:38+00:00",
+      "last_outcome": "committed",
+      "last_blocker": {
+        "reason": "blocked",
+        "agent": "closer",
+        "at": "2026-05-09T22:35:17+00:00"
+      },
+      "report_path": "orchestrator-state/tasks/reports/P00-S02-T006.md"
+    },
+    {
+      "id": "P00-S02-T011",
+      "phase_id": "P00",
+      "step_id": "P00-S02",
+      "title": "Dev .env missing valid ENCRYPTION_KEY (has legacy PROVIDER_ENCRYPTION_KEY=dev-encryption-key-placeholder)",
+      "status": "ready",
+      "build_state": "planned",
+      "product_increment": "current",
+      "depends_on": [
+        "P00-S02-T006"
+      ],
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry",
+      "acceptance": [
+        "fresh dev clone after running setup-from-scratch.sh has a valid Fernet ENCRYPTION_KEY in .env (or generated dynamically)",
+        "bootstrap_verification_data succeeds without manual export",
+        "live discover-models endpoint encrypt/decrypt works first try"
+      ],
+      "verification_commands": [
+        "rm .env then bash scripts/setup-from-scratch.sh",
+        "bash scripts/dev-restart.sh --reset succeeds without ENCRYPTION_KEY warning",
+        "curl POST /api/v1/admin/ai/providers/<id>/discover-models with seeded prod-like data returns 200 (not 502 CryptoError)"
+      ],
+      "allowed_paths": [],
+      "conflict_groups": [
+        "dev_env_setup"
+      ],
+      "write_set": [
+        ".env",
+        "scripts/setup-from-scratch.sh",
+        "docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md"
+      ],
+      "journey_refs": [
+        "J100",
+        "J103"
+      ],
+      "handoff_path": "orchestrator-state/tasks/handoffs/P00-S02-T011.md",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P00-S02-T011",
+      "origin": {
+        "type": "runtime_followup",
+        "followup_id": "FU-20260509222920-dev-env-missing-valid-encryption-key-has-legacy-",
+        "origin_task_id": "P00-S02-T006",
+        "severity": "medium",
+        "kind": "data"
+      },
+      "notes": [
+        "Runtime follow-up promoted from FU-20260509222920-dev-env-missing-valid-encryption-key-has-legacy-",
+        "Description: P01-S01-T002 renamed PROVIDER_ENCRYPTION_KEY → ENCRYPTION_KEY in .env.example and config.py but the actual dev .env was never updated and still carries the legacy name with the placeholder string 'dev-encryption-key-placeholder' which is NOT a valid Fernet base64 key. Two real failures observed during /verify-slice P00-S02-T006: (a) bootstrap_verification_data --only auth fails immediately with 'ENCRYPTION_KEY env var is required for MFA TOTP encryption' and the dev-restart.sh wrapper warns but continues, leaving auth (and admin_ai) un-seeded; (b) any live POST /api/v1/admin/ai/providers/{id}/discover-models returns 502 CryptoError because Fernet construction with an invalid base64 key fails on first decrypt. Both were observed live with hard reset. Mitigation during verify was an exported Fernet key for that single shell. Persistent fix: update dev .env + setup-from-scratch.sh to generate or carry a real Fernet key under the canonical name."
+      ]
+    },
+    {
+      "id": "P00-S02-T010",
+      "phase_id": "P00",
+      "step_id": "P00-S02",
+      "title": "Fix admin_ai seed loader: column api_key does not exist in ai_providers (should use ai_provider_credentials)",
+      "status": "ready",
+      "build_state": "planned",
+      "product_increment": "current",
+      "depends_on": [
+        "P00-S02-T006"
+      ],
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry",
+      "acceptance": [
+        "python -m app.seeds.bootstrap_verification_data --source data/verification --only admin_ai exits 0 with upsert success log (no ProgrammingError)"
+      ],
+      "verification_commands": [
+        "Run seed loader with real DB and admin_ai tables present → SELECT count(*) FROM ai_providers returns >= 1"
+      ],
+      "allowed_paths": [],
+      "conflict_groups": [
+        "admin_ai_endpoints"
+      ],
+      "write_set": [
+        "backend/app/seeds/loader.py"
+      ],
+      "journey_refs": [
+        "J103"
+      ],
+      "handoff_path": "orchestrator-state/tasks/handoffs/P00-S02-T010.md",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P00-S02-T010",
+      "origin": {
+        "type": "runtime_followup",
+        "followup_id": "FU-20260509220235-fix-admin-ai-seed-loader-column-api-key-does-not",
+        "origin_task_id": "P00-S02-T006",
+        "severity": "medium",
+        "kind": "bug"
+      },
+      "notes": [
+        "Runtime follow-up promoted from FU-20260509220235-fix-admin-ai-seed-loader-column-api-key-does-not",
+        "Description: The seed loader (backend/app/seeds/loader.py:load_admin_ai) tries to INSERT api_key into ai_providers, but that column does not exist after T006 migration. The T006 migration correctly stores credentials in ai_provider_credentials.encrypted_secret (Fernet-encrypted). The seed loader needs to be updated to: (1) INSERT the provider row into ai_providers, (2) Fernet-encrypt the api_key_env value, (3) INSERT the credential into ai_provider_credentials. This is a seed data wiring fix, not a schema change."
+      ]
+    },
+    {
+      "id": "P00-S02-T009",
+      "phase_id": "P00",
+      "step_id": "P00-S02",
+      "title": "Suppress httpx logger to prevent Gemini API key leak in verbose logs",
+      "status": "ready",
+      "build_state": "planned",
+      "product_increment": "current",
+      "depends_on": [
+        "P00-S02-T006"
+      ],
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry",
+      "acceptance": [
+        "grep -E 'AIza|sk-[A-Za-z0-9]{20}' verbose_logs.txt returns 0 matches when ENABLE_VERBOSE_LOGGING=true and endpoint makes a real Gemini API call"
+      ],
+      "verification_commands": [
+        "ENABLE_VERBOSE_LOGGING=true pytest test_admin_ai_discover_models.py::test_discover_models_gemini_real -v && grep -E 'AIza' logs.txt | wc -l (expect 0)"
+      ],
+      "allowed_paths": [],
+      "conflict_groups": [
+        "logging_config"
+      ],
+      "write_set": [
+        "backend/app/core/logging.py"
+      ],
+      "journey_refs": [
+        "J103"
+      ],
+      "handoff_path": "orchestrator-state/tasks/handoffs/P00-S02-T009.md",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P00-S02-T009",
+      "origin": {
+        "type": "runtime_followup",
+        "followup_id": "FU-20260509220224-suppress-httpx-logger-to-prevent-gemini-api-key-",
+        "origin_task_id": "P00-S02-T006",
+        "severity": "medium",
+        "kind": "security"
+      },
+      "notes": [
+        "Runtime follow-up promoted from FU-20260509220224-suppress-httpx-logger-to-prevent-gemini-api-key-",
+        "Description: When ENABLE_VERBOSE_LOGGING=true, the httpx library emits INFO-level logs of HTTP requests including the full URL. For GeminiDirectClient, the URL contains the api_key as a query param (?key=AIza...). The app code uses _safe_base_url() to strip this from app-level logs, but httpx's own transport logger bypasses it. Fix: set logging.getLogger('httpx').setLevel(logging.WARNING) in configure_logging() when verbose=False (already correct since root is WARNING) and also when verbose=True (add explicit httpx logger suppression). Alternatively, configure httpx event hooks to scrub the key from request logs."
       ]
     },
     {
@@ -4774,6 +4946,7 @@
         "i18nStore"
       ],
       "task_ids": [
+        "P00-S02-T011",
         "P01-S02-T001",
         "P01-S02-T002",
         "P01-S02-T003",
@@ -4795,7 +4968,8 @@
         "P01-S02-T007",
         "P03-S01-T001",
         "P03-S01-T005",
-        "P05-S01-T001"
+        "P05-S01-T001",
+        "P00-S02-T011"
       ],
       "slices_raw": "P01-S02, P03-S01-T001, P03-S01-T005, P05-S01-T001",
       "verification": "/verify-journey J100",
@@ -4806,6 +4980,7 @@
       "completion_policy": "all_task_ids_done",
       "task_order_policy": "dag_topological_order",
       "terminal_task_ids": [
+        "P00-S02-T011",
         "P01-S02-T004",
         "P01-S02-T005",
         "P01-S02-T007",
@@ -4968,6 +5143,9 @@
       "task_ids": [
         "P00-S02-T007",
         "P00-S02-T006",
+        "P00-S02-T011",
+        "P00-S02-T010",
+        "P00-S02-T009",
         "P02-S05-T001",
         "P02-S05-T002",
         "P04-S01-T002",
@@ -4978,12 +5156,15 @@
       "task_ids_source_order": [
         "P00-S02-T007",
         "P00-S02-T006",
+        "P00-S02-T010",
+        "P00-S02-T009",
         "P02-S05-T001",
         "P02-S05-T002",
         "P04-S01-T002",
         "P04-S01-T003",
         "P04-S01-T004",
-        "P05-S01-T004"
+        "P05-S01-T004",
+        "P00-S02-T011"
       ],
       "slices_raw": "P02-S05, P04-S01-T002..T004, P05-S01-T004",
       "verification": "/verify-journey J103",
@@ -4995,7 +5176,9 @@
       "task_order_policy": "dag_topological_order",
       "terminal_task_ids": [
         "P00-S02-T007",
-        "P00-S02-T006",
+        "P00-S02-T011",
+        "P00-S02-T010",
+        "P00-S02-T009",
         "P05-S01-T004"
       ]
     },
@@ -5105,13 +5288,13 @@
         "P05-S01-T006"
       ],
       "task_ids_source_order": [
+        "P00-S02-T008",
         "P02-S07-T001",
         "P02-S08-T001",
         "P04-S02-T003",
         "P04-S02-T004",
         "P04-S02-T005",
-        "P05-S01-T006",
-        "P00-S02-T008"
+        "P05-S01-T006"
       ],
       "slices_raw": "P02-S07, P02-S08, P04-S02-T003..T005, P05-S01-T006",
       "verification": "/verify-journey J105",
@@ -5143,6 +5326,9 @@
       "P00-S02-T008",
       "P00-S02-T007",
       "P00-S02-T006",
+      "P00-S02-T011",
+      "P00-S02-T010",
+      "P00-S02-T009",
       "P01-S01-T001",
       "P01-S02-T001",
       "P01-S02-T002",
@@ -5253,6 +5439,18 @@
       [
         "P00-S02-T005",
         "P00-S02-T006"
+      ],
+      [
+        "P00-S02-T006",
+        "P00-S02-T011"
+      ],
+      [
+        "P00-S02-T006",
+        "P00-S02-T010"
+      ],
+      [
+        "P00-S02-T006",
+        "P00-S02-T009"
       ],
       [
         "P00-S02-T002",
@@ -5733,63 +5931,66 @@
       "P00-S02-T008": 10,
       "P00-S02-T007": 11,
       "P00-S02-T006": 12,
-      "P01-S01-T001": 13,
-      "P01-S02-T001": 14,
-      "P01-S02-T002": 15,
-      "P01-S02-T003": 16,
-      "P01-S02-T004": 17,
-      "P01-S02-T005": 18,
-      "P01-S02-T006": 19,
-      "P01-S02-T007": 20,
-      "P01-S03-T001": 21,
-      "P01-S01-T002": 22,
-      "P01-S01-T003": 23,
-      "P01-S01-T004": 24,
-      "P01-S01-T005": 25,
-      "P02-S01-T001": 26,
-      "P02-S02-T001": 27,
-      "P02-S03-T001": 28,
-      "P02-S03-T002": 29,
-      "P02-S04-T001": 30,
-      "P02-S04-T002": 31,
-      "P02-S05-T001": 32,
-      "P02-S05-T002": 33,
-      "P02-S06-T001": 34,
-      "P02-S06-T002": 35,
-      "P02-S07-T001": 36,
-      "P02-S08-T001": 37,
-      "P03-S01-T001": 38,
-      "P03-S01-T002": 39,
-      "P03-S01-T003": 40,
-      "P03-S01-T004": 41,
-      "P03-S01-T005": 42,
-      "P03-S02-T001": 43,
-      "P03-S02-T002": 44,
-      "P03-S02-T003": 45,
-      "P03-S02-T004": 46,
-      "P04-S01-T001": 47,
-      "P04-S01-T002": 48,
-      "P04-S01-T003": 49,
-      "P04-S01-T004": 50,
-      "P04-S02-T001": 51,
-      "P04-S02-T002": 52,
-      "P04-S02-T003": 53,
-      "P04-S02-T004": 54,
-      "P04-S02-T005": 55,
-      "P04-S03-T001": 56,
-      "P04-S03-T002": 57,
-      "P05-S01-T001": 58,
-      "P05-S01-T002": 59,
-      "P05-S01-T003": 60,
-      "P05-S01-T004": 61,
-      "P05-S01-T005": 62,
-      "P05-S01-T006": 63,
-      "P05-S02-T001": 64,
-      "P05-S02-T002": 65,
-      "P05-S02-T003": 66,
-      "P06-S01-T001": 67,
-      "P06-S01-T002": 68,
-      "P06-S01-T003": 69
+      "P00-S02-T011": 13,
+      "P00-S02-T010": 14,
+      "P00-S02-T009": 15,
+      "P01-S01-T001": 16,
+      "P01-S02-T001": 17,
+      "P01-S02-T002": 18,
+      "P01-S02-T003": 19,
+      "P01-S02-T004": 20,
+      "P01-S02-T005": 21,
+      "P01-S02-T006": 22,
+      "P01-S02-T007": 23,
+      "P01-S03-T001": 24,
+      "P01-S01-T002": 25,
+      "P01-S01-T003": 26,
+      "P01-S01-T004": 27,
+      "P01-S01-T005": 28,
+      "P02-S01-T001": 29,
+      "P02-S02-T001": 30,
+      "P02-S03-T001": 31,
+      "P02-S03-T002": 32,
+      "P02-S04-T001": 33,
+      "P02-S04-T002": 34,
+      "P02-S05-T001": 35,
+      "P02-S05-T002": 36,
+      "P02-S06-T001": 37,
+      "P02-S06-T002": 38,
+      "P02-S07-T001": 39,
+      "P02-S08-T001": 40,
+      "P03-S01-T001": 41,
+      "P03-S01-T002": 42,
+      "P03-S01-T003": 43,
+      "P03-S01-T004": 44,
+      "P03-S01-T005": 45,
+      "P03-S02-T001": 46,
+      "P03-S02-T002": 47,
+      "P03-S02-T003": 48,
+      "P03-S02-T004": 49,
+      "P04-S01-T001": 50,
+      "P04-S01-T002": 51,
+      "P04-S01-T003": 52,
+      "P04-S01-T004": 53,
+      "P04-S02-T001": 54,
+      "P04-S02-T002": 55,
+      "P04-S02-T003": 56,
+      "P04-S02-T004": 57,
+      "P04-S02-T005": 58,
+      "P04-S03-T001": 59,
+      "P04-S03-T002": 60,
+      "P05-S01-T001": 61,
+      "P05-S01-T002": 62,
+      "P05-S01-T003": 63,
+      "P05-S01-T004": 64,
+      "P05-S01-T005": 65,
+      "P05-S01-T006": 66,
+      "P05-S02-T001": 67,
+      "P05-S02-T002": 68,
+      "P05-S02-T003": 69,
+      "P06-S01-T001": 70,
+      "P06-S01-T002": 71,
+      "P06-S01-T003": 72
     },
     "adjacency_matrix": [
       [
@@ -5862,6 +6063,9 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         0
       ],
       [
@@ -5870,6 +6074,9 @@
         0,
         0,
         1,
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -5964,6 +6171,9 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         1,
         0,
         0,
@@ -6047,6 +6257,9 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         1,
         1,
         1,
@@ -6081,6 +6294,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -6119,6 +6333,8 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
         1,
         1,
@@ -6160,6 +6376,7 @@
         0,
         0,
         1,
+        0,
         0,
         0,
         0,
@@ -6222,6 +6439,8 @@
         0,
         0,
         0,
+        0,
+        0,
         0
       ],
       [
@@ -6232,13 +6451,102 @@
         0,
         0,
         0,
+        1,
         1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
         1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
         0,
         0,
         0,
         0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
         1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -6283,6 +6591,59 @@
         0,
         0,
         0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -6294,6 +6655,17 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
         0
       ],
       [
@@ -6306,7 +6678,50 @@
         0,
         0,
         0,
+        0,
+        1,
         1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -6326,6 +6741,32 @@
         0,
         0,
         0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -6366,6 +6807,15 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
         0
       ],
       [
@@ -6438,9 +6888,13 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -6451,6 +6905,8 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
         1,
         1,
@@ -6513,6 +6969,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -6582,9 +7039,13 @@
         0,
         0,
         0,
+        0,
+        0,
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -6654,9 +7115,12 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -6726,9 +7190,13 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -6816,6 +7284,9 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         1,
         0,
         0,
@@ -6873,6 +7344,9 @@
         0
       ],
       [
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -6962,6 +7436,9 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         1,
         0,
         0,
@@ -7063,6 +7540,9 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         1,
         0,
         0,
@@ -7089,6 +7569,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -7129,6 +7610,8 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
         0,
         0,
@@ -7161,6 +7644,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -7181,6 +7665,8 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
         1,
         0,
@@ -7233,6 +7719,8 @@
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -7254,6 +7742,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -7305,6 +7794,8 @@
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -7343,6 +7834,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -7377,6 +7869,9 @@
         0
       ],
       [
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -7518,9 +8013,15 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         0
       ],
       [
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -7662,6 +8163,9 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         0
       ],
       [
@@ -7693,6 +8197,9 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         1,
         0,
         1,
@@ -7737,6 +8244,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -7769,6 +8277,8 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
         0,
         0,
@@ -7809,6 +8319,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -7838,6 +8349,8 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
         0,
         0,
@@ -7881,6 +8394,8 @@
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -7925,6 +8440,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -7953,6 +8469,8 @@
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -7982,6 +8500,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         1,
@@ -8025,6 +8544,9 @@
         0
       ],
       [
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -8126,6 +8648,9 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         1,
         1,
         0,
@@ -8169,6 +8694,9 @@
         0
       ],
       [
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -8276,6 +8804,9 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         1,
         0,
         0,
@@ -8365,6 +8896,9 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         1,
         0,
         0,
@@ -8385,6 +8919,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -8422,6 +8957,8 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
         0,
         0,
@@ -8457,6 +8994,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -8512,6 +9050,8 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
         0,
         0,
@@ -8529,6 +9069,8 @@
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -8571,6 +9113,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -8601,6 +9144,8 @@
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -8670,9 +9215,13 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -8814,9 +9363,15 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         0
       ],
       [
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -8933,6 +9488,9 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         1,
         0,
         1,
@@ -9006,6 +9564,9 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         1,
         0,
         0,
@@ -9033,6 +9594,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -9093,6 +9655,8 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
         0,
         0,
@@ -9105,6 +9669,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -9165,6 +9730,8 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
         0,
         0,
@@ -9177,6 +9744,8 @@
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -9225,6 +9794,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -9249,6 +9819,8 @@
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -9298,6 +9870,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -9321,6 +9894,9 @@
         0
       ],
       [
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -9454,6 +10030,9 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         1,
         0,
         0,
@@ -9465,6 +10044,9 @@
         0
       ],
       [
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -9599,6 +10181,9 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         1,
         0,
         0,
@@ -9663,6 +10248,9 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         1,
         1,
         0,
@@ -9681,6 +10269,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -9744,6 +10333,8 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
         0,
         0,
@@ -9753,6 +10344,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -9816,6 +10408,8 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
         0,
         0,
@@ -9825,6 +10419,8 @@
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -9894,9 +10490,12 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -9966,9 +10565,13 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -10106,6 +10709,9 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         1,
         1,
         0,
@@ -10113,6 +10719,9 @@
         0
       ],
       [
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -10249,6 +10858,9 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         1,
         1,
         1,
@@ -10321,6 +10933,9 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         1,
         0,
         1,
@@ -10329,6 +10944,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -10393,6 +11009,8 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
         0,
         1,
@@ -10401,6 +11019,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -10468,11 +11087,15 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
         0,
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -10540,11 +11163,14 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -10612,11 +11238,15 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0
       ],
       [
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -10758,9 +11388,15 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         1
       ],
       [
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -10884,7 +11520,14 @@
       ],
       "P00-S02-T008": [],
       "P00-S02-T007": [],
-      "P00-S02-T006": [],
+      "P00-S02-T006": [
+        "P00-S02-T011",
+        "P00-S02-T010",
+        "P00-S02-T009"
+      ],
+      "P00-S02-T011": [],
+      "P00-S02-T010": [],
+      "P00-S02-T009": [],
       "P01-S01-T001": [
         "P01-S02-T001",
         "P01-S01-T002",
@@ -11130,6 +11773,15 @@
       ],
       "P00-S02-T006": [
         "P00-S02-T005"
+      ],
+      "P00-S02-T011": [
+        "P00-S02-T006"
+      ],
+      "P00-S02-T010": [
+        "P00-S02-T006"
+      ],
+      "P00-S02-T009": [
+        "P00-S02-T006"
       ],
       "P01-S01-T001": [
         "P00-S02-T002"
@@ -11399,6 +12051,9 @@
         "P02-S07-T001"
       ],
       [
+        "P00-S02-T011",
+        "P00-S02-T010",
+        "P00-S02-T009",
         "P01-S02-T002",
         "P01-S02-T005",
         "P02-S04-T001",
@@ -11509,6 +12164,15 @@
       ],
       "P00-S02-T006": [
         "admin_ai_endpoints"
+      ],
+      "P00-S02-T011": [
+        "dev_env_setup"
+      ],
+      "P00-S02-T010": [
+        "admin_ai_endpoints"
+      ],
+      "P00-S02-T009": [
+        "logging_config"
       ],
       "P01-S01-T001": [
         "db:migrations"
@@ -11746,6 +12410,17 @@
       "P00-S02-T006": [
         "backend/app/features/admin_ai/**"
       ],
+      "P00-S02-T011": [
+        ".env",
+        "scripts/setup-from-scratch.sh",
+        "docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md"
+      ],
+      "P00-S02-T010": [
+        "backend/app/seeds/loader.py"
+      ],
+      "P00-S02-T009": [
+        "backend/app/core/logging.py"
+      ],
       "P01-S01-T001": [
         "backend/alembic/versions/0001_auth_users_employee_audit.py",
         "backend/app/db/models/user.py",
@@ -11981,6 +12656,9 @@
       "P00-S02-T008": "medium",
       "P00-S02-T007": "medium",
       "P00-S02-T006": "medium",
+      "P00-S02-T011": "medium",
+      "P00-S02-T010": "medium",
+      "P00-S02-T009": "medium",
       "P01-S01-T001": "medium",
       "P01-S02-T001": "medium",
       "P01-S02-T002": "medium",
@@ -12053,6 +12731,9 @@
       "P00-S02-T008": "human",
       "P00-S02-T007": "human",
       "P00-S02-T006": "human",
+      "P00-S02-T011": "human",
+      "P00-S02-T010": "human",
+      "P00-S02-T009": "human",
       "P01-S01-T001": "human",
       "P01-S02-T001": "human",
       "P01-S02-T002": "human",
@@ -12112,7 +12793,7 @@
       "P06-S01-T003": "human"
     },
     "canonical_source": "registry.tasks",
-    "source_digest": "135e75810a6b0c245e8276856f4b001633eb6f07af35854e76d16efb45f514de",
+    "source_digest": "580053cea28ef41326ef05cc14177e768a9ac3d12afc9b7d9820e76caa0e942f",
     "errors": []
   }
 }

@@ -1,0 +1,12 @@
+=== bash-source smoke — 2026-05-10T08:21:56Z ===
+--- bash -c 'set -a; source /tmp/_t003_verify.env; set +a; echo MFN=[]' ---
+rc=1 MAIL_FROM_NAME=[]
+
+--- stderr captured (warns from pre-existing <change-me> placeholders, expected, OUT-OF-SCOPE FU-20260510071705) ---
+/tmp/_t003_verify.env: line 58: change-me: No such file or directory
+/tmp/_t003_verify.env: line 74: syntax error near unexpected token `newline'
+/tmp/_t003_verify.env: line 74: `JWT_PRIVATE_KEY=<dev-rsa-private-key-pem-placeholder>'
+
+--- isolated single-line check (the actual change) ---
+MAIL_FROM_NAME=[Hilo People]
+exit=0

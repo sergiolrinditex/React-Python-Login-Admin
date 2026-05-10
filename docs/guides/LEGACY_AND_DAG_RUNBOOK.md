@@ -269,9 +269,9 @@ Regla práctica de producción:
 - 2 terminales: suele ser el punto seguro inicial.
 - 3-4 terminales: solo si `/next-wave` no serializa por conflictos.
 - 5+ terminales: útil únicamente con lanes muy separadas y reviews humanas preparadas.
-- Si una phase supera 12 slices o un step supera 10, divide antes de ejecutar; un fan-in gigante convierte el DAG en una cola.
+- Si una phase supera 20 slices o un step supera 10, divide antes de ejecutar; un fan-in gigante convierte el DAG en una cola.
 
-BASEAPP refactorizada usa lanes pequeñas: ninguna phase supera 12 slices y la matriz DAG queda validada por header, no por posición.
+BASEAPP refactorizada usa lanes pequeñas: ninguna phase supera 20 slices y la matriz DAG queda validada por header, no por posición.
 
 ## 10. Cierre y limpieza
 
@@ -323,7 +323,7 @@ El manifest `docs/base-app/BASELINE_MANIFEST.json` registra la línea temporal. 
 
 ## Production hardening actual
 
-Usa source-of-truth acumulativo baseline+vN, `Risk level`, `Verify mode`, phases <=12 slices, steps <=10 slices, journeys reales multi-superficie y verify con datos reales/prod-like. Ejecuta bootstrap + check-task-dag + check-journey-matrix + check-wiring-contract antes de waves.
+Usa source-of-truth acumulativo baseline+vN, `Risk level`, `Verify mode`, phases <=20 slices, steps <=10 slices, journeys reales multi-superficie y verify con datos reales/proporcionados. Ejecuta bootstrap + check-task-dag + check-journey-matrix + check-wiring-contract antes de waves.
 
 
 

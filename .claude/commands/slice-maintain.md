@@ -1,6 +1,6 @@
 ---
-description: Mantenimiento entre slices. Dos subcomandos — `clean` (limpieza conservadora de artefactos regenerables) y `compact` (compactación de PROGRESS.md y compañeros de memory). Dry-run obligatorio por defecto. Preserva las 2-3 últimas slices.
-argument-hint: "clean [--apply]  |  compact [--apply] [--keep N] [--threshold-days D]"
+description: Mantenimiento entre slices. Subcomandos — `clean` (limpieza conservadora), `compact` (PROGRESS.md/memory global) y `compact-agent-memory` (memorias vivas de agentes con snapshot íntegro). Dry-run obligatorio por defecto.
+argument-hint: "clean [--apply]  |  compact [--apply] [--keep N] [--threshold-days D]  |  compact-agent-memory [--apply] [--agent NAME|--all] [--threshold-lines N]"
 ---
 
 # /slice-maintain
@@ -12,6 +12,7 @@ Comando de mantenimiento unificado. Reemplaza los antiguos `/cleanup-slice` y `/
 
 - **`/slice-maintain clean [--apply]`** — limpieza conservadora de artefactos regenerables. No toca `PROGRESS.md` ni sus compañeros estructurales.
 - **`/slice-maintain compact [--apply] [--keep N] [--threshold-days D]`** — compactación de ficheros vivos de `orchestrator-state/memory/` (sobre todo `PROGRESS.md`). Snapshot previo obligatorio, compacta en vez de borrar, promociona decisiones + open items a sus ficheros canónicos.
+- **`/slice-maintain compact-agent-memory [--apply] [--agent NAME|--all] [--threshold-lines N]`** — compactación sin pérdida de `orchestrator-state/agent-memory/*/MEMORY.md`. Siempre archiva el original completo antes de reescribir. No toca `.claude/agents/*.md`.
 
 **Modo por defecto: DRY-RUN.** NUNCA borres, muevas ni reescribas hasta que el usuario escriba `sí` / `confirmo` / `apply`, o hayas recibido `--apply`.
 
@@ -252,3 +253,110 @@ Orden estricto:
 ```
 
 Si algo falla en cualquier paso → restaurar desde snapshot y reportar el motivo exacto. **Nunca dejes el PROGRESS.md a medio compactar.**
+
+---
+
+# Subcomando: `compact-agent-memory`
+
+Este subcomando es distinto de `compact`:
+
+- `compact` toca `orchestrator-state/memory/PROGRESS.md` y compañeros de memoria global.
+- `compact-agent-memory` toca sólo `orchestrator-state/agent-memory/<agent>/MEMORY.md` y crea snapshots íntegros bajo `orchestrator-state/agent-memory/<agent>/archive/`.
+
+**Dry-run por defecto.** No compactes memoria de agentes como parte de una limpieza normal; debe ser una acción explícita.
+
+## Comando mecánico recomendado
+
+Dry-run de todos los agentes:
+
+```bash
+python3 -B -S scripts/compact-agent-memory.py --all
+```
+
+Dry-run de un agente:
+
+```bash
+python3 -B -S scripts/compact-agent-memory.py --agent developer
+```
+
+Aplicar sólo tras revisar el plan:
+
+```bash
+python3 -B -S scripts/compact-agent-memory.py --all --apply
+```
+
+Umbral por defecto: 200 líneas. Override:
+
+```bash
+python3 -B -S scripts/compact-agent-memory.py --all --threshold-lines 150
+```
+
+## Contrato de seguridad
+
+1. No toca `.claude/agents/*.md`; esos son prompts estáticos, no memoria viva.
+2. No toca `docs/source-of-truth/**`, `docs/base-app/**`, `registry.json`, `runtime-state.json`, `task-dag.json`, `execution-graph.json`, handoffs ni evidence.
+3. Antes de reescribir un `MEMORY.md`, copia el original completo byte-for-byte a:
+
+```text
+orchestrator-state/agent-memory/<agent>/archive/MEMORY.full.<YYYY-MM-DD-HHMMSS>.md
+```
+
+4. El nuevo `MEMORY.md` debe incluir:
+   - ruta del archive full;
+   - SHA-256 del original archivado;
+   - invariantes vigentes;
+   - decisiones/gotchas de alta señal;
+   - índice de headings del original;
+   - referencias a `.claude/orchestrator-contract.json`, `.claude/rules/` y `CHEATSHEET.md`.
+5. Si hace falta un detalle que no está en el compacto, lee el archive full antes de asumir.
+
+## Qué preservar explícitamente
+
+Para `developer`:
+
+- production DAG-only / `explicit_dag`;
+- `bootstrap_three_docs.py --refresh` preserva runtime por defecto;
+- no editar `registry.json`, `runtime-state.json`, `task-dag.json` o `execution-graph.json` directamente;
+- scope por `CLAUDE_ACTIVE_TASK_ID` / `CLAUDE_TASK_PACK`;
+- `allowed_paths` / `Write set`;
+- `docker-compose.yml`, `Dockerfile*`, `.env.example`, `.github/workflows/**` requieren scope explícito;
+- follow-ups: developer propone, no promueve automáticamente;
+- trailer válido: `OUTCOME: success|blocked|failed`, `NEXT_STATUS: validator_tester_pending|blocked`.
+
+Para `official-docs-researcher`:
+
+- documentación oficial y versionada;
+- orden rápido: local/cache, ToolSearch/MCP, Context7, MCP vendor, WebFetch/WebSearch oficial;
+- fan-out paralelo para consultas independientes;
+- evidencia con fuente/versiones;
+- trailer válido: `OUTCOME: verified|discrepancy|insufficient`;
+- nunca emitir `OUTCOME: researched`.
+
+## Plan esperado en dry-run
+
+```text
+AGENT MEMORY COMPACTION
+=======================
+mode: dry-run
+threshold_lines: 200
+COMPACT developer: 433 lines -> snapshot orchestrator-state/agent-memory/developer/archive/MEMORY.full.<ts>.md
+COMPACT official-docs-researcher: 510 lines -> snapshot orchestrator-state/agent-memory/official-docs-researcher/archive/MEMORY.full.<ts>.md
+Dry-run only. Re-run with --apply to archive originals and compact MEMORY.md.
+```
+
+## Verificación después de `--apply`
+
+```bash
+python3 -B -S scripts/audit-agent-reality.py
+python3 -B -S scripts/audit-agent-trailer-vocabulary.py
+./scripts/run-all-tests.sh lint
+```
+
+Confirma también:
+
+```bash
+find orchestrator-state/agent-memory -path '*/archive/MEMORY.full.*.md' -type f -print
+wc -l orchestrator-state/agent-memory/*/MEMORY.md
+```
+
+Si un archive full no existe o tiene tamaño cero, restaura desde Git y no continúes.

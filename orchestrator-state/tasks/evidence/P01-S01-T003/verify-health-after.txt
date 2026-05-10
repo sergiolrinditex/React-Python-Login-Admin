@@ -1,0 +1,17 @@
+# Tester evidence: verify-health-after.txt
+# TASK_ID: P01-S01-T003
+# TIMESTAMP: 2026-05-10T08:35:00Z
+# Gate: Backend health check after fix (regression check)
+
+COMMAND:
+  curl -sf http://127.0.0.1:8000/health -o /dev/null -w "back=%{http_code}\n"
+
+OUTPUT:
+  back=200
+
+EXIT CODE: 0
+RESULT: PASS — Backend health endpoint returns HTTP 200. No regression from .env.example change.
+
+NOTE: pydantic-settings reads .env directly (not shell-source), so the double-quote addition
+to MAIL_FROM_NAME has zero effect on backend runtime behavior. The health endpoint
+confirms the backend is fully operational after the fix.

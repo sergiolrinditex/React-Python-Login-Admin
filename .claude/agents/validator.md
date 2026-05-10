@@ -174,10 +174,15 @@ Si falta alguno → `changes_requested` con lista de estados ausentes. Esto evit
 
 ## Al terminar
 
-Apendiza al handoff una sección **"Validator review"** con campos en formato `clave: valor` (uno por línea) — el `closer` los lee al construir el evidence report y los considera bloqueantes:
+Apendiza al handoff una sección **"Validator review"** con campos en formato `clave: valor` (uno por línea). El `closer` lee estas líneas, no el chat trailer, así que el resultado del validator debe quedar duplicado explícitamente en el handoff:
 
 ```markdown
 ## Validator review
+- AGENT: validator
+- TASK_ID: <TASK_ID>
+- OUTCOME: approved|changes_requested|blocked
+- NEXT_STATUS: ready_for_close|needs_debug|blocked
+- TIMESTAMP: <ISO-8601>
 - scope: OK|issues:<lista>
 - arquitectura: OK|issues:<lista>
 - logging: OK|issues:<lista>

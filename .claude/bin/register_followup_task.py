@@ -215,7 +215,7 @@ def propose(args: argparse.Namespace) -> dict[str, Any]:
         "conflict_groups": _as_list(args.conflict_group) or (task_conflict_groups(origin_task) if origin_task else []),
         "write_set": _as_list(args.write_set) or (task_write_set(origin_task) if origin_task else []),
         "acceptance": _as_list(args.acceptance) or [args.title],
-        "verify": _as_list(args.verify) or ["Reproducir con datos reales/prod-like según Verification Data Contract"],
+        "verify": _as_list(args.verify) or ["Reproducir con datos reales/proporcionados según Verification Data Contract"],
         "notes": _as_list(args.note),
     }
     path = _proposal_path(fid)

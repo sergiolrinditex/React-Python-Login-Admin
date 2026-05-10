@@ -42,7 +42,7 @@ Lee `.claude/rules/` para los criterios de "tests reales" y logging.
 - `orchestrator-state/memory/PROGRESS.md` — qué endpoints/rutas deberían existir y test count actual.
 - Handoff del developer — qué se implementó.
 - `Verification data contract` del task pack/TECHNICAL_GUIDE si la slice expone UI/API/journey: úsalo para payloads realistas y fixtures permitidos.
-- `Front → Back → DB contract` del task pack: convierte pantalla/ruta, endpoint y tablas en checks ejecutables. Si una pieza existe en el pack pero no hay forma de observarla con datos reales/prod-like, devuelve `blocked` o crea follow-up formal según scope.
+- `Front → Back → DB contract` del task pack: convierte pantalla/ruta, endpoint y tablas en checks ejecutables. Si una pieza existe en el pack pero no hay forma de observarla con datos reales/proporcionados, devuelve `blocked` o crea follow-up formal según scope.
 
 ### 2. Verificar servers arriba
 
@@ -66,7 +66,7 @@ Lee `.claude/rules/` para los criterios de "tests reales" y logging.
 
 ### 5. Smoke de endpoints
 
-Para cada endpoint nuevo del slice: `curl` con payload realista tomado del `Verification Data Contract` cuando exista → status esperado + payload correcto. No uses payloads decorativos para declarar pass; los datos sintéticos solo valen para edge cases etiquetados. Guarda el output como evidencia.
+Para cada endpoint nuevo del slice: `curl` con payload realista tomado del `Verification Data Contract` cuando exista → status esperado + payload correcto. No uses payloads decorativos ni datos inventados para declarar pass; si faltan datos reales/proporcionados para un edge case, bloquea o crea follow-up formal. Guarda el output como evidencia.
 
 ### 6. Evidencia
 
@@ -82,7 +82,24 @@ Guarda en `orchestrator-state/tasks/evidence/<TASK_ID>/`:
 
 ## Al terminar
 
-Apendiza al handoff una sección "Tester run" con: servers status, tests backend (count + status), tests frontend (count + status), curl checks, logging check en ambos modos, hallazgos críticos si los hay.
+Apendiza al handoff una sección **"Tester run"** con campos en formato `clave: valor` (uno por línea). El `closer` lee estas líneas, no el chat trailer, así que el resultado del tester debe quedar duplicado explícitamente en el handoff:
+
+```markdown
+## Tester run
+- AGENT: tester
+- TASK_ID: <TASK_ID>
+- OUTCOME: pass|fail|blocked
+- NEXT_STATUS: ready_for_close|needs_debug|blocked
+- TIMESTAMP: <ISO-8601>
+- servers_status: up|down|partial
+- tests_backend: <count + pass/fail/blocked>
+- tests_frontend: <count + pass/fail/blocked>
+- curl_checks: <lista o n/a>
+- logging_verbose_on: pass|fail|n/a
+- logging_verbose_off: pass|fail|n/a
+- critical_findings: <lista o none>
+- evidence: orchestrator-state/tasks/evidence/<TASK_ID>/
+```
 
 ## Cierre obligatorio
 

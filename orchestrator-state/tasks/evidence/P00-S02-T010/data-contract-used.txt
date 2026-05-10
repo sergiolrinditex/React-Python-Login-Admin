@@ -1,0 +1,22 @@
+=== Data Contract Used (P00-S02-T010) ===
+
+Source: HILO_PEOPLE_TECHNICAL_GUIDE.md §6.5, J103 row line 352
+Verification Bundle Contract Row: J103 admin-ai
+  - Admin user: data/verification/users/admin_peopletech.json (email: s.lopezrap+admin@gmail.com)
+  - Providers fixture: data/verification/admin_ai/providers.json (3 providers with api_key_env references)
+  - Models fixture: data/verification/admin_ai/models.json (5 models)
+  - Required env vars: VERIFICATION_GEMINI_API_KEY (active provider), ENCRYPTION_KEY (Fernet)
+
+Fixtures used in this tester run:
+  - Productive bundle: data/verification/admin_ai/providers.json + models.json
+  - Fernet key: tester-generated (NOT committed, only exported in shell session)
+  - VERIFICATION_GEMINI_API_KEY: from .env.local (gitignored, production-like)
+  - VERIFICATION_OPENAI_API_KEY: from .env.local (gitignored)
+  - VERIFICATION_LITELLM_MASTER_KEY: from .env.local (gitignored)
+
+Persisted data observed:
+  - ai_providers: 3 rows (gemini-direct/active, openai-direct/draft, litellm-local/draft)
+  - ai_provider_credentials: 3 rows (api_key/master_key, encrypted_secret len 140-312 bytes)
+  - ai_models: 5 rows (3 gemini models enabled=true, 2 openai models enabled=false)
+
+Fixtures NOT injected through endpoint under test: CONFIRMED (seed CLI only, no POST /admin/ai/providers)

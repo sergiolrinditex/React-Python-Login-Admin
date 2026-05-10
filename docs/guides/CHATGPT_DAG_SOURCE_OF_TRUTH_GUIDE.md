@@ -327,7 +327,7 @@ Al rellenar el `TECHNICAL_GUIDE`, incluye la sección `Verification Data Contrac
 
 ## Production hardening actual
 
-Usa source-of-truth acumulativo baseline+vN, `Risk level`, `Verify mode`, phases <=12 slices, steps <=10 slices, journeys reales multi-superficie y verify con datos reales/prod-like. Ejecuta bootstrap + check-task-dag + check-journey-matrix + check-wiring-contract antes de waves.
+Usa source-of-truth acumulativo baseline+vN, `Risk level`, `Verify mode`, phases <=20 slices, steps <=10 slices, journeys reales multi-superficie y verify con datos reales/proporcionados. Ejecuta bootstrap + check-task-dag + check-journey-matrix + check-wiring-contract antes de waves.
 
 
 ## Contrato front→back→DB en cada fila

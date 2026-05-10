@@ -41,11 +41,14 @@ Every slice produces exactly one handoff: `orchestrator-state/tasks/handoffs/<TA
 
 Sections are appended in execution order; workers never overwrite earlier sections. Validator/tester/debugger append only to the current `<TASK_ID>` file; if the requested path, trailer, pack or environment disagree, stop instead of writing. The closer's pre-check verifies these sections exist with the expected trailer values.
 
-- `validator` appends **## Validator review** with: scope OK/issues, arquitectura OK/issues, logging OK/issues, tests realness OK/issues, PROGRESS.md OK/issues, security scope disparado/no, hallazgos críticos, `OUTCOME: approved|changes_requested|blocked`, `SECURITY_GATE: pass|warn|fail`.
-- `tester` appends **## Tester run** with: servers status, tests backend (count + status), tests frontend (count + status), curl checks, logging check verbose on/off, hallazgos críticos, `OUTCOME: pass|fail|blocked`, evidence dir.
-- `debugger` appends **## Debugger fix** with: hipótesis inicial, causa raíz, fix aplicado, verificaciones reejecutadas. On the 4th failed cycle appends **## debugger-exhausted** instead with `RECOMMENDED_NEXT_ACTION`.
-- `/verify-slice` (human gate) appends **## verify-slice** with: `TIMESTAMP`, `MODE: pre-closer|post-closer`, `VERIFY_OUTCOME: verified|issues_found`, `FIXTURES` (what was injected), `FLOWS_TESTED`, `FINDINGS` (bullets if issues_found, empty if verified), `EVIDENCE` path. The closer's pre-check requires this section with `VERIFY_OUTCOME: verified` — **or** an explicit line `VERIFY_WAIVED: <reason>` if the user waived verification manually for a slice without UI.
+- `developer` initializes **## Developer run** and must include handoff result lines: `AGENT: developer`, `TASK_ID: <TASK_ID>`, `OUTCOME: success|blocked|failed`, `NEXT_STATUS: validator_tester_pending|blocked`, `TIMESTAMP: <ISO-8601>`.
+- `validator` appends **## Validator review** and must include handoff result lines: `AGENT: validator`, `TASK_ID: <TASK_ID>`, `OUTCOME: approved|changes_requested|blocked`, `NEXT_STATUS: ready_for_close|needs_debug|blocked`, `TIMESTAMP: <ISO-8601>`, then scope/architecture/logging/tests/progress/security gates.
+- `tester` appends **## Tester run** and must include handoff result lines: `AGENT: tester`, `TASK_ID: <TASK_ID>`, `OUTCOME: pass|fail|blocked`, `NEXT_STATUS: ready_for_close|needs_debug|blocked`, `TIMESTAMP: <ISO-8601>`, then servers/tests/curl/logging/evidence fields.
+- `debugger` appends **## Debugger fix** and must include handoff result lines: `AGENT: debugger`, `TASK_ID: <TASK_ID>`, `OUTCOME: fixed|blocked|failed`, `NEXT_STATUS: validator_tester_pending|blocked`, `TIMESTAMP: <ISO-8601>`, then hypothesis/root cause/fix/verification. On the 4th failed cycle appends **## debugger-exhausted** instead with `RECOMMENDED_NEXT_ACTION`.
+- `/verify-slice` (human gate) appends **## verify-slice** and must include handoff result lines: `TASK_ID: <TASK_ID>`, `MODE: pre-closer|post-closer`, `VERIFY_OUTCOME: verified|issues_found`, `DATA_CONTRACT_ROWS`, `FIXTURES`, `PERSISTED_DATA_OBSERVED`, `FLOWS_TESTED`, `FINDINGS`, `EVIDENCE`. The closer's pre-check requires this section with `VERIFY_OUTCOME: verified` — **or** an explicit line `VERIFY_WAIVED: <reason>` if the user waived verification manually for a slice without UI.
 - `closer` reads the handoff and writes the evidence report in `orchestrator-state/tasks/reports/<TASK_ID>.md`. It does not append to the handoff.
+
+Important: the chat trailer and the handoff section are different artifacts. A worker must emit the chat trailer so hooks can sync registry, and must also write the equivalent result lines inside the handoff so `closer` can audit after `/clear`. Do not rely on one to replace the other.
 
 ## Trailer lines
 

@@ -1,7 +1,7 @@
 {
   "id": "FU-20260509222920-dev-env-missing-valid-encryption-key-has-legacy-",
   "schema_version": 1,
-  "status": "proposed",
+  "status": "promoted",
   "created_at": "2026-05-09T22:29:20+00:00",
   "created_by": "sergiolr",
   "origin_task_id": "P00-S02-T006",
@@ -42,5 +42,8 @@
     "curl POST /api/v1/admin/ai/providers/<id>/discover-models with seeded prod-like data returns 200 (not 502 CryptoError)"
   ],
   "notes": [],
-  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260509222920-dev-env-missing-valid-encryption-key-has-legacy-.yaml"
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260509222920-dev-env-missing-valid-encryption-key-has-legacy-.yaml",
+  "promoted_at": "2026-05-10T04:04:58+00:00",
+  "promoted_task_id": "P00-S02-T011",
+  "source_doc_updated": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md"
 }

@@ -19,6 +19,6 @@ backend:
 db:
   engine: postgres                        # postgres | sqlite | mysql | none
   migrate_cmd: {{db_migrate_cmd}}              # alembic upgrade head | prisma migrate deploy | none
-  seed_cmd: {{db_seed_cmd}}                    # python -m ... | pnpm seed | none
+  seed_cmd: {{db_seed_cmd}}                    # optional compatibility hook; use only to load real/provided data, or none
 git_workflow: {{git_workflow}}                 # push-to-main/direct-main | pr-flow | gitflow
 design_tokens_enforcer: design_tokens_v1 # design_tokens_v1 | none | <project_plugin>

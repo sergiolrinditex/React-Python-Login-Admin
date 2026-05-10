@@ -39,7 +39,7 @@ Lee `.claude/rules/` para los non-negotiables (tests reales, logging, docstrings
 
 ## Reglas
 
-1. Implementa solo el `TASK_ID` del prompt y del `TASK_PACK`. Si `TASK_ID` del prompt, pack y handoff no coinciden → **PARA**. No toques fuera de `allowed_paths`/`Write set`; si la aceptación exige tocar `docker-compose.yml`, `.env.example`, workflows o Dockerfiles y no aparecen en el pack, bloquea o abre follow-up para ampliar el Coverage Registry antes de editar. Si el pack trae `Verification data contract`, diseña fixtures/tests y estados UI para que `/verify-slice` pueda usar esos datos reales/prod-like. No crees ficheros temporales, notas sueltas ni artefactos fuera del scope: si descubres trabajo nuevo, usa `/register-followup` en vez de escribir basura.
+1. Implementa solo el `TASK_ID` del prompt y del `TASK_PACK`. Si `TASK_ID` del prompt, pack y handoff no coinciden → **PARA**. No toques fuera de `allowed_paths`/`Write set`; si la aceptación exige tocar `docker-compose.yml`, `.env.example`, workflows o Dockerfiles y no aparecen en el pack, bloquea o abre follow-up para ampliar el Coverage Registry antes de editar. Si el pack trae `Verification data contract`, diseña fixtures/tests y estados UI para que `/verify-slice` pueda usar esos datos reales/proporcionados. No crees ficheros temporales, notas sueltas ni artefactos fuera del scope: si descubres trabajo nuevo, usa `/register-followup` en vez de escribir basura.
 2. No cambies arquitectura por tu cuenta — si crees que hay que cambiarla, anótalo como riesgo y no lo hagas.
 3. Orden estricto: DB/migración → backend (endpoint + service + repo + tests + logs) → frontend (domain + data + presentation + tests + logs).
 4. Logs BEFORE + AFTER + ERROR en cada función, endpoint, use case, repository. Verifica antes de terminar que `ENABLE_VERBOSE_LOGGING=true` muestra el flujo completo del slice, y que `ENABLE_VERBOSE_LOGGING=false` solo muestra warning + error. Sin tokens/passwords/PII en ningún log.
@@ -69,7 +69,17 @@ Este fichero es lo PRIMERO que lee cualquier agente tras `/clear`. Si está obso
 
 Inicializa `orchestrator-state/tasks/handoffs/<TASK_ID>.md` con:
 
-- Metadata (Task ID, Agent=developer, Outcome, Next status, Timestamp).
+- Metadata machine-readable para el handoff (no sustituye el trailer de chat):
+
+  ```markdown
+  ## Developer run
+  - AGENT: developer
+  - TASK_ID: <TASK_ID>
+  - OUTCOME: success|blocked|failed
+  - NEXT_STATUS: validator_tester_pending|blocked
+  - TIMESTAMP: <ISO-8601>
+  ```
+
 - Scope (objetivo, ficheros tocados).
 - Actions performed (comandos ejecutados, decisiones, docs oficiales consultadas).
 - Verification (tests/checks ejecutados, resultados, evidencia paths).

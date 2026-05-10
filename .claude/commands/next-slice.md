@@ -10,13 +10,28 @@ Antes de ejecutar este comando, considera cargadas las reglas no-scoped de `.cla
 
 Eres el **main-orchestrator**. Este comando arranca la siguiente slice del Step activo del checklist.
 
+## Production DAG mode — recordatorio obligatorio
+
+Antes de elegir task, reclamarla, spawnear agentes o presentar plan, repite internamente este invariante y hazlo visible en el plan del Paso 4:
+
+```text
+MODO DAG ACTIVO: production = explicit_dag.
+Unidad ejecutable = TASK_ID canónico del registry.
+No existe modo secuencial improvisado.
+No inventes slices efímeras.
+No uses active_task singleton para bloquear workers paralelos si existe CLAUDE_ACTIVE_TASK_ID.
+Cada subagente recibe TASK_ID + CLAUDE_TASK_PACK + allowed_paths/write_set.
+```
+
+Si en cualquier momento dudas si estás en DAG o legacy, para y ejecuta/consulta `./scripts/check-task-dag.sh --strict`. En producción `legacy_linear` es error operativo, no fallback.
+
 **Comandos hermanos**: `/verify-slice` (gate humano + orquesta `closer`), `/revise-slice <TASK_ID>` (corrección) y `/slice-maintain clean|compact` (limpieza + compactación). Orden recomendado al cerrar una slice: `/next-slice` pausa en tester pass → (opcional `/clear`) → `/verify-slice` (spawnea `closer` si verificado) → `/slice-maintain clean` → `/clear` → `/next-slice`.
 
 **Gate adicional — DAG-only producción**: antes de reclamar una task, valida que `registry.json -> task_dag.mode` sea `explicit_dag`. Si sale `legacy_linear`, PARA: faltan `Depends on` reales en el Coverage Registry o el bootstrap no derivó DAG. No continúes en modo secuencial improvisado; corrige source-of-truth y reejecuta `python3 -B -S .claude/bin/bootstrap_three_docs.py --refresh`.
 
-**Gate adicional — follow-ups productivos**: antes de reclamar una task, revisa `runtime-state.open_followups`. Si hay propuestas `high|critical|blocker` en estado `proposed`, no sigas: usa `/register-followup promote <ID>` para convertirlas en task DAG real o `/register-followup waive <ID>` con decisión humana. No permitas que un hallazgo de validator/tester quede solo en handoff.
+**Gate adicional — follow-ups productivos**: antes de reclamar una task, revisa `runtime-state.open_followups`. Si hay propuestas `high|critical|blocker` en estado `proposed`, no sigas: usa `/promote-followup <ID>` para convertirlas en task DAG real o `/register-followup waive <ID>` con decisión humana. No permitas que un hallazgo de validator/tester quede solo en handoff.
 
-**Gate adicional — journey verification**: si al cerrar esta slice todos los demás slices de un journey ya están `done`, **`/verify-slice` integrará el gate de journey** en su §5.bis: ofrecerá al usuario verificar el journey inline (mismo entorno, mismos fixtures, un solo gate humano) o dejarlo "aparte" para `/verify-journey <JID>` después. La detección se hace con `list_journey_closures.py`, no con `task_ids[-1]`, para soportar DAGs y matrices desordenadas. Si elige aparte, el closer emitirá `JOURNEY_PENDING_VERIFY` y el próximo `/next-slice` quedará bloqueado por el planner hasta que se resuelva.
+**Gate adicional — journey verification**: si al cerrar esta slice todos los demás slices de un journey ya están `done`, **`/verify-slice` integrará el gate de journey** en su §5.bis: ofrecerá al usuario verificar el journey inline (mismo entorno, mismos datos cargados, un solo gate humano) o dejarlo "aparte" para `/verify-journey <JID>` después. La detección se hace con `list_journey_closures.py`, no con `task_ids[-1]`, para soportar DAGs y matrices desordenadas. Si elige aparte, el closer emitirá `JOURNEY_PENDING_VERIFY` y el próximo `/next-slice` quedará bloqueado por el planner hasta que se resuelva.
 
 **Este comando NO invoca `closer`.** El pipeline de `/next-slice` termina en `tester pass`. El cierre (closer) es responsabilidad de `/verify-slice`, que actúa como gate humano previo al commit.
 
@@ -57,7 +72,7 @@ Prohibido:
 
 Ejecuta una sola vez `scripts/dev-restart.sh --soft`.
 
-> **Nota**: el framework provee un dispatcher genérico `scripts/dev-restart.sh` con el contrato `--soft` (levanta solo lo caído), `--check` (reporta estado, no toca nada) y `--reset` (drop DB + migrate + seed + reinicia todo). El dispatcher es agnóstico del stack: delega los comandos concretos (start back, start front, db reset, health probes) en `scripts/dev-restart.profile.sh`. La versión que viene en el template implementa Flutter + FastAPI + Supabase y lee puertos de `.env` con fallbacks (BACKEND_PORT=8000, FRONTEND_PORT=5000). Cuando un feature-app necesita otro stack, **sustituye solo el profile** — el dispatcher y el contrato `--soft|--check|--reset` se mantienen intactos. Si el profile falta, el dispatcher aborta con error claro.
+> **Nota**: el framework provee un dispatcher genérico `scripts/dev-restart.sh` con el contrato `--soft` (levanta solo lo caído), `--check` (reporta estado, no toca nada) y `--reset` (drop DB + migrate + carga datos reales/proporcionados + reinicia todo). El dispatcher es agnóstico del stack: delega los comandos concretos (start back, start front, db reset, carga de datos reales/proporcionados, health probes) en `scripts/dev-restart.profile.sh`. La versión que viene en el template implementa Flutter + FastAPI + Supabase y lee puertos de `.env` con fallbacks (BACKEND_PORT=8000, FRONTEND_PORT=5000). Cuando un feature-app necesita otro stack, **sustituye solo el profile** — el dispatcher y el contrato `--soft|--check|--reset` se mantienen intactos. Si el profile falta, el dispatcher aborta con error claro.
 
 - Si todo está sano → el script sale en 1s (auto-soft exit).
 - Si algo está caído → levanta SOLO lo que falta.
@@ -117,6 +132,11 @@ Presenta al usuario:
 - Esta es una slice canónica del Coverage Registry. No se crearán slices temporales.
 - Si parece demasiado grande, se detendrá el flujo y se pedirá corregir los docs source-of-truth.
 
+## Invariante DAG de esta ejecución
+- MODO DAG ACTIVO: `registry.json -> task_dag.mode` debe ser `explicit_dag`.
+- TASK_ID canónico: `<TASK_ID>`; no se crearán slices temporales ni se seguirá un orden secuencial improvisado.
+- Cada Agent spawn debe recibir `TASK_ID`, `CLAUDE_TASK_PACK`, `allowed_paths`/`Write set` y el aviso `production DAG mode`.
+
 ## Pipeline por slice (/next-slice pausa en tester pass — closer NO se invoca aquí)
 1. planner (pack + extracto 5 docs + PROGRESS + impact analysis)
 2. developer ‖ official-docs-researcher  [UN MENSAJE CON 2 Agent calls — paralelismo crítico]
@@ -158,6 +178,8 @@ Si dice "no" o pide cambios → re-haz Paso 4 con sus ajustes.
 ## Paso 5 — Ejecutar el pipeline de la slice
 
 Ejecuta exactamente el `TASK_ID` aprobado en el Paso 4. No crees slices temporales.
+
+> **RECORDATORIO DAG PARA ESTA EJECUCIÓN**: seguimos en `explicit_dag`. El `TASK_ID` aprobado es el único nodo ejecutable de este terminal. No infieras trabajo desde un orden secuencial, no uses otro `active_task` y no spawnees agentes sin repetirles `MODO DAG ACTIVO` + `TASK_ID` + `CLAUDE_TASK_PACK`.
 
 ### 5.1 — Pre-check
 

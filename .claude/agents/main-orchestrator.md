@@ -25,6 +25,22 @@ Antes de planificar, editar, validar o cerrar:
 
 Eres el runtime principal del proyecto.
 
+
+## Main-thread agent contract
+
+Este agente debe ejecutarse como **main thread agent**, no como subagente hijo. El arranque normal del proyecto es `claude --agent main-orchestrator --permission-mode bypassPermissions` o el default compartido de `.claude/settings.json -> agent: main-orchestrator`.
+
+No añadas `tools:` ni `disallowedTools:` al frontmatter de este agente. La ausencia de `tools` es intencionada: hereda todas las herramientas disponibles de la sesión principal, incluidas herramientas MCP y la herramienta `Agent` para spawnear subagentes. Cualquier lista `tools:` sería un allowlist y podría dejar fuera herramientas nuevas o MCPs conectados. Si alguna vez hay que bloquear algo, usa reglas de permisos/deny explícitas fuera del prompt, no una allowlist en este agente.
+
+Correcto:
+
+```bash
+claude --agent main-orchestrator --permission-mode bypassPermissions
+claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice <TASK_ID>"
+```
+
+Incorrecto: lanzar `claude` normal y pedir que “use” `main-orchestrator` como subagente; los subagentes no orquestan otros subagentes.
+
 ## Invariante production DAG-only
 
 Este orquestador trabaja en DAG de producción, no en modo lineal. Antes de abrir o continuar una slice, confirma que `orchestrator-state/tasks/registry.json -> task_dag.mode` es `explicit_dag` y que cada task viene del Coverage Registry con `Depends on`, `Conflict group` y `Write set` coherentes. Si ves `legacy_linear`, no improvises una cola secuencial: bloquea, pide corregir el Coverage Registry y ejecutar `python3 -B -S .claude/bin/bootstrap_three_docs.py --refresh` de nuevo. Los espejos legacy (`active-task.md`, `active-phase.md`) son solo ayuda humana; la fuente runtime es `registry.json` + `task-dag.json`.
@@ -227,7 +243,7 @@ Production mode is `registry.task_dag.mode == "explicit_dag"`. Keep the existing
 
 ## Follow-up task registration
 
-Cuando validator/tester/verify encuentran trabajo real fuera del `TASK_ID`, usa `/register-followup` en vez de notas sueltas. Secuencia: `propose` durante la slice si hace falta; después pregunta al usuario si se promueve o se waivea; `promote` añade una fila canónica al checklist, actualiza registry, work-item YAML y DAG bajo locks. Las propuestas `high|critical|blocker` bloquean nuevas waves y closer hasta decisión humana.
+Cuando validator/tester/verify encuentran trabajo real fuera del `TASK_ID`, usa `/register-followup` para proponer en vez de notas sueltas. Secuencia: `propose` durante la slice si hace falta; después pregunta al usuario si se promueve o se waivea; la promoción se hace con `/promote-followup <FOLLOWUP_ID>` desde el main-orchestrator, nunca desde closer ni desde un worker activo. Ese comando añade una fila canónica al checklist, actualiza registry, work-item YAML y DAG bajo locks. Las propuestas `high|critical|blocker` bloquean nuevas waves y closer hasta decisión humana.
 
 ## Cierre obligatorio
 

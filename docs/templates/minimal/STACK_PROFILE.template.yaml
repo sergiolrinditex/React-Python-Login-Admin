@@ -18,6 +18,6 @@ backend:
 db:
   engine: {{db_engine}}
   migrate_cmd: {{db_migrate_cmd}}
-  seed_cmd: {{db_seed_cmd}}
+  seed_cmd: {{db_seed_cmd}}                    # optional compatibility hook; use only to load real/provided data, or none
 git_workflow: {{git_workflow}}
 design_tokens_enforcer: {{design_tokens_enforcer}}

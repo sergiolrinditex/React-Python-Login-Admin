@@ -7,11 +7,11 @@
 ## Current State
 
 - **Phase**: Phase 1 — Auth + Base Capabilities (P00 infra wrapping up)
-- **Last completed slices**: P00-S01-T001..T005 (all done, committed), P00-S02-T001..T004 (all done, committed), **P00-S02-T005 (productive verification bundle — done, committed `ae3dfc7`, registry reconciled post-closer 2026-05-09T22:16Z)**, **P00-S02-T006 (dynamic LiteLLM model discovery endpoint — implementation done, pending validator/tester + verify-slice)**, **P01-S01-T001 (DB auth baseline — done, committed)**, **P01-S01-T002 (env var §11.1 alignment — implementation done, pending verify-slice)**, **P01-S01-T004 (env_file path fix + DATABASE_URL port 5433 — implementation done, pending validator/tester + verify-slice)**, **P00-S02-T008 (deepagents Supervisor + topic-routing runtime — done, committed `9aacaca`)**, **P00-S02-T007 (AdminAiModelsPage discover wizard UI — implementation done 2026-05-10, pending validator/tester + verify-slice)**, **P00-S02-T009 (httpx logger suppression — CWE-532 third-layer defense — implementation done 2026-05-10, pending validator/tester + verify-slice)**, **P00-S02-T010 (fix admin_ai seed loader column mismatch — DONE, committed 2026-05-10, verify-slice verified, 6/6 integration tests pass; ai_providers=3/ai_provider_credentials=3/ai_models=5 idempotent)**
+- **Last completed slices**: P00-S01-T001..T005 (all done, committed), P00-S02-T001..T004 (all done, committed), **P00-S02-T005 (productive verification bundle — done, committed `ae3dfc7`)**, **P00-S02-T006 (dynamic LiteLLM model discovery endpoint — done, committed `0c2ea37`)**, **P01-S01-T001 (DB auth baseline — done, committed `99d555b`)**, **P01-S01-T002 (env var §11.1 alignment — done, committed `679f363`)**, **P01-S01-T004 (env_file path fix + DATABASE_URL port 5433 — done, committed `8503e00`)**, **P00-S02-T008 (deepagents Supervisor + topic-routing runtime — done, committed `9aacaca`)**, **P00-S02-T007 (AdminAiModelsPage discover wizard UI — done, committed `aaf9e84`)**, **P00-S02-T009 (httpx logger suppression — CWE-532 — done, committed `b055b00`)**, **P00-S02-T010 (fix admin_ai seed loader — done, committed `41a9092`)**, **P00-S02-T011 (dev .env ENCRYPTION_KEY hygiene — done, committed `d24e0d6`)**, **P01-S01-T003 (quote MAIL_FROM_NAME in .env.example — implementation done, pending verify-slice)**, **P01-S01-T005 (audit_logs 4 compliance cols — implementation done 2026-05-10T08:26Z, pending validator/tester + verify-slice)**
 - **Next pending slices**: P01-S02-T001 (POST /api/v1/auth/sign-up) — blocked until pending verify-slices closed
 - **Blockers**: none
-- **Follow-ups pending**: FU-20260508225027 (RESOLVED); FU-20260509073000 (RESOLVED by P00-S02-T005, registry reconciled); FU-20260509130036 RESOLVED by P01-S01-T004. FU-X1 (dynamic LiteLLM model discovery) = **RESOLVED by P00-S02-T006**. FU-X2 (discovery wizard UI) = **RESOLVED by P00-S02-T007** (implementation done, pending verify-slice). FU-X3 (deepagents supervisor runtime) = **RESOLVED by P00-S02-T008**. FU-20260509220224 (httpx logger leak) = **RESOLVED by P00-S02-T009** (implementation done, pending verify-slice). **FU-20260509220235 (admin_ai seed loader column) = RESOLVED by P00-S02-T010** (implementation done, pending verify-slice). Owed: rotate `VERIFICATION_GEMINI_API_KEY` in GCP (post-T005 hygiene, out of T009 scope).
-- **Generated at**: 2026-05-10T07:35:00Z (T010 closer — slice committed)
+- **Follow-ups pending**: FU-20260508225027 (RESOLVED); FU-20260509073000 (RESOLVED by P00-S02-T005, registry reconciled); FU-20260509130036 RESOLVED by P01-S01-T004. FU-X1 (dynamic LiteLLM model discovery) = **RESOLVED by P00-S02-T006**. FU-X2 (discovery wizard UI) = **RESOLVED by P00-S02-T007** (implementation done, pending verify-slice). FU-X3 (deepagents supervisor runtime) = **RESOLVED by P00-S02-T008**. FU-20260509220224 (httpx logger leak) = **RESOLVED by P00-S02-T009** (implementation done, pending verify-slice). **FU-20260509220235 (admin_ai seed loader column) = RESOLVED by P00-S02-T010** (implementation done, pending verify-slice). **FU-20260508230723 (quote MAIL_FROM_NAME in .env.example) = RESOLVED by P01-S01-T003** (implementation done, pending verify-slice). Owed: rotate `VERIFICATION_GEMINI_API_KEY` in GCP (post-T005 hygiene, out of T009 scope).
+- **Generated at**: 2026-05-10T08:26:00Z (P01-S01-T005 developer — audit_logs compliance cols migration 0002)
 
 ## Docker Compose Stack (P00-S02-T001)
 
@@ -159,7 +159,7 @@ Rancher-ready compose stack ADR preserved in handoff P00-S02-T001.md (pending fo
 
 ## Database
 
-Migrations applied: 0001 (auth baseline) + 0003 (admin_ai tables). Head = `0003`. Round-trip verified for 0003: upgrade 0003 → downgrade -1 (to 0001) → upgrade head (back to 0003) all exit 0.
+Migrations applied: 0001 (auth baseline) + 0002 (audit_logs compliance cols) + 0003 (admin_ai tables). Head = `0003` (chain: 0001→0002→0003). Round-trip verified for 0002+0003: full round-trip (head→downgrade -1→downgrade -1→upgrade head) exits 0. Migration 0003 updated to point down_revision="0002" (was "0001") — keeps single linear head.
 
 | Table | Migration | FK / ON DELETE | Status |
 |-------|-----------|----------------|--------|
@@ -171,7 +171,7 @@ Migrations applied: 0001 (auth baseline) + 0003 (admin_ai tables). Head = `0003`
 | refresh_tokens | 0001 | users(id) CASCADE | EXISTS |
 | mfa_totp_secrets | 0001 | users(id) CASCADE | EXISTS |
 | password_reset_tokens | 0001 | users(id) CASCADE | EXISTS |
-| audit_logs | 0001 | users(id) SET NULL | EXISTS |
+| audit_logs | 0001+0002 | users(id) SET NULL | EXISTS — 0002 added 4 compliance cols (ip INET, user_agent TEXT, request_id TEXT, resource TEXT) all nullable; pre-existing rows back-compat |
 | ai_providers | 0003 | — (no FK to users) | EXISTS |
 | ai_provider_credentials | 0003 | ai_providers(id) CASCADE | EXISTS |
 | ai_models | 0003 | ai_providers(id) CASCADE | EXISTS |
@@ -195,8 +195,9 @@ Check constraint: `ck_users_users_language_chk` — `preferred_language IN ('es'
 Alembic files:
 - `backend/alembic.ini` — blank sqlalchemy.url; DSN from env
 - `backend/alembic/env.py` — async Alembic wired to `app.core.db.get_engine()`
-- `backend/alembic/versions/0001_auth_users_employee_audit.py` — migration with upgrade/downgrade
-- `backend/alembic/versions/0003_admin_ai_providers_models.py` — migration with upgrade/downgrade (P00-S02-T006)
+- `backend/alembic/versions/0001_auth_users_employee_audit.py` — migration with upgrade/downgrade (IMMUTABLE — commit 99d555b)
+- `backend/alembic/versions/0002_audit_logs_add_compliance_cols.py` — NEW P01-S01-T005: 4 nullable cols on audit_logs
+- `backend/alembic/versions/0003_admin_ai_providers_models.py` — migration with upgrade/downgrade (P00-S02-T006; down_revision updated 0001→0002 to maintain linear chain)
 
 ## Seed Data Bundle (P00-S02-T003)
 

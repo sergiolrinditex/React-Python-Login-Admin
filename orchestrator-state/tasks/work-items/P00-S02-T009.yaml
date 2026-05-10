@@ -1,0 +1,30 @@
+id: P00-S02-T009
+phase_id: P00
+step_id: P00-S02
+title: "Suppress httpx logger to prevent Gemini API key leak in verbose logs"
+status: ready
+kind: "unspecified"
+target: ""
+product_increment: "current"
+build_state: "planned"
+risk_level: "medium"
+verify_mode: "human"
+route: ""
+endpoint: ""
+journey_refs:
+  - "J103"
+tables:
+depends_on:
+  - P00-S02-T006
+acceptance:
+  - "grep -E 'AIza|sk-[A-Za-z0-9]{20}' verbose_logs.txt returns 0 matches when ENABLE_VERBOSE_LOGGING=true and endpoint makes a real Gemini API call"
+verification_commands:
+  - "ENABLE_VERBOSE_LOGGING=true pytest test_admin_ai_discover_models.py::test_discover_models_gemini_real -v && grep -E 'AIza' logs.txt | wc -l (expect 0)"
+allowed_paths:
+conflict_groups:
+  - "logging_config"
+write_set:
+  - "backend/app/core/logging.py"
+handoff_path: orchestrator-state/tasks/handoffs/P00-S02-T009.md
+evidence_dir: orchestrator-state/tasks/evidence/P00-S02-T009
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry"

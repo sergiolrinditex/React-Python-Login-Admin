@@ -59,9 +59,9 @@ Reglas prácticas:
 - Divide si toca más de 4 zonas fuertes a la vez: DB + backend + AI + frontend + infra.
 - Une si una tarea no tiene verificación independiente.
 - Cada `Slice ID` debe tener `Acceptance mínimo` y `Verify mínimo` específicos de esa fila.
-- `Verify mínimo` debe referenciar datos reales/prod-like del `TECHNICAL_GUIDE §Verification Data Contract` cuando la slice sea verificable por UI/API; no cierres con mocks decorativos.
+- `Verify mínimo` debe referenciar datos reales/proporcionados del `TECHNICAL_GUIDE §Verification Data Contract` cuando la slice sea verificable por UI/API; no cierres con mocks decorativos.
 - Las fases ejecutables nunca deben depender de checkboxes genéricos: la tabla de Registry manda y los headings son solo guía humana.
-- Para una app grande nueva: 20-60 slices suele ser sano; divide por milestones/lanes si pasa de 12 slices por phase.
+- Para una app grande nueva: 20-60 slices suele ser sano; divide por milestones/lanes si pasa de 20 slices por phase.
 
 ## Canonical Coverage Registry — OBLIGATORIO
 
@@ -74,7 +74,7 @@ Reglas prácticas:
 >
 > 🧱 **Serialización segura**: `Conflict group` y `Write set` son guardrails de concurrencia. Dos slices pueden tener `Depends on` libre y aun así NO deben correr juntas si pisan el mismo router, provider, migración, API client, manifiestos de dependencias, workflow o ficheros compartidos. Usa grupos estables (`db:migrations`, `api:auth`, `front:dashboard`, `router`, `theme`, `release`) y patrones de ficheros esperados (`<frontend_module_root>/**/router*`, `<backend_module_root>/**`, manifiestos/lockfiles). `/next-wave` serializa automáticamente los conflictos y `claim_task.py` bloquea claims manuales conflictivos.
 >
-> 🧩 **Follow-ups en producción**: si durante `validator`, `tester`, `/verify-slice` o `/verify-journey` aparece trabajo real que no estaba contemplado, NO se deja como nota suelta. Se crea propuesta con `register-followup-task.sh propose` y, si el usuario la aprueba, se promueve a una fila real en `Runtime Follow-up Coverage Registry` con `Depends on`, `Conflict group`, `Write set`, journey, UX y verificación real/prod-like. Así futuros `bootstrap --refresh` no pierden el trabajo añadido.
+> 🧩 **Follow-ups en producción**: si durante `validator`, `tester`, `/verify-slice` o `/verify-journey` aparece trabajo real que no estaba contemplado, NO se deja como nota suelta. Se crea propuesta con `register-followup-task.sh propose` y, si el usuario la aprueba, se promueve a una fila real en `Runtime Follow-up Coverage Registry` con `Depends on`, `Conflict group`, `Write set`, journey, UX y verificación real/proporcionada. Así futuros `bootstrap --refresh` no pierden el trabajo añadido.
 >
 > 🔗 **Columnas de cableado recomendadas** (`Origen-Instr` + `Origen-TechGuide`): visibles en cada fila para que el `planner` resuelva sin adivinanzas qué motor / feature / endpoint / tabla origina el slice. Sintaxis libre tipo `§3.1#contract-analyzer` o `§6.2#POST-/api/v1/contracts/upload`. Mantén el formato `<sección>#<slug>` para facilitar grep.
 
@@ -82,10 +82,10 @@ Reglas prácticas:
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | P00-S01-T001 | setup | Bootstrap repo + env | Step 0.1 | v1 | planned | low | auto | — | setup:bootstrap | `.env.example`; `scripts/**`; `<backend_module_root>/**/health*` | — | — | `GET /health` | — | §1.1 | §3#dev-restart | proyecto compila; `.env.example` completo; scripts base ejecutables | `./scripts/setup-from-scratch.sh --check` |
 | P02-S01-T001 | db | `0001_{{domain}}.py` | Step 2.1 | v1 | planned | medium | auto | P00-S01-T001 | db:migrations, db:{{table}} | `<migrations_dir>/*{{table}}*`; `<backend_module_root>/**/{{table}}*` | J1 | — | — | `{{table}}` | §3.1#{{component}} | §10.3#{{table}} + §6.3#{{Entity}} | migración up/down; FK cascade; índices en queries críticas | `alembic upgrade head && alembic downgrade -1` |
-| P02-S02-T001 | api | `POST /api/v1/{{resource}}` | Step 2.2 | v1 | planned | medium | human | P02-S01-T001 | api:{{resource}} | `<backend_module_root>/**/{{resource}}*`; `<backend_tests_root>/**/{{resource}}*` | J1 | `{{Resource}}CreatePage /{{resource}}/new` | `POST /api/v1/{{resource}}` | `{{table}}` | §3.1#{{component}} | §6.2#POST-/api/v1/{{resource}} | Pydantic schema; use case; repository; integration test; logs BEFORE/AFTER/ERROR | `pytest api/tests/integration -k {{resource}}_create` + curl con datos prod-like |
+| P02-S02-T001 | api | `POST /api/v1/{{resource}}` | Step 2.2 | v1 | planned | medium | human | P02-S01-T001 | api:{{resource}} | `<backend_module_root>/**/{{resource}}*`; `<backend_tests_root>/**/{{resource}}*` | J1 | `{{Resource}}CreatePage /{{resource}}/new` | `POST /api/v1/{{resource}}` | `{{table}}` | §3.1#{{component}} | §6.2#POST-/api/v1/{{resource}} | Pydantic schema; use case; repository; integration test; logs BEFORE/AFTER/ERROR | `pytest api/tests/integration -k {{resource}}_create` + curl con datos reales/proporcionados |
 | P02-S04-T001 | ai | `{{graph}}_smoke` | Step 2.4 | v1 | planned | medium | auto | P02-S02-T001 | ai:{{graph}} | `<backend_module_root>/**/{{graph}}*`; `<backend_tests_root>/**/{{graph}}*` | J1 | — | internal/no-front | `{{ai_table}}` | §3.1#{{component-AI}} | §10.4#{{graph}} | graph compila; smoke con FakeListChatModel verde; logs por nodo | `pytest api/tests/ai -k {{graph}}_smoke` |
 | P02-S00-T001 | library | intro `<paquete-X>` en dependency manifest | Step 2.0 | v1 | planned | low | auto | P00-S01-T001 | dependency:{{paquete}} | dependency manifest; lockfile; primer consumidor | — | primer consumidor | — | — | §11.0#{{área}} | §2.0#{{paquete}} | lib instalada; primer consumidor refactorizado; lockfile actualizado | `pip install -e . && pytest -k {{first-consumer}}` |
-| P03-S01-T001 | frontend | `/{{resource}}/new` `{{Resource}}CreatePage` | Step 3.1 | v1 | planned | medium | human | P02-S02-T001 | front:{{resource}}, router | `<frontend_module_root>/**/{{resource}}*`; `<frontend_tests_root>/**/{{resource}}*`; router/config | J1 | `{{Resource}}CreatePage /{{resource}}/new` | `POST /api/v1/{{resource}}` | — | §3.2#{{feature}} | §6.1#/{{resource}}/new | page con design system; validación inline; seis estados UI; provider wired; next action | `/verify-slice` en Chrome con backend real/prod-like |
+| P03-S01-T001 | frontend | `/{{resource}}/new` `{{Resource}}CreatePage` | Step 3.1 | v1 | planned | medium | human | P02-S02-T001 | front:{{resource}}, router | `<frontend_module_root>/**/{{resource}}*`; `<frontend_tests_root>/**/{{resource}}*`; router/config | J1 | `{{Resource}}CreatePage /{{resource}}/new` | `POST /api/v1/{{resource}}` | — | §3.2#{{feature}} | §6.1#/{{resource}}/new | page con design system; validación inline; seis estados UI; provider wired; next action | `/verify-slice` en Chrome con backend real y datos proporcionados |
 | P03-S02-T001 | journey | `J1` e2e happy path | Step 3.2 | v1 | planned | high | human | P03-S01-T001 | journey:J1 | `orchestrator-state/tasks/evidence/journeys/J1/**` | J1 | `/contracts/upload → /contracts/:id/analysis` | `POST /api/v1/contracts/upload`, `GET /api/v1/contracts/:id/analysis` | `contracts`, `analyses` | §3.6#J1 + §3.7#J1 | §6.1 + §6.2 | flujo multi-pantalla real; datos persistidos; next action visible; estados marginales reproducidos | `/verify-journey J1` |
 
 
@@ -95,7 +95,7 @@ Reglas prácticas:
 >>>
 >>> 🧭 **Dependencias DAG obligatorias**: rellena `Depends on` en TODAS las filas. Usa `—` solo cuando el slice pueda ejecutarse como raíz de su phase/wave. No uses dependencias decorativas: una dependencia debe significar que el output del predecessor es necesario para verificar este slice.
 >>>
->>> 🧱 **Guardrails de concurrencia obligatorios**: rellena `Conflict group` y `Write set` en TODAS las filas. Si dos slices tocan el mismo router, provider, migración, workflow, manifiestos de dependencias, API client, theme o fichero compartido, deben compartir `Conflict group` o solaparse en `Write set`. Usa `read-only` o `—` solo para slices que no escriben código compartido.
+>>> 🧱 **Guardrails de concurrencia obligatorios**: rellena `Conflict group` y `Write set` en TODAS las filas. Si dos slices tocan el mismo router, provider, migración, workflow, manifiestos de dependencias, API client, theme o fichero compartido, deben compartir `Conflict group` o solaparse en `Write set`. Si la aceptación menciona `docker-compose.yml`, `docker-compose.yaml`, `compose.yaml`, `Dockerfile*`, `.env.example`, `.github/workflows/**` o lockfiles, esos paths exactos deben aparecer en `Write set`/`allowed_paths` con grupo `infra:*`/`ci:*`. Usa `read-only` o `—` solo para slices que no escriben código compartido.
 >>>
 >>> 🔗 **No dejes slices huérfanos**:
 >>> - Cada endpoint de `TECHNICAL_GUIDE §6.2` → slice `api` con columna `Endpoint` igual a `METHOD /path`, y consumidor front/journey declarado si no es interno.
@@ -109,7 +109,7 @@ Reglas prácticas:
 
 # Phase 0 — Bootstrap / foundation propia
 
-> Construir scaffold propio: backend/frontend/DB según `STACK_PROFILE.yaml`, design system, health checks, scripts, seed/reset y tests base.
+> Construir scaffold propio: backend/frontend/DB según `STACK_PROFILE.yaml`, design system, health checks, scripts, reset/carga de datos reales proporcionados y tests base.
 
 ## Step 0.1 — Project bootstrap
 
@@ -209,7 +209,7 @@ Construir auth/perfil/admin solo si esta app lo declara en source-of-truth.
 - [ ] Cada endpoint de TECHNICAL_GUIDE §6.2 tiene slice propio o justificación explícita de agrupación.
 - [ ] Pydantic schemas tipados.
 - [ ] Auth/rate limit/audit log según criticidad.
-- [ ] Integration tests contra DB/servicio real o prod-like.
+- [ ] Integration tests contra DB/servicio real con datos proporcionados.
 - [ ] Curl reproducible.
 
 ## Step 2.4 — AI components, if any
@@ -241,7 +241,7 @@ Construir auth/perfil/admin solo si esta app lo declara en source-of-truth.
 >
 > Si una feature de `§3.2` no tiene NINGÚN slice `frontend` aquí, no se construye pantalla. Si un journey de `§3.7` no tiene slice `journey` aquí, `/verify-journey` no tiene cómo lanzarse.
 
->>> MODELO: generar phases/lanes reales por milestone/pantalla/módulo. Producción: phase <=12 slices y step <=10 slices; si una fase crece más, divídela en lanes independientes para mantener paralelismo real.
+>>> MODELO: generar phases/lanes reales por milestone/pantalla/módulo. Producción: phase <=20 slices y step <=10 slices; si una fase crece más, divídela en lanes independientes para mantener paralelismo real.
 
 ## Step 3.1 — Primary route/pages
 
@@ -273,7 +273,7 @@ Construir auth/perfil/admin solo si esta app lo declara en source-of-truth.
 - [ ] Audit actions específicas del dominio.
 - [ ] Rate limits en endpoints caros.
 - [ ] Métricas y logs del motor.
-- [ ] Performance smoke sobre dataset demo.
+- [ ] Performance smoke sobre dataset real proporcionado por el usuario/equipo.
 
 ## Step 4.2 — Phase 4 gate
 
@@ -353,7 +353,7 @@ Para CADA fila de la matriz:
 ## D. Phase gates y orden
 
 - [ ] Phase 0 → Phase 1 → Phase 2 → Phase 3 → Phase 4 → Phase 5 (orden estricto).
-- [ ] `P00..PNN` coherentes — cada phase usada por el registry existe como heading o wrapper sintético válido, y ninguna phase supera 12 slices ni ningún step supera 10.
+- [ ] `P00..PNN` coherentes — cada phase usada por el registry existe como heading o wrapper sintético válido, y ninguna phase supera 20 slices ni ningún step supera 10.
 - [ ] Cada Phase Gate al final del Phase tiene tests acumulados verdes como criterio.
 - [ ] `dev-restart.sh` con `--soft` / `--check` / `--reset` está documentado en `TECHNICAL_GUIDE §3` (lo invocan `/next-slice` y `/verify-slice`).
 
@@ -388,4 +388,4 @@ Si las 3 son "sí", entrega. Si alguna es "no", arregla y vuelve a verificar.
 
 ## Production hardening actual
 
-Usa source-of-truth acumulativo baseline+vN, `Risk level`, `Verify mode`, phases <=12 slices, steps <=10 slices, journeys reales multi-superficie y verify con datos reales/prod-like. Ejecuta bootstrap + check-task-dag + check-journey-matrix + check-wiring-contract antes de waves.
+Usa source-of-truth acumulativo baseline+vN, `Risk level`, `Verify mode`, phases <=20 slices, steps <=10 slices, journeys reales multi-superficie y verify con datos reales/proporcionados. Ejecuta bootstrap + check-task-dag + check-journey-matrix + check-wiring-contract antes de waves.

@@ -59,7 +59,7 @@ PROGRESS_HEAD_BUDGET = 3000  # chars reserved for the PROGRESS.md head block
 
 # Pressure thresholds — only emit a 💡 suggestion when these are exceeded.
 PROGRESS_BIG_BYTES = 8000          # PROGRESS.md > 8KB → suggest /slice-maintain compact
-MEMORY_BIG_LINES = 200             # any agent-memory MEMORY.md > 200 lines → suggest consolidation
+MEMORY_BIG_LINES = 200             # any agent-memory MEMORY.md > 200 lines → suggest /slice-maintain compact-agent-memory
 LEDGER_BIG_BYTES = 200 * 1024      # ledger.jsonl > 200KB → suggest /slice-maintain clean
 
 
@@ -153,7 +153,7 @@ def _detect_pressure(root: Path) -> list[str]:
             if big:
                 suggestions.append(
                     f"💡 Memoria de agentes >{MEMORY_BIG_LINES} líneas: "
-                    f"{', '.join(big)}. Considera consolidar (resumir patrones repetidos)."
+                    f"{', '.join(big)}. Considera `/slice-maintain compact-agent-memory` (dry-run) para archivar el original completo y dejar MEMORY.md operativo."
                 )
     except Exception:
         pass

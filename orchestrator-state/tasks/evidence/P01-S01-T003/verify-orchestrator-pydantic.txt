@@ -1,0 +1,4 @@
+=== consumer parse — Settings().mail_from_name — 2026-05-10T08:22:18Z ===
+mail_from_name=[Hilo People]
+OK
+exit=0

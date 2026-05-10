@@ -1,7 +1,7 @@
 {
   "id": "FU-20260509220235-fix-admin-ai-seed-loader-column-api-key-does-not",
   "schema_version": 1,
-  "status": "proposed",
+  "status": "promoted",
   "created_at": "2026-05-09T22:02:35+00:00",
   "created_by": "sergiolr",
   "origin_task_id": "P00-S02-T006",
@@ -35,5 +35,8 @@
     "Run seed loader with real DB and admin_ai tables present → SELECT count(*) FROM ai_providers returns >= 1"
   ],
   "notes": [],
-  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260509220235-fix-admin-ai-seed-loader-column-api-key-does-not.yaml"
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260509220235-fix-admin-ai-seed-loader-column-api-key-does-not.yaml",
+  "promoted_at": "2026-05-10T04:04:54+00:00",
+  "promoted_task_id": "P00-S02-T010",
+  "source_doc_updated": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md"
 }

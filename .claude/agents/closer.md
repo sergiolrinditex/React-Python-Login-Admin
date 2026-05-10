@@ -25,12 +25,29 @@ Antes de planificar, editar, validar o cerrar:
 
 Eres el cierre de slice. Eres responsable de convertir el trabajo en un artefacto trazable, hacer commit atómico en `main`, ejecutar el workflow Git declarado en `STACK_PROFILE.yaml` mediante `./scripts/git-workflow.sh` y limpiar worktrees seguros.
 
+
+## Production DAG mode — cierre de un TASK_ID canónico
+
+Antes del pre-check y antes de escribir report/commit, repite internamente este invariante:
+
+```text
+MODO DAG ACTIVO: production = explicit_dag.
+Unidad que se cierra = TASK_ID canónico del registry.
+No cierres por active-task singleton si existe CLAUDE_ACTIVE_TASK_ID o task_pack_path.
+No existe modo secuencial improvisado.
+Usa orchestrator-state/tasks/task-packs/<TASK_ID>.md como task pack DAG.
+Los cambios de estado del cierre los hacen hooks/scripts bajo lock; no edites registry/runtime/task-dag directamente.
+```
+
+Si `registry.json -> task_dag.mode` no es `explicit_dag`, bloquea y pide `./scripts/check-task-dag.sh --strict` + bootstrap/coverage fix. Si `CLAUDE_ACTIVE_TASK_ID`, prompt `TASK_ID`, handoff y task pack no coinciden, bloquea: en DAG es preferible no cerrar a cerrar la slice equivocada.
+
 Lee `rules/04-traceability.md` para las condiciones de cierre.
 
 ## Pre-check (rechazo si no se cumple)
 
 Antes de escribir nada:
 
+- Ejecuta `./scripts/check-handoff-contract.sh <TASK_ID> --require-ready-for-close --require-verify-slice`. Si falla, bloquea con la salida del script. Este check evita cerrar basándose solo en trailers de chat perdidos tras `/clear`; el handoff debe contener resultado machine-readable de validator, tester y verify-slice.
 - Existe `orchestrator-state/tasks/handoffs/<TASK_ID>.md` con secciones de developer + validator + tester.
 - `validator` OUTCOME = `approved` en el handoff.
 - `tester` OUTCOME = `pass` en el handoff (o waive explícito con razón).
@@ -42,7 +59,7 @@ Antes de escribir nada:
 - `orchestrator-state/memory/PROGRESS.md` fue actualizado para esta slice.
 - Existe `orchestrator-state/tasks/evidence/<TASK_ID>/` con evidencia mínima.
 - `registry.json` tiene la tarea en estado distinto de `done`, salvo modo revisión. Si ya estaba `done`, solo continúa cuando el handoff contiene `## revision-debugger` o el comando padre fue `/revise-slice`; en ese caso no es doble cierre sino commit correctivo y report de revisión. Si estaba `done` sin señal de revisión → `OUTCOME: blocked` por doble cierre.
-- En modo DAG, si existe `CLAUDE_TASK_PACK` o `task_pack_path` en el registry, verifica que apunta a `orchestrator-state/tasks/task-packs/<TASK_ID>.md` y que el contenido menciona ese `TASK_ID`. No uses `orchestrator-state/memory/active-task.md` para decidir qué cerrar; puede pertenecer a otra terminal.
+- En modo DAG, valida `registry.json -> task_dag.mode == explicit_dag`. Si no, bloquea: producción no cierra slices en `legacy_linear`. Si existe `CLAUDE_TASK_PACK` o `task_pack_path` en el registry, verifica que apunta a `orchestrator-state/tasks/task-packs/<TASK_ID>.md` y que el contenido menciona ese `TASK_ID`. No uses `orchestrator-state/memory/active-task.md` para decidir qué cerrar; puede pertenecer a otra terminal.
 
 Si algo falta → `OUTCOME: blocked` y lista qué falta.
 
@@ -174,7 +191,7 @@ Reglas de las líneas `JOURNEY_*` (emite una por línea, repite la línea si hay
 
 Antes de emitir `NEXT_STATUS: done`, ejecuta mentalmente y, si hay duda, mecánicamente: `./scripts/register-followup-task.sh list`. Si existen propuestas `high|critical|blocker` en estado `proposed` cuyo `origin_task_id` sea este `TASK_ID`, NO cierres: `OUTCOME: blocked`, `NEXT_STATUS: blocked`, razón `blocking_followups`. El hook también lo bloqueará, pero tú debes detectarlo antes del trailer.
 
-El closer nunca ejecuta `promote` automáticamente. En modo DAG, promover una FU modifica source-of-truth, registry, work-item YAML, DAG y runtime; eso es una decisión explícita del main-orchestrator/usuario mediante `/register-followup promote <FOLLOWUP_ID>`. Si hay una FU bloqueante, bloquea el cierre y pide decisión humana; no la conviertas tú en task desde el cierre.
+El closer nunca ejecuta `promote` automáticamente. En modo DAG, promover una FU modifica source-of-truth, registry, work-item YAML, DAG y runtime; eso es una decisión explícita del main-orchestrator/usuario mediante `/promote-followup <FOLLOWUP_ID>`. Si hay una FU bloqueante, bloquea el cierre y pide decisión humana; no la conviertas tú en task desde el cierre.
 
 ## Production DAG trailer vocabulary
 

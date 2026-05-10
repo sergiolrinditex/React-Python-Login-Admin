@@ -36,7 +36,7 @@ La fuente única del stack es `STACK_PROFILE.yaml`. Resume aquí solo las decisi
 
 ## 3. Verification Data Contract
 
-| Flow/Journey | Persona/Rol | Datos reales/prod-like requeridos | Seed/fixture permitido | Reset/Cleanup | Slices/Journeys |
+| Flow/Journey | Persona/Rol | Datos reales/proporcionados requeridos | Fuente de datos reales proporcionados | Reset/Cleanup | Slices/Journeys |
 |---|---|---|---|---|---|
 | J1 | {{PERSONA}} | {{REAL_DATA}} | {{FIXTURE_CMD}} | {{RESET_CMD}} | {{SLICE_IDS}} / J1 |
 
@@ -44,6 +44,6 @@ La fuente única del stack es `STACK_PROFILE.yaml`. Resume aquí solo las decisi
 
 | Capa | Comando | Evidencia esperada |
 |---|---|---|
-| API | {{API_TEST_CMD}} | tests verdes con DB real/prod-like |
+| API | {{API_TEST_CMD}} | tests verdes con DB real con datos proporcionados |
 | Frontend | {{frontend.test_cmd}} | UI states y provider conectados |
 | Verify | /verify-slice + /verify-journey J1 | front -> back -> DB observado |

@@ -15,12 +15,21 @@ ChatGPT Pro rellena templates
   -> registry.json canonical + derived views (work-items/*.yaml, task-dag.json/md, execution-graph.json)
   -> /next-wave propone nodos DAG seguros
   -> claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice <TASK_ID>" ejecuta agentes en un terminal aislado
-  -> /verify-slice valida con datos reales/prod-like
+  -> /verify-slice valida con datos reales/proporcionados
   -> closer genera report + sync baseline + commit + configured Git workflow + limpia worktrees
   -> /phase-gate valida phase completa
 ```
 
 La matriz de adyacencia no se escribe a mano. Se deriva del `Canonical Coverage Registry` del checklist, concretamente de `Depends on`. La fuente runtime canónica del DAG es `orchestrator-state/tasks/registry.json` (`tasks[]` + `task_dag.source_digest`); `task-dag.json`, `task-dag.md` y `execution-graph.json` son vistas derivadas que `./scripts/check-task-dag.sh --strict` compara contra el registry antes de paralelizar. `Conflict group` y `Write set` evitan paralelizar slices que pisan los mismos ficheros o recursos.
+
+**Production DAG-only**: en operación normal `task_dag.mode` debe ser `explicit_dag`. Si aparece `legacy_linear`, no sigas como si fuera una cola secuencial: faltan `Depends on` reales o el Coverage Registry está incompleto. Corrige los source-of-truth docs y vuelve a ejecutar `bootstrap_three_docs.py --refresh`.
+
+**Main thread obligatorio**: Claude Code debe arrancar con `main-orchestrator` como agente principal, no como subagente. El repo fija `.claude/settings.json -> agent: main-orchestrator`, y los comandos operativos usan siempre `claude --agent main-orchestrator --permission-mode bypassPermissions`. No añadas `tools:` al frontmatter de `.claude/agents/main-orchestrator.md`: omitir `tools` es intencional para heredar todas las herramientas disponibles de la sesión, incluidos MCPs y `Agent`; una lista `tools:` sería un allowlist y podría limitar el orquestador.
+
+```bash
+claude --agent main-orchestrator --permission-mode bypassPermissions
+claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice <TASK_ID>"
+```
 
 
 ## Multi-terminal DAG: cómo se propaga un cierre
@@ -55,6 +64,18 @@ claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slic
 ```
 
 Si el cierre genera `JOURNEY_PENDING_VERIFY`, `/next-wave` aplica `journey_gate_mode=frontier` por defecto: difiere solo tasks que referencian ese journey pendiente. `journey_gate_mode=strict` conserva el bloqueo global legacy. Los follow-ups bloqueantes y conflictos activos sí impiden abrir terminales inseguras.
+
+Los follow-ups productivos no los promueve el closer automáticamente. El closer sólo bloquea si hay FU `high|critical|blocker` propuestas para la slice; la decisión explícita de promoción es `/promote-followup <FU_ID>`; el waiver sigue siendo `/register-followup waive <FU_ID>`. Si un promote crea una task que pisa `Conflict group`/`Write set` de una task activa, queda `blocked` hasta que el DAG sea seguro.
+
+**Comando de promoción seguro**: usa `/promote-followup` desde el main-orchestrator, no desde el closer ni desde un worker activo. Si tienes `CLAUDE_ACTIVE_TASK_ID` exportado en ese terminal, primero limpia el entorno o usa una terminal de control:
+
+```bash
+unset CLAUDE_ACTIVE_TASK_ID CLAUDE_TASK_PACK
+claude --agent main-orchestrator --permission-mode bypassPermissions "/promote-followup <FOLLOWUP_ID>"
+```
+
+`/promote-followup` lista la FU, muestra plan, pide confirmación literal `PROMOTE <FOLLOWUP_ID>`, ejecuta `./scripts/register-followup-task.sh promote <FOLLOWUP_ID>` bajo locks y después corre checks DAG/wiring.
+
 
 ## Trailer schema y OUTCOME enums
 
@@ -132,6 +153,8 @@ Origen-Instr, Origen-TechGuide, Acceptance mínimo, Verify mínimo
 ```bash
 python3 -B -S .claude/bin/bootstrap_three_docs.py --validate-only
 python3 -B -S .claude/bin/bootstrap_three_docs.py --refresh
+# --refresh preserva runtime-state/task lifecycle por defecto. Para reset destructivo explícito:
+# python3 -B -S .claude/bin/bootstrap_three_docs.py --refresh --reset-runtime-state
 ./scripts/check-task-dag.sh --strict
 ./scripts/check-journey-matrix.sh --strict
 ./scripts/check-wiring-contract.sh --strict --require-new-template-columns
@@ -146,7 +169,9 @@ Journey matrix coherent — <J> journeys validadas, 0 drifts
 Wiring contract coherent — <R> routes, <E> endpoints, <T> registry rows, <J> journeys
 ```
 
-Si sale `legacy_linear`, falta la columna `Depends on` o no está rellena.
+Si sale `legacy_linear`, falta la columna `Depends on` o no está rellena. En este orquestador eso es bloqueo de producción: corrige el Coverage Registry y no abras workers hasta volver a `explicit_dag`.
+
+`bootstrap_three_docs.py --refresh` es seguro para proyectos activos: preserva `runtime-state.json`, estados de tasks ya existentes, `last_*`, blockers y follow-ups abiertos. Usa `--reset-runtime-state` sólo cuando quieras reconstruir desde cero de forma intencional.
 
 
 ## Contratos API generados
@@ -190,7 +215,7 @@ El smoke crea dos apps temporales por perfil (`minimal`, `large-without-base`, `
 El script imprime bloques copiables:
 
 ```bash
-export CLAUDE_ACTIVE_TASK_ID=P02-S03-T001 CLAUDE_TASK_PACK=orchestrator-state/tasks/task-packs/P02-S03-T001.md && echo 'Ahora ejecuta: claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice P02-S03-T001"'
+export CLAUDE_ACTIVE_TASK_ID=P02-S03-T001 CLAUDE_TASK_PACK=orchestrator-state/tasks/task-packs/P02-S03-T001.md && echo 'Ahora ejecuta en Claude Code: claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice P02-S03-T001"'
 ```
 
 En ese terminal worker, lanza Claude Code con el orquestador explícito:
@@ -242,7 +267,15 @@ La ruta normal después es:
 /verify-slice P02-S03-T001
 ```
 
-`/verify-slice` hace hard reset, seed base, fixtures reales/prod-like del `Verification Data Contract`, reproducción humana front→back→DB y, si queda verified, spawnea `closer`. Si encuentra hallazgos menores y dentro del `Write set`, debe llamar a `debugger`, repetir `validator ‖ tester` y relanzar `/verify-slice`; si el hallazgo es mayor o fuera de alcance, registra follow-up formal.
+`/verify-slice` hace hard reset y carga datos reales/proporcionados del `Verification Data Contract`, reproducción humana front→back→DB y, si queda verified, spawnea `closer`. Si encuentra hallazgos menores y dentro del `Write set`, debe llamar a `debugger`, repetir `validator ‖ tester` y relanzar `/verify-slice`; si el hallazgo es mayor o fuera de alcance, registra follow-up formal.
+
+Antes de invocar `closer`, `/verify-slice` valida que el handoff no esté roto:
+
+```bash
+./scripts/check-handoff-contract.sh <TASK_ID> --require-ready-for-close --require-verify-slice
+```
+
+El handoff debe contener resultado machine-readable de `validator`, `tester` y `verify-slice`. El trailer de chat sincroniza hooks/registry, pero no sustituye al handoff que leerá `closer` tras `/clear`.
 
 El closer hace:
 
@@ -262,13 +295,13 @@ Para producción/MVP no se cierra con mocks decorativos. `/verify-slice` y `/ver
 
 ```text
 persona/rol real o sandbox
-fixtures permitidos
+fuente/provisión de datos reales
 reset/cleanup
 datos persistidos observados
 tablas/endpoints/slices vinculados
 ```
 
-Los sintéticos solo valen para edge cases etiquetados: empty, error_network, permission_denied, payload inválido, etc.
+Si faltan datos para verificar una slice, no se inventan: se pide al usuario/equipo que los proporcione o se registra follow-up/bloqueo.
 
 ## Follow-ups formales cuando aparece trabajo nuevo
 
@@ -285,19 +318,19 @@ Si `validator`, `tester`, `debugger`, `/verify-slice` o `/verify-journey` descub
   --journey-ref J101 \
   --conflict-group front:results \
   --write-set 'app/lib/features/results/**' \
-  --acceptance "Empty state implementado con datos reales/prod-like" \
+  --acceptance "Empty state implementado con datos reales/proporcionados" \
   --verify "/verify-slice observa estado empty con cuenta sandbox persistida"
 ```
 
 Después, con aprobación humana:
 
 ```bash
-./scripts/register-followup-task.sh promote <FOLLOWUP_ID>
+claude --agent main-orchestrator --permission-mode bypassPermissions "/promote-followup <FOLLOWUP_ID>"
 ./scripts/register-followup-task.sh waive <FOLLOWUP_ID> --reason "decisión humana"
 ./scripts/register-followup-task.sh list --json
 ```
 
-Las propuestas `high|critical|blocker` bloquean `/next-wave`, claims y cierre hasta resolverse. Al promover, se actualiza source-of-truth, registry, DAG, work-item YAML, runtime y ledger bajo locks.
+Las propuestas `high|critical|blocker` bloquean `/next-wave`, claims y cierre hasta resolverse. El closer nunca hace `promote` automático: si hay FU bloqueante, debe cerrar con `OUTCOME: blocked` / `NEXT_STATUS: blocked` y pedir decisión humana. Al promover con `/promote-followup`, se actualiza source-of-truth, registry, DAG, work-item YAML, runtime y ledger bajo locks. Si la nueva task ya tiene dependencias cumplidas pero su `conflict_group` o `write_set` choca con una task activa/claimed/in_progress, queda `blocked` con `blocked_reason: conflict_with_active_task`; `promote_ready_tasks` la desbloquea cuando desaparece el conflicto.
 
 ## Git workflow
 
@@ -331,11 +364,28 @@ claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slic
 /verify-slice <TASK_ID>            gate humano + closer si verified
 /auto-verify-slice <TASK_ID>       verificación automática solo low+auto y sin cierre de journey
 /revise-slice <TASK_ID> "motivo"   corrección sobre slice canónica
-/register-followup propose|promote|waive|list
+/register-followup propose|waive|list  # CRUD bajo nivel
+/promote-followup <FU_ID>           # promoción segura vía main-orchestrator
 /verify-journey <JID>              journey end-to-end si no se verificó inline
 /phase-gate <PHASE_ID>             cierre real de phase
-/slice-maintain clean|compact      mantenimiento entre slices
+/slice-maintain clean|compact|compact-agent-memory
+                                  mantenimiento entre slices y memorias de agentes
 ```
+
+
+## Mantenimiento y memoria de agentes
+
+`/slice-maintain compact` compacta `orchestrator-state/memory/PROGRESS.md` y memoria global del proyecto. No toca memorias de agentes.
+
+Para memorias largas de agentes usa el modo explícito:
+
+```bash
+python3 -B -S scripts/compact-agent-memory.py --all          # dry-run
+python3 -B -S scripts/compact-agent-memory.py --agent developer
+python3 -B -S scripts/compact-agent-memory.py --all --apply  # archiva original completo y compacta
+```
+
+Contrato: el original completo queda en `orchestrator-state/agent-memory/<agent>/archive/MEMORY.full.<timestamp>.md` antes de reescribir `MEMORY.md`. No toca `.claude/agents/*.md`, `docs/source-of-truth/**`, registry/runtime/task-dag ni artefactos de tasks.
 
 ## Seguridad de escrituras
 

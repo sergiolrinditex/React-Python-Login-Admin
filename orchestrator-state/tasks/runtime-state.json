@@ -1,16 +1,16 @@
 {
-  "generated_at": "2026-05-10T07:10:21+00:00",
+  "generated_at": "2026-05-10T08:30:57+00:00",
   "active_phase_id": "P01",
   "active_task_id": "P01-S02-T001",
-  "last_worker": "closer",
+  "last_worker": "developer",
   "last_event": "subagent_stop",
   "pending_journey_verifications": [],
   "journey_gate_mode": "frontier",
   "last_journey_verified": null,
   "spawn_budget": 20,
   "spawns_in_current_slice": {
-    "P00-S02-T010": 1,
-    "agent:closer": 1
+    "P01-S01-T005": 1,
+    "agent:developer": 1
   },
   "open_followups": [
     {
@@ -141,21 +141,25 @@
       "title": "Disable SQLAlchemy echo in verbose mode to prevent Fernet token exposure in logs",
       "path": "orchestrator-state/tasks/follow-ups/FU-20260510044529-disable-sqlalchemy-echo-in-verbose-mode-to-preve.yaml",
       "created_at": "2026-05-10T04:45:29+00:00"
+    },
+    {
+      "id": "FU-20260510071705-quote-or-remove-change-me-placeholders-in-env-ex",
+      "status": "proposed",
+      "severity": "medium",
+      "origin_task_id": "P00-S02-T011",
+      "title": "Quote or remove <change-me> placeholders in .env.example to fix bash source on fresh clones",
+      "path": "orchestrator-state/tasks/follow-ups/FU-20260510071705-quote-or-remove-change-me-placeholders-in-env-ex.yaml",
+      "created_at": "2026-05-10T07:17:05+00:00"
     }
   ],
-  "last_stop_at": "2026-05-10T06:49:01+00:00",
-  "last_claimed_task_id": "P00-S02-T011",
+  "last_stop_at": "2026-05-10T08:30:57+00:00",
+  "last_claimed_task_id": "P01-S02-T001",
   "last_trailer": {
-    "task_id": "P00-S02-T010",
-    "outcome": "committed",
-    "next_status": "done",
-    "handoff": "orchestrator-state/tasks/handoffs/P00-S02-T010.md",
-    "report": "orchestrator-state/tasks/reports/P00-S02-T010.md",
-    "report_ready": "yes",
-    "baseline_sync_ready": "yes",
-    "git_ready": "yes",
-    "push_ready": "yes",
-    "worktrees_cleaned": "yes"
+    "task_id": "P01-S01-T005",
+    "outcome": "success",
+    "next_status": "validator_tester_pending",
+    "handoff": "orchestrator-state/tasks/handoffs/P01-S01-T005.md",
+    "evidence": "orchestrator-state/tasks/evidence/P01-S01-T005"
   },
-  "last_followup_id": "FU-20260510044529-disable-sqlalchemy-echo-in-verbose-mode-to-preve"
+  "last_followup_id": "FU-20260510071705-quote-or-remove-change-me-placeholders-in-env-ex"
 }

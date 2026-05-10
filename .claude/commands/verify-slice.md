@@ -8,6 +8,22 @@ argument-hint: "[--task <TASK_ID>]  (omite para usar la tarea activa)"
 
 Antes de ejecutar este comando, considera cargadas las reglas no-scoped de `.claude/rules/`. Si no ves esas reglas en contexto tras `/clear`, léelas explícitamente en este orden: `00-source-of-truth.md`, `01-non-negotiables.md`, `02-phase-execution.md`, `03-dev-loop.md`, `04-traceability.md`, `05-runtime-write-contract.md`.
 
+
+## Production DAG mode — recordatorio obligatorio
+
+Antes de reconstruir contexto, verificar, decidir `pre-closer`/`post-closer`, spawnear `debugger` o spawnear `closer`, repite internamente este invariante y respétalo durante todo el comando:
+
+```text
+MODO DAG ACTIVO: production = explicit_dag.
+Unidad verificable = TASK_ID canónico del registry.
+No existe modo secuencial improvisado.
+No dependas de active-task singleton para decidir qué verificar si existe CLAUDE_ACTIVE_TASK_ID o --task.
+Usa siempre orchestrator-state/tasks/task-packs/<TASK_ID>.md como task pack en DAG.
+Todo Agent spawn desde verify-slice debe recibir TASK_ID, CLAUDE_TASK_PACK y el aviso production DAG mode.
+```
+
+Si dudas si estás en DAG o legacy, para y consulta `./scripts/check-task-dag.sh --strict`. En producción `legacy_linear` es error operativo, no fallback. `/verify-slice` es el gate humano de un `TASK_ID` DAG concreto; no verifica una cola secuencial ni cierra slices implícitas.
+
 Te lanzas **después de que `tester` pasa limpio, antes de que `closer` haga commit** (modo pre-closer, el habitual). También puede lanzarse **tras `closer`** para re-verificar un slice ya commiteado (modo post-closer). Tu trabajo es convencerte a ti mismo (y al usuario) de que lo shipeado funciona de verdad, reproduciéndolo como un usuario humano en el navegador, con entorno fresco, fixtures inyectados y logs en vivo. En modo pre-closer, si la slice queda verificada orquestas tú mismo al `closer` para commit atómico + push main; si encuentra issues, orquestas al `debugger`.
 
 **Tras `/clear`**: este comando es 100% resiliente al `/clear`. No depende del contexto conversacional previo — reconstruye todo desde disco (PROGRESS.md, runtime-state.json, registry.json, handoff). Puedes y debes hacer `/clear` antes de `/verify-slice` para liberar los ~100-200k tokens del pipeline previo.
@@ -34,9 +50,9 @@ En paralelo:
 3. Si `--task <ID>` → usa ese ID.
 4. Evidence report del task si ya existe: `orchestrator-state/tasks/reports/<TASK_ID>.md` (solo existirá si `closer` ya corrió).
 5. Handoff: `orchestrator-state/tasks/handoffs/<TASK_ID>.md` (tiene las secciones developer/validator/tester — tiene que existir sí o sí).
-6. En modo DAG o con `--task <TASK_ID>`: `orchestrator-state/tasks/task-packs/<TASK_ID>.md`. No dependas de `orchestrator-state/memory/active-task.md`, porque otra terminal puede haberlo movido.
+6. En modo DAG o con `--task <TASK_ID>`: `orchestrator-state/tasks/task-packs/<TASK_ID>.md`. No dependas de `orchestrator-state/memory/active-task.md`, porque otra terminal puede haberlo movido. Si el pack no existe o no menciona ese `TASK_ID`, aborta antes de verificar.
 6. `docs/source-of-truth/*_TECHNICAL_GUIDE.md` — extrae: comando de arranque back (+ puerto), frontend (+ puerto/plataforma), comando migrate, comando seed, endpoint de health, flag de verbose logging.
-7. `docs/source-of-truth/*_TECHNICAL_GUIDE.md` §`Verification Data Contract` — identifica las filas que aplican por `TASK_ID`, `Journey refs`, pantalla o endpoint. Estas filas son obligatorias para decidir datos reales/prod-like, fixtures permitidos y reset/cleanup.
+7. `docs/source-of-truth/*_TECHNICAL_GUIDE.md` §`Verification Data Contract` — identifica las filas que aplican por `TASK_ID`, `Journey refs`, pantalla o endpoint. Estas filas son obligatorias para decidir datos reales/proporcionados, fixtures permitidos solo si cargan datos proporcionados y reset/cleanup.
 8. `instrucciones.md` → reglas de negocio relevantes al slice (las usarás en la tabla final).
 
 **Del handoff (+ evidence si existe) identifica**:
@@ -85,12 +101,12 @@ Objetivo: partir de cero con seed base + fixtures del slice, back + front arriba
 
 ### 2.4 Fixtures específicos del slice (paso clave — NO saltes)
 
-A partir de lo identificado en Paso 1, inyecta datos extra para ejercer todos los flujos del slice. La fuente autoritativa es el `Verification Data Contract` del TECHNICAL_GUIDE:
+A partir de lo identificado en Paso 1, carga solo datos reales/proporcionados necesarios para ejercer todos los flujos del slice. La fuente autoritativa es el `Verification Data Contract` del TECHNICAL_GUIDE:
 
-- Usa datos reales o **prod-like**: usuarios sandbox con roles reales, catálogos plausibles, PDFs/archivos representativos, importes/fechas/estados coherentes y relaciones completas.
-- No uses `lorem ipsum`, IDs inventados sin persistencia, mocks de negocio ni datos decorativos para cerrar una slice productiva.
-- Los datos sintéticos solo valen para casos marginales (`empty`, `error_network`, permisos, payload inválido) y deben estar etiquetados como edge fixture.
-- Si el slice añade "listar pedidos de un usuario" → crea 2-3 pedidos persistidos con distinto estado y usuario real/sandbox.
+- Usa datos reales/proporcionados por el usuario o el equipo: usuarios sandbox autorizados, catálogos reales de prueba, documentos representativos proporcionados, importes/fechas/estados coherentes y relaciones completas.
+- No uses `lorem ipsum`, IDs inventados sin persistencia, mocks de negocio, datos decorativos ni datos no proporcionados para cerrar una slice productiva.
+- Los datos sintéticos no deben usarse para cerrar una slice productiva. Para casos marginales (`empty`, `error_network`, permisos, payload inválido), usa datos proporcionados o bloquea/registra follow-up si faltan.
+- Si el slice añade "listar pedidos de un usuario" → usa pedidos reales/proporcionados persistidos con distinto estado y usuario real/sandbox autorizado; si faltan, bloquea o registra follow-up de datos.
 - Si añade "filtro por rango de precios" → asegura que el seed cubre el rango; si no, inserta lo que falta.
 - Si añade "notificación al superar umbral" → inserta el registro que fuerza el umbral.
 
@@ -153,23 +169,32 @@ Incluye también:
 
 ### 5.1 — Appendea sección al handoff (obligatorio)
 
-Añade al final de `orchestrator-state/tasks/handoffs/<TASK_ID>.md` una sección nueva (nunca sobreescribas):
+Añade al final de `orchestrator-state/tasks/handoffs/<TASK_ID>.md` una sección nueva (nunca sobreescribas). Esta sección es el contrato que lee `closer`; no basta con mencionarlo en el chat final. Usa campos `KEY: value` claros para evitar ambigüedad tras `/clear`:
 
 ```markdown
 ## verify-slice
 
+- TASK_ID: <TASK_ID>
 - TIMESTAMP: <ISO-8601>
 - MODE: pre-closer|post-closer
 - VERIFY_OUTCOME: verified|issues_found
 - DATA_CONTRACT_ROWS: <filas/IDs del Verification Data Contract usadas; required>
-- FIXTURES: <lista 1 línea por fixture inyectado>
+- FIXTURES: <lista 1 línea por dato real/proporcionado cargado; o n/a con razón>
 - PERSISTED_DATA_OBSERVED: <tabla/id/estado o n/a con razón>
 - FLOWS_TESTED: <lista corta>
-- FINDINGS: <bullets si issues_found; vacío si verified>
+- FINDINGS: <bullets si issues_found; none si verified>
 - EVIDENCE: orchestrator-state/tasks/evidence/<TASK_ID>/verify-*
 ```
 
-El `closer` leerá esta sección en su pre-check. Sin ella el closer rechaza el cierre.
+El `closer` leerá esta sección en su pre-check. Sin ella, sin `TASK_ID` coincidente o sin `VERIFY_OUTCOME: verified`, el closer rechaza el cierre.
+
+Después de apendizarla, valida mecánicamente el handoff antes de invocar `closer`:
+
+```bash
+./scripts/check-handoff-contract.sh <TASK_ID> --require-ready-for-close --require-verify-slice
+```
+
+Si falla, no invoques `closer`; corrige el handoff o relanza el agente que escribió mal su sección.
 
 ---
 
@@ -228,11 +253,12 @@ Mismo procedimiento que `/verify-journey` pero aprovechando el entorno actual:
    - `next_action` (lo que sugiere la pantalla final como siguiente paso)
 4. **Evidencia**: snippets en `orchestrator-state/tasks/evidence/<TASK_ID>/verify-journey-*`.
 
-Apendiza al handoff (después de `## verify-slice`):
+Apendiza al handoff (después de `## verify-slice`) con `TASK_ID` coincidente:
 
 ```markdown
 ## verify-journey
 
+- TASK_ID: <TASK_ID>
 - TIMESTAMP: <ISO-8601>
 - MODE: inline
 - JOURNEYS: <lista de JIDs verificados juntos en este bloque>
@@ -270,11 +296,11 @@ Recapitula al usuario el estado real (con la información de §5.bis si aplica):
 ¿Invoco a `closer` para escribir evidence report + commit atómico en main + push origin/main + cleanup de worktrees? (sí/no)
 ```
 
-- Si "sí" / "adelante" / "ok" / "dale" / "go" → spawnea `closer` (un solo Agent call) con el `TASK_ID`. Espera el trailer `OUTCOME: committed` + `NEXT_STATUS: done` + `PUSH_READY: yes`. Si vuelve `blocked`, reporta qué le falta al usuario.
+- Si "sí" / "adelante" / "ok" / "dale" / "go" → primero ejecuta `./scripts/check-handoff-contract.sh <TASK_ID> --require-ready-for-close --require-verify-slice`. Solo si pasa, spawnea `closer` (un solo Agent call) con el `TASK_ID`, `CLAUDE_TASK_PACK=orchestrator-state/tasks/task-packs/<TASK_ID>.md` y el recordatorio literal `MODO DAG ACTIVO: production = explicit_dag; no uses active-task singleton para decidir qué cerrar`. Espera el trailer `OUTCOME: committed` + `NEXT_STATUS: done` + `PUSH_READY: yes`. Si vuelve `blocked`, reporta qué le falta al usuario.
 - Si "no" → informa al usuario:
   > *"Slice verificada pero sin commit. La sección `## verify-slice` con `VERIFY_OUTCOME: verified` ya está en el handoff (más `## verify-journey` si fue inline) — cuando quieras cerrar, relanza `/verify-slice` o dime `cierra <TASK_ID>` directamente."*
 
-  Si el usuario responde inmediatamente "cierra" / "close" / "commit" → spawnea closer como en la rama "sí" sin volver a preguntar.
+  Si el usuario responde inmediatamente "cierra" / "close" / "commit" → spawnea closer como en la rama "sí" sin volver a preguntar, manteniendo el mismo `TASK_ID` y `CLAUDE_TASK_PACK` DAG.
 
 ### 6.1.bis — Housekeeping post-closer (automático, silencioso)
 
@@ -307,7 +333,7 @@ Si dices "sí", al volver re-lanzaré `validator ‖ tester` y si pasan, relanza
 - Clasifica cada hallazgo antes de actuar:
   - **Menor y dentro del TASK_ID/Write set**: bug reparable sin cambiar contratos source-of-truth, sin añadir endpoint/ruta/tabla nueva, sin ampliar journey ni tocar conflicto compartido no declarado. Debes spawnear `debugger`, luego `validator ‖ tester`, y si ambos pasan relanzar este mismo `/verify-slice <TASK_ID>` hasta que el resultado sea `verified` o quede bloqueado con razón explícita.
   - **Mayor o fuera de scope**: falta ruta/endpoint/tabla/journey, cambia contrato front→back→DB, requiere datos productivos nuevos, amplía `Write set`/`Conflict group` o afecta otro TASK_ID. No lo arregles como parche invisible: crea propuesta formal con `./scripts/register-followup-task.sh propose --origin-task <TASK_ID> --severity high|medium|low --kind bug|ux|wiring|data|test --title "..." --description "..." --acceptance "..." --verify "..."`.
-- Si "sí" y todos los hallazgos son menores → spawnea `debugger` con TASK_ID + findings. Al volver → `validator ‖ tester` en paralelo. Si pasan → relanza este mismo comando con hard reset completo. No invoques `closer` hasta un verify posterior `verified`.
+- Si "sí" y todos los hallazgos son menores → spawnea `debugger` con TASK_ID + findings + `CLAUDE_TASK_PACK=orchestrator-state/tasks/task-packs/<TASK_ID>.md` + recordatorio `MODO DAG ACTIVO: production = explicit_dag`. Al volver → `validator ‖ tester` en paralelo. Si pasan → relanza este mismo comando con hard reset completo. No invoques `closer` hasta un verify posterior `verified`.
 - Si hay al menos un hallazgo mayor/fuera de scope → registra follow-up formal antes de continuar. Si es `high|critical|blocker`, el closer y la siguiente wave quedarán bloqueados hasta promoverlo o hacer waiver humano.
 - Si "no" → informa y espera instrucciones (puede querer parchear a mano, revertir, marcar blocked, etc), pero no dejes la slice como cerrada.
 
@@ -316,16 +342,17 @@ Si dices "sí", al volver re-lanzaré `validator ‖ tester` y si pasan, relanza
 ## Trailer final (obligatorio)
 
 ```
+CLAUDE_TRAILER:
 TASK_ID: <ID>
 VERIFY_OUTCOME: verified|issues_found
 MODE: pre-closer|post-closer
 CLOSER_INVOKED: yes|no|n/a
 DATA_CONTRACT_ROWS: <filas/flows usados o "n/a">
 PERSISTED_DATA_OBSERVED: <tabla/id/estado o "n/a">
-JOURNEY_INLINE_VERIFIED: <lista JIDs o "none">   # journeys verificados en §5.bis
-JOURNEY_PENDING: <lista JIDs o "none">           # journeys que quedan para /verify-journey aparte
+JOURNEY_INLINE_VERIFIED: <lista JIDs o "none">
+JOURNEY_PENDING: <lista JIDs o "none">
 EVIDENCE: orchestrator-state/tasks/evidence/<TASK_ID>/verify-*
 ```
 
-> `JOURNEY_INLINE_VERIFIED` aquí es informativo para el comando. El `closer` debe traducirlo a líneas `JOURNEY_VERIFIED_INLINE: <JID>`; el SubagentStop hook las consume y marca el journey `verified` bajo lock.
+> `JOURNEY_INLINE_VERIFIED` y `JOURNEY_PENDING` aquí son informativos para el comando. El `closer` debe traducirlo a líneas `JOURNEY_VERIFIED_INLINE: <JID>`; el SubagentStop hook las consume y marca el journey `verified` bajo lock.
 

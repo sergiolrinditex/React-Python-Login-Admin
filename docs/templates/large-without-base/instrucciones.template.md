@@ -69,13 +69,13 @@
 
 ### 2.3 Definition of Done global — extensiones específicas
 
-⚙️ **DEFINIR PARA ESTE STACK**: define los criterios globales propios de esta app nueva; deben ser verificables con datos reales/prod-like.
+⚙️ **DEFINIR PARA ESTE STACK**: define los criterios globales propios de esta app nueva; deben ser verificables con datos reales/proporcionados.
 
 >>> MODELO: añadir 5+ criterios específicos de TU app. Ej:
 >>> - [ ] Un usuario puede subir un PDF de contrato y ver el análisis completo en <30 segundos.
->>> - [ ] El motor de clasificación de riesgos tiene precisión >85% en el dataset de validación.
+>>> - [ ] El motor de clasificación de riesgos tiene precisión >85% en el dataset de validación real proporcionado.
 >>> - [ ] La pantalla "Plan de estudio" muestra la planificación generada por el AI agent con todos los enlaces a recursos.
->>> - [ ] {milestone demo} funciona end-to-end con datos reales en Chrome y mobile.
+>>> - [ ] {milestone verificable} funciona end-to-end con datos reales en Chrome y mobile.
 
 ---
 
@@ -233,7 +233,7 @@ No hay journeys heredados. Esta sección declara journeys reales del motor + fea
 >
 > **Convención de IDs**:
 > - Journey IDs: `J100+` para journeys de TU app (los `J1-J99` quedan reservados para el baseline si existe).
-> - **Phase IDs: `P00..PNN`** (0-indexed/versionado). El bootstrap deriva fases del Coverage Registry y headings `# Phase N`; no concentres más de 12 slices por phase ni más de 10 por step.
+> - **Phase IDs: `P00..PNN`** (0-indexed/versionado). El bootstrap deriva fases del Coverage Registry y headings `# Phase N`; no concentres más de 20 slices por phase ni más de 10 por step.
 > - Step IDs: `P0X-S0Y` (e.g. `P03-S02`). En modo Coverage Registry deben coincidir con la columna `Step` del CHECKLIST. Los headings `PRE-GATE`, `PHASE GATE` o notas no cuentan como steps; solo cuentan headings `## Step N.M`. En la práctica, `Step 3.2` suele mapear a `P03-S02`. La salida de `bootstrap_three_docs.py --refresh` lo confirma en `orchestrator-state/tasks/work-items/`.
 > - Task IDs: `P0X-S0Y-T00Z` (e.g. `P03-S02-T001`).
 >
@@ -277,10 +277,10 @@ No hay journeys heredados. Esta sección declara journeys reales del motor + fea
 > 🔗 **CABLEADO de §4** — cada milestone aquí debe estar simultáneamente en:
 >
 > 1. **Mapeo técnico** → `*_TECHNICAL_GUIDE.md §13` (tabla milestone → features → rutas → endpoints → tablas → AI). Si declaras M2 aquí pero no aparece en §13, no hay contrato técnico.
-> 2. **Slices agrupados** → `*_IMPLEMENTATION_CHECKLIST.md` (slices Phase 2 + Phase 3 que componen el milestone). Sin grupos cableados no hay demo posible.
-> 3. **Demo script verificable** → cada paso del demo script (login, click, submit, verificar resultado) debe ser ejecutable en `/verify-slice` o `/verify-journey`. Si declaras "Verificar X" pero X no tiene endpoint ni pantalla, drift inmediato.
+> 2. **Slices agrupados** → `*_IMPLEMENTATION_CHECKLIST.md` (slices Phase 2 + Phase 3 que componen el milestone). Sin grupos cableados no hay verificación posible.
+> 3. **Demo script verificable** → cada paso del script de verificación (login, click, submit, verificar resultado) debe ser ejecutable en `/verify-slice` o `/verify-journey`. Si declaras "Verificar X" pero X no tiene endpoint ni pantalla, drift inmediato.
 
->>> MODELO: milestones concretos con demo script. Cada milestone = motor + feature que expone ese motor.
+>>> MODELO: milestones concretos con script de verificación. Cada milestone = motor + feature que expone ese motor.
 >>>
 >>> **Milestone N: {Nombre}**
 >>> **Objetivo**: {valor entregable al usuario}
@@ -472,14 +472,14 @@ Criterios fijos: comandos `frontend.test_cmd`, `backend.test_cmd`, checks de lin
 
 ---
 
-## 15. Seed Data
+## 15. Datos reales de verificación
 
-⚙️ **DEFINIR PARA ESTE STACK**: bootstrap_users + bootstrap_ai_providers.
+⚙️ **DEFINIR PARA ESTE STACK**: usuarios/proveedores base reales proporcionados.
 
->>> MODELO: tu app puede necesitar datos demo específicos para milestones:
->>> - Milestone N: X contratos de ejemplo, Y usuarios con historial.
->>> - Script: `api/seeds/bootstrap_{tu_feature}.py`.
->>> - Datos realistas, no Lorem ipsum. Idempotente.
+>>> MODELO: tu app puede necesitar datos reales proporcionados específicos para milestones:
+>>> - Milestone N: X contratos/documentos reales proporcionados, Y usuarios reales de prueba con historial.
+>>> - Fuente: el usuario/equipo proporcionará los datos necesarios antes de verificar; si faltan, la slice se bloquea o se registra follow-up.
+>>> - Carga: script idempotente de importación de datos proporcionados, sin inventar datos ni cargas no proporcionadas.
 
 ---
 
@@ -506,7 +506,7 @@ Criterios fijos: comandos `frontend.test_cmd`, `backend.test_cmd`, checks de lin
 - Dependencias, providers, routers u ORMs heredados sin slice explícita.
 
 **Lo que TU app debe declarar:**
-- Foundation mínima propia: health checks, auth/roles si aplica, design tokens, logging, tests, scripts y seed/reset.
+- Foundation mínima propia: health checks, auth/roles si aplica, design tokens, logging, tests, scripts y reset/carga de datos reales proporcionados.
 - Módulos backend/frontend en los paths reales de `STACK_PROFILE.yaml`.
 - Migraciones/tablas/endpoints/pantallas/journeys del dominio.
 - Cualquier dependencia nueva como slice `library` con `Conflict group`/`Write set`.
@@ -556,7 +556,7 @@ Para CADA milestone declarado en §4:
 
 - [ ] Aparece en `*_TECHNICAL_GUIDE.md §13` con motor + features + rutas + endpoints + tablas + AI mapeados.
 - [ ] Agrupa **slices reales** del `*_IMPLEMENTATION_CHECKLIST.md` (no es decorativo).
-- [ ] Su **demo script** es ejecutable paso a paso usando endpoints / pantallas que YA existen en los otros 2 docs.
+- [ ] Su **script de verificación** es ejecutable paso a paso usando endpoints / pantallas que YA existen en los otros 2 docs.
 
 ### 19.5 Wires desde §11.0 (LIBRARY DISCOVERY)
 
@@ -588,4 +588,4 @@ Si las 3 son "sí", entrega. Si alguna es "no", arregla y vuelve a verificar.
 
 ## Production hardening actual
 
-Usa source-of-truth acumulativo baseline+vN, `Risk level`, `Verify mode`, phases <=12 slices, steps <=10 slices, journeys reales multi-superficie y verify con datos reales/prod-like. Ejecuta bootstrap + check-task-dag + check-journey-matrix + check-wiring-contract antes de waves.
+Usa source-of-truth acumulativo baseline+vN, `Risk level`, `Verify mode`, phases <=20 slices, steps <=10 slices, journeys reales multi-superficie y verify con datos reales/proporcionados. Ejecuta bootstrap + check-task-dag + check-journey-matrix + check-wiring-contract antes de waves.

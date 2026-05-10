@@ -179,7 +179,7 @@ def print_markdown(result: dict[str, Any]) -> None:
         print("Comandos:")
         print("```bash")
         print("./scripts/register-followup-task.sh list")
-        print("./scripts/register-followup-task.sh promote <FOLLOWUP_ID>")
+        print('claude --agent main-orchestrator --permission-mode bypassPermissions "/promote-followup <FOLLOWUP_ID>"')
         print("# o, con decisión humana explícita:")
         print("./scripts/register-followup-task.sh waive <FOLLOWUP_ID> --reason '<motivo>'")
         print("```")

@@ -250,7 +250,7 @@ When `registry.task_dag.mode == "explicit_dag"`, keep the existing agents and pe
 
 ## Open follow-ups gate
 
-Al reconstruir contexto, lee `runtime-state.open_followups`. Si hay propuestas `high|critical|blocker` en estado `proposed`, devuelve `CONTEXT_READY: no` y pide `/register-followup promote <ID>` o waiver humano. Si hay follow-ups promovidos, trátalos como tasks DAG normales: el source-of-truth amendment ya está en el checklist y el work-item YAML existe.
+Al reconstruir contexto, lee `runtime-state.open_followups`. Si hay propuestas `high|critical|blocker` en estado `proposed`, devuelve `CONTEXT_READY: no` y pide `/promote-followup <ID>` o waiver humano. Si hay follow-ups promovidos, trátalos como tasks DAG normales: el source-of-truth amendment ya está en el checklist y el work-item YAML existe.
 
 ## Production DAG trailer vocabulary
 

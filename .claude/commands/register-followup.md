@@ -11,6 +11,17 @@ Lee `.claude/rules/05-runtime-write-contract.md` y `.claude/orchestrator-contrac
 
 Este comando existe para que ningún hallazgo productivo quede en el aire. Si validator, tester, debugger, `/verify-slice` o `/verify-journey` descubren trabajo real que NO pertenece al `TASK_ID` actual, no edites `registry.json` ni inventes una nota suelta: crea una propuesta y promuévela con aprobación humana.
 
+
+## Relación con /promote-followup
+
+`/register-followup` es el comando de bajo nivel para proponer, listar y waivear. Para convertir una FU aprobada en task DAG productiva, usa preferentemente:
+
+```bash
+claude --agent main-orchestrator --permission-mode bypassPermissions "/promote-followup <FOLLOWUP_ID>"
+```
+
+Ese flujo inspecciona la FU, pide confirmación humana literal, llama al script de promoción bajo locks y revalida DAG/wiring. El closer nunca lo ejecuta automáticamente.
+
 ## Casos
 
 ### 1. Proponer sin mutar DAG

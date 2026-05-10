@@ -41,7 +41,7 @@
       "id": "P01",
       "phase_number": 1,
       "title": "Auth / base capabilities",
-      "status": "ready",
+      "status": "active",
       "depends_on": [
         "P00"
       ],
@@ -1027,12 +1027,13 @@
       "claimed_by": "sergiolr",
       "claim_terminal_task_env": "P00-S02-T011",
       "task_pack_path": "orchestrator-state/tasks/task-packs/P00-S02-T011.md",
-      "last_outcome": "pass",
+      "last_outcome": "committed",
       "last_updated_by": "closer",
-      "last_stop_at": "2026-05-10T05:24:25+00:00",
+      "last_stop_at": "2026-05-10T07:14:58+00:00",
       "validator_outcome": "approved",
       "validator_next_status": "ready_for_close",
-      "last_note": "Verified slice committed and pushed"
+      "last_note": "Verified slice committed and pushed",
+      "report_path": "orchestrator-state/tasks/reports/P00-S02-T011.md"
     },
     {
       "id": "P00-S02-T010",
@@ -1217,7 +1218,7 @@
       "phase_id": "P01",
       "step_id": "P01-S02",
       "title": "POST /api/v1/auth/sign-up",
-      "status": "ready",
+      "status": "claimed",
       "build_state": "planned",
       "product_increment": "v1",
       "risk_level": "medium",
@@ -1277,7 +1278,11 @@
       "endpoint_raw": "POST /api/v1/auth/sign-up",
       "tables_raw": "users, employee_profiles, audit_logs",
       "origin_instr_raw": "§3.1#auth-perfiles",
-      "origin_techguide_raw": "§6.2#POST-/api/v1/auth/sign-up"
+      "origin_techguide_raw": "§6.2#POST-/api/v1/auth/sign-up",
+      "claimed_at": "2026-05-10T08:10:26+00:00",
+      "claimed_by": "sergiolr",
+      "claim_terminal_task_env": "P01-S02-T001",
+      "task_pack_path": "orchestrator-state/tasks/task-packs/P01-S02-T001.md"
     },
     {
       "id": "P01-S02-T002",
@@ -1826,7 +1831,7 @@
       "phase_id": "P01",
       "step_id": "P01-S01",
       "title": "Quote MAIL_FROM_NAME in .env.example to fix bash source failure",
-      "status": "ready",
+      "status": "done",
       "build_state": "planned",
       "product_increment": "current",
       "risk_level": "low",
@@ -1859,7 +1864,7 @@
         ".env.example"
       ],
       "handoff_path": "orchestrator-state/tasks/handoffs/P01-S01-T003.md",
-      "evidence_dir": "orchestrator-state/tasks/evidence/P01-S01-T003",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P01-S01-T003/",
       "notes": [],
       "dependency_mode": "explicit_dag",
       "depends_on_raw": "P01-S01-T001",
@@ -1880,7 +1885,17 @@
       "scope_inferred_from_acceptance": [
         ".env.example",
         "infra:env"
-      ]
+      ],
+      "claimed_at": "2026-05-10T08:09:35+00:00",
+      "claimed_by": "sergiolr",
+      "claim_terminal_task_env": null,
+      "task_pack_path": "orchestrator-state/tasks/task-packs/P01-S01-T003.md",
+      "last_outcome": "committed",
+      "last_updated_by": "closer",
+      "last_stop_at": "2026-05-10T08:28:20+00:00",
+      "validator_outcome": "approved",
+      "validator_next_status": "ready_for_close",
+      "report_path": "orchestrator-state/tasks/reports/P01-S01-T003.md"
     },
     {
       "id": "P01-S01-T004",
@@ -1967,7 +1982,7 @@
       "phase_id": "P01",
       "step_id": "P01-S01",
       "title": "audit_logs: add ip, user_agent, request_id columns (non-negotiable audit fields)",
-      "status": "ready",
+      "status": "validator_tester_pending",
       "build_state": "planned",
       "product_increment": "current",
       "risk_level": "medium",
@@ -2022,7 +2037,14 @@
       "endpoint_raw": "—",
       "tables_raw": "—",
       "origin_instr_raw": "runtime-followup#FU-20260509105319-audit-logs-add-ip-user-agent-request-id-columns-",
-      "origin_techguide_raw": "runtime-followup#FU-20260509105319-audit-logs-add-ip-user-agent-request-id-columns-"
+      "origin_techguide_raw": "runtime-followup#FU-20260509105319-audit-logs-add-ip-user-agent-request-id-columns-",
+      "claimed_at": "2026-05-10T08:09:33+00:00",
+      "claimed_by": "sergiolr",
+      "claim_terminal_task_env": "P01-S01-T005",
+      "task_pack_path": "orchestrator-state/tasks/task-packs/P01-S01-T005.md",
+      "last_outcome": "success",
+      "last_updated_by": "developer",
+      "last_stop_at": "2026-05-10T08:30:57+00:00"
     },
     {
       "id": "P02-S01-T001",

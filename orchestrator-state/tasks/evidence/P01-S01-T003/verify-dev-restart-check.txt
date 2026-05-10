@@ -1,0 +1,21 @@
+# Tester evidence: verify-dev-restart-check.txt
+# TASK_ID: P01-S01-T003
+# TIMESTAMP: 2026-05-10T08:35:00Z
+# Gate: Acceptance gate — bash scripts/dev-restart.sh --check exits 0 with backend UP
+
+COMMAND:
+  bash scripts/dev-restart.sh --check
+
+OUTPUT:
+  Service   URL                        Status
+  --------- -------------------------- -------
+  backend   http://127.0.0.1:8000      UP
+  frontend  http://127.0.0.1:5173      UP
+  database  (via /ready)               UP
+
+  Logs: orchestrator-state/dev-logs/back.log  orchestrator-state/dev-logs/front.log
+
+  ==> All services UP.
+
+EXIT CODE: 0
+RESULT: PASS — all three services UP, acceptance criterion satisfied

@@ -107,10 +107,10 @@
 
 ## 3. Comandos — adiciones
 
-🔒 **HEREDADO**: install, run, migrate, seed, test, lint, build — todos documentados en base guide §3.
+🔒 **HEREDADO**: install, run, migrate, load-provided-data, test, lint, build — todos documentados en base guide §3.
 
 >>> MODELO: comandos específicos de tu app. Ejemplos comunes:
->>> - `python -m api.seeds.bootstrap_{feature}`: seed de datos demo de tu dominio.
+>>> - `python -m api.scripts.load_provided_{feature}_data`: cargar datos reales proporcionados para verificación.
 >>> - `python -m api.scripts.ingest_corpus`: cargar corpus RAG inicial.
 >>> - `python -m api.scripts.retrain_classifier`: si entrenas modelos locales.
 >>>
@@ -360,17 +360,17 @@
 
 ### 6.5 Verification Data Contract
 
-> 🔗 **CABLEADO de datos reales para verify-slice / verify-journey** — cada journey o flujo verificable debe declarar de dónde salen los datos reales/prod-like. El orquestador NO debe verificar con mocks ni seed decorativo. Los datos sintéticos solo se permiten para estados marginales imposibles de obtener con datos reales y deben marcarse como `synthetic-edge-case`.
+> 🔗 **CABLEADO de datos reales para verify-slice / verify-journey** — cada journey o flujo verificable debe declarar de dónde salen los datos reales/proporcionados. El orquestador NO debe verificar con mocks, datos decorativos, datos inventados ni cargas no proporcionadas. Si faltan datos, el usuario los irá proporcionando y la slice debe bloquear o registrar follow-up hasta tenerlos.
 
 >>> MODELO: una fila por journey o flujo crítico.
 >>>
->>> | Flow/Journey | Persona/Rol | Datos reales/prod-like requeridos | Seed/fixture permitido | Reset/Cleanup | Slices/Journeys |
+>>> | Flow/Journey | Persona/Rol | Datos reales/proporcionados requeridos | Fuente de datos reales proporcionados | Reset/Cleanup | Slices/Journeys |
 >>> |--------------|-------------|-----------------------------------|------------------------|---------------|-----------------|
->>> | J101 upload-analysis | user real de prueba + contrato PDF realista | usuario confirmado, PDF válido, análisis persistido, errores 400/413 reales | `python -m seeds.contracts_demo --profile prod_like`; fixture SQL transaccional para edge cases | `scripts/dev-restart.sh --reset` + truncate tablas del feature | J101, P02-S02-T001, P03-S01-T001 |
+>>> | J101 upload-analysis | usuario real de prueba + contrato PDF proporcionado | usuario confirmado, PDF válido, análisis persistido, errores 400/413 reales | datos/documentos proporcionados por el usuario + carga SQL transaccional controlada | `scripts/dev-restart.sh --reset` + cleanup tablas del feature | J101, P02-S02-T001, P03-S01-T001 |
 >>>
 >>> Reglas:
 >>> - `verify-slice` debe usar estas filas para preparar datos.
->>> - No insertar datos vía el endpoint que se está verificando; usa seed/fixture externo y luego verifica el endpoint/UI.
+>>> - No insertar datos vía el endpoint que se está verificando; usa una carga externa de datos reales proporcionados y luego verifica el endpoint/UI.
 >>> - Para servicios externos, usa sandbox oficial o credenciales test documentadas; nunca inventes respuestas mock en producción MVP.
 
 ## 7. Theme & Design System
@@ -409,9 +409,9 @@
 
 ### 9.1 Convenciones específicas
 
->>> MODELO: si tu motor requiere fixtures especiales (corpus de documentos de prueba, PDFs sample, datasets de validación), documentarlos:
->>> - Fixtures en `api/tests/fixtures/contracts/` con X PDFs variados.
->>> - Dataset de validación para clasificador: `api/tests/fixtures/classification_dataset.json` con 50 cláusulas anotadas.
+>>> MODELO: si tu motor requiere datos reales especiales proporcionados (corpus de documentos, PDFs reales, datasets de validación), documenta cómo se reciben y cargan sin inventarlos:
+>>> - Carpeta/ruta de entrada para PDFs reales proporcionados: `<data/provided/contracts/>` o equivalente del stack.
+>>> - Dataset de validación real proporcionado para clasificador: `<data/provided/classification_dataset.json>` con cláusulas anotadas por el usuario/equipo.
 
 ---
 
@@ -465,7 +465,7 @@
 > 2. **Destino obligatorio** → slice `ai` en `*_IMPLEMENTATION_CHECKLIST.md` Coverage Registry, con **smoke test** ejecutable (cada agent / graph / deep_agent / tool / prompt / RAG loader independiente verificable). El `official-docs-researcher` valida versión + imports antes del developer.
 > 3. **Cross-check con prompts versionados** → si declaras `prompts/system/{name}.md`, ese fichero existe en repo con versión + fecha en su cabecera.
 >
-> Tool/agent/graph aquí sin slice + smoke test en CHECKLIST → no se construye y los endpoints que dependen fallan o retornan datos fake.
+> Tool/agent/graph aquí sin slice + smoke test en CHECKLIST → no se construye y los endpoints que dependen fallan o retornan respuestas no verificadas.
 
 >>> MODELO: el corazón técnico. Detallar:
 >>>
@@ -720,4 +720,4 @@ Si las 3 son "sí", entrega. Si alguna es "no", arregla y vuelve a verificar.
 
 ## Production hardening actual
 
-Usa source-of-truth acumulativo baseline+vN, `Risk level`, `Verify mode`, phases <=12 slices, steps <=10 slices, journeys reales multi-superficie y verify con datos reales/prod-like. Ejecuta bootstrap + check-task-dag + check-journey-matrix + check-wiring-contract antes de waves.
+Usa source-of-truth acumulativo baseline+vN, `Risk level`, `Verify mode`, phases <=20 slices, steps <=10 slices, journeys reales multi-superficie y verify con datos reales/proporcionados. Ejecuta bootstrap + check-task-dag + check-journey-matrix + check-wiring-contract antes de waves.

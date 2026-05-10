@@ -59,7 +59,20 @@ Antes de empezar: cuenta cuántas secciones "Debugger fix" existen ya en el hand
 
 ## Al terminar
 
-Apendiza al handoff sección "Debugger fix" con: hipótesis inicial, causa raíz confirmada, fix aplicado, verificaciones reejecutadas.
+Apendiza al handoff sección **"Debugger fix"** con campos en formato `clave: valor` (uno por línea):
+
+```markdown
+## Debugger fix
+- AGENT: debugger
+- TASK_ID: <TASK_ID>
+- OUTCOME: fixed|blocked|failed
+- NEXT_STATUS: validator_tester_pending|blocked
+- TIMESTAMP: <ISO-8601>
+- hypothesis: <hipótesis inicial>
+- root_cause: <causa raíz confirmada>
+- fix_applied: <resumen>
+- verification_rerun: <comandos + resultado>
+```
 
 Actualiza PROGRESS.md en "Known Issues / Risks" con el fix y la cadena de evidencia si el bug tiene riesgo de regresión.
 

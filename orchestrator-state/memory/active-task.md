@@ -1,22 +1,24 @@
 # Active task
 
-- ID: P00-S02-T008
-- Title: deepagents Supervisor + topic-routing runtime
-- Status: blocked
-- Phase: P00
+- ID: P01-S02-T001
+- Title: POST /api/v1/auth/sign-up
+- Status: claimed
+- Phase: P01
 
 ## Acceptance
-- agents/deepagents_runtime.py implemented
-- supervisor routes user messages to subagents based on subagent_topics overlap
+- Sign-up validates corporate email and legal acceptance
+- audit log written
 
 ## Allowed paths
+- backend/app/auth/**
+- backend/tests/integration/test_auth_signup.py
 
 ## DAG conflict guardrails
 ### Conflict groups
-- agents_runtime
+- api:auth
 ### Write set
-- backend/app/agents/**
+- backend/app/auth/**
+- backend/tests/integration/test_auth_signup.py
 
 ## Verification commands
-- `real flow: user asks vacaciones question -> supervisor routes to hr-policies-agent -> returns answer`
-- `user asks langchain question -> routes to langchain-docs-agent`
+- `pytest backend/tests/integration -k auth_signup && curl with prod-like user`

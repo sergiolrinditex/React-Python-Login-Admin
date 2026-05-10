@@ -63,7 +63,7 @@ def main() -> int:
 - VERIFY_MODE: auto
 - RISK_LEVEL: {risk}
 - VERIFY_OUTCOME: {outcome}
-- DATA_CONTRACT_ROWS: real/prod-like sandbox data from TECHNICAL_GUIDE Verification Data Contract; no decorative seed-only closure
+- DATA_CONTRACT_ROWS: real/provided sandbox data from TECHNICAL_GUIDE Verification Data Contract; no decorative seed-only closure
 - PERSISTED_DATA_OBSERVED: command evidence in `{relpath(evidence_path)}`
 - FIXTURES: command-driven only; no endpoint-under-test self-seeding
 - FLOWS_TESTED: {', '.join(commands)}

@@ -40,10 +40,10 @@ Declara solo features reales del MVP. Para cada feature, define pantalla, acció
 
 | Milestone | Objetivo | Criterio visible | Journeys |
 |---|---|---|---|
-| M1 | MVP usable | usuario completa J1 con datos reales/prod-like | J1 |
+| M1 | MVP usable | usuario completa J1 con datos reales/proporcionados | J1 |
 
 ## 5. Reglas de verificación real
 
-- El verify debe usar datos reales/prod-like persistidos.
-- No cierres con lorem ipsum, mocks decorativos o datos no persistidos.
-- Los fixtures sintéticos solo valen para edge cases etiquetados.
+- El verify debe usar datos reales/proporcionados persistidos.
+- No cierres con mocks decorativos, datos inventados o datos no persistidos.
+- Si faltan datos para edge cases, el usuario/equipo debe proporcionarlos o la verificación queda bloqueada/follow-up.

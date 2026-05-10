@@ -8,7 +8,7 @@ Describe the product experience in business/user language. This is the UX source
 
 | Persona | Goal | Critical journeys | Data required |
 |---|---|---|---|
-| {{persona}} | {{goal}} | {{Jx refs}} | {{real/prod-like data}} |
+| {{persona}} | {{goal}} | {{Jx refs}} | {{real/provided data}} |
 
 ## 3. Screen inventory
 
@@ -22,7 +22,7 @@ For each route, specify primary actions, next action, empty/error copy and what 
 
 ## 5. Verification rules
 
-State which flows must use real/prod-like persisted data and which edge cases may use synthetic fixtures.
+State which flows require real/provided persisted data. If data is missing, record that the user/team must provide it before verification; do not invent unprovided data loads.
 
 ## 6. Accessibility and responsive minimum
 

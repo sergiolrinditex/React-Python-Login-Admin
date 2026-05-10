@@ -14,7 +14,7 @@ One paragraph: what the small app lets a user accomplish.
 
 | Route | Screen/Page | Primary journey refs | Required UI states | Real data contract |
 |---|---|---|---|---|
-| {{/route}} | {{PageName}} | J1 | loading,error,success,empty | {{real/prod-like entity rows}} |
+| {{/route}} | {{PageName}} | J1 | loading,error,success,empty | {{real/provided entity rows}} |
 
 ## 4. Verification rules
 

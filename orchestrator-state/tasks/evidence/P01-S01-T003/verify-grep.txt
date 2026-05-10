@@ -1,0 +1,16 @@
+# Tester evidence: verify-grep.txt
+# TASK_ID: P01-S01-T003
+# TIMESTAMP: 2026-05-10T08:35:00Z
+# Gate: Mechanical grep (literal verification_command from registry)
+
+COMMAND:
+  grep 'MAIL_FROM_NAME="Hilo People"' .env.example
+
+OUTPUT:
+  MAIL_FROM_NAME="Hilo People"
+
+EXIT CODE: 0
+RESULT: PASS
+
+# Interpretation: The line MAIL_FROM_NAME="Hilo People" exists in .env.example with
+# double quotes as required by the task pack. The fix applied by developer is confirmed present.

@@ -1,0 +1,12 @@
+=== dev-restart.sh --check — 2026-05-10T08:21:57Z ===
+
+  Service   URL                        Status
+  --------- -------------------------- -------
+  backend   http://127.0.0.1:8000      UP
+  frontend  http://127.0.0.1:5173      UP
+  database  (via /ready)               UP
+
+  Logs: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/orchestrator-state/dev-logs/back.log  /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/orchestrator-state/dev-logs/front.log
+
+==> All services UP.
+exit=0

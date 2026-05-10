@@ -1393,7 +1393,7 @@ def build_phases_and_tasks(checklist_path: Path, checklist_text: str) -> tuple[l
                 if not items:
                     items = [step["title"]]
 
-                if len(items) > 12:
+                if len(items) > 10:
                     items = [step["title"]]
                     grouped_acceptance = extract_items(step_lines)
                 else:

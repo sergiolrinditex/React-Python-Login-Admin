@@ -1,44 +1,71 @@
 {
-  "id": "P00-S02-T008",
-  "phase_id": "P00",
-  "step_id": "P00-S02",
-  "title": "deepagents Supervisor + topic-routing runtime",
-  "status": "blocked",
+  "id": "P01-S02-T001",
+  "phase_id": "P01",
+  "step_id": "P01-S02",
+  "title": "POST /api/v1/auth/sign-up",
+  "status": "claimed",
   "build_state": "planned",
-  "product_increment": "current",
+  "product_increment": "v1",
+  "risk_level": "medium",
+  "verify_mode": "human",
   "depends_on": [
-    "P00-S02-T005"
+    "P01-S01-T001",
+    "P01-S01-T002"
   ],
-  "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry",
+  "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 1.2 — Auth APIs",
   "acceptance": [
-    "agents/deepagents_runtime.py implemented",
-    "supervisor routes user messages to subagents based on subagent_topics overlap"
+    "Sign-up validates corporate email and legal acceptance",
+    "audit log written"
   ],
   "verification_commands": [
-    "real flow: user asks vacaciones question -> supervisor routes to hr-policies-agent -> returns answer",
-    "user asks langchain question -> routes to langchain-docs-agent"
+    "pytest backend/tests/integration -k auth_signup && curl with prod-like user"
   ],
-  "allowed_paths": [],
+  "kind": "api",
+  "target": "POST /api/v1/auth/sign-up",
+  "journey_refs": [
+    "J100"
+  ],
+  "route": "",
+  "endpoint": "POST /api/v1/auth/sign-up",
+  "tables": [
+    "users",
+    "employee_profiles",
+    "audit_logs"
+  ],
+  "origin_instr": "§3.1#auth-perfiles",
+  "origin_techguide": "§6.2#POST-/api/v1/auth/sign-up",
+  "allowed_paths": [
+    "backend/app/auth/**",
+    "backend/tests/integration/test_auth_signup.py"
+  ],
   "conflict_groups": [
-    "agents_runtime"
+    "api:auth"
   ],
   "write_set": [
-    "backend/app/agents/**"
+    "backend/app/auth/**",
+    "backend/tests/integration/test_auth_signup.py"
   ],
-  "journey_refs": [
-    "J105"
-  ],
-  "handoff_path": "orchestrator-state/tasks/handoffs/P00-S02-T008.md",
-  "evidence_dir": "orchestrator-state/tasks/evidence/P00-S02-T008",
-  "origin": {
-    "type": "runtime_followup",
-    "followup_id": "FU-20260509205710-deepagents-supervisor-topic-routing-runtime",
-    "origin_task_id": "P00-S02-T005",
-    "severity": "medium",
-    "kind": "feature"
-  },
-  "notes": [
-    "Runtime follow-up promoted from FU-20260509205710-deepagents-supervisor-topic-routing-runtime",
-    "Description: agents/deepagents_runtime.py implemented using the deepagents Supervisor pattern (LangGraph-based); supervisor routes user messages to subagents based on subagent_topics keyword overlap. Required by ADR-002 and the AgentsPage (J105). Depends on P02-S08-T001."
-  ]
+  "handoff_path": "orchestrator-state/tasks/handoffs/P01-S02-T001.md",
+  "evidence_dir": "orchestrator-state/tasks/evidence/P01-S02-T001",
+  "notes": [],
+  "dependency_mode": "explicit_dag",
+  "depends_on_raw": "P01-S01-T001,P01-S01-T002",
+  "conflict_groups_raw": "api:auth",
+  "write_set_raw": "backend/app/auth/**, backend/tests/integration/test_auth_signup.py",
+  "product_increment_raw": "v1",
+  "build_state_raw": "planned",
+  "risk_level_raw": "medium",
+  "verify_mode_raw": "human",
+  "kind_raw": "api",
+  "target_raw": "POST /api/v1/auth/sign-up",
+  "journey_refs_raw": "J100",
+  "screen_route_raw": "—",
+  "endpoint_raw": "POST /api/v1/auth/sign-up",
+  "tables_raw": "users, employee_profiles, audit_logs",
+  "origin_instr_raw": "§3.1#auth-perfiles",
+  "origin_techguide_raw": "§6.2#POST-/api/v1/auth/sign-up",
+  "claimed_at": "2026-05-10T08:10:26+00:00",
+  "claimed_by": "sergiolr",
+  "claim_terminal_task_env": "P01-S02-T001",
+  "task_pack_path": "orchestrator-state/tasks/task-packs/P01-S02-T001.md"
 }
