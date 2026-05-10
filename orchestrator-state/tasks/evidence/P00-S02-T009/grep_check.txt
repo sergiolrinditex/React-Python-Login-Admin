@@ -1,0 +1,18 @@
+# grep -E 'AIza|sk-[A-Za-z0-9]{20}' applied to pytest_test_logging.log
+# Run: 2026-05-10
+# Command: grep -E 'AIza|sk-[A-Za-z0-9]{20}' orchestrator-state/tasks/evidence/P00-S02-T009/pytest_test_logging.log | wc -l
+# Result: 0
+# Expected: 0
+# Status: CLEAN — no api key signatures found in test output.
+
+# Test suite run summary (from pytest_test_logging.log):
+#   8 passed, 1 skipped
+#   Passed: test_exc_info_does_not_leak_frame_locals_verbose
+#           test_exc_info_does_not_leak_frame_locals_json
+#           test_enable_verbose_logging_env_var_false
+#           test_redaction_processor_still_scrubs_event_dict_keys
+#           test_httpx_logger_suppressed_in_verbose_mode
+#           test_httpx_logger_warning_still_propagates
+#           test_httpx_logger_already_silent_in_production_mode
+#           test_openai_bearer_pattern_not_in_logs
+#   Skipped: test_httpx_real_gemini_request_no_key_leak (VERIFICATION_GEMINI_API_KEY not set)

@@ -1,0 +1,12 @@
+# Leak vector BEFORE the T009 fix
+# Generated: 2026-05-10
+# Method: stdlib logging at DEBUG level, NO httpx suppression applied.
+# Demonstrates the exact URL-based api key leak via httpx INFO logger.
+# The sentinel key AIzaSyFAKE-SENTINEL-DO-NOT-LEAK-T009 simulates a real Gemini api key.
+# No real keys were used.
+
+asyncio - DEBUG - Using selector: KqueueSelector
+httpx - INFO - HTTP Request: GET https://generativelanguage.googleapis.com/v1beta/models?key=AIzaSyFAKE-SENTINEL-DO-NOT-LEAK-T009 "HTTP/1.1 200 OK"
+
+# The "AIzaSyFAKE-SENTINEL-DO-NOT-LEAK-T009" string is visible in the INFO line above.
+# This is the CWE-532 leak vector that T009 closes.

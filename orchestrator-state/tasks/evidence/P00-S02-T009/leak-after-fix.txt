@@ -1,0 +1,11 @@
+# Output AFTER the T009 fix
+# Generated: 2026-05-10
+# Method: same stdlib logging at DEBUG level, httpx/httpcore pinned to WARNING.
+# The httpx INFO "HTTP Request:" line no longer appears.
+# AIzaSyFAKE-SENTINEL-DO-NOT-LEAK-T009 is absent from all output.
+# No real keys were used.
+
+asyncio - DEBUG - Using selector: KqueueSelector
+
+# The httpx INFO line is completely suppressed.
+# Grep check: grep -E 'AIza|sk-[A-Za-z0-9]{20}' → 0 matches.

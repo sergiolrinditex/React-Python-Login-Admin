@@ -11,7 +11,18 @@ Updated in P01-S01-T002 (§11.1 alignment): replaced stale jwt_secret +
 provider_encryption_key entries in _REDACTED_KEYS with canonical names
 jwt_private_key, jwt_public_key, encryption_key.
 
-ARCHITECTURAL FIX:
+Updated in P00-S02-T009 (FU-20260509220224): third-layer CWE-532 defense —
+suppresses httpx/httpcore stdlib loggers that emit the full request URL
+(e.g. "HTTP Request: GET https://generativelanguage.googleapis.com/...?key=AIza...")
+at INFO level.  Our _redaction_processor only scrubs structlog event_dict keys,
+NOT the body of foreign log messages, so without this layer the api key leaks
+through ProcessorFormatter.foreign_pre_chain verbatim.
+
+BEFORE (T009): httpx INFO logger emits request URLs → api keys appear in verbose logs.
+AFTER  (T009): logging.getLogger("httpx").setLevel(WARNING) — URL info lines silenced;
+               WARNING/ERROR from httpx still propagate (actionable failures).
+
+ARCHITECTURAL FIX (original T004):
   structlog's RichTracebackFormatter defaults to show_locals=True.  When any
   caller invokes _logger.error(..., exc_info=True) or _logger.exception(...),
   the Rich traceback renderer walks every frame in the exception traceback and
@@ -27,6 +38,7 @@ ARCHITECTURAL FIX:
     2. _REDACTED_KEYS extended with pwd, dsn, database_url, connection_string
        (per acceptance criteria #1 in the task pack).  The dict-level scrubber
        still fires for top-level event_dict keys such as password=, token=, etc.
+    3. (T009) httpx/httpcore named-logger level pinned to WARNING unconditionally.
 
 BEFORE: ConsoleRenderer(exception_formatter=RichTracebackFormatter(show_locals=True))
 AFTER:  ConsoleRenderer(exception_formatter=RichTracebackFormatter(show_locals=False))
@@ -45,10 +57,17 @@ Logging contract (HILO_PEOPLE_TECHNICAL_GUIDE.md §10.5):
     dsn, database_url, connection_string, prompt (full), document.content.
   - request_id propagated end-to-end (middleware wired in P00-S02-T002).
   - No PII, tokens, or secrets in any log field or traceback frame locals.
+  - httpx/httpcore pinned to WARNING — never log api keys embedded in URLs (T009).
+
+Risk note (T009 R2): if a future httpx upgrade adds a new logger name (e.g.
+httpx._client), the named-logger list in configure_logging() must be extended.
+Test T2 (test_httpx_logger_warning_still_propagates) guards against over-suppression;
+sentinel-based T1/T3 guard against under-suppression.
 
 Dependencies:
   - structlog 25.5.0
   - rich (pulled in by structlog[dev] extras)
+  - httpx 0.28.1 (runtime dep; logger names confirmed: "httpx", "httpcore")
 """
 from __future__ import annotations
 
@@ -127,9 +146,14 @@ def configure_logging(verbose: bool = False) -> None:
     Must be called ONCE at application startup (app/main.py) before any
     logger is used. Idempotent — subsequent calls are no-ops.
 
-    Security: ConsoleRenderer is wired with
-    RichTracebackFormatter(show_locals=False) — see module docstring for
-    the full CWE-532 mitigation rationale (FU-20260509044829 / T004).
+    Security layers (CWE-532):
+      1. ConsoleRenderer wired with RichTracebackFormatter(show_locals=False):
+         prevents frame-local secrets from leaking via exc_info tracebacks.
+         See module docstring (FU-20260509044829 / T004).
+      2. _REDACTED_KEYS dict-level scrubber: redacts top-level event_dict keys.
+      3. httpx/httpcore stdlib loggers pinned to WARNING (T009 / FU-20260509220224):
+         prevents api keys embedded in request URLs from leaking via foreign
+         log message bodies (INFO "HTTP Request: GET ...?key=AIza...").
 
     Purpose: wire structlog processors, set log level based on verbose flag.
     Params:
@@ -207,6 +231,22 @@ def configure_logging(verbose: bool = False) -> None:
     root_logger.addHandler(handler)
     root_logger.setLevel(log_level)
 
+    # CWE-532 third-layer fix (P00-S02-T009 / FU-20260509220224):
+    # httpx emits "HTTP Request: GET <full URL>" at INFO level — when the URL
+    # contains a query-string api key (Gemini ?key=AIza...), the api key leaks
+    # through ProcessorFormatter.foreign_pre_chain verbatim because the log
+    # message body is a single string that our _redaction_processor cannot scrub.
+    # Pinning to WARNING suppresses INFO (no api keys) but preserves WARNING/ERROR
+    # (actionable failures — acceptance A4).  Applied UNCONDITIONALLY in both
+    # verbose=True and verbose=False branches: even though verbose=False already
+    # sets root=WARNING, the explicit named-logger pin guards against future
+    # changes to root level (defense-in-depth, R2 from task pack).
+    # httpcore is pinned for symmetry — its DEBUG transport lines may surface
+    # request headers in pathological future versions (R1 in task pack).
+    _HTTPX_NOISY_LOGGERS = ("httpx", "httpcore")
+    for _noisy in _HTTPX_NOISY_LOGGERS:
+        logging.getLogger(_noisy).setLevel(logging.WARNING)
+
     _configured = True
 
     # AFTER: confirm configuration completed via structlog (now bootstrapped).
@@ -216,6 +256,8 @@ def configure_logging(verbose: bool = False) -> None:
         verbose=verbose,
         log_level=logging.getLevelName(log_level),
         show_locals="False (security fix P00-S02-T004)",
+        httpx_suppressed=True,
+        httpx_loggers_pinned_to_warning=list(_HTTPX_NOISY_LOGGERS),
     )
 
 
