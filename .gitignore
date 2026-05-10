@@ -1,4 +1,4 @@
-# BaseflutterAppsEngineFeatures — framework template .gitignore
+# OrquestadorDAG AnyStack — framework template .gitignore
 # Mantiene el template limpio: cero cruft de OS, cero compilados, cero backups.
 
 # ─── OS / editor cruft ────────────────────────────────────────────────────────
@@ -26,21 +26,10 @@ __pycache__/
 *.egg-info/
 .venv/
 venv/
-# Per-task throwaway venvs (e.g. backend/.venv-t003, .venv-verify-t003)
-.venv-*/
-**/.venv-*/
 
 # ─── Node (por si CI/scripts lo usan) ────────────────────────────────────────
 node_modules/
 npm-debug.log*
-
-# ─── TypeScript / Vite build outputs ─────────────────────────────────────────
-# tsbuildinfo es cache incremental de tsc; se regenera. vitest.config.{d.ts,js}
-# se generan a partir de vitest.config.ts (TS source) — no versionar derivados.
-*.tsbuildinfo
-**/*.tsbuildinfo
-frontend/vitest.config.js
-frontend/vitest.config.d.ts
 
 # ─── Flutter / Dart (cuando exista app/) ─────────────────────────────────────
 app/.dart_tool/
@@ -65,14 +54,13 @@ app/.fvm/
 
 # ─── logs y artefactos de runtime del framework ──────────────────────────────
 # Estado mutable de orchestrator-state/ se versiona por decisión del usuario.
-# Solo se excluyen los lockfiles efímeros de fcntl.flock + los runtime caches
-# de dev-logs/ que pueden contener secretos en plano (encryption-key.runtime,
-# pids, logs efímeros). Ver P00-S02-T011 debugger fix (rotación de Fernet key).
+# Solo se excluyen los lockfiles efímeros de fcntl.flock.
 orchestrator-state/**/*.lock
-orchestrator-state/dev-logs/*
-!orchestrator-state/dev-logs/.gitkeep
 
 .claude/settings.local.json
+
+# ─── git worktrees activos ───────────────────────────────────────────────────
+.claude/worktrees/
 
 # ─── build outputs ───────────────────────────────────────────────────────────
 dist/

@@ -93,7 +93,7 @@ Verify a real task list flow with persisted task rows.
 
 ### 6.5 Verification Data Contract
 
-| Flow/Journey | Persona/Rol | Datos reales/prod-like requeridos | Seed/fixture permitido | Reset/Cleanup | Slices/Journeys |
+| Flow/Journey | Persona/Rol | Datos reales/proporcionados requeridos | Carga de datos reales/proporcionados permitida | Reset/Cleanup | Slices/Journeys |
 |---|---|---|---|---|---|
 | J101 | usuario QA tareas | usuario confirmado + 2 tareas persistidas con owner_id real | `python -m seeds.simple_tasks --profile prod_like` | truncate tasks del usuario QA + logout | P01-S01-T001, P02-S01-T001, P02-S02-T001, P03-S01-T001, P03-S02-T001 / J101 |
 

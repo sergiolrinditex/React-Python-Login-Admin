@@ -1,7 +1,0 @@
-P01-S02-T001 -> ['backend/app/features/auth/**', 'backend/tests/integration/test_auth_signup.py']
-P01-S02-T002 -> ['backend/app/features/auth/**', 'backend/tests/integration/test_auth_signin.py']
-P01-S02-T003 -> ['backend/app/features/auth/refresh_tokens.py', 'backend/tests/integration/test_auth_refresh.py']
-P01-S02-T004 -> ['backend/app/features/auth/router.py', 'backend/tests/integration/test_auth_logout.py']
-P01-S02-T005 -> ['backend/app/features/auth/reset_tokens.py', 'backend/app/features/mail/**', 'backend/tests/integration/test_password_reset.py']
-P01-S02-T006 -> ['backend/app/features/auth/mfa.py', 'backend/tests/integration/test_mfa.py']
-P01-S02-T007 -> ['backend/app/features/users/**', 'backend/tests/integration/test_users_me.py']

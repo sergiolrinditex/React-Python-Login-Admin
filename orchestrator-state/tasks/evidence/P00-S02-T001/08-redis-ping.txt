@@ -1,3 +1,0 @@
-=== Redis PING ===
-PONG
-EXIT: 0

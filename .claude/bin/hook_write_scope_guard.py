@@ -156,12 +156,12 @@ def main() -> int:
             )
             return 0
 
-        # docs/base-app is the cumulative built baseline snapshot. It is synced
+        # docs/product-baseline is the cumulative built baseline snapshot. It is synced
         # by scripts/sync-product-baseline.sh after verified closer evidence, not
         # hand-edited by an active worker terminal.
-        if task_id and rel.startswith("docs/base-app/") and os.environ.get("CLAUDE_ALLOW_BASELINE_SYNC_WRITES") != "1":
+        if task_id and rel.startswith("docs/product-baseline/") and os.environ.get("CLAUDE_ALLOW_BASELINE_SYNC_WRITES") != "1":
             _deny(
-                f"Blocked direct base-app baseline edit while TASK_ID {task_id} is active: {rel}. "
+                f"Blocked direct baseline edit while TASK_ID {task_id} is active: {rel}. "
                 "Use scripts/sync-product-baseline.sh from closer/phase-gate context instead."
             )
             return 0

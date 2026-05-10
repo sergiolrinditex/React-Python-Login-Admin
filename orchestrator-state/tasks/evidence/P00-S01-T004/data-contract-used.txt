@@ -1,4 +1,0 @@
-Verification Data Contract: n/a
-This slice (P00-S01-T004) has no productive data flow.
-TECHNICAL_GUIDE §6.5 Verification Data Contract applies to journeys with persisted data.
-T004 is FRONT-only: no backend calls, no DB writes, no fixtures injected.

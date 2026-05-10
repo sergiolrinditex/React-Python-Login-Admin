@@ -337,7 +337,7 @@ def validate(root: Path, require_new_template_columns: bool = False) -> dict[str
     errors: list[str] = []
     warnings: list[str] = []
     if require_new_template_columns and not has_data_contract:
-        errors.append("TECHNICAL_GUIDE missing Verification Data Contract for real/prod-like verify-slice data")
+        errors.append("TECHNICAL_GUIDE missing Verification Data Contract for real/provided verify-slice data")
     errors.extend(journey_parse_errors)
 
     task_ids = {r["slice_id"] for r in registry}
@@ -419,8 +419,8 @@ def validate(root: Path, require_new_template_columns: bool = False) -> dict[str
         kind = r.get("tipo", "").lower()
         if kind == "api" and not extract_endpoint_tokens(r.get("endpoints", "")):
             errors.append(f"api slice {r['slice_id']} has no parseable endpoint")
-        if kind == "flutter" and not (r.get("route") or r.get("page") or ROUTE_RE.search(r.get("target", ""))):
-            errors.append(f"flutter slice {r['slice_id']} has no route/page wiring")
+        if kind in {"frontend", "flutter", "ui"} and not (r.get("route") or r.get("page") or ROUTE_RE.search(r.get("target", ""))):
+            errors.append(f"frontend slice {r['slice_id']} has no route/page wiring")
 
     for journey in journeys:
         for screen in split_items(journey.get("screens", "")):

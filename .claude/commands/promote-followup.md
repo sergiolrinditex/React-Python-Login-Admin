@@ -89,6 +89,7 @@ Si `$ARGUMENTS` contiene un `FU-...`, haz:
    - FU id, severidad, origen, título.
    - `triage.scope_classification` y `triage.why_not_debugger`.
    - `depends_on`, `conflict_groups`, `write_set`, `journey_refs`.
+   - Si `journey_refs` contiene IDs que no existen en `UX_CONTRACT.md`/journey matrix, no promociones: primero actualiza source-of-truth o promueve una FU sin `--journey-ref` para definir la nueva journey.
    - Rutas que se van a escribir.
    - Nota: si hay conflicto activo, la task promovida quedará `blocked` automáticamente.
 5. Pide confirmación humana literal:

@@ -1,2 +1,0 @@
-PASS: validate_with_bundle_type correctly rejects real key
-  ValueError: productive bundle: AiProviderSeed.api_key contains a plaintext real key. Use api_key_env to referenc

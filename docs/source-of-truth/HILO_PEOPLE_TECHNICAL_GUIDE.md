@@ -1,4 +1,4 @@
-# Hilo People — Technical Guide (large app sin base-app)
+# Hilo People — Technical Guide (large app sin baseline)
 
 Perfil: **large-without-base**. Contrato técnico completo para una app nueva React + FastAPI + PostgreSQL/pgvector.
 
@@ -83,8 +83,8 @@ pytest backend/tests
 ruff check backend
 mypy backend/app
 alembic upgrade head
-python -m app.seeds.bootstrap_verification_data --source data/verification
-python -m app.scripts.ingest_people_docs --verification bundle prod_like
+python -m app.verification_data.bootstrap --source data/verification
+python -m app.scripts.ingest_people_docs --source data/verification/people_docs
 ```
 
 ## 4. Estructura del proyecto — adiciones
@@ -155,7 +155,7 @@ backend/
     security/
     workers/
     i18n/
-    seeds/bootstrap_verification_data.py
+    verification_data/bootstrap.py
   tests/
   alembic/
 ```
@@ -247,7 +247,6 @@ Envelope general: `{data, meta, errors}`. Errores: `{code, message, field, detai
 | GET | /live | — | `{data:{status}}` | No | 500 | health checks | no DB | P00-S02-T002 |
 | GET | /ready | — | `{data:{db,redis,litellm}}` | No | 503 | health checks | DB/Redis ping | P00-S02-T002 |
 | POST | /api/v1/auth/sign-up | `{email,password,full_name,legal_acceptance}` | `{data:{mfa_required,user_id}}` | No | 400,409,422 | SignUpPage / J100 | users, employee_profiles, audit_logs | P01-S02-T001 |
-| POST | /api/v1/auth/2fa/enroll | `{email,password}` | `{data:{otpauth_url,qr_png_base64}}` | No | 400,401,422 | (backend-only — T009) / J100 | mfa_totp_secrets upsert, audit_logs | P01-S02-T009 |
 | POST | /api/v1/auth/sign-in | `{email,password}` | `{data:{mfa_required,access_token?}}` | No | 400,401,423 | SignInPage / J100 | refresh_tokens, audit_logs | P01-S02-T002 |
 | POST | /api/v1/auth/refresh | cookie refresh | `{data:{access_token}}` | Refresh cookie | 401 | authStore | refresh_tokens | P01-S02-T003 |
 | POST | /api/v1/auth/logout | — | 204 | Sí | 401 | AccountPage | refresh_tokens revoke, audit_logs | P01-S02-T004 |
@@ -345,14 +344,14 @@ Rutas públicas: `/auth/sign-in`, `/auth/sign-up`, `/auth/forgot-password`, `/au
 
 ### 6.5 Verification Data Contract
 
-| Flow/Journey | Persona/Rol | Datos reales/prod-like requeridos | Seed/verification bundle permitido | Reset/Cleanup | Slices/Journeys |
+| Flow/Journey | Persona/Rol | Datos reales/proporcionados requeridos | Carga de datos reales/proporcionados | Reset/Cleanup | Slices/Journeys |
 |---|---|---|---|---|---|
-| J100 auth-login | `data/verification/users/employee_primary.json.email` employee | usuario confirmado, MFA secret prod-like del verification bundle, refresh cookie | `python -m app.seeds.bootstrap_verification_data --source data/verification --only auth` | `scripts/dev-restart.sh --reset` | J100, P01-S02, P03-S01 |
-| J101 chat-rag | empleado + colección activa | documento política vacaciones ES indexado, modelo chat de verificación activo | `python -m app.seeds.bootstrap_verification_data --source data/verification --only rag_chat` | truncate conversations/messages/citations | J101, P02-S03, P02-S04, P03-S02 |
-| J102 history-language | empleado con conversación previa | 2 conversaciones persistidas, idioma inicial `es` | `python -m app.seeds.bootstrap_verification_data --source data/verification --only history` | reset user language to es | J102, P03-S02-T003, P03-S02-T004 |
-| J103 admin-ai | `data/verification/users/admin_peopletech.json.email` admin | proveedor de verificación, credencial prod-like cifrable del verification bundle, modelos del verification bundle | `python -m app.seeds.bootstrap_verification_data --source data/verification --only admin_ai` | delete ai_provider test rows | J103, P02-S05, P04-S01 |
-| J104 rag-admin | admin | `politica_vacaciones_es.pdf`, colección `politicas_tienda` | `python -m app.seeds.bootstrap_verification_data --source data/verification --only rag_docs` | delete documents/chunks/embeddings/jobs | J104, P02-S06, P04-S02 |
-| J105 mcp-agents | admin | MCP sandbox autorizado HTTP read-only, agente `people_helper` | `python -m app.seeds.bootstrap_verification_data --source data/verification --only mcp_agents` | delete mcp_servers/tools/bindings/runs | J105, P02-S07, P02-S08, P04-S02 |
+| J100 auth-login | `data/verification/users/employee_primary.json.email` employee | usuario confirmado, MFA secret reales/proporcionados del data/verification proporcionado, refresh cookie | `python -m app.verification_data.bootstrap --source data/verification --only auth` | `scripts/dev-restart.sh --reset` | J100, P01-S02, P03-S01 |
+| J101 chat-rag | empleado + colección activa | documento política vacaciones ES indexado, modelo chat de verificación activo | `python -m app.verification_data.bootstrap --source data/verification --only rag_chat` | truncate conversations/messages/citations | J101, P02-S03, P02-S04, P03-S02 |
+| J102 history-language | empleado con conversación previa | 2 conversaciones persistidas, idioma inicial `es` | `python -m app.verification_data.bootstrap --source data/verification --only history` | reset user language to es | J102, P03-S02-T003, P03-S02-T004 |
+| J103 admin-ai | `data/verification/users/admin_peopletech.json.email` admin | proveedor de verificación, credencial reales/proporcionados cifrable del data/verification proporcionado, modelos del data/verification proporcionado | `python -m app.verification_data.bootstrap --source data/verification --only admin_ai` | delete ai_provider test rows | J103, P02-S05, P04-S01 |
+| J104 rag-admin | admin | `politica_vacaciones_es.pdf`, colección `politicas_tienda` | `python -m app.verification_data.bootstrap --source data/verification --only rag_docs` | delete documents/chunks/embeddings/jobs | J104, P02-S06, P04-S02 |
+| J105 mcp-agents | admin | MCP sandbox autorizado HTTP read-only, agente `people_helper` | `python -m app.verification_data.bootstrap --source data/verification --only mcp_agents` | delete mcp_servers/tools/bindings/runs | J105, P02-S07, P02-S08, P04-S02 |
 
 ## 7. Theme & Design System
 
@@ -367,7 +366,7 @@ Usar `structlog` con `request_id`, `user_id_hash`, `role`, `route`, `latency_ms`
 ### 9.1 Convenciones específicas
 
 - Tests backend en `backend/tests/integration` usan DB Postgres de test, no SQLite para RAG/pgvector.
-- Verification bundle documentos en `backend/tests/verification bundle/people_docs/`.
+- Data/verification proporcionado documentos en `backend/tests/data/verification proporcionado/people_docs/`.
 - Tests frontend usan Vitest/Testing Library con API client test doubles solo para unit tests; journeys usan backend real.
 - Edge cases sintéticos permitidos: `empty`, `error_network`, `permission_denied`, payload inválido.
 
@@ -458,7 +457,7 @@ CREATE TABLE mcp_approvals (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), invoc
 
 #### LLM Gateway
 - `llm_gateway/litellm_client.py`: cliente async para chat, embeddings, model test y streaming. Usado por chat, Admin AI y RAG embeddings.
-- Smoke: llamada a modelo sandbox oficial/prod-like con prompt corto y log de latencia.
+- Smoke: llamada a modelo sandbox oficial/reales/proporcionados con prompt corto y log de latencia.
 
 #### RAG
 - `rag/ingestion.py`: extrae texto PDF/DOCX, calcula checksum y crea `document_versions`.
@@ -503,31 +502,6 @@ Docker Compose local con servicios `frontend`, `backend`, `postgres`, `redis`, `
 | `MAX_UPLOAD_MB` | 25 | 25 | 25 | límite documentos |
 | `MCP_ALLOWLIST_DOMAINS` | localhost | staging domains | approved domains | seguridad MCP |
 
-> **Dev workflow — ENCRYPTION_KEY**: `bash scripts/setup-from-scratch.sh` genera
-> automáticamente un `ENCRYPTION_KEY` Fernet válido si `.env` carece del campo o lleva
-> el placeholder `<change-me>` / legacy `PROVIDER_ENCRYPTION_KEY=...`. La clave nunca se
-> imprime ni se commitea (`.env` está en `.gitignore`). El backend mantiene un fallback
-> transitorio `ENCRYPTION_KEY → PROVIDER_ENCRYPTION_KEY → settings.encryption_key` en
-> `app/core/security.py` que se retira en P02-S02-T001 cuando entren credenciales
-> productivas. El seed loader `bootstrap_verification_data` lee `ENCRYPTION_KEY` directamente
-> (sin fallback): asegúrate de que la clave esté presente antes de ejecutar seeds (el script
-> garantiza esto cuando se corre desde cero). **Rotación**: cambiar `ENCRYPTION_KEY` invalida
-> todos los datos cifrados existentes — planificado con re-encrypt en P02-S02-T001.
-
-### 11.1.bis Variables de entorno del verification bundle
-
-Estos 5 valores viven solo en `.env.local` (gitignored); las JSON fixtures bajo `data/verification/` usan los campos `api_key_env` / `api_key_backup_env` / `access_token_env` para referenciarlos por nombre. El loader los resuelve en tiempo de ejecución mediante `resolve_env_var(name, required=True)`.
-
-| Variable | Descripción |
-|---|---|
-| `VERIFICATION_GEMINI_API_KEY` | API key de Gemini principal para el seed productivo |
-| `VERIFICATION_GEMINI_API_KEY_BACKUP` | API key de Gemini de backup |
-| `VERIFICATION_OPENAI_API_KEY` | API key de OpenAI (proveedor inactivo en seed productivo) |
-| `VERIFICATION_LITELLM_MASTER_KEY` | Master key del proxy LiteLLM local |
-| `VERIFICATION_MCP_TOKEN_SANDBOX` | Token de acceso al servidor MCP sandbox (inactivo en seed) |
-
-Defensa-en-profundidad: el validador `_REAL_KEY_PATTERNS` en `backend/app/seeds/schemas/admin_ai.py` rechaza claves que coincidan con los patrones `AIza.../sk-proj-.../sk-ant-...` como plaintext en el campo `api_key`. Las claves reales nunca se persisten en el repositorio ni se envían al frontend.
-
 ### 11.2 Build targets
 
 Frontend: `npm --prefix frontend run build`. Backend: `docker build -f backend/Dockerfile .`. Worker comparte imagen backend con comando Celery.
@@ -569,29 +543,7 @@ La visualización estática se genera en `dist/hilo-people-preview.html`. Captur
 
 ## 15. Architectural Decision Records
 
-### ADR-001 — LiteLLM dynamic model discovery
-
-- **Fecha**: 2026-05-09
-- **Contexto**: Los catálogos de modelos de los proveedores cambian continuamente; una lista de modelos hardcodeada en el bundle de seed deriva inevitablemente con el tiempo.
-- **Decisión**: En runtime, `POST /api/v1/admin/ai/providers/{id}/discover-models` llamará al endpoint de modelos del proveedor y reconciliará los resultados contra la tabla `ai_models`, actualizando `auto_discovered=true` en las filas nuevas.
-- **Alternativas descartadas**: (a) Hardcodear la lista de modelos por proveedor — rechazada: deriva en cuanto Google/OpenAI añade o retira modelos. (b) Exigir que el admin escriba el `model_id` manualmente — rechazada: UX hostil y propensa a errores tipográficos.
-- **Consecuencias**: Round-trip adicional en la primera conexión; depende de que el proveedor exponga un endpoint compatible con la forma `/v1/models`. Detallado en FU-X1 (feature follow-up, P02-S05).
-
-### ADR-002 — deepagents Supervisor + topic routing
-
-- **Fecha**: 2026-05-09
-- **Contexto**: El bundle de seed de P00-S02-T005 declara 1 supervisor + 2 subagents con `subagent_topics`, pero ningún runtime de orquestación existe todavía.
-- **Decisión**: P02-S08 implementará `agents/deepagents_runtime.py` usando el patrón deepagents Supervisor (LangGraph-based) donde el supervisor enruta mensajes del usuario al subagente cuyo `subagent_topics` tenga mayor solapamiento de palabras clave.
-- **Alternativas descartadas**: (a) Agente único con todas las herramientas — rechazada: context bloat insostenible en sesiones largas. (b) LangChain AgentExecutor — rechazada: deprecado en LangChain ≥ 0.2; deepagents es el sucesor soportado.
-- **Consecuencias**: Pinado a `deepagents>=0.5.7`; el supervisor añade 1 LLM hop por mensaje para el routing. Detallado en FU-X3 (feature follow-up, P02-S08).
-
-### ADR-003 — MFA enrollment re-auth scheme and rotation policy (P01-S02-T009)
-
-- **Fecha**: 2026-05-10
-- **Contexto**: `POST /api/v1/auth/2fa/enroll` needs re-authentication before issuing a TOTP secret. At enrollment time no Bearer JWT has been issued yet (sign-in / JWT issuance = T002, does not exist). Two independent decisions: (A) how to re-auth the user, and (B) what to do when a user re-enrolls.
-- **Decisión**: (A) Re-auth uses `{email, password}` in the request body — the same credentials the user provided at sign-up. No Bearer JWT required, no challenge_id. (B) Rotation policy is `rotate`: if a row already exists in `mfa_totp_secrets` for the user, the secret is replaced (UPDATE secret_encrypted + enabled=false) and a new `audit_log` row is inserted with `metadata.rotation=true`. No 409 Conflict is returned.
-- **Alternativas descartadas**: (A1) Bearer JWT for re-auth — rejected: JWT issuance lives in T002 which is not yet implemented; chicken-and-egg dependency. (A2) Separate challenge_id step — rejected: over-engineering; out of scope for this slice. (B1) Reject re-enrollment with 409 — rejected: UX hostile; legitimate use case is re-keying a lost device. (B2) Require admin reset before re-enroll — rejected: operational overhead with no security gain at this stage.
-- **Consecuencias**: Re-auth uses password verification via argon2 `PasswordHasher.verify()`. Secret never stored in plain text — encrypted with Fernet AEAD (`encrypt_secret`). `secret_b32`, `otpauth_url`, and `qr_png_base64` are never bound to any logger (CWE-532). `AlreadyEnrolledError` domain error exists in `errors.py` but is unused under the default `rotate` policy; reserved for a future strict-mode flag.
+(sin ADRs específicos todavía)
 
 ## 16. Verificación de cableado pre-entrega
 

@@ -6,7 +6,7 @@ para ese journey y se cerrarán slices sin verificación end-to-end.
 
 Cubrimos:
 - Parsing canónico (8-9 columnas).
-- Pipes escapados con `\\|` dentro de celdas (caso real OAuth en base-app).
+- Pipes escapados con `\\|` dentro de celdas (caso real OAuth en baseline snapshot).
 - Expansión de slice refs: TASK_ID directo, range T001..T003, step ref P00-S05,
   phase ref P00, texto descriptivo (verbatim, marcado como drift).
 - Sección ausente devuelve [] (back-compat con proyectos pre-matriz).
@@ -111,7 +111,7 @@ def test_descriptive_slice_kept_verbatim_for_drift_detection():
 
 
 def test_escaped_pipes_in_cells_do_not_break_columns():
-    """Caso real: la celda OAuth en la base-app contiene 'tap "Continue \\| Google"'.
+    """Caso real: la celda OAuth en la baseline snapshot contiene 'tap "Continue \\| Google"'.
     El split debe respetar el escape y no contar el `|` como separador."""
     text = """## 3.5 Journey Coverage Matrix
 

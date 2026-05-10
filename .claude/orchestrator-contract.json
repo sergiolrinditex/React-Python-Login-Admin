@@ -17,7 +17,7 @@
     ],
     "runtime_policy": "Do not edit source-of-truth while a TASK_ID is active. Change docs first, then bootstrap again.",
     "override_env": "CLAUDE_ALLOW_SOURCE_TRUTH_WRITES",
-    "increment_policy": "The five source-of-truth docs are cumulative. Keep BaseApp/built rows plus v1/v2/vN rows together; use Product increment and Build state in the Coverage Registry."
+    "increment_policy": "The five source-of-truth docs are cumulative. Keep existing baseline/built rows plus v1/v2/vN rows together; use Product increment and Build state in the Coverage Registry."
   },
   "dag_scope": {
     "task_id_env": "CLAUDE_ACTIVE_TASK_ID",
@@ -127,8 +127,8 @@
         "git commit on main",
         "configured Git workflow via ./scripts/git-workflow.sh",
         "safe worktree cleanup",
-        "docs/base-app/* via sync_product_baseline.py",
-        "docs/base-app/BASELINE_MANIFEST.json via sync_product_baseline.py",
+        "docs/product-baseline/* via sync_product_baseline.py",
+        "docs/product-baseline/BASELINE_MANIFEST.json via sync_product_baseline.py",
         "orchestrator-state/agent-memory/closer/MEMORY.md",
         "orchestrator-state/agent-memory/closer/archive/**"
       ],
@@ -286,10 +286,10 @@
         "phase-gate evidence review"
       ],
       "rules": [
-        "Use real or prod-like sandbox data for productive closure.",
-        "Do not insert fixtures through the endpoint under test.",
+        "Use real/provided sandbox data for productive closure.",
+        "Do not insert verification data through the endpoint under test.",
         "Synthetic data is allowed only for labelled edge cases such as empty/error/permission states.",
-        "Evidence must state data-contract rows used, fixtures injected and persisted data observed."
+        "Evidence must state data-contract rows used, real/provided data loaded and persisted data observed."
       ]
     }
   },
@@ -332,11 +332,11 @@
     "rejected_scope_classification": "in_scope_defect"
   },
   "product_baseline": {
-    "purpose": "docs/base-app/ stores the built cumulative baseline snapshot passed to ChatGPT before planning the next increment.",
-    "manifest": "docs/base-app/BASELINE_MANIFEST.json",
-    "sync_command": "./scripts/sync-product-baseline.sh sync --version <baseapp|v1|v2|current> --task <TASK_ID>",
+    "purpose": "docs/product-baseline/ stores the built cumulative baseline snapshot passed to ChatGPT before planning the next increment.",
+    "manifest": "docs/product-baseline/BASELINE_MANIFEST.json",
+    "sync_command": "./scripts/sync-product-baseline.sh sync --version <v0|v1|v2|current> --task <TASK_ID>",
     "status_command": "./scripts/sync-product-baseline.sh status",
-    "policy": "Closer syncs docs/source-of-truth into docs/base-app after verified slice evidence is ready and before the atomic commit. Do not hand-edit base-app during active DAG tasks.",
+    "policy": "Closer syncs docs/source-of-truth into docs/product-baseline after verified slice evidence is ready and before the atomic commit. Do not hand-edit baseline snapshot during active DAG tasks.",
     "coverage_registry_columns": [
       "Product increment",
       "Build state"
@@ -416,7 +416,7 @@
       "auto",
       "human"
     ],
-    "auto_verify_requires": "low risk, deterministic commands, no closing journey, prod-like data evidence"
+    "auto_verify_requires": "low risk, deterministic commands, no closing journey, real/provided data evidence"
   },
   "next_status_enums": {
     "closer": [
@@ -612,7 +612,7 @@
         "allowed_to_close_task": false
       },
       "tester": {
-        "description": "Runs real/prod-like tests and owns ready_for_close/needs_debug lifecycle after developer.",
+        "description": "Runs real/provided-data tests and owns ready_for_close/needs_debug lifecycle after developer.",
         "required_keys": [
           "TASK_ID",
           "OUTCOME",

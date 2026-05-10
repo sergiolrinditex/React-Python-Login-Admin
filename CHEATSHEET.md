@@ -252,7 +252,7 @@ Crear propuesta:
   --verify "Comando o verify esperado"
 ```
 
-El script rechaza `--scope-classification in_scope_defect`. Para `high|critical|blocker`, `--why-not-debugger` es obligatorio.
+El script rechaza `--scope-classification in_scope_defect`. Para `high|critical|blocker`, `--why-not-debugger` es obligatorio. Cita siempre los globs de `--write-set` con comillas simples, por ejemplo `--write-set '<frontend_module_root>/features/<feature>/**'`. Usa `--journey-ref` sólo si el journey ya existe en `UX_CONTRACT.md`/journey matrix; si la FU define una journey nueva, primero materializa esa journey en source-of-truth o no pases `--journey-ref`.
 
 Listar/promover/waivear:
 
@@ -324,7 +324,9 @@ python3 -B -S scripts/audit-agent-trailer-vocabulary.py
 ## Phase / Step / Slice sizing para templates
 
 - **Phase** = milestone o módulo de producto con visión completa; máximo operativo recomendado: `<=20` slices.
-- **Step** = lane coherente dentro de la phase: pantalla, API lane, módulo de dominio, foundation lane o journey lane. Objetivo sano: `6-12` slices; máximo: `<=15`.
+- **Step** = lane coherente dentro de la phase: pantalla/journey lane, módulo de dominio, foundation lane o contrato API que alimenta una pantalla nombrada. Objetivo sano: `6-12` slices; máximo: `<=15`.
 - **Slice/Task** = unidad ejecutable/verificable por worker, con `Depends on`, `Write set`, `Conflict group`, `Journey refs` y `Verify mínimo` claros.
 - No dividas un step coherente sólo por tener 11-12 slices. Divide cuando mezcle lanes no relacionadas, toque write sets incompatibles o pierda trazabilidad de producto.
+- La pantalla no se cierra por capas aisladas: cada pantalla importante debe cubrir contrato de pantalla, API/datos, UI conectada, estados UX obligatorios y verificación del journey.
+- API/backend slices pueden existir separadas sólo como foundation real o como contrato que alimenta una pantalla/journey nombrado; no hagas `backend completo -> frontend completo -> UX polish`.
 - Los templates deben sustituir todos los ejemplos por el dominio real de la app y usar datos reales/proporcionados; si faltan datos, bloquea o registra follow-up.

@@ -42,4 +42,4 @@ If a slice cannot be verified in localhost, split it.
 
 If design is off → fix before moving on. If the motor is off → fix before moving on.
 
-The full human visual verification is performed by `/verify-slice` after tester pass: hard reset, fixtures, reproduction in browser, live watch of 3 logs, validation table. `/verify-slice` is resilient to `/clear` — it rebuilds context from disk (PROGRESS.md, runtime-state.json, registry.json, handoff, TECHNICAL_GUIDE) so you can (and should) `/clear` between tester pass and verify to free the ~100-200k tokens consumed by the pipeline.
+The full human visual verification is performed by `/verify-slice` after tester pass: hard reset, real/provided data, reproduction in browser, live watch of 3 logs, validation table. `/verify-slice` is resilient to `/clear` — it rebuilds context from disk (PROGRESS.md, runtime-state.json, registry.json, handoff, TECHNICAL_GUIDE) so you can (and should) `/clear` between tester pass and verify to free the ~100-200k tokens consumed by the pipeline.

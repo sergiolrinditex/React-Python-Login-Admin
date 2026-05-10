@@ -104,8 +104,8 @@ Después de escribir el evidence report y antes de `git add`/`git commit`, sincr
 Reglas:
 
 - `docs/source-of-truth/` sigue siendo la fuente viva acumulativa.
-- `docs/base-app/` es el snapshot construido que se pasa a ChatGPT para generar el siguiente incremento (`baseapp + v1 + v2 + ...`).
-- El sync copia los source-of-truth canónicos disponibles y actualiza `docs/base-app/BASELINE_MANIFEST.json`.
+- `docs/product-baseline/` es el snapshot construido que se pasa a ChatGPT para generar el siguiente incremento (`v0 + v1 + v2 + ...`).
+- El sync copia los source-of-truth canónicos disponibles y actualiza `docs/product-baseline/BASELINE_MANIFEST.json`.
 - Si el sync falla, no cierres: `OUTCOME: blocked`, `BASELINE_SYNC_READY: no`.
 - Incluye el baseline/manifest en el mismo commit atómico de la slice para que no se pierda contexto tras `/clear` ni entre versiones.
 

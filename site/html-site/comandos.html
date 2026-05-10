@@ -25,7 +25,7 @@
   <a href="templates.html">Templates</a>
   <a href="stack-ux.html">Stack/UX</a>
   <a href="tecnico.html">Técnico</a>
-  <a data-tally-open="5BEA8v" data-tally-layout="modal" data-tally-width="600" data-tally-overlay="1" href="mailto:s.lopezrap@gmail.com?subject=OrquestadorFlutterDAG-AnyStack%20%E2%80%94%20quiero%20ayuda%20para%20implantarlo" class="topnav-cta">📧 Contacto</a>
+  <a data-tally-open="5BEA8v" data-tally-layout="modal" data-tally-width="600" data-tally-overlay="1" href="mailto:s.lopezrap@gmail.com?subject=OrquestadorDAG-AnyStack%20%E2%80%94%20quiero%20ayuda%20para%20implantarlo" class="topnav-cta">📧 Contacto</a>
 </nav>
 
 <main>
@@ -63,8 +63,8 @@
         <code style="font-size: 16px; padding: 6px 12px; background: var(--bg-2); border: 1px solid var(--border-accent);">/verify-slice TASK_ID</code>
         <span class="badge ok">Gate humano</span>
       </div>
-      <h3>Verificación con datos reales o prod-like</h3>
-      <p>Hard reset, fixtures, reproducción humana usando el método declarado en <code>STACK_PROFILE.frontend.visual_check</code> (browser, emulador, simulador, device), logs vivos. Si encuentra hallazgos menores dentro del scope, llama a <code>debugger</code> y re-verifica.</p>
+      <h3>Verificación con datos reales/proporcionados</h3>
+      <p>Reset controlado, carga de datos reales/proporcionados y reproducción humana usando el método declarado en <code>STACK_PROFILE.frontend.visual_check</code> (browser, emulador, simulador, device), logs vivos. Si encuentra hallazgos menores dentro del scope, llama a <code>debugger</code> y re-verifica.</p>
     </div>
 
     <div class="card">
@@ -183,7 +183,7 @@ flowchart LR
     <pre data-copy><code>1. /next-wave                          ← lista nodos ready seguros
 2. /next-slice TASK_ID                 ← claim + pipeline hasta tester pass
 3. /clear                              ← libera ~150k tokens (opcional)
-4. /verify-slice TASK_ID               ← gate humano con datos reales/prod-like
+4. /verify-slice TASK_ID               ← gate humano con datos reales/proporcionados
    │
    ├─ verified  → spawnea closer       ← commit + push origin main
    └─ issues    → spawnea debugger     ← vuelve a paso 2
@@ -191,13 +191,13 @@ flowchart LR
 6. /clear                              ← prepara siguiente slice</code></pre>
   </div>
 
-  <p class="notice">Los 26 diagramas Mermaid completos viven en <a href="https://github.com/slopezrap/OrquestadorFlutterDAG-AnyStack/blob/main/site/diagrams/comandos.md" target="_blank" rel="noopener">site/diagrams/comandos.md</a>.</p>
+  <p class="notice">Los 26 diagramas Mermaid completos viven en <a href="https://github.com/slopezrap/OrquestadorDAG-AnyStack/blob/main/site/diagrams/comandos.md" target="_blank" rel="noopener">site/diagrams/comandos.md</a>.</p>
 
 </main>
 
 <footer>
   <div>Documentación estática · Sin dependencias externas · Lista para GitHub Pages.</div>
-  <div><a href="https://github.com/slopezrap/OrquestadorFlutterDAG-AnyStack" target="_blank" rel="noopener">Repositorio →</a></div>
+  <div><a href="https://github.com/slopezrap/OrquestadorDAG-AnyStack" target="_blank" rel="noopener">Repositorio →</a></div>
 </footer>
 
 <script src="assets/app.js"></script>

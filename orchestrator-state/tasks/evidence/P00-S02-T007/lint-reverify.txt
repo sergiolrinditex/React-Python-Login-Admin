@@ -1,7 +1,0 @@
-
-> hilo-people-frontend@0.0.0 lint
-> eslint .
-
-EXIT_CODE:127
-EXIT_CODE:127
-# NOTE: exit 127 = eslint binary not found (pre-existing T004 gap — ESLint not configured in T004 scope). NOT a T007 regression.

@@ -1,5 +1,0 @@
-Command: bash -n scripts/setup-from-scratch.sh
-Result:  SYNTAX OK exit 0
-
-Command: bash -n .env.example
-Result:  SYNTAX OK exit 0

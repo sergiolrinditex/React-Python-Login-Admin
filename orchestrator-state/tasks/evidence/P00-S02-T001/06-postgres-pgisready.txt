@@ -1,3 +1,0 @@
-=== pg_isready ===
-/var/run/postgresql:5432 - accepting connections
-EXIT: 0

@@ -1,6 +1,0 @@
-=== 07 postgres pgvector available ===
-  name  | default_version 
---------+-----------------
- vector | 0.8.2
-(1 row)
-

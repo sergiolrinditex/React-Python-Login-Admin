@@ -1,6 +1,15 @@
 # {{APP_NAME}} — Instrucciones minimal DAG
 
-> Perfil: **minimal**. Usa este template para una app pequeña sin BaseApp. Debe producir una app real/MVP de producción con 2-4 phases, 3-8 tasks, 1-2 journeys reales y `mode=explicit_dag`.
+## Screen/Journey Lane Redactor Contract
+
+- No modeles la app como `backend/API primero`, luego `frontend`, y `UX polish` al final. Esa separación rompe la pantalla aunque los tests pasen.
+- Cada pantalla importante debe nacer de una **screen/journey lane**: contrato de pantalla + contrato API/datos + implementación conectada + estados UX obligatorios + verificación del journey.
+- Las slices de API/backend pueden existir separadas sólo si son foundation real o contrato técnico que alimenta una pantalla/journey nombrado en `Journey refs`.
+- Criterio de cierre de pantalla: datos reales/proporcionados conectados front -> back -> DB, estados `loading`, `empty`, `error_network`, `error_validation`, `permission_denied` cuando aplique, `success`, navegación/next action, responsive básico y accesibilidad básica.
+- Tamaño recomendado: pantalla crítica 3-6 slices; módulo/journey lane 8-15 slices. No hagas una slice por botón/componente pequeño; tampoco cierres una pantalla sólo porque compila.
+- Defectos dentro de la pantalla actual van por `validator/tester -> debugger -> retest`. Sólo crea FU si falta trabajo nuevo fuera de scope: pantalla, endpoint, tabla, journey, contrato de datos reales o decisión humana no declarada.
+
+> Perfil: **minimal**. Usa este template para una app pequeña sin existing baseline. Debe producir una app real/MVP de producción con 2-4 phases, 3-8 tasks, 1-2 journeys reales y `mode=explicit_dag`.
 >
 > Este documento define negocio, UX y journeys. Debe cablearse con `<APP>_TECHNICAL_GUIDE.md` y `<APP>_IMPLEMENTATION_CHECKLIST.md`.
 

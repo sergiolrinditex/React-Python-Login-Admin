@@ -6,7 +6,7 @@ Tests del propio framework `.claude/bin/`. **No son tests de las apps que el fra
 
 | Archivo | Cubre |
 |---------|-------|
-| `test_bootstrap_registry_driven.py` | bootstrap de fases, tasks, coverage registries, BASEAPP real, granularidad sintética. |
+| `test_bootstrap_registry_driven.py` | bootstrap de fases, tasks, coverage registries, BASELINE real, granularidad sintética. |
 | `test_bootstrap_journey_matrix.py` | parsing de Journey Coverage Matrix, escapes `\|`, rangos, step/phase refs. |
 | `test_design_tokens_guard.py` | guard de design tokens evitando falsos positivos en strings/comentarios. |
 | `test_file_lock.py` | locks reentrantes, escritura atómica, serialización inter-proceso. |

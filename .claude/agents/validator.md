@@ -133,7 +133,7 @@ Busca específicamente:
 
 Dispara SI el diff toca CUALQUIERA de:
 
-- Una ruta GoRouter declarada en `*_TECHNICAL_GUIDE.md §6.1`.
+- Una ruta del router declarado declarada en `*_TECHNICAL_GUIDE.md §6.1`.
 - Un endpoint declarado en `§6.2`.
 - Una tabla declarada en `§10.3`.
 - Una pantalla / componente declarado en una feature de `instrucciones.md §3.2`.

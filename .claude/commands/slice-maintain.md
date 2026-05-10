@@ -294,7 +294,7 @@ python3 -B -S scripts/compact-agent-memory.py --all --threshold-lines 150
 ## Contrato de seguridad
 
 1. No toca `.claude/agents/*.md`; esos son prompts estáticos, no memoria viva.
-2. No toca `docs/source-of-truth/**`, `docs/base-app/**`, `registry.json`, `runtime-state.json`, `task-dag.json`, `execution-graph.json`, handoffs ni evidence.
+2. No toca `docs/source-of-truth/**`, `docs/product-baseline/**`, `registry.json`, `runtime-state.json`, `task-dag.json`, `execution-graph.json`, handoffs ni evidence.
 3. Antes de reescribir un `MEMORY.md`, copia el original completo byte-for-byte a:
 
 ```text

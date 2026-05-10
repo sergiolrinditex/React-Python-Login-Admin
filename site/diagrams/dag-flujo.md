@@ -112,12 +112,12 @@ flowchart LR
 | Recurso | Conflict group | Write set típico |
 |---|---|---|
 | Migraciones DB | `db:migrations` | `api/alembic/versions/**` (o equivalente del stack) |
-| Router frontend | `front:router` | `app/lib/core/router.dart`, `src/router/**` |
-| API client global | `front:api-client` | `app/lib/core/api/**`, `src/api/**` |
+| Router frontend | `front:router` | `<frontend_router_path>`, `src/router/**` |
+| API client global | `front:api-client` | `<frontend_api_client_glob>`, `src/api/**` |
 | Theme / design tokens | `front:theme` | rutas declaradas en `STACK_PROFILE.frontend.theme_root` |
-| Auth backend | `api:auth` | `api/src/auth/**` |
+| Auth backend | `api:auth` | `<backend_auth_glob>` |
 | Workflow CI | `ci` | `.github/workflows/**` |
-| Dependencias | `deps` | `pubspec.yaml`, `package.json`, `requirements.txt` |
+| Dependencias | `deps` | `<dependency_manifest>`, `<lockfile>` |
 
 ---
 

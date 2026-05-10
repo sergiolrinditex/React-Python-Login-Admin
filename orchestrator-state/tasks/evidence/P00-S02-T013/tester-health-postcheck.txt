@@ -1,4 +1,0 @@
-=== Health post-check after tester runs ===
-Timestamp: 2026-05-10T09:46:39Z
-
-{"status":"ok","version":"0.0.0","uptime":2470.244}

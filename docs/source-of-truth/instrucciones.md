@@ -1,6 +1,6 @@
-# Hilo People — Instrucciones (large app sin base-app)
+# Hilo People — Instrucciones (large app sin baseline)
 
-Perfil: **large-without-base**. Producto nuevo desde cero para el departamento de People de Inditex. No se heredan rutas, tablas, endpoints, journeys ni decisiones de BaseApp.
+Perfil: **large-without-base**. Producto nuevo desde cero para el departamento de People de Inditex. No se heredan rutas, tablas, endpoints, journeys ni decisiones de existing baseline.
 
 ## 1. Identidad del Proyecto
 
@@ -41,7 +41,7 @@ Los equipos de People reciben preguntas repetidas sobre vacaciones, nómina, ben
 - [ ] Un admin puede registrar un servidor MCP externo, hacer discovery de tools, aprobar tools y asignarlas a agentes.
 - [ ] La interfaz está disponible en español, inglés y francés con fallback a español.
 - [ ] Los logs no imprimen secretos, tokens ni contenido sensible completo.
-- [ ] Todos los journeys J100-J105 pasan con datos prod-like y evidencia visual.
+- [ ] Todos los journeys J100-J105 pasan con datos reales/proporcionados y evidencia visual.
 
 ## 3. Alcance
 
@@ -243,7 +243,7 @@ Estado final: servidor MCP, tools descubiertas, política y binding de agente pe
 **Motor requerido**: Auth y perfiles.  
 **Features requeridas**: login, 2FA, cuenta base.  
 **Backend**: endpoints auth y users.  
-**Demo script**: abrir `http://localhost:5000`, entrar con `data/verification/users/employee_primary.json.email`, completar 2FA con un TOTP generado en tiempo real desde `data/verification/auth/mfa_primary.json`, verificar llegada a `/chat`.  
+**Verification script**: abrir `http://localhost:5000`, entrar con `data/verification/users/employee_primary.json.email`, completar 2FA con un TOTP generado en tiempo real desde `data/verification/auth/mfa_primary.json`, verificar llegada a `/chat`.  
 **Tras entrega**: un empleado real de prueba accede al chat.
 
 ### Milestone M2: Chat de People con RAG e i18n
@@ -252,7 +252,7 @@ Estado final: servidor MCP, tools descubiertas, política y binding de agente pe
 **Motor requerido**: Chat conversacional, RAG retrieval, LiteLLM gateway.  
 **Features requeridas**: chat home, conversación, historial, cuenta.  
 **Backend**: chat endpoints, RAG retrieval, usage logging.  
-**Demo script**: preguntar “¿Cuántos días de vacaciones me quedan?”, ver streaming, cita de política interna y conversación en historial.  
+**Verification script**: preguntar “¿Cuántos días de vacaciones me quedan?”, ver streaming, cita de política interna y conversación en historial.  
 **Tras entrega**: autoservicio de People operativo.
 
 ### Milestone M3: Admin AI modelos y proveedores
@@ -261,7 +261,7 @@ Estado final: servidor MCP, tools descubiertas, política y binding de agente pe
 **Motor requerido**: Admin AI y LiteLLM Gateway.  
 **Features requeridas**: modelos, wizard, test drawer, usage.  
 **Backend**: endpoints providers/models/test/usage.  
-**Demo script**: crear proveedor OpenAI sandbox, listar modelos, activar modelo de chat, probar prompt.  
+**Verification script**: crear proveedor OpenAI sandbox, listar modelos, activar modelo de chat, probar prompt.  
 **Tras entrega**: el modelo activo del chat se gobierna desde Admin AI.
 
 ### Milestone M4: Admin RAG documentos y colecciones
@@ -270,7 +270,7 @@ Estado final: servidor MCP, tools descubiertas, política y binding de agente pe
 **Motor requerido**: RAG Admin y vectorización.  
 **Features requeridas**: documentos y colecciones.  
 **Backend**: endpoints RAG, Celery, pgvector.  
-**Demo script**: subir documento `politica_vacaciones_es.pdf`, lanzar indexación, comprobar colección activa.  
+**Verification script**: subir documento `politica_vacaciones_es.pdf`, lanzar indexación, comprobar colección activa.  
 **Tras entrega**: documentos internos alimentan respuestas con citas.
 
 ### Milestone M5: MCP y Agents gobernados
@@ -279,12 +279,12 @@ Estado final: servidor MCP, tools descubiertas, política y binding de agente pe
 **Motor requerido**: MCP y Agents.  
 **Features requeridas**: MCP servers, wizard, agents.  
 **Backend**: endpoints MCP y agents.  
-**Demo script**: registrar MCP sandbox, sincronizar tools, habilitar una tool read-only para un agente y lanzar run smoke.  
+**Verification script**: registrar MCP sandbox, sincronizar tools, habilitar una tool read-only para un agente y lanzar run smoke.  
 **Tras entrega**: agentes pueden usar herramientas externas aprobadas.
 
 ## 5. Modo de Trabajo
 
-Trabajo por slices verificables, DAG explícito, source-of-truth primero, tests reales, datos prod-like, DRY/KISS/YAGNI y sin hardcoding de secrets. Cada slice debe cerrar con handoff, evidencia y verify según `Verify mode`.
+Trabajo por slices verificables, DAG explícito, source-of-truth primero, tests reales, datos reales/proporcionados, DRY/KISS/YAGNI y sin hardcoding de secrets. Cada slice debe cerrar con handoff, evidencia y verify según `Verify mode`.
 
 ## 6. i18n — keys específicas de la app
 
@@ -323,7 +323,7 @@ Workflow: `pr-flow`. Cada slice cierra con commit atómico y PR. No push directo
 ## 10. Criterios de Aceptación
 
 - [ ] `npm run test -- --run`, `npm run build`, `pytest backend/tests`, `alembic upgrade head`, `ruff check backend`, `mypy backend/app` verdes.
-- [ ] Los cinco journeys J100-J105 verificados con datos prod-like.
+- [ ] Los cinco journeys J100-J105 verificados con datos reales/proporcionados.
 - [ ] No hay texto hardcodeado fuera de i18n salvo nombres de marca y IDs técnicos.
 - [ ] Ninguna API key o refresh token aparece en logs o respuesta API.
 - [ ] Todos los endpoints devuelven envelope `{data, meta, errors}` o 204 documentado.
@@ -393,9 +393,9 @@ Web responsive. Mobile web 402×874 para login y chat de empleado. Desktop 1440�
 
 Métricas custom: `hilo_chat_stream_duration_seconds`, `hilo_llm_tokens_total`, `hilo_llm_cost_total`, `hilo_rag_retrieval_duration_seconds`, `hilo_vectorization_jobs_total`, `hilo_mcp_tool_invocations_total`, `hilo_auth_login_attempts_total`. Audit actions: `auth_sign_in`, `auth_2fa_verified`, `model_activated`, `model_tested`, `document_uploaded`, `document_indexed`, `mcp_server_registered`, `mcp_tool_enabled`, `agent_run_started`, `chat_message_streamed`.
 
-## 15. Seed Data
+## 15. Verification Data
 
-Seed idempotente `python -m app.seeds.bootstrap_verification_data --source data/verification` carga exclusivamente datos reales/prod-like entregados por People Tech: usuarios, employee profiles, documentos People ES/EN/FR, colecciones RAG, proveedores LiteLLM de verificación, MCPs sandbox autorizados y agentes de prueba. Si `data/verification/` no existe o le faltan campos obligatorios, el comando falla y bloquea la verificación. Reset con `scripts/dev-restart.sh --reset`.
+Carga idempotente de datos de verificación `python -m app.verification_data.bootstrap --source data/verification` carga exclusivamente datos reales/proporcionados entregados por People Tech: usuarios, employee profiles, documentos People ES/EN/FR, colecciones RAG, proveedores LiteLLM de verificación, MCPs sandbox autorizados y agentes de prueba. Si `data/verification/` no existe o le faltan campos obligatorios, el comando falla y bloquea la verificación. Reset con `scripts/dev-restart.sh --reset`.
 
 ## 16. Protocolo de Entrega
 
@@ -407,7 +407,7 @@ Mockups y HTML estático se guardan en `docs/visualization/hilo-people/` y `dist
 
 ## 18. Relación con baseline
 
-Sin BaseApp. No se arrastra nada de `docs/base-app`. Todo stack, rutas, tablas, endpoints, journeys, diseño y dependencias se declaran aquí y en los documentos canónicos.
+Sin existing baseline. No se arrastra nada de `docs/product-baseline`. Todo stack, rutas, tablas, endpoints, journeys, diseño y dependencias se declaran aquí y en los documentos canónicos.
 
 ## 19. Verificación de cableado pre-entrega
 

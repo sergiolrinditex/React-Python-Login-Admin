@@ -17,6 +17,6 @@ backend:
 db:
   engine: postgres
   migrate_cmd: alembic upgrade head
-  seed_cmd: python -m app.seeds.bootstrap_verification_data --source data/verification
-git_workflow: push-to-main
+  seed_cmd: python -m app.verification_data.bootstrap --source data/verification
+git_workflow: pr-flow
 design_tokens_enforcer: design_tokens_v1

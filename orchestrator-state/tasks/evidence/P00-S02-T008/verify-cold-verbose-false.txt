@@ -1,4 +1,0 @@
-[logging] BEFORE configure_logging: verbose=False
-CMD1: "[StubExecutor] Subagent 'hr-policies-agent' received your request."
-CMD2: "[StubExecutor] Subagent 'langchain-docs-agent' received your request."
-CMD3: 'No he podido determinar el área especializada de tu consulta. Por favor, reformula la pregunta mencionando el tema principal (p. ej. vacaciones, nóminas, LangChain, RAG).'

@@ -1,4 +1,4 @@
-# Three-doc execution index — Fullstack Edition
+# Five-file source-of-truth execution index — AnyStack Production DAG Edition
 
 ## CRITICAL — This is a REAL PRODUCTION product
 
@@ -20,10 +20,16 @@ The project is governed by the canonical source-of-truth set in `docs/source-of-
 
 Legacy 3-doc projects remain readable for compatibility, but production projects should use all five files. If any source-of-truth file is missing, duplicated, stale or contradictory — stop and repair the contract first.
 
-## Phases are variable by source-of-truth (BASEAPP=13, MiniNotes/minimal examples=3)
+## Main-thread orchestrator invariant
+
+This project is controlled by `main-orchestrator` as the Claude Code main session agent. `.claude/settings.json` sets `agent: main-orchestrator`, and explicit worker commands must use `claude --agent main-orchestrator --permission-mode bypassPermissions`. Do not run plain `claude` and then invoke `main-orchestrator` as a child subagent; child subagents cannot orchestrate other subagents.
+
+Do not add `tools:` or `disallowedTools:` to `.claude/agents/main-orchestrator.md`. Omitting `tools` is intentional: the main orchestrator inherits all available tools from the main session, including MCP tools and `Agent`. Any `tools:` list becomes an allowlist and can silently remove new tools/MCPs needed by the DAG controller.
+
+## Phases are variable by source-of-truth (source-of-truth dependent, MiniNotes/minimal examples=3)
 
 0. **Scaffold + Design System** — backend + DB + frontend running, design tokens ready, showcase page.
-1. **Auth + Data Foundation** — login/register on real backend + DB, protected routes, seed data.
+1. **Auth + Data Foundation** — login/register on real backend + DB, protected routes, real/provided verification data setup.
 2. **Core Features (the motor)** — each feature = complete screen (backend + frontend + tests + visual check).
 3. **Complete Features** — secondary features, settings, admin, edge cases.
 4. **Harden** — security, error handling, responsive, accessibility, Docker, performance.
@@ -35,7 +41,7 @@ Every phase produces a VISIBLE, FUNCTIONAL, VERIFIABLE deliverable. Never build 
 
 ```
 ── /next-slice pipeline (pausa en tester pass) ──
-1. planner                               (fused: phase-controller + context-curator + technical-analyst)
+1. planner                               (planning, context curation and technical analysis)
 2. developer ‖ official-docs-researcher  [PARALLEL — one message, two Agent calls]
                                           official-docs-researcher ALWAYS runs (cache keeps it ≤5s
                                           on shallow pass). Safety net for patterns the planner
@@ -47,7 +53,7 @@ Every phase produces a VISIBLE, FUNCTIONAL, VERIFIABLE deliverable. Never build 
 ── (opcional pero recomendado) /clear para liberar ~150k tokens del pipeline ──
 
 ── /verify-slice (gate humano único + orquestación de cierre) ──
-5. /verify-slice                         hard reset + fixtures + reproducción humana + logs vivos
+5. /verify-slice                         hard reset + datos reales/proporcionados + reproducción humana + logs vivos
    ├─ VERIFY_OUTCOME: verified
    │   └─ §5.bis si la slice cierra journey(s) → pregunta al usuario:
    │       ├─ "ahora"  → verify-journey INLINE con entorno ya cargado (un solo gate)
@@ -55,7 +61,7 @@ Every phase produces a VISIBLE, FUNCTIONAL, VERIFIABLE deliverable. Never build 
    │       └─ "aparte" → JOURNEY_PENDING_VERIFY → frontier difiere solo tasks de ese journey
    │   → spawnea closer (paso 6)
    └─ VERIFY_OUTCOME: issues_found → spawnea debugger → vuelve a paso 3
-6. closer                                (fused: evidence-reporter + git-manager) — commit + configured Git workflow
+6. closer                                evidence/report + commit + configured Git workflow
                                           pre-check rechaza si no hay sección verify-slice en el handoff
                                           si el handoff tiene ## verify-journey verified, NO emite
                                           JOURNEY_PENDING_VERIFY para esos JIDs (rama "ahora")
@@ -68,9 +74,9 @@ Every phase produces a VISIBLE, FUNCTIONAL, VERIFIABLE deliverable. Never build 
 
 **Resiliente a `/clear`**: `/verify-slice` reconstruye TODO desde disco (PROGRESS.md, runtime-state, registry, handoff, TECHNICAL_GUIDE). Puedes y debes hacer `/clear` entre el tester pass y `/verify-slice` para liberar los ~100-200k tokens del pipeline previo. El SessionStart hook inyecta el estado de proyecto en la primera turn tras reiniciar.
 
-## DAG wave mode — optional parallel slices
+## DAG wave mode — production explicit DAG
 
-Default mode remains sequential. The bootstrap only enables DAG mode when the Coverage Registry in `*_IMPLEMENTATION_CHECKLIST.md` contains a dependency column named `Depends on`, `Dependencies`, `Deps`, `After`, `Blocked by` or `Dependencias`. In that case, each row is a node and the dependency cell is the source-of-truth adjacency list. Blank / `—` means a root node. Accepted refs: full `TASK_ID`, ranges (`P03-S02-T001..T004`), step refs (`P03-S02`), phase refs (`P03`), or `previous`.
+Production mode is `explicit_dag`. The bootstrap materializes DAG mode when the Coverage Registry in `*_IMPLEMENTATION_CHECKLIST.md` contains a dependency column named `Depends on`, `Dependencies`, `Deps`, `After`, `Blocked by` or `Dependencias`. In that case, each row is a node and the dependency cell is the source-of-truth adjacency list. If bootstrap falls back to `legacy_linear`, do not open workers as a normal production run; repair the Coverage Registry and refresh. Blank / `—` means a root node. Accepted refs: full `TASK_ID`, ranges (`P03-S02-T001..T004`), step refs (`P03-S02`), phase refs (`P03`), or `previous`.
 
 Derived graph artifacts:
 
@@ -82,7 +88,7 @@ orchestrator-state/tasks/registry.json    task_dag copy used by planner/checks
 
 The matrix is derived, not authored. To change ordering or parallelism, edit only the Coverage Registry `Depends on`, `Conflict group` and `Write set` cells and rerun `bootstrap_three_docs.py --refresh` + `scripts/check-task-dag.sh --strict`. `Depends on` controls DAG readiness; `Conflict group`/`Write set` control safe same-wave scheduling.
 
-For large products, the Coverage Registry is cumulative: `Product increment` labels `baseapp`, `v1`, `v2`, ... and `Build state` keeps already-built rows at `done` while new rows remain `planned`. This preserves full product context without rebuilding closed increments.
+For large products, the Coverage Registry is cumulative: `Product increment` labels `v0`, `v1`, `v2`, ... and `Build state` keeps already-built rows at `done` while new rows remain `planned`. This preserves full product context without rebuilding closed increments.
 
 Parallel execution uses separate terminals, not extra agent types. Run `/next-wave` to list ready independent tasks, then start one terminal per selected task with both `CLAUDE_ACTIVE_TASK_ID=<TASK_ID>` and `CLAUDE_TASK_PACK=orchestrator-state/tasks/task-packs/<TASK_ID>.md`, then run `/next-slice <TASK_ID>`. The task environment is critical: hooks use `CLAUDE_ACTIVE_TASK_ID` for spawn budget, ledger, session context and SubagentStop accounting; agents use the per-task pack so memory remains scoped to the correct slice even if another terminal moves the legacy `active-task.json` / `active-task.md` pointers. In explicit DAG mode, `orchestrator-state/memory/active-task.md` is advisory only and must never be the only task pack passed to subagents.
 
@@ -94,7 +100,7 @@ All existing gates still apply in each node: planner writes/enriches `orchestrat
 
 Use this to keep prompts shorter: agents do not need to rediscover write policy. They load the contract, then write only their own slice artifacts. In DAG mode every artifact containing a `TASK_ID` must match `CLAUDE_ACTIVE_TASK_ID`; hooks enforce that mechanically.
 
-`docs/base-app/` is the built baseline snapshot for the next ChatGPT planning pass. Closer runs `./scripts/sync-product-baseline.sh sync --version <increment> --task <TASK_ID>` before commit so BaseApp + v1 + v2 context is never lost.
+`docs/product-baseline/` is the built baseline snapshot for the next ChatGPT planning pass. Closer runs `./scripts/sync-product-baseline.sh sync --version <increment> --task <TASK_ID>` before commit so existing baseline + v1 + v2 context is never lost.
 
 ## Agents
 
@@ -147,13 +153,14 @@ Do not create hidden runtime folders such as `.orchestrator/`. The only hidden c
 
 - `/next-wave` — lista la wave DAG actual y los TASK_ID ready paralelizables sin conflictos declarados; no implementa ni spawnea. Imprime exports copy/paste para `CLAUDE_ACTIVE_TASK_ID` + `CLAUDE_TASK_PACK`.
 - `/next-slice` — arranca la siguiente slice con gate de aprobación y pipeline completo. El pipeline termina en `tester pass` — NO invoca `closer` directamente; deja ese paso a `/verify-slice`.
-- `/verify-slice` — verificación humana-real con hard reset + fixtures + logs vivos. Si la slice queda verificada, orquesta al `closer` para commit atómico + configured Git workflow. Si encuentra issues, orquesta al `debugger`. Resiliente al `/clear`.
+- `/verify-slice` — verificación humana-real con hard reset + datos reales/proporcionados + logs vivos. Si la slice queda verificada, orquesta al `closer` para commit atómico + configured Git workflow. Si encuentra issues, orquesta al `debugger`. Resiliente al `/clear`.
 - `/revise-slice <TASK_ID> "motivo"` — reabre una slice canónica sin cambiar el DAG ni crear IDs temporales; corrige, revalida, verify y closer correctivo.
 - `/phase-gate <PHASE_ID>` — valida que la phase está realmente cerrada antes de abrir la siguiente: tasks done, reports/evidence/handoffs, journeys verified/waived y Git limpio opcional.
-- `/register-followup propose|promote|waive|list` — convierte hallazgos reales de validator/tester/verify en propuestas YAML y, tras aprobación humana, en tasks DAG persistentes en source-of-truth + registry + work-items.
-- `./scripts/sync-product-baseline.sh status|sync` — mantiene `docs/base-app/` como snapshot construido acumulativo para el siguiente incremento.
-- `/verify-journey <JID>` — gate humano end-to-end **a nivel journey** (multi-pantalla, no por slice). Se lanza tras el `closer` de la ÚLTIMA slice de un journey declarado en la Journey Coverage Matrix de `instrucciones.md` (sección §3.5 en base-app, §3.7 en feature-app — el bootstrap la localiza por nombre, no por número). `journey_gate_mode=frontier` es el default: `pending_journey_verifications[]` solo difiere tasks que referencian esos journeys; `strict` mantiene el rechazo global legacy de `/next-slice`. Hard reset + fixtures consolidados + reproducción del flujo entero + estados marginales (empty/error/permission/back/deep_link) + next action. Resiliente al `/clear`.
-- `/slice-maintain clean|compact` — mantenimiento entre slices (limpieza + compactación de PROGRESS.md).
+- `/register-followup propose|waive|list` — registra/waivea hallazgos reales de validator/tester/verify como propuestas YAML.
+- `/promote-followup <FU_ID>` — promoción segura vía main-orchestrator: convierte una FU aprobada en task DAG persistente en source-of-truth + registry + work-items.
+- `./scripts/sync-product-baseline.sh status|sync` — mantiene `docs/product-baseline/` como snapshot construido acumulativo para el siguiente incremento.
+- `/verify-journey <JID>` — gate humano end-to-end **a nivel journey** (multi-pantalla, no por slice). Se lanza tras el `closer` de la ÚLTIMA slice de un journey declarado en la Journey Coverage Matrix de `instrucciones.md` (sección §3.5 en baseline histórico, §3.7 en feature-app — el bootstrap la localiza por nombre, no por número). `journey_gate_mode=frontier` es el default: `pending_journey_verifications[]` solo difiere tasks que referencian esos journeys; `strict` mantiene el rechazo global legacy de `/next-slice`. Hard reset + datos reales/proporcionados consolidados + reproducción del flujo entero + estados marginales (empty/error/permission/back/deep_link) + next action. Resiliente al `/clear`.
+- `/slice-maintain clean|compact|compact-agent-memory` — mantenimiento entre slices, compactación de PROGRESS.md y compactación lossless de memorias de agentes.
 
 Recommended order when closing a slice: tester pass → (optional `/clear` to free context) → `/verify-slice` (spawns `closer` if verified) → `/slice-maintain clean` → `/clear` → `/next-slice`.
 
@@ -172,7 +179,7 @@ Si aparece trabajo real fuera del TASK_ID actual, no se deja en el handoff como 
 ## Entry points
 
 - Start: `claude --agent main-orchestrator --permission-mode bypassPermissions`.
-- Bootstrap: run skill `bootstrap-three-doc-project` (once).
+- Bootstrap: run `python3 -B -S .claude/bin/bootstrap_three_docs.py --validate-only` and then `python3 -B -S .claude/bin/bootstrap_three_docs.py --refresh`.
 - Slice: `/next-slice`.
 - Verify: `/verify-slice`.
 - Maintain: `/slice-maintain clean` or `/slice-maintain compact`.
@@ -196,7 +203,7 @@ During compaction preserve:
 - `orchestrator-state/memory/PROGRESS.md` path (read FIRST after compaction),
 - frontend dev server status + URL,
 - backend server status (running, port, health),
-- database status (migrations applied, seed loaded),
+- database status (migrations applied, real/provided verification data loaded when required),
 - unresolved discrepancies with official docs,
 - active risks, blockers, last test results.
 

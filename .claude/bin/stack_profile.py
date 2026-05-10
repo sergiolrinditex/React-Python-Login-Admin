@@ -2,7 +2,7 @@
 """Load the declarative stack profile for this project.
 
 The orchestrator engine is stack-agnostic. Concrete paths and commands live in
-`docs/source-of-truth/STACK_PROFILE.yaml` (or `docs/base-app/STACK_PROFILE.yaml`
+`docs/source-of-truth/STACK_PROFILE.yaml` (or `docs/product-baseline/STACK_PROFILE.yaml`
 for an already-built baseline). This parser intentionally supports only the
 small YAML subset used by the template: nested mappings and scalar/list values.
 It avoids external dependencies so hooks and CI can run in a fresh checkout.
@@ -132,7 +132,7 @@ def deep_merge(base: dict[str, Any], override: dict[str, Any]) -> dict[str, Any]
 
 def find_stack_profile(root: Path | None = None) -> Path | None:
     root = root or project_root()
-    for rel in ("docs/source-of-truth/STACK_PROFILE.yaml", "docs/base-app/STACK_PROFILE.yaml"):
+    for rel in ("docs/source-of-truth/STACK_PROFILE.yaml", "docs/product-baseline/STACK_PROFILE.yaml"):
         path = root / rel
         if path.is_file():
             return path

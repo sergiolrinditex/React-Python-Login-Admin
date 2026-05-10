@@ -19,15 +19,16 @@ def test_design_token_enforcer_public_contract_is_agnostic():
 
 
 def test_stack_profiles_use_capability_named_enforcer():
-    optional_baseapp_profile = ROOT / "docs/base-app/STACK_PROFILE.yaml"
-    paths = [
+    optional_profiles = [
         ROOT / "docs/source-of-truth/STACK_PROFILE.yaml",
+        ROOT / "docs/product-baseline/STACK_PROFILE.yaml",
+    ]
+    paths = [
         ROOT / "docs/templates/minimal/STACK_PROFILE.template.yaml",
         ROOT / "docs/templates/large-with-base/STACK_PROFILE.template.yaml",
         ROOT / "docs/templates/large-without-base/STACK_PROFILE.template.yaml",
     ]
-    if optional_baseapp_profile.exists():
-        paths.append(optional_baseapp_profile)
+    paths.extend(path for path in optional_profiles if path.exists())
     for path in paths:
         text = path.read_text(encoding="utf-8")
         assert "design_tokens_v1" in text or "{{design_tokens_enforcer}}" in text
@@ -36,13 +37,13 @@ def test_stack_profiles_use_capability_named_enforcer():
         assert "swiftui_v1" not in text
 
 
-def test_large_with_base_stack_profile_is_not_anystack_free():
+def test_large_with_base_stack_profile_is_declared_by_existing_baseline():
     text = (ROOT / "docs/templates/large-with-base/STACK_PROFILE.template.yaml").read_text(encoding="utf-8")
-    assert "framework: flutter" in text
-    assert "framework: fastapi" in text
-    assert "engine: postgres" in text
-    assert "module_root: app/lib" in text
-    assert "module_root: api/src" in text
+    assert "{{frontend_framework}}" in text
+    assert "{{backend_framework}}" in text
+    assert "{{db_engine}}" in text
+    assert "framework: flutter" not in text
+    assert "framework: fastapi" not in text
 
 
 def test_stack_profile_default_is_neutral():

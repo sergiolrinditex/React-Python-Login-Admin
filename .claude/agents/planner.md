@@ -38,7 +38,7 @@ Al arrancar, lee `orchestrator-state/agent-memory/planner/MEMORY.md` si existe �
 Lee en paralelo:
 
 - `orchestrator-state/memory/PROGRESS.md` (completo — es corto).
-- `orchestrator-state/tasks/registry.json` — cola canónica. Incluye `journeys[]` (Journey Coverage Matrix de `instrucciones.md` parseada por bootstrap — §3.5 en base-app, §3.7 en feature-app).
+- `orchestrator-state/tasks/registry.json` — cola canónica. Incluye `journeys[]` (Journey Coverage Matrix de `instrucciones.md` parseada por bootstrap — §3.5 en baseline snapshot, §3.7 en feature-app).
 - `orchestrator-state/tasks/runtime-state.json` — último worker + último evento + `pending_journey_verifications[]`.
 - `orchestrator-state/memory/active-task.json` y `orchestrator-state/memory/active-phase.json` si existen.
 - Si existe `CLAUDE_ACTIVE_TASK_ID` o el comando padre te pasó un `TASK_ID`, usa `orchestrator-state/tasks/task-packs/<TASK_ID>.md` como pack canónico de esta terminal. El singleton `orchestrator-state/memory/active-task.md` es solo legacy/advisory y puede pertenecer a otra terminal.
@@ -117,14 +117,14 @@ Busca en `docs/source-of-truth/` el source-of-truth pack completo y extrae SOLO 
 - Patrones de arquitectura aplicables (layers, feature modules).
 - Contratos API relacionados: método, path, request/response, error codes, auth.
 - Schema DB relevante: tablas, campos, tipos, relaciones.
-- Comandos de arranque, lint, test, migrate, seed.
+- Comandos de arranque, lint, test, migrate, carga de datos.
 - §6.4 Navigation Contract si la tarea toca rutas, deep links o estados de navegación.
 - §Verification Data Contract si la tarea toca UI/API/journey verificable: filas aplicables por TASK_ID, Journey refs, endpoint o ruta.
 
 **Del STACK_PROFILE.yaml**:
 
-- Frameworks reales, module roots, test roots, comandos `setup/lint/test/typecheck/migrate/seed`, `design_tokens_enforcer` y `git_workflow`.
-- Si el stack o comando del task pack contradice `STACK_PROFILE.yaml`, bloquea y pide rebootstrap/reconciliación; no asumas Flutter/FastAPI ni rutas heredadas.
+- Frameworks reales, module roots, test roots, comandos `setup/lint/test/typecheck/migrate/carga de datos`, `design_tokens_enforcer` y `git_workflow`.
+- Si el stack o comando del task pack contradice `STACK_PROFILE.yaml`, bloquea y pide rebootstrap/reconciliación; no asumas ningún stack concreto ni rutas heredadas.
 
 **Del UX_CONTRACT.md**:
 
@@ -138,7 +138,7 @@ Busca en `docs/source-of-truth/` el source-of-truth pack completo y extrae SOLO 
 - Definition of Done global aplicable.
 - Restricciones de seguridad, i18n, multi-país.
 - Scope: qué hacer y qué NO hacer.
-- Sección **Recorridos del usuario** + **Journey Coverage Matrix** (en base-app §3.4 + §3.5; en feature-app §3.6 + §3.7 — localiza por NOMBRE de sección, no por número) — busca filas donde la columna `Slices` incluya el `TASK_ID` actual. Si la tarea es parte de un journey, anota el `JOURNEY_ID`, las pantallas en orden, los estados marginales esperados (sección **LAS FEATURES**, §3.2 en ambos perfiles) y el "next action" recomendado. Pásalo al developer en el task pack para que implemente TODOS los estados, no solo el happy path.
+- Sección **Recorridos del usuario** + **Journey Coverage Matrix** (en baseline snapshot §3.4 + §3.5; en feature-app §3.6 + §3.7 — localiza por NOMBRE de sección, no por número) — busca filas donde la columna `Slices` incluya el `TASK_ID` actual. Si la tarea es parte de un journey, anota el `JOURNEY_ID`, las pantallas en orden, los estados marginales esperados (sección **LAS FEATURES**, §3.2 en ambos perfiles) y el "next action" recomendado. Pásalo al developer en el task pack para que implemente TODOS los estados, no solo el happy path.
 
 **Contexto previo**:
 
@@ -190,7 +190,7 @@ Escribe primero `orchestrator-state/tasks/task-packs/<TASK_ID>.md` con estas sec
  alguno necesario, diseña el mínimo o bloquea con follow-up según scope.>
 
 ## Verification data contract
-<filas del TECHNICAL_GUIDE §Verification Data Contract que aplican a esta tarea/journey; datos reales/prod-like, fixtures permitidos, reset/cleanup. Si no aplica: n/a con razón>
+<filas del TECHNICAL_GUIDE §Verification Data Contract que aplican a esta tarea/journey; datos reales/proporcionados, carga de datos permitida, reset/cleanup. Si no aplica: n/a con razón>
 
 ## Impact analysis
 <módulos candidatos, contratos afectados, unknowns, riesgos>

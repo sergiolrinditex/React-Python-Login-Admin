@@ -85,10 +85,10 @@ def test_logs_nonblocking_write_set_warning(tmp_project, monkeypatch):
     assert "outside declared Write set" in ledger
 
 
-def test_blocks_base_app_baseline_edit_while_task_active(tmp_project, monkeypatch):
+def test_blocks_product_baseline_baseline_edit_while_task_active(tmp_project, monkeypatch):
     monkeypatch.setenv("CLAUDE_ACTIVE_TASK_ID", "P00-S01-T001")
-    reason = _denied(_run_hook(_payload("Write", "docs/base-app/instrucciones.md")))
-    assert "base-app baseline edit" in reason
+    reason = _denied(_run_hook(_payload("Write", "docs/product-baseline/instrucciones.md")))
+    assert "baseline edit" in reason
 
 
 def test_blocks_direct_followup_yaml_write_while_task_active(tmp_project, monkeypatch):

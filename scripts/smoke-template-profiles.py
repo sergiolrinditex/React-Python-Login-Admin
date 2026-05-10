@@ -2,7 +2,7 @@
 """Smoke test the three template profiles by generating random-ish apps.
 
 The goal is not to build product code. It proves that source-of-truth packs
-compatible with each profile can be bootstrapped into registry/tasks/waves,
+compatible with each profile can be reset and bootstrapped into registry/tasks/waves,
 checked for journey/wiring drift, code-generated into API contracts, and fed to
 /next-wave without global journey-gate deadlocks.
 """
@@ -76,24 +76,24 @@ def stack_profile(app: App) -> str:
     if app.profile == "large-with-base":
         return """profile_version: stack-profile-v1
 frontend:
-  language: dart
-  framework: flutter
-  module_root: app/lib
-  theme_root: app/lib/core/theme
-  test_cmd: flutter test
-  dev_cmd: flutter run
-  visual_check: flutter golden
+  language: typescript
+  framework: react
+  module_root: web/src
+  theme_root: web/src/theme
+  test_cmd: pnpm test -- --run
+  dev_cmd: pnpm dev
+  visual_check: pnpm test:visual
 backend:
-  language: python
-  framework: fastapi
-  module_root: api/src
-  test_cmd: pytest api/tests
-  dev_cmd: uvicorn app.main:app --reload
-  health_url: http://localhost:8000/health
+  language: typescript
+  framework: node-fastify
+  module_root: server/src
+  test_cmd: pnpm test:server
+  dev_cmd: pnpm dev:server
+  health_url: http://localhost:3000/health
 db:
   engine: postgres
-  migrate_cmd: alembic upgrade head
-  seed_cmd: python scripts/seed.py
+  migrate_cmd: pnpm db:migrate
+  seed_cmd: none
 git_workflow: push-to-main
 design_tokens_enforcer: design_tokens_v1
 """
@@ -117,7 +117,7 @@ backend:
 db:
   engine: postgres
   migrate_cmd: pnpm db:migrate
-  seed_cmd: pnpm db:seed
+  seed_cmd: none
 git_workflow: push-to-main
 design_tokens_enforcer: design_tokens_v1
 """
@@ -140,7 +140,7 @@ backend:
 db:
   engine: sqlite
   migrate_cmd: pnpm db:migrate
-  seed_cmd: pnpm db:seed
+  seed_cmd: none
 git_workflow: push-to-main
 design_tokens_enforcer: design_tokens_v1
 """
@@ -174,20 +174,20 @@ def instructions(app: App, journey_rows: list[list[str]]) -> str:
 
 | Milestone | Objetivo | Criterio visible | Journeys |
 |---|---|---|---|
-| M1 | Primer flujo usable | usuario completa creación con datos reales/prod-like | {journey_rows[0][0]} |
+| M1 | Primer flujo usable | usuario completa creación con datos reales proporcionados | {journey_rows[0][0]} |
 | M2 | Revisión usable | usuario modifica un registro existente | {journey_rows[-1][0]} |
 
 ## 5. Reglas de verificación real
 
 - Verify-slice y verify-journey usan datos persistidos, reset reproducible y evidencia front -> back -> DB.
-- Los mocks decorativos no cierran tareas humanas.
+- Los datos decorativos, inventados o no proporcionados no cierran tareas humanas.
 """
 
 
 def guide(app: App, route_rows: list[list[str]], api_rows: list[list[str]]) -> str:
     rr = "\n".join("| " + " | ".join(r) + " |" for r in route_rows)
     ar = "\n".join("| " + " | ".join(r) + " |" for r in api_rows)
-    stack_note = "Flutter + FastAPI + Postgres heredado de BaseApp" if app.profile == "large-with-base" else "AnyStack declarado por STACK_PROFILE.yaml"
+    stack_note = "stack heredado del STACK_PROFILE.yaml del baseline existente" if app.profile == "large-with-base" else "AnyStack declarado por STACK_PROFILE.yaml"
     return f"""# {app.name} — Technical Guide
 
 ## 1. Stack
@@ -216,9 +216,9 @@ def guide(app: App, route_rows: list[list[str]], api_rows: list[list[str]]) -> s
 
 ## 3. Verification Data Contract
 
-| Flow/Journey | Persona/Rol | Datos reales/prod-like requeridos | Seed/fixture permitido | Reset/Cleanup | Slices/Journeys |
+| Flow/Journey | Persona/Rol | Datos reales/proporcionados requeridos | Carga de datos reales proporcionados | Reset/Cleanup | Slices/Journeys |
 |---|---|---|---|---|---|
-| principal | operator | una fila real de {app.entity} creada por API | seed deterministic {app.domain} | truncate {app.entity} | all / all journeys |
+| principal | operator | una fila real de {app.entity} creada por API | datos reales proporcionados por usuario/equipo | truncate {app.entity} | all / all journeys |
 
 ## 4. Testing mínimo
 
@@ -239,6 +239,10 @@ def checklist(app: App, rows: list[list[str]], phases: list[tuple[str, str, list
         for tid in task_ids:
             phase_text.append(f"### Step {tid.rsplit('-T', 1)[0]} — {tid}\n- [ ] {tid}\n")
     return f"""# {app.name} — Implementation Checklist
+
+## Screen/Journey Lane Redactor Contract
+
+This generated app is intentionally grouped by screen/journey lane, not by isolated API phase followed by isolated UI phase. API/data slices feed named screens and journeys; connected screen slices prove UX states with datos reales/proporcionados; journey verification closes the visible flow.
 
 ## Canonical Coverage Registry
 
@@ -284,14 +288,17 @@ Los estados UI obligatorios son loading, empty, error_network, error_validation 
 def minimal_docs(app: App) -> dict[str, str]:
     rows = [
         ["P00-S01-T001", "db", f"{app.entity} schema", "Step 0.1", "v1", "planned", "low", "auto", "—", "db:migrations", "server/src/db/**", "—", "—", "—", app.entity, "§2#F1", "§2.3#schema", "schema created", "python3 -B -S -c \"print(\'db-ok\')\""],
-        ["P01-S01-T001", "api", f"POST {app.endpoint_base}", "Step 1.1", "v1", "planned", "medium", "human", "P00-S01-T001", f"api:{app.domain}", "server/src/**", "J1", app.route, f"POST {app.endpoint_base}", app.entity, "§3#J1", f"§2.2#POST-{app.domain}", "create endpoint persists row", "pnpm test:server"],
-        ["P02-S01-T001", "frontend", f"{app.name} page", "Step 2.1", "v1", "planned", "medium", "human", "P01-S01-T001", f"front:{app.domain}; navigation", "web/src/**", "J1", app.route, f"POST {app.endpoint_base}", "—", "§3#J1", f"§2.1#{app.route}", "UI states and submit action", "/verify-slice with persisted data"],
-        ["P03-S01-T001", "journey", "J1 e2e", "Step 3.1", "v1", "planned", "high", "human", "P02-S01-T001", f"journey:{app.domain}", "orchestrator-state/tasks/journey-handoffs/**", "J1", app.route, f"POST {app.endpoint_base}", app.entity, "§3#J1", "§3 Verification Data Contract", "J1 verified end-to-end", "/verify-journey J1"],
+        ["P01-S01-T001", "api", f"POST {app.endpoint_base}", "Step 1.1", "v1", "planned", "medium", "human", "P00-S01-T001", f"screen-journey:{app.domain}; api", "server/src/**", "J1", app.route, f"POST {app.endpoint_base}", app.entity, "§3#J1", f"§2.2#POST-{app.domain}", "API contract feeding J1 screen persists row", "pnpm test:server"],
+        ["P01-S01-T002", "frontend", f"{app.name} connected screen", "Step 1.1", "v1", "planned", "medium", "human", "P01-S01-T001", f"screen-journey:{app.domain}; front", "web/src/**", "J1", app.route, f"POST {app.endpoint_base}", "—", "§3#J1", f"§2.1#{app.route}", "connected screen proves loading/empty/error/success states", "/verify-slice with persisted data"],
+        ["P01-S02-T001", "journey", "J1 e2e", "Step 1.2", "v1", "planned", "high", "human", "P01-S01-T002", f"screen-journey:{app.domain}; verify", "orchestrator-state/tasks/journey-handoffs/**", "J1", app.route, f"POST {app.endpoint_base}", app.entity, "§3#J1", "§3 Verification Data Contract", "J1 verified front -> back -> DB", "/verify-journey J1"],
     ]
-    phases = [("P00", "Data foundation", ["P00-S01-T001"]), ("P01", "API", ["P01-S01-T001"]), ("P02", "UI", ["P02-S01-T001"]), ("P03", "Journey", ["P03-S01-T001"])]
-    journey_rows = [["J1", "M1", app.route, "create", f"POST {app.endpoint_base}", app.entity, f"{app.domain}Store", "P01-S01-T001,P02-S01-T001,P03-S01-T001", "/verify-journey J1"]]
-    route_rows = [[app.route, f"{app.name}Page", "session", "J1", f"POST {app.endpoint_base}", f"{app.domain}Store", "loading, empty, error_network, error_validation, success", "create", "P02-S01-T001", "main workflow"]]
-    api_rows = [["POST", app.endpoint_base, f"Create{app.domain.title()}Request", f"{app.domain.title()}Response", "session", "400,401,500", "J1", app.entity, "P01-S01-T001"]]
+    phases = [
+        ("P00", "Product foundation", ["P00-S01-T001"]),
+        ("P01", "J1 screen/journey lane", ["P01-S01-T001", "P01-S01-T002", "P01-S02-T001"]),
+    ]
+    journey_rows = [["J1", "M1", app.route, "create", f"POST {app.endpoint_base}", app.entity, f"{app.domain}Store", "P01-S01-T001,P01-S01-T002,P01-S02-T001", "/verify-journey J1"]]
+    route_rows = [[app.route, f"{app.name}Page", "session", "J1", f"POST {app.endpoint_base}", f"{app.domain}Store", "loading, empty, error_network, error_validation, success", "create", "P01-S01-T002", "main screen/journey lane"]]
+    api_rows = [["POST", app.endpoint_base, f"Create{app.domain.title()}Request", f"{app.domain.title()}Response", "session", "400,401,500", "J1 connected screen", app.entity, "P01-S01-T001"]]
     return {
         "instrucciones.md": instructions(app, journey_rows),
         f"{app.prefix}_TECHNICAL_GUIDE.md": guide(app, route_rows, api_rows),
@@ -304,26 +311,31 @@ def minimal_docs(app: App) -> dict[str, str]:
 def large_without_base_docs(app: App) -> dict[str, str]:
     rows = [
         ["P00-S01-T001", "db", f"{app.entity} schema", "Step 0.1", "v1", "planned", "low", "auto", "—", "db:migrations", "server/src/db/**", "—", "—", "—", app.entity, "§2#F1", "§2.3#schema", "schema created", "python3 -B -S -c \"print(\'db-ok\')\""],
-        ["P01-S01-T001", "api", f"POST {app.endpoint_base}", "Step 1.1", "v1", "planned", "medium", "human", "P00-S01-T001", f"api:{app.domain}", "server/src/**", "J1", app.route, f"POST {app.endpoint_base}", app.entity, "§3#J1", f"§2.2#POST-{app.domain}", "create endpoint persists row", "pnpm test:server"],
-        ["P01-S02-T001", "api", f"GET {app.endpoint_base}", "Step 1.2", "v1", "planned", "low", "auto", "P00-S01-T001", f"api:{app.domain}", "server/src/**", "J1,J2", app.route, f"GET {app.endpoint_base}", app.entity, "§3#J1", f"§2.2#GET-{app.domain}", "list endpoint exposes rows", "python3 -B -S -c \"print(\'api-list-ok\')\""],
-        ["P02-S01-T001", "frontend", f"{app.name} dashboard", "Step 2.1", "v1", "planned", "medium", "human", "P01-S01-T001,P01-S02-T001", f"front:{app.domain}; navigation", "web/src/**", "J1", app.route, f"GET {app.endpoint_base}, POST {app.endpoint_base}", "—", "§3#J1", f"§2.1#{app.route}", "dashboard states", "/verify-slice with persisted data"],
-        ["P02-S02-T001", "frontend", f"{app.name} detail", "Step 2.2", "v1", "planned", "medium", "human", "P01-S02-T001", f"front:{app.domain}; navigation", "web/src/**", "J2", app.route + "/:id", f"GET {app.endpoint_base}", "—", "§3#J2", f"§2.1#{app.route}-detail", "detail state consumes list data", "/verify-slice detail"],
-        ["P03-S01-T001", "journey", "J1 create/list", "Step 3.1", "v1", "planned", "high", "human", "P02-S01-T001", f"journey:{app.domain}", "orchestrator-state/tasks/journey-handoffs/**", "J1", app.route, f"POST {app.endpoint_base}, GET {app.endpoint_base}", app.entity, "§3#J1", "§3 Verification Data Contract", "J1 verified", "/verify-journey J1"],
-        ["P03-S02-T001", "journey", "J2 detail", "Step 3.2", "v1", "planned", "high", "human", "P02-S02-T001", f"journey:{app.domain}", "orchestrator-state/tasks/journey-handoffs/**", "J2", app.route + "/:id", f"GET {app.endpoint_base}", app.entity, "§3#J2", "§3 Verification Data Contract", "J2 verified", "/verify-journey J2"],
-        ["P04-S01-T001", "release", f"{app.name} release gate", "Step 4.1", "v1", "planned", "medium", "human", "P03-S01-T001,P03-S02-T001", "release", "docs/**; .github/**", "J1,J2", "—", "—", "—", "§4#M2", "§4 Testing mínimo", "release checklist passes", "./scripts/run-all-tests.sh lint"],
+        ["P01-S01-T001", "api", f"POST {app.endpoint_base}", "Step 1.1", "v1", "planned", "medium", "human", "P00-S01-T001", f"screen-journey:{app.domain}; api", "server/src/**", "J1", app.route, f"POST {app.endpoint_base}", app.entity, "§3#J1", f"§2.2#POST-{app.domain}", "create API feeds dashboard screen", "pnpm test:server"],
+        ["P01-S01-T002", "api", f"GET {app.endpoint_base}", "Step 1.1", "v1", "planned", "low", "auto", "P00-S01-T001", f"screen-journey:{app.domain}; api", "server/src/**", "J1,J2", app.route, f"GET {app.endpoint_base}", app.entity, "§3#J1", f"§2.2#GET-{app.domain}", "list API feeds dashboard and detail", "python3 -B -S -c \"print(\'api-list-ok\')\""],
+        ["P01-S01-T003", "frontend", f"{app.name} dashboard connected screen", "Step 1.1", "v1", "planned", "medium", "human", "P01-S01-T001,P01-S01-T002", f"screen-journey:{app.domain}; front; navigation", "web/src/**", "J1", app.route, f"GET {app.endpoint_base}, POST {app.endpoint_base}", "—", "§3#J1", f"§2.1#{app.route}", "dashboard uses real API and required UX states", "/verify-slice with persisted data"],
+        ["P01-S02-T001", "frontend", f"{app.name} detail connected screen", "Step 1.2", "v1", "planned", "medium", "human", "P01-S01-T002", f"screen-journey:{app.domain}; front; navigation", "web/src/**", "J2", app.route + "/:id", f"GET {app.endpoint_base}", "—", "§3#J2", f"§2.1#{app.route}-detail", "detail screen consumes list data and UX states", "/verify-slice detail"],
+        ["P02-S01-T001", "journey", "J1 create/list", "Step 2.1", "v1", "planned", "high", "human", "P01-S01-T003", f"screen-journey:{app.domain}; verify", "orchestrator-state/tasks/journey-handoffs/**", "J1", app.route, f"POST {app.endpoint_base}, GET {app.endpoint_base}", app.entity, "§3#J1", "§3 Verification Data Contract", "J1 verified visible front -> back -> DB", "/verify-journey J1"],
+        ["P02-S02-T001", "journey", "J2 detail", "Step 2.2", "v1", "planned", "high", "human", "P01-S02-T001", f"screen-journey:{app.domain}; verify", "orchestrator-state/tasks/journey-handoffs/**", "J2", app.route + "/:id", f"GET {app.endpoint_base}", app.entity, "§3#J2", "§3 Verification Data Contract", "J2 verified visible front -> back -> DB", "/verify-journey J2"],
+        ["P03-S01-T001", "release", f"{app.name} release gate", "Step 3.1", "v1", "planned", "medium", "human", "P02-S01-T001,P02-S02-T001", "release", "docs/**; .github/**", "J1,J2", "—", "—", "—", "§4#M2", "§4 Testing mínimo", "release checklist passes", "./scripts/run-all-tests.sh lint"],
     ]
-    phases = [("P00", "Data", ["P00-S01-T001"]), ("P01", "API", ["P01-S01-T001", "P01-S02-T001"]), ("P02", "UI", ["P02-S01-T001", "P02-S02-T001"]), ("P03", "Journeys", ["P03-S01-T001", "P03-S02-T001"]), ("P04", "Release", ["P04-S01-T001"])]
+    phases = [
+        ("P00", "Product foundation", ["P00-S01-T001"]),
+        ("P01", "Primary screen/journey lanes", ["P01-S01-T001", "P01-S01-T002", "P01-S01-T003", "P01-S02-T001"]),
+        ("P02", "Visible journey verification", ["P02-S01-T001", "P02-S02-T001"]),
+        ("P03", "Release", ["P03-S01-T001"]),
+    ]
     journey_rows = [
-        ["J1", "M1", app.route, "create and list", f"POST {app.endpoint_base}, GET {app.endpoint_base}", app.entity, f"{app.domain}Store", "P01-S01-T001,P01-S02-T001,P02-S01-T001,P03-S01-T001", "/verify-journey J1"],
-        ["J2", "M2", app.route + " -> " + app.route + "/:id", "open detail from list", f"GET {app.endpoint_base}", app.entity, f"{app.domain}Store", "P01-S02-T001,P02-S02-T001,P03-S02-T001", "/verify-journey J2"],
+        ["J1", "M1", app.route, "create and list", f"POST {app.endpoint_base}, GET {app.endpoint_base}", app.entity, f"{app.domain}Store", "P01-S01-T001,P01-S01-T002,P01-S01-T003,P02-S01-T001", "/verify-journey J1"],
+        ["J2", "M2", app.route + " -> " + app.route + "/:id", "open detail from list", f"GET {app.endpoint_base}", app.entity, f"{app.domain}Store", "P01-S01-T002,P01-S02-T001,P02-S02-T001", "/verify-journey J2"],
     ]
     route_rows = [
-        [app.route, f"{app.name}Dashboard", "session", "J1", f"GET {app.endpoint_base}, POST {app.endpoint_base}", f"{app.domain}Store", "loading, empty, error_network, error_validation, success", "open detail", "P02-S01-T001", "dashboard workflow"],
-        [app.route + "/:id", f"{app.name}Detail", "session", "J2", f"GET {app.endpoint_base}", f"{app.domain}Store", "loading, empty, error_network, success", "return", "P02-S02-T001", "detail workflow"],
+        [app.route, f"{app.name}Dashboard", "session", "J1", f"GET {app.endpoint_base}, POST {app.endpoint_base}", f"{app.domain}Store", "loading, empty, error_network, error_validation, success", "open detail", "P01-S01-T003", "dashboard screen/journey lane"],
+        [app.route + "/:id", f"{app.name}Detail", "session", "J2", f"GET {app.endpoint_base}", f"{app.domain}Store", "loading, empty, error_network, success", "return", "P01-S02-T001", "detail screen/journey lane"],
     ]
     api_rows = [
-        ["POST", app.endpoint_base, f"Create{app.domain.title()}Request", f"{app.domain.title()}Response", "session", "400,401,500", "J1", app.entity, "P01-S01-T001"],
-        ["GET", app.endpoint_base, "query", f"{app.domain.title()}ListResponse", "session", "401,500", "dashboard/detail", app.entity, "P01-S02-T001"],
+        ["POST", app.endpoint_base, f"Create{app.domain.title()}Request", f"{app.domain.title()}Response", "session", "400,401,500", "J1 connected screen", app.entity, "P01-S01-T001"],
+        ["GET", app.endpoint_base, "query", f"{app.domain.title()}ListResponse", "session", "401,500", "dashboard/detail connected screens", app.entity, "P01-S01-T002"],
     ]
     return {
         "instrucciones.md": instructions(app, journey_rows),
@@ -336,27 +348,30 @@ def large_without_base_docs(app: App) -> dict[str, str]:
 
 def large_with_base_docs(app: App) -> dict[str, str]:
     rows = [
-        ["P01-S01-T001", "api", "GET /api/v1/profile", "Step 1.1", "baseapp", "done", "low", "auto", "—", "api:profile", "api/src/**", "—", "/profile", "GET /api/v1/profile", "profiles", "§base", "§base#profile", "BaseApp profile endpoint already built", "pytest api/tests"],
-        ["P15-S01-T001", "db", f"{app.entity} schema", "Step 15.1", "v1", "planned", "low", "auto", "P01-S01-T001", "db:migrations", "api/alembic/versions/**", "—", "—", "—", app.entity, "§2#F1", "§2.3#schema", "schema created", "python3 -B -S -c \"print(\'db-ok\')\""],
-        ["P15-S02-T001", "api", f"POST {app.endpoint_base}", "Step 15.2", "v1", "planned", "medium", "human", "P15-S01-T001", f"api:{app.domain}", "api/src/**", "J901", app.route, f"POST {app.endpoint_base}", app.entity, "§3#J901", f"§2.2#POST-{app.domain}", "create endpoint persists row", "pytest api/tests"],
-        ["P15-S03-T001", "flutter", f"{app.name} dashboard", "Step 15.3", "v1", "planned", "medium", "human", "P15-S02-T001", f"front:{app.domain}; router", "app/lib/**", "J901", app.route, f"POST {app.endpoint_base}", "—", "§3#J901", f"§2.1#{app.route}", "dashboard uses BaseApp shell", "/verify-slice with device"],
-        ["P16-S01-T001", "api", f"PATCH {app.endpoint_base}/{{id}}", "Step 16.1", "v1", "planned", "medium", "human", "P15-S02-T001", f"api:{app.domain}", "api/src/**", "J902", app.route + "/:id", f"PATCH {app.endpoint_base}/{{id}}", app.entity, "§3#J902", f"§2.2#PATCH-{app.domain}", "update endpoint persists row", "pytest api/tests"],
-        ["P16-S02-T001", "flutter", f"{app.name} detail", "Step 16.2", "v1", "planned", "medium", "human", "P15-S03-T001,P16-S01-T001", f"front:{app.domain}; router", "app/lib/**", "J902", app.route + "/:id", f"PATCH {app.endpoint_base}/{{id}}", "—", "§3#J902", f"§2.1#{app.route}-detail", "detail uses generated Dart client", "/verify-slice detail"],
-        ["P17-S01-T001", "journey", "J901/J902 BaseApp journeys", "Step 17.1", "v1", "planned", "high", "human", "P16-S02-T001", f"journey:{app.domain}", "orchestrator-state/tasks/journey-handoffs/**", "J901,J902", app.route, f"POST {app.endpoint_base}, PATCH {app.endpoint_base}/{{id}}", app.entity, "§3#J901", "§3 Verification Data Contract", "both journeys verified", "/verify-journey J901 && /verify-journey J902"],
+        ["P01-S01-T001", "api", "GET /api/v1/session", "Step 1.1", "v0", "done", "low", "auto", "—", "api:baseline-session", "server/src/**", "—", "/dashboard", "GET /api/v1/session", "sessions", "§baseline", "§baselineline#session", "existing baseline session endpoint already built", "pnpm test:server"],
+        ["P15-S01-T001", "db", f"{app.entity} schema", "Step 15.1", "v1", "planned", "low", "auto", "P01-S01-T001", f"screen-journey:{app.domain}; db", "server/src/db/migrations/**", "J901", app.route, "—", app.entity, "§2#F1", "§2.3#schema", "schema supports create/edit screens", "python3 -B -S -c \"print(\'db-ok\')\""],
+        ["P15-S01-T002", "api", f"POST {app.endpoint_base}", "Step 15.1", "v1", "planned", "medium", "human", "P15-S01-T001", f"screen-journey:{app.domain}; api", "server/src/**", "J901", app.route, f"POST {app.endpoint_base}", app.entity, "§3#J901", f"§2.2#POST-{app.domain}", "create endpoint feeds existing baseline screen", "pnpm test:server"],
+        ["P15-S01-T003", "frontend", f"{app.name} dashboard connected screen", "Step 15.1", "v1", "planned", "medium", "human", "P15-S01-T002", f"screen-journey:{app.domain}; front; router", "web/src/**", "J901", app.route, f"POST {app.endpoint_base}", "—", "§3#J901", f"§2.1#{app.route}", "dashboard uses existing baseline shell with required UX states", "/verify-slice with device"],
+        ["P15-S02-T001", "api", f"PATCH {app.endpoint_base}/{{id}}", "Step 15.2", "v1", "planned", "medium", "human", "P15-S01-T002", f"screen-journey:{app.domain}; api", "server/src/**", "J902", app.route + "/:id", f"PATCH {app.endpoint_base}/{{id}}", app.entity, "§3#J902", f"§2.2#PATCH-{app.domain}", "update endpoint feeds detail screen", "pnpm test:server"],
+        ["P15-S02-T002", "frontend", f"{app.name} detail connected screen", "Step 15.2", "v1", "planned", "medium", "human", "P15-S01-T003,P15-S02-T001", f"screen-journey:{app.domain}; front; router", "web/src/**", "J902", app.route + "/:id", f"PATCH {app.endpoint_base}/{{id}}", "—", "§3#J902", f"§2.1#{app.route}-detail", "detail uses generated Dart client and UX states", "/verify-slice detail"],
+        ["P16-S01-T001", "journey", "J901/J902 existing baseline journeys", "Step 16.1", "v1", "planned", "high", "human", "P15-S02-T002", f"screen-journey:{app.domain}; verify", "orchestrator-state/tasks/journey-handoffs/**", "J901,J902", app.route, f"POST {app.endpoint_base}, PATCH {app.endpoint_base}/{{id}}", app.entity, "§3#J901", "§3 Verification Data Contract", "both journeys verified visible front -> back -> DB", "/verify-journey J901 && /verify-journey J902"],
     ]
-    phases = [("P01", "BaseApp existing shell", ["P01-S01-T001"]), ("P15", "Create workflow", ["P15-S01-T001", "P15-S02-T001", "P15-S03-T001"]), ("P16", "Update workflow", ["P16-S01-T001", "P16-S02-T001"]), ("P17", "Journey gate", ["P17-S01-T001"])]
+    phases = [
+        ("P01", "existing product baseline shell", ["P01-S01-T001"]),
+        ("P15", "Feature screen/journey lanes", ["P15-S01-T001", "P15-S01-T002", "P15-S01-T003", "P15-S02-T001", "P15-S02-T002"]),
+        ("P16", "Journey verification gate", ["P16-S01-T001"]),
+    ]
     journey_rows = [
-        ["J901", "M1", app.route, "create in BaseApp shell", f"POST {app.endpoint_base}", app.entity, f"{app.domain}Provider", "P15-S02-T001,P15-S03-T001,P17-S01-T001", "/verify-journey J901"],
-        ["J902", "M2", app.route + " -> " + app.route + "/:id", "edit existing row", f"PATCH {app.endpoint_base}/{{id}}", app.entity, f"{app.domain}Provider", "P16-S01-T001,P16-S02-T001,P17-S01-T001", "/verify-journey J902"],
+        ["J901", "M1", app.route, "create in existing baseline shell", f"POST {app.endpoint_base}", app.entity, f"{app.domain}Provider", "P15-S01-T002,P15-S01-T003,P16-S01-T001", "/verify-journey J901"],
+        ["J902", "M2", app.route + " -> " + app.route + "/:id", "edit existing row", f"PATCH {app.endpoint_base}/{{id}}", app.entity, f"{app.domain}Provider", "P15-S02-T001,P15-S02-T002,P16-S01-T001", "/verify-journey J902"],
     ]
     route_rows = [
-        [app.route, f"{app.name}Page", "session", "J901", f"POST {app.endpoint_base}", f"{app.domain}Provider", "loading, empty, error_network, error_validation, success", "open detail", "P15-S03-T001", "BaseApp shell workflow"],
-        [app.route + "/:id", f"{app.name}DetailPage", "session", "J902", f"PATCH {app.endpoint_base}/{{id}}", f"{app.domain}Provider", "loading, empty, error_network, error_validation, success", "back", "P16-S02-T001", "BaseApp detail workflow"],
+        [app.route, f"{app.name}Page", "session", "J901", f"POST {app.endpoint_base}", f"{app.domain}Provider", "loading, empty, error_network, error_validation, success", "open detail", "P15-S01-T003", "existing baseline screen/journey lane"],
+        [app.route + "/:id", f"{app.name}DetailPage", "session", "J902", f"PATCH {app.endpoint_base}/{{id}}", f"{app.domain}Provider", "loading, empty, error_network, error_validation, success", "back", "P15-S02-T002", "existing baseline detail screen/journey lane"],
     ]
     api_rows = [
-        ["GET", "/api/v1/profile", "session", "ProfileResponse", "session", "401,500", "base shell", "profiles", "P01-S01-T001"],
-        ["POST", app.endpoint_base, f"Create{app.domain.title()}Request", f"{app.domain.title()}Response", "session", "400,401,500", "J901", app.entity, "P15-S02-T001"],
-        ["PATCH", app.endpoint_base + "/{id}", f"Update{app.domain.title()}Request", f"{app.domain.title()}Response", "session", "400,401,404,500", "J902", app.entity, "P16-S01-T001"],
+        ["POST", app.endpoint_base, f"Create{app.domain.title()}Request", f"{app.domain.title()}Response", "session", "400,401,500", "J901 connected screen", app.entity, "P15-S01-T002"],
+        ["PATCH", app.endpoint_base + "/{id}", f"Update{app.domain.title()}Request", f"{app.domain.title()}Response", "session", "400,401,404,500", "J902 connected screen", app.entity, "P15-S02-T001"],
     ]
     return {
         "instrucciones.md": instructions(app, journey_rows),
@@ -428,8 +443,9 @@ def smoke_app(temp_root: Path, app: App, keep: bool) -> dict[str, Any]:
     _write_source_docs(project, app)
     checks = []
     for cmd in [
+        ["./scripts/reset-for-new-project.sh"],
         ["python3", "-B", "-S", ".claude/bin/bootstrap_three_docs.py", "--validate-only"],
-        ["python3", "-B", "-S", ".claude/bin/bootstrap_three_docs.py", "--refresh"],
+        ["python3", "-B", "-S", ".claude/bin/bootstrap_three_docs.py", "--refresh", "--reset-runtime-state"],
         ["./scripts/check-task-dag.sh", "--strict"],
         ["./scripts/check-journey-matrix.sh", "--strict"],
         ["./scripts/check-wiring-contract.sh", "--strict", "--require-new-template-columns"],
@@ -457,6 +473,8 @@ def smoke_app(temp_root: Path, app: App, keep: bool) -> dict[str, Any]:
         "waves": len((registry.get("task_dag") or {}).get("topological_levels") or []),
         "checks": checks,
     }
+    if not keep:
+        shutil.rmtree(project, ignore_errors=True)
     return result
 
 

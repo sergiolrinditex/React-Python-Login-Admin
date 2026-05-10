@@ -94,7 +94,7 @@ flowchart LR
 ![Tipo](https://img.shields.io/badge/tipo-gate_humano-f59e0b?style=flat-square)
 ![Datos](https://img.shields.io/badge/datos-real_o_prod--like-ec4899?style=flat-square)
 
-Verificación con datos reales del `Verification Data Contract` definido en el `*_TECHNICAL_GUIDE.md`. Hard reset, fixtures, reproducción humana usando el método declarado en `STACK_PROFILE.frontend.visual_check` (browser, emulador, simulador, device), logs vivos.
+Verificación con datos reales del `Verification Data Contract` definido en el `*_TECHNICAL_GUIDE.md`. Reset controlado, carga de datos reales/proporcionados y reproducción humana usando el método declarado en `STACK_PROFILE.frontend.visual_check` (browser, emulador, simulador, device), logs vivos.
 
 **Acciones según resultado:**
 
@@ -136,7 +136,7 @@ flowchart TD
 ```
 
 > [!TIP]
-> La rama "ahora" evita el doble gate: aprovecha el entorno ya reseteado y los fixtures cargados, apendiza `## verify-journey` al **mismo handoff** del slice (no usa `journey-handoffs/`). El closer reconoce `JOURNEY_VERIFIED_INLINE` y el SubagentStop hook marca el journey como `verified` bajo lock, sin añadirlo a `pending_journey_verifications`.
+> La rama "ahora" evita el doble gate: aprovecha el entorno ya reseteado y los datos reales/proporcionados cargados, apendiza `## verify-journey` al **mismo handoff** del slice (no usa `journey-handoffs/`). El closer reconoce `JOURNEY_VERIFIED_INLINE` y el SubagentStop hook marca el journey como `verified` bajo lock, sin añadirlo a `pending_journey_verifications`.
 
 ---
 

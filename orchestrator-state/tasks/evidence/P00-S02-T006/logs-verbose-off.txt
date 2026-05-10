@@ -1,2 +1,0 @@
-[logging] BEFORE configure_logging: verbose=False
-STATUS: 200

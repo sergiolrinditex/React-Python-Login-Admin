@@ -82,15 +82,15 @@ The default recommended plugin is `design_tokens_v1`, which reads `frontend.fram
 - All traffic HTTPS only.
 - Parametrized queries ALWAYS. Sanitize all inputs on both sides.
 - CORS whitelist specific origins. Rate-limit public endpoints, especially auth.
-- Passwords hashed with bcrypt/argon2 (o delegado al proveedor gestionado — p.ej. Supabase Auth).
+- Passwords hashed with bcrypt/argon2 (o delegado al proveedor gestionado declarado).
 - OWASP top 10 compliance (XSS, CSRF, SQL injection, broken auth, misconfig).
 - Security headers: HSTS, X-Content-Type-Options, X-Frame-Options, CSP.
 - Production builds minified; source maps not exposed.
 
 ### Token storage — platform-aware (NUNCA negociable)
 - **Mobile (iOS/Android)**: access y refresh tokens SIEMPRE en secure storage del OS (Keychain en iOS, EncryptedSharedPreferences en Android) vía `flutter_secure_storage` o equivalente. NUNCA en `SharedPreferences`, `NSUserDefaults` ni `localStorage`. NUNCA en claro en disco.
-- **Web**: refresh token SIEMPRE en cookie `HttpOnly; Secure; SameSite=Lax; Path=/auth`. El access token vive solo en memoria del cliente (variable JS/Dart, nunca persistido). NUNCA access ni refresh en `localStorage` ni `sessionStorage`.
-- Cuando se usa un SDK gestionado que persiste tokens en `localStorage` por defecto (Supabase Web SDK, etc.), se implementa patrón **BFF (Backend-For-Frontend)**: el navegador no habla directamente con el proveedor de auth — habla con endpoints propios del backend (`/auth/login`, `/auth/refresh`, `/auth/logout`, `/auth/session`) que manejan la sesión server-side y devuelven cookies httpOnly al navegador.
+- **Web**: refresh token SIEMPRE en cookie `HttpOnly; Secure; SameSite=Lax; Path=/auth`. El access token vive solo en memoria del cliente (variable de runtime del cliente, nunca persistido). NUNCA access ni refresh en `localStorage` ni `sessionStorage`.
+- Cuando se usa un SDK gestionado que persiste tokens en `localStorage` por defecto (SDK gestionado declarado, etc.), se implementa patrón **BFF (Backend-For-Frontend)**: el navegador no habla directamente con el proveedor de auth — habla con endpoints propios del backend (`/auth/login`, `/auth/refresh`, `/auth/logout`, `/auth/session`) que manejan la sesión server-side y devuelven cookies httpOnly al navegador.
 - Access token con TTL corto (900-1800s). Refresh rotativo en cada uso.
 
 ### Claves de proveedores externos (LLM, embeddings, payments, etc.)
@@ -130,7 +130,7 @@ The default recommended plugin is `design_tokens_v1`, which reads `frontend.fram
 
 - Every schema change is a migration file. Never modify DB manually.
 - Migrations reversible. Tested in both directions.
-- Seed scripts populate realistic demo data.
+- Data setup scripts may load only real/provided verification data, never decorative demo data.
 - Every frontend entity has a matching DB table/collection.
 - Indexes on every field used in WHERE / ORDER BY / JOIN.
 - Transactions for multi-step ops; rollback on failure.
@@ -158,7 +158,7 @@ Allowed max chain = 20 spawns, with aggressive parallelism:
 4. `debugger` (only if tester fails; then re-run step 3). Max 3 cycles; on the 4th failure the debugger emits `OUTCOME: blocked` with reason `max_debug_cycles_reached` and escalates to the human.
 5. `closer` (evidence + atomic commit plus configured Git workflow + `configured Git workflow (`./scripts/git-workflow.sh`)` + safe worktree cleanup)
 
-Between steps 4 and 5 the human gate is mandatory: `/verify-slice` (hard reset + fixtures + human reproduction in the browser). `/verify-slice` is resilient to `/clear` — it rebuilds state from disk (PROGRESS.md, runtime-state, registry, handoff, TECHNICAL_GUIDE). The `closer`'s pre-check refuses to commit unless `## verify-slice` with `VERIFY_OUTCOME: verified` (or explicit `VERIFY_WAIVED: <reason>`) is in the handoff.
+Between steps 4 and 5 the human gate is mandatory: `/verify-slice` (hard reset + datos reales/proporcionados + human reproduction in the browser). `/verify-slice` is resilient to `/clear` — it rebuilds state from disk (PROGRESS.md, runtime-state, registry, handoff, TECHNICAL_GUIDE). The `closer`'s pre-check refuses to commit unless `## verify-slice` with `VERIFY_OUTCOME: verified` (or explicit `VERIFY_WAIVED: <reason>`) is in the handoff.
 
 Never skip mandatory steps. Parallelize where possible.
 

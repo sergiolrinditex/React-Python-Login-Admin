@@ -1,6 +1,6 @@
 name: Orchestrator tests
 
-# Validates the three-doc orchestrator framework that lives outside any
+# Validates the five-file source-of-truth orchestrator framework that lives outside any
 # concrete app — hooks, skills, scripts and the bootstrap parser. Runs on
 # every push and PR. Four independent jobs (each on a fresh runner) so a
 # failure in one path does not mask another.
@@ -11,10 +11,15 @@ on:
     paths:
       - ".claude/**"
       - "scripts/**"
-      - "docs/base-app/**"
+      - "docs/product-baseline/**"
       - "docs/templates/**"
-      - "docs/LEGACY_AND_DAG_RUNBOOK.md"
-      - "docs/CHATGPT_DAG_SOURCE_OF_TRUTH_GUIDE.md"
+      - "docs/guides/**"
+      - "docs/source-of-truth/**"
+      - "docs/README.md"
+      - "README.md"
+      - "CHEATSHEET.md"
+      - "docs/guides/LEGACY_AND_DAG_RUNBOOK.md"
+      - "docs/guides/CHATGPT_DAG_SOURCE_OF_TRUTH_GUIDE.md"
       - "docs/prompts/**"
       - "AUDIT_REPORT.md"
       - ".github/workflows/orchestrator-tests.yml"
@@ -22,10 +27,15 @@ on:
     paths:
       - ".claude/**"
       - "scripts/**"
-      - "docs/base-app/**"
+      - "docs/product-baseline/**"
       - "docs/templates/**"
-      - "docs/LEGACY_AND_DAG_RUNBOOK.md"
-      - "docs/CHATGPT_DAG_SOURCE_OF_TRUTH_GUIDE.md"
+      - "docs/guides/**"
+      - "docs/source-of-truth/**"
+      - "docs/README.md"
+      - "README.md"
+      - "CHEATSHEET.md"
+      - "docs/guides/LEGACY_AND_DAG_RUNBOOK.md"
+      - "docs/guides/CHATGPT_DAG_SOURCE_OF_TRUTH_GUIDE.md"
       - "docs/prompts/**"
       - "AUDIT_REPORT.md"
       - ".github/workflows/orchestrator-tests.yml"
@@ -49,7 +59,7 @@ jobs:
       - name: Python compile (.claude/bin)
         # python3 -B affects implicit imports only, NOT explicit `compileall`,
         # so __pycache__ would land in the working tree. We clean it up below.
-        run: python3 -m compileall -q .claude/bin
+        run: python3 -m compileall -q .claude/bin scripts
 
       - name: Clean compileall byproducts
         run: |
@@ -63,10 +73,17 @@ jobs:
             python3 -m json.tool .claude/settings.local.example.json > /dev/null
           fi
 
+      - name: Run orchestrator audits
+        run: |
+          python3 -B -S scripts/audit-agent-reality.py
+          python3 -B -S scripts/audit-agent-trailer-vocabulary.py
+          python3 -B -S scripts/audit-template-screen-journey-redactor.py
+          python3 -B -S scripts/audit-orchestrator-refactor-consistency.py
+
       - name: Bash syntax check (bash -n)
         run: |
           set -e
-          for f in scripts/*.sh .claude/scripts/*.sh; do
+          for f in scripts/*.sh .claude/bin/*.sh .claude/enforcers/*.sh .claude/git-workflows/*.sh .claude/scripts/*.sh; do
             [ -f "$f" ] || continue
             bash -n "$f"
             echo "ok: $f"
@@ -82,7 +99,7 @@ jobs:
         #         meant to expand — the actual paths use $HOME explicitly.
         run: |
           set -e
-          for f in scripts/*.sh .claude/scripts/*.sh; do
+          for f in scripts/*.sh .claude/bin/*.sh .claude/enforcers/*.sh .claude/git-workflows/*.sh .claude/scripts/*.sh; do
             [ -f "$f" ] || continue
             shellcheck --severity=warning -e SC1091 -e SC2088 "$f"
           done
@@ -126,13 +143,14 @@ jobs:
         run: python3 -m unittest discover -s .claude/bin/tests -p 'test_*.py'
 
   # ----------------------------------------------------------------------
-  # 3) Bootstrap end-to-end on the shipped base-app docs. Verifies that the
-  #    three-doc parser still generates registry+runtime-state, and that
-  #    NO mutable artifact lands inside `.claude/` (everything must end up
-  #    under `orchestrator-state/`).
+  # 3) Bootstrap end-to-end on the active source-of-truth. Optional
+  #    docs/product-baseline history must never be promoted over the checked-in
+  #    docs/source-of-truth during CI. Verifies
+  #    registry+runtime-state generation and that NO mutable artifact lands
+  #    inside `.claude/`.
   # ----------------------------------------------------------------------
-  bootstrap-baseapp:
-    name: Bootstrap (base-app docs)
+  bootstrap-source-of-truth:
+    name: Bootstrap (active source-of-truth)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -142,16 +160,29 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Promote base-app docs to source-of-truth
+      - name: Detect active source-of-truth
+        id: sot
         run: |
-          mkdir -p docs/source-of-truth
-          rm -rf docs/source-of-truth/*
-          cp docs/base-app/instrucciones.md \
-             docs/base-app/BASEAPP_IMPLEMENTATION_CHECKLIST.md \
-             docs/base-app/BASEAPP_TECHNICAL_GUIDE.md \
-             docs/source-of-truth/
+          set -e
+          # This orchestrator ZIP intentionally ships with no built app and no default baseline.
+          # If docs/source-of-truth is empty, skip the active-app bootstrap job; template smoke/audits
+          # still validate that a new app can be generated from docs/templates.
+          has_sot=yes
+          test -s docs/source-of-truth/instrucciones.md || has_sot=no
+          test -s docs/source-of-truth/UX_CONTRACT.md || has_sot=no
+          test -s docs/source-of-truth/STACK_PROFILE.yaml || has_sot=no
+          test -n "$(find docs/source-of-truth -maxdepth 1 -type f -name '*_TECHNICAL_GUIDE.md' -print -quit)" || has_sot=no
+          test -n "$(find docs/source-of-truth -maxdepth 1 -type f -name '*_IMPLEMENTATION_CHECKLIST.md' -print -quit)" || has_sot=no
+          if [ "$has_sot" = yes ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "active source-of-truth present"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "no active source-of-truth yet; use docs/templates to generate one"
+          fi
 
       - name: Run bootstrap (validate + refresh)
+        if: steps.sot.outputs.present == 'true'
         # `-B` disables bytecode writing on automatic imports — keeps
         # __pycache__ from contaminating .claude/bin/ during this job.
         run: |
@@ -160,15 +191,19 @@ jobs:
           python3 -B .claude/bin/bootstrap_three_docs.py --refresh
 
       - name: Strict journey-matrix check
+        if: steps.sot.outputs.present == 'true'
         run: bash scripts/check-journey-matrix.sh --strict
 
       - name: Strict task-DAG check
+        if: steps.sot.outputs.present == 'true'
         run: bash scripts/check-task-dag.sh --strict
 
       - name: Strict wiring-contract check
+        if: steps.sot.outputs.present == 'true'
         run: bash scripts/check-wiring-contract.sh --strict --require-new-template-columns
 
       - name: Defensive cleanup of any byproduct caches
+        if: steps.sot.outputs.present == 'true'
         # Belt-and-braces: even with -B, a sub-process could re-enable bytecode.
         # Clean before asserting "no mutable artifacts under .claude/".
         run: |
@@ -176,6 +211,7 @@ jobs:
           find .claude -type f -name '*.pyc' -delete
 
       - name: Assert orchestrator-state landed outside .claude/
+        if: steps.sot.outputs.present == 'true'
         run: |
           set -e
           # Mutable artifacts must NEVER land inside .claude/. Two separate
@@ -195,7 +231,7 @@ jobs:
 
   # ----------------------------------------------------------------------
   # 4) Bootstrap MUST refuse to run when source-of-truth is empty. This
-  #    closes the contract loophole "the three-doc rule is enforced when
+  #    closes the contract loophole "the five-file source-of-truth rule is enforced when
   #    the docs are missing too", not just when present.
   # ----------------------------------------------------------------------
   bootstrap-rejects-empty:

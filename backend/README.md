@@ -1,1 +1,0 @@
-# Hilo People Backend

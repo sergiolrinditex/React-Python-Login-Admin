@@ -47,7 +47,7 @@ Una task entra en la wave si:
 - no tiene conflicto activo contra otra task ya claimed/in_progress;
 - no comparte `Conflict group` ni `Write set` con otra task seleccionada para la misma wave.
 
-Conflictos probables: misma migración, misma pantalla Flutter, mismo provider, mismo endpoint family, mismo fichero de configuración, mismo seed global, mismo router/theme/dependency file. El script serializa mecánicamente los conflictos declarados en el Coverage Registry; no los fuerces a mano aunque el DAG de dependencias lo permita.
+Conflictos probables: misma migración, misma pantalla, mismo state handler, mismo endpoint family, mismo fichero de configuración, misma carga global de datos proporcionados, mismo router/theme/dependency file. El script serializa mecánicamente los conflictos declarados en el Coverage Registry; no los fuerces a mano aunque el DAG de dependencias lo permita.
 
 ## Salida
 

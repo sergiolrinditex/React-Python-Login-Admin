@@ -1,5 +1,0 @@
-# Verification Data Contract — P01-S01-T002
-# This is a wiring slice (no data flow). N/A per task pack.
-# No fixtures injected. No persisted data observed.
-# Mechanical checks: grep + pytest + Settings() construction + curl /health /live /ready.
-# Verification data contract rows used: none (wiring slice, not a productive data flow slice).

@@ -1,23 +1,32 @@
-# {{APP_NAME}} — Technical Guide (feature-app sobre base-app)
+# {{APP_NAME}} — Technical Guide (feature-app sobre product baseline existente)
 
-> **HEREDADO**: stack completo + estructura + patterns desde `docs/base-app/BASEAPP_TECHNICAL_GUIDE.md`.
+## Screen/Journey Lane Redactor Contract
+
+- No modeles la app como `backend/API primero`, luego `frontend`, y `UX polish` al final. Esa separación rompe la pantalla aunque los tests pasen.
+- Cada pantalla importante debe nacer de una **screen/journey lane**: contrato de pantalla + contrato API/datos + implementación conectada + estados UX obligatorios + verificación del journey.
+- Las slices de API/backend pueden existir separadas sólo si son foundation real o contrato técnico que alimenta una pantalla/journey nombrado en `Journey refs`.
+- Criterio de cierre de pantalla: datos reales/proporcionados conectados front -> back -> DB, estados `loading`, `empty`, `error_network`, `error_validation`, `permission_denied` cuando aplique, `success`, navegación/next action, responsive básico y accesibilidad básica.
+- Tamaño recomendado: pantalla crítica 3-6 slices; módulo/journey lane 8-15 slices. No hagas una slice por botón/componente pequeño; tampoco cierres una pantalla sólo porque compila.
+- Defectos dentro de la pantalla actual van por `validator/tester -> debugger -> retest`. Sólo crea FU si falta trabajo nuevo fuera de scope: pantalla, endpoint, tabla, journey, contrato de datos reales o decisión humana no declarada.
+
+> **HEREDADO**: stack completo + estructura + patterns desde `docs/product-baseline/*_TECHNICAL_GUIDE.md`.
 > **TU TRABAJO**: describir SOLO las adiciones específicas de esta app. Todo lo heredado se da por hecho.
 > Rellenar `>>> MODELO:`. `🔒 HEREDADO` no se toca. Omitir secciones sin cambios.
 
-> Perfil: **large-with-base**. Hereda `docs/base-app/` y mantiene stack Flutter + FastAPI + Postgres/Supabase-compatible; no convertir a React/Node.
+> Perfil: **large-with-base**. Úsalo sólo si existe `docs/product-baseline/` con una app real ya construida. Mantén el stack declarado por `docs/product-baseline/STACK_PROFILE.yaml`; no conviertas ni reescribas el stack por costumbre.
 
 ---
 
 ## 🔗 Contrato de Cableado — léelo ANTES de empezar a rellenar
 
-> Este documento traduce el motor + features de `instrucciones.md` a contrato técnico ejecutable, y es la **fuente** que el `*_IMPLEMENTATION_CHECKLIST.md` consume para generar slices. Cada elemento aquí debe estar simultáneamente declarado en `instrucciones.md` (origen conceptual) y referenciado en el `CHECKLIST` (ejecución).
+> Este documento traduce el motor + features de `instrucciones.md` a recurso técnico ejecutable, y es la **fuente** que el `*_IMPLEMENTATION_CHECKLIST.md` consume para generar slices. Cada elemento aquí debe estar simultáneamente declarado en `instrucciones.md` (origen conceptual) y referenciado en el `CHECKLIST` (ejecución).
 >
-> **Wires ENTRANTES** (cada item de `instrucciones.md` debe convertirse en contrato aquí):
+> **Wires ENTRANTES** (cada item de `instrucciones.md` debe convertirse en recurso aquí):
 >
 > | Sección de `*_TECHNICAL_GUIDE.md`        | Espera de `instrucciones.md`                        | Genera en `*_IMPLEMENTATION_CHECKLIST.md`                  |
 > |------------------------------------------|------------------------------------------------------|------------------------------------------------------------|
-> | §2.0 cada lib **USAR / DEFERRED**         | §11.0 mismo área funcional                          | slice que añade la lib en `pubspec.yaml` / `pyproject.toml`|
-> | §6.1 cada **ruta Flutter**                | §3.2 (feature) o §3.6 (journey)                     | slice flutter o journey en Phase 3                         |
+> | §2.0 cada lib **USAR / DEFERRED**         | §11.0 mismo área funcional                          | slice que añade la lib en `frontend dependency manifest` / `backend dependency manifest`|
+> | §6.1 cada **ruta frontend**                | §3.2 (feature) o §3.6 (journey)                     | slice frontend o journey en Phase 3                         |
 > | §6.2 cada **endpoint API**                | §3.1 (motor) o §3.2 (feature consume)               | slice api en Phase 2                                       |
 > | §6.3 cada **entity**                      | §3.1 (componente del motor)                         | slice domain Phase 2 + slice migration §10.3 paralela      |
 > | §10.3 cada **tabla DB**                   | §3.1 (entities del motor) + §10.4 si AI persistente | slice migration Phase 2 (`000N_<feature>.py`)              |
@@ -38,13 +47,13 @@
 >>>  Usuario
 >>>    │
 >>>    ▼
->>>  [ContractUploadPage] ──► POST /api/v1/contracts/analyze  ──► [ContractAnalyzer Graph]
->>>                                                                ├─ parse_node (pypdf)
->>>                                                                ├─ classify_node (LLM + prompt)
->>>                                                                └─ suggest_node (LLM + RAG)
+>>>  [{{PrimaryActionPage}}] ──► {{primary_endpoint}} ──► [{{DomainEngine}}]
+>>>                                                                ├─ normalize_input_node (input real proporcionado)
+>>>                                                                ├─ classify_or_validate_node (reglas/AI si aplica)
+>>>                                                                └─ recommend_or_result_node (reglas/AI si aplica)
 >>>                                                                      │
 >>>                                                                      ▼
->>>                                                                 [pgvector: legal_corpus]
+>>>                                                                 [optional reference store: {{provided_reference_data}}]
 >>> ```
 >>>
 >>> Sin este diagrama no queda claro qué construyes. Es obligatorio.
@@ -53,7 +62,7 @@
 
 ## 2. Stack — adiciones al heredado
 
-🔒 **HEREDADO**: Flutter 3.41, Riverpod, GoRouter, Dio, supabase_flutter, flutter_secure_storage, Python 3.12, FastAPI 0.136, SQLAlchemy 2.0.49, Alembic 1.18.4, Pydantic 2.12.5, PyJWT[crypto], LangChain 1.2.15, LangGraph 1.1.0, DeepAgents 0.5.x, LiteLLM, pgvector. Ver base guide §2 para tabla completa.
+🔒 **HEREDADO**: stack, frameworks, librerías, module roots, comandos, lockfiles y versiones reales se leen de `docs/product-baseline/STACK_PROFILE.yaml` y `docs/product-baseline/*_TECHNICAL_GUIDE.md §2`. No declares ningún stack concreto/proveedor declarado ni ningún stack por costumbre.
 
 ### 2.0 Library Discovery Pass — formaliza decisiones de `instrucciones §11.0`
 
@@ -69,8 +78,8 @@
 >
 > **Política de versiones — IMPORTANTE**:
 > - **NO pinees versión específica en este documento**. Las versiones cambian cada semanas; lo que escribas aquí puede no existir o estar deprecated cuando se implemente la slice.
-> - El `official-docs-researcher` corre antes del `developer` en CADA slice. Es quien resuelve la versión exacta al introducir la lib en `pubspec.yaml` / `pyproject.toml`.
-> - El **lockfile** (`pubspec.lock`, `poetry.lock`, `uv.lock`) fija la versión real. Este documento solo declara intención, no contrato de versión.
+> - El `official-docs-researcher` corre antes del `developer` en CADA slice. Es quien resuelve la versión exacta al introducir la lib en `frontend dependency manifest` / `backend dependency manifest`.
+> - El **lockfile** (`frontend lockfile`, `{{backend_lockfile}}`, `{{backend_lockfile}}`) fija la versión real. Este documento solo declara intención, no recurso de versión.
 > - Si dudas de que el paquete existe o está mantenido, déjalo como `<librería candidata, official-docs-researcher confirmará>` y escribe en "Frontend / Backend" + "Justificación" para guiar al researcher.
 >
 > **Reglas estructurales**:
@@ -83,12 +92,12 @@
 >>> | Área (ref §11.0) | Paquete propuesto | URL oficial | Frontend / Backend | Justificación + slice ahorrado | Alternativa descartada | Versión | Introducida en slice |
 >>> |---|---|---|---|---|---|---|---|
 >>> | {ej: Forms} | `<paquete>` | {pub.dev/PyPI/...} | Frontend / Backend | {qué problema resuelve, cuántas slices ahorra} | {alternativa real considerada y motivo de rechazo} | pendiente — official-docs-researcher confirmará al implementar | {ej: P03-S01-T002} |
->>> | {ej: PDF parsing backend} | `<paquete>` | {URL} | Backend | {ej: motor §3.1 parsea contratos PDF nativos; ahorra 1 slice de pdf-parsing custom} | {ej: alternativa con OCR — no aplica porque PDFs son nativos} | pendiente — official-docs-researcher confirmará | {ej: P02-S04-T002} |
+>>> | {ej: parsing/validación de entrada backend} | `<paquete>` | {URL} | Backend | {ej: motor §3.1 procesa el formato real proporcionado; ahorra 1 slice custom} | {ej: alternativa más compleja — no aplica si los datos proporcionados ya vienen normalizados} | pendiente — official-docs-researcher confirmará | {ej: P02-S04-T002} |
 >>> | ... | ... | ... | ... | ... | ... | ... | ... |
 >>>
->>> Si tu app no añade ninguna lib (todas las áreas resueltas con CUSTOM o NO APLICA o cubiertas por base-app):
+>>> Si tu app no añade ninguna lib (todas las áreas resueltas con CUSTOM o NO APLICA o cubiertas por baseline snapshot):
 >>>
->>> > "HEREDADO — Library Discovery Pass declaró todas las áreas relevantes como cubiertas por base-app o resueltas con código <20 líneas custom. Detalle: ver `instrucciones.md §11.0`."
+>>> > "HEREDADO — Library Discovery Pass declaró todas las áreas relevantes como cubiertas por baseline snapshot o resueltas con código <20 líneas custom. Detalle: ver `instrucciones.md §11.0`."
 >>>
 >>> Si dudas del nombre exacto del paquete, marca el campo "Paquete propuesto" como `<librería candidata: tipo de lib buscada>` y deja que el `official-docs-researcher` la cierre al implementar.
 
@@ -98,7 +107,7 @@
 >>>
 >>> | Componente | Paquete | URL oficial | Por qué |
 >>> |---|---|---|---|
->>> | {ej: Lint extra} | `<paquete de lint>` | {URL} | {ej: reglas más estrictas que `flutter_lints` heredado} |
+>>> | {ej: Lint extra} | `<paquete de lint>` | {URL} | {ej: reglas más estrictas que `frontend_lints` heredado} |
 >>> | {ej: Codegen runner} | `<paquete de build runner>` | {URL} | {ej: necesario para `riverpod_generator` heredado} |
 >>>
 >>> Si no añades nada: "Ver §2.0 — sin paquetes auxiliares adicionales".
@@ -107,12 +116,12 @@
 
 ## 3. Comandos — adiciones
 
-🔒 **HEREDADO**: install, run, migrate, load-provided-data, test, lint, build — todos documentados en base guide §3.
+🔒 **HEREDADO**: install, run, migrate, load-provided-data, test, lint, build — todos documentados en product baseline guide §3.
 
 >>> MODELO: comandos específicos de tu app. Ejemplos comunes:
->>> - `python -m api.scripts.load_provided_{feature}_data`: cargar datos reales proporcionados para verificación.
->>> - `python -m api.scripts.ingest_corpus`: cargar corpus RAG inicial.
->>> - `python -m api.scripts.retrain_classifier`: si entrenas modelos locales.
+>>> - `{{provided_data_load_cmd}}`: cargar datos reales proporcionados para verificación.
+>>> - `{{data_import_cmd}}`: cargar datos/referencias reales proporcionados, si aplica.
+>>> - `{{model_training_cmd}}`: si entrenas modelos locales.
 >>>
 >>> Si nada extra: "HEREDADO".
 
@@ -120,66 +129,37 @@
 
 ## 4. Estructura del proyecto — adiciones
 
-🔒 **HEREDADO**: árbol completo en base guide §4.1.
+⚙️ **DEFINIR PARA ESTE STACK**: árbol completo propio usando los paths reales de `STACK_PROFILE.yaml`. No copies extensiones ni carpetas de otro stack. Usa `{{frontend.module_root}}`, `{{backend.module_root}}`, `{{frontend.test_root}}`, `{{backend.test_root}}`, `{{db.migrations_root}}` y nombres de dominio reales.
 
->>> MODELO: añade tu árbol NUEVO (solo carpetas que tu app crea). Ejemplo:
+>>> MODELO: añade tu árbol NUEVO, solo carpetas/ficheros que tu app crea. Ejemplo agnóstico:
 >>>
+>>> ```text
+>>> {{frontend.module_root}}/features/{{resource}}/
+>>> ├── domain/
+>>> │   ├── {{PrimaryEntityFile}}
+>>> │   ├── {{DomainValueObjectFile}}
+>>> │   └── {{DomainPolicyFile}}
+>>> ├── data/
+>>> │   ├── {{ResourceRepositoryFile}}
+>>> │   ├── {{ResourceApiClientFile}}
+>>> │   └── {{ResourceDtoFile}}
+>>> └── presentation/
+>>>     ├── {{PrimaryActionPageFile}}
+>>>     ├── {{ListPageFile}}
+>>>     ├── {{ResultPageFile}}
+>>>     └── {{StateManagementFiles}}
+>>>
+>>> {{backend.module_root}}/{{resource}}/
+>>> ├── domain/{{DomainFiles}}
+>>> ├── application/{{UseCaseFiles}}
+>>> ├── infrastructure/{{PersistenceFiles}}
+>>> ├── api/{{RouteAndSchemaFiles}}
+>>> └── tests/{{IntegrationTestFiles}}
+>>>
+>>> {{db.migrations_root}}/{{migration_file}}
 >>> ```
->>> # Flutter
->>> app/lib/features/
->>> └── contracts/
->>>     ├── domain/
->>>     │   ├── entities/
->>>     │   │   ├── contract.dart
->>>     │   │   ├── clause.dart
->>>     │   │   └── risk.dart
->>>     │   ├── repositories/
->>>     │   └── use_cases/
->>>     ├── data/
->>>     │   ├── repositories/
->>>     │   ├── data_sources/
->>>     │   └── models/
->>>     └── presentation/
->>>         ├── pages/
->>>         │   ├── contract_upload_page.dart
->>>         │   ├── contract_list_page.dart
->>>         │   └── analysis_results_page.dart
->>>         ├── widgets/
->>>         └── providers/
 >>>
->>> # Backend
->>> api/src/features/
->>> └── contracts/
->>>     ├── domain/
->>>     │   ├── entities.py
->>>     │   ├── errors.py
->>>     │   └── repositories.py
->>>     ├── infrastructure/
->>>     │   ├── models.py
->>>     │   └── repositories.py
->>>     ├── application/
->>>     │   └── use_cases/
->>>     ├── api/
->>>     │   ├── router.py
->>>     │   └── schemas.py
->>>     └── tests/
->>>
->>> # Adiciones a AI stack (scaffolding ya existe en base)
->>> api/src/features/ai/
->>> ├── agents/
->>> │   └── contract_analyst_agent.py
->>> ├── graphs/
->>> │   └── contract_analysis_graph.py
->>> ├── tools/
->>> │   ├── pdf_parser.py
->>> │   └── clause_extractor.py
->>> ├── prompts/
->>> │   └── system/
->>> │       └── contract_analyst.md
->>> └── rag/
->>>     └── loaders/
->>>         └── legal_corpus_loader.py
->>> ```
+>>> Si tu stack no tiene frontend o backend, marca el área como `none` en `STACK_PROFILE.yaml` y no inventes carpetas.
 
 ---
 
@@ -191,30 +171,30 @@
 >>>
 >>> | Módulo | Responsabilidad | Depende de |
 >>> |--------|-----------------|-----------|
->>> | `features/contracts` | CRUD contratos + lanzar análisis | `features/ai`, `shared/auth` |
->>> | `features/ai/graphs/contract_analysis_graph` | StateGraph que orquesta parse → classify → suggest | `features/ai/tools`, `features/ai/llms` |
->>> | `features/ai/rag/loaders/legal_corpus_loader` | Loader de corpus legal para retrieval | `features/ai/rag/chunking`, `features/ai/embeddings` |
+>>> | `features/{{resource}}` | operaciones del recurso + lanzar proceso principal | `features/ai`, `shared/auth` |
+>>> | `features/ai/graphs/{{domain_process_graph}}` | <graph_or_workflow_lib_declarada> que orquesta parse/validación → decisión → resultado | `features/ai/tools`, `features/ai/llms` |
+>>> | `{{backend.module_root}}/{{domain}}/{{provided_data_loader}}` | Loader de datos/referencias proporcionados para la capability declarada | `{{domain_processing_module}}`, `{{optional_reference_index}}` |
 
 ### 5.2 Flujo de datos específico
 
 >>> MODELO: diagrama del flujo de una request clave end-to-end. Ejemplo:
 >>>
 >>> ```
->>> User upload PDF → ContractUploadPage
->>>   → POST /api/v1/contracts/upload (multipart)
+>>> Usuario ejecuta acción principal → {{PrimaryActionPage}}
+>>>   → {{primary_endpoint}}
 >>>     → JWT verify + get_current_user
->>>     → UploadContract use case
->>>       → ContractRepository.save(file, user_id) → Supabase Storage + contracts table
->>>       → Enqueue background task: AnalyzeContract
->>>     ← 201 {contract_id}
->>>   → Flutter navega a /contracts/:id/analysis (polling o SSE)
+>>>     → {{MainUseCase}} use case
+>>>       → {{ResourceRepository}}.save(input, user_id) → storage/persistencia declarada + {{table}}
+>>>       → Enqueue background task: {{DomainProcess}}
+>>>     ← respuesta success con id persistido
+>>>   → frontend navega a /{{resource}}/{id}/result (polling o SSE)
 >>> 
 >>> [background]
->>> AnalyzeContract use case
->>>   → contract_analysis_graph.ainvoke(contract_id)
->>>     → parse_node (pypdf → text)
->>>     → classify_node (LLM con prompt system + clauses → [Risk])
->>>     → suggest_node (RAG: retrieve legal precedents + LLM → [Suggestion])
+>>> {{DomainProcess}} use case
+>>>   → {{domain_process_graph}}.ainvoke(resource_id)
+>>>     → parse_node (input real proporcionado → estructura interna)
+>>>     → decision_node (servicio/AI si aplica → resultado de dominio)
+>>>     → result_node (servicio/reglas/AI si aplica → resultado verificable)
 >>>     → persist results in DB
 >>> ```
 
@@ -224,32 +204,32 @@
 >>>
 >>> | Decisión | Alternativas | Elegida | Razón |
 >>> |---------|--------------|---------|-------|
->>> | Graph vs single agent para análisis | `create_agent` con tool de classify | `StateGraph` custom de 3 nodos | Control preciso del flow + checkpointing + debug |
+>>> | Graph vs single agent para análisis | `create_agent` con tool de classify | `<graph_or_workflow_lib_declarada>` custom de 3 nodos | Control preciso del flow + checkpointing + debug |
 >>> | Polling vs SSE para progreso | SSE streaming | Polling cada 2s | SSE añadiría complejidad; análisis dura 20-30s |
->>> | Almacenar PDFs en Supabase Storage vs re-subir | Re-subir cada análisis | Storage | Auditoría + coste UX + permite re-análisis |
+>>> | Persistir entradas reales en storage declarado vs re-cargar cada ejecución | Re-cargar cada ejecución | Storage | Auditoría + coste UX + permite reprocesar |
 
 ---
 
 ## 6. Interfaces — adiciones
 
-### 6.1 Rutas Flutter nuevas
+### 6.1 Rutas frontend nuevas
 
 > 🔗 **CABLEADO de §6.1** — cada fila aquí cierra el wire de la pantalla:
 >
 > 1. **Origen** → feature en `instrucciones.md §3.2` (la pantalla expone esa feature) y/o journey en `instrucciones.md §3.6` (la pantalla es paso del flujo).
-> 2. **Destino** → slice en `*_IMPLEMENTATION_CHECKLIST.md` Coverage Registry (`flutter` con la `<Page>` o `journey` si la pantalla solo existe como integración).
-> 3. **Cross-check** → si la ruta aparece en `instrucciones.md §3.7` (Journey Matrix), columna "Pantallas", debe figurar AQUÍ con el mismo nombre/ruta.
+> 2. **Destino** → slice en `*_IMPLEMENTATION_CHECKLIST.md` Coverage Registry (`frontend` con la `<Page>` o `journey` si la pantalla solo existe como integración).
+> 3. **Cross-check** → si la ruta aparece en `instrucciones.md journey section` (Journey Matrix), columna "Pantallas", debe figurar AQUÍ con el mismo nombre/ruta.
 >
-> Si declaras una ruta aquí que NO está en §3.2 ni §3.6 → drift (pantalla inventada). Si una pantalla aparece en §3.7 pero no aquí → la ruta no existirá y `/verify-journey` fallará.
+> Si declaras una ruta aquí que NO está en §3.2 ni §3.6 → drift (pantalla inventada). Si una pantalla aparece en journey section pero no aquí → la ruta no existirá y `/verify-journey` fallará.
 
 >>> MODELO:
 >>>
->>> | Ruta | Page | Auth | Journey refs | Endpoints consumidos | Estado cliente/provider | Estados UI obligatorios | Next action | Slice ID | Descripción |
+>>> | Ruta | Page | Auth | Journey refs | Endpoints consumidos | Estado cliente/state handler | Estados UI obligatorios | Next action | Slice ID | Descripción |
 >>> |------|------|------|--------------|----------------------|-------------------------|------------------------|-------------|----------|-------------|
->>> | /contracts | ContractListPage | Sí | J101 | GET /api/v1/contracts | ContractListProvider | loading, empty, error_network, success | abrir detalle o subir contrato | P03-S01-T001 | Lista de contratos del usuario |
->>> | /contracts/upload | ContractUploadPage | Sí | J101 | POST /api/v1/contracts/upload | ContractUploadFormProvider | idle, uploading, error_validation, error_network, success | navegar a análisis | P03-S01-T002 | Subida + lanzar análisis |
->>> | /contracts/:id | ContractDetailPage | Sí | J101 | GET /api/v1/contracts/:id | ContractDetailProvider | loading, not_found, permission_denied, success | ver análisis | P03-S01-T003 | Detalle con metadata |
->>> | /contracts/:id/analysis | AnalysisResultsPage | Sí | J101 | GET /api/v1/contracts/:id/analysis | AnalysisProvider | loading, empty, error_network, success | aceptar sugerencia o reanalizar | P03-S01-T004 | Resultados del motor con cláusulas + riesgos + sugerencias |
+>>> | /{{resource}} | {{Resource}}ListPage | Sí | J101 | GET /api/v1/{{resource}} | {{Resource}}ListState | loading, empty, error_network, success | abrir detalle o crear recurso | P03-S01-T001 | Lista de recursos del usuario |
+>>> | /{{resource}}/new | {{Resource}}CreatePage | Sí | J101 | POST /api/v1/{{resource}} | {{Resource}}FormState | idle, uploading, error_validation, error_network, success | navegar a análisis | P03-S01-T002 | Subida + lanzar análisis |
+>>> | /{{resource}}/{id} | {{Resource}}DetailPage | Sí | J101 | GET /api/v1/{{resource}}/{id} | {{Resource}}DetailState | loading, not_found, permission_denied, success | ver análisis | P03-S01-T003 | Detalle con metadata |
+>>> | /{{resource}}/{id}/result | {{ResultPage}} | Sí | J101 | GET /api/v1/{{resource}}/{id}/result | {{ResultState}} | loading, empty, error_network, success | aceptar sugerencia o reanalizar | P03-S01-T004 | Resultados del motor con estados, explicación y acciones recomendadas |
 
 ### 6.2 Endpoints API nuevos
 
@@ -259,21 +239,21 @@
 >
 > 1. **Origen** → componente del motor en `instrucciones.md §3.1` (el endpoint expone una capability del motor) o feature en `§3.2` (el endpoint sirve a una pantalla).
 > 2. **Destino obligatorio** → slice `api` en `*_IMPLEMENTATION_CHECKLIST.md` Coverage Registry, **uno por endpoint** (schema + use case + repository + integration test + curl + logs). Excepción única: agrupación explícita en un slice de integración con justificación documentada.
-> 3. **Cross-check** → si el endpoint aparece en `instrucciones.md §3.7` columna "Endpoints", debe figurar AQUÍ con el mismo method + path.
+> 3. **Cross-check** → si el endpoint aparece en `instrucciones.md journey section` columna "Endpoints", debe figurar AQUÍ con el mismo method + path.
 > 4. **Cross-check con tablas** → si el endpoint persiste, las tablas tocadas existen en §10.3.
 >
-> Endpoint declarado aquí sin slice → el orquestador no lo implementa, queda en el contrato pero no en el código. Endpoint sin consumidor explícito → drift de producto: no queda claro quién lo usa ni cómo se verifica.
+> Endpoint declarado aquí sin slice → el orquestador no lo implementa, queda en el recurso pero no en el código. Endpoint sin consumidor explícito → drift de producto: no queda claro quién lo usa ni cómo se verifica.
 
 >>> MODELO: tabla COMPLETA. CADA endpoint aquí DEBE tener un `Slice ID` propio en el CHECKLIST Coverage Registry, salvo que esté documentado como parte de un slice de integración ya existente. Todo endpoint debe tener `Consumidor front/journey`; si no tiene frontend, escribe `internal/no-front`, `webhook`, `background-job` o `admin-only` y justifica en la descripción.
 >>>
 >>> | Method | Path | Request | Response | Auth | Errors | Consumidor front/journey | Tablas/side effects | Slice ID |
 >>> |--------|------|---------|----------|------|--------|--------------------------|---------------------|----------|
->>> | POST | /api/v1/contracts/upload | multipart file | `{data: {contract_id}}` | Sí | 400, 401, 413 | ContractUploadPage / J101 | `contracts`, Supabase Storage | P02-S02-T001 |
->>> | GET | /api/v1/contracts | query params (cursor, limit) | `{data: [Contract], meta: {pagination}}` | Sí | 401 | ContractListPage / J101 | `contracts` read | P02-S02-T002 |
->>> | GET | /api/v1/contracts/:id | — | `{data: Contract}` | Sí | 401, 404 | ContractDetailPage / J101 | `contracts` read | P02-S02-T003 |
->>> | POST | /api/v1/contracts/:id/analyze | — | `{data: {analysis_id, status: "queued"}}` | Sí | 401, 404, 409 | ContractDetailPage / J101 | enqueue analysis job | P02-S02-T004 |
->>> | GET | /api/v1/contracts/:id/analysis | — | `{data: Analysis\|null, meta: {status, progress}}` | Sí | 401, 404 | AnalysisResultsPage / J101 | `analyses`, `risks` read | P02-S02-T005 |
->>> | DELETE | /api/v1/contracts/:id | — | 204 | Sí | 401, 404 | ContractDetailPage / account cleanup | `contracts` delete cascade | P02-S02-T006 |
+>>> | POST | /api/v1/{{resource}} | multipart file | `{data: {resource_id}}` | Sí | 400, 401, 413 | {{Resource}}CreatePage / J101 | `{{table}}`, storage declarado si aplica | P02-S02-T001 |
+>>> | GET | /api/v1/{{resource}} | query params (cursor, limit) | `{data: [{{Resource}}], meta: {pagination}}` | Sí | 401 | {{Resource}}ListPage / J101 | `{{table}}` read | P02-S02-T002 |
+>>> | GET | /api/v1/{{resource}}/{id} | — | `{data: {{Resource}}}` | Sí | 401, 404 | {{Resource}}DetailPage / J101 | `{{table}}` read | P02-S02-T003 |
+>>> | POST | /api/v1/{{resource}}/{id}/process | — | `{data: {process_id, status: "queued"}}` | Sí | 401, 404, 409 | {{Resource}}DetailPage / J101 | enqueue domain process job | P02-S02-T004 |
+>>> | GET | /api/v1/{{resource}}/{id}/result | — | `{data: {{ResultDto}}\|null, meta: {status, progress}}` | Sí | 401, 404 | {{ResultPage}} / J101 | `{{result_table}}` read | P02-S02-T005 |
+>>> | DELETE | /api/v1/{{resource}}/{id} | — | 204 | Sí | 401, 404 | {{Resource}}DetailPage / account cleanup | `{{table}}` delete cascade | P02-S02-T006 |
 >>>
 >>> Formato errors: heredado `{code, message, field?, details}`.
 
@@ -283,36 +263,36 @@
 >
 > 1. **Origen** → componente del motor en `instrucciones.md §3.1` (mismo nombre de entity).
 > 2. **Persistencia** → tabla correspondiente en `§10.3` con SQL. Si la entity no se persiste, lo declaras explícitamente.
-> 3. **Frontend** → DTO Dart con freezed en `app/lib/features/{feature}/data/models/`. La estructura de carpetas la declaras en §4.
+> 3. **Frontend** → DTO frontend con codegen/modelado declarado en `{{frontend_module_root}}/features/{feature}/data/models/`. La estructura de carpetas la declaras en §4.
 >
 > Entity declarada aquí sin tabla en §10.3 ni invariante en §12 → modelo huérfano. Entity declarada sin componente del motor en `instrucciones.md §3.1` → drift conceptual.
 
 >>> MODELO: por cada entity de dominio nueva:
 >>>
->>> **Contract** (domain)
+>>> **{{PrimaryEntity}}** (domain)
 >>> ```python
->>> class Contract(BaseModel):
+>>> class {{PrimaryEntity}}(<schema_base>):
 >>>     id: UUID
 >>>     user_id: UUID
 >>>     title: str
->>>     pdf_url: str  # Supabase Storage URL
+>>>     provided_input_ref: str  # proveedor declarado Storage URL
 >>>     page_count: int
 >>>     uploaded_at: datetime
->>>     analysis_status: Literal["pending", "analyzing", "done", "failed"]
+>>>     process_status: Literal["pending", "processing", "done", "failed"]
 >>> ```
 >>>
->>> **Clause** (domain)
+>>> **{{SecondaryEntity}}** (domain)
 >>> ```python
->>> class Clause(BaseModel):
+>>> class {{SecondaryEntity}}(<schema_base>):
 >>>     id: UUID
->>>     contract_id: UUID
+>>>     resource_id: <id_type>
 >>>     order: int
 >>>     text: str
 >>>     risk_level: Literal["low", "medium", "high"]
 >>>     risk_rationale: str | None
 >>> ```
 >>>
->>> **Dart equivalents** en `lib/features/contracts/domain/entities/` y sus DTOs con freezed en `data/models/`.
+>>> **frontend equivalents** en `lib/features/{{resource}}/domain/entities/` y sus DTOs con codegen/modelado declarado en `data/models/`.
 
 ### 6.4 Formato de errores específico
 
@@ -320,7 +300,7 @@
 
 >>> MODELO: códigos específicos de tu dominio. Ej:
 >>> ```
->>> CONTRACT_001_PDF_INVALID          (400)
+>>> DOMAIN_001_INPUT_INVALID          (400)
 >>> CONTRACT_002_PAGE_LIMIT_EXCEEDED  (413)
 >>> CONTRACT_003_ANALYSIS_IN_PROGRESS (409)
 >>> CONTRACT_004_ANALYSIS_FAILED      (502)
@@ -330,12 +310,12 @@
 
 ### 6.4 Navigation Contract
 
-🔒 **HEREDADO**: la base-app §6.4 ya define routing, deep links, menú principal, estados marginales globales y next action. Ver `BASEAPP_TECHNICAL_GUIDE.md §6.4`.
+🔒 **HEREDADO**: la baseline snapshot §6.4 ya define routing, deep links, menú principal, estados marginales globales y next action. Ver `APP_TECHNICAL_GUIDE.md §6.4`.
 
 >>> MODELO: documenta SOLO las extensiones / overrides de tu feature-app. Si NO hay extensiones, deja "HEREDADO — sin adiciones". Casos típicos en los que SÍ tendrás contenido:
 
 >>> - Rutas nuevas de tu app que aceptan deep link → añade a §6.4.2.
->>> - Empty states o error states con contenido específico de tu dominio (ej: "Sin contratos analizados, sube tu primer PDF" en lugar del genérico).
+>>> - Empty states o error states con contenido específico de tu dominio (ej: "Sin registros/resultados, carga el primer dato real proporcionado" en lugar del genérico).
 >>> - Next actions específicas que enlazan tus journeys (J100+) entre sí.
 >>> - Si tu app introduce un nuevo tipo de menú (ej: tabs adicionales por rol), descríbelo aquí.
 
@@ -344,15 +324,15 @@
 >>> ```markdown
 >>> #### 6.4.7 Deep links propios
 
->>> | Ruta                        | Auth req | Schema mobile        | Schema web                  |
+>>> | Ruta                        | Access req | Schema superficie/dispositivo declarado        | Schema web                  |
 >>> |-----------------------------|----------|----------------------|-----------------------------|
->>> | /analysis/:id               | sí       | tuapp://analysis/:id | https://app.dominio/analysis/:id |
+>>> | /{{resource}}/:id/result               | sí       | tuapp://{{resource}}/:id/result | https://app.dominio/{{resource}}/:id/result |
 >>> | /share/:token               | no       | tuapp://share/:token | https://app.dominio/share/:token |
 
 >>> #### 6.4.8 Empty states de tu dominio
 
->>> - DashboardPage sin análisis → ilustración custom + CTA "Sube tu primer contrato" → /upload
->>> - AnalysisListPage sin filtros aplicados → render genérico
+>>> - {{DashboardScreen}} sin resultados → ilustración custom + CTA de acción principal → ruta declarada
+>>> - {{ListPage}} sin filtros aplicados → render del estado base
 >>> ```
 
 >>> Si NO añades nada: simplemente escribe "HEREDADO — sin adiciones" debajo de este bloque y elimina el patrón.
@@ -366,7 +346,7 @@
 >>>
 >>> | Flow/Journey | Persona/Rol | Datos reales/proporcionados requeridos | Fuente de datos reales proporcionados | Reset/Cleanup | Slices/Journeys |
 >>> |--------------|-------------|-----------------------------------|------------------------|---------------|-----------------|
->>> | J101 upload-analysis | usuario real de prueba + contrato PDF proporcionado | usuario confirmado, PDF válido, análisis persistido, errores 400/413 reales | datos/documentos proporcionados por el usuario + carga SQL transaccional controlada | `scripts/dev-restart.sh --reset` + cleanup tablas del feature | J101, P02-S02-T001, P03-S01-T001 |
+>>> | J101 primary-action-result | usuario real de prueba + dato/documento real proporcionado | usuario confirmado, entrada válida, resultado persistido, errores 400/413 reales | datos/documentos proporcionados por el usuario + carga SQL transaccional controlada | `scripts/dev-restart.sh --reset` + cleanup tablas del feature | J101, P02-S02-T001, P03-S01-T001 |
 >>>
 >>> Reglas:
 >>> - `verify-slice` debe usar estas filas para preparar datos.
@@ -375,12 +355,12 @@
 
 ## 7. Theme & Design System
 
-🔒 **HEREDADO**: ThemeData + tokens + shared widgets. CERO inline.
+🔒 **HEREDADO**: tokens/componentes compartidos del baseline real. CERO inline fuera del sistema de diseño declarado.
 
 >>> MODELO: override si necesitas (logo, color primario):
->>> - Logo: `app/lib/assets/logo/`.
+>>> - Logo: `{{frontend_module_root}}/assets/logo/`.
 >>> - Override colores en `AppColors` si hay branding: "AppColors.primary = Color(0xFF...)".
->>> - Shared widgets nuevos ESPECÍFICOS de tu dominio (ej: `RiskBadge(low|medium|high)`, `ClauseCard`): documentar aquí con props.
+>>> - Componentes compartidos nuevos ESPECÍFICOS de tu dominio (ej: `DomainStatusIndicator(state)`, `DomainCard`): documentar aquí con props.
 >>>
 >>> Si nada custom: "HEREDADO".
 
@@ -392,26 +372,26 @@
 
 >>> MODELO: métricas custom específicas de tu motor:
 >>> ```python
->>> contract_analysis_duration = Histogram(
->>>     "contract_analysis_duration_seconds",
->>>     "Duration of contract analysis",
+>>> domain_process_duration = Histogram(
+>>>     "domain_process_duration_seconds",
+>>>     "Duration of domain process",
 >>>     ["outcome"],  # success|failed|timeout
 >>> )
 >>> ```
 >>>
->>> Audit log actions nuevas: `contract_uploaded`, `contract_analyzed`, `suggestion_accepted`, `suggestion_rejected`.
+>>> Audit log actions nuevas: `resource_created`, `process_completed`, `recommendation_accepted`, `recommendation_rejected`.
 
 ---
 
 ## 9. Testing
 
-🔒 **HEREDADO**: pytest + pytest-asyncio contra Supabase real, flutter_test + mocktail, `FakeListChatModel` para LLM determinismo, Integration/E2E obligatorio.
+🔒 **HEREDADO**: comandos de test reales declarados por `STACK_PROFILE.yaml`, doubles permitidos solo para servicios externos, Integration/E2E obligatorio cuando cierre journey.
 
 ### 9.1 Convenciones específicas
 
->>> MODELO: si tu motor requiere datos reales especiales proporcionados (corpus de documentos, PDFs reales, datasets de validación), documenta cómo se reciben y cargan sin inventarlos:
->>> - Carpeta/ruta de entrada para PDFs reales proporcionados: `<data/provided/contracts/>` o equivalente del stack.
->>> - Dataset de validación real proporcionado para clasificador: `<data/provided/classification_dataset.json>` con cláusulas anotadas por el usuario/equipo.
+>>> MODELO: si tu motor requiere datos reales especiales proporcionados (datos/documentos/referencias reales proporcionados para validación), documenta cómo se reciben y cargan sin inventarlos:
+>>> - Carpeta/ruta de entrada para datos/documentos reales proporcionados: `<data/provided/{{resource}}/>` o equivalente del stack.
+>>> - Dataset de validación real proporcionado para el motor: `<data/provided/{{domain}}_validation.json>` con casos anotados por el usuario/equipo.
 
 ---
 
@@ -421,38 +401,38 @@
 
 >>> MODELO: tabla de módulos propios del dominio (ya enumerados en §5.1, referenciar ahí).
 
-### 10.2 Auth strategy
+### 10.2 Identity/access strategy
 
-🔒 **HEREDADO**: Supabase JWT RS256, `get_current_user` dependency, `app_metadata.role='admin'` para admin panel.
+🔒 **HEREDADO SI EXISTE**: proveedor de identidad, middleware/dependency, sesiones y roles declarados por el baseline real. No presupongas JWT, cookies, OAuth ni roles concretos si no están documentados.
 
->>> MODELO: SOLO si tu app requiere roles/permisos específicos del dominio más allá de admin/user. Ej: "Cliente premium" (claim custom en JWT vía Supabase). Justificar y aceptar la complejidad añadida. Si no: "HEREDADO".
+>>> MODELO: SOLO si tu app requiere roles/permisos específicos del dominio más allá de lo heredado. Ej: "Cliente premium" o "operador clínico" si el proveedor auth declarado lo soporta. Justificar y aceptar la complejidad añadida. Si no: "HEREDADO / NO APLICA".
 
 ### 10.3 DB Schema — tablas nuevas
 
 > 🔗 **CABLEADO de §10.3** — cada tabla aquí cierra DOS wires:
 >
 > 1. **Origen** → entity en `§6.3` (misma columna por campo) y componente del motor en `instrucciones.md §3.1`.
-> 2. **Destino obligatorio** → slice `db` en `*_IMPLEMENTATION_CHECKLIST.md` Coverage Registry: una migración Alembic `000N_<feature>.py` con up + down probados, FKs cascade, índices. Tablas que nacen juntas y se verifican juntas pueden agruparse en una migración.
-> 3. **Cross-check con journey matrix** → si la tabla aparece en `instrucciones.md §3.7` columna "Tablas DB", debe figurar AQUÍ con el mismo nombre.
+> 2. **Destino obligatorio** → slice `db` en `*_IMPLEMENTATION_CHECKLIST.md` Coverage Registry: una migración del stack declarado `000N_<feature>.py` con up + down probados, FKs cascade, índices. Tablas que nacen juntas y se verifican juntas pueden agruparse en una migración.
+> 3. **Cross-check con journey matrix** → si la tabla aparece en `instrucciones.md journey section` columna "Tablas DB", debe figurar AQUÍ con el mismo nombre.
 >
 > Tabla declarada sin migración en CHECKLIST → no se crea, los endpoints que dependen fallan en runtime.
 
 >>> MODELO: SQL completo de cada tabla nueva. TODAS con FK a `auth.users(id) ON DELETE CASCADE` donde aplique para GDPR.
 >>>
 >>> ```sql
->>> CREATE TABLE contracts (
+>>> CREATE TABLE {{resource_table}} (
 >>>     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 >>>     user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
 >>>     title TEXT NOT NULL,
->>>     pdf_url TEXT NOT NULL,
->>>     page_count INT NOT NULL,
->>>     analysis_status VARCHAR(20) NOT NULL DEFAULT 'pending',
+>>>     provided_input_ref TEXT NOT NULL,
+>>>     input_size INT NULL,
+>>>     process_status VARCHAR(20) NOT NULL DEFAULT 'pending',
 >>>     uploaded_at TIMESTAMPTZ NOT NULL DEFAULT now(),
 >>>     metadata JSONB NOT NULL DEFAULT '{}'::jsonb
 >>> );
 >>>
->>> CREATE INDEX contracts_user_id ON contracts (user_id);
->>> CREATE INDEX contracts_analysis_status ON contracts (analysis_status) WHERE analysis_status != 'done';
+>>> CREATE INDEX {{resource_table}}_user_id ON {{resource_table}} (user_id);
+>>> CREATE INDEX resources_process_status ON resources (process_status) WHERE process_status != 'done';
 >>> ```
 >>>
 >>> Repetir por cada tabla. Migración reversible (up + down).
@@ -462,7 +442,7 @@
 > 🔗 **CABLEADO de §10.4** — cada pieza AI aquí cierra DOS wires:
 >
 > 1. **Origen** → componente del motor con AI en `instrucciones.md §3.1` ("Componente AI" del bloque). Si declaras un graph aquí que no aparece como componente AI en §3.1, drift.
-> 2. **Destino obligatorio** → slice `ai` en `*_IMPLEMENTATION_CHECKLIST.md` Coverage Registry, con **smoke test** ejecutable (cada agent / graph / deep_agent / tool / prompt / RAG loader independiente verificable). El `official-docs-researcher` valida versión + imports antes del developer.
+> 2. **Destino obligatorio** → slice `ai` en `*_IMPLEMENTATION_CHECKLIST.md` Coverage Registry, con **smoke test** ejecutable (cada agent / graph / deep_agent / tool / prompt / reference-data loader independiente verificable). El `official-docs-researcher` valida versión + imports antes del developer.
 > 3. **Cross-check con prompts versionados** → si declaras `prompts/system/{name}.md`, ese fichero existe en repo con versión + fecha en su cabecera.
 >
 > Tool/agent/graph aquí sin slice + smoke test en CHECKLIST → no se construye y los endpoints que dependen fallan o retornan respuestas no verificadas.
@@ -471,40 +451,40 @@
 >>>
 >>> #### Agents
 >>> >>> MODELO:
->>> - `contract_analyst_agent.py`: `create_agent(model=..., tools=[pdf_parse, clause_classify], system_prompt="...")`. Cuándo se usa: consultas directas sobre un contrato ya analizado.
+>>> - `{{domain_agent}}.py`: `create_agent(model=..., tools=[input_parse, domain_classify], system_prompt="...")`. Cuándo se usa: consultas directas sobre un recurso ya procesado.
 >>>
 >>> #### Deep Agents
 >>> >>> MODELO:
->>> - `legal_research_agent.py`: `create_deep_agent(model=..., subagents=[retriever_subagent, writer_subagent], ...)`. Cuándo se usa: preguntas complejas que requieren buscar jurisprudencia + redactar informe.
+>>> - `{{domain_research_agent}}.py`: `create_deep_agent(model=..., subagents=[retriever_subagent, writer_subagent], ...)`. Cuándo se usa: preguntas complejas que requieren recuperar conocimiento de dominio + redactar resultado.
 >>>
 >>> #### Graphs
 >>> >>> MODELO:
->>> - `contract_analysis_graph.py`: `StateGraph[ContractAnalysisState]` con nodos `parse → classify → suggest`. Checkpointer: `AsyncPostgresSaver`. State:
+>>> - `{{domain_process_graph}}.py`: `<graph_or_workflow_lib_declarada>[{{DomainProcessState}}]` con nodos `parse → classify → suggest`. Checkpointer: `checkpointer declarado por el stack`. State:
 >>>   ```python
->>>   class ContractAnalysisState(TypedDict):
->>>       contract_id: UUID
+>>>   class {{DomainProcessState}}(<state_type_declarado>):
+>>>       resource_id: <id_type>
 >>>       raw_text: str
->>>       clauses: list[Clause]
->>>       risks: list[Risk]
->>>       suggestions: list[Suggestion]
+>>>       items: list[{{SecondaryEntity}}]
+>>>       results: list[{{ResultEntity}}]
+>>>       recommendations: list[{{RecommendationEntity}}]
 >>>   ```
 >>>
 >>> #### Tools
 >>> >>> MODELO:
->>> - `pdf_parser.py`: `@tool def parse_pdf(file_path: str) -> str` (texto plano) o `@tool def parse_pdf_to_clauses(file_path: str) -> list[str]`.
->>> - `clause_extractor.py`: tool que extrae cláusulas individuales de texto bruto.
+>>> - `{{input_parser}}.py`: `@tool def parse_provided_input(input_ref: str) -> str` (texto plano) o `@tool def parse_provided_input_to_segments(input_ref: str) -> list[str]`.
+>>> - `{{domain_extractor}}.py`: tool que extrae unidades de dominio desde la entrada normalizada.
 >>> - (Cualquier API externa que llames: incluirlo como tool).
 >>>
 >>> #### Prompts
 >>> >>> MODELO:
->>> - `prompts/system/contract_analyst.md`: system prompt base. Versionar explícitamente (incluir fecha + versión en el fichero).
+>>> - `prompts/system/{{domain_agent}}.md`: system prompt base. Versionar explícitamente (incluir fecha + versión en el fichero).
 >>> - Describir brevemente el prompt (NO pegar el contenido completo aquí).
 >>>
->>> #### RAG
+>>> #### Referencias/knowledge base opcional
 >>> >>> MODELO:
->>> - Qué ingesta: corpus legal con X documentos (sentencias, artículos, ...).
->>> - Loader: `rag/loaders/legal_corpus_loader.py` (custom si aplica).
->>> - Splitter: heredado `RecursiveCharacterTextSplitter` con overrides (ej: chunk_size=2000 para cláusulas legales).
+>>> - Qué ingesta: datos/referencias de dominio proporcionados por el usuario/equipo.
+>>> - Loader: `{{provided_data_loader}}` en el módulo declarado por `STACK_PROFILE.yaml` (custom si aplica).
+>>> - Splitter: heredado `RecursiveCharacterTextSplitter` con overrides (ej: chunk_size adaptado al dominio).
 >>> - Rerank: sí/no. Si sí, librería (Cohere rerank, cross-encoder).
 >>> - Dimensión embedding: heredada 1536.
 
@@ -520,14 +500,14 @@
 
 ### 11.1 Variables de entorno adicionales
 
-🔒 **HEREDADO**: ver base guide §12.1.
+🔒 **HEREDADO**: ver product baseline guide §12.1.
 
 >>> MODELO: variables ADICIONALES específicas de tu app:
 >>>
 >>> | Variable | Dev | Staging | Prod | Descripción |
 >>> |----------|-----|---------|------|-------------|
->>> | `LEGAL_API_KEY` | test-key | staging-key | prod-key | API externa de jurisprudencia |
->>> | `MAX_PDF_PAGES` | 100 | 100 | 50 | Límite de páginas por PDF |
+>>> | `DOMAIN_API_KEY` | test-key | staging-key | prod-key | API externa de dominio |
+>>> | `MAX_INPUT_SIZE` | 100 | 100 | 50 | Límite de tamaño/complejidad de entrada |
 
 ### 11.2 Build targets
 
@@ -548,10 +528,10 @@
 🔒 **HEREDADO**: Clean Architecture + file size + cero hardcoding + máx 1 proveedor AI activo + tokens secure + claves cifradas + audit log.
 
 >>> MODELO: invariantes ESPECÍFICOS del dominio. Ej:
->>> - Un `Contract` siempre pertenece a un único `user_id`.
->>> - Una `Clause` no puede existir sin su `Contract` (FK cascade).
->>> - Un `Risk` level nunca se auto-modifica — solo se asigna durante análisis o manualmente por el user.
->>> - Un PDF >100 páginas se rechaza en upload (no se trocea).
+>>> - Una `{{PrimaryEntity}}` siempre pertenece a un único owner/tenant si aplica.
+>>> - Una `{{SecondaryEntity}}` no puede existir sin su entidad padre si aplica (FK cascade).
+>>> - Un resultado calculado no se auto-modifica fuera del flujo declarado; toda corrección queda auditada.
+>>> - Una entrada que supera el límite declarado se rechaza con error trazable.
 >>> - Ninguna sugerencia del AI se persiste sin campo `rationale` no-vacío.
 
 ---
@@ -562,7 +542,7 @@
 >
 > Reglas:
 > - Cada endpoint de §6.2 debe mapear a exactamente un `Slice ID` del CHECKLIST Coverage Registry.
-> - Cada ruta Flutter de §6.1 debe mapear a un `Slice ID`, o a un journey slice si la ruta solo existe como paso de integración.
+> - Cada ruta frontend de §6.1 debe mapear a un `Slice ID`, o a un journey slice si la ruta solo existe como paso de integración.
 > - Cada tabla/migración de §10.3 debe mapear a un `Slice ID`.
 > - Cada AI tool/agent/graph/deep_agent de §10.4 debe tener smoke test y `Slice ID` si añade comportamiento nuevo.
 > - Los IDs se escriben en el CHECKLIST, no aquí. Aquí solo se mantiene la trazabilidad conceptual.
@@ -571,7 +551,7 @@
 >
 > | Slice ID | Tipo | Target | Step | Product increment | Build state | Risk level | Verify mode | Depends on | Conflict group | Write set | Journey refs | Pantalla/Ruta | Endpoint | Tablas DB | Origen-Instr | Origen-TechGuide | Acceptance mínimo | Verify mínimo |
 > |---|---|---|---|---|---|---|---|---|---|---|---|---|
-> | P02-S02-T001 | api | `POST /api/v1/contracts` | Step 2.2 | P02-S01-T001 | J101 | — | `POST /api/v1/contracts` | contracts | §3.1, §3.7 | §6.2, §10.3 | schema + use case + repo + integration test + curl + logs | `pytest ...` + curl |
+> | P02-S02-T001 | api | `POST /api/v1/{{resource}}` | Step 2.2 | P02-S01-T001 | J101 | — | `POST /api/v1/{{resource}}` | {{resource_table}} | §3.1, journey section | §6.2, §10.3 | schema + use case + repo + integration test + curl + logs | `{{backend_test_cmd}}` + curl |
 
 ## 13. Milestones técnicos
 
@@ -583,11 +563,11 @@
 
 >>> MODELO: mapeo técnico de los milestones de instrucciones.md. Ej:
 >>>
->>> | Milestone | Features | Pantallas Flutter | Rutas nuevas | Endpoints nuevos | Tablas nuevas | AI nuevo |
+>>> | Milestone | Features | Pantallas frontend | Rutas nuevas | Endpoints nuevos | Tablas nuevas | AI nuevo |
 >>> |-----------|----------|-------------------|--------------|------------------|---------------|----------|
->>> | M1 Upload básico | Subir + listar | ContractUpload, ContractList | /contracts, /contracts/upload | POST /contracts/upload, GET /contracts | contracts | — |
->>> | M2 Análisis motor | Análisis automático | AnalysisResultsPage | /contracts/:id/analysis | POST /contracts/:id/analyze, GET .../analysis | clauses, risks, suggestions | contract_analysis_graph + tools |
->>> | M3 RAG sugerencias | Sugerencias fundamentadas | (misma AnalysisResultsPage) | — | — | — | RAG ingestion + retrieval + rerank |
+>>> | M1 Captura/listado principal | Crear/capturar + listar | {{Resource}}Create, {{Resource}}List | /{{resource}}, /{{resource}}/new | POST /{{resource}}/new, GET /{{resource}} | {{resource_table}} | — |
+>>> | M2 Proceso de dominio | Proceso de dominio verificable | {{ResultPage}} | /{{resource}}/{id}/result | POST /{{resource}}/{id}/analyze, GET .../result | {{secondary_table}}, {{result_table}}, {{recommendation_table}} | {{domain_process_graph}} + tools |
+>>> | M3 Referencias/recomendaciones | Recomendaciones o resultados fundamentados | (misma {{ResultPage}}) | — | — | — | ingesta de datos/referencias proporcionados + recuperación si aplica |
 
 ---
 
@@ -599,11 +579,11 @@
 
 ## 15. Architectural Decision Records (ADR) — específicos de la feature-app
 
-> **Heredado**: los **ADR-001..ADR-099** viven en `docs/base-app/BASEAPP_TECHNICAL_GUIDE.md §18` y se heredan automáticamente. NO los repitas aquí.
+> **Heredado**: los **ADR-001..ADR-099** viven en `docs/product-baseline/*_TECHNICAL_GUIDE.md §18` y se heredan automáticamente. NO los repitas aquí.
 >
 > **Esta sección**: ADRs específicos de tu feature-app, numerados desde **ADR-101**. Append-only. Cuando un ADR queda obsoleto se marca `SUPERSEDED por ADR-N (YYYY-MM-DD)` y se añade el nuevo bloque al final — nunca se borra.
 >
-> **Formato canónico** definido en `BASEAPP_TECHNICAL_GUIDE.md §18` — usa exactamente el mismo (fecha, estado, contexto, decisión, alternativas descartadas, consecuencias).
+> **Formato canónico** definido en `APP_TECHNICAL_GUIDE.md §18` — usa exactamente el mismo (fecha, estado, contexto, decisión, alternativas descartadas, consecuencias).
 
 >>> MODELO: **DEJAR VACÍO en el momento de generar la feature-app.**
 >>> Los ADRs se añaden DURANTE la implementación, no antes — sólo cuando aparece una decisión
@@ -615,7 +595,7 @@
 >>>
 >>> Si al cerrar Phase 5 no ha habido decisiones no obvias específicas de la feature-app,
 >>> esta sección queda con la línea final `(sin ADRs específicos — todas las decisiones
->>> arquitectónicas vienen heredadas de la base-app)` y eso es perfectamente válido.
+>>> arquitectónicas vienen heredadas de la baseline snapshot)` y eso es perfectamente válido.
 >>>
 >>> **Plantilla a completar** (sólo cuando aparezca decisión real):
 >>>
@@ -653,8 +633,8 @@ Para CADA fila de §2.0:
 Para CADA ruta:
 
 - [ ] Origen identificable en `instrucciones.md §3.2` (feature) o `§3.6` (journey).
-- [ ] Tiene slice `flutter` (o `journey` para rutas de integración) en `*_IMPLEMENTATION_CHECKLIST.md` Coverage Registry.
-- [ ] Si aparece en `instrucciones.md §3.7` columna "Pantallas", coincide ruta + nombre.
+- [ ] Tiene slice `frontend` (o `journey` para rutas de integración) en `*_IMPLEMENTATION_CHECKLIST.md` Coverage Registry.
+- [ ] Si aparece en `instrucciones.md journey section` columna "Pantallas", coincide ruta + nombre.
 
 ### 16.3 Wires desde §6.2 (ENDPOINTS)
 
@@ -662,7 +642,7 @@ Para CADA endpoint:
 
 - [ ] Origen identificable en `instrucciones.md §3.1` (motor) o `§3.2` (feature consume).
 - [ ] Tiene slice `api` propio en `*_IMPLEMENTATION_CHECKLIST.md` Coverage Registry (excepción documentada para agrupaciones de integración).
-- [ ] Si aparece en `instrucciones.md §3.7` columna "Endpoints", method + path coinciden.
+- [ ] Si aparece en `instrucciones.md journey section` columna "Endpoints", method + path coinciden.
 - [ ] Si persiste, las tablas tocadas existen en §10.3.
 
 ### 16.4 Wires desde §6.3 (ENTITIES)
@@ -672,7 +652,7 @@ Para CADA entity:
 - [ ] Mismo nombre que componente en `instrucciones.md §3.1`.
 - [ ] Tiene tabla en §10.3 (o declara explícitamente "no se persiste").
 - [ ] Aparece como invariante en §12 si tiene reglas de dominio.
-- [ ] Su DTO Dart está previsto en la estructura de §4.
+- [ ] Su DTO frontend está previsto en la estructura de §4.
 
 ### 16.5 Wires desde §10.3 (TABLAS DB)
 
@@ -682,16 +662,16 @@ Para CADA tabla:
 - [ ] Tiene migración con slice `db` en `*_IMPLEMENTATION_CHECKLIST.md` Coverage Registry (o agrupada con justificación).
 - [ ] FKs cascade declaradas donde GDPR aplica.
 - [ ] Índices declarados en columnas usadas en WHERE / JOIN / ORDER BY.
-- [ ] Si aparece en `instrucciones.md §3.7` columna "Tablas DB", nombre coincide.
+- [ ] Si aparece en `instrucciones.md journey section` columna "Tablas DB", nombre coincide.
 
 ### 16.6 Wires desde §10.4 (AI STACK)
 
-Para CADA pieza AI (agent / graph / deep_agent / tool / prompt / RAG):
+Para CADA pieza AI (agent / graph / deep_agent / tool / prompt / reference retrieval):
 
 - [ ] Origen en `instrucciones.md §3.1` ("Componente AI" del bloque).
 - [ ] Tiene slice `ai` con smoke test en `*_IMPLEMENTATION_CHECKLIST.md` Coverage Registry.
 - [ ] Cualquier prompt referenciado tiene fichero `prompts/{...}.md` con versión + fecha.
-- [ ] La librería AI implícita (LangChain / LangGraph / DeepAgents / LiteLLM) está pineada como `pendiente` en §2.0 si requiere extras.
+- [ ] La librería AI implícita (AI library declared by baseline / AI graph library declared by baseline / agent library declared by baseline / model provider gateway declared by baseline) está pineada como `pendiente` en §2.0 si requiere extras.
 
 ### 16.7 Wires desde §13 (MILESTONES TÉCNICOS)
 
@@ -711,8 +691,8 @@ Para CADA milestone:
 
 ### 16.9 Última prueba mental antes de entregar
 
-1. **¿Si el `developer` lee §6.2 endpoint X, encuentra suficiente contrato técnico (schema, errors, auth) para implementarlo sin volver a `instrucciones.md`?** Si tiene que adivinar, falta detalle.
-2. **¿Si el `planner` lee el primer slice del Coverage Registry y busca su contrato aquí, encuentra exactamente UNA fuente (un endpoint, una tabla, una pieza AI)?** Si encuentra ambigüedad o nada, falta cableado.
+1. **¿Si el `developer` lee §6.2 endpoint X, encuentra suficiente recurso técnico (schema, errors, auth) para implementarlo sin volver a `instrucciones.md`?** Si tiene que adivinar, falta detalle.
+2. **¿Si el `planner` lee el primer slice del Coverage Registry y busca su recurso aquí, encuentra exactamente UNA fuente (un endpoint, una tabla, una pieza AI)?** Si encuentra ambigüedad o nada, falta cableado.
 3. **¿Cada componente del motor de `instrucciones.md §3.1` tiene cobertura completa aquí (entity + tabla + endpoint + AI si aplica)?** Si falta una pata, el motor queda cojo.
 
 Si las 3 son "sí", entrega. Si alguna es "no", arregla y vuelve a verificar.
@@ -720,4 +700,4 @@ Si las 3 son "sí", entrega. Si alguna es "no", arregla y vuelve a verificar.
 
 ## Production hardening actual
 
-Usa source-of-truth acumulativo baseline+vN, `Risk level`, `Verify mode`, phases <=20 slices, steps <=10 slices, journeys reales multi-superficie y verify con datos reales/proporcionados. Ejecuta bootstrap + check-task-dag + check-journey-matrix + check-wiring-contract antes de waves.
+Usa source-of-truth acumulativo baseline+vN, `Risk level`, `Verify mode`, phases <=20 slices, steps <=15 slices, journeys reales multi-superficie y verify con datos reales/proporcionados. Ejecuta bootstrap + check-task-dag + check-journey-matrix + check-wiring-contract antes de waves.

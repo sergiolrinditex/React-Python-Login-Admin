@@ -25,7 +25,7 @@
   <a href="templates.html">Templates</a>
   <a href="stack-ux.html">Stack/UX</a>
   <a href="tecnico.html">Técnico</a>
-  <a data-tally-open="5BEA8v" data-tally-layout="modal" data-tally-width="600" data-tally-overlay="1" href="mailto:s.lopezrap@gmail.com?subject=OrquestadorFlutterDAG-AnyStack%20%E2%80%94%20quiero%20ayuda%20para%20implantarlo" class="topnav-cta">📧 Contacto</a>
+  <a data-tally-open="5BEA8v" data-tally-layout="modal" data-tally-width="600" data-tally-overlay="1" href="mailto:s.lopezrap@gmail.com?subject=OrquestadorDAG-AnyStack%20%E2%80%94%20quiero%20ayuda%20para%20implantarlo" class="topnav-cta">📧 Contacto</a>
 </nav>
 
 <main>
@@ -38,7 +38,7 @@
     Stack-agnóstico vía plugins de design-tokens y git-workflows.
   </p>
   <div class="hero-actions" style="margin-top: 12px;">
-    <a href="https://github.com/slopezrap/OrquestadorFlutterDAG-AnyStack" target="_blank" rel="noopener" class="btn-secondary">📂 Ver código en GitHub</a>
+    <a href="https://github.com/slopezrap/OrquestadorDAG-AnyStack" target="_blank" rel="noopener" class="btn-secondary">📂 Ver código en GitHub</a>
     <a href="#profundiza" class="btn-ghost">↓ Páginas técnicas profundas</a>
   </div>
 
@@ -90,7 +90,7 @@
         <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
       </div>
       <h3>Plugins stack-agnósticos</h3>
-      <p><code>.claude/enforcers/</code> y <code>.claude/git-workflows/</code> son plugins despachables desde <code>STACK_PROFILE.yaml</code>. <code>design_tokens_v1</code> escanea Flutter/React/Vue según framework. <code>push-to-main</code> y <code>pr-flow</code> cubren los dos workflows Git habituales.</p>
+      <p><code>.claude/enforcers/</code> y <code>.claude/git-workflows/</code> son plugins despachables desde <code>STACK_PROFILE.yaml</code>. <code>design_tokens_v1</code> escanea según el framework declarado. <code>push-to-main</code> y <code>pr-flow</code> cubren los dos workflows Git habituales.</p>
     </div>
 
     <div class="card">
@@ -177,7 +177,7 @@ validator  ‖  tester
   ↓ (paralelo — validator info-only, tester decide lifecycle)
 debugger   (solo si tester fail; máx 3 ciclos)
   ↓
-/verify-slice  (gate humano + datos reales/prod-like + journey §5.bis inline o aparte)
+/verify-slice  (gate humano + datos reales/proporcionados + journey §5.bis inline o aparte)
   ↓
 closer
   ↓ (commit atómico → git workflow plugin → push)
@@ -295,13 +295,13 @@ flowchart TD
     </table>
   </div>
 
-  <p class="notice">Los 26 diagramas Mermaid completos viven en <a href="https://github.com/slopezrap/OrquestadorFlutterDAG-AnyStack/tree/main/site/diagrams" target="_blank" rel="noopener">site/diagrams/</a> (renderizados nativamente por GitHub).</p>
+  <p class="notice">Los 26 diagramas Mermaid completos viven en <a href="https://github.com/slopezrap/OrquestadorDAG-AnyStack/tree/main/site/diagrams" target="_blank" rel="noopener">site/diagrams/</a> (renderizados nativamente por GitHub).</p>
 
 </main>
 
 <footer>
   <div>Documentación estática · Sin dependencias externas · Lista para GitHub Pages.</div>
-  <div><a href="https://github.com/slopezrap/OrquestadorFlutterDAG-AnyStack" target="_blank" rel="noopener">Repositorio →</a></div>
+  <div><a href="https://github.com/slopezrap/OrquestadorDAG-AnyStack" target="_blank" rel="noopener">Repositorio →</a></div>
 </footer>
 
 <script src="assets/app.js"></script>

@@ -14,7 +14,7 @@ Verify the current task or phase against official documentation.
 - Use official vendor docs only, either via official/vendor domains or trusted MCPs that expose versioned docs.
 - Prefer versioned docs if the project pins versions.
 - Use `ToolSearch` first. Prefer Context7 for library/framework docs (`resolve-library-id` → `get-library-docs`), then vendor-specific MCPs, then WebFetch/WebSearch on official domains as fallback.
-- Batch independent checks in one message: if a slice needs Supabase Auth + GoRouter + Riverpod, launch those independent MCP/WebFetch calls together and synthesize once.
+- Batch independent checks in one message: if a slice needs auth provider + router + state manager declarados por el stack, launch those independent MCP/WebFetch calls together and synthesize once.
 - For Claude Code topics, use `code.claude.com` and its `llms.txt`/docs map, fetching only the specific official pages needed.
 - If docs contradict internal documents, do not propose implementation — produce a discrepancy note.
 

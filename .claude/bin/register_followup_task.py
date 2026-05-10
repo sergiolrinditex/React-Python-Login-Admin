@@ -31,8 +31,10 @@ from bootstrap_three_docs import (
     build_task_dag,
     enrich_journey_completion_metadata,
     render_task_dag_markdown,
+    write_phase_yaml,
     write_task_yaml,
 )
+from generate_api_contracts import generate_contracts
 from common import (
     append_jsonl,
     canonical_source_docs_dir,
@@ -309,8 +311,17 @@ def propose(args: argparse.Namespace) -> dict[str, Any]:
     return {"ok": True, "followup_id": fid, "proposal_path": relpath(path), "blocking": severity in BLOCKING_SEVERITIES, "scope_classification": scope_classification, "triage_warnings": triage_warnings}
 
 
+def _normalise_step_id(phase_id: str, step_id: str | None) -> str:
+    raw = str(step_id or "").strip()
+    if re.match(r"^P\d{2}-S\d{2}$", raw):
+        return raw
+    if re.match(r"^S\d{2}$", raw):
+        return f"{phase_id}-{raw}"
+    return f"{phase_id}-S99"
+
+
 def _next_task_id(registry: dict[str, Any], phase_id: str, step_id: str) -> str:
-    prefix = step_id if re.match(r"^P\d{2}-S\d{2}$", step_id or "") else f"{phase_id}-S99"
+    prefix = _normalise_step_id(phase_id, step_id)
     max_n = 0
     for task in registry.get("tasks", []) or []:
         tid = str(task.get("id") or "")
@@ -318,6 +329,62 @@ def _next_task_id(registry: dict[str, Any], phase_id: str, step_id: str) -> str:
         if m:
             max_n = max(max_n, int(m.group(1)))
     return f"{prefix}-T{max_n + 1:03d}"
+
+
+def _clean_optional(value: Any) -> str:
+    text = str(value or "").strip()
+    return "" if text in {"", "—", "-", "none", "n/a"} else text
+
+
+def _risk_level_for_severity(value: Any) -> str:
+    severity = _normalise_severity(str(value or "medium"))
+    if severity in {"critical", "blocker"}:
+        return "critical"
+    if severity == "high":
+        return "high"
+    if severity == "low":
+        return "low"
+    return "medium"
+
+
+def _verify_mode_for_followup(proposal: dict[str, Any], risk_level: str) -> str:
+    if risk_level in {"medium", "high", "critical"}:
+        return "human"
+    if _clean_optional(proposal.get("screen_route")) or proposal.get("journey_refs"):
+        return "human"
+    return "auto"
+
+
+def _validate_followup_references(registry: dict[str, Any], proposal: dict[str, Any], deps: list[str]) -> None:
+    task_ids = {str(t.get("id")) for t in registry.get("tasks", []) or [] if t.get("id")}
+    missing_deps = [dep for dep in deps if dep not in task_ids]
+    if missing_deps:
+        raise SystemExit(
+            "cannot promote follow-up with unknown dependencies: "
+            + ", ".join(missing_deps)
+        )
+
+    known_journeys = {str(j.get("id")) for j in registry.get("journeys", []) or [] if j.get("id")}
+    journey_refs = [str(j) for j in proposal.get("journey_refs") or [] if str(j).strip()]
+    missing_journeys = [jid for jid in journey_refs if jid not in known_journeys]
+    if missing_journeys:
+        raise SystemExit(
+            "cannot promote follow-up with unknown journey_refs: "
+            + ", ".join(missing_journeys)
+            + ". Add/update UX_CONTRACT.md and bootstrap first, or omit --journey-ref for a source-of-truth follow-up that defines the new journey."
+        )
+
+
+def _write_phase_yamls(registry: dict[str, Any]) -> None:
+    phases_root = tasks_dir() / "phases"
+    phases_root.mkdir(parents=True, exist_ok=True)
+    for phase in registry.get("phases", []) or []:
+        if phase.get("id"):
+            phase.setdefault("title", f"Runtime follow-ups {phase['id']}")
+            phase.setdefault("status", "blocked")
+            phase.setdefault("depends_on", [])
+            phase.setdefault("source_ref", "runtime-followup")
+            write_phase_yaml(phases_root / f"{phase['id']}.yaml", phase)
 
 
 def _md_cell(value: Any) -> str:
@@ -464,28 +531,40 @@ def promote(args: argparse.Namespace) -> dict[str, Any]:
         phase_id = args.phase or proposal.get("origin_phase_id") or (origin or {}).get("phase_id")
         if not phase_id:
             raise SystemExit("phase is required when origin task is unknown")
-        step_id = args.step or proposal.get("origin_step_id") or (origin or {}).get("step_id") or f"{phase_id}-S99"
+        phase_id = str(phase_id)
+        raw_step_id = args.step or proposal.get("origin_step_id") or (origin or {}).get("step_id")
+        step_id = _normalise_step_id(phase_id, raw_step_id)
         task_id = args.task_id or _next_task_id(registry, phase_id, step_id)
         deps = _as_list(args.depends_on) or list(proposal.get("depends_on") or []) or ([origin["id"]] if origin else [])
+        _validate_followup_references(registry, proposal, deps)
         done = {t["id"] for t in registry.get("tasks", []) if t.get("status") == "done"}
         deps_ready = all(dep in done for dep in deps)
         status = "ready" if deps_ready else "blocked"
+        write_set = list(proposal.get("write_set") or [])
+        risk_level = _risk_level_for_severity(proposal.get("severity"))
         task = {
             "id": task_id,
             "phase_id": phase_id,
-            "step_id": step_id if re.match(r"^P\d{2}-S\d{2}$", step_id or "") else f"{phase_id}-S99",
+            "step_id": step_id,
             "title": proposal.get("title") or task_id,
             "status": status,
+            "kind": proposal.get("kind") or "followup",
+            "target": proposal.get("title") or task_id,
             "build_state": proposal.get("build_state") or "planned",
             "product_increment": proposal.get("product_increment") or os.environ.get("PRODUCT_INCREMENT") or "current",
+            "risk_level": risk_level,
+            "verify_mode": _verify_mode_for_followup(proposal, risk_level),
             "depends_on": deps,
             "source_ref": f"runtime-followup:{proposal.get('id')}",
             "acceptance": list(proposal.get("acceptance") or []),
             "verification_commands": list(proposal.get("verify") or []),
-            "allowed_paths": [],
+            "allowed_paths": write_set[:],
             "conflict_groups": list(proposal.get("conflict_groups") or []),
-            "write_set": list(proposal.get("write_set") or []),
+            "write_set": write_set,
             "journey_refs": list(proposal.get("journey_refs") or []),
+            "route": _clean_optional(proposal.get("screen_route")),
+            "endpoint": _clean_optional(proposal.get("endpoint")),
+            "tables": list(proposal.get("tables") or []),
             "handoff_path": f"orchestrator-state/tasks/handoffs/{task_id}.md",
             "evidence_dir": f"orchestrator-state/tasks/evidence/{task_id}",
             "origin": {"type": "runtime_followup", "followup_id": proposal.get("id"), "origin_task_id": proposal.get("origin_task_id"), "severity": proposal.get("severity"), "kind": proposal.get("kind"), "triage": proposal.get("triage") or {}},
@@ -520,7 +599,12 @@ def promote(args: argparse.Namespace) -> dict[str, Any]:
                     journey["verified_at"] = None
         registry = _recompute_registry_graph(promote_ready_tasks(registry))
         save_registry(registry)
+        _write_phase_yamls(registry)
         write_task_yaml(tasks_dir() / "work-items" / f"{task_id}.yaml", task)
+        # Promotion mutates the registry and may introduce/modify endpoints.
+        # Keep generated API contracts coherent so immediate validate-only checks
+        # in /promote-followup and CI do not fail on stale artifacts.
+        generate_contracts(validate_only=False)
         sync_active_state_from_registry(load_registry())
     proposal["status"] = "promoted"
     proposal["promoted_at"] = now_iso()

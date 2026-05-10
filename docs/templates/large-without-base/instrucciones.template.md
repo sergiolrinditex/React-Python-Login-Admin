@@ -1,12 +1,21 @@
-# {{APP_NAME}} — Instrucciones (large app sin base-app)
+# {{APP_NAME}} — Instrucciones (large app sin baseline snapshot)
 
-> **SIN BASEAPP**: define producto, stack, foundation, auth, UX, backend, datos y delivery desde cero usando `STACK_PROFILE.yaml`. No heredes rutas, tablas, endpoints, journeys ni decisiones de `docs/base-app/`.
+## Screen/Journey Lane Redactor Contract
+
+- No modeles la app como `backend/API primero`, luego `frontend`, y `UX polish` al final. Esa separación rompe la pantalla aunque los tests pasen.
+- Cada pantalla importante debe nacer de una **screen/journey lane**: contrato de pantalla + contrato API/datos + implementación conectada + estados UX obligatorios + verificación del journey.
+- Las slices de API/backend pueden existir separadas sólo si son foundation real o contrato técnico que alimenta una pantalla/journey nombrado en `Journey refs`.
+- Criterio de cierre de pantalla: datos reales/proporcionados conectados front -> back -> DB, estados `loading`, `empty`, `error_network`, `error_validation`, `permission_denied` cuando aplique, `success`, navegación/next action, responsive básico y accesibilidad básica.
+- Tamaño recomendado: pantalla crítica 3-6 slices; módulo/journey lane 8-15 slices. No hagas una slice por botón/componente pequeño; tampoco cierres una pantalla sólo porque compila.
+- Defectos dentro de la pantalla actual van por `validator/tester -> debugger -> retest`. Sólo crea FU si falta trabajo nuevo fuera de scope: pantalla, endpoint, tabla, journey, contrato de datos reales o decisión humana no declarada.
+
+> **SIN BASELINE**: define producto, stack, foundation, auth, UX, backend, datos y delivery desde cero usando `STACK_PROFILE.yaml`. No heredes rutas, tablas, endpoints, journeys ni decisiones de `docs/product-baseline/`.
 >
 > **TU TRABAJO aquí**: rellenar todo lo necesario para una app grande nueva. Las secciones marcadas `>>> MODELO:` se rellenan; cualquier bloque que no aplique debe resolverse como `NO APLICA` con motivo.
 >
 > Después de rellenar, copia los 5 ficheros a `docs/source-of-truth/` (sin `.template`) y corre `python3 -B -S .claude/bin/bootstrap_three_docs.py --refresh`.
 
-> Perfil: **large-without-base**. App grande nueva desde cero; AnyStack permitido vía `STACK_PROFILE.yaml`, sin asumir Flutter salvo que el perfil lo declare.
+> Perfil: **large-without-base**. App grande nueva desde cero; AnyStack permitido vía `STACK_PROFILE.yaml`, sin asumir ningún framework salvo que el perfil lo declare.
 
 ---
 
@@ -19,7 +28,7 @@
 > | Sección de `instrucciones.md`            | DEBE existir en `*_TECHNICAL_GUIDE.md`                                                                          | DEBE existir en `*_IMPLEMENTATION_CHECKLIST.md`                |
 > |------------------------------------------|------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------|
 > | §3.1 cada **componente del motor**        | §6.3 entity + §10.3 tabla + §6.2 endpoint(s) + §10.4 agent/graph/tools (si tiene AI)                            | Coverage Registry: 1+ slice Phase 2 (db / api / ai)            |
-> | §3.2 cada **feature**                     | §6.1 ruta + §6.2 endpoints consumidos                                                                            | Coverage Registry: 1+ slice Phase 3 (flutter / journey)        |
+> | §3.2 cada **feature**                     | §6.1 ruta + §6.2 endpoints consumidos                                                                            | Coverage Registry: 1+ slice Phase 3 (frontend / journey)        |
 > | §3.6 cada **journey J1+**               | §6.1 todas sus rutas + §6.2 todos sus endpoints                                                                  | Coverage Registry: slices que componen el journey              |
 > | §3.7 cada **fila de la matriz**           | TODAS las celdas (pantallas/endpoints/tablas) deben ya EXISTIR en sus secciones canónicas del TECHNICAL_GUIDE   | columna `Slices` se expande a TASK_IDs reales del Registry     |
 > | §4 cada **milestone**                     | §13 fila correspondiente en milestones técnicos                                                                  | agrupa slices reales del Registry (Phase 2 + Phase 3)          |
@@ -35,7 +44,7 @@
 
 ### 1.1 Nombre
 
->>> MODELO: Nombre en kebab-case (2-4 palabras). Ej: `legal-contract-analyzer`, `meal-planner-pro`, `study-buddy-ai`.
+>>> MODELO: Nombre en kebab-case (2-4 palabras). Ej: `operations-planner-pro`, `clinic-workflow-hub`, `team-insights-ai`.
 
 ### 1.2 Descripción
 
@@ -43,7 +52,7 @@
 
 ### 1.3 Tipo de proyecto
 
-⚙️ **DEFINIR PARA ESTE STACK** — declara plataforma(s), backend, DB, auth, AI y comandos desde `STACK_PROFILE.yaml`. No asumas Flutter/FastAPI/Supabase salvo que el perfil lo declare.
+⚙️ **DEFINIR PARA ESTE STACK** — declara plataforma(s), backend, DB, auth, AI y comandos desde `STACK_PROFILE.yaml`. No asumas ningún stack concreto salvo que el perfil lo declare.
 
 ---
 
@@ -59,7 +68,7 @@
 
 ### 2.2 Usuario objetivo
 
-⚙️ **DEFINIR PARA ESTE STACK**: describe roles, permisos, tenant model y dispositivo predominante de esta app nueva. No heredes roles de BaseApp.
+⚙️ **DEFINIR PARA ESTE STACK**: describe roles, permisos, tenant model y dispositivo predominante de esta app nueva. No heredes roles de existing baseline.
 
 >>> MODELO: Descripción concreta del usuario normal de TU app:
 >>> - Demográfico + contexto (ej: "abogados junior en despachos medianos, 25-35 años, mucha presión de tiempo").
@@ -72,10 +81,10 @@
 ⚙️ **DEFINIR PARA ESTE STACK**: define los criterios globales propios de esta app nueva; deben ser verificables con datos reales/proporcionados.
 
 >>> MODELO: añadir 5+ criterios específicos de TU app. Ej:
->>> - [ ] Un usuario puede subir un PDF de contrato y ver el análisis completo en <30 segundos.
->>> - [ ] El motor de clasificación de riesgos tiene precisión >85% en el dataset de validación real proporcionado.
+>>> - [ ] Un usuario completa el flujo principal con un dato/documento real proporcionado y ve el resultado visible dentro del umbral definido.
+>>> - [ ] El motor principal cumple la métrica de calidad definida sobre datos reales de validación proporcionados.
 >>> - [ ] La pantalla "Plan de estudio" muestra la planificación generada por el AI agent con todos los enlaces a recursos.
->>> - [ ] {milestone verificable} funciona end-to-end con datos reales en Chrome y mobile.
+>>> - [ ] {milestone verificable} funciona end-to-end con datos reales en la superficie real declarada y mobile.
 
 ---
 
@@ -83,46 +92,46 @@
 
 ### 3.1 EL MOTOR — lo que construyes en Phase 2
 
-🔒 **Phase 2 del app = MOTOR**. Aquí está el valor de tu app. SIN UI aún. Se valida por curl + tests backend.
+**Phase 2 del app = MOTOR / contratos de dominio**. Aquí se implementa el núcleo que alimenta pantallas y journeys nombrados; se valida por API/tests y siempre queda trazado a las pantallas que lo expondrán.
 
 > 🔗 **CABLEADO de §3.1** — por CADA componente que declares aquí debes cablear:
 >
-> 1. **Entities** → `*_TECHNICAL_GUIDE.md §6.3` (con sus campos Pydantic + DTOs Dart freezed).
+> 1. **Entities** → `*_TECHNICAL_GUIDE.md §6.3` (con sus schemas/validadores y DTOs/modelos frontend tipados).
 > 2. **Tablas DB nuevas** → `*_TECHNICAL_GUIDE.md §10.3` (SQL completo + índices + FK cascade).
 > 3. **Endpoints nuevos** → `*_TECHNICAL_GUIDE.md §6.2` (method + path + req + res + auth + errors).
-> 4. **AI (si aplica)** → `*_TECHNICAL_GUIDE.md §10.4` (agent/graph/deep_agent + tools + prompts + RAG config).
+> 4. **AI (si aplica)** → `*_TECHNICAL_GUIDE.md §10.4` (agent/graph/deep_agent + tools + prompts + reference retrieval config).
 > 5. **Slices ejecutables** → `*_IMPLEMENTATION_CHECKLIST.md` Coverage Registry, **Phase 2** (1 fila por migración + 1 fila por endpoint + 1 fila por pieza AI con smoke test).
 >
-> Si te saltas alguno de los 5 → el orquestador lee §3.1 pero no encuentra contrato técnico ni slices → marca el componente "presente" pero lo deja sin implementar. Cero referencias huérfanas.
+> Si te saltas alguno de los 5 → el orquestador lee §3.1 pero no encuentra recurso técnico ni slices → marca el componente "presente" pero lo deja sin implementar. Cero referencias huérfanas.
 
 >>> MODELO: describe la LÓGICA NÚCLEO de la app. Por cada componente del motor, especifica:
 >>>
 >>> **Componente del motor: {nombre}**
 >>> - **Qué hace**: 2-3 frases explicando la lógica de negocio.
->>> - **Entities de dominio**: listar (ej: `Contract`, `Clause`, `Risk`, `Suggestion`).
->>> - **Use cases principales**: listar (ej: `AnalyzeContract`, `ClassifyClauses`, `SuggestEdits`).
+>>> - **Entities de dominio**: listar (ej: `{{PrimaryEntity}}`, `{{SecondaryEntity}}`, `{{ResultEntity}}`).
+>>> - **Use cases principales**: listar (ej: `{{MainUseCase}}`, `{{SecondaryUseCase}}`, `{{RecommendationUseCase}}`).
 >>> - **Componente AI** (si aplica): qué agent/graph/deep_agent lo implementa.
 >>>   - Tipo: `agent` simple / `graph` custom / `deep_agent` (para pipelines largos con planning + subagents + filesystem).
 >>>   - Tools que usa (existentes o nuevos).
 >>>   - Prompt base (descripción alta-level).
->>>   - RAG config si aplica (qué se ingesta, qué se recupera).
+>>>   - reference retrieval config si aplica (qué se ingesta, qué se recupera).
 >>> - **Tablas DB nuevas**: listar con campos principales.
 >>> - **Endpoints nuevos**: listar method + path + propósito.
->>> - **Reglas de negocio**: 3+ reglas concretas aplicables (ej: "un contrato no puede tener >100 cláusulas", "cada cláusula clasificada como riesgo alto debe tener sugerencia").
+>>> - **Reglas de negocio**: 3+ reglas concretas aplicables (ej: "un registro no puede superar el límite definido", "cada resultado crítico debe tener acción recomendada").
 >>>
 >>> REPETIR POR CADA COMPONENTE. MÍNIMO 1 componente principal, habitualmente 2-4.
 
 ### 3.2 LAS FEATURES — lo que construyes en Phase 3
 
-**Phase 3 = FEATURES / UX**. Cada feature = pantalla/ruta del frontend declarado en `STACK_PROFILE.yaml` + flujo de usuario que EXPONE el motor construido en Phase 2.
+**Phase 3 = SCREEN/JOURNEY LANES**. Cada feature = pantalla/ruta del frontend declarado en `STACK_PROFILE.yaml` + flujo de usuario que expone el motor con API/datos/UX/journey cerrados juntos.
 
 > 🔗 **CABLEADO de §3.2** — por CADA feature debes cablear:
 >
-> 1. **Pantalla(s)/ruta(s) frontend** → `*_TECHNICAL_GUIDE.md §6.1` (ruta + page + auth + descripción) — una fila por pantalla nueva.
+> 1. **Pantalla(s)/ruta(s) frontend dentro de la screen/journey lane** → `*_TECHNICAL_GUIDE.md §6.1` (ruta + page + auth + descripción) — una fila por pantalla nueva.
 > 2. **Endpoints consumidos** → ya declarados en `§6.2` (vienen del motor §3.1). Si falta uno, vuelve a §3.1 y añádelo allí PRIMERO.
 > 3. **Estados marginales OBLIGATORIOS** (los 6): `loading`, `empty`, `error_network`, `error_validation`, `permission_denied`, `success`. Si tu feature de verdad no tiene uno (ej. no requiere permisos), márcalo como `n/a` con razón. NO los omitas en silencio.
 > 4. **Next action** tras success: a qué pantalla / acción se sugiere ir. Sin esto el journey queda colgado.
-> 5. **Slices ejecutables** → `*_IMPLEMENTATION_CHECKLIST.md` Coverage Registry, **Phase 3** (1 slice por pantalla mínimo + slices de integración / journey si componen flujo).
+> 5. **Slices ejecutables** → `*_IMPLEMENTATION_CHECKLIST.md` Coverage Registry, **Phase 3** (screen/journey lane con contrato API/datos, pantalla conectada, estados UX y journey verification).
 >
 > Cada feature que declares aquí es validable por `/verify-slice` y/o `/verify-journey` — si no tiene pantalla en §6.1 ni slice en CHECKLIST, NO se construye.
 
@@ -131,26 +140,26 @@
 >>> **Feature: {nombre}**
 >>> 1. **{Funcionalidad concreta}**:
 >>>    - Descripción 2-3 frases.
->>>    - Pantalla/s frontend involucradas (ej: `ContractUploadPage`, `AnalysisResultsPage`, `ClauseDetailPage`, o nombres equivalentes del framework declarado).
+>>>    - Pantalla/s frontend involucradas (ej: `{{PrimaryActionPage}}`, `{{ResultPage}}`, `{{DetailPage}}`, o nombres equivalentes del framework declarado).
 >>>    - Endpoints del motor que consume.
->>>    - Validaciones usuario (inline) + backend (Pydantic).
+>>>    - Validaciones usuario (inline) + backend según framework declarado.
 >>>    - Estados UI: idle / loading / empty / error / success.
->>>    - Edge cases (qué pasa si el PDF es corrupto, si el motor tarda demasiado, si LLM falla).
+>>>    - Edge cases (qué pasa si la entrada real proporcionada es inválida, si el motor tarda demasiado o si un servicio externo/AI falla).
 >>>    - Reglas de negocio aplicadas en esta pantalla.
 >>>
->>> MÍNIMO 3 features principales, habitualmente 4-8. Cada una debe ser demoable visualmente.
+>>> MÍNIMO 3 features principales, habitualmente 4-8. Cada una debe ser verificable visualmente con datos reales/proporcionados.
 
-### 3.3 Foundation propia — NO heredar BaseApp
+### 3.3 Foundation propia — NO heredar existing baseline
 
 Define aquí la foundation mínima que TU app construye desde cero, siempre alineada con `STACK_PROFILE.yaml`:
 
-- **Auth/roles**: provider, pantallas/endpoints y claims si aplica. Si no aplica, escribir `NO APLICA` y motivo.
+- **Identidad/roles**: state handler, pantallas/endpoints y claims si aplica. Si no aplica, escribir `NO APLICA` y motivo.
 - **Perfil/cuenta**: qué datos de usuario existen y qué operaciones reales se soportan.
 - **i18n**: idiomas, formato de keys y fallback si aplica.
 - **Design system**: tokens, componentes base y showcase/verificación visual.
 - **Logging + observabilidad**: request/correlation id, health checks, logs estructurados, métricas si aplica.
 - **Infraestructura**: rate limiting, security headers, CORS, Docker/CI/CD mínimos.
-- **AI stack**: solo si el producto lo necesita; declara carpetas, providers y smoke tests reales.
+- **AI stack**: solo si el producto lo necesita; declara carpetas, state handlers y smoke tests reales.
 
 ### 3.4 Excluido
 
@@ -181,12 +190,12 @@ Define aquí la foundation mínima que TU app construye desde cero, siempre alin
 
 > Esta sección no genera código directamente, pero guía a ChatGPT para que el CHECKLIST cree un `Coverage Registry` útil para Claude Code.
 >
-> Un slice oficial debe ser **pequeño, verificable y cerrable**. No escribas “Auth completa”, “Motor completo” o “Todas las pantallas” como slice. Usa unidades como:
+> Un slice oficial debe ser **pequeño, verificable y cerrable**. No escribas “Identidad/acceso completo”, “Motor completo” o “Todas las pantallas” como slice. Usa unidades como:
 >
 > - `POST /api/v1/<recurso>` con schema + use case + repository + integration test + curl + logs.
 > - `GET /api/v1/<recurso>/:id` si tiene query/autorización/error handling propios.
 > - `000N_<feature>.py` si una migración crea un grupo coherente de tablas.
-> - `<FeaturePage>` si una pantalla tiene estados y provider propios.
+> - `<FeaturePage>` si una pantalla tiene estados y state handler propios.
 > - `<agent_or_graph> smoke` si una pieza AI se puede probar aislada.
 > - `J1 e2e` si solo conecta piezas ya construidas.
 >
@@ -232,8 +241,8 @@ No hay journeys heredados. Esta sección declara journeys reales del motor + fea
 > 🔒 **OBLIGATORIA**. Una fila por journey de §3.6. Cada celda referencia identificadores que YA existen en otras secciones (rutas §6.1 del TECHNICAL_GUIDE, endpoints §6.2, tablas §10.3, slices del CHECKLIST). El validador `scripts/check-journey-matrix.sh` falla si hay drift.
 >
 > **Convención de IDs**:
-> - Journey IDs: `J100+` para journeys de TU app (los `J1-J99` quedan reservados para el baseline si existe).
-> - **Phase IDs: `P00..PNN`** (0-indexed/versionado). El bootstrap deriva fases del Coverage Registry y headings `# Phase N`; no concentres más de 20 slices por phase ni más de 10 por step.
+> - Journey IDs: `J1+` para journeys de TU app nueva. No reserves IDs para un baseline que no existe.
+> - **Phase IDs: `P00..PNN`** (0-indexed/versionado). El bootstrap deriva fases del Coverage Registry y headings `# Phase N`; no concentres más de 20 slices por phase ni más de 15 por step; objetivo recomendado por step 6-12 slices para no fragmentar demasiado ni perder visión de la app.
 > - Step IDs: `P0X-S0Y` (e.g. `P03-S02`). En modo Coverage Registry deben coincidir con la columna `Step` del CHECKLIST. Los headings `PRE-GATE`, `PHASE GATE` o notas no cuentan como steps; solo cuentan headings `## Step N.M`. En la práctica, `Step 3.2` suele mapear a `P03-S02`. La salida de `bootstrap_three_docs.py --refresh` lo confirma en `orchestrator-state/tasks/work-items/`.
 > - Task IDs: `P0X-S0Y-T00Z` (e.g. `P03-S02-T001`).
 >
@@ -252,8 +261,8 @@ No hay journeys heredados. Esta sección declara journeys reales del motor + fea
 
 | ID    | Milestone | Pantallas (en orden)                        | Acciones clave           | Endpoints                                            | Tablas DB              | Estado cliente             | Slices                       | Verificación         |
 |-------|-----------|---------------------------------------------|--------------------------|------------------------------------------------------|------------------------|----------------------------|------------------------------|----------------------|
-| J1  | M2        | LoginPage → DashboardPage → UploadPage → AnalysisResultPage | submit, confirm, upload | POST /api/v1/analysis, GET /api/v1/analysis/{id}     | analyses, files        | analysisProvider, fileProvider | P02-S02                      | /verify-journey J1 |
-| J2  | M2        | DashboardPage → AnalysisDetailPage → ExportDialog | request export           | GET /api/v1/analysis/{id}, GET /api/v1/profile/export | analyses, audit_log    | exportProvider             | P02-S03-T001..T002           | /verify-journey J2 |
+| J1  | M2        | {{LoginScreen}} → {{DashboardScreen}} → {{PrimaryActionPage}} → {{ResultPage}} | submit, confirm, primary action | POST {{primary_endpoint}}, GET {{result_endpoint}}     | {{primary_table}}, {{result_table}}        | {{primary_state_handler}}, {{result_state_handler}} | P02-S02                      | /verify-journey J1 |
+| J2  | M2        | {{DashboardScreen}} → {{DetailScreen}} → {{SecondaryActionDialog}} | request secondary action           | GET {{detail_endpoint}}, POST {{secondary_action_endpoint}} | {{primary_table}}, audit_log    | {{secondary_action_state_handler}}             | P02-S03-T001..T002           | /verify-journey J2 |
 | ...   | ...       | ...                                         | ...                      | ...                                                  | ...                    | ...                        | ...                          | ...                  |
 
 >>> MODELO: si un journey cruza menos de 2 pantallas, NO es un journey — es una feature; queda en §3.2 y NO se mete aquí. Si una pantalla / endpoint / tabla referenciada aún no existe en TECHNICAL_GUIDE, créala primero ahí.
@@ -263,7 +272,7 @@ No hay journeys heredados. Esta sección declara journeys reales del motor + fea
 - Una fila por journey. Mínimo 2 pantallas por journey.
 - Toda celda apunta a IDs que existen en su sección canónica.
 - Slices acepta los 4 formatos descritos arriba (TASK_ID, rango, step ref, phase ref). El bootstrap los expande automáticamente.
-- Pipes literales dentro de una celda se escapan como `\|` (ej. `tap Continue with {Google\|Apple\|Microsoft}`). El parser los respeta.
+- Pipes literales dentro de una celda se escapan como `\|` (ej. `tap Continue with {ProveedorA\|ProveedorB}`). El parser los respeta.
 - Las celdas que de verdad no aplican (ej. journey 100% client-side sin endpoint) usan el sentinel `(none)` o `—` — el validador los ignora.
 - Verificación siempre `/verify-journey JXXX` (waiver explícito documentado solo en casos extremos).
 - Milestone obligatorio (M1..Mn de §4).
@@ -276,7 +285,7 @@ No hay journeys heredados. Esta sección declara journeys reales del motor + fea
 
 > 🔗 **CABLEADO de §4** — cada milestone aquí debe estar simultáneamente en:
 >
-> 1. **Mapeo técnico** → `*_TECHNICAL_GUIDE.md §13` (tabla milestone → features → rutas → endpoints → tablas → AI). Si declaras M2 aquí pero no aparece en §13, no hay contrato técnico.
+> 1. **Mapeo técnico** → `*_TECHNICAL_GUIDE.md §13` (tabla milestone → features → rutas → endpoints → tablas → AI). Si declaras M2 aquí pero no aparece en §13, no hay recurso técnico.
 > 2. **Slices agrupados** → `*_IMPLEMENTATION_CHECKLIST.md` (slices Phase 2 + Phase 3 que componen el milestone). Sin grupos cableados no hay verificación posible.
 > 3. **Demo script verificable** → cada paso del script de verificación (login, click, submit, verificar resultado) debe ser ejecutable en `/verify-slice` o `/verify-journey`. Si declaras "Verificar X" pero X no tiene endpoint ni pantalla, drift inmediato.
 
@@ -288,8 +297,8 @@ No hay journeys heredados. Esta sección declara journeys reales del motor + fea
 >>> **Features requeridas**: {pantallas del §3.2}
 >>> **Backend**: endpoints que deben responder.
 >>> **Demo script**:
->>> 1. Abrir Chrome en `localhost:5000`.
->>> 2. Login con test@user.com.
+>>> 1. Abrir la superficie real declarada en `STACK_PROFILE.yaml`.
+>>> 2. Autenticarse o seleccionar rol real/proporcionado si el journey lo requiere.
 >>> 3. Click en {botón}.
 >>> 4. Rellenar {datos concretos}.
 >>> 5. Verificar que aparece {resultado concreto con datos reales del backend}.
@@ -316,12 +325,12 @@ Principios obligatorios para esta app nueva: flujo por slice, tests reales, DRY/
 >>> MODELO: lista de keys que tu app añade:
 >>> ```
 >>> {
->>>   "contractAnalysisTitle": "Análisis de contrato",
->>>   "uploadContractHint": "Sube un PDF para empezar",
+>>>   "domainProcessTitle": "Resultado del proceso",
+>>>   "primaryActionHint": "Carga el dato/documento real proporcionado para empezar",
 >>>   ...
 >>> }
 >>> ```
->>> Traducir cada key a EN + FR. Si tu app tiene terminología específica de dominio (legal, médico, etc.), cuidado con traducción literal — dejar notas para el traductor si hace falta.
+>>> Traducir sólo a los idiomas declarados para esta app. Si tu app tiene terminología específica de dominio, deja notas para revisión humana y no inventes traducciones no requeridas.
 
 ---
 
@@ -331,8 +340,8 @@ Principios obligatorios para esta app nueva: flujo por slice, tests reales, DRY/
 
 >>> MODELO: si TU app necesita branding específico (logo, color primario distinto del default azul de la base), documentar aquí:
 >>> - Logo: path + variantes (horizontal, icon-only, dark, light).
->>> - Color primario override: `AppColors.primary = Color(0xFF{tu_color})`.
->>> - Typography: si usas una fuente distinta de Inter.
+>>> - Color primario override: variable/token equivalente del sistema de diseño declarado.
+>>> - Typography: si usas una fuente distinta de la declarada por el stack.
 >>> - Si nada cambia: "Sin overrides de marca".
 
 ---
@@ -348,9 +357,9 @@ Principios obligatorios para esta app nueva: flujo por slice, tests reales, DRY/
 Criterios fijos: comandos `frontend.test_cmd`, `backend.test_cmd`, checks de lint/build del `STACK_PROFILE.yaml` verdes. Arquitectura limpia. Cero hardcodeado/duplicado/muerto.
 
 >>> MODELO: 5+ criterios específicos del dominio de TU app. Ej:
->>> - [ ] El motor de análisis devuelve al menos 1 sugerencia por cada cláusula marcada como "riesgo alto".
->>> - [ ] El tiempo de análisis de un contrato <50 páginas es <30s.
->>> - [ ] La exportación del informe en PDF mantiene el formato de tabla y cumple WCAG AA de contraste.
+>>> - [ ] El motor de dominio devuelve el resultado esperado para cada caso crítico definido por el usuario/equipo.
+>>> - [ ] El tiempo de procesamiento de una entrada real dentro del límite declarado cumple el umbral definido.
+>>> - [ ] La exportación del informe en el formato declarado mantiene estructura, accesibilidad y trazabilidad.
 >>> - [ ] El flujo de login declarado funciona y el usuario aterriza en la home con datos reales cargados.
 
 ---
@@ -379,7 +388,7 @@ Criterios fijos: comandos `frontend.test_cmd`, `backend.test_cmd`, checks de lin
 > - El `official-docs-researcher` corre antes del developer en CADA slice y resuelve la versión exacta cuando se introduce la lib en el manifiesto de dependencias correcto. El lockfile fija la versión, no este documento.
 >
 > **Reglas no negociables** (extracto — completas en `PROMPT_SOURCE_OF_TRUTH_DAG.md §7`):
-> - NO añadas dependencias por costumbre ni copies stack BaseApp. Usa solo el stack declarado en `STACK_PROFILE.yaml` y justifica cada paquete nuevo.
+> - NO añadas dependencias por costumbre ni copies stack existing baseline. Usa solo el stack declarado en `STACK_PROFILE.yaml` y justifica cada paquete nuevo.
 > - <20 LOC → CUSTOM gana. La librería NO entra.
 > - Solo libs con adopción real (≥1k stars o equivalente, mantenidas en últimos 6 meses; 2 meses para AI/ML).
 > - License MIT/BSD/Apache. GPL/comercial requieren ADR.
@@ -398,19 +407,19 @@ Criterios fijos: comandos `frontend.test_cmd`, `backend.test_cmd`, checks de lin
 
 | Área funcional | Decisión | Tipo de librería buscada (sin versión) | Slices estimados ahorrados |
 |---|---|---|---|
-| {Forms y validación} | {USAR \| CUSTOM \| NO APLICA \| DEFERRED} | {ej: form builder con validación tipada compatible con Riverpod} | {ej: 1-2} |
-| {Procesamiento PDF backend} | {USAR \| ...} | {ej: parser de PDF nativo (texto, sin OCR)} | {ej: 1} |
+| {Forms y validación} | {USAR \| CUSTOM \| NO APLICA \| DEFERRED} | {ej: form builder con validación tipada compatible con el gestor de estado declarado} | {ej: 1-2} |
+| {Procesamiento de entrada/documento backend} | {USAR \| ...} | {ej: parser/validador del formato real proporcionado} | {ej: 1} |
 | {...} | {...} | {...} | {...} |
 
 >>> **Áreas a recorrer** (ver descripción de cada una en `PROMPT_SOURCE_OF_TRUTH_DAG.md §3`). Evalúa las que apliquen a TU app:
 >>>
 >>> Frontend según `STACK_PROFILE.yaml`: forms y validación · iconografía · componentes UI extra · cache de imágenes · file pickers · chat/streaming AI · charts · animations · layouts responsive · codegen · deep links · date/time avanzado · maps · pagos · push · crash reporting · permissions nativos · almacenamiento offline.
 >>>
->>> Backend: procesamiento PDF · procesamiento Office · procesamiento imagen/video · HTTP a APIs externas · jobs/queues · email custom · scraping · validaciones específicas (phones, IDs, IBAN) · extensiones cripto · observabilidad backend · storage no-Supabase.
+>>> Backend: procesamiento de documentos/datos · procesamiento Office · procesamiento imagen/video · HTTP a APIs externas · jobs/queues · email custom · scraping · validaciones específicas (phones, IDs, IBAN) · extensiones cripto · observabilidad backend · storage externo/no declarado en perfil.
 >>>
->>> BBDD: extensiones Postgres específicas (pg_trgm, unaccent, pgcrypto, PostGIS).
+>>> BBDD: extensiones motor DB declarado específicas (pg_trgm, unaccent, pgcrypto, PostGIS).
 >>>
->>> AI/ML: structured outputs · constrained generation · prompt eval · RAG metrics · token counting · loaders/chunkers específicos.
+>>> AI/ML: structured outputs · constrained generation · prompt eval · reference retrieval metrics · token counting · loaders/chunkers específicos.
 >>>
 >>> Si una de estas áreas NO aplica a tu app, omítela — basta evaluar las que sí (mínimo 6). Si descubres una que no está en la lista pero aplica a tu app, añádela.
 
@@ -453,10 +462,10 @@ Criterios fijos: comandos `frontend.test_cmd`, `backend.test_cmd`, checks de lin
 ## 13. Riesgos
 
 >>> MODELO: 3+ riesgos específicos del dominio de TU app con mitigación concreta. Ej:
->>> - **Riesgo**: Los PDFs de contratos tienen formato muy variable → parsing inconsistente.
->>>   **Mitigación**: Pipeline de ingestion con fallback a OCR (tesseract) si pypdf falla. Dataset de validación con 50 PDFs diversos testeado antes de release.
->>> - **Riesgo**: LLM genera sugerencias legalmente incorrectas.
->>>   **Mitigación**: Banner "Esto no constituye asesoramiento legal" + feedback loop con validación profesional + sistema de reportes.
+>>> - **Riesgo**: Las entradas reales proporcionadas tienen formato variable → parsing/validación inconsistente.
+>>>   **Mitigación**: Pipeline de ingestion validado con datos reales proporcionados; si falta cobertura, bloquear o registrar follow-up antes de release.
+>>> - **Riesgo**: LLM o motor de reglas genera recomendaciones incorrectas para el dominio.
+>>>   **Mitigación**: Aviso contextual claro + revisión humana cuando aplique + feedback loop + sistema de reportes.
 >>> - **Riesgo**: Costes de LLM escalan sin control.
 >>>   **Mitigación**: Rate limit por user + cache de análisis recientes + alert de consumo en Admin AI.
 
@@ -466,9 +475,9 @@ Criterios fijos: comandos `frontend.test_cmd`, `backend.test_cmd`, checks de lin
 
 ⚙️ **DEFINIR PARA ESTE STACK**: structlog + flag verbose + request_id + audit_log + Prometheus.
 
->>> MODELO: si tu app necesita logs/métricas específicas (ej: métricas de negocio como "contratos analizados/hora"), listar aquí:
+>>> MODELO: si tu app necesita logs/métricas específicas (ej: métricas de negocio como "recursos procesados/hora"), listar aquí:
 >>> - Métricas custom: nombre + tipo (counter/histogram/gauge) + labels.
->>> - Audit log actions nuevas: ej `contract_uploaded`, `analysis_completed`, `suggestion_accepted`.
+>>> - Audit log actions nuevas: ej `resource_created`, `process_completed`, `recommendation_accepted`.
 
 ---
 
@@ -477,7 +486,7 @@ Criterios fijos: comandos `frontend.test_cmd`, `backend.test_cmd`, checks de lin
 ⚙️ **DEFINIR PARA ESTE STACK**: usuarios/proveedores base reales proporcionados.
 
 >>> MODELO: tu app puede necesitar datos reales proporcionados específicos para milestones:
->>> - Milestone N: X contratos/documentos reales proporcionados, Y usuarios reales de prueba con historial.
+>>> - Milestone N: X registros/documentos reales proporcionados, Y usuarios reales de prueba con historial.
 >>> - Fuente: el usuario/equipo proporcionará los datos necesarios antes de verificar; si faltan, la slice se bloquea o se registra follow-up.
 >>> - Carga: script idempotente de importación de datos proporcionados, sin inventar datos ni cargas no proporcionadas.
 
@@ -498,12 +507,12 @@ Criterios fijos: comandos `frontend.test_cmd`, `backend.test_cmd`, checks de lin
 
 ## 18. Relación con baseline
 
-**Sin BaseApp.** Este perfil empieza desde cero.
+**Sin existing baseline.** Este perfil empieza desde cero.
 
 **Lo que NO se debe arrastrar:**
-- Rutas, pantallas, endpoints, tablas o journeys de `docs/base-app/`.
-- Suposiciones de Flutter/FastAPI/Supabase si `STACK_PROFILE.yaml` declara otro stack.
-- Dependencias, providers, routers u ORMs heredados sin slice explícita.
+- Rutas, pantallas, endpoints, tablas o journeys de `docs/product-baseline/`.
+- Suposiciones de stack si `STACK_PROFILE.yaml` declara otro stack.
+- Dependencias, state handlers, routers u ORMs heredados sin slice explícita.
 
 **Lo que TU app debe declarar:**
 - Foundation mínima propia: health checks, auth/roles si aplica, design tokens, logging, tests, scripts y reset/carga de datos reales proporcionados.
@@ -524,7 +533,7 @@ Para CADA componente declarado en §3.1, confirmar en orden:
 - [ ] Tiene **entity** declarada en `*_TECHNICAL_GUIDE.md §6.3`.
 - [ ] Tiene **tabla(s) DB** declarada(s) en `*_TECHNICAL_GUIDE.md §10.3` con SQL completo + FKs + índices.
 - [ ] Tiene **endpoint(s)** declarado(s) en `*_TECHNICAL_GUIDE.md §6.2` con method + path + req + res + auth + errors.
-- [ ] Si tiene AI: tiene **agent / graph / deep_agent** + **tools** + **prompts** + **RAG config** declarados en `*_TECHNICAL_GUIDE.md §10.4`.
+- [ ] Si tiene AI: tiene **agent / graph / deep_agent** + **tools** + **prompts** + **reference retrieval config** declarados en `*_TECHNICAL_GUIDE.md §10.4`.
 - [ ] Tiene **1+ slice Phase 2** en `*_IMPLEMENTATION_CHECKLIST.md` Coverage Registry (db / api / ai).
 - [ ] Las **reglas de negocio** declaradas aquí se cumplen como invariantes en `*_TECHNICAL_GUIDE.md §12` (Constraints & Invariants).
 
@@ -536,7 +545,7 @@ Para CADA feature declarada en §3.2, confirmar en orden:
 - [ ] Cada **endpoint que consume** existe en `*_TECHNICAL_GUIDE.md §6.2` (sale del motor §3.1).
 - [ ] Declara los **6 estados marginales** (loading / empty / error_network / error_validation / permission_denied / success). Si alguno no aplica de verdad, está marcado `n/a` con razón.
 - [ ] Declara su **Next action** tras success.
-- [ ] Tiene **1+ slice Phase 3** en `*_IMPLEMENTATION_CHECKLIST.md` Coverage Registry (flutter o journey).
+- [ ] Tiene **1+ slice Phase 3** en `*_IMPLEMENTATION_CHECKLIST.md` Coverage Registry (frontend o journey).
 
 ### 19.3 Wires desde §3.6 + §3.7 (JOURNEYS)
 
@@ -571,7 +580,7 @@ Para CADA decisión **USAR / DEFERRED** declarada en §11.0:
 
 - [ ] **Cero `>>> MODELO:`** restantes en el fichero filled.
 - [ ] **Cero `📋 SI APLICA`** sin resolver (o rellenas o eliminas la sección).
-- [ ] **Cero referencias a BaseApp/herencia** salvo que estén marcadas explícitamente como `NO APLICA` para este perfil sin base.
+- [ ] **Cero referencias a existing baseline/herencia** salvo que estén marcadas explícitamente como `NO APLICA` para este perfil sin base.
 - [ ] **Cero referencias** a IDs (rutas, endpoints, tablas, slices, JIDs) que no existan en su doc destino.
 - [ ] Si hay AI/ML libs en §11.0: están declaradas como `pendiente — official-docs-researcher confirmará` (cambian cada semanas, no inventes versiones).
 
@@ -579,13 +588,13 @@ Para CADA decisión **USAR / DEFERRED** declarada en §11.0:
 
 Hazte estas 3 preguntas:
 
-1. **¿Si Claude Code lee §3.1, encuentra TODO el contrato técnico necesario en TECHNICAL_GUIDE para implementar el motor?** Si la respuesta es "necesita inferir algo", falta cableado.
+1. **¿Si Claude Code lee §3.1, encuentra TODO el recurso técnico necesario en TECHNICAL_GUIDE para implementar el motor?** Si la respuesta es "necesita inferir algo", falta cableado.
 2. **¿Si Claude Code lee §3.7 (Journey Matrix), puede expandir cada celda a un identifier que existe en otra sección?** Si una celda apunta al vacío, falta cableado.
-3. **¿Si el `planner` selecciona el primer slice del Coverage Registry, encuentra origen claro en §3.1 / §3.2 / §3.7 + contrato técnico claro en §6.1 / §6.2 / §6.3 / §10.3 / §10.4?** Si tiene que adivinar, falta cableado.
+3. **¿Si el `planner` selecciona el primer slice del Coverage Registry, encuentra origen claro en §3.1 / §3.2 / §3.7 + recurso técnico claro en §6.1 / §6.2 / §6.3 / §10.3 / §10.4?** Si tiene que adivinar, falta cableado.
 
 Si las 3 son "sí", entrega. Si alguna es "no", arregla y vuelve a verificar.
 
 
 ## Production hardening actual
 
-Usa source-of-truth acumulativo baseline+vN, `Risk level`, `Verify mode`, phases <=20 slices, steps <=10 slices, journeys reales multi-superficie y verify con datos reales/proporcionados. Ejecuta bootstrap + check-task-dag + check-journey-matrix + check-wiring-contract antes de waves.
+Usa source-of-truth acumulativo de app nueva (`v1`, luego `v2`, ...), `Risk level`, `Verify mode`, phases <=20 slices, steps <=15 slices, journeys reales multi-superficie y verify con datos reales/proporcionados. Ejecuta bootstrap + check-task-dag + check-journey-matrix + check-wiring-contract antes de waves.

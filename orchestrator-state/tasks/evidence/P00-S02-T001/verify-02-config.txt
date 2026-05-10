@@ -1,2 +1,0 @@
-=== docker compose config -q ===
-exit=0

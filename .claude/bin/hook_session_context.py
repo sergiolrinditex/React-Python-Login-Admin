@@ -2,7 +2,7 @@
 """SessionStart hook — pure observability.
 
 Injects lightweight context about project state at session start, so the first
-turn already knows which phase/task is active, whether the three-doc contract
+turn already knows which phase/task is active, whether the five-file source-of-truth contract
 is healthy, and what was the last worker to finish. NEVER blocks. NEVER fails
 the session — if anything goes wrong it emits an empty context.
 

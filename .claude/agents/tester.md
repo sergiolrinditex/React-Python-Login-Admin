@@ -41,7 +41,7 @@ Lee `.claude/rules/` para los criterios de "tests reales" y logging.
 - `TASK_PACK` pasado por el orchestrator — en DAG `orchestrator-state/tasks/task-packs/<TASK_ID>.md`; fallback legacy `orchestrator-state/memory/active-task.md`. Si el pack no corresponde al `TASK_ID` exacto, bloquea.
 - `orchestrator-state/memory/PROGRESS.md` — qué endpoints/rutas deberían existir y test count actual.
 - Handoff del developer — qué se implementó.
-- `Verification data contract` del task pack/TECHNICAL_GUIDE si la slice expone UI/API/journey: úsalo para payloads realistas y fixtures permitidos.
+- `Verification data contract` del task pack/TECHNICAL_GUIDE si la slice expone UI/API/journey: úsalo para payloads realistas y datos proporcionados permitidos.
 - `Front → Back → DB contract` del task pack: convierte pantalla/ruta, endpoint y tablas en checks ejecutables. Si una pieza existe en el pack pero no hay forma de observarla con datos reales/proporcionados, devuelve `blocked` o crea follow-up formal según scope.
 
 ### 2. Verificar servers arriba
@@ -77,7 +77,7 @@ Guarda en `orchestrator-state/tasks/evidence/<TASK_ID>/`:
 - `curl-<endpoint>.txt` por endpoint.
 - `logs-verbose-on.txt` y `logs-verbose-off.txt`.
 - Screenshots si hay verificación visual automatizada.
-- `data-contract-used.txt` si aplicó: filas del Verification Data Contract, fixtures usados y datos persistidos observados.
+- `data-contract-used.txt` si aplicó: filas del Verification Data Contract, datos reales/proporcionados usados y datos persistidos observados.
 - `contract-observed.txt` si aplicó: ruta/provider/API client/DTO/endpoint/repository/tabla observados durante los tests o curl checks.
 
 ## Al terminar

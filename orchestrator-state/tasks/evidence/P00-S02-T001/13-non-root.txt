@@ -1,5 +1,0 @@
-=== Backend user (id) ===
-uid=1001(appuser) gid=1001(appgroup) groups=1001(appgroup)
-=== Worker user (id) ===
-uid=1001(appuser) gid=1001(appgroup) groups=1001(appgroup)
-EXIT: 0

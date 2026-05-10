@@ -47,7 +47,7 @@ A task is `done` only when all of the following exist:
 
 El gate de journey tiene dos rutas. La ruta normal evita el doble gate:
 
-- **Inline** (rama "ahora" en `/verify-slice §5.bis`): el comando ejecuta verify-journey aprovechando el entorno ya reseteado y los fixtures cargados. Apendiza `## verify-journey` al **mismo handoff** del slice (no usa `journey-handoffs/`). El closer al ver `JOURNEY_VERIFY_OUTCOME: verified` emite `JOURNEY_VERIFIED_INLINE: <JID>` y el SubagentStop hook marca el journey como `verified` bajo lock, sin añadirlo a `pending_journey_verifications`.
+- **Inline** (rama "ahora" en `/verify-slice §5.bis`): el comando ejecuta verify-journey aprovechando el entorno ya reseteado y los datos reales/proporcionados cargados. Apendiza `## verify-journey` al **mismo handoff** del slice (no usa `journey-handoffs/`). El closer al ver `JOURNEY_VERIFY_OUTCOME: verified` emite `JOURNEY_VERIFIED_INLINE: <JID>` y el SubagentStop hook marca el journey como `verified` bajo lock, sin añadirlo a `pending_journey_verifications`.
 - **Aparte** (rama "aparte" en `/verify-slice §5.bis`, o falta de la sección): el closer emite `JOURNEY_PENDING_VERIFY: <JID>` como hasta ahora; el SubagentStop hook lo añade a `runtime-state.pending_journey_verifications`; con `journey_gate_mode=frontier` el planner difiere solo tasks que referencian ese JID; con `strict` bloquea nuevas claims hasta que el usuario lance `/verify-journey <JID>` por separado (que escribe en `journey-handoffs/<JID>.md` y emite trailer reconocido por el hook).
 
 `JOURNEY_VERIFIED_INLINE` sí lo procesa el hook: marca el journey como `verified`, limpia cualquier pending anterior y actualiza `last_journey_verified`. El campo `runtime-state.pending_journey_verifications` sigue siendo el mecanismo de bloqueo para journeys que quedaron en modo "aparte".
@@ -72,7 +72,7 @@ The whitelist lives in `.claude/bin/hook_capture_subagent_stop.py:INFO_ONLY_AGEN
   - `JOURNEY_VERIFY_OUTCOME: verified | issues_found`
   - `MILESTONE: <Mn>`
   - `SLICES_COVERED: <lista TASK_IDs>`
-  - `FIXTURES_CONSOLIDATED: <lista>`
+  - `DATA_SETUP_CONSOLIDATED: <lista de datos reales/proporcionados cargados>`
   - `FLOWS_TESTED: <lista>`
   - `MARGINAL_STATES_TESTED: back, reload, empty, error_network, permission_denied, deep_link`
   - `NEXT_ACTION_VERIFIED: yes | no | n/a`
@@ -90,7 +90,7 @@ Campos añadidos a `runtime-state.json` por la feature de journey-verification:
 
 ## Journey state in registry.json
 
-Campo añadido a `registry.json` por bootstrap (parsea la Journey Coverage Matrix de `instrucciones.md`, localizada por nombre — §3.5 en base-app, §3.7 en feature-app):
+Campo añadido a `registry.json` por bootstrap (parsea la Journey Coverage Matrix de `instrucciones.md`, localizada por nombre — §3.5 en baseline snapshot, §3.7 en feature-app):
 
 - `journeys`: list[dict] — uno por fila de la matriz, con `id`, `title`, `milestone`, `screens`, `actions`, `endpoints`, `tables`, `client_state`, `task_ids` (con rangos expandidos), `verification` (texto de la columna), `verification_status` (`pending|verified|waived`), `verified_at`, `verify_handoff`.
 - Si `instrucciones.md` no tiene Journey Coverage Matrix → `journeys: []` (back-compat con proyectos pre-matriz).

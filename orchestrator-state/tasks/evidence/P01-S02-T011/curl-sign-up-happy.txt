@@ -1,9 +1,0 @@
-# curl POST /api/v1/auth/sign-up (happy path)
-# Port: 8012 (temporary verbose uvicorn)
-# Email: p011-verbose-1778426074@example.com (unique, UUID-based)
-# Request: {"email":"p011-verbose-...@example.com","password":"StrongP@ssw0rd123!","full_name":"P011 TesterV","legal_acceptance":true}
-
-HTTP Status: 201 Created
-Response: {"data":{"mfa_required":true,"user_id":"a33de137-a2e3-4387-a750-da921dc4c13d"}}
-
-Acceptance gate: grep '$argon2id$' in response = 0 (PASS)

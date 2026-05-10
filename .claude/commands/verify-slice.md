@@ -1,5 +1,5 @@
 ---
-description: Verificación humana-real post-slice. Hard reset del entorno (back + front + bbdd con seed + fixtures del slice), reproduce como usuario en el navegador, vigila logs front+back+bbdd en vivo, devuelve tabla de validación con URL, qué probar, descripción y resultado esperado. Agnóstico del stack.
+description: Verificación humana-real post-slice. Hard reset del entorno (back + front + bbdd con carga de datos reales/proporcionados del slice), reproduce como usuario en el navegador, vigila logs front+back+bbdd en vivo, devuelve tabla de validación con URL, qué probar, descripción y resultado esperado. Agnóstico del stack.
 argument-hint: "[--task <TASK_ID>]  (omite para usar la tarea activa)"
 ---
 
@@ -24,7 +24,7 @@ Todo Agent spawn desde verify-slice debe recibir TASK_ID, CLAUDE_TASK_PACK y el 
 
 Si dudas si estás en DAG o legacy, para y consulta `./scripts/check-task-dag.sh --strict`. En producción `legacy_linear` es error operativo, no fallback. `/verify-slice` es el gate humano de un `TASK_ID` DAG concreto; no verifica una cola secuencial ni cierra slices implícitas.
 
-Te lanzas **después de que `tester` pasa limpio, antes de que `closer` haga commit** (modo pre-closer, el habitual). También puede lanzarse **tras `closer`** para re-verificar un slice ya commiteado (modo post-closer). Tu trabajo es convencerte a ti mismo (y al usuario) de que lo shipeado funciona de verdad, reproduciéndolo como un usuario humano en el navegador, con entorno fresco, fixtures inyectados y logs en vivo. En modo pre-closer, si la slice queda verificada orquestas tú mismo al `closer` para commit atómico + push main; si encuentra issues, orquestas al `debugger`.
+Te lanzas **después de que `tester` pasa limpio, antes de que `closer` haga commit** (modo pre-closer, el habitual). También puede lanzarse **tras `closer`** para re-verificar un slice ya commiteado (modo post-closer). Tu trabajo es convencerte a ti mismo (y al usuario) de que lo shipeado funciona de verdad, reproduciéndolo como un usuario humano en el navegador, con entorno fresco, datos reales/proporcionados cargados y logs en vivo. En modo pre-closer, si la slice queda verificada orquestas tú mismo al `closer` para commit atómico + push main; si encuentra issues, orquestas al `debugger`.
 
 **Tras `/clear`**: este comando es 100% resiliente al `/clear`. No depende del contexto conversacional previo — reconstruye todo desde disco (PROGRESS.md, runtime-state.json, registry.json, handoff). Puedes y debes hacer `/clear` antes de `/verify-slice` para liberar los ~100-200k tokens del pipeline previo.
 
@@ -32,11 +32,11 @@ Te lanzas **después de que `tester` pasa limpio, antes de que `closer` haga com
 
 **Principios (no negociables)**:
 
-- **Hard reset SIEMPRE.** Parar servicios, resetear bbdd, reinyectar seed base, inyectar fixtures extra para lo que shipeó el slice, reiniciar back y front. No confíes en el estado anterior.
+- **Hard reset SIEMPRE.** Parar servicios, resetear bbdd, reinyectar datos base reales/proporcionados, inyectar datos específicos para lo que shipeó el slice, reiniciar back y front. No confíes en el estado anterior.
 - **Reproduce como humano.** Abre la app, navega, rellena formularios, pulsa botones, lee respuestas. Tantas interacciones como flujos tenga el slice.
 - **Vigila los 3 logs a la vez.** Front, back y bbdd en paralelo.
-- **Solo lectura de código.** No modificas producción, no añades tests, no cambias seed existente.
-- **Agnóstico del stack.** Todo lo específico (stack, comandos, puertos, health, seed, migraciones) se lee del TECHNICAL_GUIDE en runtime.
+- **Solo lectura de código.** No modificas producción, no añades tests, no cambias carga de datos existente.
+- **Agnóstico del stack.** Todo lo específico (stack, comandos, puertos, health, carga de datos, migraciones) se lee del TECHNICAL_GUIDE en runtime.
 - **Tú eliges las herramientas.** Cada paso describe la acción, no la tool.
 
 ---
@@ -51,8 +51,8 @@ En paralelo:
 4. Evidence report del task si ya existe: `orchestrator-state/tasks/reports/<TASK_ID>.md` (solo existirá si `closer` ya corrió).
 5. Handoff: `orchestrator-state/tasks/handoffs/<TASK_ID>.md` (tiene las secciones developer/validator/tester — tiene que existir sí o sí).
 6. En modo DAG o con `--task <TASK_ID>`: `orchestrator-state/tasks/task-packs/<TASK_ID>.md`. No dependas de `orchestrator-state/memory/active-task.md`, porque otra terminal puede haberlo movido. Si el pack no existe o no menciona ese `TASK_ID`, aborta antes de verificar.
-6. `docs/source-of-truth/*_TECHNICAL_GUIDE.md` — extrae: comando de arranque back (+ puerto), frontend (+ puerto/plataforma), comando migrate, comando seed, endpoint de health, flag de verbose logging.
-7. `docs/source-of-truth/*_TECHNICAL_GUIDE.md` §`Verification Data Contract` — identifica las filas que aplican por `TASK_ID`, `Journey refs`, pantalla o endpoint. Estas filas son obligatorias para decidir datos reales/proporcionados, fixtures permitidos solo si cargan datos proporcionados y reset/cleanup.
+6. `docs/source-of-truth/*_TECHNICAL_GUIDE.md` — extrae: comando de arranque back (+ puerto), frontend (+ puerto/plataforma), comando migrate, comando de carga de datos, endpoint de health, flag de verbose logging.
+7. `docs/source-of-truth/*_TECHNICAL_GUIDE.md` §`Verification Data Contract` — identifica las filas que aplican por `TASK_ID`, `Journey refs`, pantalla o endpoint. Estas filas son obligatorias para decidir datos reales/proporcionados, datos proporcionados permitidos solo si cargan datos proporcionados y reset/cleanup.
 8. `instrucciones.md` → reglas de negocio relevantes al slice (las usarás en la tabla final).
 
 **Del handoff (+ evidence si existe) identifica**:
@@ -60,7 +60,7 @@ En paralelo:
 - Back: endpoints nuevos (verbo + ruta), servicios, reglas de negocio.
 - Front: pantallas, rutas, componentes, flujos de usuario.
 - BBDD: tablas, columnas, índices, datos esperados.
-- Fixtures extra necesarios para ejercer lo shipeado (más allá del seed base).
+- Datos reales/proporcionados necesarios para ejercer lo shipeado (más allá de los datos base reales/proporcionados).
 - Forward-carries de seguridad si los hay.
 
 Si NO hay handoff → aborta: *"La tarea no tiene handoff. Completa el pipeline hasta tester pass antes de verificar."*
@@ -81,7 +81,7 @@ Si falta algo → aborta: *"Pipeline no cerró limpio (validator/tester no pasar
 
 ## Paso 2 — HARD RESET del entorno
 
-Objetivo: partir de cero con seed base + fixtures del slice, back + front arriba con logging verbose.
+Objetivo: partir de cero con datos base reales/proporcionados + datos específicos del slice, back + front arriba con logging verbose.
 
 ### 2.1 Parar servicios
 
@@ -94,12 +94,12 @@ Objetivo: partir de cero con seed base + fixtures del slice, back + front arriba
 - Migraciones hasta **head** con el comando oficial (Alembic, Prisma, Knex, Flyway, migrate...).
 - Si no está documentado → para y reporta: *"No encuentro comando de reset en TECHNICAL_GUIDE. Indícamelo."*
 
-### 2.3 Seed base
+### 2.3 Datos base reales/proporcionados
 
-- Comando de seed del TECHNICAL_GUIDE.
-- Verifica con SELECT COUNT por tabla principal que los números coinciden con los del evidence del task que introdujo el seed.
+- Comando de carga de datos del TECHNICAL_GUIDE, si existe, sólo para datos reales/proporcionados.
+- Verifica con SELECT COUNT por tabla principal que los números coinciden con el contrato/evidence de datos reales/proporcionados.
 
-### 2.4 Fixtures específicos del slice (paso clave — NO saltes)
+### 2.4 Datos específicos reales/proporcionados del slice (paso clave — NO saltes)
 
 A partir de lo identificado en Paso 1, carga solo datos reales/proporcionados necesarios para ejercer todos los flujos del slice. La fuente autoritativa es el `Verification Data Contract` del TECHNICAL_GUIDE:
 
@@ -107,12 +107,12 @@ A partir de lo identificado en Paso 1, carga solo datos reales/proporcionados ne
 - No uses `lorem ipsum`, IDs inventados sin persistencia, mocks de negocio, datos decorativos ni datos no proporcionados para cerrar una slice productiva.
 - Los datos sintéticos no deben usarse para cerrar una slice productiva. Para casos marginales (`empty`, `error_network`, permisos, payload inválido), usa datos proporcionados o bloquea/registra follow-up si faltan.
 - Si el slice añade "listar pedidos de un usuario" → usa pedidos reales/proporcionados persistidos con distinto estado y usuario real/sandbox autorizado; si faltan, bloquea o registra follow-up de datos.
-- Si añade "filtro por rango de precios" → asegura que el seed cubre el rango; si no, inserta lo que falta.
+- Si añade "filtro por rango de precios" → asegura que el carga de datos cubre el rango; si no, inserta lo que falta.
 - Si añade "notificación al superar umbral" → inserta el registro que fuerza el umbral.
 
-Usa SQL directo (transacción parametrizada) o el script de fixtures del proyecto si existe. **NO hagas inserts vía la propia API del slice** — eso contamina la verificación.
+Usa SQL directo (transacción parametrizada) o el script de carga de datos del proyecto si existe. **NO hagas inserts vía la propia API del slice** — eso contamina la verificación.
 
-Documenta en el reporte final qué filas del `Verification Data Contract` usaste, qué fixtures inyectaste y qué filas persistidas observaste.
+Documenta en el reporte final qué filas del `Verification Data Contract` usaste, qué datos reales/proporcionados cargaste y qué filas persistidas observaste.
 
 ### 2.5 Arrancar back + front con verbose on
 
@@ -132,7 +132,7 @@ Abre el navegador en la URL del front. Reproduce TODOS los flujos identificados 
 - Casos felices + casos de error (submit vacío, payload inválido, sin permisos).
 - Cada interacción: observa UI + logs front + logs back + DB rows.
 
-Usa `ToolSearch` para descubrir qué MCPs tienes disponibles en esta sesión y elige el más adecuado para cada verificación. A día de hoy hay Chrome DevTools MCP, claude-in-chrome, Dart MCP y computer-use — pero puede haber más, búscalos antes de asumir que no existen. Si uno falla o se desconecta, prueba con otro. Si ninguno sirve, describe los pasos al usuario y espera su feedback, o verifica los flujos directamente contra la API con `curl`/`httpx`.
+Usa `ToolSearch` para descubrir qué MCPs tienes disponibles en esta sesión y elige el más adecuado para cada verificación. A día de hoy hay Chrome DevTools MCP, claude-in-chrome, MCP específico del framework declarado y computer-use — pero puede haber más, búscalos antes de asumir que no existen. Si uno falla o se desconecta, prueba con otro. Si ninguno sirve, describe los pasos al usuario y espera su feedback, o verifica los flujos directamente contra la API con `curl`/`httpx`.
 
 ---
 
@@ -160,7 +160,7 @@ Presenta al usuario una tabla con:
 Incluye también:
 
 - Filas del `Verification Data Contract` usadas.
-- Fixtures inyectados (lista).
+- Datos reales/proporcionados cargados (lista).
 - Datos persistidos observados, con tabla/ID/estado cuando aplique.
 - Queries observadas en bbdd (las relevantes al slice).
 - Hallazgos: cualquier cosa que no cuadre con lo esperado.
@@ -179,7 +179,7 @@ Añade al final de `orchestrator-state/tasks/handoffs/<TASK_ID>.md` una sección
 - MODE: pre-closer|post-closer
 - VERIFY_OUTCOME: verified|issues_found
 - DATA_CONTRACT_ROWS: <filas/IDs del Verification Data Contract usadas; required>
-- FIXTURES: <lista 1 línea por dato real/proporcionado cargado; o n/a con razón>
+- DATA_SETUP: <lista 1 línea por dato real/proporcionado cargado; o n/a con razón>
 - PERSISTED_DATA_OBSERVED: <tabla/id/estado o n/a con razón>
 - FLOWS_TESTED: <lista corta>
 - FINDINGS: <bullets si issues_found; none si verified>
@@ -218,7 +218,7 @@ Si `closing_journeys` está vacía → salta al Paso 6 directamente. No hay jour
 ✅ Slice <TASK_ID> verificada. Esta slice cierra el/los journey(s):
    <lista: J5 — login flow, J7 — password change, ...>
 
-El entorno ya está hard-reset y los fixtures cargados. Tienes dos opciones:
+El entorno ya está hard-reset y los datos reales/proporcionados cargados. Tienes dos opciones:
 
   a) ahora     — verifico el journey end-to-end inline (multi-pantalla, estados
                  marginales, deep links, next action). Aprovecho el entorno y
@@ -241,7 +241,7 @@ Interpreta la respuesta:
 
 Mismo procedimiento que `/verify-journey` pero aprovechando el entorno actual:
 
-1. **Fixtures consolidados**: añade encima de los fixtures actuales los necesarios para reproducir el journey COMPLETO (no solo esta última slice). Lista mínima: estados intermedios entre pantallas, datos para deep links, datos que dispararían rama de error.
+1. **Datos reales/proporcionados consolidados**: añade encima de los datos actuales los necesarios para reproducir el journey COMPLETO (no solo esta última slice). Lista mínima: estados intermedios entre pantallas, datos para deep links, datos que dispararían rama de error.
 2. **Reproducción end-to-end**: navega el journey en orden de pantallas. Para cada paso: rellena, pulsa, observa logs (front + back + bbdd) y UI.
 3. **Estados marginales obligatorios** (mínimo, según la sección **Recorridos del usuario** y la **Journey Coverage Matrix** de `instrucciones.md`):
    - `loading` (durante transiciones de pantalla)

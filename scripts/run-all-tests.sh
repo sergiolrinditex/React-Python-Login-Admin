@@ -69,6 +69,17 @@ run_agent_static_audits() {
     ( cd "$PROJECT_ROOT" && python3 -B -S scripts/audit-agent-reality.py >/tmp/agent-reality-audit.$$ )
     rm -f /tmp/agent-reality-audit.$$
   fi
+  if [ -f "$ROOT_DIR/scripts/audit-template-screen-journey-redactor.py" ]; then
+    log "Template screen/journey redactor audit..."
+    ( cd "$PROJECT_ROOT" && python3 -B -S scripts/audit-template-screen-journey-redactor.py >/tmp/template-screen-journey-audit.$$ )
+    rm -f /tmp/template-screen-journey-audit.$$
+  fi
+  if [ -f "$ROOT_DIR/scripts/audit-orchestrator-refactor-consistency.py" ]; then
+    log "Orchestrator refactor consistency audit..."
+    ( cd "$PROJECT_ROOT" && python3 -B -S scripts/audit-orchestrator-refactor-consistency.py >/tmp/orchestrator-refactor-audit.$$ )
+    rm -f /tmp/orchestrator-refactor-audit.$$
+  fi
+
 }
 
 case "$MODE" in

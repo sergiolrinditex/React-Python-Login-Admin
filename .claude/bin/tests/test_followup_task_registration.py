@@ -16,7 +16,7 @@ def _args(**kwargs):
     defaults = dict(
         id=None,
         origin_task="P00-S01-T001",
-        title="Missing real-data fixture for upload error state",
+        title="Missing real provided data for upload error state",
         description="Verify found that the error state uses decorative data instead of persisted sandbox data.",
         kind="data",
         severity="high",
@@ -31,7 +31,7 @@ def _args(**kwargs):
         screen_route="UploadPage /upload",
         endpoint="POST /api/v1/upload",
         table=["uploads"],
-        acceptance=["Fixture real/prod-like persisted and documented"],
+        acceptance=["Real/provided data persisted and documented"],
         verify=["/verify-slice observes persisted upload row"],
         note=None,
     )
@@ -61,7 +61,7 @@ def test_promote_followup_adds_registry_work_item_source_doc_and_dag(seeded_regi
     docs = tmp_project / "docs" / "source-of-truth"
     docs.mkdir(parents=True)
     (docs / "TEST_IMPLEMENTATION_CHECKLIST.md").write_text("# TEST Checklist\n\n# Phase 0 — Base\n\n## Step 0.1 — Existing\n\n- [ ] existing\n", encoding="utf-8")
-    result = fut.propose(_args(severity="medium"))
+    result = fut.propose(_args(severity="medium", journey_ref=[]))
     fid = result["followup_id"]
 
     promoted = fut.promote(Namespace(followup_id=fid, task_id=None, origin_task=None, phase=None, step=None, depends_on=None, no_source_doc_update=False))
@@ -73,7 +73,17 @@ def test_promote_followup_adds_registry_work_item_source_doc_and_dag(seeded_regi
     assert task is not None
     assert task["origin"]["followup_id"] == fid
     assert "task_dag" in reg and tid in reg["task_dag"]["nodes"]
-    assert (tmp_project / "orchestrator-state" / "tasks" / "work-items" / f"{tid}.yaml").exists()
+    work_item_path = tmp_project / "orchestrator-state" / "tasks" / "work-items" / f"{tid}.yaml"
+    assert work_item_path.exists()
+    work_item_text = work_item_path.read_text(encoding="utf-8")
+    assert 'kind: "data"' in work_item_text
+    assert 'target: "Missing real provided data for upload error state"' in work_item_text
+    assert 'route: "UploadPage /upload"' in work_item_text
+    assert 'endpoint: "POST /api/v1/upload"' in work_item_text
+    assert 'tables:\n  - "uploads"' in work_item_text
+    assert 'allowed_paths:\n  - "app/lib/features/upload/**"' in work_item_text
+    assert 'write_set:\n  - "app/lib/features/upload/**"' in work_item_text
+    assert (tmp_project / "orchestrator-state" / "tasks" / "phases" / "P00.yaml").exists()
     checklist = (docs / "TEST_IMPLEMENTATION_CHECKLIST.md").read_text(encoding="utf-8")
     assert "Runtime Follow-up Coverage Registry" in checklist
     assert tid in checklist
@@ -81,6 +91,38 @@ def test_promote_followup_adds_registry_work_item_source_doc_and_dag(seeded_regi
     item = [x for x in runtime["open_followups"] if x["id"] == fid][0]
     assert item["status"] == "promoted"
     assert item["promoted_task_id"] == tid
+
+
+
+
+def test_promote_rejects_unknown_journey_refs_before_mutating_source_doc(seeded_registry, tmp_project):
+    import pytest
+
+    docs = tmp_project / "docs" / "source-of-truth"
+    docs.mkdir(parents=True)
+    checklist = docs / "TEST_IMPLEMENTATION_CHECKLIST.md"
+    checklist.write_text("# TEST Checklist\n\n# Phase 0 — Base\n\n## Step 0.1 — Existing\n\n- [ ] existing\n", encoding="utf-8")
+
+    result = fut.propose(_args(severity="medium", journey_ref=["J404"]))
+    with pytest.raises(SystemExit) as exc:
+        fut.promote(Namespace(followup_id=result["followup_id"], task_id=None, origin_task=None, phase=None, step=None, depends_on=None, no_source_doc_update=False))
+    assert "unknown journey_refs" in str(exc.value)
+    assert "J404" in str(exc.value)
+    assert "Runtime Follow-up Coverage Registry" not in checklist.read_text(encoding="utf-8")
+
+
+def test_promote_normalizes_short_step_id_and_writes_phase_yaml(seeded_registry, tmp_project):
+    docs = tmp_project / "docs" / "source-of-truth"
+    docs.mkdir(parents=True)
+    (docs / "TEST_IMPLEMENTATION_CHECKLIST.md").write_text("# TEST Checklist\n\n# Phase 0 — Base\n\n## Step 0.1 — Existing\n\n- [ ] existing\n", encoding="utf-8")
+
+    result = fut.propose(_args(severity="medium", phase="P04", step="S01", journey_ref=[]))
+    promoted = fut.promote(Namespace(followup_id=result["followup_id"], task_id=None, origin_task=None, phase=None, step=None, depends_on=None, no_source_doc_update=False))
+    assert promoted["ok"] is True
+    assert promoted["task_id"].startswith("P04-S01-T")
+    phase_yaml = tmp_project / "orchestrator-state" / "tasks" / "phases" / "P04.yaml"
+    assert phase_yaml.exists()
+    assert promoted["task_id"] in phase_yaml.read_text(encoding="utf-8")
 
 
 def test_promoted_followup_blocks_when_it_conflicts_with_active_task(seeded_registry, tmp_project):
@@ -97,7 +139,7 @@ def test_promoted_followup_blocks_when_it_conflicts_with_active_task(seeded_regi
     active["write_set"] = ["app/lib/features/upload/**"]
     common.save_registry(registry)
 
-    result = fut.propose(_args(severity="medium"))
+    result = fut.propose(_args(severity="medium", journey_ref=[]))
     promoted = fut.promote(Namespace(followup_id=result["followup_id"], task_id=None, origin_task=None, phase=None, step=None, depends_on=None, no_source_doc_update=False))
     assert promoted["ok"] is True
     assert promoted["status"] == "blocked"

@@ -1,5 +1,0 @@
-=== 13 non-root UID (backend + worker) ===
---- backend ---
-uid=1001(appuser) gid=1001(appgroup) groups=1001(appgroup)
---- worker ---
-uid=1001(appuser) gid=1001(appgroup) groups=1001(appgroup)

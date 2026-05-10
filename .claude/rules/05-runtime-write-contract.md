@@ -67,10 +67,10 @@ Agent markdown may show examples, but the JSON schema is authoritative. `hook_ca
 
 ## Product baseline snapshot
 
-`docs/base-app/` is the cumulative built baseline passed back to ChatGPT for the next product increment. It mirrors the current accepted `docs/source-of-truth/` after verified closure and includes `BASELINE_MANIFEST.json`. Do not hand-edit it during an active task; closer/safe maintenance sync it with:
+`docs/product-baseline/` is the cumulative built baseline passed back to ChatGPT for the next product increment. It mirrors the current accepted `docs/source-of-truth/` after verified closure and includes `BASELINE_MANIFEST.json`. Do not hand-edit it during an active task; closer/safe maintenance sync it with:
 
 ```bash
-./scripts/sync-product-baseline.sh sync --version <baseapp|v1|v2|current> --task <TASK_ID>
+./scripts/sync-product-baseline.sh sync --version <v0|v1|v2|current> --task <TASK_ID>
 ./scripts/sync-product-baseline.sh status
 ```
 
@@ -91,11 +91,11 @@ python3 -B -S .claude/bin/bootstrap_three_docs.py --refresh
 
 For UI work, the task pack must include the journey, route/page, endpoints consumed, client state/provider, required UI states and next action. A frontend slice is not complete until loading, empty, network error, validation error, permission denied and success states are either implemented or explicitly marked not applicable in the source-of-truth.
 
-`/verify-slice` and `/verify-journey` must also use the `Verification Data Contract` from the TECHNICAL_GUIDE. Productive closure uses real or prod-like sandbox data, never decorative mocks. Evidence must state the contract rows used, fixtures injected and persisted data observed.
+`/verify-slice` and `/verify-journey` must also use the `Verification Data Contract` from the TECHNICAL_GUIDE. Productive closure uses real/provided sandbox data, never decorative mocks. Evidence must state the contract rows used, provided verification data loaded and persisted data observed.
 
 ## Mechanical enforcement
 
-`hook_write_scope_guard.py` blocks the dangerous cases: writing static `.claude/` config during app execution, writing another task's handoff/evidence/report/task-pack, editing source-of-truth/base-app during an active task, hand-writing follow-up YAML, or directly editing generated core state. `hook_capture_subagent_stop.py` also rejects false `done` from closer unless report, commit, push and worktree cleanup proof are present.
+`hook_write_scope_guard.py` blocks the dangerous cases: writing static `.claude/` config during app execution, writing another task's handoff/evidence/report/task-pack, editing source-of-truth/baseline snapshot during an active task, hand-writing follow-up YAML, or directly editing generated core state. `hook_capture_subagent_stop.py` also rejects false `done` from closer unless report, commit, push and worktree cleanup proof are present.
 
 ## Follow-up tasks from validator/tester/verify findings
 

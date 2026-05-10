@@ -36,9 +36,9 @@ def _write_three_docs(root: Path, endpoint_consumer: str = "ContractUploadPage /
 
 ### 6.5 Verification Data Contract
 
-| Flow/Journey | Persona/Rol | Datos reales/prod-like requeridos | Seed/fixture permitido | Reset/Cleanup | Slices/Journeys |
+| Flow/Journey | Persona/Rol | Datos reales/proporcionados requeridos | Carga de datos reales/proporcionados permitida | Reset/Cleanup | Slices/Journeys |
 |---|---|---|---|---|---|
-| J101 | usuario QA contrato | usuario confirmado + PDF de contrato sandbox con cláusulas realistas | fixture_contract_upload_prod_like.sql | reset_hard + truncate contracts | P02-S02-T001, P03-S01-T001 / J101 |
+| J101 | usuario QA contrato | usuario confirmado + PDF de contrato sandbox con cláusulas realistas | load_provided_contract_upload_data.sql | reset_hard + truncate contracts | P02-S02-T001, P03-S01-T001 / J101 |
 
 ## 10. Persistencia
 

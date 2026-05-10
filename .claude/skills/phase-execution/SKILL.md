@@ -23,7 +23,7 @@ Target phase: $ARGUMENTS
    - `validator`: architecture, scope, DRY/KISS/YAGNI, docstrings, logging, PROGRESS.md, tests realness (no execution), integrated security checklist (if diff touches auth/secrets/CORS/SQL/permissions/headers/rate-limit/infra).
    - `tester`: real tests with backend + DB up, curl endpoints, verify logs in both `ENABLE_VERBOSE_LOGGING` modes, evidence to `orchestrator-state/tasks/evidence/<TASK_ID>/`.
 7. **`debugger`** if `tester` fails → go back to step 6. Max 3 cycles; on the 4th failure the debugger emits `OUTCOME: blocked` with reason `max_debug_cycles_reached` for human escalation.
-8. **`/verify-slice`** (human gate) — hard reset + fixtures from the TECHNICAL_GUIDE `Verification Data Contract` + human reproduction in browser. Resilient to `/clear`: rebuilds state from disk. Appends `## verify-slice` with `DATA_CONTRACT_ROWS`, `PERSISTED_DATA_OBSERVED` and `VERIFY_OUTCOME: verified|issues_found`. If `issues_found` → debugger loop (step 7).
+8. **`/verify-slice`** (human gate) — hard reset + datos reales/proporcionados from the TECHNICAL_GUIDE `Verification Data Contract` + human reproduction in browser. Resilient to `/clear`: rebuilds state from disk. Appends `## verify-slice` with `DATA_CONTRACT_ROWS`, `PERSISTED_DATA_OBSERVED` and `VERIFY_OUTCOME: verified|issues_found`. If `issues_found` → debugger loop (step 7).
 9. **`closer`** — evidence report + atomic commit plus configured Git workflow, `configured Git workflow (`./scripts/git-workflow.sh`)`, and safe worktree cleanup. Pre-check requires `VERIFY_OUTCOME: verified` (or explicit `VERIFY_WAIVED: <reason>`).
 10. Update registry, active task, active phase (the SubagentStop hook does most of this; confirm state).
 11. Repeat until phase is complete or blocked.

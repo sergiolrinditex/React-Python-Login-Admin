@@ -129,7 +129,7 @@ flowchart TD
         SOT[docs/source-of-truth/<br><sub>5 documentos editables</sub>]
         REG[orchestrator-state/tasks/registry.json<br><sub>canónico runtime</sub>]
         AM[orchestrator-state/agent-memory/<br><sub>memoria por agente</sub>]
-        BL[docs/base-app/<br><sub>baseline acumulativo</sub>]
+        BL[docs/product-baseline/<br><sub>baseline acumulativo</sub>]
     end
 
     subgraph SESSION[🔄 Sesión · puede repoblar]
@@ -172,7 +172,7 @@ flowchart LR
     TR[frontend.theme_root<br><sub>módulo de tokens</sub>]
     PLUG[.claude/enforcers/&lt;plugin&gt;.sh<br><sub>script ejecutable</sub>]
     RULES[.claude/enforcers/&lt;plugin&gt;/RULES.md<br><sub>política de violaciones</sub>]
-    SCAN[scanner stack-aware<br><sub>flutter · react · vue · ...</sub>]
+    SCAN[scanner stack-aware<br><sub>framework específico · react · vue · ...</sub>]
 
     SP --> DTE
     SP --> TR
@@ -189,7 +189,7 @@ flowchart LR
 ```
 
 > [!NOTE]
-> El plugin recomendado por defecto es `design_tokens_v1`, que lee `frontend.framework` y aplica el escaneo específico (Flutter, React, etc.). `design_tokens_enforcer: none` es válido solo cuando el proyecto deshabilita la enforcement de visual tokens **explícitamente** y deja el trade-off documentado en source-of-truth.
+> El plugin recomendado por defecto es `design_tokens_v1`, que lee `frontend.framework` y aplica el escaneo específico (framework declarado). `design_tokens_enforcer: none` es válido solo cuando el proyecto deshabilita la enforcement de visual tokens **explícitamente** y deja el trade-off documentado en source-of-truth.
 
 ---
 

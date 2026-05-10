@@ -4,63 +4,78 @@ Esta guía explica cómo usar ChatGPT para rellenar los cinco documentos canóni
 
 ```text
 docs/source-of-truth/instrucciones.md
-docs/source-of-truth/<PROJECT>_TECHNICAL_GUIDE.md
-docs/source-of-truth/<PROJECT>_IMPLEMENTATION_CHECKLIST.md
+docs/source-of-truth/<APP>_TECHNICAL_GUIDE.md
+docs/source-of-truth/<APP>_IMPLEMENTATION_CHECKLIST.md
+docs/source-of-truth/UX_CONTRACT.md
+docs/source-of-truth/STACK_PROFILE.yaml
 ```
 
-El objetivo es que el bootstrap genere un grafo DAG explícito, no el modo lineal legacy.
+El objetivo es que el bootstrap genere un grafo DAG explícito, no el modo lineal legacy, y que la aplicación se construya por **screen/journey lanes** con datos reales/proporcionados.
 
 ## 1. Qué debe recibir ChatGPT
 
-Entrega a ChatGPT estos ficheros como contexto. El prompt maestro explica cómo leer los templates y cómo hacer la doble verificación documental:
+Entrega a ChatGPT estos ficheros como contexto común:
 
 ```text
 docs/prompts/PROMPT_SOURCE_OF_TRUTH_DAG.md
-docs/templates/instrucciones.template.md
-docs/templates/PROJECT_TECHNICAL_GUIDE.template.md
-docs/templates/PROJECT_IMPLEMENTATION_CHECKLIST.template.md
-docs/base-app/instrucciones.md                 # opcional si existe baseline construido
-docs/base-app/BASEAPP_TECHNICAL_GUIDE.md       # opcional si existe baseline construido
+README.md
+CHEATSHEET.md
 ```
 
-Además, dale el contexto real de la app: usuarios, problema, valor, V1, milestones, integraciones externas, datos sensibles, LLM por defecto, pantallas esperadas, reglas de negocio, restricciones legales y prioridades.
-
-
-### Perfil minimal para apps pequeñas
-
-Si la app es pequeña y no debe heredar BaseApp, entrega a ChatGPT el mismo prompt maestro pero usa:
+Después elige exactamente un perfil y entrega sus cinco templates:
 
 ```text
-docs/templates/minimal/instrucciones.minimal.template.md
-docs/templates/minimal/PROJECT_TECHNICAL_GUIDE.minimal.template.md
-docs/templates/minimal/PROJECT_IMPLEMENTATION_CHECKLIST.minimal.template.md
+docs/templates/minimal/instrucciones.template.md
+docs/templates/minimal/PROJECT_TECHNICAL_GUIDE.template.md
+docs/templates/minimal/PROJECT_IMPLEMENTATION_CHECKLIST.template.md
+docs/templates/minimal/UX_CONTRACT.template.md
+docs/templates/minimal/STACK_PROFILE.template.yaml
 ```
-
-El resultado sigue siendo el mismo contrato final: cinco documentos completos en `docs/source-of-truth/`, `Coverage Registry` con `Depends on`, `Conflict group`, `Write set`, `Risk level`, `Verify mode`, y bootstrap en `mode=explicit_dag`. La diferencia es el on-ramp: 2-4 phases, 3-8 tasks y 1-2 journeys reales en lugar de un baseline grande.
-
-### Modo incremental baseline + v1 + v2 + ...
-
-Para una aplicación grande, ChatGPT debe recibir también el baseline construido actual si existe. Puede ser BaseApp, una app propia ya construida o ningún baseline si arrancas desde cero:
 
 ```text
-docs/base-app/instrucciones.md
-docs/base-app/*_TECHNICAL_GUIDE.md
-docs/base-app/*_IMPLEMENTATION_CHECKLIST.md
-docs/base-app/BASELINE_MANIFEST.json
+docs/templates/large-without-base/instrucciones.template.md
+docs/templates/large-without-base/PROJECT_TECHNICAL_GUIDE.template.md
+docs/templates/large-without-base/PROJECT_IMPLEMENTATION_CHECKLIST.template.md
+docs/templates/large-without-base/UX_CONTRACT.template.md
+docs/templates/large-without-base/STACK_PROFILE.template.yaml
 ```
 
-Los docs que entregue ChatGPT son **acumulativos**, no diferenciales sueltos: conservan las filas ya construidas (`Build state = done`) y añaden las nuevas filas `v1`, `v2`, etc. con `Build state = planned`. Así el orquestador mantiene journeys, UX, endpoints, DB y matriz DAG completos sin reconstruir lo ya cerrado.
+```text
+docs/templates/large-with-base/instrucciones.template.md
+docs/templates/large-with-base/PROJECT_TECHNICAL_GUIDE.template.md
+docs/templates/large-with-base/PROJECT_IMPLEMENTATION_CHECKLIST.template.md
+docs/templates/large-with-base/UX_CONTRACT.template.md
+docs/templates/large-with-base/STACK_PROFILE.template.yaml
+```
 
+Usa `minimal` para apps pequeñas desde cero. Usa `large-without-base` para productos grandes desde cero. Usa `large-with-base` sólo cuando exista un producto real ya construido en `docs/product-baseline/`; si no existe baseline real, no lo inventes y usa `large-without-base`.
+
+Si usas `large-with-base`, entrega también el baseline real disponible:
+
+```text
+docs/product-baseline/instrucciones.md
+docs/product-baseline/*_TECHNICAL_GUIDE.md
+docs/product-baseline/*_IMPLEMENTATION_CHECKLIST.md
+docs/product-baseline/UX_CONTRACT.md
+docs/product-baseline/STACK_PROFILE.yaml
+docs/product-baseline/BASELINE_MANIFEST.json
+```
+
+Además, dale el contexto real de la app: usuarios, problema, valor, V1, milestones, integraciones externas, datos sensibles, pantallas necesarias, reglas de negocio, restricciones legales, datos reales disponibles y prioridades.
+
+Los docs que entregue ChatGPT son **acumulativos**, no diferenciales sueltos: conservan filas ya construidas (`Build state=done`) y añaden nuevas filas con `Build state=planned`. En apps nuevas, todo empieza normalmente como `Product increment=v1` y `Build state=planned`.
 
 ## 2. Entrega por fases, no todo de golpe
 
 Pide a ChatGPT que entregue los documentos uno a uno:
 
 1. `instrucciones.md`.
-2. `<PROJECT>_TECHNICAL_GUIDE.md`.
-3. `<PROJECT>_IMPLEMENTATION_CHECKLIST.md`.
+2. `<APP>_TECHNICAL_GUIDE.md`.
+3. `<APP>_IMPLEMENTATION_CHECKLIST.md`.
+4. `UX_CONTRACT.md`.
+5. `STACK_PROFILE.yaml`.
 
-No aceptes el siguiente documento hasta revisar el anterior. El tercer documento es el más crítico para DAG porque contiene el `Canonical Coverage Registry`.
+No aceptes el siguiente documento hasta revisar el anterior. El checklist es crítico para DAG porque contiene el `Canonical Coverage Registry`; `UX_CONTRACT.md` es crítico para que las pantallas no se cierren sólo por compilar; `STACK_PROFILE.yaml` evita asumir framework, paths o comandos por costumbre.
 
 ## 3. Regla que activa el modo DAG no legacy
 
@@ -118,7 +133,7 @@ Estas columnas permiten que el planner construya el task pack sin adivinar:
 
 - `Risk level` y `Verify mode` deciden si una slice puede usar `/auto-verify-slice` (`low + auto` y sin cierre de journey) o necesita `/verify-slice` humano.
 - `Depends on` alimenta la matriz de adyacencia del DAG.
-- `Conflict group` y `Write set` evitan paralelizar slices que comparten ficheros, routers, providers, migraciones, workflows o dependencias globales.
+- `Conflict group` y `Write set` evitan paralelizar slices que comparten ficheros, routers, state handlers, migraciones, workflows o dependencias globales.
 - `Journey refs` conecta slices con journeys.
 - `Pantalla/Ruta`, `Endpoint` y `Tablas DB` evitan pantallas, endpoints o tablas huérfanas.
 - `Origen-Instr` y `Origen-TechGuide` apuntan a las secciones exactas de los otros dos docs.
@@ -132,8 +147,8 @@ Patrón recomendado:
 
 ```text
 P00 roots en paralelo: scaffold, design tokens, scripts dev cuando no pisan los mismos ficheros.
-P01 auth/base data: secuencial donde haya migraciones o contratos compartidos.
-P02 motor: migraciones root -> endpoints/use cases en paralelo -> AI/tools/RAG que dependan de contratos.
+P01 identidad/datos base: secuencial donde haya migraciones o contratos compartidos.
+P02 motor: migraciones root -> endpoints/use cases en paralelo -> AI/tools/reference retrieval que dependan de contratos.
 P03 front: pantallas dependen de endpoints que consumen; pantallas independientes pueden ir en paralelo.
 Journey slices: dependen de todas las pantallas/endpoints que componen el journey.
 P04 harden: depende de journeys críticos.
@@ -144,10 +159,10 @@ P05 release: depende de P04.
 Patrón de conflictos recomendado:
 
 ```text
-Migrations Alembic: Conflict group = db:migrations; Write set = api/alembic/versions/**
-Router Flutter:     Conflict group = router;        Write set = app/lib/core/router.dart
-Theme/design:       Conflict group = theme;         Write set = app/lib/core/theme/**
-Deps Python/Dart:   Conflict group = dependencies;  Write set = api/pyproject.toml; app/pubspec.yaml
+Migraciones del stack: Conflict group = db:migrations; Write set = <migrations_root>/**
+Router frontend declarado:     Conflict group = router;        Write set = {{frontend_router_path}}
+Theme/design:       Conflict group = theme;         Write set = {{frontend_theme_root}}/**
+Deps del stack declarado: Conflict group = dependencies;  Write set = <dependency_manifest>; <lockfile>
 Workflow CI:        Conflict group = ci;            Write set = .github/workflows/**
 ```
 
@@ -170,12 +185,12 @@ Cada endpoint con consumidor UI debe aparecer en al menos una ruta de `TECHNICAL
 Cada ruta de `TECHNICAL_GUIDE §6.1` debe especificar:
 
 ```text
-ruta GoRouter
+ruta del router declarado
 Page/Widget
 Auth
 Journey refs
 Endpoints consumidos
-Estado cliente/provider
+Estado cliente/state handler
 Estados UI obligatorios: loading, empty, error_network, error_validation, permission_denied, success
 Next action
 Slice ID
@@ -212,7 +227,7 @@ python3 -B -S .claude/bin/bootstrap_three_docs.py --refresh
 Resultado esperado para DAG explícito:
 
 ```text
-Three-doc contract is valid.
+Source-of-truth contract is valid.
 Bootstrapped project prefix: <PROJECT>
 Task DAG: OK mode=explicit_dag nodes=<N> edges=<E> waves=<W>
 Journey matrix coherent — <J> journeys validadas, 0 drifts
@@ -322,14 +337,14 @@ Ambos modos comparten los mismos agentes, hooks, quality gates, memoria y closer
 
 ## Contrato de datos reales para verificación
 
-Al rellenar el `TECHNICAL_GUIDE`, incluye la sección `Verification Data Contract`. Cada journey/flow verificable debe declarar persona/rol, datos reales o prod-like, seed/fixture permitido, reset/cleanup y slices vinculados. `/verify-slice` y `/verify-journey` usan esa sección: los mocks solo valen para unit tests o edge cases marcados como `synthetic-edge-case`, no para cerrar slices productivas.
+Al rellenar el `TECHNICAL_GUIDE`, incluye la sección `Verification Data Contract`. Cada journey/flow verificable debe declarar persona/rol, datos reales/proporcionados, carga de datos reales/proporcionados permitida, reset/cleanup y slices vinculados. `/verify-slice` y `/verify-journey` usan esa sección: los mocks solo valen para unit tests o edge cases marcados como `synthetic-edge-case`, no para cerrar slices productivas.
 
 
 ## Production hardening actual
 
-Usa source-of-truth acumulativo baseline+vN, `Risk level`, `Verify mode`, phases <=20 slices, steps <=10 slices, journeys reales multi-superficie y verify con datos reales/proporcionados. Ejecuta bootstrap + check-task-dag + check-journey-matrix + check-wiring-contract antes de waves.
+Usa source-of-truth acumulativo baseline+vN, `Risk level`, `Verify mode`, phases <=20 slices, steps <=15 slices, journeys reales multi-superficie y verify con datos reales/proporcionados. Ejecuta bootstrap + check-task-dag + check-journey-matrix + check-wiring-contract antes de waves.
 
 
 ## Contrato front→back→DB en cada fila
 
-Al generar el checklist, cada slice productiva debe poder ejecutarse sin adivinar contexto: la fila debe declarar journey, pantalla/ruta, endpoint, tablas, origen funcional, origen técnico, write set, conflict group, acceptance y verify real/prod-like. El bootstrap copia estos campos a `work-items/*.yaml` y al `task-pack`; si falta el contrato, los agentes deben bloquear o registrar follow-up.
+Al generar el checklist, cada slice productiva debe poder ejecutarse sin adivinar contexto: la fila debe declarar journey, pantalla/ruta, endpoint, tablas, origen funcional, origen técnico, write set, conflict group, acceptance y verify con datos reales/proporcionados. El bootstrap copia estos campos a `work-items/*.yaml` y al `task-pack`; si falta el contrato, los agentes deben bloquear o registrar follow-up.

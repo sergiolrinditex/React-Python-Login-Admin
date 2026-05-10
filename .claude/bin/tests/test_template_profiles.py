@@ -39,14 +39,14 @@ def test_minimal_template_keeps_same_dag_registry_contract():
     assert "Runtime Follow-up Coverage Registry" in text
 
 
-def test_large_with_base_profile_locks_baseapp_stack():
+def test_large_with_base_profile_inherits_declared_baseline_stack():
     text = (ROOT / "docs/templates/large-with-base/STACK_PROFILE.template.yaml").read_text(encoding="utf-8")
-    assert "framework: flutter" in text
-    assert "framework: fastapi" in text
-    assert "engine: postgres" in text
-    assert "design_tokens_v1" in text
-    assert "{{frontend_framework}}" not in text
-    assert "{{backend_framework}}" not in text
+    assert "{{frontend_framework}}" in text
+    assert "{{backend_framework}}" in text
+    assert "{{db_engine}}" in text
+    assert "{{design_tokens_enforcer}}" in text
+    assert "framework: flutter" not in text
+    assert "framework: fastapi" not in text
 
 
 def test_master_prompt_points_to_three_template_profiles():

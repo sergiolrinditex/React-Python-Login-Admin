@@ -1,2 +1,0 @@
-{"data":{"mfa_required":true,"user_id":"625a0475-4265-424a-8960-f708e39fc615"}}
-__HTTP_CODE__201

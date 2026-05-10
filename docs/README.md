@@ -3,8 +3,8 @@
 - `templates/`: tres perfiles (`minimal`, `large-without-base`, `large-with-base`), cada uno con cinco templates.
 - `prompts/`: prompt maestro para generar los cinco source-of-truth acumulativos en modo DAG explícito.
 - `guides/`: guía de generación con ChatGPT y runbook legacy/DAG.
-- `base-app/`: baseline construido opcional + `BASELINE_MANIFEST.json`. Solo se usa cuando eliges `large-with-base`.
-- `source-of-truth/`: los cinco documentos vivos de la app actual. Son acumulativos: baseline real + v1 + v2 + ... + vN.
+- `product-baseline/`: baseline construido opcional (`docs/product-baseline/`) + `BASELINE_MANIFEST.json`. Solo se usa cuando eliges `large-with-base`.
+- `source-of-truth/`: los cinco documentos vivos de la app actual. En un checkout nuevo puede estar vacío hasta que generes la app desde templates. Cuando existe, es acumulativo: baseline real + v1 + v2 + ... + vN.
 - `reports/`: auditorías, validaciones y reportes de fixes.
 
 Contrato activo esperado en `docs/source-of-truth/`:
@@ -28,9 +28,9 @@ Slice ID | Tipo | Target | Step | Product increment | Build state | Risk level |
 ## Perfiles de templates
 
 ```text
-docs/templates/minimal/             app pequeña sin BaseApp, AnyStack, pocos slices
+docs/templates/minimal/             app pequeña sin existing baseline, AnyStack, pocos slices
 docs/templates/large-without-base/  producto grande desde cero, AnyStack
-docs/templates/large-with-base/     evolución de docs/base-app, stack fijado a Flutter/FastAPI/Postgres
+docs/templates/large-with-base/     evolución de un baseline existente, stack real declarado en STACK_PROFILE.yaml
 ```
 
 Cada perfil contiene exactamente:
@@ -43,7 +43,7 @@ UX_CONTRACT.template.md
 STACK_PROFILE.template.yaml
 ```
 
-`large-with-base` hereda `docs/base-app/` y mantiene compatibilidad con su stack real: Flutter + FastAPI + Postgres/Supabase-compatible. No lo conviertas a React/Node. Para apps nuevas grandes usa `large-without-base`.
+`large-with-base` hereda `docs/product-baseline/` y mantiene compatibilidad con el stack real declarado en su STACK_PROFILE.yaml. No lo conviertas a otro stack por costumbre. Para apps nuevas grandes usa `large-without-base`.
 
 ## Comandos de validación
 

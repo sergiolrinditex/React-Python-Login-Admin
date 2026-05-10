@@ -25,7 +25,7 @@
   <a href="templates.html">Templates</a>
   <a href="stack-ux.html">Stack/UX</a>
   <a href="tecnico.html">Técnico</a>
-  <a data-tally-open="5BEA8v" data-tally-layout="modal" data-tally-width="600" data-tally-overlay="1" href="mailto:s.lopezrap@gmail.com?subject=OrquestadorFlutterDAG-AnyStack%20%E2%80%94%20quiero%20ayuda%20para%20implantarlo" class="topnav-cta">📧 Contacto</a>
+  <a data-tally-open="5BEA8v" data-tally-layout="modal" data-tally-width="600" data-tally-overlay="1" href="mailto:s.lopezrap@gmail.com?subject=OrquestadorDAG-AnyStack%20%E2%80%94%20quiero%20ayuda%20para%20implantarlo" class="topnav-cta">📧 Contacto</a>
 </nav>
 
 <main>
@@ -33,9 +33,9 @@
   <span class="hero-eyebrow">🧩 Stack-agnóstico de verdad</span>
   <h1>Stack y UX desacoplados del motor.</h1>
   <p class="lead">
-    El orquestador no debe estar atado a Flutter+Python. Cada app declara su stack en
+    El orquestador no debe estar atado a un stack concreto. Cada app declara su stack en
     <code>STACK_PROFILE.yaml</code> y su experiencia de usuario en <code>UX_CONTRACT.md</code>.
-    El mismo DAG puede construir Flutter/FastAPI, React/Node, SwiftUI/Go, Vue/Django — sin
+    El mismo DAG puede construir React/Node, SwiftUI/Go, frontend/backend declarados, Vue/Django — sin
     reescribir hooks, locks, agentes ni journey gates.
   </p>
 
@@ -62,13 +62,13 @@
         <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
       </div>
       <h3>Plugins despachables</h3>
-      <p><code>.claude/enforcers/</code> y <code>.claude/git-workflows/</code> evitan hardcodear Flutter o push-to-main. <code>scripts/git-workflow.sh</code> es el dispatcher que lee el campo <code>git_workflow</code> de STACK_PROFILE.</p>
+      <p><code>.claude/enforcers/</code> y <code>.claude/git-workflows/</code> evitan hardcodear un framework concreto o un workflow Git concreto. <code>scripts/git-workflow.sh</code> es el dispatcher que lee el campo <code>git_workflow</code> de STACK_PROFILE.</p>
     </div>
 
   </div>
 
   <h2>5 documentos source-of-truth — quién edita cada uno</h2>
-  <p class="muted">AnyStack añade <strong>STACK_PROFILE</strong> y <strong>UX_CONTRACT</strong> al contrato legacy de tres docs. Cada uno tiene un owner semántico claro.</p>
+  <p class="muted">AnyStack añade <strong>STACK_PROFILE</strong> y <strong>UX_CONTRACT</strong> al contrato contrato histórico de cinco docs. Cada uno tiene un owner semántico claro.</p>
   <pre class="mermaid">
 flowchart TB
     subgraph PROD[Producto]
@@ -89,36 +89,36 @@ flowchart TB
 
   <h2>Anatomía de STACK_PROFILE.yaml</h2>
   <div class="panel">
-    <h4>Ejemplo Flutter + FastAPI + Postgres</h4>
+    <h4>Ejemplo genérico de STACK_PROFILE</h4>
     <pre data-copy><code>frontend:
   language: dart
-  framework: flutter
-  module_root: app/lib
-  theme_root: app/lib/core/theme
-  test_cmd: flutter test
-  dev_cmd: flutter run -d chrome
+  framework: <frontend_framework>
+  module_root: <frontend_module_root>
+  theme_root: <frontend_theme_root>
+  test_cmd: <frontend_test_cmd>
+  dev_cmd: <frontend_dev_cmd>
   visual_check: browser
   health_check: http://localhost:8080
 
 backend:
   language: python
   framework: fastapi
-  module_root: api/src
+  module_root: <backend_module_root>
   test_cmd: pytest
   dev_cmd: uvicorn src.main:app --reload
   health_url: http://localhost:8000/health
 
 db:
   engine: postgres
-  migrate_cmd: alembic upgrade head
-  seed_cmd: python -m src.seed
+  migrate_cmd: <db_migrate_cmd>
+  carga de datos_cmd: python -m src.carga de datos
 
 git_workflow: push-to-main          # → .claude/git-workflows/push-to-main.sh
 design_tokens_enforcer: design_tokens_v1  # → .claude/enforcers/design_tokens_v1.sh</code></pre>
   </div>
 
   <h2>STACK_PROFILE → enforcer plugin pattern</h2>
-  <p>El plugin recomendado por defecto es <code>design_tokens_v1</code>, que lee <code>frontend.framework</code> y aplica el escaneo específico (Flutter, React, Vue, SwiftUI...).</p>
+  <p>El plugin recomendado por defecto es <code>design_tokens_v1</code>, que lee <code>frontend.framework</code> y aplica el escaneo específico (React, Vue, Flutter, SwiftUI...).</p>
   <pre class="mermaid">
 flowchart LR
     SP[STACK_PROFILE.yaml<br/>frontend · backend · db · git_workflow]
@@ -126,7 +126,7 @@ flowchart LR
     TR[frontend.theme_root<br/>módulo de tokens]
     PLUG[.claude/enforcers/&lt;plugin&gt;.sh<br/>script ejecutable]
     RULES[.claude/enforcers/&lt;plugin&gt;/RULES.md<br/>política]
-    SCAN[scanner stack-aware<br/>flutter · react · vue · ...]
+    SCAN[scanner stack-aware<br/>framework scanner · react · vue · ...]
     SP --&gt; DTE
     SP --&gt; TR
     DTE --&gt; PLUG
@@ -170,13 +170,13 @@ flowchart LR
     <strong>Cambia el stack y solo cambian dos ficheros.</strong> <code>STACK_PROFILE.yaml</code> y los plugins de <code>.claude/enforcers/</code> y <code>.claude/git-workflows/</code>. Los hooks, locks, agentes, journey gates y closer guardrail no se tocan. Eso es lo que hace al motor genuinamente stack-agnóstico, no decorativo.
   </div>
 
-  <p class="notice">Detalle de los 5 docs y del plugin pattern en <a href="https://github.com/slopezrap/OrquestadorFlutterDAG-AnyStack/blob/main/site/diagrams/arquitectura.md" target="_blank" rel="noopener">site/diagrams/arquitectura.md</a> y <a href="https://github.com/slopezrap/OrquestadorFlutterDAG-AnyStack/blob/main/site/diagrams/outcomes.md" target="_blank" rel="noopener">site/diagrams/outcomes.md</a>.</p>
+  <p class="notice">Detalle de los 5 docs y del plugin pattern en <a href="https://github.com/slopezrap/OrquestadorDAG-AnyStack/blob/main/site/diagrams/arquitectura.md" target="_blank" rel="noopener">site/diagrams/arquitectura.md</a> y <a href="https://github.com/slopezrap/OrquestadorDAG-AnyStack/blob/main/site/diagrams/outcomes.md" target="_blank" rel="noopener">site/diagrams/outcomes.md</a>.</p>
 
 </main>
 
 <footer>
   <div>Documentación estática · Sin dependencias externas · Lista para GitHub Pages.</div>
-  <div><a href="https://github.com/slopezrap/OrquestadorFlutterDAG-AnyStack" target="_blank" rel="noopener">Repositorio →</a></div>
+  <div><a href="https://github.com/slopezrap/OrquestadorDAG-AnyStack" target="_blank" rel="noopener">Repositorio →</a></div>
 </footer>
 
 <script src="assets/app.js"></script>

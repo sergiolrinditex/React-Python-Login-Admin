@@ -56,3 +56,27 @@ def test_reset_accepts_modern_source_of_truth_and_cleans_derived_state(tmp_path:
     assert not (tasks / "work-items" / "old.md").exists()
     assert not (memory / "archive").exists()
     assert not (project / "orchestrator-state" / "stale.lock").exists()
+
+
+def test_reset_accepts_empty_source_of_truth_for_fresh_orchestrator_checkout(tmp_path: Path) -> None:
+    project = tmp_path
+    (project / ".claude").mkdir()
+    (project / "docs" / "source-of-truth").mkdir(parents=True)
+    _write(project / "orchestrator-state" / "tasks" / "registry.json", "{}\n")
+
+    env = os.environ.copy()
+    env["CLAUDE_PROJECT_DIR"] = str(project)
+    env["PYTHONPATH"] = str(ROOT / ".claude" / "bin") + os.pathsep + env.get("PYTHONPATH", "")
+    result = subprocess.run(
+        [sys.executable, "-B", "-S", str(RESET)],
+        cwd=project,
+        env=env,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        check=False,
+    )
+
+    assert result.returncode == 0, result.stderr + result.stdout
+    assert not (project / "orchestrator-state" / "tasks" / "registry.json").exists()
+    assert (project / "docs" / "source-of-truth").is_dir()

@@ -171,7 +171,7 @@ def _is_write_set_header_key(key: str) -> bool:
 def _is_product_increment_header_key(key: str) -> bool:
     """True for the optional product increment/version column.
 
-    This lets one cumulative source-of-truth represent BaseApp + v1 + v2 +
+    This lets one cumulative source-of-truth represent existing baseline + v1 + v2 +
     ... without losing context. The bootstrap stores it on each task and uses
     Build state to keep already-built baseline tasks closed.
     """
@@ -763,7 +763,7 @@ def _split_md_table_row(line: str) -> list[str]:
     A literal pipe inside a cell is written as '\\|' in markdown — the renderer
     treats it as content, not as a column separator. Naive `line.split("|")`
     breaks the row whenever a cell uses this escape (the J2 OAuth row in the
-    base-app matrix is the canonical case). Replace the escape with a NUL
+    baseline snapshot matrix is the canonical case). Replace the escape with a NUL
     placeholder, split, then restore.
     """
     safe = (line or "").replace("\\|", _ESC_PIPE)
@@ -1032,7 +1032,7 @@ def validate_docs(doc_paths: dict[str, list[Path]]) -> dict[str, Any]:
     if len(ux_docs) == 0:
         warnings.append("UX_CONTRACT.md not found; legacy 3-doc mode is allowed, but production projects should split UX into docs/source-of-truth/UX_CONTRACT.md.")
     if len(stack_profiles) == 0:
-        warnings.append("STACK_PROFILE.yaml not found; using default Flutter/FastAPI/Postgres stack profile for compatibility.")
+        warnings.append("STACK_PROFILE.yaml not found; using neutral stack profile defaults for compatibility. Production projects should include docs/source-of-truth/STACK_PROFILE.yaml.")
 
     if checklist.stem.replace("_IMPLEMENTATION_CHECKLIST", "") != guide.stem.replace("_TECHNICAL_GUIDE", ""):
         errors.append("Checklist and technical guide do not share the same prefix.")
@@ -1518,7 +1518,7 @@ def build_phases_and_tasks(checklist_path: Path, checklist_text: str) -> tuple[l
     # the function-level closure exposes them via the `coarse_warnings`
     # attribute on the first phase (read by generate_artifacts).
     # If the Coverage Registry declares already-built baseline rows, keep
-    # phase lifecycle coherent. This lets cumulative BaseApp + v1 + v2 source
+    # phase lifecycle coherent. This lets cumulative existing baseline + v1 + v2 source
     # docs avoid rebuilding old increments while preserving journeys, UX and
     # wiring context.
     task_by_id = {t.get("id"): t for t in tasks}

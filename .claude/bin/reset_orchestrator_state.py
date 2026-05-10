@@ -30,6 +30,13 @@ def validate_source_of_truth() -> None:
     if list(SOT.glob("*.template.md")):
         fail("Template files are not allowed inside docs/source-of-truth/.")
 
+    has_any_pack_file = bool(md_files) or (SOT / "STACK_PROFILE.yaml").is_file()
+    if not has_any_pack_file:
+        # A fresh orchestrator checkout intentionally has no built app yet. Resetting
+        # derived state must still work before the user generates the five-file pack
+        # from docs/templates/.
+        return
+
     has_modern_stack = (SOT / "STACK_PROFILE.yaml").is_file()
     has_modern_ux = (SOT / "UX_CONTRACT.md").is_file()
 
@@ -39,20 +46,12 @@ def validate_source_of_truth() -> None:
         fail("Expected exactly 1 *_TECHNICAL_GUIDE.md in docs/source-of-truth/.")
     if len(list(SOT.glob("*_IMPLEMENTATION_CHECKLIST.md"))) != 1:
         fail("Expected exactly 1 *_IMPLEMENTATION_CHECKLIST.md in docs/source-of-truth/.")
-
-    # Modern AnyStack projects use the 5-file source-of-truth pack:
-    # instrucciones.md + technical guide + implementation checklist +
-    # UX_CONTRACT.md + STACK_PROFILE.yaml. Keep accepting the old 3-md
-    # contract for legacy projects, but do not reject current templates.
-    if has_modern_stack or has_modern_ux:
-        if not has_modern_stack:
-            fail("Missing docs/source-of-truth/STACK_PROFILE.yaml.")
-        if not has_modern_ux:
-            fail("Missing docs/source-of-truth/UX_CONTRACT.md.")
-        if len(md_files) != 4:
-            fail(f"docs/source-of-truth modern pack must contain exactly 4 filled .md files plus STACK_PROFILE.yaml; found {len(md_files)} .md files.")
-    elif len(md_files) != 3:
-        fail(f"docs/source-of-truth legacy pack must contain exactly 3 filled .md files; found {len(md_files)}.")
+    if not has_modern_stack:
+        fail("Missing docs/source-of-truth/STACK_PROFILE.yaml.")
+    if not has_modern_ux:
+        fail("Missing docs/source-of-truth/UX_CONTRACT.md.")
+    if len(md_files) != 4:
+        fail(f"docs/source-of-truth modern pack must contain exactly 4 filled .md files plus STACK_PROFILE.yaml; found {len(md_files)} .md files.")
 
     for path in md_files:
         text = path.read_text(encoding="utf-8", errors="replace")
@@ -71,6 +70,10 @@ def unlink(path: Path) -> None:
         path.unlink()
     except FileNotFoundError:
         pass
+
+
+def source_of_truth_is_empty() -> bool:
+    return not any(p.is_file() and p.name != ".gitkeep" for p in SOT.glob("*"))
 
 
 def main() -> int:
@@ -143,10 +146,15 @@ def main() -> int:
 
     print("==> Reset complete.")
     print("Next:")
-    print("  python3 -B -S .claude/bin/bootstrap_three_docs.py --refresh")
-    print("  ./scripts/check-task-dag.sh --strict")
-    print("  ./scripts/check-journey-matrix.sh --strict")
-    print("  ./scripts/check-wiring-contract.sh --strict --require-new-template-columns")
+    if source_of_truth_is_empty():
+        print("  1) Generate the five source-of-truth files from docs/templates/ into docs/source-of-truth/.")
+        print("  2) python3 -B -S .claude/bin/bootstrap_three_docs.py --validate-only")
+        print("  3) python3 -B -S .claude/bin/bootstrap_three_docs.py --refresh --reset-runtime-state")
+    else:
+        print("  python3 -B -S .claude/bin/bootstrap_three_docs.py --refresh")
+        print("  ./scripts/check-task-dag.sh --strict")
+        print("  ./scripts/check-journey-matrix.sh --strict")
+        print("  ./scripts/check-wiring-contract.sh --strict --require-new-template-columns")
     return 0
 
 

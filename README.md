@@ -1,4 +1,4 @@
-# BaseflutterAppsEngineFeatures — Orquestador DAG para apps Flutter fullstack
+# OrquestadorDAG AnyStack — orquestador production DAG para aplicaciones fullstack
 
 Orquestador para construir aplicaciones fullstack en producción mediante Claude Code, usando cinco documentos source-of-truth, slices verificables, journeys, UX, matriz DAG, memoria en disco, hooks, locks, follow-ups formales y cierre Git estricto.
 
@@ -88,33 +88,33 @@ La fuente única de valores de trailer está en:
 Ahí se declaran `required_keys`, `outcome_values`, `next_status_values` y si el rol puede mutar lifecycle. Los mirrors `outcome_enums` y `next_status_enums` se mantienen solo por compatibilidad. `hook_capture_subagent_stop.py` carga primero `trailer_schema`; sus constantes internas son fallback para instalaciones dañadas, no fuente normativa.
 
 
-## Source-of-truth acumulativo: BaseApp + v1 + v2 + ...
+## Source-of-truth acumulativo: existing baseline + v1 + v2 + ...
 
 El producto grande se construye por incrementos. `docs/source-of-truth/` siempre contiene la verdad acumulada de la app completa:
 
 ```text
-baseapp ya construida  -> Product increment=baseapp, Build state=done
+v0 ya construida  -> Product increment=v0, Build state=done
 producto v1            -> Product increment=v1,      Build state=planned/done
 producto v2            -> Product increment=v2,      Build state=planned/done
 ...
 producto vN            -> Product increment=vN,      Build state=planned
 ```
 
-`docs/base-app/` es un snapshot construido opcional: sirve cuando quieres continuar una app ya hecha, pero no es obligatorio para crear una app nueva desde cero. Para una app nueva puedes vaciarlo con `./scripts/reset-for-new-project.sh` y trabajar solo desde los cinco docs vivos de `docs/source-of-truth/`. No es un sitio para notas sueltas: cuando se use como baseline, el closer lo sincroniza desde `docs/source-of-truth/` con:
+`docs/product-baseline/` es un snapshot construido opcional: sirve cuando quieres continuar una app ya hecha, pero no es obligatorio para crear una app nueva desde cero. Para una app nueva puedes vaciarlo con `./scripts/reset-for-new-project.sh` y trabajar solo desde los cinco docs vivos de `docs/source-of-truth/`. No es un sitio para notas sueltas: cuando se use como baseline, el closer lo sincroniza desde `docs/source-of-truth/` con:
 
 ```bash
-./scripts/sync-product-baseline.sh sync --version <baseapp|v1|v2|current> --task <TASK_ID> --reason "verified slice closed"
+./scripts/sync-product-baseline.sh sync --version <v0|v1|v2|current> --task <TASK_ID> --reason "verified slice closed"
 ./scripts/sync-product-baseline.sh status
 ```
 
-En este ZIP, BaseApp viene marcada como ya construida (`Build state=done`) para que sirva como baseline. Cuando añadas v1/v2, ChatGPT debe conservar las filas antiguas y añadir nuevas filas acumulativas, no generar un diferencial incompleto.
+Este ZIP no trae una baseline de producto por defecto y `docs/source-of-truth/` puede empezar vacío en un checkout nuevo. Para apps nuevas usa `minimal` o `large-without-base`; `docs/product-baseline/` se crea sólo cuando cierres una app/incremento real y quieras planificar v1/v2 conservando contexto.
 
 ## Carpetas importantes
 
 ```text
 docs/templates/        3 perfiles x 5 templates que ChatGPT debe rellenar
 docs/prompts/          prompt maestro para generar los documentos source-of-truth sin perder contexto
-docs/base-app/         baseline construido acumulativo + BASELINE_MANIFEST.json
+docs/product-baseline/         baseline construido acumulativo + BASELINE_MANIFEST.json
 docs/source-of-truth/  los documentos source-of-truth vivos de la app actual
 .claude/               configuración estática: agents, commands, skills, hooks, rules
 orchestrator-state/    memoria runtime, tasks, handoffs, evidence, reports, locks
@@ -123,9 +123,9 @@ scripts/               wrappers de checks y mantenimiento
 
 ## Generar o evolucionar una app con ChatGPT
 
-1. Dale a ChatGPT estos ficheros: `docs/prompts/PROMPT_SOURCE_OF_TRUTH_DAG.md`, `docs/guides/CHATGPT_DAG_SOURCE_OF_TRUTH_GUIDE.md`, `docs/templates/<perfil>/*`, `docs/base-app/*` si heredas BaseApp y el contexto real del producto.
+1. Dale a ChatGPT estos ficheros: `docs/prompts/PROMPT_SOURCE_OF_TRUTH_DAG.md`, `docs/guides/CHATGPT_DAG_SOURCE_OF_TRUTH_GUIDE.md`, `docs/templates/<perfil>/*`, `docs/product-baseline/*` si heredas existing baseline y el contexto real del producto.
 2. Pide los cinco documentos: `instrucciones.md`, `<APP>_TECHNICAL_GUIDE.md`, `<APP>_IMPLEMENTATION_CHECKLIST.md`, `STACK_PROFILE.yaml` y `UX_CONTRACT.md`.
-3. En incrementos v1/v2/vN, exige que conserve el baseline real que le entregues —BaseApp si existe, o el snapshot de tu app actual— con `Build state=done`, y que añada nuevas filas con `Build state=planned`.
+3. En incrementos v1/v2/vN, exige que conserve el baseline real que le entregues —existing baseline si existe, o el snapshot de tu app actual— con `Build state=done`, y que añada nuevas filas con `Build state=planned`.
 4. Copia los source-of-truth docs aceptados en `docs/source-of-truth/`.
 5. Ejecuta checks antes de arrancar Claude Code.
 
@@ -184,7 +184,7 @@ orchestrator-state/tasks/api-contracts/
   openapi.yaml
   registry-endpoints.json
   frontend/typescript/apiClient.generated.ts
-  frontend/dart/api_client.g.dart
+  frontend/<language>/api_client.generated.*
   CONTRACT_MANIFEST.json
 ```
 
@@ -305,22 +305,31 @@ Si faltan datos para verificar una slice, no se inventan: se pide al usuario/equ
 
 ## Follow-ups formales cuando aparece trabajo nuevo
 
-Si `validator`, `tester`, `debugger`, `/verify-slice` o `/verify-journey` descubre algo real fuera del TASK_ID actual, no se queda como nota suelta. Se crea propuesta YAML:
+No todo hallazgo merece FU. Primero clasifica:
+
+- **Defecto dentro de la slice**: acceptance ya estaba en el task pack, el arreglo cabe en `Write set`/`allowed_paths` y no requiere nueva ruta/endpoint/tabla/journey/contrato. Va por `validator/tester -> debugger -> retest -> /verify-slice`. No crees FU.
+- **Trabajo nuevo fuera de scope**: falta Coverage Registry row, nueva ruta/endpoint/tabla/journey, ampliación de `Write set`/`Conflict group`, datos reales/proporcionados no definidos, dependencia externa o decisión humana. Sí merece FU.
+
+Si `validator`, `tester`, `debugger`, `/verify-slice` o `/verify-journey` descubre trabajo nuevo real fuera del TASK_ID actual, no se queda como nota suelta. Se crea propuesta YAML con triage explícito:
 
 ```bash
 ./scripts/register-followup-task.sh propose \
   --origin-task P02-S03-T001 \
   --severity high \
   --kind ux \
+  --scope-classification missing_real_data \
+  --why-not-debugger "requiere contrato de datos reales/proporcionados no declarado en el TASK_ID" \
   --title "Estado empty real en ResultsPage" \
   --description "Verify necesita estado empty con datos sandbox persistidos" \
   --product-increment v1 \
   --journey-ref J101 \
   --conflict-group front:results \
-  --write-set 'app/lib/features/results/**' \
+  --write-set '<frontend_module_root>/features/<feature>/**' \
   --acceptance "Empty state implementado con datos reales/proporcionados" \
   --verify "/verify-slice observa estado empty con cuenta sandbox persistida"
 ```
+
+El script rechaza `--scope-classification in_scope_defect` y exige `--why-not-debugger` para `high|critical|blocker`. Esto evita FU spam sin ocultar deuda fuera de scope. Cita siempre los globs de `--write-set` con comillas simples y usa `--journey-ref` sólo si el journey ya existe en `UX_CONTRACT.md`/journey matrix; si el FU crea una journey nueva, no pases `--journey-ref` hasta materializarla en source-of-truth.
 
 Después, con aprobación humana:
 
@@ -394,7 +403,7 @@ Los agentes leen `.claude/orchestrator-contract.json` y `.claude/rules/05-runtim
 ```text
 escrituras cruzadas de otro TASK_ID
 edición directa de registry/runtime/ledger/task-dag
-edición de source-of-truth o base-app con TASK_ID activo
+edición de source-of-truth o baseline snapshot con TASK_ID activo
 edición estática de .claude durante ejecución normal
 follow-up YAML escrito a mano fuera del script
 ```
@@ -418,27 +427,38 @@ Open `site/html-site/index.html` to explain the orchestrator to business and tec
 
 ## Small app path
 
-For a small app without BaseApp, use `docs/templates/minimal/` plus `docs/prompts/PROMPT_SOURCE_OF_TRUTH_DAG.md`. The minimal profile still produces the same five source-of-truth docs and explicit DAG, but keeps phases small and avoids inherited BaseApp context.
+For a small app without existing baseline, use `docs/templates/minimal/` plus `docs/prompts/PROMPT_SOURCE_OF_TRUTH_DAG.md`. The minimal profile still produces the same five source-of-truth docs and explicit DAG, but keeps phases small and avoids inherited existing baseline context.
 
 
 ## Stack y UX desacoplados
 
-El orquestador ya no debe asumir Flutter+Python. Cada app declara su stack en `docs/source-of-truth/STACK_PROFILE.yaml` y su contrato UX en `docs/source-of-truth/UX_CONTRACT.md`. Los scripts de tokens y Git despachan a plugins (`.claude/enforcers/`, `.claude/git-workflows/`) según ese perfil.
+El orquestador ya no debe asumir un stack concreto. Cada app declara su stack en `docs/source-of-truth/STACK_PROFILE.yaml` y su contrato UX en `docs/source-of-truth/UX_CONTRACT.md`. Los scripts de tokens y Git despachan a plugins (`.claude/enforcers/`, `.claude/git-workflows/`) según ese perfil.
 
 
 ## Stack profile y UX contract
 
-`STACK_PROFILE.yaml` es la fuente única de framework, paths, comandos, enforcer visual y workflow Git. `UX_CONTRACT.md` es la fuente única de personas, pantallas, estados UI y verificación visual/productiva. El motor DAG no debe asumir Flutter+Python; si el stack cambia, cambia el profile y el enforcer/plugin, no los hooks.
+`STACK_PROFILE.yaml` es la fuente única de framework, paths, comandos, enforcer visual y workflow Git. `UX_CONTRACT.md` es la fuente única de personas, pantallas, estados UI y verificación visual/productiva. El motor DAG no debe asumir un stack concreto; si el stack cambia, cambia el profile y el enforcer/plugin, no los hooks.
 
 
 ### Perfiles de templates
 
-`docs/templates/` contiene exactamente tres perfiles, cada uno con cinco ficheros: `minimal`, `large-without-base` y `large-with-base`. Usa `minimal` para MVPs pequeños sin BaseApp; `large-without-base` para productos grandes desde cero y AnyStack; `large-with-base` para evolucionar la BaseApp existente, fijada a Flutter + FastAPI + Postgres/Supabase-compatible.
+`docs/templates/` contiene exactamente tres perfiles, cada uno con cinco ficheros: `minimal`, `large-without-base` y `large-with-base`. Usa `minimal` para MVPs pequeños sin existing baseline; `large-without-base` para productos grandes desde cero y AnyStack; `large-with-base` para evolucionar la existing baseline existente, basada en el STACK_PROFILE.yaml real del baseline existente.
 
 
 ## Documentación visual
 
-- [Pages site (live)](https://slopezrap.github.io/OrquestadorFlutterDAG-AnyStack/) — overview, negocio, técnico, comandos, DAG, outcomes y stack/UX.
+- [Pages site (live)](https://slopezrap.github.io/Orquestadorfrontend declaradoDAG-AnyStack/) — overview, negocio, técnico, comandos, DAG, outcomes y stack/UX.
 - [Diagramas Mermaid](site/diagrams/) — [arquitectura](site/diagrams/arquitectura.md), [DAG flujo](site/diagrams/dag-flujo.md), [comandos](site/diagrams/comandos.md) y [outcomes](site/diagrams/outcomes.md). 26 diagramas adaptados al modelo AnyStack de 5 documentos source-of-truth (instrucciones + technical guide + checklist + STACK_PROFILE + UX_CONTRACT).
-- [Pages site (live)](https://slopezrap.github.io/OrquestadorFlutterDAG-AnyStack/) servido desde `site/html-site/` vía GitHub Actions.
+- [Pages site (live)](https://slopezrap.github.io/Orquestadorfrontend declaradoDAG-AnyStack/) servido desde `site/html-site/` vía GitHub Actions.
 - [Reports](docs/reports/) — auditorías y validaciones internas. [Guides](docs/guides/) — guías operativas (ChatGPT prompt, legacy/DAG runbook).
+
+
+## Phase / Step / Slice sizing para templates
+
+- **Phase** = milestone o módulo de producto con visión completa; máximo operativo recomendado: `<=20` slices.
+- **Step** = lane coherente dentro de la phase: pantalla/journey lane, módulo de dominio, foundation lane o contrato API que alimenta una pantalla nombrada. Objetivo sano: `6-12` slices; máximo: `<=15`.
+- **Slice/Task** = unidad ejecutable/verificable por worker, con `Depends on`, `Write set`, `Conflict group`, `Journey refs` y `Verify mínimo` claros.
+- No dividas un step coherente sólo por tener 11-12 slices. Divide cuando mezcle lanes no relacionadas, toque write sets incompatibles o pierda trazabilidad de producto.
+- La pantalla no se cierra por capas aisladas: cada pantalla importante debe cubrir contrato de pantalla, API/datos, UI conectada, estados UX obligatorios y verificación del journey.
+- API/backend slices pueden existir separadas sólo como foundation real o como contrato que alimenta una pantalla/journey nombrado; no hagas `backend completo -> frontend completo -> UX polish`.
+- Los templates deben sustituir todos los ejemplos por el dominio real de la app y usar datos reales/proporcionados; si faltan datos, bloquea o registra follow-up.

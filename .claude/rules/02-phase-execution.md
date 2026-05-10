@@ -4,7 +4,7 @@ Phases are source-of-truth driven, strict order. Each phase declared in the Cove
 
 ## Phases
 
-Do not hardcode a fixed phase count. Read `orchestrator-state/tasks/registry.json -> phase_order` and `phases[]` after bootstrap. Minimal apps may have a short lane; BaseApp-style products may have many phases (for example P00..P12). The only invariant is dependency order: a phase can advance only when its DAG predecessors and phase gate are satisfied.
+Do not hardcode a fixed phase count. Read `orchestrator-state/tasks/registry.json -> phase_order` and `phases[]` after bootstrap. Minimal apps may have a short lane; existing baseline-style products may have many phases (for example P00..P12). The only invariant is dependency order: a phase can advance only when its DAG predecessors and phase gate are satisfied.
 
 Typical examples, not a contract:
 
@@ -28,14 +28,14 @@ Typical examples, not a contract:
    - `tester` runs real tests with backend + DB up, verifies logs under both verbose modes.
 6. If `validator` or `tester` finds an in-scope defect → `debugger` → back to step 5. **Max 3 debug cycles per task.** If still failing after 3 debugger passes → stop pipeline, surface blocker to human, mark task `blocked` in registry. Do not create FU for defects the debugger can fix inside the same task pack/write_set.
    - Create FU only for out-of-scope work: missing Coverage Registry row, new route/endpoint/table/journey, write_set/conflict_group expansion, missing real/provided data contract, external dependency, or explicit human product decision.
-7. **Visual verification** via `/verify-slice` — hard reset + fixtures + human reproduction in browser (or the method defined in TECHNICAL_GUIDE: emulator, simulator, device, etc.). Resilient to `/clear`: rebuilds state from disk. Appends `## verify-slice` with `VERIFY_OUTCOME: verified|issues_found` to the handoff.
+7. **Visual verification** via `/verify-slice` — hard reset + datos reales/proporcionados + human reproduction in browser (or the method defined in TECHNICAL_GUIDE: emulator, simulator, device, etc.). Resilient to `/clear`: rebuilds state from disk. Appends `## verify-slice` with `VERIFY_OUTCOME: verified|issues_found` to the handoff.
    - **§5.bis — Journey-closing inline (gate humano único)**. Si la slice cierra al menos un journey de `registry.journeys[]` Y `VERIFY_OUTCOME: verified`, el comando pregunta al usuario si verifica el journey end-to-end ahora aprovechando el entorno ya reseteado. Si "ahora" → ejecuta verify-journey inline (estados marginales, deep links, next action) y apendiza `## verify-journey` al handoff con `JOURNEY_VERIFY_OUTCOME: verified|issues_found`. Si "aparte" → mantiene la rama tradicional (closer emite `JOURNEY_PENDING_VERIFY`, planner bloqueará).
 8. `closer` — writes evidence report, commits atomically on `main`, pushes `origin/main`, and cleans safe worktrees. Pre-check requires `VERIFY_OUTCOME: verified` (or an explicit `VERIFY_WAIVED: <reason>`). Detects journey-closing slices with `list_journey_closures.py`/`completion_policy=all_task_ids_done`, never with positional `task_ids[-1]`:
    - Si el handoff tiene `## verify-journey` con `JOURNEY_VERIFY_OUTCOME: verified` para ese JID → emite `JOURNEY_VERIFIED_INLINE: <JID>`; el hook lo marca `verified` bajo lock.
    - Si el handoff tiene `## verify-journey` con `issues_found` → `OUTCOME: blocked` (lanza debugger).
    - En cualquier otro caso → emite `JOURNEY_PENDING_VERIFY: <JID>` (rama tradicional).
    - Tras push, dispara `bash scripts/slice-clean.sh --apply` y `bash scripts/cleanup-worktrees.sh --apply --task <TASK_ID>` (housekeeping silencioso; no borra worktrees dirty).
-9. **Journey gate aparte** (solo si verify-slice eligió "aparte" o waiver) — `/verify-journey <JID>` resuelve los pending. El `planner` refuses with `CONTEXT_READY: no` while `runtime-state.pending_journey_verifications` is non-empty. Hard reset + fixtures consolidados + reproducción end-to-end multi-pantalla. Resilient to `/clear`. Waiver via `JOURNEY_VERIFY_WAIVED: <reason>` in the trailer (only with explicit human signature).
+9. **Journey gate aparte** (solo si verify-slice eligió "aparte" o waiver) — `/verify-journey <JID>` resuelve los pending. El `planner` refuses with `CONTEXT_READY: no` while `runtime-state.pending_journey_verifications` is non-empty. Hard reset + datos reales/proporcionados consolidados + reproducción end-to-end multi-pantalla. Resilient to `/clear`. Waiver via `JOURNEY_VERIFY_WAIVED: <reason>` in the trailer (only with explicit human signature).
 
 Stop immediately if: official docs contradict internal docs, `planner` returns `CONTEXT_READY: no`, or the current phase/task depends on incomplete predecessors.
 

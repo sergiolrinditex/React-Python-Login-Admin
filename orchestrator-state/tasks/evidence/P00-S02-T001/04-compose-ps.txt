@@ -1,7 +1,0 @@
-NAME            IMAGE                                      COMMAND                  SERVICE    CREATED         STATUS                    PORTS
-hilo-backend    hilo-people-backend:dev                    "uvicorn app.main:ap…"   backend    2 minutes ago   Up 22 seconds (healthy)   0.0.0.0:8000->8000/tcp, [::]:8000->8000/tcp
-hilo-litellm    ghcr.io/berriai/litellm:v1.83.14-stable    "docker/prod_entrypo…"   litellm    2 minutes ago   Up 2 minutes (healthy)    0.0.0.0:4000->4000/tcp, [::]:4000->4000/tcp
-hilo-minio      minio/minio:RELEASE.2025-09-07T16-13-09Z   "/usr/bin/docker-ent…"   minio      2 minutes ago   Up 2 minutes (healthy)    0.0.0.0:9000->9000/tcp, [::]:9000->9000/tcp, 127.0.0.1:9001->9001/tcp
-hilo-postgres   pgvector/pgvector:pg18-bookworm            "docker-entrypoint.s…"   postgres   2 minutes ago   Up 2 minutes (healthy)    0.0.0.0:5433->5432/tcp, [::]:5433->5432/tcp
-hilo-redis      redis:8-alpine                             "docker-entrypoint.s…"   redis      2 minutes ago   Up 2 minutes (healthy)    0.0.0.0:6379->6379/tcp, [::]:6379->6379/tcp
-hilo-worker     hilo-people-backend:dev                    "python -c 'import t…"   worker     2 minutes ago   Up About a minute         8000/tcp

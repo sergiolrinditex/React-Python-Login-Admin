@@ -1,2 +1,0 @@
-=== 08 redis ping ===
-PONG

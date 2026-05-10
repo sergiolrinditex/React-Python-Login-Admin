@@ -1,9 +1,0 @@
-# curl POST /api/v1/auth/sign-up (duplicate path)
-# Port: 8012 (temporary verbose uvicorn)
-# Email: p011-verbose-1778426074@example.com (same as happy path)
-# Request: {"email":"p011-verbose-...@example.com","password":"StrongP@ssw0rd123!","full_name":"P011 TesterV","legal_acceptance":true}
-
-HTTP Status: 409 Conflict
-Response: {"errors":[{"code":"AUTH_EMAIL_TAKEN","message":"Email no disponible. Por favor utiliza otro email.","field":"email","details":[]}]}
-
-Acceptance gate: grep '$argon2id$' in response = 0 (PASS)

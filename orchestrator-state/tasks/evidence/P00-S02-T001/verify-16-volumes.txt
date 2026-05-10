@@ -1,5 +1,0 @@
-=== 16 named volumes ===
-DRIVER    VOLUME NAME
-local     hilo-minio-data
-local     hilo-postgres-data
-local     hilo-redis-data

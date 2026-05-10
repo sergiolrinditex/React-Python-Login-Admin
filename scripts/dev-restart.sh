@@ -16,9 +16,7 @@
 # This script is a generic dispatcher. The stack-specific commands (how to
 # start the backend, how to start the frontend, how to probe health, how to
 # reset the DB) live in `scripts/dev-restart.profile.sh`, which this script
-# sources. The profile shipped in the template implements Flutter + FastAPI
-# + Supabase, but a feature-app on a different stack only needs to override
-# that one file — never this dispatcher.
+# sources. The profile shipped in the orchestrator ZIP is neutral because no default app is bundled. A generated app must replace scripts/dev-restart.profile.sh with stack-specific commands derived from STACK_PROFILE.yaml; never edit this dispatcher for stack changes.
 #
 # Profile contract (each function returns 0 on success / non-zero on fail):
 #   back_health        → quick health probe, exit 0 if up
@@ -144,8 +142,7 @@ export -f wait_for
 #
 # Resolution order:
 #   1. ${ROOT_DIR}/scripts/dev-restart.profile.sh — the per-project profile.
-#      A feature-app overrides the stack here. The template ships one with
-#      Flutter+FastAPI defaults.
+#      A feature-app overrides the stack here. The template ships a neutral profile; generated apps replace it with real stack commands.
 #   2. (no fallback) — if the profile is missing, abort with a clear error
 #      so the project is forced to declare its stack explicitly.
 

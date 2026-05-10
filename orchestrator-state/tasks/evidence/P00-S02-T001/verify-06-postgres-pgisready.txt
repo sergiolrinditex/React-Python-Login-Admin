@@ -1,2 +1,0 @@
-=== 06 postgres pg_isready ===
-/var/run/postgresql:5432 - accepting connections

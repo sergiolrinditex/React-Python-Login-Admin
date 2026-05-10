@@ -4,17 +4,19 @@ Este documento enseña los dos modos del orquestador: el modo legacy lineal y el
 
 ## 1. Regla de oro
 
-La source-of-truth sigue siendo el trío de documentos:
+La source-of-truth moderna es el pack de cinco ficheros:
 
 ```text
 docs/source-of-truth/instrucciones.md
 docs/source-of-truth/<APP>_TECHNICAL_GUIDE.md
 docs/source-of-truth/<APP>_IMPLEMENTATION_CHECKLIST.md
+docs/source-of-truth/STACK_PROFILE.yaml
+docs/source-of-truth/UX_CONTRACT.md
 ```
 
 No se edita a mano ni `registry.json` ni `task-dag.json` ni la matriz de adyacencia. El bootstrap los deriva desde el `Coverage Registry` del checklist.
 
-Para productos grandes, el registry es acumulativo: BaseApp y versiones ya cerradas siguen en los docs con `Build state=done`; el incremento activo usa `Product increment=vN` y `Build state=planned`. Así el DAG conserva el contexto completo y no reconstruye trabajo ya cerrado.
+Para productos grandes, el registry es acumulativo: existing baseline y versiones ya cerradas siguen en los docs con `Build state=done`; el incremento activo usa `Product increment=vN` y `Build state=planned`. Así el DAG conserva el contexto completo y no reconstruye trabajo ya cerrado.
 
 ## 2. Modo legacy lineal
 
@@ -23,9 +25,9 @@ Usa este modo cuando el `Coverage Registry` no tenga columna `Depends on`.
 ```md
 | Slice ID | Tipo | Target | Step | Product increment | Build state | Verify mínimo |
 |---|---|---|---|---|---|---|
-| P00-S01-T001 | setup | scaffold | Step 0.1 | baseapp | done | test A |
+| P00-S01-T001 | setup | scaffold | Step 0.1 | v0 | done | test A |
 | P00-S01-T002 | api | GET /health | Step 0.1 | v1 | planned | test B |
-| P00-S02-T001 | flutter | HomePage / | Step 0.2 | v1 | planned | test C |
+| P00-S02-T001 | frontend | HomePage / | Step 0.2 | v1 | planned | test C |
 ```
 
 El bootstrap genera una cadena secuencial:
@@ -66,9 +68,9 @@ Usa este modo cuando el `Coverage Registry` tenga columna `Depends on`. En este 
 ```md
 | Slice ID | Tipo | Target | Step | Product increment | Build state | Risk level | Verify mode | Depends on | Conflict group | Write set | Journey refs | Pantalla/Ruta | Endpoint | Tablas DB | Origen-Instr | Origen-TechGuide | Acceptance mínimo | Verify mínimo |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| P00-S01-T001 | api | GET /health | Step 0.1 | baseapp | done | low | auto | — | api:health | api/src/**/health* | — | — | GET /health | — | §7 | §6.2 | endpoint responde 200 | curl /health |
-| P00-S01-T002 | db | init DB | Step 0.1 | v1 | planned | medium | human | — | db:migrations | api/alembic/versions/** | — | — | — | users | §3.1 | §10.3 | migration up/down | alembic upgrade head |
-| P00-S02-T001 | api | GET /ready | Step 0.2 | v1 | planned | P00-S01-T001, P00-S01-T002 | api:ready | api/src/**/ready* | — | — | GET /ready | users | §7 | §6.2 | espera API + DB | curl /ready |
+| P00-S01-T001 | api | GET /health | Step 0.1 | v0 | done | low | auto | — | api:health | {{backend_module_root}}/**/health* | — | — | GET /health | — | §7 | §6.2 | endpoint responde 200 | curl /health |
+| P00-S01-T002 | db | init DB | Step 0.1 | v1 | planned | medium | human | — | db:migrations | <db_migrations_root>/** | — | — | — | users | §3.1 | §10.3 | migration up/down | <db_migrate_cmd> |
+| P00-S02-T001 | api | GET /ready | Step 0.2 | v1 | planned | P00-S01-T001, P00-S01-T002 | api:ready | {{backend_module_root}}/**/ready* | — | — | GET /ready | users | §7 | §6.2 | espera API + DB | curl /ready |
 ```
 
 El bootstrap deriva:
@@ -104,18 +106,18 @@ python3 -B -S .claude/bin/bootstrap_three_docs.py --refresh
 ./scripts/check-wiring-contract.sh --strict --require-new-template-columns
 ```
 
-Resultado esperado para la BASEAPP DAG incluida:
+Resultado esperado cuando `docs/source-of-truth/` contiene una app real generada desde templates:
 
 ```text
-Three-doc contract is valid.
-Bootstrapped project prefix: BASEAPP
-Detected phases: 13
-Generated tasks: 84
-Detected journeys: 8
-Task DAG: OK mode=explicit_dag nodes=84 edges=134 waves=8
-Journey matrix coherent — 8 journeys validadas, 0 drifts
-Wiring contract coherent — 13 routes, 41 endpoints, 84 registry rows, 8 journeys, data_contract=1
+Source-of-truth contract is valid.
+Generated tasks: <N>
+Detected journeys: <N>
+Task DAG: OK mode=explicit_dag ...
+Journey matrix coherent ...
+Wiring contract coherent ...
 ```
+
+El ZIP del orquestador no trae una app/baseline construida por defecto. Si `docs/source-of-truth/` está vacío, primero genera los cinco docs desde `docs/templates/` o ejecuta el smoke de templates.
 
 ## 5. Cómo abrir una wave paralela
 
@@ -138,13 +140,13 @@ La salida tiene bloques copiables. Ejemplo:
 ## Copia y pega por terminal
 
 ### Terminal 1 — P00-S01-T001
-export CLAUDE_ACTIVE_TASK_ID=P00-S01-T001 CLAUDE_TASK_PACK=orchestrator-state/tasks/task-packs/P00-S01-T001.md && echo 'Ahora ejecuta en Claude Code: /next-slice P00-S01-T001'
+export CLAUDE_ACTIVE_TASK_ID=P00-S01-T001 CLAUDE_TASK_PACK=orchestrator-state/tasks/task-packs/P00-S01-T001.md && echo 'Ahora ejecuta en Claude Code: claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice P00-S01-T001"'
 
 ### Terminal 2 — P00-S01-T003
-export CLAUDE_ACTIVE_TASK_ID=P00-S01-T003 CLAUDE_TASK_PACK=orchestrator-state/tasks/task-packs/P00-S01-T003.md && echo 'Ahora ejecuta en Claude Code: /next-slice P00-S01-T003'
+export CLAUDE_ACTIVE_TASK_ID=P00-S01-T003 CLAUDE_TASK_PACK=orchestrator-state/tasks/task-packs/P00-S01-T003.md && echo 'Ahora ejecuta en Claude Code: claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice P00-S01-T003"'
 
 ### Terminal 3 — P00-S03-T001
-export CLAUDE_ACTIVE_TASK_ID=P00-S03-T001 CLAUDE_TASK_PACK=orchestrator-state/tasks/task-packs/P00-S03-T001.md && echo 'Ahora ejecuta en Claude Code: /next-slice P00-S03-T001'
+export CLAUDE_ACTIVE_TASK_ID=P00-S03-T001 CLAUDE_TASK_PACK=orchestrator-state/tasks/task-packs/P00-S03-T001.md && echo 'Ahora ejecuta en Claude Code: claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice P00-S03-T001"'
 ```
 
 En cada terminal:
@@ -153,10 +155,10 @@ En cada terminal:
 export CLAUDE_ACTIVE_TASK_ID=<TASK_ID> CLAUDE_TASK_PACK=orchestrator-state/tasks/task-packs/<TASK_ID>.md
 ```
 
-Después, dentro de Claude Code en ese mismo terminal:
+Después, en ese mismo terminal worker, ejecuta Claude Code como main thread agent:
 
-```text
-/next-slice <TASK_ID>
+```bash
+claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice <TASK_ID>"
 ```
 
 No cambies `CLAUDE_ACTIVE_TASK_ID` hasta terminar ese slice. Los hooks lo usan para escribir ledger, spawn budget, evidence, handoffs y runtime de ese nodo, aunque el singleton `active-task.json` haya cambiado por otro terminal.
@@ -169,7 +171,7 @@ Regla práctica:
 
 ```text
 1 terminal por TASK_ID ready con riesgo bajo.
-Serializa TASK_IDs que toquen la misma pantalla, mismo provider, misma migración, misma familia de endpoint o mismo fichero global.
+Serializa TASK_IDs que toquen la misma pantalla, mismo state handler, misma migración, misma familia de endpoint o mismo fichero global.
 ```
 
 `./scripts/next-wave.sh` recomienda N terminales seguros y mueve a la seccion "Serializados por conflicto" los ready que comparten `Conflict group` o `Write set`. Si quieres limitar:
@@ -247,7 +249,7 @@ El hook `hook_write_scope_guard.py` protege los casos peligrosos:
 
 Esto mantiene el DAG rápido pero no corruptible: los scripts y hooks escriben estado core bajo locks; los agentes escriben solo su pack, handoff, evidence, report o código de su slice.
 
-UX en el task pack: cuando una slice toca Flutter, el planner debe incluir route/page, journey refs, endpoints consumidos, estado cliente/provider, estados UI obligatorios y next action. El checker de wiring valida esos campos en modo nuevo.
+UX en el task pack: cuando una slice toca UI del stack declarado, el planner debe incluir route/page, journey refs, endpoints consumidos, estado cliente/state handler, estados UI obligatorios y next action. El checker de wiring valida esos campos en modo nuevo.
 
 ## 9. Ahorro estimado de tiempo
 
@@ -269,9 +271,9 @@ Regla práctica de producción:
 - 2 terminales: suele ser el punto seguro inicial.
 - 3-4 terminales: solo si `/next-wave` no serializa por conflictos.
 - 5+ terminales: útil únicamente con lanes muy separadas y reviews humanas preparadas.
-- Si una phase supera 20 slices o un step supera 10, divide antes de ejecutar; un fan-in gigante convierte el DAG en una cola.
+- Si una phase supera 20 slices o un step supera 15, divide antes de ejecutar; un fan-in gigante convierte el DAG en una cola.
 
-BASEAPP refactorizada usa lanes pequeñas: ninguna phase supera 20 slices y la matriz DAG queda validada por header, no por posición.
+Los templates validados usan lanes pequeñas: ninguna phase debe superar 20 slices y la matriz DAG se valida por headers/IDs, no por posición.
 
 ## 10. Cierre y limpieza
 
@@ -301,8 +303,8 @@ Un hallazgo nuevo no debe romper el grafo ni quedar fuera de memoria. Usa:
 
 ```bash
 ./scripts/register-followup-task.sh list
-./scripts/register-followup-task.sh propose --origin-task <TASK_ID> --severity high --kind wiring --title "..." --acceptance "..." --verify "..."
-./scripts/register-followup-task.sh promote <FOLLOWUP_ID>
+./scripts/register-followup-task.sh propose --origin-task <TASK_ID> --severity high --kind wiring --scope-classification missing_coverage --why-not-debugger "requiere nueva cobertura fuera del TASK_ID actual" --title "..." --acceptance "..." --verify "..."
+claude --agent main-orchestrator --permission-mode bypassPermissions "/promote-followup <FOLLOWUP_ID>"
 # o, solo con decisión humana explícita:
 ./scripts/register-followup-task.sh waive <FOLLOWUP_ID> --reason "..."
 ```
@@ -312,18 +314,18 @@ Un hallazgo nuevo no debe romper el grafo ni quedar fuera de memoria. Usa:
 
 ## Baseline acumulativo por versiones
 
-`docs/base-app/` no es un seed estático: es el snapshot construido de la app completa hasta el último cierre aceptado. El closer lo sincroniza antes del commit:
+`docs/product-baseline/` no es un carga de datos estático: es el snapshot construido de la app completa hasta el último cierre aceptado. El closer lo sincroniza antes del commit:
 
 ```bash
-./scripts/sync-product-baseline.sh sync --version <baseapp|v1|v2|current> --task <TASK_ID> --reason "verified slice closed"
+./scripts/sync-product-baseline.sh sync --version <v0|v1|v2|current> --task <TASK_ID> --reason "verified slice closed"
 ```
 
-El manifest `docs/base-app/BASELINE_MANIFEST.json` registra la línea temporal. Al pedir a ChatGPT v2/v3, pásale `docs/base-app/*` para que no pierda contexto y genere docs acumulativos, no diferenciales sueltos.
+El manifest `docs/product-baseline/BASELINE_MANIFEST.json` registra la línea temporal. Al pedir a ChatGPT v2/v3, pásale `docs/product-baseline/*` para que no pierda contexto y genere docs acumulativos, no diferenciales sueltos.
 
 
 ## Production hardening actual
 
-Usa source-of-truth acumulativo baseline+vN, `Risk level`, `Verify mode`, phases <=20 slices, steps <=10 slices, journeys reales multi-superficie y verify con datos reales/proporcionados. Ejecuta bootstrap + check-task-dag + check-journey-matrix + check-wiring-contract antes de waves.
+Usa source-of-truth acumulativo baseline+vN, `Risk level`, `Verify mode`, phases <=20 slices, steps <=15 slices, journeys reales multi-superficie y verify con datos reales/proporcionados. Ejecuta bootstrap + check-task-dag + check-journey-matrix + check-wiring-contract antes de waves.
 
 
 

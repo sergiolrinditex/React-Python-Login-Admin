@@ -1,1 +1,0 @@
-OK Design tokens - web literals are outside app code or inside token/theme modules.

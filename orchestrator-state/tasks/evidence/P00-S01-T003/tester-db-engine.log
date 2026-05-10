@@ -1,8 +1,0 @@
-2026-05-08 23:52:37 [debug    ] BEFORE _get_engine: creating async engine
-2026-05-08 23:52:37 [debug    ] AFTER _get_engine: engine created (host redacted)
-get_session: <function get_session at 0x104f39f80>
-engine: <sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x10756f5c0>
-engine.dialect: postgresql
-engine.url (host only): localhost
-Engine pool size (pre-connect): 5
-db.py import + engine create: PASS (no DB connection made)

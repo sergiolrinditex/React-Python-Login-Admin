@@ -124,9 +124,9 @@ Next.js frontend/API with SQLite.
 | GET | /api/notes | none | notes[] | none | 500 | /notes J1 | notes select | P02-S01-T001 |
 
 ## Verification Data Contract
-| Flow/Journey | Persona/Rol | Datos reales/prod-like requeridos | Seed/fixture permitido | Reset/Cleanup | Slices/Journeys |
+| Flow/Journey | Persona/Rol | Datos reales/proporcionados requeridos | Carga de datos reales/proporcionados permitida | Reset/Cleanup | Slices/Journeys |
 |---|---|---|---|---|---|
-| Notes CRUD | User | sqlite notes row | resettable fixture | delete notes | J1 |
+| Notes CRUD | User | sqlite notes row | resettable provided data | delete notes | J1 |
 """, encoding="utf-8")
     (sot / "MINIREACT_IMPLEMENTATION_CHECKLIST.md").write_text("""# MINIREACT Implementation Checklist
 

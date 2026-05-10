@@ -1,3 +1,0 @@
-[logging] BEFORE configure_logging: verbose=False
-selected_subagent=None score=0 matched=[] fallback_used=True
-No he podido determinar el área especializada de tu consulta. Por favor, reformula la pregunta mencionando el tema principal (p. ej. vacaciones, nóminas, LangChain, RAG).

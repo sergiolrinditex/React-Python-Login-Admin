@@ -1,2 +1,0 @@
-T012 verify-slice — focused mode (no DB reset)
-2026-05-10T10:43:52Z

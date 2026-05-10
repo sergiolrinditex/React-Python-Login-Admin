@@ -416,7 +416,7 @@ def discover_source_docs(root: Path | None = None) -> dict[str, Any]:
     Canonical runtime docs are: instrucciones, technical guide, implementation
     checklist, optional UX_CONTRACT.md and optional STACK_PROFILE.yaml. If
     ``docs/source-of-truth`` exists, it is the only place inspected. This
-    prevents accidental fallback to ``docs/base-app`` or ``docs/templates`` and
+    prevents accidental fallback to ``docs/product-baseline`` or ``docs/templates`` and
     avoids building the wrong app.
     """
     root = root or project_root()

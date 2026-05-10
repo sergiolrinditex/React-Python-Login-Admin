@@ -1,2 +1,0 @@
-[logging] BEFORE configure_logging: verbose=False
-RESULT: [StubExecutor] Subagent 'hr-policies-agent' received your request.

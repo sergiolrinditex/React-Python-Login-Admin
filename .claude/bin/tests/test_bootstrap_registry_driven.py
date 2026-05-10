@@ -12,7 +12,7 @@ Coverage:
     must NOT also emit a synthetic for the same step (regression for the
     duplicate-IDs bug).
   * Journey slice cells are stripped of backticks before expansion.
-  * E2E against the real BASEAPP docs: every canonical sample matches and
+  * E2E against the real BASELINE docs: every canonical sample matches and
     every journey task_id resolves.
 """
 from __future__ import annotations
@@ -432,28 +432,28 @@ class JourneyBackticksAreStrippedTests(unittest.TestCase):
 
 
 # ---------------------------------------------------------------------------
-# E2E against the real BASEAPP docs
+# E2E against optional real product baseline docs
 # ---------------------------------------------------------------------------
-class BootstrapEndToEndAgainstBaseappTests(unittest.TestCase):
+class BootstrapEndToEndAgainstProductBaselineTests(unittest.TestCase):
 
-    def test_real_base_app_bootstrap(self):
-        required_baseapp_docs = (
+    def test_real_product_baseline_bootstrap(self):
+        required_v0_docs = (
             "instrucciones.md",
-            "BASEAPP_IMPLEMENTATION_CHECKLIST.md",
-            "BASEAPP_TECHNICAL_GUIDE.md",
+            "APP_IMPLEMENTATION_CHECKLIST.md",
+            "APP_TECHNICAL_GUIDE.md",
         )
-        src = REPO_ROOT / "docs" / "base-app"
-        missing = [fname for fname in required_baseapp_docs if not (src / fname).is_file()]
+        src = REPO_ROOT / "docs" / "product-baseline"
+        missing = [fname for fname in required_v0_docs if not (src / fname).is_file()]
         if missing:
             self.skipTest(
-                "base-app docs are optional; skipping base-app bootstrap fixture because missing: "
+                "baseline snapshot docs are optional; skipping baseline snapshot bootstrap fixture because missing: "
                 + ", ".join(missing)
             )
 
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             (root / "docs" / "source-of-truth").mkdir(parents=True)
-            for fname in required_baseapp_docs:
+            for fname in required_v0_docs:
                 shutil.copy(src / fname, root / "docs" / "source-of-truth" / fname)
             (root / "orchestrator-state" / "tasks").mkdir(parents=True)
             (root / "orchestrator-state" / "memory").mkdir(parents=True)
@@ -508,7 +508,7 @@ class BootstrapEndToEndAgainstBaseappTests(unittest.TestCase):
             self.assertEqual(unresolved, [],
                 f"every journey task_id must resolve to a real registry task; unresolved={unresolved[:5]}")
 
-            # Production-hardened BASEAPP is split into reviewable DAG lanes.
+            # Production-hardened BASELINE is split into reviewable DAG lanes.
             # No phase may exceed 20 slices and no step may exceed 15.
             from collections import Counter
             phase_counts = Counter(t["phase_id"] for t in reg["tasks"])

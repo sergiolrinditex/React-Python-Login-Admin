@@ -44,7 +44,7 @@ Seguro durante una slice activa:
   --kind bug|ux|wiring|data|test|security|followup \
   --scope-classification out_of_scope|missing_coverage|missing_real_data|external_dependency|future_enhancement|scope_expansion|blocked_by_human_decision \
   --why-not-debugger "<por qué debugger/retest no lo puede arreglar dentro del TASK_ID>" \
-  --product-increment <baseapp|v1|v2|current> \
+  --product-increment <v0|v1|v2|current> \
   --title "<título>" \
   --description "<hallazgo real>" \
   --journey-ref <JID> \
@@ -53,6 +53,11 @@ Seguro durante una slice activa:
   --acceptance "<criterio de cierre>" \
   --verify "<verificación con datos reales/proporcionados>"
 ```
+
+Notas de seguridad:
+
+- Pon comillas simples en patrones glob de `--write-set`, por ejemplo `--write-set 'docs/source-of-truth/**'`, para que el shell no los expanda antes de llegar al script.
+- Usa `--journey-ref` sólo con journeys que ya existen en `UX_CONTRACT.md`/journey matrix. Si el follow-up define una journey nueva, primero crea/amplía el source-of-truth de esa journey o no pases `--journey-ref` hasta que exista.
 
 Esto escribe:
 

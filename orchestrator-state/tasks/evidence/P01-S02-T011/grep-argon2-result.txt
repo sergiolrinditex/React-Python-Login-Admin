@@ -1,6 +1,0 @@
-grep -c '$argon2id$' logs-verbose-on.txt = 0
-grep result in signup-happy.json = 0
-0
-grep result in signup-dup.json = 0
-0
-ACCEPTANCE_GATE: PASS (all counts = 0)

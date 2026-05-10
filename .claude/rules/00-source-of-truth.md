@@ -24,7 +24,7 @@ Dos secciones tienen home semántico fijo dentro de los documentos source-of-tru
 
 - Sección dedicada dentro de `instrucciones.md` (sugerencia: subsección bajo Alcance / Scope, p. ej. `### 3.4 Recorridos del usuario`).
 - Feature-app inicial: 2–6 recorridos reales en lenguaje plano que cruzan varias pantallas; después pueden crecer hasta 10 si el producto lo requiere. Un journey de un solo paso es una feature, no un journey.
-- Cada journey usa **identificadores compartidos con el resto de docs**: nombres de ruta GoRouter del `TECHNICAL_GUIDE` y nombres de pantalla del `CHECKLIST`. Ejemplo: `user → /login → tap "Continue with Google" → callback OAuth → /home`.
+- Cada journey usa **identificadores compartidos con el resto de docs**: nombres de ruta del router declarado del `TECHNICAL_GUIDE` y nombres de pantalla del `CHECKLIST`. Ejemplo: `user → /login → tap "Continue with Google" → callback OAuth → /home`.
 - Owner: producto. Cambia cuando cambia el alcance, no cuando cambia la implementación.
 
 ### Architectural Decision Records (ADR) → `*_TECHNICAL_GUIDE.md`

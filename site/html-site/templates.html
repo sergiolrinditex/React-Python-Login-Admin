@@ -24,7 +24,7 @@
   <a href="templates.html">Templates</a>
   <a href="stack-ux.html">Stack/UX</a>
   <a href="tecnico.html">Técnico</a>
-  <a data-tally-open="5BEA8v" data-tally-layout="modal" data-tally-width="600" data-tally-overlay="1" href="mailto:s.lopezrap@gmail.com?subject=OrquestadorFlutterDAG-AnyStack%20%E2%80%94%20quiero%20ayuda%20para%20implantarlo" class="topnav-cta">📧 Contacto</a>
+  <a data-tally-open="5BEA8v" data-tally-layout="modal" data-tally-width="600" data-tally-overlay="1" href="mailto:s.lopezrap@gmail.com?subject=OrquestadorDAG-AnyStack%20%E2%80%94%20quiero%20ayuda%20para%20implantarlo" class="topnav-cta">📧 Contacto</a>
 </nav>
 
 <main>
@@ -51,15 +51,15 @@
         <code>docs/templates/large-with-base/*.template.{md,yaml}</code>
       </p>
       <ul>
-        <li><strong>BaseApp / v1 / v2 / vN</strong> acumulativo</li>
+        <li><strong>existing baseline / v1 / v2 / vN</strong> acumulativo</li>
         <li>Library Discovery Pass amplio</li>
         <li>Phases por lanes o pantallas</li>
         <li><code>Conflict group</code> + <code>Write set</code> obligatorios</li>
-        <li>Verification Data Contract real/prod-like</li>
+        <li>Verification Data Contract real/provided</li>
         <li>~80-150 slices realistas</li>
       </ul>
       <div class="notice" style="margin-top: 20px;">
-        <strong>Cuándo usar.</strong> Productos con baseline ya construido, o apps complejas con auth + datos + AI + admin + GDPR. La BaseApp incluida tiene 84 slices y 8 journeys reales.
+        <strong>Cuándo usar.</strong> Productos con baseline ya construido, o apps complejas con auth + datos + AI + admin + GDPR. La existing baseline incluida tiene 84 slices y 8 journeys reales.
       </div>
     </div>
 
@@ -70,10 +70,10 @@
       </div>
       <h3>large-without-base</h3>
       <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 16px;">
-        <code>docs/templates/*.template.{md,yaml}</code> · sin BaseApp
+        <code>docs/templates/*.template.{md,yaml}</code> · sin existing baseline
       </p>
       <ul>
-        <li>Templates large sin heredar BaseApp</li>
+        <li>Templates large sin heredar existing baseline</li>
         <li>Sin tablas/endpoints/journeys históricos</li>
         <li>Phases pequeñas, DAG explícito</li>
         <li>Stack Profile + UX Contract obligatorios</li>
@@ -99,7 +99,7 @@
         <li>3-8 tasks totales</li>
         <li>1-2 journeys reales multi-pantalla</li>
         <li>Mismo DAG explícito</li>
-        <li>Sin BaseApp ni Library Discovery</li>
+        <li>Sin existing baseline ni Library Discovery</li>
         <li>On-ramp drásticamente reducido</li>
       </ul>
       <div class="notice success" style="margin-top: 20px;">
@@ -110,7 +110,7 @@
   </div>
 
   <h2>Los 5 documentos source-of-truth</h2>
-  <p class="muted">Cada perfil produce el mismo set canónico. AnyStack añade <strong>STACK_PROFILE</strong> y <strong>UX_CONTRACT</strong> al contrato legacy de tres docs.</p>
+  <p class="muted">Cada perfil produce el mismo set canónico. AnyStack añade <strong>STACK_PROFILE</strong> y <strong>UX_CONTRACT</strong> al contrato contrato histórico de cinco docs.</p>
   <div class="table-wrap">
     <table>
       <thead>
@@ -140,8 +140,8 @@
     <div class="step">
       <div class="step-num">PASO 02</div>
       <b>Elige perfil.</b>
-      <code>large-with-base</code> si heredas BaseApp. <code>large-without-base</code> si es producto grande desde cero.
-      <code>minimal</code> si es app pequeña sin BaseApp.
+      <code>large-with-base</code> si heredas existing baseline. <code>large-without-base</code> si es producto grande desde cero.
+      <code>minimal</code> si es app pequeña sin existing baseline.
     </div>
     <div class="step">
       <div class="step-num">PASO 03</div>
@@ -178,7 +178,7 @@ python3 -B -S .claude/bin/bootstrap_three_docs.py --refresh
 
 <footer>
   <div>Documentación estática · Sin dependencias externas · Lista para GitHub Pages.</div>
-  <div><a href="https://github.com/slopezrap/OrquestadorFlutterDAG-AnyStack" target="_blank" rel="noopener">Repositorio →</a></div>
+  <div><a href="https://github.com/slopezrap/OrquestadorDAG-AnyStack" target="_blank" rel="noopener">Repositorio →</a></div>
 </footer>
 
 <script src="assets/app.js"></script>
