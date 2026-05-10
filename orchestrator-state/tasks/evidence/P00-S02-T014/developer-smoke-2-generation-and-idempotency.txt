@@ -1,0 +1,23 @@
+Test: Fresh .env (from .env.example with placeholders) → ensure_jwt_keypair → keys generated
+
+Output (first run):
+==> ensure_jwt_keypair: checking JWT_PRIVATE_KEY/JWT_PUBLIC_KEY in /tmp/test/.env
+==> ensure_jwt_keypair: generated fresh RSA 2048 keypair — PEM not echoed (pub thumbprint: ****21a7)
+
+Written lines in .env:
+  JWT_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----
+  JWT_PUBLIC_KEY="-----BEGIN PUBLIC KEY-----
+
+Idempotency check (second run — same .env):
+Output:
+==> ensure_jwt_keypair: checking JWT_PRIVATE_KEY/JWT_PUBLIC_KEY in /tmp/test/.env
+==> ensure_jwt_keypair: JWT keypair already valid (pub thumbprint: ****21a7) — no change
+
+sha256sum comparison:
+  Before: f5241474e356f67542e1cfc470266dc1a68e7f9e3514e3c1790256e7b428a5cb  .env
+  After:  f5241474e356f67542e1cfc470266dc1a68e7f9e3514e3c1790256e7b428a5cb  .env
+  IDEMPOTENCY PASSED: hash identical
+
+CWE-532 guard (no PEM in stdout/stderr):
+  PEM lines found: 0
+  CWE-532 GUARD PASSED: 0 PEM lines in output

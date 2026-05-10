@@ -1,0 +1,28 @@
+T7 — ENABLE_VERBOSE_LOGGING and set -x check
+
+This slice is scripts-only (bash), NOT backend Python code.
+The logging flag ENABLE_VERBOSE_LOGGING controls Python structlog — not bash scripts.
+
+=== Check: does setup-from-scratch.sh use "set -x"? ===
+Result: No. The script does NOT use "set -x" anywhere.
+Confirmed via: grep -n 'set -x' scripts/setup-from-scratch.sh → 0 matches
+
+=== Check: does ensure_jwt_keypair contain any echo/print of PEM body? ===
+The function:
+1. Generates PEM in a local Python variable (never assigned to bash var with echo)
+2. Python generates directly and writes to .env via path.write_text()
+3. Only the thumbprint (last 4 chars of SHA-256) is logged via the log() function
+4. log() → echo "==> $1" → only the masked thumbprint reaches stdout
+
+=== ENABLE_VERBOSE_LOGGING=false behavior ===
+ENABLE_VERBOSE_LOGGING does not affect this bash script (not a Python module).
+Backend Python structlog respects the flag; this script predates the flag loading.
+The .env is sourced AFTER ensure_jwt_keypair runs (line 368: source "$PROJECT_ROOT/.env").
+So ENABLE_VERBOSE_LOGGING value from .env has no effect on ensure_jwt_keypair output.
+
+=== Conclusion ===
+No bash verbose flag (set -x) present in the script.
+No PEM content can leak via verbose bash execution.
+Python code path writes PEM directly to .env via pathlib — never to stdout.
+
+STATUS: PASS — no verbose flag that could leak PEM; script is safe under all logging modes

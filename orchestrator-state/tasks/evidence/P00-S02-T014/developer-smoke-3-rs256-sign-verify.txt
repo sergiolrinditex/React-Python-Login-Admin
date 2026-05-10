@@ -1,0 +1,15 @@
+Test: RS256 sign+verify smoke (closes acceptance §2.3 — D1 decision)
+
+Using PEM values extracted from the tmpdir .env after ensure_jwt_keypair generation:
+
+OK: priv 1704 chars, 28 newlines
+OK: pub  451 chars, 9 newlines
+OK: RSA key_size=2048
+OK: signed+verified with RS256, header={'alg': 'RS256', 'typ': 'JWT'}
+SMOKE TEST PASSED
+
+Notes:
+- This replaces verification commands #5+#6 (sign-up JWT) per acceptance §2.3 / D1
+- sign-up endpoint does NOT emit access_token (returns {data:{mfa_required,user_id}})
+- RS256 sign+verify is exercised directly with pyjwt + the Settings keys
+- End-to-end token issuance will be verified in P01-S02-T002 (sign-in)

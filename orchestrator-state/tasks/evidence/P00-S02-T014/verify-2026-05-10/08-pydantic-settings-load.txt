@@ -1,0 +1,5 @@
+priv len= 1704 starts= '-----BEGIN PRIVATE KEY-----\nMI' newlines= 28
+pub  len= 451 starts= '-----BEGIN PUBLIC KEY-----\nMI' newlines= 9
+RSA key_size= 2048
+header= {'alg': 'RS256', 'typ': 'JWT'} payload= {'sub': 'verify-T014-pydantic'}
+OK: pydantic-settings + RS256 PASSED — R1 RESOLVED

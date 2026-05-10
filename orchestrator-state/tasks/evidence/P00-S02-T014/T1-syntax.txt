@@ -1,0 +1,5 @@
+T1 — Syntax check: bash -n scripts/setup-from-scratch.sh
+Command: bash -n scripts/setup-from-scratch.sh
+Expected: exit 0
+Result: EXIT: 0
+STATUS: PASS

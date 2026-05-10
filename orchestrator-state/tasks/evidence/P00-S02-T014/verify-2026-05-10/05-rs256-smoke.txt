@@ -1,0 +1,7 @@
+priv len= 1704 starts= '-----BEGIN PRIVATE KEY-----\nMI'
+pub  len= 451 starts= '-----BEGIN PUBLIC KEY-----\nMI'
+priv newlines= 28 pub newlines= 9
+parsed RSA key_size= 2048
+header= {'alg': 'RS256', 'typ': 'JWT'}
+payload= {'sub': 'verify-T014', 'iat': 0, 'exp': 9999999999}
+OK: RS256 sign+verify roundtrip PASSED

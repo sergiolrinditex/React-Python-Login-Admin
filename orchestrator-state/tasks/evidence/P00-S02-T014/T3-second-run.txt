@@ -1,0 +1,5 @@
+==> ensure_encryption_key: checking ENCRYPTION_KEY in /tmp/T014-Ratq/.env
+==> ensure_encryption_key: ENCRYPTION_KEY already set (masked: ****Tow=) — no change
+==> ensure_jwt_keypair: checking JWT_PRIVATE_KEY/JWT_PUBLIC_KEY in /tmp/T014-Ratq/.env
+==> ensure_jwt_keypair: JWT keypair already valid (pub thumbprint: ****fee5) — no change
+/Library/Frameworks/Python.framework/Versions/3.11/Resources/Python.app/Contents/MacOS/Python: can't open file '/tmp/.claude/bin/stack_profile.py': [Errno 2] No such file or directory

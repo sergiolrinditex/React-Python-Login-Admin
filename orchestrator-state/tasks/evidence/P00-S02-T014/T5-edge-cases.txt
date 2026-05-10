@@ -1,0 +1,26 @@
+=== T5 Edge Cases — Full Script Output ===
+
+=== (a) empty JWT keys ===
+==> ensure_jwt_keypair: checking JWT_PRIVATE_KEY/JWT_PUBLIC_KEY in /tmp/T014-A2-W7s4/.env
+==> ensure_jwt_keypair: generated fresh RSA 2048 keypair — PEM not echoed (pub thumbprint: ****007f)
+PEM markers in .env after: 2
+STATUS (a): PASS
+
+=== (b) <change-me> placeholder ===
+==> ensure_jwt_keypair: checking JWT_PRIVATE_KEY/JWT_PUBLIC_KEY in /tmp/T014-B2-RU1k/.env
+==> ensure_jwt_keypair: generated fresh RSA 2048 keypair — PEM not echoed (pub thumbprint: ****db5f)
+PEM markers in .env after: 2
+STATUS (b): PASS
+
+=== (c) garbage-not-pem ===
+==> ensure_jwt_keypair: checking JWT_PRIVATE_KEY/JWT_PUBLIC_KEY in /tmp/T014-C2-QENU/.env
+==> ensure_jwt_keypair: generated fresh RSA 2048 keypair — PEM not echoed (pub thumbprint: ****5c5a)
+PEM markers in .env after: 2
+STATUS (c): PASS
+
+=== EDGE CASES SUMMARY ===
+(a) empty → regenerated: YES
+(b) <change-me> → regenerated: YES
+(c) garbage → regenerated: YES
+(d) partial+placeholder → regenerated: YES (verified earlier)
+(e) desync pair → deep validation catch + regenerated: YES (verified earlier)
