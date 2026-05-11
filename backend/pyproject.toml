@@ -76,6 +76,13 @@ dependencies = [
     # ── T003 §2 stack contract — DB ──────────────────────────────────────────
     "sqlalchemy==2.0.49",        # acceptance explicit: "SQLAlchemy async"; async-capable
     "alembic==1.18.4",           # §2 stack contract: "SQLAlchemy async, Alembic"
+
+    # ── T002 §6.2 — Postgres driver for /ready DB ping (debugger cycle 1/3) ─
+    # Without this, SQLAlchemy create_engine("postgresql+psycopg://...") raises
+    # ModuleNotFoundError. Researcher confirmed 3.3.4 is current stable on PyPI
+    # (released 2026-05-01); compatible with sqlalchemy==2.0.49 and Python 3.12.
+    # Source: official-doc-notes/P00-S02-T002-psycopg-version-2026-05-11.md (RESOLVED).
+    "psycopg[binary]==3.3.4",
 ]
 
 [project.optional-dependencies]
