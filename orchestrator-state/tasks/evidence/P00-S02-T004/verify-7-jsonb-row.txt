@@ -1,0 +1,17 @@
+--- Verify employee_profiles row + jsonb type ---
+email          : employee.verification@inditex-sandbox.com
+employee_id    : EMP-VERIFY-001
+brand          : Zara
+society        : ITX-ES
+center         : Madrid-HQ
+country        : ES
+department     : People & Talent
+metadata       : {'start_date': '2022-01-15', 'contract_type': 'indefinite'}
+metadata type  : dict
+pg_typeof      : jsonb
+ASSERTION PASS: metadata is dict, fields match fixture
+users count: 1
+employee_profiles count: 1
+roles count: 0
+permissions count: 0
+user_roles count: 0

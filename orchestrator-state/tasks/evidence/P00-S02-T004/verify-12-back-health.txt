@@ -1,0 +1,4 @@
+--- Backend health endpoints still respond after DB reset+seed ---
+{"data":{"status":"ok","version":"0.1.0","uptime":1798.05}}{"data":{"db":{"status":"ok"},"redis":{"status":"ok"},"litellm":{"status":"unknown"}}}live=200
+--- Frontend serving ---
+front=200

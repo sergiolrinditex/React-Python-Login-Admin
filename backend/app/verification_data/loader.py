@@ -28,6 +28,7 @@ Source refs:
   - 01-non-negotiables.md §Tests are REAL — hits real Postgres, no SQLite.
 """
 
+import json
 import os
 from dataclasses import dataclass
 from typing import Any
@@ -277,7 +278,7 @@ def load_users(
                         text(
                             "INSERT INTO employee_profiles"
                             " (user_id, employee_id, brand, society, center, country, department, metadata)"
-                            " VALUES (:uid, :eid, :brand, :soc, :ctr, :cntry, :dept, :meta::jsonb)"
+                            " VALUES (:uid, :eid, :brand, :soc, :ctr, :cntry, :dept, CAST(:meta AS JSONB))"
                         ),
                         {
                             "uid": user_id,
@@ -287,7 +288,7 @@ def load_users(
                             "ctr": ep.center,
                             "cntry": ep.country,
                             "dept": ep.department,
-                            "meta": str(ep.metadata or {}).replace("'", '"'),
+                            "meta": json.dumps(ep.metadata or {}),
                         },
                     )
                     total_inserted += 1
@@ -389,12 +390,11 @@ def load_rag_collections(
             text("SELECT id FROM rag_collections WHERE name = :name"),
             {"name": fx.name},
         ).fetchone()
-        import json
         if existing is None:
             session.execute(
                 text(
                     "INSERT INTO rag_collections (name, vertical, language, enabled, metadata)"
-                    " VALUES (:name, :vertical, :lang, :enabled, :meta::jsonb)"
+                    " VALUES (:name, :vertical, :lang, :enabled, CAST(:meta AS JSONB))"
                 ),
                 {
                     "name": fx.name, "vertical": fx.vertical,
@@ -407,7 +407,7 @@ def load_rag_collections(
             session.execute(
                 text(
                     "UPDATE rag_collections SET vertical=:vertical, language=:lang,"
-                    " enabled=:enabled, metadata=:meta::jsonb WHERE name=:name"
+                    " enabled=:enabled, metadata=CAST(:meta AS JSONB) WHERE name=:name"
                 ),
                 {
                     "name": fx.name, "vertical": fx.vertical,
@@ -574,7 +574,6 @@ def load_agents(
         )
         return LoadResult(group="mcp_agents", status="deferred", reason="table_missing:agents")
 
-    import json
     total_inserted = total_updated = 0
     for fx in fixtures:
         _info("verification_data.mcp_agents.agents.upsert", name=fx.name)
@@ -586,7 +585,7 @@ def load_agents(
             session.execute(
                 text(
                     "INSERT INTO agents (name, description, enabled, config)"
-                    " VALUES (:name, :desc, :enabled, :config::jsonb)"
+                    " VALUES (:name, :desc, :enabled, CAST(:config AS JSONB))"
                 ),
                 {
                     "name": fx.name, "desc": fx.description,
@@ -599,7 +598,7 @@ def load_agents(
             session.execute(
                 text(
                     "UPDATE agents SET description=:desc, enabled=:enabled,"
-                    " config=:config::jsonb WHERE name=:name"
+                    " config=CAST(:config AS JSONB) WHERE name=:name"
                 ),
                 {
                     "name": fx.name, "desc": fx.description,

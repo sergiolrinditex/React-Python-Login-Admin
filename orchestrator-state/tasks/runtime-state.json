@@ -1,21 +1,22 @@
 {
-  "generated_at": "2026-05-11T15:21:38+00:00",
+  "generated_at": "2026-05-11T16:01:40+00:00",
   "active_phase_id": "P00",
   "active_task_id": "P00-S02-T004",
-  "last_worker": "closer",
-  "last_event": "followup_promoted",
+  "last_worker": "tester",
+  "last_event": "subagent_stop",
   "pending_journey_verifications": [],
   "journey_gate_mode": "frontier",
   "last_journey_verified": null,
   "spawn_budget": 20,
   "spawns_in_current_slice": {
     "P01-S01-T001": 8,
-    "agent:planner": 1,
+    "agent:planner": 2,
     "agent:official-docs-researcher": 1,
-    "agent:developer": 1,
-    "agent:validator": 1,
-    "agent:tester": 1,
-    "agent:closer": 2
+    "agent:developer": 2,
+    "agent:validator": 2,
+    "agent:tester": 2,
+    "agent:closer": 2,
+    "P00-S02-T004": 4
   },
   "open_followups": [
     {
@@ -31,20 +32,15 @@
       "promoted_task_id": "P00-S02-T004"
     }
   ],
-  "last_claimed_task_id": "P01-S01-T001",
+  "last_claimed_task_id": "P00-S02-T004",
   "last_trailer": {
-    "task_id": "P01-S01-T001",
-    "outcome": "committed",
-    "next_status": "done",
-    "handoff": "orchestrator-state/tasks/handoffs/P01-S01-T001.md",
-    "evidence": "orchestrator-state/tasks/evidence/P01-S01-T001/",
-    "report": "orchestrator-state/tasks/reports/P01-S01-T001.md",
-    "report_ready": "yes",
-    "baseline_sync_ready": "yes",
-    "git_ready": "yes",
-    "push_ready": "yes",
-    "worktrees_cleaned": "yes"
+    "task_id": "P00-S02-T004",
+    "outcome": "pass",
+    "next_status": "ready_for_close",
+    "handoff": "orchestrator-state/tasks/handoffs/P00-S02-T004.md",
+    "evidence": "orchestrator-state/tasks/evidence/P00-S02-T004/"
   },
-  "last_stop_at": "2026-05-11T15:19:30+00:00",
-  "last_followup_id": "FU-20260511145446-fix-verification-data-loader-meta-jsonb-sql-cast"
+  "last_stop_at": "2026-05-11T16:01:40+00:00",
+  "last_followup_id": "FU-20260511145446-fix-verification-data-loader-meta-jsonb-sql-cast",
+  "last_claimed_phase_id": "P00"
 }

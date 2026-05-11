@@ -1,0 +1,35 @@
+## Contract Observed — P00-S02-T004
+
+### Backend module tested
+
+- `backend/app/verification_data/loader.py` — fixed functions:
+  - `load_users()`: INSERT to `employee_profiles` with `CAST(:meta AS JSONB)` + `json.dumps()`
+  - `load_rag_collections()`: INSERT/UPDATE preventive maintenance (deferred, table absent)
+  - `load_agents()`: INSERT/UPDATE preventive maintenance (deferred, table absent)
+  - `_table_exists()`: returns False for `rag_collections` and `agents` — confirmed via DB inspection
+
+### Database tables observed
+
+- `employee_profiles`: INSERT exercised by tests (AC1, AC4, AC9, AC11)
+  - Column `metadata` confirmed as `jsonb` type (pg_typeof = jsonb)
+  - JSONB value correctly stored: {"start_date": "2022-01-15", "contract_type": "indefinite"}
+- `users`: INSERT exercised by bootstrap via `_upsert_user()`
+- `rag_collections`: NOT present (deferred — migration 0001 only covers auth tables)
+- `agents`: NOT present (deferred — same reason)
+
+### Test modules executed
+
+- `backend/tests/integration/test_dev_restart_reset.py`
+  - Uses: subprocess → real alembic CLI → real Postgres
+  - 2 tests: test_db_reset_cycle_exits_zero, test_reset_exits_zero_and_is_idempotent
+- `backend/tests/integration/test_verification_data_bootstrap.py`
+  - Uses: pg_engine fixture (SQLAlchemy create_engine → postgresql+psycopg://localhost:5432/hilo_dev)
+  - 9 tests covering: idempotency, error paths, --only filter, invalid flags, --dry-run, deferred, redaction, verbose off
+  - Transactions rolled back per test (fixture isolation) — no persistent contamination
+
+### Realness confirmation
+
+- pg_engine fixture connects to `postgresql+psycopg://hilo:hilo@localhost:5432/hilo_dev`
+- alembic CLI resolves to `/Users/sergiolr/Library/Python/3.11/bin/alembic`
+- No service mocks present — tests would fail if Postgres were down
+- `_table_exists()` runs real `SELECT EXISTS(...)` query against live Postgres

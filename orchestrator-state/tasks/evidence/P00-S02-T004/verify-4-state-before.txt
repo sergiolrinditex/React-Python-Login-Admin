@@ -1,0 +1,10 @@
+--- Pre-state: empty tables ---
+users: 0 rows
+employee_profiles: 0 rows
+roles: 0 rows
+permissions: 0 rows
+user_roles: 0 rows
+refresh_tokens: 0 rows
+mfa_totp_secrets: 0 rows
+password_reset_tokens: 0 rows
+audit_logs: 0 rows

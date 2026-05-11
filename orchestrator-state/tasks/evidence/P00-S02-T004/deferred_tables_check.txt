@@ -1,0 +1,4 @@
+Existing tables: ['alembic_version', 'audit_logs', 'employee_profiles', 'mfa_totp_secrets', 'password_reset_tokens', 'permissions', 'refresh_tokens', 'roles', 'user_roles', 'users']
+
+  rag_collections: exists=False (expected: False -> deferred path confirmed)
+  agents: exists=False (expected: False -> deferred path confirmed)

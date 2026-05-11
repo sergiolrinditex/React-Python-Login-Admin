@@ -1,0 +1,31 @@
+## Verification Data Contract — P00-S02-T004
+
+### Contract rows used (from TECHNICAL_GUIDE §6.5)
+
+| Flow/Journey | Persona/Rol | Datos reales/proporcionados requeridos | Carga | Reset/Cleanup | Slices/Journeys |
+|---|---|---|---|---|---|
+| J100 auth-login | employee | usuario confirmado, MFA secret reales/proporcionados desde data/verification | python -m app.verification_data.bootstrap --source data/verification --only auth | scripts/dev-restart.sh --reset | J100, P01-S02, P03-S01 |
+
+### Real/provided data used
+
+- Fixture file: `data/verification/users/employee_primary.json`
+  - email: employee.verification@inditex-sandbox.com
+  - employee_id: EMP-VERIFY-001
+  - brand: Zara, society: ITX-ES, center: Madrid-HQ, country: ES, department: People & Talent
+  - metadata: { "contract_type": "indefinite", "start_date": "2022-01-15" }
+
+### Persisted data observed (from psql query)
+
+Row found in `employee_profiles` after bootstrap:
+  employee_id | metadata                                                       | pg_typeof(metadata)
+  EMP-VERIFY-001 | {"start_date": "2022-01-15", "contract_type": "indefinite"} | jsonb
+
+- `metadata` column type confirmed as `jsonb` (not text, not varchar)
+- Value is a real JSONB object (not a JSON string)
+
+### Key observations
+
+1. Cast fixed: `CAST(:meta AS JSONB)` used in SQL — correct SQLAlchemy text() form.
+2. Serialization fixed: `json.dumps(ep.metadata or {})` — canonical JSON output.
+3. Preventive maintenance applied: same cast fix at load_rag_collections() and load_agents() (deferred paths).
+4. Deferred tables confirmed: `rag_collections` and `agents` do NOT exist in current schema → those branches return deferred status as expected.

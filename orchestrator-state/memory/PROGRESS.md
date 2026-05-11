@@ -17,9 +17,10 @@
   - P00-S01-T005 — i18n resources ES/EN/FR (done, 2026-05-11)
   - P00-S02-T003 — Verification data loader + Alembic infra (done, 2026-05-11)
   - P01-S01-T001 — 0001_auth_users_employee_audit migration (done, 2026-05-11)
+  - P00-S02-T004 — fix verification_data loader `:meta::jsonb` SQL cast (done, 2026-05-11)
 - **Next pending slice**: P01-S02-T001 — POST /api/v1/auth/sign-up endpoint
-- **Blockers**: Pre-existing bug in loader.py `:meta::jsonb` — FU-20260511145446 registered (medium, not blocking)
-- **Generated at**: 2026-05-11T19:00:00+00:00
+- **Blockers**: none
+- **Generated at**: 2026-05-11T20:00:00+00:00
 
 ## Infrastructure Status (P00-S02-T001)
 
@@ -44,8 +45,8 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 | Health check | 3 endpoints implemented | GET /health (backward compat), GET /live (liveness), GET /ready (readiness with DB+Redis ping) |
 | Endpoints implemented | 3 | GET /health, GET /live, GET /ready |
 | Migrations applied | 1 (head=0001) | 9 auth tables: users, employee_profiles, roles, permissions, user_roles, refresh_tokens, mfa_totp_secrets, password_reset_tokens, audit_logs |
-| Seed data | not loaded (FU blocker in loader.py) | FU-20260511145446 — loader.py :meta::jsonb bug — medium, proposed |
-| Backend tests | 37 passing | test_health.py (11) + test_dependency_smoke.py (20) + test_migrations_0001_auth.py (6) |
+| Seed data | loader.py fixed (P00-S02-T004); bootstrap ready | FU-20260511145446 resolved — CAST(:meta AS JSONB) + json.dumps() |
+| Backend tests | 48 passing | test_health.py (11) + test_dependency_smoke.py (20) + test_migrations_0001_auth.py (6) + test_dev_restart_reset.py (2) + test_verification_data_bootstrap.py (9) |
 | Backend dependencies | declared + installed | see pyproject.toml [project.dependencies] — 26 packages pinned (23 T003 + psycopg[binary]==3.3.4 T002 + argon2-cffi==25.1.0 + cryptography==48.0.0 T003) |
 | Lint (ruff) | clean | 0 issues |
 
@@ -68,27 +69,27 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 
 | Table | Migration | Seed | Status |
 |-------|-----------|------|--------|
-| users | 0001_auth_users_employee_audit.py | not loaded (loader.py FU) | created |
-| employee_profiles | 0001_auth_users_employee_audit.py | not loaded | created |
-| roles | 0001_auth_users_employee_audit.py | not loaded | created |
-| permissions | 0001_auth_users_employee_audit.py | not loaded | created |
-| user_roles | 0001_auth_users_employee_audit.py | not loaded | created |
-| refresh_tokens | 0001_auth_users_employee_audit.py | not loaded | created |
-| mfa_totp_secrets | 0001_auth_users_employee_audit.py | not loaded | created |
-| password_reset_tokens | 0001_auth_users_employee_audit.py | not loaded | created |
-| audit_logs | 0001_auth_users_employee_audit.py | not loaded | created |
+| users | 0001_auth_users_employee_audit.py | ready (loader fixed P00-S02-T004) | created |
+| employee_profiles | 0001_auth_users_employee_audit.py | ready (loader fixed P00-S02-T004) | created |
+| roles | 0001_auth_users_employee_audit.py | ready (loader fixed) | created |
+| permissions | 0001_auth_users_employee_audit.py | ready (loader fixed) | created |
+| user_roles | 0001_auth_users_employee_audit.py | ready (loader fixed) | created |
+| refresh_tokens | 0001_auth_users_employee_audit.py | ready (loader fixed) | created |
+| mfa_totp_secrets | 0001_auth_users_employee_audit.py | ready (loader fixed) | created |
+| password_reset_tokens | 0001_auth_users_employee_audit.py | ready (loader fixed) | created |
+| audit_logs | 0001_auth_users_employee_audit.py | ready (loader fixed) | created |
 
 ## Tests Summary
 
 | Level | Count | Status |
 |-------|-------|--------|
 | Backend unit | 0 | — |
-| Backend integration | 37 | PASS (health probe 11 + dep smoke 20 + T001 migrations 6) |
+| Backend integration | 48 | PASS (health probe 11 + dep smoke 20 + T001 migrations 6 + dev restart 2 + bootstrap 9) |
 | Compose orchestration smoke | 11 | PASS (T1–T8 tester + verify cycle 1+2 + minio-init bucket) |
 | Frontend unit | 0 | — |
 | Frontend component | 58 | PASS (providers 4 + design-system 34 + showcase 4 + i18n 16) |
 | E2E | 0 | — |
-| **Total** | **106** | **106 PASS, 0 FAIL** |
+| **Total** | **117** | **117 PASS, 0 FAIL** |
 
 ## Milestones
 
@@ -155,6 +156,7 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 - **2026-05-11 (P01-S01-T001)**: No `CREATE EXTENSION vector` in migration 0001 (YAGNI for this slice; vector belongs to P02-S01-T001 D1). No `DROP EXTENSION pgcrypto` in downgrade (D2).
 - **2026-05-11 (P01-S01-T001)**: `extra_metadata` Python attribute → `metadata` DB column via `mapped_column("metadata", JSONB)` to avoid SQLAlchemy 2.x DeclarativeBase reserved attribute conflict.
 - **2026-05-11 (P01-S01-T001)**: `audit_logs.actor_user_id` ON DELETE SET NULL (not CASCADE) for GDPR Art. 30 — audit trail preserved when user deleted (pseudonymization is app-layer concern P04).
+- **2026-05-11 (P00-S02-T004)**: Fixed `:meta::jsonb` SQL cast in `loader.py:load_users()` (employee_profiles INSERT). Used `CAST(:meta AS JSONB)` (SQL-standard, unambiguous to SQLAlchemy text() parser) + `json.dumps()` (canonical JSON serializer). Preventive maintenance: also fixed cast syntax in out-of-scope `load_rag_collections()` and `load_agents()` functions (same file, cast-only change, deferred paths — requires validator approval). import json hoisted to module top.
 - **2026-05-11 (P01-S01-T001)**: FU-20260511145446 registered (medium) — loader.py `:meta::jsonb` cast bug in P00-S02-T003 tests now surfaces because tables exist. Out of T001 scope. Main-orchestrator to decide promotion/waiver.
 
 ## Known Issues / Risks
@@ -182,5 +184,5 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 
 ---
 
-> Last updated: 2026-05-11T19:00:00+00:00
-> Updated by: closer — P01-S01-T001 0001_auth_users_employee_audit migration (done)
+> Last updated: 2026-05-11T17:55:00+00:00
+> Updated by: developer — P00-S02-T004 fix verification_data loader :meta::jsonb SQL cast (in progress)

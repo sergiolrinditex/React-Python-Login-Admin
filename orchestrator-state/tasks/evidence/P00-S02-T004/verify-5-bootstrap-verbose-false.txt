@@ -1,0 +1,2 @@
+--- Bootstrap auth verbose=false (1st run via worktree, INSERT path) ---
+{"status": "ok", "groups": [{"group": "auth", "status": "ok", "inserted": 2, "updated": 0, "skipped": 0, "reason": ""}]}

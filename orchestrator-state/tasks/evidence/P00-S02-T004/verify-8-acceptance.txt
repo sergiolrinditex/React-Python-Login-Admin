@@ -1,0 +1,23 @@
+--- Canonical acceptance command from task pack ---
+============================= test session starts ==============================
+platform darwin -- Python 3.11.5, pytest-9.0.2, pluggy-1.6.0 -- /usr/local/bin/python3
+cachedir: .pytest_cache
+rootdir: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-a2de278daf1cb7c43/backend
+configfile: pyproject.toml
+plugins: httpx-0.36.0, asyncio-1.3.0, langsmith-0.8.3, anyio-4.13.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 11 items
+
+tests/integration/test_dev_restart_reset.py::test_db_reset_cycle_exits_zero PASSED [  9%]
+tests/integration/test_dev_restart_reset.py::test_reset_exits_zero_and_is_idempotent PASSED [ 18%]
+tests/integration/test_verification_data_bootstrap.py::test_idempotency_two_runs_same_state PASSED [ 27%]
+tests/integration/test_verification_data_bootstrap.py::test_missing_dir_fails_with_clear_error PASSED [ 36%]
+tests/integration/test_verification_data_bootstrap.py::test_missing_required_field_fails_with_field_name PASSED [ 45%]
+tests/integration/test_verification_data_bootstrap.py::test_only_flag_filters_groups PASSED [ 54%]
+tests/integration/test_verification_data_bootstrap.py::test_invalid_only_flag_lists_valid_choices PASSED [ 63%]
+tests/integration/test_verification_data_bootstrap.py::test_dry_run_does_not_touch_db PASSED [ 72%]
+tests/integration/test_verification_data_bootstrap.py::test_deferred_groups_log_warn_when_tables_missing PASSED [ 81%]
+tests/integration/test_verification_data_bootstrap.py::test_redaction_in_logs_no_password_no_token PASSED [ 90%]
+tests/integration/test_verification_data_bootstrap.py::test_verbose_off_no_info_logs PASSED [100%]
+
+============================== 11 passed in 7.09s ==============================

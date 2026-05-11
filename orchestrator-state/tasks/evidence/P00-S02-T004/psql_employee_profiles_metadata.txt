@@ -1,0 +1,3 @@
+employee_id | metadata | pg_typeof(metadata)
+----------------------------------------------------------------------
+EMP-VERIFY-001 | {"start_date": "2022-01-15", "contract_type": "indefinite"} | jsonb

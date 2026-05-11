@@ -1,0 +1,13 @@
+--- Schema after upgrade head (table list + employee_profiles columns) ---
+TABLES: ['alembic_version', 'audit_logs', 'employee_profiles', 'mfa_totp_secrets', 'password_reset_tokens', 'permissions', 'refresh_tokens', 'roles', 'user_roles', 'users'] count= 10
+employee_profiles columns:
+  ('user_id', 'uuid')
+  ('employee_id', 'text')
+  ('brand', 'text')
+  ('society', 'text')
+  ('center', 'text')
+  ('country', 'text')
+  ('department', 'text')
+  ('metadata', 'jsonb')
+users count (should be 0 post-reset): 0
+employee_profiles count (should be 0 post-reset): 0

@@ -1,0 +1,9 @@
+2026-05-11 17:59:02 [info     ] verification_data.bootstrap.start dry_run=False only=auth source=../data/verification
+2026-05-11 17:59:02 [info     ] verification_data.group.auth.start
+2026-05-11 17:59:02 [info     ] verification_data.group.auth.start
+2026-05-11 17:59:02 [info     ] verification_data.auth.users.start count=1
+2026-05-11 17:59:02 [info     ] verification_data.auth.users.upsert email=e***@inditex-sandbox.com status=active
+2026-05-11 17:59:02 [info     ] verification_data.auth.users.ok inserted=0 skipped=0 updated=2
+2026-05-11 17:59:02 [info     ] verification_data.group.auth.done
+{"status": "ok", "groups": [{"group": "auth", "status": "ok", "inserted": 0, "updated": 2, "skipped": 0, "reason": ""}]}
+2026-05-11 17:59:02 [info     ] verification_data.bootstrap.done groups_run=1

@@ -1,0 +1,4 @@
+--- PII redaction grep on logs ---
+Searching for unmasked emails / passwords / tokens in all evidence logs...
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/orchestrator-state/tasks/evidence/P00-S02-T004/verify-7-jsonb-row.txt:2:email          : employee.verification@inditex-sandbox.com
+(expected: only verify-7 contains the email from the DB query — not the logs.)

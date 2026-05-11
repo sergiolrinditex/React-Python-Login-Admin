@@ -1,0 +1,8 @@
+--- Bootstrap auth ENABLE_VERBOSE_LOGGING=false (1st run, should INSERT) ---
+ERROR: unexpected error in group 'auth': (psycopg.errors.SyntaxError) syntax error at or near ":"
+LINE 1: ...nt, metadata) VALUES ($1, $2, $3, $4, $5, $6, $7, :meta::jso...
+                                                             ^
+[SQL: INSERT INTO employee_profiles (user_id, employee_id, brand, society, center, country, department, metadata) VALUES (%(uid)s, %(eid)s, %(brand)s, %(soc)s, %(ctr)s, %(cntry)s, %(dept)s, :meta::jsonb)]
+[parameters: {'uid': 'ad072c94-22ad-4b1b-97a6-a1a616cf9441', 'eid': 'EMP-VERIFY-001', 'brand': 'Zara', 'soc': 'ITX-ES', 'ctr': 'Madrid-HQ', 'cntry': 'ES', 'dept': 'People & Talent'}]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2026-05-11 18:11:21 [error    ] verification_data.bootstrap.error error='(psycopg.errors.SyntaxError) syntax error at or near ":"\nLINE 1: ...nt, metadata) VALUES ($1, $2, $3, $4, $5, $6, $7, :meta::jso...\n                                                             ^\n[SQL: INSERT INTO employee_profiles (user_id, employee_id, brand, society, center, country, department, metadata) VALUES (%(uid)s, %(eid)s, %(brand)s, %(soc)s, %(ctr)s, %(cntry)s, %(dept)s, :meta::jsonb)]\n[parameters: {\'uid\': \'ad072c94-22ad-4b1b-97a6-a1a616cf9441\', \'eid\': \'EMP-VERIFY-001\', \'brand\': \'Zara\', \'soc\': \'ITX-ES\', \'ctr\': \'Madrid-HQ\', \'cntry\': \'ES\', \'dept\': \'People & Talent\'}]\n(Background on this error at: https://sqlalche.me/e/20/f405)' group=auth
