@@ -1,0 +1,12 @@
+verify-slice run summary — P00-S01-T002
+TIMESTAMP: 2026-05-11T10:05:03+00:00
+MODE: pre-closer
+HARD_RESET: rm -rf node_modules && npm ci  → 165 packages in 3s, exit 0
+VERIFY_CMD: bash -lc "npm --prefix frontend run test -- --run"  → 4 PASS, exit 0
+VERBOSE_ON: 4 stdout lines ("providers.init.start ..." + "providers.init.ok ...") visible per render
+VERBOSE_OFF: 0 "providers.init.*" lines; all 4 tests still pass
+LOCK_CANONICAL: react-router-dom=0  react-router=1
+SECURITY_SCOPE: no localStorage/sessionStorage/persistQueryClient in product code (only docstring PROHIBITED comments)
+FILE_SIZES: providers.tsx=167  i18n/index.ts=54  vitest.config.ts=30  vitest.setup.ts=11  tsconfig.json=17  providers.test.tsx=103  (all ≤200)
+DEP_BUDGET: 10 prod + 9 dev = 19 direct (≤30 cap)
+OUTCOME: VERIFIED

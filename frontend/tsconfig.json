@@ -1,0 +1,17 @@
+{
+  "_comment": "Hilo People — frontend TypeScript config. Slice: P00-S01-T002 (WRITE_SET_DRIFT accepted: needed for vitest TSX compilation + provider smoke test). T004 will extend with path aliases and router types.",
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "allowImportingTsExtensions": true
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
+}
