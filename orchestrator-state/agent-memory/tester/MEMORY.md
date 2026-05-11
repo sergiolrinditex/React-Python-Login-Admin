@@ -20,6 +20,17 @@
 
 ## Per-task cache
 
+### P00-S01-T005 — i18n resources ES/EN/FR (2026-05-11) — PASS
+- OUTCOME: pass (first run)
+- TESTS: 58/58 frontend pass; 16/16 i18n-filtered pass; 0 fail
+- KEY LEARNING: i18n is frontend-only (jsdom). The "servers_status: n/a" is correct and expected — do NOT flag as blocked or fail just because backend is not needed. Rule 01-non-negotiables allows pure-logic unit tests to be isolated.
+- KEY LEARNING: When `VITE_ENABLE_VERBOSE_LOGGING=false` is tested and there is genuinely no log output, zero stdout IS the pass condition. Absence of logs = correct behavior for verbose=false.
+- KEY LEARNING: For i18n bundle validation, use two layers: (1) Vitest tests using real i18n singleton, (2) python3 JSON.load() on all 24 files. Both are needed — tests prove runtime resolution, python3 proves the static JSON files are valid (even when not imported at build time).
+- KEY LEARNING: The vitest filter `-t i18n` matches on describe/it string content. All test names must contain the literal "i18n" (both in describe and it labels) for the filter to work. Verify this before asserting the filter works.
+- KEY LEARNING: Error namespace coverage check — script to verify all N error codes exist in all M locales: iterate codes × locales via python3. Saves time vs reading 3 × N JSON fields manually.
+- Evidence: orchestrator-state/tasks/evidence/P00-S01-T005/
+- Handoff: orchestrator-state/tasks/handoffs/P00-S01-T005.md
+
 ### P00-S02-T001 — Docker compose services (2026-05-11) — RETEST cycle 1/3
 - OUTCOME: pass (retest)
 - INITIAL TESTER RUN: pass (static checks); F1 CRITICAL found by verify-slice (litellm UNHEALTHY)

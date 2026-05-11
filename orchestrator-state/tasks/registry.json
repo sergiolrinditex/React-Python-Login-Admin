@@ -15,7 +15,7 @@
       "id": "P00",
       "phase_number": 0,
       "title": "Bootstrap / foundation propia",
-      "status": "ready",
+      "status": "blocked",
       "depends_on": [],
       "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Phase 0 — Bootstrap / foundation propia",
       "task_ids": [
@@ -465,7 +465,7 @@
       "phase_id": "P00",
       "step_id": "P00-S01",
       "title": "i18n resources ES/EN/FR",
-      "status": "ready",
+      "status": "ready_for_close",
       "build_state": "planned",
       "product_increment": "v1",
       "risk_level": "medium",
@@ -507,7 +507,7 @@
         "frontend/public/locales/**"
       ],
       "handoff_path": "orchestrator-state/tasks/handoffs/P00-S01-T005.md",
-      "evidence_dir": "orchestrator-state/tasks/evidence/P00-S01-T005",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P00-S01-T005/",
       "notes": [],
       "dependency_mode": "explicit_dag",
       "depends_on_raw": "P00-S01-T002,P00-S01-T004",
@@ -524,7 +524,16 @@
       "endpoint_raw": "—",
       "tables_raw": "users",
       "origin_instr_raw": "§6#i18n",
-      "origin_techguide_raw": "§6.5#verification-data"
+      "origin_techguide_raw": "§6.5#verification-data",
+      "claimed_at": "2026-05-11T13:03:21+00:00",
+      "claimed_by": "sergiolr",
+      "claim_terminal_task_env": "P00-S01-T005",
+      "task_pack_path": "orchestrator-state/tasks/task-packs/P00-S01-T005.md",
+      "last_outcome": "pass",
+      "last_updated_by": "tester",
+      "last_stop_at": "2026-05-11T13:28:44+00:00",
+      "validator_outcome": "approved",
+      "validator_next_status": "ready_for_close"
     },
     {
       "id": "P00-S02-T001",
@@ -667,7 +676,7 @@
       "phase_id": "P00",
       "step_id": "P00-S02",
       "title": "Verification data loader and reset",
-      "status": "ready",
+      "status": "ready_for_close",
       "build_state": "planned",
       "product_increment": "v1",
       "risk_level": "medium",
@@ -717,7 +726,7 @@
         "scripts/dev-restart.sh"
       ],
       "handoff_path": "orchestrator-state/tasks/handoffs/P00-S02-T003.md",
-      "evidence_dir": "orchestrator-state/tasks/evidence/P00-S02-T003",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P00-S02-T003/",
       "notes": [],
       "dependency_mode": "explicit_dag",
       "depends_on_raw": "P00-S02-T002",
@@ -734,7 +743,16 @@
       "endpoint_raw": "—",
       "tables_raw": "users, employee_profiles, rag_collections, documents, ai_providers, mcp_servers, agents",
       "origin_instr_raw": "§15#verification-data",
-      "origin_techguide_raw": "§6.5#verification-data"
+      "origin_techguide_raw": "§6.5#verification-data",
+      "claimed_at": "2026-05-11T13:03:01+00:00",
+      "claimed_by": "sergiolr",
+      "claim_terminal_task_env": "P00-S02-T003",
+      "task_pack_path": "orchestrator-state/tasks/task-packs/P00-S02-T003.md",
+      "last_outcome": "pass",
+      "last_updated_by": "tester",
+      "last_stop_at": "2026-05-11T13:47:44+00:00",
+      "validator_outcome": "approved",
+      "validator_next_status": "ready_for_close"
     },
     {
       "id": "P01-S01-T001",

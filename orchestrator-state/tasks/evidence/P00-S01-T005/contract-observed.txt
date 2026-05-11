@@ -1,0 +1,33 @@
+Contract observed — P00-S01-T005 i18n resources ES/EN/FR
+=========================================================
+
+Frontend layer observed:
+  - frontend/src/i18n/index.ts — i18next singleton bootstrap; 8 ns × 3 langs inline; BEFORE/AFTER logs
+  - frontend/src/i18n/languages.ts — SUPPORTED_LANGUAGES, DEFAULT_LANGUAGE, I18N_NAMESPACES, DEFAULT_NAMESPACE, Language type
+  - frontend/src/i18n/types.d.ts — i18next CustomTypeOptions augmentation
+  - frontend/src/i18n/__tests__/i18n.test.ts — 16 vitest tests covering 8 acceptance groups
+  - frontend/src/app/providers.tsx — I18nextProvider wired; imports default i18n from ../i18n/index
+  - frontend/src/pages/showcase/I18nDemoSection.tsx — demo consumer (WRITE_SET_DRIFT approved)
+  - frontend/src/pages/showcase/ShowcasePage.tsx — imports I18nDemoSection (WRITE_SET_DRIFT approved)
+  - frontend/public/locales/{es,en,fr}/{common,auth,chat,account,admin-ai,rag,mcp,errors}.json — 24 JSON bundles
+
+Provider/API client observed:
+  - N/A — i18n is static; no API calls, no data fetching
+
+Backend endpoints observed:
+  - N/A — T005 is frontend-only
+
+DB tables/columns observed:
+  - N/A — users.preferred_language not yet materialised (deferred to P01-S02-T007)
+
+Tests observed during run:
+  - i18n.test.ts: 16 tests / 8 describe groups (all pass)
+  - providers.test.tsx: 4 tests (all pass; 3 skipped with -t i18n filter)
+  - design-system.test.tsx: 34 tests (all pass in full run)
+  - ShowcasePage.test.tsx: 4 tests (all pass in full run)
+  Total: 58 tests pass, 0 fail
+
+Logging contract observed:
+  - VITE_ENABLE_VERBOSE_LOGGING=true → i18n.init.start + i18n.init.ok printed to stdout
+  - VITE_ENABLE_VERBOSE_LOGGING=false → zero stdout output from i18n module
+  - No PII, tokens, passwords, or secrets observed in any log line

@@ -1,0 +1,26 @@
+Network requests captured during full session.
+Total: 33 requests. All 200/304 (success). No 4xx/5xx.
+
+Categories:
+  Vite client/HMR:                3 (req 1,2,4)
+  React + ReactDOM + jsx-runtime: 5 (req 5,6,11,12,20,21)
+  TanStack Query:                 1 (req 13)
+  React Router:                   1 (req 16)
+  react-i18next + i18next deps:   2 (req 14,18)
+  T005 i18n module:               2 (req 15 /src/i18n/index.ts, req 19 /src/i18n/languages.ts)
+  Showcase shells:                3 (ShowcasePage, ShowcaseSections, I18nDemoSection)
+  Design tokens / global css:     2 (req 9, 10)
+  Design system components:      8 (Wordmark, TrackedLabel, EditorialInput, SolidCTA, HairlineTable, StatusDot, AdminShell, CitationInline)
+  Favicon:                        1 (req 33)
+  app providers + router:         2
+
+Critical assertion for T005 acceptance: NO requests to /locales/**/*.json during boot or during the 3 language switches.
+
+grep '/locales/' on the request log: ZERO matches.
+
+Manual probe: `fetch('/locales/es/auth.json')` returned status=200 (Vite static serving),
+but this was a manual fetch, NOT issued by the i18next instance. Confirms:
+- public/locales/{lng}/{ns}.json files exist and are accessible (reference/migration path).
+- i18next uses inline TS resources from src/i18n/index.ts at module load — no HTTP at runtime.
+
+This matches the documented T005 design decision (task pack §2.5, handoff §Developer.Decisions.1).

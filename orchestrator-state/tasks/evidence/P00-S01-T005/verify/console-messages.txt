@@ -1,0 +1,36 @@
+Console messages captured from http://localhost:5173/showcase after full reproduction
+(EN click → FR click → ES revert), VITE_ENABLE_VERBOSE_LOGGING=true.
+includePreservedMessages=true (covers full session since navigation).
+
+msgid=1  [debug] [vite] connecting...
+msgid=2  [info]  React DevTools hint
+msgid=3  [info]  i18n.init.start                  <-- T005 BEFORE init log, gated by env flag
+msgid=4  [info]  i18n.init.ok                     <-- T005 AFTER  init log, gated by env flag
+msgid=5  [info]  main.mount.start
+msgid=6  [info]  main.mount.ok
+msgid=7  [info]  providers.init.start phase=P00 slice=P00-S01-T002 queryClient=injected:false i18n=injected:false
+msgid=8  [info]  providers.init.ok queryClient=ready i18n=ready
+msgid=9  [info]  providers.init.start (StrictMode 2nd pass)
+msgid=10 [info]  providers.init.ok (StrictMode 2nd pass)
+msgid=11 [info]  AppRouter.render.start                       (×2 StrictMode)
+msgid=13 [info]  ShowcasePage.render.start                    (×2 StrictMode)
+msgid=15 [info]  EditorialInput.render.start                  (×10 instances)
+msgid=25 [info]  SolidCTA.render.start                        (×8 instances)
+msgid=33 [info]  HairlineTable.render.start                   (×6 instances)
+msgid=39 [info]  SolidCTA.render.start                        (×2)
+msgid=41 [info]  HairlineTable.render.start                   (×2)
+msgid=43 [info]  StatusDot.render.start                       (×10)
+msgid=53 [info]  AdminShell.render.start                      (×2)
+msgid=55 [info]  CitationInline.render.start                  (×8)
+msgid=63 [debug] [vite] connected.
+msgid=64 [info]  i18n-demo.changeLanguage.start               <-- click EN: BEFORE
+msgid=65 [info]  i18n-demo.changeLanguage.ok                  <-- click EN: AFTER
+msgid=66 [info]  i18n-demo.changeLanguage.start               <-- click FR: BEFORE
+msgid=67 [info]  i18n-demo.changeLanguage.ok                  <-- click FR: AFTER
+msgid=68 [info]  i18n-demo.changeLanguage.start               <-- click ES: BEFORE
+msgid=69 [info]  i18n-demo.changeLanguage.ok                  <-- click ES: AFTER
+
+Conclusions:
+- BEFORE/AFTER pattern present for both i18n init AND demo language switch.
+- Zero PII / tokens / secrets in any log payload (only phase/slice/lng/ns counts and namespace names per validator review §logging).
+- Zero errors, zero warnings emitted from T005 code.

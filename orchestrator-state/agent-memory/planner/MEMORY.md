@@ -64,6 +64,21 @@
 
 - `runtime-state.active_task_id` is the SINGLETON pointer; in DAG mode multiple terminals run concurrently. If your env `CLAUDE_ACTIVE_TASK_ID=T002` but the singleton points to T003, that is NORMAL parallelism (sister terminal). Confirm via `Conflict group` disjointness in registry. Do not bail out as "registry drift".
 
+### P-10 — i18n resource slice (T005 pattern, reusable for any locale-pack slice)
+
+- `instrucciones.md §6` (or the project's equivalent i18n keys section) usually contains a small literal table that fixes:
+  - the set of supported languages,
+  - the fallback,
+  - the set of namespaces (string literals),
+  - the canonical copy for a sample of keys per language.
+  Treat this table as the legal contract. Every namespace + every literal copy MUST land verbatim in the bundles. EN/FR (or any non-fallback language) MUST NOT be a copy-paste of the fallback — that is a covert acceptance failure even if `t()` returns a string.
+- `TECHNICAL_GUIDE §6.4 Formato de errores` (or equivalent error-code catalog) is the legal source for the `errors` namespace keys. Cross-list ALL codes there into the errors bundle in the pack so the developer doesn't ship a half-empty errors map.
+- Bundle delivery format on Vite + i18next v26: inline import from `public/locales/**/*.json` is KISS-correct for tiny bundles (<10KB gzipped). HTTP backend + lazy-load is YAGNI in P0. Document the decision in the pack so the developer doesn't introduce `i18next-http-backend`.
+- `i18next-browser-languagedetector` should remain DISABLED in any slice that lives before the screen that exposes a language selector (AccountPage in this product). The jsdom crash already documented in T002 is reason to keep it OFF. Activation belongs to the AccountPage slice, not the bundle slice.
+- Verify_mode=human on an infrastructure slice with no new screen → propose a **minimal demo consumer in the existing dev-only showcase route** (`/showcase` here). Flag it as WRITE_SET_DRIFT in the handoff with the reason "verify_mode=human requires a visible consumer". Without this, /verify-slice cannot run a real browser reproduction and the slice cannot close.
+- TS module augmentation (`declare module "i18next" { CustomTypeOptions }`) is an optional best-practice that future screen slices will benefit from. Make it explicit in the pack but deferable if it generates TS friction in the dep matrix.
+- Write_set `frontend/src/i18n/**` + `frontend/public/locales/**` is **disjoint** from `frontend/src/shared/styles/**` (tokens) — confirm this in the pack to short-circuit validator concern about i18n touching the design system.
+
 ### P-9 — Infra/compose slices in P00-S02 (Docker Compose)
 
 - Acceptance text "Postgres, Redis, LiteLLM, MinIO and worker boot locally" can be interpreted two ways: (a) services declared in YAML + healthchecks pass, (b) every service actually runs sanely. For "worker" (Celery), the Celery entrypoint module (e.g. `app.worker`) usually does NOT exist yet at this stage (lives in P02-S04-T002). Plan the slice for interpretation (a) with `restart: on-failure`, and surface the question to the human via §J Open questions. Don't silently create a stub `app/worker.py` in a write_set that excludes it.

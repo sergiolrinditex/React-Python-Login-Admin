@@ -1,0 +1,18 @@
+Browser storage state observed at end of reproduction.
+
+evaluate_script('() => { ...localStorage / sessionStorage / cookie / lang... }') returned:
+
+{
+  "localStorageEntries": {},          // empty
+  "sessionStorageEntries": {},        // empty
+  "cookies": "csrf_token=4ade00a4...",// pre-existing from previous backend session; NOT from i18n
+  "htmlLang": "es",                   // from index.html static <html lang="es">; i18next does not mutate it (by design, KISS)
+  "i18nextLngPresent": false          // language detector OFF, no persistence
+}
+
+Acceptance criterion (task pack §10):
+  "DevTools console / localStorage / NO debe haber `i18nextLng` ni nada relacionado en localStorage (detector OFF)"
+Result: PASS.
+
+Cookie `csrf_token` is unrelated to T005 (likely from a prior /api/v1/* visit in the same browser
+context). T005 makes no auth/cookie writes.

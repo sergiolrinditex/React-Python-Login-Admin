@@ -1,0 +1,36 @@
+# Test Run Evidence — P00-S01-T005
+
+## Acceptance verification command
+npm --prefix frontend run test -- --run -t i18n
+
+## Result
+✓ src/i18n/__tests__/i18n.test.ts (16 tests) 6ms
+✓ src/app/__tests__/providers.test.tsx (4 tests | 3 skipped) 18ms
+↓ src/shared/design-system/__tests__/design-system.test.tsx (34 tests | 34 skipped)
+↓ src/pages/showcase/__tests__/ShowcasePage.test.tsx (4 tests | 4 skipped)
+
+Test Files  2 passed | 2 skipped (4)
+     Tests  17 passed | 41 skipped (58)
+
+## Full suite (regression)
+Tests  58 passed (58)
+
+## Build
+tsc -b && vite build
+✓ built in 347ms — 111 modules — dist/assets/index-4COOz3-N.js 329.64 kB gzip 103.97 kB
+
+## Verbose logging (VITE_ENABLE_VERBOSE_LOGGING=true)
+i18n.init.start  { phase: 'P00', slice: 'P00-S01-T005', lng: 'es', fallbackLng: 'es',
+                   ns: [...8 namespaces], defaultNS: 'common' }
+i18n.init.ok     { phase: 'P00', slice: 'P00-S01-T005', isInitialized: true,
+                   language: 'es', namespaceCount: 8, localeCount: 3 }
+
+## Verbose logging (VITE_ENABLE_VERBOSE_LOGGING=false)
+No i18n logs emitted. Only warning+error level.
+
+## Design tokens scanner
+bash scripts/check-design-tokens.sh
+OK — No design-token violations found
+
+## Timestamp
+2026-05-11T15:17:00Z

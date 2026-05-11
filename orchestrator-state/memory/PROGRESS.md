@@ -14,9 +14,10 @@
   - P00-S01-T004 — Design tokens + editorial component library + showcase (done, 2026-05-11)
   - P00-S02-T001 — Docker compose services (done, 2026-05-11)
   - P00-S02-T002 — Health live ready endpoints (done, 2026-05-11)
+  - P00-S01-T005 — i18n resources ES/EN/FR (done, 2026-05-11)
 - **Next pending slice**: P00-S02-T003 — Verification data and Alembic baseline (or next wave task)
 - **Blockers**: none
-- **Generated at**: 2026-05-11T14:30:00+00:00
+- **Generated at**: 2026-05-11T15:17:00+00:00
 
 ## Infrastructure Status (P00-S02-T001)
 
@@ -43,7 +44,7 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 | Migrations applied | 0 | no DB schema yet (P01-S01+) |
 | Seed data | not loaded | no verification data yet |
 | Backend tests | 31 passing | test_health.py (11) + test_dependency_smoke.py (20) |
-| Backend dependencies | declared + installed | see pyproject.toml [project.dependencies] — 24 packages pinned (23 T003 + psycopg[binary]==3.3.4 from T002 health) |
+| Backend dependencies | declared + installed | see pyproject.toml [project.dependencies] — 26 packages pinned (23 T003 + psycopg[binary]==3.3.4 T002 + argon2-cffi==25.1.0 + cryptography==48.0.0 T003) |
 | Lint (ruff) | clean | 0 issues |
 
 ## Frontend Status
@@ -56,10 +57,10 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 | Base components | 9 | Wordmark, TrackedLabel, EditorialInput, SolidCTA, HairlineTable, StatusDot, MobileFrame, AdminShell, CitationInline |
 | Vite runtime | complete | vite.config.ts, tsconfig.json, tsconfig.node.json, index.html, src/main.tsx, src/vite-env.d.ts |
 | Providers | wired | frontend/src/app/providers.tsx — QueryClientProvider + I18nextProvider composition |
-| Frontend tests | 42 passing | providers (4 T002) + design-system (34 T004) + showcase (4 T004) |
-| Build | green | `npm run build` → tsc -b + vite build, 109 modules, 316kB gzip 99kB |
-| Scanner | green | `bash scripts/check-design-tokens.sh` exit 0; regression test proves non-silent |
-| i18n | English placeholder | T005 adds real ES/EN/FR resources |
+| i18n | ES/EN/FR with 8 namespaces, 24 bundles, fallback es | frontend/src/i18n/index.ts + languages.ts + types.d.ts; public/locales/{es,en,fr}/{8 ns}.json |
+| Frontend tests | 58 passing | providers (4 T002) + design-system (34 T004) + showcase (4 T004) + i18n (16 T005) |
+| Build | green | `npm run build` → tsc -b + vite build, 111 modules |
+| Scanner | green | `bash scripts/check-design-tokens.sh` exit 0 |
 
 ## Database
 
@@ -75,15 +76,15 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 | Backend integration | 31 | PASS (health probe 11 + dep smoke 20; TestClient ASGI) |
 | Compose orchestration smoke | 11 | PASS (T1–T8 tester + verify cycle 1+2 + minio-init bucket) |
 | Frontend unit | 0 | — |
-| Frontend component | 42 | PASS (providers 4 + design-system 34 + showcase 4) |
+| Frontend component | 58 | PASS (providers 4 + design-system 34 + showcase 4 + i18n 16) |
 | E2E | 0 | — |
-| **Total** | **84** | **84 PASS, 0 FAIL** |
+| **Total** | **100** | **100 PASS, 0 FAIL** |
 
 ## Milestones
 
 | Milestone | Status | Slices | Tests |
 |-----------|--------|--------|-------|
-| M1 — Auth foundation | in progress | P00 scaffold slices in progress | 84/0 |
+| M1 — Auth foundation | in progress | P00 scaffold slices in progress | 100/0 |
 
 ## Journeys (from the Journey Coverage Matrix of instrucciones.md)
 
@@ -133,6 +134,11 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 - **2026-05-11 (P00-S02-T002)**: `/ready` includes `litellm: {status: "unknown"}` informational field — no HTTP ping (httpx is test-only dep). Per TECHNICAL_GUIDE §6.2 + planner §U2.
 - **2026-05-11 (P00-S02-T002)**: `/health` handler migrated from `main.py` inline to `api/router.py` — all 3 probes in one module.
 - **2026-05-11 (P00-S02-T002 debugger 1/3)**: Worktree was branched from `7de36dd` (T001 closer commit) before T003 and S02-T001 landed. Rebased; resolved conflicts in `backend/requirements.txt` (dedupe sqlalchemy/redis; add psycopg[binary]==3.3.4) and `backend/pyproject.toml`. Verified 31 tests pass post-rebase.
+- **2026-05-11 (P00-S01-T005)**: Inline static resources — no i18next-http-backend, no lazy-load. All 8 namespaces × 3 langs loaded synchronously in init(). resolveJsonModule not in tsconfig; resources inlined as TS objects.
+- **2026-05-11 (P00-S01-T005)**: Language detector DISABLED (inherited T002 R1 — browser-only crashes jsdom). Activation deferred to AccountPage (P03-S02-T004).
+- **2026-05-11 (P00-S01-T005)**: Interpolation simple {{var}}, no ICU. Fallback lng=es per instrucciones.md §3.3.
+- **2026-05-11 (P00-S01-T005)**: WRITE_SET_DRIFT — I18nDemoSection.tsx added to frontend/src/pages/showcase/ for verify_mode=human. Justified by showcase being the only canonical P0 dev surface. Flagged in handoff.
+- **2026-05-11 (P00-S01-T005)**: Test globals (describe/it/expect) imported explicitly from "vitest" following existing test pattern (NOT via tsconfig globals which would cause tsc TS2593 errors).
 
 ## Known Issues / Risks
 
@@ -155,8 +161,9 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 - **R3-T004**: `check_web_design_tokens.py` excludes `design-system/` dir by default. Regression test uses `src/pages/` fixture instead.
 - **R1-T002 (resolved by debugger 1/3)**: Worktree branched off pre-T003 commit — would have wiped T003 dep pack on merge. Resolved.
 - **R2-T002 (resolved by /verify-slice)**: `/verify-slice` required `docker compose up -d postgres redis` to test `/ready` with real services. All 3 endpoints verified end-to-end (200/200/200 healthy; 503 degraded paths; recovery to 200). Resolved.
+- **R1-T005**: i18next resources inlined in TypeScript (not imported from JSON) because `resolveJsonModule` not in tsconfig. JSON files in public/locales/ serve as reference and are served statically by Vite. If HTTP backend is added later, a follow-up task should move to JSON imports.
 
 ---
 
-> Last updated: 2026-05-11T14:30:00+00:00
-> Updated by: main-orchestrator merge of feat/P00-S02-T002-health-endpoints + feat/P00-S01-T004-design-tokens into main (post-cierre, union of both chain histories)
+> Last updated: 2026-05-11T15:17:00+00:00
+> Updated by: developer agent — P00-S01-T005 i18n resources ES/EN/FR

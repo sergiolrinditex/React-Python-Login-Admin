@@ -1,0 +1,20 @@
+Verification Data Contract rows applicable to P00-S01-T005
+===========================================================
+
+From TECHNICAL_GUIDE §6.5:
+
+| Journey | Persona | Datos reales/proporcionados | Applicability to T005 |
+|---------|---------|----------------------------|----------------------|
+| J100 auth-login | employee_primary | usuario confirmado, MFA secret | N/A — T005 does NOT touch backend or DB |
+| J101 chat-rag | empleado + colección activa | doc política vacaciones ES indexado | N/A — T005 does NOT touch backend or DB |
+| J102 history-language | empleado con conversación previa | 2 conversaciones persistidas, idioma inicial `es` | N/A — T005 does NOT touch backend or DB |
+
+APPLICABILITY DECISION: n/a — slice without persistence, only static build-time bundles.
+No real/provided data was loaded. No DB state was observed.
+No backend endpoints were called.
+
+The only "data" relevant to T005 are the 24 JSON bundles which this slice produces.
+These are validated by:
+  1. python3 JSON.load() on each file → all 24 OK
+  2. Vitest tests assert specific literal translations from instrucciones.md §6
+  3. Error codes test asserts all 13 codes (11 §6.4 + UNKNOWN + NETWORK) present in all 3 langs

@@ -1,23 +1,25 @@
 # Active task
 
-- ID: P00-S01-T005
-- Title: i18n resources ES/EN/FR
+- ID: P01-S01-T001
+- Title: 0001_auth_users_employee_audit.py
 - Status: ready
-- Phase: P00
+- Phase: P01
 
 ## Acceptance
-- Namespaces common/auth/chat/account/admin-ai/rag/mcp/errors exist in es/en/fr with fallback es
+- Migration creates auth/profile/audit tables with constraints and rollback
 
 ## Allowed paths
-- frontend/src/i18n/**
-- frontend/public/locales/**
+- backend/alembic/versions/0001_auth_users_employee_audit.py
+- backend/app/db/models/user.py
+- backend/app/db/models/auth.py
 
 ## DAG conflict guardrails
 ### Conflict groups
-- i18n
+- db:migrations
 ### Write set
-- frontend/src/i18n/**
-- frontend/public/locales/**
+- backend/alembic/versions/0001_auth_users_employee_audit.py
+- backend/app/db/models/user.py
+- backend/app/db/models/auth.py
 
 ## Verification commands
-- `npm --prefix frontend run test -- --run -t i18n`
+- `alembic upgrade head && alembic downgrade -1 && alembic upgrade head`

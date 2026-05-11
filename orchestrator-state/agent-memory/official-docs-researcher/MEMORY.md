@@ -242,6 +242,138 @@ Full canonical table in: `orchestrator-state/memory/official-doc-notes/T003-pinn
 
 ---
 
+### 2026-05-11 — P00-S01-T005 i18n resources ES/EN/FR — deep pass
+
+**Sources**: Context7 /i18next/i18next v26.0.2, /i18next/react-i18next; i18next.com/misc/migration-guide; i18next.com/overview/configuration-options; react.i18next.com/misc/testing.
+
+**Cache valid until**: 2026-05-18 (stable lib — react-i18next, i18next are not AI/ML volatile).
+
+#### i18next v26 breaking changes (verified)
+
+| Breaking change | Impact on T005 |
+|---|---|
+| `initImmediate` removed (use `initAsync`) | No impact — project never used `initImmediate` |
+| Legacy `interpolation.format` monolithic fn removed | No impact — only `escapeValue: false` used |
+| `simplifyPluralSuffix` option removed | No impact — option not used |
+| `showSupportNotice` + suppression logic removed | No impact — no suppression logic in project |
+
+**v24 note**: `initImmediate` was renamed to `initAsync` in v24. Already irrelevant.
+**v23 note**: `returnNull` default changed to `false` — already the correct default; no explicit setting needed.
+
+#### init pattern (inline resources)
+
+- `i18n.use(initReactI18next).init({ resources: {...}, lng, fallbackLng, ns, defaultNS, interpolation, saveMissing, ... })` — canonical for v23/v24/v25/v26 with inline resources. No breaking change in this pattern across versions.
+- Inline resources → init is **synchronous**. `i18n.isInitialized === true` immediately after `.init()`.
+- With synchronous init, React Suspense is NOT triggered. `useSuspense: false` is not required when bundles are inline.
+
+#### fallbackLng = 'es' (non-English fallback)
+
+- **VERIFIED OK**. `fallbackLng` accepts any language string. The default value in the docs is `'dev'` but any valid language code works. No documented caveat about using Spanish or any non-English language as fallback.
+- Fallback chain: if key missing in current language, i18next looks in `fallbackLng`. With `fallbackLng: 'es'`, missing EN/FR keys will fall back to ES values. Correct per instrucciones §3.1.
+
+#### ns array + defaultNS
+
+- `ns: ["common","auth","chat","account","admin-ai","rag","mcp","errors"]` (8 namespaces) is the canonical pattern.
+- `defaultNS: "common"` is correct — `t('productName')` resolves from `common` by default.
+- Namespace separator: `:` by default. `t('auth:signIn.title')` is canonical.
+
+#### missingKeyHandler: false (redundant but harmless)
+
+- Official API: `missingKeyHandler` is called ONLY when `saveMissing: true`. With `saveMissing: false` (project setting), the handler is never invoked regardless of its value.
+- Setting `missingKeyHandler: false` (boolean) is non-standard (docs show function signature), but with `saveMissing: false` it has zero effect. Redundant, not a bug. No change needed.
+- For the missing-key test in §8.5: `t('common:doesNotExist')` returns the key string (e.g. `"common:doesNotExist"`) by default when no fallback value exists and `returnNull: false`. This is correct behavior.
+
+#### react-i18next 17 API patterns (verified)
+
+- `useTranslation('namespace')` — canonical for functional components. Unchanged in v17.
+- `useTranslation(['ns1', 'ns2'])` — valid (first ns is default for that hook call).
+- `I18nextProvider i18n={i18nInstance}` — canonical provider pattern. No change in v17.
+- `initReactI18next` plugin — canonical for `.use(initReactI18next)`. No change.
+- **React 19 compat**: react-i18next 17.0.7 peerDeps `react >=16.8.0` — React 19.2.6 satisfies. No documented incompatibility.
+- `useSuspense: false` in hook options (`useTranslation('ns', { useSuspense: false })`) — valid pattern for disabling Suspense per hook. Not needed with inline resources (sync init), but acceptable to set globally.
+- With inline resources and sync init, `ready === true` from first render. No need for `if (!ready) return null` guard.
+
+#### Vite + public/locales/ (inline import, no http backend)
+
+- No official Vite-specific i18next pattern documented.
+- Two valid approaches:
+  1. **Direct TS import**: `import esCommon from "../../public/locales/es/common.json"` — Vite resolves JSON imports natively. `resolveJsonModule: true` in tsconfig required (confirmed active from T004).
+  2. **http backend** with `loadPath: '/locales/{{lng}}/{{ns}}.json'` — planner correctly rejected (YAGNI P0, adds async complexity).
+- Approach 1 (inline import) is correct and aligns with "no network request for /locales/**" verify requirement.
+- **Vite behavior**: files in `frontend/public/` are served as static assets AND can be imported directly via relative paths from `src/`. Both are valid; direct import preferred for bundle inclusion.
+
+#### Vitest + jsdom + i18next (testing)
+
+- Official approach: `i18n.init({ resources: { en: {...} }, lng: 'en', fallbackLng: 'en' })` inline in test setup — accepted pattern.
+- For T005 unit tests (testing i18n module itself, not components): import the real i18n instance + resources directly. No mocking needed.
+- For component tests using `useTranslation`: wrap with `I18nextProvider` or use the module-mock pattern. T005 only writes `i18n.test.ts` (not component tests), so no provider wrapping needed.
+- Language detector DISABLED (no `window.navigator.language` reads in init) → jsdom safe.
+- `await i18n.changeLanguage('fr')` in tests: returns a Promise. Must `await` in async test. `i18n.language` updates synchronously after resolution.
+- No documented jsdom-specific issues with i18next when detector is off.
+
+#### Type augmentation (CustomTypeOptions)
+
+- Pattern: `declare module "i18next" { interface CustomTypeOptions { defaultNS: "common"; resources: { common: typeof import("...") } } }` — valid in v23+ TypeScript redesign (requires TS strict mode, already active).
+- Optional but recommended for downstream type safety. In-scope for T005 `frontend/src/i18n/types.d.ts`.
+
+#### Outcome: VERIFIED — all planner decisions confirmed
+
+No discrepancy notes written. Developer may proceed without reconciliation.
+
+---
+
+---
+
+### 2026-05-11 — P00-S02-T003 Verification data loader (8 hooks)
+
+**Verified via PyPI live JSON + argon2-cffi ReadTheDocs + Context7 (SQLAlchemy, Alembic, structlog, pydantic) + pgvector GitHub README.**
+**Cache valid until**: 2026-05-18 (all stable tech except pgvector Docker tag — check before P01).
+
+#### Hook 1 — argon2-cffi — DISCREPANCY
+
+| Field | Value |
+|---|---|
+| Latest stable | **25.1.0** (NOT ~23.x as task pack suggested) |
+| Python support | >=3.8 incl. 3.12 |
+| Key API | `PasswordHasher.hash()`, `.verify()`, `.check_needs_rehash()` |
+| verify() exceptions | `VerifyMismatchError` (mismatch), `VerificationError` (other), `InvalidHashError` (bad format) |
+| verify_and_update | Does NOT exist — use `verify()` + `check_needs_rehash()` pattern |
+| Import | `from argon2 import PasswordHasher; from argon2.exceptions import VerifyMismatchError` |
+| Direct dep of argon2-cffi | only `argon2-cffi-bindings`; no cryptography |
+| DISCREPANCY NOTE | `P00-S02-T003-argon2-cffi-2026-05-11.md` |
+| RECOMMENDED PIN | `argon2-cffi==25.1.0` |
+
+#### Hook 2 — SQLAlchemy 2.0.49 UPSERT — CONFIRMED
+
+`from sqlalchemy.dialects.postgresql import insert; insert(table).values(...).on_conflict_do_update(index_elements=[col_name], set_={col: insert_stmt.excluded.col})` — official API unchanged.
+
+#### Hook 3 — `inspect(engine).has_table()` SQLAlchemy 2.x — CONFIRMED
+
+`from sqlalchemy import inspect; inspect(engine).has_table("tablename")` — official and unchanged in 2.x. Opción C is valid.
+
+#### Hook 4 — Alembic 1.18.4 init structure — CONFIRMED
+
+`alembic init <dir>` generates: `alembic.ini`, `<dir>/env.py`, `<dir>/README`, `<dir>/script.py.mako`, `<dir>/versions/`. Minor: also creates a `README` file (not a `.gitkeep`). Harmless.
+
+#### Hook 5 — structlog 25.5.0 redaction — CONFIRMED
+
+Custom processor pattern: `def redact(logger, method, event_dict): event_dict["password"] = "***"; return event_dict`. Add to `structlog.configure(processors=[..., redact, ...])`. Confirmed best practice.
+
+#### Hook 6 — pgvector deferral — CONFIRMED (with tag note for P01)
+
+Deferral to P01 is correct. When P01 switches, the correct tag is `pgvector/pgvector:pg17-trixie` (NOT `pg17-alpine` — alpine variant is not an official pgvector tag; must compile from source on alpine).
+
+#### Hook 7 — cryptography (Fernet) — DISCREPANCY
+
+NOT a transitive dep from argon2-cffi or psycopg. litellm pulls it only under `proxy` extra (older version 46.0.7) — not guaranteed. Must pin explicitly: `cryptography==48.0.0`.
+DISCREPANCY NOTE: `P00-S02-T003-cryptography-fernet-2026-05-11.md`
+
+#### Hook 8 — Pydantic v2.12.5 validators — CONFIRMED
+
+`@field_validator`, `@model_validator(mode='after')`, `model_config = ConfigDict(...)` — all confirmed. Do NOT mix `class Config:` with `model_config` (raises PydanticUserError).
+
+---
+
 ## Notes for next researcher
 
 - React 19.2.6 human-confirmed 2026-05-11. No re-verify needed until 2026-05-18.
@@ -252,4 +384,7 @@ Full canonical table in: `orchestrator-state/memory/official-doc-notes/T003-pinn
 - Zod v4 is current stable — downstream slices must use v4 API (no `.email()` chain; use `z.email()`).
 - @hookform/resolvers v5.2.2 bridges both Zod v3 and v4 — no split package needed.
 - react-router v7: canonical install is `react-router`; imports from `"react-router"`.
-- i18next-browser-languagedetector: install in T005, NOT in providers.tsx (browser-only init, defer).
+- i18next T005 fully verified 2026-05-11 (cache until 2026-05-18). All planner decisions confirmed. No discrepancy notes. See section above for full details.
+- P00-S02-T003 two discrepancy notes written 2026-05-11: argon2-cffi==25.1.0 (not ~23.x) and cryptography==48.0.0 (must be explicit dep).
+- pgvector Docker tag for P01 is `pgvector/pgvector:pg17-trixie` (NOT pg17-alpine).
+- MEMORY.md well over 200 lines. Strongly recommend `/slice-maintain compact-agent-memory` after this slice.

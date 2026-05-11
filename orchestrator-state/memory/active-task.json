@@ -1,66 +1,74 @@
 {
-  "id": "P00-S01-T005",
-  "phase_id": "P00",
-  "step_id": "P00-S01",
-  "title": "i18n resources ES/EN/FR",
+  "id": "P01-S01-T001",
+  "phase_id": "P01",
+  "step_id": "P01-S01",
+  "title": "0001_auth_users_employee_audit.py",
   "status": "ready",
   "build_state": "planned",
   "product_increment": "v1",
   "risk_level": "medium",
   "verify_mode": "human",
   "depends_on": [
-    "P00-S01-T002",
-    "P00-S01-T004"
+    "P00-S02-T002"
   ],
-  "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 0.1 — Project bootstrap",
+  "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 1.1 — DB auth baseline",
   "acceptance": [
-    "Namespaces common/auth/chat/account/admin-ai/rag/mcp/errors exist in es/en/fr with fallback es"
+    "Migration creates auth/profile/audit tables with constraints and rollback"
   ],
   "verification_commands": [
-    "npm --prefix frontend run test -- --run -t i18n"
+    "alembic upgrade head && alembic downgrade -1 && alembic upgrade head"
   ],
-  "kind": "setup",
-  "target": "i18n resources ES/EN/FR",
+  "kind": "db",
+  "target": "0001_auth_users_employee_audit.py",
   "journey_refs": [
     "J100",
-    "J101",
     "J102"
   ],
   "route": "",
   "endpoint": "",
   "tables": [
-    "users"
+    "users",
+    "employee_profiles",
+    "roles",
+    "permissions",
+    "user_roles",
+    "refresh_tokens",
+    "mfa_totp_secrets",
+    "password_reset_tokens",
+    "audit_logs"
   ],
-  "origin_instr": "§6#i18n",
-  "origin_techguide": "§6.5#verification-data",
+  "origin_instr": "§3.1#auth-perfiles",
+  "origin_techguide": "§10.3#users",
   "allowed_paths": [
-    "frontend/src/i18n/**",
-    "frontend/public/locales/**"
+    "backend/alembic/versions/0001_auth_users_employee_audit.py",
+    "backend/app/db/models/user.py",
+    "backend/app/db/models/auth.py"
   ],
   "conflict_groups": [
-    "i18n"
+    "db:migrations"
   ],
   "write_set": [
-    "frontend/src/i18n/**",
-    "frontend/public/locales/**"
+    "backend/alembic/versions/0001_auth_users_employee_audit.py",
+    "backend/app/db/models/user.py",
+    "backend/app/db/models/auth.py"
   ],
-  "handoff_path": "orchestrator-state/tasks/handoffs/P00-S01-T005.md",
-  "evidence_dir": "orchestrator-state/tasks/evidence/P00-S01-T005",
+  "handoff_path": "orchestrator-state/tasks/handoffs/P01-S01-T001.md",
+  "evidence_dir": "orchestrator-state/tasks/evidence/P01-S01-T001",
   "notes": [],
   "dependency_mode": "explicit_dag",
-  "depends_on_raw": "P00-S01-T002,P00-S01-T004",
-  "conflict_groups_raw": "i18n",
-  "write_set_raw": "frontend/src/i18n/**, frontend/public/locales/**",
+  "depends_on_raw": "P00-S02-T002",
+  "conflict_groups_raw": "db:migrations",
+  "write_set_raw": "backend/alembic/versions/0001_auth_users_employee_audit.py, backend/app/db/models/user.py, backend/app/db/models/auth.py",
   "product_increment_raw": "v1",
   "build_state_raw": "planned",
   "risk_level_raw": "medium",
   "verify_mode_raw": "human",
-  "kind_raw": "setup",
-  "target_raw": "i18n resources ES/EN/FR",
-  "journey_refs_raw": "J100,J101,J102",
+  "kind_raw": "db",
+  "target_raw": "0001_auth_users_employee_audit.py",
+  "journey_refs_raw": "J100,J102",
   "screen_route_raw": "—",
   "endpoint_raw": "—",
-  "tables_raw": "users",
-  "origin_instr_raw": "§6#i18n",
-  "origin_techguide_raw": "§6.5#verification-data"
+  "tables_raw": "users, employee_profiles, roles, permissions, user_roles, refresh_tokens, mfa_totp_secrets, password_reset_tokens, audit_logs",
+  "origin_instr_raw": "§3.1#auth-perfiles",
+  "origin_techguide_raw": "§10.3#users"
 }
