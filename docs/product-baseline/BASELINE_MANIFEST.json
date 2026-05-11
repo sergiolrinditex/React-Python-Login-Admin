@@ -72,9 +72,9 @@
       }
     },
     {
-      "ts": "2026-05-11T10:16:31+00:00",
+      "ts": "2026-05-11T12:12:09+00:00",
       "version": "v1",
-      "task_id": "P00-S01-T003",
+      "task_id": "P00-S01-T004",
       "phase_id": null,
       "reason": "verified slice closed",
       "docs": {
@@ -106,9 +106,9 @@
       }
     },
     {
-      "ts": "2026-05-11T10:51:01+00:00",
+      "ts": "2026-05-11T12:21:01+00:00",
       "version": "v1",
-      "task_id": "P00-S02-T001",
+      "task_id": "P00-S02-T002",
       "phase_id": null,
       "reason": "verified slice closed",
       "docs": {
@@ -140,6 +140,6 @@
       }
     }
   ],
-  "latest_task_id": "P00-S02-T001",
-  "updated_at": "2026-05-11T10:51:01+00:00"
+  "latest_task_id": "P00-S02-T002",
+  "updated_at": "2026-05-11T12:21:01+00:00"
 }

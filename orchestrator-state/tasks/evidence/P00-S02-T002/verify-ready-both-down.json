@@ -1,0 +1,1 @@
+{"data":{"db":{"status":"error","error":"(psycopg.OperationalError) connection failed: connection to server at \"127.0.0.1\", port 5432 failed: server closed the c"},"redis":{"status":"error","error":"Error 61 connecting to localhost:6379. Connection refused."},"litellm":{"status":"unknown"}}}
