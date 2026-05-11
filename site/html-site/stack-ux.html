@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Stack &amp; UX — Orquestador DAG · AnyStack</title>
+    <meta property="article:author" content="Sergio Lopez Rapado">
+  <meta property="article:published_time" content="2026-05-07T00:00:00Z">
+  <meta name="author" content="Sergio Lopez Rapado">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/styles.css">
+  <style>pre.mermaid{background:transparent;border:0;padding:8px 0;text-align:center;color:#e5e7eb}</style>
+  <!-- Cloudflare Web Analytics -->
+  <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "592c05228d374062ac06009e38a56155"}'></script>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="index.html" class="brand">Orquestador DAG · AnyStack</a>
+  <a href="index.html">Inicio</a>
+  <a href="negocio.html">Negocio</a>
+  <a href="templates.html">Templates</a>
+  <a href="stack-ux.html">Stack/UX</a>
+  <a href="tecnico.html">Técnico</a>
+  <a data-tally-open="5BEA8v" data-tally-layout="modal" data-tally-width="600" data-tally-overlay="1" href="mailto:s.lopezrap@gmail.com?subject=OrquestadorDAG-AnyStack%20%E2%80%94%20quiero%20ayuda%20para%20implantarlo" class="topnav-cta">📧 Contacto</a>
+</nav>
+
+<main>
+
+  <span class="hero-eyebrow">🧩 Stack-agnóstico de verdad</span>
+  <h1>Stack y UX desacoplados del motor.</h1>
+  <p class="lead">
+    El orquestador no debe estar atado a un stack concreto. Cada app declara su stack en
+    <code>STACK_PROFILE.yaml</code> y su experiencia de usuario en <code>UX_CONTRACT.md</code>.
+    El mismo DAG puede construir React/Node, SwiftUI/Go, frontend/backend declarados, Vue/Django — sin
+    reescribir hooks, locks, agentes ni journey gates.
+  </p>
+
+  <div class="grid cols-3">
+
+    <div class="card">
+      <div class="card-icon" style="background: linear-gradient(135deg, #06b6d4, #3b82f6);">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      </div>
+      <h3>STACK_PROFILE.yaml</h3>
+      <p>Frameworks, paths, comandos dev/test, health URL, base de datos, workflow Git y enforcer de tokens. Es la fuente única que el motor consulta para decidir qué scanner aplicar y qué git-workflow usar.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-icon" style="background: linear-gradient(135deg, #ec4899, #8b5cf6);">
+        <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </div>
+      <h3>UX_CONTRACT.md</h3>
+      <p>Personas, inventario de pantallas, estados UI requeridos, rutas, datos reales esperados y verificación visual/productiva. Una slice de UI no se cierra hasta que loading, empty, error, permission y success están explícitos.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-icon" style="background: linear-gradient(135deg, #4ade80, #06b6d4);">
+        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      </div>
+      <h3>Plugins despachables</h3>
+      <p><code>.claude/enforcers/</code> y <code>.claude/git-workflows/</code> evitan hardcodear un framework concreto o un workflow Git concreto. <code>scripts/git-workflow.sh</code> es el dispatcher que lee el campo <code>git_workflow</code> de STACK_PROFILE.</p>
+    </div>
+
+  </div>
+
+  <h2>5 documentos source-of-truth — quién edita cada uno</h2>
+  <p class="muted">AnyStack añade <strong>STACK_PROFILE</strong> y <strong>UX_CONTRACT</strong> al contrato contrato histórico de cinco docs. Cada uno tiene un owner semántico claro.</p>
+  <pre class="mermaid">
+flowchart TB
+    subgraph PROD[Producto]
+        I[instrucciones.md<br/>scope · journeys · business rules]
+        UX[UX_CONTRACT.md<br/>personas · pantallas · estados UI]
+    end
+    subgraph TECH[Tech lead]
+        TG[*_TECHNICAL_GUIDE.md<br/>arquitectura · contratos · ADR]
+        SP[STACK_PROFILE.yaml<br/>frameworks · paths · enforcer]
+    end
+    subgraph PM[PM / Tech lead]
+        CL[*_IMPLEMENTATION_CHECKLIST.md<br/>phases · Coverage Registry · DAG]
+    end
+    PROD -.alimenta.-&gt; CL
+    TECH -.alimenta.-&gt; CL
+    CL ==bootstrap==&gt; RUNTIME[Runtime DAG]
+  </pre>
+
+  <h2>Anatomía de STACK_PROFILE.yaml</h2>
+  <div class="panel">
+    <h4>Ejemplo genérico de STACK_PROFILE</h4>
+    <pre data-copy><code>frontend:
+  language: dart
+  framework: <frontend_framework>
+  module_root: <frontend_module_root>
+  theme_root: <frontend_theme_root>
+  test_cmd: <frontend_test_cmd>
+  dev_cmd: <frontend_dev_cmd>
+  visual_check: browser
+  health_check: http://localhost:8080
+
+backend:
+  language: python
+  framework: fastapi
+  module_root: <backend_module_root>
+  test_cmd: pytest
+  dev_cmd: uvicorn src.main:app --reload
+  health_url: http://localhost:8000/health
+
+db:
+  engine: postgres
+  migrate_cmd: <db_migrate_cmd>
+  carga de datos_cmd: python -m src.carga de datos
+
+git_workflow: push-to-main          # → .claude/git-workflows/push-to-main.sh
+design_tokens_enforcer: design_tokens_v1  # → .claude/enforcers/design_tokens_v1.sh</code></pre>
+  </div>
+
+  <h2>STACK_PROFILE → enforcer plugin pattern</h2>
+  <p>El plugin recomendado por defecto es <code>design_tokens_v1</code>, que lee <code>frontend.framework</code> y aplica el escaneo específico (React, Vue, Flutter, SwiftUI...).</p>
+  <pre class="mermaid">
+flowchart LR
+    SP[STACK_PROFILE.yaml<br/>frontend · backend · db · git_workflow]
+    DTE[design_tokens_enforcer<br/>plugin name]
+    TR[frontend.theme_root<br/>módulo de tokens]
+    PLUG[.claude/enforcers/&lt;plugin&gt;.sh<br/>script ejecutable]
+    RULES[.claude/enforcers/&lt;plugin&gt;/RULES.md<br/>política]
+    SCAN[scanner stack-aware<br/>framework scanner · react · vue · ...]
+    SP --&gt; DTE
+    SP --&gt; TR
+    DTE --&gt; PLUG
+    PLUG --&gt; RULES
+    PLUG --&gt; SCAN
+    TR --&gt; SCAN
+  </pre>
+
+  <h2>Git workflow plugins</h2>
+  <p>Dos workflows incluidos out-of-the-box. <code>scripts/git-workflow.sh</code> hace dispatch al apropiado según <code>STACK_PROFILE.yaml → git_workflow</code>.</p>
+  <div class="grid cols-2">
+    <div class="card">
+      <h3><code>push-to-main</code></h3>
+      <p>Para repos donde el closer commitea directamente a <code>main</code>. Es el default histórico del orquestador. Plugin: <code>.claude/git-workflows/push-to-main.sh</code>.</p>
+    </div>
+    <div class="card">
+      <h3><code>pr-flow</code></h3>
+      <p>Para repos con branch protection o trunk-based con review obligatorio. <code>git push</code> + <code>gh pr create</code>. Plugin: <code>.claude/git-workflows/pr-flow.sh</code>.</p>
+    </div>
+  </div>
+
+  <h2>UX states obligatorios por slice de UI</h2>
+  <p>El <code>UX_CONTRACT.md</code> exige que cada pantalla declare estos seis estados. Una slice de UI no es ✅ hasta que están implementados o explícitamente marcados N/A.</p>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Estado</th><th>Cuándo aparece</th><th>Datos requeridos</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><span class="badge muted">loading</span></td><td>Mientras la request está in-flight</td><td>Skeleton o spinner con accessible label</td></tr>
+        <tr><td><span class="badge cyan">empty</span></td><td>Cuando el endpoint devuelve 0 resultados</td><td>Cuenta sandbox sin datos persistidos</td></tr>
+        <tr><td><span class="badge accent">network error</span></td><td>HTTP 5xx o timeout</td><td>Mock de red caída + retry CTA</td></tr>
+        <tr><td><span class="badge accent">validation error</span></td><td>HTTP 400 con field-level errors</td><td>Inputs inválidos reales</td></tr>
+        <tr><td><span class="badge accent">permission denied</span></td><td>HTTP 401/403</td><td>Cuenta sin rol requerido</td></tr>
+        <tr><td><span class="badge cyan">success</span></td><td>HTTP 2xx con datos</td><td>Cuenta sandbox poblada</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="notice">
+    <strong>Cambia el stack y solo cambian dos ficheros.</strong> <code>STACK_PROFILE.yaml</code> y los plugins de <code>.claude/enforcers/</code> y <code>.claude/git-workflows/</code>. Los hooks, locks, agentes, journey gates y closer guardrail no se tocan. Eso es lo que hace al motor genuinamente stack-agnóstico, no decorativo.
+  </div>
+
+  <p class="notice">Detalle de los 5 docs y del plugin pattern en <a href="https://github.com/slopezrap/OrquestadorDAG-AnyStack/blob/main/site/diagrams/arquitectura.md" target="_blank" rel="noopener">site/diagrams/arquitectura.md</a> y <a href="https://github.com/slopezrap/OrquestadorDAG-AnyStack/blob/main/site/diagrams/outcomes.md" target="_blank" rel="noopener">site/diagrams/outcomes.md</a>.</p>
+
+</main>
+
+<footer>
+  <div>Documentación estática · Sin dependencias externas · Lista para GitHub Pages.</div>
+  <div><a href="https://github.com/slopezrap/OrquestadorDAG-AnyStack" target="_blank" rel="noopener">Repositorio →</a></div>
+</footer>
+
+<script src="assets/app.js"></script>
+<!-- Tally.so embed (popup forms + inline embeds) -->
+<script async src="https://tally.so/widgets/embed.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true,theme:'dark',themeVariables:{primaryColor:'#1f2937',primaryTextColor:'#e5e7eb',primaryBorderColor:'#8b5cf6',lineColor:'#94a3b8',background:'#0b1020'}});</script>
+</body>
+</html>

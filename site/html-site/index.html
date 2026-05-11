@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Orquestador DAG · AnyStack — Apps fullstack agnósticas de stack</title>
+  <meta name="description" content="Orquestador multi-agente open source que convierte 5 documentos en un grafo ejecutable de tareas. Stack-agnóstico (React, Node, Flutter, SwiftUI...) — slices con datos reales, evidencia auditable, sin atajos.">
+
+  <!-- Open Graph / LinkedIn -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://slopezrap.github.io/OrquestadorDAG-AnyStack/">
+  <meta property="og:title" content="Orquestador DAG · AnyStack — Apps fullstack agnósticas de stack">
+  <meta property="og:description" content="Apps fullstack empresariales construidas por slices, en cualquier stack. STACK_PROFILE + UX_CONTRACT desacoplan el motor del framework. Open source MIT.">
+  <meta property="og:site_name" content="Orquestador DAG · AnyStack · Sergio Lopez Rapado">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Orquestador DAG · AnyStack · Sergio Lopez Rapado">
+  <meta name="twitter:description" content="Apps fullstack empresariales en cualquier stack. 5 docs source-of-truth, DAG, hooks, locks. 200 € en tokens, no 100.000 € de consultoría.">
+
+  <meta property="article:author" content="Sergio Lopez Rapado">
+  <meta property="article:published_time" content="2026-05-07T00:00:00Z">
+  <meta name="author" content="Sergio Lopez Rapado">
+  <!-- og:image — cuando tengas el PNG en html-site/og-image.png, descomenta la siguiente línea -->
+  <!-- <meta property="og:image" content="https://slopezrap.github.io/OrquestadorDAG-AnyStack/og-image.png"> -->
+  <!-- <meta property="og:image:width" content="1200"> -->
+  <!-- <meta property="og:image:height" content="630"> -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/styles.css">
+  <!-- Cloudflare Web Analytics — reemplaza 592c05228d374062ac06009e38a56155 con el token de https://dash.cloudflare.com/?to=/:account/web-analytics -->
+  <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "592c05228d374062ac06009e38a56155"}'></script>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="index.html" class="brand">Orquestador DAG · AnyStack</a>
+  <a href="index.html">Inicio</a>
+  <a href="negocio.html">Negocio</a>
+  <a href="templates.html">Templates</a>
+  <a href="stack-ux.html">Stack/UX</a>
+  <a href="tecnico.html">Técnico</a>
+  <a data-tally-open="5BEA8v" data-tally-layout="modal" data-tally-width="600" data-tally-overlay="1" href="mailto:s.lopezrap@gmail.com?subject=OrquestadorDAG-AnyStack%20%E2%80%94%20quiero%20ayuda%20para%20implantarlo" class="topnav-cta">📧 Contacto</a>
+</nav>
+
+<main>
+
+  <section class="hero hero-pitch">
+    <div>
+      <span class="hero-eyebrow">🧩 Orquestador stack-agnóstico · Open source · MIT</span>
+      <h1>Crea aplicaciones <em>empresariales</em>.<br><span class="hl-1">Cualquier stack.</span><br><span class="hl-2">200&nbsp;€, no 100.000&nbsp;€.</span></h1>
+      <p class="lead">
+        Mismo motor DAG, multi-stack: React+Node, frontend/API, SwiftUI+Go, lo que tu equipo ya
+        tenga. <code>STACK_PROFILE.yaml</code> y <code>UX_CONTRACT.md</code> desacoplan el framework
+        del orquestador. Cada slice se valida con datos reales, se commitea con evidencia y queda
+        trazada. App a app — sin atajos, sin "está al 80%".
+      </p>
+      <p class="hero-asterisk">
+        <span class="asterisk">*</span> Los 200&nbsp;€ son coste de tokens del modelo de IA. Sin equipo, sin honorarios de consultoría.
+      </p>
+      <div class="hero-cta-row">
+        <a href="negocio.html" class="cta-btn">💼 Para negocio</a>
+        <a href="tecnico.html" class="cta-btn">🛠 Para técnicos</a>
+        <a data-tally-open="5BEA8v" data-tally-layout="modal" data-tally-width="600" data-tally-overlay="1" href="mailto:s.lopezrap@gmail.com?subject=OrquestadorDAG-AnyStack%20%E2%80%94%20quiero%20ayuda%20para%20implantarlo" class="cta-btn primary">📧 Quiero ayuda</a>
+      </div>
+    </div>
+
+    <div class="hero-orchestra" aria-label="Orquestador DAG construyéndose en directo">
+      <!-- Hojas/ramas orgánicas decorativas — toque naturaleza -->
+      <svg class="organic-vine tl" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" fill="none" aria-hidden="true">
+        <path d="M 30 30 Q 60 70 90 95 Q 120 110 145 100" stroke="rgba(74, 222, 128, 0.40)" stroke-width="1.4" stroke-linecap="round"/>
+        <ellipse cx="42" cy="52" rx="6" ry="11" fill="rgba(74, 222, 128, 0.30)" transform="rotate(-25 42 52)"/>
+        <ellipse cx="72" cy="86" rx="5" ry="9" fill="rgba(74, 222, 128, 0.22)" transform="rotate(-50 72 86)"/>
+        <ellipse cx="108" cy="106" rx="6" ry="10" fill="rgba(74, 222, 128, 0.28)" transform="rotate(-15 108 106)"/>
+        <circle cx="142" cy="100" r="3" fill="rgba(74, 222, 128, 0.45)"/>
+      </svg>
+      <svg class="organic-vine br" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" fill="none" aria-hidden="true">
+        <path d="M 30 30 Q 60 70 90 95 Q 120 110 145 100" stroke="rgba(139, 92, 246, 0.35)" stroke-width="1.2" stroke-linecap="round"/>
+        <ellipse cx="42" cy="52" rx="5" ry="9" fill="rgba(139, 92, 246, 0.25)" transform="rotate(-25 42 52)"/>
+        <ellipse cx="72" cy="86" rx="4" ry="8" fill="rgba(6, 182, 212, 0.20)" transform="rotate(-50 72 86)"/>
+        <ellipse cx="108" cy="106" rx="5" ry="9" fill="rgba(74, 222, 128, 0.22)" transform="rotate(-15 108 106)"/>
+      </svg>
+
+      <svg viewBox="0 0 600 440" xmlns="http://www.w3.org/2000/svg" role="img">
+        <defs>
+          <linearGradient id="edge-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#8b5cf6" stop-opacity="0.9"/>
+            <stop offset="50%" stop-color="#06b6d4" stop-opacity="0.9"/>
+            <stop offset="100%" stop-color="#4ade80" stop-opacity="0.9"/>
+          </linearGradient>
+          <radialGradient id="final-glow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="rgba(16,185,129,0.30)"/>
+            <stop offset="100%" stop-color="rgba(16,185,129,0)"/>
+          </radialGradient>
+        </defs>
+
+        <!-- Phase column "swim lanes" — sutiles backgrounds alternados -->
+        <g aria-hidden="true">
+          <rect class="phase-column-bg"     x="15"  y="100" width="100" height="220"/>
+          <rect class="phase-column-bg alt" x="135" y="100" width="100" height="220"/>
+          <rect class="phase-column-bg"     x="255" y="100" width="100" height="220"/>
+          <rect class="phase-column-bg alt" x="375" y="100" width="100" height="220"/>
+          <rect class="phase-column-bg"     x="485" y="100" width="110" height="220"/>
+        </g>
+
+        <!-- Phase column headers (P00, P01, ...) arriba de cada columna -->
+        <text class="phase-header" data-step="ph-0" x="65"  y="85">P00 · setup</text>
+        <text class="phase-header" data-step="ph-1" x="185" y="85">P01 · auth</text>
+        <text class="phase-header" data-step="ph-2" x="305" y="85">P02 · profile</text>
+        <text class="phase-header" data-step="ph-3" x="425" y="85">P03 · screens</text>
+        <text class="phase-header" data-step="ph-f" x="540" y="85">main</text>
+
+        <!-- Halo radial detrás del nodo final -->
+        <circle cx="540" cy="195" r="80" fill="url(#final-glow)"/>
+
+        <!-- Edges del DAG real — flujo izquierda → derecha -->
+        <path class="dag-edge-anim" data-step="w0-1" pathLength="100" d="M 110 160 C 125 160, 125 130, 140 130"/>
+        <path class="dag-edge-anim" data-step="w0-1" pathLength="100" d="M 110 160 C 125 160, 125 195, 140 195"/>
+        <path class="dag-edge-anim" data-step="w0-1" pathLength="100" d="M 110 160 C 125 160, 125 260, 140 260"/>
+        <path class="dag-edge-anim long-range" data-step="w0-3" pathLength="100" d="M 110 230 C 250 230, 250 160, 380 160"/>
+        <path class="dag-edge-anim long-range" data-step="w0-3" pathLength="100" d="M 110 230 C 250 230, 250 230, 380 230"/>
+        <path class="dag-edge-anim" data-step="w1-2" pathLength="100" d="M 230 130 C 245 130, 245 160, 260 160"/>
+        <path class="dag-edge-anim" data-step="w1-2" pathLength="100" d="M 230 195 C 245 195, 245 230, 260 230"/>
+        <path class="dag-edge-anim long-range" data-step="w1-3" pathLength="100" d="M 230 260 C 305 260, 305 160, 380 160"/>
+        <path class="dag-edge-anim" data-step="w2-3" pathLength="100" d="M 350 160 C 365 160, 365 230, 380 230"/>
+        <path class="dag-edge-anim" data-step="w2-3" pathLength="100" d="M 350 230 C 365 230, 365 160, 380 160"/>
+        <path class="dag-edge-anim" data-step="w3-final" pathLength="100" d="M 470 160 C 480 160, 480 195, 490 195"/>
+        <path class="dag-edge-anim" data-step="w3-final" pathLength="100" d="M 470 230 C 480 230, 480 195, 490 195"/>
+
+        <!-- WAVE 0 · 2 slices paralelos (P00) -->
+        <g class="dag-node-anim" data-step="w0a">
+          <rect x="20" y="145" width="90" height="30" rx="15" class="slice-pill db"/>
+          <text x="65" y="160" class="slice-text">🗄 db init</text>
+          <text x="65" y="190" class="slice-id">P00-S01-T001</text>
+        </g>
+        <g class="dag-node-anim" data-step="w0b">
+          <rect x="20" y="215" width="90" height="30" rx="15" class="slice-pill design"/>
+          <text x="65" y="230" class="slice-text">🎨 design</text>
+          <text x="65" y="260" class="slice-id">P00-S02-T001</text>
+        </g>
+
+        <!-- WAVE 1 · 3 slices paralelos (P01) -->
+        <g class="dag-node-anim" data-step="w1a">
+          <rect x="140" y="115" width="90" height="30" rx="15" class="slice-pill api"/>
+          <text x="185" y="130" class="slice-text">🔐 auth API</text>
+          <text x="185" y="160" class="slice-id">P01-S01-T001</text>
+        </g>
+        <g class="dag-node-anim" data-step="w1b">
+          <rect x="140" y="180" width="90" height="30" rx="15" class="slice-pill api"/>
+          <text x="185" y="195" class="slice-text">📝 register</text>
+          <text x="185" y="225" class="slice-id">P01-S01-T002</text>
+        </g>
+        <g class="dag-node-anim" data-step="w1c">
+          <rect x="140" y="245" width="90" height="30" rx="15" class="slice-pill api"/>
+          <text x="185" y="260" class="slice-text">🔑 login</text>
+          <text x="185" y="290" class="slice-id">P01-S01-T003</text>
+        </g>
+
+        <!-- WAVE 2 · 2 slices (P02) -->
+        <g class="dag-node-anim" data-step="w2a">
+          <rect x="260" y="145" width="90" height="30" rx="15" class="slice-pill api"/>
+          <text x="305" y="160" class="slice-text">👤 profile</text>
+          <text x="305" y="190" class="slice-id">P02-S01-T001</text>
+        </g>
+        <g class="dag-node-anim" data-step="w2b">
+          <rect x="260" y="215" width="90" height="30" rx="15" class="slice-pill ui"/>
+          <text x="305" y="230" class="slice-text">📋 profile UI</text>
+          <text x="305" y="260" class="slice-id">P02-S02-T001</text>
+        </g>
+
+        <!-- WAVE 3 · 2 slices (P03) -->
+        <g class="dag-node-anim" data-step="w3a">
+          <rect x="380" y="145" width="90" height="30" rx="15" class="slice-pill ui"/>
+          <text x="425" y="160" class="slice-text">🏠 home page</text>
+          <text x="425" y="190" class="slice-id">P03-S01-T001</text>
+        </g>
+        <g class="dag-node-anim" data-step="w3b">
+          <rect x="380" y="215" width="90" height="30" rx="15" class="slice-pill ui"/>
+          <text x="425" y="230" class="slice-text">⚙️ admin</text>
+          <text x="425" y="260" class="slice-id">P03-S02-T001</text>
+        </g>
+
+        <!-- FINAL · main (convergencia de todo el DAG) -->
+        <g class="dag-node-anim" data-step="final">
+          <rect x="490" y="176" width="100" height="38" rx="19" class="slice-pill final"/>
+          <rect x="490" y="176" width="100" height="38" rx="19" class="slice-pill final dag-pulse-ring" fill="none"/>
+          <text x="540" y="195" class="slice-text final-text">🚀 main</text>
+          <text x="540" y="232" class="slice-id">commit + push</text>
+        </g>
+
+        <!-- Wave tags debajo de cada columna -->
+        <text class="wave-tag" data-wave="0"     x="65"  y="345">2 paralelos</text>
+        <text class="wave-tag" data-wave="1"     x="185" y="345">3 paralelos</text>
+        <text class="wave-tag" data-wave="2"     x="305" y="345">join + 2</text>
+        <text class="wave-tag" data-wave="3"     x="425" y="345">join + 2</text>
+        <text class="wave-tag" data-wave="final" x="540" y="345">producción ✓</text>
+      </svg>
+    </div>
+  </section>
+
+  <section class="trust-bar">
+    <div class="trust-item"><strong>5 docs</strong> source-of-truth (3 + STACK_PROFILE + UX_CONTRACT)</div>
+    <div class="trust-item"><strong>100%</strong> código real, cero mocks de negocio</div>
+    <div class="trust-item"><strong>Stack-agnóstico</strong> · enforcers + git-workflows en plugin</div>
+    <div class="trust-item"><strong>Open source</strong> · MIT License</div>
+  </section>
+
+  <section>
+    <div class="section-eyebrow">¿Quién eres?</div>
+    <h2>Tres rampas, mismo motor.</h2>
+    <div class="grid cols-3">
+
+      <a class="card audience-card" href="negocio.html">
+        <div class="card-icon" style="background: linear-gradient(135deg, #10b981, #06b6d4);">
+          <svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 6-6"/></svg>
+        </div>
+        <h3>💼 Eres negocio</h3>
+        <p>Lideras producto, transformación digital o tecnología y necesitas convertir una idea en una aplicación empresarial real, en el stack que ya usa tu equipo.</p>
+        <span class="card-cta">Ver caso de negocio →</span>
+      </a>
+
+      <a class="card audience-card" href="tecnico.html">
+        <div class="card-icon" style="background: linear-gradient(135deg, #8b5cf6, #ec4899);">
+          <svg viewBox="0 0 24 24"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg>
+        </div>
+        <h3>🛠 Eres técnico</h3>
+        <p>Quieres ver el motor por dentro: 5 docs SOT, hooks, locks POSIX, agentes, registry, DAG derivado, STACK_PROFILE plugins, trailers tipados.</p>
+        <span class="card-cta">Ver arquitectura →</span>
+      </a>
+
+      <a class="card audience-card highlight" data-tally-open="5BEA8v" data-tally-layout="modal" data-tally-width="600" data-tally-overlay="1" href="mailto:s.lopezrap@gmail.com?subject=OrquestadorDAG-AnyStack%20%E2%80%94%20quiero%20ayuda%20para%20implantarlo">
+        <div class="card-icon" style="background: linear-gradient(135deg, #f59e0b, #ef4444);">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <h3>🤝 Necesitas ayuda</h3>
+        <p>Te interesa el motor pero quieres apoyo para ponerlo a funcionar en tu equipo y tu stack. Setup, formación, primera slice acompañada.</p>
+        <span class="card-cta">📧 Escríbeme →</span>
+      </a>
+
+    </div>
+  </section>
+
+  <section class="contact-cta" id="contacto">
+    <h2>🤝 ¿Necesitas ayuda para implantarlo?</h2>
+    <p class="lead">
+      El motor es <strong>open source y MIT</strong> — lo puedes clonar, leer y usar libremente.
+      Si te interesa pero quieres ayuda real para ponerlo a funcionar en tu equipo y tu stack,
+      escríbeme. No vendo apps llave en mano: vendo <strong>adopción del motor</strong> en tu organización.
+    </p>
+
+    <div class="savings-callout">
+      <div class="savings-side old">
+        <span class="savings-label">Modelo consultoría tradicional</span>
+        <span class="savings-amount">100.000&nbsp;€</span>
+        <span class="savings-meta">equipo de 5 senior · 6 meses de delivery · backlog perpetuo · entrega parcial</span>
+      </div>
+      <div class="savings-arrow">→</div>
+      <div class="savings-side new">
+        <span class="savings-label">Construido con el motor</span>
+        <span class="savings-amount">200&nbsp;€</span>
+        <span class="savings-meta">coste de tokens del modelo IA · 1 persona + IA · 2-3 semanas · evidencia auditable · open source MIT</span>
+      </div>
+    </div>
+
+    <ul class="contact-features">
+      <li>🚀 <strong>Setup completo.</strong> Hooks, agentes, locks, settings, STACK_PROFILE — funcionando sobre tu repo en 1-2 días.</li>
+      <li>📚 <strong>Formación a tu equipo.</strong> Cómo escribir los 5 docs, cómo construir slices, cómo verificar.</li>
+      <li>🔧 <strong>Primera slice end-to-end.</strong> Acompañamiento real desde planner hasta closer en main, en directo.</li>
+      <li>🎯 <strong>Adaptación a tu stack.</strong> React, Vue, Flutter, SwiftUI, Node, Go, Python — adapto el plugin de design tokens y el git-workflow a tu setup.</li>
+      <li>🔬 <strong>Audit técnico.</strong> Reviso tu adopción, identifico cuellos de botella, propongo mejoras concretas.</li>
+      <li>🤝 <strong>Soporte continuo.</strong> Disponibilidad puntual cuando aparezca un caso raro o un follow-up complejo.</li>
+    </ul>
+
+    <div class="contact-block">
+      <h3>¿Lo quieres en tu equipo?</h3>
+      <p>Escríbeme con tu contexto: stack actual, tamaño del equipo, qué aplicación o feature te gustaría arrancar con el motor. Te respondo en 24h con un plan concreto y honesto sobre qué tiene sentido (y qué no).</p>
+      <a data-tally-open="5BEA8v" data-tally-layout="modal" data-tally-width="600" data-tally-overlay="1" href="mailto:s.lopezrap@gmail.com?subject=OrquestadorDAG-AnyStack%20%E2%80%94%20quiero%20ayuda%20para%20implantarlo&amp;body=Hola%20Sergio%2C%0A%0AContexto%3A%0A-%20Empresa%2Fequipo%3A%20%5B%5D%0A-%20Stack%20actual%3A%20%5B%5D%0A-%20Aplicaci%C3%B3n%20o%20feature%20donde%20probarlo%3A%20%5B%5D%0A-%20Plazo%20deseado%3A%20%5B%5D%0A%0A%C2%BFCu%C3%A1l%20es%20el%20mejor%20siguiente%20paso%3F%0A%0AGracias." class="email-cta">
+        📧 s.lopezrap@gmail.com
+      </a>
+      <p class="muted" style="margin-top: 16px; font-size: 13px;">
+        El código sigue siendo tuyo. La licencia MIT no cambia: puedes auditarlo, modificarlo y desplegarlo sin permiso adicional.
+      </p>
+    </div>
+  </section>
+
+  <section class="subscribe-block">
+    <div class="subscribe-card">
+      <div class="subscribe-icon">📬</div>
+      <h2>Mantente al tanto</h2>
+      <p>Updates cuando publique nuevas features, casos de uso reales o aprendizajes sobre adopción del motor. <strong>1 email al mes</strong>, sin spam, baja en un click.</p>
+      <a
+        data-tally-open="Np8ZRp"
+        data-tally-layout="modal"
+        data-tally-width="500"
+        data-tally-overlay="1"
+        href="mailto:s.lopezrap@gmail.com?subject=Suscribir%20al%20newsletter%20del%20Orquestador%20DAG%20AnyStack"
+        class="subscribe-btn">
+        Suscribirme al newsletter
+        <span class="arrow">→</span>
+      </a>
+      <div class="subscribe-meta">
+        <span>📧 1 email/mes</span>
+        <span class="dot"></span>
+        <span>🚫 cero spam</span>
+        <span class="dot"></span>
+        <span>↩ baja en 1 click</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div>
+    © 2026 <strong>Sergio Lopez Rapado</strong> · Trabajo original liberado bajo MIT License<br>
+    <span class="muted">📧 <a data-tally-open="5BEA8v" data-tally-layout="modal" data-tally-width="600" data-tally-overlay="1" href="mailto:s.lopezrap@gmail.com">s.lopezrap@gmail.com</a></span>
+  </div>
+  <div><a href="https://github.com/slopezrap/OrquestadorDAG-AnyStack" target="_blank" rel="noopener">Repositorio en GitHub →</a></div>
+</footer>
+
+<script src="assets/app.js"></script>
+<!-- Tally.so embed (popup forms + inline embeds) -->
+<script async src="https://tally.so/widgets/embed.js"></script>
+</body>
+</html>

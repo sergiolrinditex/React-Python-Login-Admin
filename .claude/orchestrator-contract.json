@@ -1,0 +1,716 @@
+{
+  "version": "2026-05-06.dag-runtime-write-contract.v5-trailer-schema",
+  "purpose": "Static, machine-readable contract for Claude Code agents, hooks and commands. Runtime/generated state stays outside .claude.",
+  "static_config": {
+    "root": ".claude/",
+    "policy": "Agents must not edit static orchestrator config during app-building runs.",
+    "override_env": "CLAUDE_ALLOW_STATIC_CONFIG_WRITES"
+  },
+  "source_of_truth": {
+    "canonical_dir": "docs/source-of-truth/",
+    "files": [
+      "instrucciones.md",
+      "*_TECHNICAL_GUIDE.md",
+      "*_IMPLEMENTATION_CHECKLIST.md",
+      "UX_CONTRACT.md",
+      "STACK_PROFILE.yaml"
+    ],
+    "runtime_policy": "Do not edit source-of-truth while a TASK_ID is active. Change docs first, then bootstrap again.",
+    "override_env": "CLAUDE_ALLOW_SOURCE_TRUTH_WRITES",
+    "increment_policy": "The five source-of-truth docs are cumulative. Keep existing baseline/built rows plus v1/v2/vN rows together; use Product increment and Build state in the Coverage Registry."
+  },
+  "dag_scope": {
+    "task_id_env": "CLAUDE_ACTIVE_TASK_ID",
+    "task_pack_env": "CLAUDE_TASK_PACK",
+    "task_pack_template": "orchestrator-state/tasks/task-packs/<TASK_ID>.md",
+    "legacy_active_task": "orchestrator-state/memory/active-task.md",
+    "legacy_policy": "advisory only in explicit DAG mode"
+  },
+  "derived_core_state": {
+    "policy": "Only bootstrap/claim/hooks/checker scripts may write these files directly.",
+    "files": [
+      "orchestrator-state/tasks/registry.json",
+      "orchestrator-state/tasks/runtime-state.json",
+      "orchestrator-state/tasks/ledger.jsonl",
+      "orchestrator-state/memory/task-dag.json",
+      "orchestrator-state/memory/task-dag.md",
+      "orchestrator-state/memory/execution-graph.json",
+      "orchestrator-state/memory/active-task.json",
+      "orchestrator-state/memory/active-phase.json"
+    ],
+    "override_env": "CLAUDE_ALLOW_CORE_STATE_WRITES",
+    "canonical_dag_source": "orchestrator-state/tasks/registry.json -> tasks[] + task_dag.source_digest; task-dag.json/md and execution-graph.json are derived views checked for drift by check-task-dag --strict"
+  },
+  "agent_write_contract": {
+    "planner": {
+      "may_write": [
+        "orchestrator-state/tasks/task-packs/<TASK_ID>.md",
+        "orchestrator-state/memory/active-task.md legacy mirror",
+        "orchestrator-state/memory/active-phase.md legacy mirror",
+        "orchestrator-state/agent-memory/planner/MEMORY.md",
+        "orchestrator-state/agent-memory/planner/archive/**"
+      ],
+      "must_not_write": [
+        "product code",
+        "registry/runtime JSON directly unless explicit repair requested"
+      ]
+    },
+    "developer": {
+      "may_write": [
+        "product code inside task scope",
+        "shared config files explicitly declared in the active task Write set (e.g. docker-compose.yml, Dockerfile*, .env.example, .github/workflows/**)",
+        "orchestrator-state/memory/PROGRESS.md",
+        "orchestrator-state/tasks/handoffs/<TASK_ID>.md",
+        "orchestrator-state/tasks/evidence/<TASK_ID>/developer-*",
+        "orchestrator-state/agent-memory/developer/MEMORY.md",
+        "orchestrator-state/agent-memory/developer/archive/**"
+      ],
+      "must_not_write": [
+        "registry/runtime JSON directly",
+        "other TASK_ID artifacts"
+      ]
+    },
+    "official-docs-researcher": {
+      "may_write": [
+        "orchestrator-state/memory/official-doc-notes/*.md",
+        "orchestrator-state/agent-memory/official-docs-researcher/MEMORY.md",
+        "orchestrator-state/agent-memory/official-docs-researcher/archive/**"
+      ],
+      "must_not_write": [
+        "product code",
+        "registry/runtime JSON"
+      ]
+    },
+    "validator": {
+      "may_write": [
+        "append-only sections in orchestrator-state/tasks/handoffs/<TASK_ID>.md",
+        "orchestrator-state/agent-memory/validator/MEMORY.md",
+        "orchestrator-state/agent-memory/validator/archive/**",
+        "orchestrator-state/tasks/follow-ups/<FOLLOWUP_ID>.yaml via register_followup_task.py propose"
+      ],
+      "must_not_write": [
+        "product code",
+        "registry/runtime JSON directly"
+      ]
+    },
+    "tester": {
+      "may_write": [
+        "orchestrator-state/tasks/evidence/<TASK_ID>/*",
+        "append-only sections in orchestrator-state/tasks/handoffs/<TASK_ID>.md",
+        "orchestrator-state/agent-memory/tester/MEMORY.md",
+        "orchestrator-state/agent-memory/tester/archive/**",
+        "orchestrator-state/tasks/follow-ups/<FOLLOWUP_ID>.yaml via register_followup_task.py propose"
+      ],
+      "must_not_write": [
+        "product code except explicit fixture/test-only request",
+        "other TASK_ID artifacts"
+      ]
+    },
+    "debugger": {
+      "may_write": [
+        "smallest product-code fix inside TASK_ID scope",
+        "orchestrator-state/tasks/handoffs/<TASK_ID>.md",
+        "orchestrator-state/tasks/evidence/<TASK_ID>/debugger-*",
+        "orchestrator-state/agent-memory/debugger/MEMORY.md",
+        "orchestrator-state/agent-memory/debugger/archive/**",
+        "orchestrator-state/tasks/follow-ups/<FOLLOWUP_ID>.yaml via register_followup_task.py propose"
+      ],
+      "must_not_write": [
+        "registry/runtime JSON directly",
+        "other TASK_ID artifacts"
+      ]
+    },
+    "closer": {
+      "may_write": [
+        "orchestrator-state/tasks/reports/<TASK_ID>.md",
+        "append close summary to handoff",
+        "git commit on main",
+        "configured Git workflow via ./scripts/git-workflow.sh",
+        "safe worktree cleanup",
+        "docs/product-baseline/* via sync_product_baseline.py",
+        "docs/product-baseline/BASELINE_MANIFEST.json via sync_product_baseline.py",
+        "orchestrator-state/agent-memory/closer/MEMORY.md",
+        "orchestrator-state/agent-memory/closer/archive/**"
+      ],
+      "must_not_write": [
+        "product code",
+        "mark done without push + cleanup proof",
+        "mark done while high/blocker follow-up proposals from this TASK_ID remain unpromoted/unwaived",
+        "Co-authored-by trailers or Claude coauthor metadata in commits"
+      ]
+    },
+    "bootstrap_agents": {
+      "agents": [
+        "document-analyzer",
+        "project-architect",
+        "task-planner"
+      ],
+      "may_write": [
+        "docs/source-of-truth before execution starts",
+        "orchestrator-state/memory/architecture-contract.md",
+        "orchestrator-state/agent-memory/task-planner/MEMORY.md",
+        "orchestrator-state/memory/source-manifest.json",
+        "orchestrator-state/memory/project-brief.md",
+        "orchestrator-state/memory/decisions.md",
+        "orchestrator-state/memory/risk-register.md",
+        "orchestrator-state/agent-memory/document-analyzer/MEMORY.md",
+        "orchestrator-state/agent-memory/project-architect/MEMORY.md",
+        "orchestrator-state/agent-memory/bootstrap_agents/archive/**"
+      ],
+      "must_not_write": [
+        "active DAG task artifacts"
+      ]
+    },
+    "deployer": {
+      "may_write": [
+        "deployment manifests/config/scripts inside task scope when deployment is explicitly in scope",
+        "orchestrator-state/tasks/handoffs/<TASK_ID>.md",
+        "orchestrator-state/tasks/evidence/<TASK_ID>/deploy-*",
+        "orchestrator-state/agent-memory/deployer/MEMORY.md",
+        "orchestrator-state/agent-memory/deployer/archive/**"
+      ],
+      "must_not_write": [
+        "registry/runtime JSON directly",
+        "deploy to a real target without approved QA/closer gate, dry-run evidence and rollback plan",
+        "other TASK_ID artifacts"
+      ]
+    },
+    "document-analyzer": {
+      "may_write": [
+        "docs/source-of-truth before execution starts",
+        "orchestrator-state/memory/source-manifest.json",
+        "orchestrator-state/agent-memory/document-analyzer/MEMORY.md",
+        "orchestrator-state/agent-memory/document-analyzer/archive/**"
+      ],
+      "must_not_write": [
+        "product code",
+        "active DAG task artifacts",
+        "registry/runtime JSON directly"
+      ]
+    },
+    "project-architect": {
+      "may_write": [
+        "orchestrator-state/memory/architecture-contract.md",
+        "orchestrator-state/memory/decisions.md",
+        "orchestrator-state/memory/risk-register.md",
+        "orchestrator-state/agent-memory/project-architect/MEMORY.md",
+        "orchestrator-state/agent-memory/project-architect/archive/**"
+      ],
+      "must_not_write": [
+        "product code",
+        "active DAG task artifacts",
+        "registry/runtime JSON directly"
+      ]
+    },
+    "task-planner": {
+      "may_write": [
+        "docs/source-of-truth before execution starts when user-approved planning changes are required",
+        "orchestrator-state/agent-memory/task-planner/MEMORY.md",
+        "orchestrator-state/agent-memory/task-planner/archive/**"
+      ],
+      "must_not_write": [
+        "product code",
+        "registry/runtime/task-dag/work-items directly; bootstrap scripts write generated artifacts under locks",
+        "active DAG task artifacts"
+      ]
+    },
+    "main-orchestrator": {
+      "may_write": [
+        "orchestrator-state/agent-memory/main-orchestrator/MEMORY.md",
+        "orchestrator-state/agent-memory/main-orchestrator/archive/**",
+        "orchestration notes in handoffs only through the scoped agent/command workflow"
+      ],
+      "must_not_write": [
+        "product code",
+        "registry/runtime JSON directly",
+        "generated DAG files directly",
+        "other TASK_ID artifacts"
+      ]
+    }
+  },
+  "trailers": {
+    "lifecycle_agents": [
+      "closer",
+      "debugger",
+      "deployer",
+      "developer",
+      "tester"
+    ],
+    "info_only_agents": [
+      "official-docs-researcher",
+      "validator",
+      "planner",
+      "main-orchestrator"
+    ],
+    "required_lifecycle_keys": [
+      "TASK_ID",
+      "OUTCOME",
+      "NEXT_STATUS"
+    ],
+    "closer_done_requires": [
+      "OUTCOME: committed",
+      "NEXT_STATUS: done",
+      "REPORT_READY: yes",
+      "BASELINE_SYNC_READY: yes",
+      "GIT_READY: yes",
+      "PUSH_READY: yes",
+      "WORKTREES_CLEANED: yes"
+    ]
+  },
+  "ux_contract": {
+    "source_docs": "User journeys live in instrucciones.md; route/page/endpoints/UI states live in TECHNICAL_GUIDE; slice acceptance/verify lives in CHECKLIST.",
+    "required_screen_states": [
+      "loading",
+      "empty",
+      "error_network",
+      "error_validation",
+      "permission_denied",
+      "success"
+    ],
+    "required_navigation_fields": [
+      "route",
+      "page/widget",
+      "auth",
+      "journey_refs",
+      "endpoints_consumed",
+      "client_state/provider",
+      "required_ui_states",
+      "next_action",
+      "slice_id"
+    ],
+    "verification_data_contract": {
+      "source": "docs/source-of-truth/*_TECHNICAL_GUIDE.md §Verification Data Contract",
+      "required_for": [
+        "verify-slice",
+        "verify-journey",
+        "phase-gate evidence review"
+      ],
+      "rules": [
+        "Use real/provided sandbox data for productive closure.",
+        "Do not insert verification data through the endpoint under test.",
+        "Synthetic data is allowed only for labelled edge cases such as empty/error/permission states.",
+        "Evidence must state data-contract rows used, real/provided data loaded and persisted data observed."
+      ]
+    }
+  },
+  "followup_tasks": {
+    "purpose": "Only real out-of-scope work becomes formal DAG follow-up. In-scope defects stay in the same TASK_ID and go through validator/tester -> debugger -> retest.",
+    "proposal_dir": "orchestrator-state/tasks/follow-ups/<FOLLOWUP_ID>.yaml",
+    "source_patch_dir": "orchestrator-state/tasks/source-doc-patches/<FOLLOWUP_ID>.md",
+    "proposal_command": "./scripts/register-followup-task.sh propose --origin-task <TASK_ID> --scope-classification <out_of_scope|missing_coverage|missing_real_data|external_dependency|future_enhancement|scope_expansion|blocked_by_human_decision> --why-not-debugger <reason> --title <title> --severity high|medium|low ...",
+    "promotion_command": "claude --agent main-orchestrator --permission-mode bypassPermissions \"/promote-followup <FOLLOWUP_ID>\"",
+    "waiver_command": "./scripts/register-followup-task.sh waive <FOLLOWUP_ID> --reason <human decision>",
+    "blocking_severities": [
+      "blocker",
+      "critical",
+      "high"
+    ],
+    "promotion_writes": [
+      "docs/source-of-truth/*_IMPLEMENTATION_CHECKLIST.md Runtime Follow-up Coverage Registry",
+      "orchestrator-state/tasks/registry.json",
+      "orchestrator-state/tasks/work-items/<TASK_ID>.yaml",
+      "orchestrator-state/memory/task-dag.json",
+      "orchestrator-state/memory/task-dag.md",
+      "orchestrator-state/tasks/runtime-state.json",
+      "orchestrator-state/tasks/ledger.jsonl",
+      "Coverage Registry Product increment column",
+      "Coverage Registry Build state column"
+    ],
+    "policy": "Agents may propose follow-ups. Only the main orchestrator promotes/waives after human approval. Promotion persists the task into source-of-truth so future bootstrap runs do not lose it.",
+    "promotion_script": "./scripts/register-followup-task.sh promote <FOLLOWUP_ID>",
+    "promotion_policy": "Use /promote-followup as the safe main-orchestrator command. The script is the low-level implementation and must not be called by closer automatically. Main-orchestrator must reject/waive FU spam that should have gone through debugger/retest.",
+    "triage_policy": "Do not create FU for in_scope_defect. Use debugger/retest inside the current slice. Every FU must explain why debugger cannot fix it inside TASK_ID; blocking severities require --why-not-debugger.",
+    "scope_classifications": [
+      "out_of_scope",
+      "missing_coverage",
+      "missing_real_data",
+      "external_dependency",
+      "future_enhancement",
+      "scope_expansion",
+      "blocked_by_human_decision"
+    ],
+    "rejected_scope_classification": "in_scope_defect"
+  },
+  "product_baseline": {
+    "purpose": "docs/product-baseline/ stores the built cumulative baseline snapshot passed to ChatGPT before planning the next increment.",
+    "manifest": "docs/product-baseline/BASELINE_MANIFEST.json",
+    "sync_command": "./scripts/sync-product-baseline.sh sync --version <v0|v1|v2|current> --task <TASK_ID>",
+    "status_command": "./scripts/sync-product-baseline.sh status",
+    "policy": "Closer syncs docs/source-of-truth into docs/product-baseline after verified slice evidence is ready and before the atomic commit. Do not hand-edit baseline snapshot during active DAG tasks.",
+    "coverage_registry_columns": [
+      "Product increment",
+      "Build state"
+    ],
+    "build_state_values": {
+      "done": "already built baseline, do not rebuild after bootstrap",
+      "planned": "future/current increment task",
+      "ready": "force ready root when dependencies allow",
+      "blocked": "force blocked"
+    }
+  },
+  "outcome_enums": {
+    "closer": [
+      "committed",
+      "blocked"
+    ],
+    "debugger": [
+      "fixed",
+      "blocked",
+      "failed"
+    ],
+    "deployer": [
+      "deployed",
+      "planned",
+      "blocked",
+      "failed"
+    ],
+    "developer": [
+      "success",
+      "blocked",
+      "failed"
+    ],
+    "document-analyzer": [
+      "valid",
+      "invalid"
+    ],
+    "official-docs-researcher": [
+      "verified",
+      "discrepancy",
+      "insufficient"
+    ],
+    "project-architect": [
+      "ready",
+      "blocked"
+    ],
+    "task-planner": [
+      "ready",
+      "blocked"
+    ],
+    "tester": [
+      "pass",
+      "fail",
+      "blocked"
+    ],
+    "validator": [
+      "approved",
+      "changes_requested",
+      "blocked"
+    ],
+    "planner": [
+      "ready",
+      "blocked"
+    ],
+    "main-orchestrator": [
+      "ready",
+      "blocked"
+    ]
+  },
+  "verify_policy": {
+    "risk_level": [
+      "low",
+      "medium",
+      "high",
+      "critical"
+    ],
+    "verify_mode": [
+      "auto",
+      "human"
+    ],
+    "auto_verify_requires": "low risk, deterministic commands, no closing journey, real/provided data evidence"
+  },
+  "next_status_enums": {
+    "closer": [
+      "done",
+      "blocked"
+    ],
+    "debugger": [
+      "validator_tester_pending",
+      "blocked"
+    ],
+    "deployer": [
+      "done",
+      "blocked"
+    ],
+    "developer": [
+      "validator_tester_pending",
+      "blocked"
+    ],
+    "document-analyzer": [],
+    "official-docs-researcher": [],
+    "project-architect": [],
+    "task-planner": [],
+    "tester": [
+      "ready_for_close",
+      "needs_debug",
+      "blocked"
+    ],
+    "validator": [
+      "ready_for_close",
+      "needs_debug",
+      "blocked"
+    ],
+    "planner": [],
+    "main-orchestrator": []
+  },
+  "trailer_schema": {
+    "source_of_truth": ".claude/orchestrator-contract.json",
+    "policy": "All agents must emit trailers using the role-specific enums below. Hooks load this schema first; hardcoded hook enums are fallback only for damaged/partial installs.",
+    "global_keys": [
+      "TASK_ID",
+      "OUTCOME",
+      "NEXT_STATUS",
+      "HANDOFF",
+      "EVIDENCE",
+      "REPORT",
+      "REPORT_READY",
+      "BASELINE_SYNC_READY",
+      "GIT_READY",
+      "PUSH_READY",
+      "WORKTREES_CLEANED",
+      "JOURNEY_PENDING_VERIFY",
+      "JOURNEY_VERIFIED_INLINE",
+      "JOURNEY_ID",
+      "JOURNEY_VERIFY_OUTCOME",
+      "JOURNEY_VERIFY_WAIVED"
+    ],
+    "roles": {
+      "closer": {
+        "description": "Final closure: report, baseline sync, commit, push and worktree cleanup.",
+        "required_keys": [
+          "TASK_ID",
+          "OUTCOME",
+          "NEXT_STATUS"
+        ],
+        "outcome_values": [
+          "committed",
+          "blocked"
+        ],
+        "next_status_values": [
+          "done",
+          "blocked"
+        ],
+        "mutates_registry_lifecycle": true,
+        "info_only": false,
+        "allowed_to_close_task": true
+      },
+      "debugger": {
+        "description": "Applies the smallest fix inside the same TASK_ID after tester/validator failure.",
+        "required_keys": [
+          "TASK_ID",
+          "OUTCOME",
+          "NEXT_STATUS"
+        ],
+        "outcome_values": [
+          "fixed",
+          "blocked",
+          "failed"
+        ],
+        "next_status_values": [
+          "validator_tester_pending",
+          "blocked"
+        ],
+        "mutates_registry_lifecycle": true,
+        "info_only": false,
+        "allowed_to_close_task": false
+      },
+      "deployer": {
+        "description": "Deployment planning/execution when the project enables deploy flow.",
+        "required_keys": [
+          "TASK_ID",
+          "OUTCOME",
+          "NEXT_STATUS"
+        ],
+        "outcome_values": [
+          "deployed",
+          "planned",
+          "blocked",
+          "failed"
+        ],
+        "next_status_values": [
+          "done",
+          "blocked"
+        ],
+        "mutates_registry_lifecycle": true,
+        "info_only": false,
+        "allowed_to_close_task": false
+      },
+      "developer": {
+        "description": "Implements code for exactly one active TASK_ID and hands off to validator/tester.",
+        "required_keys": [
+          "TASK_ID",
+          "OUTCOME",
+          "NEXT_STATUS"
+        ],
+        "outcome_values": [
+          "success",
+          "blocked",
+          "failed"
+        ],
+        "next_status_values": [
+          "validator_tester_pending",
+          "blocked"
+        ],
+        "mutates_registry_lifecycle": true,
+        "info_only": false,
+        "allowed_to_close_task": false
+      },
+      "document-analyzer": {
+        "description": "Bootstrap/source-doc analysis before active DAG execution.",
+        "required_keys": [
+          "OUTCOME"
+        ],
+        "outcome_values": [
+          "valid",
+          "invalid"
+        ],
+        "next_status_values": [],
+        "mutates_registry_lifecycle": false,
+        "info_only": false,
+        "allowed_to_close_task": false
+      },
+      "official-docs-researcher": {
+        "description": "Checks official docs and reports discrepancies; informational lifecycle only.",
+        "required_keys": [
+          "OUTCOME"
+        ],
+        "outcome_values": [
+          "verified",
+          "discrepancy",
+          "insufficient"
+        ],
+        "next_status_values": [],
+        "mutates_registry_lifecycle": false,
+        "info_only": true,
+        "allowed_to_close_task": false
+      },
+      "project-architect": {
+        "description": "Architecture planning before active DAG execution.",
+        "required_keys": [
+          "OUTCOME"
+        ],
+        "outcome_values": [
+          "ready",
+          "blocked"
+        ],
+        "next_status_values": [],
+        "mutates_registry_lifecycle": false,
+        "info_only": false,
+        "allowed_to_close_task": false
+      },
+      "task-planner": {
+        "description": "Source-doc to task planning before active DAG execution.",
+        "required_keys": [
+          "OUTCOME"
+        ],
+        "outcome_values": [
+          "ready",
+          "blocked"
+        ],
+        "next_status_values": [],
+        "mutates_registry_lifecycle": false,
+        "info_only": false,
+        "allowed_to_close_task": false
+      },
+      "tester": {
+        "description": "Runs real/provided-data tests and owns ready_for_close/needs_debug lifecycle after developer.",
+        "required_keys": [
+          "TASK_ID",
+          "OUTCOME",
+          "NEXT_STATUS"
+        ],
+        "outcome_values": [
+          "pass",
+          "fail",
+          "blocked"
+        ],
+        "next_status_values": [
+          "ready_for_close",
+          "needs_debug",
+          "blocked"
+        ],
+        "mutates_registry_lifecycle": true,
+        "info_only": false,
+        "allowed_to_close_task": false
+      },
+      "validator": {
+        "description": "Reviews scope, architecture, security and contracts; informational lifecycle only.",
+        "required_keys": [
+          "TASK_ID",
+          "OUTCOME"
+        ],
+        "outcome_values": [
+          "approved",
+          "changes_requested",
+          "blocked"
+        ],
+        "next_status_values": [
+          "ready_for_close",
+          "needs_debug",
+          "blocked"
+        ],
+        "mutates_registry_lifecycle": false,
+        "info_only": true,
+        "allowed_to_close_task": false
+      },
+      "planner": {
+        "description": "Planning/context assembly agent. It may report informational readiness but must not mutate lifecycle directly.",
+        "required_keys": [
+          "OUTCOME"
+        ],
+        "outcome_values": [
+          "ready",
+          "blocked"
+        ],
+        "next_status_values": [],
+        "mutates_registry_lifecycle": false,
+        "info_only": true,
+        "allowed_to_close_task": false
+      },
+      "main-orchestrator": {
+        "description": "Top-level command coordinator. It may report informational routing state but must not mutate lifecycle directly.",
+        "required_keys": [
+          "OUTCOME"
+        ],
+        "outcome_values": [
+          "ready",
+          "blocked"
+        ],
+        "next_status_values": [],
+        "mutates_registry_lifecycle": false,
+        "info_only": true,
+        "allowed_to_close_task": false
+      }
+    },
+    "closer_done_requires": [
+      "OUTCOME: committed",
+      "NEXT_STATUS: done",
+      "REPORT_READY: yes",
+      "BASELINE_SYNC_READY: yes",
+      "GIT_READY: yes",
+      "PUSH_READY: yes",
+      "WORKTREES_CLEANED: yes"
+    ],
+    "json_trailer_format": {
+      "recommended": true,
+      "shape": {
+        "claude_trailer": {
+          "TASK_ID": "<TASK_ID>",
+          "OUTCOME": "<role outcome>",
+          "NEXT_STATUS": "<role next status>"
+        }
+      },
+      "plain_text_fallback": [
+        "TASK_ID: <TASK_ID>",
+        "OUTCOME: <role outcome>",
+        "NEXT_STATUS: <role next status>"
+      ]
+    }
+  },
+  "outcome_enums_source": "trailer_schema.roles[*].outcome_values",
+  "next_status_enums_source": "trailer_schema.roles[*].next_status_values",
+  "journey_gate": {
+    "default_mode": "frontier",
+    "frontier_policy": "pending journeys defer only tasks whose Journey refs/dependencies reference that JID",
+    "strict_policy": "legacy global block until pending journeys are verified or waived"
+  }
+}

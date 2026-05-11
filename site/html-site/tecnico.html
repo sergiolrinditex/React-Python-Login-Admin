@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Técnico — Orquestador DAG · AnyStack</title>
+    <meta property="article:author" content="Sergio Lopez Rapado">
+  <meta property="article:published_time" content="2026-05-07T00:00:00Z">
+  <meta name="author" content="Sergio Lopez Rapado">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/styles.css">
+  <style>pre.mermaid{background:transparent;border:0;padding:8px 0;text-align:center;color:#e5e7eb}</style>
+  <!-- Cloudflare Web Analytics -->
+  <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "592c05228d374062ac06009e38a56155"}'></script>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="index.html" class="brand">Orquestador DAG · AnyStack</a>
+  <a href="index.html">Inicio</a>
+  <a href="negocio.html">Negocio</a>
+  <a href="templates.html">Templates</a>
+  <a href="stack-ux.html">Stack/UX</a>
+  <a href="tecnico.html">Técnico</a>
+  <a data-tally-open="5BEA8v" data-tally-layout="modal" data-tally-width="600" data-tally-overlay="1" href="mailto:s.lopezrap@gmail.com?subject=OrquestadorDAG-AnyStack%20%E2%80%94%20quiero%20ayuda%20para%20implantarlo" class="topnav-cta">📧 Contacto</a>
+</nav>
+
+<main>
+
+  <span class="hero-eyebrow">🛠 Para ingenieros · Arquitectura</span>
+  <h1>Cinco docs SOT, cero magia.</h1>
+  <p class="lead">
+    Source-of-truth fija (5 docs: instrucciones + technical guide + checklist + STACK_PROFILE + UX_CONTRACT).
+    Registry derivado canónico. Hooks defensivos. Locks POSIX. Trailers tipados desde un único schema.
+    Stack-agnóstico vía plugins de design-tokens y git-workflows.
+  </p>
+  <div class="hero-actions" style="margin-top: 12px;">
+    <a href="https://github.com/slopezrap/OrquestadorDAG-AnyStack" target="_blank" rel="noopener" class="btn-secondary">📂 Ver código en GitHub</a>
+    <a href="#profundiza" class="btn-ghost">↓ Páginas técnicas profundas</a>
+  </div>
+
+  <h2>Componentes principales</h2>
+  <div class="grid cols-2">
+
+    <div class="card">
+      <div class="card-icon" style="background: linear-gradient(135deg, #8b5cf6, #6366f1);">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg>
+      </div>
+      <h3>Source of truth · 5 docs</h3>
+      <p>Cinco markdown/yaml canónicos en <code>docs/source-of-truth/</code>: <code>instrucciones.md</code>, <code>*_TECHNICAL_GUIDE.md</code>, <code>*_IMPLEMENTATION_CHECKLIST.md</code>, <code>STACK_PROFILE.yaml</code>, <code>UX_CONTRACT.md</code>. El bootstrap deriva registry, work-items, phases y DAG. La matriz de adyacencia <strong>no se edita a mano</strong>.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-icon" style="background: linear-gradient(135deg, #06b6d4, #0ea5e9);">
+        <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      </div>
+      <h3>Memoria runtime</h3>
+      <p><code>CLAUDE_TASK_PACK</code>, handoffs, evidence y reports por <code>TASK_ID</code>. El singleton legacy <code>active-task.md</code> es advisory en modo DAG. Cada terminal lleva su propio scope.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-icon" style="background: linear-gradient(135deg, #f59e0b, #ef4444);">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </div>
+      <h3>Hooks</h3>
+      <p>Hooks Python: <code>spawn_budget</code>, <code>write_scope_guard</code>, <code>docs_discrepancy</code>, <code>update_ledger</code>, <code>capture_subagent_stop</code>, <code>session_context</code>.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-icon" style="background: linear-gradient(135deg, #10b981, #14b8a6);">
+        <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      </div>
+      <h3>Locks POSIX</h3>
+      <p><code>fcntl.flock</code> reentrante con depth counter. Orden global registry → runtime-state. Atomic write tmp+rename. Multiprocessing tests reales.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-icon" style="background: linear-gradient(135deg, #ec4899, #8b5cf6);">
+        <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </div>
+      <h3>Agentes</h3>
+      <p>12 prompts especializados. Lifecycle: developer, tester, debugger, closer, deployer. Info-only: validator, official-docs-researcher.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-icon" style="background: linear-gradient(135deg, #4ade80, #06b6d4);">
+        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      </div>
+      <h3>Plugins stack-agnósticos</h3>
+      <p><code>.claude/enforcers/</code> y <code>.claude/git-workflows/</code> son plugins despachables desde <code>STACK_PROFILE.yaml</code>. <code>design_tokens_v1</code> escanea según el framework declarado. <code>push-to-main</code> y <code>pr-flow</code> cubren los dos workflows Git habituales.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-icon" style="background: linear-gradient(135deg, #3b82f6, #06b6d4);">
+        <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      </div>
+      <h3>Vocabulario centralizado</h3>
+      <p>Vocabulario centralizado en <code>orchestrator-contract.json → trailer_schema.roles</code>. Hook valida outcomes y next_status; hardcoded sólo como fallback.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-icon" style="background: linear-gradient(135deg, #8b5cf6, #ec4899);">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      </div>
+      <h3>UX Contract</h3>
+      <p><code>UX_CONTRACT.md</code> declara personas, pantallas y estados UI requeridos. Una slice de UI no se cierra hasta que loading, empty, network error, validation error, permission denied y success están explícitos o marcados N/A.</p>
+    </div>
+
+  </div>
+
+  <h2>Vista de alto nivel</h2>
+  <p>Los 5 documentos editables alimentan el bootstrap; el resto es derivado o escrito por hooks bajo lock.</p>
+  <pre class="mermaid">
+flowchart TB
+    subgraph SOT[5 documentos source-of-truth]
+        I[instrucciones.md]
+        TG[*_TECHNICAL_GUIDE.md]
+        CL[*_IMPLEMENTATION_CHECKLIST.md]
+        SP[STACK_PROFILE.yaml]
+        UX[UX_CONTRACT.md]
+    end
+    subgraph DERIVED[Estado derivado · solo bootstrap/hooks]
+        REG[registry.json]
+        DAG[task-dag.json/.md]
+        EG[execution-graph.json]
+        WI[work-items/*.yaml]
+    end
+    subgraph RUNTIME[Runtime · hooks bajo lock]
+        RS[runtime-state.json]
+        LED[ledger.jsonl]
+        TP[task-packs/*.md]
+    end
+    SOT ==&gt; REG
+    REG --&gt; DAG
+    REG --&gt; EG
+    REG --&gt; WI
+    REG --&gt; RS
+    REG --&gt; LED
+    REG --&gt; TP
+  </pre>
+
+  <h2>Hooks — el sistema nervioso</h2>
+  <p>Cuatro grupos de hooks cableados en <code>settings.json</code>. Solo el PreToolUse de Agent puede denegar (cuando se alcanza el budget de 20 spawns).</p>
+  <pre class="mermaid">
+flowchart LR
+    subgraph PRE[PreToolUse]
+        SB[spawn_budget<br/>max 20 spawns/slice]
+        WG[write_scope_guard<br/>bloquea cross-task]
+        DD[docs_discrepancy<br/>warn-only]
+    end
+    subgraph POST[PostToolUse]
+        UL[update_ledger]
+    end
+    subgraph STOP[SubagentStop]
+        CSS[capture_subagent_stop]
+    end
+    subgraph START[SessionStart]
+        SC[session_context]
+    end
+    PRE -.bloquea o avisa.-&gt; AGENT[Agente]
+    AGENT -.consume.-&gt; POST
+    AGENT -.cierre.-&gt; STOP
+    START -.contexto inicial.-&gt; AGENT
+  </pre>
+
+  <h2>Cadena por slice</h2>
+  <div class="panel">
+    <h4>Pipeline máximo 20 spawns</h4>
+    <pre data-copy><code>planner
+  ↓ (blocking — selecciona task ready, escribe task-pack con stack profile)
+developer  ‖  official-docs-researcher
+  ↓ (paralelo — un único Agent message con dos calls)
+validator  ‖  tester
+  ↓ (paralelo — validator info-only, tester decide lifecycle)
+debugger   (solo si tester fail; máx 3 ciclos)
+  ↓
+/verify-slice  (gate humano + datos reales/proporcionados + journey §5.bis inline o aparte)
+  ↓
+closer
+  ↓ (commit atómico → git workflow plugin → push)
+done</code></pre>
+  </div>
+
+  <h2>Concurrencia real — validator + tester en paralelo</h2>
+  <p>Cuando ambos cierran a la vez, el contrato evita la race: validator es info-only, solo tester muta <code>task.status</code>.</p>
+  <pre class="mermaid">
+sequenceDiagram
+    participant V as validator
+    participant T as tester
+    participant H1 as hook validator
+    participant H2 as hook tester
+    participant L as fcntl.flock
+    participant R as registry.json
+    par paralelo
+        V-&gt;&gt;H1: SubagentStop OUTCOME approved
+        T-&gt;&gt;H2: SubagentStop OUTCOME pass
+    end
+    H1-&gt;&gt;L: lock registry
+    Note over H1,R: validator info-only<br/>solo metadata
+    H1-&gt;&gt;R: validator_outcome=approved
+    H1-&gt;&gt;L: release
+    H2-&gt;&gt;L: lock registry
+    Note over H2,R: tester decide lifecycle
+    H2-&gt;&gt;R: status=ready_for_close
+    H2-&gt;&gt;L: release
+  </pre>
+
+  <h2>Closer guardrail — 5 candados mecánicos</h2>
+  <pre class="mermaid">
+flowchart TD
+    T[closer trailer<br/>OUTCOME committed<br/>NEXT_STATUS done]
+    GR{Todos en yes?<br/>REPORT_READY<br/>BASELINE_SYNC_READY<br/>GIT_READY<br/>PUSH_READY<br/>WORKTREES_CLEANED}
+    DONE[task.status=done]
+    BLOCK[hook fuerza blocked]
+    T --&gt; GR
+    GR -- todos yes --&gt; DONE
+    GR -- alguno no --&gt; BLOCK
+  </pre>
+
+  <div class="notice">
+    <strong>El DAG solo agenda.</strong> No rebaja quality gates. Cada slice pasa por las mismas validaciones — lo único que cambia entre modo legacy y modo DAG es el scheduler y la posibilidad de usar varios terminales en paralelo.
+  </div>
+
+  <section id="profundiza">
+    <div class="section-eyebrow">Profundiza</div>
+    <h2>Páginas técnicas detalladas</h2>
+    <p class="muted">Los detalles operativos del motor están aquí. Cada página resuelve una duda concreta.</p>
+    <div class="deep-link-grid">
+
+      <a href="stack-ux.html" class="deep-link">
+        <span class="deep-link-icon">🧩</span>
+        <div class="deep-link-text">
+          <strong>Stack &amp; UX</strong>
+          <span>STACK_PROFILE + UX_CONTRACT, plugin pattern y enforcers.</span>
+        </div>
+      </a>
+
+      <a href="flujo-dag.html" class="deep-link">
+        <span class="deep-link-icon">🔀</span>
+        <div class="deep-link-text">
+          <strong>Flujo DAG</strong>
+          <span>Cómo se desbloquean nodos, joins reales, conflict groups y simulador interactivo.</span>
+        </div>
+      </a>
+
+      <a href="terminales.html" class="deep-link">
+        <span class="deep-link-icon">💻</span>
+        <div class="deep-link-text">
+          <strong>Terminales en paralelo</strong>
+          <span>Cómo cooperan terminales sin pisarse, comandos copy/paste y race resolution.</span>
+        </div>
+      </a>
+
+      <a href="comandos.html" class="deep-link">
+        <span class="deep-link-icon">📜</span>
+        <div class="deep-link-text">
+          <strong>Comandos</strong>
+          <span>Referencia de slash commands con badges, ciclo recomendado por slice.</span>
+        </div>
+      </a>
+
+      <a href="outcomes.html" class="deep-link">
+        <span class="deep-link-icon">🎯</span>
+        <div class="deep-link-text">
+          <strong>Outcomes schema</strong>
+          <span>Vocabulario único por agente desde <code>trailer_schema.roles</code>.</span>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <h2>Estado derivado vs canónico</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Fichero</th>
+          <th>Tipo</th>
+          <th>Editable a mano</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><code>docs/source-of-truth/*.{md,yaml}</code> (5 docs)</td><td><span class="badge accent">Canónico</span></td><td>Sí (antes de bootstrap)</td></tr>
+        <tr><td><code>orchestrator-state/tasks/registry.json</code></td><td><span class="badge cyan">Derivado canónico</span></td><td>No (sólo bootstrap/hooks bajo lock)</td></tr>
+        <tr><td><code>orchestrator-state/memory/task-dag.json</code></td><td><span class="badge muted">Vista derivada</span></td><td>No</td></tr>
+        <tr><td><code>orchestrator-state/memory/task-dag.md</code></td><td><span class="badge muted">Vista derivada</span></td><td>No</td></tr>
+        <tr><td><code>orchestrator-state/memory/execution-graph.json</code></td><td><span class="badge muted">Vista derivada</span></td><td>No</td></tr>
+        <tr><td><code>orchestrator-state/tasks/runtime-state.json</code></td><td><span class="badge cyan">Runtime</span></td><td>No</td></tr>
+        <tr><td><code>orchestrator-state/tasks/ledger.jsonl</code></td><td><span class="badge cyan">Append-only</span></td><td>No</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="notice">Los 26 diagramas Mermaid completos viven en <a href="https://github.com/slopezrap/OrquestadorDAG-AnyStack/tree/main/site/diagrams" target="_blank" rel="noopener">site/diagrams/</a> (renderizados nativamente por GitHub).</p>
+
+</main>
+
+<footer>
+  <div>Documentación estática · Sin dependencias externas · Lista para GitHub Pages.</div>
+  <div><a href="https://github.com/slopezrap/OrquestadorDAG-AnyStack" target="_blank" rel="noopener">Repositorio →</a></div>
+</footer>
+
+<script src="assets/app.js"></script>
+<!-- Tally.so embed (popup forms + inline embeds) -->
+<script async src="https://tally.so/widgets/embed.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true,theme:'dark',themeVariables:{primaryColor:'#1f2937',primaryTextColor:'#e5e7eb',primaryBorderColor:'#8b5cf6',lineColor:'#94a3b8',background:'#0b1020'}});</script>
+</body>
+</html>

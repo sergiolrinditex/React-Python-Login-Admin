@@ -1,4 +1,66 @@
+# OrquestadorDAG AnyStack — framework template .gitignore
+# Mantiene el template limpio: cero cruft de OS, cero compilados, cero backups.
+
+# ─── OS / editor cruft ────────────────────────────────────────────────────────
 .DS_Store
-.env
+Thumbs.db
+*~
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# ─── backups / temp ──────────────────────────────────────────────────────────
+*.bak
+*.tmp
+*.orig
+.#*
+
+# ─── Python ──────────────────────────────────────────────────────────────────
 __pycache__/
-orchestrator-state/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+.venv/
+venv/
+
+# ─── Node (por si CI/scripts lo usan) ────────────────────────────────────────
+node_modules/
+npm-debug.log*
+
+# ─── Flutter / Dart (cuando exista app/) ─────────────────────────────────────
+app/.dart_tool/
+app/.flutter-plugins
+app/.flutter-plugins-dependencies
+app/build/
+app/.idea/
+app/.packages
+app/pubspec.lock.bak
+app/ios/Pods/
+app/ios/.symlinks
+app/android/.gradle/
+app/android/local.properties
+app/android/key.properties
+app/.fvm/
+**/.dart_tool/
+
+# ─── env y secretos ──────────────────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+
+# ─── logs y artefactos de runtime del framework ──────────────────────────────
+# Estado mutable de orchestrator-state/ se versiona por decisión del usuario.
+# Solo se excluyen los lockfiles efímeros de fcntl.flock.
+orchestrator-state/**/*.lock
+
+.claude/settings.local.json
+.claude/worktrees/
+
+# ─── build outputs ───────────────────────────────────────────────────────────
+dist/
+build/
+*.log

@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Templates — Orquestador DAG · AnyStack</title>
+    <meta property="article:author" content="Sergio Lopez Rapado">
+  <meta property="article:published_time" content="2026-05-07T00:00:00Z">
+  <meta name="author" content="Sergio Lopez Rapado">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/styles.css">
+  <!-- Cloudflare Web Analytics -->
+  <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "592c05228d374062ac06009e38a56155"}'></script>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="index.html" class="brand">Orquestador DAG · AnyStack</a>
+  <a href="index.html">Inicio</a>
+  <a href="negocio.html">Negocio</a>
+  <a href="templates.html">Templates</a>
+  <a href="stack-ux.html">Stack/UX</a>
+  <a href="tecnico.html">Técnico</a>
+  <a data-tally-open="5BEA8v" data-tally-layout="modal" data-tally-width="600" data-tally-overlay="1" href="mailto:s.lopezrap@gmail.com?subject=OrquestadorDAG-AnyStack%20%E2%80%94%20quiero%20ayuda%20para%20implantarlo" class="topnav-cta">📧 Contacto</a>
+</nav>
+
+<main>
+
+  <span class="hero-eyebrow">Generación de docs</span>
+  <h1>Tres perfiles de template, mismo runtime.</h1>
+  <p class="lead">
+    Los templates producen los <strong>cinco documentos</strong> de <code>docs/source-of-truth/</code>:
+    <code>instrucciones.md</code>, <code>*_TECHNICAL_GUIDE.md</code>, <code>*_IMPLEMENTATION_CHECKLIST.md</code>,
+    <code>STACK_PROFILE.yaml</code> y <code>UX_CONTRACT.md</code>.
+    El motor DAG es idéntico en los tres casos — lo único que cambia es el esfuerzo
+    para generar la primera versión y si arrastra baseline acumulativo o no.
+  </p>
+
+  <div class="grid cols-3">
+
+    <div class="card" style="position: relative; padding-top: 32px;">
+      <span class="pill accent" style="position: absolute; top: 16px; right: 16px;">Apps grandes con baseline</span>
+      <div class="card-icon" style="background: linear-gradient(135deg, #8b5cf6, #6366f1);">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+      </div>
+      <h3>large-with-base</h3>
+      <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 16px;">
+        <code>docs/templates/large-with-base/*.template.{md,yaml}</code>
+      </p>
+      <ul>
+        <li><strong>existing baseline / v1 / v2 / vN</strong> acumulativo</li>
+        <li>Library Discovery Pass amplio</li>
+        <li>Phases por lanes o pantallas</li>
+        <li><code>Conflict group</code> + <code>Write set</code> obligatorios</li>
+        <li>Verification Data Contract real/provided</li>
+        <li>~80-150 slices realistas</li>
+      </ul>
+      <div class="notice" style="margin-top: 20px;">
+        <strong>Cuándo usar.</strong> Productos con baseline ya construido, o apps complejas con auth + datos + AI + admin + GDPR. La existing baseline incluida tiene 84 slices y 8 journeys reales.
+      </div>
+    </div>
+
+    <div class="card" style="position: relative; padding-top: 32px;">
+      <span class="pill cyan" style="position: absolute; top: 16px; right: 16px;">Apps grandes desde cero</span>
+      <div class="card-icon" style="background: linear-gradient(135deg, #06b6d4, #3b82f6);">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </div>
+      <h3>large-without-base</h3>
+      <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 16px;">
+        <code>docs/templates/*.template.{md,yaml}</code> · sin existing baseline
+      </p>
+      <ul>
+        <li>Templates large sin heredar existing baseline</li>
+        <li>Sin tablas/endpoints/journeys históricos</li>
+        <li>Phases pequeñas, DAG explícito</li>
+        <li>Stack Profile + UX Contract obligatorios</li>
+        <li>Coverage Registry empieza limpia</li>
+        <li>~30-80 slices del primer incremento</li>
+      </ul>
+      <div class="notice" style="margin-top: 20px;">
+        <strong>Cuándo usar.</strong> Producto grande desde cero sin un baseline previo del que partir. Punto medio entre <code>large-with-base</code> (baseline real) y <code>minimal</code> (scope pequeño).
+      </div>
+    </div>
+
+    <div class="card" style="position: relative; padding-top: 32px;">
+      <span class="pill" style="position: absolute; top: 16px; right: 16px;">Apps pequeñas</span>
+      <div class="card-icon" style="background: linear-gradient(135deg, #10b981, #06b6d4);">
+        <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      </div>
+      <h3>minimal</h3>
+      <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 16px;">
+        <code>docs/templates/minimal/*.template.{md,yaml}</code>
+      </p>
+      <ul>
+        <li>2-4 phases</li>
+        <li>3-8 tasks totales</li>
+        <li>1-2 journeys reales multi-pantalla</li>
+        <li>Mismo DAG explícito</li>
+        <li>Sin existing baseline ni Library Discovery</li>
+        <li>On-ramp drásticamente reducido</li>
+      </ul>
+      <div class="notice success" style="margin-top: 20px;">
+        <strong>Cuándo usar.</strong> Apps de 5-15 pantallas sin baseline. MVP, herramientas internas, prototipos productivos. MiniNotes (5 tasks, 1 journey) está validado en CI.
+      </div>
+    </div>
+
+  </div>
+
+  <h2>Los 5 documentos source-of-truth</h2>
+  <p class="muted">Cada perfil produce el mismo set canónico. AnyStack añade <strong>STACK_PROFILE</strong> y <strong>UX_CONTRACT</strong> al contrato contrato histórico de cinco docs.</p>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Documento</th>
+          <th>Owner</th>
+          <th>Qué declara</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><code>instrucciones.md</code></td><td><span class="badge accent">Producto</span></td><td>Scope, business rules, Journey Coverage Matrix</td></tr>
+        <tr><td><code>UX_CONTRACT.md</code></td><td><span class="badge accent">Producto</span></td><td>Personas, pantallas, estados UI requeridos, verificación visual</td></tr>
+        <tr><td><code>*_TECHNICAL_GUIDE.md</code></td><td><span class="badge cyan">Tech lead</span></td><td>Arquitectura, contratos, endpoints, DB, ADR, Verification Data Contract</td></tr>
+        <tr><td><code>STACK_PROFILE.yaml</code></td><td><span class="badge cyan">Tech lead</span></td><td>Frameworks, paths, comandos, health, design-tokens enforcer, git workflow</td></tr>
+        <tr><td><code>*_IMPLEMENTATION_CHECKLIST.md</code></td><td><span class="badge muted">PM / Tech lead</span></td><td>Phases, Coverage Registry con DAG (Depends on, Conflict group, Write set)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Proceso común</h2>
+  <div class="timeline">
+    <div class="step">
+      <div class="step-num">PASO 01</div>
+      <b>Pasa a ChatGPT el prompt maestro.</b>
+      <code>docs/prompts/PROMPT_SOURCE_OF_TRUTH_DAG.md</code> + el contexto real del producto.
+    </div>
+    <div class="step">
+      <div class="step-num">PASO 02</div>
+      <b>Elige perfil.</b>
+      <code>large-with-base</code> si heredas existing baseline. <code>large-without-base</code> si es producto grande desde cero.
+      <code>minimal</code> si es app pequeña sin existing baseline.
+    </div>
+    <div class="step">
+      <div class="step-num">PASO 03</div>
+      <b>Rellena los 5 docs completos.</b>
+      <code>instrucciones.md</code>, <code>*_TECHNICAL_GUIDE.md</code>, <code>*_IMPLEMENTATION_CHECKLIST.md</code>,
+      <code>STACK_PROFILE.yaml</code> y <code>UX_CONTRACT.md</code> en <code>docs/source-of-truth/</code>.
+    </div>
+    <div class="step">
+      <div class="step-num">PASO 04</div>
+      <b>Bootstrap + checkers.</b>
+      Genera registry, work-items, DAG y vistas derivadas. Falla rápido si los docs están incompletos o si STACK_PROFILE referencia un enforcer/git-workflow inexistente.
+    </div>
+    <div class="step">
+      <div class="step-num">PASO 05</div>
+      <b><code>/next-wave</code> y construye slices.</b>
+      A partir de aquí, el flujo es idéntico para los tres perfiles.
+    </div>
+  </div>
+
+  <div class="panel">
+    <h4>Comandos de bootstrap</h4>
+    <pre data-copy><code>python3 -B -S .claude/bin/bootstrap_three_docs.py --validate-only
+python3 -B -S .claude/bin/bootstrap_three_docs.py --refresh
+./scripts/check-task-dag.sh --strict
+./scripts/check-journey-matrix.sh --strict
+./scripts/check-wiring-contract.sh --strict --require-new-template-columns</code></pre>
+  </div>
+
+  <div class="notice">
+    <strong>Los tres perfiles comparten runtime.</strong> Hooks, locks, agentes, gates, journey verification y closer son idénticos. Solo cambian dos cosas: la cantidad de scope inicial y si arrastras baseline acumulativo.
+  </div>
+
+</main>
+
+<footer>
+  <div>Documentación estática · Sin dependencias externas · Lista para GitHub Pages.</div>
+  <div><a href="https://github.com/slopezrap/OrquestadorDAG-AnyStack" target="_blank" rel="noopener">Repositorio →</a></div>
+</footer>
+
+<script src="assets/app.js"></script>
+<!-- Tally.so embed (popup forms + inline embeds) -->
+<script async src="https://tally.so/widgets/embed.js"></script>
+</body>
+</html>

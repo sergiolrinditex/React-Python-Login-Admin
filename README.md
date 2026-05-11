@@ -256,7 +256,7 @@ printf 'CLAUDE_ACTIVE_TASK_ID=%s\nCLAUDE_TASK_PACK=%s\n' "$CLAUDE_ACTIVE_TASK_ID
 planner
   -> developer ‖ official-docs-researcher
   -> validator ‖ tester
-  -> debugger si tester falla
+  -> debugger si tester falla o validator pide cambios
   -> pausa en tester pass
 ```
 

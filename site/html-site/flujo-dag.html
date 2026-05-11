@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Flujo DAG — Orquestador DAG · AnyStack</title>
+    <meta property="article:author" content="Sergio Lopez Rapado">
+  <meta property="article:published_time" content="2026-05-07T00:00:00Z">
+  <meta name="author" content="Sergio Lopez Rapado">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/styles.css">
+  <style>pre.mermaid{background:transparent;border:0;padding:8px 0;text-align:center;color:#e5e7eb}</style>
+  <!-- Cloudflare Web Analytics -->
+  <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "592c05228d374062ac06009e38a56155"}'></script>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="index.html" class="brand">Orquestador DAG · AnyStack</a>
+  <a href="index.html">Inicio</a>
+  <a href="negocio.html">Negocio</a>
+  <a href="templates.html">Templates</a>
+  <a href="stack-ux.html">Stack/UX</a>
+  <a href="tecnico.html">Técnico</a>
+  <a data-tally-open="5BEA8v" data-tally-layout="modal" data-tally-width="600" data-tally-overlay="1" href="mailto:s.lopezrap@gmail.com?subject=OrquestadorDAG-AnyStack%20%E2%80%94%20quiero%20ayuda%20para%20implantarlo" class="topnav-cta">📧 Contacto</a>
+</nav>
+
+<main>
+
+  <span class="hero-eyebrow">Diagrama interactivo</span>
+  <h1>Flujo DAG con join real.</h1>
+  <p class="lead">
+    El DAG se deriva del Coverage Registry. La matriz de adyacencia se calcula
+    desde la columna <code>Depends on</code>. Pulsa los botones para simular
+    cómo se desbloquea un join.
+  </p>
+
+  <div class="dag-flow">
+    <svg class="dag-svg" viewBox="0 0 600 240" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arrowhead" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M0 0 L10 5 L0 10 z" fill="rgba(255,255,255,0.4)"/>
+        </marker>
+        <marker id="arrowhead-active" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M0 0 L10 5 L0 10 z" fill="#8b5cf6"/>
+        </marker>
+      </defs>
+
+      <path id="edge-a-j" class="dag-edge" d="M 130,80 C 220,80 240,120 280,120" marker-end="url(#arrowhead)"/>
+      <path id="edge-b-j" class="dag-edge" d="M 130,180 C 220,180 240,140 280,140" marker-end="url(#arrowhead)"/>
+      <path id="edge-j-out" class="dag-edge" d="M 400,130 L 480,130" marker-end="url(#arrowhead)"/>
+
+      <g>
+        <rect id="node-a" class="dag-node ready" x="20" y="50" width="110" height="60" rx="12"/>
+        <text class="dag-label" x="75" y="75">Terminal A</text>
+        <text class="dag-sublabel" x="75" y="95">P00-S01-T001</text>
+      </g>
+
+      <g>
+        <rect id="node-b" class="dag-node ready" x="20" y="150" width="110" height="60" rx="12"/>
+        <text class="dag-label" x="75" y="175">Terminal B</text>
+        <text class="dag-sublabel" x="75" y="195">P00-S01-T003</text>
+      </g>
+
+      <g>
+        <rect id="node-join" class="dag-node blocked" x="280" y="100" width="120" height="60" rx="12"/>
+        <text class="dag-label" x="340" y="125">JOIN</text>
+        <text class="dag-sublabel" x="340" y="145">P00-S02-T001</text>
+      </g>
+
+      <g>
+        <rect class="dag-node" x="480" y="100" width="100" height="60" rx="12" style="opacity: 0.5;"/>
+        <text class="dag-label" x="530" y="125" style="opacity: 0.6;">…</text>
+        <text class="dag-sublabel" x="530" y="145" style="opacity: 0.6;">successor</text>
+      </g>
+    </svg>
+
+    <p id="sim-log" class="notice warning"></p>
+
+    <div class="dag-controls">
+      <button class="btn" onclick="dagDoneA()">Cerrar A</button>
+      <button class="btn" onclick="dagDoneB()">Cerrar B</button>
+      <button class="btn" onclick="dagReset()">Reset</button>
+    </div>
+  </div>
+
+  <h2>Reglas del scheduler</h2>
+  <div class="grid cols-2">
+
+    <div class="card">
+      <h3>Join se desbloquea cuando todos sus predecessors están <code>done</code></h3>
+      <p>No con uno solo. Si A cierra y B no, el join sigue <code>blocked</code>. <code>claim_task.py</code> deniega el claim aunque el usuario lo intente manualmente.</p>
+    </div>
+
+    <div class="card">
+      <h3><code>Conflict group</code> y <code>Write set</code> serializan</h3>
+      <p>Dos slices independientes en el grafo (no comparten <code>depends_on</code>) pueden serializarse igualmente si pisan el mismo router, migración o fichero global declarado en STACK_PROFILE.</p>
+    </div>
+
+    <div class="card">
+      <h3><code>claim_task.py</code> repite validaciones bajo lock</h3>
+      <p>Aunque alguien intente saltar <code>/next-wave</code> con <code>export CLAUDE_ACTIVE_TASK_ID=…</code> manualmente, el claim falla si las deps no están <code>done</code> o hay conflicto activo.</p>
+    </div>
+
+    <div class="card">
+      <h3><code>/phase-gate</code> bloquea avance entre fases</h3>
+      <p>Si quedan tasks no <code>done</code>, journeys sin verificar, evidencia ausente o follow-ups bloqueantes, la fase no avanza aunque haya nodos ready en la siguiente.</p>
+    </div>
+
+  </div>
+
+  <h2>Cómo se construye el grafo</h2>
+  <p class="muted">Columnas relevantes del Coverage Registry — el bootstrap deriva la matriz de adyacencia desde aquí.</p>
+  <pre class="mermaid">
+flowchart LR
+    A[Coverage Registry<br/>Depends on · Conflict group · Write set]
+    B[bootstrap_three_docs.py]
+    C[registry.json<br/>tasks + task_dag]
+    D[task-dag.json]
+    E[task-dag.md]
+    F[execution-graph.json]
+    A --&gt; B --&gt; C --&gt; D
+    C --&gt; E
+    C --&gt; F
+  </pre>
+
+  <h2>Ejemplo de matriz</h2>
+  <div class="table-wrap">
+    <table class="dag-build-table">
+      <thead>
+        <tr>
+          <th>Slice ID</th>
+          <th>Tipo</th>
+          <th>Depends on</th>
+          <th>Conflict group</th>
+          <th>Write set</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>P00-S01-T001</code></td>
+          <td><span class="badge cyan">api</span></td>
+          <td><span class="badge muted">— root</span></td>
+          <td><code>api:health</code></td>
+          <td><code>{{backend_module_root}}/**/health*</code></td>
+        </tr>
+        <tr>
+          <td><code>P00-S01-T003</code></td>
+          <td><span class="badge accent">db</span></td>
+          <td><span class="badge muted">— root</span></td>
+          <td><code>db:migrations</code></td>
+          <td><code>api/alembic/**</code></td>
+        </tr>
+        <tr>
+          <td><code>P00-S02-T001</code></td>
+          <td><span class="badge cyan">api</span></td>
+          <td><code>P00-S01-T001</code><br><code>P00-S01-T003</code></td>
+          <td><code>api:auth</code></td>
+          <td><code><backend_module_root>/**/auth*</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Lock order — registry primero, runtime-state después</h2>
+  <pre class="mermaid">
+flowchart TD
+    L1[1 lock registry.json]
+    L2[2 modificar registry]
+    L3[3 lock runtime-state.json]
+    L4[4 modificar runtime-state]
+    L5[5 release runtime-state]
+    L6[6 release registry]
+    L1 --&gt; L2 --&gt; L3 --&gt; L4 --&gt; L5 --&gt; L6
+  </pre>
+
+  <div class="notice">
+    <strong>Wave topológica.</strong> El bootstrap calcula <code>topological_levels</code> agrupando nodos por nivel de profundidad. Cada nivel es una "wave" — todos los nodos de la misma wave se pueden ejecutar en paralelo si <code>Conflict group</code> y <code>Write set</code> lo permiten.
+  </div>
+
+</main>
+
+<footer>
+  <div>Documentación estática · Sin dependencias externas · Lista para GitHub Pages.</div>
+  <div><a href="https://github.com/slopezrap/OrquestadorDAG-AnyStack" target="_blank" rel="noopener">Repositorio →</a></div>
+</footer>
+
+<script src="assets/app.js"></script>
+<!-- Tally.so embed (popup forms + inline embeds) -->
+<script async src="https://tally.so/widgets/embed.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true,theme:'dark',themeVariables:{primaryColor:'#1f2937',primaryTextColor:'#e5e7eb',primaryBorderColor:'#8b5cf6',lineColor:'#94a3b8',background:'#0b1020'}});</script>
+</body>
+</html>

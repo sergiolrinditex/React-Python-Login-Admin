@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Negocio — Orquestador DAG · AnyStack</title>
+    <meta property="article:author" content="Sergio Lopez Rapado">
+  <meta property="article:published_time" content="2026-05-07T00:00:00Z">
+  <meta name="author" content="Sergio Lopez Rapado">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/styles.css">
+  <!-- Cloudflare Web Analytics -->
+  <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "592c05228d374062ac06009e38a56155"}'></script>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="index.html" class="brand">Orquestador DAG · AnyStack</a>
+  <a href="index.html">Inicio</a>
+  <a href="negocio.html">Negocio</a>
+  <a href="templates.html">Templates</a>
+  <a href="stack-ux.html">Stack/UX</a>
+  <a href="tecnico.html">Técnico</a>
+  <a data-tally-open="5BEA8v" data-tally-layout="modal" data-tally-width="600" data-tally-overlay="1" href="mailto:s.lopezrap@gmail.com?subject=OrquestadorDAG-AnyStack%20%E2%80%94%20quiero%20ayuda%20para%20implantarlo" class="topnav-cta">📧 Contacto</a>
+</nav>
+
+<main>
+
+  <span class="hero-eyebrow">Para stakeholders</span>
+  <h1>Una fábrica controlada para construir aplicaciones, en cualquier stack.</h1>
+  <p class="lead">
+    El orquestador convierte una idea de aplicación en un proceso auditable: define qué construir,
+    en qué orden, quién valida y qué evidencia queda antes de declarar una versión lista.
+    Sin "feature casi hecha". Sin shortcuts. Y sin atarte al stack del consultor — el motor lee
+    <code>STACK_PROFILE.yaml</code> y se adapta al tuyo (React, Vue, Flutter, SwiftUI, Node, Go...).
+  </p>
+
+  <div class="grid cols-2">
+
+    <div class="card">
+      <div class="card-icon" style="background: linear-gradient(135deg, #10b981, #06b6d4);">
+        <svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><path d="M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9c2.39 0 4.68.94 6.36 2.64"/></svg>
+      </div>
+      <h3>Menos incertidumbre</h3>
+      <p>Cada pantalla, endpoint y dato queda vinculado a un journey real y a una tarea verificable. No hay drift entre lo prometido y lo implementado. UX, técnico y checklist hablan del mismo producto.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-icon" style="background: linear-gradient(135deg, #8b5cf6, #ec4899);">
+        <svg viewBox="0 0 24 24"><polyline points="13 17 18 12 13 7"/><polyline points="6 17 11 12 6 7"/></svg>
+      </div>
+      <h3>Más velocidad sin caos</h3>
+      <p>El DAG permite trabajar en paralelo solo cuando las tareas no se pisan. Si comparten router, migraciones o ficheros, se serializan automáticamente.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-icon" style="background: linear-gradient(135deg, #f59e0b, #ef4444);">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 16 14"/></svg>
+      </div>
+      <h3>Auditoría de producto</h3>
+      <p>Cada cierre exige verificación con datos reales/proporcionados, evidencia, commit atómico, push y limpieza. Lo declarado <em>done</em> queda trazado.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-icon" style="background: linear-gradient(135deg, #06b6d4, #3b82f6);">
+        <svg viewBox="0 0 24 24"><path d="M3 7h18M3 12h18M3 17h12"/></svg>
+      </div>
+      <h3>Crecimiento por versiones</h3>
+      <p>existing baseline / v1 / v2 / vN conservan contexto acumulativo. Lo construido permanece <code>done</code>; lo nuevo entra como <code>planned</code> sin reescribir lo anterior.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-icon" style="background: linear-gradient(135deg, #4ade80, #06b6d4);">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      </div>
+      <h3>Stack-agnóstico de verdad</h3>
+      <p>Cambia el stack y solo cambian dos ficheros: <code>STACK_PROFILE.yaml</code> y los plugins de <code>.claude/enforcers/</code>. Los hooks, locks, agentes y journey gates no se tocan.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-icon" style="background: linear-gradient(135deg, #ec4899, #8b5cf6);">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      </div>
+      <h3>UX como contrato</h3>
+      <p><code>UX_CONTRACT.md</code> declara personas, pantallas y estados UI requeridos. Una slice de UI no se cierra hasta que loading, empty, error, permission y success están explícitos.</p>
+    </div>
+
+  </div>
+
+  <h2>Cómo contárselo a un stakeholder</h2>
+  <div class="timeline">
+    <div class="step">
+      <div class="step-num">PASO 01</div>
+      <b>Alineamos el producto.</b>
+      Se rellenan cinco documentos: instrucciones (scope + journeys), technical guide (arquitectura + ADR), checklist (Coverage Registry + DAG), STACK_PROFILE (stack y workflow Git) y UX_CONTRACT (personas + pantallas + estados).
+    </div>
+    <div class="step">
+      <div class="step-num">PASO 02</div>
+      <b>El sistema genera el mapa de ejecución.</b>
+      De esos documentos sale un DAG: qué puede ir en paralelo y qué debe esperar.
+    </div>
+    <div class="step">
+      <div class="step-num">PASO 03</div>
+      <b>Se construye por piezas pequeñas.</b>
+      Cada slice tiene alcance, UX, endpoint, tabla, verify y evidencia.
+    </div>
+    <div class="step">
+      <div class="step-num">PASO 04</div>
+      <b>Se cierra solo con pruebas reales.</b>
+      El closer no marca <code>done</code> si faltan verification, report, commit, push o cleanup.
+    </div>
+    <div class="step">
+      <div class="step-num">PASO 05</div>
+      <b>La siguiente versión no pierde contexto.</b>
+      El baseline se sincroniza para que v2 sepa exactamente lo que v1 ya construyó.
+    </div>
+  </div>
+
+  <div class="section-eyebrow">Calculadora interactiva</div>
+  <h2>Estimador de ahorro</h2>
+  <p class="muted">No es promesa comercial. Modela cómo conflictos y gates humanos reducen el speedup teórico.</p>
+
+  <div class="panel">
+    <div class="calc-grid">
+      <div class="calc-controls">
+        <label>Tasks totales <span id="tasksOut">84</span>
+          <input id="tasks" type="range" min="5" max="120" value="84">
+        </label>
+        <label>Waves DAG <span id="wavesOut">8</span>
+          <input id="waves" type="range" min="2" max="30" value="8">
+        </label>
+        <label>Terminales en paralelo <span id="termsOut">3</span>
+          <input id="terms" type="range" min="1" max="8" value="3">
+        </label>
+        <label>Serialización por conflictos <span id="conflictOut">35%</span>
+          <input id="conflict" type="range" min="0" max="80" value="35">
+        </label>
+        <label>Gates humanos <span id="humanOut">20%</span>
+          <input id="human" type="range" min="0" max="80" value="20">
+        </label>
+      </div>
+
+      <div class="calc-output">
+        <div class="kpi-card">
+          <div class="kpi-value" id="speedOut">2.0x</div>
+          <div class="kpi-label">Speedup práctico estimado</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-value" id="saveOut">50%</div>
+          <div class="kpi-label">Ahorro frente a secuencial</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="notice">
+    <strong>Nota.</strong> El speedup real depende del producto: apps con mucho frontend independiente paralelizan mejor; apps backend-heavy con migraciones compartidas se serializan más. Los gates humanos (<code>/verify-slice</code>, <code>/verify-journey</code>) son el techo real.
+  </div>
+
+  <section class="contact-cta" id="contacto">
+    <h2>🤝 ¿Quieres implantar el motor en tu empresa?</h2>
+    <p class="lead">
+      El orquestador es <strong>open source y MIT</strong>. Lo puedes clonar, leer y adoptar
+      sin pedir permiso. Si quieres ayuda real para construir aplicaciones empresariales en
+      tu equipo y tu stack — setup, formación, primera slice acompañada — escríbeme.
+    </p>
+
+    <div class="savings-callout">
+      <div class="savings-side old">
+        <span class="savings-label">Modelo consultoría tradicional</span>
+        <span class="savings-amount">100.000&nbsp;€</span>
+        <span class="savings-meta">equipo de 5 senior · 6 meses de delivery · backlog perpetuo · entrega parcial</span>
+      </div>
+      <div class="savings-arrow">→</div>
+      <div class="savings-side new">
+        <span class="savings-label">Construido con el motor</span>
+        <span class="savings-amount">200&nbsp;€</span>
+        <span class="savings-meta">coste de tokens del modelo IA · 1 persona + IA · 2-3 semanas · evidencia auditable · open source MIT</span>
+      </div>
+    </div>
+
+    <h3 style="margin-top: 32px;">Cómo te puedo ayudar</h3>
+    <ul class="contact-features">
+      <li>🚀 <strong>Setup completo en tu repo</strong> — Hooks, agentes, locks, settings, 5 docs source-of-truth, validators y workflow CI funcionando en 1-2 días.</li>
+      <li>📚 <strong>Formación a tu equipo</strong> — Cómo escribir los 5 docs, cómo construir slices, cómo verificar con datos reales, cómo usar verify-slice y phase-gate.</li>
+      <li>🔧 <strong>Primera slice end-to-end en directo</strong> — Acompañamiento real desde planner hasta closer en main, para que el equipo vea el flujo completo.</li>
+      <li>🎯 <strong>Adaptación a tu stack</strong> — React, Vue, Flutter, SwiftUI, Node, Go, Python — adapto STACK_PROFILE, el plugin de design tokens y el git-workflow a tu setup.</li>
+      <li>🔬 <strong>Audit técnico</strong> — Reviso tu adopción ya en marcha, identifico cuellos de botella, propongo mejoras concretas.</li>
+      <li>🤝 <strong>Soporte continuo</strong> — Disponibilidad puntual cuando aparezca un caso raro: follow-up complejo, migración entre incrementos, debug post-mortem.</li>
+    </ul>
+
+    <h3 style="margin-top: 32px;">Modelos de colaboración</h3>
+    <p class="muted">Cuatro formas de trabajar conmigo, según el momento de tu equipo. <strong>Para conocer precios concretos según tu caso, escríbeme</strong> — los planteamos en la primera respuesta sin venta consultiva.</p>
+    <div class="grid cols-2" style="margin-top: 12px;">
+      <div class="card">
+        <h3>🚀 Setup + primer slice</h3>
+        <p>Pongo la instalación a funcionar en tu equipo, te formo y arranco la primera slice contigo. Después siguen ellos. Es la forma más rápida de validar el motor en tu contexto real.</p>
+      </div>
+      <div class="card">
+        <h3>📚 Workshop in-company</h3>
+        <p>Formación intensiva de 2-3 días para tu equipo de producto e ingeniería. Salen sabiendo escribir los 5 docs, construir slices y verificar con datos reales/proporcionados.</p>
+      </div>
+      <div class="card">
+        <h3>🛠 Auditoría técnica</h3>
+        <p>Reviso vuestra adopción del motor ya en marcha, identifico cuellos de botella, drift documental, deuda técnica acumulada. Propongo plan de remediación.</p>
+      </div>
+      <div class="card">
+        <h3>🤝 Soporte por demanda</h3>
+        <p>Disponibilidad puntual para casos complejos: race conditions, follow-ups bloqueantes, migración entre incrementos, integraciones nuevas. Sin contrato anual.</p>
+      </div>
+    </div>
+
+    <div class="contact-block">
+      <h3>Hablemos</h3>
+      <p>Escríbeme con tu contexto: empresa, stack actual, qué aplicación o feature te gustaría arrancar con el motor. Te respondo en 24h con un plan concreto y honesto sobre qué tiene sentido (y qué no) en tu caso.</p>
+      <a data-tally-open="5BEA8v" data-tally-layout="modal" data-tally-width="600" data-tally-overlay="1" href="mailto:s.lopezrap@gmail.com?subject=OrquestadorDAG-AnyStack%20%E2%80%94%20quiero%20ayuda%20para%20implantarlo&amp;body=Hola%20Sergio%2C%0A%0AContexto%3A%0A-%20Empresa%2Fequipo%3A%20%5B%5D%0A-%20Stack%20actual%3A%20%5B%5D%0A-%20Aplicaci%C3%B3n%20o%20feature%20donde%20probarlo%3A%20%5B%5D%0A-%20Plazo%20deseado%3A%20%5B%5D%0A%0A%C2%BFCu%C3%A1l%20es%20el%20mejor%20siguiente%20paso%3F%0A%0AGracias." class="email-cta">
+        📧 s.lopezrap@gmail.com
+      </a>
+      <p class="muted" style="margin-top: 16px; font-size: 13px;">
+        El motor sigue siendo open source MIT. La colaboración es solo para acelerar la adopción — el código siempre es tuyo.
+      </p>
+    </div>
+  </section>
+
+  <section class="subscribe-block">
+    <div class="subscribe-card">
+      <div class="subscribe-icon">📬</div>
+      <h2>Mantente al tanto</h2>
+      <p>Updates cuando publique nuevas features, casos de uso reales o aprendizajes sobre adopción del motor. <strong>1 email al mes</strong>, sin spam, baja en un click.</p>
+      <a
+        data-tally-open="Np8ZRp"
+        data-tally-layout="modal"
+        data-tally-width="500"
+        data-tally-overlay="1"
+        href="mailto:s.lopezrap@gmail.com?subject=Suscribir%20al%20newsletter%20del%20Orquestador%20DAG%20AnyStack"
+        class="subscribe-btn">
+        Suscribirme al newsletter
+        <span class="arrow">→</span>
+      </a>
+      <div class="subscribe-meta">
+        <span>📧 1 email/mes</span>
+        <span class="dot"></span>
+        <span>🚫 cero spam</span>
+        <span class="dot"></span>
+        <span>↩ baja en 1 click</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div>Documentación estática · Sin dependencias externas · Lista para GitHub Pages.</div>
+  <div><a href="https://github.com/slopezrap/OrquestadorDAG-AnyStack" target="_blank" rel="noopener">Repositorio →</a></div>
+</footer>
+
+<script src="assets/app.js"></script>
+<!-- Tally.so embed (popup forms + inline embeds) -->
+<script async src="https://tally.so/widgets/embed.js"></script>
+</body>
+</html>
