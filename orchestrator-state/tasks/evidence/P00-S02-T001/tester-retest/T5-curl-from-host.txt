@@ -1,0 +1,17 @@
+# T5 — confirm real app from host
+# DATE: 2026-05-11T12:29:08+02:00
+# TASK_ID: P00-S02-T001
+# CYCLE: retest cycle 1/3
+
+=== curl -fsS -m 5 http://localhost:4000/health/liveliness ===
+"I'm alive!"
+HTTP status: 200
+
+=== curl -fsS -m 5 http://localhost:4000/health/readiness ===
+{"status":"healthy","db":"Not connected","cache":null,"litellm_version":"1.83.14","success_callbacks":[],"use_aiohttp_transport":true,"log_level":"WARNING","is_detailed_debug":false}
+HTTP status: 200
+
+RESULT: PASS
+- /health/liveliness returns "I'm alive!" (200)
+- /health/readiness returns JSON with litellm_version: "1.83.14" (200)
+- App is running correctly; python urllib healthcheck probe correctly reflects real app state

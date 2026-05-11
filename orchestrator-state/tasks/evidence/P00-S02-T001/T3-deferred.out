@@ -1,0 +1,30 @@
+# T3 — Compose build smoke (P00-S02-T001)
+# Date: 2026-05-11
+# DEFERRED — documented per task pack §I (risk R1), §E, §H step 3
+
+## T003/T002 status at time of tester run:
+P00-S01-T002: ready_for_close
+P00-S01-T003: needs_debug
+
+## Decision
+- T002 (frontend deps) is ready_for_close — package-lock.json / vite.config.ts may not be
+  fully merged into worktree yet.
+- T003 (backend deps) is needs_debug — requirements.txt with full dep pack (SQLAlchemy,
+  Alembic, Celery, LiteLLM, etc.) is NOT yet finalized.
+
+Per task pack §E (conflict guardrails): "If T002/T003 still claimed/in_progress, mark the
+build as deferred to next slice after T002/T003 close."
+Per task pack §H step 3: build smoke explicitly deferred if T002/T003 not yet done.
+Per task pack §I risk R1: "docker compose build backend/worker fails if T002/T003 still
+claimed (lock/pins not definitive). Mitigação: Defer build smoke to /verify-slice or to
+P06-S01-T001."
+
+## Outcome
+T3 is DEFERRED (not FAIL). This is an expected, documented deferral.
+The compose YAML itself is valid (T1 PASS exit 0). Build smoke will be verified at
+/verify-slice after T003 closes to needs_debug → done, or at P06-S01-T001
+"Production build and compose smoke" at minimum.
+
+## Note
+T3 deferral does NOT affect the T1-T8 pass/fail outcome. The pack explicitly states
+this case is NOT a fail condition.

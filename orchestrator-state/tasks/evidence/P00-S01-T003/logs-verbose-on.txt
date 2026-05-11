@@ -1,0 +1,108 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.5, pytest-9.0.2, pluggy-1.6.0 -- /usr/local/bin/python3
+cachedir: .pytest_cache
+rootdir: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend
+configfile: pyproject.toml
+plugins: anyio-4.12.1, httpx-0.36.0, asyncio-1.3.0, langsmith-0.8.3
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 21 items / 4 deselected / 17 selected
+
+backend/tests/test_dependency_smoke.py::test_dependency_smoke[pypdf-pypdf-__version__] 
+-------------------------------- live log call ---------------------------------
+INFO     tests.test_dependency_smoke:test_dependency_smoke.py:128 [BEFORE] dependency_smoke: importing 'pypdf' (dist='pypdf')
+INFO     tests.test_dependency_smoke:test_dependency_smoke.py:153 [AFTER] dependency_smoke: 'pypdf' OK — version=6.11.0
+PASSED                                                                   [  5%]
+backend/tests/test_dependency_smoke.py::test_dependency_smoke[python-docx-docx-__version__] 
+-------------------------------- live log call ---------------------------------
+INFO     tests.test_dependency_smoke:test_dependency_smoke.py:128 [BEFORE] dependency_smoke: importing 'docx' (dist='python-docx')
+INFO     tests.test_dependency_smoke:test_dependency_smoke.py:153 [AFTER] dependency_smoke: 'docx' OK — version=1.2.0
+PASSED                                                                   [ 11%]
+backend/tests/test_dependency_smoke.py::test_dependency_smoke[celery-celery-__version__] 
+-------------------------------- live log call ---------------------------------
+INFO     tests.test_dependency_smoke:test_dependency_smoke.py:128 [BEFORE] dependency_smoke: importing 'celery' (dist='celery')
+INFO     tests.test_dependency_smoke:test_dependency_smoke.py:153 [AFTER] dependency_smoke: 'celery' OK — version=5.6.3
+PASSED                                                                   [ 17%]
+backend/tests/test_dependency_smoke.py::test_dependency_smoke[redis-redis-__version__] 
+-------------------------------- live log call ---------------------------------
+INFO     tests.test_dependency_smoke:test_dependency_smoke.py:128 [BEFORE] dependency_smoke: importing 'redis' (dist='redis')
+INFO     tests.test_dependency_smoke:test_dependency_smoke.py:153 [AFTER] dependency_smoke: 'redis' OK — version=7.4.0
+PASSED                                                                   [ 23%]
+backend/tests/test_dependency_smoke.py::test_dependency_smoke[resend-resend-__version__] 
+-------------------------------- live log call ---------------------------------
+INFO     tests.test_dependency_smoke:test_dependency_smoke.py:128 [BEFORE] dependency_smoke: importing 'resend' (dist='resend')
+INFO     tests.test_dependency_smoke:test_dependency_smoke.py:153 [AFTER] dependency_smoke: 'resend' OK — version=2.30.0
+PASSED                                                                   [ 29%]
+backend/tests/test_dependency_smoke.py::test_dependency_smoke[structlog-structlog-None] 
+-------------------------------- live log call ---------------------------------
+INFO     tests.test_dependency_smoke:test_dependency_smoke.py:128 [BEFORE] dependency_smoke: importing 'structlog' (dist='structlog')
+INFO     tests.test_dependency_smoke:test_dependency_smoke.py:153 [AFTER] dependency_smoke: 'structlog' OK — version=25.5.0
+PASSED                                                                   [ 35%]
+backend/tests/test_dependency_smoke.py::test_dependency_smoke[prometheus-client-prometheus_client-__version__] 
+-------------------------------- live log call ---------------------------------
+INFO     tests.test_dependency_smoke:test_dependency_smoke.py:128 [BEFORE] dependency_smoke: importing 'prometheus_client' (dist='prometheus-client')
+INFO     tests.test_dependency_smoke:test_dependency_smoke.py:153 [AFTER] dependency_smoke: 'prometheus_client' OK — version=0.25.0
+PASSED                                                                   [ 41%]
+backend/tests/test_dependency_smoke.py::test_dependency_smoke[boto3-boto3-__version__] 
+-------------------------------- live log call ---------------------------------
+INFO     tests.test_dependency_smoke:test_dependency_smoke.py:128 [BEFORE] dependency_smoke: importing 'boto3' (dist='boto3')
+INFO     tests.test_dependency_smoke:test_dependency_smoke.py:153 [AFTER] dependency_smoke: 'boto3' OK — version=1.43.6
+PASSED                                                                   [ 47%]
+backend/tests/test_dependency_smoke.py::test_dependency_smoke[pgvector-pgvector-None] 
+-------------------------------- live log call ---------------------------------
+INFO     tests.test_dependency_smoke:test_dependency_smoke.py:128 [BEFORE] dependency_smoke: importing 'pgvector' (dist='pgvector')
+INFO     tests.test_dependency_smoke:test_dependency_smoke.py:153 [AFTER] dependency_smoke: 'pgvector' OK — version=0.4.2
+PASSED                                                                   [ 52%]
+backend/tests/test_dependency_smoke.py::test_dependency_smoke[litellm-litellm-None] 
+-------------------------------- live log call ---------------------------------
+INFO     tests.test_dependency_smoke:test_dependency_smoke.py:128 [BEFORE] dependency_smoke: importing 'litellm' (dist='litellm')
+INFO     tests.test_dependency_smoke:test_dependency_smoke.py:153 [AFTER] dependency_smoke: 'litellm' OK — version=1.83.14
+PASSED                                                                   [ 58%]
+backend/tests/test_dependency_smoke.py::test_dependency_smoke[langchain-langchain-__version__] 
+-------------------------------- live log call ---------------------------------
+INFO     tests.test_dependency_smoke:test_dependency_smoke.py:128 [BEFORE] dependency_smoke: importing 'langchain' (dist='langchain')
+INFO     tests.test_dependency_smoke:test_dependency_smoke.py:153 [AFTER] dependency_smoke: 'langchain' OK — version=1.2.18
+PASSED                                                                   [ 64%]
+backend/tests/test_dependency_smoke.py::test_dependency_smoke[langgraph-langgraph-None] 
+-------------------------------- live log call ---------------------------------
+INFO     tests.test_dependency_smoke:test_dependency_smoke.py:128 [BEFORE] dependency_smoke: importing 'langgraph' (dist='langgraph')
+INFO     tests.test_dependency_smoke:test_dependency_smoke.py:153 [AFTER] dependency_smoke: 'langgraph' OK — version=1.1.10
+PASSED                                                                   [ 70%]
+backend/tests/test_dependency_smoke.py::test_dependency_smoke[deepagents-deepagents-None] 
+-------------------------------- live log call ---------------------------------
+INFO     tests.test_dependency_smoke:test_dependency_smoke.py:128 [BEFORE] dependency_smoke: importing 'deepagents' (dist='deepagents')
+INFO     tests.test_dependency_smoke:test_dependency_smoke.py:153 [AFTER] dependency_smoke: 'deepagents' OK — version=0.5.9
+PASSED                                                                   [ 76%]
+backend/tests/test_dependency_smoke.py::test_dependency_smoke[mcp-mcp-None] 
+-------------------------------- live log call ---------------------------------
+INFO     tests.test_dependency_smoke:test_dependency_smoke.py:128 [BEFORE] dependency_smoke: importing 'mcp' (dist='mcp')
+INFO     tests.test_dependency_smoke:test_dependency_smoke.py:153 [AFTER] dependency_smoke: 'mcp' OK — version=1.27.1
+PASSED                                                                   [ 82%]
+backend/tests/test_dependency_smoke.py::test_dependency_smoke[tiktoken-tiktoken-None] 
+-------------------------------- live log call ---------------------------------
+INFO     tests.test_dependency_smoke:test_dependency_smoke.py:128 [BEFORE] dependency_smoke: importing 'tiktoken' (dist='tiktoken')
+INFO     tests.test_dependency_smoke:test_dependency_smoke.py:153 [AFTER] dependency_smoke: 'tiktoken' OK — version=0.12.0
+PASSED                                                                   [ 88%]
+backend/tests/test_dependency_smoke.py::test_dependency_smoke[sqlalchemy-sqlalchemy-__version__] 
+-------------------------------- live log call ---------------------------------
+INFO     tests.test_dependency_smoke:test_dependency_smoke.py:128 [BEFORE] dependency_smoke: importing 'sqlalchemy' (dist='sqlalchemy')
+INFO     tests.test_dependency_smoke:test_dependency_smoke.py:153 [AFTER] dependency_smoke: 'sqlalchemy' OK — version=2.0.49
+PASSED                                                                   [ 94%]
+backend/tests/test_dependency_smoke.py::test_dependency_smoke[alembic-alembic-__version__] 
+-------------------------------- live log call ---------------------------------
+INFO     tests.test_dependency_smoke:test_dependency_smoke.py:128 [BEFORE] dependency_smoke: importing 'alembic' (dist='alembic')
+INFO     alembic.runtime.plugins:plugins.py:37 setup plugin alembic.autogenerate.schemas
+INFO     alembic.runtime.plugins:plugins.py:37 setup plugin alembic.autogenerate.tables
+INFO     alembic.runtime.plugins:plugins.py:37 setup plugin alembic.autogenerate.types
+INFO     alembic.runtime.plugins:plugins.py:37 setup plugin alembic.autogenerate.constraints
+INFO     alembic.runtime.plugins:plugins.py:37 setup plugin alembic.autogenerate.defaults
+INFO     alembic.runtime.plugins:plugins.py:37 setup plugin alembic.autogenerate.comments
+INFO     tests.test_dependency_smoke:test_dependency_smoke.py:153 [AFTER] dependency_smoke: 'alembic' OK — version=1.18.4
+PASSED                                                                   [100%]
+
+=============================== warnings summary ===============================
+tests/test_dependency_smoke.py::test_dependency_smoke[deepagents-deepagents-None]
+  /Users/sergiolr/Library/Python/3.11/lib/python/site-packages/langgraph/checkpoint/serde/encrypted.py:5: LangChainPendingDeprecationWarning: The default value of `allowed_objects` will change in a future version. Pass an explicit value (e.g., allowed_objects='messages' or allowed_objects='core') to suppress this warning.
+    from langgraph.checkpoint.serde.jsonplus import JsonPlusSerializer
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+================= 17 passed, 4 deselected, 1 warning in 3.72s ==================

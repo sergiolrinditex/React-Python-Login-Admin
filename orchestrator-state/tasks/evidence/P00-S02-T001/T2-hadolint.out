@@ -1,0 +1,15 @@
+# T2 — Dockerfile static lint (P00-S02-T001)
+# Date: 2026-05-11
+
+[T2] hadolint not available — skipped
+[T2] SKIP: hadolint binary not found in PATH (/Users/sergiolr/.local/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin)
+[T2] Informational only; does not block T1-T8 pass/fail per task pack §H and tester instructions.
+
+Rancher Desktop's docker binary was found at:
+  /Applications/Rancher Desktop.app/Contents/Resources/resources/darwin/bin/docker
+  (not in standard PATH — added explicitly for T1)
+
+Notes:
+- backend/Dockerfile: multi-stage python:3.12-slim-bookworm; non-root user; no COPY --chown issues visible
+- frontend/Dockerfile: multi-stage node:20-alpine + nginx:stable-alpine; SKIP_BUILD ARG guard present
+- Both Dockerfiles have docstring headers per non-negotiables §Documentation

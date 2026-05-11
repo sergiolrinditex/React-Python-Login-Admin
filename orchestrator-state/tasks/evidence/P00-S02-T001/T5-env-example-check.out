@@ -1,0 +1,26 @@
+# T5 — .env.example completeness (P00-S02-T001)
+# Date: 2026-05-11
+# File checked: .claude/worktrees/agent-a59eeab464e82ef96/.env.example
+
+## grep output (exact lines):
+POSTGRES_USER=hilo
+POSTGRES_PASSWORD=hilo
+POSTGRES_DB=hilo_dev
+MINIO_ROOT_USER=hilo
+MINIO_ROOT_PASSWORD=hilo-dev-only
+LITELLM_MASTER_KEY=sk-litellm-dev-only
+
+## Individual key checks:
+FOUND: POSTGRES_USER       = hilo             (dev placeholder — matches DATABASE_URL creds)
+FOUND: POSTGRES_PASSWORD   = hilo             (dev placeholder)
+FOUND: POSTGRES_DB         = hilo_dev         (dev placeholder)
+FOUND: MINIO_ROOT_USER     = hilo             (dev placeholder)
+FOUND: MINIO_ROOT_PASSWORD = hilo-dev-only    (dev placeholder — NOT a real secret)
+FOUND: LITELLM_MASTER_KEY  = sk-litellm-dev-only (dev placeholder — starts with sk-)
+
+## Security check:
+- All values are clearly labeled dev placeholders
+- File header warns: "SECURITY: Never commit real keys here"
+- No real secrets detected
+
+RESULT: PASS — all 6 required keys present with placeholder values

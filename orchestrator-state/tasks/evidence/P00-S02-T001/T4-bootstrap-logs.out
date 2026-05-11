@@ -1,0 +1,30 @@
+# T4 — minio-bootstrap.sh logging compliance (P00-S02-T001)
+# Date: 2026-05-11
+
+[T4] Checking BEFORE/AFTER patterns in scripts/minio-bootstrap.sh
+
+Lines matched (grep -E "BEFORE|AFTER"):
+  # Logging: BEFORE/AFTER/ERROR pattern per 01-non-negotiables.md §Logging.
+  echo "[minio-init] BEFORE: configuring mc alias '${ALIAS}' -> ${MINIO_ENDPOINT}"
+  echo "[minio-init] AFTER: alias '${ALIAS}' configured"
+  echo "[minio-init] BEFORE: creating bucket '${BUCKET}' if not exists"
+  echo "[minio-init] AFTER: bucket '${BUCKET}' created successfully"
+  echo "[minio-init] BEFORE: setting bucket '${BUCKET}' policy to private"
+  echo "[minio-init] AFTER: bucket '${BUCKET}' policy set to private"
+
+Counts:
+  BEFORE count: 4 (3 operational + 1 in comment)
+  AFTER  count: 4 (3 operational + 1 in comment)
+
+Operations covered:
+  1. BEFORE/AFTER mc alias set (alias configuration)
+  2. BEFORE/AFTER mc mb (bucket creation — only if not exists)
+  3. BEFORE/AFTER mc anonymous set none (policy set to private)
+
+Also present:
+  - INFO log for "bucket already exists — skipping creation" case
+  - SUCCESS log at end: "[minio-init] SUCCESS: MinIO bootstrap complete"
+  - ERROR pattern via `set -e` (exits on any command failure)
+
+RESULT: PASS — BEFORE/AFTER/SUCCESS logging pattern fully compliant with 01-non-negotiables.md §Logging
+No PII, no tokens, no passwords in echo statements (only variable names echoed, not values)

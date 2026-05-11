@@ -1,0 +1,52 @@
+# Contract-observed — P00-S01-T003
+
+TASK_ID: P00-S01-T003
+TESTER_TIMESTAMP: 2026-05-11T11:52:00+00:00
+
+## Observed artifacts
+
+### pyproject.toml [project.dependencies]
+- 3 T001 preserved pins: fastapi==0.135.2, uvicorn[standard]==0.42.0, pydantic==2.12.5
+- 17 T003 new runtime deps (all verified importable + correct version)
+- [project.optional-dependencies].test: pytest==9.0.2, httpx==0.28.1, pytest-asyncio==1.3.0
+- [project.optional-dependencies].dev: ruff==0.15.12, mypy==2.0.0
+
+### requirements.txt
+- Mirror of [project.dependencies] (pip-installable format)
+- All 17+3 T003 packages present with exact pin
+
+### requirements-test.txt
+- -r requirements.txt + pytest==9.0.2 + httpx==0.28.1 + pytest-asyncio==1.3.0
+
+### requirements-dev.txt (new)
+- ruff==0.15.12 + mypy==2.0.0
+
+### backend/app/core/__init__.py
+- Empty package marker with docstring (slice/phase ref, purpose, write_set note)
+
+### backend/tests/test_dependency_smoke.py
+- 17 parametrized tests (one per importable runtime package)
+- BEFORE/AFTER logging gated by ENABLE_VERBOSE_LOGGING
+- ImportError handled with pytest.fail() (not silently skipped)
+- Pure import + importlib.metadata, no DB, no test mocks of project code
+
+## Pip install observed
+- Zero conflicts reported by pip
+- All packages already at correct pinned versions in system Python 3.11.5
+- All installed as "Requirement already satisfied: <pkg>==<pin>"
+
+## Versions observed vs canonical
+- All 25 packages (17 runtime + 3 dev/test + 5 T001 preserved) match pin exactly
+- pytest-asyncio: declared 1.3.0 in requirements-test.txt and pyproject.toml; 
+  researcher note says 1.1.0. Developer used PyPI live (1.3.0 is newer stable).
+  Installed version: 1.3.0. Compatibility confirmed (requires pytest>=8.2,<10; pytest==9.0.2 satisfies).
+
+## Smoke test coverage
+- 17/17 importable runtime packages covered (ruff, mypy, pytest-asyncio excluded as CLI/plugins)
+- Researcher canoncal table: 20 rows = 17 runtime + 3 dev/test tools
+
+## Network call observation
+- litellm==1.83.14 makes a synchronous network call to raw.githubusercontent.com during import
+  (fetches model pricing data on startup). This is library-internal, not test code.
+  litellm is an external AI gateway (third-party) — the test cannot suppress this without mocking.
+  The test still passes correctly. Classified as library behavior, not test defect.

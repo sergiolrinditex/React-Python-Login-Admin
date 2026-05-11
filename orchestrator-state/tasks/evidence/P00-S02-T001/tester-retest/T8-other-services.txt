@@ -1,0 +1,44 @@
+# T8 — remaining infra services boot (redis + minio)
+# DATE: 2026-05-11T12:29:47+02:00
+# TASK_ID: P00-S02-T001
+# CYCLE: retest cycle 1/3
+
+=== Port availability check ===
+PORT 5432: OCCUPIED by ssh process (pid 3301, user sergiolr)
+  - This is an external ssh tunnel (apn-postgres / Inditex stack), NOT our project
+  - Classification: SKIP (env-blocked) — same condition documented in verify-slice FLOWS_TESTED
+  - postgres service boot SKIPPED to avoid colliding with user's active ssh tunnel
+
+PORT 6379: FREE (redis can boot)
+PORT 9000: FREE (minio can boot)
+
+=== docker compose up -d redis minio ===
+Volume react-python-login-admin_minio_data Created
+Container react-python-login-admin-minio-1 Started
+Container react-python-login-admin-redis-1 Started
+
+=== Poll result ===
+[t=1] redis: Up Less than a second (health: starting) | minio: Up Less than a second (health: starting)
+[t=2] redis: Up 2 seconds (health: starting) | minio: Up 3 seconds (health: starting)
+[t=3] redis: Up 5 seconds (health: starting) | minio: Up 5 seconds (health: starting)
+[t=4] redis: Up 7 seconds (healthy) | minio: Up 7 seconds (healthy)
+BOTH_HEALTHY_AT=4
+
+=== redis healthcheck confirm ===
+valkey-cli ping → PONG
+
+=== minio healthcheck confirm ===
+curl http://localhost:9000/minio/health/live → HTTP 200 (empty body = healthy per MinIO docs)
+
+=== Final compose ps ===
+react-python-login-admin-litellm-1   healthy  0.0.0.0:4000->4000/tcp
+react-python-login-admin-minio-1     healthy  0.0.0.0:9000-9001->9000-9001/tcp
+react-python-login-admin-redis-1     healthy  0.0.0.0:6379->6379/tcp
+
+RESULT: PARTIAL PASS (postgres SKIP due to env-blocked port 5432)
+- redis: PASS (healthy at tick=4, valkey-cli PONG confirmed)
+- minio: PASS (healthy at tick=4, HTTP 200 from /minio/health/live confirmed)
+- postgres: SKIP (env-blocked — port 5432 occupied by ssh tunnel, same documented constraint as verify-slice)
+- litellm: already confirmed HEALTHY from T3
+
+CLEANUP: docker compose down -v EXIT=0; .env removed

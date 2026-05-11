@@ -1,28 +1,31 @@
 """
 Hilo People — FastAPI application entry point.
 
-Slice:  P00-S01-T001 — Repo scaffold + scripts + env
+Slice:  P00-S02-T002 — Health live ready endpoints
 Phase:  P00 Scaffold + Design System
-Purpose: Creates the FastAPI application instance and registers the /health
-         stub endpoint. The full health contract (DB+Redis+LiteLLM checks,
-         /live and /ready) is implemented in P00-S02-T002.
+Purpose: Creates the FastAPI application instance and mounts the api_router
+         which provides /health (backward compat), /live and /ready probes.
+         The inline /health stub from P00-S01-T001 has been migrated to
+         backend/app/api/router.py so all observability endpoints live in one
+         module.
 
 Key deps:
   - fastapi: ASGI web framework (uvicorn transport, port 8000 per STACK_PROFILE).
   - logging: stdlib; level driven by ENABLE_VERBOSE_LOGGING env var.
-  - time: used to track uptime from process start.
+  - app.api.router: api_router with /health, /live, /ready.
 
 Source refs:
-  - TECHNICAL_GUIDE §6.2 GET /health stub contract — response: {data:{status:"ok"}}.
+  - TECHNICAL_GUIDE §6.2 health endpoints contract.
   - STACK_PROFILE.yaml backend.dev_cmd (uvicorn port 8000).
   - 01-non-negotiables.md §Logging (BEFORE/AFTER/ERROR pattern, no PII/secrets).
 """
 
 import logging
 import os
-import time
 
 from fastapi import FastAPI
+
+from app.api.router import api_router
 
 # ---------------------------------------------------------------------------
 # Logging configuration
@@ -38,11 +41,6 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
-# Process-start timestamp — used to compute uptime in /health response.
-# ---------------------------------------------------------------------------
-_START_TIME: float = time.monotonic()
-
-# ---------------------------------------------------------------------------
 # FastAPI application instance
 # ---------------------------------------------------------------------------
 app = FastAPI(
@@ -51,33 +49,9 @@ app = FastAPI(
     description="Internal HR platform — Hilo People (scaffold)",
 )
 
-
-@app.get("/health", tags=["observability"], response_model=None)
-async def health() -> dict:
-    """
-    GET /health — scaffold stub (P00-S01-T001).
-
-    Returns a minimal status envelope per TECHNICAL_GUIDE §6.2.
-    No DB, Redis or LiteLLM checks in this slice; those land in P00-S02-T002.
-
-    Returns:
-        dict: JSON ``{"data": {"status": "ok", "version": str, "uptime": float}}``.
-
-    Errors:
-        500: unexpected exception; logged with full context, no PII exposed.
-    """
-    logger.info("health.check.start route=/health")  # BEFORE
-    try:
-        uptime_s = round(time.monotonic() - _START_TIME, 2)
-        payload = {
-            "data": {
-                "status": "ok",
-                "version": app.version,
-                "uptime": uptime_s,
-            }
-        }
-        logger.info("health.check.ok status=ok uptime=%s", uptime_s)  # AFTER
-        return payload
-    except Exception:
-        logger.error("health.check.error", exc_info=True)  # ERROR — no PII/secrets
-        raise
+# ---------------------------------------------------------------------------
+# Mount routers
+# api_router provides /health (backward-compat stub), /live, /ready at root.
+# Future feature routers will mount at /api/v1/ prefix.
+# ---------------------------------------------------------------------------
+app.include_router(api_router)

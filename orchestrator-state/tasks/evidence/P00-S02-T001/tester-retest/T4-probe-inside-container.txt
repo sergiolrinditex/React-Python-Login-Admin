@@ -1,0 +1,15 @@
+# T4 — probe inside-container (exact replica of healthcheck)
+# DATE: 2026-05-11T12:29:05+02:00
+# TASK_ID: P00-S02-T001
+# CYCLE: retest cycle 1/3
+
+=== docker compose exec -T litellm sh -c 'python -c "..."' ===
+INSIDE_EXIT=0
+
+Command executed:
+  docker compose exec -T litellm sh -c 'python -c "import urllib.request,sys; r=urllib.request.urlopen('http://localhost:4000/health/liveliness',timeout=3); sys.exit(0 if r.status==200 else 1)"'
+
+RESULT: PASS
+- INSIDE_EXIT=0 confirms the python urllib probe works inside the container
+- Same one-liner used in docker-compose.yml healthcheck.test field
+- python binary resolves at /app/.venv/bin/python (confirmed in T6)

@@ -1,0 +1,20 @@
+time="2026-05-11T12:19:03+02:00" level=warning msg="No services to build"
+ Container react-python-login-admin-minio-1 Running 
+ Container react-python-login-admin-minio-init-1 Creating 
+ Container react-python-login-admin-minio-init-1 Created 
+Attaching to minio-init-1
+ Container react-python-login-admin-minio-1 Waiting 
+ Container react-python-login-admin-minio-1 Healthy 
+ Container react-python-login-admin-minio-init-1 Starting 
+ Container react-python-login-admin-minio-init-1 Started 
+minio-init-1  | [minio-init] BEFORE: configuring mc alias 'local' -> http://minio:9000
+minio-init-1  | Added `local` successfully.
+minio-init-1  | [minio-init] AFTER: alias 'local' configured
+minio-init-1  | [minio-init] BEFORE: creating bucket 'hilo-docs-dev' if not exists
+minio-init-1  | Bucket created successfully `local/hilo-docs-dev`.
+minio-init-1  | [minio-init] AFTER: bucket 'hilo-docs-dev' created successfully
+minio-init-1  | [minio-init] BEFORE: setting bucket 'hilo-docs-dev' policy to private
+minio-init-1  | Access permission for `local/hilo-docs-dev` is set to `private`
+minio-init-1  | [minio-init] AFTER: bucket 'hilo-docs-dev' policy set to private
+minio-init-1  | [minio-init] SUCCESS: MinIO bootstrap complete
+[Kminio-init-1 exited with code 0

@@ -1,0 +1,1 @@
+{"data":{"db":{"status":"ok"},"redis":{"status":"error","error":"Error while reading from localhost:6379 : (54, 'Connection reset by peer')"},"litellm":{"status":"unknown"}}}

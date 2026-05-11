@@ -1,0 +1,22 @@
+# T1 — compose parse
+# DATE: 2026-05-11T12:28:30+02:00
+# TASK_ID: P00-S02-T001
+# CYCLE: retest cycle 1/3
+
+=== docker compose config --quiet ===
+EXIT=0
+
+=== docker compose config --services ===
+frontend
+litellm
+minio
+minio-init
+postgres
+redis
+worker
+backend
+SERVICES_EXIT=0
+
+RESULT: PASS
+- exit 0 confirmed
+- 8 services listed: frontend, litellm, minio, minio-init, postgres, redis, worker, backend

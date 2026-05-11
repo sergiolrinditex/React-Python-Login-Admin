@@ -1,0 +1,223 @@
+# Hilo People — Docker Compose services (local dev).
+#
+# Slice:  P00-S02-T001 — Docker compose services
+# Phase:  P00 Scaffold + Design System
+# Source: TECHNICAL_GUIDE §11 Deploy; instrucciones.md §3.3 Foundation propia#infra
+#
+# USAGE:
+#   Detect runtime first (Rancher Desktop may use moby or containerd):
+#     docker compose version >/dev/null 2>&1 && COMPOSE="docker compose" || COMPOSE="nerdctl compose"
+#   Infra-only boot (recommended before backend/worker/frontend images are built):
+#     $COMPOSE up -d postgres redis litellm minio
+#     $COMPOSE up minio-init
+#   Full boot (only after P00-S01-T002 + P00-S01-T003 are merged):
+#     $COMPOSE up -d
+#
+# RANCHER DESKTOP NOTE:
+#   - No `version:` key (Compose spec v2 — deprecated).
+#   - No `extra_hosts: host.docker.internal:host-gateway` (fails under containerd).
+#   - All volumes are NAMED (not bind-mounts outside $HOME).
+#   - Healthchecks on all persistent services.
+#   - Service name `redis` wraps valkey/valkey:8-alpine for DNS compatibility
+#     (backend resolves REDIS_URL=redis://redis:6379/0 unchanged).
+#
+# NERDCTL CAVEAT (containerd backend in Rancher Desktop):
+#   nerdctl compose v2.2.x does NOT implement `services.<svc>.healthcheck`
+#   nor `depends_on: { ...: { condition: service_healthy } }`.
+#   Both are silently IGNORED — services may start out of order.
+#   Fully-functional path = Rancher Desktop set to `dockerd (moby)` engine.
+#   /verify-slice MUST run with moby backend; nerdctl is best-effort only.
+#   Tracking: https://github.com/containerd/nerdctl/issues/2386
+#
+# PGVECTOR NOTE:
+#   postgres:17-alpine does NOT ship pgvector. When needed (P01-S01-T001),
+#   replace this image with pgvector/pgvector:pg17 or install via init-script.
+#   Decision deferred to P01 planner; do NOT change image in this slice.
+#
+# WORKER NOTE (R5):
+#   The `worker` service references `app.worker` which does not exist until
+#   P02-S04-T002. The service is declared with restart: on-failure so compose
+#   can start it but it will exit-fail until app.worker is implemented.
+#   "worker boot" acceptance is met at SERVICE DECLARATION level in this slice.
+
+services:
+
+  # ── Postgres ────────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    restart: unless-stopped
+
+  # ── Redis (Valkey 8 — protocol-compatible with Redis 7.x) ───────────────────
+  # Service name is `redis` so REDIS_URL=redis://redis:6379/0 resolves unchanged.
+  redis:
+    image: valkey/valkey:8-alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD", "valkey-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+    restart: unless-stopped
+
+  # ── LiteLLM gateway ─────────────────────────────────────────────────────────
+  # Stable patch declared by human (§C). Port 4000 maps to LITELLM_BASE_URL.
+  # R7: In bare mode (no model configured) LiteLLM still boots healthy.
+  # The master key is required; LITELLM_MASTER_KEY must be set in .env.
+  litellm:
+    image: ghcr.io/berriai/litellm:v1.83.14-stable.patch.3
+    environment:
+      LITELLM_MASTER_KEY: ${LITELLM_MASTER_KEY}
+    ports:
+      - "4000:4000"
+    networks:
+      - backend
+    healthcheck:
+      # LiteLLM v1.83 exposes /health/liveliness (confirmed in official docs).
+      # NOTE (debugger 2026-05-11 P00-S02-T001 ciclo 1/3): the official image
+      # `ghcr.io/berriai/litellm:v1.83.14-stable.patch.3` ships WITHOUT curl
+      # and WITHOUT wget. Only `/app/.venv/bin/python` is available. Using
+      # python-stdlib urllib avoids declaring the container unhealthy when
+      # the app itself responds 200. See evidence/verify/SUMMARY.md F1.
+      test: ["CMD-SHELL", "python -c 'import urllib.request,sys; r=urllib.request.urlopen(\"http://localhost:4000/health/liveliness\",timeout=3); sys.exit(0 if r.status==200 else 1)' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+    restart: unless-stopped
+
+  # ── MinIO (S3-compatible object storage) ────────────────────────────────────
+  minio:
+    image: minio/minio:RELEASE.2025-09-07T16-13-09Z
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    volumes:
+      - minio_data:/data
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:9000/minio/health/live || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 15s
+    restart: unless-stopped
+
+  # ── MinIO bootstrap (one-shot sidecar) ──────────────────────────────────────
+  # Creates bucket S3_BUCKET_DOCUMENTS after minio is healthy.
+  # restart: "no" — must not loop. See scripts/minio-bootstrap.sh.
+  minio-init:
+    image: minio/mc:latest
+    depends_on:
+      minio:
+        condition: service_healthy
+    networks:
+      - backend
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      S3_BUCKET_DOCUMENTS: ${S3_BUCKET_DOCUMENTS}
+    entrypoint: ["/bin/sh", "/scripts/minio-bootstrap.sh"]
+    volumes:
+      - ./scripts/minio-bootstrap.sh:/scripts/minio-bootstrap.sh:ro
+    restart: "no"
+
+  # ── Backend (FastAPI via uvicorn) ────────────────────────────────────────────
+  # Multi-stage image from backend/Dockerfile. Build deferred to /verify-slice
+  # if P00-S01-T003 (dependency pack) has not landed yet (R1).
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    networks:
+      - backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      litellm:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8000/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+    restart: unless-stopped
+
+  # ── Celery worker ────────────────────────────────────────────────────────────
+  # Shares the same image as backend. app.worker module lands in P02-S04-T002.
+  # Until then, this service will start and exit-fail (restart: on-failure).
+  # "worker boot" acceptance for this slice is at SERVICE DECLARATION level.
+  worker:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    command: celery -A app.worker worker --loglevel=info
+    env_file:
+      - .env
+    networks:
+      - backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: on-failure
+
+  # ── Frontend (nginx serving React SPA dist/) ─────────────────────────────────
+  # Build requires package-lock.json (T002) and vite.config.ts (T002).
+  # Build will fail until T002 closes. Build smoke deferred to P06-S01-T001.
+  # SKIP_BUILD=1 ARG allows CI/tester to skip the npm build step.
+  # R6: Dockerfile declares the pattern; productive build is T002+.
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+      args:
+        SKIP_BUILD: ${SKIP_BUILD:-0}
+    ports:
+      - "5173:80"
+    networks:
+      - backend
+    restart: unless-stopped
+
+# ── Named volumes (Rancher Desktop safe — no bind-mounts outside $HOME) ──────
+volumes:
+  pg_data:
+  minio_data:
+
+# ── Networks ────────────────────────────────────────────────────────────────
+networks:
+  backend:
+    driver: bridge
