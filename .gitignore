@@ -60,6 +60,7 @@ app/.fvm/
 # Estado mutable de orchestrator-state/ se versiona por decisión del usuario.
 # Solo se excluyen los lockfiles efímeros de fcntl.flock.
 orchestrator-state/**/*.lock
+orchestrator-state/tasks/bash-ledger.jsonl
 
 .claude/settings.local.json
 .claude/worktrees/

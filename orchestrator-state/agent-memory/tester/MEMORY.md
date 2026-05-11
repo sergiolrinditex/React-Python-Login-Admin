@@ -20,15 +20,21 @@
 
 ## Per-task cache
 
-### P00-S02-T001 — Docker compose services (2026-05-11)
-- OUTCOME: pass
-- T1 PASS: exit 0 on config --quiet; 8 services parsed cleanly
-- T2 SKIP: hadolint not available (non-blocking)
-- T3 DEFERRED: T003=needs_debug at tester run time; deferred per task pack §I R1
-- T4 PASS: minio-bootstrap.sh has 3 BEFORE/AFTER/SUCCESS pairs; no PII in logs
-- T5 PASS: all 6 env keys present with dev placeholders
-- T6 PASS: nginx:stable-alpine, NERDCTL CAVEAT present, no UNRESOLVED flags
-- T7 PASS: 4/4 backend tests green (no regressions)
-- T8 PASS: minio-bootstrap.sh syntax valid in both verbose modes
-- Handoff: .claude/worktrees/agent-a59eeab464e82ef96/orchestrator-state/tasks/handoffs/P00-S02-T001.md
-- Evidence: orchestrator-state/tasks/evidence/P00-S02-T001/
+### P00-S02-T001 — Docker compose services (2026-05-11) — RETEST cycle 1/3
+- OUTCOME: pass (retest)
+- INITIAL TESTER RUN: pass (static checks); F1 CRITICAL found by verify-slice (litellm UNHEALTHY)
+- DEBUGGER FIX: replaced curl healthcheck with python urllib probe in docker-compose.yml
+- RETEST RESULTS:
+  - T1 PASS: exit 0 on config --quiet; 8 services (frontend, litellm, minio, minio-init, postgres, redis, worker, backend)
+  - T2 PASS: 24/24 backend tests green (was 4/4; now 24/24 after P00-S01-T003 dep smoke tests added)
+  - T3 PASS (CRITICAL): litellm reaches (healthy) at tick=9 (~17s); Health.Status=healthy; FailingStreak=0; F1 RESOLVED
+  - T4 PASS: INSIDE_EXIT=0; python urllib probe works inside container
+  - T5 PASS: /health/liveliness → "I'm alive!" 200; /health/readiness → JSON litellm_version 1.83.14 200
+  - T6 PASS: curl= (empty), wget= (empty), python=/app/.venv/bin/python; regression-proof of fix
+  - T7 PASS: grep matches Item 5 + Item 8 with RESOLVED: format (F3 RESOLVED)
+  - T8 PARTIAL PASS: redis healthy (valkey-cli PONG); minio healthy (HTTP 200); postgres SKIP (port 5432 ssh tunnel env-blocked)
+- KEY LEARNING: LiteLLM official image ghcr.io/berriai/litellm:v1.83.14-stable.patch.3 has NO curl/wget; only python at /app/.venv/bin/python. Always use python urllib for healthchecks in LiteLLM containers.
+- KEY LEARNING: Port 5432 may be occupied by user's ssh tunnel (apn-postgres/Inditex) on this machine. Check lsof before postgres tests and mark SKIP (env-blocked) if occupied.
+- KEY LEARNING: MinIO /minio/health/live returns 200 with EMPTY BODY — curl exit 0 but no output is correct healthy behavior.
+- Evidence: orchestrator-state/tasks/evidence/P00-S02-T001/tester-retest/
+- Handoff: orchestrator-state/tasks/handoffs/P00-S02-T001.md

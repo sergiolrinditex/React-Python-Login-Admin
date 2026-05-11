@@ -54,6 +54,11 @@ Every phase produces a VISIBLE, FUNCTIONAL, VERIFIABLE deliverable. Never build 
 
 ── /verify-slice (gate humano único + orquestación de cierre) ──
 5. /verify-slice                         hard reset + datos reales/proporcionados + reproducción humana + logs vivos
+   ├─ si task frontend/ux/journey/gate o VISUAL_CONTRACT_CHECK:
+   │   screen-journey-reviewer info-only antes de closer
+   │   ├─ approved → continúa
+   │   ├─ changes_requested → debugger/retest, NO FU
+   │   └─ blocked → FU triageada solo si falta trabajo/dato/contrato fuera de scope
    ├─ VERIFY_OUTCOME: verified
    │   └─ §5.bis si la slice cierra journey(s) → pregunta al usuario:
    │       ├─ "ahora"  → verify-journey INLINE con entorno ya cargado (un solo gate)
@@ -63,6 +68,7 @@ Every phase produces a VISIBLE, FUNCTIONAL, VERIFIABLE deliverable. Never build 
    └─ VERIFY_OUTCOME: issues_found → spawnea debugger → vuelve a paso 3
 6. closer                                evidence/report + commit + configured Git workflow
                                           pre-check rechaza si no hay sección verify-slice en el handoff
+                                          para pantalla/journey exige Screen/Journey review aprobado
                                           si el handoff tiene ## verify-journey verified, NO emite
                                           JOURNEY_PENDING_VERIFY para esos JIDs (rama "ahora")
    └─ post-push: slice-clean + cleanup-worktrees (housekeeping silencioso y seguro)
@@ -104,9 +110,9 @@ Use this to keep prompts shorter: agents do not need to rediscover write policy.
 
 ## Agents
 
-Total: 12 agents. Per slice max 20 spawns (steps above). Bootstrap-only: `document-analyzer`, `project-architect`, `task-planner`. Phase 5 only: `deployer`.
+Total: 13 agents. Per slice max 20 spawns (steps above). Bootstrap-only: `document-analyzer`, `project-architect`, `task-planner`. Phase 5 only: `deployer`. Verify-slice-only info reviewer: `screen-journey-reviewer`.
 
-Manual-memory agents: `planner`, `developer`, `validator`, `debugger`, `official-docs-researcher`, `project-architect`, plus `task-planner` for bootstrap learnings. Memory is stored in `orchestrator-state/agent-memory/<agent>/MEMORY.md`; `.claude/` stays static.
+Manual-memory agents: `planner`, `developer`, `validator`, `debugger`, `official-docs-researcher`, `project-architect`, `screen-journey-reviewer`, plus `task-planner` for bootstrap learnings. Memory is stored in `orchestrator-state/agent-memory/<agent>/MEMORY.md`; `.claude/` stays static.
 
 Isolation (worktree): only `developer`, `debugger`, `deployer`.
 

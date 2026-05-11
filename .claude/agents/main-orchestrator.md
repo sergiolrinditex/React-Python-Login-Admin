@@ -128,12 +128,13 @@ vigila logs en vivo, y apendiza `## verify-slice` al handoff con
     el hook lo mete en `pending_journey_verifications`; en `frontier` solo se
     difieren tasks que referencian ese journey, y en `strict` se conserva el
     bloqueo global hasta `/verify-journey <JID>`.
-- **`VERIFY_OUTCOME: verified`** sin journey → /verify-slice spawnea `closer` directo.
+- **`VERIFY_OUTCOME: verified`** + task frontend/ux/journey/gate o con `VISUAL_CONTRACT_CHECK` → /verify-slice spawnea primero `screen-journey-reviewer` info-only; si `approved`, continúa a journey/closer; si `changes_requested`, va a `debugger/retest`; si `blocked`, pide FU triageada o decisión humana.
+- **`VERIFY_OUTCOME: verified`** sin journey ni pantalla/UX → /verify-slice spawnea `closer` directo.
 - **`VERIFY_OUTCOME: issues_found`** → spawnea `debugger`, vuelve al paso 3.
 
 ### `closer` (invocado SIEMPRE por /verify-slice — NO por ti)
 
-- Pre-check rechaza si no hay `## verify-slice` con `VERIFY_OUTCOME: verified` (o `VERIFY_WAIVED: <motivo>` firmado por humano) en el handoff.
+- Pre-check rechaza si no hay `## verify-slice` con `VERIFY_OUTCOME: verified` (o `VERIFY_WAIVED: <motivo>` firmado por humano) en el handoff. Para tareas frontend/ux/journey/gate exige también `## Screen/Journey review` aprobado por screen-journey-reviewer.
 - Si `## verify-journey` con `JOURNEY_VERIFY_OUTCOME: verified` está en el handoff → emite `JOURNEY_VERIFIED_INLINE: <JID>` (no `JOURNEY_PENDING_VERIFY`).
 - En cualquier otro caso de cierre de journey → emite `JOURNEY_PENDING_VERIFY: <JID>`.
 - Commit atómico en `main`, `configured Git workflow (`./scripts/git-workflow.sh`)`, y limpieza segura de worktrees.
@@ -216,6 +217,7 @@ project-architect:        OUTCOME ready|blocked                                 
 task-planner:             OUTCOME ready|blocked                                  NEXT_STATUS <none>
 tester:                   OUTCOME pass|fail|blocked                              NEXT_STATUS ready_for_close|needs_debug|blocked
 validator:                OUTCOME approved|changes_requested|blocked             NEXT_STATUS ready_for_close|needs_debug|blocked
+screen-journey-reviewer:  OUTCOME approved|changes_requested|blocked             NEXT_STATUS <none>
 main-orchestrator:        OUTCOME ready|blocked                                  NEXT_STATUS <none>
 ```
 

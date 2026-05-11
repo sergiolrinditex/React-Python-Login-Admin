@@ -65,7 +65,11 @@ class AgentTrailerGuidanceTests(unittest.TestCase):
                     "Scope writes by `CLAUDE_ACTIVE_TASK_ID`/`CLAUDE_TASK_PACK`; never edit generated registry/runtime/task-dag directly.",
                     text,
                 )
-                self.assertIn("Use `/register-followup` for discovered work outside current slice.", text)
+                if role == "screen-journey-reviewer":
+                    self.assertIn("Do not create or promote follow-ups directly", text)
+                    self.assertIn("followup_candidate=yes", text)
+                else:
+                    self.assertIn("Use `/register-followup` for discovered work outside current slice.", text)
                 self.assertIn("CLAUDE_TRAILER:", text)
                 for value in roles[role].get("outcome_values", []):
                     self.assertIn(value, text, f"missing OUTCOME enum {value}")

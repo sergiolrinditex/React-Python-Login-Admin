@@ -123,7 +123,13 @@ Antes de `closer`, valida el handoff:
 ./scripts/check-handoff-contract.sh <TASK_ID> --require-ready-for-close --require-verify-slice
 ```
 
-El handoff debe contener `OUTCOME` de validator/tester y `VERIFY_OUTCOME` de verify-slice; el trailer de chat no basta tras `/clear`.
+Para tasks de pantalla/UX/journey/gate visual o con `VISUAL_CONTRACT_CHECK`, `/verify-slice` invoca `screen-journey-reviewer` antes del closer y valida también:
+
+```bash
+./scripts/check-handoff-contract.sh <TASK_ID> --require-ready-for-close --require-verify-slice --require-screen-journey-review
+```
+
+El reviewer es info-only: bugs reparables dentro de la slice van a debugger/retest; solo trabajo nuevo fuera de scope genera FU triageada. El handoff debe contener `OUTCOME` de validator/tester, `VERIFY_OUTCOME` de verify-slice y, cuando aplique, `Screen/Journey review`; el trailer de chat no basta tras `/clear`.
 
 Después del closer:
 

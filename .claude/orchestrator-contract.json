@@ -226,6 +226,23 @@
         "generated DAG files directly",
         "other TASK_ID artifacts"
       ]
+    },
+    "screen-journey-reviewer": {
+      "may_write": [
+        "append-only sections in orchestrator-state/tasks/handoffs/<TASK_ID>.md",
+        "orchestrator-state/agent-memory/screen-journey-reviewer/MEMORY.md",
+        "orchestrator-state/agent-memory/screen-journey-reviewer/archive/**"
+      ],
+      "must_not_write": [
+        "product code",
+        "registry/runtime JSON directly",
+        "generated DAG files directly",
+        "source-of-truth directly",
+        "promote follow-ups",
+        "follow-up YAMLs directly",
+        "register_followup_task.py promote",
+        "register_followup_task.py propose; only the main-orchestrator or /verify-slice registers FU after reading followup_candidate=yes"
+      ]
     }
   },
   "trailers": {
@@ -240,7 +257,8 @@
       "official-docs-researcher",
       "validator",
       "planner",
-      "main-orchestrator"
+      "main-orchestrator",
+      "screen-journey-reviewer"
     ],
     "required_lifecycle_keys": [
       "TASK_ID",
@@ -403,6 +421,11 @@
     "main-orchestrator": [
       "ready",
       "blocked"
+    ],
+    "screen-journey-reviewer": [
+      "approved",
+      "changes_requested",
+      "blocked"
     ]
   },
   "verify_policy": {
@@ -450,7 +473,8 @@
       "blocked"
     ],
     "planner": [],
-    "main-orchestrator": []
+    "main-orchestrator": [],
+    "screen-journey-reviewer": []
   },
   "trailer_schema": {
     "source_of_truth": ".claude/orchestrator-contract.json",
@@ -673,6 +697,22 @@
         ],
         "outcome_values": [
           "ready",
+          "blocked"
+        ],
+        "next_status_values": [],
+        "mutates_registry_lifecycle": false,
+        "info_only": true,
+        "allowed_to_close_task": false
+      },
+      "screen-journey-reviewer": {
+        "description": "Info-only screen/journey/product UX reviewer invoked by verify-slice for frontend, UX, journey or visual-contract tasks before closer.",
+        "required_keys": [
+          "TASK_ID",
+          "OUTCOME"
+        ],
+        "outcome_values": [
+          "approved",
+          "changes_requested",
           "blocked"
         ],
         "next_status_values": [],

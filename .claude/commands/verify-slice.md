@@ -19,7 +19,7 @@ Unidad verificable = TASK_ID canónico del registry.
 No existe modo secuencial improvisado.
 No dependas de active-task singleton para decidir qué verificar si existe CLAUDE_ACTIVE_TASK_ID o --task.
 Usa siempre orchestrator-state/tasks/task-packs/<TASK_ID>.md como task pack en DAG.
-Todo Agent spawn desde verify-slice debe recibir TASK_ID, CLAUDE_TASK_PACK y el aviso production DAG mode.
+Todo Agent spawn desde verify-slice debe recibir TASK_ID, CLAUDE_TASK_PACK y el aviso production DAG mode. Esto incluye `screen-journey-reviewer`, `debugger` y `closer`.
 ```
 
 Si dudas si estás en DAG o legacy, para y consulta `./scripts/check-task-dag.sh --strict`. En producción `legacy_linear` es error operativo, no fallback. `/verify-slice` es el gate humano de un `TASK_ID` DAG concreto; no verifica una cola secuencial ni cierra slices implícitas.
@@ -198,6 +198,49 @@ Si falla, no invoques `closer`; corrige el handoff o relanza el agente que escri
 
 ---
 
+## Paso 5.2 — Screen/Journey review condicional antes de closer
+
+Este paso protege la nueva realidad del orquestador: pantallas y journeys se cierran por experiencia completa, no por capas aisladas ni por HTML estático.
+
+Ejecuta este paso **solo si** la task cumple alguno de estos criterios, leyendo `registry.json`, task pack y handoff:
+
+- `kind`/`Tipo` es `frontend`, `ui`, `ux`, `journey`, `gate` o visual.
+- Tiene `Pantalla/Ruta`, `route`, `Journey refs` o `journey_refs`.
+- Acceptance, handoff o evidencia mencionan `VISUAL_CONTRACT_CHECK`.
+- La verificación humana reprodujo una pantalla, navegación, estado UX o evidencia visual.
+
+Si no aplica, escribe en tu tabla final `screen_journey_review: not_applicable` y sigue a §5.bis.
+
+Si aplica y `VERIFY_OUTCOME: verified`, spawnea **un único** subagente `screen-journey-reviewer` antes de `closer`, con este contexto literal:
+
+```text
+TASK_ID: <TASK_ID>
+CLAUDE_TASK_PACK: orchestrator-state/tasks/task-packs/<TASK_ID>.md
+MODO DAG ACTIVO: production = explicit_dag.
+No uses active-task singleton.
+Revisa UX_CONTRACT.md, Technical Guide, Implementation Checklist, handoff, verify-slice y evidencia.
+HTML preview/docs visuales son referencia/evidencia, no source-of-truth.
+Si el problema cabe en TASK_ID/Write set: OUTCOME: changes_requested; needs_debugger=yes; NO FU.
+Si falta trabajo/datos/contrato fuera de scope: OUTCOME: blocked; followup_candidate=yes; why_not_debugger obligatorio.
+Apendiza `## Screen/Journey review` al handoff.
+```
+
+Después del subagente, ejecuta:
+
+```bash
+./scripts/check-handoff-contract.sh <TASK_ID> --require-ready-for-close --require-verify-slice --require-screen-journey-review
+```
+
+Decisión:
+
+- `OUTCOME: approved` en `## Screen/Journey review` → continúa a §5.bis / closer.
+- `OUTCOME: changes_requested` → trata los hallazgos como `issues_found` aunque tu reproducción inicial pareciera bien: salta a §6.2, invoca `debugger`, repite `validator ‖ tester` y relanza `/verify-slice`. No crees FU para defectos reparables dentro del `TASK_ID`.
+- `OUTCOME: blocked` → no invoques `closer`. Si `followup_candidate=yes`, registra FU formal con `--scope-classification` y `--why-not-debugger`; si falta información, pide decisión humana.
+
+Si el reviewer no escribe `## Screen/Journey review`, no cierres. Corrige/repite el reviewer o bloquea.
+
+---
+
 ## Paso 5.bis — Journey-closing inline (solo si VERIFY_OUTCOME: verified)
 
 **Solo se ejecuta si**: la verificación de slice salió `verified` Y la slice cierra al menos un journey de la Journey Coverage Matrix. Si `issues_found` → salta este paso y ve directo al Paso 6.
@@ -296,7 +339,7 @@ Recapitula al usuario el estado real (con la información de §5.bis si aplica):
 ¿Invoco a `closer` para escribir evidence report + commit atómico + workflow Git configurado (`./scripts/git-workflow.sh`) + cleanup de worktrees? (sí/no)
 ```
 
-- Si "sí" / "adelante" / "ok" / "dale" / "go" → primero ejecuta `./scripts/check-handoff-contract.sh <TASK_ID> --require-ready-for-close --require-verify-slice`. Solo si pasa, spawnea `closer` (un solo Agent call) con el `TASK_ID`, `CLAUDE_TASK_PACK=orchestrator-state/tasks/task-packs/<TASK_ID>.md` y el recordatorio literal `MODO DAG ACTIVO: production = explicit_dag; no uses active-task singleton para decidir qué cerrar`. Espera el trailer `OUTCOME: committed` + `NEXT_STATUS: done` + `PUSH_READY: yes`. Si vuelve `blocked`, reporta qué le falta al usuario.
+- Si "sí" / "adelante" / "ok" / "dale" / "go" → primero ejecuta `./scripts/check-handoff-contract.sh <TASK_ID> --require-ready-for-close --require-verify-slice`. Solo si pasa —y, cuando aplique pantalla/journey, también pasa con `--require-screen-journey-review`— spawnea `closer` (un solo Agent call) con el `TASK_ID`, `CLAUDE_TASK_PACK=orchestrator-state/tasks/task-packs/<TASK_ID>.md` y el recordatorio literal `MODO DAG ACTIVO: production = explicit_dag; no uses active-task singleton para decidir qué cerrar`. Espera el trailer `OUTCOME: committed` + `NEXT_STATUS: done` + `PUSH_READY: yes`. Si vuelve `blocked`, reporta qué le falta al usuario.
 - Si "no" → informa al usuario:
   > *"Slice verificada pero sin commit. La sección `## verify-slice` con `VERIFY_OUTCOME: verified` ya está en el handoff (más `## verify-journey` si fue inline) — cuando quieras cerrar, relanza `/verify-slice` o dime `cierra <TASK_ID>` directamente."*
 
@@ -324,7 +367,7 @@ Si el SessionStart hook detectó presión de tamaño (sugerencia 💡 sobre PROG
 ```
 ❌ Verify encontró problemas en <TASK_ID>. NO se ha commiteado nada (por diseño).
 Hallazgos:
-<bullets de findings>
+<bullets de findings, incluidos `Screen/Journey review` si fue el reviewer quien bloqueó>
 
 ¿Invoco a `debugger` para que los arregle? (sí/no)
 Si dices "sí", al volver re-lanzaré `validator ‖ tester` y si pasan, relanzaré `/verify-slice`.

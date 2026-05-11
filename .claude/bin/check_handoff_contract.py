@@ -17,11 +17,12 @@ from typing import Dict, List, Tuple
 from common import project_root
 
 SECTION_RE = re.compile(r"^##\s+(.+?)\s*$")
-KEY_RE = re.compile(r"^\s*-?\s*(?P<key>[A-Z][A-Z0-9_]*):\s*(?P<value>.*?)\s*$")
+KEY_RE = re.compile(r"^\s*-?\s*(?P<key>[A-Za-z][A-Za-z0-9_]*):\s*(?P<value>.*?)\s*$")
 
 VALIDATOR_OUTCOMES = {"approved", "changes_requested", "blocked"}
 TESTER_OUTCOMES = {"pass", "fail", "blocked"}
 VERIFY_OUTCOMES = {"verified", "issues_found"}
+SCREEN_JOURNEY_OUTCOMES = {"approved", "changes_requested", "blocked"}
 
 
 def _handoff_path(task_id: str) -> Path:
@@ -61,7 +62,7 @@ def _all_task_ids(sections: Dict[str, List[Tuple[str, str]]]) -> list[tuple[str,
     return found
 
 
-def validate(task_id: str, *, require_ready_for_close: bool, require_verify_slice: bool) -> tuple[bool, list[str], dict[str, object]]:
+def validate(task_id: str, *, require_ready_for_close: bool, require_verify_slice: bool, require_screen_journey_review: bool = False) -> tuple[bool, list[str], dict[str, object]]:
     path = _handoff_path(task_id)
     errors: list[str] = []
     details: dict[str, object] = {"task_id": task_id, "handoff": str(path.relative_to(project_root()))}
@@ -77,9 +78,11 @@ def validate(task_id: str, *, require_ready_for_close: bool, require_verify_slic
     validator = _latest(sections, "validator review")
     tester = _latest(sections, "tester run")
     verify = _latest(sections, "verify-slice")
+    screen_review = _latest(sections, "screen/journey review")
     details["validator"] = validator
     details["tester"] = tester
     details["verify_slice"] = verify
+    details["screen_journey_review"] = screen_review
 
     if require_ready_for_close:
         val_outcome = validator.get("OUTCOME")
@@ -115,6 +118,27 @@ def validate(task_id: str, *, require_ready_for_close: bool, require_verify_slic
             elif verify_outcome != "verified":
                 errors.append(f"verify-slice not verified: VERIFY_OUTCOME={verify_outcome}")
 
+
+    if require_screen_journey_review:
+        if not screen_review:
+            errors.append("missing ## Screen/Journey review section in handoff")
+        else:
+            review_tid = screen_review.get("TASK_ID")
+            if not review_tid:
+                errors.append("missing Screen/Journey review TASK_ID line in handoff")
+            elif review_tid != task_id and not review_tid.startswith("<"):
+                errors.append(f"Screen/Journey review TASK_ID mismatch: {review_tid} != {task_id}")
+            review_outcome = screen_review.get("OUTCOME")
+            if not review_outcome:
+                errors.append("missing Screen/Journey review OUTCOME line in handoff")
+            elif review_outcome not in SCREEN_JOURNEY_OUTCOMES:
+                errors.append(f"invalid Screen/Journey review OUTCOME={review_outcome!r}")
+            elif review_outcome != "approved":
+                errors.append(f"screen/journey reviewer did not approve: OUTCOME={review_outcome}")
+            for key in ("visual_contract_checked", "required_states_covered", "real_data_or_backend_used", "visual_evidence_present"):
+                if key not in screen_review:
+                    errors.append(f"missing Screen/Journey review {key} line in handoff")
+
     return not errors, errors, details
 
 
@@ -123,12 +147,14 @@ def main() -> int:
     parser.add_argument("task_id")
     parser.add_argument("--require-ready-for-close", action="store_true", help="Require Validator review OUTCOME=approved and Tester run OUTCOME=pass.")
     parser.add_argument("--require-verify-slice", action="store_true", help="Require ## verify-slice with matching TASK_ID and VERIFY_OUTCOME=verified.")
+    parser.add_argument("--require-screen-journey-review", action="store_true", help="Require ## Screen/Journey review with matching TASK_ID and OUTCOME=approved.")
     parser.add_argument("--json", action="store_true")
     args = parser.parse_args()
     ok, errors, details = validate(
         args.task_id,
         require_ready_for_close=args.require_ready_for_close,
         require_verify_slice=args.require_verify_slice,
+        require_screen_journey_review=args.require_screen_journey_review,
     )
     payload = {"ok": ok, "errors": errors, **details}
     if args.json:
