@@ -118,6 +118,26 @@
 - Session-scoped pg_engine + function-scoped pg_session with transactional rollback in conftest.py.
 - Mark tests @pytest.mark.integration; run selectively with -m integration or -m "not integration".
 - Port 5432 may be claimed by another worktree container — check before trying docker compose up.
+
+### SQLAlchemy text() JSONB cast patterns (P00-S02-T004)
+- **BROKEN**: `:param::jsonb` — SQLAlchemy 2.x `text()` parser may misinterpret `::` after a bind param (psycopg3 driver interaction).
+- **SAFE forms** (both accepted):
+  - `CAST(:param AS JSONB)` — SQL-standard, preferred for clarity.
+  - `(:param)::jsonb` — parenthesized to isolate bind param before cast operator.
+- Always pair with `json.dumps(value or {})` — NOT `str(dict).replace("'", '"')`.
+- `json.dumps` is the canonical serializer. `str(dict)` produces Python repr (True/False/None/single-quotes) which is not valid JSON.
+- Import `json` at module top (not inside functions) for cleanliness.
+
+### Alembic worktree invocation (updated P00-S02-T004)
+- Must set `DATABASE_URL` env var — alembic env.py raises `RuntimeError` without it.
+- Use: `DATABASE_URL=postgresql+psycopg://hilo:hilo@localhost:5432/hilo_dev /Users/sergiolr/Library/Python/3.11/bin/alembic upgrade head`
+- The `python -m alembic` workaround fails due to `backend/alembic/` directory shadowing the installed package.
+
+### Acceptance test path (P00-S02-T004)
+- pytest is run with `cwd=backend/`, so test paths must be relative to `backend/`:
+  - Correct: `pytest tests/integration/test_dev_restart_reset.py`
+  - Wrong: `pytest backend/tests/integration/test_dev_restart_reset.py` (exit 4 — not found)
+
 ## Known gotchas
 
 - Task packs for the current task MUST be read from the main repo path, not the worktree (they're not synced to worktrees).
@@ -136,4 +156,5 @@
 | P00-S01-T001 | success | backend/app/main.py, backend/pyproject.toml, .env.example, scripts/ |
 | P00-S02-T001 | success | docker-compose.yml, backend/Dockerfile, frontend/Dockerfile, .dockerignore, scripts/minio-bootstrap.sh, frontend/nginx.conf, .env.example |
 | P00-S01-T005 | success | frontend/src/i18n/index.ts (rewrite), frontend/src/i18n/languages.ts, frontend/src/i18n/types.d.ts, frontend/src/i18n/__tests__/i18n.test.ts, frontend/public/locales/**/{8 ns}.json (×3 langs = 24 files), frontend/src/pages/showcase/I18nDemoSection.tsx, frontend/src/pages/showcase/ShowcasePage.tsx |
+| P00-S02-T004 | in progress (developer done) | backend/app/verification_data/loader.py (cast fix + json.dumps + preventive maintenance) |
 | P00-S02-T003 | success | backend/alembic.ini, backend/alembic/env.py, backend/alembic/script.py.mako, backend/alembic/versions/.gitkeep, backend/app/verification_data/** (8 files), data/verification/** (11 fixtures + README), backend/tests/conftest.py, backend/tests/integration/** (3 files), scripts/dev-restart.profile.sh, backend/pyproject.toml (cryptography+argon2-cffi), backend/requirements.txt, .env.example |
