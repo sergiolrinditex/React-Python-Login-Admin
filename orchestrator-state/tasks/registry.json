@@ -465,7 +465,7 @@
       "phase_id": "P00",
       "step_id": "P00-S01",
       "title": "i18n resources ES/EN/FR",
-      "status": "ready_for_close",
+      "status": "done",
       "build_state": "planned",
       "product_increment": "v1",
       "risk_level": "medium",
@@ -529,11 +529,17 @@
       "claimed_by": "sergiolr",
       "claim_terminal_task_env": "P00-S01-T005",
       "task_pack_path": "orchestrator-state/tasks/task-packs/P00-S01-T005.md",
-      "last_outcome": "pass",
-      "last_updated_by": "tester",
-      "last_stop_at": "2026-05-11T13:28:44+00:00",
+      "last_outcome": "committed",
+      "last_updated_by": "closer",
+      "last_stop_at": "2026-05-11T13:52:40+00:00",
       "validator_outcome": "approved",
-      "validator_next_status": "ready_for_close"
+      "validator_next_status": "ready_for_close",
+      "last_blocker": {
+        "reason": "blocked_false_done",
+        "agent": "closer",
+        "at": "2026-05-11T13:51:48+00:00"
+      },
+      "report_path": "orchestrator-state/tasks/reports/P00-S01-T005.md"
     },
     {
       "id": "P00-S02-T001",
