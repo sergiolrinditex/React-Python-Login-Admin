@@ -1,0 +1,21 @@
+===== Step B: alembic downgrade base (HARD RESET) =====
+INFO  [alembic] alembic.env.online.start
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running downgrade 0001 -> , 0001 — auth/users/employee_profiles/audit tables baseline.
+INFO  [alembic.runtime.migration] 0001.downgrade.start: dropping 9 auth tables in reverse FK order
+INFO  [alembic.runtime.migration] 0001.downgrade: dropping audit_logs
+INFO  [alembic.runtime.migration] 0001.downgrade: dropping password_reset_tokens
+INFO  [alembic.runtime.migration] 0001.downgrade: dropping mfa_totp_secrets
+INFO  [alembic.runtime.migration] 0001.downgrade: dropping refresh_tokens
+INFO  [alembic.runtime.migration] 0001.downgrade: dropping user_roles
+INFO  [alembic.runtime.migration] 0001.downgrade: dropping permissions
+INFO  [alembic.runtime.migration] 0001.downgrade: dropping roles
+INFO  [alembic.runtime.migration] 0001.downgrade: dropping employee_profiles
+INFO  [alembic.runtime.migration] 0001.downgrade: dropping users
+INFO  [alembic.runtime.migration] 0001.downgrade.done: 9 tables dropped; pgcrypto extension kept (D2)
+INFO  [alembic] alembic.env.online.done
+
+===== Step B: tables left after downgrade base =====
+tables (count=1): ['alembic_version']
+extensions: ['pgcrypto', 'plpgsql']

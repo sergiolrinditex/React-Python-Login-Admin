@@ -1,0 +1,15 @@
+--- employee_profiles ---
+  ('user_id', 'uuid', 'NO', None)
+  ('employee_id', 'text', 'NO', None)
+  ('brand', 'text', 'NO', None)
+  ('society', 'text', 'NO', None)
+  ('center', 'text', 'NO', None)
+  ('country', 'text', 'NO', None)
+  ('department', 'text', 'NO', None)
+  ('metadata', 'jsonb', 'NO', "'{}'::jsonb")
+--- refresh_tokens ---
+  ('id', 'uuid', 'NO', 'gen_random_uuid()')
+  ('user_id', 'uuid', 'NO', None)
+  ('token_hash', 'text', 'NO', None)
+  ('expires_at', 'timestamp with time zone', 'NO', None)
+  ('revoked_at', 'timestamp with time zone', 'YES', None)

@@ -1,0 +1,30 @@
+===== Step C: alembic upgrade head (VERBOSE=true) =====
+INFO  [alembic] alembic.env.online.start
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 0001, 0001 — auth/users/employee_profiles/audit tables baseline.
+INFO  [alembic.runtime.migration] 0001.upgrade.start: creating pgcrypto extension and 9 auth tables
+INFO  [alembic.runtime.migration] 0001.upgrade: pgcrypto extension ensured
+INFO  [alembic.runtime.migration] 0001.upgrade: creating table users
+INFO  [alembic.runtime.migration] 0001.upgrade: table users created
+INFO  [alembic.runtime.migration] 0001.upgrade: creating table employee_profiles
+INFO  [alembic.runtime.migration] 0001.upgrade: table employee_profiles created
+INFO  [alembic.runtime.migration] 0001.upgrade: creating table roles
+INFO  [alembic.runtime.migration] 0001.upgrade: table roles created
+INFO  [alembic.runtime.migration] 0001.upgrade: creating table permissions
+INFO  [alembic.runtime.migration] 0001.upgrade: table permissions created
+INFO  [alembic.runtime.migration] 0001.upgrade: creating table user_roles
+INFO  [alembic.runtime.migration] 0001.upgrade: table user_roles + role_id index created
+INFO  [alembic.runtime.migration] 0001.upgrade: creating table refresh_tokens
+INFO  [alembic.runtime.migration] 0001.upgrade: table refresh_tokens + indexes created
+INFO  [alembic.runtime.migration] 0001.upgrade: creating table mfa_totp_secrets
+INFO  [alembic.runtime.migration] 0001.upgrade: table mfa_totp_secrets created
+INFO  [alembic.runtime.migration] 0001.upgrade: creating table password_reset_tokens
+INFO  [alembic.runtime.migration] 0001.upgrade: table password_reset_tokens + index created
+INFO  [alembic.runtime.migration] 0001.upgrade: creating table audit_logs
+INFO  [alembic.runtime.migration] 0001.upgrade: table audit_logs + indexes created
+INFO  [alembic.runtime.migration] 0001.upgrade.done: 9 tables + pgcrypto extension ready
+INFO  [alembic] alembic.env.online.done
+
+===== Step C: PII/secret scan in logs =====
+===== Step C: PII/secret scan in logs =====

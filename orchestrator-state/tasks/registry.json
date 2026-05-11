@@ -15,7 +15,7 @@
       "id": "P00",
       "phase_number": 0,
       "title": "Bootstrap / foundation propia",
-      "status": "blocked",
+      "status": "complete",
       "depends_on": [],
       "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Phase 0 — Bootstrap / foundation propia",
       "task_ids": [
@@ -33,7 +33,7 @@
       "id": "P01",
       "phase_number": 1,
       "title": "Auth / base capabilities",
-      "status": "ready",
+      "status": "blocked",
       "depends_on": [
         "P00"
       ],
@@ -682,7 +682,7 @@
       "phase_id": "P00",
       "step_id": "P00-S02",
       "title": "Verification data loader and reset",
-      "status": "ready_for_close",
+      "status": "done",
       "build_state": "planned",
       "product_increment": "v1",
       "risk_level": "medium",
@@ -754,18 +754,19 @@
       "claimed_by": "sergiolr",
       "claim_terminal_task_env": "P00-S02-T003",
       "task_pack_path": "orchestrator-state/tasks/task-packs/P00-S02-T003.md",
-      "last_outcome": "pass",
-      "last_updated_by": "tester",
-      "last_stop_at": "2026-05-11T13:47:44+00:00",
+      "last_outcome": "committed",
+      "last_updated_by": "closer",
+      "last_stop_at": "2026-05-11T14:09:14+00:00",
       "validator_outcome": "approved",
-      "validator_next_status": "ready_for_close"
+      "validator_next_status": "ready_for_close",
+      "report_path": "orchestrator-state/tasks/reports/P00-S02-T003.md"
     },
     {
       "id": "P01-S01-T001",
       "phase_id": "P01",
       "step_id": "P01-S01",
       "title": "0001_auth_users_employee_audit.py",
-      "status": "ready",
+      "status": "ready_for_close",
       "build_state": "planned",
       "product_increment": "v1",
       "risk_level": "medium",
@@ -815,7 +816,7 @@
         "backend/app/db/models/auth.py"
       ],
       "handoff_path": "orchestrator-state/tasks/handoffs/P01-S01-T001.md",
-      "evidence_dir": "orchestrator-state/tasks/evidence/P01-S01-T001",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P01-S01-T001/",
       "notes": [],
       "dependency_mode": "explicit_dag",
       "depends_on_raw": "P00-S02-T002",
@@ -832,7 +833,16 @@
       "endpoint_raw": "—",
       "tables_raw": "users, employee_profiles, roles, permissions, user_roles, refresh_tokens, mfa_totp_secrets, password_reset_tokens, audit_logs",
       "origin_instr_raw": "§3.1#auth-perfiles",
-      "origin_techguide_raw": "§10.3#users"
+      "origin_techguide_raw": "§10.3#users",
+      "claimed_at": "2026-05-11T14:15:18+00:00",
+      "claimed_by": "sergiolr",
+      "claim_terminal_task_env": "P01-S01-T001",
+      "task_pack_path": "orchestrator-state/tasks/task-packs/P01-S01-T001.md",
+      "last_outcome": "pass",
+      "last_updated_by": "tester",
+      "last_stop_at": "2026-05-11T14:49:52+00:00",
+      "validator_outcome": "approved",
+      "validator_next_status": "ready_for_close"
     },
     {
       "id": "P01-S02-T001",

@@ -1,0 +1,46 @@
+{
+  "id": "FU-20260511145446-fix-verification-data-loader-meta-jsonb-sql-cast",
+  "schema_version": 1,
+  "status": "proposed",
+  "created_at": "2026-05-11T14:54:46+00:00",
+  "created_by": "sergiolr",
+  "origin_task_id": "P00-S02-T003",
+  "origin_phase_id": "P00",
+  "origin_step_id": "P00-S02",
+  "kind": "bug",
+  "product_increment": "current",
+  "build_state": "planned",
+  "severity": "medium",
+  "title": "fix verification_data loader :meta::jsonb SQL cast",
+  "description": "backend/app/verification_data/loader.py linea ~280 usa el cast malformado :meta::jsonb que rompe los tests test_dev_restart_reset.py y test_verification_data_bootstrap.py. Detectado por validator+tester de P01-S01-T001. El cast debe ser CAST(:meta AS JSONB) o (:meta)::jsonb con el placeholder agrupado correctamente.",
+  "journey_refs": [],
+  "screen_route": "—",
+  "endpoint": "—",
+  "tables": [],
+  "depends_on": [
+    "P00-S02-T003"
+  ],
+  "conflict_groups": [
+    "backend:verification_data"
+  ],
+  "write_set": [
+    "backend/app/verification_data/loader.py",
+    "backend/tests/integration/test_dev_restart_reset.py",
+    "backend/tests/integration/test_verification_data_bootstrap.py"
+  ],
+  "acceptance": [
+    "pytest backend/tests/integration/test_dev_restart_reset.py backend/tests/integration/test_verification_data_bootstrap.py pasa contra Postgres real con tablas auth ya migradas"
+  ],
+  "verify": [
+    "cd backend && alembic upgrade head && pytest backend/tests/integration/test_dev_restart_reset.py backend/tests/integration/test_verification_data_bootstrap.py -v"
+  ],
+  "notes": [],
+  "triage": {
+    "scope_classification": "out_of_scope",
+    "why_not_debugger": "P00-S02-T003 ya esta committed y mergeado en main; el bug del cast :meta::jsonb solo aflora ahora porque T001 crea las tablas auth que activan el code path del loader. No es fix in-scope de T001 (write_set distinto: backend/app/verification_data/loader.py).",
+    "decision": "followup_only_when_outside_current_slice",
+    "debugger_path": "in_scope_defects_use_validator_tester_debugger_retest",
+    "warnings": []
+  },
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260511145446-fix-verification-data-loader-meta-jsonb-sql-cast.yaml"
+}

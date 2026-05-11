@@ -1,74 +1,66 @@
 {
-  "id": "P01-S01-T001",
+  "id": "P01-S02-T001",
   "phase_id": "P01",
-  "step_id": "P01-S01",
-  "title": "0001_auth_users_employee_audit.py",
-  "status": "ready",
+  "step_id": "P01-S02",
+  "title": "POST /api/v1/auth/sign-up",
+  "status": "blocked",
   "build_state": "planned",
   "product_increment": "v1",
   "risk_level": "medium",
   "verify_mode": "human",
   "depends_on": [
-    "P00-S02-T002"
+    "P01-S01-T001"
   ],
-  "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 1.1 — DB auth baseline",
+  "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 1.2 — Auth APIs",
   "acceptance": [
-    "Migration creates auth/profile/audit tables with constraints and rollback"
+    "Sign-up validates corporate email and legal acceptance",
+    "audit log written"
   ],
   "verification_commands": [
-    "alembic upgrade head && alembic downgrade -1 && alembic upgrade head"
+    "pytest backend/tests/integration -k auth_signup && curl with reales/proporcionados user"
   ],
-  "kind": "db",
-  "target": "0001_auth_users_employee_audit.py",
+  "kind": "api",
+  "target": "POST /api/v1/auth/sign-up",
   "journey_refs": [
-    "J100",
-    "J102"
+    "J100"
   ],
   "route": "",
-  "endpoint": "",
+  "endpoint": "POST /api/v1/auth/sign-up",
   "tables": [
     "users",
     "employee_profiles",
-    "roles",
-    "permissions",
-    "user_roles",
-    "refresh_tokens",
-    "mfa_totp_secrets",
-    "password_reset_tokens",
     "audit_logs"
   ],
   "origin_instr": "§3.1#auth-perfiles",
-  "origin_techguide": "§10.3#users",
+  "origin_techguide": "§6.2#POST-/api/v1/auth/sign-up",
   "allowed_paths": [
-    "backend/alembic/versions/0001_auth_users_employee_audit.py",
-    "backend/app/db/models/user.py",
-    "backend/app/db/models/auth.py"
+    "backend/app/auth/**",
+    "backend/tests/integration/test_auth_signup.py"
   ],
   "conflict_groups": [
-    "db:migrations"
+    "api:auth"
   ],
   "write_set": [
-    "backend/alembic/versions/0001_auth_users_employee_audit.py",
-    "backend/app/db/models/user.py",
-    "backend/app/db/models/auth.py"
+    "backend/app/auth/**",
+    "backend/tests/integration/test_auth_signup.py"
   ],
-  "handoff_path": "orchestrator-state/tasks/handoffs/P01-S01-T001.md",
-  "evidence_dir": "orchestrator-state/tasks/evidence/P01-S01-T001",
+  "handoff_path": "orchestrator-state/tasks/handoffs/P01-S02-T001.md",
+  "evidence_dir": "orchestrator-state/tasks/evidence/P01-S02-T001",
   "notes": [],
   "dependency_mode": "explicit_dag",
-  "depends_on_raw": "P00-S02-T002",
-  "conflict_groups_raw": "db:migrations",
-  "write_set_raw": "backend/alembic/versions/0001_auth_users_employee_audit.py, backend/app/db/models/user.py, backend/app/db/models/auth.py",
+  "depends_on_raw": "P01-S01-T001",
+  "conflict_groups_raw": "api:auth",
+  "write_set_raw": "backend/app/auth/**, backend/tests/integration/test_auth_signup.py",
   "product_increment_raw": "v1",
   "build_state_raw": "planned",
   "risk_level_raw": "medium",
   "verify_mode_raw": "human",
-  "kind_raw": "db",
-  "target_raw": "0001_auth_users_employee_audit.py",
-  "journey_refs_raw": "J100,J102",
+  "kind_raw": "api",
+  "target_raw": "POST /api/v1/auth/sign-up",
+  "journey_refs_raw": "J100",
   "screen_route_raw": "—",
-  "endpoint_raw": "—",
-  "tables_raw": "users, employee_profiles, roles, permissions, user_roles, refresh_tokens, mfa_totp_secrets, password_reset_tokens, audit_logs",
+  "endpoint_raw": "POST /api/v1/auth/sign-up",
+  "tables_raw": "users, employee_profiles, audit_logs",
   "origin_instr_raw": "§3.1#auth-perfiles",
-  "origin_techguide_raw": "§10.3#users"
+  "origin_techguide_raw": "§6.2#POST-/api/v1/auth/sign-up"
 }

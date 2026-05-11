@@ -1,0 +1,11 @@
+=== TABLE: refresh_tokens ===
+  id                                  uuid                      nullable=NO  default=gen_random_uuid()
+  user_id                             uuid                      nullable=NO  default=None
+  token_hash                          text                      nullable=NO  default=None
+  expires_at                          timestamp with time zone  nullable=NO  default=None
+  revoked_at                          timestamp with time zone  nullable=YES default=None
+  [f] refresh_tokens_user_id_fkey: FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+  [p] pk_refresh_tokens: PRIMARY KEY (id)
+  IDX pk_refresh_tokens: CREATE UNIQUE INDEX pk_refresh_tokens ON public.refresh_tokens USING btree (id)
+  IDX refresh_tokens_token_hash_idx: CREATE INDEX refresh_tokens_token_hash_idx ON public.refresh_tokens USING btree (token_hash)
+  IDX refresh_tokens_user_id_revoked_at_idx: CREATE INDEX refresh_tokens_user_id_revoked_at_idx ON public.refresh_tokens USING btree (user_id, revoked_at)

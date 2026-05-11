@@ -1,0 +1,7 @@
+=== TABLE: permissions ===
+  id                                  uuid                      nullable=NO  default=gen_random_uuid()
+  key                                 text                      nullable=NO  default=None
+  [p] pk_permissions: PRIMARY KEY (id)
+  [u] permissions_key_key: UNIQUE (key)
+  IDX permissions_key_key: CREATE UNIQUE INDEX permissions_key_key ON public.permissions USING btree (key)
+  IDX pk_permissions: CREATE UNIQUE INDEX pk_permissions ON public.permissions USING btree (id)

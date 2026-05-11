@@ -1,0 +1,14 @@
+=== TABLE: employee_profiles ===
+  user_id                             uuid                      nullable=NO  default=None
+  employee_id                         text                      nullable=NO  default=None
+  brand                               text                      nullable=NO  default=None
+  society                             text                      nullable=NO  default=None
+  center                              text                      nullable=NO  default=None
+  country                             text                      nullable=NO  default=None
+  department                          text                      nullable=NO  default=None
+  metadata                            jsonb                     nullable=NO  default='{}'::jsonb
+  [f] employee_profiles_user_id_fkey: FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+  [p] pk_employee_profiles: PRIMARY KEY (user_id)
+  [u] employee_profiles_employee_id_key: UNIQUE (employee_id)
+  IDX employee_profiles_employee_id_key: CREATE UNIQUE INDEX employee_profiles_employee_id_key ON public.employee_profiles USING btree (employee_id)
+  IDX pk_employee_profiles: CREATE UNIQUE INDEX pk_employee_profiles ON public.employee_profiles USING btree (user_id)

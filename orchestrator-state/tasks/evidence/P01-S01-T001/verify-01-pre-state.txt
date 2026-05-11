@@ -1,0 +1,55 @@
+===== Step A: alembic current =====
+0001 (head)
+
+===== Step A: heads =====
+0001 (head)
+
+===== Step A: history =====
+Rev: 0001 (head)
+Parent: <base>
+Path: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-a9c2e2f9442e1f02f/backend/alembic/versions/0001_auth_users_employee_audit.py
+
+    0001 — auth/users/employee_profiles/audit tables baseline.
+    
+    Slice:  P01-S01-T001 — DB auth baseline
+    Phase:  P01 Auth + Data Foundation
+    Purpose: Creates the full auth+profile+audit schema needed by Phase 1.
+             9 tables in dependency order (parents before children, FK-safe).
+             Includes CHECK constraint, UNIQUE constraints, and indexes for
+             token lookup and audit queries.
+    
+    Tables created (upgrade order):
+      1. users               — primary identity + credentials
+      2. employee_profiles   — org metadata (1:1 user, FK CASCADE)
+      3. roles               — RBAC role names
+      4. permissions         — fine-grained permission keys
+      5. user_roles          — join table users x roles (composite PK, FK CASCADE)
+      6. refresh_tokens      — JWT refresh token lifecycle (FK CASCADE)
+      7. mfa_totp_secrets    — encrypted TOTP secrets (1:1 user, FK CASCADE)
+      8. password_reset_tokens — password reset one-time tokens (FK CASCADE)
+      9. audit_logs          — compliance audit trail (FK SET NULL — GDPR Art. 30)
+    
+    Tables dropped (downgrade order — reverse, children before parents).
+    pgcrypto extension NOT dropped (D2: idempotent, may be used by future migrations).
+    
+    Decisions implemented:
+      D1: NO vector extension here (belongs to P02-S01-T001)
+      D2: NO DROP EXTENSION pgcrypto in downgrade (idempotent, future-safe)
+      D6: refresh_tokens.user_id and password_reset_tokens.user_id declared NOT NULL
+      D7: indexes for token hash lookup and audit queries
+      D8: NO index on employee_profiles.country (YAGNI)
+      D9: NO seed of roles/permissions data here
+      D10: NO trigger for updated_at (app-controlled P01-S02-T007)
+    
+    Revises: (none — first migration)
+    Create Date: 2026-05-11
+    
+    Source refs:
+      - docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md §10.3#users
+      - docs/source-of-truth/instrucciones.md §3.1#auth-perfiles
+      - 01-non-negotiables.md §Database, §Security/Audit log (GDPR Art. 17 + Art. 30)
+
+
+===== Step A: revision IDs in 0001 file =====
+53:revision: str = "0001"
+54:down_revision: str | None = None

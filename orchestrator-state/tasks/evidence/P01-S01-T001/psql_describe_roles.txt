@@ -1,0 +1,7 @@
+=== TABLE: roles ===
+  id                                  uuid                      nullable=NO  default=gen_random_uuid()
+  name                                text                      nullable=NO  default=None
+  [p] pk_roles: PRIMARY KEY (id)
+  [u] roles_name_key: UNIQUE (name)
+  IDX pk_roles: CREATE UNIQUE INDEX pk_roles ON public.roles USING btree (id)
+  IDX roles_name_key: CREATE UNIQUE INDEX roles_name_key ON public.roles USING btree (name)

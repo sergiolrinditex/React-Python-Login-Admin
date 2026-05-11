@@ -1,0 +1,14 @@
+=== TABLE: users ===
+  id                                  uuid                      nullable=NO  default=gen_random_uuid()
+  email                               text                      nullable=NO  default=None
+  password_hash                       text                      nullable=NO  default=None
+  full_name                           text                      nullable=NO  default=None
+  status                              text                      nullable=NO  default='active'::text
+  preferred_language                  text                      nullable=NO  default='es'::text
+  created_at                          timestamp with time zone  nullable=NO  default=now()
+  updated_at                          timestamp with time zone  nullable=NO  default=now()
+  [c] ck_users_users_language_chk: CHECK ((preferred_language = ANY (ARRAY['es'::text, 'en'::text, 'fr'::text])))
+  [p] pk_users: PRIMARY KEY (id)
+  [u] users_email_key: UNIQUE (email)
+  IDX pk_users: CREATE UNIQUE INDEX pk_users ON public.users USING btree (id)
+  IDX users_email_key: CREATE UNIQUE INDEX users_email_key ON public.users USING btree (email)

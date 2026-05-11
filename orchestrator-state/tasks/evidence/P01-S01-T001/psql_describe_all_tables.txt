@@ -1,0 +1,119 @@
+
+=== TABLE: users ===
+  id                                  uuid                      nullable=NO  default=gen_random_uuid()
+  email                               text                      nullable=NO  default=None
+  password_hash                       text                      nullable=NO  default=None
+  full_name                           text                      nullable=NO  default=None
+  status                              text                      nullable=NO  default='active'::text
+  preferred_language                  text                      nullable=NO  default='es'::text
+  created_at                          timestamp with time zone  nullable=NO  default=now()
+  updated_at                          timestamp with time zone  nullable=NO  default=now()
+  Constraints:
+    [c] ck_users_users_language_chk: CHECK ((preferred_language = ANY (ARRAY['es'::text, 'en'::text, 'fr'::text])))
+    [p] pk_users: PRIMARY KEY (id)
+    [u] users_email_key: UNIQUE (email)
+  Indexes:
+    pk_users: CREATE UNIQUE INDEX pk_users ON public.users USING btree (id)
+    users_email_key: CREATE UNIQUE INDEX users_email_key ON public.users USING btree (email)
+
+=== TABLE: employee_profiles ===
+  user_id                             uuid                      nullable=NO  default=None
+  employee_id                         text                      nullable=NO  default=None
+  brand                               text                      nullable=NO  default=None
+  society                             text                      nullable=NO  default=None
+  center                              text                      nullable=NO  default=None
+  country                             text                      nullable=NO  default=None
+  department                          text                      nullable=NO  default=None
+  metadata                            jsonb                     nullable=NO  default='{}'::jsonb
+  Constraints:
+    [f] employee_profiles_user_id_fkey: FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    [p] pk_employee_profiles: PRIMARY KEY (user_id)
+    [u] employee_profiles_employee_id_key: UNIQUE (employee_id)
+  Indexes:
+    employee_profiles_employee_id_key: CREATE UNIQUE INDEX employee_profiles_employee_id_key ON public.employee_profiles USING btree (employee_id)
+    pk_employee_profiles: CREATE UNIQUE INDEX pk_employee_profiles ON public.employee_profiles USING btree (user_id)
+
+=== TABLE: roles ===
+  id                                  uuid                      nullable=NO  default=gen_random_uuid()
+  name                                text                      nullable=NO  default=None
+  Constraints:
+    [p] pk_roles: PRIMARY KEY (id)
+    [u] roles_name_key: UNIQUE (name)
+  Indexes:
+    pk_roles: CREATE UNIQUE INDEX pk_roles ON public.roles USING btree (id)
+    roles_name_key: CREATE UNIQUE INDEX roles_name_key ON public.roles USING btree (name)
+
+=== TABLE: permissions ===
+  id                                  uuid                      nullable=NO  default=gen_random_uuid()
+  key                                 text                      nullable=NO  default=None
+  Constraints:
+    [p] pk_permissions: PRIMARY KEY (id)
+    [u] permissions_key_key: UNIQUE (key)
+  Indexes:
+    permissions_key_key: CREATE UNIQUE INDEX permissions_key_key ON public.permissions USING btree (key)
+    pk_permissions: CREATE UNIQUE INDEX pk_permissions ON public.permissions USING btree (id)
+
+=== TABLE: user_roles ===
+  user_id                             uuid                      nullable=NO  default=None
+  role_id                             uuid                      nullable=NO  default=None
+  Constraints:
+    [f] user_roles_role_id_fkey: FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE
+    [f] user_roles_user_id_fkey: FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    [p] pk_user_roles: PRIMARY KEY (user_id, role_id)
+  Indexes:
+    pk_user_roles: CREATE UNIQUE INDEX pk_user_roles ON public.user_roles USING btree (user_id, role_id)
+    user_roles_role_id_idx: CREATE INDEX user_roles_role_id_idx ON public.user_roles USING btree (role_id)
+
+=== TABLE: refresh_tokens ===
+  id                                  uuid                      nullable=NO  default=gen_random_uuid()
+  user_id                             uuid                      nullable=NO  default=None
+  token_hash                          text                      nullable=NO  default=None
+  expires_at                          timestamp with time zone  nullable=NO  default=None
+  revoked_at                          timestamp with time zone  nullable=YES default=None
+  Constraints:
+    [f] refresh_tokens_user_id_fkey: FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    [p] pk_refresh_tokens: PRIMARY KEY (id)
+  Indexes:
+    pk_refresh_tokens: CREATE UNIQUE INDEX pk_refresh_tokens ON public.refresh_tokens USING btree (id)
+    refresh_tokens_token_hash_idx: CREATE INDEX refresh_tokens_token_hash_idx ON public.refresh_tokens USING btree (token_hash)
+    refresh_tokens_user_id_revoked_at_idx: CREATE INDEX refresh_tokens_user_id_revoked_at_idx ON public.refresh_tokens USING btree (user_id, revoked_at)
+
+=== TABLE: mfa_totp_secrets ===
+  user_id                             uuid                      nullable=NO  default=None
+  secret_encrypted                    text                      nullable=NO  default=None
+  enabled                             boolean                   nullable=NO  default=false
+  Constraints:
+    [f] mfa_totp_secrets_user_id_fkey: FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    [p] pk_mfa_totp_secrets: PRIMARY KEY (user_id)
+  Indexes:
+    pk_mfa_totp_secrets: CREATE UNIQUE INDEX pk_mfa_totp_secrets ON public.mfa_totp_secrets USING btree (user_id)
+
+=== TABLE: password_reset_tokens ===
+  id                                  uuid                      nullable=NO  default=gen_random_uuid()
+  user_id                             uuid                      nullable=NO  default=None
+  token_hash                          text                      nullable=NO  default=None
+  expires_at                          timestamp with time zone  nullable=NO  default=None
+  used_at                             timestamp with time zone  nullable=YES default=None
+  Constraints:
+    [f] password_reset_tokens_user_id_fkey: FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    [p] pk_password_reset_tokens: PRIMARY KEY (id)
+  Indexes:
+    password_reset_tokens_token_hash_idx: CREATE INDEX password_reset_tokens_token_hash_idx ON public.password_reset_tokens USING btree (token_hash)
+    pk_password_reset_tokens: CREATE UNIQUE INDEX pk_password_reset_tokens ON public.password_reset_tokens USING btree (id)
+
+=== TABLE: audit_logs ===
+  id                                  uuid                      nullable=NO  default=gen_random_uuid()
+  actor_user_id                       uuid                      nullable=YES default=None
+  action                              text                      nullable=NO  default=None
+  entity_type                         text                      nullable=YES default=None
+  entity_id                           uuid                      nullable=YES default=None
+  metadata                            jsonb                     nullable=NO  default='{}'::jsonb
+  created_at                          timestamp with time zone  nullable=NO  default=now()
+  Constraints:
+    [f] audit_logs_actor_user_id_fkey: FOREIGN KEY (actor_user_id) REFERENCES users(id) ON DELETE SET NULL
+    [p] pk_audit_logs: PRIMARY KEY (id)
+  Indexes:
+    audit_logs_actor_created_idx: CREATE INDEX audit_logs_actor_created_idx ON public.audit_logs USING btree (actor_user_id, created_at)
+    audit_logs_created_at_idx: CREATE INDEX audit_logs_created_at_idx ON public.audit_logs USING btree (created_at)
+    audit_logs_entity_idx: CREATE INDEX audit_logs_entity_idx ON public.audit_logs USING btree (entity_type, entity_id)
+    pk_audit_logs: CREATE UNIQUE INDEX pk_audit_logs ON public.audit_logs USING btree (id)

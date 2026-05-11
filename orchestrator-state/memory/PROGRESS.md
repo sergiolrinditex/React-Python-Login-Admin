@@ -6,7 +6,7 @@
 
 ## Current State
 
-- **Phase**: Phase 0 — Scaffold + Design System
+- **Phase**: Phase 1 — Auth + Data Foundation
 - **Last completed slices**:
   - P00-S01-T001 — Repo scaffold + scripts + env (done)
   - P00-S01-T002 — Frontend dependency pack (done)
@@ -15,9 +15,11 @@
   - P00-S02-T001 — Docker compose services (done, 2026-05-11)
   - P00-S02-T002 — Health live ready endpoints (done, 2026-05-11)
   - P00-S01-T005 — i18n resources ES/EN/FR (done, 2026-05-11)
-- **Next pending slice**: P00-S02-T003 — Verification data and Alembic baseline (or next wave task)
-- **Blockers**: none
-- **Generated at**: 2026-05-11T15:17:00+00:00
+  - P00-S02-T003 — Verification data loader + Alembic infra (done, 2026-05-11)
+  - P01-S01-T001 — 0001_auth_users_employee_audit migration (done, 2026-05-11)
+- **Next pending slice**: P01-S02-T001 — POST /api/v1/auth/sign-up endpoint
+- **Blockers**: Pre-existing bug in loader.py `:meta::jsonb` — FU-20260511145446 registered (medium, not blocking)
+- **Generated at**: 2026-05-11T19:00:00+00:00
 
 ## Infrastructure Status (P00-S02-T001)
 
@@ -41,9 +43,9 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 | Server | not started (scaffold ready) | uvicorn app.main:app --port 8000 --reload |
 | Health check | 3 endpoints implemented | GET /health (backward compat), GET /live (liveness), GET /ready (readiness with DB+Redis ping) |
 | Endpoints implemented | 3 | GET /health, GET /live, GET /ready |
-| Migrations applied | 0 | no DB schema yet (P01-S01+) |
-| Seed data | not loaded | no verification data yet |
-| Backend tests | 31 passing | test_health.py (11) + test_dependency_smoke.py (20) |
+| Migrations applied | 1 (head=0001) | 9 auth tables: users, employee_profiles, roles, permissions, user_roles, refresh_tokens, mfa_totp_secrets, password_reset_tokens, audit_logs |
+| Seed data | not loaded (FU blocker in loader.py) | FU-20260511145446 — loader.py :meta::jsonb bug — medium, proposed |
+| Backend tests | 37 passing | test_health.py (11) + test_dependency_smoke.py (20) + test_migrations_0001_auth.py (6) |
 | Backend dependencies | declared + installed | see pyproject.toml [project.dependencies] — 26 packages pinned (23 T003 + psycopg[binary]==3.3.4 T002 + argon2-cffi==25.1.0 + cryptography==48.0.0 T003) |
 | Lint (ruff) | clean | 0 issues |
 
@@ -66,19 +68,27 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 
 | Table | Migration | Seed | Status |
 |-------|-----------|------|--------|
-| (none yet) | — | — | — |
+| users | 0001_auth_users_employee_audit.py | not loaded (loader.py FU) | created |
+| employee_profiles | 0001_auth_users_employee_audit.py | not loaded | created |
+| roles | 0001_auth_users_employee_audit.py | not loaded | created |
+| permissions | 0001_auth_users_employee_audit.py | not loaded | created |
+| user_roles | 0001_auth_users_employee_audit.py | not loaded | created |
+| refresh_tokens | 0001_auth_users_employee_audit.py | not loaded | created |
+| mfa_totp_secrets | 0001_auth_users_employee_audit.py | not loaded | created |
+| password_reset_tokens | 0001_auth_users_employee_audit.py | not loaded | created |
+| audit_logs | 0001_auth_users_employee_audit.py | not loaded | created |
 
 ## Tests Summary
 
 | Level | Count | Status |
 |-------|-------|--------|
 | Backend unit | 0 | — |
-| Backend integration | 31 | PASS (health probe 11 + dep smoke 20; TestClient ASGI) |
+| Backend integration | 37 | PASS (health probe 11 + dep smoke 20 + T001 migrations 6) |
 | Compose orchestration smoke | 11 | PASS (T1–T8 tester + verify cycle 1+2 + minio-init bucket) |
 | Frontend unit | 0 | — |
 | Frontend component | 58 | PASS (providers 4 + design-system 34 + showcase 4 + i18n 16) |
 | E2E | 0 | — |
-| **Total** | **100** | **100 PASS, 0 FAIL** |
+| **Total** | **106** | **106 PASS, 0 FAIL** |
 
 ## Milestones
 
@@ -140,6 +150,13 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 - **2026-05-11 (P00-S01-T005)**: WRITE_SET_DRIFT — I18nDemoSection.tsx added to frontend/src/pages/showcase/ for verify_mode=human. Justified by showcase being the only canonical P0 dev surface. Flagged in handoff.
 - **2026-05-11 (P00-S01-T005)**: Test globals (describe/it/expect) imported explicitly from "vitest" following existing test pattern (NOT via tsconfig globals which would cause tsc TS2593 errors).
 
+- **2026-05-11 (P01-S01-T001)**: ORM split by bounded context: identity/RBAC in user.py (User, EmployeeProfile, Role, Permission, UserRole), session/audit in auth.py (RefreshToken, MfaTotpSecret, PasswordResetToken, AuditLog). No import cycles. DeclarativeBase in base.py.
+- **2026-05-11 (P01-S01-T001)**: `refresh_tokens.user_id` and `password_reset_tokens.user_id` declared NOT NULL (tighter than §10.3 raw DDL; validator approved D6).
+- **2026-05-11 (P01-S01-T001)**: No `CREATE EXTENSION vector` in migration 0001 (YAGNI for this slice; vector belongs to P02-S01-T001 D1). No `DROP EXTENSION pgcrypto` in downgrade (D2).
+- **2026-05-11 (P01-S01-T001)**: `extra_metadata` Python attribute → `metadata` DB column via `mapped_column("metadata", JSONB)` to avoid SQLAlchemy 2.x DeclarativeBase reserved attribute conflict.
+- **2026-05-11 (P01-S01-T001)**: `audit_logs.actor_user_id` ON DELETE SET NULL (not CASCADE) for GDPR Art. 30 — audit trail preserved when user deleted (pseudonymization is app-layer concern P04).
+- **2026-05-11 (P01-S01-T001)**: FU-20260511145446 registered (medium) — loader.py `:meta::jsonb` cast bug in P00-S02-T003 tests now surfaces because tables exist. Out of T001 scope. Main-orchestrator to decide promotion/waiver.
+
 ## Known Issues / Risks
 
 - **R1 (P00-S01-T001)**: `backend/tests/` write_set extension — validator approved. Resolved.
@@ -165,5 +182,5 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 
 ---
 
-> Last updated: 2026-05-11T15:17:00+00:00
-> Updated by: developer agent — P00-S01-T005 i18n resources ES/EN/FR
+> Last updated: 2026-05-11T19:00:00+00:00
+> Updated by: closer — P01-S01-T001 0001_auth_users_employee_audit migration (done)

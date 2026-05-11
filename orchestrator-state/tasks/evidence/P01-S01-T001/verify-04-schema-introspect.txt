@@ -1,0 +1,55 @@
+--- tables (count=9) ---
+  audit_logs
+  employee_profiles
+  mfa_totp_secrets
+  password_reset_tokens
+  permissions
+  refresh_tokens
+  roles
+  user_roles
+  users
+missing=none extra=none
+
+--- CHECK constraints ---
+   ('ck_users_users_language_chk', 'users', "CHECK ((preferred_language = ANY (ARRAY['es'::text, 'en'::text, 'fr'::text])))")
+
+--- UNIQUE constraints ---
+   ('employee_profiles_employee_id_key', 'employee_profiles', 'UNIQUE (employee_id)')
+   ('permissions_key_key', 'permissions', 'UNIQUE (key)')
+   ('roles_name_key', 'roles', 'UNIQUE (name)')
+   ('users_email_key', 'users', 'UNIQUE (email)')
+
+--- FOREIGN KEYs (with ON DELETE rule) ---
+   ('audit_logs_actor_user_id_fkey', 'audit_logs', 'FOREIGN KEY (actor_user_id) REFERENCES users(id) ON DELETE SET NULL')
+   ('employee_profiles_user_id_fkey', 'employee_profiles', 'FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE')
+   ('mfa_totp_secrets_user_id_fkey', 'mfa_totp_secrets', 'FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE')
+   ('password_reset_tokens_user_id_fkey', 'password_reset_tokens', 'FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE')
+   ('refresh_tokens_user_id_fkey', 'refresh_tokens', 'FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE')
+   ('user_roles_role_id_fkey', 'user_roles', 'FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE')
+   ('user_roles_user_id_fkey', 'user_roles', 'FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE')
+
+--- D6 NOT NULL on tokens.user_id ---
+   ('password_reset_tokens', 'user_id', 'NO', 'uuid')
+   ('refresh_tokens', 'user_id', 'NO', 'uuid')
+
+--- Indexes ---
+  audit_logs.audit_logs_actor_created_idx :: CREATE INDEX audit_logs_actor_created_idx ON public.audit_logs USING btree (actor_user_id, created_at)
+  audit_logs.audit_logs_created_at_idx :: CREATE INDEX audit_logs_created_at_idx ON public.audit_logs USING btree (created_at)
+  audit_logs.audit_logs_entity_idx :: CREATE INDEX audit_logs_entity_idx ON public.audit_logs USING btree (entity_type, entity_id)
+  audit_logs.pk_audit_logs :: CREATE UNIQUE INDEX pk_audit_logs ON public.audit_logs USING btree (id)
+  employee_profiles.employee_profiles_employee_id_key :: CREATE UNIQUE INDEX employee_profiles_employee_id_key ON public.employee_profiles USING btree (employee_id)
+  employee_profiles.pk_employee_profiles :: CREATE UNIQUE INDEX pk_employee_profiles ON public.employee_profiles USING btree (user_id)
+  mfa_totp_secrets.pk_mfa_totp_secrets :: CREATE UNIQUE INDEX pk_mfa_totp_secrets ON public.mfa_totp_secrets USING btree (user_id)
+  password_reset_tokens.password_reset_tokens_token_hash_idx :: CREATE INDEX password_reset_tokens_token_hash_idx ON public.password_reset_tokens USING btree (token_hash)
+  password_reset_tokens.pk_password_reset_tokens :: CREATE UNIQUE INDEX pk_password_reset_tokens ON public.password_reset_tokens USING btree (id)
+  permissions.permissions_key_key :: CREATE UNIQUE INDEX permissions_key_key ON public.permissions USING btree (key)
+  permissions.pk_permissions :: CREATE UNIQUE INDEX pk_permissions ON public.permissions USING btree (id)
+  refresh_tokens.pk_refresh_tokens :: CREATE UNIQUE INDEX pk_refresh_tokens ON public.refresh_tokens USING btree (id)
+  refresh_tokens.refresh_tokens_token_hash_idx :: CREATE INDEX refresh_tokens_token_hash_idx ON public.refresh_tokens USING btree (token_hash)
+  refresh_tokens.refresh_tokens_user_id_revoked_at_idx :: CREATE INDEX refresh_tokens_user_id_revoked_at_idx ON public.refresh_tokens USING btree (user_id, revoked_at)
+  roles.pk_roles :: CREATE UNIQUE INDEX pk_roles ON public.roles USING btree (id)
+  roles.roles_name_key :: CREATE UNIQUE INDEX roles_name_key ON public.roles USING btree (name)
+  user_roles.pk_user_roles :: CREATE UNIQUE INDEX pk_user_roles ON public.user_roles USING btree (user_id, role_id)
+  user_roles.user_roles_role_id_idx :: CREATE INDEX user_roles_role_id_idx ON public.user_roles USING btree (role_id)
+  users.pk_users :: CREATE UNIQUE INDEX pk_users ON public.users USING btree (id)
+  users.users_email_key :: CREATE UNIQUE INDEX users_email_key ON public.users USING btree (email)

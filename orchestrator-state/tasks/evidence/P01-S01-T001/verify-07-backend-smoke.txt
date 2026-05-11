@@ -1,0 +1,7 @@
+===== Step H: backend health smoke (running pre-T001 backend) =====
+{"data":{"status":"ok","version":"0.1.0","uptime":2894.87}}
+{"data":{"status":"ok"}}
+{"data":{"db":{"status":"ok"},"redis":{"status":"ok"},"litellm":{"status":"unknown"}}}
+
+===== Step I: ruff on slice files =====
+All checks passed!

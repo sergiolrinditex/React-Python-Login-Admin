@@ -1,0 +1,14 @@
+=== TABLE: audit_logs ===
+  id                                  uuid                      nullable=NO  default=gen_random_uuid()
+  actor_user_id                       uuid                      nullable=YES default=None
+  action                              text                      nullable=NO  default=None
+  entity_type                         text                      nullable=YES default=None
+  entity_id                           uuid                      nullable=YES default=None
+  metadata                            jsonb                     nullable=NO  default='{}'::jsonb
+  created_at                          timestamp with time zone  nullable=NO  default=now()
+  [f] audit_logs_actor_user_id_fkey: FOREIGN KEY (actor_user_id) REFERENCES users(id) ON DELETE SET NULL
+  [p] pk_audit_logs: PRIMARY KEY (id)
+  IDX audit_logs_actor_created_idx: CREATE INDEX audit_logs_actor_created_idx ON public.audit_logs USING btree (actor_user_id, created_at)
+  IDX audit_logs_created_at_idx: CREATE INDEX audit_logs_created_at_idx ON public.audit_logs USING btree (created_at)
+  IDX audit_logs_entity_idx: CREATE INDEX audit_logs_entity_idx ON public.audit_logs USING btree (entity_type, entity_id)
+  IDX pk_audit_logs: CREATE UNIQUE INDEX pk_audit_logs ON public.audit_logs USING btree (id)

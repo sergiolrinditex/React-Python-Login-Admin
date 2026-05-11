@@ -1,25 +1,24 @@
 # Active task
 
-- ID: P01-S01-T001
-- Title: 0001_auth_users_employee_audit.py
-- Status: ready
+- ID: P01-S02-T001
+- Title: POST /api/v1/auth/sign-up
+- Status: blocked
 - Phase: P01
 
 ## Acceptance
-- Migration creates auth/profile/audit tables with constraints and rollback
+- Sign-up validates corporate email and legal acceptance
+- audit log written
 
 ## Allowed paths
-- backend/alembic/versions/0001_auth_users_employee_audit.py
-- backend/app/db/models/user.py
-- backend/app/db/models/auth.py
+- backend/app/auth/**
+- backend/tests/integration/test_auth_signup.py
 
 ## DAG conflict guardrails
 ### Conflict groups
-- db:migrations
+- api:auth
 ### Write set
-- backend/alembic/versions/0001_auth_users_employee_audit.py
-- backend/app/db/models/user.py
-- backend/app/db/models/auth.py
+- backend/app/auth/**
+- backend/tests/integration/test_auth_signup.py
 
 ## Verification commands
-- `alembic upgrade head && alembic downgrade -1 && alembic upgrade head`
+- `pytest backend/tests/integration -k auth_signup && curl with reales/proporcionados user`

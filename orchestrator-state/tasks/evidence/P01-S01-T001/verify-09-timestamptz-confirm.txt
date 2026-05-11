@@ -1,0 +1,37 @@
+
+WITH timezone: 0 cols
+WITHOUT timezone: 0 cols
+✓ All timestamps are TIMESTAMPTZ — researcher note RESOLVED claim confirmed
+
+--- All time-related columns ---
+
+--- Timestamp columns (pg_catalog) ---
+
+--- users ---
+
+--- refresh_tokens ---
+
+--- password_reset_tokens ---
+
+--- audit_logs ---
+
+--- mfa_totp_secrets ---
+
+--- employee_profiles ---
+DB context: ('hilo_dev', 'hilo', 'PostgreSQL 17.9 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit')
+Tables seen: ['alembic_version']
+
+users columns:
+
+Timestamp columns:
+('audit_logs', 'created_at', 'timestamp with time zone', 'timestamptz')
+('password_reset_tokens', 'expires_at', 'timestamp with time zone', 'timestamptz')
+('password_reset_tokens', 'used_at', 'timestamp with time zone', 'timestamptz')
+('refresh_tokens', 'expires_at', 'timestamp with time zone', 'timestamptz')
+('refresh_tokens', 'revoked_at', 'timestamp with time zone', 'timestamptz')
+('users', 'created_at', 'timestamp with time zone', 'timestamptz')
+('users', 'updated_at', 'timestamp with time zone', 'timestamptz')
+
+TIMESTAMPTZ columns: 7
+TIMESTAMP (naive) columns: 0
+✓ All timestamps are TIMESTAMPTZ — researcher resolution confirmed against DB

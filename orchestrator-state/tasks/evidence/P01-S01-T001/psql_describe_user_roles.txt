@@ -1,0 +1,8 @@
+=== TABLE: user_roles ===
+  user_id                             uuid                      nullable=NO  default=None
+  role_id                             uuid                      nullable=NO  default=None
+  [f] user_roles_role_id_fkey: FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE
+  [f] user_roles_user_id_fkey: FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+  [p] pk_user_roles: PRIMARY KEY (user_id, role_id)
+  IDX pk_user_roles: CREATE UNIQUE INDEX pk_user_roles ON public.user_roles USING btree (user_id, role_id)
+  IDX user_roles_role_id_idx: CREATE INDEX user_roles_role_id_idx ON public.user_roles USING btree (role_id)
