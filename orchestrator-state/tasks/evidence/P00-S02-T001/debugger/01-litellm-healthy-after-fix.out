@@ -1,0 +1,80 @@
+=== P00-S02-T001 debugger ciclo 1/3 — litellm healthcheck fix verification ===
+TIMESTAMP=2026-05-11T10:24:17Z
+WORKDIR=/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin
+Docker version 29.1.4-rd, build 3c6914c
+Docker Compose version v5.0.1
+
+--- STEP A: pre-clean ---
+ Container react-python-login-admin-litellm-1 Stopping 
+ Container react-python-login-admin-litellm-1 Stopped 
+ Container react-python-login-admin-litellm-1 Removing 
+ Container react-python-login-admin-litellm-1 Removed 
+ Network react-python-login-admin_backend Removing 
+ Network react-python-login-admin_backend Removed 
+
+--- STEP B: .env ready ---
+.env present (size=    3246)
+
+--- STEP C: bring up only litellm ---
+time="2026-05-11T12:24:21+02:00" level=warning msg="No services to build"
+ Network react-python-login-admin_backend Creating 
+ Network react-python-login-admin_backend Created 
+ Container react-python-login-admin-litellm-1 Creating 
+ Container react-python-login-admin-litellm-1 Created 
+ Container react-python-login-admin-litellm-1 Starting 
+ Container react-python-login-admin-litellm-1 Started 
+
+--- STEP D: poll for healthy (up to 60s) ---
+tick=1 status=Up Less than a second (health: starting)
+tick=2 status=Up 2 seconds (health: starting)
+tick=3 status=Up 4 seconds (health: starting)
+tick=4 status=Up 6 seconds (health: starting)
+tick=5 status=Up 8 seconds (health: starting)
+tick=6 status=Up 11 seconds (health: starting)
+tick=7 status=Up 13 seconds (health: starting)
+tick=8 status=Up 15 seconds (health: starting)
+tick=9 status=Up 17 seconds (healthy)
+final_status=Up 17 seconds (healthy)
+
+--- STEP E: docker inspect Health.Status + last 3 healthcheck log entries ---
+container_id=530ed74d04aca4f5ed9a54afd247e47d920a07629b73ae2e1c99f06919fc9797
+healthy
+LOG# 0 exit 1 out= 'Traceback (most recent call last):\n  File "/usr/lib/python3.13/urllib/request.py", line 1319, in do_open\n    h.request(req.get_method(), req.selector, req.data, headers,\n    ~~~~~~~~~^^^^^^^^^^^^^^^^^'
+LOG# 1 exit 1 out= 'Traceback (most recent call last):\n  File "/usr/lib/python3.13/urllib/request.py", line 1319, in do_open\n    h.request(req.get_method(), req.selector, req.data, headers,\n    ~~~~~~~~~^^^^^^^^^^^^^^^^^'
+LOG# 2 exit 0 out= ''
+
+--- STEP F: probe INSIDE container (the same python one-liner the healthcheck runs) ---
+
+--- STEP F: probe INSIDE container (same python one-liner the healthcheck runs) ---
+
+--- STEP F (retry, using docker exec directly): probe INSIDE container ---
+INSIDE_EXIT=0
+
+--- STEP G: counter-evidence (curl/wget absent, python present) ---
+inside_bin: curl=
+inside_bin: wget=
+inside_bin: python=/app/.venv/bin/python
+inside_bin: python3=/app/.venv/bin/python3
+
+--- STEP H: app-level proof from host ---
+"I'm alive!"
+{"status":"healthy","db":"Not connected","cache":null,"litellm_version":"1.83.14","success_callbacks":[],"use_aiohttp_transport":true,"log_level":"WARNING","is_detailed_debug":false}
+
+--- STEP I: final inspect Health summary ---
+healthy
+status= healthy failing_streak= 0 total_logs= 5
+LOG# 0 exit 0
+LOG# 1 exit 0
+LOG# 2 exit 0
+LOG# 3 exit 0
+LOG# 4 exit 0
+
+--- STEP J: teardown ---
+ Container react-python-login-admin-litellm-1 Stopping 
+ Container react-python-login-admin-litellm-1 Stopped 
+ Container react-python-login-admin-litellm-1 Removing 
+ Container react-python-login-admin-litellm-1 Removed 
+ Network react-python-login-admin_backend Removing 
+ Network react-python-login-admin_backend Removed 
+END_TIMESTAMP=2026-05-11T10:25:25Z
+DONE.

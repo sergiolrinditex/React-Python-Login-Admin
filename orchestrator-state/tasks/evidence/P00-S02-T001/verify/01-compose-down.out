@@ -1,0 +1,27 @@
+time="2026-05-11T12:14:54+02:00" level=warning msg="The \"POSTGRES_USER\" variable is not set. Defaulting to a blank string."
+time="2026-05-11T12:14:54+02:00" level=warning msg="The \"POSTGRES_DB\" variable is not set. Defaulting to a blank string."
+time="2026-05-11T12:14:54+02:00" level=warning msg="The \"POSTGRES_DB\" variable is not set. Defaulting to a blank string."
+time="2026-05-11T12:14:54+02:00" level=warning msg="The \"POSTGRES_USER\" variable is not set. Defaulting to a blank string."
+time="2026-05-11T12:14:54+02:00" level=warning msg="The \"POSTGRES_PASSWORD\" variable is not set. Defaulting to a blank string."
+time="2026-05-11T12:14:54+02:00" level=warning msg="The \"LITELLM_MASTER_KEY\" variable is not set. Defaulting to a blank string."
+time="2026-05-11T12:14:54+02:00" level=warning msg="The \"MINIO_ROOT_USER\" variable is not set. Defaulting to a blank string."
+time="2026-05-11T12:14:54+02:00" level=warning msg="The \"MINIO_ROOT_PASSWORD\" variable is not set. Defaulting to a blank string."
+time="2026-05-11T12:14:54+02:00" level=warning msg="The \"MINIO_ROOT_USER\" variable is not set. Defaulting to a blank string."
+time="2026-05-11T12:14:54+02:00" level=warning msg="The \"MINIO_ROOT_PASSWORD\" variable is not set. Defaulting to a blank string."
+time="2026-05-11T12:14:54+02:00" level=warning msg="The \"S3_BUCKET_DOCUMENTS\" variable is not set. Defaulting to a blank string."
+ Container hilo-minio Stopping 
+ Container hilo-redis Stopping 
+ Container hilo-litellm Stopping 
+ Container hilo-postgres Stopping 
+ Container hilo-minio Stopped 
+ Container hilo-minio Removing 
+ Container hilo-redis Stopped 
+ Container hilo-redis Removing 
+ Container hilo-postgres Stopped 
+ Container hilo-postgres Removing 
+ Container hilo-postgres Removed 
+ Container hilo-minio Removed 
+ Container hilo-redis Removed 
+ Container hilo-litellm Stopped 
+ Container hilo-litellm Removing 
+ Container hilo-litellm Removed 

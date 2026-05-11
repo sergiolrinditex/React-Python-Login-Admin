@@ -1,0 +1,241 @@
+name: agent-a59eeab464e82ef96
+services:
+  backend:
+    build:
+      context: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-a59eeab464e82ef96
+      dockerfile: backend/Dockerfile
+    command:
+      - uvicorn
+      - app.main:app
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8000"
+    depends_on:
+      litellm:
+        condition: service_healthy
+        required: true
+      postgres:
+        condition: service_healthy
+        required: true
+      redis:
+        condition: service_healthy
+        required: true
+    environment:
+      DATABASE_URL: postgresql+asyncpg://hilo:hilo@localhost:5432/hilo_dev
+      DEFAULT_LANGUAGE: es
+      ENABLE_VERBOSE_LOGGING: "false"
+      ENCRYPTION_KEY: replace-with-dev-key
+      JWT_PRIVATE_KEY: replace-with-dev-key
+      JWT_PUBLIC_KEY: replace-with-dev-key
+      LITELLM_BASE_URL: http://litellm:4000
+      LITELLM_MASTER_KEY: sk-litellm-dev-only
+      MAX_UPLOAD_MB: "25"
+      MCP_ALLOWLIST_DOMAINS: localhost
+      MINIO_ROOT_PASSWORD: hilo-dev-only
+      MINIO_ROOT_USER: hilo
+      POSTGRES_DB: hilo_dev
+      POSTGRES_PASSWORD: hilo
+      POSTGRES_USER: hilo
+      REDIS_URL: redis://localhost:6379/0
+      S3_BUCKET_DOCUMENTS: hilo-docs-dev
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - curl -fsS http://localhost:8000/health || exit 1
+      timeout: 5s
+      interval: 10s
+      retries: 12
+      start_period: 20s
+    networks:
+      backend: null
+    ports:
+      - mode: ingress
+        target: 8000
+        published: "8000"
+        protocol: tcp
+    restart: unless-stopped
+  frontend:
+    build:
+      context: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-a59eeab464e82ef96
+      dockerfile: frontend/Dockerfile
+      args:
+        SKIP_BUILD: "0"
+    networks:
+      backend: null
+    ports:
+      - mode: ingress
+        target: 80
+        published: "5173"
+        protocol: tcp
+    restart: unless-stopped
+  litellm:
+    environment:
+      LITELLM_MASTER_KEY: sk-litellm-dev-only
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - curl -fsS http://localhost:4000/health/liveliness || exit 1
+      timeout: 5s
+      interval: 10s
+      retries: 12
+      start_period: 20s
+    image: ghcr.io/berriai/litellm:v1.83.14-stable.patch.3
+    networks:
+      backend: null
+    ports:
+      - mode: ingress
+        target: 4000
+        published: "4000"
+        protocol: tcp
+    restart: unless-stopped
+  minio:
+    command:
+      - server
+      - /data
+      - --console-address
+      - :9001
+    environment:
+      MINIO_ROOT_PASSWORD: hilo-dev-only
+      MINIO_ROOT_USER: hilo
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - curl -fsS http://localhost:9000/minio/health/live || exit 1
+      timeout: 5s
+      interval: 10s
+      retries: 12
+      start_period: 15s
+    image: minio/minio:RELEASE.2025-09-07T16-13-09Z
+    networks:
+      backend: null
+    ports:
+      - mode: ingress
+        target: 9000
+        published: "9000"
+        protocol: tcp
+      - mode: ingress
+        target: 9001
+        published: "9001"
+        protocol: tcp
+    restart: unless-stopped
+    volumes:
+      - type: volume
+        source: minio_data
+        target: /data
+        volume: {}
+  minio-init:
+    depends_on:
+      minio:
+        condition: service_healthy
+        required: true
+    entrypoint:
+      - /bin/sh
+      - /scripts/minio-bootstrap.sh
+    environment:
+      MINIO_ROOT_PASSWORD: hilo-dev-only
+      MINIO_ROOT_USER: hilo
+      S3_BUCKET_DOCUMENTS: hilo-docs-dev
+    image: minio/mc:latest
+    networks:
+      backend: null
+    restart: "no"
+    volumes:
+      - type: bind
+        source: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-a59eeab464e82ef96/scripts/minio-bootstrap.sh
+        target: /scripts/minio-bootstrap.sh
+        read_only: true
+        bind: {}
+  postgres:
+    environment:
+      POSTGRES_DB: hilo_dev
+      POSTGRES_PASSWORD: hilo
+      POSTGRES_USER: hilo
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready -U hilo -d hilo_dev
+      timeout: 5s
+      interval: 5s
+      retries: 10
+      start_period: 10s
+    image: postgres:17-alpine
+    networks:
+      backend: null
+    ports:
+      - mode: ingress
+        target: 5432
+        published: "5432"
+        protocol: tcp
+    restart: unless-stopped
+    volumes:
+      - type: volume
+        source: pg_data
+        target: /var/lib/postgresql/data
+        volume: {}
+  redis:
+    healthcheck:
+      test:
+        - CMD
+        - valkey-cli
+        - ping
+      timeout: 3s
+      interval: 5s
+      retries: 10
+      start_period: 5s
+    image: valkey/valkey:8-alpine
+    networks:
+      backend: null
+    ports:
+      - mode: ingress
+        target: 6379
+        published: "6379"
+        protocol: tcp
+    restart: unless-stopped
+  worker:
+    build:
+      context: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-a59eeab464e82ef96
+      dockerfile: backend/Dockerfile
+    command:
+      - celery
+      - -A
+      - app.worker
+      - worker
+      - --loglevel=info
+    depends_on:
+      postgres:
+        condition: service_healthy
+        required: true
+      redis:
+        condition: service_healthy
+        required: true
+    environment:
+      DATABASE_URL: postgresql+asyncpg://hilo:hilo@localhost:5432/hilo_dev
+      DEFAULT_LANGUAGE: es
+      ENABLE_VERBOSE_LOGGING: "false"
+      ENCRYPTION_KEY: replace-with-dev-key
+      JWT_PRIVATE_KEY: replace-with-dev-key
+      JWT_PUBLIC_KEY: replace-with-dev-key
+      LITELLM_BASE_URL: http://litellm:4000
+      LITELLM_MASTER_KEY: sk-litellm-dev-only
+      MAX_UPLOAD_MB: "25"
+      MCP_ALLOWLIST_DOMAINS: localhost
+      MINIO_ROOT_PASSWORD: hilo-dev-only
+      MINIO_ROOT_USER: hilo
+      POSTGRES_DB: hilo_dev
+      POSTGRES_PASSWORD: hilo
+      POSTGRES_USER: hilo
+      REDIS_URL: redis://localhost:6379/0
+      S3_BUCKET_DOCUMENTS: hilo-docs-dev
+    networks:
+      backend: null
+    restart: on-failure
+networks:
+  backend:
+    name: agent-a59eeab464e82ef96_backend
+    driver: bridge
+volumes:
+  minio_data:
+    name: agent-a59eeab464e82ef96_minio_data
+  pg_data:
+    name: agent-a59eeab464e82ef96_pg_data

@@ -1,0 +1,59 @@
+# .dockerignore — repo root
+#
+# Slice:  P00-S02-T001 — Docker compose services
+# Phase:  P00 Scaffold + Design System
+# Purpose: Reduces Docker build context size and prevents sensitive/generated
+#          files from being sent to the Docker daemon.
+#
+# Write-set extension: declared in handoff under "Write set extension request".
+
+# Version control
+.git
+.gitignore
+
+# Orchestrator runtime state (never ship in image)
+orchestrator-state/
+.claude/
+
+# Python artifacts
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+backend/.venv/
+backend/venv/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+
+# Node / frontend artifacts
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/coverage/
+node_modules/
+
+# IDE and OS artifacts
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Environment files (never in image)
+.env
+.env.local
+.env.*.local
+
+# Test data / large files that should not be in image
+data/verification/
+docs/
+site/

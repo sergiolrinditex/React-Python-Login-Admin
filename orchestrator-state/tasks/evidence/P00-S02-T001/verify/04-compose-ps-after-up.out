@@ -1,0 +1,4 @@
+NAME                                 IMAGE                                             COMMAND                  SERVICE   CREATED         STATUS                            PORTS
+react-python-login-admin-litellm-1   ghcr.io/berriai/litellm:v1.83.14-stable.patch.3   "docker/prod_entrypo…"   litellm   6 seconds ago   Up 5 seconds (health: starting)   0.0.0.0:4000->4000/tcp, [::]:4000->4000/tcp
+react-python-login-admin-minio-1     minio/minio:RELEASE.2025-09-07T16-13-09Z          "/usr/bin/docker-ent…"   minio     7 seconds ago   Up 5 seconds (healthy)            0.0.0.0:9000-9001->9000-9001/tcp, [::]:9000-9001->9000-9001/tcp
+react-python-login-admin-redis-1     valkey/valkey:8-alpine                            "docker-entrypoint.s…"   redis     7 seconds ago   Up 5 seconds (healthy)            0.0.0.0:6379->6379/tcp, [::]:6379->6379/tcp

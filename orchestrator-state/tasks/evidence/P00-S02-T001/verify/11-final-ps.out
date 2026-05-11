@@ -1,0 +1,5 @@
+SERVICE    IMAGE                                             STATUS
+litellm    ghcr.io/berriai/litellm:v1.83.14-stable.patch.3   Up 3 minutes (unhealthy)
+minio      minio/minio:RELEASE.2025-09-07T16-13-09Z          Up 3 minutes (healthy)
+postgres   postgres:17-alpine                                Up 2 minutes (healthy)
+redis      valkey/valkey:8-alpine                            Up 3 minutes (healthy)

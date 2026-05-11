@@ -1,0 +1,8 @@
+frontend
+litellm
+minio
+minio-init
+postgres
+redis
+worker
+backend

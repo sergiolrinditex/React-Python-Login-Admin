@@ -1,0 +1,37 @@
+# T6 — Reconciliation residual check (P00-S02-T001)
+# Date: 2026-05-11
+
+## T6-1: Legacy nginx pin check (nginx:1.27 or nginx:1.28)
+Command: grep -nE "nginx:1\.(27|28)" frontend/Dockerfile
+Result: no match
+[T6-1] OK: no legacy nginx pin (nginx:1.27 or 1.28 not present)
+
+## T6-2: NERDCTL CAVEAT comment in docker-compose.yml
+Command: grep -q "NERDCTL CAVEAT" docker-compose.yml
+Result: FOUND
+[T6-2] OK: NERDCTL CAVEAT comment present
+
+## T6-3: UNRESOLVED items in official-doc-notes
+Command: grep -q "UNRESOLVED" orchestrator-state/memory/official-doc-notes/P00-S02-T001-infra-compose-2026-05-11.md
+Result: no match
+[T6-3] OK: no UNRESOLVED items in note file
+
+## T6-4: nginx:stable-alpine verified in frontend/Dockerfile
+Line 8:  # STAGE 2 (runtime): nginx:stable-alpine; serves /dist as SPA with try_files fallback.
+Line 55: FROM nginx:stable-alpine AS runtime
+[T6-4] OK: nginx:stable-alpine used (reconciliation applied correctly)
+
+## NERDCTL CAVEAT block content (from docker-compose.yml lines 24-31):
+# NERDCTL CAVEAT (containerd backend in Rancher Desktop):
+#   nerdctl compose v2.2.x does NOT implement `services.<svc>.healthcheck`
+#   nor `depends_on: { ...: { condition: service_healthy } }`.
+#   Both are silently IGNORED — services may start out of order.
+#   Fully-functional path = Rancher Desktop set to `dockerd (moby)` engine.
+#   /verify-slice MUST run with moby backend; nerdctl is best-effort only.
+#   Tracking: https://github.com/containerd/nerdctl/issues/2386
+
+## Summary of reconciliation items:
+Item 5 (nerdctl healthcheck): RESOLVED — NERDCTL CAVEAT comment added to docker-compose.yml
+Item 8 (nginx version): RESOLVED — nginx:stable-alpine replaces nginx:1.27-alpine
+
+RESULT: PASS — all reconciliation items applied; no residual legacy pins; no UNRESOLVED flags
