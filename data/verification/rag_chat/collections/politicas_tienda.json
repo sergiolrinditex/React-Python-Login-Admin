@@ -1,0 +1,11 @@
+{
+  "_comment": "RAG collection for store policies — used in J101 and J104.",
+  "name": "politicas_tienda",
+  "vertical": "hr_policies",
+  "language": "es",
+  "enabled": true,
+  "metadata": {
+    "description": "Colección de políticas de recursos humanos para verificación",
+    "source": "People Tech sandbox"
+  }
+}

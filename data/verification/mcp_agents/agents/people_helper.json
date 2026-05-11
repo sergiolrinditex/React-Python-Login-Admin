@@ -1,0 +1,11 @@
+{
+  "_comment": "People Helper agent — used in J105 MCP agent verification.",
+  "name": "people_helper",
+  "description": "Agente de ayuda para consultas de políticas de RRHH",
+  "enabled": true,
+  "config_jsonb": {
+    "model": "gpt-4o",
+    "max_tokens": 1024,
+    "mcp_server_ref": "sandbox_readonly"
+  }
+}

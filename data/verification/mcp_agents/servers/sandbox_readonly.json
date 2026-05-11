@@ -1,0 +1,9 @@
+{
+  "_comment": "Sandbox HTTP MCP server (read-only) — used in J105 MCP agent verification.",
+  "name": "sandbox_readonly",
+  "transport_type": "http",
+  "endpoint_url": "http://localhost:8080/mcp",
+  "command": null,
+  "status": "active",
+  "credential_plain": null
+}

@@ -1,0 +1,6 @@
+{
+  "_comment": "TOTP secret for primary employee verification user. Used during /verify-slice for J100 MFA login. This is sandbox-only data for internal verification — see data/verification/README.md for security notes.",
+  "user_email_ref": "employee.verification@inditex-sandbox.com",
+  "totp_secret": "JBSWY3DPEHPK3PXP",
+  "enabled": false
+}

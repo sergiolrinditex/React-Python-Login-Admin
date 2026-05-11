@@ -63,6 +63,16 @@ tiktoken==0.12.0
 sqlalchemy==2.0.49
 alembic==1.18.4
 
+
+# ── P00-S02-T003 — Password hashing (Argon2id) ──────────────────────────────
+# §10.2 TECHNICAL_GUIDE mandates Argon2. loader.py hashes passwords at UPSERT
+# time using argon2.PasswordHasher (Argon2id default params). argon2-cffi==25.1.0
+# is the latest stable release on PyPI 2026-05-11; MIT license, ~25kB, maintained.
+# Source: P00-S02-T003 §F.2 extension + §C.5 §10.2 TECHNICAL_GUIDE.
+argon2-cffi==25.1.0
+# cryptography==48.0.0: explicit pin for Fernet (MFA secrets). Not guaranteed transitive.
+cryptography==48.0.0
+
 # ── T002 §6.2 — Postgres driver for /ready DB ping ──────────────────────────
 # Without this, SQLAlchemy create_engine("postgresql+psycopg://...") raises
 # ModuleNotFoundError at runtime. Researcher confirmed 3.3.4 is current stable
