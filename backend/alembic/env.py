@@ -1,17 +1,26 @@
 """
 Alembic environment configuration for Hilo People backend.
 
-Slice:  P00-S02-T003 — Verification data loader and reset
-Phase:  P00 Scaffold + Design System
+Slice:  P01-S01-T001 — 0001_auth_users_employee_audit migration
+Phase:  P01 Auth + Data Foundation
 Purpose: Bootstraps Alembic with a sync SQLAlchemy engine driven by the
-         DATABASE_URL environment variable. Currently uses target_metadata=None
-         (no models yet); P01-S01-T001 will replace this with Base.metadata.
+         DATABASE_URL environment variable. target_metadata is now wired to
+         Base.metadata so autogenerate can detect schema drift.
+
+         Changed from P00-S02-T003: replaced `target_metadata = None` with
+         `from app.db.base import Base` + `target_metadata = Base.metadata`.
+         app.db (which imports app.db.models) is also imported to register
+         all model classes with the metadata before Alembic runs.
 
 Key deps:
   - alembic==1.18.4 (run_migrations_online/offline pattern)
   - sqlalchemy==2.0.49 (create_engine, sync)
   - DATABASE_URL env var (postgresql+psycopg://... or postgresql+psycopg2://...)
   - ENABLE_VERBOSE_LOGGING env var (controls alembic log level)
+
+WRITE_SET_EXTENSION: alembic/env.py was predicted in its own docstring
+(P00-S02-T003) to require this single-line change in P01-S01-T001.
+Documented in handoff §I.
 
 Source refs:
   - STACK_PROFILE.yaml db.migrate_cmd: alembic upgrade head
@@ -44,17 +53,19 @@ _alembic_logger = logging.getLogger("alembic")
 _alembic_logger.setLevel(logging.INFO if _verbose else logging.WARNING)
 
 # ---------------------------------------------------------------------------
-# Target metadata — None until P01-S01-T001 adds models.
-# P01-S01-T001 will replace this line with:
-#   from app.db.base import Base; target_metadata = Base.metadata
+# Target metadata — P01-S01-T001 replaces the previous `target_metadata = None`
+# with Base.metadata. app.db import triggers registration of all models.
 # ---------------------------------------------------------------------------
-target_metadata = None
+from app.db.base import Base  # noqa: E402 — must run after env setup
+import app.db as _db  # noqa: F401, E402 — triggers app.db.models registration
+
+target_metadata = Base.metadata
 
 
 def _get_database_url() -> str:
     """Return the sync Postgres URL, converting asyncpg dialect if needed.
 
-    alembic runs sync; we strip 'postgresql+asyncpg://' → 'postgresql+psycopg://'
+    alembic runs sync; we strip 'postgresql+asyncpg://' -> 'postgresql+psycopg://'
     to avoid 'asyncpg not usable in sync context' errors at migration time.
 
     Returns:
