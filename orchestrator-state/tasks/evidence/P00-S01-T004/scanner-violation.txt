@@ -1,0 +1,37 @@
+Design Token Scanner — Hilo People
+Enforcer: design_tokens_v1 (check_web_design_tokens.py + layout checks)
+Target:   /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-aaafb2437ede54ee0/frontend/src
+Theme:    /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-aaafb2437ede54ee0/frontend/src/shared/styles
+
+
+── Scanner regression test ─────────────────────────────────────────────────
+Purpose: verify the scanner FAILS on a hardcoded hex color violation (§G.4).
+
+Step 1: fixture created with hardcoded hex colors (prohibited by Visual Contract §C.2 item 7)
+
+Step 2: scanner output:
+X Design token violation: literal hex color
+  frontend/src/pages/showcase/__fixture_regression_test.tsx:2
+
+Found 1 web design-token violation(s). Move literals to the token/theme module declared in STACK_PROFILE.yaml.
+Excepcion justificada: // ignore: design-tokens(reason: "<motivo>"). La razon es OBLIGATORIA.
+
+Step 3: fixture removed.
+
+OK REGRESSION PASS: scanner correctly returned exit 1 on hex color violation.
+
+Step 4: border-radius fixture created…
+Step 5: radius fixture removed.
+X REGRESSION NOTE: borderRadius in inline styles found (checked by css lint, not this scanner): /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-aaafb2437ede54ee0/frontend/src/shared/design-system/AdminShell.tsx
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-aaafb2437ede54ee0/frontend/src/shared/design-system/SolidCTA.tsx
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-aaafb2437ede54ee0/frontend/src/shared/design-system/MobileFrame.tsx
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-aaafb2437ede54ee0/frontend/src/shared/design-system/CitationInline.tsx
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-aaafb2437ede54ee0/frontend/src/shared/design-system/EditorialInput.tsx
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-aaafb2437ede54ee0/frontend/src/pages/showcase/ShowcaseSections.tsx
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-aaafb2437ede54ee0/frontend/src/pages/showcase/__fixture_radius_test.tsx
+
+Step 6: verifying clean run after fixture removal…
+OK Design tokens - web literals are outside app code or inside token/theme modules.
+OK REGRESSION PASS: clean run returns exit 0.
+
+── End regression test ─────────────────────────────────────────────────────

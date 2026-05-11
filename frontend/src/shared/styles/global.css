@@ -1,0 +1,101 @@
+/**
+ * Hilo People — Global base resets.
+ *
+ * Slice/Phase: P00-S01-T004 — Design tokens + editorial system / Phase 0 Scaffold.
+ *
+ * Responsibility: apply editorial codex base resets using tokens only.
+ *   No raw hex/rgb/font literals — all values come from tokens.css via var().
+ *   Imported by src/main.tsx after tokens.css.
+ *
+ * Rules:
+ *   - font-family on body → --font-sans
+ *   - background-color on html/body → --color-bg
+ *   - color on body → --color-ink
+ *   - margin/padding reset
+ *   - NO border-radius anywhere (--radius: 0 is the canonical value)
+ *   - NO box-shadow for decoration
+ *
+ * Key deps: tokens.css (must be imported before global.css).
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  background-color: var(--color-bg);
+  /* Prevent font size inflation on mobile */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-bg);
+  color: var(--color-ink);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Remove default button styling so SolidCTA can control it via tokens */
+button {
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  font: inherit;
+}
+
+/* Consistent link styling */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Remove list styling when used in nav contexts */
+ul,
+ol {
+  list-style: none;
+}
+
+/* Images fill containers and never overflow */
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* Input reset — SolidCTA, EditorialInput control styling via tokens */
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: none;
+  outline: none;
+  border-radius: 0; /* Hard rule: never rounded */
+}
+
+/* Table reset — HairlineTable uses token hairlines */
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+/* Screen-reader only utility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}

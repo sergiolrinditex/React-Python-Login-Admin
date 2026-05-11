@@ -1,5 +1,5 @@
 {
-  "_comment": "Hilo People — frontend TypeScript config. Slice: P00-S01-T002 (WRITE_SET_DRIFT accepted: needed for vitest TSX compilation + provider smoke test). T004 will extend with path aliases and router types.",
+  "_comment": "Hilo People — frontend TypeScript config. Slice: P00-S01-T004 (extends T002 base: adds path aliases, composite + references for vite.config.ts). T004 write-set extension §B approved by human.",
   "compilerOptions": {
     "target": "ES2022",
     "module": "ESNext",
@@ -10,8 +10,15 @@
     "skipLibCheck": true,
     "isolatedModules": true,
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "allowImportingTsExtensions": true
+    "allowImportingTsExtensions": true,
+    "ignoreDeprecations": "6.0",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "types": ["vite/client", "@testing-library/jest-dom"]
   },
   "include": ["src"],
-  "exclude": ["node_modules", "dist"]
+  "exclude": ["node_modules", "dist"],
+  "references": [{ "path": "./tsconfig.node.json" }]
 }

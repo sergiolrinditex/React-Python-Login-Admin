@@ -1,0 +1,46 @@
+/**
+ * Hilo People — Design token module.
+ *
+ * Slice/Phase: P00-S01-T004 — Design tokens + editorial system / Phase 0 Scaffold.
+ *
+ * Responsibility: single authoritative source for all visual tokens used by the
+ *   application. Every color, font, border and spacing constant MUST be referenced
+ *   via these CSS custom properties. Raw hex/rgb/font literals in product code are
+ *   forbidden by the Visual Implementation Contract (TECHNICAL_GUIDE §7 + UX_CONTRACT §5).
+ *
+ * Source-of-truth: TECHNICAL_GUIDE §7 line 364 — canonical 8 tokens (verbatim).
+ *
+ * Prohibitions enforced by scripts/check-design-tokens.sh:
+ *   - NO border-radius > 0 anywhere in frontend/src/**
+ *   - NO box-shadow for decoration
+ *   - NO hardcoded hex/rgb outside this file and global.css
+ *   - NO hardcoded font-family outside this file
+ *
+ * Key deps: none — pure CSS custom properties on :root.
+ */
+
+:root {
+  /* Background — crude editorial warm off-white (Inditex/Zara codex) */
+  --color-bg: #f5f3ee;
+
+  /* Ink — near-black for text and CTAs. NOT pure #000. */
+  --color-ink: #0a0a0a;
+
+  /* Paper — pure white for sheets/cards (no rounded corners) */
+  --color-paper: #ffffff;
+
+  /* Display font — Bodoni Moda preferred; Didot fallback; generic serif last */
+  --font-display: "Bodoni Moda", Didot, serif;
+
+  /* Sans font — Helvetica Neue preferred; system-ui fallback */
+  --font-sans: "Helvetica Neue", Arial, system-ui, sans-serif;
+
+  /* Hairline — single canonical border definition. NO other border styles. */
+  --hairline: 1px solid rgba(10, 10, 10, 0.22);
+
+  /* Tracking — uppercase tracked labels (letter-spacing) */
+  --tracking-label: 0.18em;
+
+  /* Radius — ZERO. Hard rule: no rounded corners anywhere. */
+  --radius: 0;
+}

@@ -126,7 +126,7 @@ export function Providers({
   children,
   queryClient,
   i18n = defaultI18n,
-}: ProvidersProps): JSX.Element {
+}: ProvidersProps): import("react").ReactElement {
   // BEFORE init log
   verboseLog(
     "providers.init.start phase=P00 slice=P00-S01-T002",

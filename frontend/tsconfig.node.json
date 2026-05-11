@@ -1,0 +1,15 @@
+{
+  "_comment": "Hilo People — Node-side TypeScript config. Slice: P00-S01-T004 (conditional extension §B). Only vite.config.ts is included — vitest.config.ts is excluded because it uses vitest/config's Plugin type which conflicts with Vite 8 rolldown types at tsc -b time. Vitest config is type-checked by vitest itself at test runtime.",
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "composite": true,
+    "declaration": true,
+    "emitDeclarationOnly": true
+  },
+  "include": ["vite.config.ts"]
+}
