@@ -1,0 +1,126 @@
+time="2026-05-11T17:43:50+02:00" level=warning msg="The \"LITELLM_MASTER_KEY\" variable is not set. Defaulting to a blank string."
+time="2026-05-11T17:43:50+02:00" level=warning msg="The \"MINIO_ROOT_USER\" variable is not set. Defaulting to a blank string."
+time="2026-05-11T17:43:50+02:00" level=warning msg="The \"MINIO_ROOT_PASSWORD\" variable is not set. Defaulting to a blank string."
+time="2026-05-11T17:43:50+02:00" level=warning msg="The \"MINIO_ROOT_USER\" variable is not set. Defaulting to a blank string."
+time="2026-05-11T17:43:50+02:00" level=warning msg="The \"MINIO_ROOT_PASSWORD\" variable is not set. Defaulting to a blank string."
+time="2026-05-11T17:43:50+02:00" level=warning msg="No services to build"
+ Container react-python-login-admin-redis-1 Running 
+ Container react-python-login-admin-postgres-1 Running 
+INFO:     Will watch for changes in these directories: ['/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend']
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [46788] using WatchFiles
+INFO:     Started server process [46794]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:65137 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65143 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65158 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65160 - "GET /ready HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65166 - "GET /live HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49696 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50537 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50539 - "GET /ready HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50541 - "GET /live HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50906 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50908 - "GET /ready HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50910 - "GET /live HTTP/1.1" 200 OK
+WARNING:  WatchFiles detected changes in 'app/verification_data/loader.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [46794]
+INFO:     Started server process [49155]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:51973 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51977 - "GET /health HTTP/1.1" 200 OK
+WARNING:  WatchFiles detected changes in 'app/auth/errors.py', 'app/auth/__init__.py', 'app/auth/router.py', 'app/main.py', 'app/auth/domain.py', 'app/auth/password.py', 'app/auth/repository.py', 'app/auth/schemas.py', 'app/auth/service.py', 'app/auth/rate_limit.py', 'tests/integration/test_auth_signup.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [49155]
+INFO:     Started server process [51150]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:53302 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53306 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53319 - "HEAD /api/v1/auth/sign-up HTTP/1.1" 405 Method Not Allowed
+INFO:     127.0.0.1:53321 - "GET /ready HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53409 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53561 - "POST /api/v1/auth/sign-up HTTP/1.1" 422 Unprocessable Entity
+2026-05-11 18:58:48,316 app.auth.router ERROR auth.sign_up.error request_id=1128a485-5168-4283-a113-7cb25a26bc3b
+Traceback (most recent call last):
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py", line 117, in execute
+    raise ex.with_traceback(None)
+psycopg.errors.UndefinedTable: relation "users" does not exist
+LINE 1: INSERT INTO users (email, password_hash, full_name, status) ...
+                    ^
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/app/auth/router.py", line 241, in sign_up
+    result = use_case.execute(
+             ^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/app/auth/service.py", line 180, in execute
+    user = self._repo.create_user(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/app/auth/repository.py", line 130, in create_user
+    self._session.flush()  # assigns user.id without committing
+    ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py", line 4331, in flush
+    self._flush(objects)
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py", line 4466, in _flush
+    with util.safe_reraise():
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/util/langhelpers.py", line 121, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py", line 4427, in _flush
+    flush_context.execute()
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/unitofwork.py", line 466, in execute
+    rec.execute(self)
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/unitofwork.py", line 642, in execute
+    util.preloaded.orm_persistence.save_obj(
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/persistence.py", line 93, in save_obj
+    _emit_insert_statements(
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/persistence.py", line 1233, in _emit_insert_statements
+    result = connection.execute(
+             ^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1419, in execute
+    return meth(
+           ^^^^^
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/sql/elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py", line 117, in execute
+    raise ex.with_traceback(None)
+sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation "users" does not exist
+LINE 1: INSERT INTO users (email, password_hash, full_name, status) ...
+                    ^
+[SQL: INSERT INTO users (email, password_hash, full_name, status) VALUES (%(email)s::VARCHAR, %(password_hash)s::VARCHAR, %(full_name)s::VARCHAR, %(status)s::VARCHAR) RETURNING users.id, users.preferred_language, users.created_at, users.updated_at]
+[parameters: {'email': 'tester+p01-s02-t001@inditex-sandbox.com', 'password_hash': '$argon2id$v=19$m=65536,t=3,p=4$KGZKlCORIS0MZy8Czy7vfw$IxQLa4xkGhAJN8yWJasaETwhn/neV3aVuw6vlJIOeMk', 'full_name': 'Tester P01-S02-T001', 'status': 'active'}]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+INFO:     127.0.0.1:53570 - "POST /api/v1/auth/sign-up HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:53597 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53607 - "POST /api/v1/auth/sign-up HTTP/1.1" 201 Created
+2026-05-11 18:59:23,574 app.auth.service WARNING auth.sign_up.rejected reason=NON_CORPORATE_EMAIL email_domain=gmail.com request_id=1728750c-25a4-4868-8bee-c385a100e2f6
+INFO:     127.0.0.1:53615 - "POST /api/v1/auth/sign-up HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:53620 - "POST /api/v1/auth/sign-up HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:53625 - "POST /api/v1/auth/sign-up HTTP/1.1" 409 Conflict

@@ -1,18 +1,21 @@
 """
 Hilo People — FastAPI application entry point.
 
-Slice:  P00-S02-T002 — Health live ready endpoints
-Phase:  P00 Scaffold + Design System
-Purpose: Creates the FastAPI application instance and mounts the api_router
-         which provides /health (backward compat), /live and /ready probes.
-         The inline /health stub from P00-S01-T001 has been migrated to
-         backend/app/api/router.py so all observability endpoints live in one
-         module.
+Slice:  P01-S02-T001 — POST /api/v1/auth/sign-up (WRITE_SET_DRIFT: main.py)
+Phase:  P01 Auth + Data Foundation
+Purpose: Creates the FastAPI application instance and mounts routers:
+         - api_router: /health, /live, /ready probes (root-level).
+         - auth_router: /api/v1/auth/* — sign-up and future auth endpoints.
+
+WRITE_SET_DRIFT from P01-S02-T001:
+  This file was last modified in P00-S02-T002 (health probes). T001 adds
+  auth router mounting — a minimal two-line change. Flagged in handoff.
 
 Key deps:
   - fastapi: ASGI web framework (uvicorn transport, port 8000 per STACK_PROFILE).
   - logging: stdlib; level driven by ENABLE_VERBOSE_LOGGING env var.
   - app.api.router: api_router with /health, /live, /ready.
+  - app.auth: auth_router with /api/v1/auth/sign-up.
 
 Source refs:
   - TECHNICAL_GUIDE §6.2 health endpoints contract.
@@ -26,6 +29,7 @@ import os
 from fastapi import FastAPI
 
 from app.api.router import api_router
+from app.auth import auth_router
 
 # ---------------------------------------------------------------------------
 # Logging configuration
@@ -46,12 +50,13 @@ logger = logging.getLogger(__name__)
 app = FastAPI(
     title="Hilo People API",
     version="0.1.0",
-    description="Internal HR platform — Hilo People (scaffold)",
+    description="Internal HR platform — Hilo People",
 )
 
 # ---------------------------------------------------------------------------
 # Mount routers
-# api_router provides /health (backward-compat stub), /live, /ready at root.
-# Future feature routers will mount at /api/v1/ prefix.
+# api_router: /health, /live, /ready (root-level — no prefix)
+# auth_router: /api/v1/auth/* (feature routes)
 # ---------------------------------------------------------------------------
 app.include_router(api_router)
+app.include_router(auth_router, prefix="/api/v1")

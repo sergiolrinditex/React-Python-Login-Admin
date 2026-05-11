@@ -1,0 +1,31 @@
+## Contract Observed — P01-S02-T001
+
+### Route/Path
+- POST /api/v1/auth/sign-up (mounted in app/main.py via auth_router under /api/v1)
+
+### Provider/Service
+- SignUpUser use case in app/auth/service.py
+- AuthRepository in app/auth/repository.py
+
+### API Client / DTO / Schema
+- Request DTO: SignUpRequest (app/auth/schemas.py) — fields: email (EmailStr), password (str), full_name (str), legal_acceptance (bool)
+- Response DTO: SignUpResponse (app/auth/schemas.py) — envelope {data: {user_id, mfa_required}, meta: {request_id}, errors: []}
+
+### Endpoint
+- POST /api/v1/auth/sign-up → 201 on success
+- 400 on AUTH_SIGNUP_NON_CORPORATE_EMAIL (domain not in allowlist)
+- 400 on AUTH_SIGNUP_LEGAL_NOT_ACCEPTED (service layer, if reached)
+- 422 on payload validation error (Pydantic: legal_acceptance=false, missing fields)
+- 409 on AUTH_SIGNUP_EMAIL_TAKEN (duplicate email)
+- 429 on AUTH_SIGNUP_RATE_LIMITED (in-memory token bucket)
+
+### Repository
+- AuthRepository.create_user() — INSERT into users
+- AuthRepository.write_audit() — INSERT into audit_logs (both success and rejection)
+
+### Tables Written
+- users: id, email, password_hash, full_name, status
+- audit_logs: id, actor_user_id, action, entity_type, entity_id, extra_metadata (JSON: outcome, reason, request_id, ip, user_agent)
+
+### Tables NOT Written
+- employee_profiles: NOT created at sign-up per §F.7 (NOT NULL fields cannot be sourced from payload)

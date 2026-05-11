@@ -1,0 +1,2 @@
+{"detail":[{"type":"missing","loc":["body","legal_acceptance"],"msg":"Field required","input":{"email":"employee.cycle1-missing@inditex-sandbox.com","password":"TestPass-2026!","full_name":"Cycle1 Missing"}}]}
+HTTP 422

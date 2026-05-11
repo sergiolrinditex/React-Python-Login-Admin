@@ -1,0 +1,29 @@
+## Verification Data Contract Used — Cycle 1
+
+Source: docs/source-of-truth/*_TECHNICAL_GUIDE.md §6.5 Verification Data Contract
+
+### Contract rows used
+| Flow/Journey | Persona | Verification data | Load command | Reset |
+|---|---|---|---|---|
+| J100 auth-login | employee | data/verification/users/employee_primary.json corp user | python -m app.verification_data.bootstrap --source data/verification --only auth | scripts/dev-restart.sh --reset |
+
+### Real/provided data used in cycle 1
+- Fresh emails per test (UUID/timestamp-based, e.g. employee.cycle1-legal@inditex-sandbox.com)
+- Corporate domain: inditex-sandbox.com (confirmed in CORPORATE_EMAIL_DOMAINS default allowlist)
+- Non-corporate email: attacker@gmail.com (test boundary case)
+- legal_acceptance=false: employee.cycle1-legal@inditex-sandbox.com
+- Request ID: 4dc7cfe2-c290-4d5b-8bd3-d7cd89d03cee (legal_accepted:false curl)
+- Happy path: employee.signup-cycle1-<timestamp>@inditex-sandbox.com
+
+### Persisted data observed
+- users table: new row with Argon2id hash (from happy path curl)
+- audit_logs: 1 row for legal_accepted=false (action=auth.sign_up, actor_user_id=NULL, outcome=rejected, reason=LEGAL_NOT_ACCEPTED, request_id=4dc7cfe2-c290-4d5b-8bd3-d7cd89d03cee)
+- audit_logs: rows for non-corporate rejection and happy path from pytest tests (transactional rollback)
+- No employee_profiles rows (§F.7 decision confirmed)
+
+### Note on DB state during cycle 1
+- Known R1-T001-S02 issue: test_downgrade_removes_all_tables in full suite drops all tables.
+- After full suite run: restored with `alembic upgrade head` (verified with alembic current = 0001 head)
+- All curl verifications performed AFTER migration restore confirmed
+- The legal_accepted=false audit row at 19:14:32 was written successfully (1 row confirmed via DB query)
+- Two earlier attempts at 19:12:02 and 19:12:07 failed due to tables being dropped (expected known issue, not defect)

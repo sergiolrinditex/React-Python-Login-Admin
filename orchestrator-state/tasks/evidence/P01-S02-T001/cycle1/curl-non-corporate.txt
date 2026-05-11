@@ -1,0 +1,2 @@
+{"data":null,"meta":{"request_id":"e134ec03-ea0d-40c0-90ed-e567a4dee876"},"errors":[{"code":"AUTH_SIGNUP_NON_CORPORATE_EMAIL","message":"Email domain not in corporate allowlist: gmail.com","field":"email","details":null}]}
+HTTP 400

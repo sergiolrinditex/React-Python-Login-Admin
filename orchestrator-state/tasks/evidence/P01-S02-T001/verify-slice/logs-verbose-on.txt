@@ -1,0 +1,25 @@
+=== Verbose=true log capture (all verify request_ids) ===
+2026-05-11 19:31:45,079 app.auth.router INFO auth.sign_up.received email_domain=inditex-sandbox.com request_id=verify-happy-F522A117-91CB-4DB7-A390-4EC829C13661
+2026-05-11 19:31:45,080 app.auth.service INFO auth.sign_up.starting request_id=verify-happy-F522A117-91CB-4DB7-A390-4EC829C13661 email_domain=inditex-sandbox.com
+2026-05-11 19:31:45,183 app.auth.service INFO auth.sign_up.success user_id=357e0a83-e1aa-4c61-b1e3-2dd7429e6fd1 request_id=verify-happy-F522A117-91CB-4DB7-A390-4EC829C13661
+2026-05-11 19:31:45,183 app.auth.router INFO auth.sign_up.response_sent user_id=357e0a83-e1aa-4c61-b1e3-2dd7429e6fd1 request_id=verify-happy-F522A117-91CB-4DB7-A390-4EC829C13661
+2026-05-11 19:31:50,915 app.auth.router INFO auth.sign_up.received email_domain=gmail.com request_id=verify-noncorp-4A8813B6-CFC0-4C85-A97D-17AB3CEB5E49
+2026-05-11 19:31:50,915 app.auth.service INFO auth.sign_up.starting request_id=verify-noncorp-4A8813B6-CFC0-4C85-A97D-17AB3CEB5E49 email_domain=gmail.com
+2026-05-11 19:31:50,915 app.auth.service WARNING auth.sign_up.rejected reason=NON_CORPORATE_EMAIL email_domain=gmail.com request_id=verify-noncorp-4A8813B6-CFC0-4C85-A97D-17AB3CEB5E49
+2026-05-11 19:31:50,915 app.auth.service DEBUG auth.sign_up.rejection_audit.start reason=NON_CORPORATE_EMAIL request_id=verify-noncorp-4A8813B6-CFC0-4C85-A97D-17AB3CEB5E49
+2026-05-11 19:32:01,141 app.auth.router INFO auth.sign_up.received email_domain=inditex-sandbox.com request_id=verify-legal-94861CE0-F3D4-404F-9896-099B47FE5769
+2026-05-11 19:32:01,141 app.auth.service INFO auth.sign_up.starting request_id=verify-legal-94861CE0-F3D4-404F-9896-099B47FE5769 email_domain=inditex-sandbox.com
+2026-05-11 19:32:01,141 app.auth.service WARNING auth.sign_up.rejected reason=LEGAL_NOT_ACCEPTED request_id=verify-legal-94861CE0-F3D4-404F-9896-099B47FE5769
+2026-05-11 19:32:01,141 app.auth.service DEBUG auth.sign_up.rejection_audit.start reason=LEGAL_NOT_ACCEPTED request_id=verify-legal-94861CE0-F3D4-404F-9896-099B47FE5769
+2026-05-11 19:32:14,098 app.auth.router INFO auth.sign_up.received email_domain=inditex-sandbox.com request_id=verify-dup-6B56BDBF-A590-4E30-8AF9-B122B8550D06
+2026-05-11 19:32:14,099 app.auth.service INFO auth.sign_up.starting request_id=verify-dup-6B56BDBF-A590-4E30-8AF9-B122B8550D06 email_domain=inditex-sandbox.com
+2026-05-11 19:32:14,186 app.auth.service INFO auth.sign_up.rejected reason=EMAIL_TAKEN email_domain=inditex-sandbox.com request_id=verify-dup-6B56BDBF-A590-4E30-8AF9-B122B8550D06
+2026-05-11 19:32:14,186 app.auth.service DEBUG auth.sign_up.rejection_audit.start reason=EMAIL_TAKEN request_id=verify-dup-6B56BDBF-A590-4E30-8AF9-B122B8550D06
+2026-05-11 19:32:22,131 app.auth.router INFO auth.sign_up.received email_domain=inditex-sandbox.com request_id=verify-pwshort-1A5A7D3B-F117-40DA-A3E6-DBAD7FBAC97E
+2026-05-11 19:32:22,132 app.auth.service INFO auth.sign_up.starting request_id=verify-pwshort-1A5A7D3B-F117-40DA-A3E6-DBAD7FBAC97E email_domain=inditex-sandbox.com
+
+=== PII leak check ===
+Searching for password substring 'VerifyPass2024' in logs:
+0
+Searching for full email 'employee.signup-verify+' in logs (should be 0):
+0

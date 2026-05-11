@@ -1,0 +1,32 @@
+## Contract Observed — Cycle 1
+
+### Front → Back → DB contract verified
+
+| Layer | Element | Observed |
+|---|---|---|
+| Route | POST /api/v1/auth/sign-up | HTTP 400 for legal_acceptance=false (was 422 in cycle 0) |
+| Schema | SignUpRequest.legal_acceptance: bool | Missing/wrong type → 422; False → 400 (service layer) |
+| Router | app.auth.router.py | legal_acceptance=false routed to service, returns 400 envelope |
+| Use case | SignUpUser.execute() | Raises LegalNotAcceptedError → mapped to 400 |
+| Repository | AuthRepository.write_audit() | Audit row written for rejection in separate short tx |
+| DB table audit_logs | action=auth.sign_up | actor_user_id=NULL, outcome=rejected, reason=LEGAL_NOT_ACCEPTED, request_id matched |
+| DB table users | No row created | Confirmed by test assertions |
+| Response envelope | {data:null, meta, errors:[{code, field, message}]} | "detail" key NOT present in 400 response |
+| Error code | AUTH_SIGNUP_LEGAL_NOT_ACCEPTED | errors[0].code confirmed |
+| Error field | legal_acceptance | errors[0].field confirmed |
+
+### Endpoint behavior table (cycle 1)
+| Case | Expected | Observed | Status |
+|---|---|---|---|
+| legal_acceptance=false | HTTP 400, project envelope, code=AUTH_SIGNUP_LEGAL_NOT_ACCEPTED, field=legal_acceptance, audit row | CONFIRMED | PASS |
+| legal_acceptance missing | HTTP 422, Pydantic structural error, detail key | CONFIRMED | PASS |
+| legal_acceptance="yes" (string) | HTTP 201 (Pydantic coerces "yes" → True) | CONFIRMED (201) | PASS — Pydantic bool coercion is correct behavior |
+| Happy path (corp email, valid pw, legal=true) | HTTP 201, data.user_id, mfa_required=false | CONFIRMED | PASS |
+| Non-corporate email | HTTP 400, code=AUTH_SIGNUP_NON_CORPORATE_EMAIL, field=email | CONFIRMED | PASS |
+
+### Logging contract verified
+- ENABLE_VERBOSE_LOGGING=true: BEFORE lines (received/check.start/starting/hash.start/create.start/audit.start), AFTER lines (check.ok/hash.done/create.done/audit.done/success/response_sent), WARNING for rejections
+- ENABLE_VERBOSE_LOGGING=false: only WARNING auth.sign_up.rejected for rejection path, zero lines for success path
+- No password in any log (T08 test + verbose inspection)
+- No full email in any log (only email_domain at INFO+)
+- PII check: PASS

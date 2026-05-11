@@ -128,6 +128,61 @@ Compact operational memory. No history was deleted.
 - `postgresql_where` partial unique index — NOT present in any of the 9 tables of this migration. No partial indexes in §4 plan. Prompt mentioned it as a topic but the DDL doesn't use it.
 - `cryptography.Fernet` — confirmed NOT in scope for this slice (P02-S02 Security service).
 
+### 2026-05-11 — P01-S02-T001 sign-up API (email-validator, Pydantic EmailStr, Argon2id OWASP params)
+
+**Sources**: PyPI live JSON (email-validator 2.3.0), Context7 /joshdata/python-email-validator, Context7 /websites/pydantic_dev_validation, OWASP Password Storage Cheat Sheet (2026-05-11), argon2-cffi ReadTheDocs 25.1.0.
+**Cache valid until**: 2026-05-18 (stable tech — email-validator, Pydantic, argon2-cffi, OWASP are not AI/ML volatile).
+
+#### Q1 — email-validator pin + DNS-off behavior — VERIFIED
+
+| Item | Value | Source |
+|---|---|---|
+| Latest stable | **2.3.0** | PyPI live JSON 2026-05-11 |
+| Pydantic 2.12.5 requirement | `email-validator>=2.0.0` (under `pydantic[email]` extra) | PyPI pydantic/2.12.5/json |
+| License | Unlicense | PyPI |
+| DNS-off API | `validate_email(email, check_deliverability=False)` | Context7 joshdata/python-email-validator README |
+| MATCH | YES — `check_deliverability=False` is the documented pattern for account-creation pages (no DNS, syntactic only) | README explicitly states this use case |
+| pyproject.toml line | `"email-validator==2.3.0"` | — |
+| requirements.txt line | `email-validator==2.3.0` | — |
+| install as pydantic extra | `pydantic[email]==2.12.5` or separate `email-validator==2.3.0` | Both work; explicit pin preferred |
+
+#### Q2 — Pydantic v2 EmailStr + custom domain validator — VERIFIED
+
+Canonical pattern confirmed via Context7 pydantic_dev_validation:
+
+```python
+from pydantic import BaseModel, EmailStr, field_validator, ValidationError
+
+class SignUpRequest(BaseModel):
+    email: EmailStr  # handles RFC 5322 syntax + normalization
+
+    @field_validator('email', mode='after')
+    @classmethod
+    def validate_corporate_domain(cls, v: str) -> str:
+        domain = v.split('@')[1].lower()
+        allowed = {d.strip() for d in os.getenv('CORPORATE_EMAIL_DOMAINS', '').split(',') if d.strip()}
+        if not allowed or domain not in allowed:
+            raise ValueError('email domain not in corporate allowlist')
+        return v
+```
+
+- `mode='after'` runs AFTER EmailStr validation — guaranteed v is a valid email string.
+- Raising `ValueError` inside `@field_validator` produces `errors[].type="value_error"` and `errors[].loc=["email"]` in Pydantic v2 ValidationError, which FastAPI surfaces as 422 with `errors[].field="email"`.
+- No double-parsing cost: EmailStr runs the `email-validator` lib once; the domain check is pure string split — negligible overhead.
+- Alternative (`PydanticCustomError`) allows custom error codes but `ValueError` is canonical and sufficient.
+- MATCH with task pack §F.1 and §M.2.
+
+#### Q3 — Argon2id OWASP 2026 params — DISCREPANCY (non-blocking)
+
+**DISCREPANCY NOTE WRITTEN**: `P01-S02-T001-argon2-owasp-params-2026-05-11.md`
+
+- Task pack §F.3 incorrectly characterizes argon2-cffi defaults as "OWASP 2024 minimums".
+- OWASP 2026 minimums are actually MUCH LOWER: top config = 46 MiB / t=1 / p=1.
+- argon2-cffi 25.1.0 defaults = 64 MiB / t=3 / p=4 — these EXCEED all 5 OWASP configs.
+- Recommended action: use `PasswordHasher()` defaults as-is (no code change); correct docstring to say "EXCEED OWASP minimums".
+- OWASP explicitly recommends Argon2id variant (Type.ID = default in argon2-cffi).
+- OWASP does NOT specify salt_len / hash_len — library defaults (16/32) are fine.
+
 ## Original heading index
 - # Official Docs Researcher Memory
 - ### 2026-05-11 — P00-S02-T001 Docker Compose infra pins

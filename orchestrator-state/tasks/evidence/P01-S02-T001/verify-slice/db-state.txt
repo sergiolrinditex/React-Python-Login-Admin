@@ -1,0 +1,18 @@
+=== DB state ===
+--- users ---
+                         email                         |     full_name      | status |        hash_prefix        
+-------------------------------------------------------+--------------------+--------+---------------------------
+ employee.verification@inditex-sandbox.com             | Elena Verificación | active | $argon2id$v=19$m=65536,t=
+ admin.peopletech@inditex-sandbox.com                  | Admin People Tech  | active | $argon2id$v=19$m=65536,t=
+ employee.signup-verify+1778520705@inditex-sandbox.com | Verify Slice User  | active | $argon2id$v=19$m=65536,t=
+(3 rows)
+
+--- audit_logs (last 10) ---
+    action    | has_actor | outcome  |       reason        |                     request_id                      
+--------------+-----------+----------+---------------------+-----------------------------------------------------
+ auth.sign_up | f         | rejected | EMAIL_TAKEN         | verify-dup-6B56BDBF-A590-4E30-8AF9-B122B8550D06
+ auth.sign_up | f         | rejected | LEGAL_NOT_ACCEPTED  | verify-legal-94861CE0-F3D4-404F-9896-099B47FE5769
+ auth.sign_up | f         | rejected | NON_CORPORATE_EMAIL | verify-noncorp-4A8813B6-CFC0-4C85-A97D-17AB3CEB5E49
+ auth.sign_up | t         | success  |                     | verify-happy-F522A117-91CB-4DB7-A390-4EC829C13661
+(4 rows)
+

@@ -1,0 +1,3 @@
+X-Request-ID: 31fb9415-8a90-459b-893c-ad051674c821 (duplicate)
+{"data":null,"meta":{"request_id":"31fb9415-8a90-459b-893c-ad051674c821"},"errors":[{"code":"AUTH_SIGNUP_EMAIL_TAKEN","message":"An account with that email exists or cannot be created","field":null,"details":null}]}
+HTTP_STATUS:409

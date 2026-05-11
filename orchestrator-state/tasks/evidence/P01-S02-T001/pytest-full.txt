@@ -1,0 +1,8 @@
+.........................................................                [100%]
+=============================== warnings summary ===============================
+tests/test_dependency_smoke.py::test_dependency_smoke[deepagents-deepagents-None]
+  /Users/sergiolr/Library/Python/3.11/lib/python/site-packages/langgraph/checkpoint/serde/encrypted.py:5: LangChainPendingDeprecationWarning: The default value of `allowed_objects` will change in a future version. Pass an explicit value (e.g., allowed_objects='messages' or allowed_objects='core') to suppress this warning.
+    from langgraph.checkpoint.serde.jsonplus import JsonPlusSerializer
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+57 passed, 1 warning in 20.08s

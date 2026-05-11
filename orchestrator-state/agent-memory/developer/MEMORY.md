@@ -158,3 +158,37 @@
 | P00-S01-T005 | success | frontend/src/i18n/index.ts (rewrite), frontend/src/i18n/languages.ts, frontend/src/i18n/types.d.ts, frontend/src/i18n/__tests__/i18n.test.ts, frontend/public/locales/**/{8 ns}.json (×3 langs = 24 files), frontend/src/pages/showcase/I18nDemoSection.tsx, frontend/src/pages/showcase/ShowcasePage.tsx |
 | P00-S02-T004 | in progress (developer done) | backend/app/verification_data/loader.py (cast fix + json.dumps + preventive maintenance) |
 | P00-S02-T003 | success | backend/alembic.ini, backend/alembic/env.py, backend/alembic/script.py.mako, backend/alembic/versions/.gitkeep, backend/app/verification_data/** (8 files), data/verification/** (11 fixtures + README), backend/tests/conftest.py, backend/tests/integration/** (3 files), scripts/dev-restart.profile.sh, backend/pyproject.toml (cryptography+argon2-cffi), backend/requirements.txt, .env.example |
+
+### Auth module structure (P01-S02-T001)
+- Module layout: errors.py → domain.py → password.py → rate_limit.py → repository.py → service.py → schemas.py → router.py → __init__.py
+- errors.py must be standalone (no external deps) so domain.py can import it
+- domain.py must be standalone (no DB, no FastAPI) — domain layer must not import external libs
+- CorporateEmail value object normalises email to lowercase and validates domain from env var
+- Password value object validates min/max length + letter+digit, stores plain for one-time hash use
+- Rate limit store is a module-level dict + threading.Lock — NOT a singleton class
+
+### Pydantic v2 field_validator behavior (P01-S02-T001)
+- `@field_validator` fires BEFORE FastAPI reaches the endpoint handler
+- If field_validator raises ValueError, FastAPI wraps it as 422 (not 400)
+- If you want 400 for a field, the service layer must handle it (not the schema)
+- Task pack's "optionally fold into 422" acknowledges this — legal_acceptance=false gets 422
+
+### TestClient vs live uvicorn session handling (P01-S02-T001)
+- FastAPI TestClient uses ASGI transport — no HTTP server, but DOES share DB connections
+- Router creates its own SQLAlchemy engine (`_engine = create_engine(...)`) at module import
+- That engine is DIFFERENT from `pg_session` fixture's engine
+- Tests using pg_session fixture CAN see rows committed by the router's engine (same DB)
+- BUT pg_session fixture uses transactional rollback — after test, all rows visible to fixture are rolled back
+- The router's engine commits independently — rows committed by the router PERSIST after test
+- This means test isolation works correctly only because we use separate emails per test
+
+### Migration test gotcha (P01-S02-T001)
+- test_migrations_0001_auth.py::test_downgrade_removes_all_tables drops all tables
+- After full test suite run: MUST run `alembic upgrade head` to restore schema
+- This is expected behavior; just remember to re-apply before using the live DB
+
+### Service layer session ownership (P01-S02-T001)
+- Service layer (SignUpUser) owns transaction management: flush in repo, commit in service
+- This allows rejection audit to use a SEPARATE transaction (different Session.commit())
+- Router creates Session, passes to service, closes in finally block
+- DO NOT call session.commit() in the repository — that's the service's job

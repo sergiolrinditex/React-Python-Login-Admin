@@ -1,0 +1,13 @@
+STATUS: 201
+=== LOG OUTPUT (verbose OFF) ===
+''
+INFO/DEBUG lines: 0
+WARNING/ERROR lines: 0
+2026-05-11 19:01:00,227 app.auth.service WARNING auth.sign_up.rejected reason=NON_CORPORATE_EMAIL email_domain=gmail.com request_id=3935d707-864b-4e28-b346-0baaa508f8b8
+STATUS: 400
+=== LOG OUTPUT (verbose OFF, rejection) ===
+auth.sign_up.rejected reason=NON_CORPORATE_EMAIL email_domain=gmail.com request_id=3935d707-864b-4e28-b346-0baaa508f8b8
+
+Lines captured: 1
+INFO flow lines (should be 0): 0
+WARNING lines: 1

@@ -1,0 +1,2 @@
+{"data":null,"meta":{"request_id":"4dc7cfe2-c290-4d5b-8bd3-d7cd89d03cee"},"errors":[{"code":"AUTH_SIGNUP_LEGAL_NOT_ACCEPTED","message":"Legal acceptance is required to complete registration","field":"legal_acceptance","details":null}]}
+HTTP 400

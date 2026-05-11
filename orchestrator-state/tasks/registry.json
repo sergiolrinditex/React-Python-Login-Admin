@@ -15,7 +15,7 @@
       "id": "P00",
       "phase_number": 0,
       "title": "Bootstrap / foundation propia",
-      "status": "blocked",
+      "status": "complete",
       "depends_on": [],
       "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Phase 0 — Bootstrap / foundation propia",
       "task_ids": [
@@ -34,7 +34,7 @@
       "id": "P01",
       "phase_number": 1,
       "title": "Auth / base capabilities",
-      "status": "ready",
+      "status": "blocked",
       "depends_on": [
         "P00"
       ],
@@ -767,7 +767,7 @@
       "phase_id": "P00",
       "step_id": "P00-S02",
       "title": "fix verification_data loader :meta::jsonb SQL cast",
-      "status": "ready_for_close",
+      "status": "done",
       "kind": "bug",
       "target": "fix verification_data loader :meta::jsonb SQL cast",
       "build_state": "planned",
@@ -826,11 +826,17 @@
       "claimed_by": "sergiolr",
       "claim_terminal_task_env": "P00-S02-T004",
       "task_pack_path": "orchestrator-state/tasks/task-packs/P00-S02-T004.md",
-      "last_outcome": "pass",
-      "last_updated_by": "tester",
-      "last_stop_at": "2026-05-11T16:01:40+00:00",
+      "last_outcome": "committed",
+      "last_updated_by": "closer",
+      "last_stop_at": "2026-05-11T16:27:17+00:00",
       "validator_outcome": "approved",
-      "validator_next_status": "ready_for_close"
+      "validator_next_status": "ready_for_close",
+      "last_blocker": {
+        "reason": "blocked_false_done",
+        "agent": "closer",
+        "at": "2026-05-11T16:25:37+00:00"
+      },
+      "report_path": "orchestrator-state/tasks/reports/P00-S02-T004.md"
     },
     {
       "id": "P01-S01-T001",
@@ -926,7 +932,7 @@
       "phase_id": "P01",
       "step_id": "P01-S02",
       "title": "POST /api/v1/auth/sign-up",
-      "status": "ready",
+      "status": "ready_for_close",
       "build_state": "planned",
       "product_increment": "v1",
       "risk_level": "medium",
@@ -985,7 +991,16 @@
       "endpoint_raw": "POST /api/v1/auth/sign-up",
       "tables_raw": "users, employee_profiles, audit_logs",
       "origin_instr_raw": "§3.1#auth-perfiles",
-      "origin_techguide_raw": "§6.2#POST-/api/v1/auth/sign-up"
+      "origin_techguide_raw": "§6.2#POST-/api/v1/auth/sign-up",
+      "claimed_at": "2026-05-11T16:33:10+00:00",
+      "claimed_by": "sergiolr",
+      "claim_terminal_task_env": "P01-S02-T001",
+      "task_pack_path": "orchestrator-state/tasks/task-packs/P01-S02-T001.md",
+      "last_outcome": "pass",
+      "last_updated_by": "tester",
+      "last_stop_at": "2026-05-11T17:18:15+00:00",
+      "validator_outcome": "approved",
+      "validator_next_status": "ready_for_close"
     },
     {
       "id": "P01-S02-T002",

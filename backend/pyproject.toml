@@ -99,6 +99,12 @@ dependencies = [
     # (released 2026-05-01); compatible with sqlalchemy==2.0.49 and Python 3.12.
     # Source: official-doc-notes/P00-S02-T002-psycopg-version-2026-05-11.md (RESOLVED).
     "psycopg[binary]==3.3.4",
+    # ── P01-S02-T001 — email validation for Pydantic EmailStr (WRITE_SET_DRIFT) ──
+    # pydantic[email] extra requires email-validator for EmailStr syntax validation.
+    # 2.3.0 is latest stable on PyPI 2026-05-11, MIT license, actively maintained.
+    # Does NOT perform DNS lookup by default (check_deliverability=False in pydantic).
+    # Source: task pack §F.1; email-validator==2.3.0 confirmed installed in env.
+    "email-validator==2.3.0",
 ]
 
 [project.optional-dependencies]

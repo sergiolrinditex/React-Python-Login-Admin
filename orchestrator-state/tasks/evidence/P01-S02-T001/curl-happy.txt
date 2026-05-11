@@ -1,0 +1,4 @@
+X-Request-ID: 200200fa-c63b-4b9b-9bc7-baa210e04066
+Email: tester+P01-S02-T001@inditex-sandbox.com
+{"data":{"user_id":"e1370288-b6e2-43c1-b514-585e46c15d0d","mfa_required":false},"meta":{"request_id":"200200fa-c63b-4b9b-9bc7-baa210e04066"},"errors":[]}
+HTTP_STATUS:201

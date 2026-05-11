@@ -49,3 +49,17 @@
 - KEY LEARNING: MinIO /minio/health/live returns 200 with EMPTY BODY — curl exit 0 but no output is correct healthy behavior.
 - Evidence: orchestrator-state/tasks/evidence/P00-S02-T001/tester-retest/
 - Handoff: orchestrator-state/tasks/handoffs/P00-S02-T001.md
+
+### P01-S02-T001 — POST /api/v1/auth/sign-up (2026-05-11) — PASS
+- OUTCOME: pass (first run)
+- TESTS: 9/9 auth-signup pass (verbose ON + verbose OFF); 57/57 full suite pass (regression clean)
+- CURL: 201 happy path, 400 non-corporate, 422 legal_acceptance=false, 409 duplicate — all correct
+- DB: users row with $argon2id$v= prefix confirmed; audit_logs 3 rows (success + duplicate + rejection)
+- LOGGING: verbose ON shows full BEFORE/AFTER flow (7 before lines, 3 after lines); verbose OFF shows only WARNING for rejections; no PII in any log record
+- KEY LEARNING: R1-T001-S02 bites during tester runs — the test suite includes test_downgrade_removes_all_tables which drops all 9 auth tables. After running the full suite, MUST run `alembic upgrade head` before attempting curl smoke tests against the live server. Binary location: `/Users/sergiolr/Library/Python/3.11/bin/alembic`.
+- KEY LEARNING: alembic is NOT in PATH on this machine. Full path: `/Users/sergiolr/Library/Python/3.11/bin/alembic`. Use with DATABASE_URL env var set.
+- KEY LEARNING: `audit_logs` table has no `request_id` column directly — the request_id is stored in `metadata` JSONB. Query: `metadata->>'request_id'` not `request_id`.
+- KEY LEARNING: The curl test field name is `legal_acceptance` (not `legal_accepted`) and `full_name` is required. Match schema exactly before running smoke tests.
+- KEY LEARNING: Backend runs without ENABLE_VERBOSE_LOGGING=true by default (dev server). To verify BEFORE/AFTER lines, use python3 -c inline script with TestClient and caplog capture. The live server only shows WARNING+ in uvicorn log by default.
+- Evidence: orchestrator-state/tasks/evidence/P01-S02-T001/
+- Handoff: orchestrator-state/tasks/handoffs/P01-S02-T001.md

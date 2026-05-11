@@ -1,0 +1,28 @@
+## Data Contract Used — P01-S02-T001
+
+### Verification Data Contract Row (TECHNICAL_GUIDE §6.5)
+- Journey: J100 auth-login
+- Persona: employee
+- Verification data: data/verification/users/employee_primary.json (corp user)
+- Load command: python -m app.verification_data.bootstrap --source data/verification --only auth
+
+### For Tester Smoke Tests
+- New email used (NOT the pre-seeded employee.verification@inditex-sandbox.com):
+  - Happy path: tester+P01-S02-T001@inditex-sandbox.com
+  - Duplicate test: same as above (re-run)
+  - Legal test: tester+legal@inditex-sandbox.com (used 422 result)
+  - Non-corporate: attacker@gmail.com (rejected correctly)
+- Provided data from CORPORATE_EMAIL_DOMAINS default: inditex-sandbox.com (included)
+
+### Persisted Data Observed
+- users table: 1 row with id=e1370288-b6e2-43c1-b514-585e46c15d0d, email=tester+p01-s02-t001@inditex-sandbox.com, hash_prefix=$argon2id$v=
+- audit_logs: 3 rows for auth.sign_up action:
+  - 1 success row: actor_user_id=e1370288-b6e2-43c1-b514-585e46c15d0d, request_id=200200fa-c63b-4b9b-9bc7-baa210e04066
+  - 1 duplicate row: actor_user_id=NULL, request_id=31fb9415-8a90-459b-893c-ad051674c821
+  - 1 non-corporate rejection: actor_user_id=NULL, request_id=1728750c-25a4-4868-8bee-c385a100e2f6
+- No employee_profiles row created (per §F.7 decision)
+
+### Note on Schema State During Testing
+- Known R1-T001-S02: test suite runs test_downgrade_removes_all_tables which destroys schema
+- After full test suite, ran: alembic upgrade head to restore schema to head=0001
+- Backend uvicorn autoreloaded + schema restored before curl smoke tests

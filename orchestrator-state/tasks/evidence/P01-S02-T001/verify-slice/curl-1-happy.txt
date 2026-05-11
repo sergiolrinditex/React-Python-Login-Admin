@@ -1,0 +1,10 @@
+=== HAPPY PATH ===
+email=employee.signup-verify+1778520705@inditex-sandbox.com rid=verify-happy-F522A117-91CB-4DB7-A390-4EC829C13661
+HTTP/1.1 201 Created
+date: Mon, 11 May 2026 17:31:44 GMT
+server: uvicorn
+x-request-id: verify-happy-F522A117-91CB-4DB7-A390-4EC829C13661
+content-length: 166
+content-type: application/json
+
+{"data":{"user_id":"357e0a83-e1aa-4c61-b1e3-2dd7429e6fd1","mfa_required":false},"meta":{"request_id":"verify-happy-F522A117-91CB-4DB7-A390-4EC829C13661"},"errors":[]}

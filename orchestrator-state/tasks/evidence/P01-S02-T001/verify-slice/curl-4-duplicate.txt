@@ -1,0 +1,9 @@
+=== DUPLICATE EMAIL (against existing seed user) ===
+email=employee.verification@inditex-sandbox.com (already seeded) rid=verify-dup-6B56BDBF-A590-4E30-8AF9-B122B8550D06
+HTTP/1.1 409 Conflict
+date: Mon, 11 May 2026 17:32:13 GMT
+server: uvicorn
+content-length: 226
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"verify-dup-6B56BDBF-A590-4E30-8AF9-B122B8550D06"},"errors":[{"code":"AUTH_SIGNUP_EMAIL_TAKEN","message":"An account with that email exists or cannot be created","field":null,"details":null}]}

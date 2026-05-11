@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-11T16:01:40+00:00",
+  "generated_at": "2026-05-11T17:18:15+00:00",
   "active_phase_id": "P00",
   "active_task_id": "P00-S02-T004",
   "last_worker": "tester",
@@ -10,13 +10,14 @@
   "spawn_budget": 20,
   "spawns_in_current_slice": {
     "P01-S01-T001": 8,
-    "agent:planner": 2,
-    "agent:official-docs-researcher": 1,
-    "agent:developer": 2,
-    "agent:validator": 2,
-    "agent:tester": 2,
-    "agent:closer": 2,
-    "P00-S02-T004": 4
+    "agent:planner": 3,
+    "agent:official-docs-researcher": 2,
+    "agent:developer": 3,
+    "agent:validator": 4,
+    "agent:tester": 4,
+    "agent:closer": 4,
+    "P00-S02-T004": 6,
+    "P01-S02-T001": 7
   },
   "open_followups": [
     {
@@ -32,15 +33,15 @@
       "promoted_task_id": "P00-S02-T004"
     }
   ],
-  "last_claimed_task_id": "P00-S02-T004",
+  "last_claimed_task_id": "P01-S02-T001",
   "last_trailer": {
-    "task_id": "P00-S02-T004",
+    "task_id": "P01-S02-T001",
     "outcome": "pass",
     "next_status": "ready_for_close",
-    "handoff": "orchestrator-state/tasks/handoffs/P00-S02-T004.md",
-    "evidence": "orchestrator-state/tasks/evidence/P00-S02-T004/"
+    "handoff": "orchestrator-state/tasks/handoffs/P01-S02-T001.md",
+    "evidence": "orchestrator-state/tasks/evidence/P01-S02-T001"
   },
-  "last_stop_at": "2026-05-11T16:01:40+00:00",
+  "last_stop_at": "2026-05-11T17:18:15+00:00",
   "last_followup_id": "FU-20260511145446-fix-verification-data-loader-meta-jsonb-sql-cast",
-  "last_claimed_phase_id": "P00"
+  "last_claimed_phase_id": "P01"
 }

@@ -1,0 +1,42 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.5, pytest-9.0.2, pluggy-1.6.0 -- /usr/local/bin/python3
+cachedir: .pytest_cache
+rootdir: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend
+configfile: pyproject.toml
+plugins: httpx-0.36.0, asyncio-1.3.0, langsmith-0.8.3, anyio-4.13.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 2 items
+
+tests/integration/test_auth_signup.py::test_signup_happy_path_201 
+-------------------------------- live log call ---------------------------------
+DEBUG    asyncio:selector_events.py:54 Using selector: KqueueSelector
+INFO     app.auth.router:router.py:208 auth.sign_up.received email_domain=inditex-sandbox.com request_id=c84da8e9-623f-401a-ab86-b4cff7c9285b
+DEBUG    app.auth.rate_limit:rate_limit.py:115 rate_limit.check.start ip=testclient rate_per_min=10 burst=10
+DEBUG    app.auth.rate_limit:rate_limit.py:127 rate_limit.check.ok ip=testclient new_window remaining=9
+INFO     app.auth.service:service.py:125 auth.sign_up.starting request_id=c84da8e9-623f-401a-ab86-b4cff7c9285b email_domain=inditex-sandbox.com
+DEBUG    app.auth.password:password.py:71 password.hash.start
+DEBUG    app.auth.password:password.py:73 password.hash.done
+INFO     app.auth.repository:repository.py:117 auth.repo.create_user.start email_domain=inditex-sandbox.com
+INFO     app.auth.repository:repository.py:150 auth.repo.create_user.done user_id=f56e052a-7c60-4826-9fbb-5468e8a856fe
+DEBUG    app.auth.repository:repository.py:186 auth.repo.write_audit.start action=auth.sign_up actor_user_id=f56e052a-7c60-4826-9fbb-5468e8a856fe
+DEBUG    app.auth.repository:repository.py:202 auth.repo.write_audit.done audit_id=88bcc3ad-2a61-4dbf-810c-724516805035 action=auth.sign_up
+INFO     app.auth.service:service.py:199 auth.sign_up.success user_id=f56e052a-7c60-4826-9fbb-5468e8a856fe request_id=c84da8e9-623f-401a-ab86-b4cff7c9285b
+INFO     app.auth.router:router.py:300 auth.sign_up.response_sent user_id=f56e052a-7c60-4826-9fbb-5468e8a856fe request_id=c84da8e9-623f-401a-ab86-b4cff7c9285b
+INFO     httpx:_client.py:1025 HTTP Request: POST http://testserver/api/v1/auth/sign-up "HTTP/1.1 201 Created"
+PASSED
+tests/integration/test_auth_signup.py::test_signup_legal_not_accepted_400 
+-------------------------------- live log call ---------------------------------
+DEBUG    asyncio:selector_events.py:54 Using selector: KqueueSelector
+INFO     app.auth.router:router.py:208 auth.sign_up.received email_domain=inditex-sandbox.com request_id=81270019-edcc-4080-b23b-958b29e4c889
+DEBUG    app.auth.rate_limit:rate_limit.py:115 rate_limit.check.start ip=testclient rate_per_min=10 burst=10
+DEBUG    app.auth.rate_limit:rate_limit.py:127 rate_limit.check.ok ip=testclient new_window remaining=9
+INFO     app.auth.service:service.py:125 auth.sign_up.starting request_id=81270019-edcc-4080-b23b-958b29e4c889 email_domain=inditex-sandbox.com
+WARNING  app.auth.service:service.py:135 auth.sign_up.rejected reason=LEGAL_NOT_ACCEPTED request_id=81270019-edcc-4080-b23b-958b29e4c889
+DEBUG    app.auth.service:service.py:244 auth.sign_up.rejection_audit.start reason=LEGAL_NOT_ACCEPTED request_id=81270019-edcc-4080-b23b-958b29e4c889
+DEBUG    app.auth.repository:repository.py:186 auth.repo.write_audit.start action=auth.sign_up actor_user_id=NULL
+DEBUG    app.auth.repository:repository.py:202 auth.repo.write_audit.done audit_id=947c6526-69f5-4740-b40f-16fc00a87a36 action=auth.sign_up
+DEBUG    app.auth.service:service.py:265 auth.sign_up.rejection_audit.done reason=LEGAL_NOT_ACCEPTED
+INFO     httpx:_client.py:1025 HTTP Request: POST http://testserver/api/v1/auth/sign-up "HTTP/1.1 400 Bad Request"
+PASSED
+
+============================== 2 passed in 0.49s ===============================

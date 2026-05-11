@@ -2,6 +2,59 @@
 
 > Reflexion-style notes. Append-only. Newest entries at the top.
 
+## 2026-05-11 — P01-S02-T001 (debug cycle 1/3) — Legal/business validators in Pydantic schemas silently break envelope + audit + status pin
+
+### Root causes
+1. **Business-policy validators placed in Pydantic schemas bypass the service layer.** The developer put `legal_acceptance must_be_true` as a `@field_validator` in `app/auth/schemas.py`. Pydantic field validation runs BEFORE the FastAPI handler reaches the use case, so the rejection path produced THREE silent contract violations at once:
+   - HTTP **422** instead of the task-pack-pinned **400** (Pydantic uses 422 for any validator error; this collides with §C.3 "AUTH_SIGNUP_LEGAL_NOT_ACCEPTED returns 400 so the frontend can branch quickly").
+   - Wrong response envelope: FastAPI's default `RequestValidationError` handler returns `{detail:[...]}`. The project contract is `{data, meta, errors:[ErrorItem]}` (TECHNICAL_GUIDE §6.2). The frontend cannot localize by `errors[].code` when the key is `detail`.
+   - **BR5 audit-every-attempt invariant broken.** The service layer writes the rejection audit row (`_write_rejection_audit(reason='LEGAL_NOT_ACCEPTED')`). When Pydantic short-circuits the request, the service is never reached → no audit row → compliance hole. The developer's test even codified the hole (`if resp.status_code == 400: check audit`).
+2. **Researcher RESOLVED note doesn't enforce code reconciliation.** The `password.py` docstring had three sentences claiming "OWASP 2024 minimums". The researcher note was marked RESOLVED, but the developer applied the corrected phrasing to only ONE of three locations. The hook regex matches `RESOLVED:` literally on the note file, so it stopped warning even though the code still contradicted the note. Notes can be RESOLVED in the file while the code is still partially inconsistent.
+
+### Fixes applied
+- F1: edited two earlier docstring sections in `backend/app/auth/password.py` (Source refs + Decisions block) to state "library defaults EXCEED OWASP 2026 minimums" with explicit reference to the RESOLVED note. Argon2 parameters and hash logic UNCHANGED — `PasswordHasher()` library defaults preserved. Pure docstring/comment change, ~+8/-6 lines.
+- F2.a: removed the `@field_validator("legal_acceptance") must_be_true` from `backend/app/auth/schemas.py` (~-20 lines). Kept `legal_acceptance: bool = Field(...)` so missing/non-bool still yields a 422 payload-structural error (distinct from policy violation). Updated module docstring Decisions + Field description to document that policy lives in service layer for envelope + audit compliance. `field_validator` import retained (still used by `strip_full_name`).
+- F2.b: tightened `test_signup_legal_not_accepted_400` in `backend/tests/integration/test_auth_signup.py` to assert strict 400 (no fallback 422), project envelope (`"errors" in data and "detail" not in data`), `errors[0].code/field` correctly populated, audit row inserted with `action='auth.sign_up'`, `actor_user_id IS NULL`, `outcome='rejected'`, `reason='LEGAL_NOT_ACCEPTED'`, matching request_id. Removed the conditional that masked the BR5 violation. ~+34/-19 lines.
+
+### Patterns / gotchas to remember
+- **Legal/business validators belong in the service layer, not Pydantic schemas.** Pydantic is for payload STRUCTURE (types, required fields, length bounds, format). Anything that needs (a) a custom HTTP status, (b) the project envelope, or (c) an audit row, must live in the use case. Rule of thumb: if rejecting the input requires writing to the DB or returning a code other than 422, it's a service-layer concern.
+- **Pydantic short-circuits the FastAPI handler.** Any `@field_validator` or `@model_validator` runs BEFORE `Depends()` is resolved and BEFORE the use case is called. There is no exception handler hook that lets you "convert this Pydantic validator error back to a service-layer audit + custom envelope" without intercepting `RequestValidationError` globally — and that global handler couldn't know which validators are business-policy vs payload-structure. Don't even try.
+- **Decision #N "I chose 422 because Pydantic fires first" is a smell.** When the developer's handoff records a Decision like "Pydantic field_validator fires before service layer → 422 for legal_acceptance=false. Task pack says 'optionally fold into 422' — this is acceptable." — read the §C.3 pin again. "Optionally fold" usually means "if you can't avoid Pydantic running first" — but you CAN avoid it by NOT putting a validator there. The pack's preferred status is what should ship.
+- **Conditional assertions in tests encode silent contract violations.** `if resp.status_code == 400: check audit` allowed the BR5 hole to ship. When a test accepts two outcomes, ask: are these two outcomes truly equivalent for the contract? If one of them silently skips an invariant (here: no audit row), the test is shaped wrong, not the code.
+- **A note marked RESOLVED on disk does NOT mean the code applied all the implications.** The hook only checks the marker string. Always grep the code paths the note describes (here `grep -n "OWASP 2024" backend/app/auth/password.py` would have caught the partial application). Add this to validator + debugger checklists for any RESOLVED note that asked for a multi-location change.
+- **`backend/app/auth/**` write_set covers schemas + service + tests in one slice.** F1 and F2 both fit inside the existing canonical write_set; no FU needed. Classification was `in_scope_defect`, not `out_of_scope` — debugger handled it in cycle 1.
+
+### Verification commands that proved the fix
+```bash
+# Lint
+cd backend && python3 -m ruff check app/auth tests/integration/test_auth_signup.py
+# → All checks passed!
+
+# Both verbose modes
+DATABASE_URL=postgresql+psycopg://hilo:hilo@localhost:5432/hilo_dev \
+  ENABLE_VERBOSE_LOGGING=true python3 -m pytest tests/integration/test_auth_signup.py -v
+DATABASE_URL=postgresql+psycopg://hilo:hilo@localhost:5432/hilo_dev \
+  ENABLE_VERBOSE_LOGGING=false python3 -m pytest tests/integration/test_auth_signup.py -v
+# → 9 passed both modes
+
+# Live envelope + audit verification (the only test that proves all 3 contracts)
+RID=$(uuidgen | tr 'A-Z' 'a-z')
+curl -sS -o /tmp/legal_resp.json -w "HTTP=%{http_code}\n" -X POST \
+  http://localhost:8000/api/v1/auth/sign-up \
+  -H "Content-Type: application/json" -H "X-Request-ID: $RID" \
+  -d "{\"email\":\"debug.legal.$(date +%s)@inditex-sandbox.com\",\"password\":\"VerifyPass2024!\",\"full_name\":\"X\",\"legal_acceptance\":false}"
+# → HTTP=400, body has data:null + meta.request_id + errors[0].code=AUTH_SIGNUP_LEGAL_NOT_ACCEPTED, NO "detail" key.
+
+docker compose exec -T postgres psql -U hilo -d hilo_dev -c \
+  "SELECT action, actor_user_id, metadata->>'outcome', metadata->>'reason' FROM audit_logs WHERE metadata->>'request_id'='$RID';"
+# → 1 row: auth.sign_up | NULL | rejected | LEGAL_NOT_ACCEPTED
+```
+
+### Debug cycle budget
+- Used 1 of 3 cycles. Validator + tester should rerun cleanly; F1 (3-of-3 docstring locations now consistent) + F2 (status/envelope/audit all aligned with task pack §C.3 + BR5) addressed without write_set expansion or new FU. If validator reopens with new evidence not seen this pass, 2 more debugger passes remain before `max_debug_cycles_reached`.
+
+---
+
 ## 2026-05-11 — P00-S02-T001 (debug cycle 1/3) — Compose healthcheck binary assumption + hook regex format trap
 
 ### Root causes

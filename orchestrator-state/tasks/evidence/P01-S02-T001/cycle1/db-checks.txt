@@ -1,0 +1,2 @@
+Rows: 1
+  action: auth.sign_up | actor_user_id: None | outcome: rejected | reason: LEGAL_NOT_ACCEPTED | rid: 4dc7cfe2-c290-4d5b-8bd3-d7cd89d03cee

@@ -1,0 +1,2 @@
+{"data":{"user_id":"7b82b39e-1798-4bb7-99d4-db8a64aad2eb","mfa_required":false},"meta":{"request_id":"0ff7df6e-cf20-42fd-a891-56435ad31786"},"errors":[]}
+HTTP 201

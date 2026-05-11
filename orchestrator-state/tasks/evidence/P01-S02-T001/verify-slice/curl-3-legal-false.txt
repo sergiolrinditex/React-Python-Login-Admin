@@ -1,0 +1,9 @@
+=== LEGAL_ACCEPTANCE=FALSE (cycle1 fix critical) ===
+email=employee.legal-test+1778520721@inditex-sandbox.com rid=verify-legal-94861CE0-F3D4-404F-9896-099B47FE5769
+HTTP/1.1 400 Bad Request
+date: Mon, 11 May 2026 17:32:00 GMT
+server: uvicorn
+content-length: 248
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"verify-legal-94861CE0-F3D4-404F-9896-099B47FE5769"},"errors":[{"code":"AUTH_SIGNUP_LEGAL_NOT_ACCEPTED","message":"Legal acceptance is required to complete registration","field":"legal_acceptance","details":null}]}

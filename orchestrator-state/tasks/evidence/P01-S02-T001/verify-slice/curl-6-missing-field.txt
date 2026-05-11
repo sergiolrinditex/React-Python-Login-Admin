@@ -1,0 +1,8 @@
+=== MISSING FIELD (422 Pydantic) ===
+HTTP/1.1 422 Unprocessable Entity
+date: Mon, 11 May 2026 17:32:22 GMT
+server: uvicorn
+content-length: 203
+content-type: application/json
+
+{"detail":[{"type":"missing","loc":["body","full_name"],"msg":"Field required","input":{"email":"employee.pw-short+1778520742@inditex-sandbox.com","password":"VerifyPass2024!","legal_acceptance":true}}]}

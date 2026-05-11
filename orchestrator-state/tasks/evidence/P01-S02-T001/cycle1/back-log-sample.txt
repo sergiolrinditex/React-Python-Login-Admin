@@ -1,0 +1,60 @@
+    result = use_case.execute(
+             ^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/app/auth/service.py", line 180, in execute
+    user = self._repo.create_user(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/app/auth/repository.py", line 130, in create_user
+    self._session.flush()  # assigns user.id without committing
+    ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py", line 4331, in flush
+    self._flush(objects)
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py", line 4466, in _flush
+    with util.safe_reraise():
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/util/langhelpers.py", line 121, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py", line 4427, in _flush
+    flush_context.execute()
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/unitofwork.py", line 466, in execute
+    rec.execute(self)
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/unitofwork.py", line 642, in execute
+    util.preloaded.orm_persistence.save_obj(
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/persistence.py", line 93, in save_obj
+    _emit_insert_statements(
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/persistence.py", line 1233, in _emit_insert_statements
+    result = connection.execute(
+             ^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1419, in execute
+    return meth(
+           ^^^^^
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/sql/elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py", line 117, in execute
+    raise ex.with_traceback(None)
+sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation "users" does not exist
+LINE 1: INSERT INTO users (email, password_hash, full_name, status) ...
+                    ^
+[SQL: INSERT INTO users (email, password_hash, full_name, status) VALUES (%(email)s::VARCHAR, %(password_hash)s::VARCHAR, %(full_name)s::VARCHAR, %(status)s::VARCHAR) RETURNING users.id, users.preferred_language, users.created_at, users.updated_at]
+[parameters: {'email': 'employee.cycle1-str@inditex-sandbox.com', 'password_hash': '$argon2id$v=19$m=65536,t=3,p=4$HDFFzuFElo/o3ZJQ98+QpQ$9IKhWRKMvYBsfW+i4S70GFbo3T2CH9IGgbdDoNB1yYM', 'full_name': 'Cycle1 Str', 'status': 'active'}]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+INFO:     127.0.0.1:54662 - "POST /api/v1/auth/sign-up HTTP/1.1" 500 Internal Server Error
+2026-05-11 19:14:32,009 app.auth.service WARNING auth.sign_up.rejected reason=LEGAL_NOT_ACCEPTED request_id=4dc7cfe2-c290-4d5b-8bd3-d7cd89d03cee
+INFO:     127.0.0.1:54807 - "POST /api/v1/auth/sign-up HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:54812 - "POST /api/v1/auth/sign-up HTTP/1.1" 201 Created
+INFO:     127.0.0.1:54818 - "POST /api/v1/auth/sign-up HTTP/1.1" 201 Created
+2026-05-11 19:14:50,457 app.auth.service WARNING auth.sign_up.rejected reason=NON_CORPORATE_EMAIL email_domain=gmail.com request_id=e134ec03-ea0d-40c0-90ed-e567a4dee876
+INFO:     127.0.0.1:54821 - "POST /api/v1/auth/sign-up HTTP/1.1" 400 Bad Request

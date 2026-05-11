@@ -1,0 +1,33 @@
+DEBUG asyncio Using selector: KqueueSelector
+INFO  app.auth.router auth.sign_up.received email_domain=inditex-sandbox.com request_id=79d14839-bf17-42a1-bd0b-5cd7bd605c3c
+DEBUG app.auth.rate_limit rate_limit.check.start ip=testclient rate_per_min=10 burst=10
+DEBUG app.auth.rate_limit rate_limit.check.ok ip=testclient new_window remaining=9
+INFO  app.auth.service auth.sign_up.starting request_id=79d14839-bf17-42a1-bd0b-5cd7bd605c3c email_domain=inditex-sandbox.com
+DEBUG app.auth.password password.hash.start
+DEBUG app.auth.password password.hash.done
+INFO  app.auth.repository auth.repo.create_user.start email_domain=inditex-sandbox.com
+INFO  app.auth.repository auth.repo.create_user.done user_id=7e78d484-5aef-4b84-a85f-ff5e61eac989
+DEBUG app.auth.repository auth.repo.write_audit.start action=auth.sign_up actor_user_id=7e78d484-5aef-4b84-a85f-ff5e61eac989
+DEBUG app.auth.repository auth.repo.write_audit.done audit_id=3e9ebf15-e976-4715-a5e3-9b599867856b action=auth.sign_up
+INFO  app.auth.service auth.sign_up.success user_id=7e78d484-5aef-4b84-a85f-ff5e61eac989 request_id=79d14839-bf17-42a1-bd0b-5cd7bd605c3c
+INFO  app.auth.router auth.sign_up.response_sent user_id=7e78d484-5aef-4b84-a85f-ff5e61eac989 request_id=79d14839-bf17-42a1-bd0b-5cd7bd605c3c
+INFO  httpx HTTP Request: POST http://testserver/api/v1/auth/sign-up "HTTP/1.1 201 Created"
+STATUS: 201
+=== LOG OUTPUT (verbose ON) ===
+auth.sign_up.received email_domain=inditex-sandbox.com request_id=79d14839-bf17-42a1-bd0b-5cd7bd605c3c
+rate_limit.check.start ip=testclient rate_per_min=10 burst=10
+rate_limit.check.ok ip=testclient new_window remaining=9
+auth.sign_up.starting request_id=79d14839-bf17-42a1-bd0b-5cd7bd605c3c email_domain=inditex-sandbox.com
+password.hash.start
+password.hash.done
+auth.repo.create_user.start email_domain=inditex-sandbox.com
+auth.repo.create_user.done user_id=7e78d484-5aef-4b84-a85f-ff5e61eac989
+auth.repo.write_audit.start action=auth.sign_up actor_user_id=7e78d484-5aef-4b84-a85f-ff5e61eac989
+auth.repo.write_audit.done audit_id=3e9ebf15-e976-4715-a5e3-9b599867856b action=auth.sign_up
+auth.sign_up.success user_id=7e78d484-5aef-4b84-a85f-ff5e61eac989 request_id=79d14839-bf17-42a1-bd0b-5cd7bd605c3c
+auth.sign_up.response_sent user_id=7e78d484-5aef-4b84-a85f-ff5e61eac989 request_id=79d14839-bf17-42a1-bd0b-5cd7bd605c3c
+
+BEFORE lines: 7
+AFTER lines: 3
+PII (email) in logs: False
+PII (password) in logs: False

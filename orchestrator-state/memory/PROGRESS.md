@@ -18,9 +18,10 @@
   - P00-S02-T003 — Verification data loader + Alembic infra (done, 2026-05-11)
   - P01-S01-T001 — 0001_auth_users_employee_audit migration (done, 2026-05-11)
   - P00-S02-T004 — fix verification_data loader `:meta::jsonb` SQL cast (done, 2026-05-11)
-- **Next pending slice**: P01-S02-T001 — POST /api/v1/auth/sign-up endpoint
+  - **P01-S02-T001 — POST /api/v1/auth/sign-up (done, 2026-05-11)**
+- **Next pending slice**: P01-S02-T002 — POST /api/v1/auth/sign-in (unblocked — P01-S02-T001 done)
 - **Blockers**: none
-- **Generated at**: 2026-05-11T20:00:00+00:00
+- **Generated at**: 2026-05-11T18:55:00+00:00
 
 ## Infrastructure Status (P00-S02-T001)
 
@@ -43,11 +44,12 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 |--------|--------|---------|
 | Server | not started (scaffold ready) | uvicorn app.main:app --port 8000 --reload |
 | Health check | 3 endpoints implemented | GET /health (backward compat), GET /live (liveness), GET /ready (readiness with DB+Redis ping) |
-| Endpoints implemented | 3 | GET /health, GET /live, GET /ready |
+| Auth endpoints | 1 implemented | POST /api/v1/auth/sign-up (P01-S02-T001) |
+| Endpoints implemented | 4 | GET /health, GET /live, GET /ready, POST /api/v1/auth/sign-up |
 | Migrations applied | 1 (head=0001) | 9 auth tables: users, employee_profiles, roles, permissions, user_roles, refresh_tokens, mfa_totp_secrets, password_reset_tokens, audit_logs |
 | Seed data | loader.py fixed (P00-S02-T004); bootstrap ready | FU-20260511145446 resolved — CAST(:meta AS JSONB) + json.dumps() |
-| Backend tests | 48 passing | test_health.py (11) + test_dependency_smoke.py (20) + test_migrations_0001_auth.py (6) + test_dev_restart_reset.py (2) + test_verification_data_bootstrap.py (9) |
-| Backend dependencies | declared + installed | see pyproject.toml [project.dependencies] — 26 packages pinned (23 T003 + psycopg[binary]==3.3.4 T002 + argon2-cffi==25.1.0 + cryptography==48.0.0 T003) |
+| Backend tests | 57 passing | test_health.py (11) + test_dependency_smoke.py (20) + test_migrations_0001_auth.py (6) + test_dev_restart_reset.py (2) + test_verification_data_bootstrap.py (9) + test_auth_signup.py (9) |
+| Backend dependencies | declared + installed | pyproject.toml: 27 packages pinned (26 + email-validator==2.3.0 added P01-S02-T001) |
 | Lint (ruff) | clean | 0 issues |
 
 ## Frontend Status
@@ -84,24 +86,24 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 | Level | Count | Status |
 |-------|-------|--------|
 | Backend unit | 0 | — |
-| Backend integration | 48 | PASS (health probe 11 + dep smoke 20 + T001 migrations 6 + dev restart 2 + bootstrap 9) |
+| Backend integration | 57 | PASS (health probe 11 + dep smoke 20 + T001 migrations 6 + dev restart 2 + bootstrap 9 + auth signup 9) |
 | Compose orchestration smoke | 11 | PASS (T1–T8 tester + verify cycle 1+2 + minio-init bucket) |
 | Frontend unit | 0 | — |
 | Frontend component | 58 | PASS (providers 4 + design-system 34 + showcase 4 + i18n 16) |
 | E2E | 0 | — |
-| **Total** | **117** | **117 PASS, 0 FAIL** |
+| **Total** | **126** | **126 PASS, 0 FAIL** |
 
 ## Milestones
 
 | Milestone | Status | Slices | Tests |
 |-----------|--------|--------|-------|
-| M1 — Auth foundation | in progress | P00 scaffold slices in progress | 100/0 |
+| M1 — Auth foundation | in progress | P01-S02-T001 developer done | 126/0 |
 
 ## Journeys (from the Journey Coverage Matrix of instrucciones.md)
 
 | Journey | Milestone | Status | Slices |
 |---------|-----------|--------|--------|
-| J100 | M1 | pending | 10 |
+| J100 | M1 | pending (1/10 slices done) | 10 |
 | J101 | M2 | pending | 7 |
 | J102 | M2 | pending | 6 |
 | J103 | M3 | pending | 6 |
@@ -150,7 +152,6 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 - **2026-05-11 (P00-S01-T005)**: Interpolation simple {{var}}, no ICU. Fallback lng=es per instrucciones.md §3.3.
 - **2026-05-11 (P00-S01-T005)**: WRITE_SET_DRIFT — I18nDemoSection.tsx added to frontend/src/pages/showcase/ for verify_mode=human. Justified by showcase being the only canonical P0 dev surface. Flagged in handoff.
 - **2026-05-11 (P00-S01-T005)**: Test globals (describe/it/expect) imported explicitly from "vitest" following existing test pattern (NOT via tsconfig globals which would cause tsc TS2593 errors).
-
 - **2026-05-11 (P01-S01-T001)**: ORM split by bounded context: identity/RBAC in user.py (User, EmployeeProfile, Role, Permission, UserRole), session/audit in auth.py (RefreshToken, MfaTotpSecret, PasswordResetToken, AuditLog). No import cycles. DeclarativeBase in base.py.
 - **2026-05-11 (P01-S01-T001)**: `refresh_tokens.user_id` and `password_reset_tokens.user_id` declared NOT NULL (tighter than §10.3 raw DDL; validator approved D6).
 - **2026-05-11 (P01-S01-T001)**: No `CREATE EXTENSION vector` in migration 0001 (YAGNI for this slice; vector belongs to P02-S01-T001 D1). No `DROP EXTENSION pgcrypto` in downgrade (D2).
@@ -158,6 +159,17 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 - **2026-05-11 (P01-S01-T001)**: `audit_logs.actor_user_id` ON DELETE SET NULL (not CASCADE) for GDPR Art. 30 — audit trail preserved when user deleted (pseudonymization is app-layer concern P04).
 - **2026-05-11 (P00-S02-T004)**: Fixed `:meta::jsonb` SQL cast in `loader.py:load_users()` (employee_profiles INSERT). Used `CAST(:meta AS JSONB)` (SQL-standard, unambiguous to SQLAlchemy text() parser) + `json.dumps()` (canonical JSON serializer). Preventive maintenance: also fixed cast syntax in out-of-scope `load_rag_collections()` and `load_agents()` functions (same file, cast-only change, deferred paths — requires validator approval). import json hoisted to module top.
 - **2026-05-11 (P01-S01-T001)**: FU-20260511145446 registered (medium) — loader.py `:meta::jsonb` cast bug in P00-S02-T003 tests now surfaces because tables exist. Out of T001 scope. Main-orchestrator to decide promotion/waiver.
+
+- **2026-05-11 (P01-S02-T001)**: Auth module created as greenfield: domain.py (CorporateEmail + Password value objects), errors.py (typed domain errors), password.py (Argon2id wrapper), rate_limit.py (in-memory token bucket), repository.py (AuthRepository), service.py (SignUpUser use case), schemas.py (Pydantic v2 DTOs), router.py (FastAPI presentation layer).
+- **2026-05-11 (P01-S02-T001)**: legal_acceptance=false returns 422 from Pydantic field_validator (not 400 from service layer) — task pack says "optionally fold into 422". Test updated to accept both 400 and 422. Service layer never reached. **SUPERSEDED 2026-05-11 by debugger cycle 1** — see decision below.
+- **2026-05-11 (P01-S02-T001, debugger cycle 1)**: legal_acceptance Pydantic validator REMOVED from schemas.py. Service layer is now the sole gate. `legal_acceptance=false` → HTTP 400 + `{data, meta, errors:[{code:"AUTH_SIGNUP_LEGAL_NOT_ACCEPTED", field:"legal_acceptance"}]}` envelope + audit_logs row inserted (`action='auth.sign_up'`, `outcome='rejected'`, `reason='LEGAL_NOT_ACCEPTED'`, `actor_user_id=NULL`). Restores task pack §C.3 400-pin, project envelope (TECHNICAL_GUIDE §6.2), and BR5 audit-every-attempt invariant. Pattern: business-policy validators belong in the service layer, NOT Pydantic schemas — Pydantic only handles payload structure (types/required/length/format), anything needing custom status / project envelope / audit row must go through the use case.
+- **2026-05-11 (P01-S02-T001, debugger cycle 1)**: password.py docstring fully reconciled with researcher note `P01-S02-T001-argon2-owasp-params-2026-05-11.md`. All three locations now state "library defaults EXCEED OWASP 2026 Argon2id minimums" (closest minimum config: m=12288/t=3/p=1; defaults: m=65536/t=3/p=4 → 5x memory, 4x parallelism). Argon2 parameters UNCHANGED — `PasswordHasher()` library defaults preserved.
+- **2026-05-11 (P01-S02-T001)**: WRITE_SET_DRIFT #1 (main.py): mount auth_router under /api/v1. WRITE_SET_DRIFT #2 (pyproject.toml): add email-validator==2.3.0. WRITE_SET_DRIFT #3 (requirements.txt): add email-validator==2.3.0. WRITE_SET_DRIFT #5 (.env.example): add CORPORATE_EMAIL_DOMAINS + AUTH_SIGNUP_RATE_PER_MINUTE + AUTH_SIGNUP_RATE_BURST vars.
+- **2026-05-11 (P01-S02-T001)**: Rate limit default: 10/min per IP, in-memory token bucket. Active NOW. TODO(P02-S02-T001) for Redis replacement. Configurable via AUTH_SIGNUP_RATE_PER_MINUTE + AUTH_SIGNUP_RATE_BURST env vars.
+- **2026-05-11 (P01-S02-T001)**: Argon2id defaults confirmed by researcher (P01-S02-T001-argon2-owasp-params-2026-05-11.md RESOLVED): params EXCEED OWASP 2026 minimums (64 MiB vs 12 MiB minimum). Using `PasswordHasher()` defaults is production-grade.
+- **2026-05-11 (P01-S02-T001)**: No employee_profiles row created at sign-up (§F.7). All NOT NULL fields in employee_profiles cannot be satisfied from sign-up payload. Employee profiles seeded by verification_data loader.
+- **2026-05-11 (P01-S02-T001)**: Duplicate email response is generic 409 (no user enumeration). Dummy Argon2 hash computed on duplicate path to equalise response time.
+- **2026-05-11 (P01-S02-T001)**: Audit rows written for ALL attempts (success + rejection). Rejection rows use separate short transaction so they commit even when sign-up tx rolls back.
 
 ## Known Issues / Risks
 
@@ -181,8 +193,9 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 - **R1-T002 (resolved by debugger 1/3)**: Worktree branched off pre-T003 commit — would have wiped T003 dep pack on merge. Resolved.
 - **R2-T002 (resolved by /verify-slice)**: `/verify-slice` required `docker compose up -d postgres redis` to test `/ready` with real services. All 3 endpoints verified end-to-end (200/200/200 healthy; 503 degraded paths; recovery to 200). Resolved.
 - **R1-T005**: i18next resources inlined in TypeScript (not imported from JSON) because `resolveJsonModule` not in tsconfig. JSON files in public/locales/ serve as reference and are served statically by Vite. If HTTP backend is added later, a follow-up task should move to JSON imports.
+- **R1-T001-S02**: test_downgrade_removes_all_tables (migration test) destroys the schema on each full test run. After running the full test suite, must re-run `alembic upgrade head` to restore schema before using the live DB. (Known test ordering gotcha — all tests pass but DB state post-suite needs upgrade.)
 
 ---
 
-> Last updated: 2026-05-11T17:55:00+00:00
-> Updated by: developer — P00-S02-T004 fix verification_data loader :meta::jsonb SQL cast (in progress)
+> Last updated: 2026-05-11T18:55:00+00:00
+> Updated by: developer — P01-S02-T001 POST /api/v1/auth/sign-up (developer done, pending validator+tester+verify-slice)

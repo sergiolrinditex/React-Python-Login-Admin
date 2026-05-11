@@ -1,0 +1,15 @@
+=== users row ===
+                  id                  |                  email                  | hash_prefix  
+--------------------------------------+-----------------------------------------+--------------
+ e1370288-b6e2-43c1-b514-585e46c15d0d | tester+p01-s02-t001@inditex-sandbox.com | $argon2id$v=
+(1 row)
+
+
+=== audit_logs rows (request_id from metadata JSONB) ===
+    action    |              request_id              |            actor_user_id             
+--------------+--------------------------------------+--------------------------------------
+ auth.sign_up | 31fb9415-8a90-459b-893c-ad051674c821 | 
+ auth.sign_up | 1728750c-25a4-4868-8bee-c385a100e2f6 | 
+ auth.sign_up | 200200fa-c63b-4b9b-9bc7-baa210e04066 | e1370288-b6e2-43c1-b514-585e46c15d0d
+(3 rows)
+

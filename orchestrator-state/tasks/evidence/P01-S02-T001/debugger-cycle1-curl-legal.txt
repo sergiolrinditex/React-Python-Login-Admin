@@ -1,0 +1,8 @@
+=== debugger cycle 1 — POST /api/v1/auth/sign-up legal_acceptance=false ===
+TIMESTAMP: 2026-05-11T17:06:08Z
+request_id=11ab735f-74e6-443e-bbb4-23cc22e3fe78
+HTTP=400
+--- response body ---
+{"data":null,"meta":{"request_id":"11ab735f-74e6-443e-bbb4-23cc22e3fe78"},"errors":[{"code":"AUTH_SIGNUP_LEGAL_NOT_ACCEPTED","message":"Legal acceptance is required to complete registration","field":"legal_acceptance","details":null}]}
+--- audit_logs row (docker exec postgres psql) ---
+action=auth.sign_up actor_user_id=NULL outcome=rejected reason=LEGAL_NOT_ACCEPTED request_id matches

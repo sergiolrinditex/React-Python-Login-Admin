@@ -1,0 +1,35 @@
+P01-S02-T001 — /verify-slice Data Contract observed
+====================================================
+
+TECHNICAL_GUIDE §6.5 Verification Data Contract row used:
+  J100 auth-login — employee persona — data/verification/users/employee_primary.json (corp user) + admin_peopletech.json
+  Loader: python -m app.verification_data.bootstrap --source ../data/verification --only auth
+  Reset: bash scripts/dev-restart.sh --reset
+
+Hard reset executed:
+  - docker compose down -v (postgres+minio volumes destroyed)
+  - alembic upgrade head (head=0001) — 9 auth tables created
+  - verification_data bootstrap (corrected path ../data/verification) — auth group: 2 users inserted (employee.verification@inditex-sandbox.com, admin.peopletech@inditex-sandbox.com)
+  - uvicorn restarted with ENABLE_VERBOSE_LOGGING=true and CORPORATE_EMAIL_DOMAINS default whitelist
+  - vite restarted on :5173
+
+Real/provided data used in this verify:
+  - employee.verification@inditex-sandbox.com (seed) — used for duplicate-email 409 test
+  - admin.peopletech@inditex-sandbox.com (seed) — present but unused in this slice
+  - NEW corporate emails created on the fly using inditex-sandbox.com (allowed domain):
+      employee.signup-verify+<timestamp>@inditex-sandbox.com — happy path 201
+      employee.legal-test+<timestamp>@inditex-sandbox.com — 400 legal_not_accepted
+      employee.pw-short+<timestamp>@inditex-sandbox.com — 422 password policy
+  - attacker@gmail.com (non-corporate) — 400 non_corporate_email test
+
+Persisted data observed after verify:
+  - users table: 3 rows total (2 seed + 1 new from happy path) — see db-state.txt
+  - audit_logs: 4 rows total (1 success + 3 rejections) — see db-state.txt
+  - All audit rows carry the X-Request-ID sent by curl in metadata.request_id
+  - All password_hash values start with $argon2id$v=19$m=65536,t=  (Argon2id confirmed)
+
+PII inspection on logs/back.log (ENABLE_VERBOSE_LOGGING=true):
+  - Password "VerifyPass2024" present: 0 occurrences
+  - Full email "employee.signup-verify+" present: 0 occurrences (only email_domain=inditex-sandbox.com appears)
+
+Verbose=false mode NOT re-tested live (tester cycle 1 evidence pytest-verbose-off.txt already validates 0 INFO+DEBUG for success path; only WARNING auth.sign_up.rejected for rejections).

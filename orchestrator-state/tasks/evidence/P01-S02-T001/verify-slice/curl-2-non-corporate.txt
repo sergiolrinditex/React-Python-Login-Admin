@@ -1,0 +1,9 @@
+=== NON-CORPORATE EMAIL ===
+email=attacker@gmail.com rid=verify-noncorp-4A8813B6-CFC0-4C85-A97D-17AB3CEB5E49
+HTTP/1.1 400 Bad Request
+date: Mon, 11 May 2026 17:31:50 GMT
+server: uvicorn
+content-length: 237
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"verify-noncorp-4A8813B6-CFC0-4C85-A97D-17AB3CEB5E49"},"errors":[{"code":"AUTH_SIGNUP_NON_CORPORATE_EMAIL","message":"Email domain not in corporate allowlist: gmail.com","field":"email","details":null}]}
