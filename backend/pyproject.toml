@@ -77,6 +77,22 @@ dependencies = [
     "sqlalchemy==2.0.49",        # acceptance explicit: "SQLAlchemy async"; async-capable
     "alembic==1.18.4",           # §2 stack contract: "SQLAlchemy async, Alembic"
 
+
+    # ── T003-P00-S02-T003 — Password hashing (Argon2id) ────────────────────────
+    # §10.2 TECHNICAL_GUIDE mandates Argon2 for password hashing.
+    # P00-S02-T003 loader hashes passwords at UPSERT time (not pre-computed).
+    # argon2-cffi==25.1.0 is latest stable on PyPI 2026-05-11. MIT license.
+    # Provides: argon2.PasswordHasher (Argon2id by default).
+    "argon2-cffi==25.1.0",
+
+    # ── T003-P00-S02-T003 — Fernet encryption for MFA secrets ───────────────
+    # crypto.py uses cryptography.fernet.Fernet for TOTP secret encryption.
+    # cryptography is NOT a guaranteed transitive dep (litellm pins it only under
+    # its optional 'proxy' extra). Explicit pin required per researcher note.
+    # cryptography==48.0.0 is latest stable on PyPI 2026-05-11. BSD-3 license.
+    # RESOLVED per official-doc-notes/P00-S02-T003-cryptography-fernet-2026-05-11.md
+    "cryptography==48.0.0",
+
     # ── T002 §6.2 — Postgres driver for /ready DB ping (debugger cycle 1/3) ─
     # Without this, SQLAlchemy create_engine("postgresql+psycopg://...") raises
     # ModuleNotFoundError. Researcher confirmed 3.3.4 is current stable on PyPI
@@ -104,3 +120,7 @@ testpaths = ["tests"]
 python_files = ["test_*.py"]
 python_functions = ["test_*"]
 asyncio_mode = "auto"
+markers = [
+    "integration: marks tests as requiring a real Postgres DB (deselect with -m 'not integration')",
+]
+

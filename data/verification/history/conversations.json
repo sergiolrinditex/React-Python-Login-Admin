@@ -1,0 +1,22 @@
+[
+  {
+    "_comment": "First verification conversation for J102 history test.",
+    "user_email_ref": "employee.verification@inditex-sandbox.com",
+    "language": "es",
+    "title": "Consulta sobre vacaciones",
+    "messages": [
+      {"role": "user", "content": "¿Cuántos días de vacaciones tengo?"},
+      {"role": "assistant", "content": "Según la política vigente, tienes 22 días hábiles anuales."}
+    ]
+  },
+  {
+    "_comment": "Second verification conversation for J102 history test.",
+    "user_email_ref": "employee.verification@inditex-sandbox.com",
+    "language": "es",
+    "title": "Baja médica",
+    "messages": [
+      {"role": "user", "content": "¿Cómo solicito una baja médica?"},
+      {"role": "assistant", "content": "Debes comunicarlo a RRHH con el parte del médico."}
+    ]
+  }
+]

@@ -1,0 +1,31 @@
+2026-05-11 15:44:10 [info     ] verification_data.bootstrap.start dry_run=False only=None source=../data/verification
+2026-05-11 15:44:11 [info     ] verification_data.group.auth.start
+2026-05-11 15:44:11 [info     ] verification_data.group.auth.start
+2026-05-11 15:44:11 [info     ] verification_data.auth.users.start count=1
+2026-05-11 15:44:11 [warning  ] verification_data.auth.deferred_until_schema_ready reason=table_missing table=users
+2026-05-11 15:44:11 [info     ] verification_data.group.auth.done
+2026-05-11 15:44:11 [info     ] verification_data.group.rag_chat.start
+2026-05-11 15:44:11 [info     ] verification_data.group.rag_chat.start
+2026-05-11 15:44:11 [info     ] verification_data.rag_chat.rag_collections.start count=1
+2026-05-11 15:44:11 [warning  ] verification_data.rag_chat.deferred_until_schema_ready reason=table_missing table=rag_collections
+2026-05-11 15:44:11 [info     ] verification_data.group.history.start
+2026-05-11 15:44:11 [info     ] verification_data.group.history.start
+2026-05-11 15:44:11 [info     ] verification_data.history.users.start count=1
+2026-05-11 15:44:11 [warning  ] verification_data.history.deferred_until_schema_ready reason=table_missing table=users
+2026-05-11 15:44:11 [info     ] verification_data.group.admin_ai.start
+2026-05-11 15:44:11 [info     ] verification_data.group.admin_ai.start
+2026-05-11 15:44:11 [info     ] verification_data.admin_ai.admin_users.start count=1
+2026-05-11 15:44:11 [warning  ] verification_data.admin_ai.deferred_until_schema_ready reason=table_missing table=users
+2026-05-11 15:44:11 [info     ] verification_data.admin_ai.ai_providers.start count=1
+2026-05-11 15:44:11 [warning  ] verification_data.admin_ai.deferred_until_schema_ready reason=table_missing table=ai_providers
+2026-05-11 15:44:11 [info     ] verification_data.group.rag_docs.start
+2026-05-11 15:44:11 [info     ] verification_data.group.rag_docs.start
+2026-05-11 15:44:11 [warning  ] verification_data.rag_docs.deferred_until_schema_ready reason=table_missing table=documents
+2026-05-11 15:44:11 [info     ] verification_data.group.mcp_agents.start
+2026-05-11 15:44:11 [info     ] verification_data.group.mcp_agents.start
+2026-05-11 15:44:11 [info     ] verification_data.mcp_agents.mcp_servers.start count=1
+2026-05-11 15:44:11 [warning  ] verification_data.mcp_agents.deferred_until_schema_ready reason=table_missing table=mcp_servers
+2026-05-11 15:44:11 [info     ] verification_data.mcp_agents.agents.start count=1
+2026-05-11 15:44:11 [warning  ] verification_data.mcp_agents.deferred_until_schema_ready reason=table_missing table=agents
+{"status": "ok", "groups": [{"group": "auth", "status": "deferred", "inserted": 0, "updated": 0, "skipped": 0, "reason": "table_missing:users"}, {"group": "rag_chat", "status": "deferred", "inserted": 0, "updated": 0, "skipped": 0, "reason": "table_missing:rag_collections"}, {"group": "history", "status": "deferred", "inserted": 0, "updated": 0, "skipped": 0, "reason": "table_missing:users"}, {"group": "admin_ai", "status": "deferred", "inserted": 0, "updated": 0, "skipped": 0, "reason": "table_missing:users"}, {"group": "admin_ai", "status": "deferred", "inserted": 0, "updated": 0, "skipped": 0, "reason": "table_missing:ai_providers"}, {"group": "rag_docs", "status": "deferred", "inserted": 0, "updated": 0, "skipped": 0, "reason": "table_missing:documents"}, {"group": "mcp_agents", "status": "deferred", "inserted": 0, "updated": 0, "skipped": 0, "reason": "table_missing:mcp_servers"}, {"group": "mcp_agents", "status": "deferred", "inserted": 0, "updated": 0, "skipped": 0, "reason": "table_missing:agents"}]}
+2026-05-11 15:44:11 [info     ] verification_data.bootstrap.done groups_run=6

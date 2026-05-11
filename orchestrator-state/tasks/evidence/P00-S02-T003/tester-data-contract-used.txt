@@ -1,0 +1,38 @@
+## Verification Data Contract rows used — P00-S02-T003 (Tester run 2026-05-11)
+
+Source: docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md §6.5 Verification Data Contract
+
+### Contract rows applicable to this slice
+
+| Flow/Journey | Fixture file loaded | Status | Persisted data observed |
+|---|---|---|---|
+| J100 auth-login | data/verification/users/employee_primary.json | DEFERRED — users table not yet created (P01-S01-T001) | 0 rows (deferred) |
+| J101 chat-rag | data/verification/rag_chat/politicas_tienda.json | DEFERRED — rag_collections table not yet created (P02-S01) | 0 rows (deferred) |
+| J102 history-language | data/verification/history/conversations.json | DEFERRED — users table not yet created | 0 rows (deferred) |
+| J103 admin-ai | data/verification/admin_ai/litellm_verification.json | DEFERRED — ai_providers table not yet created (P02-S01) | 0 rows (deferred) |
+| J104 rag-admin | data/verification/rag_docs/politica_vacaciones_es.json | DEFERRED — documents table not yet created (P02-S01) | 0 rows (deferred) |
+| J105 mcp-agents | data/verification/mcp_agents/sandbox_readonly.json, people_helper.json | DEFERRED — mcp_servers/agents tables not yet created (P02-S01) | 0 rows (deferred) |
+
+### Real/provided verification data loaded
+
+Per Opción C decision (task pack §E): tables don't exist yet (this is P00, before P01-S01-T001 auth migrations).
+All groups return status=deferred with WARN logs — correct behaviour per AC8 acceptance criterion.
+
+Bootstrap connects to REAL Postgres (localhost:5432, version 17.9) and calls sqlalchemy.inspect().has_table() for each group.
+The deferred result is confirmed via DB inspection, not a mock.
+
+### Bootstrap CLI parameters used during tester verification
+
+1. VERBOSE=true   run1: python -m app.verification_data.bootstrap --source ../data/verification
+2. VERBOSE=true   run2: python -m app.verification_data.bootstrap --source ../data/verification (idempotency)
+3. VERBOSE=false  run1: python -m app.verification_data.bootstrap --source ../data/verification
+4. --dry-run:     python -m app.verification_data.bootstrap --source ../data/verification --dry-run (AC6)
+5. --only auth:   python -m app.verification_data.bootstrap --source ../data/verification --only auth (AC4)
+6. missing dir:   python -m app.verification_data.bootstrap --source /nonexistent/path (AC2 - exit 1)
+7. invalid group: python -m app.verification_data.bootstrap --source ../data/verification --only invalid_group_xyz (AC5 - exit 2)
+8. full reset:    bash scripts/dev-restart.sh --reset (AC7 - exit 0)
+
+### Persisted data observed
+
+All groups deferred (0 rows inserted). This is the correct state in P00 before auth/RAG migrations.
+Bootstrap exits 0. DB state verified via real Postgres connection (version 17.9, hilo_dev).

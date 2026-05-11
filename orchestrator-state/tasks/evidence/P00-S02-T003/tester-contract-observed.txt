@@ -1,0 +1,38 @@
+## Contract observed — P00-S02-T003 (Tester run 2026-05-11)
+
+### Architecture observed during tests
+
+Layer | Component | Observed
+--- | --- | ---
+CLI entry | python -m app.verification_data.bootstrap (via __main__.py) | Yes — invoked via subprocess and direct call
+Package | backend/app/verification_data/__init__.py | Yes — imported
+Schemas | backend/app/verification_data/schemas.py | Yes — Pydantic v2 validation confirmed (exit 2 on missing field)
+Loader | backend/app/verification_data/loader.py | Yes — inspect().has_table() calls real Postgres
+Crypto | backend/app/verification_data/crypto.py | Yes — argon2-cffi available, hash_password importable
+Redaction | backend/app/verification_data/redaction.py | Yes — mask_email used; passwords/secrets absent in logs
+Groups | backend/app/verification_data/groups.py | Yes — VALID_GROUPS = (auth, rag_chat, history, admin_ai, rag_docs, mcp_agents)
+Alembic infra | backend/alembic.ini + alembic/env.py | Yes — alembic downgrade base + upgrade head both exit 0
+DB connection | postgresql+psycopg://hilo:hilo@localhost:5432/hilo_dev | Yes — real Postgres 17.9 connected
+Profile script | scripts/dev-restart.profile.sh db_reset() | Yes — alembic cycle + bootstrap chain runs via dev-restart --reset
+
+### Tables checked via sqlalchemy.inspect().has_table()
+
+Table | Expected state | Observed
+--- | --- | ---
+users | not yet created (pre-P01-S01-T001) | has_table() = False → deferred
+employee_profiles | not yet created | has_table() = False → deferred
+rag_collections | not yet created (pre-P02-S01) | has_table() = False → deferred
+documents | not yet created | has_table() = False → deferred
+ai_providers | not yet created | has_table() = False → deferred
+mcp_servers | not yet created | has_table() = False → deferred
+agents | not yet created | has_table() = False → deferred
+
+### Dev-restart --reset cycle
+
+Step | Command | Exit code | Observed
+--- | --- | --- | ---
+1 | alembic downgrade base | 0 | no migrations, no-op
+2 | alembic upgrade head | 0 | no migrations, no-op
+3 | bootstrap seed | 0 | all groups deferred
+
+Exit code from dev-restart.sh --reset: 0

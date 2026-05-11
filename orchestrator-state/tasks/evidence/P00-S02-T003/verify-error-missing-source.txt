@@ -1,0 +1,4 @@
+2026-05-11 16:00:06 [info     ] verification_data.bootstrap.start dry_run=False only=None source=/tmp/nonexistent-verification-source
+ERROR: verification data directory not found: /private/tmp/nonexistent-verification-source
+Set --source to the correct path. Expected: data/verification/
+2026-05-11 16:00:06 [error    ] verification_data.bootstrap.error path=/tmp/nonexistent-verification-source reason=source_dir_not_found

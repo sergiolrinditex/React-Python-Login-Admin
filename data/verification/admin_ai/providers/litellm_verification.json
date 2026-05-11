@@ -1,0 +1,8 @@
+{
+  "_comment": "LiteLLM verification provider — sandbox config for J103 admin AI provider test.",
+  "name": "litellm_verification_sandbox",
+  "provider_type": "litellm",
+  "base_url": "http://localhost:4000",
+  "status": "active",
+  "credential_plain": null
+}

@@ -1,0 +1,21 @@
+2026-05-11 15:59:59 [info     ] verification_data.bootstrap.start dry_run=True only=None source=/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-abf751b82b00fdfce/data/verification
+2026-05-11 15:59:59 [info     ] verification_data.group.auth.start
+2026-05-11 15:59:59 [info     ] verification_data.group.auth.start
+2026-05-11 15:59:59 [info     ] verification_data.group.auth.dry_run employee_count=1
+2026-05-11 15:59:59 [info     ] verification_data.group.rag_chat.start
+2026-05-11 15:59:59 [info     ] verification_data.group.rag_chat.start
+2026-05-11 15:59:59 [info     ] verification_data.group.rag_chat.dry_run
+2026-05-11 15:59:59 [info     ] verification_data.group.history.start
+2026-05-11 15:59:59 [info     ] verification_data.group.history.start
+2026-05-11 15:59:59 [info     ] verification_data.group.history.dry_run
+2026-05-11 15:59:59 [info     ] verification_data.group.admin_ai.start
+2026-05-11 15:59:59 [info     ] verification_data.group.admin_ai.start
+2026-05-11 15:59:59 [info     ] verification_data.group.admin_ai.dry_run
+2026-05-11 15:59:59 [info     ] verification_data.group.rag_docs.start
+2026-05-11 15:59:59 [info     ] verification_data.group.rag_docs.start
+2026-05-11 15:59:59 [info     ] verification_data.group.rag_docs.dry_run
+2026-05-11 15:59:59 [info     ] verification_data.group.mcp_agents.start
+2026-05-11 15:59:59 [info     ] verification_data.group.mcp_agents.start
+2026-05-11 15:59:59 [info     ] verification_data.group.mcp_agents.dry_run
+{"status": "ok", "groups": [{"group": "auth", "status": "dry_run", "inserted": 0, "updated": 0, "skipped": 0, "reason": "--dry-run flag"}, {"group": "rag_chat", "status": "dry_run", "inserted": 0, "updated": 0, "skipped": 0, "reason": "--dry-run flag"}, {"group": "history", "status": "dry_run", "inserted": 0, "updated": 0, "skipped": 0, "reason": "--dry-run flag"}, {"group": "admin_ai", "status": "dry_run", "inserted": 0, "updated": 0, "skipped": 0, "reason": "--dry-run flag"}, {"group": "rag_docs", "status": "dry_run", "inserted": 0, "updated": 0, "skipped": 0, "reason": "--dry-run flag"}, {"group": "mcp_agents", "status": "dry_run", "inserted": 0, "updated": 0, "skipped": 0, "reason": "--dry-run flag"}]}
+2026-05-11 15:59:59 [info     ] verification_data.bootstrap.done groups_run=6

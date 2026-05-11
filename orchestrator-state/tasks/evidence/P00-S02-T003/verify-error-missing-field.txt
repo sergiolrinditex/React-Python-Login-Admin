@@ -1,0 +1,6 @@
+ERROR: fixture validation failed for group 'auth':
+1 validation error for EmployeeUserFixture
+email
+  Field required [type=missing, input_value={'_comment': 'Primary emp...t_date': '2022-01-15'}}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+2026-05-11 16:01:07 [error    ] verification_data.bootstrap.validation_error error="1 validation error for EmployeeUserFixture\nemail\n  Field required [type=missing, input_value={'_comment': 'Primary emp...t_date': '2022-01-15'}}}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/missing" group=auth

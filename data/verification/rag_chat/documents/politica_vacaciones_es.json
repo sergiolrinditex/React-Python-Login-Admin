@@ -1,0 +1,8 @@
+{
+  "_comment": "Document metadata for vacation policy ES — used in J101 RAG chat verification.",
+  "title": "Política de Vacaciones — España",
+  "language": "es",
+  "source_uri_ref": "backend/tests/data/verification/people_docs/politica_vacaciones_es.pdf",
+  "status": "pending",
+  "collection_ref": "politicas_tienda"
+}

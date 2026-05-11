@@ -1,0 +1,9 @@
+{
+  "_comment": "People Tech admin verification user. Participates in J103, J104, J105.",
+  "email": "admin.peopletech@inditex-sandbox.com",
+  "full_name": "Admin People Tech",
+  "password_plain": "AdminVerify2024!",
+  "status": "active",
+  "preferred_language": "es",
+  "roles": ["admin"]
+}

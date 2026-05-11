@@ -1,0 +1,3 @@
+usage: python -m app.verification_data.bootstrap [-h] [--source SOURCE]
+                                                 [--only GROUP] [--dry-run]
+python -m app.verification_data.bootstrap: error: argument --only: invalid choice: 'invalid_group_xyz' (choose from 'auth', 'rag_chat', 'history', 'admin_ai', 'rag_docs', 'mcp_agents')

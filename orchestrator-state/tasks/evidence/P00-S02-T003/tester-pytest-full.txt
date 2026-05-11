@@ -1,0 +1,59 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.5, pytest-9.0.2, pluggy-1.6.0 -- /usr/local/bin/python3
+cachedir: .pytest_cache
+rootdir: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-abf751b82b00fdfce/backend
+configfile: pyproject.toml
+plugins: httpx-0.36.0, asyncio-1.3.0, langsmith-0.8.3, anyio-4.13.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 42 items
+
+tests/integration/test_dev_restart_reset.py::test_db_reset_cycle_exits_zero PASSED [  2%]
+tests/integration/test_dev_restart_reset.py::test_reset_exits_zero_and_is_idempotent PASSED [  4%]
+tests/integration/test_verification_data_bootstrap.py::test_idempotency_two_runs_same_state PASSED [  7%]
+tests/integration/test_verification_data_bootstrap.py::test_missing_dir_fails_with_clear_error PASSED [  9%]
+tests/integration/test_verification_data_bootstrap.py::test_missing_required_field_fails_with_field_name PASSED [ 11%]
+tests/integration/test_verification_data_bootstrap.py::test_only_flag_filters_groups PASSED [ 14%]
+tests/integration/test_verification_data_bootstrap.py::test_invalid_only_flag_lists_valid_choices PASSED [ 16%]
+tests/integration/test_verification_data_bootstrap.py::test_dry_run_does_not_touch_db PASSED [ 19%]
+tests/integration/test_verification_data_bootstrap.py::test_deferred_groups_log_warn_when_tables_missing PASSED [ 21%]
+tests/integration/test_verification_data_bootstrap.py::test_redaction_in_logs_no_password_no_token PASSED [ 23%]
+tests/integration/test_verification_data_bootstrap.py::test_verbose_off_no_info_logs PASSED [ 26%]
+tests/test_dependency_smoke.py::test_dependency_smoke[pypdf-pypdf-__version__] PASSED [ 28%]
+tests/test_dependency_smoke.py::test_dependency_smoke[python-docx-docx-__version__] PASSED [ 30%]
+tests/test_dependency_smoke.py::test_dependency_smoke[celery-celery-__version__] PASSED [ 33%]
+tests/test_dependency_smoke.py::test_dependency_smoke[redis-redis-__version__] PASSED [ 35%]
+tests/test_dependency_smoke.py::test_dependency_smoke[resend-resend-__version__] PASSED [ 38%]
+tests/test_dependency_smoke.py::test_dependency_smoke[structlog-structlog-None] PASSED [ 40%]
+tests/test_dependency_smoke.py::test_dependency_smoke[prometheus-client-prometheus_client-__version__] PASSED [ 42%]
+tests/test_dependency_smoke.py::test_dependency_smoke[boto3-boto3-__version__] PASSED [ 45%]
+tests/test_dependency_smoke.py::test_dependency_smoke[pgvector-pgvector-None] PASSED [ 47%]
+tests/test_dependency_smoke.py::test_dependency_smoke[litellm-litellm-None] PASSED [ 50%]
+tests/test_dependency_smoke.py::test_dependency_smoke[langchain-langchain-__version__] PASSED [ 52%]
+tests/test_dependency_smoke.py::test_dependency_smoke[langchain-core-langchain_core-__version__] PASSED [ 54%]
+tests/test_dependency_smoke.py::test_dependency_smoke[langchain-community-langchain_community-__version__] PASSED [ 57%]
+tests/test_dependency_smoke.py::test_dependency_smoke[langchain-text-splitters-langchain_text_splitters-None] PASSED [ 59%]
+tests/test_dependency_smoke.py::test_dependency_smoke[langgraph-langgraph-None] PASSED [ 61%]
+tests/test_dependency_smoke.py::test_dependency_smoke[deepagents-deepagents-None] PASSED [ 64%]
+tests/test_dependency_smoke.py::test_dependency_smoke[mcp-mcp-None] PASSED [ 66%]
+tests/test_dependency_smoke.py::test_dependency_smoke[tiktoken-tiktoken-None] PASSED [ 69%]
+tests/test_dependency_smoke.py::test_dependency_smoke[sqlalchemy-sqlalchemy-__version__] PASSED [ 71%]
+tests/test_dependency_smoke.py::test_dependency_smoke[alembic-alembic-__version__] PASSED [ 73%]
+tests/test_health.py::test_legacy_health_still_returns_200 PASSED        [ 76%]
+tests/test_health.py::test_health_envelope_shape PASSED                  [ 78%]
+tests/test_health.py::test_health_live_returns_200_ok PASSED             [ 80%]
+tests/test_health.py::test_health_ready_returns_200_when_all_ok PASSED   [ 83%]
+tests/test_health.py::test_health_ready_returns_503_when_db_degraded PASSED [ 85%]
+tests/test_health.py::test_health_ready_returns_503_when_redis_connection_error PASSED [ 88%]
+tests/test_health.py::test_health_ready_returns_503_when_redis_timeout PASSED [ 90%]
+tests/test_health.py::test_health_ready_returns_503_when_both_degraded PASSED [ 92%]
+tests/test_health.py::test_health_ready_body_includes_litellm_unknown PASSED [ 95%]
+tests/test_health.py::test_logging_verbose_mode_logs_before_after PASSED [ 97%]
+tests/test_health.py::test_logging_quiet_mode_suppresses_info PASSED     [100%]
+
+=============================== warnings summary ===============================
+tests/test_dependency_smoke.py::test_dependency_smoke[deepagents-deepagents-None]
+  /Users/sergiolr/Library/Python/3.11/lib/python/site-packages/langgraph/checkpoint/serde/encrypted.py:5: LangChainPendingDeprecationWarning: The default value of `allowed_objects` will change in a future version. Pass an explicit value (e.g., allowed_objects='messages' or allowed_objects='core') to suppress this warning.
+    from langgraph.checkpoint.serde.jsonplus import JsonPlusSerializer
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================== 42 passed, 1 warning in 9.67s =========================

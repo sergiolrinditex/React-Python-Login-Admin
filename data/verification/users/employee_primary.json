@@ -1,0 +1,20 @@
+{
+  "_comment": "Primary employee verification user — Hilo People sandbox. Provided by People Tech for verification. This user participates in J100, J101, J102.",
+  "email": "employee.verification@inditex-sandbox.com",
+  "full_name": "Elena Verificación",
+  "password_plain": "VerifyPass2024!",
+  "status": "active",
+  "preferred_language": "es",
+  "employee_profile": {
+    "employee_id": "EMP-VERIFY-001",
+    "brand": "Zara",
+    "society": "ITX-ES",
+    "center": "Madrid-HQ",
+    "country": "ES",
+    "department": "People & Talent",
+    "metadata": {
+      "contract_type": "indefinite",
+      "start_date": "2022-01-15"
+    }
+  }
+}
