@@ -98,7 +98,7 @@ No paralelices pasos dependientes: `resolve-library-id` debe preceder a `get-lib
 
 ## Protocolo
 
-1. Lee la tarea activa (`active-task.md`).
+1. Lee el task pack explícito `orchestrator-state/tasks/task-packs/<TASK_ID>.md`. No uses `implicit selector` en producción DAG.
 2. Identifica tecnologías/APIs afectadas.
 3. Consulta solo fuentes oficiales o MCPs confiables que expongan documentación oficial/versionada.
 4. Prefiere docs versionadas si el proyecto pina versión.

@@ -8,7 +8,7 @@ allowed-tools: Read Grep Glob Write
 When working on a task pack:
 
 1. Read `orchestrator-state/tasks/registry.json`.
-2. Read the per-task pack first: `orchestrator-state/tasks/task-packs/<TASK_ID>.md`. In legacy sequential mode, `orchestrator-state/memory/active-task.json` and `orchestrator-state/memory/active-task.md` are acceptable mirrors; in explicit DAG mode they are advisory only and may be moved by another terminal.
+2. Read the per-task pack: `orchestrator-state/tasks/task-packs/<TASK_ID>.md`. In production explicit DAG, `orchestrator-state/tasks/task-packs/<TASK_ID>.md` mirrors are removed from DAG-only mode and are never acceptable as the only pack.
 3. Confirm:
    - task ID,
    - title,

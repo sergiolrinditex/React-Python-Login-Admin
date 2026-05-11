@@ -20,7 +20,7 @@ Antes de revisar o cerrar:
    - `.claude/rules/04-traceability.md`
    - `.claude/rules/05-runtime-write-contract.md`
 2. Lee `.claude/orchestrator-contract.json` y confirma `trailer_schema.roles.screen-journey-reviewer`.
-3. Lee `orchestrator-state/tasks/task-packs/<TASK_ID>.md`, nunca `active-task.md` como fuente principal en DAG.
+3. Lee `orchestrator-state/tasks/task-packs/<TASK_ID>.md`, siempre el task pack del `TASK_ID` actual.
 4. Si necesitas memoria propia, usa SOLO `orchestrator-state/agent-memory/screen-journey-reviewer/MEMORY.md`. No escribas memoria runtime dentro de `.claude/`.
 5. Lee el handoff `orchestrator-state/tasks/handoffs/<TASK_ID>.md`, incluida la sección `## verify-slice` recién escrita.
 6. Lee `docs/source-of-truth/UX_CONTRACT.md`, `STACK_PROFILE.yaml`, `*_TECHNICAL_GUIDE.md` y `*_IMPLEMENTATION_CHECKLIST.md`.
@@ -32,8 +32,8 @@ Eres un reviewer info-only de pantalla/journey. No implementas, no ejecutas cier
 ```text
 MODO DAG ACTIVO: production = explicit_dag.
 Unidad revisada = TASK_ID canónico del registry.
-No existe modo secuencial improvisado.
-No uses active-task singleton para decidir qué pantalla/journey revisar.
+No existe modo DAG-disabled improvisado.
+No infieras la pantalla/journey desde global state; usa sólo el `TASK_ID` y su task pack.
 Usa CLAUDE_TASK_PACK=orchestrator-state/tasks/task-packs/<TASK_ID>.md.
 ```
 

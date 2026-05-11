@@ -220,3 +220,62 @@ def test_git_workflow_pr_flow_rejects_main_without_fallback(tmp_path):
     assert result.returncode == 2
     assert "pr-flow requires a feature branch" in result.stdout
     assert "push-to-main/direct-main" in result.stdout
+
+
+def test_git_workflow_amends_late_ledger_before_push(tmp_path):
+    repo = _make_minimal_git_workflow_repo(tmp_path, "direct-main")
+    if repo is None:
+        return
+    remote = tmp_path / "origin-ledger.git"
+    subprocess.run(["git", "init", "-q", "--bare", str(remote)], check=True)
+    subprocess.run(["git", "remote", "add", "origin", str(remote)], cwd=repo, check=True)
+    ledger = repo / "orchestrator-state" / "tasks" / "ledger.jsonl"
+    ledger.parent.mkdir(parents=True, exist_ok=True)
+    ledger.write_text('{"event":"before_close"}\n', encoding="utf-8")
+    subprocess.run(["git", "add", str(ledger.relative_to(repo))], cwd=repo, check=True)
+    subprocess.run(["git", "commit", "-q", "-m", "track ledger"], cwd=repo, check=True)
+    ledger.write_text('{"event":"before_close"}\n{"event":"post_commit_bash"}\n', encoding="utf-8")
+
+    result = subprocess.run(["bash", "scripts/git-workflow.sh"], cwd=repo, text=True, capture_output=True, timeout=30)
+
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert "GIT_WORKFLOW_TRACE_AMENDED: yes" in result.stdout
+    assert "GIT_WORKFLOW_READY: yes" in result.stdout
+    assert subprocess.run(["git", "status", "--porcelain"], cwd=repo, text=True, capture_output=True, timeout=30).stdout.strip() == ""
+    show = subprocess.run(["git", "show", "main:orchestrator-state/tasks/ledger.jsonl"], cwd=repo, text=True, capture_output=True, timeout=30)
+    assert show.returncode == 0, show.stdout + show.stderr
+    assert "post_commit_bash" in show.stdout
+
+
+def test_git_workflow_blocks_dirty_non_ledger_paths(tmp_path):
+    repo = _make_minimal_git_workflow_repo(tmp_path, "direct-main")
+    if repo is None:
+        return
+    remote = tmp_path / "origin-dirty.git"
+    subprocess.run(["git", "init", "-q", "--bare", str(remote)], check=True)
+    subprocess.run(["git", "remote", "add", "origin", str(remote)], cwd=repo, check=True)
+    (repo / "unexpected.txt").write_text("dirty\n", encoding="utf-8")
+
+    result = subprocess.run(["bash", "scripts/git-workflow.sh"], cwd=repo, text=True, capture_output=True, timeout=30)
+
+    assert result.returncode == 2
+    assert "working tree is dirty" in result.stdout
+    assert "unexpected.txt" in result.stdout
+
+
+def test_git_workflow_rejects_dirty_worktree_without_stash(tmp_path):
+    repo = _make_minimal_git_workflow_repo(tmp_path, "direct-main")
+    if repo is None:
+        return
+    remote = tmp_path / "origin.git"
+    subprocess.run(["git", "init", "-q", "--bare", str(remote)], check=True)
+    subprocess.run(["git", "remote", "add", "origin", str(remote)], cwd=repo, check=True)
+    (repo / "docs" / "source-of-truth" / "STACK_PROFILE.yaml").write_text(
+        "profile_version: stack-profile-v1\ngit_workflow: direct-main\n# dirty\n",
+        encoding="utf-8",
+    )
+    result = subprocess.run(["bash", "scripts/git-workflow.sh"], cwd=repo, text=True, capture_output=True, timeout=30)
+    assert result.returncode == 2
+    assert "working tree is dirty" in result.stdout
+    assert "Do not use stash/pop" in result.stdout
+    assert "DIRTY:" in result.stdout

@@ -91,32 +91,8 @@ def main() -> int:
         d = tasks_dir() / sub
         d.mkdir(parents=True, exist_ok=True)
         (d / ".gitkeep").touch()
-    for name in [
-        "registry.json",
-        "runtime-state.json",
-        "ledger.jsonl",
-        "task-dag.json",
-        "task-dag.md",
-        "execution-graph.json",
-        "api-contracts.json",
-        "stack-profile.json",
-        "ux-contract.md",
-    ]:
-        unlink(tasks_dir() / name)
-
-    # Manual agent memory is preserved across app resets on purpose. It carries
-    # useful Reflexion-style lessons between slices and future apps. Create the
-    # root if missing, but do not delete it.
-    agent_memory_dir().mkdir(parents=True, exist_ok=True)
-    shutil.rmtree(state_dir() / "worktrees", ignore_errors=True)
-    dev_logs = state_dir() / "dev-logs"
-    shutil.rmtree(dev_logs, ignore_errors=True)
-    dev_logs.mkdir(parents=True, exist_ok=True)
-    (dev_logs / ".gitkeep").touch()
-
     memory = memory_dir()
-    memory.mkdir(parents=True, exist_ok=True)
-    for name in [
+    cleanup_names = [
         "PROGRESS.md",
         "decisions.md",
         "risk-register.md",
@@ -128,11 +104,13 @@ def main() -> int:
         "task-dag.md",
         "stack-profile.json",
         "ux-contract.md",
-        "active-phase.json",
-        "active-phase.md",
-        "active-task.json",
-        "active-task.md",
-    ]:
+    ]
+    # Remove obsolete singleton selector files from older checkouts without
+    # reintroducing them as runtime concepts.
+    obsolete_prefixes = [("active", "task"), ("active", "phase")]
+    for left, right in obsolete_prefixes:
+        cleanup_names.extend([f"{left}-{right}.json", f"{left}-{right}.md"])
+    for name in cleanup_names:
         unlink(memory / name)
     shutil.rmtree(memory / "official-doc-notes", ignore_errors=True)
     shutil.rmtree(memory / "archive", ignore_errors=True)

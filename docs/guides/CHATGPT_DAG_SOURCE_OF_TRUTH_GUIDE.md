@@ -10,7 +10,7 @@ docs/source-of-truth/UX_CONTRACT.md
 docs/source-of-truth/STACK_PROFILE.yaml
 ```
 
-El objetivo es que el bootstrap genere un grafo DAG explícito, no el modo lineal legacy, y que la aplicación se construya por **screen/journey lanes** con datos reales/proporcionados.
+El objetivo es que el bootstrap genere un grafo DAG explícito, no el modo sin dependencias explícitas, y que la aplicación se construya por **screen/journey lanes** con datos reales/proporcionados.
 
 ## 1. Qué debe recibir ChatGPT
 
@@ -77,7 +77,7 @@ Pide a ChatGPT que entregue los documentos uno a uno:
 
 No aceptes el siguiente documento hasta revisar el anterior. El checklist es crítico para DAG porque contiene el `Canonical Coverage Registry`; `UX_CONTRACT.md` es crítico para que las pantallas no se cierren sólo por compilar; `STACK_PROFILE.yaml` evita asumir framework, paths o comandos por costumbre.
 
-## 3. Regla que activa el modo DAG no legacy
+## 3. Regla que activa el modo DAG DAG explícito
 
 El modo DAG se activa solo si el Coverage Registry del checklist contiene una columna de dependencias con uno de estos nombres:
 
@@ -101,7 +101,7 @@ P02                       depende de todas las tasks de una phase
 previous                  conserva orden local cuando no se puede paralelizar
 ```
 
-Si la columna falta, el bootstrap crea `mode=legacy_linear`. Si la columna existe pero todo usa `previous`, será DAG explícito pero sin ahorro útil.
+Si la columna falta, el bootstrap crea `bootstrap error: missing dependency column`. Si la columna existe pero todo usa `previous`, será DAG explícito pero sin ahorro útil.
 
 ## 4. Columnas mínimas del Coverage Registry
 
@@ -234,7 +234,7 @@ Journey matrix coherent — <J> journeys validadas, 0 drifts
 Wiring contract coherent — <R> routes, <E> endpoints, <T> registry rows, <J> journeys
 ```
 
-Si ves `mode=legacy_linear`, vuelve al checklist y añade/rellena `Depends on`.
+Si ves `bootstrap error: missing dependency column`, vuelve al checklist y añade/rellena `Depends on`.
 
 ## 9. Qué genera el bootstrap
 
@@ -263,7 +263,7 @@ Pide la wave actual:
 El script imprime comandos copy/paste de este estilo:
 
 ```bash
-export CLAUDE_ACTIVE_TASK_ID=P02-S03-T001 CLAUDE_TASK_PACK=orchestrator-state/tasks/task-packs/P02-S03-T001.md && echo 'Ahora ejecuta en Claude Code: /next-slice P02-S03-T001'
+export CLAUDE_ACTIVE_TASK_ID=P02-S03-T001 CLAUDE_TASK_PACK=orchestrator-state/tasks/task-packs/P02-S03-T001.md && echo 'Ahora ejecuta en Claude Code: claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice P02-S03-T001"'
 ```
 
 Abre un terminal por task ready. En cada terminal:
@@ -274,7 +274,7 @@ export CLAUDE_ACTIVE_TASK_ID=<TASK_ID> CLAUDE_TASK_PACK=orchestrator-state/tasks
 /next-slice <TASK_ID>
 ```
 
-`/next-slice` hace el claim atómico después del plan humano. El planner enriquece `orchestrator-state/tasks/task-packs/<TASK_ID>.md`. Developer, official-docs-researcher, validator, tester y debugger deben leer ese pack por task, no el singleton legacy `orchestrator-state/memory/active-task.md`.
+`/next-slice` hace el claim atómico después del plan humano. El planner enriquece `orchestrator-state/tasks/task-packs/<TASK_ID>.md`. Developer, official-docs-researcher, validator, tester y debugger deben leer ese pack por `TASK_ID`.
 
 ## 11. Cierre de cada nodo
 
@@ -282,7 +282,7 @@ El cierre correcto de una task es:
 
 ```text
 planner
-  -> developer || official-docs-researcher
+  -> developer (+ official-docs-researcher si aplica)
   -> validator || tester
   -> debugger loop si falla
   -> tester pass
@@ -311,13 +311,13 @@ Al terminar una phase, ejecuta:
 
 El gate exige que todas las tasks de la phase estén `done`, que sus reports/evidence/handoffs existan, que no queden `pending_journey_verifications`, y que los journeys cerrados por esa phase estén `verified` o `waived`. Si falla, no abras la siguiente phase aunque el DAG tenga nodos ready.
 
-## 13. Diferencia entre legacy y DAG explícito
+## 13. DAG explícito obligatorio
 
-Legacy:
+Missing dependency column:
 
 ```text
 Coverage Registry sin Depends on
-bootstrap => mode=legacy_linear
+bootstrap => bootstrap error: missing dependency column (bloqueo operativo)
 una sola cadena secuencial
 /next-slice sin TASK_ID específico
 ```

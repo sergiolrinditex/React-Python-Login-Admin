@@ -7,7 +7,7 @@ allowed-tools: Read Write
 
 Before marking a task as `done`, verify ALL of the following:
 
-1. Task pack acceptance is covered. In DAG, use `orchestrator-state/tasks/task-packs/<TASK_ID>.md`; `orchestrator-state/memory/active-task.md` is legacy/advisory only and can belong to another terminal.
+1. Task pack acceptance is covered. Use `orchestrator-state/tasks/task-packs/<TASK_ID>.md`; implicit selector is removed from DAG-only mode and can belong to another terminal if present from migration.
 2. `validator` review exists and outcome = `approved`.
 3. `tester` run exists and outcome = `pass` (or explicitly waived with documented reason).
 4. Handoff file exists with sections from developer + validator + tester (+ debugger if used).

@@ -8,10 +8,9 @@ from pathlib import Path
 
 from common import (
     append_jsonl,
-    effective_active_task_id,
+    dag_worker_task_id,
     find_task,
     ledger_path,
-    load_active_task,
     load_registry,
     now_iso,
     project_root,
@@ -31,15 +30,9 @@ def main() -> int:
     if data.get("tool_name") not in {"Write", "Edit"}:
         return 0
 
-    active = load_active_task()
-    task_id = effective_active_task_id(active)
-    task = active
-    if task_id and task_id != active.get("id"):
-        # In DAG worker terminals the environment override is authoritative.
-        # Pull commands from registry for that node instead of from the global
-        # active-task singleton, which another terminal may have moved.
-        task = find_task(load_registry(), task_id) or active
-    commands = task.get("verification_commands", []) or []
+    task_id = dag_worker_task_id()
+    task = find_task(load_registry(), task_id) if task_id else None
+    commands = (task or {}).get("verification_commands", []) or []
     if not task_id or not commands:
         return 0
     lock_file = _lock_file()
@@ -66,7 +59,7 @@ def main() -> int:
         append_jsonl(ledger_path(), {
             "ts": now_iso(),
             "event": "async_test_run",
-            "active_task_id": task_id,
+            "task_id": task_id,
             "commands": commands,
             "log_file": str(log_file),
             "success": all(item["returncode"] == 0 for item in results),

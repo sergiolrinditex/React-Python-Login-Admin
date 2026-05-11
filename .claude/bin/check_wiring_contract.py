@@ -387,7 +387,7 @@ def validate(root: Path, require_new_template_columns: bool = False) -> dict[str
             for required_state in ("loading", "error", "success"):
                 if route.get("ui_states") and required_state not in ui_states:
                     warnings.append(f"route {route['route']} UI states do not mention {required_state}")
-        # Legacy base docs can map a route to a widget row rather than a route cell.
+        # Archived base docs can map a route to a widget row rather than a route cell.
         route_known = route["route"] in registry_routes or route.get("page") in registry_pages or route["route"] in checklist_text
         if not route_known:
             warnings.append(f"route/page in TECHNICAL_GUIDE not mapped in Coverage Registry: {route['route']} {route.get('page','')}")

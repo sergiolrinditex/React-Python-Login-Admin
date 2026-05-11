@@ -1,4 +1,4 @@
-"""promote_ready_tasks + choose_next_active_task — núcleo de la selección
+"""promote_ready_tasks + choose_next_scheduler_task — núcleo de la selección
 del planner. Si esto se rompe, el planner elegiría tasks con dependencias
 sin resolver o se quedaría bloqueado eligiéndose la misma siempre.
 """
@@ -49,9 +49,9 @@ def test_full_chain_of_promotions(seeded_registry):
             )
 
 
-def test_choose_next_active_picks_first_ready_in_phase_order(seeded_registry):
-    """choose_next_active_task respeta phase_order y elige la primera ready."""
-    phase, task = common.choose_next_active_task(common.load_registry())
+def test_test_choose_next_scheduler_picks_first_ready_in_phase_order(seeded_registry):
+    """choose_next_scheduler_task respeta phase_order y elige la primera ready."""
+    phase, task = common.choose_next_scheduler_task(common.load_registry())
     assert phase["id"] == "P00"
     assert task["id"] == "P00-S01-T001"
 
@@ -64,7 +64,7 @@ def test_choose_next_skips_done_phases(seeded_registry):
     reg = common.promote_ready_tasks(reg)
     common.save_registry(reg)
 
-    phase, task = common.choose_next_active_task(common.load_registry())
+    phase, task = common.choose_next_scheduler_task(common.load_registry())
     assert phase["id"] == "P01"
     assert task["id"] == "P01-S01-T001"
 
@@ -75,7 +75,7 @@ def test_choose_next_returns_none_when_all_done(seeded_registry):
         t["status"] = "done"
     common.save_registry(reg)
 
-    phase, task = common.choose_next_active_task(common.load_registry())
+    phase, task = common.choose_next_scheduler_task(common.load_registry())
     assert phase is None
     assert task is None
 
@@ -88,7 +88,7 @@ def test_task_in_progress_takes_priority_over_ready_in_later_phase(seeded_regist
     common.find_task(reg, "P00-S01-T001")["status"] = "in_progress"
     common.save_registry(reg)
 
-    _, task = common.choose_next_active_task(common.load_registry())
+    _, task = common.choose_next_scheduler_task(common.load_registry())
     assert task["id"] == "P00-S01-T001"
     assert task["status"] == "in_progress"
 

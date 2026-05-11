@@ -1,6 +1,6 @@
 ---
 description: Verificación humana-real post-slice. Hard reset del entorno (back + front + bbdd con carga de datos reales/proporcionados del slice), reproduce como usuario en el navegador, vigila logs front+back+bbdd en vivo, devuelve tabla de validación con URL, qué probar, descripción y resultado esperado. Agnóstico del stack.
-argument-hint: "[--task <TASK_ID>]  (omite para usar la tarea activa)"
+argument-hint: "<TASK_ID>|--task <TASK_ID>  (o terminal con CLAUDE_ACTIVE_TASK_ID exportado)"
 ---
 
 # /verify-slice
@@ -16,13 +16,13 @@ Antes de reconstruir contexto, verificar, decidir `pre-closer`/`post-closer`, sp
 ```text
 MODO DAG ACTIVO: production = explicit_dag.
 Unidad verificable = TASK_ID canónico del registry.
-No existe modo secuencial improvisado.
-No dependas de active-task singleton para decidir qué verificar si existe CLAUDE_ACTIVE_TASK_ID o --task.
+No existe modo DAG-disabled improvisado.
+No dependas de ningún singleton global para decidir qué verificar; en DAG-only se exige TASK_ID explícito.
 Usa siempre orchestrator-state/tasks/task-packs/<TASK_ID>.md como task pack en DAG.
 Todo Agent spawn desde verify-slice debe recibir TASK_ID, CLAUDE_TASK_PACK y el aviso production DAG mode. Esto incluye `screen-journey-reviewer`, `debugger` y `closer`.
 ```
 
-Si dudas si estás en DAG o legacy, para y consulta `./scripts/check-task-dag.sh --strict`. En producción `legacy_linear` es error operativo, no fallback. `/verify-slice` es el gate humano de un `TASK_ID` DAG concreto; no verifica una cola secuencial ni cierra slices implícitas.
+Si dudas si estás en DAG, para y consulta `./scripts/check-task-dag.sh --strict`. En producción la ausencia de `Depends on` es error operativo, no fallback. `/verify-slice` es el gate humano de un `TASK_ID` DAG concreto; no verifica una flujo no habilitado para DAG ni cierra slices implícitas.
 
 Te lanzas **después de que `tester` pasa limpio, antes de que `closer` haga commit** (modo pre-closer, el habitual). También puede lanzarse **tras `closer`** para re-verificar un slice ya commiteado (modo post-closer). Tu trabajo es convencerte a ti mismo (y al usuario) de que lo shipeado funciona de verdad, reproduciéndolo como un usuario humano en el navegador, con entorno fresco, datos reales/proporcionados cargados y logs en vivo. En modo pre-closer, si la slice queda verificada orquestas tú mismo al `closer` para commit atómico + workflow Git configurado; si encuentra issues, orquestas al `debugger`.
 
@@ -45,12 +45,12 @@ Te lanzas **después de que `tester` pasa limpio, antes de que `closer` haga com
 
 En paralelo:
 
-1. `orchestrator-state/tasks/runtime-state.json` → `active_task_id`, `last_worker`.
+1. `orchestrator-state/tasks/runtime-state.json` → `last_worker`, `last_event`, `pending_journey_verifications`; la identidad del verify viene sólo de `<TASK_ID>` o `CLAUDE_ACTIVE_TASK_ID`.
 2. `orchestrator-state/memory/PROGRESS.md` (bloque NOW + primer PREVIOUSLY).
-3. Si `--task <ID>` → usa ese ID.
+3. Usa `TASK_ID` sólo desde `--task <ID>`, argumento directo o `CLAUDE_ACTIVE_TASK_ID`. Si falta, PARA y pide un `TASK_ID` explícito.
 4. Evidence report del task si ya existe: `orchestrator-state/tasks/reports/<TASK_ID>.md` (solo existirá si `closer` ya corrió).
 5. Handoff: `orchestrator-state/tasks/handoffs/<TASK_ID>.md` (tiene las secciones developer/validator/tester — tiene que existir sí o sí).
-6. En modo DAG o con `--task <TASK_ID>`: `orchestrator-state/tasks/task-packs/<TASK_ID>.md`. No dependas de `orchestrator-state/memory/active-task.md`, porque otra terminal puede haberlo movido. Si el pack no existe o no menciona ese `TASK_ID`, aborta antes de verificar.
+6. `orchestrator-state/tasks/task-packs/<TASK_ID>.md`. No dependas de implicit selector; está eliminado del modo DAG en DAG. Si el pack no existe o no menciona ese `TASK_ID`, aborta antes de verificar.
 6. `docs/source-of-truth/*_TECHNICAL_GUIDE.md` — extrae: comando de arranque back (+ puerto), frontend (+ puerto/plataforma), comando migrate, comando de carga de datos, endpoint de health, flag de verbose logging.
 7. `docs/source-of-truth/*_TECHNICAL_GUIDE.md` §`Verification Data Contract` — identifica las filas que aplican por `TASK_ID`, `Journey refs`, pantalla o endpoint. Estas filas son obligatorias para decidir datos reales/proporcionados, datos proporcionados permitidos solo si cargan datos proporcionados y reset/cleanup.
 8. `instrucciones.md` → reglas de negocio relevantes al slice (las usarás en la tabla final).
@@ -217,7 +217,7 @@ Si aplica y `VERIFY_OUTCOME: verified`, spawnea **un único** subagente `screen-
 TASK_ID: <TASK_ID>
 CLAUDE_TASK_PACK: orchestrator-state/tasks/task-packs/<TASK_ID>.md
 MODO DAG ACTIVO: production = explicit_dag.
-No uses active-task singleton.
+No uses global state; exige `TASK_ID` explícito.
 Revisa UX_CONTRACT.md, Technical Guide, Implementation Checklist, handoff, verify-slice y evidencia.
 HTML preview/docs visuales son referencia/evidencia, no source-of-truth.
 Si el problema cabe en TASK_ID/Write set: OUTCOME: changes_requested; needs_debugger=yes; NO FU.
@@ -339,7 +339,7 @@ Recapitula al usuario el estado real (con la información de §5.bis si aplica):
 ¿Invoco a `closer` para escribir evidence report + commit atómico + workflow Git configurado (`./scripts/git-workflow.sh`) + cleanup de worktrees? (sí/no)
 ```
 
-- Si "sí" / "adelante" / "ok" / "dale" / "go" → primero ejecuta `./scripts/check-handoff-contract.sh <TASK_ID> --require-ready-for-close --require-verify-slice`. Solo si pasa —y, cuando aplique pantalla/journey, también pasa con `--require-screen-journey-review`— spawnea `closer` (un solo Agent call) con el `TASK_ID`, `CLAUDE_TASK_PACK=orchestrator-state/tasks/task-packs/<TASK_ID>.md` y el recordatorio literal `MODO DAG ACTIVO: production = explicit_dag; no uses active-task singleton para decidir qué cerrar`. Espera el trailer `OUTCOME: committed` + `NEXT_STATUS: done` + `PUSH_READY: yes`. Si vuelve `blocked`, reporta qué le falta al usuario.
+- Si "sí" / "adelante" / "ok" / "dale" / "go" → primero ejecuta `./scripts/check-handoff-contract.sh <TASK_ID> --require-ready-for-close --require-verify-slice`. Solo si pasa —y, cuando aplique pantalla/journey, también pasa con `--require-screen-journey-review`— spawnea `closer` (un solo Agent call) con el `TASK_ID`, `CLAUDE_TASK_PACK=orchestrator-state/tasks/task-packs/<TASK_ID>.md` y el recordatorio literal `MODO DAG ACTIVO: production = explicit_dag; cierra sólo el TASK_ID explícito y su CLAUDE_TASK_PACK`. Espera el trailer `OUTCOME: committed` + `NEXT_STATUS: done` + `PUSH_READY: yes`. Si vuelve `blocked`, reporta qué le falta al usuario.
 - Si "no" → informa al usuario:
   > *"Slice verificada pero sin commit. La sección `## verify-slice` con `VERIFY_OUTCOME: verified` ya está en el handoff (más `## verify-journey` si fue inline) — cuando quieras cerrar, relanza `/verify-slice` o dime `cierra <TASK_ID>` directamente."*
 

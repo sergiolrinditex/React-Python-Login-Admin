@@ -2,9 +2,9 @@
 
 Coverage:
   - bump_spawn_count increments per task and per agent.
-  - The counter resets when the active task changes (no leakage between slices).
+  - The counter resets when the DAG task changes (no leakage between slices).
   - Budget exceedance is logged to orchestrator-state/hook-errors.log so SessionStart shows it.
-  - SessionStart context shows the count vs. budget for the active task.
+  - SessionStart context shows the count vs. budget for the DAG task.
 """
 from __future__ import annotations
 
@@ -59,11 +59,10 @@ def _seed():
         "tasks": [{"id": "P00-S01-T001", "title": "x", "phase_id": "P00",
                    "step_id": "P00-S01", "status": "in_progress", "depends_on": []}],
         "journeys": [],
+        "task_dag": {"mode": "explicit_dag"},
     })
     common.save_runtime_state({
         "generated_at": common.now_iso(),
-        "active_phase_id": "P00",
-        "active_task_id": "P00-S01-T001",
         "last_worker": None,
         "last_event": None,
         "pending_journey_verifications": [],
@@ -96,7 +95,7 @@ class BumpSpawnCountTests(unittest.TestCase):
         finally:
             td.cleanup()
 
-    def test_bump_resets_when_active_task_changes(self):
+    def test_bump_keeps_independent_dag_task_counters(self):
         root, td = _setup()
         try:
             with _Sandbox(root):
@@ -104,12 +103,11 @@ class BumpSpawnCountTests(unittest.TestCase):
                 _seed()
                 common.bump_spawn_count("P00-S01-T001", "developer")
                 common.bump_spawn_count("P00-S01-T001", "validator")
-                # New task — counter for previous task drops automatically.
+                # New DAG task — counters may coexist for independent terminals.
                 self.assertEqual(common.bump_spawn_count("P00-S01-T002", "developer"), 1)
                 state = common.load_runtime_state()
                 counts = state["spawns_in_current_slice"]
-                self.assertNotIn("P00-S01-T001", counts,
-                    "stale task counters must be cleared on slice change")
+                self.assertEqual(counts["P00-S01-T001"], 2)
                 self.assertEqual(counts["P00-S01-T002"], 1)
         finally:
             td.cleanup()
@@ -161,7 +159,7 @@ class SubagentStopBumpsCounterTests(unittest.TestCase):
                     hook.main()
 
                 self.assertEqual(common.get_spawn_count("P00-S01-T001"), 1,
-                    "SubagentStop must bump the counter for the active task")
+                    "SubagentStop must bump the counter for the DAG task")
         finally:
             td.cleanup()
 
@@ -205,21 +203,12 @@ class SessionStartShowsBudgetTests(unittest.TestCase):
             with _Sandbox(root):
                 import common
                 _seed()
-                # Save active-task so SessionStart picks it up.
-                common.save_active_task({
-                    "id": "P00-S01-T001",
-                    "title": "x",
-                    "status": "in_progress",
-                    "phase_id": "P00",
-                    "acceptance": [],
-                    "allowed_paths": [],
-                    "verification_commands": [],
-                })
                 common.bump_spawn_count("P00-S01-T001", "developer")
                 common.bump_spawn_count("P00-S01-T001", "validator")
 
                 import hook_session_context as session_hook
-                ctx = session_hook.build_context()
+                with mock.patch.dict(os.environ, {"CLAUDE_ACTIVE_TASK_ID": "P00-S01-T001"}, clear=False):
+                    ctx = session_hook.build_context()
                 self.assertIn("Spawns this slice: 2/20", ctx)
         finally:
             td.cleanup()
@@ -230,16 +219,12 @@ class SessionStartShowsBudgetTests(unittest.TestCase):
             with _Sandbox(root):
                 import common
                 _seed()
-                common.save_active_task({
-                    "id": "P00-S01-T001", "title": "x", "status": "in_progress",
-                    "phase_id": "P00", "acceptance": [], "allowed_paths": [],
-                    "verification_commands": [],
-                })
                 for i in range(20):
                     common.bump_spawn_count("P00-S01-T001", f"a{i}")
 
                 import hook_session_context as session_hook
-                ctx = session_hook.build_context()
+                with mock.patch.dict(os.environ, {"CLAUDE_ACTIVE_TASK_ID": "P00-S01-T001"}, clear=False):
+                    ctx = session_hook.build_context()
                 self.assertIn("over budget", ctx)
 
 

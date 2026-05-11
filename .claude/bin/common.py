@@ -100,7 +100,7 @@ def project_root() -> Path:
          main repo's ``orchestrator-state/``.
       3. Walk up from this file looking for a ``.git`` marker. A directory
          marker -> repo root. A file marker -> main repo (worktree-aware).
-      4. Fallback: ``parents[2]`` of this file (legacy behaviour for a zip not
+      4. Fallback: ``parents[2]`` of this file (zip-layout fallback for a zip not
          yet initialized as a git repo).
     """
     explicit = os.environ.get("CLAUDE_ORCHESTRATOR_ROOT")
@@ -109,8 +109,8 @@ def project_root() -> Path:
     env = os.environ.get("CLAUDE_PROJECT_DIR")
     if env:
         return _resolve_main_repo(Path(env).resolve())
-    legacy_default = Path(__file__).resolve().parents[2]
-    return _resolve_main_repo(legacy_default)
+    archived_default = Path(__file__).resolve().parents[2]
+    return _resolve_main_repo(archived_default)
 
 
 def claude_dir() -> Path:
@@ -123,7 +123,7 @@ DEFAULT_JOURNEY_GATE_MODE = "frontier"
 # Tasks in these statuses own their declared conflict groups/write-set.
 # Plain `blocked` is dependency-blocked by default and must NOT block unrelated waves;
 # active_conflict_blockers() treats `blocked` as a blocker only when its deps are already satisfied.
-SCHEDULER_ACTIVE_STATUSES = {"claimed", "in_progress", "validator_tester_pending", "review_pending", "test_pending", "qa_pending", "needs_debug", "ready_for_close"}
+SCHEDULER_ACTIVE_STATUSES = {"claimed", "in_progress", "validator_tester_pending", "needs_debug", "ready_for_close"}
 NEUTRAL_CONFLICT_VALUES = {"", "-", "—", "none", "n/a", "na", "null", "sin conflicto", "sin conflictos", "read-only", "readonly", "no-write", "no-write-set"}
 
 
@@ -157,11 +157,8 @@ def tasks_dir() -> Path:
 def task_packs_dir() -> Path:
     """Per-task context packs used by DAG worker terminals.
 
-    ``orchestrator-state/memory/active-task.md`` is a legacy singleton and can
-    be overwritten by another terminal during explicit DAG execution. A worker
-    terminal must pass ``orchestrator-state/tasks/task-packs/<TASK_ID>.md`` to
-    subagents, so developer/tester/validator read an immutable pack scoped to
-    the claimed node.
+    The per-task pack is the production DAG authority. DAG-only execution has no
+    global task/implicit selector.
     """
     return tasks_dir() / "task-packs"
 
@@ -218,12 +215,12 @@ def ledger_path() -> Path:
     return tasks_dir() / "ledger.jsonl"
 
 
-def active_phase_json_path() -> Path:
-    return memory_dir() / "active-phase.json"
+def bash_ledger_path() -> Path:
+    # Runtime-only Bash observability. This file is intentionally ignored by git
+    # so Claude Code PostToolUse Bash hooks cannot dirty the worktree after a
+    # closer commit/push. Non-Bash lifecycle events still use ledger.jsonl.
+    return tasks_dir() / "bash-ledger.jsonl"
 
-
-def active_task_json_path() -> Path:
-    return memory_dir() / "active-task.json"
 
 
 def ensure_parent(path: Path) -> None:
@@ -508,24 +505,21 @@ def load_runtime_state() -> dict[str, Any]:
     """Read runtime-state.json with safe defaults.
 
     Adds back-compat keys (pending_journey_verifications, last_journey_verified)
-    if a legacy state file (predating the journey-verification feature) lacks
+    if a older runtime-state file (predating the journey-verification feature) lacks
     them. Callers that expect lists/strings can rely on the defaults — no
     KeyError, no None-vs-list confusion.
     """
     state = read_json(runtime_state_path(), {})
     defaults = {
         "generated_at": None,
-        "active_phase_id": None,
-        "active_task_id": None,
         "last_worker": None,
         "last_event": None,
         "pending_journey_verifications": [],
         "journey_gate_mode": DEFAULT_JOURNEY_GATE_MODE,
         "last_journey_verified": None,
         # Spawn-budget invariant: mechanical counter the hook bumps on every
-        # SubagentStop. The planner reads this (active_task_id -> count) and
-        # refuses CONTEXT_READY when over `spawn_budget`. Reset is automatic
-        # when the active task moves.
+        # SubagentStop. The planner reads this (TASK_ID -> count) and
+        # refuses CONTEXT_READY when over `spawn_budget`. Reset is explicit per DAG task.
         "spawn_budget": DEFAULT_SPAWN_BUDGET,
         "spawns_in_current_slice": {},
         # Follow-up proposals created by validator/tester when they discover
@@ -548,11 +542,11 @@ def normalize_journey_gate_mode(value: Any) -> str:
     """Return the configured journey gate mode.
 
     ``frontier`` is the production default: pending journey verifications only
-    defer tasks that reference those journeys. ``strict`` preserves the legacy
+    defer tasks that reference those journeys. ``strict`` preserves the archived
     global block for teams that want a hard sequential journey gate.
     """
     raw = str(value or DEFAULT_JOURNEY_GATE_MODE).strip().lower()
-    if raw in {"strict", "legacy", "global", "global_block"}:
+    if raw in {"strict", "archived", "global", "global_block"}:
         return "strict"
     return "frontier"
 
@@ -583,7 +577,7 @@ def task_journey_refs(task: dict[str, Any]) -> list[str]:
     """Collect all journey references that can make a task subject to a gate.
 
     The Coverage Registry normally provides ``journey_refs``. The extra fields
-    are supported for manual follow-up tasks and legacy generated YAML.
+    are supported for manual follow-up tasks and generated YAML.
     """
     refs: list[str] = []
     for key in ("journey_refs", "journey_refs_raw", "depends_on_journeys", "journey_gate_refs"):
@@ -660,10 +654,8 @@ def bump_spawn_count(task_id: str | None, agent_type: str | None) -> int:
     the slice budget, because the budget is about CONTEXT consumption, not
     state ownership.
 
-    Reset semantics: when ``task_id`` differs from the previously tracked
-    active task, the counter dict is wiped and rebuilt fresh. This means the
-    moment the planner moves to the next slice, the previous slice's counts
-    drop off automatically.
+    DAG semantics: counters are keyed by explicit TASK_ID. Several task counters
+    may coexist safely while independent slices run in parallel.
 
     Returns 0 when ``task_id`` is None (defensive — never raises).
     """
@@ -674,11 +666,9 @@ def bump_spawn_count(task_id: str | None, agent_type: str | None) -> int:
         counts = state.get("spawns_in_current_slice") or {}
         if not isinstance(counts, dict):
             counts = {}
-        # Sequential legacy mode keeps only one task counter at a time. DAG
-        # worker terminals set CLAUDE_ACTIVE_TASK_ID, so several task counters
-        # may coexist safely while independent slices run in parallel.
-        if not active_task_env_override() and task_id not in counts and counts:
-            counts = {}
+        # DAG worker terminals set CLAUDE_ACTIVE_TASK_ID, so several task
+        # counters may coexist safely while independent slices run in parallel.
+        # Without CLAUDE_ACTIVE_TASK_ID, callers should avoid slice-specific use.
         new_count = int(counts.get(task_id, 0)) + 1
         counts[task_id] = new_count
         if agent_type:
@@ -725,92 +715,30 @@ def reset_spawn_counter(task_id: str | None = None) -> None:
         save_runtime_state(state)
 
 
-def load_active_task() -> dict[str, Any]:
-    return read_json(active_task_json_path(), {"id": None, "title": None, "status": "not_initialized", "allowed_paths": [], "verification_commands": []})
+
+def registry_is_explicit_dag(registry: dict[str, Any] | None = None) -> bool:
+    try:
+        registry = registry if registry is not None else load_registry()
+        return ((registry or {}).get("task_dag") or {}).get("mode") == "explicit_dag"
+    except Exception:
+        return False
 
 
-def active_task_env_override() -> str | None:
-    """Return the per-terminal task override for DAG workers, if present.
-
-    Parallel DAG execution may run several Claude Code terminals at once. The
-    singleton ``active-task.json`` remains useful for the default sequential
-    session, but worker terminals must be able to pin hook accounting to their
-    own slice. ``CLAUDE_ACTIVE_TASK_ID`` is the canonical override;
-    ``CLAUDE_TASK_ID`` is accepted as a short alias.
-    """
+def dag_worker_task_id() -> str | None:
+    """Return the explicit per-terminal TASK_ID for DAG workers, if present."""
     raw = (os.environ.get("CLAUDE_ACTIVE_TASK_ID") or os.environ.get("CLAUDE_TASK_ID") or "").strip()
     if not raw or raw.lower() in {"none", "null", "n/a", "na", "-", "—"}:
         return None
     return raw
 
 
-def effective_active_task_id(active: dict[str, Any] | None = None) -> str | None:
-    """Task id that hooks should use for this process.
+def effective_worker_task_id() -> str | None:
+    """Return the explicit DAG worker TASK_ID from the terminal environment.
 
-    Priority: explicit per-terminal DAG override, then the legacy singleton
-    active task. This keeps all existing sequential behavior unchanged while
-    making spawn-budget and ledger accounting safe when several ready slices
-    are executed from different terminals.
+    Production is DAG-only: this function never reads singleton task/phase
+    files and never infers a task from runtime-state.
     """
-    override = active_task_env_override()
-    if override:
-        return override
-    if active is None:
-        active = load_active_task() or {}
-    task_id = str(active.get("id") or "").strip()
-    if not task_id or task_id.lower() in {"none", "null", "n/a", "na", "complete", "-", "—"}:
-        return None
-    return task_id
-
-
-def save_active_task(data: dict[str, Any]) -> None:
-    write_json(active_task_json_path(), data)
-    md = [
-        "# Active task",
-        "",
-        f"- ID: {data.get('id')}",
-        f"- Title: {data.get('title')}",
-        f"- Status: {data.get('status')}",
-        f"- Phase: {data.get('phase_id')}",
-        "",
-        "## Acceptance",
-    ]
-    for item in data.get("acceptance", []):
-        md.append(f"- {item}")
-    md.extend(["", "## Allowed paths"])
-    for item in data.get("allowed_paths", []):
-        md.append(f"- {item}")
-    md.extend(["", "## DAG conflict guardrails"])
-    md.append("### Conflict groups")
-    for item in data.get("conflict_groups", []):
-        md.append(f"- {item}")
-    if not data.get("conflict_groups"):
-        md.append("- —")
-    md.append("### Write set")
-    for item in data.get("write_set", []):
-        md.append(f"- {item}")
-    if not data.get("write_set"):
-        md.append("- —")
-    md.extend(["", "## Verification commands"])
-    for item in data.get("verification_commands", []):
-        md.append(f"- `{item}`")
-    write_text(memory_dir() / "active-task.md", "\n".join(md) + "\n")
-
-
-def save_active_phase(data: dict[str, Any]) -> None:
-    write_json(active_phase_json_path(), data)
-    md = [
-        "# Active phase",
-        "",
-        f"- ID: {data.get('id')}",
-        f"- Title: {data.get('title')}",
-        f"- Status: {data.get('status')}",
-        "",
-        "## Tasks",
-    ]
-    for item in data.get("task_ids", []):
-        md.append(f"- {item}")
-    write_text(memory_dir() / "active-phase.md", "\n".join(md) + "\n")
+    return dag_worker_task_id()
 
 
 def find_task(registry: dict[str, Any], task_id: str | None) -> dict[str, Any] | None:
@@ -907,7 +835,7 @@ def write_patterns_conflict(left: str, right: str) -> bool:
 
 
 def heuristic_conflict_groups(task: dict[str, Any]) -> list[str]:
-    """Fallback groups for legacy rows that do not declare conflict metadata."""
+    """Fallback groups for rows that do not declare conflict metadata."""
     title = str(task.get("title") or "")
     out: list[str] = []
     m = re.search(r"\b(GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS)\s+([^\s`|,;]+)", title, re.I)
@@ -958,7 +886,7 @@ def task_conflict_reasons(task: dict[str, Any], other: dict[str, Any]) -> list[s
 
 
 def active_conflict_blockers(registry: dict[str, Any], task: dict[str, Any], *, active_statuses: set[str] | None = None) -> list[dict[str, Any]]:
-    """Return active tasks that conflict with ``task`` under declared metadata.
+    """Return DAG tasks that conflict with ``task`` under declared metadata.
 
     Used by claim_task.py as a final safety net. Even if a user manually starts
     two terminals without going through /next-wave, the second claim is denied
@@ -1018,14 +946,14 @@ def promote_ready_tasks(registry: dict[str, Any]) -> dict[str, Any]:
 
         last_blocker = task.get("last_blocker")
         conflict_block = (
-            task.get("blocked_reason") == "conflict_with_active_task"
-            or (isinstance(last_blocker, dict) and last_blocker.get("type") == "conflict_with_active_task")
+            task.get("blocked_reason") == "conflict_with_worker_task"
+            or (isinstance(last_blocker, dict) and last_blocker.get("type") == "conflict_with_worker_task")
         )
         if conflict_block:
             blockers = active_conflict_blockers(registry, task)
             if blockers:
                 task["blocked_by"] = [str(item.get("task_id")) for item in blockers if item.get("task_id")]
-                task["last_blocker"] = {"type": "conflict_with_active_task", "blockers": blockers, "ts": now_iso()}
+                task["last_blocker"] = {"type": "conflict_with_worker_task", "blockers": blockers, "ts": now_iso()}
                 continue
             task.pop("blocked_reason", None)
             task.pop("blocked_by", None)
@@ -1039,7 +967,7 @@ def promote_ready_tasks(registry: dict[str, Any]) -> dict[str, Any]:
     return refresh_phase_statuses(registry)
 
 
-def choose_next_active_task(registry: dict[str, Any]) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
+def choose_next_scheduler_task(registry: dict[str, Any]) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
     registry = promote_ready_tasks(registry)
     phase_order = registry.get("phase_order", [])
     phases = {p["id"]: p for p in registry.get("phases", [])}
@@ -1054,25 +982,20 @@ def choose_next_active_task(registry: dict[str, Any]) -> tuple[dict[str, Any] | 
             if task.get("status") == "ready":
                 return phase, task
         for task in phase_tasks:
-            if task.get("status") in {"claimed", "in_progress", "review_pending", "test_pending", "qa_pending", "needs_debug", "blocked"}:
+            if task.get("status") in {"claimed", "in_progress", "needs_debug", "blocked"}:
                 return phase, task
     return None, None
 
 
-def sync_active_state_from_registry(registry: dict[str, Any]) -> None:
-    phase, task = choose_next_active_task(registry)
-    if phase:
-        save_active_phase(phase)
-    else:
-        save_active_phase({"id": None, "title": None, "status": "complete", "task_ids": []})
-    if task:
-        save_active_task(task)
-    else:
-        save_active_task({"id": None, "title": None, "status": "complete", "allowed_paths": [], "verification_commands": []})
+def sync_runtime_state_from_registry(registry: dict[str, Any]) -> None:
+    """Persist runtime housekeeping after registry status changes.
+
+    DAG-only mode has no global DAG task/implicit selector. This function keeps
+    runtime metadata fresh without choosing work for terminals.
+    """
     state = load_runtime_state()
     state["generated_at"] = now_iso()
-    state["active_phase_id"] = phase.get("id") if phase else None
-    state["active_task_id"] = task.get("id") if task else None
+    state.setdefault("last_event", "registry_synced")
     save_runtime_state(state)
 
 
@@ -1089,11 +1012,11 @@ def update_task_status(task_id: str, status: str, agent: str | None = None, note
             task["last_note"] = note
         # Write registry + runtime-state atomically under the same lock window.
         save_registry(promote_ready_tasks(registry))
-        sync_active_state_from_registry(load_registry())
+        sync_runtime_state_from_registry(load_registry())
 
 
 def mark_task_blocked(task_id: str, reason: str, agent: str | None = None) -> None:
-    """Mark a task as blocked with a reason and auto-skip it in the active queue.
+    """Mark a task as blocked with a reason and auto-skip it in the scheduler queue.
 
     Used by the debugger when it hits the max-retry cap, and by any worker
     that raises a non-recoverable condition. Preserves the reason in
@@ -1109,15 +1032,15 @@ def mark_task_blocked(task_id: str, reason: str, agent: str | None = None) -> No
         if agent:
             task["last_updated_by"] = agent
         save_registry(promote_ready_tasks(registry))
-        sync_active_state_from_registry(load_registry())
+        sync_runtime_state_from_registry(load_registry())
 
 
 def has_unresolved_doc_discrepancies() -> tuple[bool, list[str]]:
     """Scan orchestrator-state/memory/official-doc-notes/ for unresolved notes.
 
     A note is considered unresolved if its body does not contain a line
-    starting with `RESOLVED:` (case-insensitive). The PreToolUse
-    docs-discrepancy hook uses this to block Write/Edit while there is an
+    starting with `RESOLVED` (canonical form: `RESOLVED: <how>`; date-prefixed form `RESOLVED 2026-...` is accepted). The PreToolUse
+    docs-discrepancy hook uses this to warn on Write/Edit while there is an
     open reconciliation pending.
     """
     notes_dir = memory_dir() / "official-doc-notes"
@@ -1129,9 +1052,26 @@ def has_unresolved_doc_discrepancies() -> tuple[bool, list[str]]:
             text = note.read_text(encoding="utf-8", errors="replace")
         except Exception:
             continue
-        if not re.search(r"(?im)^\s*RESOLVED\s*:", text):
+        if not has_resolved_doc_discrepancy_marker(text):
             unresolved.append(relpath(note))
     return (len(unresolved) > 0), unresolved
+
+
+
+
+DOC_DISCREPANCY_RESOLVED_RE = re.compile(r"(?im)^\s*RESOLVED(?:\s*:|\s+\d{4}-\d{2}-\d{2}\b|\s+[-–—])")
+
+
+def has_resolved_doc_discrepancy_marker(text: str) -> bool:
+    """Return True when an official-doc discrepancy note is marked resolved.
+
+    Canonical notes should use `RESOLVED: <how>`, but older agents sometimes
+    wrote `RESOLVED 2026-05-11 ...`. Accept that date form, plus
+    `RESOLVED - ...`, so SessionStart/PreToolUse do not keep warning after the
+    code has actually been reconciled. A bare `RESOLVED` without detail is not
+    accepted; every agent should leave an explanation.
+    """
+    return bool(DOC_DISCREPANCY_RESOLVED_RE.search(text or ""))
 
 
 def run_commands(commands: list[str], cwd: Path | None = None, timeout: int = 900) -> list[dict[str, Any]]:
@@ -1200,11 +1140,9 @@ def _journey_task_statuses(registry: dict[str, Any]) -> dict[str, str]:
 def journey_completion_task_ids(registry: dict[str, Any], journey: dict[str, Any]) -> list[str]:
     """Return the DAG terminal task IDs for one journey.
 
-    In the old linear orchestrator, a journey closed at ``task_ids[-1]``. In an
-    explicit DAG that is unsafe: the Slices cell may be expanded from a range, a
-    step ref, or a manually ordered list, and several independent terminal nodes
-    can exist. The robust completion frontier is the set of journey tasks with
-    no outgoing dependency to another task in the same journey.
+    In a DAG, a journey may have several terminal nodes. The robust completion
+    frontier is the set of journey tasks with no outgoing dependency to another
+    task in the same journey.
     """
     task_ids = [str(t) for t in (journey.get("task_ids") or []) if t]
     if not task_ids:
@@ -1219,7 +1157,7 @@ def journey_completion_task_ids(registry: dict[str, Any], journey: dict[str, Any
             frontier.append(tid)
     if frontier:
         return frontier
-    # Fallback for legacy registries without task_dag metadata.
+    # Fallback for registries without task_dag metadata.
     return [task_ids[-1]]
 
 
@@ -1232,7 +1170,7 @@ def journeys_closing_at_task(registry: dict[str, Any], task_id: str) -> list[str
     - the journey is not already verified/waived;
     - every other task in that journey is already ``done``.
 
-    This works for legacy linear task lists, explicit DAG ranges, and unordered
+    This works for task lists, explicit DAG ranges, and unordered
     Journey Matrix cells. It also avoids the classic ``task_ids[-1]`` bug where
     the wrong node was treated as the journey closer.
     """

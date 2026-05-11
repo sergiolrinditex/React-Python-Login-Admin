@@ -38,7 +38,7 @@ def test_lock_reentrancy_does_not_deadlock(tmp_project):
 
 
 def test_update_task_status_reentrancy_under_lock(seeded_registry):
-    """update_task_status toma lock; sync_active_state_from_registry corre
+    """update_task_status toma lock; sync_runtime_state_from_registry corre
     dentro y vuelve a pedir locks de runtime-state. Si la reentrancy estuviera
     rota, esto deadlockearía."""
     common.update_task_status("P00-S01-T001", "in_progress", agent="developer")

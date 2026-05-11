@@ -41,7 +41,7 @@ Lee PROGRESS.md FIRST:
 - Endpoints/rutas implementados (no debuguees lo que no existe todavía).
 - Tests count antes del fallo.
 
-Después lee el `TASK_PACK` de la slice (`orchestrator-state/tasks/task-packs/<TASK_ID>.md` en DAG; fallback legacy `orchestrator-state/memory/active-task.md`) y el handoff del developer + apéndices de validator + tester. Si el pack/handoff no coinciden con el `TASK_ID`, bloquea por riesgo de corrupción. Identifica la hipótesis principal.
+Después lee el `TASK_PACK` de la slice (`orchestrator-state/tasks/task-packs/<TASK_ID>.md`) y el handoff del developer + apéndices de validator + tester. En producción DAG no uses implicit selector. Si el pack/handoff no coinciden con el `TASK_ID`, bloquea por riesgo de corrupción. Identifica la hipótesis principal.
 
 ## Límite de ciclos
 

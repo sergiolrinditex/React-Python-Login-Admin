@@ -18,7 +18,7 @@ The project is governed by the canonical source-of-truth set in `docs/source-of-
 4. `STACK_PROFILE.yaml` — stack-specific paths, commands, visual-token enforcer and Git workflow.
 5. `UX_CONTRACT.md` — personas, screen inventory, UI states and UX verification rules.
 
-Legacy 3-doc projects remain readable for compatibility, but production projects should use all five files. If any source-of-truth file is missing, duplicated, stale or contradictory — stop and repair the contract first.
+If any source-of-truth file is missing, duplicated, stale or contradictory — stop and repair the contract first.
 
 ## Main-thread orchestrator invariant
 
@@ -42,10 +42,12 @@ Every phase produces a VISIBLE, FUNCTIONAL, VERIFIABLE deliverable. Never build 
 ```
 ── /next-slice pipeline (pausa en tester pass) ──
 1. planner                               (planning, context curation and technical analysis)
-2. developer ‖ official-docs-researcher  [PARALLEL — one message, two Agent calls]
-                                          official-docs-researcher ALWAYS runs (cache keeps it ≤5s
-                                          on shallow pass). Safety net for patterns the planner
-                                          missed. On discrepancy → pauses developer, reconciles.
+2. developer (+ official-docs-researcher only when needed)
+                                          official-docs-researcher runs only for new/uncertain
+                                          external APIs, libraries, security, AI/RAG/MCP, streaming,
+                                          DB/deploy behavior or planner `NEEDS_OFFICIAL_DOCS: yes`.
+                                          When invoked, ask 1–5 concrete questions and use
+                                          Context7/MCP/cache before official WebFetch/WebSearch.
 3. validator ‖ tester                    [PARALLEL — one message, two Agent calls]
 4. debugger                              [if tester fails OR validator requests changes → back to step 3]
    ── /next-slice termina aquí, no invoca closer ──
@@ -82,7 +84,7 @@ Every phase produces a VISIBLE, FUNCTIONAL, VERIFIABLE deliverable. Never build 
 
 ## DAG wave mode — production explicit DAG
 
-Production mode is `explicit_dag`. The bootstrap materializes DAG mode when the Coverage Registry in `*_IMPLEMENTATION_CHECKLIST.md` contains a dependency column named `Depends on`, `Dependencies`, `Deps`, `After`, `Blocked by` or `Dependencias`. In that case, each row is a node and the dependency cell is the source-of-truth adjacency list. If bootstrap falls back to `legacy_linear`, do not open workers as a normal production run; repair the Coverage Registry and refresh. Blank / `—` means a root node. Accepted refs: full `TASK_ID`, ranges (`P03-S02-T001..T004`), step refs (`P03-S02`), phase refs (`P03`), or `previous`.
+Production mode is `explicit_dag`. The bootstrap materializes DAG mode when the Coverage Registry in `*_IMPLEMENTATION_CHECKLIST.md` contains a dependency column named `Depends on`, `Dependencies`, `Deps`, `After`, `Blocked by` or `Dependencias`. In that case, each row is a node and the dependency cell is the source-of-truth adjacency list. If the dependency column is missing, do not open workers; repair the Coverage Registry and refresh. Blank / `—` means a root node. Accepted refs: full `TASK_ID`, ranges (`P03-S02-T001..T004`), step refs (`P03-S02`), phase refs (`P03`), or `previous`.
 
 Derived graph artifacts:
 
@@ -96,17 +98,17 @@ The matrix is derived, not authored. To change ordering or parallelism, edit onl
 
 For large products, the Coverage Registry is cumulative: `Product increment` labels `v0`, `v1`, `v2`, ... and `Build state` keeps already-built rows at `done` while new rows remain `planned`. This preserves full product context without rebuilding closed increments.
 
-Parallel execution uses separate terminals, not extra agent types. Run `/next-wave` to list ready independent tasks, then start one terminal per selected task with both `CLAUDE_ACTIVE_TASK_ID=<TASK_ID>` and `CLAUDE_TASK_PACK=orchestrator-state/tasks/task-packs/<TASK_ID>.md`, then run `/next-slice <TASK_ID>`. The task environment is critical: hooks use `CLAUDE_ACTIVE_TASK_ID` for spawn budget, ledger, session context and SubagentStop accounting; agents use the per-task pack so memory remains scoped to the correct slice even if another terminal moves the legacy `active-task.json` / `active-task.md` pointers. In explicit DAG mode, `orchestrator-state/memory/active-task.md` is advisory only and must never be the only task pack passed to subagents.
+Parallel execution uses separate terminals, not extra agent types. Run `/next-wave` to list ready independent tasks, then start one terminal per selected task with both `CLAUDE_ACTIVE_TASK_ID=<TASK_ID>` and `CLAUDE_TASK_PACK=orchestrator-state/tasks/task-packs/<TASK_ID>.md`, then run `/next-slice <TASK_ID>`. The task environment is critical: hooks use `CLAUDE_ACTIVE_TASK_ID` for spawn budget, ledger, session context and SubagentStop accounting; agents use the per-task pack so memory remains scoped to the correct slice. `CLAUDE_ACTIVE_TASK_ID` + `CLAUDE_TASK_PACK` are the only DAG task authority.
 
-All existing gates still apply in each node: planner writes/enriches `orchestrator-state/tasks/task-packs/<TASK_ID>.md`, developer + official-docs-researcher run with that pack, validator + tester read that same pack, debugger loops on the same `TASK_ID`, then `/verify-slice`, closer, journey verification. A task is promotable only when every `depends_on` predecessor is `done`; a task is claimable only when no active task conflicts via `Conflict group`/`Write set`; the planner still respects phase order, phase gates and pending journey blocks.
+All existing gates still apply in each node: planner writes/enriches `orchestrator-state/tasks/task-packs/<TASK_ID>.md`, developer + official-docs-researcher run with that pack, validator + tester read that same pack, debugger loops on the same `TASK_ID`, then `/verify-slice`, closer, journey verification. A task is promotable only when every `depends_on` predecessor is `done`; a task is claimable only when no DAG task conflicts via `Conflict group`/`Write set`; the planner still respects phase order, phase gates and pending journey blocks.
 
 ## Central runtime contract
 
-`.claude/orchestrator-contract.json` is the compact machine-readable index for what each agent may write, which files are generated core state, what trailer fields are required, and which UX fields must reach every UI task pack. The human-readable mirror is `.claude/rules/05-runtime-write-contract.md`.
+`.claude/orchestrator-contract.json` is the compact machine-readable index for what each agent may write, which files are generated core state, what trailer fields are required, and which UX fields must reach every UI task pack. The human-readable mirror is `.claude/rules/05-runtime-write-contract.md`. Hooks enforce code + `orchestrator-contract.json`; they do not parse `.claude/rules/*.md` as runtime policy. If you edit rules/agents/contract during a live Claude session, restart or `/clear` before relying on the new instructions so agents and hooks do not reason from different snapshots.
 
 Use this to keep prompts shorter: agents do not need to rediscover write policy. They load the contract, then write only their own slice artifacts. In DAG mode every artifact containing a `TASK_ID` must match `CLAUDE_ACTIVE_TASK_ID`; hooks enforce that mechanically.
 
-`docs/product-baseline/` is the built baseline snapshot for the next ChatGPT planning pass. Closer runs `./scripts/sync-product-baseline.sh sync --version <increment> --task <TASK_ID>` before commit so existing baseline + v1 + v2 context is never lost.
+`docs/product-baseline/` is the built baseline snapshot for the next ChatGPT planning pass. Closer runs `./scripts/sync-product-baseline.sh sync --version <increment> --task <TASK_ID>` after verified `/verify-slice` handoff and before commit so existing baseline + v1 + v2 context is never lost.
 
 ## Agents
 
@@ -138,7 +140,7 @@ Four hook groups are wired in `settings.json`. They are intentionally small and 
 
 - `PreToolUse` on `Agent` → `hook_spawn_budget.py`. Enforces the mechanical max-20-spawns-per-slice budget. On the 21st Agent call it returns `permissionDecision: deny`, so the invariant is code-enforced instead of cultural.
 - `PreToolUse` on `Write|Edit|MultiEdit|NotebookEdit` → `hook_write_scope_guard.py` first, then `hook_docs_discrepancy_check.py`. The write-scope guard blocks DAG-corrupting writes: static `.claude/` edits during app execution, cross-task handoff/evidence/report/task-pack writes, source-of-truth edits while a TASK_ID is active, and direct edits to generated core state. The docs-discrepancy hook then warns about unresolved official-doc notes. If `orchestrator-state/memory/official-doc-notes/` has unresolved notes, it injects a visible warning so Claude reconciles before continuing. It is non-blocking by design; MCP/browser tools are excluded by the matcher.
-- `PostToolUse` on `Write|Edit|MultiEdit|Bash|NotebookEdit` → `hook_update_ledger.py`. Logs every tool use to `orchestrator-state/tasks/ledger.jsonl`; in DAG worker terminals the log is scoped to `CLAUDE_ACTIVE_TASK_ID`.
+- `PostToolUse` on `Write|Edit|MultiEdit|Bash|NotebookEdit` → `hook_update_ledger.py`. Logs Write/Edit/MultiEdit/NotebookEdit events to local `orchestrator-state/tasks/ledger.jsonl` and Bash events to local `orchestrator-state/tasks/bash-ledger.jsonl`; in DAG worker terminals records are scoped to `CLAUDE_ACTIVE_TASK_ID`. Both ledgers are runtime-only/ignored by Git so Bash hooks cannot dirty the repository after the closer's atomic commit/push.
 - `SubagentStop` → `hook_capture_subagent_stop.py`. Parses the final `CLAUDE_TRAILER:` block (`TASK_ID` / `OUTCOME` / `NEXT_STATUS` / `HANDOFF` / `EVIDENCE` / `REPORT`), increments spawn counters, and syncs `registry.json` + `runtime-state.json` under ordered locks. If the trailer is missing or partial, it writes a visible error; it does not silently drop state. In DAG worker terminals, a trailer with a different `TASK_ID` is logged as a scope mismatch and cannot mutate another node.
 - `SessionStart` → `hook_session_context.py`. Emits `additionalContext` with the project state, unresolved docs discrepancies, spawn counts, and recent hook errors.
 
@@ -148,8 +150,8 @@ All hook root resolution is worktree-safe: when a subagent runs with `isolation:
 
 `.claude/` is static Claude Code configuration: agents, skills, commands, rules, hooks and settings. Runtime writes go outside it:
 
-- `orchestrator-state/memory/` — PROGRESS, active task/phase, architecture contract, decisions, risks, official-doc notes.
-- `orchestrator-state/tasks/` — registry, runtime-state, work-items, per-task packs, handoffs, evidence, reports, ledger.
+- `orchestrator-state/memory/` — PROGRESS, architecture contract, decisions, risks, official-doc notes. DAG-only mode uses TASK_ID + task-pack, not task/implicit selector files.
+- `orchestrator-state/tasks/` — registry, runtime-state, work-items, per-task packs, handoffs, evidence, reports, local ledger.
 - `orchestrator-state/agent-memory/` — manual Reflexion-style memory per agent.
 - `orchestrator-state/hook-errors.log` — visible hook failures.
 
@@ -164,8 +166,8 @@ Do not create hidden runtime folders such as `.orchestrator/`. The only hidden c
 - `/phase-gate <PHASE_ID>` — valida que la phase está realmente cerrada antes de abrir la siguiente: tasks done, reports/evidence/handoffs, journeys verified/waived y Git limpio opcional.
 - `/register-followup propose|waive|list` — registra/waivea hallazgos reales de validator/tester/verify como propuestas YAML.
 - `/promote-followup <FU_ID>` — promoción segura vía main-orchestrator: convierte una FU aprobada en task DAG persistente en source-of-truth + registry + work-items.
-- `./scripts/sync-product-baseline.sh status|sync` — mantiene `docs/product-baseline/` como snapshot construido acumulativo para el siguiente incremento.
-- `/verify-journey <JID>` — gate humano end-to-end **a nivel journey** (multi-pantalla, no por slice). Se lanza tras el `closer` de la ÚLTIMA slice de un journey declarado en la Journey Coverage Matrix de `instrucciones.md` (sección §3.5 en baseline histórico, §3.7 en feature-app — el bootstrap la localiza por nombre, no por número). `journey_gate_mode=frontier` es el default: `pending_journey_verifications[]` solo difiere tasks que referencian esos journeys; `strict` mantiene el rechazo global legacy de `/next-slice`. Hard reset + datos reales/proporcionados consolidados + reproducción del flujo entero + estados marginales (empty/error/permission/back/deep_link) + next action. Resiliente al `/clear`.
+- `./scripts/sync-product-baseline.sh status|sync` — mantiene `docs/product-baseline/` como snapshot construido acumulativo para el siguiente incremento. `sync` requiere handoff verificado salvo migración manual explícita con `--allow-unverified`.
+- `/verify-journey <JID>` — gate humano end-to-end **a nivel journey** (multi-pantalla, no por slice). Se lanza tras el `closer` de la ÚLTIMA slice de un journey declarado en la Journey Coverage Matrix de `instrucciones.md` (sección §3.5 en baseline histórico, §3.7 en feature-app — el bootstrap la localiza por nombre, no por número). `journey_gate_mode=frontier` es el default: `pending_journey_verifications[]` solo difiere tasks que referencian esos journeys; `strict` mantiene un bloqueo global de journey. Hard reset + datos reales/proporcionados consolidados + reproducción del flujo entero + estados marginales (empty/error/permission/back/deep_link) + next action. Resiliente al `/clear`.
 - `/slice-maintain clean|compact|compact-agent-memory` — mantenimiento entre slices, compactación de PROGRESS.md y compactación lossless de memorias de agentes.
 
 Recommended order when closing a slice: tester pass → (optional `/clear` to free context) → `/verify-slice` (spawns `closer` if verified) → `/slice-maintain clean` → `/clear` → `/next-slice`.
@@ -180,7 +182,7 @@ Si aparece trabajo real fuera del TASK_ID actual, no se deja en el handoff como 
 - `developer` updates it after EVERY slice.
 - After `/clear`: read PROGRESS.md FIRST before any other action.
 - All subagents' first read on start.
-- PROGRESS.md is a DERIVED artifact — the five source-of-truth docs remain the authority when present; legacy 3-doc projects remain compatibility-only.
+- PROGRESS.md is a DERIVED artifact — the five source-of-truth docs remain the authority when present; the five source-of-truth docs are mandatory for production.
 
 ## Entry points
 
@@ -198,7 +200,7 @@ Si aparece trabajo real fuera del TASK_ID actual, no se deja en el handoff como 
 4. Execute only dependency-ready tasks.
 5. After each slice: verify backend health + verify in browser + run ALL tests.
 6. Require handoff, validator approval, tester pass, `VERIFY_OUTCOME: verified` from `/verify-slice`, closer baseline sync + commit + push before `done`, and (when the slice closes a journey) `JOURNEY_VERIFY_OUTCOME: verified` from `/verify-journey` before the next `/next-slice`.
-7. Keep context small. Daily read = `PROGRESS.md` + per-task pack (`orchestrator-state/tasks/task-packs/<TASK_ID>.md` in DAG; `active-task.md` only in legacy/sequential mode).
+7. Keep context small. Daily read = `PROGRESS.md` + per-task pack (`orchestrator-state/tasks/task-packs/<TASK_ID>.md`). Use only the per-task pack for the current `TASK_ID`.
 
 ## Compact instructions
 

@@ -132,3 +132,67 @@ def test_validator_and_tester_prompts_require_handoff_outcome_lines() -> None:
     assert "- OUTCOME: approved|changes_requested|blocked" in validator
     assert "El `closer` lee estas líneas, no el chat trailer" in tester
     assert "- OUTCOME: pass|fail|blocked" in tester
+
+
+def test_handoff_contract_rejects_unregistered_followup_candidate(tmp_path: Path) -> None:
+    task_id = "P00-S01-T001"
+    result = _run(
+        tmp_path,
+        f"""
+# Task Handoff — {task_id}
+
+## Validator review
+- AGENT: validator
+- TASK_ID: {task_id}
+- OUTCOME: approved
+- NEXT_STATUS: ready_for_close
+
+## Tester run
+- AGENT: tester
+- TASK_ID: {task_id}
+- OUTCOME: pass
+- NEXT_STATUS: ready_for_close
+
+## verify-slice
+- TASK_ID: {task_id}
+- VERIFY_OUTCOME: verified
+- followup_candidate: yes
+- scope_classification: missing_real_data
+- why_not_debugger: requires provided verification data outside this task
+""",
+        task_id,
+    )
+    assert result.returncode == 2
+    assert "no formal FOLLOWUP_ID" in result.stdout
+
+
+def test_handoff_contract_accepts_registered_followup_candidate(tmp_path: Path) -> None:
+    task_id = "P00-S01-T001"
+    result = _run(
+        tmp_path,
+        f"""
+# Task Handoff — {task_id}
+
+## Validator review
+- AGENT: validator
+- TASK_ID: {task_id}
+- OUTCOME: approved
+- NEXT_STATUS: ready_for_close
+
+## Tester run
+- AGENT: tester
+- TASK_ID: {task_id}
+- OUTCOME: pass
+- NEXT_STATUS: ready_for_close
+
+## verify-slice
+- TASK_ID: {task_id}
+- VERIFY_OUTCOME: verified
+- followup_candidate: yes
+- FOLLOWUP_ID: FU-TEST-001
+- scope_classification: missing_real_data
+- why_not_debugger: requires provided verification data outside this task
+""",
+        task_id,
+    )
+    assert result.returncode == 0, result.stdout + result.stderr

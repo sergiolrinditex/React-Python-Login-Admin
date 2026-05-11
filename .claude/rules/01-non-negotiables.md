@@ -57,7 +57,7 @@ The default recommended plugin is `design_tokens_v1`, which reads `frontend.fram
 - `orchestrator-state/memory/PROGRESS.md` is the live project snapshot.
 - The `developer` updates it after EVERY slice with: current phase, last slice, next slice, backend endpoints, frontend routes, DB tables/migrations, test counts by level, milestones, recent decisions, known issues.
 - After `/clear` or session restart, agents read PROGRESS.md FIRST.
-- PROGRESS.md is a DERIVED artifact — the five source-of-truth docs remain the authority when present; legacy 3-doc projects remain compatibility-only.
+- PROGRESS.md is a DERIVED artifact — the five source-of-truth docs remain the authority when present; the five source-of-truth docs are mandatory for production.
 
 ## Documentation
 
@@ -151,9 +151,9 @@ The default recommended plugin is `design_tokens_v1`, which reads `frontend.fram
 Allowed max chain = 20 spawns, with aggressive parallelism:
 
 1. `planner` (blocking — selects task, builds pack, impact analysis)
-2. `developer` ‖ `official-docs-researcher` (**parallel — one message, two Agent calls**)
+2. `developer` (+ `official-docs-researcher` si aplica; mismo mensaje cuando se invoque)
    - `developer` implements.
-   - `official-docs-researcher` ALWAYS runs as safety net. Shallow pass ≤5s when cache hit. On discrepancy → writes a note in `orchestrator-state/memory/official-doc-notes/`. The PreToolUse docs-discrepancy hook injects a **warning** (warn-only, never blocks) the next time the developer edits product code, so the developer reconciles before continuing. After reconciling, add a `RESOLVED: <how>` line to each note.
+   - `official-docs-researcher` runs only when the planner marks `NEEDS_OFFICIAL_DOCS: yes` or the slice touches unconfirmed external API/library/security/AI/RAG/MCP/streaming/DB/deploy behavior. Give it 1–5 concrete questions; it uses cache/MCP/Context7 first and writes a discrepancy note only when official docs contradict the source-of-truth.
 3. `validator` ‖ `tester` (parallel — one message, two Agent calls)
 4. `debugger` (if tester fails OR validator requests changes; then re-run step 3). Max 3 cycles; on the 4th failure the debugger emits `OUTCOME: blocked` with reason `max_debug_cycles_reached` and escalates to the human.
 5. `closer` (evidence + atomic commit via configured Git workflow (`./scripts/git-workflow.sh`) + safe worktree cleanup)

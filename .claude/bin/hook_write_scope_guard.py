@@ -5,7 +5,7 @@ This hook blocks only corruption-prone writes. It does not try to validate
 product code quality; validator/tester own that. The guarded cases are:
   - app-building agents editing static `.claude/` config;
   - any active TASK_ID writing another task's handoff/evidence/report/pack;
-  - active task terminals editing source-of-truth docs mid-slice;
+  - DAG task terminals editing source-of-truth docs mid-slice;
   - direct Write/Edit/MultiEdit to generated core state that should be written
     by bootstrap/claim/hooks under locks.
 """
@@ -19,7 +19,7 @@ from pathlib import Path
 from typing import Any
 
 from common import (
-    active_task_env_override,
+    dag_worker_task_id,
     append_jsonl,
     ledger_path,
     load_registry,
@@ -40,8 +40,6 @@ CORE_STATE_FILES = {
     "orchestrator-state/memory/task-dag.json",
     "orchestrator-state/memory/task-dag.md",
     "orchestrator-state/memory/execution-graph.json",
-    "orchestrator-state/memory/active-task.json",
-    "orchestrator-state/memory/active-phase.json",
 }
 
 TASK_SCOPED_PATTERNS = [
@@ -136,7 +134,7 @@ def main() -> int:
         if not rel:
             return 0
 
-        task_id = active_task_env_override()
+        task_id = dag_worker_task_id()
 
         # Static orchestrator config is not product-code runtime. Allow only in
         # intentional orchestrator-maintenance mode.
@@ -200,7 +198,7 @@ def main() -> int:
             append_jsonl(ledger_path(), {
                 "ts": now_iso(),
                 "event": "write_scope_warning",
-                "active_task_id": task_id,
+                "task_id": task_id,
                 "file_path": rel,
                 "warning": warning,
             })

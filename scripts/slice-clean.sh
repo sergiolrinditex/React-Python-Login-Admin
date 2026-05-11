@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Housekeeping silencioso post-closer. NO interactivo. Operaciones SEGURAS:
-#   - Rota orchestrator-state/tasks/ledger.jsonl si >200KB (lo comprime y deja vacío).
+#   - Rota ledger.jsonl y bash-ledger.jsonl si >200KB (los comprime y deja vacío).
 #   - Borra caches regenerables (__pycache__, .pytest_cache, htmlcov, .DS_Store).
 #   - Archiva handoffs/evidence/reports de slices con status "done" en registry
 #     y >2 días desde su mtime, en orchestrator-state/memory/archive/<fecha>/.
@@ -27,6 +27,7 @@ done
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT" || exit 1
 LEDGER="orchestrator-state/tasks/ledger.jsonl"
+BASH_LEDGER="orchestrator-state/tasks/bash-ledger.jsonl"
 ARCHIVE_DIR="orchestrator-state/memory/archive/$(date +%Y-%m-%d)"
 
 log() { printf "[slice-clean] %s\n" "$1"; }
@@ -59,22 +60,27 @@ reverse_lines() {
   fi
 }
 
-# 1. Rotación del ledger si >200KB
-if [ -f "$LEDGER" ]; then
-  size=$(wc -c < "$LEDGER" 2>/dev/null || echo 0)
-  if [ "$size" -gt $((200 * 1024)) ]; then
-    target="orchestrator-state/tasks/ledger-$(date +%Y-%m-%d-%H%M%S).jsonl.gz"
-    log "ledger.jsonl = ${size} bytes — rota a $target"
-    if [ "$APPLY" -eq 1 ]; then
-      gzip -c "$LEDGER" > "$target" && : > "$LEDGER" && rotated=1
-      # Mantener máx 5 ledgers comprimidos. macOS xargs no soporta -r.
-      old_ledgers=$(ls -1t orchestrator-state/tasks/ledger-*.jsonl.gz 2>/dev/null | tail -n +6 || true)
-      if [ -n "$old_ledgers" ]; then
-        printf '%s\n' "$old_ledgers" | xargs rm -f
+# 1. Rotación de ledgers si >200KB
+rotate_ledger_file() {
+  file="$1"
+  prefix="$2"
+  if [ -f "$file" ]; then
+    size=$(wc -c < "$file" 2>/dev/null || echo 0)
+    if [ "$size" -gt $((200 * 1024)) ]; then
+      target="orchestrator-state/tasks/${prefix}-$(date +%Y-%m-%d-%H%M%S).jsonl.gz"
+      log "$(basename "$file") = ${size} bytes — rota a $target"
+      if [ "$APPLY" -eq 1 ]; then
+        gzip -c "$file" > "$target" && : > "$file" && rotated=1
+        old_ledgers=$(ls -1t orchestrator-state/tasks/${prefix}-*.jsonl.gz 2>/dev/null | tail -n +6 || true)
+        if [ -n "$old_ledgers" ]; then
+          printf '%s\n' "$old_ledgers" | xargs rm -f
+        fi
       fi
     fi
   fi
-fi
+}
+rotate_ledger_file "$LEDGER" "ledger"
+rotate_ledger_file "$BASH_LEDGER" "bash-ledger"
 
 # 2. Caches regenerables — find safe directories
 prune_paths=(.git .claude orchestrator-state/tasks orchestrator-state/memory docs flutter_template .venv venv node_modules)
@@ -127,6 +133,6 @@ fi
 log "Caches dirs:    $hr_count (${hr_size} bytes)"
 log "Ficheros sueltos: $sd_count (${sd_size} bytes)"
 log "Slices archivadas: $ar_count"
-[ "$rotated" -eq 1 ] && log "ledger.jsonl rotado"
+[ "$rotated" -eq 1 ] && log "ledger(s) rotado(s)"
 [ "$APPLY" -eq 0 ] && log "DRY-RUN — relanza con --apply para ejecutar"
 exit 0

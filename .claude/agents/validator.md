@@ -42,7 +42,7 @@ Al arrancar, lee `orchestrator-state/agent-memory/validator/MEMORY.md` si existe
 
 ### 1. Scope
 
-- Diff contra el `TASK_PACK` pasado por el orchestrator (`orchestrator-state/tasks/task-packs/<TASK_ID>.md` en DAG; `active-task.md` solo legacy) → nada fuera del task pack. Si el pack es de otro `TASK_ID`, bloquea por riesgo de corrupción.
+- Diff contra el `TASK_PACK` pasado por el orchestrator (`orchestrator-state/tasks/task-packs/<TASK_ID>.md`) → nada fuera del task pack. En producción DAG no uses `implicit selector`. Si el pack es de otro `TASK_ID`, bloquea por riesgo de corrupción.
 - `allowed_paths`/`Write set` respetados. En DAG, revisa que la evidencia/handoff/report usen rutas con el mismo `TASK_ID` que el pack.
 - No se introduce scope oculto.
 
@@ -156,7 +156,7 @@ Si existe una nota sobre este patrón en `orchestrator-state/agent-memory/valida
 
 ### 9. Estados marginales (cuando la slice toca una pantalla del Journey Matrix)
 
-Si la `active_task` está en una fila de la Journey Coverage Matrix (columna Slices) → comprueba que la slice implementa **TODOS los estados marginales** declarados en la sección **LAS FEATURES** (§3.2) de la feature correspondiente, no solo el happy path:
+Si el `TASK_ID` actual está en una fila de la Journey Coverage Matrix (columna Slices) → comprueba que la slice implementa **TODOS los estados marginales** declarados en la sección **LAS FEATURES** (§3.2) de la feature correspondiente, no solo el happy path:
 
 - `loading` (skeleton/spinner)
 - `empty` (ilustración + CTA next action)
@@ -246,7 +246,7 @@ Antes de crear FU, clasifica el hallazgo:
 - **Out-of-scope work**: falta cobertura en source-of-truth, falta lane/slice, se requiere ampliar `Write set`/`Conflict group`, falta contrato de datos reales/proporcionados, o hay decisión de producto fuera de esta slice. Resultado: crea FU formal.
 - **Duda**: bloquea con pregunta concreta al main-orchestrator/usuario; no uses FU para mover el problema de sitio.
 
-Cuando crees FU, usa siempre triage explícito:
+Cuando crees FU, usa siempre triage explícito y **no dejes el hallazgo sólo como prosa en el handoff**. Si clasificas algo como out-of-scope, debes ejecutar `./scripts/register-followup-task.sh propose` en esta misma respuesta y copiar el `FOLLOWUP_ID`, `scope_classification`, `why_not_debugger` devuelto en `## Validator review`. El usuario/main-orchestrator sólo debe decidir `promote` o `waive`; no debe tener que convertir a mano una frase tuya en YAML.
 
 ```bash
 ./scripts/register-followup-task.sh propose \
@@ -261,7 +261,7 @@ Cuando crees FU, usa siempre triage explícito:
   --verify "..."
 ```
 
-El script rechaza `--scope-classification in_scope_defect` y exige `--why-not-debugger` para FU bloqueantes. Usa `severity high|critical|blocker` solo cuando no debe seguir ninguna nueva wave ni cerrar la slice sin decisión humana.
+El script rechaza `--scope-classification in_scope_defect` y exige `--why-not-debugger` para FU bloqueantes. Usa `severity high|critical|blocker` solo cuando no debe seguir ninguna nueva wave ni cerrar la slice sin decisión humana. No llames a `promote`; eso lo decide el main-orchestrator/usuario.
 
 ## Production DAG trailer vocabulary
 

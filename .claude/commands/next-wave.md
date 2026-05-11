@@ -33,7 +33,7 @@ Usa su salida como base. No inventes ready nodes a mano si el script dice que no
 
 - Si `runtime-state.pending_journey_verifications` no está vacío, aplica `journey_gate_mode`: en `frontier` difiere solo tasks con esos `Journey refs`; en `strict` devuelve bloqueo global y lista `/verify-journey <JID>`.
 - Si `runtime-state.open_followups` contiene propuestas `high|critical|blocker` en estado `proposed`, no abras wave: promueve con `/promote-followup <ID>` o descarta con waiver humano explícito.
-- Valida con `./scripts/check-task-dag.sh --strict`; si el DAG tiene errores o `task_dag.mode != explicit_dag`, no propongas paralelismo. Este orquestador opera en production DAG-only; `legacy_linear` significa que el Coverage Registry debe corregirse.
+- Valida con `./scripts/check-task-dag.sh --strict`; si el DAG tiene errores o `task_dag.mode != explicit_dag`, no propongas paralelismo. Este orquestador opera en production DAG-only; si falta `Depends on`, el Coverage Registry debe corregirse.
 - Solo considera la earliest incomplete phase. No adelantes Phase N+1 si Phase N tiene tareas no `done`.
 
 ## Selección de wave

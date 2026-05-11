@@ -1,7 +1,7 @@
 {
   "id": "FU-20260511145446-fix-verification-data-loader-meta-jsonb-sql-cast",
   "schema_version": 1,
-  "status": "proposed",
+  "status": "promoted",
   "created_at": "2026-05-11T14:54:46+00:00",
   "created_by": "sergiolr",
   "origin_task_id": "P00-S02-T003",
@@ -42,5 +42,8 @@
     "debugger_path": "in_scope_defects_use_validator_tester_debugger_retest",
     "warnings": []
   },
-  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260511145446-fix-verification-data-loader-meta-jsonb-sql-cast.yaml"
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260511145446-fix-verification-data-loader-meta-jsonb-sql-cast.yaml",
+  "promoted_at": "2026-05-11T15:21:38+00:00",
+  "promoted_task_id": "P00-S02-T004",
+  "source_doc_updated": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md"
 }

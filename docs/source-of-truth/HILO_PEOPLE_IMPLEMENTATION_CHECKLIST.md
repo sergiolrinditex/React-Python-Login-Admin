@@ -156,3 +156,12 @@ Every `Tipo=frontend` slice must use the canonical visual contract from `UX_CONT
 ## Final wiring verification
 
 Revisión ejecutada dos veces: cada endpoint, ruta, tabla, pieza AI, journey y lib USAR/DEFERRED tiene slice real; cada slice tiene origen, write set, conflict group, depends on y verificación. No quedan marcadores de plantilla.
+
+## Runtime Follow-up Coverage Registry
+
+> Auto-appended by `.claude/bin/register_followup_task.py` after human approval.
+> These rows are source-of-truth amendments. Keep them; future bootstrap runs parse them like any other Coverage Registry row.
+
+| Slice ID | Tipo | Target | Step | Product increment | Build state | Risk level | Verify mode | Depends on | Conflict group | Write set | Journey refs | Pantalla/Ruta | Endpoint | Tablas DB | Origen-Instr | Origen-TechGuide | Acceptance mínimo | Verify mínimo |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| P00-S02-T004 | bug | fix verification_data loader :meta::jsonb SQL cast | Runtime follow-up P00-S02-T003 | current | planned | medium | human | P00-S02-T003 | backend:verification_data | backend/app/verification_data/loader.py, backend/tests/integration/test_dev_restart_reset.py, backend/tests/integration/test_verification_data_bootstrap.py | — | — | — | — | runtime-followup#FU-20260511145446-fix-verification-data-loader-meta-jsonb-sql-cast | runtime-followup#FU-20260511145446-fix-verification-data-loader-meta-jsonb-sql-cast | pytest backend/tests/integration/test_dev_restart_reset.py backend/tests/integration/test_verification_data_bootstrap.py pasa contra Postgres real con tablas auth ya migradas | cd backend && alembic upgrade head && pytest backend/tests/integration/test_dev_restart_reset.py backend/tests/integration/test_verification_data_bootstrap.py -v |

@@ -229,7 +229,7 @@ class ParseCoverageRegistryTests(unittest.TestCase):
         """COVERAGE_ROW_ID_RE must accept 1-digit segments to align with
         TASK_ID_RE (which already does). Single-digit IDs are valid for
         early-stage projects; the previous 2/2/3-digit minimum caused
-        silent drift to positional fallback."""
+        silent drift to body-only generation."""
         cl = self._checklist(
             "## Coverage Registry\n\n"
             "| Slice ID | Description |\n"
@@ -339,13 +339,13 @@ class BuildPhasesAndTasksRegistryDrivenTests(unittest.TestCase):
             "- gate noise\n"
         )
 
-    def test_canonicals_emitted_synthetic_filled_in_for_uncovered(self):
+    def test_canonicals_only_no_hidden_synthetic_for_uncovered_body_step(self):
         phases, tasks = boot.build_phases_and_tasks(
             Path("checklist.md"), self._minimal_checklist())
         self.assertEqual([p["id"] for p in phases], ["P00"])
         ids = [t["id"] for t in tasks]
-        self.assertEqual(ids, ["P00-S01-T001", "P00-S01-T002", "P00-S02-T001"],
-            "canonicals from registry first, then ONE synthetic per uncovered step")
+        self.assertEqual(ids, ["P00-S01-T001", "P00-S01-T002"],
+            "DAG-only emits only declared Coverage Registry rows; uncovered body steps are source-of-truth drift")
 
     def test_no_duplicates(self):
         _, tasks = boot.build_phases_and_tasks(
@@ -361,12 +361,10 @@ class BuildPhasesAndTasksRegistryDrivenTests(unittest.TestCase):
             self.assertNotIn("PRE-GATE", t["title"].upper())
             self.assertNotIn("PHASE 0 GATE", t["title"].upper())
 
-    def test_synthetic_task_has_acceptance_from_body(self):
+    def test_uncovered_body_step_is_not_materialized_as_task(self):
         _, tasks = boot.build_phases_and_tasks(
             Path("checklist.md"), self._minimal_checklist())
-        synth = next(t for t in tasks if t["id"] == "P00-S02-T001")
-        self.assertGreaterEqual(len(synth["acceptance"]), 2)
-        self.assertTrue(any("synthetic" in n for n in synth.get("notes", [])))
+        self.assertFalse(any(t["id"] == "P00-S02-T001" for t in tasks))
 
     def test_first_task_is_ready_rest_blocked(self):
         _, tasks = boot.build_phases_and_tasks(
@@ -377,13 +375,14 @@ class BuildPhasesAndTasksRegistryDrivenTests(unittest.TestCase):
 
 
 # ---------------------------------------------------------------------------
-# Build phases & tasks — legacy positional fallback (no registry)
+# Build phases & tasks — body-only generation fallback (no registry)
 # ---------------------------------------------------------------------------
-class BuildPhasesAndTasksLegacyFallbackTests(unittest.TestCase):
+@unittest.skip("DAG-only requires Coverage Registry with Depends on; body-only generation tests retired")
+class BuildPhasesAndTasksMissingDependencyColumnFallbackTests(unittest.TestCase):
 
     def test_no_registry_uses_positional_path(self):
         cl = (
-            "# Legacy Checklist\n\n"
+            "# MissingDependencyColumn Checklist\n\n"
             "# Phase 0 — Stuff\n\n"
             "## Step 0.1 — Scaffold\n\n"
             "- [ ] One thing\n"
@@ -394,10 +393,10 @@ class BuildPhasesAndTasksLegacyFallbackTests(unittest.TestCase):
         self.assertEqual(tasks[0]["id"], "P00-S01-T001")
         self.assertEqual(tasks[1]["id"], "P00-S01-T002")
 
-    def test_legacy_pre_gate_still_filtered(self):
+    def test_missing_dependency_column_pre_gate_still_filtered(self):
         """Even without registry, PRE-GATE / PHASE GATE should not become a step."""
         cl = (
-            "# Legacy\n\n# Phase 0 — Stuff\n\n"
+            "# MissingDependencyColumn\n\n# Phase 0 — Stuff\n\n"
             "## ⚠️ PRE-GATE\n\n- noise\n\n"
             "## Step 0.1 — Real step\n\n- [ ] Real item\n"
         )
@@ -526,6 +525,7 @@ if __name__ == "__main__":
 # ---------------------------------------------------------------------------
 # Synthetic refinement (split at sub-headings + warn on coarse)
 # ---------------------------------------------------------------------------
+@unittest.skip("DAG-only no longer materializes hidden synthetic tasks from body-only steps")
 class SyntheticSplitAndWarnTests(unittest.TestCase):
     """Pin the refined synthetic-task behaviour (Fix follow-up):
       * Step body with >=2 sub-headings -> split into one task per sub-heading.
@@ -534,6 +534,8 @@ class SyntheticSplitAndWarnTests(unittest.TestCase):
 
     GUIDE = "# Tech Guide\n\n## Stack\n\nfastapi.\n\n## Architecture\n\nclean.\n"
     INSTR = "# Instructions\n\n## Goals\n\nBuild things.\n"
+    UX = "# UX Contract\n\n## Screen/Journey Lane Redactor Contract\n\nUse real/provided data.\n"
+    STACK = "frontend:\n  language: typescript\n  framework: react\nbackend:\n  language: python\n  framework: fastapi\ndb:\n  engine: postgres\ndesign_tokens_enforcer: none\ngit_workflow: direct-main\n"
 
     def _run(self, checklist: str):
         td = tempfile.TemporaryDirectory()
@@ -542,6 +544,10 @@ class SyntheticSplitAndWarnTests(unittest.TestCase):
         (root / "docs/source-of-truth/instrucciones.md").write_text(self.INSTR, encoding="utf-8")
         (root / "docs/source-of-truth/X_IMPLEMENTATION_CHECKLIST.md").write_text(checklist, encoding="utf-8")
         (root / "docs/source-of-truth/X_TECHNICAL_GUIDE.md").write_text(self.GUIDE, encoding="utf-8")
+        (root / "docs/source-of-truth/UX_CONTRACT.md").write_text(self.UX, encoding="utf-8")
+        (root / "docs/source-of-truth/STACK_PROFILE.yaml").write_text(self.STACK, encoding="utf-8")
+        (root / "docs/source-of-truth/UX_CONTRACT.md").write_text("# UX\n\n## Screens\n\nOK.\n", encoding="utf-8")
+        (root / "docs/source-of-truth/STACK_PROFILE.yaml").write_text("frontend:\n  framework: react\nbackend:\n  framework: fastapi\ndb:\n  engine: postgres\ndesign_tokens_enforcer: ./scripts/check-design-tokens.sh\ngit_workflow: pr-flow\n", encoding="utf-8")
         (root / "orchestrator-state/tasks").mkdir(parents=True)
         (root / "orchestrator-state/memory").mkdir(parents=True)
         prev = os.environ.get("CLAUDE_PROJECT_DIR")
@@ -563,9 +569,9 @@ class SyntheticSplitAndWarnTests(unittest.TestCase):
         cl = (
             "# Test\n\n"
             "## Endpoint Coverage Registry\n\n"
-            "| Slice ID | Method | Path | Step | Verify |\n"
-            "|----------|--------|------|------|--------|\n"
-            "| P00-S02-T001 | GET | /healthz | Step 0.2 | curl |\n\n"
+            "| Slice ID | Method | Path | Step | Depends on | Verify |\n"
+            "|----------|--------|------|------|------------|--------|\n"
+            "| P00-S02-T001 | GET | /healthz | Step 0.2 | P00-S01 | curl |\n\n"
             "# Phase 0 — Coarse\n\n"
             "## Step 0.1 — Big scaffolding step\n\n"
             + "\n".join(f"- [ ] item {i}" for i in range(1, 16))
@@ -573,35 +579,34 @@ class SyntheticSplitAndWarnTests(unittest.TestCase):
         )
         result, reg = self._run(cl)
         self.assertTrue(result["ok"])
-        coarse = [w for w in result.get("validation", {}).get("warnings", []) if "synthetic task" in w]
-        self.assertGreaterEqual(len(coarse), 1,
-            "step with 15 acceptance items must surface a coarse-synthetic warning")
-        self.assertIn("P00-S01-T001", coarse[0])
+        warnings = result.get("validation", {}).get("warnings", [])
+        self.assertTrue(any("no Coverage Registry row" in w for w in warnings),
+            "unregistered body steps must be reported, not emitted as hidden tasks")
+        self.assertFalse(any(t["step_id"] == "P00-S01" for t in reg["tasks"]))
 
     def test_synthetic_below_threshold_does_not_warn(self):
         cl = (
             "# Test\n\n"
             "## Endpoint Coverage Registry\n\n"
-            "| Slice ID | Method | Path | Step |\n"
-            "|----|----|----|----|\n"
-            "| P00-S02-T001 | GET | /a | Step 0.2 |\n\n"
+            "| Slice ID | Method | Path | Step | Depends on |\n"
+            "|----|----|----|----|------------|\n"
+            "| P00-S02-T001 | GET | /a | Step 0.2 | P00-S01 |\n\n"
             "# Phase 0 — Small\n\n"
             "## Step 0.1 — Tiny step\n\n"
             "- [ ] one\n- [ ] two\n- [ ] three\n\n"
             "# Phase 1 — Done\n\n## Step 1.1 — End\n\n- [ ] add /a\n"
         )
         result, _reg = self._run(cl)
-        coarse = [w for w in result.get("validation", {}).get("warnings", []) if "synthetic task" in w]
-        self.assertEqual(coarse, [],
-            "step with 3 acceptance items must NOT trigger the coarse warning")
+        warnings = result.get("validation", {}).get("warnings", [])
+        self.assertTrue(any("no Coverage Registry row" in w for w in warnings))
 
     def test_subheadings_drive_split(self):
         cl = (
             "# Test\n\n"
             "## Endpoint Coverage Registry\n\n"
-            "| Slice ID | Method | Path | Step |\n"
-            "|----|----|----|----|\n"
-            "| P00-S02-T001 | GET | /a | Step 0.2 |\n\n"
+            "| Slice ID | Method | Path | Step | Depends on |\n"
+            "|----|----|----|----|------------|\n"
+            "| P00-S02-T001 | GET | /a | Step 0.2 | P00-S01 |\n\n"
             "# Phase 0 — Split\n\n"
             "## Step 0.1 — Big step with sub-tasks\n\n"
             "- [ ] preamble item\n"
@@ -609,41 +614,36 @@ class SyntheticSplitAndWarnTests(unittest.TestCase):
             "\n### Sub-task B\n\n- [ ] do B1\n- [ ] do B2\n"
             "\n# Phase 1 — Done\n\n## Step 1.1 — End\n\n- [ ] add /a\n"
         )
-        _result, reg = self._run(cl)
-        p0_synth = [t for t in reg["tasks"] if t["step_id"] == "P00-S01"]
-        self.assertGreaterEqual(len(p0_synth), 2,
-            "step with >=2 sub-headings must split into multiple synthetic tasks")
-        # Preamble + Sub-task A + Sub-task B = 3 tasks expected.
-        self.assertEqual(len(p0_synth), 3)
-        titles = [t["title"] for t in p0_synth]
-        self.assertIn("Sub-task A", titles)
-        self.assertIn("Sub-task B", titles)
-        # Each split task has its own acceptance, not all bullets.
-        for t in p0_synth:
-            self.assertLessEqual(len(t["acceptance"]), 2,
-                "split tasks must have only their own bullets as acceptance")
+        result, reg = self._run(cl)
+        self.assertTrue(result["ok"])
+        self.assertFalse(any(t["step_id"] == "P00-S01" for t in reg["tasks"]),
+            "DAG-only bootstrap must not synthesize hidden tasks from body sub-headings")
 
     def test_no_subheadings_yields_single_task(self):
         cl = (
             "# Test\n\n"
             "## Endpoint Coverage Registry\n\n"
-            "| Slice ID | Method | Path | Step |\n"
-            "|----|----|----|----|\n"
-            "| P00-S02-T001 | GET | /a | Step 0.2 |\n\n"
+            "| Slice ID | Method | Path | Step | Depends on |\n"
+            "|----|----|----|----|------------|\n"
+            "| P00-S02-T001 | GET | /a | Step 0.2 | P00-S01 |\n\n"
             "# Phase 0 — Flat\n\n"
             "## Step 0.1 — Plain step\n\n"
             "- [ ] one\n- [ ] two\n- [ ] three\n\n"
             "# Phase 1 — Done\n\n## Step 1.1 — End\n\n- [ ] add /a\n"
         )
-        _result, reg = self._run(cl)
-        p0 = [t for t in reg["tasks"] if t["step_id"] == "P00-S01"]
-        self.assertEqual(len(p0), 1, "flat step (no sub-headings) must yield ONE synthetic task")
-        self.assertEqual(p0[0]["id"], "P00-S01-T001")
+        result, reg = self._run(cl)
+        self.assertTrue(result["ok"])
+        self.assertFalse(any(t["step_id"] == "P00-S01" for t in reg["tasks"]),
+            "DAG-only bootstrap must not synthesize hidden tasks from body-only steps")
 
 
 class BootstrapRuntimePreservationTests(unittest.TestCase):
     GUIDE = "# Tech Guide\n\n## Stack\n\npython/react.\n\n## Architecture\n\nclean.\n"
     INSTR = "# Instructions\n\n## Goals\n\nBuild a DAG app.\n"
+    UX = "# UX\n\n## Purpose\n\nDAG app UX.\n"
+    STACK = "frontend:\n  language: typescript\n  framework: react\nbackend:\n  language: python\n  framework: fastapi\ndb:\n  engine: postgres\ndesign_tokens_enforcer: none\ngit_workflow: push-to-main\n"
+    UX = "# UX Contract\n\n## Screen/Journey Lane Redactor Contract\n\nUse real/provided data.\n"
+    STACK = "frontend:\n  language: typescript\n  framework: react\nbackend:\n  language: python\n  framework: fastapi\ndb:\n  engine: postgres\ndesign_tokens_enforcer: none\ngit_workflow: direct-main\n"
     CHECKLIST = (
         "# Checklist\n\n"
         "## Canonical Coverage Registry\n\n"
@@ -664,6 +664,10 @@ class BootstrapRuntimePreservationTests(unittest.TestCase):
         (sot / "instrucciones.md").write_text(self.INSTR, encoding="utf-8")
         (sot / "APP_TECHNICAL_GUIDE.md").write_text(self.GUIDE, encoding="utf-8")
         (sot / "APP_IMPLEMENTATION_CHECKLIST.md").write_text(self.CHECKLIST, encoding="utf-8")
+        (sot / "UX_CONTRACT.md").write_text(self.UX, encoding="utf-8")
+        (sot / "STACK_PROFILE.yaml").write_text(self.STACK, encoding="utf-8")
+        (sot / "UX_CONTRACT.md").write_text("# UX\n\n## Screens\n\nOK.\n", encoding="utf-8")
+        (sot / "STACK_PROFILE.yaml").write_text("frontend:\n  framework: react\nbackend:\n  framework: fastapi\ndb:\n  engine: postgres\ndesign_tokens_enforcer: ./scripts/check-design-tokens.sh\ngit_workflow: pr-flow\n", encoding="utf-8")
         (root / "orchestrator-state/tasks").mkdir(parents=True)
         (root / "orchestrator-state/memory").mkdir(parents=True)
         return td, root
@@ -699,8 +703,6 @@ class BootstrapRuntimePreservationTests(unittest.TestCase):
                 registry["tasks"][1]["claimed_by"] = "worker-2"
                 common_mod.save_registry(registry)
                 common_mod.save_runtime_state({
-                    "active_phase_id": "P00",
-                    "active_task_id": "P00-S02-T001",
                     "last_worker": "tester",
                     "last_event": "subagent_stop",
                     "pending_journey_verifications": ["J1"],
@@ -721,7 +723,8 @@ class BootstrapRuntimePreservationTests(unittest.TestCase):
                 self.assertEqual(by_id["P00-S02-T001"]["status"], "claimed")
                 self.assertEqual(by_id["P00-S02-T001"]["claimed_by"], "worker-2")
                 runtime = common_mod.load_runtime_state()
-                self.assertEqual(runtime["active_task_id"], "P00-S02-T001")
+                self.assertNotIn("last_claimed_task_id", runtime)
+                self.assertEqual(runtime.get("last_worker"), "tester")
                 self.assertEqual(runtime["last_worker"], "tester")
                 self.assertEqual(runtime["pending_journey_verifications"], ["J1"])
                 self.assertEqual(runtime["open_followups"][0]["id"], "FU-test")
@@ -736,7 +739,7 @@ class BootstrapRuntimePreservationTests(unittest.TestCase):
                 registry = common_mod.load_registry()
                 registry["tasks"][0]["status"] = "done"
                 common_mod.save_registry(registry)
-                common_mod.save_runtime_state({"active_task_id": "P00-S02-T001", "open_followups": [{"id": "FU-test"}]})
+                common_mod.save_runtime_state({"open_followups": [{"id": "FU-test"}]})
 
                 result = boot_mod.generate_artifacts(preserve_runtime_state=False)
                 self.assertTrue(result["ok"])
@@ -745,7 +748,8 @@ class BootstrapRuntimePreservationTests(unittest.TestCase):
                 by_id = {t["id"]: t for t in refreshed["tasks"]}
                 self.assertEqual(by_id["P00-S01-T001"]["status"], "ready")
                 runtime = common_mod.load_runtime_state()
-                self.assertEqual(runtime["active_task_id"], "P00-S01-T001")
+                self.assertNotIn("last_claimed_task_id", runtime)
+                self.assertEqual(runtime.get("next_ready_task_id"), "P00-S01-T001")
                 self.assertEqual(runtime["open_followups"], [])
         finally:
             td.cleanup()

@@ -1,6 +1,6 @@
 ---
 name: deployer
-description: Plans or executes deployment steps for the active release when the source-of-truth DAG declares deployment scope. Use for Rancher, Kubernetes, Helm, or runtime rollout tasks when the active task/phase declares deployment scope.
+description: Plans or executes deployment steps for the active release when the source-of-truth DAG declares deployment scope. Use for Rancher, Kubernetes, Helm, or runtime rollout tasks when the DAG task/phase declares deployment scope.
 model: sonnet
 permissionMode: bypassPermissions
 maxTurns: 80

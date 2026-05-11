@@ -63,7 +63,7 @@ def _seed_closed_phase(common, root: Path, *, journey_status="verified", pending
         "journeys": [{"id": "J101", "task_ids": ["P00-S01-T001", "P00-S02-T001"], "verification_status": journey_status}],
         "task_dag": boot.build_task_dag(tasks),
     })
-    common.save_runtime_state({"active_phase_id": "P00", "pending_journey_verifications": pending or [], "spawns_in_current_slice": {}})
+    common.save_runtime_state({"pending_journey_verifications": pending or [], "spawns_in_current_slice": {}})
 
 
 def test_phase_gate_passes_closed_phase_with_verified_closing_journey():
@@ -114,7 +114,7 @@ def test_closer_hook_refuses_false_done_without_push_cleanup_proof():
                 "journeys": [],
                 "task_dag": boot.build_task_dag(tasks),
             })
-            common.save_runtime_state({"active_phase_id": "P00", "active_task_id": "P00-S01-T001", "pending_journey_verifications": [], "spawns_in_current_slice": {}})
+            common.save_runtime_state({"pending_journey_verifications": [], "spawns_in_current_slice": {}})
             payload = json.dumps({
                 "agent_type": "closer",
                 "last_assistant_message": (

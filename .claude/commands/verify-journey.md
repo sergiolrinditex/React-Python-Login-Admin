@@ -47,7 +47,7 @@ Lee en paralelo:
    - §6.4 (Navigation Contract) para empty/error/permission states
    - §3 (comandos: arranque back, front, migrate, carga de datos, health)
    - §Verification Data Contract para persona/rol, datos reales/proporcionados, datos proporcionados permitidos y reset/cleanup del journey
-7. Handoffs de cada slice: `orchestrator-state/tasks/handoffs/{TASK_ID}.md` para cada `task_ids[i]` del journey — busca DATA_SETUP (o FIXTURES legacy) y FLOWS_TESTED de cada slice individual.
+7. Handoffs de cada slice: `orchestrator-state/tasks/handoffs/{TASK_ID}.md` para cada `task_ids[i]` del journey — busca DATA_SETUP (o DATA_SETUP alias) y FLOWS_TESTED de cada slice individual.
 
 Si alguna slice del journey NO está en estado `done` en registry → aborta: *"Journey JXXX no está completo (slice TASK_ID en estado X). Cierra todas sus slices con `/verify-slice` antes de verificar el journey."*
 

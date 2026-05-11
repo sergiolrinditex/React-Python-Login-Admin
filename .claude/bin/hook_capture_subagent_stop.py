@@ -24,18 +24,16 @@ import re
 import sys
 
 from common import (
-    active_task_env_override,
+    dag_worker_task_id,
     add_pending_journey_verification,
     blocking_followups_for_task,
     append_jsonl,
     bump_spawn_count,
-    effective_active_task_id,
     file_lock,
     find_task,
     get_spawn_budget,
     ledger_path,
     journeys_closing_at_task,
-    load_active_task,
     load_registry,
     load_runtime_state,
     log_hook_error,
@@ -46,7 +44,7 @@ from common import (
     runtime_state_path,
     save_registry,
     save_runtime_state,
-    sync_active_state_from_registry,
+    sync_runtime_state_from_registry,
     waive_journey_verification,
 )
 
@@ -457,9 +455,8 @@ def main() -> int:
             trailer.pop("task_id", None)
 
         journey_data = parse_journey_trailer(last_message)
-        active = load_active_task()
-        override_task_id = active_task_env_override()
-        effective_task_id = effective_active_task_id(active)
+        override_task_id = dag_worker_task_id()
+        effective_task_id = override_task_id or trailer.get("task_id")
         allow_registry_mutation = True
         reported_task_id = trailer.get("task_id")
         if override_task_id:
@@ -509,7 +506,7 @@ def main() -> int:
             "ts": now_iso(),
             "event": "subagent_stop",
             "agent_type": agent_type,
-            "active_task_id": effective_task_id or active.get("id"),
+            "task_id": effective_task_id,
             "trailer": trailer,
             "journey_trailer": {
                 k: v for k, v in journey_data.items() if v
@@ -547,7 +544,7 @@ def main() -> int:
         #       together, so the SessionStart context never shows a registry
         #       that has moved past a runtime-state still pointing at the
         #       previous worker;
-        #   (c) inner helpers (sync_active_state_from_registry,
+        #   (c) inner helpers (sync_runtime_state_from_registry,
         #       apply_journey_mutations) keep their own file_lock(...) calls
         #       — those become reentrant under file_lock's depth counter and
         #       cost nothing extra.
@@ -583,7 +580,7 @@ def main() -> int:
                     if trailer.get("report"):
                         task["report_path"] = trailer["report"]
                     save_registry(promote_ready_tasks(registry))
-                    sync_active_state_from_registry(load_registry())
+                    sync_runtime_state_from_registry(load_registry())
 
             # Journey mutations + final runtime-state update share the same
             # outer registry lock so the whole hook commits as one unit. In

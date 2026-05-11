@@ -23,6 +23,24 @@ VALIDATOR_OUTCOMES = {"approved", "changes_requested", "blocked"}
 TESTER_OUTCOMES = {"pass", "fail", "blocked"}
 VERIFY_OUTCOMES = {"verified", "issues_found"}
 SCREEN_JOURNEY_OUTCOMES = {"approved", "changes_requested", "blocked"}
+FOLLOWUP_ID_RE = re.compile(r"\bFU-[A-Za-z0-9_.:-]+\b")
+FOLLOWUP_CANDIDATE_RE = re.compile(r"(?im)^\s*-?\s*(followup_candidate|FOLLOWUP_REQUIRED)\s*:\s*(yes|true|si|sí)\s*$")
+
+
+def _has_unregistered_followup_candidate(text: str) -> bool:
+    """Return True when a handoff says work needs FU but no FU id exists.
+
+    In DAG-only flow, productive work outside the current TASK_ID must be a
+    formal proposed FU before close. It must not remain as prose in validator,
+    tester, debugger, verify-slice or screen/journey review sections.
+    """
+    if not FOLLOWUP_CANDIDATE_RE.search(text):
+        return False
+    if FOLLOWUP_ID_RE.search(text):
+        return False
+    if re.search(r"(?im)^\s*-?\s*FOLLOWUP_ID\s*:\s*FU-", text):
+        return False
+    return True
 
 
 def _handoff_path(task_id: str) -> Path:
@@ -70,6 +88,12 @@ def validate(task_id: str, *, require_ready_for_close: bool, require_verify_slic
         return False, [f"missing handoff: {path.relative_to(project_root())}"], details
     text = path.read_text(encoding="utf-8", errors="replace")
     sections = _parse_sections(text)
+
+    if _has_unregistered_followup_candidate(text):
+        errors.append(
+            "handoff contains followup_candidate/FOLLOWUP_REQUIRED=yes but no formal FOLLOWUP_ID; "
+            "register it with ./scripts/register-followup-task.sh propose before close"
+        )
 
     mismatches = [(sec, val) for sec, val in _all_task_ids(sections) if val and val != task_id and not val.startswith("<")]
     if mismatches:

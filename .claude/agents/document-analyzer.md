@@ -36,7 +36,7 @@ Encontrar exactamente el source-of-truth pack moderno:
 - `STACK_PROFILE.yaml`
 - `UX_CONTRACT.md`
 
-Canonical location: `docs/source-of-truth/`. Legacy 3-doc packs remain readable only for compatibility; production projects should contain all five files. Templates live in `docs/templates/`; Baseline context lives in `docs/product-baseline/`.
+Canonical location: `docs/source-of-truth/`. Templates live in `docs/templates/`; Baseline context lives in `docs/product-baseline/`.
 
 ## Protocolo
 

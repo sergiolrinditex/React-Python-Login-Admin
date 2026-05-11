@@ -1,11 +1,8 @@
 #!/usr/bin/env python3
 """Atomically claim a ready DAG task for one worker terminal.
 
-Sequential mode still works with the singleton active-task pointer. In DAG mode,
-several terminals can execute independent ready slices, but each terminal should
-claim exactly one TASK_ID before spawning agents. Use CLAUDE_ACTIVE_TASK_ID in
-that terminal so hooks account memory/spawn budget to the same slice even if the
-singleton active-task pointer is moved by another terminal.
+Production is DAG-only: each worker terminal claims exactly one TASK_ID and pins
+hooks with CLAUDE_ACTIVE_TASK_ID plus CLAUDE_TASK_PACK. There is no implicit task/phase selector.
 """
 from __future__ import annotations
 
@@ -29,8 +26,6 @@ from common import (
     promote_ready_tasks,
     registry_path,
     runtime_state_path,
-    save_active_phase,
-    save_active_task,
     save_registry,
     save_runtime_state,
     task_is_ready,
@@ -51,8 +46,7 @@ def _ensure_minimal_task_pack(task: dict[str, Any]) -> str:
 
     The planner overwrites this file with the full source-pack extract before the
     developer starts. The placeholder makes the task-pack path concrete and
-    prevents worker terminals from depending on the legacy global
-    ``orchestrator-state/memory/active-task.md`` singleton.
+    prevents worker terminals from depending on any implicit selector.
     """
     task_id = str(task.get("id") or "").strip()
     path = task_pack_path(task_id)
@@ -172,7 +166,7 @@ def claim_task(task_id: str, *, force: bool = False) -> tuple[bool, dict[str, An
         conflict_blockers = active_conflict_blockers(registry, task)
         if conflict_blockers and not force:
             return False, {
-                "error": f"TASK_ID conflicts with active task(s): {task_id}",
+                "error": f"TASK_ID conflicts with DAG task(s): {task_id}",
                 "conflict_blockers": conflict_blockers,
                 "task": task,
             }
@@ -184,19 +178,14 @@ def claim_task(task_id: str, *, force: bool = False) -> tuple[bool, dict[str, An
         task["task_pack_path"] = _ensure_minimal_task_pack(task)
         save_registry(promote_ready_tasks(registry))
 
-        # The active-task singleton is still useful for session context, but in
-        # parallel DAG workers it is only advisory. CLAUDE_ACTIVE_TASK_ID is the
-        # authoritative per-terminal scope for hooks.
-        if phase:
-            save_active_phase(phase)
-        save_active_task(task)
+        # No global DAG task/phase mirror is written. Worker terminals are
+        # scoped exclusively by CLAUDE_ACTIVE_TASK_ID + CLAUDE_TASK_PACK.
         with file_lock(runtime_state_path()):
             runtime = load_runtime_state()
             runtime["generated_at"] = now_iso()
-            runtime["active_phase_id"] = task.get("phase_id")
-            runtime["active_task_id"] = task.get("id")
             runtime["last_event"] = "task_claimed"
             runtime["last_claimed_task_id"] = task.get("id")
+            runtime["last_claimed_phase_id"] = task.get("phase_id")
             save_runtime_state(runtime)
         return True, {"status": "claimed", "task": task, "phase": phase}
 

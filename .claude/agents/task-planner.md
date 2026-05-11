@@ -112,7 +112,7 @@ Transformar el source-of-truth pack moderno (`instrucciones.md`, `*_IMPLEMENTATI
 }
 ```
 
-Campos no-opcionales: `id`, `phase_id`, `step_id`, `title`, `status`, `build_state`, `depends_on`, `acceptance`, `verification_commands`, `allowed_paths` (legacy/backcompat), `conflict_groups`, `write_set`, `handoff_path`, `evidence_dir`. Los campos `last_*` los rellena el hook `SubagentStop` automáticamente; tú solo dejas `null` en bootstrap.
+Campos no-opcionales: `id`, `phase_id`, `step_id`, `title`, `status`, `build_state`, `depends_on`, `acceptance`, `verification_commands`, `allowed_paths` (compatibility), `conflict_groups`, `write_set`, `handoff_path`, `evidence_dir`. Los campos `last_*` los rellena el hook `SubagentStop` automáticamente; tú solo dejas `null` en bootstrap.
 
 ### ID format
 

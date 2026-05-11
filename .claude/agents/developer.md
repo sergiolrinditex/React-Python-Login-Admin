@@ -1,6 +1,6 @@
 ---
 name: developer
-description: "Implements exactly one approved active task pack at a time. Use after planner returns CONTEXT_READY: yes."
+description: "Implements exactly one approved DAG task pack at a time. Use after planner returns CONTEXT_READY: yes."
 model: sonnet
 permissionMode: bypassPermissions
 maxTurns: 150
@@ -31,7 +31,7 @@ Lee `.claude/rules/` para los non-negotiables (tests reales, logging, docstrings
 
 ## Antes de editar
 
-1. Lee el `TASK_PACK` que te pase el orchestrator. En DAG debe ser `orchestrator-state/tasks/task-packs/<TASK_ID>.md`; en legacy puede ser `orchestrator-state/memory/active-task.md`. Si no te pasan ruta, mira primero `orchestrator-state/tasks/task-packs/<TASK_ID>.md` y solo como fallback `orchestrator-state/memory/active-task.md`. Si el pack contiene el aviso “Minimal pack created by claim_task.py” o no tiene sección "Stack y arquitectura" / "Reglas de negocio" → **PARA**, pide que se ejecute `planner` primero. No implementes a ciegas ni leas un pack de otro TASK_ID.
+1. Lee el `TASK_PACK` que te pase el orchestrator: `orchestrator-state/tasks/task-packs/<TASK_ID>.md`. En producción DAG no existe fallback a implicit selector; si no te pasan ruta o el pack no existe, **PARA** y pide que `main-orchestrator`/`planner` materialicen el pack correcto. Si el pack contiene el aviso “Minimal pack created by claim_task.py” o no tiene sección "Stack y arquitectura" / "Reglas de negocio" → **PARA**, pide que se ejecute `planner` primero. No implementes a ciegas ni leas un pack de otro TASK_ID.
 2. Lee `orchestrator-state/memory/architecture-contract.md` — patrones del proyecto.
 3. Lee `orchestrator-state/agent-memory/developer/MEMORY.md` si existe — decisiones propias previas.
 4. Lee el handoff anterior si existe: `orchestrator-state/tasks/handoffs/<TASK_ID_ANTERIOR>.md`.

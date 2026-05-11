@@ -125,7 +125,7 @@ def test_promote_normalizes_short_step_id_and_writes_phase_yaml(seeded_registry,
     assert promoted["task_id"] in phase_yaml.read_text(encoding="utf-8")
 
 
-def test_promoted_followup_blocks_when_it_conflicts_with_active_task(seeded_registry, tmp_project):
+def test_promoted_followup_blocks_when_it_conflicts_with_worker_task(seeded_registry, tmp_project):
     docs = tmp_project / "docs" / "source-of-truth"
     docs.mkdir(parents=True)
     (docs / "TEST_IMPLEMENTATION_CHECKLIST.md").write_text("# TEST Checklist\n\n# Phase 0 — Base\n\n## Step 0.1 — Existing\n\n- [ ] existing\n", encoding="utf-8")
@@ -147,9 +147,9 @@ def test_promoted_followup_blocks_when_it_conflicts_with_active_task(seeded_regi
     reg = common.load_registry()
     task = common.find_task(reg, promoted["task_id"])
     assert task["status"] == "blocked"
-    assert task["blocked_reason"] == "conflict_with_active_task"
+    assert task["blocked_reason"] == "conflict_with_worker_task"
     assert task["blocked_by"] == ["P00-S01-T002"]
-    assert task["last_blocker"]["type"] == "conflict_with_active_task"
+    assert task["last_blocker"]["type"] == "conflict_with_worker_task"
 
     active = common.find_task(reg, "P00-S01-T002")
     active["status"] = "done"

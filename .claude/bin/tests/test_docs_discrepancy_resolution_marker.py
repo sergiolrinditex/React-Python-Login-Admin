@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 
-def test_docs_discrepancy_resolution_accepts_colon_and_legacy_date(tmp_project):
+def test_docs_discrepancy_resolution_accepts_colon_and_missing_dependency_column_date(tmp_project):
     import common
 
     notes = tmp_project / "orchestrator-state" / "memory" / "official-doc-notes"

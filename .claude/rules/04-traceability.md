@@ -2,8 +2,8 @@
 
 - `orchestrator-state/tasks/registry.json` mirrors the real execution state. Bootstrap/claim/hooks write it under locks; `planner` reads it and writes the per-task pack, while closer verifies before final state.
 - `orchestrator-state/tasks/runtime-state.json` tracks last worker + last event. Updated by claim scripts and the SubagentStop hook automatically.
-- `orchestrator-state/tasks/ledger.jsonl` logs every tool use. Updated by the PostToolUse hook automatically.
-- `orchestrator-state/memory/active-phase.{json,md}` and `orchestrator-state/memory/active-task.{json,md}` are legacy mirrors. In explicit DAG mode, `CLAUDE_ACTIVE_TASK_ID` + `orchestrator-state/tasks/task-packs/<TASK_ID>.md` are authoritative.
+- `orchestrator-state/tasks/ledger.jsonl` is a local high-churn runtime trace for Write/Edit/MultiEdit/NotebookEdit and lifecycle events. Bash PostToolUse records go to `orchestrator-state/tasks/bash-ledger.jsonl`. Both are runtime-only/ignored by Git so close-time Bash hooks cannot dirty the repo after commit/push.
+- In explicit DAG mode, `CLAUDE_ACTIVE_TASK_ID` + `orchestrator-state/tasks/task-packs/<TASK_ID>.md` are authoritative. There is no global DAG task/phase file.
 - `orchestrator-state/memory/PROGRESS.md` is the live project snapshot. Developer updates after every slice. All agents read it after `/clear`.
 - `orchestrator-state/memory/task-dag.json` and `.md` are derived DAG artifacts. They contain adjacency matrix, adjacency list, reverse dependencies, topological waves, conflict groups and write-set metadata. They are never edited by hand; update the Coverage Registry `Depends on` / `Conflict group` / `Write set` cells instead.
 
@@ -28,18 +28,18 @@ A task is `done` only when all of the following exist:
 ## Hooks behavior
 
 - Four hook groups are wired in `.claude/settings.json` with timeout caps. Only the `PreToolUse` Agent hook can deny, and only when the active slice reaches the configured spawn budget. The docs-discrepancy hook is warn-only; PostToolUse, SubagentStop and SessionStart never block.
-  - `PreToolUse` on `Agent` → `hook_spawn_budget.py`. Blocks the 21st spawn for the active slice by returning `permissionDecision: deny`. In DAG worker terminals it scopes the count to `CLAUDE_ACTIVE_TASK_ID` before falling back to the singleton active task.
+  - `PreToolUse` on `Agent` → `hook_spawn_budget.py`. Blocks the 21st spawn for the active slice by returning `permissionDecision: deny`. In DAG worker terminals it scopes the count to `CLAUDE_ACTIVE_TASK_ID` without any singleton fallback.
   - `PreToolUse` on `Write|Edit|NotebookEdit` → `hook_docs_discrepancy_check.py`. If any note in `orchestrator-state/memory/official-doc-notes/` lacks a `RESOLVED:` line, emits `additionalContext` with a warning listing the unresolved notes. **Warn-only, never blocks.** Chrome MCP and every `mcp__*` tool are excluded by the matcher.
-  - `PostToolUse` on `Write|Edit|Bash|NotebookEdit` → `hook_update_ledger.py`. Appends every tool use to `orchestrator-state/tasks/ledger.jsonl`. In DAG worker terminals it records `CLAUDE_ACTIVE_TASK_ID` instead of the global singleton so ledger/memory traces cannot bleed across parallel nodes.
+  - `PostToolUse` on `Write|Edit|Bash|NotebookEdit` → `hook_update_ledger.py`. Appends Write/Edit/MultiEdit/NotebookEdit events to local `ledger.jsonl` and Bash events to local `bash-ledger.jsonl`. Bash ledger is ignored by Git by design, so a Bash hook fired after `git commit`/`git push` cannot re-dirty the working tree. In DAG worker terminals it records `CLAUDE_ACTIVE_TASK_ID` from the explicit worker environment so ledger/memory traces cannot bleed across parallel nodes.
   - `SubagentStop` → `hook_capture_subagent_stop.py`. Parses the worker's trailer (`TASK_ID` / `OUTCOME` / `NEXT_STATUS` / `HANDOFF` / `EVIDENCE`) and syncs `registry.json` + `runtime-state.json` **under an exclusive file lock** so two parallel subagents (e.g. validator + tester) cannot clobber each other. In DAG terminals the environment scope is authoritative; if a trailer reports a different `TASK_ID`, the hook logs the mismatch and refuses to mutate a different node.
-  - `SessionStart` → `hook_session_context.py`. Emits `additionalContext` with the project state (active phase, active task, per-terminal DAG override, last worker + event, PROGRESS.md head, unresolved discrepancies, recent hook errors). Follows the official `hookSpecificOutput` format.
+  - `SessionStart` → `hook_session_context.py`. Emits `additionalContext` with runtime suggested phase, per-terminal DAG worker task override, last worker + event, PROGRESS.md head, unresolved discrepancies, recent hook errors. Follows the official `hookSpecificOutput` format.
 - On any exception each hook writes a timestamped entry to `orchestrator-state/hook-errors.log` via `log_hook_error()` in `common.py`. They never re-raise and never block the pipeline; the error log is the single source of truth for hook health, and the SessionStart hook surfaces recent entries on the first turn after a restart.
 - If a worker forgets the trailer, the pipeline continues but the `closer` rejects the slice on missing evidence.
 
 ## Concurrency safety
 
 - `common.py` provides a `file_lock(path)` context manager backed by `fcntl.flock` (POSIX). All registry / runtime-state mutations (in `write_json`, `update_task_status`, `mark_task_blocked`, `claim_task.py`, `hook_capture_subagent_stop`) acquire this lock before read-modify-write. Writes use a temp file + `rename` for atomicity.
-- `claim_task.py` locks `registry.json` first and `runtime-state.json` second, same lock order as `hook_capture_subagent_stop.py`. This prevents duplicate DAG workers from claiming the same ready node and blocks claims that conflict with active tasks via `Conflict group`/`Write set`.
+- `claim_task.py` locks `registry.json` first and `runtime-state.json` second, same lock order as `hook_capture_subagent_stop.py`. This prevents duplicate DAG workers from claiming the same ready node and blocks claims that conflict with DAG tasks via `Conflict group`/`Write set`.
 - Async evidence runner `run_tests_async.py` also honors `CLAUDE_ACTIVE_TASK_ID`; it loads verification commands from the scoped registry task and writes evidence under that node.
 - On Windows the lock becomes a no-op. The framework is designed for POSIX dev machines.
 
@@ -98,3 +98,5 @@ Campo añadido a `registry.json` por bootstrap (parsea la Journey Coverage Matri
 ## Reversibility
 
 Prefer small reversible tasks over large diffs. Every migration has an `up` and `down`. Every feature flag has a documented rollback.
+
+Git close note: `hook_update_ledger.py` writes Bash PostToolUse events to `orchestrator-state/tasks/bash-ledger.jsonl`, which is runtime-only and ignored by Git. This prevents Bash hooks from re-dirtying the working tree after the atomic commit/push in DAG close. Do not use `git stash` as the normal closer flow; stage required changes into the slice commit before running `./scripts/git-workflow.sh`.

@@ -1,7 +1,7 @@
 """DAG task orchestration contract.
 
 Pins the backward-compatible behavior:
-- no `Depends on` column => legacy linear chain;
+- no `Depends on` column => missing_dependency_column DAG dependency diagnostic;
 - `Depends on` column => explicit DAG roots can run in parallel;
 - derived adjacency matrix and waves are deterministic;
 - per-terminal CLAUDE_ACTIVE_TASK_ID protects hook accounting in parallel workers;
@@ -80,7 +80,7 @@ def _dag_checklist() -> str:
 """
 
 
-def _legacy_checklist() -> str:
+def _missing_dependency_column_checklist() -> str:
     return """# App Implementation Checklist
 
 ## Coverage Registry
@@ -114,12 +114,10 @@ class BootstrapDagModeTests(unittest.TestCase):
         self.assertEqual(by_id["P00-S02-T001"].get("dependency_mode"), "explicit_dag")
         self.assertEqual(phases[0].get("_dag_errors"), [])
 
-    def test_no_depends_on_column_preserves_legacy_linear_chain(self):
-        _, tasks = boot.build_phases_and_tasks(Path("APP_IMPLEMENTATION_CHECKLIST.md"), _legacy_checklist())
-        self.assertEqual(tasks[0]["depends_on"], [])
-        self.assertEqual(tasks[1]["depends_on"], ["P00-S01-T001"])
-        self.assertEqual(tasks[2]["depends_on"], ["P00-S01-T002"])
-        self.assertNotIn("dependency_mode", tasks[0])
+    def test_no_depends_on_column_reports_dag_error(self):
+        phases, tasks = boot.build_phases_and_tasks(Path("APP_IMPLEMENTATION_CHECKLIST.md"), _missing_dependency_column_checklist())
+        self.assertTrue(tasks, "rows may still be parsed for diagnostics")
+        self.assertTrue(any("Dependency" in e or "dependency" in e for e in phases[0].get("_dag_errors", [])))
 
 
     def test_compact_step_refs_do_not_create_synthetic_duplicates(self):
@@ -193,8 +191,6 @@ class DagRuntimeSafetyTests(unittest.TestCase):
         })
         common.save_runtime_state({
             "generated_at": common.now_iso(),
-            "active_phase_id": "P00",
-            "active_task_id": "P00-S01-T001",
             "last_worker": None,
             "last_event": None,
             "pending_journey_verifications": [],
@@ -202,7 +198,6 @@ class DagRuntimeSafetyTests(unittest.TestCase):
             "spawn_budget": 20,
             "spawns_in_current_slice": {},
         })
-        common.save_active_task({"id": "P00-S01-T001", "title": "A", "status": "ready", "phase_id": "P00", "acceptance": [], "allowed_paths": [], "verification_commands": []})
 
     def test_claim_task_marks_ready_task_claimed_atomically(self):
         root, td = _setup_root()
@@ -214,8 +209,10 @@ class DagRuntimeSafetyTests(unittest.TestCase):
                 ok, result = claim_task.claim_task("P00-S01-T002")
                 self.assertTrue(ok)
                 self.assertEqual(result["task"]["status"], "claimed")
-                self.assertEqual(common.load_runtime_state()["active_task_id"], "P00-S01-T002")
-                self.assertEqual(common.load_active_task()["id"], "P00-S01-T002")
+                self.assertEqual(common.load_runtime_state()["last_claimed_task_id"], "P00-S01-T002")
+                self.assertIsNone(common.effective_worker_task_id())
+                self.assertFalse((root / "orchestrator-state/memory/removed implicit selector.json").exists())
+                self.assertFalse((root / "orchestrator-state/memory/removed implicit selector").exists())
 
                 ok2, result2 = claim_task.claim_task("P00-S01-T002")
                 self.assertFalse(ok2)
@@ -300,8 +297,6 @@ class DagRuntimeSafetyTests(unittest.TestCase):
                 })
                 common.save_runtime_state({
                     "generated_at": common.now_iso(),
-                    "active_phase_id": "P00",
-                    "active_task_id": "P00-S01-T002",
                     "last_worker": None,
                     "last_event": None,
                     "pending_journey_verifications": [],
@@ -337,9 +332,52 @@ class DagRuntimeSafetyTests(unittest.TestCase):
                     hook_update_ledger.main()
                 lines = (root / "orchestrator-state" / "tasks" / "ledger.jsonl").read_text(encoding="utf-8").splitlines()
                 record = json.loads(lines[-1])
-                self.assertEqual(record["active_task_id"], "P00-S01-T002")
-                self.assertEqual(record["active_phase_id"], "P00")
+                self.assertEqual(record["task_id"], "P00-S01-T002")
+                self.assertEqual(record["phase_id"], "P00")
                 self.assertEqual(record["file_path"], "lib/b.dart")
+        finally:
+            td.cleanup()
+
+    def test_post_tool_ledger_routes_git_close_housekeeping_bash_to_runtime_ledger(self):
+        root, td = _setup_root()
+        try:
+            with _Sandbox(root):
+                import common
+                import hook_update_ledger
+                self._seed_registry(common)
+                ledger = root / "orchestrator-state" / "tasks" / "ledger.jsonl"
+                bash_ledger = root / "orchestrator-state" / "tasks" / "bash-ledger.jsonl"
+                commands = [
+                    "git status --short",
+                    "git add -A && git commit -m close",
+                    "./scripts/git-workflow.sh",
+                    "bash scripts/slice-clean.sh --apply 2>&1 | tail -20",
+                    "bash scripts/cleanup-worktrees.sh --apply --task P00-S01-T001",
+                ]
+                for command in commands:
+                    payload = json.dumps({"tool_name": "Bash", "tool_input": {"command": command}})
+                    with mock.patch.object(sys, "stdin", StringIO(payload)):
+                        hook_update_ledger.main()
+                self.assertFalse(ledger.exists(), "Bash commands must not append the canonical ledger after close commit")
+                self.assertTrue(bash_ledger.exists(), "Bash commands remain traceable in runtime-only bash-ledger.jsonl")
+        finally:
+            td.cleanup()
+
+    def test_post_tool_ledger_keeps_product_bash_traceability(self):
+        root, td = _setup_root()
+        try:
+            with _Sandbox(root):
+                import common
+                import hook_update_ledger
+                self._seed_registry(common)
+                command = "pytest backend/tests -k health"
+                payload = json.dumps({"tool_name": "Bash", "tool_input": {"command": command}})
+                with mock.patch.object(sys, "stdin", StringIO(payload)):
+                    hook_update_ledger.main()
+                lines = (root / "orchestrator-state" / "tasks" / "bash-ledger.jsonl").read_text(encoding="utf-8").splitlines()
+                record = json.loads(lines[-1])
+                self.assertEqual(record["tool_name"], "Bash")
+                self.assertEqual(record["command"], command)
         finally:
             td.cleanup()
 
@@ -357,7 +395,6 @@ class DagRuntimeSafetyTests(unittest.TestCase):
                     if task["id"] == "P00-S01-T002":
                         task["verification_commands"] = ["python3 -c 'print(\"right\")'"]
                 common.save_registry(registry)
-                common.save_active_task({"id": "P00-S01-T001", "title": "A", "status": "ready", "phase_id": "P00", "acceptance": [], "allowed_paths": [], "verification_commands": ["python3 -c 'print(\"wrong\")'"]})
                 os.environ["CLAUDE_ACTIVE_TASK_ID"] = "P00-S01-T002"
                 payload = json.dumps({"tool_name": "Write", "tool_input": {"file_path": "lib/b.dart"}})
                 with mock.patch.object(sys, "stdin", StringIO(payload)):
@@ -418,6 +455,14 @@ class DagRuntimeSafetyTests(unittest.TestCase):
                 self.assertIn("P00-S01-T002", body)
         finally:
             td.cleanup()
+
+
+class HookUpdateLedgerGitCloseTests(unittest.TestCase):
+    def test_bash_events_use_ignored_runtime_ledger(self):
+        import hook_update_ledger
+        self.assertEqual(hook_update_ledger._ledger_for_tool("Bash").name, "bash-ledger.jsonl")
+        self.assertEqual(hook_update_ledger._ledger_for_tool("Write").name, "ledger.jsonl")
+        self.assertEqual(hook_update_ledger._ledger_for_tool("Edit").name, "ledger.jsonl")
 
 
 if __name__ == "__main__":

@@ -13,7 +13,7 @@ def test_next_slice_repeats_dag_mode_before_plan_and_spawns() -> None:
     assert "RECORDATORIO DAG PARA ESTA EJECUCIÓN" in text
     assert "Cada Agent spawn debe recibir" in text
     assert "CLAUDE_TASK_PACK" in text
-    assert "legacy_linear` es error operativo" in text
+    assert "ausencia de `Depends on` es error operativo" in text
 
 
 def test_templates_and_smoke_do_not_suggest_demo_seed_or_bundle_data() -> None:

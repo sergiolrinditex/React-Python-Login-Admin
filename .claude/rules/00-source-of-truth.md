@@ -8,7 +8,7 @@ The project is governed by the canonical source-of-truth set in `docs/source-of-
 - `STACK_PROFILE.yaml` — framework/language, module roots, commands, design-token enforcer and Git workflow.
 - `UX_CONTRACT.md` — personas, screen inventory, required UI states and UX verification rules.
 
-Legacy 3-doc projects are still readable for compatibility, but production projects should use all five files. If any source-of-truth file is missing, duplicated, stale or contradictory, stop and repair the contract first.
+If any source-of-truth file is missing, duplicated, stale or contradictory, stop and repair the contract first.
 
 Rules:
 

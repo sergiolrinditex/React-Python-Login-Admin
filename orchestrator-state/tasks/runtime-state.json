@@ -1,42 +1,50 @@
 {
-  "generated_at": "2026-05-11T14:54:46+00:00",
-  "active_phase_id": "P01",
-  "active_task_id": "P01-S02-T001",
-  "last_worker": "tester",
-  "last_event": "followup_proposed",
+  "generated_at": "2026-05-11T15:21:38+00:00",
+  "active_phase_id": "P00",
+  "active_task_id": "P00-S02-T004",
+  "last_worker": "closer",
+  "last_event": "followup_promoted",
   "pending_journey_verifications": [],
   "journey_gate_mode": "frontier",
   "last_journey_verified": null,
   "spawn_budget": 20,
   "spawns_in_current_slice": {
-    "P01-S01-T001": 6,
+    "P01-S01-T001": 8,
     "agent:planner": 1,
     "agent:official-docs-researcher": 1,
     "agent:developer": 1,
     "agent:validator": 1,
-    "agent:tester": 1
+    "agent:tester": 1,
+    "agent:closer": 2
   },
   "open_followups": [
     {
       "id": "FU-20260511145446-fix-verification-data-loader-meta-jsonb-sql-cast",
-      "status": "proposed",
+      "status": "promoted",
       "severity": "medium",
       "origin_task_id": "P00-S02-T003",
       "title": "fix verification_data loader :meta::jsonb SQL cast",
       "path": "orchestrator-state/tasks/follow-ups/FU-20260511145446-fix-verification-data-loader-meta-jsonb-sql-cast.yaml",
       "created_at": "2026-05-11T14:54:46+00:00",
       "scope_classification": "out_of_scope",
-      "why_not_debugger": "P00-S02-T003 ya esta committed y mergeado en main; el bug del cast :meta::jsonb solo aflora ahora porque T001 crea las tablas auth que activan el code path del loader. No es fix in-scope de T001 (write_set distinto: backend/app/verification_data/loader.py)."
+      "why_not_debugger": "P00-S02-T003 ya esta committed y mergeado en main; el bug del cast :meta::jsonb solo aflora ahora porque T001 crea las tablas auth que activan el code path del loader. No es fix in-scope de T001 (write_set distinto: backend/app/verification_data/loader.py).",
+      "promoted_task_id": "P00-S02-T004"
     }
   ],
   "last_claimed_task_id": "P01-S01-T001",
   "last_trailer": {
     "task_id": "P01-S01-T001",
-    "outcome": "pass",
-    "next_status": "ready_for_close",
+    "outcome": "committed",
+    "next_status": "done",
     "handoff": "orchestrator-state/tasks/handoffs/P01-S01-T001.md",
-    "evidence": "orchestrator-state/tasks/evidence/P01-S01-T001/"
+    "evidence": "orchestrator-state/tasks/evidence/P01-S01-T001/",
+    "report": "orchestrator-state/tasks/reports/P01-S01-T001.md",
+    "report_ready": "yes",
+    "baseline_sync_ready": "yes",
+    "git_ready": "yes",
+    "push_ready": "yes",
+    "worktrees_cleaned": "yes"
   },
-  "last_stop_at": "2026-05-11T14:49:52+00:00",
+  "last_stop_at": "2026-05-11T15:19:30+00:00",
   "last_followup_id": "FU-20260511145446-fix-verification-data-loader-meta-jsonb-sql-cast"
 }

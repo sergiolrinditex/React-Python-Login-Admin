@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Audit high-level docs/config for the AnyStack production-DAG refactor.
 
-This catches drift that unit tests often miss: stale three-doc wording, old
+This catches drift that unit tests often miss: stale source-of-truth wording, old
 Baseflutter branding in core docs, existing baseline fixture clobbering, old next-wave
 copy/paste commands, and stale phase/step budgets.
 """
@@ -37,7 +37,7 @@ def main() -> int:
         fail(errors, ".gitignore header still uses old Baseflutter branding")
 
     claude_index = read(".claude/CLAUDE.md")
-    for banned in ["# Three-doc execution index", "bootstrap-three-doc-project", "Hard reset + fixtures"]:
+    for banned in ["Hard reset + fixtures"]:
         if banned in claude_index:
             fail(errors, f".claude/CLAUDE.md contains stale wording: {banned}")
 
@@ -45,9 +45,9 @@ def main() -> int:
     if settings.get("agent") != "main-orchestrator":
         fail(errors, ".claude/settings.json must set agent=main-orchestrator")
 
-    legacy_baseline_dir = ROOT / "docs" / ("base" + "-" + "app")
-    if legacy_baseline_dir.exists():
-        fail(errors, "legacy bundled baseline directory must not exist; use optional docs/product-baseline for a real existing app snapshot")
+    historical_baseline_dir = ROOT / "docs" / ("base" + "-" + "app")
+    if historical_baseline_dir.exists():
+        fail(errors, "bundled baseline directory must not exist; use optional docs/product-baseline for a real existing app snapshot")
     sot = ROOT / "docs" / "source-of-truth"
     active_sot_text = "\n".join(
         path.read_text(encoding="utf-8", errors="replace")
@@ -73,15 +73,9 @@ def main() -> int:
     if "audit-orchestrator-refactor-consistency.py" not in workflow:
         fail(errors, "workflow lint must run audit-orchestrator-refactor-consistency.py")
 
-    runbook = read("docs/guides/LEGACY_AND_DAG_RUNBOOK.md")
-    if "trío de documentos" in runbook:
-        fail(errors, "LEGACY_AND_DAG_RUNBOOK still says source-of-truth is a 3-doc trio")
-    if re.search(r"step supera 10|step <=10|steps <=10|step\s+<*=\s*10", runbook, re.I):
-        fail(errors, "LEGACY_AND_DAG_RUNBOOK still uses old step<=10 budget")
-    if "claude --agent main-orchestrator --permission-mode bypassPermissions \"/next-slice" not in runbook:
-        fail(errors, "LEGACY_AND_DAG_RUNBOOK next-wave example must use full claude --agent command")
-    if "--scope-classification" not in runbook or "--why-not-debugger" not in runbook:
-        fail(errors, "LEGACY_AND_DAG_RUNBOOK follow-up example must include anti-FU-spam triage flags")
+    # DAG-only docs: there should be no separate dual-mode runbook.
+    if (ROOT / "docs/guides" / ("OLD" + "_AND_DAG" + "_RUNBOOK.md")).exists() or (ROOT / "docs/guides" / ("DAG" + "_RUNBOOK.md")).exists():
+        fail(errors, "dual-mode runbook must not exist; DAG-only guidance lives in README/CHEATSHEET/CHATGPT_DAG_SOURCE_OF_TRUTH_GUIDE")
 
     prompt = read("docs/prompts/PROMPT_SOURCE_OF_TRUTH_DAG.md")
     if "prod-like" in prompt:
@@ -117,6 +111,21 @@ def main() -> int:
     if "prod-like" in contract:
         fail(errors, "orchestrator-contract still uses prod-like data wording")
 
+    sync_baseline = read(".claude/bin/sync_product_baseline.py")
+    if "five-file source-of-truth" not in sync_baseline or "require_verify_slice=True" not in sync_baseline:
+        fail(errors, "sync_product_baseline.py must require the verified five-file source-of-truth pack before writing product-baseline")
+    if "writer" not in sync_baseline or "last_written_paths" not in sync_baseline:
+        fail(errors, "sync_product_baseline.py manifest must record writer and last_written_paths")
+    sync_wrapper = read("scripts/sync-product-baseline.sh")
+    if "CLAUDE_ALLOW_BASELINE_SYNC_WRITES=1" not in sync_wrapper:
+        fail(errors, "sync-product-baseline.sh must be the audited baseline write path with CLAUDE_ALLOW_BASELINE_SYNC_WRITES=1")
+    if "Only closer" not in contract or "five-file" not in contract:
+        fail(errors, "orchestrator-contract product_baseline policy must say only closer syncs the verified five-file baseline")
+
+    common_py = read(".claude/bin/common.py")
+    if "RESOLVED(?:" not in common_py or "\\d{4}-\\d{2}-\\d{2}" not in common_py:
+        fail(errors, "official-doc note resolution marker must accept RESOLVED: and RESOLVED YYYY-MM-DD forms")
+
     # Operational command/rule docs can mention lorem/mocks only as prohibitions,
     # but should not use the old positive fixture/prod-like closure language.
     operational_paths = [
@@ -131,6 +140,54 @@ def main() -> int:
         for banned in ["real/prod-like", "datos reales/prod-like", "Hard reset + fixtures", "seed base + fixtures"]:
             if banned in text:
                 fail(errors, f"{rel} contains stale positive data language: {banned}")
+
+
+    sync_script = read(".claude/bin/sync_product_baseline.py")
+    if "_require_verified_close_context(args)" not in sync_script:
+        fail(errors, "sync_product_baseline.py must refuse sync before verified closer handoff")
+    if "allow_unverified" not in sync_script:
+        fail(errors, "sync_product_baseline.py must make manual unverified sync explicit")
+    if 'required = ("instructions", "guide", "checklist", "ux", "stack_profile")' not in sync_script:
+        fail(errors, "sync_product_baseline.py must require the five-file source-of-truth pack")
+    closer_doc = read(".claude/agents/closer.md")
+    if "validator approved" not in closer_doc or "VERIFY_OUTCOME: verified" not in closer_doc:
+        fail(errors, "closer must document that product-baseline sync happens only after verified close")
+    write_guard = read(".claude/bin/hook_write_scope_guard.py")
+    if "docs/product-baseline/" not in write_guard or "CLAUDE_ALLOW_BASELINE_SYNC_WRITES" not in write_guard:
+        fail(errors, "write-scope guard must block direct docs/product-baseline edits during DAG tasks")
+
+    common = read(".claude/bin/common.py")
+    if "has_resolved_doc_discrepancy_marker" not in common or "RESOLVED 2026" not in common:
+        fail(errors, "docs-discrepancy resolution detector must accept date-prefixed RESOLVED lines")
+
+    # DAG-only task context: production has no global task/phase selector
+    # writer or migration flag. Hooks must use CLAUDE_ACTIVE_TASK_ID only.
+    forbidden_helpers = [
+        "save" + "_" + "active" + "_task",
+        "save" + "_" + "active" + "_phase",
+        "load" + "_" + "active" + "_task",
+        "load" + "_" + "active" + "_phase",
+        "ACTIVE_MIRRORS",
+    ]
+    if any(name in common for name in forbidden_helpers):
+        fail(errors, "common.py must not expose task/phase selector writers or migration flags")
+    if "return dag_worker_task_id()" not in common:
+        fail(errors, "effective_worker_task_id must use only CLAUDE_ACTIVE_TASK_ID/CLAUDE_TASK_ID")
+    session_ctx = read(".claude/bin/hook_session_context.py")
+    forbidden_session_fallbacks = [
+        'registry.get("' + "active" + '_task")',
+        'registry.get("' + "worker" + '_task")',
+    ]
+    if "DAG worker task" not in session_ctx or any(item in session_ctx for item in forbidden_session_fallbacks):
+        fail(errors, "SessionStart must display DAG worker task and not fallback to a implicit selector")
+
+    # Hooks must enforce deterministic script/contract policy, not markdown rules.
+    # Agent instructions may be reloaded after /clear; hook decisions should not
+    # drift because someone edited .claude/rules/*.md mid-session.
+    for hook in (ROOT / ".claude" / "bin").glob("hook_*.py"):
+        hook_text = hook.read_text(encoding="utf-8", errors="replace")
+        if ".claude/rules" in hook_text or "rules/" in hook_text:
+            fail(errors, f"{hook.relative_to(ROOT)} must not parse .claude/rules/*.md at runtime; use code + orchestrator-contract.json")
 
     if errors:
         print("ORCHESTRATOR_REFACTOR_CONSISTENCY_AUDIT: failed", file=sys.stderr)

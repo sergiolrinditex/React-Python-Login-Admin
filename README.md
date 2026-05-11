@@ -22,7 +22,7 @@ ChatGPT Pro rellena templates
 
 La matriz de adyacencia no se escribe a mano. Se deriva del `Canonical Coverage Registry` del checklist, concretamente de `Depends on`. La fuente runtime canónica del DAG es `orchestrator-state/tasks/registry.json` (`tasks[]` + `task_dag.source_digest`); `task-dag.json`, `task-dag.md` y `execution-graph.json` son vistas derivadas que `./scripts/check-task-dag.sh --strict` compara contra el registry antes de paralelizar. `Conflict group` y `Write set` evitan paralelizar slices que pisan los mismos ficheros o recursos.
 
-**Production DAG-only**: en operación normal `task_dag.mode` debe ser `explicit_dag`. Si aparece `legacy_linear`, no sigas como si fuera una cola secuencial: faltan `Depends on` reales o el Coverage Registry está incompleto. Corrige los source-of-truth docs y vuelve a ejecutar `bootstrap_three_docs.py --refresh`.
+**Production DAG-only**: en operación normal `task_dag.mode` debe ser `explicit_dag`. Si falta `Depends on`, el bootstrap/checker debe bloquear: faltan dependencias reales o el Coverage Registry está incompleto. Corrige los source-of-truth docs y vuelve a ejecutar `bootstrap_three_docs.py --refresh`.
 
 **Main thread obligatorio**: Claude Code debe arrancar con `main-orchestrator` como agente principal, no como subagente. El repo fija `.claude/settings.json -> agent: main-orchestrator`, y los comandos operativos usan siempre `claude --agent main-orchestrator --permission-mode bypassPermissions`. No añadas `tools:` al frontmatter de `.claude/agents/main-orchestrator.md`: omitir `tools` es intencional para heredar todas las herramientas disponibles de la sesión, incluidos MCPs y `Agent`; una lista `tools:` sería un allowlist y podría limitar el orquestador.
 
@@ -41,7 +41,7 @@ Terminal A cierra TASK_A
   -> closer emite trailer machine-readable
   -> hook_capture_subagent_stop.py valida OUTCOME/NEXT_STATUS
   -> registry.json TASK_A pasa a done bajo lock
-  -> runtime-state.json y ledger.jsonl se actualizan
+  -> runtime-state.json se actualiza y ledger.jsonl se mantiene como traza local
   -> promote_ready_tasks desbloquea successors si todas sus deps están done
   -> cualquier terminal vuelve a ejecutar ./scripts/next-wave.sh y ve el nuevo frontier
 ```
@@ -63,7 +63,7 @@ unset CLAUDE_ACTIVE_TASK_ID CLAUDE_TASK_PACK
 claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice <NEXT_TASK_ID>"
 ```
 
-Si el cierre genera `JOURNEY_PENDING_VERIFY`, `/next-wave` aplica `journey_gate_mode=frontier` por defecto: difiere solo tasks que referencian ese journey pendiente. `journey_gate_mode=strict` conserva el bloqueo global legacy. Los follow-ups bloqueantes y conflictos activos sí impiden abrir terminales inseguras.
+Si el cierre genera `JOURNEY_PENDING_VERIFY`, `/next-wave` aplica `journey_gate_mode=frontier` por defecto: difiere solo tasks que referencian ese journey pendiente. `journey_gate_mode=strict` conserva el bloqueo global estricto. Los follow-ups bloqueantes y conflictos activos sí impiden abrir terminales inseguras.
 
 Los follow-ups productivos no los promueve el closer automáticamente. El closer sólo bloquea si hay FU `high|critical|blocker` propuestas para la slice; la decisión explícita de promoción es `/promote-followup <FU_ID>`; el waiver sigue siendo `/register-followup waive <FU_ID>`. Si un promote crea una task que pisa `Conflict group`/`Write set` de una task activa, queda `blocked` hasta que el DAG sea seguro.
 
@@ -85,7 +85,7 @@ La fuente única de valores de trailer está en:
 .claude/orchestrator-contract.json -> trailer_schema.roles.<agent-name>
 ```
 
-Ahí se declaran `required_keys`, `outcome_values`, `next_status_values` y si el rol puede mutar lifecycle. Los mirrors `outcome_enums` y `next_status_enums` se mantienen solo por compatibilidad. `hook_capture_subagent_stop.py` carga primero `trailer_schema`; sus constantes internas son fallback para instalaciones dañadas, no fuente normativa.
+Ahí se declaran `required_keys`, `outcome_values`, `next_status_values` y si el rol puede mutar lifecycle. `outcome_enums` y `next_status_enums` son vistas read-only derivadas del schema para checks antiguos del engine; no son fuente normativa. `hook_capture_subagent_stop.py` carga primero `trailer_schema`; sus constantes internas son fallback para instalaciones dañadas, no fuente normativa.
 
 
 ## Source-of-truth acumulativo: existing baseline + v1 + v2 + ...
@@ -100,7 +100,7 @@ producto v2            -> Product increment=v2,      Build state=planned/done
 producto vN            -> Product increment=vN,      Build state=planned
 ```
 
-`docs/product-baseline/` es un snapshot construido opcional: sirve cuando quieres continuar una app ya hecha, pero no es obligatorio para crear una app nueva desde cero. Para una app nueva puedes vaciarlo con `./scripts/reset-for-new-project.sh` y trabajar solo desde los cinco docs vivos de `docs/source-of-truth/`. No es un sitio para notas sueltas: cuando se use como baseline, el closer lo sincroniza desde `docs/source-of-truth/` con:
+`docs/product-baseline/` es un snapshot construido opcional: sirve cuando quieres continuar una app ya hecha, pero no es obligatorio para crear una app nueva desde cero. Para una app nueva puedes vaciarlo con `./scripts/reset-for-new-project.sh` y trabajar solo desde los cinco docs vivos de `docs/source-of-truth/`. No es un sitio para notas sueltas: cuando se use como baseline, sólo el closer lo sincroniza desde `docs/source-of-truth/` después de `/verify-slice`; el script verifica el handoff, exige los 5 ficheros modernos y escribe únicamente el snapshot + manifest con:
 
 ```bash
 ./scripts/sync-product-baseline.sh sync --version <v0|v1|v2|current> --task <TASK_ID> --reason "verified slice closed"
@@ -169,7 +169,7 @@ Journey matrix coherent — <J> journeys validadas, 0 drifts
 Wiring contract coherent — <R> routes, <E> endpoints, <T> registry rows, <J> journeys
 ```
 
-Si sale `legacy_linear`, falta la columna `Depends on` o no está rellena. En este orquestador eso es bloqueo de producción: corrige el Coverage Registry y no abras workers hasta volver a `explicit_dag`.
+Si falta la columna `Depends on` o no está rellena, el bootstrap/checker bloquea. En este orquestador eso es bloqueo de producción: corrige el Coverage Registry y no abras workers hasta volver a `explicit_dag`.
 
 `bootstrap_three_docs.py --refresh` es seguro para proyectos activos: preserva `runtime-state.json`, estados de tasks ya existentes, `last_*`, blockers y follow-ups abiertos. Usa `--reset-runtime-state` sólo cuando quieras reconstruir desde cero de forma intencional.
 
@@ -250,11 +250,13 @@ Para comprobar el contexto activo del terminal:
 printf 'CLAUDE_ACTIVE_TASK_ID=%s\nCLAUDE_TASK_PACK=%s\n' "$CLAUDE_ACTIVE_TASK_ID" "$CLAUDE_TASK_PACK"
 ```
 
+> En DAG-only, `CLAUDE_ACTIVE_TASK_ID` + `CLAUDE_TASK_PACK` fijan la slice de ese terminal. No hay selector global de tarea/fase en DAG-only.
+
 `claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice ..."` hace:
 
 ```text
 planner
-  -> developer ‖ official-docs-researcher
+  -> developer (+ official-docs-researcher si aplica)
   -> validator ‖ tester
   -> debugger si tester falla o validator pide cambios
   -> pausa en tester pass
@@ -345,7 +347,7 @@ claude --agent main-orchestrator --permission-mode bypassPermissions "/promote-f
 ./scripts/register-followup-task.sh list --json
 ```
 
-Las propuestas `high|critical|blocker` bloquean `/next-wave`, claims y cierre hasta resolverse. El closer nunca hace `promote` automático: si hay FU bloqueante, debe cerrar con `OUTCOME: blocked` / `NEXT_STATUS: blocked` y pedir decisión humana. Al promover con `/promote-followup`, se actualiza source-of-truth, registry, DAG, work-item YAML, runtime y ledger bajo locks. Si la nueva task ya tiene dependencias cumplidas pero su `conflict_group` o `write_set` choca con una task activa/claimed/in_progress, queda `blocked` con `blocked_reason: conflict_with_active_task`; `promote_ready_tasks` la desbloquea cuando desaparece el conflicto.
+Las propuestas `high|critical|blocker` bloquean `/next-wave`, claims y cierre hasta resolverse. El closer nunca hace `promote` automático: si hay FU bloqueante, debe cerrar con `OUTCOME: blocked` / `NEXT_STATUS: blocked` y pedir decisión humana. Al promover con `/promote-followup`, se actualiza source-of-truth, registry, DAG, work-item YAML, runtime y ledger bajo locks. Los Bash PostToolUse van a `orchestrator-state/tasks/bash-ledger.jsonl`, runtime-only e ignorado por Git, para no re-ensuciar el repo tras commit/push. Si la nueva task ya tiene dependencias cumplidas pero su `conflict_group` o `write_set` choca con una task activa/claimed/in_progress, queda `blocked` con `blocked_reason: conflict_with_worker_task`; `promote_ready_tasks` la desbloquea cuando desaparece el conflicto.
 
 ## Git workflow
 
@@ -357,7 +359,10 @@ git_workflow: push-to-main   # alias: direct-main
 git_workflow: pr-flow        # requiere feature branch; no vale desde main
 ```
 
-El closer debe ejecutar siempre `./scripts/git-workflow.sh`. Si el plugin falla, bloquea el cierre; no debe hacer fallback manual a `git push origin main`.
+El closer debe ejecutar siempre `./scripts/git-workflow.sh`. Si el plugin falla, bloquea el cierre; no debe hacer fallback manual a `git push origin main`. `git-workflow.sh` es transporte Git y nunca usa `stash/pop`. El closer debe crear el commit atómico antes de invocarlo; si el workflow sólo detecta trazas tardías permitidas (`ledger.jsonl`, `bash-ledger.jsonl`, `runtime-state.json`), las integra con `git commit --amend --no-edit` antes del push y bloquea cualquier otro path dirty.
+
+Nota DAG importante: el hook `hook_update_ledger.py` escribe eventos Bash en `orchestrator-state/tasks/bash-ledger.jsonl`, runtime-only e ignorado por Git. Así los Bash PostToolUse no re-ensucian el repo después del commit/push. El ledger canónico `ledger.jsonl` queda para eventos lifecycle no-Bash.
+
 
 ## Phase gate
 
@@ -408,7 +413,7 @@ Los agentes leen `.claude/orchestrator-contract.json` y `.claude/rules/05-runtim
 
 ```text
 escrituras cruzadas de otro TASK_ID
-edición directa de registry/runtime/ledger/task-dag
+edición directa de registry/runtime/task-dag; ledger.jsonl es runtime local de sólo append
 edición de source-of-truth o baseline snapshot con TASK_ID activo
 edición estática de .claude durante ejecución normal
 follow-up YAML escrito a mano fuera del script
@@ -456,7 +461,7 @@ El orquestador ya no debe asumir un stack concreto. Cada app declara su stack en
 - [Pages site (live)](https://slopezrap.github.io/Orquestadorfrontend declaradoDAG-AnyStack/) — overview, negocio, técnico, comandos, DAG, outcomes y stack/UX.
 - [Diagramas Mermaid](site/diagrams/) — [arquitectura](site/diagrams/arquitectura.md), [DAG flujo](site/diagrams/dag-flujo.md), [comandos](site/diagrams/comandos.md) y [outcomes](site/diagrams/outcomes.md). 26 diagramas adaptados al modelo AnyStack de 5 documentos source-of-truth (instrucciones + technical guide + checklist + STACK_PROFILE + UX_CONTRACT).
 - [Pages site (live)](https://slopezrap.github.io/Orquestadorfrontend declaradoDAG-AnyStack/) servido desde `site/html-site/` vía GitHub Actions.
-- [Reports](docs/reports/) — auditorías y validaciones internas. [Guides](docs/guides/) — guías operativas (ChatGPT prompt, legacy/DAG runbook).
+- [Reports](docs/reports/) — auditorías y validaciones internas. [Guides](docs/guides/) — guías operativas (ChatGPT prompt, DAG runbook).
 
 
 ## Phase / Step / Slice sizing para templates
@@ -468,3 +473,5 @@ El orquestador ya no debe asumir un stack concreto. Cada app declara su stack en
 - La pantalla no se cierra por capas aisladas: cada pantalla importante debe cubrir contrato de pantalla, API/datos, UI conectada, estados UX obligatorios y verificación del journey.
 - API/backend slices pueden existir separadas sólo como foundation real o como contrato que alimenta una pantalla/journey nombrado; no hagas `backend completo -> frontend completo -> UX polish`.
 - Los templates deben sustituir todos los ejemplos por el dominio real de la app y usar datos reales/proporcionados; si faltan datos, bloquea o registra follow-up.
+
+Git close note: `hook_update_ledger.py` writes Bash PostToolUse events to `orchestrator-state/tasks/bash-ledger.jsonl`, which is runtime-only and ignored by Git. This prevents Bash hooks from re-dirtying the working tree after the atomic commit/push in DAG close. Do not use `git stash` as the normal closer flow; stage required changes into the slice commit before running `./scripts/git-workflow.sh`.

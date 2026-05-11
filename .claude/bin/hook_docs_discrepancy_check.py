@@ -7,7 +7,7 @@ vendor official documentation, it drops a note in
 the developer should reconcile those notes before writing more product code.
 
 This hook runs on Write / Edit / MultiEdit / NotebookEdit calls and, if any note lacks
-a `RESOLVED: <how>` line, injects a **warning** into the tool-use context
+a `RESOLVED: <how>` line (archived `RESOLVED 2026-...` is accepted), injects a **warning** into the tool-use context
 via `hookSpecificOutput.additionalContext`. It does NOT emit a deny
 decision — the tool call always proceeds. The warning is purely informative
 so the agent can decide to reconcile first and preserves the user's
@@ -18,7 +18,7 @@ reconciliation workflow itself (notes folder, handoffs, registry, source
 docs, etc.) — listing those in ALLOW_DURING_DISCREPANCY keeps the signal
 clean.
 
-Reference: rules/00-source-of-truth.md and rules/02-phase-execution.md.
+Reference: source-of-truth contract and official-doc notes policy.
 """
 from __future__ import annotations
 
@@ -46,8 +46,6 @@ ALLOW_DURING_DISCREPANCY = (
     "orchestrator-state/memory/PROGRESS.md",
     "orchestrator-state/memory/decisions.md",
     "orchestrator-state/memory/risk-register.md",
-    "orchestrator-state/memory/active-task",
-    "orchestrator-state/memory/active-phase",
     "orchestrator-state/tasks/handoffs/",
     "orchestrator-state/tasks/reports/",
     "orchestrator-state/tasks/evidence/",
@@ -120,7 +118,7 @@ def main() -> int:
         warn_lines.append("")
         warn_lines.append(
             "Recommendation: reconcile the source-of-truth pack with the "
-            "official docs, then add a `RESOLVED: <how>` line to each note. "
+            "official docs, then add a `RESOLVED: <how>` line to each note (`RESOLVED 2026-...` date-prefixed notes are also accepted). "
             "This hook is INFORMATIONAL only — your tool call proceeds."
         )
         # additionalContext is non-blocking: the tool runs as usual, the agent

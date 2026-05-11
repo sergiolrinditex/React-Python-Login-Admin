@@ -34,11 +34,22 @@ def _find_phase(registry: dict[str, Any], phase_id: str | None) -> dict[str, Any
 
 
 def _default_phase_id(registry: dict[str, Any], runtime: dict[str, Any]) -> str | None:
-    active = runtime.get("active_phase_id")
-    if active:
-        return str(active)
+    """Return the first phase that is not fully done.
+
+    DAG-only mode has no runtime implicit selector singleton; phase gates should be
+    called with an explicit phase_id when possible. This fallback is only a
+    convenience for interactive maintenance.
+    """
+    tasks = registry.get("tasks", []) or []
+    by_phase = {}
+    for task in tasks:
+        by_phase.setdefault(str(task.get("phase_id") or ""), []).append(task)
+    for phase_id in _phase_ids(registry):
+        phase_tasks = by_phase.get(phase_id, [])
+        if not phase_tasks or any(str(t.get("status") or "") != "done" for t in phase_tasks):
+            return phase_id
     ids = _phase_ids(registry)
-    return ids[0] if ids else None
+    return ids[-1] if ids else None
 
 
 def _path_exists(root: Path, rel: str | None) -> bool:
@@ -210,7 +221,7 @@ def print_text(result: dict[str, Any]) -> None:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Validate an end-of-phase gate.")
-    parser.add_argument("phase_id", nargs="?", help="Phase ID, e.g. P03. Defaults to runtime active phase.")
+    parser.add_argument("phase_id", nargs="?", help="Phase ID, e.g. P03. Defaults to first non-done DAG phase.")
     parser.add_argument("--no-strict-artifacts", action="store_true", help="Do not require handoff/report/evidence files for done tasks.")
     parser.add_argument("--require-git-clean", action="store_true", help="Require main branch clean and synced with origin/main when git is available.")
     parser.add_argument("--json", action="store_true")

@@ -45,7 +45,7 @@ unset CLAUDE_ACTIVE_TASK_ID CLAUDE_TASK_PACK
   - `orchestrator-state/tasks/runtime-state.json`
   - `orchestrator-state/tasks/ledger.jsonl`
   - `orchestrator-state/tasks/source-doc-patches/<FOLLOWUP_ID>.md`
-- `register_followup_task.py promote` ya evalúa dependencias y conflictos activos. Si la FU promovida pisa `Conflict group` o `Write set` de una task activa/claimed/in_progress, la task nueva debe quedar `blocked` con `blocked_reason: conflict_with_active_task` hasta que `promote_ready_tasks()` pueda desbloquearla.
+- `register_followup_task.py promote` ya evalúa dependencias y conflictos activos. Si la FU promovida pisa `Conflict group` o `Write set` de una task activa/claimed/in_progress, la task nueva debe quedar `blocked` con `blocked_reason: conflict_with_worker_task` hasta que `promote_ready_tasks()` pueda desbloquearla.
 
 ## Triage antes de promover
 

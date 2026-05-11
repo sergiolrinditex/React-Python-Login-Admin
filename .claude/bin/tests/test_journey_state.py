@@ -158,8 +158,8 @@ def test_journeys_closing_at_task_detects_last_task(seeded_registry):
     assert not_closing == []
 
 
-def test_get_pending_handles_legacy_state_without_field(seeded_registry):
-    """Una runtime-state legacy sin la clave debe devolver []."""
+def test_get_pending_handles_missing_dependency_column_state_without_field(seeded_registry):
+    """Una runtime-state missing_dependency_column sin la clave debe devolver []."""
     state = common.load_runtime_state()
     state.pop("pending_journey_verifications", None)
     common.save_runtime_state(state)

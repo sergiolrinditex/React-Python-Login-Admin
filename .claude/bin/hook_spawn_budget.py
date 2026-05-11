@@ -4,8 +4,8 @@
 SubagentStart cannot block creation in Claude Code; PreToolUse on the Agent
 call can. This hook is intentionally conservative and stdlib-only:
   - If the tool is not Agent, it exits cleanly.
-  - If no active task exists yet, it exits cleanly.
-  - If the active task has already consumed the budget recorded by
+  - If no DAG task exists yet, it exits cleanly.
+  - If the DAG task has already consumed the budget recorded by
     SubagentStop, it denies the next Agent call and tells Claude what to do.
 
 The SubagentStop hook remains the source of truth for completed-spawn counts;
@@ -17,7 +17,7 @@ from __future__ import annotations
 import json
 import sys
 
-from common import effective_active_task_id, get_spawn_budget, get_spawn_count, load_active_task, log_hook_error
+from common import dag_worker_task_id, get_spawn_budget, get_spawn_count, log_hook_error
 
 
 def _agent_name(payload: dict) -> str:
@@ -51,8 +51,7 @@ def main() -> int:
         if tool_name != "Agent":
             return 0
 
-        active = load_active_task() or {}
-        task_id = effective_active_task_id(active)
+        task_id = dag_worker_task_id()
         if not task_id:
             return 0
 

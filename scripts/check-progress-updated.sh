@@ -77,15 +77,7 @@ if [[ -z "$WORKTREE" && "$AUTO" == "1" ]]; then
     echo "REASON=no_runtime_state" >&2
     exit 3
   fi
-  TASK_ID=$(python3 -B -S -c '
-import json, sys
-try:
-    with open("orchestrator-state/tasks/runtime-state.json") as f:
-        d = json.load(f)
-    print(d.get("active_task_id") or "")
-except Exception:
-    print("")
-' 2>/dev/null)
+  TASK_ID="${CLAUDE_ACTIVE_TASK_ID:-${CLAUDE_TASK_ID:-}}"
 
   if [[ -n "$TASK_ID" ]]; then
     # git worktree list --porcelain emite líneas:
@@ -169,7 +161,7 @@ while IFS= read -r f; do
   [[ -z "$f" ]] && continue
   # Ignora archivos de framework derivados.
   case "$f" in
-    orchestrator-state/tasks/ledger.jsonl|orchestrator-state/tasks/ledger.jsonl.lock|orchestrator-state/hook-errors.log)
+    orchestrator-state/tasks/ledger.jsonl|orchestrator-state/tasks/bash-ledger.jsonl|orchestrator-state/tasks/ledger.jsonl.lock|orchestrator-state/tasks/bash-ledger.jsonl.lock|orchestrator-state/hook-errors.log)
       continue
       ;;
   esac

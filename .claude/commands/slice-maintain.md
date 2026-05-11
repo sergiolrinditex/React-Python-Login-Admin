@@ -27,9 +27,9 @@ Si el usuario ejecuta sin subcomando → muestra este resumen y pregunta cuál q
 En paralelo:
 
 1. `orchestrator-state/memory/PROGRESS.md` (cabecera + últimas 2 fases) → fase activa, slice activa (ID en registry), últimas 2 slices cerradas (se PRESERVAN intactas).
-2. `orchestrator-state/tasks/registry.json` (solo `active_task`, `active_phase`, últimos 5 `done`).
+2. `orchestrator-state/tasks/registry.json` (solo `task_dag.mode`, últimas 5 `done`, primeras `ready`, y `runtime-state.active_*` como sugerencia).
 3. `du -sh` de: `orchestrator-state/memory/`, `orchestrator-state/memory/archive/`, `orchestrator-state/tasks/handoffs/`, `orchestrator-state/tasks/evidence/`, `orchestrator-state/tasks/reports/`, `orchestrator-state/tasks/context-packs/`, `orchestrator-state/tasks/contexts/`, `orchestrator-state/tasks/context/`.
-   Además: `du -sh orchestrator-state/tasks/ledger.jsonl` + `wc -l orchestrator-state/tasks/ledger.jsonl`; cuenta cuántos ficheros `ledger-*.jsonl.gz` existen en `orchestrator-state/tasks/` y su tamaño total acumulado.
+   Además: `du -sh orchestrator-state/tasks/ledger.jsonl orchestrator-state/tasks/bash-ledger.jsonl` + `wc -l orchestrator-state/tasks/ledger.jsonl orchestrator-state/tasks/bash-ledger.jsonl`; cuenta cuántos ficheros `ledger-*.jsonl.gz` y `bash-ledger-*.jsonl.gz` existen en `orchestrator-state/tasks/` y su tamaño total acumulado.
 4. Cuenta ficheros en esas carpetas.
 5. Artefactos regenerables en TODO el proyecto (no solo `.claude/`):
    - Logs: `*.log` en roots front y back (según TECHNICAL_GUIDE) y raíz (excluyendo carpetas ignoradas por `.gitignore`).
@@ -48,7 +48,7 @@ En paralelo:
 - `docs/source-of-truth/**` (los source-of-truth docs).
 - `.claude/CLAUDE.md`, `.claude/settings.json`, `.claude/settings.local.json`, `.claude/settings.local.example.json`.
 - `.claude/rules/**`, `.claude/agents/**`, `.claude/skills/**`, `.claude/bin/**` (incluye `hook_*.py`), `.claude/commands/**`, `.claude/scripts/**` — `.claude/` es configuración estática; no la limpies desde runtime.
-- `orchestrator-state/tasks/registry.json`, `orchestrator-state/tasks/runtime-state.json`, `orchestrator-state/tasks/ledger.jsonl` (se rota, no se borra).
+- `orchestrator-state/tasks/registry.json`, `orchestrator-state/tasks/runtime-state.json`, `orchestrator-state/tasks/ledger.jsonl` y `orchestrator-state/tasks/bash-ledger.jsonl` (se rota, no se borra).
 - `orchestrator-state/memory/PROGRESS.md` (se PRESERVA — `clean` nunca lo toca; usa `compact` para eso).
 - `orchestrator-state/memory/execution-graph.json`, `source-manifest.json`, `architecture-contract.md`, `project-brief.md`, `decisions.md`, `risk-register.md`, `official-doc-sources.md`, `active-*.{json,md}`, `active-context-pack.md`.
 - `orchestrator-state/agent-memory/**`, `orchestrator-state/memory/official-doc-notes/**`.
@@ -63,7 +63,7 @@ En paralelo:
 |---|---|---|
 | **SAFE_DELETE** | Borrar directo | `*.log`, `.DS_Store`, caches regenerables, carpetas vacías |
 | **ARCHIVE+SUMMARIZE** | Mover a `orchestrator-state/memory/archive/YYYY-MM-DD/` + resumir en `archive/SUMMARY-YYYY-MM-DD.md` | handoffs/evidence/reports/context-packs de slices cerradas >2 atrás, `orchestrator-state/memory/*-YYYY-MM-DD.md` anteriores |
-| **ROTATE** | Rename + comprimir + crear nuevo vacío; mantener máx. 5 ficheros `ledger-*.jsonl.gz` (borrar el más antiguo si se supera) | `orchestrator-state/tasks/ledger.jsonl` si >200 KB → `ledger-YYYY-MM-DD.jsonl.gz` |
+| **ROTATE** | Rename + comprimir + crear nuevo vacío; mantener máx. 5 ficheros `ledger-*.jsonl.gz` y `bash-ledger-*.jsonl.gz` (borrar el más antiguo si se supera) | `orchestrator-state/tasks/ledger.jsonl` o `orchestrator-state/tasks/bash-ledger.jsonl` si >200 KB → `ledger-YYYY-MM-DD.jsonl.gz` / `bash-ledger-YYYY-MM-DD.jsonl.gz` |
 | **CONSOLIDATE** | Unir carpetas duplicadas en la canónica | `orchestrator-state/tasks/context/` + `contexts/` → `context-packs/` |
 | **INVESTIGATE** | ⚠️ Detectado, NO tocar — requiere decisión humana | Duplicados de PROGRESS.md fuera de `orchestrator-state/memory/`, ficheros de scratch en raíz |
 | **KEEP** | No tocar | Todo lo demás + intocables + últimas 2 slices |
@@ -88,7 +88,7 @@ ARCHIVE+SUMMARIZE (<N> ítems, <MB>):
   ...
 
 ROTATE:
-  - ledger.jsonl (<MB>) → ledger-YYYY-MM-DD.jsonl.gz
+  - ledger.jsonl o bash-ledger.jsonl (<MB>) → ledger-YYYY-MM-DD.jsonl.gz / bash-ledger-YYYY-MM-DD.jsonl.gz
 
 CONSOLIDATE:
   - <path origen> → <path canónico>
@@ -105,7 +105,7 @@ Para ejecutar, responde "sí" / "confirmo" / "apply" o relanza con --apply.
 
 - Borra SAFE_DELETE uno a uno. Si alguno da error → log pero no pares.
 - Para ARCHIVE+SUMMARIZE: crea `archive/YYYY-MM-DD/`, mueve, luego genera `SUMMARY-YYYY-MM-DD.md` con 1 línea por fichero movido.
-- Para ROTATE: comprime (`gzip`), renombra a `ledger-YYYY-MM-DD.jsonl.gz`, crea nuevo `ledger.jsonl` vacío (el hook escribe en el nuevo). Si tras la rotación existen >5 ficheros `ledger-*.jsonl.gz`, borra el más antiguo. El ledger siempre debe mantenerse escribible para el hook.
+- Para ROTATE: comprime (`gzip`), renombra a `ledger-YYYY-MM-DD.jsonl.gz`, crea nuevo `ledger.jsonl` o `bash-ledger.jsonl` vacío (el hook escribe en el nuevo). Si tras la rotación existen >5 ficheros `ledger-*.jsonl.gz` y `bash-ledger-*.jsonl.gz`, borra el más antiguo. El ledger siempre debe mantenerse escribible para el hook.
 - Para CONSOLIDATE: muévelos a la canónica, verifica que los agentes siguen referenciándola.
 - Reporta al usuario: ítems borrados/archivados/rotados, espacio recuperado, INVESTIGATEs pendientes.
 
@@ -124,8 +124,8 @@ En paralelo:
    - Bloque `# Project Progress — Live Snapshot`.
    - Avisos `> 🚩 ... BINDING` / `> ✅ ...` / `> 🔧 ...` / `> 🧪 ...` (blockquotes `>` consecutivos).
    - Inicio de `## Current State`.
-3. `orchestrator-state/tasks/registry.json` → `active_task`, `active_phase`, últimos 5 `done`.
-4. `orchestrator-state/memory/active-phase.md` + `active-task.md`.
+3. `orchestrator-state/tasks/registry.json` → `task_dag.mode`, últimos 5 `done`, primeras `ready`.
+4. `orchestrator-state/tasks/runtime-state.json` → eventos, follow-ups y contadores; no contiene identidad de worker.
 5. Compañeros de `PROGRESS.md` en `orchestrator-state/memory/`:
    - `ls -la orchestrator-state/memory/*.md`, `du -sh`.
    - Orphans con fecha pegada: `*-stage-*-YYYY-MM-DD.md`, `chrome-smoke-*.md`, `*-BRIEF.md`, `reviewer-*.md`, `validator-*.md`, `tester-*.md`, `qa-*.md`, `security-*.md`, `closer-*.md`.
@@ -151,7 +151,7 @@ En paralelo:
 
 | Categoría | Acción | Ejemplos |
 |---|---|---|
-| **COMPACT_INLINE** | Reemplazar entrada larga por resumen 3-6 líneas EN EL MISMO PROGRESS.md, bajo sección nueva `## Historical entries (compacted YYYY-MM-DD)` colocada ANTES de las secciones permanentes | Entradas `## {SLICE_ID} — ...` y bullets `> ✅/🔧/🧪` con fecha < `threshold-days` y NO dentro de `--keep N` ni intocables |
+| **COMPACT_INLINE** | Reemplazar entrada larga por resumen 3-6 líneas EN EL MISMO PROGRESS.md, bajo sección nueva `## Archived entries (compacted YYYY-MM-DD)` colocada ANTES de las secciones permanentes | Entradas `## {SLICE_ID} — ...` y bullets `> ✅/🔧/🧪` con fecha < `threshold-days` y NO dentro de `--keep N` ni intocables |
 | **PROMOTE_TO_DECISIONS** | Extraer bloques "Decision log", líneas `Decision:` / `D1/D2/D3:` vigentes → append a `orchestrator-state/memory/decisions.md` con ref a slice origen | Must-carry invariants activos, decisiones arquitectónicas vivas |
 | **PROMOTE_TO_ISSUES** | Extraer open items / follow-ups / deferred / known-issues vivos → append a `orchestrator-state/memory/risk-register.md` con slice origen + severidad | Follow-ups pendientes, latent traps, "deferred to Phase N" |
 | **ARCHIVE_ORPHAN** | Mover a `orchestrator-state/memory/archive/{fecha_hoy}/stage-reports/` | `reviewer-stage-*-YYYY-MM-DD.md`, `tester-stage-*.md`, `validator-stage-*.md`, `qa-stage-*.md`, `chrome-smoke-*.md`, `STAGE-*-BRIEF.md` (si la stage ya cerró) |
@@ -228,12 +228,12 @@ Orden estricto:
 3. PROMOTE_TO_ISSUES → append en `risk-register.md` con el mismo patrón.
 4. ARCHIVE_ORPHAN → mover ficheros a `archive/YYYY-MM-DD/stage-reports/`.
 5. COMPACT_INLINE → reescribir PROGRESS.md:
-   - Crear/actualizar sección `## Historical entries (compacted YYYY-MM-DD)` ANTES de las secciones permanentes.
+   - Crear/actualizar sección `## Archived entries (compacted YYYY-MM-DD)` ANTES de las secciones permanentes.
    - Reemplazar cada entrada antigua por su resumen de ≤6 líneas.
    - Preservar intactos: cabecera, Current State, últimas `N` slices, secciones permanentes, must-carry bullets, UUIDs seed, commit SHAs.
 6. Verificar sintaxis del PROGRESS.md resultante (markdown parseable, sin secciones rotas).
 7. **Verificación de información crítica preservada (gate fuerte)**. Compara el original (snapshot previo) contra el PROGRESS.md compactado:
-   - **Commit SHAs**: extrae todos los SHAs de 7+ chars hex del original. CADA UNO debe seguir presente en el compactado (en `## Historical entries (compacted)` o en las últimas N slices verbatim). Si falta UN solo SHA → restaurar desde snapshot, abortar, reportar `SHA_MISSING: <sha>`.
+   - **Commit SHAs**: extrae todos los SHAs de 7+ chars hex del original. CADA UNO debe seguir presente en el compactado (en `## Archived entries (compacted)` o en las últimas N slices verbatim). Si falta UN solo SHA → restaurar desde snapshot, abortar, reportar `SHA_MISSING: <sha>`.
    - **UUIDs seed hardcodeados**: extrae UUIDs (regex `[0-9a-f]{8}-[0-9a-f]{4}-...`). Cada uno debe seguir presente. Si falta → restaurar y abortar.
    - **must-carry bullets**: extrae líneas con prefijos `L-1`, `L-2`, etc., o blockquotes `> 🚩 ... BINDING`. Cada uno debe seguir presente. Si falta → restaurar y abortar.
    - **Decisions activas en `decisions.md`**: si una entrada tenía `Dec:` y se compactó, debe estar en `decisions.md` con ref a la slice origen. Comprueba que cada decision promovida quedó append-only en decisions.md. Si falta → restaurar y abortar.

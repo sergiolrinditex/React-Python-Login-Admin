@@ -5,7 +5,7 @@ user-invocable: false
 allowed-tools: Read Write Edit
 ---
 
-Every slice produces exactly one handoff: `orchestrator-state/tasks/handoffs/<TASK_ID>.md`. In explicit DAG mode the handoff TASK_ID must match `CLAUDE_ACTIVE_TASK_ID` and `orchestrator-state/tasks/task-packs/<TASK_ID>.md`; never append to a handoff for another task even if `active-task.md` points there.
+Every slice produces exactly one handoff: `orchestrator-state/tasks/handoffs/<TASK_ID>.md`. In explicit DAG mode the handoff TASK_ID must match `CLAUDE_ACTIVE_TASK_ID` and `orchestrator-state/tasks/task-packs/<TASK_ID>.md`; never append to a handoff for another task and never use `implicit selector` to infer the destination.
 
 ## Base structure (initialized by `developer`)
 

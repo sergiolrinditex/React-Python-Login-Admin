@@ -2,7 +2,7 @@
 """SessionStart hook — pure observability.
 
 Injects lightweight context about project state at session start, so the first
-turn already knows which phase/task is active, whether the five-file source-of-truth contract
+turn already knows the pinned DAG worker task, whether the five-file source-of-truth contract
 is healthy, and what was the last worker to finish. NEVER blocks. NEVER fails
 the session — if anything goes wrong it emits an empty context.
 
@@ -31,24 +31,23 @@ from pathlib import Path
 try:
     from common import (
         claude_dir,
-        active_task_env_override,
-        effective_active_task_id,
+        dag_worker_task_id,
         hook_error_log_path,
-        load_active_task,
         load_registry,
         load_runtime_state,
         log_hook_error,
         now_iso,
         project_root,
+        has_resolved_doc_discrepancy_marker,
     )
 except Exception:
     def _noop():  # type: ignore[no-redef]
         return {}
-    load_active_task = load_registry = load_runtime_state = _noop  # type: ignore[assignment]
-    active_task_env_override = lambda: None  # type: ignore[assignment]
-    effective_active_task_id = lambda active=None: None  # type: ignore[assignment]
+    load_registry = load_runtime_state = _noop  # type: ignore[assignment]
+    dag_worker_task_id = lambda: None  # type: ignore[assignment]
     now_iso = lambda: ""  # type: ignore[assignment]
     project_root = lambda: Path(".")  # type: ignore[assignment]
+    has_resolved_doc_discrepancy_marker = lambda text: __import__("re").search(r"(?im)^\s*RESOLVED(?:\s*:|\s+\d{4}-\d{2}-\d{2}\b|\s+[-–—])", text or "") is not None  # type: ignore[assignment]
     claude_dir = lambda: Path(".claude")  # type: ignore[assignment]
     hook_error_log_path = lambda: Path("orchestrator-state/hook-errors.log")  # type: ignore[assignment]
     def log_hook_error(name, exc):  # type: ignore[no-redef]
@@ -173,19 +172,26 @@ def _detect_pressure(root: Path) -> list[str]:
 
 
 def build_context() -> str:
-    active = load_active_task() or {}
     runtime = load_runtime_state() or {}
     registry = load_registry() or {}
 
-    active_phase = registry.get("active_phase") or runtime.get("active_phase_id") or "—"
-    worker_override = active_task_env_override() if callable(active_task_env_override) else None
-    active_task = effective_active_task_id(active) or registry.get("active_task") or "—"
-    active_status = active.get("status") or "—"
+    worker_override = dag_worker_task_id() if callable(dag_worker_task_id) else None
+    worker_task = worker_override or "—"
+    worker_phase = "—"
+    active_status = "—"
     if worker_override and isinstance(registry.get("tasks"), list):
         for task in registry.get("tasks", []):
             if isinstance(task, dict) and task.get("id") == worker_override:
-                active_phase = task.get("phase_id") or active_phase
-                active_status = task.get("status") or active_status
+                worker_phase = task.get("phase_id") or "—"
+                active_status = task.get("status") or "—"
+                break
+    next_ready_phase = runtime.get("next_ready_phase_id") or "—"
+    next_ready_task = runtime.get("next_ready_task_id") or "—"
+    if (next_ready_task == "—" or next_ready_phase == "—") and isinstance(registry.get("tasks"), list):
+        for candidate in registry.get("tasks", []):
+            if isinstance(candidate, dict) and candidate.get("status") == "ready":
+                next_ready_task = next_ready_task if next_ready_task != "—" else (candidate.get("id") or "—")
+                next_ready_phase = next_ready_phase if next_ready_phase != "—" else (candidate.get("phase_id") or "—")
                 break
     last_worker = runtime.get("last_worker") or "—"
     last_event = runtime.get("last_event") or "—"
@@ -202,9 +208,9 @@ def build_context() -> str:
     if not isinstance(spawn_counts_raw, dict):
         spawn_counts_raw = {}
     spawn_count_for_active = 0
-    if active_task and active_task != "—":
+    if worker_task and worker_task != "—":
         try:
-            spawn_count_for_active = int(spawn_counts_raw.get(active_task, 0))
+            spawn_count_for_active = int(spawn_counts_raw.get(worker_task, 0))
         except (TypeError, ValueError):
             spawn_count_for_active = 0
 
@@ -216,10 +222,10 @@ def build_context() -> str:
     sot_status = "ok" if sot_dir.is_dir() else "missing (bootstrap required)"
 
     handoff_note = ""
-    if active_task and active_task != "—":
-        handoff = Path(root) / f"orchestrator-state/tasks/handoffs/{active_task}.md"
+    if worker_task and worker_task != "—":
+        handoff = Path(root) / f"orchestrator-state/tasks/handoffs/{worker_task}.md"
         if handoff.exists():
-            handoff_note = f"- Handoff activo: `orchestrator-state/tasks/handoffs/{active_task}.md`"
+            handoff_note = f"- Handoff activo: `orchestrator-state/tasks/handoffs/{worker_task}.md`"
 
     # Pending journey verifications — block /next-slice from planner until cleared.
     pending_journeys: list[str] = []
@@ -247,13 +253,12 @@ def build_context() -> str:
     try:
         notes_dir = Path(root) / "orchestrator-state/memory/official-doc-notes"
         if notes_dir.is_dir():
-            import re as _re
             for note in sorted(notes_dir.glob("*.md")):
                 try:
                     body = note.read_text(encoding="utf-8", errors="replace")
                 except Exception:
                     continue
-                if not _re.search(r"(?im)^\s*RESOLVED\s*:", body):
+                if not has_resolved_doc_discrepancy_marker(body):
                     try:
                         rel = note.resolve().relative_to(Path(root).resolve()).as_posix()
                     except Exception:
@@ -269,24 +274,22 @@ def build_context() -> str:
         spawn_marker = " ⚠️ at budget"
     lines = [
         "## Project state (auto-injected at session start)",
-        f"- Active phase: `{active_phase}`",
-        f"- Active task:  `{active_task}` (status: `{active_status}`)",
+        f"- Next ready hint: phase `{next_ready_phase}`, task `{next_ready_task}`",
+        f"- DAG worker task: `{worker_task}` (phase: `{worker_phase}`, status: `{active_status}`)",
         f"- Spawns this slice: {spawn_count_for_active}/{spawn_budget}{spawn_marker}",
         f"- Last worker:  `{last_worker}` (event: `{last_event}`)",
         f"- Last journey verified: `{last_journey_verified}`",
         f"- Source-of-truth docs: {sot_status}",
         "- Mutable state root: `orchestrator-state/`",
-        "- Write contract: `.claude/orchestrator-contract.json` + `.claude/rules/05-runtime-write-contract.md`",
+        "- Write contract: `.claude/orchestrator-contract.json` (hooks enforce machine contract; markdown rules are agent instructions)",
     ]
     if worker_override:
         lines.append(f"- Worker task override: `{worker_override}` (DAG terminal scope)")
         pack = Path(root) / f"orchestrator-state/tasks/task-packs/{worker_override}.md"
         pack_status = "exists" if pack.exists() else "missing — planner must create/enrich before developer"
         lines.append(f"- DAG task pack: `orchestrator-state/tasks/task-packs/{worker_override}.md` ({pack_status})")
-    elif active_task and active_task != "—":
-        pack = Path(root) / f"orchestrator-state/tasks/task-packs/{active_task}.md"
-        if pack.exists():
-            lines.append(f"- Task pack: `orchestrator-state/tasks/task-packs/{active_task}.md`")
+    else:
+        lines.append("- DAG mode: no worker task pinned. Export `CLAUDE_ACTIVE_TASK_ID` + `CLAUDE_TASK_PACK` or run `claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice <TASK_ID>"` from a task terminal.")
     if handoff_note:
         lines.append(handoff_note)
 
@@ -315,7 +318,7 @@ def build_context() -> str:
             lines.append(f"- `{path}`")
         lines.append(
             "Recommend: reconcile the source-of-truth pack with the official "
-            "docs, then add a `RESOLVED: <how>` line to each note. The "
+            "docs, then add a `RESOLVED: <how>` line to each note (`RESOLVED 2026-...` date-prefixed notes are also accepted). The "
             "PreToolUse hook will keep warning (warn-only, never blocks) until "
             "every note is resolved."
         )

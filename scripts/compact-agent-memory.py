@@ -144,7 +144,7 @@ def compact_text(agent: str, original: str, archive_rel: str, original_lines: in
             "- `bootstrap_three_docs.py --refresh` preserves runtime by default; use `--reset-runtime-state` only for intentional destructive reset.",
             "- Never edit generated `registry.json`, `runtime-state.json`, `task-dag.json`, or `execution-graph.json` directly.",
             "- Scope every write by `CLAUDE_ACTIVE_TASK_ID` and `CLAUDE_TASK_PACK`.",
-            "- Touch only paths present in the active task pack `Write set` / `allowed_paths`.",
+            "- Touch only paths present in the DAG task pack `Write set` / `allowed_paths`.",
             "- `docker-compose.yml`, `Dockerfile*`, `.env.example`, and `.github/workflows/**` require explicit task scope before editing.",
             "- Propose discovered out-of-slice work with `/register-followup`; do not promote follow-ups automatically.",
         ])

@@ -54,7 +54,7 @@ from common import (
     runtime_state_path,
     save_registry,
     save_runtime_state,
-    sync_active_state_from_registry,
+    sync_runtime_state_from_registry,
     task_conflict_groups,
     task_write_set,
     tasks_dir,
@@ -575,10 +575,10 @@ def promote(args: argparse.Namespace) -> dict[str, Any]:
             if conflict_blockers:
                 task["status"] = "blocked"
                 status = "blocked"
-                task["blocked_reason"] = "conflict_with_active_task"
+                task["blocked_reason"] = "conflict_with_worker_task"
                 task["blocked_by"] = [str(item.get("task_id")) for item in conflict_blockers if item.get("task_id")]
                 task["last_blocker"] = {
-                    "type": "conflict_with_active_task",
+                    "type": "conflict_with_worker_task",
                     "blockers": conflict_blockers,
                     "ts": now_iso(),
                 }
@@ -605,7 +605,7 @@ def promote(args: argparse.Namespace) -> dict[str, Any]:
         # Keep generated API contracts coherent so immediate validate-only checks
         # in /promote-followup and CI do not fail on stale artifacts.
         generate_contracts(validate_only=False)
-        sync_active_state_from_registry(load_registry())
+        sync_runtime_state_from_registry(load_registry())
     proposal["status"] = "promoted"
     proposal["promoted_at"] = now_iso()
     proposal["promoted_task_id"] = task_id

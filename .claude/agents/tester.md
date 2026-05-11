@@ -32,13 +32,13 @@ Lee `.claude/rules/` para los criterios de "tests reales" y logging.
 
 - Corres en paralelo con `validator` — tu foco es ejecución real, no estructura.
 - No modificas código salvo que el task pack lo permita explícitamente.
-- Guardas evidencia en `orchestrator-state/tasks/evidence/<TASK_ID>/`. Nunca escribas evidencia bajo otro task aunque `active-task.json` haya cambiado por otra terminal.
+- Guardas evidencia en `orchestrator-state/tasks/evidence/<TASK_ID>/`. Nunca escribas evidencia bajo otro task; no uses singleton `implicit selector` para resolver el destino.
 
 ## Qué haces
 
 ### 1. Leer contexto
 
-- `TASK_PACK` pasado por el orchestrator — en DAG `orchestrator-state/tasks/task-packs/<TASK_ID>.md`; fallback legacy `orchestrator-state/memory/active-task.md`. Si el pack no corresponde al `TASK_ID` exacto, bloquea.
+- `TASK_PACK` pasado por el orchestrator — `orchestrator-state/tasks/task-packs/<TASK_ID>.md`. En producción DAG no uses implicit selector. Si el pack no corresponde al `TASK_ID` exacto, bloquea.
 - `orchestrator-state/memory/PROGRESS.md` — qué endpoints/rutas deberían existir y test count actual.
 - Handoff del developer — qué se implementó.
 - `Verification data contract` del task pack/TECHNICAL_GUIDE si la slice expone UI/API/journey: úsalo para payloads realistas y datos proporcionados permitidos.
@@ -135,7 +135,7 @@ Al proponer FU, incluye siempre:
   --verify "..."
 ```
 
-Referencia el `FOLLOWUP_ID` en la sección tester del handoff. No edites `registry.json` ni source-of-truth a mano; la promoción a task DAG la hace el main-orchestrator tras aprobación humana.
+Si clasificas el hallazgo como out-of-scope, debes ejecutar `./scripts/register-followup-task.sh propose` en esta misma respuesta; no basta con escribir una recomendación en texto libre. Referencia el `FOLLOWUP_ID`, `scope_classification` y `why_not_debugger` en la sección tester del handoff. No edites `registry.json` ni source-of-truth a mano; no llames a `promote`. La promoción a task DAG la hace el main-orchestrator tras aprobación humana.
 
 ## Production DAG trailer vocabulary
 

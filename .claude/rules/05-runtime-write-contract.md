@@ -15,7 +15,7 @@ CLAUDE_ACTIVE_TASK_ID=<TASK_ID>
 CLAUDE_TASK_PACK=orchestrator-state/tasks/task-packs/<TASK_ID>.md
 ```
 
-The `TASK_ID` in the environment, the task pack name, handoff path, evidence dir and report path must all match. If they do not match, stop before writing. The legacy `orchestrator-state/memory/active-task.md` is advisory only and may belong to another terminal.
+The `TASK_ID` in the environment, the task pack name, handoff path, evidence dir and report path must all match. If they do not match, stop before writing. There is no implicit selector in DAG-only mode; never infer work without explicit `TASK_ID`.
 
 ## Generated core state
 
@@ -25,14 +25,24 @@ Do not edit these files with Write/Edit/MultiEdit during a slice:
 orchestrator-state/tasks/registry.json
 orchestrator-state/tasks/runtime-state.json
 orchestrator-state/tasks/ledger.jsonl
+orchestrator-state/tasks/bash-ledger.jsonl
 orchestrator-state/memory/task-dag.json
 orchestrator-state/memory/task-dag.md
 orchestrator-state/memory/execution-graph.json
-orchestrator-state/memory/active-task.json
-orchestrator-state/memory/active-phase.json
 ```
 
-They are written by bootstrap, claim scripts and hooks under locks. If repair is truly needed, stop and run the dedicated script or ask for explicit maintenance mode.
+These are generated/derived files and only scripts/hooks may update them under locks.
+
+Removed removed singleton files:
+
+```text
+orchestrator-state/memory/implicit selector.json
+orchestrator-state/memory/implicit selector
+orchestrator-state/memory/implicit selector.json
+orchestrator-state/memory/implicit selector.md
+```
+
+Bootstrap, claim scripts and hooks must never generate those singleton files. If they appear after upgrading an old repo, delete them; do not use them as context or task authority.
 
 
 ## Production DAG trailer vocabulary
@@ -52,25 +62,25 @@ Each role declares:
 - `next_status_values`
 - whether the role mutates registry lifecycle or is info-only
 
-Agent markdown may show examples, but the JSON schema is authoritative. `hook_capture_subagent_stop.py` loads `trailer_schema` first and falls back to legacy mirrors only for damaged/partial installs.
+Agent markdown may show examples, but the JSON schema is authoritative. `hook_capture_subagent_stop.py` loads `trailer_schema` first and falls back to local constants only for damaged/partial installs.
 
 ## Agent write map
 
-- `planner`: writes/enriches `orchestrator-state/tasks/task-packs/<TASK_ID>.md`; may mirror to `active-task.md` only in legacy; does not write product code.
+- `planner`: writes/enriches `orchestrator-state/tasks/task-packs/<TASK_ID>.md`; does not write product code.
 - `developer`: writes product code for the slice, `PROGRESS.md`, handoff and evidence under the same `TASK_ID`.
 - `official-docs-researcher`: writes only official-doc notes and its memory.
 - `validator`: append-only handoff review; no product code edits.
 - `tester`: evidence under the same `TASK_ID` and append-only handoff test section; no product-code fixes.
 - `debugger`: smallest safe product-code fix for the same `TASK_ID`, plus handoff/evidence.
-- `closer`: report, sync product baseline, atomic commit via configured Git workflow (`./scripts/git-workflow.sh`), then safe worktree cleanup; no product-code edits and no `Co-authored-by: Claude` trailer.
+- `closer`: report, sync product baseline, atomic commit via configured Git workflow (`./scripts/git-workflow.sh`), then safe worktree cleanup; no product-code edits, no `Co-authored-by: Claude` trailer, and no `git stash`/`git stash pop` close flow. If pre-push changes are still required, amend/commit them explicitly instead of stashing generated hook state.
 - bootstrap agents (`document-analyzer`, `project-architect`, `task-planner`): may shape source docs and architecture memory before execution starts, not during an active DAG task.
 
 ## Product baseline snapshot
 
-`docs/product-baseline/` is the cumulative built baseline passed back to ChatGPT for the next product increment. It mirrors the current accepted `docs/source-of-truth/` after verified closure and includes `BASELINE_MANIFEST.json`. Do not hand-edit it during an active task; closer/safe maintenance sync it with:
+`docs/product-baseline/` is the cumulative built baseline passed back to ChatGPT for the next product increment. It mirrors the current accepted `docs/source-of-truth/` after verified closure and includes `BASELINE_MANIFEST.json`. Do not hand-edit it during an DAG task; closer/safe maintenance sync it with:
 
 ```bash
-./scripts/sync-product-baseline.sh sync --version <v0|v1|v2|current> --task <TASK_ID>
+./scripts/sync-product-baseline.sh sync --version <v0|v1|v2|current> --task <TASK_ID>  # closer only; requires verified handoff
 ./scripts/sync-product-baseline.sh status
 ```
 
@@ -95,14 +105,14 @@ For UI work, the task pack must include the journey, route/page, endpoints consu
 
 ## Mechanical enforcement
 
-`hook_write_scope_guard.py` blocks the dangerous cases: writing static `.claude/` config during app execution, writing another task's handoff/evidence/report/task-pack, editing source-of-truth/baseline snapshot during an active task, hand-writing follow-up YAML, or directly editing generated core state. `hook_capture_subagent_stop.py` also rejects false `done` from closer unless report, commit, push and worktree cleanup proof are present.
+`hook_write_scope_guard.py` blocks the dangerous cases: writing static `.claude/` config during app execution, writing another task's handoff/evidence/report/task-pack, editing source-of-truth/baseline snapshot during an DAG task, hand-writing follow-up YAML, or directly editing generated core state. `hook_capture_subagent_stop.py` also rejects false `done` from closer unless report, commit, push and worktree cleanup proof are present.
 
 ## Follow-up tasks from validator/tester/verify findings
 
 A production finding must never remain only as prose in a handoff, but a follow-up is also **not** a substitute for debugger/retest. Use this split before creating any FU:
 
 - **In-scope defect for the current `TASK_ID`**: acceptance is already in the task pack, paths are in `Write set`/`allowed_paths`, no new route/endpoint/table/journey/data contract is needed. Do **not** create FU. Mark lifecycle `needs_debug`; the main-orchestrator runs `debugger`, reruns `validator ‖ tester`, then reruns `/verify-slice`. Subagents must not spawn subagents.
-- **Out-of-scope work / missing coverage**: requires source-of-truth amendment, new screen/endpoint/table/journey, `Write set` or `Conflict group` expansion, missing real/provided data contract, external dependency, or explicit human product decision. Create FU.
+- **Out-of-scope work / missing coverage**: requires source-of-truth amendment, new screen/endpoint/table/journey, `Write set` or `Conflict group` expansion, missing real/provided data contract, external dependency, or explicit human product decision. Create FU immediately with `register-followup-task.sh propose`; do not leave it as prose for the user to translate into YAML.
 - **Unclear classification**: stop and ask the main-orchestrator/user. Do not create a blocking FU just to move on.
 
 Every FU proposal must explain why it is not going through debugger/retest:
@@ -123,7 +133,7 @@ Every FU proposal must explain why it is not going through debugger/retest:
   --verify "<verification with real/provided data>"
 ```
 
-The script rejects `--scope-classification in_scope_defect` and requires `--why-not-debugger` for `high|critical|blocker` proposals. That prevents FU spam while keeping real out-of-scope debt visible.
+The script rejects `--scope-classification in_scope_defect` and requires `--why-not-debugger` for `high|critical|blocker` proposals. `validator`, `tester` and `debugger` are allowed to run `propose` for real out-of-scope findings, but they must never call `promote`; `screen-journey-reviewer` is the exception and only writes `followup_candidate=yes` for `/verify-slice` to register. That prevents FU spam while keeping real out-of-scope debt visible.
 
 Only the main orchestrator promotes or waives it after explicit human decision:
 
@@ -133,3 +143,5 @@ Only the main orchestrator promotes or waives it after explicit human decision:
 ```
 
 Promotion appends a `Runtime Follow-up Coverage Registry` row to the implementation checklist, updates `registry.json`, regenerates the DAG adjacency, writes `work-items/<TASK_ID>.yaml`, and updates runtime-state/ledger under locks. High/critical/blocker proposals block `/next-wave`, `claim_task.py`, and closer `done` until promoted or waived.
+
+Git close note: `hook_update_ledger.py` writes Bash PostToolUse events to `orchestrator-state/tasks/bash-ledger.jsonl`, which is runtime-only and ignored by Git. This prevents Bash hooks from re-dirtying the working tree after the atomic commit/push in DAG close. Do not use `git stash` as the normal closer flow; stage required changes into the slice commit before running `./scripts/git-workflow.sh`.

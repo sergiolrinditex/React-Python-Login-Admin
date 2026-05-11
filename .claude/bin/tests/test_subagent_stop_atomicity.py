@@ -73,8 +73,6 @@ def _seed_minimal_registry():
     common.save_registry(registry)
     common.save_runtime_state({
         "generated_at": common.now_iso(),
-        "active_phase_id": "P00",
-        "active_task_id": "P00-S01-T001",
         "last_worker": None,
         "last_event": None,
         "pending_journey_verifications": [],

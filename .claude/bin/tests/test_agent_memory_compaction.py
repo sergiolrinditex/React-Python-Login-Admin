@@ -22,7 +22,7 @@ def make_repo(tmp_path: Path) -> Path:
     (root / ".claude" / "agents" / "developer.md").write_text("static developer prompt\n", encoding="utf-8")
     memdir = root / "orchestrator-state" / "agent-memory" / "developer"
     memdir.mkdir(parents=True)
-    lines = ["# Developer historical memory", "", "## Decisions"]
+    lines = ["# Developer missing_dependency_column memory", "", "## Decisions"]
     for i in range(230):
         lines.append(
             f"- D{i}: DAG explicit_dag invariant, bootstrap --refresh, Write set, docker-compose.yml, OUTCOME success, NEXT_STATUS validator_tester_pending"

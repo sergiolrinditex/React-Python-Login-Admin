@@ -32,15 +32,14 @@ HOOK_REF_PATTERN = re.compile(r"\bhook_[A-Za-z0-9_]+\.py\b")
 # These strings have caused runtime/tracing drift in the past. They should not
 # appear in agent prompts unless this audit explicitly allows them.
 FORBIDDEN_AGENT_PATTERNS = {
-    r"\bLos tres `?\.md`?": "source-of-truth is now the five-file pack, not three md files",
-    r"\bthree `?\.md`?": "source-of-truth is now the five-file pack, not three md files",
-    r"\b3 docs\b": "source-of-truth is now the five-file pack, not three docs",
-    r"\bSix phases\b": "phase count is source-of-truth driven, not hardcoded",
+    r"\bLos tres `?\.md`?": "source-of-truth is now the five-file pack, not a reduced pack",
+    r"\bthree `?\.md`?": "source-of-truth is now the five-file pack, not a reduced pack",
+        r"\bSix phases\b": "phase count is source-of-truth driven, not hardcoded",
     r"\bsix phases\b": "phase count is source-of-truth driven, not hardcoded",
     r"P00`?\.\.`?P05": "phase range is dynamic; do not hardcode P05 as final",
-    r"\breview_pending\b": "legacy task status; use validator_tester_pending/ready_for_close/needs_debug lifecycle",
-    r"\btest_pending\b": "legacy task status; use validator_tester_pending/ready_for_close/needs_debug lifecycle",
-    r"\bqa_pending\b": "legacy task status; use validator_tester_pending/ready_for_close/needs_debug lifecycle",
+    r"\breview_pending\b": "removed task status; use validator_tester_pending/ready_for_close/needs_debug lifecycle",
+    r"\btest_pending\b": "removed task status; use validator_tester_pending/ready_for_close/needs_debug lifecycle",
+    r"\bqa_pending\b": "removed task status; use validator_tester_pending/ready_for_close/needs_debug lifecycle",
     r"OUTCOME:\s*implemented\b": "invalid trailer outcome drift",
     r"OUTCOME:\s*researched\b": "invalid trailer outcome drift",
     r"OUTCOME:\s*validated\b": "invalid trailer outcome drift",
@@ -48,13 +47,13 @@ FORBIDDEN_AGENT_PATTERNS = {
     r"NEXT_STATUS:\s*needs_review\b": "invalid trailer next-status drift",
     r"NEXT_STATUS:\s*ready_for_retest\b": "invalid trailer next-status drift",
     r"NEXT_STATUS:\s*info_only\b": "invalid trailer next-status drift",
-    r"\bevidence-reporter\b": "legacy/non-existent agent name",
-    r"\bgit-manager\b": "legacy/non-existent agent name",
-    r"\bphase-controller\b": "legacy/non-existent agent name",
-    r"\bcontext-curator\b": "legacy/non-existent agent name",
-    r"\btechnical-analyst\b": "legacy/non-existent agent name",
-    r"\bsecurity-auditor\b": "legacy/non-existent agent name",
-    r"\bqa-validator\b": "legacy/non-existent agent name",
+    r"\bevidence-reporter\b": "removed/non-existent agent name",
+    r"\bgit-manager\b": "removed/non-existent agent name",
+    r"\bphase-controller\b": "removed/non-existent agent name",
+    r"\bcontext-curator\b": "removed/non-existent agent name",
+    r"\btechnical-analyst\b": "removed/non-existent agent name",
+    r"\bsecurity-auditor\b": "removed/non-existent agent name",
+    r"\bqa-validator\b": "removed/non-existent agent name",
     r"\b7 agentes tienen `memory`": "hardcoded memory-agent count is stale",
     r"orchestrator-state/memory/agent-memory": "agent memory lives under orchestrator-state/agent-memory",
 }
@@ -264,7 +263,7 @@ def audit_main_orchestrator_thread_contract(errors: list[str]) -> None:
             fail(errors, f"{path}: missing main-thread/all-tools contract phrase: {phrase}")
 
 
-def audit_contract_mirrors(contract: dict[str, Any], roles: dict[str, dict[str, Any]], errors: list[str]) -> None:
+def audit_contract_derived_views(contract: dict[str, Any], roles: dict[str, dict[str, Any]], errors: list[str]) -> None:
     lifecycle_from_schema = [role for role, spec in roles.items() if spec.get("mutates_registry_lifecycle")]
     info_only_from_schema = [role for role, spec in roles.items() if spec.get("info_only")]
     if contract.get("trailers", {}).get("lifecycle_agents") != lifecycle_from_schema:
@@ -303,7 +302,7 @@ def main() -> int:
     agent_roles = {p.stem for p in AGENTS_DIR.glob("*.md")}
     if agent_roles != set(roles):
         fail(errors, f"agent files and trailer_schema.roles differ: agents={sorted(agent_roles)} roles={sorted(roles)}")
-    audit_contract_mirrors(contract, roles, errors)
+    audit_contract_derived_views(contract, roles, errors)
 
     for agent_path in sorted(AGENTS_DIR.glob("*.md")):
         role = agent_path.stem

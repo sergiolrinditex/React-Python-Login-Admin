@@ -100,12 +100,8 @@ def _seed_two_task_registry(*, journeys: list[dict] | None = None) -> None:
         "journeys": journeys or [],
     }
     common.save_registry(registry)
-    common.save_active_task(registry["tasks"][0])
-    common.save_active_phase(registry["phases"][0])
     common.save_runtime_state({
         "generated_at": common.now_iso(),
-        "active_phase_id": "P00",
-        "active_task_id": "P00-S01-T001",
         "last_worker": None,
         "last_event": None,
         "pending_journey_verifications": [],
@@ -476,7 +472,8 @@ class SpawnBudgetChoreographyTests(unittest.TestCase):
                 })
                 buf = StringIO()
                 with mock.patch.object(sys, "stdin", StringIO(pre_payload)), \
-                     mock.patch.object(sys, "stdout", buf):
+                     mock.patch.object(sys, "stdout", buf), \
+                     mock.patch.dict(os.environ, {"CLAUDE_ACTIVE_TASK_ID": "P00-S01-T001"}, clear=False):
                     import hook_spawn_budget as gate
                     rc = gate.main()
                 self.assertEqual(rc, 0)
@@ -515,7 +512,8 @@ class SpawnBudgetChoreographyTests(unittest.TestCase):
                 })
                 buf = StringIO()
                 with mock.patch.object(sys, "stdin", StringIO(pre_payload)), \
-                     mock.patch.object(sys, "stdout", buf):
+                     mock.patch.object(sys, "stdout", buf), \
+                     mock.patch.dict(os.environ, {"CLAUDE_ACTIVE_TASK_ID": "P00-S01-T001"}, clear=False):
                     import hook_spawn_budget as gate
                     rc = gate.main()
                 self.assertEqual(rc, 0)

@@ -25,8 +25,6 @@ from common import (
     project_root,
     read_text,
     relpath,
-    save_active_phase,
-    save_active_task,
     save_registry,
     save_runtime_state,
     sha256_file,
@@ -454,7 +452,7 @@ def parse_coverage_registry(checklist_text: str) -> list[dict[str, Any]]:
 
             # Production wiring metadata. These fields let planner/developer/tester
             # reason from the task record itself instead of scraping free text or
-            # relying on the unsafe legacy active-task singleton.
+            # relying on the unsafe global singleton.
             kind_raw = _cell_by_alias(cell_by_header, {"tipo", "kind", "type"})
             target_raw = _cell_by_alias(cell_by_header, {"target", "objetivo", "scope", "deliverable", "entregable", "page/widget", "page / widget"})
             journey_refs_raw = _cell_by_alias(cell_by_header, {"journey refs", "journeys", "journey", "recorridos", "referencias journey"})
@@ -481,7 +479,7 @@ def parse_coverage_registry(checklist_text: str) -> list[dict[str, Any]]:
                     verify = v
                     break
             if not verify:
-                # Backwards compatibility for legacy checklists that had a
+                # Compatibility for older checklist tables that had a
                 # generic Verify/Verificación column but no Verify mode column.
                 for k, v in cell_by_header.items():
                     if _is_verify_mode_header_key(k):
@@ -812,18 +810,18 @@ def _expand_slice_ref(ref: str, all_tasks: list[dict[str, Any]]) -> list[str]:
 
 
 def resolve_coverage_dependencies(canonical_tasks: list[dict[str, Any]]) -> tuple[bool, list[str]]:
-    """Resolve optional Coverage Registry dependencies into TASK_ID lists.
+    """Resolve Coverage Registry dependencies into TASK_ID lists.
 
-    Returns ``(dag_mode, errors)``. If no table contains a dependency header,
-    ``dag_mode`` is False and the legacy linear chain remains untouched. Once a
-    dependency header exists, every blank dependency cell means an independent
-    root inside its phase wave.
+    Production is DAG-only. A valid checklist must provide a Coverage Registry
+    with a dependency column. Blank dependency cells mean independent root nodes.
     """
+    errors: list[str] = []
+    if not canonical_tasks:
+        return False, ["Coverage Registry with Slice ID rows is required; DAG-only mode requires registry rows"]
     dag_mode = any(bool(t.get("dependency_column_present")) for t in canonical_tasks)
     if not dag_mode:
-        return False, []
+        return False, ["Coverage Registry must include a Depends on/Dependencies column; DAG-only mode requires dependency cells"]
 
-    errors: list[str] = []
     known_ids = {t["id"] for t in canonical_tasks}
     previous_id: str | None = None
     for task in canonical_tasks:
@@ -898,7 +896,7 @@ def build_task_dag(tasks: list[dict[str, Any]]) -> dict[str, Any]:
         done.update(level)
         remaining.difference_update(level)
 
-    mode = "explicit_dag" if any(t.get("dependency_mode") == "explicit_dag" for t in tasks) else "legacy_linear"
+    mode = "explicit_dag"
     source_projection = [
         {
             "id": tid,
@@ -996,10 +994,11 @@ def validate_docs(doc_paths: dict[str, list[Path]]) -> dict[str, Any]:
     for key in ("instructions", "checklist", "guide"):
         if len(doc_paths[key]) != 1:
             errors.append(f"Expected exactly one {key} document, found {len(doc_paths[key])}.")
-    # Engine mode accepts the original 3-doc contract plus the stack/UX split:
-    # instrucciones.md + technical guide + implementation checklist + optional UX_CONTRACT.md
-    # and optional STACK_PROFILE.yaml. Other markdown/yaml files in source-of-truth
-    # are rejected because they can make the bootstrap build the wrong product.
+    # Production DAG-only source-of-truth contract:
+    # instrucciones.md + technical guide + implementation checklist + UX_CONTRACT.md
+    # + STACK_PROFILE.yaml. A clean engine template may have an empty folder; any
+    # active app must provide the full five-file pack. Extra files are rejected
+    # because they can make the bootstrap build the wrong product.
     sot = canonical_source_docs_dir()
     if sot.exists():
         active_md = sorted(p for p in sot.glob("*.md") if p.is_file())
@@ -1008,15 +1007,17 @@ def validate_docs(doc_paths: dict[str, list[Path]]) -> dict[str, Any]:
         extra_md = [p.name for p in active_md if p.name not in allowed_md]
         if extra_md:
             errors.append("source-of-truth contains unexpected markdown files: " + ", ".join(extra_md))
-        if len(active_md) not in (0, 3, 4):
-            errors.append(
-                "source-of-truth expected 3 active markdown docs or 4 with UX_CONTRACT.md "
-                f"or 0 in the clean template, found {len(active_md)}: "
-                + ", ".join(p.name for p in active_md)
-            )
         stack_profiles = sorted(p for p in sot.glob("STACK_PROFILE.yaml") if p.is_file())
-        if len(stack_profiles) > 1:
-            errors.append("Expected at most one STACK_PROFILE.yaml, found " + str(len(stack_profiles)))
+        if active_md or stack_profiles:
+            if len(active_md) != 4:
+                errors.append(
+                    "source-of-truth expected exactly 4 active markdown docs "
+                    "(instrucciones.md, *_TECHNICAL_GUIDE.md, *_IMPLEMENTATION_CHECKLIST.md, UX_CONTRACT.md) "
+                    f"or 0 in the clean template, found {len(active_md)}: "
+                    + ", ".join(p.name for p in active_md)
+                )
+            if len(stack_profiles) != 1:
+                errors.append("source-of-truth expected exactly one STACK_PROFILE.yaml, found " + str(len(stack_profiles)))
     if errors:
         return {"errors": errors, "warnings": warnings}
 
@@ -1030,9 +1031,9 @@ def validate_docs(doc_paths: dict[str, list[Path]]) -> dict[str, Any]:
     if len(stack_profiles) > 1:
         errors.append(f"Expected at most one STACK_PROFILE.yaml, found {len(stack_profiles)}.")
     if len(ux_docs) == 0:
-        warnings.append("UX_CONTRACT.md not found; legacy 3-doc mode is allowed, but production projects should split UX into docs/source-of-truth/UX_CONTRACT.md.")
+        errors.append("UX_CONTRACT.md is required in docs/source-of-truth/.")
     if len(stack_profiles) == 0:
-        warnings.append("STACK_PROFILE.yaml not found; using neutral stack profile defaults for compatibility. Production projects should include docs/source-of-truth/STACK_PROFILE.yaml.")
+        errors.append("STACK_PROFILE.yaml is required in docs/source-of-truth/.")
 
     if checklist.stem.replace("_IMPLEMENTATION_CHECKLIST", "") != guide.stem.replace("_TECHNICAL_GUIDE", ""):
         errors.append("Checklist and technical guide do not share the same prefix.")
@@ -1041,6 +1042,15 @@ def validate_docs(doc_paths: dict[str, list[Path]]) -> dict[str, Any]:
     checklist_text = read_text(checklist)
     guide_text = read_text(guide)
     ux_text = read_text(ux_docs[0]) if ux_docs else ""
+
+    coverage_rows = parse_coverage_registry(checklist_text)
+    if not coverage_rows:
+        errors.append("Coverage Registry table with explicit TASK_ID rows is required for DAG-only bootstrap.")
+    else:
+        dag_mode_ok, dag_errors = resolve_coverage_dependencies(coverage_rows)
+        if not dag_mode_ok:
+            errors.append("Coverage Registry must include and fill a dependency column such as `Depends on`.")
+        errors.extend(dag_errors)
 
     for label, text in (
         ("instrucciones.md", instructions_text),
@@ -1086,7 +1096,7 @@ def validate_docs(doc_paths: dict[str, list[Path]]) -> dict[str, Any]:
         except Exception as exc:
             errors.append(f"STACK_PROFILE.yaml could not be parsed: {type(exc).__name__}: {exc}")
     if not docs_are_in_canonical_dir(doc_paths):
-        warnings.append("Legacy source-doc location detected. Recommended canonical location: docs/source-of-truth/.")
+        errors.append("Source-of-truth files must live in docs/source-of-truth/ for DAG-only projects")
     return {"errors": errors, "warnings": warnings}
 
 
@@ -1108,25 +1118,11 @@ def extract_sections(text: str, headings: list[dict[str, Any]], phase_heading: d
 
 
 def build_phases_and_tasks(checklist_path: Path, checklist_text: str) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
-    """Build phases and tasks from the checklist.
+    """Build phases and tasks from the canonical Coverage Registry.
 
-    Two modes:
-      * **Registry-driven (preferred — Fix B3).** When the checklist contains
-        Coverage Registry tables, those tables are the authoritative source
-        of canonical TASK_IDs. The bootstrap emits exactly the IDs declared
-        there, in the order they appear, and matches each one to its
-        ``## Step X.Y`` section in the body to harvest acceptance bullets and
-        verification commands.
-      * **Legacy positional (fallback).** When no Coverage Registry table is
-        present (older projects, simple templates), the bootstrap keeps the
-        original behaviour: ``# Phase N`` -> ``## Step X.Y`` -> checkbox items
-        as separate tasks. Step heading filtering (Fix B2) still applies in
-        this mode so PRE-GATE / PHASE GATE never become tasks.
-
-    Legacy positional mode preserves the original single linear dependency
-    chain. Registry-driven mode is also linear unless the Coverage Registry
-    contains a `Depends on`/`Dependencies` column; then those cells become the
-    source-of-truth adjacency list for a task DAG.
+    Production is DAG-only: Coverage Registry rows are the authoritative TASK_ID
+    source and the dependency column is the source-of-truth adjacency list.
+    Body step sections are used only to enrich acceptance and verification text.
     """
     headings = extract_headings(checklist_text)
     phases_raw = phase_headings(headings)
@@ -1362,7 +1358,7 @@ def build_phases_and_tasks(checklist_path: Path, checklist_text: str) -> tuple[l
                     for canonical in matched:
                         last_task_id = _emit_canonical(canonical, step_heading, last_task_id)
                 else:
-                    last_task_id = _emit_synthetic(step_heading, last_task_id)
+                    coarse_warnings.append(f"{phase_id}: step '{step_heading['title']}' has no Coverage Registry row; DAG-only bootstrap emits no synthetic task")
 
             # Any canonical tasks whose step_ref didn't match a body heading
             # (rare — usually a typo in the registry) still need to be
@@ -1372,57 +1368,7 @@ def build_phases_and_tasks(checklist_path: Path, checklist_text: str) -> tuple[l
                     continue
                 last_task_id = _emit_canonical(canonical, None, last_task_id)
         else:
-            # ----- Legacy positional path (back-compat) ------------------
-            if not step_headings:
-                step_headings = [{
-                    "level": phase_heading["level"] + 1,
-                    "title": phase_title_suffix,
-                    "line": phase_heading["line"] + 1,
-                }]
-
-            for s_idx, step in enumerate(step_headings, start=1):
-                next_step_line = None
-                for other in step_headings:
-                    if other["line"] > step["line"]:
-                        next_step_line = other["line"]
-                        break
-                slice_start = step["line"] - 1
-                slice_end = (next_step_line - 1) if next_step_line else (phase_line_end - 1)
-                step_lines = checklist_text.splitlines()[slice_start:slice_end]
-                items = extract_items(step_lines)
-                if not items:
-                    items = [step["title"]]
-
-                if len(items) > 15:
-                    items = [step["title"]]
-                    grouped_acceptance = extract_items(step_lines)
-                else:
-                    grouped_acceptance = None
-
-                for t_idx, item in enumerate(items, start=1):
-                    task_id = f"{phase_id}-S{s_idx:02d}-T{t_idx:03d}"
-                    task = {
-                        "id": task_id,
-                        "phase_id": phase_id,
-                        "step_id": f"{phase_id}-S{s_idx:02d}",
-                        "title": item,
-                        "status": "ready" if not last_task_id and p_idx == 1 and s_idx == 1 and t_idx == 1 else "blocked",
-                        "depends_on": [last_task_id] if last_task_id else [],
-                        "source_ref": f"{relpath(checklist_path)}#{step['title']}",
-                        "acceptance": grouped_acceptance if grouped_acceptance else [item],
-                        "verification_commands": [],
-                        "risk_level": "medium",
-                        "verify_mode": "human",
-                        "allowed_paths": [],
-                        "conflict_groups": [],
-                        "write_set": [],
-                        "handoff_path": f"orchestrator-state/tasks/handoffs/{task_id}.md",
-                        "evidence_dir": f"orchestrator-state/tasks/evidence/{task_id}",
-                        "notes": [],
-                    }
-                    tasks.append(task)
-                    phase["task_ids"].append(task_id)
-                    last_task_id = task_id
+            coarse_warnings.append(f"{phase_id}: phase has no Coverage Registry rows; DAG-only bootstrap emits no synthetic tasks")
 
         previous_phase_last_task_id = last_task_id
         phases.append(phase)
@@ -1507,8 +1453,7 @@ def build_phases_and_tasks(checklist_path: Path, checklist_text: str) -> tuple[l
         phases.append(phase)
         emitted_phase_ids.add(phase_id)
 
-    # Legacy safety: first generated task starts ready. In explicit DAG mode,
-    # readiness comes from the source-of-truth dependency cells.
+    # Body-only task generation safety for invalid docs; valid DAG docs derive readiness from dependency cells.
     if not dag_mode and tasks and tasks[0]["status"] != "ready":
         tasks[0]["status"] = "ready"
         tasks[0]["depends_on"] = []
@@ -1543,7 +1488,7 @@ def build_project_brief(instructions_path: Path, checklist_path: Path, guide_pat
         "",
         f"- Generated at: {now_iso()}",
         f"- Canonical source-of-truth dir: `{relpath(canonical_source_docs_dir())}`",
-        f"- Discovery mode: {'canonical' if docs_are_in_canonical_dir({'instructions': [instructions_path], 'checklist': [checklist_path], 'guide': [guide_path]}) else 'legacy'}",
+        f"- Discovery mode: {'canonical' if docs_are_in_canonical_dir({'instructions': [instructions_path], 'checklist': [checklist_path], 'guide': [guide_path]}) else 'invalid-noncanonical'}",
         f"- Instructions: `{relpath(instructions_path)}`",
         f"- Checklist: `{relpath(checklist_path)}`",
         f"- Technical guide: `{relpath(guide_path)}`",
@@ -1621,7 +1566,7 @@ def build_manifest(instructions_path: Path, checklist_path: Path, guide_path: Pa
         "source_of_truth": {
             "canonical_dir": relpath(canonical_source_docs_dir()),
             "discovery_mode": "canonical-strict" if docs_are_in_canonical_dir({"instructions": [instructions_path], "checklist": [checklist_path], "guide": [guide_path]}) else "invalid",
-            "contract_version": "five-doc-stack-ux" if ux_path and stack_profile_path else "three-doc-compatible",
+            "contract_version": "five-file-source-of-truth",
         },
         "documents": documents,
         "validation": validation,
@@ -1921,8 +1866,6 @@ _RUNTIME_TASK_FIELDS_TO_PRESERVE = {
 }
 
 _RUNTIME_KEYS_TO_PRESERVE = {
-    "active_phase_id",
-    "active_task_id",
     "last_worker",
     "last_event",
     "pending_journey_verifications",
@@ -1972,15 +1915,12 @@ def _apply_preserved_runtime(tasks: list[dict[str, Any]], phases: list[dict[str,
 
 
 def _runtime_after_refresh(previous_runtime: dict[str, Any], tasks: list[dict[str, Any]], phases: list[dict[str, Any]], *, preserve_runtime_state: bool) -> dict[str, Any]:
-    task_ids = {str(t.get("id")) for t in tasks if t.get("id")}
-    phase_ids = {str(p.get("id")) for p in phases if p.get("id")}
-    first_phase = phases[0] if phases else {"id": None}
-    first_task = tasks[0] if tasks else {"id": None}
-
+    next_ready_task = next((t for t in tasks if t.get("status") == "ready"), None)
+    next_ready_phase_id = (next_ready_task or {}).get("phase_id") or (phases[0].get("id") if phases else None)
     state = {
         "generated_at": now_iso(),
-        "active_phase_id": first_phase.get("id"),
-        "active_task_id": first_task.get("id"),
+        "next_ready_phase_id": next_ready_phase_id,
+        "next_ready_task_id": (next_ready_task or {}).get("id"),
         "last_worker": None,
         "last_event": "bootstrap_refresh",
         "pending_journey_verifications": [],
@@ -1996,12 +1936,6 @@ def _runtime_after_refresh(previous_runtime: dict[str, Any], tasks: list[dict[st
     for key in _RUNTIME_KEYS_TO_PRESERVE:
         if key in previous_runtime:
             state[key] = previous_runtime[key]
-
-    if state.get("active_task_id") not in task_ids:
-        state["active_task_id"] = first_task.get("id")
-    if state.get("active_phase_id") not in phase_ids:
-        active_task = next((t for t in tasks if t.get("id") == state.get("active_task_id")), None)
-        state["active_phase_id"] = (active_task or first_task).get("phase_id") or first_phase.get("id")
     if not isinstance(state.get("pending_journey_verifications"), list):
         state["pending_journey_verifications"] = []
     if not isinstance(state.get("spawns_in_current_slice"), dict):
@@ -2205,10 +2139,6 @@ def generate_artifacts(*, preserve_runtime_state: bool = True) -> dict[str, Any]
         write_task_yaml(tasks_root / "work-items" / f"{task['id']}.yaml", task)
 
     runtime_state = _runtime_after_refresh(previous_runtime, tasks, phases, preserve_runtime_state=preserve_runtime_state)
-    active_phase = next((p for p in phases if p.get("id") == runtime_state.get("active_phase_id")), None)
-    active_task = next((t for t in tasks if t.get("id") == runtime_state.get("active_task_id")), None)
-    save_active_phase(active_phase or (phases[0] if phases else {"id": None, "title": None, "status": "empty", "task_ids": []}))
-    save_active_task(active_task or (tasks[0] if tasks else {"id": None, "title": None, "status": "empty", "allowed_paths": [], "verification_commands": []}))
     save_runtime_state(runtime_state)
 
     # Materialize API contracts from the freshly-written registry. This closes

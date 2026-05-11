@@ -34,8 +34,6 @@ def _seed_dag(tmp_project):
     })
     common.save_runtime_state({
         "generated_at": common.now_iso(),
-        "active_phase_id": "P00",
-        "active_task_id": "P00-S01-T001",
         "last_worker": None,
         "last_event": None,
         "pending_journey_verifications": [],
@@ -80,7 +78,7 @@ def test_next_wave_frontier_only_defers_tasks_referencing_pending_journey(tmp_pr
     assert result["pending_journey_verifications"] == ["J101"]
 
 
-def test_next_wave_strict_mode_keeps_legacy_global_journey_block(tmp_project):
+def test_next_wave_strict_mode_keeps_missing_dependency_column_global_journey_block(tmp_project):
     import common
     import next_wave
 
@@ -139,7 +137,7 @@ def test_next_wave_terminal_command_exports_task_pack_and_does_not_preclaim():
     assert "claim_task.py" not in cmd
 
 
-def test_next_wave_rejects_legacy_linear_in_production(tmp_project):
+def test_next_wave_rejects_missing_dag_dependencies_registry_drift(tmp_project):
     import bootstrap_three_docs as boot
     import common
     import next_wave
@@ -155,12 +153,15 @@ def test_next_wave_rejects_legacy_linear_in_production(tmp_project):
         "phases": [{"id": "P00", "title": "P0", "status": "ready", "task_ids": [t["id"] for t in tasks]}],
         "tasks": tasks,
         "journeys": [],
-        "task_dag": boot.build_task_dag(tasks),
+        "task_dag": {"mode": "not_explicit_dag", "nodes": ["P00-S01-T001", "P00-S01-T002"], "edges": []},
     })
     common.save_runtime_state({"pending_journey_verifications": [], "spawns_in_current_slice": {}})
+    registry = common.load_registry()
+    registry["task_dag"]["mode"] = "not_explicit_dag"
+    common.save_registry(registry)
 
     result = next_wave.compute_wave(common.load_registry())
-    assert result["dag_mode"] == "legacy_linear"
+    assert result["dag_mode"] == "explicit_dag"
     assert result["ok"] is False
     assert result["ready"] == []
-    assert any("explicit_dag" in e for e in result["errors"])
+    assert any("mode drift" in e for e in result["errors"])

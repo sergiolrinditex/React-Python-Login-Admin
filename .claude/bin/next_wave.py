@@ -135,8 +135,8 @@ def _terminal_command(task_id: str) -> str:
     # Do not pre-claim here. `/next-slice <TASK_ID>` performs the atomic claim
     # after the human approves the plan, avoiding a double-claim denial. The
     # task-pack export is advisory until claim/planner create the file, but it
-    # gives every downstream agent a per-node path instead of the legacy global
-    # active-task.md singleton.
+    # gives every downstream agent a per-node path instead of the global
+    # DAG implicit selector.
     pack = f"orchestrator-state/tasks/task-packs/{task_id}.md"
     claude_cmd = (
         f'claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice {task_id}"'
@@ -163,7 +163,7 @@ def print_markdown(result: dict[str, Any]) -> None:
         print(f"## Journeys pendientes (`journey_gate_mode={mode}`)")
         if mode == "strict":
             for jid in pending:
-                print(f"- Bloqueo global legacy: ejecuta `/verify-journey {jid}` antes de abrir nueva wave.")
+                print(f"- Bloqueo global estricto: ejecuta `/verify-journey {jid}` antes de abrir nueva wave.")
         else:
             print("- Modo frontier: solo se difieren las tasks que referencian esos journeys; las ramas independientes pueden continuar.")
             for jid in pending:

@@ -8,7 +8,7 @@
   -> registry.json + task-packs + DAG derivado
   -> next-wave / claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice <TASK_ID>"
   -> verify-slice
-  -> closer: report + baseline + git workflow + cleanup
+  -> closer: report + product-baseline sync de 5 ficheros verificados + git workflow + cleanup
 ```
 
 Los cinco documentos vivos son:
@@ -38,7 +38,7 @@ python3 -B -S .claude/bin/bootstrap_three_docs.py --refresh
 
 `bootstrap_three_docs.py --refresh` preserva runtime por defecto: estados de tasks existentes, `runtime-state.json`, blockers y follow-ups abiertos. Para un reset destructivo explícito usa `--reset-runtime-state`; no lo uses a mitad de una app/slice.
 
-Production DAG-only: `./scripts/check-task-dag.sh --strict` debe reportar `mode=explicit_dag`. Si sale `legacy_linear`, corrige `Depends on` en el Coverage Registry antes de abrir workers.
+Production DAG-only: `./scripts/check-task-dag.sh --strict` debe reportar `mode=explicit_dag`. Si sale `missing dependency column`, corrige `Depends on` en el Coverage Registry antes de abrir workers.
 
 Main thread obligatorio: el proyecto debe arrancar con `main-orchestrator` como agente principal. `.claude/settings.json` declara `agent: main-orchestrator`, y el arranque explícito es:
 
@@ -106,7 +106,7 @@ printf 'CLAUDE_ACTIVE_TASK_ID=%s\nCLAUDE_TASK_PACK=%s\n' "$CLAUDE_ACTIVE_TASK_ID
 ```bash
 claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice <TASK_ID>"
   planner
-  developer ‖ official-docs-researcher
+  developer (+ official-docs-researcher si aplica)
   validator ‖ tester
   debugger si tester/validator fallan
   pausa en tester pass
@@ -233,6 +233,8 @@ El closer debe ejecutar siempre:
 
 Si `pr-flow` se ejecuta desde `main`, fallará correctamente. Para push directo a main usa `push-to-main` o `direct-main`; no hagas fallback manual fuera del script.
 
+Nota DAG importante: no uses `git stash` / `git stash pop` durante el cierre. El flujo correcto es que el closer cree el commit atómico antes de ejecutar `git-workflow.sh`. Los eventos Bash se registran en `orchestrator-state/tasks/bash-ledger.jsonl`, runtime-only e ignorado por Git, para no dirty-ear el working tree después del commit/push.
+
 ## 9. Follow-ups formales
 
 Regla anti-spam:
@@ -268,7 +270,7 @@ claude --agent main-orchestrator --permission-mode bypassPermissions "/promote-f
 ./scripts/register-followup-task.sh waive FU-YYYYMMDDHHMMSS --reason "decision humana"
 ```
 
-`high`, `critical` y `blocker` bloquean waves/closer hasta promover o waivear. El closer nunca promueve automáticamente: bloquea y pide decisión humana. `/promote-followup` actualiza source-of-truth, registry, DAG, work-item YAML, runtime y ledger; si la nueva task conflictúa con una task activa/claimed/in_progress por `conflict_group` o `write_set`, queda `blocked` con `blocked_reason: conflict_with_active_task` hasta que `promote_ready_tasks` pueda desbloquearla.
+`high`, `critical` y `blocker` bloquean waves/closer hasta promover o waivear. El closer nunca promueve automáticamente: bloquea y pide decisión humana. `/promote-followup` actualiza source-of-truth, registry, DAG, work-item YAML, runtime y ledger; Bash PostToolUse se registra en `bash-ledger.jsonl` runtime-only para no ensuciar Git; si la nueva task conflictúa con una task activa/claimed/in_progress por `conflict_group` o `write_set`, queda `blocked` con `blocked_reason: conflict_with_worker_task` hasta que `promote_ready_tasks` pueda desbloquearla.
 
 No promuevas FU desde un terminal worker que está ejecutando otra slice si puede tocar los mismos ficheros. Primero mira `./scripts/next-wave.sh`; el promote respeta locks y conflictos, pero la decisión de convertir deuda en task DAG debe ser explícita.
 
@@ -336,3 +338,10 @@ python3 -B -S scripts/audit-agent-trailer-vocabulary.py
 - La pantalla no se cierra por capas aisladas: cada pantalla importante debe cubrir contrato de pantalla, API/datos, UI conectada, estados UX obligatorios y verificación del journey.
 - API/backend slices pueden existir separadas sólo como foundation real o como contrato que alimenta una pantalla/journey nombrado; no hagas `backend completo -> frontend completo -> UX polish`.
 - Los templates deben sustituir todos los ejemplos por el dominio real de la app y usar datos reales/proporcionados; si faltan datos, bloquea o registra follow-up.
+
+### Git workflow y ledger local
+
+- `./scripts/git-workflow.sh` es transporte Git: no usa `git stash`; sólo puede hacer `commit --amend --no-edit` para trazas tardías permitidas (`ledger.jsonl`, `bash-ledger.jsonl`, `runtime-state.json`) y bloquea cualquier otro path dirty.
+- El closer debe crear el commit atómico antes de ejecutarlo.
+- `hook_update_ledger.py` escribe eventos Bash en `orchestrator-state/tasks/bash-ledger.jsonl`, runtime-only e ignorado por Git, para que los Bash PostToolUse no re-ensucien el repo después del commit/push.
+- `orchestrator-state/tasks/ledger.jsonl` queda como ledger canónico para eventos lifecycle no-Bash.

@@ -22,7 +22,7 @@ Typical examples, not a contract:
 3. `planner` — selects next ready task, extracts the full source-of-truth pack, does impact analysis. Blocking. Must output `CONTEXT_READY: yes`.
 4. `developer` ‖ `official-docs-researcher` — parallel, one message with two Agent calls.
    - `developer` implements DB/migration → backend (endpoint + service + repo + tests + logs) → frontend (domain + data + presentation + tests + logs) → updates PROGRESS.md → writes handoff.
-   - `official-docs-researcher` ALWAYS runs as a safety net (shallow pass ≤5s when cache hit). Catches patterns or ecosystem changes the `planner` missed. If it detects a discrepancy with internal docs → writes a note in `orchestrator-state/memory/official-doc-notes/`; the PreToolUse docs-discrepancy hook warns the developer on the next Write/Edit (warn-only, never blocks) so the developer reconciles the source-of-truth pack and adds a `RESOLVED: <how>` line before continuing.
+   - `official-docs-researcher` runs only when the `planner` marks `NEEDS_OFFICIAL_DOCS: yes` or the slice touches unconfirmed external API/library/security/AI/RAG/MCP/streaming/DB/deploy behavior. It receives 1–5 concrete questions and uses cache/MCP/Context7 first. If it detects a discrepancy with internal docs → writes a note in `orchestrator-state/memory/official-doc-notes/`; the PreToolUse docs-discrepancy hook warns the developer on the next Write/Edit (warn-only, never blocks) so the developer reconciles the source-of-truth pack and adds a `RESOLVED: <how>` line before continuing.
 5. `validator` ‖ `tester` — parallel, one message with two Agent calls.
    - `validator` reviews architecture, scope, DRY/KISS/YAGNI, file size, docstrings, logging, PROGRESS.md, security scope.
    - `tester` runs real tests with backend + DB up, verifies logs under both verbose modes.
@@ -57,13 +57,13 @@ Before advancing to the next phase:
 
 ## DAG execution overlay
 
-Production execution is DAG-only. DAG execution is enabled by the Coverage Registry dependency column in the checklist; if `task_dag.mode` is `legacy_linear`, treat it as a source-of-truth defect and do not open workers. The planner must treat `depends_on` as a hard gate: a node can be selected only when every predecessor is `done`. Multiple ready nodes in the earliest incomplete phase form the current wave.
+Production execution is DAG-only. DAG execution is enabled by the Coverage Registry dependency column in the checklist; if `task_dag.mode` is `missing dependency column`, treat it as a source-of-truth defect and do not open workers. The planner must treat `depends_on` as a hard gate: a node can be selected only when every predecessor is `done`. Multiple ready nodes in the earliest incomplete phase form the current wave.
 
 Rules for DAG waves:
 
 - Use `/next-wave` to list independent `ready` nodes. The script enforces `Conflict group` and `Write set` guardrails before opening worker terminals.
 - Do not spawn several slice pipelines inside one Claude session. Use one terminal per `TASK_ID`, each with `CLAUDE_ACTIVE_TASK_ID=<TASK_ID>`.
-- Before the first worker call in a DAG terminal, claim the task with `.claude/bin/claim_task.py <TASK_ID>`. This prevents duplicate terminals from taking the same node and denies claims that conflict with active tasks by `Conflict group`/`Write set`.
+- Before the first worker call in a DAG terminal, claim the task with `.claude/bin/claim_task.py <TASK_ID>`. This prevents duplicate terminals from taking the same node and denies claims that conflict with DAG tasks by `Conflict group`/`Write set`.
 - Do not bypass journey gates, phase gates, spawn budget, human verification or closer. DAG only changes which independent slices may be worked at the same time.
 - If path conflicts are likely (same migration file, same screen, same provider, same endpoint family), encode them in the source-of-truth `Conflict group`/`Write set` cells instead of relying on memory.
 - Before opening the next phase, run `./scripts/phase-gate.sh <PHASE_ID>`; use `--require-git-clean` when a real `origin/main` exists.

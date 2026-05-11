@@ -49,8 +49,8 @@ def _seed_registry(common, *, task_ids=None, statuses=None, journey_task_ids=Non
     common.save_registry(registry)
     common.save_runtime_state({
         "generated_at": common.now_iso(),
-        "active_phase_id": "P00",
-        "active_task_id": "P00-S01-T002",
+        "next_ready_phase_id": "P00",
+        "last_claimed_task_id": "P00-S01-T002",
         "last_worker": None,
         "last_event": None,
         "pending_journey_verifications": [],

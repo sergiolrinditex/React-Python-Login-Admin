@@ -33,8 +33,8 @@ Antes del pre-check y antes de escribir report/commit, repite internamente este 
 ```text
 MODO DAG ACTIVO: production = explicit_dag.
 Unidad que se cierra = TASK_ID canónico del registry.
-No cierres por active-task singleton si existe CLAUDE_ACTIVE_TASK_ID o task_pack_path.
-No existe modo secuencial improvisado.
+No cierres por global state; cierra sólo el TASK_ID explícito y su task_pack_path.
+No existe modo DAG-disabled improvisado.
 Usa orchestrator-state/tasks/task-packs/<TASK_ID>.md como task pack DAG.
 Los cambios de estado del cierre los hacen hooks/scripts bajo lock; no edites registry/runtime/task-dag directamente.
 ```
@@ -59,7 +59,7 @@ Antes de escribir nada:
 - `orchestrator-state/memory/PROGRESS.md` fue actualizado para esta slice.
 - Existe `orchestrator-state/tasks/evidence/<TASK_ID>/` con evidencia mínima.
 - `registry.json` tiene la tarea en estado distinto de `done`, salvo modo revisión. Si ya estaba `done`, solo continúa cuando el handoff contiene `## revision-debugger` o el comando padre fue `/revise-slice`; en ese caso no es doble cierre sino commit correctivo y report de revisión. Si estaba `done` sin señal de revisión → `OUTCOME: blocked` por doble cierre.
-- En modo DAG, valida `registry.json -> task_dag.mode == explicit_dag`. Si no, bloquea: producción no cierra slices en `legacy_linear`. Si existe `CLAUDE_TASK_PACK` o `task_pack_path` en el registry, verifica que apunta a `orchestrator-state/tasks/task-packs/<TASK_ID>.md` y que el contenido menciona ese `TASK_ID`. No uses `orchestrator-state/memory/active-task.md` para decidir qué cerrar; puede pertenecer a otra terminal.
+- En modo DAG, valida `registry.json -> task_dag.mode == explicit_dag`. Si no, bloquea: producción no cierra slices sin DAG explícito. Si existe `CLAUDE_TASK_PACK` o `task_pack_path` en el registry, verifica que apunta a `orchestrator-state/tasks/task-packs/<TASK_ID>.md` y que el contenido menciona ese `TASK_ID`. No uses implicit selector para decidir qué cerrar; puede pertenecer a otra terminal.
 
 Si algo falta → `OUTCOME: blocked` y lista qué falta.
 
@@ -73,7 +73,7 @@ Tras pasar el pre-check y antes de escribir el evidence report:
 4. Para cada `J` en `closing_journeys`:
    - Si `J` está en `inline_verified_journeys` → emite `JOURNEY_VERIFIED_INLINE: <J>`; el hook lo marcará `verified` bajo lock. No emitas `JOURNEY_PENDING_VERIFY` para este J.
    - Si `J.verification_status` es ya `verified` o `waived` (re-apertura post-verify) → emite `JOURNEY_REVERIFY_RECOMMENDED: <J>` (warning, no bloquea).
-   - En cualquier otro caso → emite `JOURNEY_PENDING_VERIFY: <J>` en el trailer. El SubagentStop hook lo añade a `runtime-state.pending_journey_verifications`; con `journey_gate_mode=frontier` solo se difieren tasks que referencian ese journey, y con `strict` se mantiene el bloqueo global legacy hasta resolverlo.
+   - En cualquier otro caso → emite `JOURNEY_PENDING_VERIFY: <J>` en el trailer. El SubagentStop hook lo añade a `runtime-state.pending_journey_verifications`; con `journey_gate_mode=frontier` solo se difieren tasks que referencian ese journey, y con `strict` se mantiene el bloqueo global estricto hasta resolverlo.
 
 Documenta en el evidence report (sección "Journey closure") la clasificación de cada journey cerrado: `inline_verified | pending_verify | reverify_recommended`. Recuerda al usuario las acciones siguientes.
 
@@ -95,7 +95,7 @@ Cuerpo conciso — no repitas código, referencia ficheros por path.
 
 ## Sync del baseline acumulativo de producto
 
-Después de escribir el evidence report y antes de `git add`/`git commit`, sincroniza el baseline construido:
+Después de escribir el evidence report, con `validator approved`, `tester pass` y `VERIFY_OUTCOME: verified` ya presentes en el handoff, y antes de `git add`/`git commit`, sincroniza el baseline construido:
 
 ```bash
 ./scripts/sync-product-baseline.sh sync --version <product_increment|PRODUCT_INCREMENT|current> --task <TASK_ID> --reason "verified slice closed"
@@ -105,14 +105,15 @@ Reglas:
 
 - `docs/source-of-truth/` sigue siendo la fuente viva acumulativa.
 - `docs/product-baseline/` es el snapshot construido que se pasa a ChatGPT para generar el siguiente incremento (`v0 + v1 + v2 + ...`).
-- El sync copia los source-of-truth canónicos disponibles y actualiza `docs/product-baseline/BASELINE_MANIFEST.json`.
-- Si el sync falla, no cierres: `OUTCOME: blocked`, `BASELINE_SYNC_READY: no`.
+- El sync exige el pack moderno completo de 5 ficheros (`instrucciones.md`, `*_TECHNICAL_GUIDE.md`, `*_IMPLEMENTATION_CHECKLIST.md`, `UX_CONTRACT.md`, `STACK_PROFILE.yaml`), copia sólo esos documentos a `docs/product-baseline/` y actualiza `docs/product-baseline/BASELINE_MANIFEST.json`.
+- El script rechaza sincronizar si el handoff no tiene `Validator review OUTCOME=approved`, `Tester run OUTCOME=pass` y `## verify-slice` con `VERIFY_OUTCOME: verified`; si falla, no cierres: `OUTCOME: blocked`, `BASELINE_SYNC_READY: no`.
 - Incluye el baseline/manifest en el mismo commit atómico de la slice para que no se pierda contexto tras `/clear` ni entre versiones.
 
 ## Commit
 
 - Antes de tocar Git, confirma que estás en `main` o cambia a `main` si el repo lo permite sin perder cambios (`git branch --show-current`; `git checkout main`). No cierres una slice desde ramas auxiliares.
-- Stageas los cambios relevantes con `git add` (no ficheros de contexto efímeros como `runtime-state.json` si solo cambió por el hook — el ledger y el runtime-state se pueden incluir si son parte de la trazabilidad del slice).
+- Stageas los cambios relevantes con `git add`. No fuerces ficheros de contexto efímeros: `runtime-state.json` sólo entra si forma parte deliberada del cierre, y `orchestrator-state/tasks/ledger.jsonl` es runtime local ignorado por Git; la trazabilidad comprometida vive en handoffs, evidence reports, source-of-truth/product-baseline y el commit.
+- No uses `git stash` ni `git stash pop` en el cierre. En modo DAG los hooks pueden escribir trazabilidad durante el cierre; el stash/pop mezcla estado generado con código de producto y puede crear bucles/conflictos. Si queda un cambio necesario después del commit, intégralo con `git add -A` + `git commit --amend --no-edit` o crea un commit correctivo explícito; si es sólo ledger/runtime generado por el hook tras comandos Git/cleanup, no persigas el diff.
 - Verifica con `git status` antes de commit que no hay ficheros huérfanos sin querer.
 - Mensaje de commit atómico con trazabilidad. **No añadas `Co-authored-by: Claude`, `Generated-by: Claude` ni trailers de coautor de IA.** El commit debe quedar atribuido solo al usuario/configuración Git del repo:
 
@@ -135,8 +136,8 @@ Usa el prefijo apropiado: `feat:` / `fix:` / `refactor:` / `docs:` / `test:` / `
 
 Tras crear el commit:
 
-1. Ejecuta `git status --short` y confirma que no quedan cambios inesperados. Si quedan cambios necesarios para la slice, intégralos en el mismo commit antes de pushear.
-2. Ejecuta `./scripts/git-workflow.sh`. Si falla, emite `OUTCOME: blocked`, `PUSH_READY: no` y explica el error. No hagas fallback manual a `git push origin main`; el modo directo a main es legítimo sólo cuando `STACK_PROFILE.yaml` declara `git_workflow: push-to-main` o `direct-main`. No hagas `--force`, no pushees ramas auxiliares y no inventes remotos.
+1. Ejecuta `git status --short` y confirma que no quedan cambios inesperados de producto. No uses `git stash`/`stash pop` como mecanismo normal de cierre. `hook_update_ledger.py` escribe eventos Bash en `bash-ledger.jsonl`, runtime-only e ignorado por Git, para no re-dirtyar el repo después del commit. Si aparece cambio necesario antes del push, intégralo en el commit atómico.
+2. Ejecuta `./scripts/git-workflow.sh` después del commit atómico. El workflow nunca usa `git stash`; si sólo encuentra trazas tardías permitidas (`ledger.jsonl`, `bash-ledger.jsonl`, `runtime-state.json`) puede integrarlas con `git commit --amend --no-edit` antes de push, y bloqueará cualquier otro path dirty. Si falla, emite `OUTCOME: blocked`, `PUSH_READY: no` y explica el error. No hagas fallback manual a `git push origin main`; el modo directo a main es legítimo sólo cuando `STACK_PROFILE.yaml` declara `git_workflow: push-to-main` o `direct-main`. No hagas `--force`, no pushees ramas auxiliares y no inventes remotos.
 3. Ejecuta `bash scripts/slice-clean.sh --apply 2>&1 | tail -20` para housekeeping normal.
 4. Ejecuta `bash scripts/cleanup-worktrees.sh --apply --task <TASK_ID> 2>&1 | tail -40`. El script no debe borrar worktrees dirty ni tocar `main`. Si la limpieza falla por worktree dirty, no reviertas código; emite `WORKTREES_CLEANED: no` con la razón.
 

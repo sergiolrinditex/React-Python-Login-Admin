@@ -9,7 +9,7 @@ Use this ONLY when deployment is explicitly in scope in the source-of-truth DAG.
 
 ## Sequence
 
-1. Read the active phase and deployment task.
+1. Read the DAG phase and deployment task.
 2. Verify current vendor documentation for the exact deployment commands and flags you intend to use (via `official-docs-researcher` if the last check is >7 days old).
 3. Validate image digests, manifests, Helm charts/values.
 4. Dry-run first: `kubectl apply --dry-run=server -f ...` or `helm upgrade --dry-run --debug ...`.

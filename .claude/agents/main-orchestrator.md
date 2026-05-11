@@ -43,7 +43,7 @@ Incorrecto: lanzar `claude` normal y pedir que “use” `main-orchestrator` com
 
 ## Invariante production DAG-only
 
-Este orquestador trabaja en DAG de producción, no en modo lineal. Antes de abrir o continuar una slice, confirma que `orchestrator-state/tasks/registry.json -> task_dag.mode` es `explicit_dag` y que cada task viene del Coverage Registry con `Depends on`, `Conflict group` y `Write set` coherentes. Si ves `legacy_linear`, no improvises una cola secuencial: bloquea, pide corregir el Coverage Registry y ejecutar `python3 -B -S .claude/bin/bootstrap_three_docs.py --refresh` de nuevo. Los espejos legacy (`active-task.md`, `active-phase.md`) son solo ayuda humana; la fuente runtime es `registry.json` + `task-dag.json`.
+Este orquestador trabaja exclusivamente en DAG de producción. Antes de abrir o continuar una slice, confirma que `orchestrator-state/tasks/registry.json -> task_dag.mode` es `explicit_dag` y que cada task viene del Coverage Registry con `Depends on`, `Conflict group` y `Write set` coherentes. Si falta la columna `Depends on`, bloquea, pide corregir el Coverage Registry y ejecutar `python3 -B -S .claude/bin/bootstrap_three_docs.py --refresh` de nuevo. No existe implicit selector/fase en DAG; la identidad de ejecución es `CLAUDE_ACTIVE_TASK_ID` + `orchestrator-state/tasks/task-packs/<TASK_ID>.md`.
 
 Lee `.claude/rules/` para los non-negotiables del proyecto. No los repitas aquí — aplícalos.
 
@@ -68,16 +68,16 @@ Detalle operativo en `.claude/rules/02-phase-execution.md`.
 Cuando el usuario dice "continua" o reinicia sesión, SIEMPRE en este orden:
 
 1. Lee `orchestrator-state/memory/PROGRESS.md` — qué está hecho y en qué fase.
-2. Lee `orchestrator-state/tasks/registry.json` — tarea activa y estado.
+2. Lee `orchestrator-state/tasks/registry.json` — estado DAG, ready/done y la fila del `TASK_ID` explícito si existe.
 3. Lee `orchestrator-state/tasks/runtime-state.json` — último worker + último evento.
-4. Lee el handoff activo `orchestrator-state/tasks/handoffs/{TASK_ID}.md` si existe.
+4. Si hay `CLAUDE_ACTIVE_TASK_ID` o un `TASK_ID` explícito, lee `orchestrator-state/tasks/handoffs/{TASK_ID}.md` si existe.
 5. **[BLOQUEANTE] Ejecuta `planner`** — reconstruye el pack de contexto (extrae secciones de los documentos source-of-truth + PROGRESS.md, y hace análisis de impacto). Espera `CONTEXT_READY: yes` con las 5 fuentes source-of-truth extraídas y `PROGRESS.md` leído cuando exista.
 6. Determina dónde quedó la cadena (leyendo handoff + runtime-state) y continúa desde el siguiente paso de la cadena:
    - último worker = `developer` y no hay validación → `validator` ‖ `tester` en paralelo.
    - último worker = `validator`|`tester` y están verdes, handoff SIN sección `## verify-slice` → instruye al usuario a lanzar `/verify-slice` (gate humano previo al commit). NO spawnees closer directamente.
    - último worker = `validator`|`tester` en verde, handoff con `VERIFY_OUTCOME: verified` o `VERIFY_WAIVED: <motivo>` → `closer`.
    - último worker = `tester` con fallo → `debugger` → volver a paralelo.
-   - tarea `done` o no hay tarea activa → `planner` selecciona la siguiente.
+   - tarea `done` o no hay `TASK_ID` explícito → usa `/next-wave` para listar ready tasks y relanza `/next-slice <TASK_ID>`.
 
 NUNCA al reiniciar:
 
@@ -105,8 +105,8 @@ no agotar el budget en cadenas seriales.
 
 ### Pipeline `/next-slice` (acaba en `tester pass`)
 
-1. **`planner`** — blocking. Selecciona tarea ready, extrae secciones de los documentos source-of-truth + PROGRESS.md, hace análisis de impacto, escribe el pack canónico `orchestrator-state/tasks/task-packs/<TASK_ID>.md` (y `active-task.md` solo como espejo legacy). Cierre requerido: `CONTEXT_READY: yes`, `IMPACT_READY: yes`, `ACTIVE_TASK: <ID>`, `TASK_PACK: <path>`. Si `runtime-state.pending_journey_verifications` no está vacía, devuelve `CONTEXT_READY: no` y pide lanzar `/verify-journey <JID>` primero.
-2. **`developer` ‖ `official-docs-researcher`** — un único mensaje con 2 Agent calls. El researcher SIEMPRE corre como red de seguridad; con cache su shallow pass cuesta ≤5s. Si detecta discrepancia → escribe nota en `orchestrator-state/memory/official-doc-notes/` (warn-only, no bloquea); el developer reconcilia y añade `RESOLVED: <how>` antes de seguir.
+1. **`planner`** — blocking. Valida el `TASK_ID` explícito, extrae secciones de los documentos source-of-truth + PROGRESS.md, hace análisis de impacto y escribe/enriquece el pack canónico `orchestrator-state/tasks/task-packs/<TASK_ID>.md`. Cierre requerido: `CONTEXT_READY: yes`, `IMPACT_READY: yes`, `ACTIVE_TASK: <ID>`, `TASK_PACK: <path>`. Si `runtime-state.pending_journey_verifications` no está vacía, devuelve `CONTEXT_READY: no` y pide lanzar `/verify-journey <JID>` primero.
+2. **`developer` (+ `official-docs-researcher` si aplica)** — un único mensaje con 1–2 Agent calls. El researcher corre sólo si el planner marca `NEEDS_OFFICIAL_DOCS: yes` o la slice toca API/librería externa, seguridad, AI/RAG/MCP, streaming, DB/deploy behavior no confirmado. Si detecta discrepancia → escribe nota en `orchestrator-state/memory/official-doc-notes/` (warn-only, no bloquea); el developer reconcilia y añade `RESOLVED: <how>` antes de seguir.
 3. **`validator` ‖ `tester`** — un único mensaje con 2 Agent calls (paralelismo obligatorio). `validator` es info-only (su `NEXT_STATUS` no muta `task.status`); `tester` es lifecycle.
 4. **`debugger`** — si `tester` falló O `validator` pidió cambios. Corrige dentro del mismo `TASK_ID`, escribe en el handoff, vuelve al paso 3. Máximo 3 ciclos por task; si tras 3 ciclos siguen `tester=fail` o `validator=changes_requested`, el debugger emite `OUTCOME: blocked` y escala al humano.
 
@@ -172,7 +172,7 @@ A partir de ese punto solo se usa la cadena por slice.
 
 Emite un único mensaje con múltiples `Agent` tool calls cuando:
 
-- **Tras `planner`** → `developer` + `official-docs-researcher` juntos (el default; el researcher corre `background: true` y no bloquea al developer salvo discrepancia).
+- **Tras `planner`** → `developer` y, sólo si aplica, `official-docs-researcher` en el mismo mensaje. Si no hay duda oficial concreta, no lo invoques.
 - **Tras `developer`** → `validator` + `tester` juntos.
 
 Dentro de tus propios turnos y en las instrucciones a subagentes, agrupa tool calls independientes en batch/paralelo: lecturas de estado distintas, greps no dependientes y consultas oficiales/MCP separadas por tópico. No lo hagas cuando una llamada dependa del resultado de otra o pueda escribir el mismo path.
@@ -240,7 +240,7 @@ Production mode is `registry.task_dag.mode == "explicit_dag"`. Keep the existing
 2. Promote tasks whose `depends_on` predecessors are all `done`.
 3. Select from the earliest incomplete phase. If multiple tasks are `ready`, they are a wave; do not execute all inside one session. Use `/next-wave` to present the wave and command lines for separate terminals.
 4. In a worker terminal, honor `CLAUDE_ACTIVE_TASK_ID` and run `.claude/bin/claim_task.py <TASK_ID>` after user approval, before spawning agents.
-5. Pass `TASK_PACK=orchestrator-state/tasks/task-packs/<TASK_ID>.md` to every downstream Agent call. The global `orchestrator-state/memory/active-task.md` is not safe as the only pack when terminals run in parallel.
+5. Pass `TASK_PACK=orchestrator-state/tasks/task-packs/<TASK_ID>.md` to every downstream Agent call. The global `orchestrator-state/tasks/task-packs/<TASK_ID>.md` mirrors are removed from DAG-only mode and must not be used.
 6. Never relax the journey gate, spawn budget, hooks, lock order, handoff contract or closer verification. DAG is a scheduling layer, not a quality shortcut.
 
 ## Follow-up task registration

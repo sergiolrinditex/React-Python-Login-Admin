@@ -40,16 +40,16 @@ Lee en paralelo:
 - `orchestrator-state/memory/PROGRESS.md` (completo — es corto).
 - `orchestrator-state/tasks/registry.json` — cola canónica. Incluye `journeys[]` (Journey Coverage Matrix de `instrucciones.md` parseada por bootstrap — §3.5 en baseline snapshot, §3.7 en feature-app).
 - `orchestrator-state/tasks/runtime-state.json` — último worker + último evento + `pending_journey_verifications[]`.
-- `orchestrator-state/memory/active-task.json` y `orchestrator-state/memory/active-phase.json` si existen.
-- Si existe `CLAUDE_ACTIVE_TASK_ID` o el comando padre te pasó un `TASK_ID`, usa `orchestrator-state/tasks/task-packs/<TASK_ID>.md` como pack canónico de esta terminal. El singleton `orchestrator-state/memory/active-task.md` es solo legacy/advisory y puede pertenecer a otra terminal.
+- `orchestrator-state/tasks/runtime-state.json` solo para contexto de progreso; no lo uses como identidad de worker si no hay `CLAUDE_ACTIVE_TASK_ID`.
+- Si existe `CLAUDE_ACTIVE_TASK_ID` o el comando padre te pasó un `TASK_ID`, usa `orchestrator-state/tasks/task-packs/<TASK_ID>.md` como pack canónico de esta terminal. No existe implicit selector/fase en DAG; el task-pack por `TASK_ID` es la única autoridad de contexto.
 
 ### 1.bis Gate de journeys pendientes
 
-Comprueba `runtime-state.pending_journey_verifications` y `runtime-state.journey_gate_mode` (`frontier` por defecto, `strict` legacy).
+Comprueba `runtime-state.pending_journey_verifications` y `runtime-state.journey_gate_mode` (`frontier` por defecto, `strict`).
 
 - `frontier`: NO bloquea todo el DAG. Solo devuelve `CONTEXT_READY: no` si el `TASK_ID` pedido referencia alguno de los journeys pendientes en `Journey refs`, `depends_on_journeys` o `journey_gate_refs`. Las ramas independientes pueden seguir.
-- `strict`: conserva el bloqueo global legacy; si hay journeys pendientes, no selecciones tarea nueva.
-- Nunca mutes registry, runtime-state ni active-task desde el planner.
+- `strict`: conserva el bloqueo global estricto; si hay journeys pendientes, no selecciones tarea nueva.
+- Nunca mutes registry, runtime-state ni implicit selector desde el planner.
 
 Si la task queda diferida por el gate, emite:
 
@@ -66,7 +66,7 @@ Si existe una nota sobre este patrón en `orchestrator-state/agent-memory/planne
 
 Tras el gate de journey, lee `runtime-state.spawns_in_current_slice` (dict `task_id -> count`) y `runtime-state.spawn_budget` (default `20`).
 
-Si `active_task_id` existe y `spawns_in_current_slice[active_task_id] >= spawn_budget`:
+Si `CLAUDE_ACTIVE_TASK_ID` existe y `spawns_in_current_slice[CLAUDE_ACTIVE_TASK_ID] >= spawn_budget`:
 
 - NO selecciones tarea nueva, NO inicies un nuevo ciclo.
 - Emite cierre exactamente:
@@ -83,8 +83,8 @@ Cuando seleccionas una tarea NUEVA (no una continuación), el reseteo de spawn b
 
 ### 2. Selecciona la siguiente tarea
 
-- Si el comando padre trae `TASK_ID` o `CLAUDE_ACTIVE_TASK_ID` → usa esa task exacta; verifica que está `claimed|in_progress|ready_for_close` o que todas sus deps están `done`. No selecciones otra aunque el singleton `active-task.json` apunte a algo distinto.
-- Si hay `active_task` no terminada y NO hay override DAG → continúa esa (no selecciones una nueva).
+- Si el comando padre trae `TASK_ID` o `CLAUDE_ACTIVE_TASK_ID` → usa esa task exacta; verifica que está `claimed|in_progress|ready_for_close` o que todas sus deps están `done`. No selecciones otra y no consultes `implicit selector`.
+- Si no hay `CLAUDE_ACTIVE_TASK_ID` ni `TASK_ID` explícito → no uses un singleton; pide `/next-wave` o un `/next-slice <TASK_ID>` explícito.
 - Si no hay → elige de `registry.json` la primera `ready` con **todas** las dependencias (`depends_on`) en `done`. No actives nunca una tarea con deps incompletas.
 - **No cambies a la siguiente fase hasta que la actual esté completa.** Solo actives tareas de fase N+1 cuando TODAS las tareas de fase N estén `done`.
 - Si hay varias tareas `ready` que no se pisan (`Conflict group`/`Write set` disjuntos, sin deps cruzadas) → puedes proponer paralelización en el cierre.
@@ -95,10 +95,10 @@ Cuando seleccionas una tarea NUEVA (no una continuación), el reseteo de spawn b
 Escrituras permitidas del planner:
 
 - **Siempre** el pack canónico por task: `orchestrator-state/tasks/task-packs/<TASK_ID>.md`. En DAG este es el único pack que deben leer developer/tester/validator/debugger; evita corrupción por terminales concurrentes.
-- `orchestrator-state/memory/active-task.md` / `active-phase.md` solo como espejo legacy humano, nunca como fuente autoritativa en DAG.
+- `orchestrator-state/tasks/task-packs/<TASK_ID>.md` / `implicit selector` están eliminados del modo DAG. Si aparecen por migración, trátalos como no autoritativo.
 - Memoria propia: `orchestrator-state/agent-memory/planner/MEMORY.md`.
 
-No escribas con Write/Edit/MultiEdit: `registry.json`, `runtime-state.json`, `active-task.json`, `active-phase.json`, `task-dag.json` ni `execution-graph.json`; esos archivos son generados por scripts y por hook scripts bajo `.claude/bin/` bajo locks.
+No escribas con Write/Edit/MultiEdit: `registry.json`, `runtime-state.json`, `implicit selector.json`, `implicit selector.json`, `task-dag.json` ni `execution-graph.json`; esos archivos son generados/gestionados por scripts bajo `.claude/bin/` bajo locks.
 
 ### 3. Extrae el pack de contexto
 
@@ -160,7 +160,7 @@ Determina:
 
 ### 5. Escribe el task pack
 
-Escribe primero `orchestrator-state/tasks/task-packs/<TASK_ID>.md` con estas secciones exactas. Si NO hay `CLAUDE_ACTIVE_TASK_ID` puedes además espejar el mismo contenido en `orchestrator-state/memory/active-task.md` por compatibilidad legacy; en modo DAG no dependas del singleton global.
+Escribe primero `orchestrator-state/tasks/task-packs/<TASK_ID>.md` con estas secciones exactas. No espejes a implicit selector en producción DAG; esos obsolete selector files están eliminados del modo DAG.
 
 ```
 # Task Pack: <TASK_ID> — <título>
@@ -205,7 +205,7 @@ Escribe primero `orchestrator-state/tasks/task-packs/<TASK_ID>.md` con estas sec
 <handoff anterior si existe>
 ```
 
-Escribe también `orchestrator-state/memory/active-phase.md` (resumen de fase, 10 líneas máx) solo como espejo humano. No escribas el registry: `task_pack_path` lo debe poblar `claim_task.py` o bootstrap; si falta, repórtalo como drift para reparación bajo lock.
+No escribas `orchestrator-state/memory/implicit selector.md` en producción DAG. No escribas el registry: `task_pack_path` lo debe poblar `claim_task.py` o bootstrap; si falta, repórtalo como drift para reparación bajo lock.
 
 ## Al terminar
 
@@ -245,7 +245,7 @@ When `registry.task_dag.mode == "explicit_dag"`, keep the existing agents and pe
 2. Promote tasks whose `depends_on` predecessors are all `done`.
 3. Select from the earliest incomplete phase. If multiple tasks are `ready`, they are a wave; do not execute all inside one session. Use `/next-wave` to present the wave and command lines for separate terminals.
 4. In a worker terminal, honor `CLAUDE_ACTIVE_TASK_ID` and run `.claude/bin/claim_task.py <TASK_ID>` after user approval, before spawning agents.
-5. Write/read `orchestrator-state/tasks/task-packs/<TASK_ID>.md`; do not rely on the global `orchestrator-state/memory/active-task.md` while several terminals run.
+5. Write/read `orchestrator-state/tasks/task-packs/<TASK_ID>.md`; do not rely on `orchestrator-state/tasks/task-packs/<TASK_ID>.md`.
 6. Never relax the journey gate, spawn budget, hooks, lock order, handoff contract or closer verification. DAG is a scheduling layer, not a quality shortcut.
 
 ## Follow-up triage gate

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 import argparse, json, os, subprocess, sys
-from common import effective_active_task_id, ensure_parent, find_task, journeys_closing_at_task, load_active_task, load_registry, now_iso, project_root, relpath, tasks_dir
+from common import ensure_parent, find_task, journeys_closing_at_task, load_registry, now_iso, project_root, relpath, tasks_dir
 
 ALLOWED_STATUS = {"ready_for_close", "done"}
 
@@ -25,7 +25,7 @@ def main() -> int:
     parser.add_argument("--allow-any-status", action="store_true")
     args = parser.parse_args()
     registry = load_registry()
-    task_id = args.task_id or os.environ.get("CLAUDE_ACTIVE_TASK_ID") or effective_active_task_id(load_active_task())
+    task_id = args.task_id or os.environ.get("CLAUDE_ACTIVE_TASK_ID")
     task = find_task(registry, task_id)
     if not task:
         print(f"ERROR: unknown TASK_ID: {task_id}", file=sys.stderr); return 2
