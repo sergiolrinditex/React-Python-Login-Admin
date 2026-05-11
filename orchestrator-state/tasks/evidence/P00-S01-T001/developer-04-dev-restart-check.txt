@@ -1,0 +1,12 @@
+=== VERIFICATION 4: dev-restart.sh --check (2026-05-11T04:09:58+02:00) ===
+
+  Service   URL                        Status
+  --------- -------------------------- -------
+  backend   http://localhost:8000      DOWN
+  frontend  http://localhost:5173      DOWN
+  database  (via /ready)               UNKNOWN
+
+  Logs: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-afca12c32f11ff29d/orchestrator-state/dev-logs/back.log  /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-afca12c32f11ff29d/orchestrator-state/dev-logs/front.log
+
+==> One or more services DOWN.
+Exit code: 0

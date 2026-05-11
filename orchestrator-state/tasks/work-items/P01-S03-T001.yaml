@@ -1,0 +1,40 @@
+id: P01-S03-T001
+phase_id: P01
+step_id: P01-S03
+title: "Auth state provider and protected route guards"
+status: blocked
+kind: "setup"
+target: "Auth state provider and protected route guards"
+product_increment: "v1"
+build_state: "planned"
+risk_level: "medium"
+verify_mode: "human"
+route: ""
+endpoint: "GET /api/v1/users/me, POST /api/v1/auth/refresh"
+journey_refs:
+  - "J100"
+  - "J102"
+tables:
+  - "users"
+  - "refresh_tokens"
+depends_on:
+  - P01-S02-T002
+  - P01-S02-T006
+  - P01-S02-T007
+  - P00-S01-T002
+acceptance:
+  - "Auth provider handles access token memory, refresh cookie, redirects and role guards"
+verification_commands:
+  - "npm --prefix frontend run test -- --run -t auth"
+allowed_paths:
+  - "frontend/src/features/auth/**"
+  - "frontend/src/app/router.tsx"
+conflict_groups:
+  - "front:auth"
+  - "router"
+write_set:
+  - "frontend/src/features/auth/**"
+  - "frontend/src/app/router.tsx"
+handoff_path: orchestrator-state/tasks/handoffs/P01-S03-T001.md
+evidence_dir: orchestrator-state/tasks/evidence/P01-S03-T001
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 1.3 — Auth frontend state"

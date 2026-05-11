@@ -1,0 +1,40 @@
+id: P02-S04-T002
+phase_id: P02
+step_id: P02-S04
+title: "Celery vectorization worker"
+status: blocked
+kind: "worker"
+target: "Celery vectorization worker"
+product_increment: "v1"
+build_state: "planned"
+risk_level: "medium"
+verify_mode: "human"
+route: ""
+endpoint: "internal/no-front"
+journey_refs:
+  - "J104"
+tables:
+  - "documents"
+  - "document_versions"
+  - "document_chunks"
+  - "document_embeddings"
+  - "vectorization_jobs"
+depends_on:
+  - P02-S04-T001
+acceptance:
+  - "Worker extracts, chunks, embeds and updates job progress"
+verification_commands:
+  - "pytest backend/tests/integration -k vectorization_worker"
+allowed_paths:
+  - "backend/app/workers/tasks_documents.py"
+  - "backend/app/workers/tasks_embeddings.py"
+  - "backend/tests/integration/test_vectorization_worker.py"
+conflict_groups:
+  - "worker:rag"
+write_set:
+  - "backend/app/workers/tasks_documents.py"
+  - "backend/app/workers/tasks_embeddings.py"
+  - "backend/tests/integration/test_vectorization_worker.py"
+handoff_path: orchestrator-state/tasks/handoffs/P02-S04-T002.md
+evidence_dir: orchestrator-state/tasks/evidence/P02-S04-T002
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 2.4 — RAG and workers"

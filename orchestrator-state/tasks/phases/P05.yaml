@@ -1,0 +1,16 @@
+id: P05
+title: "Journey verification and hardening"
+status: blocked
+depends_on:
+  - P04
+task_ids:
+  - P05-S01-T001
+  - P05-S01-T002
+  - P05-S01-T003
+  - P05-S01-T004
+  - P05-S01-T005
+  - P05-S01-T006
+  - P05-S02-T001
+  - P05-S02-T002
+  - P05-S02-T003
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Phase 5 — Journey verification and hardening"

@@ -1,0 +1,18 @@
+{
+  "generated_at": "2026-05-11T02:22:54+00:00",
+  "active_phase_id": "P00",
+  "active_task_id": "P00-S01-T002",
+  "last_worker": "",
+  "last_event": "subagent_stop",
+  "pending_journey_verifications": [],
+  "journey_gate_mode": "frontier",
+  "last_journey_verified": null,
+  "spawn_budget": 20,
+  "spawns_in_current_slice": {
+    "P00-S01-T002": 2
+  },
+  "open_followups": [],
+  "last_trailer": {},
+  "last_stop_at": "2026-05-11T06:17:19+00:00",
+  "last_claimed_task_id": "P00-S01-T001"
+}

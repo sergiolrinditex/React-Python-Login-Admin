@@ -1,0 +1,38 @@
+id: P06-S01-T003
+phase_id: P06
+step_id: P06-S01
+title: "Final acceptance"
+status: blocked
+kind: "gate"
+target: "Final acceptance"
+product_increment: "v1"
+build_state: "planned"
+risk_level: "high"
+verify_mode: "human"
+route: "all journeys"
+endpoint: "all endpoints"
+journey_refs:
+  - "J100"
+  - "J101"
+  - "J102"
+  - "J103"
+  - "J104"
+  - "J105"
+tables:
+  - "all tables"
+depends_on:
+  - P06-S01-T001
+  - P06-S01-T002
+acceptance:
+  - "All journeys verified, tests green, docs up to date and no critical security findings"
+verification_commands:
+  - "./scripts/check-task-dag.sh --strict && ./scripts/check-journey-matrix.sh --strict && ./scripts/check-wiring-contract.sh --strict --require-new-template-columns"
+allowed_paths:
+  - "orchestrator-state/tasks/evidence/final/**"
+conflict_groups:
+  - "release:final"
+write_set:
+  - "orchestrator-state/tasks/evidence/final/**"
+handoff_path: orchestrator-state/tasks/handoffs/P06-S01-T003.md
+evidence_dir: orchestrator-state/tasks/evidence/P06-S01-T003
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 6.2 — Final acceptance"

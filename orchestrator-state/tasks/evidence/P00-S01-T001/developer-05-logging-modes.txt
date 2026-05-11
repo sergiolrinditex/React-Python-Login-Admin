@@ -1,0 +1,11 @@
+=== VERIFICATION 5: Dual logging modes (2026-05-11T04:10:04+02:00) ===
+
+--- VERBOSE=false (should be silent: only JSON output) ---
+Response: {'status': 'ok', 'version': '0.0.0', 'uptime': 0.1}
+
+--- VERBOSE=true (should show INFO/DEBUG logs) ---
+2026-05-11T04:10:05 DEBUG [asyncio] Using selector: KqueueSelector
+2026-05-11T04:10:05 INFO [app.main] health.check.start request_id=281854f9-4dc1-4119-8111-5439f52befd2
+2026-05-11T04:10:05 INFO [app.main] health.check.ok request_id=281854f9-4dc1-4119-8111-5439f52befd2 uptime=0.084
+2026-05-11T04:10:05 INFO [httpx] HTTP Request: GET http://testserver/health "HTTP/1.1 200 OK"
+Response: {'status': 'ok', 'version': '0.0.0', 'uptime': 0.084}

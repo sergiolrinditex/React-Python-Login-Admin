@@ -1,0 +1,39 @@
+id: P05-S02-T002
+phase_id: P05
+step_id: P05-S02
+title: "Observability and performance smoke"
+status: blocked
+kind: "setup"
+target: "Observability and performance smoke"
+product_increment: "v1"
+build_state: "planned"
+risk_level: "medium"
+verify_mode: "human"
+route: ""
+endpoint: "internal/no-front"
+journey_refs:
+  - "J101"
+  - "J103"
+tables:
+  - "llm_usage_logs"
+  - "vectorization_jobs"
+  - "mcp_tool_invocations"
+depends_on:
+  - P05-S01-T002
+  - P05-S01-T004
+acceptance:
+  - "Prometheus metrics exposed"
+  - "chat stream and model test latency histograms populated"
+verification_commands:
+  - "pytest backend/tests -k metrics && curl /metrics"
+allowed_paths:
+  - "backend/app/core/metrics.py"
+  - "backend/tests/perf/**"
+conflict_groups:
+  - "observability"
+write_set:
+  - "backend/app/core/metrics.py"
+  - "backend/tests/perf/**"
+handoff_path: orchestrator-state/tasks/handoffs/P05-S02-T002.md
+evidence_dir: orchestrator-state/tasks/evidence/P05-S02-T002
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 5.2 — Security, observability and visual gate"

@@ -1,0 +1,34 @@
+id: P04-S02-T004
+phase_id: P04
+step_id: P04-S02
+title: "McpWizardPage"
+status: blocked
+kind: "frontend"
+target: "McpWizardPage"
+product_increment: "v1"
+build_state: "planned"
+risk_level: "high"
+verify_mode: "human"
+route: "/admin/ai/mcp/new"
+endpoint: "POST /api/v1/admin/ai/mcp/servers"
+journey_refs:
+  - "J105"
+tables:
+  - "mcp_servers"
+  - "mcp_credentials"
+depends_on:
+  - P02-S07-T001
+  - P04-S02-T003
+acceptance:
+  - "Wizard captures transport, endpoint, auth and test connection"
+verification_commands:
+  - "/verify-slice P04-S02-T004 in desktop Chrome"
+allowed_paths:
+  - "frontend/src/pages/admin/mcp/McpWizardPage.tsx"
+conflict_groups:
+  - "front:mcp"
+write_set:
+  - "frontend/src/pages/admin/mcp/McpWizardPage.tsx"
+handoff_path: orchestrator-state/tasks/handoffs/P04-S02-T004.md
+evidence_dir: orchestrator-state/tasks/evidence/P04-S02-T004
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 4.2 — RAG, MCP and agents pages"

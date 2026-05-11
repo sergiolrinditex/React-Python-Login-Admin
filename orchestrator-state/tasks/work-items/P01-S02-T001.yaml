@@ -1,0 +1,37 @@
+id: P01-S02-T001
+phase_id: P01
+step_id: P01-S02
+title: "POST /api/v1/auth/sign-up"
+status: blocked
+kind: "api"
+target: "POST /api/v1/auth/sign-up"
+product_increment: "v1"
+build_state: "planned"
+risk_level: "medium"
+verify_mode: "human"
+route: ""
+endpoint: "POST /api/v1/auth/sign-up"
+journey_refs:
+  - "J100"
+tables:
+  - "users"
+  - "employee_profiles"
+  - "audit_logs"
+depends_on:
+  - P01-S01-T001
+acceptance:
+  - "Sign-up validates corporate email and legal acceptance"
+  - "audit log written"
+verification_commands:
+  - "pytest backend/tests/integration -k auth_signup && curl with reales/proporcionados user"
+allowed_paths:
+  - "backend/app/auth/**"
+  - "backend/tests/integration/test_auth_signup.py"
+conflict_groups:
+  - "api:auth"
+write_set:
+  - "backend/app/auth/**"
+  - "backend/tests/integration/test_auth_signup.py"
+handoff_path: orchestrator-state/tasks/handoffs/P01-S02-T001.md
+evidence_dir: orchestrator-state/tasks/evidence/P01-S02-T001
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 1.2 — Auth APIs"

@@ -1,0 +1,33 @@
+id: P04-S03-T002
+phase_id: P04
+step_id: P04-S03
+title: "UsagePage"
+status: blocked
+kind: "frontend"
+target: "UsagePage"
+product_increment: "v1"
+build_state: "planned"
+risk_level: "medium"
+verify_mode: "human"
+route: "/admin/usage"
+endpoint: "GET /api/v1/admin/usage"
+journey_refs:
+  - "J103"
+tables:
+  - "llm_usage_logs"
+depends_on:
+  - P02-S05-T002
+  - P00-S01-T004
+acceptance:
+  - "Usage page shows cost, tokens and latency by model"
+verification_commands:
+  - "/verify-slice P04-S03-T002 in desktop Chrome"
+allowed_paths:
+  - "frontend/src/pages/admin/usage/UsagePage.tsx"
+conflict_groups:
+  - "front:usage"
+write_set:
+  - "frontend/src/pages/admin/usage/UsagePage.tsx"
+handoff_path: orchestrator-state/tasks/handoffs/P04-S03-T002.md
+evidence_dir: orchestrator-state/tasks/evidence/P04-S03-T002
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 4.3 — Audit and usage"

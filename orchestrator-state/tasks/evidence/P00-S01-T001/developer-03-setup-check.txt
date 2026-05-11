@@ -1,0 +1,15 @@
+=== VERIFICATION 3: setup-from-scratch.sh --check (2026-05-11T04:09:54+02:00) ===
+==> Checking project file structure (--check mode)...
+  [OK] package.json
+  [OK] frontend/package.json
+  [OK] backend/app/main.py
+  [OK] backend/app/__init__.py
+  [OK] .env.example
+  [OK] scripts/dev-restart.profile.sh
+  [OK] scripts/dev-restart.sh
+  [OK] scripts/setup-from-scratch.sh
+  [OK] backend/pyproject.toml (or requirements*.txt)
+  [OK] backend/tests/__init__.py
+  [OK] backend/tests/test_health.py
+
+==> All required files present. Structure check passed.

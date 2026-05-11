@@ -1,0 +1,42 @@
+# backend/pyproject.toml
+# Hilo People backend — Python 3.12 + FastAPI.
+# Slice: P00-S01-T001 (Repo scaffold + scripts + env)
+# Only base dependencies are declared here. Feature deps (SQLAlchemy, Alembic,
+# Celery, LiteLLM, LangChain, argon2-cffi, etc.) are added in T002/T003.
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hilo-people-backend"
+version = "0.0.0"
+description = "Hilo People backend API — FastAPI + PostgreSQL."
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.30.0",
+    "pydantic>=2.9.0",
+    "python-dotenv>=1.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3.0",
+    "httpx>=0.27.0",
+    "ruff>=0.6.0",
+    "mypy>=1.11.0",
+]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+select = ["E", "F", "W", "I", "N", "UP", "S", "B", "A", "C4", "PT"]
+ignore = ["S101"]  # allow assert in tests
+
+[tool.ruff.per-file-ignores]
+"backend/tests/**" = ["S101", "S105", "S106"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"

@@ -1,0 +1,2 @@
+=== VERIFICATION 1: App import (2026-05-11T04:09:46+02:00) ===
+app ok: hilo-people-backend

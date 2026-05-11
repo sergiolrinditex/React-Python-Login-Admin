@@ -1,0 +1,53 @@
+# Architecture contract
+
+- Generated at: 2026-05-10T22:14:46+00:00
+- Source: `docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md`
+
+## Structural headings
+- H1: Hilo People — Technical Guide (large app sin baseline)
+- H2: 1. Overview específico
+- H2: 2. Stack — contrato completo
+- H3: 2.0 Library Discovery Pass
+- H3: 2.1 Stack — paquetes auxiliares
+- H2: 3. Comandos — adiciones
+- H2: 4. Estructura del proyecto — adiciones
+- H2: 5. Arquitectura
+- H3: 5.1 Componentes nuevos
+- H3: 5.2 Flujo de datos específico
+- H3: 5.3 Decisiones de diseño
+- H2: 6. Interfaces — adiciones
+- H3: 6.1 Rutas/pantallas frontend
+- H3: 6.2 Endpoints API nuevos
+- H3: 6.3 Modelos de datos nuevos
+- H3: 6.4 Formato de errores específico
+- H3: 6.4 Navigation Contract
+- H3: 6.5 Verification Data Contract
+- H2: 7. Theme & Design System
+- H2: 8. Logging y Observabilidad
+- H2: 9. Testing
+- H3: 9.1 Convenciones específicas
+- H2: 10. Backend / API — adiciones
+- H3: 10.1 Módulos del backend
+- H3: 10.2 Auth strategy
+- H3: 10.3 DB Schema — tablas nuevas
+- H3: 10.4 AI stack — motor específico
+- H4: LLM Gateway
+- H4: RAG
+- H4: Deep Agents
+- H4: LangGraph
+- H4: MCP
+- H3: 10.5 Backend logging
+- H2: 11. Deploy
+- H3: 11.1 Variables de entorno adicionales
+- H3: 11.2 Build targets
+- H3: 11.3 Rollback strategy
+- H2: 12. Constraints & Invariants
+- H2: 12.1 Slice Traceability Contract
+- H2: 13. Milestones técnicos
+
+## Constraint and invariant signals
+- | LangGraph | obligatorio en chat | disponible para workflows/approvals | chat simple no necesita complejidad de graph en V1 |
+- CONSTRAINT users_language_chk CHECK (preferred_language IN ('es','en','fr'))
+
+## Operating note
+This file is derived. Use it as an execution contract, but reconcile against the raw guide when ambiguity matters.
