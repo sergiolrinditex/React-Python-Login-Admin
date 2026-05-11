@@ -1,0 +1,15 @@
+{
+  "AUTH_INVALID_CREDENTIALS": "Incorrect email or password",
+  "AUTH_MFA_REQUIRED": "Two-step verification is required",
+  "AUTH_SESSION_EXPIRED": "Your session has expired. Please sign in again",
+  "AUTH_FORBIDDEN": "You do not have permission to perform this action",
+  "CHAT_STREAM_FAILED": "Failed to receive the response. Please try again",
+  "RAG_DOCUMENT_INVALID": "The document is invalid or cannot be processed",
+  "RAG_INDEX_IN_PROGRESS": "The document is being indexed and will be available shortly",
+  "AI_PROVIDER_TEST_FAILED": "Connection test with the AI provider failed",
+  "MCP_SERVER_UNREACHABLE": "Unable to connect to the MCP server",
+  "MCP_TOOL_REQUIRES_APPROVAL": "This tool requires approval before it can run",
+  "AGENT_RUN_FAILED": "The agent could not complete the task",
+  "UNKNOWN": "An unexpected error occurred",
+  "NETWORK": "Connection error. Check your network and try again"
+}

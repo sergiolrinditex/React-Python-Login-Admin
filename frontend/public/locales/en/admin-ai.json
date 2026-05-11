@@ -1,0 +1,10 @@
+{
+  "models": {
+    "title": "LiteLLM models",
+    "empty": "No models configured"
+  },
+  "mcp": {
+    "title": "MCP integrations",
+    "empty": "No active integrations"
+  }
+}

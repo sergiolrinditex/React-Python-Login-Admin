@@ -1,0 +1,10 @@
+{
+  "models": {
+    "title": "Modèles LiteLLM",
+    "empty": "Aucun modèle configuré"
+  },
+  "mcp": {
+    "title": "Intégrations MCP",
+    "empty": "Aucune intégration active"
+  }
+}
