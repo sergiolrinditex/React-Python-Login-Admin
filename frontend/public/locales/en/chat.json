@@ -1,0 +1,15 @@
+{
+  "empty": {
+    "title": "How can I help?",
+    "subtitle": "Type your question to get started",
+    "promptVacation": "How many vacation days do I have left?",
+    "promptMobility": "Internal mobility policy"
+  },
+  "citation": {
+    "label": "Source"
+  },
+  "composer": {
+    "placeholder": "Type your message...",
+    "send": "Send"
+  }
+}

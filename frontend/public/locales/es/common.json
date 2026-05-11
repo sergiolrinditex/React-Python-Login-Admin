@@ -1,0 +1,20 @@
+{
+  "productName": "Hilo",
+  "actions": {
+    "continue": "Continuar",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "retry": "Reintentar",
+    "back": "Volver"
+  },
+  "states": {
+    "loading": "Cargando...",
+    "empty": "Sin resultados",
+    "success": "Operación completada"
+  },
+  "language": {
+    "es": "Español",
+    "en": "Inglés",
+    "fr": "Francés"
+  }
+}

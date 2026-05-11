@@ -1,0 +1,15 @@
+{
+  "empty": {
+    "title": "¿En qué puedo ayudarte?",
+    "subtitle": "Escribe tu pregunta para empezar",
+    "promptVacation": "¿Cuántos días de vacaciones me quedan?",
+    "promptMobility": "Política de movilidad interna"
+  },
+  "citation": {
+    "label": "Fuente"
+  },
+  "composer": {
+    "placeholder": "Escribe tu mensaje...",
+    "send": "Enviar"
+  }
+}

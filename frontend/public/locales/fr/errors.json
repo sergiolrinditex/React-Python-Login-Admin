@@ -1,0 +1,15 @@
+{
+  "AUTH_INVALID_CREDENTIALS": "Email ou mot de passe incorrect",
+  "AUTH_MFA_REQUIRED": "La vérification en deux étapes est requise",
+  "AUTH_SESSION_EXPIRED": "Votre session a expiré. Veuillez vous reconnecter",
+  "AUTH_FORBIDDEN": "Vous n'avez pas la permission d'effectuer cette action",
+  "CHAT_STREAM_FAILED": "Impossible de recevoir la réponse. Veuillez réessayer",
+  "RAG_DOCUMENT_INVALID": "Le document est invalide ou ne peut pas être traité",
+  "RAG_INDEX_IN_PROGRESS": "Le document est en cours d'indexation et sera disponible prochainement",
+  "AI_PROVIDER_TEST_FAILED": "Le test de connexion avec le fournisseur IA a échoué",
+  "MCP_SERVER_UNREACHABLE": "Impossible de se connecter au serveur MCP",
+  "MCP_TOOL_REQUIRES_APPROVAL": "Cet outil nécessite une approbation avant de s'exécuter",
+  "AGENT_RUN_FAILED": "L'agent n'a pas pu accomplir la tâche",
+  "UNKNOWN": "Une erreur inattendue s'est produite",
+  "NETWORK": "Erreur de connexion. Vérifiez votre réseau et réessayez"
+}
