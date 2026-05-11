@@ -1,9 +1,9 @@
 {
-  "id": "P00-S01-T002",
+  "id": "P00-S01-T003",
   "phase_id": "P00",
   "step_id": "P00-S01",
-  "title": "Frontend dependency pack",
-  "status": "blocked",
+  "title": "Backend dependency pack",
+  "status": "ready",
   "build_state": "planned",
   "product_increment": "v1",
   "risk_level": "low",
@@ -13,50 +13,49 @@
   ],
   "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 0.1 — Project bootstrap",
   "acceptance": [
-    "React Router, TanStack Query, forms and i18n deps installed",
-    "first provider wired"
+    "FastAPI, SQLAlchemy, Celery, LiteLLM, LangChain, LangGraph, DeepAgents, pgvector deps declared"
   ],
   "verification_commands": [
-    "bash -lc \"npm --prefix frontend run test -- --run\""
+    "pytest backend/tests -k dependency_smoke"
   ],
   "kind": "library",
-  "target": "Frontend dependency pack",
+  "target": "Backend dependency pack",
   "journey_refs": [],
   "route": "",
   "endpoint": "",
   "tables": [],
-  "origin_instr": "§11.0#frontend-libs",
-  "origin_techguide": "§2.0#frontend-libs",
+  "origin_instr": "§11.0#backend-libs",
+  "origin_techguide": "§2.0#backend-libs",
   "allowed_paths": [
-    "frontend/package.json",
-    "frontend/package-lock.json",
-    "frontend/src/app/providers.tsx"
+    "backend/pyproject.toml",
+    "backend/requirements*.txt",
+    "backend/app/core/**"
   ],
   "conflict_groups": [
-    "dependency:frontend"
+    "dependency:backend"
   ],
   "write_set": [
-    "frontend/package.json",
-    "frontend/package-lock.json",
-    "frontend/src/app/providers.tsx"
+    "backend/pyproject.toml",
+    "backend/requirements*.txt",
+    "backend/app/core/**"
   ],
-  "handoff_path": "orchestrator-state/tasks/handoffs/P00-S01-T002.md",
-  "evidence_dir": "orchestrator-state/tasks/evidence/P00-S01-T002",
+  "handoff_path": "orchestrator-state/tasks/handoffs/P00-S01-T003.md",
+  "evidence_dir": "orchestrator-state/tasks/evidence/P00-S01-T003",
   "notes": [],
   "dependency_mode": "explicit_dag",
   "depends_on_raw": "P00-S01-T001",
-  "conflict_groups_raw": "dependency:frontend",
-  "write_set_raw": "frontend/package.json, frontend/package-lock.json, frontend/src/app/providers.tsx",
+  "conflict_groups_raw": "dependency:backend",
+  "write_set_raw": "backend/pyproject.toml, backend/requirements*.txt, backend/app/core/**",
   "product_increment_raw": "v1",
   "build_state_raw": "planned",
   "risk_level_raw": "low",
   "verify_mode_raw": "auto",
   "kind_raw": "library",
-  "target_raw": "Frontend dependency pack",
+  "target_raw": "Backend dependency pack",
   "journey_refs_raw": "—",
   "screen_route_raw": "—",
   "endpoint_raw": "—",
   "tables_raw": "—",
-  "origin_instr_raw": "§11.0#frontend-libs",
-  "origin_techguide_raw": "§2.0#frontend-libs"
+  "origin_instr_raw": "§11.0#backend-libs",
+  "origin_techguide_raw": "§2.0#backend-libs"
 }

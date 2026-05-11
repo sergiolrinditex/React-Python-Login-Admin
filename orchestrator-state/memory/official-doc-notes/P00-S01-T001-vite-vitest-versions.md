@@ -44,4 +44,6 @@ Pinning `vite@5` while using `vitest@4` is a **hard compatibility break** — Vi
 
 The developer should update `STACK_PROFILE.yaml` frontend dependency references from "Vite 5.x" to "Vite 8.x" (or ≥6.x minimum) and align Vitest accordingly.
 
+RESOLVED: 2026-05-11 — frontend/package.json (T001 commit 09154e5) pins vite ^8.0.0, vitest ^4.1.0, @vitejs/plugin-react ^6.0.1 per official npm registry; declaration only. T002 will run the actual `npm install` and validate the chain holds under React 19.2.
+
 <!-- RESOLVED: 2026-05-11 — frontend/package.json updated to vite ^8.0.0, vitest ^4.1.0, @vitejs/plugin-react ^6.0.1 per official npm registry; declaration only, install happens in T002. -->

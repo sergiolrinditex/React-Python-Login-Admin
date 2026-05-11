@@ -54,4 +54,6 @@ Supports both React 18 and React 19 via `peerDependencies: "^18.0.0 || ^19.0.0"`
 
 4. Update `STACK_PROFILE.yaml` and any source-of-truth references from "React 18.x" to "React 19.x" and from "TypeScript 5.x" to "TypeScript 6.x".
 
+RESOLVED: 2026-05-11 — frontend/package.json (T001 commit 09154e5) pins react/react-dom ^19.2.0 and typescript ^6.0.0 per official npm registry; greenfield 2026-05 pin, declaration only. T002 will run the actual `npm install`.
+
 <!-- RESOLVED: 2026-05-11 — frontend/package.json updated to react/react-dom ^19.2.0 and typescript ^6.0.0 per official npm registry; greenfield 2026-05 pin, declaration only. -->

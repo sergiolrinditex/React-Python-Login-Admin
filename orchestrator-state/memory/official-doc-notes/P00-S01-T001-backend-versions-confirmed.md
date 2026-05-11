@@ -69,4 +69,6 @@ All backend versions and patterns in the task pack are valid. Developer can proc
 - `ruff>=0.15.12`
 - `mypy>=2.0.0`
 
+RESOLVED: 2026-05-11 — informational only; backend stack versions and patterns confirmed correct in T001 (commit 09154e5). No reconciliation needed.
+
 <!-- RESOLVED: 2026-05-11 — informational, backend stack confirmed correct; no change needed. -->

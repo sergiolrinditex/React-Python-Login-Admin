@@ -138,3 +138,88 @@
 |---|---|---|
 | P00-S01-T001-vite-vitest-versions.md | Vite 5 outdated (8.0.11 current), Vitest 2.x outdated (4.1.5 current), plugin-react v6 requires Vite ^8 | HIGH — hard compatibility break if mismatched |
 | P00-S01-T001-react-typescript-versions.md | React 18 outdated (19.2.6 current stable), TypeScript 5 outdated (6.0.3 current) | MEDIUM — React 18 still works but TS 6 is greenfield-correct |
+
+---
+
+## 2026-05-11 — P00-S01-T002 Deep Pass (Frontend dependency pack)
+
+### react-router-dom
+- **Verified**: 2026-05-11
+- **Latest stable**: **7.15.0**
+- **Cache valid until**: 2026-05-18
+- **peerDependencies**: `react >=18` (React 19.2.6 covered)
+- **Key findings**: `<BrowserRouter>` is fully supported in v7 "Declarative mode" — not deprecated. v7 re-exports from `react-router`; import from `react-router-dom` still correct.
+- **Source**: npm registry + Context7 /remix-run/react-router
+
+### @tanstack/react-query
+- **Verified**: 2026-05-11
+- **Latest stable**: **5.100.9**
+- **Cache valid until**: 2026-05-18
+- **peerDependencies**: `react: ^18 || ^19` — React 19 explicitly supported
+- **Key findings**: `QueryClient` + `QueryClientProvider` API unchanged. `staleTime`/`retry` in `defaultOptions.queries` works as expected.
+- **Source**: npm registry
+
+### react-hook-form
+- **Verified**: 2026-05-11
+- **Latest stable**: **7.75.0**
+- **Cache valid until**: 2026-05-18
+- **peerDependencies**: `react: ^16.8.0 || ^17 || ^18 || ^19` — React 19 explicit
+- **Source**: npm registry
+
+### zod
+- **Verified**: 2026-05-11
+- **Latest stable (dist-tag `latest`)**: **4.4.3** — ZOD 4 IS NOW STABLE
+- **Cache valid until**: 2026-05-18
+- **peerDependencies**: None
+- **Key findings**: `npm install zod` installs Zod 4.4.3. Import: `import { z } from 'zod'` (Zod 4). Zod 3 available via `import { z } from 'zod/v3'` shim. Greenfield projects must use Zod 4.
+- **Source**: npm registry
+
+### @hookform/resolvers
+- **Verified**: 2026-05-11
+- **Latest stable**: **5.2.2**
+- **Cache valid until**: 2026-05-18
+- **peerDependencies**: `react-hook-form: ^7.55.0` — RHF 7.75.0 satisfies
+- **Key findings**: `zodResolver` supports both Zod 3 AND Zod 4. No API change needed. Import `zod` normally.
+- **Source**: npm registry + Context7 /react-hook-form/resolvers
+
+### i18next
+- **Verified**: 2026-05-11
+- **Latest stable**: **26.0.10**
+- **Cache valid until**: 2026-05-18
+- **peerDependencies**: `typescript: ^5 || ^6` (optional) — TS 6.0.3 satisfies
+- **Source**: npm registry
+
+### react-i18next
+- **Verified**: 2026-05-11
+- **Latest stable**: **17.0.7**
+- **Cache valid until**: 2026-05-18
+- **peerDependencies**: `i18next: >= 26.0.10`, `react: >= 16.8.0`, `typescript: ^5 || ^6` (optional)
+- **Key findings**: All peers satisfied. i18next 26.0.10 exactly meets `>= 26.0.10`.
+- **Source**: npm registry
+
+### i18next-browser-languagedetector
+- **Verified**: 2026-05-11
+- **Latest stable**: **8.2.1**
+- **Cache valid until**: 2026-05-18
+- **peerDependencies**: None declared. Plugin-style attachment to i18next instance.
+- **Source**: npm registry
+
+### @testing-library/jest-dom
+- **Verified**: 2026-05-11
+- **Latest stable**: **6.9.1**
+- **Cache valid until**: 2026-05-18
+- **peerDependencies**: None
+- **Key findings**: Vitest import path `@testing-library/jest-dom/vitest` confirmed available. Recommend adding to `setupFiles` in `vitest.config.ts`.
+- **Source**: npm registry
+
+### jsdom
+- **Verified**: 2026-05-11
+- **Latest stable**: **29.1.1** (already installed from T001)
+- **Cache valid until**: 2026-05-18
+- **peerDependencies**: `canvas: ^3.0.0` (optional)
+- **Node engine**: `^20.19.0 || ^22.13.0 || >=24.0.0` — Node 25.9.0 satisfies `>=24.0.0`
+- **Source**: npm registry
+
+### T002 note file
+- `orchestrator-state/memory/official-doc-notes/P00-S01-T002-frontend-libs-confirmed.md`
+- Status: RESOLVED (informational, no source-of-truth change needed)
