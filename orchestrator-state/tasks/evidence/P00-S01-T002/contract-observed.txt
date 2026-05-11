@@ -1,0 +1,31 @@
+## Contract-observed — P00-S01-T002 (Frontend dependency pack)
+
+### Slice context
+This slice is a pure frontend-deps slice with NO backend endpoint, NO API call, NO DB table, and NO journey.
+The "Front → Back → DB" contract is n/a per task pack §Contract map.
+
+### Frontend artifacts observed during vitest run
+- Provider component: frontend/src/app/providers.tsx (Providers component + createDefaultQueryClient)
+- Test file: frontend/src/app/__tests__/providers.test.tsx (4 real render tests, no mock business logic)
+- i18n bootstrap: frontend/src/i18n/index.ts (minimal, LanguageDetector disabled for jsdom)
+
+### Packages installed and confirmed resolving
+- react-router@7.15.0 (canonical v7 package — NOT react-router-dom shim)
+- @tanstack/react-query@5.100.9
+- react-hook-form@7.75.0
+- zod@4.4.3
+- @hookform/resolvers@5.2.2
+- i18next@26.1.0
+- react-i18next@17.0.7
+- i18next-browser-languagedetector@8.2.1
+
+### Logging contract observed
+- BEFORE log: "providers.init.start phase=P00 slice=P00-S01-T002 ..." visible when VITE_ENABLE_VERBOSE_LOGGING=true
+- AFTER log: "providers.init.ok queryClient=ready i18n=ready" visible when VITE_ENABLE_VERBOSE_LOGGING=true
+- ERROR path: console.error gated on try/catch (re-throws, never swallows)
+- Silent mode: VITE_ENABLE_VERBOSE_LOGGING=false → no console.info output, only warning+error
+
+### Backend/DB status
+- Backend: not started (expected for this slice — pure frontend deps slice)
+- DB: not started (expected for this slice)
+- servers_status: n/a (frontend deps only)

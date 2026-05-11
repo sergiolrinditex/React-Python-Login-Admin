@@ -1,0 +1,8 @@
+Design Token Scanner — Hilo People
+Enforcer: design_tokens_v1 (check_web_design_tokens.py + layout checks)
+Target:   /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-aaafb2437ede54ee0/frontend/src
+Theme:    /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-aaafb2437ede54ee0/frontend/src/shared/styles
+
+OK Design tokens - web literals are outside app code or inside token/theme modules.
+
+OK No design-token violations found (color + layout).

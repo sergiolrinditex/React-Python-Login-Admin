@@ -1,0 +1,14 @@
+=== Package versions resolved ===
+react-router-dom: 7.15.0
+@tanstack/react-query: 5.100.9
+i18next: 26.1.0
+zod: 4.4.3
+react-hook-form: 7.75.0
+@hookform/resolvers: 5.2.2
+react-i18next: 17.0.7
+i18next-browser-languagedetector: 8.2.1
+=== JSON validity ===
+package.json: JSON_OK
+package-lock.json: JSON_OK
+=== providers.tsx line count ===
+     167 frontend/src/app/providers.tsx

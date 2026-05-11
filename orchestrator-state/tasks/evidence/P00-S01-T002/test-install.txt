@@ -1,0 +1,10 @@
+=== Package-lock.json JSON validity ===
+LOCK_JSON_OK
+
+=== package-lock.json metadata ===
+lockfileVersion: 3 name: hilo-people-frontend packageCount: 245
+
+=== node_modules freshness check ===
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-a1afc4f6047f5dff1/frontend/node_modules/react-router/package.json
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-a1afc4f6047f5dff1/frontend/node_modules/@tanstack/react-query/package.json
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-a1afc4f6047f5dff1/frontend/node_modules/zod/package.json

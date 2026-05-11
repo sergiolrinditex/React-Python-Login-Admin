@@ -1,0 +1,23 @@
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-aaafb2437ede54ee0/frontend/src/app/__tests__/providers.test.tsx
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-aaafb2437ede54ee0/frontend/src/app/providers.tsx
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-aaafb2437ede54ee0/frontend/src/app/router.tsx
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-aaafb2437ede54ee0/frontend/src/i18n/index.ts
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-aaafb2437ede54ee0/frontend/src/main.tsx
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-aaafb2437ede54ee0/frontend/src/pages/showcase/__tests__/ShowcasePage.test.tsx
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-aaafb2437ede54ee0/frontend/src/pages/showcase/ShowcasePage.tsx
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-aaafb2437ede54ee0/frontend/src/pages/showcase/ShowcaseSections.tsx
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-aaafb2437ede54ee0/frontend/src/shared/design-system/__tests__/design-system.test.tsx
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-aaafb2437ede54ee0/frontend/src/shared/design-system/AdminShell.tsx
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-aaafb2437ede54ee0/frontend/src/shared/design-system/CitationInline.tsx
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-aaafb2437ede54ee0/frontend/src/shared/design-system/EditorialInput.tsx
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-aaafb2437ede54ee0/frontend/src/shared/design-system/HairlineTable.tsx
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-aaafb2437ede54ee0/frontend/src/shared/design-system/MobileFrame.tsx
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-aaafb2437ede54ee0/frontend/src/shared/design-system/SolidCTA.tsx
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-aaafb2437ede54ee0/frontend/src/shared/design-system/StatusDot.tsx
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-aaafb2437ede54ee0/frontend/src/shared/design-system/TrackedLabel.tsx
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-aaafb2437ede54ee0/frontend/src/shared/design-system/Wordmark.tsx
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-aaafb2437ede54ee0/frontend/src/shared/styles/global.css
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-aaafb2437ede54ee0/frontend/src/shared/styles/tokens.css
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-aaafb2437ede54ee0/frontend/src/vite-env.d.ts
+---
+-rwxr-xr-x  1 sergiolr  staff  8036 11 may 13:27 /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-aaafb2437ede54ee0/scripts/check-design-tokens.sh

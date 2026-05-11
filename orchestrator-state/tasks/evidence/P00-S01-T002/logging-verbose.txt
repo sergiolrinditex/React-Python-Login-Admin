@@ -1,0 +1,25 @@
+
+> hilo-people-frontend@0.1.0 test
+> vitest --run --reporter verbose
+
+
+ RUN  v3.2.4 /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-a1afc4f6047f5dff1/frontend
+
+stdout | src/app/__tests__/providers.test.tsx > Providers > renders children without throwing (A7 — smoke render)
+providers.init.start phase=P00 slice=P00-S01-T002 queryClient=injected:true i18n=injected:false
+providers.init.ok queryClient=ready i18n=ready
+
+stdout | src/app/__tests__/providers.test.tsx > Providers > renders children when no queryClient or i18n is injected (defaults used)
+providers.init.start phase=P00 slice=P00-S01-T002 queryClient=injected:false i18n=injected:false
+providers.init.ok queryClient=ready i18n=ready
+
+ ✓ src/app/__tests__/providers.test.tsx > Providers > renders children without throwing (A7 — smoke render) 14ms
+ ✓ src/app/__tests__/providers.test.tsx > Providers > renders children when no queryClient or i18n is injected (defaults used) 1ms
+ ✓ src/app/__tests__/providers.test.tsx > Providers > emits BEFORE and AFTER console.info logs when VITE_ENABLE_VERBOSE_LOGGING=true (A8) 2ms
+ ✓ src/app/__tests__/providers.test.tsx > Providers > emits NO console.info logs when VITE_ENABLE_VERBOSE_LOGGING=false (A8 silent mode) 1ms
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  11:53:32
+   Duration  1.09s (transform 42ms, setup 76ms, collect 131ms, tests 18ms, environment 413ms, prepare 66ms)
+

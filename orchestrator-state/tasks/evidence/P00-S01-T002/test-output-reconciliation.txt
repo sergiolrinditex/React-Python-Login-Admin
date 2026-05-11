@@ -1,0 +1,14 @@
+
+> hilo-people-frontend@0.1.0 test
+> vitest --run
+
+
+ RUN  v3.2.4 /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-a1afc4f6047f5dff1/frontend
+
+ ✓ src/app/__tests__/providers.test.tsx (4 tests) 18ms
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  11:49:49
+   Duration  1.11s (transform 43ms, setup 80ms, collect 159ms, tests 18ms, environment 382ms, prepare 55ms)
+
