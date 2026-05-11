@@ -1,0 +1,36 @@
+id: P04-S02-T001
+phase_id: P04
+step_id: P04-S02
+title: "RagDocumentsPage"
+status: blocked
+kind: "frontend"
+target: "RagDocumentsPage"
+product_increment: "v1"
+build_state: "planned"
+risk_level: "high"
+verify_mode: "human"
+route: "/admin/rag/documents"
+endpoint: "POST /api/v1/admin/rag/documents, GET /api/v1/admin/rag/documents, POST /api/v1/admin/rag/documents/{id}/index"
+journey_refs:
+  - "J104"
+tables:
+  - "documents"
+  - "document_versions"
+  - "vectorization_jobs"
+depends_on:
+  - P02-S06-T001
+  - P00-S01-T004
+acceptance:
+  - "Upload UI with document list, indexing status and validation states"
+  - "VISUAL_CONTRACT_CHECK documents tokens, components, required states, real data/backend and visual evidence"
+verification_commands:
+  - "/verify-slice P04-S02-T001 in desktop Chrome with provided PDF/DOCX from data/verification + visual evidence referenced in handoff"
+allowed_paths:
+  - "frontend/src/pages/admin/rag/RagDocumentsPage.tsx"
+conflict_groups:
+  - "front:rag"
+write_set:
+  - "frontend/src/pages/admin/rag/RagDocumentsPage.tsx"
+handoff_path: orchestrator-state/tasks/handoffs/P04-S02-T001.md
+evidence_dir: orchestrator-state/tasks/evidence/P04-S02-T001
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 4.2 — RAG, MCP and agents pages"

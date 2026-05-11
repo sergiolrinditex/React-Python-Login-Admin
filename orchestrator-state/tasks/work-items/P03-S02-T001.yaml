@@ -1,0 +1,41 @@
+id: P03-S02-T001
+phase_id: P03
+step_id: P03-S02
+title: "ChatHomePage"
+status: blocked
+kind: "frontend"
+target: "ChatHomePage"
+product_increment: "v1"
+build_state: "planned"
+risk_level: "high"
+verify_mode: "human"
+route: "/chat"
+endpoint: "GET /api/v1/users/me, POST /api/v1/chat/conversations"
+journey_refs:
+  - "J100"
+  - "J101"
+tables:
+  - "users"
+  - "conversations"
+depends_on:
+  - P02-S03-T001
+  - P01-S02-T007
+  - P00-S01-T004
+  - P00-S01-T005
+acceptance:
+  - "Chat is home after login"
+  - "empty prompts visible and create conversation works"
+  - "VISUAL_CONTRACT_CHECK documents tokens, components, required states, real data/backend and visual evidence"
+verification_commands:
+  - "/verify-slice P03-S02-T001 in Chrome with backend real + visual evidence referenced in handoff"
+allowed_paths:
+  - "frontend/src/pages/chat/ChatHomePage.tsx"
+  - "frontend/src/features/chat/**"
+conflict_groups:
+  - "front:chat"
+write_set:
+  - "frontend/src/pages/chat/ChatHomePage.tsx"
+  - "frontend/src/features/chat/**"
+handoff_path: orchestrator-state/tasks/handoffs/P03-S02-T001.md
+evidence_dir: orchestrator-state/tasks/evidence/P03-S02-T001
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 3.2 — Chat pages"

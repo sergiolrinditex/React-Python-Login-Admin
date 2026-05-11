@@ -1,0 +1,36 @@
+id: P05-S01-T003
+phase_id: P05
+step_id: P05-S01
+title: "J102 history language e2e"
+status: blocked
+kind: "journey"
+target: "J102 history language e2e"
+product_increment: "v1"
+build_state: "planned"
+risk_level: "high"
+verify_mode: "human"
+route: "/history → /chat/:conversationId → /account"
+endpoint: "GET /api/v1/chat/conversations, GET /api/v1/chat/conversations/{id}, PATCH /api/v1/users/me/language"
+journey_refs:
+  - "J102"
+tables:
+  - "users"
+  - "conversations"
+  - "messages"
+depends_on:
+  - P03-S02-T002
+  - P03-S02-T003
+  - P03-S02-T004
+acceptance:
+  - "Employee opens history and changes language to French, UI updates"
+verification_commands:
+  - "/verify-journey J102"
+allowed_paths:
+  - "orchestrator-state/tasks/evidence/journeys/J102/**"
+conflict_groups:
+  - "journey:J102"
+write_set:
+  - "orchestrator-state/tasks/evidence/journeys/J102/**"
+handoff_path: orchestrator-state/tasks/handoffs/P05-S01-T003.md
+evidence_dir: orchestrator-state/tasks/evidence/P05-S01-T003
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 5.1 — Journey integration"

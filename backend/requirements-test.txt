@@ -1,0 +1,8 @@
+# Hilo People — test dependencies.
+#
+# Slice:  P00-S01-T001 — Repo scaffold + scripts + env
+# Phase:  P00 Scaffold + Design System
+
+-r requirements.txt
+pytest==9.0.2
+httpx==0.28.1

@@ -1,0 +1,38 @@
+# Hilo People — backend Python project configuration.
+#
+# Slice:  P00-S01-T001 — Repo scaffold + scripts + env
+# Phase:  P00 Scaffold + Design System
+# Purpose: Declares minimum backend dependencies (FastAPI + uvicorn) and
+#          pytest configuration. Full dependency pack (SQLAlchemy, Alembic,
+#          Celery, LiteLLM, LangChain, etc.) lands in P00-S01-T003.
+#
+# Source ref: 01-non-negotiables.md §Dependencies — pin exact versions.
+# Pinned against installed environment on 2026-05-11:
+#   fastapi==0.135.2, uvicorn==0.42.0, pydantic==2.12.5
+
+[build-system]
+requires = ["setuptools>=68.0.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hilo-people-backend"
+version = "0.1.0"
+description = "Hilo People internal HR platform — backend service"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi==0.135.2",
+    "uvicorn[standard]==0.42.0",
+    "pydantic==2.12.5",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest==9.0.2",
+    "httpx==0.28.1",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+asyncio_mode = "auto"

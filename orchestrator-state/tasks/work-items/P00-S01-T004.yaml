@@ -1,0 +1,43 @@
+id: P00-S01-T004
+phase_id: P00
+step_id: P00-S01
+title: "Design tokens and editorial system"
+status: blocked
+kind: "frontend"
+target: "Design tokens and editorial system"
+product_increment: "v1"
+build_state: "planned"
+risk_level: "medium"
+verify_mode: "human"
+route: "/showcase"
+endpoint: ""
+journey_refs:
+tables:
+depends_on:
+  - P00-S01-T001
+  - P00-S01-T002
+acceptance:
+  - "Tokens and base components implement the Visual Implementation Contract"
+  - "no rounded corners"
+  - "showcase visible with required states"
+  - "VISUAL_CONTRACT_CHECK documents tokens, components, required states, real data/backend and visual evidence"
+verification_commands:
+  - "npm --prefix frontend run build && bash scripts/check-design-tokens.sh"
+  - "browser visual check /showcase with evidence referenced in handoff"
+allowed_paths:
+  - "frontend/src/shared/styles/**"
+  - "frontend/src/shared/design-system/**"
+  - "frontend/src/app/router.tsx"
+  - "frontend/src/pages/showcase/**"
+  - "scripts/check-design-tokens.sh"
+conflict_groups:
+  - "theme"
+write_set:
+  - "frontend/src/shared/styles/**"
+  - "frontend/src/shared/design-system/**"
+  - "frontend/src/app/router.tsx"
+  - "frontend/src/pages/showcase/**"
+  - "scripts/check-design-tokens.sh"
+handoff_path: orchestrator-state/tasks/handoffs/P00-S01-T004.md
+evidence_dir: orchestrator-state/tasks/evidence/P00-S01-T004
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 0.1 — Project bootstrap"

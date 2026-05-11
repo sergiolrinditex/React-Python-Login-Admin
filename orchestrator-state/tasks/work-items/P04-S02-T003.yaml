@@ -1,0 +1,35 @@
+id: P04-S02-T003
+phase_id: P04
+step_id: P04-S02
+title: "McpServersPage"
+status: blocked
+kind: "frontend"
+target: "McpServersPage"
+product_increment: "v1"
+build_state: "planned"
+risk_level: "high"
+verify_mode: "human"
+route: "/admin/ai/mcp"
+endpoint: "GET /api/v1/admin/ai/mcp/servers, POST /api/v1/admin/ai/mcp/servers/{id}/sync"
+journey_refs:
+  - "J105"
+tables:
+  - "mcp_servers"
+  - "mcp_tools"
+depends_on:
+  - P02-S07-T001
+  - P00-S01-T004
+acceptance:
+  - "MCP server list shows sync state, tool count and risk labels"
+  - "VISUAL_CONTRACT_CHECK documents tokens, components, required states, real data/backend and visual evidence"
+verification_commands:
+  - "/verify-slice P04-S02-T003 in desktop Chrome + visual evidence referenced in handoff"
+allowed_paths:
+  - "frontend/src/pages/admin/mcp/McpServersPage.tsx"
+conflict_groups:
+  - "front:mcp"
+write_set:
+  - "frontend/src/pages/admin/mcp/McpServersPage.tsx"
+handoff_path: orchestrator-state/tasks/handoffs/P04-S02-T003.md
+evidence_dir: orchestrator-state/tasks/evidence/P04-S02-T003
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 4.2 — RAG, MCP and agents pages"

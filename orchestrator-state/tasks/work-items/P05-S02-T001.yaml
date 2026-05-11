@@ -1,0 +1,42 @@
+id: P05-S02-T001
+phase_id: P05
+step_id: P05-S02
+title: "Audit endpoint and security hardening"
+status: blocked
+kind: "api"
+target: "Audit endpoint and security hardening"
+product_increment: "v1"
+build_state: "planned"
+risk_level: "high"
+verify_mode: "human"
+route: "/admin/audit"
+endpoint: "GET /api/v1/admin/audit"
+journey_refs:
+  - "J103"
+  - "J104"
+  - "J105"
+tables:
+  - "audit_logs"
+depends_on:
+  - P05-S01-T004
+  - P05-S01-T005
+  - P05-S01-T006
+acceptance:
+  - "Audit endpoint returns filtered events"
+  - "security headers and rate limits active"
+verification_commands:
+  - "pytest backend/tests/integration -k audit && curl as auditor"
+allowed_paths:
+  - "backend/app/admin/audit.py"
+  - "backend/app/core/security_headers.py"
+  - "backend/tests/integration/test_audit.py"
+conflict_groups:
+  - "api:audit"
+  - "security:hardening"
+write_set:
+  - "backend/app/admin/audit.py"
+  - "backend/app/core/security_headers.py"
+  - "backend/tests/integration/test_audit.py"
+handoff_path: orchestrator-state/tasks/handoffs/P05-S02-T001.md
+evidence_dir: orchestrator-state/tasks/evidence/P05-S02-T001
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 5.2 — Security, observability and visual gate"

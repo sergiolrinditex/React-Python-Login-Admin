@@ -1,0 +1,36 @@
+id: P04-S02-T005
+phase_id: P04
+step_id: P04-S02
+title: "AgentsPage"
+status: blocked
+kind: "frontend"
+target: "AgentsPage"
+product_increment: "v1"
+build_state: "planned"
+risk_level: "high"
+verify_mode: "human"
+route: "/admin/ai/agents"
+endpoint: "GET /api/v1/admin/ai/agents, PATCH /api/v1/admin/ai/agents/{id}/tools, POST /api/v1/agents/runs"
+journey_refs:
+  - "J105"
+tables:
+  - "agents"
+  - "mcp_agent_bindings"
+  - "agent_runs"
+depends_on:
+  - P02-S08-T001
+  - P04-S02-T003
+acceptance:
+  - "Agents page binds approved tools and starts smoke run"
+  - "VISUAL_CONTRACT_CHECK documents tokens, components, required states, real data/backend and visual evidence"
+verification_commands:
+  - "/verify-slice P04-S02-T005 in desktop Chrome + visual evidence referenced in handoff"
+allowed_paths:
+  - "frontend/src/pages/admin/agents/AgentsPage.tsx"
+conflict_groups:
+  - "front:agents"
+write_set:
+  - "frontend/src/pages/admin/agents/AgentsPage.tsx"
+handoff_path: orchestrator-state/tasks/handoffs/P04-S02-T005.md
+evidence_dir: orchestrator-state/tasks/evidence/P04-S02-T005
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 4.2 — RAG, MCP and agents pages"

@@ -1,0 +1,13 @@
+{
+  "_comment": "Hilo People — repo root workspace marker. Slice: P00-S01-T001. Used by scripts/setup-from-scratch.sh --check to verify repo root scaffold presence.",
+  "name": "hilo-people",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "frontend"
+  ],
+  "scripts": {
+    "test:backend": "cd backend && python -m pytest tests",
+    "test:frontend": "npm --prefix frontend run test"
+  }
+}

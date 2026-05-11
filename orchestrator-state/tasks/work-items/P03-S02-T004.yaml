@@ -1,0 +1,39 @@
+id: P03-S02-T004
+phase_id: P03
+step_id: P03-S02
+title: "AccountPage"
+status: blocked
+kind: "frontend"
+target: "AccountPage"
+product_increment: "v1"
+build_state: "planned"
+risk_level: "medium"
+verify_mode: "human"
+route: "/account"
+endpoint: "GET /api/v1/users/me, PATCH /api/v1/users/me/language, POST /api/v1/auth/logout"
+journey_refs:
+  - "J102"
+tables:
+  - "users"
+  - "employee_profiles"
+  - "refresh_tokens"
+depends_on:
+  - P01-S02-T004
+  - P01-S02-T007
+  - P03-S02-T001
+acceptance:
+  - "Account shows employee profile, language selector ES/EN/FR and logout"
+  - "VISUAL_CONTRACT_CHECK documents tokens, components, required states, real data/backend and visual evidence"
+verification_commands:
+  - "/verify-slice P03-S02-T004 in Chrome changing language + visual evidence referenced in handoff"
+allowed_paths:
+  - "frontend/src/pages/chat/AccountPage.tsx"
+  - "frontend/src/features/user/**"
+conflict_groups:
+  - "front:account"
+write_set:
+  - "frontend/src/pages/chat/AccountPage.tsx"
+  - "frontend/src/features/user/**"
+handoff_path: orchestrator-state/tasks/handoffs/P03-S02-T004.md
+evidence_dir: orchestrator-state/tasks/evidence/P03-S02-T004
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 3.2 — Chat pages"

@@ -1,0 +1,41 @@
+id: P02-S08-T001
+phase_id: P02
+step_id: P02-S08
+title: "Agents endpoints and DeepAgents/LangGraph smoke"
+status: blocked
+kind: "api"
+target: "Agents endpoints and DeepAgents/LangGraph smoke"
+product_increment: "v1"
+build_state: "planned"
+risk_level: "high"
+verify_mode: "human"
+route: ""
+endpoint: "GET /api/v1/admin/ai/agents, PATCH /api/v1/admin/ai/agents/{id}/tools, POST /api/v1/agents/runs"
+journey_refs:
+  - "J105"
+tables:
+  - "agents"
+  - "mcp_agent_bindings"
+  - "agent_runs"
+  - "mcp_tool_invocations"
+depends_on:
+  - P02-S07-T001
+  - P02-S04-T001
+acceptance:
+  - "Admin lists agents, binds approved MCP tools and starts run smoke"
+verification_commands:
+  - "pytest backend/tests/ai -k agents_smoke"
+allowed_paths:
+  - "backend/app/agents/**"
+  - "backend/app/graphs/**"
+  - "backend/tests/ai/test_agents_smoke.py"
+conflict_groups:
+  - "api:agents"
+  - "ai:agents"
+write_set:
+  - "backend/app/agents/**"
+  - "backend/app/graphs/**"
+  - "backend/tests/ai/test_agents_smoke.py"
+handoff_path: orchestrator-state/tasks/handoffs/P02-S08-T001.md
+evidence_dir: orchestrator-state/tasks/evidence/P02-S08-T001
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 2.8 — Agents and graphs"

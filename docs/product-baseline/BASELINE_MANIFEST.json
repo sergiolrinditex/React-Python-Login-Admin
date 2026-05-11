@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "purpose": "Cumulative built baseline snapshot for ChatGPT/source-of-truth increments.",
+  "latest_version": "v1",
+  "snapshots": [
+    {
+      "ts": "2026-05-11T09:23:59+00:00",
+      "version": "v1",
+      "task_id": "P00-S01-T001",
+      "phase_id": null,
+      "reason": "verified slice closed",
+      "docs": {
+        "instructions": {
+          "source": "docs/source-of-truth/instrucciones.md",
+          "target": "docs/product-baseline/instrucciones.md",
+          "sha256": "be52cdb97bcadc8f28884694cc26cb68fc4b5b5cbc1f96fd363eb8cef5e8b0bf"
+        },
+        "guide": {
+          "source": "docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md",
+          "target": "docs/product-baseline/HILO_PEOPLE_TECHNICAL_GUIDE.md",
+          "sha256": "90394b110cb0c96c64126173ae770b2e87dfa4cee8f8991d7a5002f0c338aef4"
+        },
+        "checklist": {
+          "source": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md",
+          "target": "docs/product-baseline/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md",
+          "sha256": "e72bd391d5afde9ac32dc3d45b5cea5e72f6b6d1a8aa1039484697bed37ed014"
+        },
+        "ux_contract": {
+          "source": "docs/source-of-truth/UX_CONTRACT.md",
+          "target": "docs/product-baseline/UX_CONTRACT.md",
+          "sha256": "7fedb557a10a616be881c4bea9c4348d1a232cdbdc5d8775f092d2b1d58492ed"
+        },
+        "stack_profile": {
+          "source": "docs/source-of-truth/STACK_PROFILE.yaml",
+          "target": "docs/product-baseline/STACK_PROFILE.yaml",
+          "sha256": "6bb688e55f3c2f57f352dab5676246df2069ce49c963d3c2f0a11d9bc834c56a"
+        }
+      }
+    }
+  ],
+  "latest_task_id": "P00-S01-T001",
+  "updated_at": "2026-05-11T09:23:59+00:00"
+}

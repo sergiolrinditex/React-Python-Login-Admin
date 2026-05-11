@@ -1,0 +1,34 @@
+id: P00-S02-T001
+phase_id: P00
+step_id: P00-S02
+title: "Docker compose services"
+status: blocked
+kind: "setup"
+target: "Docker compose services"
+product_increment: "v1"
+build_state: "planned"
+risk_level: "medium"
+verify_mode: "human"
+route: ""
+endpoint: ""
+journey_refs:
+tables:
+depends_on:
+  - P00-S01-T001
+acceptance:
+  - "Postgres, Redis, LiteLLM, MinIO and worker boot locally"
+verification_commands:
+  - "bash scripts/dev-restart.sh --check"
+allowed_paths:
+  - "docker-compose.yml"
+  - "backend/Dockerfile"
+  - "frontend/Dockerfile"
+conflict_groups:
+  - "infra:compose"
+write_set:
+  - "docker-compose.yml"
+  - "backend/Dockerfile"
+  - "frontend/Dockerfile"
+handoff_path: orchestrator-state/tasks/handoffs/P00-S02-T001.md
+evidence_dir: orchestrator-state/tasks/evidence/P00-S02-T001
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 0.2 — Infra, health and verification data"

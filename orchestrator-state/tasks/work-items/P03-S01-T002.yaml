@@ -1,0 +1,36 @@
+id: P03-S01-T002
+phase_id: P03
+step_id: P03-S01
+title: "SignUpPage"
+status: blocked
+kind: "frontend"
+target: "SignUpPage"
+product_increment: "v1"
+build_state: "planned"
+risk_level: "medium"
+verify_mode: "human"
+route: "/auth/sign-up"
+endpoint: "POST /api/v1/auth/sign-up"
+journey_refs:
+  - "J100"
+tables:
+  - "users"
+  - "employee_profiles"
+depends_on:
+  - P01-S02-T001
+  - P00-S01-T004
+  - P00-S01-T005
+acceptance:
+  - "Sign-up form with legal acceptance and corporate email validation"
+  - "VISUAL_CONTRACT_CHECK documents tokens, components, required states, real data/backend and visual evidence"
+verification_commands:
+  - "/verify-slice P03-S01-T002 in Chrome with provided corporate email + visual evidence referenced in handoff"
+allowed_paths:
+  - "frontend/src/pages/auth/SignUpPage.tsx"
+conflict_groups:
+  - "front:auth"
+write_set:
+  - "frontend/src/pages/auth/SignUpPage.tsx"
+handoff_path: orchestrator-state/tasks/handoffs/P03-S01-T002.md
+evidence_dir: orchestrator-state/tasks/evidence/P03-S01-T002
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 3.1 — Login pages"

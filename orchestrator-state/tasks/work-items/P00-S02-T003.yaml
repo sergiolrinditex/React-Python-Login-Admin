@@ -1,0 +1,45 @@
+id: P00-S02-T003
+phase_id: P00
+step_id: P00-S02
+title: "Verification data loader and reset"
+status: blocked
+kind: "setup"
+target: "Verification data loader and reset"
+product_increment: "v1"
+build_state: "planned"
+risk_level: "medium"
+verify_mode: "human"
+route: ""
+endpoint: ""
+journey_refs:
+  - "J100"
+  - "J101"
+  - "J102"
+  - "J103"
+  - "J104"
+  - "J105"
+tables:
+  - "users"
+  - "employee_profiles"
+  - "rag_collections"
+  - "documents"
+  - "ai_providers"
+  - "mcp_servers"
+  - "agents"
+depends_on:
+  - P00-S02-T002
+acceptance:
+  - "Verification data users/documents/providers/MCP/agents are idempotent and resettable"
+verification_commands:
+  - "python -m app.verification_data.bootstrap --source data/verification && bash scripts/dev-restart.sh --reset"
+allowed_paths:
+  - "backend/app/verification_data/**"
+  - "scripts/dev-restart.sh"
+conflict_groups:
+  - "data:verification"
+write_set:
+  - "backend/app/verification_data/**"
+  - "scripts/dev-restart.sh"
+handoff_path: orchestrator-state/tasks/handoffs/P00-S02-T003.md
+evidence_dir: orchestrator-state/tasks/evidence/P00-S02-T003
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 0.2 — Infra, health and verification data"

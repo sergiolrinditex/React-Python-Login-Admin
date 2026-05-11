@@ -1,0 +1,14 @@
+# Hilo People — backend runtime dependencies (lockfile counterpart to pyproject.toml).
+#
+# Slice:  P00-S01-T001 — Repo scaffold + scripts + env
+# Phase:  P00 Scaffold + Design System
+# Purpose: Minimal deps for the scaffold slice. Full dep pack (SQLAlchemy,
+#          Alembic, Celery, LiteLLM, LangChain, LangGraph, DeepAgents,
+#          pgvector) lands in P00-S01-T003.
+#
+# Source ref: 01-non-negotiables.md §Dependencies — pin exact versions.
+# Versions pinned to installed environment on 2026-05-11.
+
+fastapi==0.135.2
+uvicorn[standard]==0.42.0
+pydantic==2.12.5
