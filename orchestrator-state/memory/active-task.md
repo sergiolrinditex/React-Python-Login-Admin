@@ -1,33 +1,23 @@
 # Active task
 
-- ID: P00-S01-T004
-- Title: Design tokens and editorial system
+- ID: P00-S01-T005
+- Title: i18n resources ES/EN/FR
 - Status: ready
 - Phase: P00
 
 ## Acceptance
-- Tokens and base components implement the Visual Implementation Contract
-- no rounded corners
-- showcase visible with required states
-- VISUAL_CONTRACT_CHECK documents tokens, components, required states, real data/backend and visual evidence
+- Namespaces common/auth/chat/account/admin-ai/rag/mcp/errors exist in es/en/fr with fallback es
 
 ## Allowed paths
-- frontend/src/shared/styles/**
-- frontend/src/shared/design-system/**
-- frontend/src/app/router.tsx
-- frontend/src/pages/showcase/**
-- scripts/check-design-tokens.sh
+- frontend/src/i18n/**
+- frontend/public/locales/**
 
 ## DAG conflict guardrails
 ### Conflict groups
-- theme
+- i18n
 ### Write set
-- frontend/src/shared/styles/**
-- frontend/src/shared/design-system/**
-- frontend/src/app/router.tsx
-- frontend/src/pages/showcase/**
-- scripts/check-design-tokens.sh
+- frontend/src/i18n/**
+- frontend/public/locales/**
 
 ## Verification commands
-- `npm --prefix frontend run build && bash scripts/check-design-tokens.sh`
-- `browser visual check /showcase with evidence referenced in handoff`
+- `npm --prefix frontend run test -- --run -t i18n`

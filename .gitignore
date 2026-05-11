@@ -31,6 +31,10 @@ venv/
 node_modules/
 npm-debug.log*
 
+# TypeScript auto-generated build artifacts (TS project references + vite typegen)
+*.tsbuildinfo
+frontend/vite.config.d.ts
+
 # ─── Flutter / Dart (cuando exista app/) ─────────────────────────────────────
 app/.dart_tool/
 app/.flutter-plugins
