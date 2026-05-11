@@ -1,14 +1,24 @@
 # Hilo People — backend Python project configuration.
 #
-# Slice:  P00-S01-T001 — Repo scaffold + scripts + env
+# Slice:  P00-S01-T003 — Backend dependency pack (extends T001 scaffold)
 # Phase:  P00 Scaffold + Design System
-# Purpose: Declares minimum backend dependencies (FastAPI + uvicorn) and
-#          pytest configuration. Full dependency pack (SQLAlchemy, Alembic,
-#          Celery, LiteLLM, LangChain, etc.) lands in P00-S01-T003.
+# Purpose: Full backend dependency declaration per TECHNICAL_GUIDE §2.0
+#          (Library Discovery Pass) and §2.1 (aux dev/test). Versions pinned
+#          from PyPI live JSON on 2026-05-11 by developer (official-docs-
+#          researcher confirmed via T003 note).
 #
-# Source ref: 01-non-negotiables.md §Dependencies — pin exact versions.
-# Pinned against installed environment on 2026-05-11:
-#   fastapi==0.135.2, uvicorn==0.42.0, pydantic==2.12.5
+# Source refs:
+#   - docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md §2.0 (runtime)
+#   - docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md §2.1 (dev/test)
+#   - 01-non-negotiables.md §Dependencies — pin exact versions
+#   - orchestrator-state/memory/official-doc-notes/backend-stack-versions-2026-05-11.md
+#
+# T001 pins preserved: fastapi==0.135.2, uvicorn[standard]==0.42.0,
+#   pydantic==2.12.5, pytest==9.0.2, httpx==0.28.1.
+# pydantic==2.12.5 is ALSO required by litellm==1.83.14 (hard peer dep).
+#
+# Co-installability verified 2026-05-11 in isolated venv (see handoff).
+# All packages import successfully (see backend/tests/test_dependency_smoke.py).
 
 [build-system]
 requires = ["setuptools>=68.0.0"]
@@ -20,15 +30,66 @@ version = "0.1.0"
 description = "Hilo People internal HR platform — backend service"
 requires-python = ">=3.11"
 dependencies = [
+    # ── T001 pins (preserved) ───────────────────────────────────────────────
     "fastapi==0.135.2",
     "uvicorn[standard]==0.42.0",
-    "pydantic==2.12.5",
+    "pydantic==2.12.5",          # also required by litellm==1.83.14 (hard peer dep)
+
+    # ── T003 §2.0 — PDF / Office backends ───────────────────────────────────
+    "pypdf==6.11.0",             # §2.0 row 1 — PDF text extraction
+    "python-docx==1.2.0",        # §2.0 row 2 — DOCX read/write; imports as 'docx'
+
+    # ── T003 §2.0 — Jobs / Queues ────────────────────────────────────────────
+    "celery==5.6.3",             # §2.0 row 3 — async task queue
+    "redis==7.4.0",              # §2.0 row 4 — Celery broker + cache; broker URL via env
+
+    # ── T003 §2.0 — Email ────────────────────────────────────────────────────
+    "resend==2.30.0",            # §2.0 row 5 — transactional email (Resend SDK)
+
+    # ── T003 §2.0 — Observability ────────────────────────────────────────────
+    "structlog==25.5.0",         # §2.0 row 6 — structured JSON logging + request_id
+    "prometheus-client==0.25.0", # §2.0 row 7 — /metrics endpoint; imports as 'prometheus_client'
+
+    # ── T003 §2.0 — Storage ──────────────────────────────────────────────────
+    "boto3==1.43.6",             # §2.0 row 8 — S3/MinIO; endpoint_url configurable via env
+
+    # ── T003 §2.0 — Vector DB ────────────────────────────────────────────────
+    "pgvector==0.4.2",           # §2.0 row 9 — pgvector SQLAlchemy integration
+                                  # import: pgvector / pgvector.sqlalchemy.Vector
+
+    # ── T003 §2.0 — AI / ML ──────────────────────────────────────────────────
+    "litellm==1.83.14",          # §2.0 row 10 — LLM gateway (pins pydantic==2.12.5)
+    "langchain==1.2.18",         # §2.0 row 11 — RAG loaders + splitters (meta-package)
+    # langchain 1.x is a meta-package. Per researcher canonical note row 13 +
+    # 01-non-negotiables §Dependencies (pin exact versions), the three split
+    # packages required for RAG must be pinned explicitly to prevent transitive
+    # version drift at install time.
+    "langchain-core==1.3.3",            # §2.0 row 11 split — core abstractions
+    "langchain-community==0.4.1",       # §2.0 row 11 split — document loaders, vector stores
+    "langchain-text-splitters==1.1.2",  # §2.0 row 11 split — text chunking for RAG
+    "langgraph==1.1.10",         # §2.0 row 12 — stateful agent workflows
+                                  # langchain==1.2.18 requires langgraph>=1.1.10,<1.2.0
+    "deepagents==0.5.9",         # §2.0 row 13 — DeepAgents (requires langchain>=1.2.17)
+    "mcp==1.27.1",               # §2.0 row 14 — Model Context Protocol SDK (Anthropic, MIT)
+    "tiktoken==0.12.0",          # §2.0 row 15 — token counting (OpenAI/Anthropic)
+
+    # ── T003 §2 stack contract — DB ──────────────────────────────────────────
+    "sqlalchemy==2.0.49",        # acceptance explicit: "SQLAlchemy async"; async-capable
+    "alembic==1.18.4",           # §2 stack contract: "SQLAlchemy async, Alembic"
 ]
 
 [project.optional-dependencies]
 test = [
+    # T001 pins (preserved)
     "pytest==9.0.2",
     "httpx==0.28.1",
+    # T003 §2.1 — explicit declaration closes asyncio_mode=auto incongruence
+    "pytest-asyncio==1.3.0",
+]
+dev = [
+    # T003 §2.1 — backend linting and type checking
+    "ruff==0.15.12",
+    "mypy==2.0.0",
 ]
 
 [tool.pytest.ini_options]

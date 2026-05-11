@@ -1,0 +1,30 @@
+Package version coherence check:
+Package                        Expected        Installed       Match 
+----------------------------------------------------------------------
+pypdf                          6.11.0          6.11.0          OK
+python-docx                    1.2.0           1.2.0           OK
+celery                         5.6.3           5.6.3           OK
+redis                          7.4.0           7.4.0           OK
+resend                         2.30.0          2.30.0          OK
+structlog                      25.5.0          25.5.0          OK
+prometheus-client              0.25.0          0.25.0          OK
+boto3                          1.43.6          1.43.6          OK
+pgvector                       0.4.2           0.4.2           OK
+litellm                        1.83.14         1.83.14         OK
+langchain                      1.2.18          1.2.18          OK
+langgraph                      1.1.10          1.1.10          OK
+deepagents                     0.5.9           0.5.9           OK
+mcp                            1.27.1          1.27.1          OK
+tiktoken                       0.12.0          0.12.0          OK
+sqlalchemy                     2.0.49          2.0.49          OK
+alembic                        1.18.4          1.18.4          OK
+fastapi                        0.135.2         0.135.2         OK
+uvicorn                        0.42.0          0.42.0          OK
+pydantic                       2.12.5          2.12.5          OK
+pytest                         9.0.2           9.0.2           OK
+httpx                          0.28.1          0.28.1          OK
+pytest-asyncio                 1.3.0           1.3.0           OK
+ruff                           0.15.12         0.15.12         OK
+mypy                           2.0.0           2.0.0           OK
+
+ALL MATCH: True

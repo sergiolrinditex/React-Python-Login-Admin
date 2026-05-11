@@ -1,0 +1,19 @@
+# Hilo People — dev dependencies (lockfile counterpart to
+# pyproject.toml [project.optional-dependencies].dev).
+#
+# Slice:  P00-S01-T003 — Backend dependency pack
+# Phase:  P00 Scaffold + Design System
+# Purpose: Mirror of pyproject.toml dev extras for pip-install based CI.
+#          Includes linting (ruff) and type checking (mypy).
+#
+# Source refs:
+#   - docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md §2.1
+#   - 01-non-negotiables.md §Dependencies — pin exact versions
+#
+# Note: does not include -r requirements.txt by design — dev tools are
+# standalone. Install with:
+#   pip install -r requirements.txt -r requirements-dev.txt
+
+# T003 §2.1 — backend linting and type checking
+ruff==0.15.12
+mypy==2.0.0
