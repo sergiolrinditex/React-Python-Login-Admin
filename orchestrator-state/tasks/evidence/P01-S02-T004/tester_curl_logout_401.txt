@@ -1,0 +1,34 @@
+## Tester: curl logout 401 idempotency smoke — P01-S02-T004
+## Purpose: Verify repeat logout → 401 AUTH_SESSION_EXPIRED (aggregate anti-enum)
+## Timestamp: 2026-05-12T10:02:43+02:00
+## Method: ASGI TestClient (same token/cookie pair used after 204 success)
+
+Request (repeat with same revoked cookie):
+POST /api/v1/auth/logout
+Authorization: Bearer <same JWT>
+Cookie: refresh_token=<already revoked cookie>
+X-Request-ID: t004-tester-smoke-003
+
+Response status: 401 Unauthorized
+Response body:
+{
+  "data": null,
+  "meta": {"request_id": "t004-tester-smoke-003"},
+  "errors": [
+    {"code": "AUTH_SESSION_EXPIRED", "message": "Session expired or invalid; please sign in again."}
+  ]
+}
+Set-Cookie: refresh_token=""; HttpOnly; Max-Age=0; Path=/auth; SameSite=lax; Secure (cleared on 401 too)
+
+Result: PASS — 401 with AUTH_SESSION_EXPIRED body, cookie cleared on 401
+
+Additional coverage from test suite (T02..T09 all verified via pytest):
+- T02 no_bearer → 401 AUTH_SESSION_EXPIRED, cookie cleared, audit reason=no_bearer
+- T03 invalid_bearer → 401, audit reason=invalid_bearer
+- T04 expired_bearer → 401, audit reason=expired_bearer
+- T05 no_cookie → 401, audit reason=no_cookie
+- T06 unknown_cookie → 401, audit reason=unknown_hash
+- T07 expired_cookie → 401, audit reason=expired
+- T08 revoked_cookie → 401 (idempotency), audit reason=revoked
+- T09 user_mismatch → 401, audit reason=user_mismatch
+- T10 byte-identical body all failure paths → PASS

@@ -1,0 +1,21 @@
+## Tester: DB inspection — refresh_tokens table — P01-S02-T004
+## Timestamp: 2026-05-12T10:07:00+02:00
+## Method: SQLAlchemy query via Python (psql not in PATH on this machine)
+
+## Table schema confirmed (information_schema):
+## refresh_tokens columns: ['id', 'user_id', 'token_hash', 'expires_at', 'revoked_at']
+## Note: No 'reason' column on refresh_tokens — reason is in audit_logs.metadata
+
+## Most recent revoked rows after smoke test:
+SELECT id, user_id, revoked_at FROM refresh_tokens WHERE revoked_at IS NOT NULL ORDER BY revoked_at DESC LIMIT 5;
+
+id                                   | user_id                              | revoked_at
+-------------------------------------|--------------------------------------|----------------------------------
+25f98048-1197-452e-862b-a8b09444a000 | 6b9da9c8-c077-41d9-8ecb-5f6e8dc28815 | 2026-05-12 08:02:43.573676+00:00
+
+Observation:
+- revoked_at IS NOT NULL: YES (revocation committed correctly)
+- user_id matches the smoke test user (tester.smoke.t004@inditex-sandbox.com)
+- Token ID 25f98048 matches the audit_logs entry revoked_token_id
+
+Result: PASS — refresh_tokens.revoked_at set correctly on logout

@@ -1,0 +1,14 @@
+# Smoke curl test — P01-S02-T004
+# Executed: 2026-05-12
+# Command: curl -s -o /dev/null -w "%{http_code}" -X POST http://localhost:8000/api/v1/auth/logout
+# Result: 404
+
+# Note: The live uvicorn server at localhost:8000 serves from the main branch
+# (git HEAD = abd4f34 which has T003 but not T004 yet). The T004 code lives
+# in the worktree and is exercised by TestClient (ASGI transport) integration
+# tests — which do hit the real postgres DB.
+# After the closer commits and merges to main, the live server will serve T004
+# and curl will respond 401 (missing bearer/cookie) as expected.
+#
+# TestClient ASGI verification is the authoritative developer verification method
+# for this slice, as documented in the task pack.

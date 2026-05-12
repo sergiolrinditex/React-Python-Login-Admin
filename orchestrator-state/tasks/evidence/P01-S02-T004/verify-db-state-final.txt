@@ -1,0 +1,16 @@
+=== refresh_tokens ===
+  id=533fb20a.. user=7b868439.. expires=2026-06-11 08:19:47.659282+00:00 revoked_at=None
+  id=e3d59934.. user=7b868439.. expires=2026-06-11 08:21:51.846139+00:00 revoked_at=None
+  id=8474681d.. user=7b868439.. expires=2026-06-11 08:22:35.664074+00:00 revoked_at=2026-05-12 08:22:35.769314+00:00
+
+=== audit_logs auth.logout entries ===
+  user=7b868439.. outcome=failure reason=no_cookie req=verify-t004-F2-logout-success
+  user=7b868439.. outcome=failure reason=no_cookie req=verify-t004-F3-logout-replay
+  user=7b868439.. outcome=success reason=- req=verify-t004-F4-cookie-header
+  user=7b868439.. outcome=failure reason=revoked req=verify-t004-F5-replay-cookieheader
+  user=None.. outcome=failure reason=no_bearer req=verify-t004-F6-no-bearer
+  user=None.. outcome=failure reason=invalid_bearer req=verify-t004-F7-invalid-bearer
+
+=== audit count by action ===
+  auth.logout                    6
+  auth.sign_in                   3

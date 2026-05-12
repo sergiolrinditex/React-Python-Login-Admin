@@ -1,0 +1,40 @@
+## Tester: Verbose-on log excerpt — P01-S02-T004
+## Source: Captured from ASGI TestClient with ENABLE_VERBOSE_LOGGING=true
+## Timestamp: 2026-05-12T10:03:00+02:00
+## Assertion: BEFORE + AFTER pairs present at auth.logout handler + service boundaries
+
+=== Captured auth.logout DEBUG lines (ENABLE_VERBOSE_LOGGING=true) ===
+
+app.auth.routers.logout DEBUG auth.logout.received request_id=t004-log-001 ip=testclient
+app.auth.services.logout DEBUG auth.logout.execute.start request_id=t004-log-001 ip=testclient
+app.auth.repositories.refresh DEBUG auth.repo.refresh.find_active_for_update.start hash_prefix=4b36e493...
+app.auth.repositories.refresh DEBUG auth.repo.refresh.find_active_for_update.done found=True hash_prefix=4b36e493...
+app.auth.repositories.refresh DEBUG auth.repo.refresh.revoke.start token_id=49e53fa5-036e-434e-a003-845865fc6442
+app.auth.repositories.refresh DEBUG auth.repo.refresh.revoke.done token_id=49e53fa5-036e-434e-a003-845865fc6442
+app.auth.services.logout_audit DEBUG auth.logout.success_audit.start user_id=a84e8348-75b3-42ae-90c4-ffc3adc37c0c request_id=t004-log-001
+app.auth.repository DEBUG auth.repo.write_audit.start action=auth.logout actor_user_id=a84e8348-75b3-42ae-90c4-ffc3adc37c0c
+app.auth.repository DEBUG auth.repo.write_audit.done audit_id=b06e8182-7287-447a-a237-31eefb98dcb7 action=auth.logout
+app.auth.services.logout_audit DEBUG auth.logout.success_audit.done user_id=a84e8348-75b3-42ae-90c4-ffc3adc37c0c request_id=t004-log-001
+app.auth.services.logout DEBUG auth.logout.execute.done user_id=a84e8348-75b3-42ae-90c4-ffc3adc37c0c token_id=49e53fa5-036e-434e-a003-845865fc6442 request_id=t004-log-001
+app.auth.routers.logout DEBUG auth.logout.success request_id=t004-log-001
+
+=== Assertions checked (all PASS) ===
+BEFORE pair: auth.logout.received (router) + auth.logout.execute.start (service): PRESENT
+AFTER pair: auth.logout.execute.done (service) + auth.logout.success (router): PRESENT
+Repository BEFORE: auth.repo.refresh.find_active_for_update.start: PRESENT
+Repository AFTER: auth.repo.refresh.find_active_for_update.done: PRESENT
+Revoke BEFORE: auth.repo.refresh.revoke.start: PRESENT
+Revoke AFTER: auth.repo.refresh.revoke.done: PRESENT
+Audit BEFORE: auth.logout.success_audit.start: PRESENT
+Audit AFTER: auth.logout.success_audit.done: PRESENT
+
+=== PII/Token leak check (PASS) ===
+Bearer JWT value: NOT in logs
+Refresh cookie raw value: NOT in logs
+Full SHA-256 hash (64 hex chars): NOT in logs (only hash_prefix=<first 8 chars>... shown)
+
+=== Live server log (ENABLE_VERBOSE_LOGGING=true, sign-in from curl t004-tester-001) ===
+From orchestrator-state/dev-logs/back.log:
+2026-05-12 10:02:04,835 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=SIGNIN
+2026-05-12 10:02:04,838 app.auth.services.sign_in INFO auth.sign_in.starting request_id=t004-tester-001
+[... full DEBUG flow for sign_in visible as expected ...]

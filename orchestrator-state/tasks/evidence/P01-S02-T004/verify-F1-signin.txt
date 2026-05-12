@@ -1,0 +1,9 @@
+HTTP/1.1 200 OK
+date: Tue, 12 May 2026 08:21:50 GMT
+server: uvicorn
+x-request-id: verify-t004-F1-signin
+content-length: 558
+content-type: application/json
+set-cookie: refresh_token=rdPsmIaz7uGANaqzOfetgKJ9fJVziOeekuekjwb26kJL2lV1SnjDB04PLkDwbLcv; HttpOnly; Max-Age=2592000; Path=/auth; SameSite=lax; Secure
+
+{"data":{"mfa_required":false,"access_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3Yjg2ODQzOS1jNDkwLTQ0NzQtYjU0NC1hMTgzOTFkZWNiYTgiLCJlbWFpbCI6ImVtcGxveWVlLnZlcmlmaWNhdGlvbkBpbmRpdGV4LXNhbmRib3guY29tIiwicm9sZXMiOlsiZW1wbG95ZWUiXSwicHJlZmVycmVkX2xhbmd1YWdlIjoiZXMiLCJlbXBsb3llZV9wcm9maWxlX2lkIjpudWxsLCJqdGkiOiI2YzIyM2ExYWI3OGI0NGE1ODg5NzdjYTlkNWM4YjUxZCIsImlhdCI6MTc3ODU3NDExMSwiZXhwIjoxNzc4NTc1OTExfQ.nNi7I63XCuCKP0y4uYviQiQdk5SbHfJ9hiWwUMpVjbE","token_type":"Bearer","expires_in":1800},"meta":{"request_id":"verify-t004-F1-signin"},"errors":[]}

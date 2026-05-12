@@ -388,3 +388,66 @@
 - These are NOT regressions from T003 — they exist in main repo before T003.
 - Document as known pre-existing issue; do not create FU unless explicitly asked.
 - Standard test invocation for T003 development: always source `.env` first.
+
+## P01-S02-T004 — POST /api/v1/auth/logout patterns
+
+### Logout audit extraction pattern (file size compliance)
+- Initial `logout.py` draft was 372 LOC (27% over 300-line hard cap).
+- Pattern: extract `LogoutAuditWriter` + `classify_logout_miss()` to `logout_audit.py` (182 LOC).
+- Result: `logout.py` = 276 LOC (within hard cap); `logout_audit.py` = 182 LOC (within target).
+- This mirrors T003's `refresh_audit.py` extraction — same pattern for same D-S2 requirement.
+- Use this pattern for any use case with complex audit logic that pushes LOC toward cap.
+
+### _clear_refresh_cookie pattern
+- `_clear_refresh_cookie(response) -> None` added to `routers/_helpers.py`.
+- Uses same attrs as `_set_refresh_cookie` but with `max_age=0` (not `Max-Age=-1`).
+- MUST be called on BOTH 204 (success) and EVERY 401 (failure) path.
+- The cookie must be cleared even on auth failures — browser will retry with an empty cookie,
+  which is cleaner than keeping a stale/expired cookie around.
+- `path="/auth"` must match `_set_refresh_cookie` exactly — otherwise browser won't delete it.
+
+### classify_logout_miss(row) pattern
+- Takes the result of `find_by_hash(token_hash)` (no FOR UPDATE, just existence check).
+- Returns "unknown_hash" if `row is None`, "revoked" if `row.revoked_at is not None`, "expired" otherwise.
+- Used AFTER `find_active_by_hash_for_update()` returns None to classify what kind of miss it was.
+- This classification is audit-only — never exposed in response body (aggregate anti-enumeration).
+- Import `classify_logout_miss` from `logout_audit.py`, not inline in use case.
+
+### _safe_uuid helper for bearer/cookie user_id comparison
+- `_safe_uuid(value: str) -> Optional[uuid.UUID]` — module-level in `logout.py`.
+- Returns `None` if `value` is not a valid UUID4 string. Handles `ValueError` from `UUID(value)`.
+- Purpose: Bearer JWT `sub` claim is a str. Cookie's `rt_row.user_id` is `uuid.UUID`.
+- If `_safe_uuid` returns `None`, raise `SessionExpiredError` immediately (malformed JWT sub).
+- NEVER compare str to UUID directly — always convert first.
+
+### Test isolation for logout tests
+- Uses same `_create_user()` / `cleanup_created_rows` autouse fixture pattern as T003.
+- `_mint_access_token_for(user_id, email, *, expired=False)` directly crafts JWTs for T03+T04.
+  - `expired=False` (default): normal access token with `exp = now + 1800s`.
+  - `expired=True`: `exp = now - 1s` (already expired at mint time) — triggers `ExpiredSignatureError`.
+- The test JWT key is `""` (empty string) — causes `InsecureKeyLengthWarning` from PyJWT.
+  This is expected in tests; production uses 64-char key (T009). Non-blocking warning.
+- `_get_last_audit_logout(session, user_id)` fetches the most recent `auth.logout` audit row.
+  Used in T12 to verify X-Request-ID propagation to audit metadata.
+
+### D-S2 on logout (T14)
+- T14 verifies: when `user_mismatch`, the refresh_token row is NOT revoked (no `repo.revoke()`).
+- The failure audit IS committed independently via `audit_session_scope()`.
+- Test: assert `rt_row.revoked_at is None` AFTER the 401 request → confirms no revoke on mismatch.
+- Also assert `audit_log` row exists with `metadata->>'reason' == 'user_mismatch'`.
+- This pattern (assert no side effect + assert audit committed) is the canonical D-S2 test.
+
+### Byte-identical 401 body (T10)
+- T10 makes requests for: no_bearer, invalid_bearer, no_cookie, unknown_hash paths.
+- Strips `meta.request_id` from each response (legitimately differs per request).
+- Asserts all remaining fields are identical: `error`, `code`, `message`, all other `meta` fields.
+- If ANY difference detected, test fails — prevents accidental enumeration via response body.
+- Pattern: `{k: v for k, v in body["meta"].items() if k != "request_id"}` for normalization.
+
+### Test pre-existing failures with no postgres (known)
+- All integration tests (including test_auth_logout.py) fail with `relation "users" does not exist`
+  when docker compose postgres is not running.
+- This is NORMAL — restart postgres (`docker compose up -d postgres`) before running integration tests.
+- The 14 logout tests pass in 1.84s with postgres UP. They do NOT use an in-memory DB.
+- Do NOT confuse "tests fail in this session" with "T004 introduced regressions".
+- Always check if postgres is running before interpreting test failures as code bugs.

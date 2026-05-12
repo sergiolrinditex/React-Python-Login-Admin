@@ -1,0 +1,7 @@
+# Source-of-truth amendment — FU-20260512082956-fix-refresh-cookie-path-mismatch-auth-vs-api-v1-
+
+Appended to `docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md`:
+
+```md
+| P01-S02-T011 | wiring | fix refresh cookie Path mismatch (/auth vs /api/v1/auth) across sign-in setter + refresh/logout consumers | Runtime follow-up P01-S02-T004 | current | planned | high | human | P01-S02-T004 | api:auth | backend/app/auth/routers/_helpers.py, backend/tests/integration/test_auth_refresh.py, backend/tests/integration/test_auth_logout.py, docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md | J100 | — | — | — | runtime-followup#FU-20260512082956-fix-refresh-cookie-path-mismatch-auth-vs-api-v1- | runtime-followup#FU-20260512082956-fix-refresh-cookie-path-mismatch-auth-vs-api-v1- | Cookie set at sign-in uses a Path attribute that matches the actual endpoint URL prefix so a real browser/curl re-submits the cookie to /api/v1/auth/refresh and /api/v1/auth/logout. T002 sign-in tests, T003 refresh tests, T004 logout tests all pass after the change. New integration test added that simulates a real browser cookie jar (not TestClient) and asserts the cookie roundtrip end-to-end. TECHNICAL_GUIDE §10.2 updated to pin the chosen Path attribute. Cookie Path in _set_refresh_cookie and _clear_refresh_cookie remain byte-identical. | Hard reset + sign-in employee.verification@inditex-sandbox.com + curl -c cookies.txt -b cookies.txt logout (NO explicit Cookie header) → 204 No Content + revoke + audit success. Same flow against refresh → 200 + rotation. |
+```

@@ -1,0 +1,35 @@
+## Tester: curl sign-in smoke — P01-S02-T004
+## Purpose: Obtain access token + refresh cookie for logout smoke test
+## Timestamp: 2026-05-12T10:02:04+02:00
+## Verification data: employee_primary.json — email=employee.verification@inditex-sandbox.com
+## Cookie file: /tmp/t004_cookies.txt
+
+Command:
+curl -s -i -c /tmp/t004_cookies.txt -X POST http://localhost:8000/api/v1/auth/sign-in \
+  -H 'Content-Type: application/json' \
+  -H 'X-Request-ID: t004-tester-001' \
+  -d '{"email":"employee.verification@inditex-sandbox.com","password":"VerifyPass2024!"}'
+
+Response:
+HTTP/1.1 200 OK
+date: Tue, 12 May 2026 08:02:04 GMT
+server: uvicorn
+x-request-id: t004-tester-001
+content-length: 552
+content-type: application/json
+set-cookie: refresh_token=<opaque-64-char-token>; HttpOnly; Max-Age=2592000; Path=/auth; SameSite=lax; Secure
+
+{
+  "data": {
+    "mfa_required": false,
+    "access_token": "<JWT omitted for evidence>",
+    "token_type": "Bearer",
+    "expires_in": 1800
+  },
+  "meta": {"request_id": "t004-tester-001"},
+  "errors": []
+}
+
+Result: 200 OK — sign-in successful, access_token + refresh_token cookie obtained
+X-Request-ID echoed: t004-tester-001
+Cookie attributes: HttpOnly, Max-Age=2592000, Path=/auth, SameSite=lax, Secure

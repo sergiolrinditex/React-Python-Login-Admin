@@ -1,0 +1,35 @@
+## Tester: curl logout 204 smoke — P01-S02-T004
+## Purpose: Verify POST /api/v1/auth/logout → 204 + cookie clear via ASGI TestClient
+## Timestamp: 2026-05-12T10:02:43+02:00
+## Note: Live server serves main branch (T004 not merged) → 404 on live server.
+## Authoritative verification uses TestClient ASGI (same as integration tests).
+
+=== LIVE SERVER (expected 404 — T004 code in worktree, not merged yet) ===
+curl -i -b /tmp/t004_cookies.txt -X POST http://localhost:8000/api/v1/auth/logout \
+  -H "Authorization: Bearer <access_token>" \
+  -H 'X-Request-ID: t004-tester-002'
+
+HTTP/1.1 404 Not Found
+{"detail":"Not Found"}
+
+(Expected — live uvicorn serves main branch which does not yet have T004 merged)
+
+=== ASGI TestClient SMOKE (authoritative — same as integration tests) ===
+
+Test user: tester.smoke.t004@inditex-sandbox.com (created in real Postgres DB)
+Request: POST /api/v1/auth/logout via TestClient ASGI
+Headers: Authorization: Bearer <JWT>, Cookie: refresh_token=<opaque>, X-Request-ID: t004-tester-smoke-002
+
+Response status: 204 No Content
+Response header Set-Cookie: refresh_token=""; HttpOnly; Max-Age=0; Path=/auth; SameSite=lax; Secure
+Response header X-Request-ID: t004-tester-smoke-002
+
+DB verification:
+  refresh_tokens row: revoked_at=2026-05-12 08:02:43.573676+00:00 (SET, not null) ✓
+  audit_logs row: action=auth.logout, outcome=success, request_id=t004-tester-smoke-002 ✓
+
+Idempotency (repeat logout → 401):
+  Second POST with same Bearer + same cookie → 401 AUTH_SESSION_EXPIRED ✓
+  Cookie cleared on 401 path as well ✓
+
+Result: PASS — 204 No Content, cookie Max-Age=0, DB revoked, audit written, X-Request-ID echoed

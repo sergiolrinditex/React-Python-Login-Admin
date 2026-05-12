@@ -1,0 +1,6 @@
+HTTP/1.1 204 No Content
+date: Tue, 12 May 2026 08:22:35 GMT
+server: uvicorn
+x-request-id: verify-t004-F4-cookie-header
+set-cookie: refresh_token=""; HttpOnly; Max-Age=0; Path=/auth; SameSite=lax; Secure
+

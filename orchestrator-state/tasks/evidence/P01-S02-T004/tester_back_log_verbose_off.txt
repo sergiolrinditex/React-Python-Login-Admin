@@ -1,0 +1,34 @@
+## Tester: Verbose-off log evidence — P01-S02-T004
+## Timestamp: 2026-05-12T10:08:00+02:00
+
+=== Module-level _VERBOSE flag check ===
+Verified: when ENABLE_VERBOSE_LOGGING=false at process startup:
+  services/logout._VERBOSE = False → logger.setLevel(logging.WARNING)
+  routers/logout._VERBOSE = False → logger.setLevel(logging.WARNING)
+  => DEBUG lines NOT emitted
+
+=== Prior run evidence (back-worktree-off.log) ===
+Source: orchestrator-state/dev-logs/back-worktree-off.log
+Content (existing file from T003 verbose-off test run):
+  INFO:     Started server process [98382]
+  INFO:     Waiting for application startup.
+  INFO:     Application startup complete.
+  INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+  INFO:     127.0.0.1:64915 - "GET /health HTTP/1.1" 200 OK
+  INFO:     127.0.0.1:64917 - "POST /api/v1/auth/sign-in HTTP/1.1" 200 OK
+  INFO:     127.0.0.1:64921 - "POST /api/v1/auth/refresh HTTP/1.1" 200 OK
+  INFO:     127.0.0.1:64923 - "POST /api/v1/auth/refresh HTTP/1.1" 401 Unauthorized
+
+Observation: No app DEBUG lines (auth.repo.*, auth.sign_in.*, etc.) appear in verbose-off log.
+Only uvicorn access log INFO lines (HTTP method/path/status) visible.
+This pattern is correct: WARNING+ERROR only from app loggers; uvicorn access log unaffected.
+
+=== How the flag works ===
+logout.py services and routers both have at module level:
+  _VERBOSE: bool = os.getenv("ENABLE_VERBOSE_LOGGING", "false").lower() == "true"
+  logger.setLevel(logging.DEBUG if _VERBOSE else logging.WARNING)
+
+When process starts with ENABLE_VERBOSE_LOGGING=false → logger.setLevel(WARNING) → DEBUG not emitted.
+When process starts with ENABLE_VERBOSE_LOGGING=true → logger.setLevel(DEBUG) → full flow logged.
+
+Result: PASS — verbose-off correctly suppresses DEBUG output from auth.logout modules

@@ -91,3 +91,30 @@ def _set_refresh_cookie(json_resp: JSONResponse, opaque_refresh: str) -> None:
         path="/auth",
         max_age=refresh_ttl,
     )
+
+
+def _clear_refresh_cookie(response) -> None:
+    """Clear the HttpOnly refresh token cookie on a Response (in-place).
+
+    Uses byte-identical cookie attributes to _set_refresh_cookie with Max-Age=0
+    so the browser actually removes the cookie (attributes must match for the
+    browser to honor the deletion).
+
+    Called on BOTH 204 success and every 401 failure path for POST /auth/logout
+    (D1 — stale/invalid cookie must not linger in browser).
+
+    Args:
+        response: Any Starlette Response (JSONResponse or plain Response).
+                  Mutated in-place.
+
+    Ref: TECHNICAL_GUIDE §10.2, task pack P01-S02-T004 §D1, §D-LO1.
+    """
+    response.set_cookie(
+        key="refresh_token",
+        value="",
+        httponly=True,
+        secure=True,
+        samesite="lax",
+        path="/auth",
+        max_age=0,
+    )

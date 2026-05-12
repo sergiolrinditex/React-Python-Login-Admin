@@ -1,0 +1,52 @@
+## Tester: Contract Observed — Front → Back → DB — P01-S02-T004
+## Timestamp: 2026-05-12T10:08:00+02:00
+
+=== Endpoint Observed ===
+Method: POST
+Path: /api/v1/auth/logout
+File: backend/app/auth/routers/logout.py (worktree)
+Handler: logout() → LogoutUser(session).execute()
+
+=== Use Case Observed ===
+File: backend/app/auth/services/logout.py
+Class: LogoutUser.execute()
+Steps verified:
+  1. Bearer JWT decoded via app.auth.tokens.decode_token()
+  2. refresh cookie SHA-256 hashed
+  3. find_active_by_hash_for_update() — SELECT ... FOR UPDATE
+  4. user_id match check (Bearer.sub == row.user_id)
+  5. repo.revoke(token_id) — UPDATE refresh_tokens SET revoked_at=now()
+  6. write_success audit (same transaction)
+  7. session.commit()
+
+=== Audit Use Case Observed ===
+File: backend/app/auth/services/logout_audit.py
+Class: LogoutAuditWriter
+Methods:
+  write_success(request_id, ip, user_agent, user_id, token_id) — in main tx
+  write_failure(request_id, ip, user_agent, reason, actor_user_id) — D-S2 via audit_session_scope()
+
+=== Repository Observed ===
+File: backend/app/auth/repositories/refresh.py
+Methods used: find_active_by_hash_for_update(), find_by_hash(), revoke()
+
+File: backend/app/auth/repository.py
+Method used: write_audit() → audit_logs INSERT
+
+=== DB Tables Observed ===
+refresh_tokens:
+  Row found by token_hash (SHA-256 of cookie)
+  revoked_at set on success → verified in DB query
+audit_logs:
+  action='auth.logout', actor_user_id, metadata={request_id, ip, user_agent, outcome, revoked_token_id}
+
+=== Cookie Helper Observed ===
+File: backend/app/auth/routers/_helpers.py
+Function: _clear_refresh_cookie(response)
+Attributes: Max-Age=0, Path=/auth, HttpOnly=True, Secure=True, SameSite=lax
+Applied on: 204 response AND every 401 response
+
+=== Error Observed ===
+File: backend/app/auth/errors.py
+Class: SessionExpiredError — reused (code=AUTH_SESSION_EXPIRED, http_status=401)
+All failure paths raise SessionExpiredError → byte-identical 401 body

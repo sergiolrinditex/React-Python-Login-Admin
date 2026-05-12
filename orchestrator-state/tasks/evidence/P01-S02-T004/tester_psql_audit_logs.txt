@@ -1,0 +1,25 @@
+## Tester: DB inspection — audit_logs table — P01-S02-T004
+## Timestamp: 2026-05-12T10:07:00+02:00
+## Method: SQLAlchemy query via Python
+
+## Table schema confirmed (information_schema):
+## audit_logs columns: ['id', 'actor_user_id', 'action', 'entity_type', 'entity_id', 'metadata', 'created_at']
+
+## Most recent auth.logout audit rows after smoke test:
+SELECT action, actor_user_id, metadata->>'request_id' as req_id, metadata->>'outcome' as outcome
+FROM audit_logs WHERE action='auth.logout' ORDER BY created_at DESC LIMIT 5;
+
+action      | actor_user_id                        | req_id                  | outcome
+------------|--------------------------------------|-------------------------|--------
+auth.logout | 6b9da9c8-c077-41d9-8ecb-5f6e8dc28815 | t004-tester-smoke-002   | success
+
+Observations:
+- action = 'auth.logout': YES
+- request_id matches X-Request-ID from logout request (t004-tester-smoke-002): YES
+- outcome = 'success': YES
+- actor_user_id matches the logged-in user: YES
+- reason = null (correct for success path — reason only for failure paths): YES
+
+Additional: audit_logs for T12 (pytest): request_id = request_id supplied in headers, outcome=success, in audit_logs confirmed by test assertion.
+
+Result: PASS — audit_logs has auth.logout row with correct request_id and outcome=success

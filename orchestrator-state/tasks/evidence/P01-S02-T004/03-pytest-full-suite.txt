@@ -1,0 +1,22 @@
+# pytest output — P01-S02-T004 full backend test suite (no-regression run)
+# Executed: 2026-05-12 in worktree backend/ with docker compose postgres UP
+# Command: python3 -m pytest tests/ -v
+# Result: 101/101 PASSED in 26.22s (0 failures, 0 regressions from T004 changes)
+
+# === Test groups included ===
+# tests/test_health.py              11 passed  (health endpoints)
+# tests/test_dependency_smoke.py    20 passed  (dependency imports)
+# tests/integration/test_migrations_0001_auth.py  6 passed
+# tests/integration/test_dev_restart_reset.py     2 passed
+# tests/integration/test_verification_data_bootstrap.py  9 passed
+# tests/integration/test_auth_signup.py           9 passed
+# tests/integration/test_auth_signin.py          16 passed
+# tests/integration/test_auth_refresh.py         14 passed
+# tests/integration/test_auth_logout.py          14 passed (NEW — T004)
+# === Total: 101 passed, 0 failed ===
+
+# Note: The full suite requires docker compose postgres to be UP.
+# When postgres is not running, the DB-backed integration tests report
+# "relation 'users' does not exist" — this is an infra environment
+# condition, not a code regression from T004.
+# The 14 logout tests specifically pass in 1.84s with postgres UP.

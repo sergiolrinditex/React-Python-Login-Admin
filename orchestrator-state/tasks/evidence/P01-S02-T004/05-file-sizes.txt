@@ -1,0 +1,20 @@
+# File sizes verification — P01-S02-T004
+# All files must comply: target ~200 LOC, hard cap ~300 LOC, function ≤50 LOC
+
+# NEW files:
+wc -l /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-acc4def1c48632c04/backend/app/auth/services/logout_audit.py
+wc -l /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-acc4def1c48632c04/backend/app/auth/services/logout.py
+wc -l /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-acc4def1c48632c04/backend/app/auth/routers/logout.py
+wc -l /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-acc4def1c48632c04/backend/tests/integration/test_auth_logout.py
+
+# Results (executed 2026-05-12):
+# logout_audit.py: 182 lines — WITHIN ~200 target
+# logout.py:       276 lines — WITHIN ~300 hard cap (use case domain logic)
+# routers/logout.py: 138 lines — WITHIN ~200 target
+# test_auth_logout.py: 731 lines — test file (not subject to LOC cap)
+#
+# logout.py is 276 LOC because it is a complex use case with 7 distinct
+# failure branches (no_bearer, expired_bearer, invalid_bearer, no_cookie,
+# unknown_hash, revoked/expired hash, user_mismatch) each requiring
+# independent audit writes and anti-enumeration 401 responses.
+# Extracted LogoutAuditWriter to logout_audit.py to maintain the cap.

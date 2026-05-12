@@ -1,0 +1,54 @@
+## Tester: pytest full suite — P01-S02-T004
+## Run from: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-acc4def1c48632c04
+## Command: python3 -m pytest backend/tests/ -v
+## Timestamp: 2026-05-12T10:10:00+02:00
+## Note: Alembic upgrade head applied before run (test_downgrade_removes_all_tables drops schema)
+
+============================= test session starts ==============================
+platform darwin -- Python 3.11.5, pytest-9.0.2, pluggy-1.6.0
+rootdir: .../worktrees/agent-acc4def1c48632c04/backend
+configfile: pyproject.toml
+
+collected 101 items
+
+backend/tests/integration/test_auth_logout.py::test_logout_success_revokes_token_and_clears_cookie PASSED
+backend/tests/integration/test_auth_logout.py::test_logout_no_bearer_returns_401 PASSED
+backend/tests/integration/test_auth_logout.py::test_logout_invalid_bearer_returns_401 PASSED
+backend/tests/integration/test_auth_logout.py::test_logout_expired_bearer_returns_401 PASSED
+backend/tests/integration/test_auth_logout.py::test_logout_no_cookie_returns_401 PASSED
+backend/tests/integration/test_auth_logout.py::test_logout_unknown_cookie_returns_401 PASSED
+backend/tests/integration/test_auth_logout.py::test_logout_expired_cookie_returns_401 PASSED
+backend/tests/integration/test_auth_logout.py::test_logout_revoked_cookie_returns_401 PASSED
+backend/tests/integration/test_auth_logout.py::test_logout_user_mismatch_returns_401 PASSED
+backend/tests/integration/test_auth_logout.py::test_logout_401_body_byte_identical_for_all_failure_reasons PASSED
+backend/tests/integration/test_auth_logout.py::test_logout_does_not_revoke_other_users_tokens PASSED
+backend/tests/integration/test_auth_logout.py::test_logout_request_id_propagated_in_response_header_and_audit PASSED
+backend/tests/integration/test_auth_logout.py::test_logout_no_pii_or_token_value_in_logs PASSED
+backend/tests/integration/test_auth_logout.py::test_logout_audit_row_persists_even_when_main_tx_rolls_back PASSED
+backend/tests/integration/test_auth_refresh.py (14 tests) ALL PASSED
+backend/tests/integration/test_auth_signin.py (16 tests) ALL PASSED
+backend/tests/integration/test_auth_signup.py (9 tests) ALL PASSED
+backend/tests/integration/test_dev_restart_reset.py (2 tests) ALL PASSED
+backend/tests/integration/test_migrations_0001_auth.py (6 tests) ALL PASSED
+backend/tests/integration/test_verification_data_bootstrap.py (9 tests) ALL PASSED
+backend/tests/test_dependency_smoke.py (20 tests) ALL PASSED
+backend/tests/test_health.py (11 tests) ALL PASSED
+
+=============================== warnings summary ===============================
+tests/integration/test_auth_refresh.py: 20 warnings (DeprecationWarning per-request cookies)
+tests/test_dependency_smoke.py: LangChainPendingDeprecationWarning (non-blocking)
+
+====================== 101 passed, 21 warnings in 22.86s ======================
+
+## Summary:
+## test_auth_logout.py (14 new T004) ALL PASS
+## test_auth_refresh.py (14) ALL PASS
+## test_auth_signin.py (16) ALL PASS
+## test_auth_signup.py (9) ALL PASS
+## test_dev_restart_reset.py (2) ALL PASS
+## test_migrations_0001_auth.py (6) ALL PASS
+## test_verification_data_bootstrap.py (9) ALL PASS
+## test_dependency_smoke.py (20) ALL PASS
+## test_health.py (11) ALL PASS
+## Total: 101 passed, 0 failed
+## No regressions introduced

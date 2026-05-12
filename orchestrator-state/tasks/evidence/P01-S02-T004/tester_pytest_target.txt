@@ -1,0 +1,34 @@
+## Tester: pytest targeted — P01-S02-T004
+## Run from: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-acc4def1c48632c04
+## Command: python3 -m pytest backend/tests/integration/test_auth_logout.py -v
+## Timestamp: 2026-05-12T10:09:00+02:00
+## Note: Alembic upgrade head applied before run (downgrade test destroys schema)
+
+============================= test session starts ==============================
+platform darwin -- Python 3.11.5, pytest-9.0.2, pluggy-1.6.0
+rootdir: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-acc4def1c48632c04/backend
+configfile: pyproject.toml
+plugins: httpx-0.36.0, asyncio-1.3.0, langsmith-0.8.3, anyio-4.13.0
+
+collecting ... collected 14 items
+
+backend/tests/integration/test_auth_logout.py::test_logout_success_revokes_token_and_clears_cookie PASSED [  7%]
+backend/tests/integration/test_auth_logout.py::test_logout_no_bearer_returns_401 PASSED [ 14%]
+backend/tests/integration/test_auth_logout.py::test_logout_invalid_bearer_returns_401 PASSED [ 21%]
+backend/tests/integration/test_auth_logout.py::test_logout_expired_bearer_returns_401 PASSED [ 28%]
+backend/tests/integration/test_auth_logout.py::test_logout_no_cookie_returns_401 PASSED [ 35%]
+backend/tests/integration/test_auth_logout.py::test_logout_unknown_cookie_returns_401 PASSED [ 42%]
+backend/tests/integration/test_auth_logout.py::test_logout_expired_cookie_returns_401 PASSED [ 50%]
+backend/tests/integration/test_auth_logout.py::test_logout_revoked_cookie_returns_401 PASSED [ 57%]
+backend/tests/integration/test_auth_logout.py::test_logout_user_mismatch_returns_401 PASSED [ 64%]
+backend/tests/integration/test_auth_logout.py::test_logout_401_body_byte_identical_for_all_failure_reasons PASSED [ 71%]
+backend/tests/integration/test_auth_logout.py::test_logout_does_not_revoke_other_users_tokens PASSED [ 78%]
+backend/tests/integration/test_auth_logout.py::test_logout_request_id_propagated_in_response_header_and_audit PASSED [ 85%]
+backend/tests/integration/test_auth_logout.py::test_logout_no_pii_or_token_value_in_logs PASSED [ 92%]
+backend/tests/integration/test_auth_logout.py::test_logout_audit_row_persists_even_when_main_tx_rolls_back PASSED [100%]
+
+============================== 14 passed in 1.82s ==============================
+
+## Result: 14/14 PASSED — all T01..T14 green
+## Tests use TestClient ASGI + real Postgres DB (migration head=0001)
+## No mocks of business logic — real service → real repository → real DB

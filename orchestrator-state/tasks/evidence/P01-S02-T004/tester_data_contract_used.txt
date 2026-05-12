@@ -1,0 +1,41 @@
+## Tester: Verification Data Contract — P01-S02-T004
+## Timestamp: 2026-05-12T10:08:00+02:00
+
+=== Contract Row Used ===
+Source: TECHNICAL_GUIDE §6.5, J100 auth-login row
+Persona/Rol: employee_primary (employee)
+Datos reales/proporcionados: confirmed user, real Postgres DB
+Carga: python -m app.verification_data.bootstrap --source data/verification --only auth
+
+=== Real/Provided Data Loaded ===
+File: data/verification/users/employee_primary.json
+email: employee.verification@inditex-sandbox.com
+status: active
+Result: Loaded — 2 users inserted (employee_primary + admin)
+
+=== Curl Smoke Chain (Live Server) ===
+Sign-in (live server, T002/T003 merged):
+  POST /api/v1/auth/sign-in → 200 OK, access_token obtained, refresh_token cookie set
+Logout (live server, T004 not merged → 404 expected):
+  POST /api/v1/auth/logout → 404 (expected; T004 code in worktree, not merged)
+
+=== ASGI TestClient Smoke (Authoritative — Real DB) ===
+User: tester.smoke.t004@inditex-sandbox.com (created in real Postgres hilo_dev DB)
+Sign-in via TestClient → 200, access_token + refresh_cookie obtained
+Logout via TestClient → 204 No Content
+  Set-Cookie: refresh_token=""; Max-Age=0; Path=/auth; HttpOnly; Secure; SameSite=lax
+  X-Request-ID: t004-tester-smoke-002 (echoed)
+
+=== Persisted Data Observed ===
+refresh_tokens table:
+  id=25f98048, user_id=6b9da9c8, revoked_at=2026-05-12 08:02:43.573676+00:00 (SET)
+  => Token revoked correctly
+
+audit_logs table:
+  action=auth.logout, outcome=success, request_id=t004-tester-smoke-002
+  => Audit row persisted correctly
+
+Tests T01-T14 also verify real DB state:
+  T01: refresh_tokens.revoked_at NOT NULL + audit outcome=success
+  T12: X-Request-ID in response header + audit_logs.metadata.request_id match
+  T14: D-S2 failure audit persists even when main tx does not commit
