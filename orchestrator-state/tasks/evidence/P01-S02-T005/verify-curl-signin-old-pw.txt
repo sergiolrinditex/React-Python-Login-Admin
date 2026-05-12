@@ -1,0 +1,7 @@
+HTTP/1.1 401 Unauthorized
+date: Tue, 12 May 2026 16:06:06 GMT
+server: uvicorn
+content-length: 192
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"861b8b29-24bc-4ae7-90e9-7194a3d6f7ac"},"errors":[{"code":"AUTH_INVALID_CREDENTIALS","message":"Email or password is incorrect","field":null,"details":null}]}

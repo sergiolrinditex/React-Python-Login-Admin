@@ -1,0 +1,9 @@
+HTTP/1.1 200 OK
+date: Tue, 12 May 2026 17:02:54 GMT
+server: uvicorn
+x-request-id: cccccccc-0001-0000-0000-000000000002
+content-length: 573
+content-type: application/json
+set-cookie: refresh_token=LgAoiNGSGYo97g1Pxw7JHSJEimypDtz5y3Z1BQmcVFaCPU6YSFOXzu1SxRlqk2h9; HttpOnly; Max-Age=2592000; Path=/api/v1/auth; SameSite=lax; Secure
+
+{"data":{"mfa_required":false,"access_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjNmFlOWExOS1jNGJiLTQzN2QtYjliZS01ZWU1MTZlY2I2ZDEiLCJlbWFpbCI6ImVtcGxveWVlLnZlcmlmaWNhdGlvbkBpbmRpdGV4LXNhbmRib3guY29tIiwicm9sZXMiOlsiZW1wbG95ZWUiXSwicHJlZmVycmVkX2xhbmd1YWdlIjoiZXMiLCJlbXBsb3llZV9wcm9maWxlX2lkIjpudWxsLCJqdGkiOiJmOTc1YjVhZjEwY2Q0ZGU4YjU1ZjBlZWYxYWE3ZDkxMiIsImlhdCI6MTc3ODYwNTM3NCwiZXhwIjoxNzc4NjA3MTc0fQ.xC_L12pd6OLdTFsLqKvWP_eeysLAsAFRDg9KUuZ9sXE","token_type":"Bearer","expires_in":1800},"meta":{"request_id":"cccccccc-0001-0000-0000-000000000002"},"errors":[]}

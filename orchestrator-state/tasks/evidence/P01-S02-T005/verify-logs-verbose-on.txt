@@ -1,0 +1,76 @@
+2026-05-12 19:00:12,732 app.auth.routers.forgot_reset DEBUG auth.forgot.endpoint.start ip_prefix=127.0.0. request_id=00000000-0000-0000-0000-000000000001
+2026-05-12 19:00:12,732 app.auth.rate_limit DEBUG rate_limit.check.start prefix=FORGOT ip=FORGOT:127.0.0.1 rate_per_min=3 burst=3
+2026-05-12 19:00:12,732 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=FORGOT ip=FORGOT:127.0.0.1 new_window remaining=2
+2026-05-12 19:00:12,732 app.auth.services.password_reset_request DEBUG auth.forgot.start email_domain=inditex-sandbox.com request_id=00000000-0000-0000-0000-000000000001
+2026-05-12 19:00:12,816 app.auth.services.password_reset_request DEBUG auth.forgot.done email_domain=inditex-sandbox.com user_found=False sent=False request_id=00000000-0000-0000-0000-000000000001
+2026-05-12 19:00:12,816 app.auth.routers.forgot_reset DEBUG auth.forgot.endpoint.done request_id=00000000-0000-0000-0000-000000000001
+2026-05-12 19:00:34,886 app.auth.routers.forgot_reset DEBUG auth.forgot.endpoint.start ip_prefix=127.0.0. request_id=aaaaaaaa-0001-0000-0000-000000000001
+2026-05-12 19:00:34,886 app.auth.rate_limit DEBUG rate_limit.check.start prefix=FORGOT ip=FORGOT:127.0.0.1 rate_per_min=3 burst=3
+2026-05-12 19:00:34,886 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=FORGOT ip=FORGOT:127.0.0.1 remaining=1
+2026-05-12 19:00:34,886 app.auth.services.password_reset_request DEBUG auth.forgot.start email_domain=inditex-sandbox.com request_id=aaaaaaaa-0001-0000-0000-000000000001
+2026-05-12 19:00:34,941 app.auth.services.password_reset_request DEBUG auth.forgot.done email_domain=inditex-sandbox.com user_found=False sent=False request_id=aaaaaaaa-0001-0000-0000-000000000001
+2026-05-12 19:00:34,941 app.auth.routers.forgot_reset DEBUG auth.forgot.endpoint.done request_id=aaaaaaaa-0001-0000-0000-000000000001
+2026-05-12 19:00:34,980 app.auth.routers.forgot_reset DEBUG auth.forgot.endpoint.start ip_prefix=127.0.0. request_id=aaaaaaaa-0001-0000-0000-000000000002
+2026-05-12 19:00:34,980 app.auth.rate_limit DEBUG rate_limit.check.start prefix=FORGOT ip=FORGOT:127.0.0.1 rate_per_min=3 burst=3
+2026-05-12 19:00:34,980 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=FORGOT ip=FORGOT:127.0.0.1 remaining=0
+2026-05-12 19:00:34,980 app.auth.services.password_reset_request DEBUG auth.forgot.start email_domain=inditex-sandbox.com request_id=aaaaaaaa-0001-0000-0000-000000000002
+2026-05-12 19:00:34,984 app.auth.repositories.password_reset DEBUG auth.repo.password_reset.insert.start user_id=c6ae9a19-c4bb-437d-b9be-5ee516ecb6d1
+2026-05-12 19:00:34,989 app.auth.repositories.password_reset DEBUG auth.repo.password_reset.insert.done user_id=c6ae9a19-c4bb-437d-b9be-5ee516ecb6d1 prt_id=315f73aa-14fc-41ad-8d5b-3503d9620eeb
+2026-05-12 19:00:35,013 app.auth.services.password_reset_request DEBUG auth.forgot.dispatch_email.start locale=es request_id=aaaaaaaa-0001-0000-0000-000000000002
+2026-05-12 19:00:35,019 app.auth.services.password_reset_request DEBUG auth.forgot.dispatch_email.done locale=es
+2026-05-12 19:00:35,019 app.auth.services.password_reset_request DEBUG auth.forgot.done email_domain=inditex-sandbox.com user_found=True sent=True request_id=aaaaaaaa-0001-0000-0000-000000000002
+2026-05-12 19:00:35,019 app.auth.routers.forgot_reset DEBUG auth.forgot.endpoint.done request_id=aaaaaaaa-0001-0000-0000-000000000002
+2026-05-12 19:00:40,732 app.auth.routers.forgot_reset DEBUG auth.forgot.endpoint.start ip_prefix=127.0.0. request_id=aaaaaaaa-0001-0000-0000-000000000004
+2026-05-12 19:00:40,732 app.auth.rate_limit DEBUG rate_limit.check.start prefix=FORGOT ip=FORGOT:127.0.0.1 rate_per_min=3 burst=3
+2026-05-12 19:00:40,732 app.auth.rate_limit WARNING rate_limit.check.exceeded prefix=FORGOT ip=FORGOT:127.0.0.1 retry_after=32s
+2026-05-12 19:00:40,732 app.auth.routers.forgot_reset WARNING auth.forgot.endpoint.rate_limited retry_after=32s request_id=aaaaaaaa-0001-0000-0000-000000000004
+2026-05-12 19:01:33,463 app.auth.rate_limit DEBUG rate_limit.check.start prefix=SIGNIN ip=SIGNIN:127.0.0.1 rate_per_min=20 burst=20
+2026-05-12 19:01:33,463 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=SIGNIN ip=SIGNIN:127.0.0.1 new_window remaining=19
+2026-05-12 19:01:33,593 app.auth.rate_limit DEBUG rate_limit.check.start prefix=SIGNIN ip=SIGNIN:127.0.0.1 rate_per_min=20 burst=20
+2026-05-12 19:01:33,593 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=SIGNIN ip=SIGNIN:127.0.0.1 remaining=18
+2026-05-12 19:01:33,688 app.auth.rate_limit DEBUG rate_limit.check.start prefix=SIGNIN ip=SIGNIN:127.0.0.1 rate_per_min=20 burst=20
+2026-05-12 19:01:33,688 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=SIGNIN ip=SIGNIN:127.0.0.1 remaining=17
+2026-05-12 19:01:54,680 app.auth.routers.forgot_reset DEBUG auth.reset.endpoint.start ip_prefix=127.0.0. request_id=bbbbbbbb-0001-0000-0000-000000000001
+2026-05-12 19:01:54,680 app.auth.rate_limit DEBUG rate_limit.check.start prefix=RESET ip=RESET:127.0.0.1 rate_per_min=10 burst=10
+2026-05-12 19:01:54,680 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=RESET ip=RESET:127.0.0.1 new_window remaining=9
+2026-05-12 19:01:54,680 app.auth.services.password_reset_consume DEBUG auth.reset.start request_id=bbbbbbbb-0001-0000-0000-000000000001
+2026-05-12 19:01:54,680 app.auth.repositories.password_reset DEBUG auth.repo.password_reset.find_active_for_update.start hash_prefix=e1b86bc4...
+2026-05-12 19:01:54,689 app.auth.repositories.password_reset DEBUG auth.repo.password_reset.find_active_for_update.done found=True
+2026-05-12 19:01:54,732 app.auth.repositories.password_reset DEBUG auth.repo.password_reset.mark_used.start token_id=315f73aa-14fc-41ad-8d5b-3503d9620eeb
+2026-05-12 19:01:54,734 app.auth.repositories.password_reset DEBUG auth.repo.password_reset.mark_used.done token_id=315f73aa-14fc-41ad-8d5b-3503d9620eeb
+2026-05-12 19:01:54,740 app.auth.services.password_reset_consume DEBUG auth.reset.done user_id=c6ae9a19-c4bb-437d-b9be-5ee516ecb6d1 sessions_revoked=3 request_id=bbbbbbbb-0001-0000-0000-000000000001
+2026-05-12 19:01:54,741 app.auth.routers.forgot_reset DEBUG auth.reset.endpoint.done request_id=bbbbbbbb-0001-0000-0000-000000000001
+2026-05-12 19:02:13,993 app.auth.routers.forgot_reset DEBUG auth.reset.endpoint.start ip_prefix=127.0.0. request_id=bbbbbbbb-0001-0000-0000-000000000006
+2026-05-12 19:02:13,993 app.auth.rate_limit DEBUG rate_limit.check.start prefix=RESET ip=RESET:127.0.0.1 rate_per_min=10 burst=10
+2026-05-12 19:02:13,993 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=RESET ip=RESET:127.0.0.1 remaining=8
+2026-05-12 19:02:13,993 app.auth.services.password_reset_consume DEBUG auth.reset.start request_id=bbbbbbbb-0001-0000-0000-000000000006
+2026-05-12 19:02:13,993 app.auth.repositories.password_reset DEBUG auth.repo.password_reset.find_active_for_update.start hash_prefix=85737406...
+2026-05-12 19:02:13,999 app.auth.repositories.password_reset DEBUG auth.repo.password_reset.find_active_for_update.done found=False
+2026-05-12 19:02:13,999 app.auth.repositories.password_reset DEBUG auth.repo.password_reset.find_by_hash.start hash_prefix=85737406...
+2026-05-12 19:02:14,002 app.auth.repositories.password_reset DEBUG auth.repo.password_reset.find_by_hash.done found=False
+2026-05-12 19:02:14,002 app.auth.services.password_reset_consume WARNING auth.reset.invalid request_id=bbbbbbbb-0001-0000-0000-000000000006
+2026-05-12 19:02:14,002 app.auth.routers.forgot_reset WARNING auth.reset.endpoint.token_invalid request_id=bbbbbbbb-0001-0000-0000-000000000006
+2026-05-12 19:02:14,026 app.auth.routers.forgot_reset DEBUG auth.reset.endpoint.start ip_prefix=127.0.0. request_id=bbbbbbbb-0001-0000-0000-000000000008
+2026-05-12 19:02:14,026 app.auth.rate_limit DEBUG rate_limit.check.start prefix=RESET ip=RESET:127.0.0.1 rate_per_min=10 burst=10
+2026-05-12 19:02:14,026 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=RESET ip=RESET:127.0.0.1 remaining=7
+2026-05-12 19:02:14,026 app.auth.services.password_reset_consume DEBUG auth.reset.start request_id=bbbbbbbb-0001-0000-0000-000000000008
+2026-05-12 19:02:14,026 app.auth.repositories.password_reset DEBUG auth.repo.password_reset.find_active_for_update.start hash_prefix=e1b86bc4...
+2026-05-12 19:02:14,030 app.auth.repositories.password_reset DEBUG auth.repo.password_reset.find_active_for_update.done found=False
+2026-05-12 19:02:14,031 app.auth.repositories.password_reset DEBUG auth.repo.password_reset.find_by_hash.start hash_prefix=e1b86bc4...
+2026-05-12 19:02:14,032 app.auth.repositories.password_reset DEBUG auth.repo.password_reset.find_by_hash.done found=True
+2026-05-12 19:02:14,032 app.auth.services.password_reset_consume WARNING auth.reset.invalid request_id=bbbbbbbb-0001-0000-0000-000000000008
+2026-05-12 19:02:14,032 app.auth.routers.forgot_reset WARNING auth.reset.endpoint.token_invalid request_id=bbbbbbbb-0001-0000-0000-000000000008
+2026-05-12 19:02:44,770 app.auth.routers.forgot_reset DEBUG auth.reset.endpoint.start ip_prefix=127.0.0. request_id=bbbbbbbb-0001-0000-0000-000000000007
+2026-05-12 19:02:44,770 app.auth.rate_limit DEBUG rate_limit.check.start prefix=RESET ip=RESET:127.0.0.1 rate_per_min=10 burst=10
+2026-05-12 19:02:44,770 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=RESET ip=RESET:127.0.0.1 remaining=6
+2026-05-12 19:02:44,770 app.auth.services.password_reset_consume DEBUG auth.reset.start request_id=bbbbbbbb-0001-0000-0000-000000000007
+2026-05-12 19:02:44,771 app.auth.repositories.password_reset DEBUG auth.repo.password_reset.find_active_for_update.start hash_prefix=c9502886...
+2026-05-12 19:02:44,777 app.auth.repositories.password_reset DEBUG auth.repo.password_reset.find_active_for_update.done found=False
+2026-05-12 19:02:44,777 app.auth.repositories.password_reset DEBUG auth.repo.password_reset.find_by_hash.start hash_prefix=c9502886...
+2026-05-12 19:02:44,778 app.auth.repositories.password_reset DEBUG auth.repo.password_reset.find_by_hash.done found=True
+2026-05-12 19:02:44,778 app.auth.services.password_reset_consume WARNING auth.reset.expired request_id=bbbbbbbb-0001-0000-0000-000000000007
+2026-05-12 19:02:44,778 app.auth.routers.forgot_reset WARNING auth.reset.endpoint.token_expired request_id=bbbbbbbb-0001-0000-0000-000000000007
+2026-05-12 19:02:54,820 app.auth.rate_limit DEBUG rate_limit.check.start prefix=SIGNIN ip=SIGNIN:127.0.0.1 rate_per_min=20 burst=20
+2026-05-12 19:02:54,820 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=SIGNIN ip=SIGNIN:127.0.0.1 new_window remaining=19
+2026-05-12 19:02:54,909 app.auth.rate_limit DEBUG rate_limit.check.start prefix=SIGNIN ip=SIGNIN:127.0.0.1 rate_per_min=20 burst=20
+2026-05-12 19:02:54,909 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=SIGNIN ip=SIGNIN:127.0.0.1 remaining=18

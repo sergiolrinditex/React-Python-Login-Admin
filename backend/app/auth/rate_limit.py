@@ -84,7 +84,13 @@ def _load_limits(prefix: str) -> Tuple[int, int]:
     Returns:
         Tuple of (rate_per_minute, burst).
     """
-    defaults = {"SIGNUP": ("10", None), "SIGNIN": ("20", None), "REFRESH": ("30", None)}
+    defaults = {
+        "SIGNUP": ("10", None),
+        "SIGNIN": ("20", None),
+        "REFRESH": ("30", None),
+        "FORGOT": ("3", None),   # tight: reset emails = potential harassment vector
+        "RESET": ("10", None),   # DB + argon2 path
+    }
     default_rate, _ = defaults.get(prefix, ("10", None))
     rate_per_minute = int(os.getenv(f"AUTH_{prefix}_RATE_PER_MINUTE", default_rate))
     burst = int(os.getenv(f"AUTH_{prefix}_RATE_BURST", str(rate_per_minute)))
@@ -231,3 +237,42 @@ def check_rate_limit_refresh(ip: str) -> None:
     result = _check_bucket("REFRESH", ip, rate_per_minute, burst)
     if result < 0:
         raise RefreshRateLimitedError(retry_after=abs(result))
+
+def check_rate_limit_forgot(ip: str) -> None:
+    """Check and consume one forgot-password token for the given IP.
+
+    Rate is configured via AUTH_FORGOT_RATE_PER_MINUTE (default 3) — tight
+    because password-reset emails are a potential account-harassment vector.
+
+    Args:
+        ip: Client IP address.
+
+    Raises:
+        ForgotPasswordRateLimitedError: Rate limit exceeded.
+    """
+    from app.auth.errors import ForgotPasswordRateLimitedError  # noqa: PLC0415
+
+    rate_per_minute, burst = _load_limits("FORGOT")
+    result = _check_bucket("FORGOT", ip, rate_per_minute, burst)
+    if result < 0:
+        raise ForgotPasswordRateLimitedError(retry_after=abs(result))
+
+
+def check_rate_limit_reset(ip: str) -> None:
+    """Check and consume one reset-password token for the given IP.
+
+    Rate is configured via AUTH_RESET_RATE_PER_MINUTE (default 10).
+    Higher than forgot because reset attempts hit DB + argon2 (expensive path).
+
+    Args:
+        ip: Client IP address.
+
+    Raises:
+        ResetPasswordRateLimitedError: Rate limit exceeded.
+    """
+    from app.auth.errors import ResetPasswordRateLimitedError  # noqa: PLC0415
+
+    rate_per_minute, burst = _load_limits("RESET")
+    result = _check_bucket("RESET", ip, rate_per_minute, burst)
+    if result < 0:
+        raise ResetPasswordRateLimitedError(retry_after=abs(result))

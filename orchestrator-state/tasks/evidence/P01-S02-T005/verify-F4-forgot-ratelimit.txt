@@ -1,0 +1,8 @@
+HTTP/1.1 429 Too Many Requests
+date: Tue, 12 May 2026 17:00:40 GMT
+server: uvicorn
+retry-after: 32
+content-length: 202
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"aaaaaaaa-0001-0000-0000-000000000004"},"errors":[{"code":"AUTH_FORGOT_RATE_LIMITED","message":"Too many reset requests; retry after 32s","field":null,"details":null}]}

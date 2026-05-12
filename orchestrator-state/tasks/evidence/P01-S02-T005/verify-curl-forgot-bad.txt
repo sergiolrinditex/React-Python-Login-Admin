@@ -1,0 +1,7 @@
+HTTP/1.1 422 Unprocessable Entity
+date: Tue, 12 May 2026 16:01:32 GMT
+server: uvicorn
+content-length: 220
+content-type: application/json
+
+{"detail":[{"type":"value_error","loc":["body","email"],"msg":"value is not a valid email address: An email address must have an @-sign.","input":"not-an-email","ctx":{"reason":"An email address must have an @-sign."}}]}

@@ -14,15 +14,21 @@ Submodules:
   - sign_in.py  — SignInUser, SignInResult (P01-S02-T002)
   - refresh.py  — RefreshTokenUser, RefreshResult (P01-S02-T003)
   - logout.py   — LogoutUser (P01-S02-T004)
+  - password_reset_request.py — RequestPasswordReset (P01-S02-T005)
+  - password_reset_consume.py — ResetPassword (P01-S02-T005)
 """
 
 from app.auth.services.logout import LogoutUser
+from app.auth.services.password_reset_consume import ResetPassword
+from app.auth.services.password_reset_request import RequestPasswordReset
 from app.auth.services.refresh import RefreshResult, RefreshTokenUser
 from app.auth.services.sign_in import SignInResult, SignInUser
 from app.auth.services.sign_up import SignUpResult, SignUpUser
 
 __all__ = [
     "LogoutUser",
+    "RequestPasswordReset",
+    "ResetPassword",
     "RefreshResult",
     "RefreshTokenUser",
     "SignInResult",

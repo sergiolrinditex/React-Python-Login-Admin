@@ -256,3 +256,81 @@ class RefreshRateLimitedError(AuthError):
         """
         super().__init__(f"Too many refresh attempts; retry after {retry_after}s")
         self.retry_after = retry_after
+
+
+# ---------------------------------------------------------------------------
+# Password reset errors (added P01-S02-T005)
+# ---------------------------------------------------------------------------
+
+class ResetTokenInvalidError(AuthError):
+    """Reset token is unknown, already used, or invalid.
+
+    Returned for all non-expired invalid cases — byte-identical 410 body to
+    prevent token-state enumeration. Used-at IS NOT NULL and unknown hash
+    both map here. The reason is internal only.
+
+    HTTP: 410 Gone  Code: AUTH_RESET_TOKEN_INVALID
+    Ref: TECHNICAL_GUIDE §6.2 fila 260; task pack §H-reset-2/4
+    """
+
+    code = "AUTH_RESET_TOKEN_INVALID"
+    http_status = 410
+
+    def __init__(self) -> None:
+        super().__init__("Reset token is invalid or has already been used")
+
+
+class ResetTokenExpiredError(AuthError):
+    """Reset token has expired (expires_at <= now()).
+
+    HTTP: 410 Gone  Code: AUTH_RESET_TOKEN_EXPIRED
+    The HTTP body must be identical to ResetTokenInvalidError from the caller's
+    perspective (anti-enumeration); code differs only for internal audit clarity.
+
+    Ref: TECHNICAL_GUIDE §6.2; task pack §H-reset-3
+    """
+
+    code = "AUTH_RESET_TOKEN_EXPIRED"
+    http_status = 410
+
+    def __init__(self) -> None:
+        super().__init__("Reset token has expired; request a new one")
+
+
+class ForgotPasswordRateLimitedError(RateLimitExceededError):
+    """Too many forgot-password requests from this IP.
+
+    HTTP: 429  Code: AUTH_FORGOT_RATE_LIMITED
+    Ref: task pack §H-forgot-5, §H-reset-6
+    """
+
+    code = "AUTH_FORGOT_RATE_LIMITED"
+    http_status = 429
+
+    def __init__(self, retry_after: int) -> None:
+        """
+        Args:
+            retry_after: Seconds until the rate-limit window resets.
+        """
+        # Call AuthError.__init__ to avoid RateLimitExceededError's super chain
+        AuthError.__init__(self, f"Too many reset requests; retry after {retry_after}s")
+        self.retry_after = retry_after
+
+
+class ResetPasswordRateLimitedError(RateLimitExceededError):
+    """Too many reset-password attempts from this IP.
+
+    HTTP: 429  Code: AUTH_RESET_RATE_LIMITED
+    Ref: task pack §H-reset-6
+    """
+
+    code = "AUTH_RESET_RATE_LIMITED"
+    http_status = 429
+
+    def __init__(self, retry_after: int) -> None:
+        """
+        Args:
+            retry_after: Seconds until the rate-limit window resets.
+        """
+        AuthError.__init__(self, f"Too many reset attempts; retry after {retry_after}s")
+        self.retry_after = retry_after

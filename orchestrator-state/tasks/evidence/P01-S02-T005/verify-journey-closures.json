@@ -1,0 +1,49 @@
+{
+  "ok": true,
+  "task_id": "P01-S02-T005",
+  "assume_current_done": true,
+  "closing_journeys": [],
+  "participating_journeys": [
+    {
+      "id": "J100",
+      "title": "SignInPage /auth/sign-in → TwoFactorPage /auth/2fa → ChatHomePage /chat",
+      "verification_status": "pending",
+      "task_ids": [
+        "P01-S02-T001",
+        "P01-S02-T002",
+        "P01-S02-T003",
+        "P01-S02-T004",
+        "P01-S02-T005",
+        "P01-S02-T006",
+        "P01-S02-T007",
+        "P01-S02-T008",
+        "P01-S02-T009",
+        "P01-S02-T010",
+        "P01-S02-T011",
+        "P01-S02-T012",
+        "P03-S01-T001",
+        "P03-S01-T005",
+        "P05-S01-T001"
+      ],
+      "terminal_task_ids": [
+        "P01-S02-T005",
+        "P01-S02-T007",
+        "P01-S02-T009",
+        "P01-S02-T010",
+        "P01-S02-T011",
+        "P01-S02-T012",
+        "P05-S01-T001"
+      ],
+      "completion_policy": "all_task_ids_done",
+      "missing_dependencies_after_current_done": [
+        "P01-S02-T006",
+        "P01-S02-T007",
+        "P03-S01-T001",
+        "P03-S01-T005",
+        "P05-S01-T001"
+      ],
+      "ready_to_verify_after_current_done": false,
+      "already_closed": false
+    }
+  ]
+}

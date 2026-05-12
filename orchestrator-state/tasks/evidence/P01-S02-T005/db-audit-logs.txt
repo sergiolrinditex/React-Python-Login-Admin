@@ -1,0 +1,11 @@
+=== audit_logs - password_reset actions ===
+  action=auth.password_reset.completed request_id=tester-T005-e2e-reset user_found=? sessions_revoked=?
+  action=auth.password_reset.requested request_id=tester-T005-e2e-forgot user_found=True sessions_revoked=?
+  action=auth.password_reset.requested request_id=antienum-unknown user_found=False sessions_revoked=?
+  action=auth.password_reset.requested request_id=antienum-known user_found=True sessions_revoked=?
+  action=auth.password_reset.requested request_id=req-known user_found=True sessions_revoked=?
+  action=auth.password_reset.requested request_id=tester-T005-forgot-unknown user_found=False sessions_revoked=?
+  action=auth.password_reset.requested request_id=tester-T005-forgot-known user_found=True sessions_revoked=?
+  action=auth.password_reset.completed request_id=test-t21-e2e-reset user_found=? sessions_revoked=?
+  action=auth.password_reset.requested request_id=test-t21-e2e user_found=True sessions_revoked=?
+  action=auth.password_reset.completed request_id=7e55e77a-920c-4557-ae8b-96891be24774 user_found=? sessions_revoked=?

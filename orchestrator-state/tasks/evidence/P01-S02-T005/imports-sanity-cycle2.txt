@@ -1,0 +1,2 @@
+tokens.jwt_key.missing JWT_PRIVATE_KEY env var is not set; JWT encoding will raise at runtime
+imports OK: app.auth.services.password_reset_request app.auth.services.password_reset_consume

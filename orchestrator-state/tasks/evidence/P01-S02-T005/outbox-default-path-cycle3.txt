@@ -1,0 +1,10 @@
+=== OUTBOX DEFAULT PATH — Cycle 3 ===
+Timestamp: 2026-05-12T18:27:00+02:00
+Command: python3 -c "import sys; sys.path.insert(0,'backend'); from app.mail.outbox import _DEFAULT_OUTBOX; print(_DEFAULT_OUTBOX)"
+
+Result:
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-a3760893a49df8dca/orchestrator-state/dev-logs/mail-outbox.jsonl
+
+VERIFICATION: Path ENDS WITH 'agent-a3760893a49df8dca/orchestrator-state/dev-logs/mail-outbox.jsonl' — CORRECT
+The path is INSIDE the worktree, NOT at .claude/worktrees/orchestrator-state/... (one level above)
+BUG A is FIXED. 4×.parent chain is correct (outbox.py → mail → app → backend → REPO_ROOT).

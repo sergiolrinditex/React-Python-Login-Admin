@@ -1,0 +1,15 @@
+=== VERBOSE-OFF LOGGING CONTRACT — Cycle 3 ===
+Timestamp: 2026-05-12T18:28:00+02:00
+Test: ENABLE_VERBOSE_LOGGING=false pytest test_t08_forgot_verbose_off_silent
+
+Result: 1 passed
+
+T08 assertion (cycle 2 debugger tightened):
+- Reloads app.auth.services.password_reset_request + app.auth.routers.forgot_reset after ENABLE_VERBOSE_LOGGING=false env flip
+- Captures at caplog.at_level(logging.DEBUG, logger="app.auth")
+- Filters records to app.auth.routers.forgot_reset.* / app.auth.services.password_reset_request.*
+- Asserts: debug_records == [] (ZERO debug records)
+- Asserts: higher_records == [] (ZERO warning+ records on success path)
+T08 PASSED — the silence assertion is real (not just a status_code proxy)
+
+verbose_off: pass

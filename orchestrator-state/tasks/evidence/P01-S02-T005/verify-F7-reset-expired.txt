@@ -1,0 +1,7 @@
+HTTP/1.1 410 Gone
+date: Tue, 12 May 2026 17:02:44 GMT
+server: uvicorn
+content-length: 204
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"bbbbbbbb-0001-0000-0000-000000000007"},"errors":[{"code":"AUTH_RESET_TOKEN_EXPIRED","message":"Reset token has expired; request a new one","field":null,"details":null}]}

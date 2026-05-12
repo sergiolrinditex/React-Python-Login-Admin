@@ -1,0 +1,43 @@
+=== BUG FIX CONTRACT VERIFICATION — Cycle 3 ===
+Timestamp: 2026-05-12T18:28:00+02:00
+
+=== BUG A: outbox.py off-by-one parent count ===
+STATUS: FIXED
+File: backend/app/mail/outbox.py (line ~37)
+Fix: 5×.parent → 4×.parent
+Verified: _DEFAULT_OUTBOX = .../agent-a3760893a49df8dca/orchestrator-state/dev-logs/mail-outbox.jsonl
+INSIDE worktree (NOT one level above at .claude/worktrees/orchestrator-state/)
+RESULT: PASS
+
+=== BUG B: forgot 422 → should be 400 AUTH_INVALID_PAYLOAD ===
+STATUS: FIXED
+Test T04 source check:
+  Line 351: assert resp.status_code == 400, resp.text      ← strict 400
+  Line 354: assert "detail" not in body                    ← not FastAPI default envelope
+  Line 355: assert body["data"] is None                    ← project envelope
+  Line 356: assert "meta" in body and "request_id" in body["meta"]
+  Line 357: assert isinstance(body["errors"], list) and len(body["errors"]) >= 1
+  Line 358: err = body["errors"][0]
+  Line 359: assert err["code"] == "AUTH_INVALID_PAYLOAD"  ← correct error code
+  Line 360: assert err["field"] == "email"                 ← field-level error
+Test T04 PASSED in target run: test_t04_forgot_malformed_email_400 PASSED
+RESULT: PASS
+
+=== BUG C: reset 422 → should be 400 AUTH_INVALID_PAYLOAD ===
+STATUS: FIXED
+Test T14 source check:
+  Line 666: assert resp.status_code == 400, resp.text      ← strict 400
+  Line 668: assert "detail" not in body                    ← not FastAPI default envelope
+  Line 669: assert body["data"] is None                    ← project envelope
+  Line 670: assert "meta" in body and "request_id" in body["meta"]
+  Line 671: assert isinstance(body["errors"], list) and len(body["errors"]) >= 1
+  Line 672: err = body["errors"][0]
+  Line 673: assert err["code"] == "AUTH_INVALID_PAYLOAD"  ← correct error code
+  Line 674: assert err["field"] == "password"              ← field-level error
+Test T14 PASSED in target run: test_t14_reset_weak_password_400 PASSED
+RESULT: PASS
+
+=== OVERALL BUG FIX VERIFICATION ===
+BUG A: PASS
+BUG B: PASS (T04 strict 400 + full envelope contract verified)
+BUG C: PASS (T14 strict 400 + full envelope contract verified)

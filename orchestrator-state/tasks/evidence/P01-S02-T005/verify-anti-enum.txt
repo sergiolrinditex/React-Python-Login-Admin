@@ -1,0 +1,1 @@
+anti-enum body byte-equal: yes

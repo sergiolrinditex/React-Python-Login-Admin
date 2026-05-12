@@ -1,0 +1,50 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.5, pytest-9.0.2, pluggy-1.6.0
+rootdir: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-a3760893a49df8dca/backend
+configfile: pyproject.toml
+plugins: httpx-0.36.0, asyncio-1.3.0, langsmith-0.8.3, anyio-4.13.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collected 123 items
+
+tests/integration/test_auth_logout.py ...............                    [ 12%]
+tests/integration/test_auth_refresh.py ..............                    [ 23%]
+tests/integration/test_auth_signin.py ................                   [ 36%]
+tests/integration/test_auth_signup.py .........                          [ 43%]
+tests/integration/test_dev_restart_reset.py ..                           [ 45%]
+tests/integration/test_migrations_0001_auth.py ......                    [ 50%]
+tests/integration/test_password_reset.py FFF..FFFFFFFFFFFFFFFF           [ 67%]
+tests/integration/test_verification_data_bootstrap.py .........          [ 74%]
+tests/test_dependency_smoke.py ....................                      [ 91%]
+tests/test_health.py ...........                                         [100%]
+
+=============================== warnings summary ===============================
+tests/integration/test_auth_refresh.py: 20 warnings
+  /Users/sergiolr/Library/Python/3.11/lib/python/site-packages/starlette/testclient.py:445: DeprecationWarning: Setting per-request cookies=<...> is being deprecated, because the expected behaviour on cookie persistence is ambiguous. Set cookies directly on the client instance instead.
+    return super().request(
+
+tests/test_dependency_smoke.py::test_dependency_smoke[deepagents-deepagents-None]
+  /Users/sergiolr/Library/Python/3.11/lib/python/site-packages/langgraph/checkpoint/serde/encrypted.py:5: LangChainPendingDeprecationWarning: The default value of `allowed_objects` will change in a future version. Pass an explicit value (e.g., allowed_objects='messages' or allowed_objects='core') to suppress this warning.
+    from langgraph.checkpoint.serde.jsonplus import JsonPlusSerializer
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/integration/test_password_reset.py::test_t01_forgot_existing_user_200_outbox
+FAILED tests/integration/test_password_reset.py::test_t02_forgot_unknown_email_200_no_outbox
+FAILED tests/integration/test_password_reset.py::test_t03_forgot_disabled_user_200_no_outbox
+FAILED tests/integration/test_password_reset.py::test_t06_forgot_antienum_timing
+FAILED tests/integration/test_password_reset.py::test_t07_forgot_pii_safety
+FAILED tests/integration/test_password_reset.py::test_t08_forgot_verbose_off_silent
+FAILED tests/integration/test_password_reset.py::test_t09_forgot_locale_fallback
+FAILED tests/integration/test_password_reset.py::test_t10_reset_ok - sqlalche...
+FAILED tests/integration/test_password_reset.py::test_t11_reset_unknown_token_410
+FAILED tests/integration/test_password_reset.py::test_t12_reset_expired_token_410
+FAILED tests/integration/test_password_reset.py::test_t13_reset_used_token_410_same_body_as_unknown
+FAILED tests/integration/test_password_reset.py::test_t14_reset_weak_password_400
+FAILED tests/integration/test_password_reset.py::test_t15_reset_concurrency
+FAILED tests/integration/test_password_reset.py::test_t16_reset_revokes_all_sessions
+FAILED tests/integration/test_password_reset.py::test_t17_reset_idempotency
+FAILED tests/integration/test_password_reset.py::test_t18_reset_rate_limit_429
+FAILED tests/integration/test_password_reset.py::test_t19_reset_pii_safety - ...
+FAILED tests/integration/test_password_reset.py::test_t20_reset_old_password_rejected_new_accepted
+FAILED tests/integration/test_password_reset.py::test_t21_e2e_forgot_extract_reset_signin
+================= 19 failed, 104 passed, 21 warnings in 24.04s =================

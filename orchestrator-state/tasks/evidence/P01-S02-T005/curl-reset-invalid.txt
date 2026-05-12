@@ -1,0 +1,2 @@
+{"data":null,"meta":{"request_id":"tester-T005-reset-invalid"},"errors":[{"code":"AUTH_RESET_TOKEN_INVALID","message":"Reset token is invalid or has already been used","field":null,"details":null}]}
+HTTP=410

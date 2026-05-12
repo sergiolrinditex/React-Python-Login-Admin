@@ -1,0 +1,26 @@
+=== DATA CONTRACT USED — Cycle 3 ===
+Timestamp: 2026-05-12T18:28:00+02:00
+
+Verification Data Contract row: J100 auth-login
+Persona/Role: employee `data/verification/users/employee_primary.json`
+
+Real/Provided data loaded:
+- employee.verification@inditex-sandbox.com (status=active, locale=es, Argon2id password hash)
+- DB seed via: python3 -m app.verification_data.bootstrap --source data/verification --only auth
+- 2 users seeded (primary + secondary employee)
+
+Data confirmed in DB before test run:
+- SELECT COUNT(*) FROM users WHERE email='employee.verification@inditex-sandbox.com' → 1
+
+Tests using this data:
+- T01: forgot known email → 200 + outbox entry locale=es
+- T02: forgot unknown (nope@inditex-sandbox.com) → 200 body byte-equal
+- T03: forgot disabled user → uses _create_test_user (test-local)
+- T10, T16, T20, T21: reset with real token + sign-in with new password
+
+Persisted data observed during test execution:
+- password_reset_tokens: INSERT + mark_used rows per test (isolated via db_session fixture)
+- audit_logs: auth.password_reset.requested + auth.password_reset.completed
+- refresh_tokens: revoked_at set (T16: 3 sessions revoked)
+- users.password_hash: rotated by T10/T20/T21 (via test-local users)
+- mail-outbox JSONL (temp path per test): contains token, subject, html_len, text_len, to_domain

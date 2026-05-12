@@ -1,0 +1,43 @@
+=== CONTRACT OBSERVED — Cycle 3 ===
+Timestamp: 2026-05-12T18:28:00+02:00
+
+=== Route/API paths exercised ===
+POST /api/v1/auth/forgot-password → backend/app/auth/routers/forgot_reset.py::forgot_password_endpoint
+POST /api/v1/auth/reset-password → backend/app/auth/routers/forgot_reset.py::reset_password_endpoint
+
+=== Use cases / Services ===
+backend/app/auth/services/password_reset_request.py::RequestPasswordReset.execute (T01-T09)
+backend/app/auth/services/password_reset_consume.py::ResetPassword.execute (T10-T21)
+
+=== Repositories ===
+backend/app/auth/repositories/password_reset.py::PasswordResetTokenRepository
+  .insert() — T01, T10, T15, T16, T17, T20, T21
+  .find_active_by_hash_for_update() — T10, T11, T12, T13, T15, T16, T17, T20, T21
+  .find_by_hash() — T12 (expired differentiation)
+  .mark_used() — T10, T15, T16, T17, T20, T21
+backend/app/auth/repositories/refresh.py::RefreshTokenRepository
+  .revoke_all_active_for_user() — T16 (3 sessions revoked)
+backend/app/auth/repository.py::AuthRepository
+  .find_by_email() — T01-T06
+  .write_audit() — all tests
+
+=== Tables ===
+password_reset_tokens — INSERT, SELECT FOR UPDATE, UPDATE used_at
+users — SELECT email lookup, UPDATE password_hash
+refresh_tokens — UPDATE revoked_at (revoke_all_active_for_user)
+audit_logs — INSERT action=auth.password_reset.{requested,completed}
+
+=== Mail ===
+backend/app/mail/__init__.py::get_mailer() → OutboxMailer (MAIL_MODE=outbox)
+backend/app/mail/outbox_mailer.py::OutboxMailer.send_reset_email → writes to tmp JSONL (MAIL_OUTBOX_PATH)
+
+=== No mocks of own services ===
+Verified: grep -n "patch|MagicMock|Mock|mock_object|@mock" test_password_reset.py
+Only monkeypatch.setenv usage (T05 rate limit, T18 rate limit) — NOT mocking business logic
+No patches of RequestPasswordReset, ResetPassword, AuthRepository, RefreshTokenRepository
+Only acceptable "mock": OutboxMailer with MAIL_OUTBOX_PATH tmpdir redirect (dev mode, not a mock of business logic)
+
+=== Error handler wiring (cycle 2 fix) ===
+backend/app/main.py — path-scoped RequestValidationError handler for {forgot-password, reset-password}
+  → Returns HTTP 400 with {data:null, meta:{request_id}, errors:[{code:AUTH_INVALID_PAYLOAD, field:...}]}
+  → Preserves HTTP 422 for all other endpoints (sign-up, sign-in remain 422 per existing contract)

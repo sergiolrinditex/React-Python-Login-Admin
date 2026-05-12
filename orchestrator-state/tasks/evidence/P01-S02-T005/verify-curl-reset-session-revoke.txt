@@ -1,0 +1,7 @@
+HTTP/1.1 200 OK
+date: Tue, 12 May 2026 16:04:32 GMT
+server: uvicorn
+content-length: 68
+content-type: application/json
+
+{"data":{"reset":true},"meta":{"request_id":"F8-reset"},"errors":[]}

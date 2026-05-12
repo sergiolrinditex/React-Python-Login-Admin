@@ -27,7 +27,7 @@
   - **P01-S02-T004 — POST /api/v1/auth/logout (developer done, 2026-05-12)**
   - **P01-S02-T012 — fix dev-restart db_health race: host TCP probe (developer done, 2026-05-12)**
   - **P01-S02-T011 — fix refresh cookie Path mismatch /auth → /api/v1/auth (developer done, 2026-05-12)**
-- **Next pending slice**: P01-S02-T005 — GET /api/v1/auth/session (or per registry wave)
+- **Next pending slice**: Next wave per registry (P01-S02-T006 or similar)
 - **Blockers**: none
 - **Generated at**: 2026-05-12T08:35:00+02:00
 
@@ -85,8 +85,8 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 |--------|--------|---------|
 | Server | running | uvicorn app.main:app --port 8000 --reload |
 | Health check | 3 endpoints implemented | GET /health (backward compat), GET /live (liveness), GET /ready (readiness with DB+Redis ping) |
-| Auth endpoints | 4 implemented | POST /api/v1/auth/sign-up (T001), POST /api/v1/auth/sign-in (T002), POST /api/v1/auth/refresh (T003), POST /api/v1/auth/logout (T004) — cookie Path fixed to /api/v1/auth (T011) |
-| Endpoints implemented | 7 | GET /health, GET /live, GET /ready, POST /api/v1/auth/sign-up, POST /api/v1/auth/sign-in, POST /api/v1/auth/refresh, POST /api/v1/auth/logout |
+| Auth endpoints | 6 implemented | POST /api/v1/auth/sign-up (T001), POST /api/v1/auth/sign-in (T002), POST /api/v1/auth/refresh (T003), POST /api/v1/auth/logout (T004) — cookie Path fixed to /api/v1/auth (T011). POST /api/v1/auth/forgot-password (T005), POST /api/v1/auth/reset-password (T005) |
+| Endpoints implemented | 9 | GET /health, GET /live, GET /ready, POST /api/v1/auth/sign-up, POST /api/v1/auth/sign-in, POST /api/v1/auth/refresh, POST /api/v1/auth/logout, POST /api/v1/auth/forgot-password, POST /api/v1/auth/reset-password |
 | Migrations applied | 1 (head=0001) | 9 auth tables: users, employee_profiles, roles, permissions, user_roles, refresh_tokens, mfa_totp_secrets, password_reset_tokens, audit_logs |
 | Seed data | loader.py fixed (P00-S02-T004); bootstrap ready; dev-restart --reset self-contained (T008) | FU-20260511145446 resolved — CAST(:meta AS JSONB) + json.dumps(). T008 fix: absolute --source path + hard-fail. |
 | Backend tests | 102 passing | test_health.py (11) + test_dependency_smoke.py (20) + test_migrations_0001_auth.py (6) + test_dev_restart_reset.py (2) + test_verification_data_bootstrap.py (9) + test_auth_signup.py (9) + test_auth_signin.py (16) + test_auth_refresh.py (14) + test_auth_logout.py (15 — T15 NEW cookie-jar roundtrip T011) |
@@ -160,12 +160,12 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 | Level | Count | Status |
 |-------|-------|--------|
 | Backend unit | 0 | — |
-| Backend integration | 102 | PASS (health 11 + dep smoke 20 + migrations 6 + dev restart 2 + bootstrap 9 + auth signup 9 + auth signin 16 + auth refresh 14 + auth logout 15 — T15 cookie-jar T011) |
+| Backend integration | 123 | PASS (health 11 + dep smoke 20 + migrations 6 + dev restart 2 + bootstrap 9 + auth signup 9 + auth signin 16 + auth refresh 14 + auth logout 15 + password reset 21 — T005) |
 | Compose orchestration smoke | 11 | PASS (T1–T8 tester + verify cycle 1+2 + minio-init bucket) |
 | Frontend unit | 0 | — |
 | Frontend component | 58 | PASS (providers 4 + design-system 34 + showcase 4 + i18n 16) |
 | E2E | 0 | — |
-| **Total** | **171** | **171 PASS, 0 FAIL** |
+| **Total** | **192** | **192 PASS, 0 FAIL** |
 
 ## Milestones
 
@@ -241,6 +241,8 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 - **2026-05-12 (P01-S02-T004)**: All 401 failures raise `SessionExpiredError` → `AUTH_SESSION_EXPIRED` body. The reason (no_bearer, expired_bearer, invalid_bearer, no_cookie, unknown_hash, revoked, expired, user_mismatch) is captured only in `audit_logs.metadata->>'reason'` for security. T10 verifies byte-equality of 401 bodies stripping per-request meta fields.
 - **2026-05-12 (P01-S02-T004)**: hook_write_scope_guard.py resolves worktree path relative to repo root → sees `.claude/worktrees/...` → falsely triggers static config guard. Workaround: all new file creation via Bash heredoc `cat > file << 'PYEOF'`. Documented in MEMORY.md.
 
+> Last updated: 2026-05-12T17:00:00+02:00
+> Updated by: developer — P01-S02-T005 POST /api/v1/auth/forgot-password + reset-password — 21 new tests (123/123 backend integration), 9 backend endpoints total (developer done, pending validator+tester+verify-slice)
 > Last updated: 2026-05-12T11:40:00+02:00
 > Updated by: developer — P01-S02-T003 POST /api/v1/auth/refresh — 14 tests (87/87 suite), 6 backend endpoints total (developer done, pending validator+tester+verify-slice)
 > Updated by: developer — P01-S02-T009 JWT dev key hygiene + ENABLE_VERBOSE_LOGGING default (developer done, pending validator+tester+verify-slice)

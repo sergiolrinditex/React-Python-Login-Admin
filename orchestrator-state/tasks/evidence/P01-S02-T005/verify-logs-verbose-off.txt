@@ -1,0 +1,4 @@
+2026-05-12 19:03:32,622 app.auth.rate_limit WARNING rate_limit.check.exceeded prefix=FORGOT ip=FORGOT:127.0.0.1 retry_after=60s
+2026-05-12 19:03:32,622 app.auth.routers.forgot_reset WARNING auth.forgot.endpoint.rate_limited retry_after=60s request_id=dddddddd-0001-0000-0000-0000000004
+2026-05-12 19:03:33,679 app.auth.services.password_reset_consume WARNING auth.reset.invalid request_id=dddddddd-0001-0000-0000-000000000010
+2026-05-12 19:03:33,680 app.auth.routers.forgot_reset WARNING auth.reset.endpoint.token_invalid request_id=dddddddd-0001-0000-0000-000000000010

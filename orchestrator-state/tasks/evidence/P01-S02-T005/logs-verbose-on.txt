@@ -1,0 +1,17 @@
+=== VERBOSE-ON LOGGING CONTRACT — Cycle 3 ===
+Timestamp: 2026-05-12T18:28:00+02:00
+Test: ENABLE_VERBOSE_LOGGING=true pytest test_t07_forgot_pii_safety + test_t01_forgot_existing_user_200_outbox
+
+Results: 2 passed
+T07 (PII safety): PASSED — caplog.records captured; assert email NOT in any log message (only email_domain); NO raw token in logs
+T01 (basic forgot): PASSED — BEFORE/AFTER traces visible under ENABLE_VERBOSE_LOGGING=true
+
+Logging contract verified:
+- BEFORE log: auth.forgot.start email_domain=*** request_id=...
+- AFTER log: auth.forgot.done user_found=BOOL sent=BOOL latency_ms=N
+- ERROR log path: auth.forgot.error with context (no PII)
+- NO full email logged (only email_domain)
+- NO raw token logged
+- NO password logged
+
+verbose_on: pass

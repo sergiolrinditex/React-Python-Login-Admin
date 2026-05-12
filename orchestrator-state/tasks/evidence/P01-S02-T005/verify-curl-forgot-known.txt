@@ -1,0 +1,7 @@
+HTTP/1.1 200 OK
+date: Tue, 12 May 2026 16:01:32 GMT
+server: uvicorn
+content-length: 95
+content-type: application/json
+
+{"data":{"sent":true},"meta":{"request_id":"11111111-1111-1111-1111-111111111111"},"errors":[]}

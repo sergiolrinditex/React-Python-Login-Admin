@@ -211,3 +211,45 @@ class RefreshTokenRepository:
             active,
         )  # AFTER
         return user if active else None
+
+    def revoke_all_active_for_user(
+        self,
+        user_id: uuid.UUID,
+        reason: str = "password_reset",
+    ) -> int:
+        """Revoke all active refresh tokens for a user (bulk session invalidation).
+
+        Used by the password reset flow (§H-reset-8) to invalidate all open
+        sessions after a successful password change. Marks revoked_at = now()
+        on every row WHERE user_id = :uid AND revoked_at IS NULL.
+
+        Args:
+            user_id: UUID of the user whose sessions are to be invalidated.
+            reason:  Audit metadata label (default 'password_reset').
+
+        Returns:
+            Number of rows updated (count of sessions invalidated).
+        """
+        logger.debug(
+            "auth.repo.refresh.revoke_all_active.start user_id=%s reason=%s",
+            str(user_id),
+            reason,
+        )  # BEFORE
+        now = datetime.now(tz=timezone.utc)
+        count = (
+            self._session.query(RefreshToken)
+            .filter(
+                RefreshToken.user_id == user_id,
+                RefreshToken.revoked_at.is_(None),
+            )
+            .update(
+                {"revoked_at": now},
+                synchronize_session="fetch",
+            )
+        )
+        logger.debug(
+            "auth.repo.refresh.revoke_all_active.done user_id=%s revoked=%d",
+            str(user_id),
+            count,
+        )  # AFTER
+        return count

@@ -1,0 +1,23 @@
+== users (after reset) ==
+  ('admin.peopletech@inditex-sandbox.com', 'active', 'es', '$argon2id$v=19$m=65536,t=3,p=4$QpL8r/Tpp')
+  ('employee.verification@inditex-sandbox.com', 'active', 'es', '$argon2id$v=19$m=65536,t=3,p=4$EQMk5JsIH')
+
+== password_reset_tokens ==
+  (UUID('16e86e9c-9049-4109-acac-287c941e22af'), UUID('c6ae9a19-c4bb-437d-b9be-5ee516ecb6d1'), datetime.datetime(2026, 5, 12, 16, 2, 44, 732571, tzinfo=datetime.timezone.utc), None)
+  (UUID('315f73aa-14fc-41ad-8d5b-3503d9620eeb'), UUID('c6ae9a19-c4bb-437d-b9be-5ee516ecb6d1'), datetime.datetime(2026, 5, 12, 18, 0, 34, 984370, tzinfo=datetime.timezone.utc), datetime.datetime(2026, 5, 12, 17, 1, 54, 732906, tzinfo=datetime.timezone.utc))
+  (UUID('5b2497de-599f-4320-a385-dc854d3d8968'), UUID('c6ae9a19-c4bb-437d-b9be-5ee516ecb6d1'), datetime.datetime(2026, 5, 12, 18, 3, 32, 449480, tzinfo=datetime.timezone.utc), None)
+
+== refresh_tokens ==
+  (UUID('d7f92b74-6988-4b61-a4b2-1e5a14c239d8'), UUID('c6ae9a19-c4bb-437d-b9be-5ee516ecb6d1'), datetime.datetime(2026, 5, 12, 17, 1, 54, 734673, tzinfo=datetime.timezone.utc))
+  (UUID('063fb44c-eda9-42d2-ad0c-0bea2ccfe30a'), UUID('c6ae9a19-c4bb-437d-b9be-5ee516ecb6d1'), datetime.datetime(2026, 5, 12, 17, 1, 54, 734673, tzinfo=datetime.timezone.utc))
+  (UUID('68fc1b69-2827-43dd-8f0e-643bf89a213d'), UUID('c6ae9a19-c4bb-437d-b9be-5ee516ecb6d1'), datetime.datetime(2026, 5, 12, 17, 1, 54, 734673, tzinfo=datetime.timezone.utc))
+  (UUID('de336816-7299-4490-bcd3-293e52ffb0e4'), UUID('c6ae9a19-c4bb-437d-b9be-5ee516ecb6d1'), None)
+
+== audit_logs (password_reset only) ==
+  ('auth.password_reset.requested', '00000000-0000-0000-0000-000000000001', 'false', None, 'inditex-sandbox.com', None)
+  ('auth.password_reset.requested', 'aaaaaaaa-0001-0000-0000-000000000001', 'false', None, 'inditex-sandbox.com', None)
+  ('auth.password_reset.requested', 'aaaaaaaa-0001-0000-0000-000000000002', 'true', None, 'inditex-sandbox.com', '315f73aa-14fc-41ad-8d5b-3503d9620eeb')
+  ('auth.password_reset.completed', 'bbbbbbbb-0001-0000-0000-000000000001', None, '3', None, '315f73aa-14fc-41ad-8d5b-3503d9620eeb')
+  ('auth.password_reset.requested', 'dddddddd-0001-0000-0000-000000000001', 'true', None, 'inditex-sandbox.com', '5b2497de-599f-4320-a385-dc854d3d8968')
+  ('auth.password_reset.requested', 'dddddddd-0001-0000-0000-0000000002', 'false', None, 'example.com', None)
+  ('auth.password_reset.requested', 'dddddddd-0001-0000-0000-0000000003', 'false', None, 'example.com', None)

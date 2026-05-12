@@ -255,3 +255,85 @@ class SignInResponseMfaChallenge(BaseModel):
     data: dict = Field(description="MFA challenge payload with mfa_challenge_token.")
     meta: ResponseMeta
     errors: list[Any] = Field(default_factory=list)
+
+
+# ---------------------------------------------------------------------------
+# Forgot + reset password schemas (added P01-S02-T005)
+# ---------------------------------------------------------------------------
+
+class ForgotPasswordRequest(BaseModel):
+    """Request body for POST /api/v1/auth/forgot-password.
+
+    Anti-enumeration: if the email does not exist, the endpoint returns
+    the same 200 body as if it did. The Pydantic layer only validates syntax.
+
+    Attributes:
+        email: User's email address (RFC 5322 syntax, no domain restriction).
+    """
+
+    email: EmailStr = Field(
+        ...,
+        description="Email address to send the reset link to.",
+        json_schema_extra={"example": "employee@inditex-sandbox.com"},
+    )
+
+
+class ForgotPasswordResponse(BaseModel):
+    """Response envelope for POST /api/v1/auth/forgot-password (HTTP 200).
+
+    Always {data: {sent: true}, meta: {request_id}, errors: []} regardless
+    of whether the email exists (anti-enumeration, per task pack §H-forgot-4).
+
+    Attributes:
+        data: Always {sent: true}.
+        meta: Standard response metadata.
+        errors: Always empty list.
+    """
+
+    data: dict = Field(
+        default_factory=lambda: {"sent": True},
+        description="Always {sent: true} — never reveals whether email exists.",
+    )
+    meta: ResponseMeta
+    errors: list = Field(default_factory=list)
+
+
+class ResetPasswordRequest(BaseModel):
+    """Request body for POST /api/v1/auth/reset-password.
+
+    Attributes:
+        token: The URL-safe opaque token extracted from the reset link.
+               Min 30 chars (token_urlsafe(32) produces ~43 chars).
+        password: New plaintext password (policy enforced by service layer).
+    """
+
+    token: str = Field(
+        ...,
+        min_length=30,
+        description="Reset token from the email link (URL-safe base64, ~43 chars).",
+    )
+    password: str = Field(
+        ...,
+        min_length=1,
+        max_length=512,
+        description="New password. Min 12 chars, must contain upper, digit, and symbol.",
+    )
+
+
+class ResetPasswordResponse(BaseModel):
+    """Response envelope for POST /api/v1/auth/reset-password (HTTP 200).
+
+    Shape: {data: {reset: true}, meta: {request_id}, errors: []}.
+
+    Attributes:
+        data: Always {reset: true} on success.
+        meta: Standard response metadata.
+        errors: Always empty list.
+    """
+
+    data: dict = Field(
+        default_factory=lambda: {"reset": True},
+        description="Confirmation that the password was reset.",
+    )
+    meta: ResponseMeta
+    errors: list = Field(default_factory=list)

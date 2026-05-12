@@ -1,0 +1,59 @@
+## password_reset_tokens
+                  id                  |               user_id                |            used_at            |          expires_at           
+--------------------------------------+--------------------------------------+-------------------------------+-------------------------------
+ 97ba8d87-a574-410e-805e-dc1595db9cda | 06f7e5ba-551d-43a7-a329-c02b989c26ee | 2026-05-12 16:02:50.054697+00 | 2026-05-12 17:01:32.851518+00
+ a1986a21-a134-460d-94e1-5ce1cc6e1360 | 06f7e5ba-551d-43a7-a329-c02b989c26ee | 2026-05-12 16:04:32.967883+00 | 2026-05-12 17:04:32.859574+00
+ e7f8647b-ed71-4bdf-af66-57e9f2ccef8b | 06f7e5ba-551d-43a7-a329-c02b989c26ee | 2026-05-12 16:05:55.090801+00 | 2026-05-12 17:05:55.000109+00
+ 59dd331a-14f1-4940-93bc-9628ec337fef | 06f7e5ba-551d-43a7-a329-c02b989c26ee |                               | 2026-05-12 17:07:40.58435+00
+ 17b9cc09-73b3-4365-b6e9-2235dd265e3d | 06f7e5ba-551d-43a7-a329-c02b989c26ee |                               | 2026-05-12 17:07:55.281593+00
+ a56bf0e7-ed14-4adc-9b16-95ad0fbed718 | 06f7e5ba-551d-43a7-a329-c02b989c26ee |                               | 2026-05-12 17:07:55.550485+00
+ eba72303-6919-4181-8cb6-06ceeb5c7e94 | 06f7e5ba-551d-43a7-a329-c02b989c26ee |                               | 2026-05-12 17:07:55.787919+00
+ be02f7be-e2a4-4533-86b4-b25956f3c550 | 06f7e5ba-551d-43a7-a329-c02b989c26ee |                               | 2026-05-12 17:07:56.033987+00
+ 6c36028c-cf6f-4c9d-8eb3-850e9d1f7699 | 06f7e5ba-551d-43a7-a329-c02b989c26ee |                               | 2026-05-12 17:07:56.277589+00
+ beb9c176-c478-4728-a564-1818a74a709f | 06f7e5ba-551d-43a7-a329-c02b989c26ee |                               | 2026-05-12 17:08:06.010152+00
+(10 rows)
+
+
+## refresh_tokens
+                  id                  |               user_id                |          revoked_at           |          expires_at           
+--------------------------------------+--------------------------------------+-------------------------------+-------------------------------
+ 20360330-5005-4639-82d7-859cffcd60fe | 06f7e5ba-551d-43a7-a329-c02b989c26ee | 2026-05-12 16:05:55.092394+00 | 2026-05-19 16:04:52.808868+00
+ 60623b8d-d610-4c1d-98af-6a91d11ab7b3 | 06f7e5ba-551d-43a7-a329-c02b989c26ee | 2026-05-12 16:05:55.092394+00 | 2026-05-19 16:04:52.862736+00
+ ee64bae8-5fc4-4fb4-9191-d5b281c73655 | 06f7e5ba-551d-43a7-a329-c02b989c26ee | 2026-05-12 16:05:55.092394+00 | 2026-05-19 16:04:52.911442+00
+ 174a9aa7-82ed-41c3-9aeb-bae326fc11ba | 06f7e5ba-551d-43a7-a329-c02b989c26ee |                               | 2026-06-11 16:06:07.277414+00
+(4 rows)
+
+
+## audit_logs (auth.password_reset.*)
+            action             |            actor_user_id             |                                                                                             metadata                                                                                             
+-------------------------------+--------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ auth.password_reset.requested | 06f7e5ba-551d-43a7-a329-c02b989c26ee | {"ip_hash": "12ca17b49af2", "token_id": "97ba8d87-a574-410e-805e-dc1595db9cda", "request_id": "11111111-1111-1111-1111-111111111111", "user_found": true, "email_domain": "inditex-sandbox.com"}
+ auth.password_reset.completed | 06f7e5ba-551d-43a7-a329-c02b989c26ee | {"ip_hash": "12ca17b49af2", "token_id": "e7f8647b-ed71-4bdf-af66-57e9f2ccef8b", "request_id": "F8b-reset", "sessions_revoked": 3}
+ auth.password_reset.requested |                                      | {"ip_hash": "f5047344122f", "request_id": "2bb00fcb-bb28-4ac2-954d-ead495b34b90", "user_found": false, "email_domain": "inditex-sandbox.com"}
+ auth.password_reset.completed | 06f7e5ba-551d-43a7-a329-c02b989c26ee | {"ip_hash": "12ca17b49af2", "token_id": "a1986a21-a134-460d-94e1-5ce1cc6e1360", "request_id": "F8-reset", "sessions_revoked": 0}
+ auth.password_reset.requested | 06f7e5ba-551d-43a7-a329-c02b989c26ee | {"ip_hash": "180d338d162d", "token_id": "be02f7be-e2a4-4533-86b4-b25956f3c550", "request_id": "a754edf6-20b3-4a27-a6ad-5628fafb6f46", "user_found": true, "email_domain": "inditex-sandbox.com"}
+ auth.password_reset.requested | 06f7e5ba-551d-43a7-a329-c02b989c26ee | {"ip_hash": "a9a5126d7cca", "token_id": "eba72303-6919-4181-8cb6-06ceeb5c7e94", "request_id": "06d61afd-4429-4b51-b3da-989cdd3e5a93", "user_found": true, "email_domain": "inditex-sandbox.com"}
+ auth.password_reset.requested | 06f7e5ba-551d-43a7-a329-c02b989c26ee | {"ip_hash": "4dc2bea7fc2d", "token_id": "beb9c176-c478-4728-a564-1818a74a709f", "request_id": "51925ff3-1919-4f7e-9466-3d745dc3c24d", "user_found": true, "email_domain": "inditex-sandbox.com"}
+ auth.password_reset.requested |                                      | {"ip_hash": "d3a9ab1e0c6c", "request_id": "b528504a-1103-4330-be76-761a257ae254", "user_found": false, "email_domain": "inditex-sandbox.com"}
+ auth.password_reset.requested | 06f7e5ba-551d-43a7-a329-c02b989c26ee | {"ip_hash": "0546412d61ba", "token_id": "6c36028c-cf6f-4c9d-8eb3-850e9d1f7699", "request_id": "a3346c42-5ae7-4d3c-8eea-781f0f51c8ef", "user_found": true, "email_domain": "inditex-sandbox.com"}
+ auth.password_reset.requested | 06f7e5ba-551d-43a7-a329-c02b989c26ee | {"ip_hash": "f5047344122f", "token_id": "17b9cc09-73b3-4365-b6e9-2235dd265e3d", "request_id": "fe88d08f-5e12-49a4-a4bc-3fb7b38f6b80", "user_found": true, "email_domain": "inditex-sandbox.com"}
+ auth.password_reset.requested |                                      | {"ip_hash": "a9a5126d7cca", "request_id": "727743fd-19f9-494b-abdc-db60a7da7b36", "user_found": false, "email_domain": "inditex-sandbox.com"}
+ auth.password_reset.requested |                                      | {"ip_hash": "0546412d61ba", "request_id": "7f3733bb-6c09-4b30-b5ba-a3f85d1e318b", "user_found": false, "email_domain": "inditex-sandbox.com"}
+ auth.password_reset.requested | 06f7e5ba-551d-43a7-a329-c02b989c26ee | {"ip_hash": "12ca17b49af2", "token_id": "e7f8647b-ed71-4bdf-af66-57e9f2ccef8b", "request_id": "F8b-forgot", "user_found": true, "email_domain": "inditex-sandbox.com"}
+ auth.password_reset.completed | 06f7e5ba-551d-43a7-a329-c02b989c26ee | {"ip_hash": "12ca17b49af2", "token_id": "97ba8d87-a574-410e-805e-dc1595db9cda", "request_id": "66666666-6666-6666-6666-666666666666", "sessions_revoked": 0}
+ auth.password_reset.requested |                                      | {"ip_hash": "12ca17b49af2", "request_id": "22222222-2222-2222-2222-222222222222", "user_found": false, "email_domain": "inditex-sandbox.com"}
+ auth.password_reset.requested | 06f7e5ba-551d-43a7-a329-c02b989c26ee | {"ip_hash": "12ca17b49af2", "token_id": "59dd331a-14f1-4940-93bc-9628ec337fef", "request_id": "verbose-off-test", "user_found": true, "email_domain": "inditex-sandbox.com"}
+ auth.password_reset.requested | 06f7e5ba-551d-43a7-a329-c02b989c26ee | {"ip_hash": "12ca17b49af2", "token_id": "a1986a21-a134-460d-94e1-5ce1cc6e1360", "request_id": "F8-forgot-resend", "user_found": true, "email_domain": "inditex-sandbox.com"}
+ auth.password_reset.requested |                                      | {"ip_hash": "cb5f37b47628", "request_id": "08ffba2a-8ac4-4b97-aa9c-a930214dbe25", "user_found": false, "email_domain": "inditex-sandbox.com"}
+ auth.password_reset.requested |                                      | {"ip_hash": "180d338d162d", "request_id": "1e162650-c039-4394-a103-a4a54dca814b", "user_found": false, "email_domain": "inditex-sandbox.com"}
+ auth.password_reset.requested | 06f7e5ba-551d-43a7-a329-c02b989c26ee | {"ip_hash": "cb5f37b47628", "token_id": "a56bf0e7-ed14-4adc-9b16-95ad0fbed718", "request_id": "3fe31a38-7cec-4fc2-acb3-c0e189521508", "user_found": true, "email_domain": "inditex-sandbox.com"}
+ auth.password_reset.requested |                                      | {"ip_hash": "12ca17b49af2", "request_id": "rate-limit-test-1", "user_found": false, "email_domain": "inditex-sandbox.com"}
+(21 rows)
+
+
+## users.password_hash (first 30 chars)
+           substring            
+--------------------------------
+ $argon2id$v=19$m=65536,t=3,p=4
+(1 row)
+

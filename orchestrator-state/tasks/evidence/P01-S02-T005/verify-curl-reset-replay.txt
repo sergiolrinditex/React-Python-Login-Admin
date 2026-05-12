@@ -1,0 +1,7 @@
+HTTP/1.1 410 Gone
+date: Tue, 12 May 2026 16:02:49 GMT
+server: uvicorn
+content-length: 209
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"2e2c030c-9b77-49ca-b5da-a33225a5da05"},"errors":[{"code":"AUTH_RESET_TOKEN_INVALID","message":"Reset token is invalid or has already been used","field":null,"details":null}]}
