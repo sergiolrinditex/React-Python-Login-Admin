@@ -1,0 +1,29 @@
+## Verification Data Contract Used — P01-S02-T002
+
+### Contract rows used
+- data/verification/users/employee_primary.json
+  - email: employee.verification@inditex-sandbox.com
+  - password: VerifyPass2024!
+  - MFA: disabled initially (enabled temporarily for MFA curl test)
+
+### Data loaded
+- `python3 -m app.verification_data.bootstrap --source data/verification --only auth`
+- Inserted 2 auth verification rows (primary employee user + MFA record)
+
+### Persisted data observed (from curl success run)
+- refresh_tokens row:
+  - user_id: 5c3291f9-aa54-4de8-8e6e-3b1e2de87572
+  - token_hash: 64 hex chars (SHA-256 of opaque cookie value) - VERIFIED
+  - expires_at: ~30 days from now - VERIFIED
+  - revoked_at: NULL - VERIFIED
+- audit_logs rows for auth.sign_in:
+  - outcome=success (success no-MFA curl)
+  - outcome=mfa_challenge_issued (MFA curl test)
+  - outcome=blocked, reason=account_locked (423 lockout test x3)
+  - outcome=failure, reason=unknown_email (401 unknown email curl)
+  - Raw refresh token NOT stored anywhere - VERIFIED
+
+### Note on lockout test
+The lockout was triggered at threshold=3 (env override in service layer).
+We reset the lockout by deleting the failure audit rows to re-test the MFA branch.
+This is a valid tester operation.

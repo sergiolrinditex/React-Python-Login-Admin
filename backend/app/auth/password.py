@@ -114,3 +114,56 @@ def needs_rehash(stored_hash: str) -> bool:
         True if the hash was generated with outdated parameters.
     """
     return _ph.check_needs_rehash(stored_hash)
+
+
+# ---------------------------------------------------------------------------
+# Dummy hash for user-enumeration mitigation (added P01-S02-T002)
+# ---------------------------------------------------------------------------
+# DUMMY_VERIFY_HASH is computed ONCE at module import time so the sign-in
+# unknown-email path has a valid Argon2id hash to call verify_password() against,
+# making the wall-clock time of the "unknown email" path statistically
+# indistinguishable from the "wrong password" path. Both paths call
+# verify_password() and the Argon2 work dominates the timing.
+#
+# The constant plaintext "dummy-equaliser-not-a-real-password-12345" can never
+# appear as a user password (it does not meet sign-up policy) and the hash is
+# never stored in DB or returned in any response. NEVER log this value.
+#
+# Source: task pack §F.1, T001 service.py:208 pattern (hash_password on dupe-email path).
+# Public symbol per validator P01-S02-T002 cycle 1 finding F4 (was `_DUMMY_HASH`,
+# the underscore-prefixed private name leaked across module boundaries — now
+# a public constant + a public helper `verify_with_dummy_fallback`).
+DUMMY_VERIFY_HASH: str = hash_password("dummy-equaliser-not-a-real-password-12345")
+
+
+def verify_with_dummy_fallback(stored_hash: str | None, plain: str) -> bool:
+    """Verify a password against a real hash, or use the dummy hash when None.
+
+    Centralises the aggregate-401 / anti-enumeration pattern for sign-in:
+    callers MUST invoke this even when `find_by_email` returned None, so the
+    wall-clock time of unknown-email and wrong-password paths is dominated by
+    the same Argon2 verify call. The dummy hash never matches any real
+    password, so this returns False on the unknown-email path.
+
+    Args:
+        stored_hash: The user's stored Argon2id hash, or None when the user
+            was not found by find_by_email.
+        plain: The raw password attempt. NEVER log this value.
+
+    Returns:
+        True if `stored_hash` is provided and matches `plain`. False in all
+        other cases (no user, wrong password, malformed hash).
+
+    Security note: callers MUST raise the SAME error code on both
+    `stored_hash is None` and `verify failure` to avoid an enumeration oracle.
+    This helper only equalises timing — it does not equalise the response.
+    """
+    target_hash = stored_hash if stored_hash is not None else DUMMY_VERIFY_HASH
+    logger.debug("password.verify_with_dummy.start has_real_hash=%s", stored_hash is not None)
+    try:
+        _ph.verify(target_hash, plain)
+        logger.debug("password.verify_with_dummy.ok")
+        return True
+    except (VerifyMismatchError, VerificationError, InvalidHashError):
+        logger.debug("password.verify_with_dummy.mismatch")
+        return False

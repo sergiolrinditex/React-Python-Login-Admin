@@ -99,6 +99,13 @@ dependencies = [
     # (released 2026-05-01); compatible with sqlalchemy==2.0.49 and Python 3.12.
     # Source: official-doc-notes/P00-S02-T002-psycopg-version-2026-05-11.md (RESOLVED).
     "psycopg[binary]==3.3.4",
+    # ── P01-S02-T002 — JWT tokens for sign-in (WRITE_SET_DRIFT) ───────────────
+    # PyJWT==2.12.1 is the latest stable as of 2026-03-13; Python 3.12 confirmed.
+    # Confirmed by official-docs-researcher: encode returns str, HS256 key >=32 bytes,
+    # decode with options.require, uuid4().hex for jti. MIT license.
+    # Source: official-doc-notes/P01-S02-T002-pyjwt-cookies-argon2.md RESOLVED.
+    "PyJWT==2.12.1",
+
     # ── P01-S02-T001 — email validation for Pydantic EmailStr (WRITE_SET_DRIFT) ──
     # pydantic[email] extra requires email-validator for EmailStr syntax validation.
     # 2.3.0 is latest stable on PyPI 2026-05-11, MIT license, actively maintained.

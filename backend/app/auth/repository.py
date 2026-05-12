@@ -205,3 +205,96 @@ class AuthRepository:
             action,
         )  # AFTER
         return audit
+
+    # -----------------------------------------------------------------------
+    # Sign-in operations (added P01-S02-T002)
+    # -----------------------------------------------------------------------
+
+    def count_recent_signin_failures(
+        self,
+        user_id: uuid.UUID,
+        window_seconds: int,
+    ) -> int:
+        """Count recent failed sign-in attempts for a user_id (lockout query).
+
+        Queries audit_logs for rows where:
+          - action = 'auth.sign_in'
+          - metadata->>'outcome' = 'failure'
+          - actor_user_id = :user_id
+          - created_at > now() - interval (window_seconds)
+
+        Used for §F.3 lockout check: if count >= threshold → return 423.
+
+        TODO(P02-S02-T001): replace audit-log scan with Redis counter once
+        Redis-backed rate-limit lands. This O(n) scan is acceptable for V1
+        single-user lockout queries.
+
+        Args:
+            user_id: UUID of the authenticated user to check.
+            window_seconds: Rolling time window in seconds.
+
+        Returns:
+            Number of recent failure audit rows.
+        """
+        from sqlalchemy import text as _text  # noqa: PLC0415 — lazy import avoids circular
+
+        logger.debug(
+            "auth.repo.count_signin_failures.start user_id=%s window=%ds",
+            str(user_id),
+            window_seconds,
+        )  # BEFORE
+        result = self._session.execute(
+            _text(
+                "SELECT COUNT(*) FROM audit_logs "
+                "WHERE action = 'auth.sign_in' "
+                "  AND actor_user_id = :uid "
+                "  AND metadata->>'outcome' = 'failure' "
+                "  AND created_at > now() - CAST(:window || ' seconds' AS INTERVAL)"
+            ),
+            {"uid": str(user_id), "window": str(window_seconds)},
+        ).scalar()
+        count = int(result or 0)
+        logger.debug(
+            "auth.repo.count_signin_failures.done user_id=%s count=%d",
+            str(user_id),
+            count,
+        )  # AFTER
+        return count
+
+    def insert_refresh_token(
+        self,
+        user_id: uuid.UUID,
+        token_hash: str,
+        expires_at: object,  # datetime-like; avoid circular import (use typing.Any if needed)
+    ) -> None:
+        """Insert a new refresh_token row and flush (no commit).
+
+        Stores the SHA-256 hash of the opaque refresh token (never the raw token).
+        The caller must commit. revoked_at defaults to NULL (active token).
+
+        Args:
+            user_id: UUID of the authenticated user.
+            token_hash: SHA-256 hex digest of the opaque token string.
+            expires_at: Expiry timestamp (timezone-aware UTC).
+
+        Raises:
+            sqlalchemy.exc.SQLAlchemyError: On unexpected DB error.
+        """
+        from app.db.models.auth import RefreshToken  # noqa: PLC0415 — avoid circular
+
+        logger.debug(
+            "auth.repo.insert_refresh_token.start user_id=%s",
+            str(user_id),
+        )  # BEFORE — NEVER log token_hash
+        rt = RefreshToken(
+            user_id=user_id,
+            token_hash=token_hash,
+            expires_at=expires_at,
+        )
+        self._session.add(rt)
+        self._session.flush()
+        logger.debug(
+            "auth.repo.insert_refresh_token.done user_id=%s rt_id=%s",
+            str(user_id),
+            str(rt.id),
+        )  # AFTER

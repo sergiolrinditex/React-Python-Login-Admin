@@ -1,0 +1,33 @@
+P01-S02-T002 verify-slice — evidence summary
+=============================================
+
+Backend: uvicorn from .claude/worktrees/agent-accfeea7145ea5e44/backend (T002 worktree)
+DB:      Postgres hilo_dev, alembic head=0001, seeded employee_primary user
+Health:  /health 200, /ready 200 (db+redis ok)
+Verbose: ENABLE_VERBOSE_LOGGING=true (verify-uvicorn-verbose-on.log)
+Verbose: ENABLE_VERBOSE_LOGGING=false → only HTTP access lines (verify-logs-verbose-off.log)
+
+Curl matrix (verify-c1..c10):
+  C1  200 success no-MFA      → JWT body + Set-Cookie HttpOnly Secure SameSite=lax Path=/auth Max-Age=2592000
+  C2  401 unknown email       → AUTH_INVALID_CREDENTIALS
+  C3  401 wrong password      → AUTH_INVALID_CREDENTIALS (byte-equal vs C2 data+errors; only meta.request_id differs)
+  C4  400 invalid_payload     → AUTH_INVALID_PAYLOAD field=password (whitespace-only)
+  C5  422 missing field       → FastAPI default detail body
+  C6  byte-equality assertion → TRUE (Python script comparison)
+  C7  423 lockout             → AUTH_ACCOUNT_LOCKED on 4th attempt (threshold=3 env override)
+  C8  429 rate-limit          → AUTH_SIGNIN_RATE_LIMITED + Retry-After: 60 on 3rd attempt (burst=2)
+  C9  200 mfa_required=true   → mfa_challenge_token JWT purpose=mfa_challenge ttl=300s, NO Set-Cookie
+  C10 200 clean run + DB scan → sha256(refresh_cookie) == refresh_tokens.token_hash (64 hex);
+                                expires_at ~30 days; revoked_at=NULL
+  C11 audit taxonomy          → success / unknown_email (actor NULL) / wrong_password / invalid_payload rows present
+
+JWT claims (decoded curl C10):
+  sub, email, roles, preferred_language, employee_profile_id, jti, iat, exp — all 8 §10.2 claims present, ttl=1800s.
+
+Logging redaction (verify-uvicorn-verbose-on.log):
+  raw password 'VerifyPass2024!'   → 0 matches
+  raw password 'WrongPw'           → 0 matches
+  JWT prefix 'eyJhbG'              → 0 matches
+  refresh cookie 'Y-M92krLZnwSL'   → 0 matches
+  full email 'employee.verification@inditex' → 0 matches
+  domain-only 'email_domain=inditex-sandbox.com' → 18 matches (expected)

@@ -1,0 +1,44 @@
+=== Curl matrix at 2026-05-11T18:40:27Z — cycle 1 debugger re-capture ===
+
+--- Case 1: POST /sign-in valid creds (no MFA — primary verification user) → expect 200 + JWT + Set-Cookie
+HTTP/1.1 200 OK
+date: Mon, 11 May 2026 18:40:26 GMT
+server: uvicorn
+x-request-id: curl-success-1778524827
+content-length: 560
+content-type: application/json
+set-cookie: refresh_token=5WLnAFJ2S3CvnjTptgCUzZur_p4IpmBQHu6RdgskqUFW-5z3VR-DiC_LwocbTH2B; HttpOnly; Max-Age=2592000; Path=/auth; SameSite=lax; Secure
+
+{"data":{"mfa_required":false,"access_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4YWEyNzY3ZC0zNmRlLTQ0OTktOGQ5NS1kMjE5NDI4YWZjMWEiLCJlbWFpbCI6ImVtcGxveWVlLnZlcmlmaWNhdGlvbkBpbmRpdGV4LXNhbmRib3guY29tIiwicm9sZXMiOlsiZW1wbG95ZWUiXSwicHJlZmVycmVkX2xhbmd1YWdlIjoiZXMiLCJlbXBsb3llZV9wcm9maWxlX2lkIjpudWxsLCJqdGkiOiI1OTE2ZTU5ZDU3MmQ0ZGZjYTc3NTU0NWMyMTZjNGExZCIsImlhdCI6MTc3ODUyNDgyNywiZXhwIjoxNzc4NTI2NjI3fQ.EDbMDBNYtyBjXoZMGFOLQnbl5hR_sdwOhNji-s2_wBc","token_type":"Bearer","expires_in":1800},"meta":{"request_id":"curl-success-1778524827"},"errors":[]}
+--- Case 2: POST /sign-in unknown email → expect 401 AUTH_INVALID_CREDENTIALS
+HTTP/1.1 401 Unauthorized
+date: Mon, 11 May 2026 18:40:26 GMT
+server: uvicorn
+content-length: 179
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"curl-unknown-1778524827"},"errors":[{"code":"AUTH_INVALID_CREDENTIALS","message":"Email or password is incorrect","field":null,"details":null}]}
+--- Case 3: POST /sign-in known email + wrong password → expect 401 AUTH_INVALID_CREDENTIALS (byte-equal to case 2)
+HTTP/1.1 401 Unauthorized
+date: Mon, 11 May 2026 18:40:26 GMT
+server: uvicorn
+content-length: 179
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"curl-wrongpw-1778524827"},"errors":[{"code":"AUTH_INVALID_CREDENTIALS","message":"Email or password is incorrect","field":null,"details":null}]}
+--- Case 4: POST /sign-in missing password → expect 422 Pydantic
+HTTP/1.1 422 Unprocessable Entity
+date: Mon, 11 May 2026 18:40:26 GMT
+server: uvicorn
+content-length: 142
+content-type: application/json
+
+{"detail":[{"type":"missing","loc":["body","password"],"msg":"Field required","input":{"email":"employee.verification@inditex-sandbox.com"}}]}
+--- Case 5: POST /sign-in whitespace password → expect 400 AUTH_INVALID_PAYLOAD field=password (closes F6)
+HTTP/1.1 400 Bad Request
+date: Mon, 11 May 2026 18:40:27 GMT
+server: uvicorn
+content-length: 191
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"curl-invalidpayload-1778524827"},"errors":[{"code":"AUTH_INVALID_PAYLOAD","message":"password: Field must not be empty","field":"password","details":null}]}

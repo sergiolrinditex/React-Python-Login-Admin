@@ -192,3 +192,54 @@
 - This allows rejection audit to use a SEPARATE transaction (different Session.commit())
 - Router creates Session, passes to service, closes in finally block
 - DO NOT call session.commit() in the repository — that's the service's job
+
+## P01-S02-T002 decisions and patterns
+
+### JWT with PyJWT==2.12.1
+- `jwt.encode(payload, key, algorithm="HS256")` returns **str** directly (no .decode() needed).
+- `jwt.decode(token, key, algorithms=["HS256"], options={"require": [...]})`
+- jti must be `uuid.uuid4().hex` (str) — PyJWT requires str jti per RFC 7519.
+- iat and exp must be `int(datetime.now(tz=UTC).timestamp())` — NOT datetime objects for consistency.
+- JWT_PRIVATE_KEY must be ≥32 bytes for HS256 (RFC 7518 §3.2). tokens.py emits startup warning.
+
+### Refresh token cookie pattern (Web BFF)
+- Opaque token: `secrets.token_urlsafe(48)` → SHA-256 hex digest stored in DB.
+- Cookie: `samesite="lax"` (lowercase "lax" — Starlette API requirement, NOT "Lax").
+- `httponly=True, secure=True, path="/auth", max_age=<int seconds>`.
+- Never store plain token in DB — only the SHA-256 digest.
+
+### Aggregate-401 anti-enumeration
+- Module-level `_DUMMY_HASH = hash_password("dummy-...")` computed once at import.
+- Unknown-email path calls `verify_password(plain, _DUMMY_HASH)` to equalise timing.
+- Both unknown-email and wrong-password paths return identical JSON body.
+- T16 timing smoke check: threshold 20ms (NOT 50ms) — hardware-agnostic floor.
+
+### D-S2 rejection audit pattern
+- Rejection audits (unknown email, wrong pw, locked, etc.) use a SEPARATE short session.
+- Short session opens, writes audit, commits, closes — independently of main sign-in transaction.
+- Success audit + refresh_token share the main transaction (atomicity).
+- This ensures audit rows persist even if the main tx aborts.
+
+### Circular import prevention in auth module
+- service.py lazily imports `encode_access_token`, `encode_mfa_challenge_token`, `verify_password`, `_DUMMY_HASH`, `needs_rehash`, `MfaTotpSecret` inside the `execute()` method with `# noqa: PLC0415`.
+- This avoids circular import chains: tokens.py → (none), password.py → errors.py only.
+- repository.py lazily imports `RefreshToken` model inside `insert_refresh_token()`.
+
+### rate_limit.py refactor for multi-endpoint support
+- `_load_limits(prefix)` reads `AUTH_{PREFIX}_RATE_PER_MINUTE` and `AUTH_{PREFIX}_RATE_BURST` env vars.
+- Store key is `"{PREFIX}:{ip}"` — sign-up and sign-in have separate buckets.
+- There are NO `_RATE_PER_MINUTE` or `_BURST` module attributes (they were removed).
+- Tests MUST use `monkeypatch.setenv("AUTH_SIGNUP_RATE_PER_MINUTE", "N")` NOT `monkeypatch.setattr(rl_module, "_RATE_PER_MINUTE", N)`.
+
+### Test isolation for sign-in tests
+- `pg_session` fixture wraps each test in a rollback transaction.
+- Sign-in endpoint uses a different DB connection from `_SessionLocal` (can't see uncommitted data).
+- Solution: `_create_user()` uses a SEPARATE `_SetupSession` that commits immediately to real DB.
+- `_cleanup_created_users` autouse fixture deletes committed rows after each test.
+- Pattern: `_created_user_ids: list[str]` collects IDs; autouse fixture iterates and deletes.
+
+### Alembic in test suite
+- `test_downgrade_removes_all_tables` drops ALL tables (including users, audit_logs, etc.).
+- After a full test run: ALWAYS run `alembic upgrade head` before using the live DB.
+- Pre-condition check before running tests: verify tables exist.
+- This is R1-T001-S02 (pre-existing known issue — nothing to fix).

@@ -1,0 +1,37 @@
+## Verbose-On Log Summary (ENABLE_VERBOSE_LOGGING=true)
+
+Source: /tmp/t002-uvicorn.log (temp uvicorn on port 8001 from worktree)
+
+### BEFORE/AFTER pattern verified
+All use case steps show .start (BEFORE) and .done/.ok/.mismatch (AFTER):
+
+SUCCESS PATH:
+- auth.sign_in.received email_domain=inditex-sandbox.com (BEFORE)
+- rate_limit.check.start/.ok (BEFORE/AFTER)
+- auth.sign_in.starting (BEFORE)
+- auth.repo.find_by_email.start/.done found=True (BEFORE/AFTER)
+- auth.repo.count_signin_failures.start/.done (BEFORE/AFTER)
+- password.verify.start/.ok (BEFORE/AFTER)
+- tokens.encode_access.start/.done (BEFORE/AFTER)
+- auth.repo.insert_refresh_token.start/.done (BEFORE/AFTER)
+- auth.sign_in.success_audit.start/flushed (BEFORE/AFTER)
+- auth.repo.write_audit.start/.done (BEFORE/AFTER)
+- auth.sign_in.success (AFTER)
+
+UNKNOWN EMAIL PATH:
+- auth.sign_in.unknown_email (BEFORE note)
+- password.verify.start/.mismatch (dummy hash verify runs - BEFORE/AFTER)
+- auth.sign_in.rejection_audit.start/.done (BEFORE/AFTER)
+- auth.repo.write_audit.start action=auth.sign_in actor_user_id=NULL (BEFORE/AFTER)
+
+### PII check PASS
+- email_domain=inditex-sandbox.com (domain only, NO full email)
+- NO passwords in any log line
+- NO raw access_token values
+- NO raw refresh_token values
+- NO mfa_challenge_token values
+
+### Redaction examples
+- password.verify.start (no password value logged)
+- tokens.encode_access.start sub=<uuid> ttl=1800s (no token value)
+- auth.repo.insert_refresh_token.start user_id=<uuid> (no token value)
