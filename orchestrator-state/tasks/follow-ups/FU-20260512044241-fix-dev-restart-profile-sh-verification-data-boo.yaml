@@ -1,0 +1,46 @@
+{
+  "id": "FU-20260512044241-fix-dev-restart-profile-sh-verification-data-boo",
+  "schema_version": 1,
+  "status": "proposed",
+  "created_at": "2026-05-12T04:42:41+00:00",
+  "created_by": "sergiolr",
+  "origin_task_id": "P01-S02-T002",
+  "origin_phase_id": "P01",
+  "origin_step_id": "P01-S02",
+  "kind": "tooling",
+  "product_increment": "current",
+  "build_state": "planned",
+  "severity": "medium",
+  "title": "fix dev-restart.profile.sh verification-data bootstrap source path",
+  "description": "scripts/dev-restart.profile.sh:351-352 invokes 'python -m app.verification_data.bootstrap --source data/verification' from cwd=$HILO_BACKEND_DIR (=backend/), but data/verification lives at repo root. Result: db_reset() always fails the seed step with 'verification data directory not found' and silently warns instead of seeding. /verify-slice --reset works around it manually but the hard reset is no longer self-contained. Fix: cd to ROOT_DIR before invoking the bootstrap, or pass --source \"${ROOT_DIR}/data/verification\" explicitly. Verify by running scripts/dev-restart.sh --reset on a clean DB and asserting the seed step reports inserted>=1 with no warning.",
+  "journey_refs": [],
+  "screen_route": "—",
+  "endpoint": "—",
+  "tables": [],
+  "depends_on": [
+    "P01-S02-T002"
+  ],
+  "conflict_groups": [
+    "tooling:dev-restart"
+  ],
+  "write_set": [
+    "scripts/dev-restart.profile.sh"
+  ],
+  "acceptance": [
+    "scripts/dev-restart.sh --reset completes the seed step (loads data/verification users) without falling back to the manual workaround. tests/orchestrator-level smoke covers the seed assertion (count > 0)."
+  ],
+  "verify": [
+    "Run scripts/dev-restart.sh --reset on a clean DB. Assert: (a) script exits 0",
+    "(b) back.log contains 'verification_data.auth.users.ok inserted=N' with N>=1",
+    "(c) psql 'SELECT count(*) FROM users' >= 1."
+  ],
+  "notes": [],
+  "triage": {
+    "scope_classification": "out_of_scope",
+    "why_not_debugger": "Bug is in scripts/dev-restart.profile.sh, not in the P01-S02-T002 sign-in write set (backend/app/auth/**). Debugger inside T002 cannot touch dev tooling without expanding Write set / Conflict group, which is exactly what FU exists for. The bug exists since the profile was first added and was just unmasked because T002 was the first slice to use --reset after the verification_data loader fix (P00-S02-T004) landed; not a regression introduced by sign-in.",
+    "decision": "followup_only_when_outside_current_slice",
+    "debugger_path": "in_scope_defects_use_validator_tester_debugger_retest",
+    "warnings": []
+  },
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260512044241-fix-dev-restart-profile-sh-verification-data-boo.yaml"
+}
