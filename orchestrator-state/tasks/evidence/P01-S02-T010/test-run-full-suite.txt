@@ -1,0 +1,194 @@
+test_agent_reality_audit_passes (test_agent_reality_audit.AgentRealityAuditTests.test_agent_reality_audit_passes) ... ok
+test_agent_prompts_do_not_teach_known_invalid_trailer_synonyms (test_agent_trailer_guidance.AgentTrailerGuidanceTests.test_agent_prompts_do_not_teach_known_invalid_trailer_synonyms) ... ok
+test_agent_prompts_use_production_dag_trailer_vocabulary (test_agent_trailer_guidance.AgentTrailerGuidanceTests.test_agent_prompts_use_production_dag_trailer_vocabulary) ... ok
+test_all_claude_trailer_code_blocks_match_contract (test_agent_trailer_guidance.AgentTrailerGuidanceTests.test_all_claude_trailer_code_blocks_match_contract) ... ok
+test_cheatsheet_documents_trailer_enums_and_git_modes (test_agent_trailer_guidance.AgentTrailerGuidanceTests.test_cheatsheet_documents_trailer_enums_and_git_modes) ... ok
+test_cierre_obligatorio_sections_match_contract (test_agent_trailer_guidance.AgentTrailerGuidanceTests.test_cierre_obligatorio_sections_match_contract) ... ok
+test_claude_trailer_code_blocks_are_comment_free (test_agent_trailer_guidance.AgentTrailerGuidanceTests.test_claude_trailer_code_blocks_are_comment_free)
+Machine-readable examples must not teach inline comments in trailer lines. ... ok
+test_every_explicit_trailer_status_mention_matches_own_role_contract (test_agent_trailer_guidance.AgentTrailerGuidanceTests.test_every_explicit_trailer_status_mention_matches_own_role_contract)
+Guard against prompt drift outside the final CLAUDE_TRAILER blocks. ... ok
+test_every_literal_trailer_state_mention_matches_that_agent_contract (test_agent_trailer_guidance.AgentTrailerGuidanceTests.test_every_literal_trailer_state_mention_matches_that_agent_contract)
+Guardrail for the exact issue that caused hook noise. ... ok
+test_info_only_next_status_roles_document_runtime_semantics (test_agent_trailer_guidance.AgentTrailerGuidanceTests.test_info_only_next_status_roles_document_runtime_semantics) ... ok
+test_info_only_roles_with_next_status_explain_metadata_semantics (test_agent_trailer_guidance.AgentTrailerGuidanceTests.test_info_only_roles_with_next_status_explain_metadata_semantics) ... ok
+test_main_orchestrator_spawn_table_lists_every_contract_role (test_agent_trailer_guidance.AgentTrailerGuidanceTests.test_main_orchestrator_spawn_table_lists_every_contract_role) ... ok
+test_refresh_does_not_freeze_non_closer_final_status (test_bootstrap_refresh_preserves_done.BootstrapRefreshPreservesDoneTests.test_refresh_does_not_freeze_non_closer_final_status)
+TC5: A task with status=ready should not be over-frozen by the guard. ... ok
+test_refresh_preserves_all_lifecycle_fields_listed_in_allowlist (test_bootstrap_refresh_preserves_done.BootstrapRefreshPreservesDoneTests.test_refresh_preserves_all_lifecycle_fields_listed_in_allowlist)
+TC7: Every field in _RUNTIME_TASK_FIELDS_TO_PRESERVE must survive a refresh. ... ok
+test_refresh_preserves_blocked_status (test_bootstrap_refresh_preserves_done.BootstrapRefreshPreservesDoneTests.test_refresh_preserves_blocked_status)
+TC2: Blocked-by-closer task must survive refresh. ... ok
+test_refresh_preserves_deployed_outcome (test_bootstrap_refresh_preserves_done.BootstrapRefreshPreservesDoneTests.test_refresh_preserves_deployed_outcome)
+TC4: Deployer-closed task (done + deployed) must survive refresh. ... ok
+test_refresh_preserves_done_committed_closer_final (test_bootstrap_refresh_preserves_done.BootstrapRefreshPreservesDoneTests.test_refresh_preserves_done_committed_closer_final)
+TC1: Canonical closer-final task (done + committed) must survive refresh. ... ok
+test_refresh_preserves_manually_set_done_without_last_outcome (test_bootstrap_refresh_preserves_done.BootstrapRefreshPreservesDoneTests.test_refresh_preserves_manually_set_done_without_last_outcome)
+TC8: status=done without last_outcome (manual/edge case) is still preserved. ... ok
+test_refresh_preserves_skipped_status (test_bootstrap_refresh_preserves_done.BootstrapRefreshPreservesDoneTests.test_refresh_preserves_skipped_status)
+TC3: Skipped task with deployed outcome must survive refresh. ... ok
+test_refresh_still_refreshes_derived_fields_for_closer_final_task (test_bootstrap_refresh_preserves_done.BootstrapRefreshPreservesDoneTests.test_refresh_still_refreshes_derived_fields_for_closer_final_task)
+TC6: Source-of-truth fields (title, write_set) refresh even for done tasks. ... ok
+test_closer_final_outcomes_contains_expected_values (test_bootstrap_refresh_preserves_done.CloserFinalConstantsTests.test_closer_final_outcomes_contains_expected_values) ... ok
+test_closer_final_statuses_contains_expected_values (test_bootstrap_refresh_preserves_done.CloserFinalConstantsTests.test_closer_final_statuses_contains_expected_values) ... ok
+test_constants_are_frozensets (test_bootstrap_refresh_preserves_done.CloserFinalConstantsTests.test_constants_are_frozensets) ... ok
+test_non_closer_outcomes_not_in_set (test_bootstrap_refresh_preserves_done.CloserFinalConstantsTests.test_non_closer_outcomes_not_in_set) ... ok
+test_non_closer_statuses_not_in_set (test_bootstrap_refresh_preserves_done.CloserFinalConstantsTests.test_non_closer_statuses_not_in_set) ... ok
+test_real_product_baseline_bootstrap (test_bootstrap_registry_driven.BootstrapEndToEndAgainstProductBaselineTests.test_real_product_baseline_bootstrap) ... skipped 'baseline snapshot docs are optional; skipping baseline snapshot bootstrap fixture because missing: APP_IMPLEMENTATION_CHECKLIST.md, APP_TECHNICAL_GUIDE.md'
+test_acceptance_mentions_of_compose_and_env_extend_write_scope (test_bootstrap_registry_driven.BootstrapRuntimePreservationTests.test_acceptance_mentions_of_compose_and_env_extend_write_scope) ... ok
+test_refresh_preserves_runtime_state_by_default (test_bootstrap_registry_driven.BootstrapRuntimePreservationTests.test_refresh_preserves_runtime_state_by_default) ... ok
+test_reset_runtime_state_flag_is_explicitly_destructive (test_bootstrap_registry_driven.BootstrapRuntimePreservationTests.test_reset_runtime_state_flag_is_explicitly_destructive) ... ok
+test_missing_dependency_column_pre_gate_still_filtered (test_bootstrap_registry_driven.BuildPhasesAndTasksMissingDependencyColumnFallbackTests.test_missing_dependency_column_pre_gate_still_filtered)
+Even without registry, PRE-GATE / PHASE GATE should not become a step. ... skipped 'DAG-only requires Coverage Registry with Depends on; body-only generation tests retired'
+test_no_registry_uses_positional_path (test_bootstrap_registry_driven.BuildPhasesAndTasksMissingDependencyColumnFallbackTests.test_no_registry_uses_positional_path) ... skipped 'DAG-only requires Coverage Registry with Depends on; body-only generation tests retired'
+test_canonicals_only_no_hidden_synthetic_for_uncovered_body_step (test_bootstrap_registry_driven.BuildPhasesAndTasksRegistryDrivenTests.test_canonicals_only_no_hidden_synthetic_for_uncovered_body_step) ... ok
+test_first_task_is_ready_rest_blocked (test_bootstrap_registry_driven.BuildPhasesAndTasksRegistryDrivenTests.test_first_task_is_ready_rest_blocked) ... ok
+test_no_duplicates (test_bootstrap_registry_driven.BuildPhasesAndTasksRegistryDrivenTests.test_no_duplicates) ... ok
+test_pre_gate_and_phase_gate_are_not_tasks (test_bootstrap_registry_driven.BuildPhasesAndTasksRegistryDrivenTests.test_pre_gate_and_phase_gate_are_not_tasks) ... ok
+test_uncovered_body_step_is_not_materialized_as_task (test_bootstrap_registry_driven.BuildPhasesAndTasksRegistryDrivenTests.test_uncovered_body_step_is_not_materialized_as_task) ... ok
+test_id_header_with_taskid_row_is_flagged (test_bootstrap_registry_driven.DetectUnrecognizedCoverageRegistriesTests.test_id_header_with_taskid_row_is_flagged) ... ok
+test_recognized_headers_produce_no_warning (test_bootstrap_registry_driven.DetectUnrecognizedCoverageRegistriesTests.test_recognized_headers_produce_no_warning) ... ok
+test_table_without_separator_is_skipped (test_bootstrap_registry_driven.DetectUnrecognizedCoverageRegistriesTests.test_table_without_separator_is_skipped) ... ok
+test_unrelated_table_no_taskid_in_col1_is_silent (test_bootstrap_registry_driven.DetectUnrecognizedCoverageRegistriesTests.test_unrelated_table_no_taskid_in_col1_is_silent) ... ok
+test_warning_surfaces_through_build_phases_and_tasks (test_bootstrap_registry_driven.DetectUnrecognizedCoverageRegistriesTests.test_warning_surfaces_through_build_phases_and_tasks)
+End-to-end: warning produced by the detector must appear in ... ok
+test_backticks_in_slice_cell_are_stripped_before_expansion (test_bootstrap_registry_driven.JourneyBackticksAreStrippedTests.test_backticks_in_slice_cell_are_stripped_before_expansion) ... ok
+test_acceptance_skips_id_column_for_all_synonyms (test_bootstrap_registry_driven.ParseCoverageRegistryTests.test_acceptance_skips_id_column_for_all_synonyms)
+When the ID column is named with a synonym, acceptance lookup ... ok
+test_bare_id_header_is_not_recognized (test_bootstrap_registry_driven.ParseCoverageRegistryTests.test_bare_id_header_is_not_recognized)
+Header `| ID |` alone must NOT activate the parser — too generic. ... ok
+test_endpoint_registry_minimal (test_bootstrap_registry_driven.ParseCoverageRegistryTests.test_endpoint_registry_minimal) ... ok
+test_flutter_screen_registry_no_step_column (test_bootstrap_registry_driven.ParseCoverageRegistryTests.test_flutter_screen_registry_no_step_column)
+Flutter Screen registry has no Step/Phase column — bootstrap ... ok
+test_header_synonym_slice_alone (test_bootstrap_registry_driven.ParseCoverageRegistryTests.test_header_synonym_slice_alone)
+Header `| Slice |` (no `ID`) is a recognized synonym. ... ok
+test_header_synonym_task_id (test_bootstrap_registry_driven.ParseCoverageRegistryTests.test_header_synonym_task_id)
+Header `| Task ID |` is a recognized synonym (case-insensitive). ... ok
+test_header_synonym_taskid_no_space (test_bootstrap_registry_driven.ParseCoverageRegistryTests.test_header_synonym_taskid_no_space)
+Header `| TaskID |` (no space) is recognized. ... ok
+test_multiple_tables_merge (test_bootstrap_registry_driven.ParseCoverageRegistryTests.test_multiple_tables_merge)
+Same canonical ID across tables should merge, not duplicate. ... ok
+test_no_registry_returns_empty (test_bootstrap_registry_driven.ParseCoverageRegistryTests.test_no_registry_returns_empty) ... ok
+test_short_digit_ids_accepted (test_bootstrap_registry_driven.ParseCoverageRegistryTests.test_short_digit_ids_accepted)
+COVERAGE_ROW_ID_RE must accept 1-digit segments to align with ... ok
+test_meta_headings_rejected (test_bootstrap_registry_driven.StepHeadingFilterTests.test_meta_headings_rejected) ... ok
+test_step_filter_keeps_only_step_headings (test_bootstrap_registry_driven.StepHeadingFilterTests.test_step_filter_keeps_only_step_headings) ... ok
+test_step_n_m_accepted (test_bootstrap_registry_driven.StepHeadingFilterTests.test_step_n_m_accepted) ... ok
+test_step_2_1_does_not_match_step_2_10 (test_bootstrap_registry_driven.StepLabelMatcherRegressionTests.test_step_2_1_does_not_match_step_2_10) ... ok
+test_handles_empty (test_bootstrap_registry_driven.StripMdInlineTests.test_handles_empty) ... ok
+test_strips_backticks_and_whitespace (test_bootstrap_registry_driven.StripMdInlineTests.test_strips_backticks_and_whitespace) ... ok
+test_coarse_synthetic_emits_warning (test_bootstrap_registry_driven.SyntheticSplitAndWarnTests.test_coarse_synthetic_emits_warning) ... skipped 'DAG-only no longer materializes hidden synthetic tasks from body-only steps'
+test_no_subheadings_yields_single_task (test_bootstrap_registry_driven.SyntheticSplitAndWarnTests.test_no_subheadings_yields_single_task) ... skipped 'DAG-only no longer materializes hidden synthetic tasks from body-only steps'
+test_subheadings_drive_split (test_bootstrap_registry_driven.SyntheticSplitAndWarnTests.test_subheadings_drive_split) ... skipped 'DAG-only no longer materializes hidden synthetic tasks from body-only steps'
+test_synthetic_below_threshold_does_not_warn (test_bootstrap_registry_driven.SyntheticSplitAndWarnTests.test_synthetic_below_threshold_does_not_warn) ... skipped 'DAG-only no longer materializes hidden synthetic tasks from body-only steps'
+test_explicit_dag_requires_env_override_for_effective_task (test_dag_worker_context.DagWorkerTaskScopeTests.test_explicit_dag_requires_env_override_for_effective_task) ... ok
+test_no_implicit_selector_helpers_are_exposed (test_dag_worker_context.DagWorkerTaskScopeTests.test_no_implicit_selector_helpers_are_exposed) ... ok
+test_sync_does_not_create_task_or_phase_pointer_files (test_dag_worker_context.DagWorkerTaskScopeTests.test_sync_does_not_create_task_or_phase_pointer_files) ... ok
+test_main_returns_0_on_clean_repo (test_design_tokens_guard.MainEndToEndTests.test_main_returns_0_on_clean_repo) ... ok
+test_main_returns_0_when_app_lib_missing (test_design_tokens_guard.MainEndToEndTests.test_main_returns_0_when_app_lib_missing) ... ok
+test_main_returns_1_on_violation (test_design_tokens_guard.MainEndToEndTests.test_main_returns_1_on_violation) ... ok
+test_bare_ignore_directive_is_NOT_honoured (test_design_tokens_guard.ScanFileTests.test_bare_ignore_directive_is_NOT_honoured)
+Without a reason, the directive is rejected (silent escapes are ... ok
+test_custom_identifier_with_shared_prefix_does_not_trip (test_design_tokens_guard.ScanFileTests.test_custom_identifier_with_shared_prefix_does_not_trip)
+`MyColors.primary` must NOT match the `Colors.<name>` pattern. ... ok
+test_excluded_dirs_are_skipped (test_design_tokens_guard.ScanFileTests.test_excluded_dirs_are_skipped) ... ok
+test_ignore_directive_with_reason_is_honoured (test_design_tokens_guard.ScanFileTests.test_ignore_directive_with_reason_is_honoured) ... ok
+test_pattern_in_comment_does_not_trip (test_design_tokens_guard.ScanFileTests.test_pattern_in_comment_does_not_trip) ... ok
+test_pattern_in_string_does_not_trip (test_design_tokens_guard.ScanFileTests.test_pattern_in_string_does_not_trip) ... ok
+test_real_violation_in_widget_is_detected (test_design_tokens_guard.ScanFileTests.test_real_violation_in_widget_is_detected) ... ok
+test_block_comment_is_stripped (test_design_tokens_guard.StripCommentsAndStringsTests.test_block_comment_is_stripped) ... ok
+test_length_preserving (test_design_tokens_guard.StripCommentsAndStringsTests.test_length_preserving) ... ok
+test_line_comment_is_stripped (test_design_tokens_guard.StripCommentsAndStringsTests.test_line_comment_is_stripped) ... ok
+test_string_literal_is_stripped (test_design_tokens_guard.StripCommentsAndStringsTests.test_string_literal_is_stripped) ... ok
+test_tester_fail_then_debugger_then_tester_pass (test_orchestrator_choreography.DebuggerCycleChoreographyTests.test_tester_fail_then_debugger_then_tester_pass)
+Three stops simulate the canonical cycle: ... ok
+test_closing_T001_promotes_T002_to_ready (test_orchestrator_choreography.FullPipelineChoreographyTests.test_closing_T001_promotes_T002_to_ready)
+When T001 is marked `done`, promote_ready_tasks (called inside ... ok
+test_developer_validator_tester_closer_converge_to_done (test_orchestrator_choreography.FullPipelineChoreographyTests.test_developer_validator_tester_closer_converge_to_done)
+Five subagent stops in canonical order. Asserts: ... ok
+test_closer_emits_journey_pending_verify_lands_in_runtime_state (test_orchestrator_choreography.JourneyClosingChoreographyTests.test_closer_emits_journey_pending_verify_lands_in_runtime_state) ... ok
+test_journey_verify_waived_clears_pending_with_reason (test_orchestrator_choreography.JourneyClosingChoreographyTests.test_journey_verify_waived_clears_pending_with_reason) ... ok
+test_verify_journey_with_issues_found_keeps_pending (test_orchestrator_choreography.JourneyClosingChoreographyTests.test_verify_journey_with_issues_found_keeps_pending)
+`issues_found` does NOT clear pending — debugger must fix first. ... ok
+test_verify_journey_with_verified_clears_pending_and_marks_registry (test_orchestrator_choreography.JourneyClosingChoreographyTests.test_verify_journey_with_verified_clears_pending_and_marks_registry) ... ok
+test_21st_agent_call_is_denied_after_budget_completed_stops (test_orchestrator_choreography.SpawnBudgetChoreographyTests.test_21st_agent_call_is_denied_after_budget_completed_stops)
+Use a small budget (5) for speed. After 5 SubagentStop, the 6th ... ok
+test_under_budget_hook_produces_no_output (test_orchestrator_choreography.SpawnBudgetChoreographyTests.test_under_budget_hook_produces_no_output)
+At count < budget the hook is silent (Claude Code reads silence ... ok
+test_env_overrides_walk (test_project_root_worktree.ProjectRootEnvTests.test_env_overrides_walk) ... ok
+test_env_unset_uses_walk_from_file (test_project_root_worktree.ProjectRootEnvTests.test_env_unset_uses_walk_from_file) ... ok
+test_dir_marker_returns_repo_root (test_project_root_worktree.ResolveMainRepoTests.test_dir_marker_returns_repo_root) ... ok
+test_no_git_falls_back_to_start (test_project_root_worktree.ResolveMainRepoTests.test_no_git_falls_back_to_start) ... ok
+test_worktree_file_marker_resolves_to_main_repo (test_project_root_worktree.ResolveMainRepoTests.test_worktree_file_marker_resolves_to_main_repo) ... ok
+test_bump_increments_task_and_agent_counters (test_spawn_budget.BumpSpawnCountTests.test_bump_increments_task_and_agent_counters) ... ok
+test_bump_keeps_independent_dag_task_counters (test_spawn_budget.BumpSpawnCountTests.test_bump_keeps_independent_dag_task_counters) ... ok
+test_bump_with_none_task_is_no_op (test_spawn_budget.BumpSpawnCountTests.test_bump_with_none_task_is_no_op) ... ok
+test_reset_spawn_counter_clears_all (test_spawn_budget.BumpSpawnCountTests.test_reset_spawn_counter_clears_all) ... ok
+test_session_context_includes_spawn_line (test_spawn_budget.SessionStartShowsBudgetTests.test_session_context_includes_spawn_line) ... ok
+test_session_context_marks_at_budget (test_spawn_budget.SessionStartShowsBudgetTests.test_session_context_marks_at_budget) ... ok
+test_exceeding_budget_writes_to_hook_errors_log (test_spawn_budget.SubagentStopBumpsCounterTests.test_exceeding_budget_writes_to_hook_errors_log) ... ok
+test_hook_invocation_bumps_counter (test_spawn_budget.SubagentStopBumpsCounterTests.test_hook_invocation_bumps_counter) ... ok
+test_agents_load_rules_and_use_external_memory (test_static_contracts.StaticClaudeContracts.test_agents_load_rules_and_use_external_memory) ... ok
+test_central_orchestrator_contract_exists (test_static_contracts.StaticClaudeContracts.test_central_orchestrator_contract_exists) ... ok
+test_chatgpt_dag_generation_docs_exist (test_static_contracts.StaticClaudeContracts.test_chatgpt_dag_generation_docs_exist) ... ok
+test_parallel_dag_uses_per_task_packs (test_static_contracts.StaticClaudeContracts.test_parallel_dag_uses_per_task_packs) ... ok
+test_settings_autonomous_and_hook_paths (test_static_contracts.StaticClaudeContracts.test_settings_autonomous_and_hook_paths) ... ok
+test_spawn_budget_is_twenty_not_six (test_static_contracts.StaticClaudeContracts.test_spawn_budget_is_twenty_not_six) ... FAIL
+test_env_scoped_worker_does_not_apply_mismatched_journey_mutations (test_subagent_stop_atomicity.DagScopeMismatchTests.test_env_scoped_worker_does_not_apply_mismatched_journey_mutations)
+A parallel terminal is scoped by CLAUDE_ACTIVE_TASK_ID. ... ok
+test_tester_pass_advances_both_registry_and_runtime_state (test_subagent_stop_atomicity.HookEndToEndAtomicityTests.test_tester_pass_advances_both_registry_and_runtime_state) ... ok
+test_validator_is_informational_does_not_change_status (test_subagent_stop_atomicity.HookEndToEndAtomicityTests.test_validator_is_informational_does_not_change_status)
+Validator (INFO_ONLY) must not move task.status, but its outcome ... ok
+test_remove_pending_acquires_registry_before_runtime_state (test_subagent_stop_atomicity.JourneyHelpersLockOrderTests.test_remove_pending_acquires_registry_before_runtime_state) ... ok
+test_waive_acquires_registry_before_runtime_state (test_subagent_stop_atomicity.JourneyHelpersLockOrderTests.test_waive_acquires_registry_before_runtime_state) ... ok
+test_unknown_agent_trailer_cannot_mutate_task_status (test_subagent_stop_atomicity.UnknownAgentMutationTests.test_unknown_agent_trailer_cannot_mutate_task_status) ... ok
+test_compact_step_refs_do_not_create_synthetic_duplicates (test_task_dag.BootstrapDagModeTests.test_compact_step_refs_do_not_create_synthetic_duplicates) ... ok
+test_dag_cycle_is_reported (test_task_dag.BootstrapDagModeTests.test_dag_cycle_is_reported) ... ok
+test_explicit_depends_on_column_enables_parallel_roots (test_task_dag.BootstrapDagModeTests.test_explicit_depends_on_column_enables_parallel_roots) ... ok
+test_no_depends_on_column_reports_dag_error (test_task_dag.BootstrapDagModeTests.test_no_depends_on_column_reports_dag_error) ... ok
+test_step_ref_dependency_expands_to_all_step_tasks (test_task_dag.BootstrapDagModeTests.test_step_ref_dependency_expands_to_all_step_tasks) ... ok
+test_task_dag_matrix_and_waves_are_derived (test_task_dag.BootstrapDagModeTests.test_task_dag_matrix_and_waves_are_derived) ... ok
+test_async_tests_use_per_terminal_env_override_commands_and_evidence (test_task_dag.DagRuntimeSafetyTests.test_async_tests_use_per_terminal_env_override_commands_and_evidence) ... ok
+test_claim_denies_join_until_all_predecessors_done (test_task_dag.DagRuntimeSafetyTests.test_claim_denies_join_until_all_predecessors_done) ... ok
+test_claim_task_creates_per_task_pack_for_dag_worker (test_task_dag.DagRuntimeSafetyTests.test_claim_task_creates_per_task_pack_for_dag_worker) ... ok
+test_claim_task_marks_ready_task_claimed_atomically (test_task_dag.DagRuntimeSafetyTests.test_claim_task_marks_ready_task_claimed_atomically) ... ok
+test_join_task_stays_blocked_until_all_predecessors_done (test_task_dag.DagRuntimeSafetyTests.test_join_task_stays_blocked_until_all_predecessors_done) ... ok
+test_post_tool_ledger_keeps_product_bash_traceability (test_task_dag.DagRuntimeSafetyTests.test_post_tool_ledger_keeps_product_bash_traceability) ... ok
+test_post_tool_ledger_routes_git_close_housekeeping_bash_to_runtime_ledger (test_task_dag.DagRuntimeSafetyTests.test_post_tool_ledger_routes_git_close_housekeeping_bash_to_runtime_ledger) ... ok
+test_post_tool_ledger_uses_per_terminal_env_override (test_task_dag.DagRuntimeSafetyTests.test_post_tool_ledger_uses_per_terminal_env_override) ... ok
+test_spawn_budget_uses_per_terminal_env_override (test_task_dag.DagRuntimeSafetyTests.test_spawn_budget_uses_per_terminal_env_override) ... ok
+test_subagent_stop_scope_mismatch_does_not_mutate_wrong_task (test_task_dag.DagRuntimeSafetyTests.test_subagent_stop_scope_mismatch_does_not_mutate_wrong_task) ... ok
+test_bash_events_use_ignored_runtime_ledger (test_task_dag.HookUpdateLedgerGitCloseTests.test_bash_events_use_ignored_runtime_ledger) ... ok
+test_developer_without_next_status_logs_error (test_trailer_strict.HookSurfacesIncompleteTrailerTests.test_developer_without_next_status_logs_error) ... ok
+test_json_fallback_satisfies_required (test_trailer_strict.HookSurfacesIncompleteTrailerTests.test_json_fallback_satisfies_required) ... ok
+test_planner_without_trailer_does_not_log (test_trailer_strict.HookSurfacesIncompleteTrailerTests.test_planner_without_trailer_does_not_log)
+Planner is not in LIFECYCLE/REPORTING; missing trailer is OK. ... ok
+test_fenced_json_bare_dict (test_trailer_strict.JSONTrailerFallbackTests.test_fenced_json_bare_dict) ... ok
+test_fenced_json_with_envelope (test_trailer_strict.JSONTrailerFallbackTests.test_fenced_json_with_envelope) ... ok
+test_invalid_json_block_is_skipped (test_trailer_strict.JSONTrailerFallbackTests.test_invalid_json_block_is_skipped) ... ok
+test_no_json_block_returns_empty (test_trailer_strict.JSONTrailerFallbackTests.test_no_json_block_returns_empty) ... ok
+test_lifecycle_agent_requires_task_outcome_status (test_trailer_strict.RequiredKeysTests.test_lifecycle_agent_requires_task_outcome_status) ... ok
+test_missing_returns_empty_when_complete (test_trailer_strict.RequiredKeysTests.test_missing_returns_empty_when_complete) ... ok
+test_missing_returns_sorted (test_trailer_strict.RequiredKeysTests.test_missing_returns_sorted) ... ok
+test_non_lifecycle_contract_roles_use_schema_required_keys (test_trailer_strict.RequiredKeysTests.test_non_lifecycle_contract_roles_use_schema_required_keys) ... ok
+test_reporting_agent_requires_task_outcome_only (test_trailer_strict.RequiredKeysTests.test_reporting_agent_requires_task_outcome_only) ... ok
+
+======================================================================
+FAIL: test_spawn_budget_is_twenty_not_six (test_static_contracts.StaticClaudeContracts.test_spawn_budget_is_twenty_not_six)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/bin/tests/test_static_contracts.py", line 109, in test_spawn_budget_is_twenty_not_six
+    self.assertIsNone(re.search(pattern, corpus, re.IGNORECASE), pattern)
+AssertionError: <re.Match object; span=(3971776, 3971779), match='2/6'> is not None : 2/6
+
+----------------------------------------------------------------------
+Ran 142 tests in 2.916s
+
+FAILED (failures=1, skipped=7)
+X Design token violation: EdgeInsets.all(<num>)
+  app/lib/widgets/x.dart:1
+
+Found 1 design-token violation(s) outside app/lib/core/theme.
+Mueve los literales al token/theme module declarado en STACK_PROFILE.yaml y consume via context.colors / context.spacing /
+context.textStyles / context.radius / context.shadows / context.motion.
+Excepcion justificada: // ignore: design-tokens(reason: "<motivo>"). La razon es OBLIGATORIA.

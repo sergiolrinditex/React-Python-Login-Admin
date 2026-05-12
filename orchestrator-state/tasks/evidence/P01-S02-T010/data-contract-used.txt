@@ -1,0 +1,12 @@
+# T010 — Verification Data Contract
+# N/A — Framework-only slice (no API endpoint, no DB, no UI)
+#
+# Per task pack §"Verification data contract":
+#   "n/a. Slice does not use the TECHNICAL_GUIDE §Verification Data Contract.
+#    Reason: framework-internal logic exercised exclusively against synthetic
+#    in-memory registries inside tmp dirs created by tempfile.TemporaryDirectory()."
+#
+# Data used in tests: synthetic registries in tempfile.TemporaryDirectory() with
+# minimal Coverage Registry scaffold (2 tasks: P00-S01-T001, P00-S02-T001).
+# No real/provided verification data loaded. No persistent data observed.
+# No TECHNICAL_GUIDE §Verification Data Contract rows apply.

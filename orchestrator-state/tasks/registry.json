@@ -1211,7 +1211,7 @@
       "phase_id": "P01",
       "step_id": "P01-S02",
       "title": "fix dev-restart.profile.sh verification-data bootstrap source path",
-      "status": "ready_for_close",
+      "status": "done",
       "kind": "tooling",
       "target": "fix dev-restart.profile.sh verification-data bootstrap source path",
       "build_state": "planned",
@@ -1268,11 +1268,12 @@
       "claimed_by": "sergiolr",
       "claim_terminal_task_env": "P01-S02-T008",
       "task_pack_path": "orchestrator-state/tasks/task-packs/P01-S02-T008.md",
-      "last_outcome": "pass",
-      "last_updated_by": "tester",
-      "last_stop_at": "2026-05-12T05:21:11+00:00",
+      "last_outcome": "committed",
+      "last_updated_by": "closer",
+      "last_stop_at": "2026-05-12T05:32:56+00:00",
       "validator_outcome": "approved",
-      "validator_next_status": "ready_for_close"
+      "validator_next_status": "ready_for_close",
+      "report_path": "orchestrator-state/tasks/reports/P01-S02-T008.md"
     },
     {
       "id": "P01-S02-T003",

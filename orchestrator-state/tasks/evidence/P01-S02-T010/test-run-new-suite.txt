@@ -1,0 +1,26 @@
+test_refresh_does_not_freeze_non_closer_final_status (test_bootstrap_refresh_preserves_done.BootstrapRefreshPreservesDoneTests.test_refresh_does_not_freeze_non_closer_final_status)
+TC5: A task with status=ready should not be over-frozen by the guard. ... ok
+test_refresh_preserves_all_lifecycle_fields_listed_in_allowlist (test_bootstrap_refresh_preserves_done.BootstrapRefreshPreservesDoneTests.test_refresh_preserves_all_lifecycle_fields_listed_in_allowlist)
+TC7: Every field in _RUNTIME_TASK_FIELDS_TO_PRESERVE must survive a refresh. ... ok
+test_refresh_preserves_blocked_status (test_bootstrap_refresh_preserves_done.BootstrapRefreshPreservesDoneTests.test_refresh_preserves_blocked_status)
+TC2: Blocked-by-closer task must survive refresh. ... ok
+test_refresh_preserves_deployed_outcome (test_bootstrap_refresh_preserves_done.BootstrapRefreshPreservesDoneTests.test_refresh_preserves_deployed_outcome)
+TC4: Deployer-closed task (done + deployed) must survive refresh. ... ok
+test_refresh_preserves_done_committed_closer_final (test_bootstrap_refresh_preserves_done.BootstrapRefreshPreservesDoneTests.test_refresh_preserves_done_committed_closer_final)
+TC1: Canonical closer-final task (done + committed) must survive refresh. ... ok
+test_refresh_preserves_manually_set_done_without_last_outcome (test_bootstrap_refresh_preserves_done.BootstrapRefreshPreservesDoneTests.test_refresh_preserves_manually_set_done_without_last_outcome)
+TC8: status=done without last_outcome (manual/edge case) is still preserved. ... ok
+test_refresh_preserves_skipped_status (test_bootstrap_refresh_preserves_done.BootstrapRefreshPreservesDoneTests.test_refresh_preserves_skipped_status)
+TC3: Skipped task with deployed outcome must survive refresh. ... ok
+test_refresh_still_refreshes_derived_fields_for_closer_final_task (test_bootstrap_refresh_preserves_done.BootstrapRefreshPreservesDoneTests.test_refresh_still_refreshes_derived_fields_for_closer_final_task)
+TC6: Source-of-truth fields (title, write_set) refresh even for done tasks. ... ok
+test_closer_final_outcomes_contains_expected_values (test_bootstrap_refresh_preserves_done.CloserFinalConstantsTests.test_closer_final_outcomes_contains_expected_values) ... ok
+test_closer_final_statuses_contains_expected_values (test_bootstrap_refresh_preserves_done.CloserFinalConstantsTests.test_closer_final_statuses_contains_expected_values) ... ok
+test_constants_are_frozensets (test_bootstrap_refresh_preserves_done.CloserFinalConstantsTests.test_constants_are_frozensets) ... ok
+test_non_closer_outcomes_not_in_set (test_bootstrap_refresh_preserves_done.CloserFinalConstantsTests.test_non_closer_outcomes_not_in_set) ... ok
+test_non_closer_statuses_not_in_set (test_bootstrap_refresh_preserves_done.CloserFinalConstantsTests.test_non_closer_statuses_not_in_set) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 2.013s
+
+OK

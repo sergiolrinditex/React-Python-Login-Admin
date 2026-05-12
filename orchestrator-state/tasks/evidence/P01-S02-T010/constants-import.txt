@@ -1,0 +1,3 @@
+CLOSER_FINAL_STATUSES = ['blocked', 'done', 'skipped']
+CLOSER_FINAL_OUTCOMES = ['committed', 'deployed']
+Both frozensets: True

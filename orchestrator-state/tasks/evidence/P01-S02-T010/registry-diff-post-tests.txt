@@ -1,0 +1,52 @@
+37c37
+<       "status": "ready",
+---
+>       "status": "active",
+1061c1061
+<       "status": "validator_tester_pending",
+---
+>       "status": "claimed",
+1124,1129c1124
+<       "task_pack_path": "orchestrator-state/tasks/task-packs/P01-S02-T010.md",
+<       "last_outcome": "success",
+<       "last_updated_by": "validator",
+<       "last_stop_at": "2026-05-12T05:28:53+00:00",
+<       "validator_outcome": "approved",
+<       "validator_next_status": "ready_for_close"
+---
+>       "task_pack_path": "orchestrator-state/tasks/task-packs/P01-S02-T010.md"
+1136c1131
+<       "status": "ready_for_close",
+---
+>       "status": "claimed",
+1179c1174
+<       "evidence_dir": "orchestrator-state/tasks/evidence/P01-S02-T009/",
+---
+>       "evidence_dir": "orchestrator-state/tasks/evidence/P01-S02-T009",
+1202,1207c1197
+<       "task_pack_path": "orchestrator-state/tasks/task-packs/P01-S02-T009.md",
+<       "last_outcome": "pass",
+<       "last_updated_by": "tester",
+<       "last_stop_at": "2026-05-12T05:27:59+00:00",
+<       "validator_outcome": "approved",
+<       "validator_next_status": "ready_for_close"
+---
+>       "task_pack_path": "orchestrator-state/tasks/task-packs/P01-S02-T009.md"
+1214c1204
+<       "status": "ready_for_close",
+---
+>       "status": "validator_tester_pending",
+1247c1237
+<       "evidence_dir": "orchestrator-state/tasks/evidence/P01-S02-T008/",
+---
+>       "evidence_dir": "orchestrator-state/tasks/evidence/P01-S02-T008",
+1271,1275c1261,1263
+<       "last_outcome": "pass",
+<       "last_updated_by": "tester",
+<       "last_stop_at": "2026-05-12T05:21:11+00:00",
+<       "validator_outcome": "approved",
+<       "validator_next_status": "ready_for_close"
+---
+>       "last_outcome": "success",
+>       "last_updated_by": "developer",
+>       "last_stop_at": "2026-05-12T05:13:39+00:00"
