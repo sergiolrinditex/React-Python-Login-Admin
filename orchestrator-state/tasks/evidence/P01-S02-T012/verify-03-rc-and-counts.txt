@@ -1,0 +1,9 @@
+RC1=0 duration=15s
+RC2=0 duration=15s
+psql_rc=0 count=time="2026-05-12T11:58:29+02:00"level=warningmsg="The\"MINIO_ROOT_USER\"variableisnotset.Defaultingtoablankstring."time="2026-05-12T11:58:29+02:00"level=warningmsg="The\"MINIO_ROOT_PASSWORD\"variableisnotset.Defaultingtoablankstring."time="2026-05-12T11:58:29+02:00"level=warningmsg="The\"LITELLM_MASTER_KEY\"variableisnotset.Defaultingtoablankstring."time="2026-05-12T11:58:29+02:00"level=warningmsg="The\"MINIO_ROOT_PASSWORD\"variableisnotset.Defaultingtoablankstring."time="2026-05-12T11:58:29+02:00"level=warningmsg="The\"MINIO_ROOT_USER\"variableisnotset.Defaultingtoablankstring."2
+
+users_count=2
+Backend health:
+{"data":{"status":"ok","version":"0.1.0","uptime":18.6}}
+Ready (DB+Redis ping):
+{"data":{"db":{"status":"ok"},"redis":{"status":"ok"},"litellm":{"status":"unknown"}}}

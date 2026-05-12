@@ -1,0 +1,6 @@
+Tester acceptance criterion 1 — back-to-back reset return codes
+
+RC1=0   (first reset — clean run)
+RC2=0   (second reset — back-to-back, the critical race scenario)
+
+Both resets exited 0 with no manual sleep between them.

@@ -413,7 +413,9 @@ Ver §5.1. Cada módulo tiene `router.py`, `service.py`, `schemas.py`; módulos 
 
 ### 10.2 Auth strategy
 
-JWT propio. Access token Bearer de vida corta. Refresh token en cookie HttpOnly Secure SameSite=Lax, guardado hasheado y rotado. Password hashing con Argon2. Claims: `sub`, `email`, `roles`, `preferred_language`, `employee_profile_id`, `iat`, `exp`, `jti`. Guards: `require_user`, `require_admin`, `require_auditor`, `require_role`.
+JWT propio. Access token Bearer de vida corta. Refresh token en cookie `HttpOnly; Secure; SameSite=Lax; Path=/api/v1/auth`, guardado hasheado y rotado. Password hashing con Argon2. Claims: `sub`, `email`, `roles`, `preferred_language`, `employee_profile_id`, `iat`, `exp`, `jti`. Guards: `require_user`, `require_admin`, `require_auditor`, `require_role`.
+
+**Refresh cookie Path contract (P01-S02-T011)**: el atributo `Path` de la cookie de refresh es `/api/v1/auth` — no `/auth` (sub-prefix sin el prefix real), no `/` (demasiado amplio). Justificación RFC 6265 §5.4: el navegador solo envía la cookie a URLs cuyo path comience por el valor del atributo Path. Los endpoints reales viven en `/api/v1/auth/{sign-in,refresh,logout,2fa/verify}`, por lo que `Path=/api/v1/auth` es el mínimo viable que satisface el principio de menor exposición (la cookie no viaja a `/api/v1/users/*`, `/api/v1/chat/*` ni ningún otro módulo). Atributos byte-idénticos en setter (`_set_refresh_cookie`, Max-Age=TTL) y clearer (`_clear_refresh_cookie`, Max-Age=0) — implementado en `backend/app/auth/routers/_helpers.py::_REFRESH_COOKIE_PATH`.
 
 ### 10.3 DB Schema — tablas nuevas
 
@@ -578,7 +580,20 @@ La visualización estática se genera en `dist/hilo-people-preview.html` como pr
 
 ## 15. Architectural Decision Records
 
-(sin ADRs específicos todavía)
+### ADR-001 — Refresh cookie Path attribute
+
+**Fecha**: 2026-05-12
+
+**Contexto**: La cookie de refresh token se estaba emitiendo con `Path=/auth`. Los endpoints reales de auth viven en `/api/v1/auth/*`. Por RFC 6265 §5.4, un navegador real NO envía la cookie a un path si el path del request no comienza por el atributo Path de la cookie. Esto hacía que refresh y logout fallaran en un navegador real aunque los tests con TestClient (que ignora Path) pasaran.
+
+**Decisión**: Fijar `Path=/api/v1/auth` en `_REFRESH_COOKIE_PATH` (constante única en `_helpers.py`) usada por `_set_refresh_cookie` y `_clear_refresh_cookie`. Añadir test de cookie-jar real con `httpx.AsyncClient+ASGITransport` que valida el roundtrip sin inyectar manualmente la Cookie header.
+
+**Alternativas descartadas**:
+- `Path=/` — expone la cookie a toda la API; viola principio de menor exposición; rechazado.
+- `Path=/api/v1` — innecesariamente amplio; no hay razón para enviar el refresh token a users/chat/etc.; rechazado.
+- `Path=/auth` (status quo) — bug activo; el path no coincide con los endpoints reales; rechazado.
+
+**Consecuencias**: La cookie solo viaja a `/api/v1/auth/*`. Cambios futuros al routing prefix requieren actualizar `_REFRESH_COOKIE_PATH` y la sección §10.2. Tests T01/T13 de sign-in, T01 de refresh y el nuevo T15 de logout actúan como muro de contención.
 
 ## 16. Verificación de cableado pre-entrega
 

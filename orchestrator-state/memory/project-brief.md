@@ -1,6 +1,6 @@
 # Project brief
 
-- Generated at: 2026-05-12T04:33:44+00:00
+- Generated at: 2026-05-12T09:25:58+00:00
 - Canonical source-of-truth dir: `docs/source-of-truth`
 - Discovery mode: canonical
 - Instructions: `docs/source-of-truth/instrucciones.md`

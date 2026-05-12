@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-05-12T08:30:49+00:00",
+  "generated_at": "2026-05-12T09:56:03+00:00",
   "next_ready_phase_id": "P01",
-  "next_ready_task_id": "P01-S02-T003",
-  "last_worker": "screen-journey-reviewer",
+  "next_ready_task_id": "P01-S02-T005",
+  "last_worker": "tester",
   "last_event": "subagent_stop",
   "pending_journey_verifications": [],
   "journey_gate_mode": "frontier",
@@ -10,12 +10,12 @@
   "spawn_budget": 20,
   "spawns_in_current_slice": {
     "P01-S01-T001": 8,
-    "agent:planner": 9,
+    "agent:planner": 12,
     "agent:official-docs-researcher": 4,
-    "agent:developer": 9,
-    "agent:validator": 12,
-    "agent:tester": 12,
-    "agent:closer": 9,
+    "agent:developer": 11,
+    "agent:validator": 14,
+    "agent:tester": 14,
+    "agent:closer": 10,
     "P00-S02-T004": 6,
     "P01-S02-T001": 8,
     "P01-S02-T002": 8,
@@ -24,8 +24,10 @@
     "P01-S02-T010": 5,
     "P01-S02-T009": 5,
     "P01-S02-T003": 9,
-    "P01-S02-T004": 5,
-    "agent:screen-journey-reviewer": 1
+    "P01-S02-T004": 6,
+    "agent:screen-journey-reviewer": 1,
+    "P01-S02-T012": 4,
+    "P01-S02-T011": 5
   },
   "open_followups": [
     {
@@ -78,14 +80,15 @@
     },
     {
       "id": "FU-20260512052820-fix-dev-restart-db-health-race-wait-for-host-tcp",
-      "status": "proposed",
+      "status": "promoted",
       "severity": "medium",
       "origin_task_id": "P01-S02-T008",
       "title": "fix dev-restart db_health race: wait for host TCP, not container-internal pg_isready",
       "path": "orchestrator-state/tasks/follow-ups/FU-20260512052820-fix-dev-restart-db-health-race-wait-for-host-tcp.yaml",
       "created_at": "2026-05-12T05:28:20+00:00",
       "scope_classification": "out_of_scope",
-      "why_not_debugger": "T008 acceptance is narrowly the seed --source path (lines 347-360 of scripts/dev-restart.profile.sh). The race lives in db_health() (lines 153-157) which runs pg_isready INSIDE the postgres container; meanwhile alembic upgrade head connects from the HOST at 127.0.0.1:5432 — container-internal-ready and host-TCP-forward-ready are different timings under Rancher. Two-consecutive --reset can race between compose down -v + compose up + alembic. T008 fix did not introduce this race (seed block runs after alembic), but T008's hard-fail correctly surfaces it as RESET2_EXIT=1. Bundling a wait-for-host-tcp into T008 would expand its responsibility from one bug to two unrelated bugs (KISS/YAGNI violation per .claude/rules/01-non-negotiables.md). Needs its own slice with separate acceptance: db_health (or a new wait_for_host_tcp helper) must verify host TCP 5432 reachability with credentials before returning success."
+      "why_not_debugger": "T008 acceptance is narrowly the seed --source path (lines 347-360 of scripts/dev-restart.profile.sh). The race lives in db_health() (lines 153-157) which runs pg_isready INSIDE the postgres container; meanwhile alembic upgrade head connects from the HOST at 127.0.0.1:5432 — container-internal-ready and host-TCP-forward-ready are different timings under Rancher. Two-consecutive --reset can race between compose down -v + compose up + alembic. T008 fix did not introduce this race (seed block runs after alembic), but T008's hard-fail correctly surfaces it as RESET2_EXIT=1. Bundling a wait-for-host-tcp into T008 would expand its responsibility from one bug to two unrelated bugs (KISS/YAGNI violation per .claude/rules/01-non-negotiables.md). Needs its own slice with separate acceptance: db_health (or a new wait_for_host_tcp helper) must verify host TCP 5432 reachability with credentials before returning success.",
+      "promoted_task_id": "P01-S02-T012"
     },
     {
       "id": "FU-20260512082956-fix-refresh-cookie-path-mismatch-auth-vs-api-v1-",
@@ -100,13 +103,14 @@
       "promoted_task_id": "P01-S02-T011"
     }
   ],
-  "last_stop_at": "2026-05-12T08:33:39+00:00",
-  "last_claimed_task_id": "P01-S02-T004",
   "last_trailer": {
-    "task_id": "P01-S02-T004",
-    "outcome": "approved",
-    "handoff": "orchestrator-state/tasks/handoffs/P01-S02-T004.md"
+    "task_id": "P01-S02-T011",
+    "outcome": "pass",
+    "next_status": "ready_for_close",
+    "handoff": "orchestrator-state/tasks/handoffs/P01-S02-T011.md",
+    "evidence": "orchestrator-state/tasks/evidence/P01-S02-T011/"
   },
-  "last_followup_id": "FU-20260512082956-fix-refresh-cookie-path-mismatch-auth-vs-api-v1-",
+  "last_claimed_task_id": "P01-S02-T011",
+  "last_stop_at": "2026-05-12T09:56:03+00:00",
   "last_claimed_phase_id": "P01"
 }

@@ -2,7 +2,7 @@ id: P01-S02-T008
 phase_id: P01
 step_id: P01-S02
 title: "fix dev-restart.profile.sh verification-data bootstrap source path"
-status: ready
+status: done
 kind: "tooling"
 target: "fix dev-restart.profile.sh verification-data bootstrap source path"
 product_increment: "current"
@@ -18,9 +18,7 @@ depends_on:
 acceptance:
   - "scripts/dev-restart.sh --reset completes the seed step (loads data/verification users) without falling back to the manual workaround. tests/orchestrator-level smoke covers the seed assertion (count > 0)."
 verification_commands:
-  - "Run scripts/dev-restart.sh --reset on a clean DB. Assert: (a) script exits 0"
-  - "(b) back.log contains 'verification_data.auth.users.ok inserted=N' with N>=1"
-  - "(c) psql 'SELECT count(*) FROM users' >= 1."
+  - "Run scripts/dev-restart.sh --reset on a clean DB. Assert: (a) script exits 0, (b) back.log contains 'verification_data.auth.users.ok inserted=N' with N>=1, (c) psql 'SELECT count(*) FROM users' >= 1."
 allowed_paths:
   - "scripts/dev-restart.profile.sh"
 conflict_groups:
@@ -29,4 +27,4 @@ write_set:
   - "scripts/dev-restart.profile.sh"
 handoff_path: orchestrator-state/tasks/handoffs/P01-S02-T008.md
 evidence_dir: orchestrator-state/tasks/evidence/P01-S02-T008
-source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry"
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime follow-up P01-S02-T002"

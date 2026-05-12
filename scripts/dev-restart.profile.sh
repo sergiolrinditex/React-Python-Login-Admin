@@ -145,8 +145,18 @@ _resolve_alembic() {
 
 _tcp_probe() {
   # Plain TCP probe via Bash /dev/tcp. Returns 0 if connect succeeds.
+  # Uses a subshell so the FD is isolated; stderr suppressed to silence
+  # "Connection refused" noise when postgres is not yet reachable.
   local host="$1" port="$2"
   (exec 3<>/dev/tcp/"${host}"/"${port}") 2>/dev/null && exec 3<&- 3>&-
+}
+
+_host_pg_ready() {
+  # Probe host-side TCP port-forward to postgres. Returns 0 if reachable.
+  # Distinct from _compose_pg_ready (container-internal pg_isready) because
+  # Rancher Desktop / Docker Desktop can take 0.5-3s after container reports
+  # ready before the host port-forward is usable by alembic. (P01-S02-T012)
+  _tcp_probe "${HILO_POSTGRES_HOST}" "${HILO_POSTGRES_PORT}" 2>/dev/null
 }
 
 _compose_pg_ready() {
@@ -173,7 +183,7 @@ _ensure_infra_essential() {
     warn "compose up failed — see ${BACK_LOG}"
     return 1
   fi
-  if ! wait_for db_health 30 "Postgres"; then
+  if ! wait_for db_health 60 "Postgres"; then  # raised 30→60s: host TCP probe (P01-S02-T012)
     return 1
   fi
 }
@@ -279,26 +289,34 @@ front_start() {
 
 db_health() {
   # Returns:
-  #   0 = postgres reachable (pg_isready inside container OR plain TCP)
-  #   1 = postgres is supposed to be up but not responding
-  #   2 = unknown (no compose CLI; treat as unverified — UI surfaces UNKNOWN)
-  if ! command -v curl >/dev/null 2>&1; then
-    # curl is a hard dep elsewhere; still, don't crash db_health if missing.
-    :
-  fi
-  # Fast path: pg_isready inside the compose postgres container.
-  if _resolve_compose >/dev/null && _compose_pg_ready; then
+  #   0 = postgres reachable: BOTH container-internal pg_isready AND host TCP pass
+  #   1 = postgres is supposed to be up but not responding (one or both probes fail)
+  #   2 = unknown (no compose CLI and no host TCP; UI surfaces UNKNOWN)
+  #
+  # P01-S02-T012: the two-probe AND is the core race fix. Rancher Desktop /
+  # Docker Desktop can take 0.5-3s after pg_isready-internal returns OK before
+  # the host port-forward is open. alembic upgrade head runs from the host, so
+  # we must verify host TCP reachability before declaring postgres UP.
+  log "[db_health] probing postgres: container-internal pg_isready AND host TCP ${HILO_POSTGRES_HOST}:${HILO_POSTGRES_PORT}"
+
+  # Fast path: both probes must pass (container-internal AND host-side TCP).
+  if _resolve_compose >/dev/null 2>&1 && _compose_pg_ready && _host_pg_ready; then
+    log "[db_health] postgres UP (container ready + host TCP open)"
     return 0
   fi
-  # Fallback: TCP probe on localhost:5432.
-  if _tcp_probe "${HILO_POSTGRES_HOST}" "${HILO_POSTGRES_PORT}"; then
-    return 0
-  fi
-  # If we don't even have a compose CLI to ask, report unknown so the status
-  # table shows UNKNOWN rather than a misleading DOWN.
+
+  # No-compose path: if no compose CLI is available (postgres native on host),
+  # a successful host TCP probe alone is sufficient and we surface UNKNOWN→UP.
   if ! _resolve_compose >/dev/null 2>&1; then
+    if _host_pg_ready; then
+      log "[db_health] postgres UP (no compose CLI; host TCP open — native postgres)"
+      return 0
+    fi
+    log "[db_health] postgres UNKNOWN (no compose CLI, host TCP closed)"
     return 2
   fi
+
+  log "[db_health] postgres DOWN (at least one probe failed)"
   return 1
 }
 
