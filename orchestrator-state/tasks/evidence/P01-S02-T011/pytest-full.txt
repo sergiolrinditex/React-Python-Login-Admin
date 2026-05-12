@@ -1,0 +1,32 @@
+$ cd .claude/worktrees/agent-a46ba8f44d6390837/backend
+$ JWT_PRIVATE_KEY=... JWT_PUBLIC_KEY=... DATABASE_URL=postgresql+psycopg://hilo:hilo@localhost:5432/hilo_dev \
+  python3 -m pytest tests/ -q [migrations-first ordering for schema-drop safety]
+
+============================= test session info ================================
+platform darwin -- Python 3.11.5, pytest-9.0.2, pluggy-1.6.0
+rootdir: .../agent-a46ba8f44d6390837/backend
+configfile: pyproject.toml
+plugins: httpx-0.36.0, asyncio-1.3.0, langsmith-0.8.3, anyio-4.13.0
+asyncio: mode=Mode.AUTO
+
+File ordering (migrations-first, avoids schema-drop early-termination):
+  tests/integration/test_migrations_0001_auth.py      (6 tests)
+  tests/integration/test_verification_data_bootstrap.py (9 tests)
+  tests/integration/test_dev_restart_reset.py         (2 tests)
+  tests/test_health.py                                (11 tests)
+  tests/test_dependency_smoke.py                      (20 tests)
+  tests/integration/test_auth_signup.py               (9 tests)
+  tests/integration/test_auth_signin.py               (16 tests)
+  tests/integration/test_auth_refresh.py              (14 tests)
+  tests/integration/test_auth_logout.py               (15 tests — T15 NEW cookie-jar T011)
+
+RESULT: 102 passed, 21 warnings in 24.93s
+EXIT CODE: 0
+
+NOTE on schema lifecycle:
+  test_migrations_0001_auth.py::test_downgrade_removes_all_tables runs alembic downgrade -1
+  which drops all tables. The migration test file itself re-upgrades at the end (conftest fixture
+  restores schema for subsequent test files). This is documented in PROGRESS.md §R1-T001-S02.
+  When tests run in default pytest order (alphabetical), auth tests run BEFORE migration tests
+  and the schema is present; after migration test runs, schema is re-upgraded via alembic.
+  Running migrations-first makes the ordering explicit and avoids any interim confusion.

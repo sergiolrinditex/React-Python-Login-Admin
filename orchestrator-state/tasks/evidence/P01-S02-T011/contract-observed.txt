@@ -1,0 +1,29 @@
+=== FRONT → BACK → DB CONTRACT OBSERVED — P01-S02-T011 ===
+Timestamp: 2026-05-12T09:50:00Z
+
+Route/Provider:
+  - POST /api/v1/auth/sign-in (setter): observed Set-Cookie Path=/api/v1/auth [FIXED]
+  - POST /api/v1/auth/refresh (consumer): observed 200 OK with rotated token [WORKS with fix]
+  - POST /api/v1/auth/logout (consumer + clearer): observed 204 with Set-Cookie Max-Age=0 Path=/api/v1/auth [WORKS with fix]
+
+API Client/DTO:
+  - curl cookie jar (/tmp/t011-tester-cookies-worktree.txt): cookie jar correctly restricts to /api/v1/auth/* paths
+  - httpx.AsyncClient cookie jar (T15 test): same RFC 6265 §5.4 enforcement verified in test suite
+
+Endpoint Implementation:
+  - backend/app/auth/routers/_helpers.py::_set_refresh_cookie(): path=_REFRESH_COOKIE_PATH [VERIFIED]
+  - backend/app/auth/routers/_helpers.py::_clear_refresh_cookie(): path=_REFRESH_COOKIE_PATH, max_age=0 [VERIFIED]
+  - _REFRESH_COOKIE_PATH = "/api/v1/auth" [VERIFIED via grep and curl observation]
+
+Repository:
+  - RefreshTokenRepository.revoke(): sets revoked_at IS NOT NULL [VERIFIED in DB rows]
+  - RefreshTokenRepository.insert_new(): creates new row for rotation [VERIFIED in DB rows]
+
+Tables Observed:
+  - refresh_tokens: rotation creates new row, logout revokes row [VERIFIED]
+  - audit_logs: entries created for sign-in, refresh, logout [VERIFIED by test T12, T13]
+  - users: read-only for auth lookups [VERIFIED]
+
+Pre-fix vs Post-fix (RFC 6265 §5.4 compliance):
+  - BEFORE: cookie with Path=/auth NOT sent to /api/v1/auth/refresh → 401 AUTH_SESSION_EXPIRED [VERIFIED]
+  - AFTER: cookie with Path=/api/v1/auth IS sent to /api/v1/auth/refresh → 200 OK [VERIFIED]

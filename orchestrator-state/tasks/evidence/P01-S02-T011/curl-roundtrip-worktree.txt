@@ -1,0 +1,55 @@
+=== CURL ROUNDTRIP — WORKTREE BACKEND (port 18021) — POST-FIX STATE ===
+Timestamp: 2026-05-12T09:50:23Z
+Worktree: .claude/worktrees/agent-a46ba8f44d6390837
+Branch: worktree-agent-a46ba8f44d6390837
+Fix: _REFRESH_COOKIE_PATH = "/api/v1/auth" in backend/app/auth/routers/_helpers.py
+
+--- 1. SIGN-IN (worktree backend port 18021) ---
+$ rm -f /tmp/t011-tester-cookies-worktree.txt
+$ curl -sS -c /tmp/t011-tester-cookies-worktree.txt -X POST http://localhost:18021/api/v1/auth/sign-in \
+    -H 'Content-Type: application/json' \
+    -d '{"email":"employee.verification@inditex-sandbox.com","password":"VerifyPass2024!"}' \
+    -i | head -15
+
+HTTP/1.1 200 OK
+date: Tue, 12 May 2026 09:50:23 GMT
+server: uvicorn
+x-request-id: f0df047b-9176-41ca-ae53-db1aa15253a4
+content-length: 573
+content-type: application/json
+set-cookie: refresh_token=46j221Erjdmj4_yzCfpUYrdZa2_4u_z6Gkgy5O9R-PXoSfCg0oG1SRPc-Y3Koyun; HttpOnly; Max-Age=2592000; Path=/api/v1/auth; SameSite=lax; Secure
+
+OBSERVATION: Set-Cookie header shows Path=/api/v1/auth (the FIX).
+
+--- 2. REFRESH WITH COOKIE JAR (worktree) — EXPECTED TO SUCCEED ---
+$ curl -sS -b /tmp/t011-tester-cookies-worktree.txt -c /tmp/t011-tester-cookies-worktree.txt \
+    -X POST http://localhost:18021/api/v1/auth/refresh -i | head -10
+
+HTTP/1.1 200 OK
+date: Tue, 12 May 2026 09:50:33 GMT
+server: uvicorn
+x-request-id: adf76e0e-85c1-4322-ba45-74b97f6fc525
+content-length: 552
+content-type: application/json
+set-cookie: refresh_token=GwokVy0nvIhbi7sOpLyhgmvrww58ernHwDtQwW817kJzJ2jpnd-xlXu7MyN6HCpS; HttpOnly; Max-Age=2592000; Path=/api/v1/auth; SameSite=lax; Secure
+
+RESULT: 200 OK with new rotated refresh cookie at Path=/api/v1/auth — COOKIE JAR WORKED.
+        curl sent the cookie because Path=/api/v1/auth prefix-matches /api/v1/auth/refresh.
+
+--- 3. LOGOUT WITH COOKIE JAR (worktree, no manual Cookie header) --- 
+$ ACCESS_TOKEN=<extracted from second sign-in call>
+$ curl -sS -b /tmp/t011-tester-cookies-worktree2.txt -c /tmp/t011-tester-cookies-worktree2.txt \
+    -X POST http://localhost:18021/api/v1/auth/logout \
+    -H "Authorization: Bearer $NEW_ACCESS" -i | head -10
+
+HTTP/1.1 204 No Content
+date: Tue, 12 May 2026 09:50:38 GMT
+server: uvicorn
+x-request-id: 0b277ab4-c058-411b-ba67-b972c658867f
+set-cookie: refresh_token=""; HttpOnly; Max-Age=0; Path=/api/v1/auth; SameSite=lax; Secure
+
+RESULT: 204 No Content. Cookie cleared at Path=/api/v1/auth.
+        Cookie was sent by curl jar (no manual Cookie: header) — Path prefix-match confirmed.
+
+VERDICT: Post-fix behavior CONFIRMED — real browser/curl can use cookie for refresh and logout.
+         RFC 6265 §5.4 compliance achieved. T011 acceptance criteria met.

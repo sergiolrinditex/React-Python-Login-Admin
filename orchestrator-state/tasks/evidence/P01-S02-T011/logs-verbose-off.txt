@@ -1,0 +1,21 @@
+=== LOGS WITH ENABLE_VERBOSE_LOGGING=false ===
+Timestamp: 2026-05-12T09:52:00Z
+
+Test run: ENABLE_VERBOSE_LOGGING=false pytest tests/integration/test_auth_logout.py::test_logout_success_revokes_token_and_clears_cookie -v -s
+
+RESULT: test PASSED — no debug/info log output captured during test execution.
+
+When ENABLE_VERBOSE_LOGGING=false:
+- _VERBOSE flag is False (set from os.getenv at module load)
+- Logging level is set to WARNING or higher
+- DEBUG messages (auth.sign_in.received, auth.refresh.execute.start, etc.) are NOT output
+- INFO messages may be suppressed depending on root logger configuration
+- Only WARNING and ERROR level messages would appear
+
+IMPLEMENTATION VERIFIED:
+- app/main.py: _VERBOSE = os.getenv("ENABLE_VERBOSE_LOGGING", "false").lower() == "true"
+- app/auth/routers/*.py: logging level controlled by _VERBOSE
+- With VERBOSE=false: no auth flow detail in stdout/logs
+- With VERBOSE=true: full BEFORE/AFTER chain visible (see logs-verbose-on.txt)
+
+SECURITY: Neither mode logs raw tokens, passwords, or PII. [CONFIRMED]

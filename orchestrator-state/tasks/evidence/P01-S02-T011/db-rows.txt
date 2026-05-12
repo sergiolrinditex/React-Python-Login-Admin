@@ -1,0 +1,25 @@
+=== DB VERIFICATION — refresh_tokens table ===
+Timestamp: 2026-05-12T09:50:40Z
+Connection: host=localhost dbname=hilo_dev user=hilo (psycopg3)
+
+Schema: SELECT column_name FROM information_schema.columns WHERE table_name='refresh_tokens'
+Columns: ['id', 'user_id', 'token_hash', 'expires_at', 'revoked_at']
+
+SELECT id, user_id, token_hash[:16]+'...', expires_at, revoked_at FROM refresh_tokens ORDER BY id DESC LIMIT 8;
+
+id                                   | user_id                              | revoked_at
+-------------------------------------|--------------------------------------|------------------------------
+b6dc9907-ba3a-4574-bcfe-fbbe3b278f89 | 89eb30c4-e778-48a9-a475-8e1705f832a0 | 2026-05-12 09:50:38 [REVOKED by logout]
+7e7ba8c3-aa6d-41cb-9069-139eb9735dd5 | 89eb30c4-e778-48a9-a475-8e1705f832a0 | None [active — from main backend, buggy path]
+6d7c64bd-4ff4-4cad-9529-3727af9ab101 | 89eb30c4-e778-48a9-a475-8e1705f832a0 | 2026-05-12 09:50:33 [REVOKED by rotation during refresh]
+430d48bb-338e-4fc1-a160-38cfafe0e980 | 89eb30c4-e778-48a9-a475-8e1705f832a0 | 2026-05-12 09:50:38 [REVOKED — rotated during final refresh before logout]
+01c4c7f3-362d-45d7-9e7c-31ada1fa3d1e | 89eb30c4-e778-48a9-a475-8e1705f832a0 | None [active — from main backend, buggy path]
+
+VERIFICATION:
+- Token revoked by LOGOUT: b6dc9907 — revoked_at=2026-05-12 09:50:38 [PASS]
+- Token revoked by ROTATION (refresh): 6d7c64bd → b6dc9907 new token [PASS]
+- Token hashes stored (not raw values): YES — hash_prefix shown in logs as first 8 chars [PASS]
+- Cookie set/clear at Path=/api/v1/auth: confirmed by curl Set-Cookie headers [PASS]
+
+NOTE: Rows with revoked_at=None from main backend (buggy) cannot be used because the cookie
+      with Path=/auth is not sent to /api/v1/auth/* endpoints by RFC 6265 §5.4-compliant clients.

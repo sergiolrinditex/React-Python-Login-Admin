@@ -1,0 +1,27 @@
+=== VERIFICATION DATA CONTRACT — P01-S02-T011 ===
+Timestamp: 2026-05-12T09:50:00Z
+
+Data Contract Row Used (from TECHNICAL_GUIDE §6.5):
+  Row: J100 auth-login
+  Persona: employee.verification@inditex-sandbox.com
+  File: data/verification/users/employee_primary.json
+  Load command: python3 -m app.verification_data.bootstrap --source ../data/verification --only auth
+
+Real/Provided Verification Data Used:
+  email: employee.verification@inditex-sandbox.com
+  password_plain: VerifyPass2024! [from employee_primary.json]
+  status: active
+  preferred_language: es
+
+Data Load Result:
+  {"status": "ok", "groups": [{"group": "auth", "status": "ok", "inserted": 0, "updated": 2, "skipped": 0}]}
+  (user already existed from previous verification pass, updated 2 rows)
+
+Persisted Data Observed:
+  - user_id: 89eb30c4-e778-48a9-a475-8e1705f832a0 (employee.verification@inditex-sandbox.com)
+  - refresh_tokens rows: 5 rows observed (2 from main backend, 3 from worktree tester)
+  - Rotation confirmed: old token revoked on refresh (revoked_at IS NOT NULL)
+  - Logout confirmed: final token revoked (revoked_at IS NOT NULL)
+  - audit_logs: entries written for all auth operations (verified by T12 in test suite)
+
+Synthetic Data: NONE — all flows used real/provided verification credentials

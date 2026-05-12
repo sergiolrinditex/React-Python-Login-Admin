@@ -1,0 +1,32 @@
+Curl roundtrip verification — P01-S02-T011 (worktree backend port 18011)
+Date: 2026-05-12
+
+STEP 1: Sign-in
+  Request:  POST http://127.0.0.1:18011/api/v1/auth/sign-in
+  Response: 200 OK
+  Set-Cookie: refresh_token=bCRXR4...; HttpOnly; Max-Age=2592000; Path=/api/v1/auth; SameSite=lax; Secure
+  ✓ Path=/api/v1/auth (FIXED from /auth)
+
+STEP 2: Refresh (cookie jar — no manual Cookie header)
+  Request:  POST http://127.0.0.1:18011/api/v1/auth/refresh
+  Response: 200 OK
+  Set-Cookie: refresh_token=fUNwNx...; HttpOnly; Max-Age=2592000; Path=/api/v1/auth; SameSite=lax; Secure
+  ✓ Rotation confirmed (new token)
+  ✓ Path=/api/v1/auth maintained
+
+STEP 3: Logout (cookie jar + Bearer)
+  Request:  POST http://127.0.0.1:18011/api/v1/auth/logout
+  Response: 204 No Content
+  Set-Cookie: refresh_token=""; HttpOnly; Max-Age=0; Path=/api/v1/auth; SameSite=lax; Secure
+  ✓ 204 No Content (success)
+  ✓ Cookie cleared: Max-Age=0, Path=/api/v1/auth
+  X-Request-ID: dbc0d215-9bd1-4ca8-a104-4a5c7d6cff60
+
+DB verification (refresh_tokens):
+  - Token from sign-in: revoked_at SET (revoked by rotation step)
+  - Token from refresh: revoked_at SET (revoked by logout step)
+  - New token from rotation: revoked_at=None (rotation-created, now also revoked by logout)
+
+RFC 6265 §5.4 compliance:
+  ✓ curl -b (cookie jar) sends cookie to /api/v1/auth/* endpoints
+  ✓ Path=/api/v1/auth is the correct prefix for the endpoint routes

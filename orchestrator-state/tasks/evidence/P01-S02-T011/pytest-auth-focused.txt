@@ -1,0 +1,67 @@
+$ cd .claude/worktrees/agent-a46ba8f44d6390837/backend
+$ JWT_PRIVATE_KEY=... JWT_PUBLIC_KEY=... DATABASE_URL=postgresql+psycopg://hilo:hilo@localhost:5432/hilo_dev \
+  python3 -m pytest tests/integration/test_auth_signin.py tests/integration/test_auth_refresh.py tests/integration/test_auth_logout.py -v
+
+============================= test session starts ==============================
+platform darwin -- Python 3.11.5, pytest-9.0.2, pluggy-1.6.0
+rootdir: .../agent-a46ba8f44d6390837/backend
+configfile: pyproject.toml
+plugins: httpx-0.36.0, asyncio-1.3.0, langsmith-0.8.3, anyio-4.13.0
+asyncio: mode=Mode.AUTO
+collected 45 items
+
+tests/integration/test_auth_signin.py::test_signin_success_no_mfa PASSED
+tests/integration/test_auth_signin.py::test_signin_mfa_required_branch PASSED
+tests/integration/test_auth_signin.py::test_signin_wrong_password_401_indistinguishable PASSED
+tests/integration/test_auth_signin.py::test_signin_unknown_email_401_indistinguishable PASSED
+tests/integration/test_auth_signin.py::test_signin_unknown_and_wrong_have_same_response_body PASSED
+tests/integration/test_auth_signin.py::test_signin_user_inactive_returns_401 PASSED
+tests/integration/test_auth_signin.py::test_signin_lockout_returns_423_after_threshold PASSED
+tests/integration/test_auth_signin.py::test_signin_invalid_payload_empty_email_400 PASSED
+tests/integration/test_auth_signin.py::test_signin_missing_field_returns_422 PASSED
+tests/integration/test_auth_signin.py::test_signin_rate_limit_429 PASSED
+tests/integration/test_auth_signin.py::test_signin_response_includes_request_id_meta PASSED
+tests/integration/test_auth_signin.py::test_signin_no_pii_in_logs PASSED
+tests/integration/test_auth_signin.py::test_signin_refresh_cookie_attributes PASSED
+tests/integration/test_auth_signin.py::test_signin_refresh_token_hashed_in_db PASSED
+tests/integration/test_auth_signin.py::test_signin_access_token_not_in_cookie PASSED
+tests/integration/test_auth_signin.py::test_signin_response_timing_envelope PASSED
+tests/integration/test_auth_refresh.py::test_refresh_success_rotates_and_returns_new_access_token PASSED
+tests/integration/test_auth_refresh.py::test_refresh_no_cookie_returns_401_session_expired PASSED
+tests/integration/test_auth_refresh.py::test_refresh_unknown_token_returns_401 PASSED
+tests/integration/test_auth_refresh.py::test_refresh_expired_token_returns_401 PASSED
+tests/integration/test_auth_refresh.py::test_refresh_revoked_token_returns_401 PASSED
+tests/integration/test_auth_refresh.py::test_refresh_inactive_user_returns_401 PASSED
+tests/integration/test_auth_refresh.py::test_refresh_replay_old_token_returns_401 PASSED
+tests/integration/test_auth_refresh.py::test_refresh_concurrent_requests_only_one_wins PASSED
+tests/integration/test_auth_refresh.py::test_refresh_rate_limit_returns_429 PASSED
+tests/integration/test_auth_refresh.py::test_refresh_no_pii_or_token_value_in_logs PASSED
+tests/integration/test_auth_refresh.py::test_refresh_request_id_in_response_header_and_meta PASSED
+tests/integration/test_auth_refresh.py::test_refresh_body_has_no_refresh_token PASSED
+tests/integration/test_auth_refresh.py::test_refresh_new_refresh_hashed_in_db PASSED
+tests/integration/test_auth_refresh.py::test_refresh_401_body_byte_identical_for_all_failure_reasons PASSED
+tests/integration/test_auth_logout.py::test_logout_success_revokes_token_and_clears_cookie PASSED
+tests/integration/test_auth_logout.py::test_logout_no_bearer_returns_401 PASSED
+tests/integration/test_auth_logout.py::test_logout_invalid_bearer_returns_401 PASSED
+tests/integration/test_auth_logout.py::test_logout_expired_bearer_returns_401 PASSED
+tests/integration/test_auth_logout.py::test_logout_no_cookie_returns_401 PASSED
+tests/integration/test_auth_logout.py::test_logout_unknown_cookie_returns_401 PASSED
+tests/integration/test_auth_logout.py::test_logout_expired_cookie_returns_401 PASSED
+tests/integration/test_auth_logout.py::test_logout_revoked_cookie_returns_401 PASSED
+tests/integration/test_auth_logout.py::test_logout_user_mismatch_returns_401 PASSED
+tests/integration/test_auth_logout.py::test_logout_401_body_byte_identical_for_all_failure_reasons PASSED
+tests/integration/test_auth_logout.py::test_logout_does_not_revoke_other_users_tokens PASSED
+tests/integration/test_auth_logout.py::test_logout_request_id_propagated_in_response_header_and_audit PASSED
+tests/integration/test_auth_logout.py::test_logout_no_pii_or_token_value_in_logs PASSED
+tests/integration/test_auth_logout.py::test_logout_audit_row_persists_even_when_main_tx_rolls_back PASSED
+tests/integration/test_auth_logout.py::test_logout_cookie_jar_roundtrip_no_manual_cookie_header PASSED
+
+======================= 45 passed, 20 warnings in 4.77s =======================
+EXIT CODE: 0
+
+Key tests for T011:
+  - test_signin_refresh_cookie_attributes (T01): verifies Path=/api/v1/auth in Set-Cookie [PASS]
+  - test_signin_response_timing_envelope (T13): verifies path=/api/v1/auth in cookie attrs [PASS]
+  - test_refresh_success_rotates_and_returns_new_access_token: includes Path=/api/v1/auth assert [PASS]
+  - test_logout_cookie_jar_roundtrip_no_manual_cookie_header (T15 NEW): httpx.AsyncClient+ASGITransport
+    cookie-jar end-to-end regression guard — RFC 6265 §5.4 compliance [PASS]

@@ -1,0 +1,40 @@
+=== CURL ROUNDTRIP — MAIN BACKEND (port 8000) — PRE-FIX STATE ===
+Timestamp: 2026-05-12T09:49:52Z
+
+--- 1. SIGN-IN (main backend port 8000) ---
+$ rm -f /tmp/t011-tester-cookies-main.txt
+$ curl -sS -c /tmp/t011-tester-cookies-main.txt -X POST http://localhost:8000/api/v1/auth/sign-in \
+    -H 'Content-Type: application/json' \
+    -d '{"email":"employee.verification@inditex-sandbox.com","password":"VerifyPass2024!"}' \
+    -i | head -15
+
+HTTP/1.1 200 OK
+date: Tue, 12 May 2026 09:49:52 GMT
+server: uvicorn
+x-request-id: 99a53b03-23aa-49db-9b0b-3750401ddf46
+content-length: 573
+content-type: application/json
+set-cookie: refresh_token=VdtwWFeHpFcZRQejgwpDkPRN0dObI9IrsIXSCfKtbLCUKSHYO87VOPwNatDv-Ujc; HttpOnly; Max-Age=2592000; Path=/auth; SameSite=lax; Secure
+
+OBSERVATION: Set-Cookie header shows Path=/auth (the BUG).
+             The actual endpoints are at /api/v1/auth/*, so a real browser/curl
+             enforcing RFC 6265 §5.4 will NOT send this cookie to those endpoints.
+
+--- 2. REFRESH WITH COOKIE JAR (main backend) — EXPECTED TO FAIL ---
+$ curl -sS -b /tmp/t011-tester-cookies-main.txt -c /tmp/t011-tester-cookies-main.txt \
+    -X POST http://localhost:8000/api/v1/auth/refresh -i | head -10
+
+HTTP/1.1 401 Unauthorized
+date: Tue, 12 May 2026 09:50:00 GMT
+server: uvicorn
+content-length: 207
+content-type: application/json
+{"data":null,"meta":{"request_id":"9e28a690-6fbd-431f-af28-a5b7af0b6fc4"},
+"errors":[{"code":"AUTH_SESSION_EXPIRED","message":"Session expired or invalid; please sign in again.","field":null,"details":null}]}
+
+RESULT: 401 AUTH_SESSION_EXPIRED — CONFIRMED BUG.
+        curl's cookie jar respects the Path attribute.
+        Cookie was not sent to /api/v1/auth/refresh because Path=/auth does not prefix-match.
+        This is exactly the RFC 6265 §5.4 path matching failure that T011 fixes.
+
+VERDICT: Pre-fix behavior CONFIRMED — real browser/curl cannot use the cookie for refresh or logout.

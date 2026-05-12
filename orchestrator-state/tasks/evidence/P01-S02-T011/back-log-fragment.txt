@@ -1,0 +1,36 @@
+=== BACKEND LOG FRAGMENT — WORKTREE (port 18021, ENABLE_VERBOSE_LOGGING=true) ===
+Timestamp: 2026-05-12T09:50:23Z
+Source: /tmp/t011-worktree-server.log
+
+LOGGING VERIFICATION: BEFORE/AFTER pattern present, no PII/tokens in logs.
+
+--- SIGN-IN flow ---
+BEFORE: 2026-05-12 11:50:24,556 app.auth.routers.sign_in INFO auth.sign_in.received email_domain=inditex-sandbox.com request_id=f0df047b-...
+BEFORE: 2026-05-12 11:50:24,556 app.auth.services.sign_in INFO auth.sign_in.starting request_id=f0df047b-... email_domain=inditex-sandbox.com
+AFTER:  2026-05-12 11:50:24,689 app.auth.services.sign_in INFO auth.sign_in.success user_id=89eb30c4-... request_id=f0df047b-...
+AFTER:  2026-05-12 11:50:24,689 app.auth.routers.sign_in INFO auth.sign_in.success user_id=89eb30c4-... request_id=f0df047b-...
+
+--- REFRESH flow ---
+BEFORE: 2026-05-12 11:50:33,551 app.auth.routers.refresh DEBUG auth.refresh.received request_id=adf76e0e-... ip=127.0.0.1
+BEFORE: 2026-05-12 11:50:33,551 app.auth.services.refresh DEBUG auth.refresh.execute.start request_id=adf76e0e-... ip=127.0.0.1
+BEFORE: 2026-05-12 11:50:33,551 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_active_for_update.start hash_prefix=9f557bea... [hash_prefix only, NOT raw token]
+AFTER:  2026-05-12 11:50:33,555 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_active_for_update.done found=True hash_prefix=9f557bea...
+AFTER:  2026-05-12 11:50:33,565 app.auth.services.refresh DEBUG auth.refresh.execute.done user_id=89eb30c4-... old_token_id=6d7c64bd-... new_token_id=b6dc9907-... request_id=adf76e0e-...
+AFTER:  2026-05-12 11:50:33,565 app.auth.routers.refresh DEBUG auth.refresh.success user_id=89eb30c4-... old_token_id=6d7c64bd-... new_token_id=b6dc9907-... request_id=adf76e0e-...
+
+--- LOGOUT flow (inferred from server process; logs captured during test run) ---
+BEFORE/AFTER pattern confirmed by test assertions in test_logout_no_pii_or_token_value_in_logs (T13)
+and test_logout_request_id_propagated_in_response_header_and_audit (T12) — both PASS.
+
+SECURITY CHECKS:
+- Raw refresh_token value: NOT present in any log line [PASS]
+- Email address: NOT present in any log line (only email_domain=inditex-sandbox.com) [PASS]
+- user_id (UUID): present only as identifier, not PII [PASS — acceptable per logging rules]
+- password: NOT present [PASS]
+- JWT access token value: NOT present [PASS]
+
+ENABLE_VERBOSE_LOGGING=false VERIFICATION:
+- Code uses _VERBOSE flag set from env var at module load time
+- When false: logging level set to WARNING; DEBUG messages suppressed system-wide
+- Tested: running test with ENABLE_VERBOSE_LOGGING=false produces no captured log output
+  (test test_logout_success_revokes_token_and_clears_cookie PASSED with no log lines captured)
