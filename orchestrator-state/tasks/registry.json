@@ -34,7 +34,7 @@
       "id": "P01",
       "phase_number": 1,
       "title": "Auth / base capabilities",
-      "status": "active",
+      "status": "ready",
       "depends_on": [
         "P00"
       ],
@@ -1058,7 +1058,7 @@
       "phase_id": "P01",
       "step_id": "P01-S02",
       "title": "make bootstrap_three_docs.py --refresh preserve closer-set task status",
-      "status": "ready",
+      "status": "ready_for_close",
       "kind": "framework",
       "target": "make bootstrap_three_docs.py --refresh preserve closer-set task status",
       "build_state": "planned",
@@ -1098,7 +1098,7 @@
       "endpoint": "",
       "tables": [],
       "handoff_path": "orchestrator-state/tasks/handoffs/P01-S02-T010.md",
-      "evidence_dir": "orchestrator-state/tasks/evidence/P01-S02-T010",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P01-S02-T010/",
       "origin": {
         "type": "runtime_followup",
         "followup_id": "FU-20260512044309-make-bootstrap-three-docs-py-refresh-preserve-cl",
@@ -1117,14 +1117,23 @@
         "Runtime follow-up promoted from FU-20260512044309-make-bootstrap-three-docs-py-refresh-preserve-cl",
         "Description: bootstrap_three_docs.py --refresh, when re-run after a slice closer has committed, overwrites the 'done' status (and last_outcome/last_updated_by/last_stop_at) back to the registry-template defaults (ready_for_close / ready). The refresh message says 'Runtime state preserved by default (62 matching task(s))' but the diff shows fields like status, last_outcome, last_updated_by being reset. Manifested for P01-S02-T002 when STACK_PROFILE.yaml was changed and bootstrap --refresh was run for propagation: T002 status flipped from 'done' to 'ready_for_close' despite the closer's atomic commit being merged to main. Fix: in the registry merger, when a task already exists with status in {done, blocked, skipped} and last_outcome in {committed, deployed}, do NOT overwrite those lifecycle fields — only update title/depends_on/conflict_groups/write_set/journey_refs/acceptance derived from the Coverage Registry. Add a regression test under .claude/bin/tests/ that creates a registry with status=done and asserts --refresh preserves it.",
         "Triage: out_of_scope; why_not_debugger=Bug lives in the orchestrator framework (.claude/bin/bootstrap_three_docs.py + supporting modules), not in any app slice Write set. The bug only manifests when bootstrap_three_docs.py --refresh runs on a registry that has tasks at status=done from recent closers — refresh regenerates task records and resets the status to ready_for_close. I patched the registry manually for T002 (commit 570b702) but the root cause persists for any future refresh. Debugger inside T002 cannot fix orchestrator framework code without expanding Write set across the entire .claude/ static config."
-      ]
+      ],
+      "claimed_at": "2026-05-12T05:03:03+00:00",
+      "claimed_by": "sergiolr",
+      "claim_terminal_task_env": "P01-S02-T010",
+      "task_pack_path": "orchestrator-state/tasks/task-packs/P01-S02-T010.md",
+      "last_outcome": "pass",
+      "last_updated_by": "tester",
+      "last_stop_at": "2026-05-12T05:30:38+00:00",
+      "validator_outcome": "approved",
+      "validator_next_status": "ready_for_close"
     },
     {
       "id": "P01-S02-T009",
       "phase_id": "P01",
       "step_id": "P01-S02",
       "title": "generate ≥32-byte JWT dev key + default ENABLE_VERBOSE_LOGGING in dev .env",
-      "status": "claimed",
+      "status": "ready_for_close",
       "kind": "security",
       "target": "generate ≥32-byte JWT dev key + default ENABLE_VERBOSE_LOGGING in dev .env",
       "build_state": "planned",
@@ -1167,7 +1176,7 @@
       "endpoint": "",
       "tables": [],
       "handoff_path": "orchestrator-state/tasks/handoffs/P01-S02-T009.md",
-      "evidence_dir": "orchestrator-state/tasks/evidence/P01-S02-T009",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P01-S02-T009/",
       "origin": {
         "type": "runtime_followup",
         "followup_id": "FU-20260512044309-generate-32-byte-jwt-dev-key-default-enable-verb",
@@ -1190,14 +1199,19 @@
       "claimed_at": "2026-05-12T05:00:36+00:00",
       "claimed_by": "sergiolr",
       "claim_terminal_task_env": "P01-S02-T009",
-      "task_pack_path": "orchestrator-state/tasks/task-packs/P01-S02-T009.md"
+      "task_pack_path": "orchestrator-state/tasks/task-packs/P01-S02-T009.md",
+      "last_outcome": "pass",
+      "last_updated_by": "tester",
+      "last_stop_at": "2026-05-12T05:27:59+00:00",
+      "validator_outcome": "approved",
+      "validator_next_status": "ready_for_close"
     },
     {
       "id": "P01-S02-T008",
       "phase_id": "P01",
       "step_id": "P01-S02",
       "title": "fix dev-restart.profile.sh verification-data bootstrap source path",
-      "status": "claimed",
+      "status": "ready_for_close",
       "kind": "tooling",
       "target": "fix dev-restart.profile.sh verification-data bootstrap source path",
       "build_state": "planned",
@@ -1230,7 +1244,7 @@
       "endpoint": "",
       "tables": [],
       "handoff_path": "orchestrator-state/tasks/handoffs/P01-S02-T008.md",
-      "evidence_dir": "orchestrator-state/tasks/evidence/P01-S02-T008",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P01-S02-T008/",
       "origin": {
         "type": "runtime_followup",
         "followup_id": "FU-20260512044241-fix-dev-restart-profile-sh-verification-data-boo",
@@ -1253,7 +1267,12 @@
       "claimed_at": "2026-05-12T05:00:25+00:00",
       "claimed_by": "sergiolr",
       "claim_terminal_task_env": "P01-S02-T008",
-      "task_pack_path": "orchestrator-state/tasks/task-packs/P01-S02-T008.md"
+      "task_pack_path": "orchestrator-state/tasks/task-packs/P01-S02-T008.md",
+      "last_outcome": "pass",
+      "last_updated_by": "tester",
+      "last_stop_at": "2026-05-12T05:21:11+00:00",
+      "validator_outcome": "approved",
+      "validator_next_status": "ready_for_close"
     },
     {
       "id": "P01-S02-T003",

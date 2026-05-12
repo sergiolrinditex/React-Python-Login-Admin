@@ -138,6 +138,15 @@
   - Correct: `pytest tests/integration/test_dev_restart_reset.py`
   - Wrong: `pytest backend/tests/integration/test_dev_restart_reset.py` (exit 4 — not found)
 
+### Tooling-fix slices in worktrees (P01-S02-T008 pattern)
+
+- The worktree has the OLD code — the fix lives in the MAIN REPO. Always read the main repo paths when continuing/closing a tooling fix slice in a worktree continuation session.
+- Task packs, evidence, and handoffs for T008 live in the main repo (`orchestrator-state/`), NOT in the worktree. Continuation sessions must read from `/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/orchestrator-state/`, not from the worktree-local `orchestrator-state/`.
+- `git status` in the MAIN REPO is the authoritative view of what changed for a tooling slice — worktree `git status` only shows the worktree's divergence from its branch point.
+- For shell scripts with `cd "${SOMEDIR}"` + relative `--source path`: always use `${ROOT_DIR}/path` (absolute) when `cwd` changes inside the function. Relative paths after `cd "${HILO_BACKEND_DIR}"` resolve to `backend/`, not repo root.
+- Hard-fail (`fail "..."`) is always preferred over warn-only (`warn "..."; return 0`) for seed steps once the blocking issue is resolved. Silent-pass after warn is an anti-pattern per non-negotiables §Error handling.
+- When planner builds packs for a multi-FU wave (T008/T009/T010 in same session), T009.md and T010.md may be enriched/created during T008 planning. These are planner artifacts, NOT developer write-set drift. Closer must stage only T008's canonical file (scripts/dev-restart.profile.sh) plus orchestrator artifacts (handoff, evidence, PROGRESS.md).
+
 ## Known gotchas
 
 - Task packs for the current task MUST be read from the main repo path, not the worktree (they're not synced to worktrees).
@@ -157,6 +166,8 @@
 | P00-S02-T001 | success | docker-compose.yml, backend/Dockerfile, frontend/Dockerfile, .dockerignore, scripts/minio-bootstrap.sh, frontend/nginx.conf, .env.example |
 | P00-S01-T005 | success | frontend/src/i18n/index.ts (rewrite), frontend/src/i18n/languages.ts, frontend/src/i18n/types.d.ts, frontend/src/i18n/__tests__/i18n.test.ts, frontend/public/locales/**/{8 ns}.json (×3 langs = 24 files), frontend/src/pages/showcase/I18nDemoSection.tsx, frontend/src/pages/showcase/ShowcasePage.tsx |
 | P00-S02-T004 | in progress (developer done) | backend/app/verification_data/loader.py (cast fix + json.dumps + preventive maintenance) |
+| P01-S02-T008 | developer done (pending validator+tester+verify-slice) | scripts/dev-restart.profile.sh (absolute --source path + hard-fail seed block) |
+| P01-S02-T009 | developer done (pending validator+tester+verify-slice) | scripts/gen-dev-secrets.sh (NEW), scripts/setup-from-scratch.sh (+15 LOC), .env.example (comments) |
 | P00-S02-T003 | success | backend/alembic.ini, backend/alembic/env.py, backend/alembic/script.py.mako, backend/alembic/versions/.gitkeep, backend/app/verification_data/** (8 files), data/verification/** (11 fixtures + README), backend/tests/conftest.py, backend/tests/integration/** (3 files), scripts/dev-restart.profile.sh, backend/pyproject.toml (cryptography+argon2-cffi), backend/requirements.txt, .env.example |
 
 ### Auth module structure (P01-S02-T001)
@@ -243,3 +254,67 @@
 - After a full test run: ALWAYS run `alembic upgrade head` before using the live DB.
 - Pre-condition check before running tests: verify tables exist.
 - This is R1-T001-S02 (pre-existing known issue — nothing to fix).
+
+## P01-S02-T009 — Bash dev-secrets provisioner patterns
+
+### POSIX-portable in-place .env editing
+- Never use `sed -i` for in-place .env edits — BSD macOS requires `sed -i ''` (empty backup arg), GNU accepts `sed -i`. Always use: `awk ... "$ENV_PATH" > "$tmp" && mv "$tmp" "$ENV_PATH"`.
+- Use `mktemp "${ENV_PATH}.tmp.XXXXXX"` for atomic temp file next to the target (same filesystem → `mv` is atomic).
+- Pattern to replace a KEY=VALUE line: `awk -v k="$var" -v v="$val" 'split($0,p,"=") && p[1]==k {print k"="v; next} {print}'`.
+- Pattern to detect if a key exists: `grep -qE "^${VAR}="`.
+
+### Bash secret hygiene
+- NEVER use `set -x` in scripts that handle secrets (xtrace prints every expansion to stderr).
+- After generating a secret into a local var: write to file, then `unset VAR` immediately.
+- Log only `len=${#VAR}` (shell string length), never `echo "$VAR"`.
+- Use stderr (`>&2`) for all logging from provisioner scripts — stdout stays clean for callers.
+
+### CLAUDE_PROJECT_DIR pattern for portable scripts
+- `ROOT_DIR="$(cd "${CLAUDE_PROJECT_DIR:-$SCRIPT_DIR/..}" && pwd)"` lets tests pass `CLAUDE_PROJECT_DIR=$TMPDIR` for sandbox testing without modifying real .env.
+- Worktree vs main-repo: the script resolves ROOT_DIR at runtime so it works in worktrees, CI, and sandbox temp dirs.
+
+### Idempotency contract for provisioners
+- Rule: running the script twice must produce `changed=0` on the second run.
+- Key check: `is_placeholder()` — returns true if value == "" OR value == "replace-with-dev-key" OR `${#value} < 32`.
+- Flag check: compare current value to expected value before deciding to set.
+- `chmod 600 .env` at the end is idempotent (re-applying same permissions is a no-op).
+
+### uvicorn invocation for verification (macOS)
+- `uvicorn` is NOT on system PATH by default — installed at `/Users/sergiolr/Library/Python/3.11/bin/uvicorn`.
+- Use port offset from main dev server (e.g., :18009 instead of :8000) for test instances to avoid killing the running dev server.
+- After test: `kill $UPID && wait $UPID` to reap the process cleanly before inspecting logs.
+- `python3 -m uvicorn` does NOT work if `backend/alembic/` shadows the installed package (same issue as alembic). Use full path.
+
+## P01-S02-T010 — Bootstrap preservation framework patterns
+
+### hook_write_scope_guard.py blocks .claude/bin/ writes (CRITICAL)
+- `Write` / `Edit` tools are blocked for paths under `.claude/` during app-building slices UNLESS `CLAUDE_ALLOW_STATIC_CONFIG_WRITES=1` is in the environment.
+- BUT: the env var must be in the CURRENT BASH SHELL, not a previous one. The tools run in isolated shell calls.
+- **Pattern for framework-maintenance slices**: write `.claude/bin/` files using `python3 << 'PYEOF' ... PYEOF` in a Bash call with `CLAUDE_ALLOW_STATIC_CONFIG_WRITES=1` prepended on the command line.
+- This is the correct, hook-bypass-approved pattern for orchestrator maintenance tasks.
+
+### Bootstrap test pattern (canonical)
+- Test file: `_BIN = Path(__file__).resolve().parent.parent` + `sys.path.insert(0, str(_BIN))` + `import bootstrap_three_docs as boot; import common`
+- Each test case uses `tempfile.TemporaryDirectory()` as the root and `_RootCtx(root)` context manager.
+- `_RootCtx.__enter__`: `os.environ["CLAUDE_PROJECT_DIR"] = str(root)` + `common._LOCK_DEPTH.clear()` + `importlib.reload(common); importlib.reload(boot)`.
+- `_RootCtx.__exit__`: restore `CLAUDE_PROJECT_DIR`, clear `_LOCK_DEPTH`, reload modules.
+- The two-context pattern (first pass to materialize registry, second pass to inject state, third pass to refresh) is the standard for refresh preservation tests.
+- NEVER use `boot.generate_artifacts()` pointing at the real registry — always use a tmp dir.
+
+### Closer-final preservation contract
+- `CLOSER_FINAL_STATUSES = frozenset({"done","blocked","skipped"})` — importable from `bootstrap_three_docs`.
+- `CLOSER_FINAL_OUTCOMES = frozenset({"committed","deployed"})` — importable from `bootstrap_three_docs`.
+- `_RUNTIME_TASK_FIELDS_TO_PRESERVE` — the full allowlist of lifecycle fields (20 fields).
+- `_apply_preserved_runtime` has a defensive re-assertion: after the copy loop, for closer-final tasks it re-sets `status`, `last_outcome`, `last_updated_by`, `last_stop_at` from `old`.
+- Derived fields (`title`, `depends_on`, `write_set`, `conflict_groups`) are ALWAYS refreshed — never preserved.
+- Regression test: `.claude/bin/tests/test_bootstrap_refresh_preserves_done.py` (13 tests — TC1..TC8 + 5 constant checks).
+
+### Pre-existing test_static_contracts failure
+- `test_static_contracts::test_spawn_budget_is_twenty_not_six` fails with `2/6` pattern match.
+- This is PRE-EXISTING (exists before T010 — confirmed via `git stash` + `git stash pop`).
+- Do NOT create a FU for this unless you are specifically asked to investigate it.
+
+### Snapshot verification pattern for framework maintenance slices
+- Before ANY test run: `diff -q orchestrator-state/memory/task-dag.json /tmp/T010-snapshots-<timestamp>/task-dag.json`
+- Expected: task-dag.json ALWAYS matches (our tests never touch the real registry).
+- registry.json and runtime-state.json may differ slightly (hook updates from parallel validator/tester runs) — check the diff content to confirm it's only hook-written fields (validator_outcome, last_updated_by, etc.).

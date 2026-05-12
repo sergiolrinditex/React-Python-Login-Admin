@@ -19,10 +19,13 @@
   - P01-S01-T001 — 0001_auth_users_employee_audit migration (done, 2026-05-11)
   - P00-S02-T004 — fix verification_data loader `:meta::jsonb` SQL cast (done, 2026-05-11)
   - P01-S02-T001 — POST /api/v1/auth/sign-up (done, 2026-05-11)
-  - **P01-S02-T002 — POST /api/v1/auth/sign-in (developer done, 2026-05-11)**
-- **Next pending slice**: P01-S02-T003 — POST /api/v1/auth/token/refresh (unblocked when T002 verified)
+  - P01-S02-T002 — POST /api/v1/auth/sign-in (developer done, 2026-05-11)
+  - P01-S02-T008 — fix dev-restart.profile.sh verification-data bootstrap source path (developer done, 2026-05-12)
+  - P01-S02-T009 — JWT dev key hygiene + ENABLE_VERBOSE_LOGGING=true default (developer done, 2026-05-12)
+  - **P01-S02-T010 — bootstrap_three_docs.py --refresh preserves closer-final task status (developer done, 2026-05-12)**
+- **Next pending slice**: P01-S02-T003 — POST /api/v1/auth/token/refresh (ready in registry; T008+T009+T010 verify-slice pending)
 - **Blockers**: none
-- **Generated at**: 2026-05-11T20:15:00+00:00
+- **Generated at**: 2026-05-12T08:10:00+02:00
 
 ## Infrastructure Status (P00-S02-T001)
 
@@ -39,6 +42,38 @@
 
 Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfile`, `.dockerignore`, `scripts/minio-bootstrap.sh`, `frontend/nginx.conf`, `.env.example` (extended).
 
+## Framework Changes (P01-S02-T010)
+
+| Aspect | Status | Details |
+|--------|--------|---------|
+| `CLOSER_FINAL_STATUSES` constant | added | `frozenset({"done","blocked","skipped"})` in bootstrap_three_docs.py (importable by tests) |
+| `CLOSER_FINAL_OUTCOMES` constant | added | `frozenset({"committed","deployed"})` in bootstrap_three_docs.py (importable by tests) |
+| `_apply_preserved_runtime` docstring | extended | Documents the closer-final defensive re-assertion contract |
+| Defensive re-assertion guard | added | After field-copy loop, re-asserts lifecycle fields for closer-final tasks — prevents future refactors from breaking the invariant |
+| Regression test | NEW | `.claude/bin/tests/test_bootstrap_refresh_preserves_done.py` — 13 tests (8 TC + 5 constant checks) |
+| Manual patch 570b702 | OBSOLETE | Future refreshes will not reintroduce the regression. Test TC1 pins this exact scenario. |
+| Test command (new file) | verified | `python3 -B -S -m unittest discover -s .claude/bin/tests -p test_bootstrap_refresh_preserves_done.py -v` → 13/13 PASS |
+| Full framework suite | verified | 142 framework tests pass; 1 pre-existing failure in test_static_contracts (2/6 pattern, exists before T010) |
+| `--validate-only` | passes | exit 0, "Source-of-truth contract is valid." — no source-of-truth drift introduced |
+
+## JWT Dev Key Hygiene (P01-S02-T009)
+
+| Aspect | Status | Details |
+|--------|--------|---------|
+| `scripts/gen-dev-secrets.sh` | NEW | Idempotent provisioner: rotates JWT key if placeholder/short, sets ENABLE_VERBOSE_LOGGING=true |
+| `scripts/setup-from-scratch.sh` | updated | Invokes gen-dev-secrets.sh after .env source, before DB migrations; re-sources .env after rotation |
+| `.env.example` | updated | Added RFC 7518 §3.2 comment + gen-dev-secrets.sh usage note for JWT keys; expanded ENABLE_VERBOSE_LOGGING comment |
+| `.env` (local) | rotated | JWT_PRIVATE_KEY now 64 chars (real key), ENABLE_VERBOSE_LOGGING=true; chmod 600 |
+| Backend startup warning | eliminated | `tokens.jwt_key.too_short` no longer fires (key is 64 chars, RFC 7518 ≥32 bytes satisfied) |
+| Idempotency | verified | Second run produces `changed=0`, no rotation |
+| Tests | 73/73 PASS | No regression |
+
+## Tooling Status (P01-S02-T008)
+
+| Tool | Status | Details |
+|------|--------|---------|
+| `scripts/dev-restart.sh --reset` | self-contained (P01-S02-T008 fix) | No manual workaround required. Hard-fail on seed error. `--source ${ROOT_DIR}/data/verification` is cwd-independent. |
+
 ## Backend Status
 
 | Aspect | Status | Details |
@@ -48,7 +83,7 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 | Auth endpoints | 2 implemented | POST /api/v1/auth/sign-up (T001), POST /api/v1/auth/sign-in (T002) |
 | Endpoints implemented | 5 | GET /health, GET /live, GET /ready, POST /api/v1/auth/sign-up, POST /api/v1/auth/sign-in |
 | Migrations applied | 1 (head=0001) | 9 auth tables: users, employee_profiles, roles, permissions, user_roles, refresh_tokens, mfa_totp_secrets, password_reset_tokens, audit_logs |
-| Seed data | loader.py fixed (P00-S02-T004); bootstrap ready | FU-20260511145446 resolved — CAST(:meta AS JSONB) + json.dumps() |
+| Seed data | loader.py fixed (P00-S02-T004); bootstrap ready; dev-restart --reset self-contained (T008) | FU-20260511145446 resolved — CAST(:meta AS JSONB) + json.dumps(). T008 fix: absolute --source path + hard-fail. |
 | Backend tests | 73 passing | test_health.py (11) + test_dependency_smoke.py (20) + test_migrations_0001_auth.py (6) + test_dev_restart_reset.py (2) + test_verification_data_bootstrap.py (9) + test_auth_signup.py (9) + test_auth_signin.py (16) |
 | Backend dependencies | declared + installed | pyproject.toml: 28 packages pinned (27 + PyJWT==2.12.1 added P01-S02-T002) |
 | Lint (ruff) | clean | 0 issues |
@@ -170,5 +205,10 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 
 ---
 
-> Last updated: 2026-05-11T20:15:00+00:00
-> Updated by: developer — P01-S02-T002 POST /api/v1/auth/sign-in (developer done, pending validator+tester+verify-slice)
+- **2026-05-12 (P01-S02-T009)**: D-T009-1: `JWT_PUBLIC_KEY` is set to same value as `JWT_PRIVATE_KEY` for HS256 symmetry. tokens.py only reads `JWT_PRIVATE_KEY` today but TECHNICAL_GUIDE §11.1 declares both — keeping them in sync prevents future RS256-migration confusion.
+- **2026-05-12 (P01-S02-T009)**: D-T009-2: `MFA_ENCRYPTION_KEY` and `ENCRYPTION_KEY` hygiene (Fernet generation) left out-of-scope. They require `Fernet.generate_key()` (not `secrets.token_urlsafe`). Candidate for a future FU.
+- **2026-05-12 (P01-S02-T009)**: Placeholder detection: value == "" OR value == "replace-with-dev-key" OR len(value) < 32. Key generation: `python3 -c "import secrets; print(secrets.token_urlsafe(48))"` → 64 url-safe chars, ≥48 bytes entropy.
+
+> Last updated: 2026-05-12T07:25:00+02:00
+> Updated by: developer — P01-S02-T009 JWT dev key hygiene + ENABLE_VERBOSE_LOGGING default (developer done, pending validator+tester+verify-slice)
+> Updated by: developer — P01-S02-T008 fix dev-restart.profile.sh verification-data bootstrap source path (developer done, pending validator+tester+verify-slice)

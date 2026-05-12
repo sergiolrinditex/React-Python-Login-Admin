@@ -1,0 +1,6 @@
+                  id                  |                   email                   | status 
+--------------------------------------+-------------------------------------------+--------
+ 4c65e235-abb0-4dcb-910b-09c108eae84f | admin.peopletech@inditex-sandbox.com      | active
+ 445898ca-dbd5-4c81-8270-054c0bcdadce | employee.verification@inditex-sandbox.com | active
+(2 rows)
+

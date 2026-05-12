@@ -1,0 +1,49 @@
+{
+  "id": "FU-20260512052820-fix-dev-restart-db-health-race-wait-for-host-tcp",
+  "schema_version": 1,
+  "status": "proposed",
+  "created_at": "2026-05-12T05:28:20+00:00",
+  "created_by": "sergiolr",
+  "origin_task_id": "P01-S02-T008",
+  "origin_phase_id": "P01",
+  "origin_step_id": "P01-S02",
+  "kind": "bug",
+  "product_increment": "current",
+  "build_state": "planned",
+  "severity": "medium",
+  "title": "fix dev-restart db_health race: wait for host TCP, not container-internal pg_isready",
+  "description": "After 'compose down -v && compose up postgres', the existing wait_for db_health uses pg_isready inside the container. Container reports ready before Rancher (or vanilla docker) finishes forwarding port 5432 to the host. alembic upgrade then connects from the host and gets ECONNREFUSED. Observed during /verify-slice run of P01-S02-T008: run-1 (clean cold) succeeded; run-2 (back-to-back hard reset) failed at alembic step with sqlalchemy.exc.OperationalError: connection failed: connection to server at \"127.0.0.1\", port 5432 failed: Connection refused. Run-3 (postgres already healthy, no down) succeeded. The hard-fail behavior installed by T008 makes this race visible (good), but the underlying timing fix is out-of-scope for T008. Suggested fix shape: in db_health (line 153) or a new wait_for_host_tcp helper, after pg_isready-internal succeeds, also poll a host-side connection (e.g. nc -z 127.0.0.1 5432 with credential probe via psycopg or pg_isready -h 127.0.0.1) for up to 30s before returning success. Same file (scripts/dev-restart.profile.sh) so conflict_group is the same (tooling:dev-restart) — must NOT run in parallel with T008 itself, but T008 is closing now.",
+  "journey_refs": [],
+  "screen_route": "—",
+  "endpoint": "—",
+  "tables": [],
+  "depends_on": [
+    "P01-S02-T008"
+  ],
+  "conflict_groups": [
+    "tooling:dev-restart"
+  ],
+  "write_set": [
+    "scripts/dev-restart.profile.sh"
+  ],
+  "acceptance": [
+    "Two consecutive 'bash scripts/dev-restart.sh --reset' commands both exit 0 and persist users>=1",
+    "with no manual sleep between them. wait_for db_health returns only after both container-internal pg_isready AND a real host-side connection (127.0.0.1:5432 with valid credentials) succeed within 60s. If host-side connection fails after 60s the script fails non-zero (no silent fallback)."
+  ],
+  "verify": [
+    "Run: bash scripts/dev-restart.sh --reset",
+    "echo $?",
+    "bash scripts/dev-restart.sh --reset",
+    "both must print 0. psql count(*) FROM users must return >= 1 after each. Negative control: stop postgres container (docker compose stop postgres)",
+    "run bash scripts/dev-restart.sh --reset → must fail within 60s with a clear 'Postgres did not become ready' message."
+  ],
+  "notes": [],
+  "triage": {
+    "scope_classification": "out_of_scope",
+    "why_not_debugger": "T008 acceptance is narrowly the seed --source path (lines 347-360 of scripts/dev-restart.profile.sh). The race lives in db_health() (lines 153-157) which runs pg_isready INSIDE the postgres container; meanwhile alembic upgrade head connects from the HOST at 127.0.0.1:5432 — container-internal-ready and host-TCP-forward-ready are different timings under Rancher. Two-consecutive --reset can race between compose down -v + compose up + alembic. T008 fix did not introduce this race (seed block runs after alembic), but T008's hard-fail correctly surfaces it as RESET2_EXIT=1. Bundling a wait-for-host-tcp into T008 would expand its responsibility from one bug to two unrelated bugs (KISS/YAGNI violation per .claude/rules/01-non-negotiables.md). Needs its own slice with separate acceptance: db_health (or a new wait_for_host_tcp helper) must verify host TCP 5432 reachability with credentials before returning success.",
+    "decision": "followup_only_when_outside_current_slice",
+    "debugger_path": "in_scope_defects_use_validator_tester_debugger_retest",
+    "warnings": []
+  },
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260512052820-fix-dev-restart-db-health-race-wait-for-host-tcp.yaml"
+}

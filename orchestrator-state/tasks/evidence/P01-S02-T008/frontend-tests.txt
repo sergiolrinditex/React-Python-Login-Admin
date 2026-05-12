@@ -1,0 +1,17 @@
+
+> hilo-people-frontend@0.1.0 test
+> vitest --run
+
+
+ RUN  v3.2.4 /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/frontend
+
+ ✓ src/i18n/__tests__/i18n.test.ts (16 tests) 7ms
+ ✓ src/app/__tests__/providers.test.tsx (4 tests) 18ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx (34 tests) 98ms
+ ✓ src/pages/showcase/__tests__/ShowcasePage.test.tsx (4 tests) 130ms
+
+ Test Files  4 passed (4)
+      Tests  58 passed (58)
+   Start at  07:18:54
+   Duration  1.58s (transform 231ms, setup 451ms, collect 670ms, tests 253ms, environment 2.66s, prepare 484ms)
+

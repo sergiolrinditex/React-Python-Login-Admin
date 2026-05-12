@@ -29,9 +29,9 @@
 #   front_start   boot frontend (nohup, PID → $FRONT_PID_FILE, logs → $FRONT_LOG)
 #   front_url     URL string for status table
 #   db_health     0 = up, 1 = down, 2 = unknown (no CLI / no compose)
-#   db_reset      destroy DB volume → infra up → migrate → seed (warn-only on
-#                 seed failure: P00-S02-T004 covers the verification_data
-#                 loader :meta::jsonb cast bug — FU-20260511145446 promoted).
+#   db_reset      destroy DB volume → infra up → migrate → seed (hard-fail on
+#                 seed failure: data/verification/ must exist and be loadable;
+#                 any bootstrap error aborts --reset with non-zero exit).
 #
 # Notes:
 #   - Rancher Desktop: if `docker`/`nerdctl` are not on PATH, we auto-prepend
@@ -348,15 +348,14 @@ db_reset() {
   cd "${HILO_BACKEND_DIR}"
   # `python -m app.verification_data.bootstrap` is safe here: `app` is a real
   # package at backend/app/, and there is no top-level module that shadows it.
+  # --source uses an absolute path derived from ROOT_DIR so that cwd=backend/
+  # does not cause the relative path data/verification to resolve to
+  # backend/data/verification (which does not exist). P01-S02-T008 fix.
   if ! "${py}" -m app.verification_data.bootstrap \
-        --source data/verification >>"${BACK_LOG}" 2>&1; then
+        --source "${ROOT_DIR}/data/verification" >>"${BACK_LOG}" 2>&1; then
     cd "${ROOT_DIR}"
-    # WARN-only: P00-S02-T004 (FU-20260511145446) is the DAG task that fixes
-    # the :meta::jsonb cast bug in backend/app/verification_data/loader.py.
-    # The seed step legitimately fails until that slice is closed.
-    warn "verification_data bootstrap failed — see ${BACK_LOG}."
-    warn "This is expected until P00-S02-T004 closes (FU-20260511145446)."
-    return 0
+    fail "verification_data bootstrap failed; see ${BACK_LOG}."
   fi
+  log "verification_data bootstrap complete."
   cd "${ROOT_DIR}"
 }

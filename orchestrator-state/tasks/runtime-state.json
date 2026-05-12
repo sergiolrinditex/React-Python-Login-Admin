@@ -1,25 +1,28 @@
 {
-  "generated_at": "2026-05-12T05:00:36+00:00",
+  "generated_at": "2026-05-12T05:30:38+00:00",
   "next_ready_phase_id": "P01",
   "next_ready_task_id": "P01-S02-T003",
-  "last_worker": "closer",
-  "last_event": "task_claimed",
+  "last_worker": "tester",
+  "last_event": "subagent_stop",
   "pending_journey_verifications": [],
   "journey_gate_mode": "frontier",
   "last_journey_verified": null,
   "spawn_budget": 20,
   "spawns_in_current_slice": {
     "P01-S01-T001": 8,
-    "agent:planner": 4,
+    "agent:planner": 7,
     "agent:official-docs-researcher": 3,
-    "agent:developer": 4,
-    "agent:validator": 6,
-    "agent:tester": 6,
+    "agent:developer": 7,
+    "agent:validator": 9,
+    "agent:tester": 9,
     "agent:closer": 5,
     "P00-S02-T004": 6,
     "P01-S02-T001": 8,
     "P01-S02-T002": 8,
-    "agent:debugger": 1
+    "agent:debugger": 1,
+    "P01-S02-T008": 4,
+    "P01-S02-T010": 4,
+    "P01-S02-T009": 4
   },
   "open_followups": [
     {
@@ -69,22 +72,28 @@
       "scope_classification": "out_of_scope",
       "why_not_debugger": "Bug lives in the orchestrator framework (.claude/bin/bootstrap_three_docs.py + supporting modules), not in any app slice Write set. The bug only manifests when bootstrap_three_docs.py --refresh runs on a registry that has tasks at status=done from recent closers — refresh regenerates task records and resets the status to ready_for_close. I patched the registry manually for T002 (commit 570b702) but the root cause persists for any future refresh. Debugger inside T002 cannot fix orchestrator framework code without expanding Write set across the entire .claude/ static config.",
       "promoted_task_id": "P01-S02-T010"
+    },
+    {
+      "id": "FU-20260512052820-fix-dev-restart-db-health-race-wait-for-host-tcp",
+      "status": "proposed",
+      "severity": "medium",
+      "origin_task_id": "P01-S02-T008",
+      "title": "fix dev-restart db_health race: wait for host TCP, not container-internal pg_isready",
+      "path": "orchestrator-state/tasks/follow-ups/FU-20260512052820-fix-dev-restart-db-health-race-wait-for-host-tcp.yaml",
+      "created_at": "2026-05-12T05:28:20+00:00",
+      "scope_classification": "out_of_scope",
+      "why_not_debugger": "T008 acceptance is narrowly the seed --source path (lines 347-360 of scripts/dev-restart.profile.sh). The race lives in db_health() (lines 153-157) which runs pg_isready INSIDE the postgres container; meanwhile alembic upgrade head connects from the HOST at 127.0.0.1:5432 — container-internal-ready and host-TCP-forward-ready are different timings under Rancher. Two-consecutive --reset can race between compose down -v + compose up + alembic. T008 fix did not introduce this race (seed block runs after alembic), but T008's hard-fail correctly surfaces it as RESET2_EXIT=1. Bundling a wait-for-host-tcp into T008 would expand its responsibility from one bug to two unrelated bugs (KISS/YAGNI violation per .claude/rules/01-non-negotiables.md). Needs its own slice with separate acceptance: db_health (or a new wait_for_host_tcp helper) must verify host TCP 5432 reachability with credentials before returning success."
     }
   ],
-  "last_stop_at": "2026-05-11T18:57:00+00:00",
-  "last_claimed_task_id": "P01-S02-T009",
+  "last_stop_at": "2026-05-12T05:30:38+00:00",
+  "last_claimed_task_id": "P01-S02-T010",
   "last_trailer": {
-    "task_id": "P01-S02-T002",
-    "outcome": "committed",
-    "next_status": "done",
-    "handoff": "orchestrator-state/tasks/handoffs/P01-S02-T002.md",
-    "report": "orchestrator-state/tasks/reports/P01-S02-T002.md",
-    "report_ready": "yes",
-    "baseline_sync_ready": "yes",
-    "git_ready": "yes",
-    "push_ready": "yes",
-    "worktrees_cleaned": "yes"
+    "task_id": "P01-S02-T010",
+    "outcome": "pass",
+    "next_status": "ready_for_close",
+    "handoff": "orchestrator-state/tasks/handoffs/P01-S02-T010.md",
+    "evidence": "orchestrator-state/tasks/evidence/P01-S02-T010/"
   },
-  "last_followup_id": "FU-20260512044309-make-bootstrap-three-docs-py-refresh-preserve-cl",
+  "last_followup_id": "FU-20260512052820-fix-dev-restart-db-health-race-wait-for-host-tcp",
   "last_claimed_phase_id": "P01"
 }

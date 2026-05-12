@@ -1,0 +1,25 @@
+# Data Contract Used — P01-S02-T008
+
+## Verification Data Contract Row
+Source: docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md §6.5
+
+| Flow/Journey | Persona/Rol | Datos | Carga | Reset/Cleanup | Slices/Journeys |
+|---|---|---|---|---|---|
+| J100 auth-login | employee | usuario confirmado + MFA secret | python -m app.verification_data.bootstrap --source data/verification | scripts/dev-restart.sh --reset | J100, P01-S02, P03-S01 |
+
+## Real/Provided Data Used
+- Source dir: data/verification/ (at repo root — committed in P00-S02-T003)
+- Contents loaded:
+  - auth group: 2 users inserted (inserted=2 skipped=0 updated=0)
+  - history.users group: 0 inserted, 2 updated (upsert-based)
+  - admin_ai.admin_users group: 1 inserted
+
+## Persisted Data Observed
+After reset-run-1:
+  - SELECT count(*) FROM users → 2
+After reset-run-2 (idempotency):
+  - SELECT count(*) FROM users → 2 (no duplication, upsert-based)
+
+## Contract Rows Satisfied
+- J100 auth-login row is fully exercised: reset uses --source data/verification
+  (absolute path ${ROOT_DIR}/data/verification from P01-S02-T008 fix)

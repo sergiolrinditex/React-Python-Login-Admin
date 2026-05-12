@@ -1,0 +1,10 @@
+
+  Service   URL                        Status
+  --------- -------------------------- -------
+  backend   http://localhost:8000      UP
+  frontend  http://localhost:5173      UP
+  database  (via /ready)               UP
+
+  Logs: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/orchestrator-state/dev-logs/back.log  /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/orchestrator-state/dev-logs/front.log
+
+==> All services UP.

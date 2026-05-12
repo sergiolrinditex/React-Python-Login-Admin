@@ -1,0 +1,22 @@
+# Contract Observed — P01-S02-T008
+
+## Shell Script Contract
+- scripts/dev-restart.sh: orchestrator; exports ROOT_DIR, LOG_DIR, BACK_LOG
+- scripts/dev-restart.profile.sh: edited (P01-S02-T008 write set); db_reset() calls bootstrap
+
+## Python Module Contract
+- backend/app/verification_data/bootstrap.py: --source accepts absolute path
+- backend/app/verification_data/loader.py: emits verification_data.auth.users.ok inserted=N
+
+## DB Tables Observed
+- users (9 auth tables confirmed via \dt after alembic upgrade head)
+- alembic_version: migration head = 0001_auth_users_employee_audit
+
+## Log Lines Observed (back.log)
+- "Loading verification_data (real/provided fixtures)..." — BEFORE shell log
+- "verification_data.auth.users.ok inserted=2 skipped=0 updated=0" — loader AFTER log
+- "verification_data bootstrap complete." — shell AFTER log
+
+## Endpoint Observed
+- GET /health → 200 {"status":"ok","version":"0.1.0"}
+- GET /ready → 200 {"data":{"db":{"status":"ok"},"redis":{"status":"ok"},...}}

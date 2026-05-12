@@ -1,0 +1,4 @@
+{"data":{"status":"ok","version":"0.1.0","uptime":30.11}}
+[GET /health -> HTTP 200]
+{"data":{"db":{"status":"ok"},"redis":{"status":"ok"},"litellm":{"status":"unknown"}}}
+[GET /ready  -> HTTP 200]
