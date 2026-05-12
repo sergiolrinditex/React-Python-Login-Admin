@@ -2,6 +2,8 @@
 Hilo People — Auth typed domain errors and HTTP code mapping.
 
 Slice:  P01-S02-T001 — POST /api/v1/auth/sign-up
+        P01-S02-T003 — POST /api/v1/auth/refresh (added SessionExpiredError,
+                       RefreshRateLimitedError)
 Phase:  P01 Auth + Data Foundation
 Purpose: Defines typed AuthError subclasses for every auth failure mode and
          the mapping from domain error to HTTP status code + envelope error code.
@@ -14,6 +16,7 @@ Source refs:
   - TECHNICAL_GUIDE §6.4 auth error codes
   - TECHNICAL_GUIDE §6.2 HTTP status pin (201/400/409/422/429)
   - task pack §C.3 AUTH_SIGNUP_* error codes
+  - task pack P01-S02-T003 §C.7 AUTH_SESSION_EXPIRED (refresh failures)
   - 01-non-negotiables.md §Error handling (typed domain errors, no generic catch)
 """
 
@@ -212,3 +215,44 @@ class InvalidPayloadError(AuthError):
         """
         super().__init__(f"{field}: {reason}")
         self.field = field
+
+
+# ---------------------------------------------------------------------------
+# Refresh token errors (added P01-S02-T003)
+# ---------------------------------------------------------------------------
+
+class SessionExpiredError(AuthError):
+    """Refresh token is missing, unknown, expired, revoked, or user is inactive.
+
+    Returned for ALL refresh failure reasons — byte-identical 401 body to prevent
+    token-state enumeration. The actual reason is stored in audit_log.metadata
+    only, never in the API response.
+
+    HTTP: 401  Code: AUTH_SESSION_EXPIRED
+    Ref: TECHNICAL_GUIDE §6.4, task pack P01-S02-T003 §C.7, D-RP4
+    """
+
+    code = "AUTH_SESSION_EXPIRED"
+    http_status = 401
+
+    def __init__(self) -> None:
+        super().__init__("Session expired or invalid; please sign in again.")
+
+
+class RefreshRateLimitedError(AuthError):
+    """Too many refresh attempts from this IP within the rate-limit window.
+
+    HTTP: 429  Code: AUTH_REFRESH_RATE_LIMITED
+    Ref: task pack P01-S02-T003 §F.9
+    """
+
+    code = "AUTH_REFRESH_RATE_LIMITED"
+    http_status = 429
+
+    def __init__(self, retry_after: int) -> None:
+        """
+        Args:
+            retry_after: Seconds until the rate-limit window resets.
+        """
+        super().__init__(f"Too many refresh attempts; retry after {retry_after}s")
+        self.retry_after = retry_after

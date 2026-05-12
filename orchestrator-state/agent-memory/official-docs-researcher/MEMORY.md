@@ -97,6 +97,21 @@ Compact operational memory. No history was deleted.
 - - i18next T005 fully verified 2026-05-11 (cache until 2026-05-18). All planner decisions confirmed. No discrepancy notes. See section above for full details.
 - - P00-S02-T003 two discrepancy notes written 2026-05-11: argon2-cffi==25.1.0 (not ~23.x) and cryptography==48.0.0 (must be explicit dep).
 
+### 2026-05-12 — P01-S02-T003 SQLAlchemy 2.0 sync `with_for_update()` + PostgreSQL 17 FOR UPDATE under READ COMMITTED
+
+**Sources**: Context7 /websites/sqlalchemy_en_20_orm, /websites/sqlalchemy_en_20_core; PostgreSQL 17 official docs §13.2.1 READ COMMITTED (https://www.postgresql.org/docs/17/transaction-iso.html#XACT-READ-COMMITTED); PostgreSQL 17 SELECT FOR UPDATE docs (https://www.postgresql.org/docs/17/sql-select.html#SQL-FOR-UPDATE-SHARE).
+**Cache valid until**: 2026-05-19 (stable tech — SQLAlchemy 2.x, PostgreSQL 17 isolation semantics are not volatile).
+
+#### Key findings
+
+- **Project is SYNC, not async**: `session.py` uses `create_engine` + `sessionmaker` + `Session`. D-DB1: "Async deferred to P02 (YAGNI)." Task-pack M.1 async framing is not applicable to the actual codebase.
+- **`with_for_update(nowait=True)` is the recommended flag**: `nowait=False` (default) blocks until the concurrent tx commits; `nowait=True` raises `sqlalchemy.exc.OperationalError` (wrapping `psycopg.errors.LockNotAvailable`) immediately — faster fail for the losing race, same client-visible 401 outcome.
+- **READ COMMITTED + FOR UPDATE is sufficient** — PostgreSQL 17 official docs §13.2.1 explicitly state: *"The search condition (WHERE clause) is re-evaluated to see if the updated version of the row still matches… In the case of `SELECT FOR UPDATE`, this means it is the updated version of the row that is locked and returned to the client."* Consequence: after Tx-A commits `revoked_at=now()`, Tx-B re-evaluates `WHERE revoked_at IS NULL` → gets zero rows → None → 401. No REPEATABLE READ or SERIALIZABLE upgrade needed.
+- **D-S2 separate-session audit pattern is canonical**: SAVEPOINTs (`session.begin_nested()`) do not survive an outer tx rollback. Separate short-lived session is the only way to persist the rejection audit row independently.
+- **Codebase uses legacy `session.query()` style** (1.x-compatible, still valid in 2.0.49). The 2.0-style `session.scalars(select(...).with_for_update())` is equally valid but inconsistent with existing code.
+- **`OperationalError` catch pattern for NOWAIT**: `from sqlalchemy.exc import OperationalError; try: session.query(...).with_for_update(nowait=True).first() except OperationalError: raise SessionExpiredError()`.
+- **No discrepancies** with task-pack D-RP3. NOWAIT is a recommendation (task pack says "researcher to confirm"), not a contradiction.
+
 ### 2026-05-11 — P01-S01-T001 Alembic migration + SQLAlchemy 2.0 models (auth baseline)
 
 **Sources**: Context7 /websites/sqlalchemy_en_20_orm, /websites/sqlalchemy_en_20_core, /websites/alembic_sqlalchemy. Cache from P00-S02-T003 also reused (same-day).

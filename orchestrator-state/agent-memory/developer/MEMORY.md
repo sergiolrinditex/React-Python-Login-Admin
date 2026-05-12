@@ -318,3 +318,73 @@
 - Before ANY test run: `diff -q orchestrator-state/memory/task-dag.json /tmp/T010-snapshots-<timestamp>/task-dag.json`
 - Expected: task-dag.json ALWAYS matches (our tests never touch the real registry).
 - registry.json and runtime-state.json may differ slightly (hook updates from parallel validator/tester runs) — check the diff content to confirm it's only hook-written fields (validator_outcome, last_updated_by, etc.).
+
+## P01-S02-T003 — POST /api/v1/auth/refresh patterns
+
+### SELECT FOR UPDATE for concurrent rotation (D-RP3)
+- `find_active_by_hash_for_update()` must use `with_for_update()` on the ORM query.
+- SQLAlchemy 2.x: `session.query(RefreshToken).filter(...).with_for_update().first()`
+- Under READ COMMITTED: the second concurrent transaction re-evaluates the predicate AFTER the first commits.
+  If winner has set `revoked_at IS NOT NULL`, the loser's query returns `None` (not found) → 401.
+- This replaces DB-level serialization without needing SERIALIZABLE isolation level.
+
+### D-S2 pattern for refresh failure audits
+- Same as sign-in: `_write_failure_audit()` opens own `_SessionLocal()` session, commits, closes.
+- The main transaction may still be in progress (or may roll back) — failure audit must not be lost.
+- Use `try: ... finally: session.close()` pattern. Catch Exception, log, do NOT re-raise.
+- audit.actor_user_id = token's user_id if known; None if no-cookie or unknown-hash.
+
+### Aggregate anti-enumeration for refresh
+- All 401 cases: no-cookie, unknown hash, expired, revoked, user_inactive all raise `SessionExpiredError`.
+- `SessionExpiredError` has a single fixed message: "Session expired or invalid; please sign in again."
+- The specific reason (no_cookie, expired, revoked, user_inactive) goes into `audit_log.extra_metadata.reason` only.
+- This prevents attackers from distinguishing "token expired" from "token revoked" from "token stolen".
+
+### ORM DetachedInstanceError in test helpers (CRITICAL)
+- After `session.close()`, accessing ANY attribute on an ORM object raises `DetachedInstanceError`.
+- This is because SQLAlchemy expires all attributes on commit/close by default.
+- **Fix 1 (for simple fields)**: Extract id/email as plain Python vars before session.close():
+  ```python
+  user_id: uuid.UUID = user.id
+  email: str = user.email
+  session.commit()
+  ```
+  Return a NamedTuple (UserData) instead of the ORM object.
+- **Fix 2 (for query helpers returning lists)**: Call `session.expunge_all()` before `session.close()`.
+  Expunge detaches objects but keeps their loaded attributes accessible.
+  ```python
+  rows = session.query(RefreshToken).filter(...).all()
+  session.expunge_all()
+  return rows  # safe after close
+  ```
+- **Fix 3 (single object)**: `session.expunge(obj)` before close. (Same principle as expunge_all.)
+- NEVER rely on `expire_on_commit=False` at the factory level for test helpers — it's fragile.
+
+### Rate limit namespace for new endpoint
+- Each endpoint gets its own prefix: SIGNUP, SIGNIN, REFRESH.
+- `defaults` dict in `rate_limit.py`: `{"SIGNUP": (...), "SIGNIN": (...), "REFRESH": (...)}`.
+- New function signature: `check_rate_limit_<name>(ip: str) -> None` — raises typed error.
+- Rate test: use `monkeypatch.setenv("AUTH_REFRESH_RATE_PER_MINUTE", "2")` + `rl_module._store.clear()`.
+
+### Cookie helper shared across endpoints (D-RP2)
+- `_set_refresh_cookie(json_resp: JSONResponse, opaque_refresh: str) -> None` in `routers/_helpers.py`.
+- Called from BOTH `routers/sign_in.py` and `routers/refresh.py`.
+- Attributes: `httponly=True, secure=True, samesite="lax", path="/auth", max_age=<int>`.
+- NEVER log the opaque value — log only UUIDs (token_id, user_id).
+
+### Alembic test suite destroys DB schema (known issue)
+- `test_migrations_0001_auth.py::test_downgrade_removes_all_tables` drops all tables.
+- After running the FULL test suite (including migrations tests), MUST run `alembic upgrade head` before integration tests.
+- The migration integration tests run BEFORE the auth integration tests alphabetically.
+- The full suite (87 tests) internally handles this because `test_upgrade_creates_all_9_tables` runs before `test_downgrade_...`.
+- BUT: if you run only auth tests (not migrations) after a full run, the DB may be down. Always upgrade before isolated test runs.
+- Command: `DATABASE_URL=postgresql+psycopg://hilo:hilo@localhost:5432/hilo_dev ~/Library/Python/3.11/bin/alembic upgrade head`
+
+### test_signin_success_no_mfa + test_signin_mfa_required_branch pre-existing failures
+- These 2 tests FAIL when `JWT_PRIVATE_KEY` is empty (not set in env).
+- They were broken by T009 (jwt key hygiene) which changed the key requirement.
+- They PASS when `.env` is sourced: `set -a && source .env && set +a`.
+- Root cause: tests decode JWT with the key, but `JWT_PRIVATE_KEY=""` → `InvalidSignatureError`.
+- These are NOT regressions from T003 — they exist in main repo before T003.
+- Document as known pre-existing issue; do not create FU unless explicitly asked.
+- Standard test invocation for T003 development: always source `.env` first.

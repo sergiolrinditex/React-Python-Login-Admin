@@ -1,0 +1,108 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.5, pytest-9.0.2, pluggy-1.6.0 -- /usr/local/bin/python3
+cachedir: .pytest_cache
+rootdir: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-a603f43bf685c795c/backend
+configfile: pyproject.toml
+plugins: httpx-0.36.0, asyncio-1.3.0, langsmith-0.8.3, anyio-4.13.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 87 items
+
+tests/integration/test_auth_refresh.py::test_refresh_success_rotates_and_returns_new_access_token PASSED [  1%]
+tests/integration/test_auth_refresh.py::test_refresh_no_cookie_returns_401_session_expired PASSED [  2%]
+tests/integration/test_auth_refresh.py::test_refresh_unknown_token_returns_401 PASSED [  3%]
+tests/integration/test_auth_refresh.py::test_refresh_expired_token_returns_401 PASSED [  4%]
+tests/integration/test_auth_refresh.py::test_refresh_revoked_token_returns_401 PASSED [  5%]
+tests/integration/test_auth_refresh.py::test_refresh_inactive_user_returns_401 PASSED [  6%]
+tests/integration/test_auth_refresh.py::test_refresh_replay_old_token_returns_401 PASSED [  8%]
+tests/integration/test_auth_refresh.py::test_refresh_concurrent_requests_only_one_wins PASSED [  9%]
+tests/integration/test_auth_refresh.py::test_refresh_rate_limit_returns_429 PASSED [ 10%]
+tests/integration/test_auth_refresh.py::test_refresh_no_pii_or_token_value_in_logs PASSED [ 11%]
+tests/integration/test_auth_refresh.py::test_refresh_request_id_in_response_header_and_meta PASSED [ 12%]
+tests/integration/test_auth_refresh.py::test_refresh_body_has_no_refresh_token PASSED [ 13%]
+tests/integration/test_auth_refresh.py::test_refresh_new_refresh_hashed_in_db PASSED [ 14%]
+tests/integration/test_auth_refresh.py::test_refresh_401_body_byte_identical_for_all_failure_reasons PASSED [ 16%]
+tests/integration/test_auth_signin.py::test_signin_success_no_mfa PASSED [ 17%]
+tests/integration/test_auth_signin.py::test_signin_mfa_required_branch PASSED [ 18%]
+tests/integration/test_auth_signin.py::test_signin_wrong_password_401_indistinguishable PASSED [ 19%]
+tests/integration/test_auth_signin.py::test_signin_unknown_email_401_indistinguishable PASSED [ 20%]
+tests/integration/test_auth_signin.py::test_signin_unknown_and_wrong_have_same_response_body PASSED [ 21%]
+tests/integration/test_auth_signin.py::test_signin_user_inactive_returns_401 PASSED [ 22%]
+tests/integration/test_auth_signin.py::test_signin_lockout_returns_423_after_threshold PASSED [ 24%]
+tests/integration/test_auth_signin.py::test_signin_invalid_payload_empty_email_400 PASSED [ 25%]
+tests/integration/test_auth_signin.py::test_signin_missing_field_returns_422 PASSED [ 26%]
+tests/integration/test_auth_signin.py::test_signin_rate_limit_429 PASSED [ 27%]
+tests/integration/test_auth_signin.py::test_signin_response_includes_request_id_meta PASSED [ 28%]
+tests/integration/test_auth_signin.py::test_signin_no_pii_in_logs PASSED [ 29%]
+tests/integration/test_auth_signin.py::test_signin_refresh_cookie_attributes PASSED [ 31%]
+tests/integration/test_auth_signin.py::test_signin_refresh_token_hashed_in_db PASSED [ 32%]
+tests/integration/test_auth_signin.py::test_signin_access_token_not_in_cookie PASSED [ 33%]
+tests/integration/test_auth_signin.py::test_signin_response_timing_envelope PASSED [ 34%]
+tests/integration/test_auth_signup.py::test_signup_happy_path_201 PASSED [ 35%]
+tests/integration/test_auth_signup.py::test_signup_non_corporate_email_400 PASSED [ 36%]
+tests/integration/test_auth_signup.py::test_signup_legal_not_accepted_400 PASSED [ 37%]
+tests/integration/test_auth_signup.py::test_signup_missing_full_name_422 PASSED [ 39%]
+tests/integration/test_auth_signup.py::test_signup_duplicate_email_409 PASSED [ 40%]
+tests/integration/test_auth_signup.py::test_signup_password_too_short_400 PASSED [ 41%]
+tests/integration/test_auth_signup.py::test_signup_password_hashed_argon2id PASSED [ 42%]
+tests/integration/test_auth_signup.py::test_signup_logs_no_pii PASSED    [ 43%]
+tests/integration/test_auth_signup.py::test_signup_rate_limit_429 PASSED [ 44%]
+tests/integration/test_dev_restart_reset.py::test_db_reset_cycle_exits_zero PASSED [ 45%]
+tests/integration/test_dev_restart_reset.py::test_reset_exits_zero_and_is_idempotent PASSED [ 47%]
+tests/integration/test_migrations_0001_auth.py::test_upgrade_creates_all_9_tables PASSED [ 48%]
+tests/integration/test_migrations_0001_auth.py::test_check_language_constraint_rejects_invalid PASSED [ 49%]
+tests/integration/test_migrations_0001_auth.py::test_unique_email_constraint_rejects_duplicate PASSED [ 50%]
+tests/integration/test_migrations_0001_auth.py::test_on_delete_cascade_removes_child_rows PASSED [ 51%]
+tests/integration/test_migrations_0001_auth.py::test_audit_log_actor_set_null_on_user_delete PASSED [ 52%]
+tests/integration/test_migrations_0001_auth.py::test_downgrade_removes_all_tables PASSED [ 54%]
+tests/integration/test_verification_data_bootstrap.py::test_idempotency_two_runs_same_state PASSED [ 55%]
+tests/integration/test_verification_data_bootstrap.py::test_missing_dir_fails_with_clear_error PASSED [ 56%]
+tests/integration/test_verification_data_bootstrap.py::test_missing_required_field_fails_with_field_name PASSED [ 57%]
+tests/integration/test_verification_data_bootstrap.py::test_only_flag_filters_groups PASSED [ 58%]
+tests/integration/test_verification_data_bootstrap.py::test_invalid_only_flag_lists_valid_choices PASSED [ 59%]
+tests/integration/test_verification_data_bootstrap.py::test_dry_run_does_not_touch_db PASSED [ 60%]
+tests/integration/test_verification_data_bootstrap.py::test_deferred_groups_log_warn_when_tables_missing PASSED [ 62%]
+tests/integration/test_verification_data_bootstrap.py::test_redaction_in_logs_no_password_no_token PASSED [ 63%]
+tests/integration/test_verification_data_bootstrap.py::test_verbose_off_no_info_logs PASSED [ 64%]
+tests/test_dependency_smoke.py::test_dependency_smoke[pypdf-pypdf-__version__] PASSED [ 65%]
+tests/test_dependency_smoke.py::test_dependency_smoke[python-docx-docx-__version__] PASSED [ 66%]
+tests/test_dependency_smoke.py::test_dependency_smoke[celery-celery-__version__] PASSED [ 67%]
+tests/test_dependency_smoke.py::test_dependency_smoke[redis-redis-__version__] PASSED [ 68%]
+tests/test_dependency_smoke.py::test_dependency_smoke[resend-resend-__version__] PASSED [ 70%]
+tests/test_dependency_smoke.py::test_dependency_smoke[structlog-structlog-None] PASSED [ 71%]
+tests/test_dependency_smoke.py::test_dependency_smoke[prometheus-client-prometheus_client-__version__] PASSED [ 72%]
+tests/test_dependency_smoke.py::test_dependency_smoke[boto3-boto3-__version__] PASSED [ 73%]
+tests/test_dependency_smoke.py::test_dependency_smoke[pgvector-pgvector-None] PASSED [ 74%]
+tests/test_dependency_smoke.py::test_dependency_smoke[litellm-litellm-None] PASSED [ 75%]
+tests/test_dependency_smoke.py::test_dependency_smoke[langchain-langchain-__version__] PASSED [ 77%]
+tests/test_dependency_smoke.py::test_dependency_smoke[langchain-core-langchain_core-__version__] PASSED [ 78%]
+tests/test_dependency_smoke.py::test_dependency_smoke[langchain-community-langchain_community-__version__] PASSED [ 79%]
+tests/test_dependency_smoke.py::test_dependency_smoke[langchain-text-splitters-langchain_text_splitters-None] PASSED [ 80%]
+tests/test_dependency_smoke.py::test_dependency_smoke[langgraph-langgraph-None] PASSED [ 81%]
+tests/test_dependency_smoke.py::test_dependency_smoke[deepagents-deepagents-None] PASSED [ 82%]
+tests/test_dependency_smoke.py::test_dependency_smoke[mcp-mcp-None] PASSED [ 83%]
+tests/test_dependency_smoke.py::test_dependency_smoke[tiktoken-tiktoken-None] PASSED [ 85%]
+tests/test_dependency_smoke.py::test_dependency_smoke[sqlalchemy-sqlalchemy-__version__] PASSED [ 86%]
+tests/test_dependency_smoke.py::test_dependency_smoke[alembic-alembic-__version__] PASSED [ 87%]
+tests/test_health.py::test_legacy_health_still_returns_200 PASSED        [ 88%]
+tests/test_health.py::test_health_envelope_shape PASSED                  [ 89%]
+tests/test_health.py::test_health_live_returns_200_ok PASSED             [ 90%]
+tests/test_health.py::test_health_ready_returns_200_when_all_ok PASSED   [ 91%]
+tests/test_health.py::test_health_ready_returns_503_when_db_degraded PASSED [ 93%]
+tests/test_health.py::test_health_ready_returns_503_when_redis_connection_error PASSED [ 94%]
+tests/test_health.py::test_health_ready_returns_503_when_redis_timeout PASSED [ 95%]
+tests/test_health.py::test_health_ready_returns_503_when_both_degraded PASSED [ 96%]
+tests/test_health.py::test_health_ready_body_includes_litellm_unknown PASSED [ 97%]
+tests/test_health.py::test_logging_verbose_mode_logs_before_after PASSED [ 98%]
+tests/test_health.py::test_logging_quiet_mode_suppresses_info PASSED     [100%]
+
+=============================== warnings summary ===============================
+tests/integration/test_auth_refresh.py: 20 warnings
+  /Users/sergiolr/Library/Python/3.11/lib/python/site-packages/starlette/testclient.py:445: DeprecationWarning: Setting per-request cookies=<...> is being deprecated, because the expected behaviour on cookie persistence is ambiguous. Set cookies directly on the client instance instead.
+    return super().request(
+
+tests/test_dependency_smoke.py::test_dependency_smoke[deepagents-deepagents-None]
+  /Users/sergiolr/Library/Python/3.11/lib/python/site-packages/langgraph/checkpoint/serde/encrypted.py:5: LangChainPendingDeprecationWarning: The default value of `allowed_objects` will change in a future version. Pass an explicit value (e.g., allowed_objects='messages' or allowed_objects='core') to suppress this warning.
+    from langgraph.checkpoint.serde.jsonplus import JsonPlusSerializer
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================= 87 passed, 21 warnings in 25.77s =======================

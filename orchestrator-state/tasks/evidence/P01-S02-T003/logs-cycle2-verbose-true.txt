@@ -1,0 +1,15 @@
+STATUS: 200
+BEFORE (start) lines: 10
+AFTER (done/success) lines: 11
+raw_cookie_in_log: False
+jwt_in_log: False
+email_local_in_log: False
+LOGGING CHECK: PASS - no PII/token values in logs
+  LOG: app.auth.routers.refresh DEBUG auth.refresh.received request_id=3513bc3f-aeb0-4bdc-a6c7-30d947eac845 ip=testclient
+  LOG: app.auth.services.refresh DEBUG auth.refresh.execute.start request_id=3513bc3f-aeb0-4bdc-a6c7-30d947eac845 ip=testclient
+  LOG: app.auth.services.refresh_audit DEBUG auth.refresh.success_audit.start user_id=fa932809-7266-4499-bc3a-ff14b8664a6e requ
+  LOG: app.auth.repository DEBUG auth.repo.write_audit.start action=auth.refresh actor_user_id=fa932809-7266-4499-bc3a-ff14b866
+  LOG: app.auth.repository DEBUG auth.repo.write_audit.done audit_id=bea0eb4c-5452-4e1c-9b81-cf3e5c0e36db action=auth.refresh
+  LOG: app.auth.services.refresh_audit DEBUG auth.refresh.success_audit.done user_id=fa932809-7266-4499-bc3a-ff14b8664a6e reque
+  LOG: app.auth.services.refresh DEBUG auth.refresh.execute.done user_id=fa932809-7266-4499-bc3a-ff14b8664a6e old_token_id=066a
+  LOG: app.auth.routers.refresh DEBUG auth.refresh.success user_id=fa932809-7266-4499-bc3a-ff14b8664a6e old_token_id=066a4724-2

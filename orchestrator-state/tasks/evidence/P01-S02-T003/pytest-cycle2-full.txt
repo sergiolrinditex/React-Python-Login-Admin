@@ -1,0 +1,28 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.5, pytest-9.0.2, pluggy-1.6.0
+rootdir: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-a603f43bf685c795c/backend
+configfile: pyproject.toml
+plugins: httpx-0.36.0, asyncio-1.3.0, langsmith-0.8.3, anyio-4.13.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collected 87 items
+
+backend/tests/integration/test_auth_refresh.py ..............            [ 16%]
+backend/tests/integration/test_auth_signin.py ................           [ 34%]
+backend/tests/integration/test_auth_signup.py .........                  [ 44%]
+backend/tests/integration/test_dev_restart_reset.py ..                   [ 47%]
+backend/tests/integration/test_migrations_0001_auth.py ......            [ 54%]
+backend/tests/integration/test_verification_data_bootstrap.py .........  [ 64%]
+backend/tests/test_dependency_smoke.py ....................              [ 87%]
+backend/tests/test_health.py ...........                                 [100%]
+
+=============================== warnings summary ===============================
+tests/integration/test_auth_refresh.py: 20 warnings
+  /Users/sergiolr/Library/Python/3.11/lib/python/site-packages/starlette/testclient.py:445: DeprecationWarning: Setting per-request cookies=<...> is being deprecated, because the expected behaviour on cookie persistence is ambiguous. Set cookies directly on the client instance instead.
+    return super().request(
+
+tests/test_dependency_smoke.py::test_dependency_smoke[deepagents-deepagents-None]
+  /Users/sergiolr/Library/Python/3.11/lib/python/site-packages/langgraph/checkpoint/serde/encrypted.py:5: LangChainPendingDeprecationWarning: The default value of `allowed_objects` will change in a future version. Pass an explicit value (e.g., allowed_objects='messages' or allowed_objects='core') to suppress this warning.
+    from langgraph.checkpoint.serde.jsonplus import JsonPlusSerializer
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================= 87 passed, 21 warnings in 22.95s =======================

@@ -23,9 +23,10 @@
   - P01-S02-T008 — fix dev-restart.profile.sh verification-data bootstrap source path (developer done, 2026-05-12)
   - P01-S02-T009 — JWT dev key hygiene + ENABLE_VERBOSE_LOGGING=true default (developer done, 2026-05-12)
   - **P01-S02-T010 — bootstrap_three_docs.py --refresh preserves closer-final task status (developer done, 2026-05-12)**
-- **Next pending slice**: P01-S02-T003 — POST /api/v1/auth/token/refresh (ready in registry; T008+T009+T010 verify-slice pending)
+  - **P01-S02-T003 — POST /api/v1/auth/refresh (developer done, 2026-05-12)**
+- **Next pending slice**: P01-S02-T004 — GET /api/v1/auth/session (or next ready task per registry)
 - **Blockers**: none
-- **Generated at**: 2026-05-12T08:10:00+02:00
+- **Generated at**: 2026-05-12T08:35:00+02:00
 
 ## Infrastructure Status (P00-S02-T001)
 
@@ -80,8 +81,8 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 |--------|--------|---------|
 | Server | running | uvicorn app.main:app --port 8000 --reload |
 | Health check | 3 endpoints implemented | GET /health (backward compat), GET /live (liveness), GET /ready (readiness with DB+Redis ping) |
-| Auth endpoints | 2 implemented | POST /api/v1/auth/sign-up (T001), POST /api/v1/auth/sign-in (T002) |
-| Endpoints implemented | 5 | GET /health, GET /live, GET /ready, POST /api/v1/auth/sign-up, POST /api/v1/auth/sign-in |
+| Auth endpoints | 3 implemented | POST /api/v1/auth/sign-up (T001), POST /api/v1/auth/sign-in (T002), POST /api/v1/auth/refresh (T003) |
+| Endpoints implemented | 6 | GET /health, GET /live, GET /ready, POST /api/v1/auth/sign-up, POST /api/v1/auth/sign-in, POST /api/v1/auth/refresh |
 | Migrations applied | 1 (head=0001) | 9 auth tables: users, employee_profiles, roles, permissions, user_roles, refresh_tokens, mfa_totp_secrets, password_reset_tokens, audit_logs |
 | Seed data | loader.py fixed (P00-S02-T004); bootstrap ready; dev-restart --reset self-contained (T008) | FU-20260511145446 resolved — CAST(:meta AS JSONB) + json.dumps(). T008 fix: absolute --source path + hard-fail. |
 | Backend tests | 73 passing | test_health.py (11) + test_dependency_smoke.py (20) + test_migrations_0001_auth.py (6) + test_dev_restart_reset.py (2) + test_verification_data_bootstrap.py (9) + test_auth_signup.py (9) + test_auth_signin.py (16) |
@@ -138,12 +139,12 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 | Level | Count | Status |
 |-------|-------|--------|
 | Backend unit | 0 | — |
-| Backend integration | 73 | PASS (health 11 + dep smoke 20 + migrations 6 + dev restart 2 + bootstrap 9 + auth signup 9 + auth signin 16) |
+| Backend integration | 87 | PASS (health 11 + dep smoke 20 + migrations 6 + dev restart 2 + bootstrap 9 + auth signup 9 + auth signin 16 + auth refresh 14) |
 | Compose orchestration smoke | 11 | PASS (T1–T8 tester + verify cycle 1+2 + minio-init bucket) |
 | Frontend unit | 0 | — |
 | Frontend component | 58 | PASS (providers 4 + design-system 34 + showcase 4 + i18n 16) |
 | E2E | 0 | — |
-| **Total** | **142** | **142 PASS, 0 FAIL** |
+| **Total** | **156** | **156 PASS, 0 FAIL** |
 
 ## Milestones
 
@@ -205,10 +206,17 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 
 ---
 
+- **2026-05-12 (P01-S02-T003)**: `repositories/refresh.py` split from planned single file: Clean Architecture requires separate repos/services/routers; `repository.py` was at 300-line cap. Pre-declared WRITE_SET_DRIFT in task pack §D-RP1.
+- **2026-05-12 (P01-S02-T003)**: `_set_refresh_cookie()` extracted to `routers/_helpers.py` (D-RP2): byte-identical cookie attrs shared between sign-in and refresh to prevent cookie drift across endpoints.
+- **2026-05-12 (P01-S02-T003)**: `SELECT ... FOR UPDATE` (with_for_update()) on `find_active_by_hash_for_update` serializes concurrent refresh races at DB level. Second transaction sees `revoked_at IS NOT NULL` after winner commits → 401. (D-RP3)
+- **2026-05-12 (P01-S02-T003)**: D-S2 failure audit: `_write_failure_audit()` opens own `_SessionLocal()` session, commits independently. Main transaction rollback does not suppress audit.
+- **2026-05-12 (P01-S02-T003)**: In-memory rate limiter V1 uses REFRESH namespace (separate bucket from SIGNIN). Redis upgrade target P02-S02-T001.
+- **2026-05-12 (P01-S02-T003)**: Test helper `_create_user` returns `UserData` namedtuple (plain id+email) to avoid `DetachedInstanceError` after session.close(). Query helpers call `session.expunge_all()` before close.
 - **2026-05-12 (P01-S02-T009)**: D-T009-1: `JWT_PUBLIC_KEY` is set to same value as `JWT_PRIVATE_KEY` for HS256 symmetry. tokens.py only reads `JWT_PRIVATE_KEY` today but TECHNICAL_GUIDE §11.1 declares both — keeping them in sync prevents future RS256-migration confusion.
 - **2026-05-12 (P01-S02-T009)**: D-T009-2: `MFA_ENCRYPTION_KEY` and `ENCRYPTION_KEY` hygiene (Fernet generation) left out-of-scope. They require `Fernet.generate_key()` (not `secrets.token_urlsafe`). Candidate for a future FU.
 - **2026-05-12 (P01-S02-T009)**: Placeholder detection: value == "" OR value == "replace-with-dev-key" OR len(value) < 32. Key generation: `python3 -c "import secrets; print(secrets.token_urlsafe(48))"` → 64 url-safe chars, ≥48 bytes entropy.
 
-> Last updated: 2026-05-12T07:25:00+02:00
+> Last updated: 2026-05-12T08:35:00+02:00
+> Updated by: developer — P01-S02-T003 POST /api/v1/auth/refresh — 14 tests (87/87 suite), 6 backend endpoints total (developer done, pending validator+tester+verify-slice)
 > Updated by: developer — P01-S02-T009 JWT dev key hygiene + ENABLE_VERBOSE_LOGGING default (developer done, pending validator+tester+verify-slice)
 > Updated by: developer — P01-S02-T008 fix dev-restart.profile.sh verification-data bootstrap source path (developer done, pending validator+tester+verify-slice)

@@ -1,0 +1,66 @@
+## Contract Observed — P01-S02-T003
+
+### Route / Endpoint
+- Route: POST /api/v1/auth/refresh
+- Mounted via: app/auth/router.py (aggregator) → auth_router.include_router(refresh_router, prefix="")
+- Full path: /api/v1/auth/refresh (auth_router prefix=/api/v1 from main.py)
+
+### Provider / API Client
+- ASGI TestClient (starlette.testclient.TestClient) — real ASGI transport, no HTTP socket
+- Database: PostgreSQL 17 at localhost:5432/hilo_dev via sqlalchemy+psycopg
+
+### DTO / Schema
+- Request: cookie "refresh_token" (no JSON body) — read via request.cookies.get("refresh_token")
+- Response 200: {"data": {"access_token": str, "token_type": "Bearer", "expires_in": int}, "meta": {"request_id": str}, "errors": []}
+- Response 401: {"data": null, "meta": {"request_id": str}, "errors": [{"code": "AUTH_SESSION_EXPIRED", "message": "...", "field": null, "details": null}]}
+- Response 429: {"data": null, "meta": {...}, "errors": [{"code": "AUTH_REFRESH_RATE_LIMITED", ...}]}
+
+### Repository / Use Case
+- Repository: app/auth/repositories/refresh.py → RefreshTokenRepository
+  - find_active_by_hash_for_update(): SELECT ... FOR UPDATE — serializes concurrent rotation
+  - find_by_hash(): state lookup for audit classification (expired/revoked/unknown_hash)
+  - revoke(): UPDATE refresh_tokens SET revoked_at = now() WHERE id = :id
+  - insert_new(): INSERT INTO refresh_tokens (user_id, token_hash, expires_at, revoked_at)
+  - find_user_active(): SELECT from users WHERE id = :user_id AND status = 'active'
+- Use Case: app/auth/services/refresh.py → RefreshTokenUser
+  - SHA-256 hash: hashlib.sha256(opaque_token.encode()).hexdigest() (hexdigest = 64 hex chars)
+  - Rotation: FOR UPDATE → revoke old → insert new → encode JWT → commit → audit
+  - Failure audit: D-S2 pattern (own _SessionLocal session, commits independently)
+- Router: app/auth/routers/refresh.py → refresh_router
+
+### Tables Observed (Postgres 17 / hilo_dev)
+- refresh_tokens: INSERT (new token), UPDATE (revoke old token via revoked_at)
+  - token_hash: always 64 hex chars (SHA-256 hexdigest), never raw opaque value
+  - revoked_at: NULL for active, NOT NULL for revoked/used
+  - expires_at: now() + AUTH_REFRESH_TTL_SECONDS
+- audit_logs: INSERT for every refresh attempt
+  - action='auth.refresh'
+  - actor_user_id: user UUID (on success/revoked/expired/inactive) or NULL (no_cookie/unknown_hash)
+  - metadata: {"outcome": "success"|"failure", "reason": null|"no_cookie"|"unknown_hash"|"expired"|"revoked"|"user_inactive"|"rate_limited", "old_token_id": UUID|null, "new_token_id": UUID|null, "request_id": str}
+
+### Cookie
+- Name: refresh_token
+- Attributes: HttpOnly; Secure; SameSite=lax; Path=/auth; Max-Age=AUTH_REFRESH_TTL_SECONDS
+- Verified via: shared _set_refresh_cookie() helper in app/auth/routers/_helpers.py
+
+### Rate Limit
+- Namespace: REFRESH (separate from SIGNIN/SIGNUP)
+- Store: in-memory dict (module-level) — V1; Redis replacement planned P02-S02-T001
+- Config: AUTH_REFRESH_RATE_PER_MINUTE (default 30), AUTH_REFRESH_RATE_BURST (default 30)
+
+### Logging
+- Verbose ON (ENABLE_VERBOSE_LOGGING=true): DEBUG+INFO at all app.auth.refresh.* loggers
+  - start/done pattern at: auth.refresh.execute, auth.repo.refresh.find_active_for_update,
+    auth.repo.refresh.find_user_active, auth.repo.refresh.revoke, auth.repo.refresh.insert_new,
+    auth.refresh.success_audit, auth.repo.write_audit, auth.refresh.success/rejected/failure_audit
+  - NO raw cookie value (hash_prefix=first 8 hex chars only)
+  - NO JWT eyJhbG prefix
+  - NO email local-part (only email_domain allowed)
+- Verbose OFF (ENABLE_VERBOSE_LOGGING=false): root logger at WARNING level
+  - Only WARNING entries visible: rate_limit.check.exceeded, auth.refresh.rejected reason=RATE_LIMITED
+  - All DEBUG/INFO suppressed
+
+### Concurrent Safety
+- SELECT ... FOR UPDATE row-level lock ensures exactly one rotation wins
+- Loser sees revoked_at IS NOT NULL after winner commits → 0 rows → 401
+- Test T08 (Barrier-aligned threads) confirmed: 1x200 + 1x401, 1 new DB row

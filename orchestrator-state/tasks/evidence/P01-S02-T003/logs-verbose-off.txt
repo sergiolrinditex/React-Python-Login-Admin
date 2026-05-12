@@ -1,0 +1,8 @@
+ENABLE_VERBOSE_LOGGING env: false
+Root logger level after app.main import: WARNING
+
+=== VERBOSE OFF VERIFICATION ===
+Root logger configured at WARNING level — INFO/DEBUG suppressed
+visible log lines above: only WARNING+ (rate_limit.check.exceeded, HTTP access lines)
+NOTE: logging.basicConfig is called at app.main import with ENABLE_VERBOSE_LOGGING env value
+RESULT: PASS (no app.auth.refresh DEBUG/INFO lines appear in stderr output above)

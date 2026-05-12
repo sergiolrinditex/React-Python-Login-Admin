@@ -1,0 +1,42 @@
+=== T003 endpoint verification via TestClient (2026-05-12) ===
+
+CASE 1: No cookie → 401 AUTH_SESSION_EXPIRED
+STATUS: 401
+Body: {"data":null,"meta":{"request_id":"..."},"errors":[{"code":"AUTH_SESSION_EXPIRED","message":"Session expired or invalid; please sign in again.","field":null,"details":null}]}
+
+CASE 2: Unknown token → 401 AUTH_SESSION_EXPIRED  
+STATUS: 401
+Body: same envelope as Case 1 (anti-enumeration verified)
+
+CASE 3: Valid cookie → 200 + new Set-Cookie
+STATUS: 200
+Body: {"data":{"access_token":"<jwt>","token_type":"Bearer","expires_in":1800},"meta":{"request_id":"..."},"errors":[]}
+Set-Cookie: refresh_token=...; HttpOnly; Secure; SameSite=lax; Path=/auth; Max-Age=2592000
+
+CASE 4: Replay old cookie after rotation → 401
+STATUS: 401
+Body: same AUTH_SESSION_EXPIRED envelope (anti-enumeration verified)
+
+CASE 5: New cookie (B) still usable (no family revocation / D-RP4)
+STATUS: 200
+
+CASE 6: X-Request-ID echoed in header + meta
+STATUS: 200
+X-Request-ID matches sent value in header AND body meta.request_id
+
+=== Log trace (ENABLE_VERBOSE_LOGGING=true) ===
+auth.refresh.received → rate_limit.check → auth.refresh.execute.start → 
+  [success path] find_active_for_update → find_user_active → revoke → insert_new → 
+  encode_access → success_audit → execute.done → auth.refresh.success (router)
+  [no_cookie path] auth.refresh.rejected reason=no_cookie → failure_audit
+  [unknown path] find_active_for_update found=False → find_by_hash found=False → 
+  auth.refresh.rejected reason=unknown_hash → failure_audit
+  [revoked path] find_active_for_update found=False → find_by_hash found=True → 
+  auth.refresh.rejected reason=revoked → failure_audit
+
+=== Verified ===
+- hash prefix logged (8 chars), never raw cookie value
+- user_id + token UUIDs logged, never email
+- BEFORE log: received + execute.start
+- AFTER log: execute.done + success (router)
+- ERROR/rejection log: rejected + failure_audit

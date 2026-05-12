@@ -63,3 +63,21 @@
 - KEY LEARNING: Backend runs without ENABLE_VERBOSE_LOGGING=true by default (dev server). To verify BEFORE/AFTER lines, use python3 -c inline script with TestClient and caplog capture. The live server only shows WARNING+ in uvicorn log by default.
 - Evidence: orchestrator-state/tasks/evidence/P01-S02-T001/
 - Handoff: orchestrator-state/tasks/handoffs/P01-S02-T001.md
+
+### P01-S02-T003 — POST /api/v1/auth/refresh (2026-05-12) — PASS
+- OUTCOME: pass (first run)
+- TESTS: 14/14 T003 pass; 87/87 full suite pass
+- E2E: happy path + replay + no_cookie + unknown_hash + rate_limit — all PASS via TestClient + real Postgres
+- DB: old token revoked_at NOT NULL; new token revoked_at IS NULL; hash_len=64 (SHA-256 hex); audit rows confirmed
+- LOGGING VERBOSE ON: start/done pattern at auth.refresh.execute, auth.repo.refresh.*, auth.refresh.success_audit; no raw cookie (hash_prefix 8 hex chars only); no JWT eyJhbG; no email local-part
+- LOGGING VERBOSE OFF: root logger configured at WARNING level (ENABLE_VERBOSE_LOGGING=false in env before app.main import); all DEBUG/INFO suppressed
+- KEY LEARNING: worktree has no .env — must explicitly export DATABASE_URL JWT_PRIVATE_KEY JWT_PUBLIC_KEY AUTH_ALLOWED_DOMAIN (and other .env vars) before running pytest from worktree dir. Do: `source /path/to/main/.env && export DATABASE_URL JWT_PRIVATE_KEY JWT_PUBLIC_KEY ...`
+- KEY LEARNING: test_downgrade_removes_all_tables drops all 9 tables on full suite run. After running full suite, must re-run `alembic upgrade head` from main repo backend dir (not worktree). Worktree code = main but schema is shared Postgres instance.
+- KEY LEARNING: verbose=off is tested by starting a NEW Python process with ENABLE_VERBOSE_LOGGING=false in env BEFORE importing app.main. logging.basicConfig is a no-op if root logger already has handlers — can't re-test verbose modes in same Python process.
+- KEY LEARNING: logging uses start/done naming convention (structlog-style), not BEFORE/AFTER literals. Grep for "start" and "done" to verify BEFORE/AFTER contract.
+- KEY LEARNING: User model in user.py has no legal_accepted column (it's not in the schema). Use User(email=..., password_hash=..., full_name=..., status='active') only.
+- KEY LEARNING: monkeypatch.setattr(rl_module, "_store", {}) is acceptable — it resets the in-memory rate-limit dict for test isolation, not a mock of the service logic. Same pattern as T001/T002.
+- KEY LEARNING: alembic binary path: /Users/sergiolr/Library/Python/3.11/bin/alembic. Must be run from backend/ directory with DATABASE_URL exported.
+- KEY LEARNING: For verbose logging verification in a script, capture logs with io.StringIO BEFORE any imports. Or use a fresh subprocess with env preset. Do NOT use inline process after app has already been imported.
+- Evidence: orchestrator-state/tasks/evidence/P01-S02-T003/
+- Handoff: orchestrator-state/tasks/handoffs/P01-S02-T003.md

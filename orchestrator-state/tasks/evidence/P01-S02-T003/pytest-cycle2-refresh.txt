@@ -1,0 +1,31 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.5, pytest-9.0.2, pluggy-1.6.0 -- /usr/local/bin/python3
+cachedir: .pytest_cache
+rootdir: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-a603f43bf685c795c/backend
+configfile: pyproject.toml
+plugins: httpx-0.36.0, asyncio-1.3.0, langsmith-0.8.3, anyio-4.13.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 14 items
+
+backend/tests/integration/test_auth_refresh.py::test_refresh_success_rotates_and_returns_new_access_token PASSED [  7%]
+backend/tests/integration/test_auth_refresh.py::test_refresh_no_cookie_returns_401_session_expired PASSED [ 14%]
+backend/tests/integration/test_auth_refresh.py::test_refresh_unknown_token_returns_401 PASSED [ 21%]
+backend/tests/integration/test_auth_refresh.py::test_refresh_expired_token_returns_401 PASSED [ 28%]
+backend/tests/integration/test_auth_refresh.py::test_refresh_revoked_token_returns_401 PASSED [ 35%]
+backend/tests/integration/test_auth_refresh.py::test_refresh_inactive_user_returns_401 PASSED [ 42%]
+backend/tests/integration/test_auth_refresh.py::test_refresh_replay_old_token_returns_401 PASSED [ 50%]
+backend/tests/integration/test_auth_refresh.py::test_refresh_concurrent_requests_only_one_wins PASSED [ 57%]
+backend/tests/integration/test_auth_refresh.py::test_refresh_rate_limit_returns_429 PASSED [ 64%]
+backend/tests/integration/test_auth_refresh.py::test_refresh_no_pii_or_token_value_in_logs PASSED [ 71%]
+backend/tests/integration/test_auth_refresh.py::test_refresh_request_id_in_response_header_and_meta PASSED [ 78%]
+backend/tests/integration/test_auth_refresh.py::test_refresh_body_has_no_refresh_token PASSED [ 85%]
+backend/tests/integration/test_auth_refresh.py::test_refresh_new_refresh_hashed_in_db PASSED [ 92%]
+backend/tests/integration/test_auth_refresh.py::test_refresh_401_body_byte_identical_for_all_failure_reasons PASSED [100%]
+
+=============================== warnings summary ===============================
+tests/integration/test_auth_refresh.py: 20 warnings
+  /Users/sergiolr/Library/Python/3.11/lib/python/site-packages/starlette/testclient.py:445: DeprecationWarning: Setting per-request cookies=<...> is being deprecated, because the expected behaviour on cookie persistence is ambiguous. Set cookies directly on the client instance instead.
+    return super().request(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================= 14 passed, 20 warnings in 1.80s ========================

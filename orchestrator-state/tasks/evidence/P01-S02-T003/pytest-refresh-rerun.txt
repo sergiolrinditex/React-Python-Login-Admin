@@ -1,0 +1,47 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.5, pytest-9.0.2, pluggy-1.6.0 -- /usr/local/bin/python3
+cachedir: .pytest_cache
+rootdir: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-a603f43bf685c795c/backend
+configfile: pyproject.toml
+plugins: httpx-0.36.0, asyncio-1.3.0, langsmith-0.8.3, anyio-4.13.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 14 items
+
+tests/integration/test_auth_refresh.py::test_refresh_success_rotates_and_returns_new_access_token PASSED [  7%]
+tests/integration/test_auth_refresh.py::test_refresh_no_cookie_returns_401_session_expired PASSED [ 14%]
+tests/integration/test_auth_refresh.py::test_refresh_unknown_token_returns_401 PASSED [ 21%]
+tests/integration/test_auth_refresh.py::test_refresh_expired_token_returns_401 PASSED [ 28%]
+tests/integration/test_auth_refresh.py::test_refresh_revoked_token_returns_401 PASSED [ 35%]
+tests/integration/test_auth_refresh.py::test_refresh_inactive_user_returns_401 PASSED [ 42%]
+tests/integration/test_auth_refresh.py::test_refresh_replay_old_token_returns_401 PASSED [ 50%]
+tests/integration/test_auth_refresh.py::test_refresh_concurrent_requests_only_one_wins PASSED [ 57%]
+tests/integration/test_auth_refresh.py::test_refresh_rate_limit_returns_429 PASSED [ 64%]
+tests/integration/test_auth_refresh.py::test_refresh_no_pii_or_token_value_in_logs PASSED [ 71%]
+tests/integration/test_auth_refresh.py::test_refresh_request_id_in_response_header_and_meta PASSED [ 78%]
+tests/integration/test_auth_refresh.py::test_refresh_body_has_no_refresh_token PASSED [ 85%]
+tests/integration/test_auth_refresh.py::test_refresh_new_refresh_hashed_in_db PASSED [ 92%]
+tests/integration/test_auth_refresh.py::test_refresh_401_body_byte_identical_for_all_failure_reasons PASSED [100%]
+
+=============================== warnings summary ===============================
+tests/integration/test_auth_refresh.py::test_refresh_success_rotates_and_returns_new_access_token
+tests/integration/test_auth_refresh.py::test_refresh_inactive_user_returns_401
+tests/integration/test_auth_refresh.py::test_refresh_replay_old_token_returns_401
+tests/integration/test_auth_refresh.py::test_refresh_concurrent_requests_only_one_wins
+tests/integration/test_auth_refresh.py::test_refresh_rate_limit_returns_429
+tests/integration/test_auth_refresh.py::test_refresh_no_pii_or_token_value_in_logs
+tests/integration/test_auth_refresh.py::test_refresh_request_id_in_response_header_and_meta
+tests/integration/test_auth_refresh.py::test_refresh_body_has_no_refresh_token
+tests/integration/test_auth_refresh.py::test_refresh_new_refresh_hashed_in_db
+  /Users/sergiolr/Library/Python/3.11/lib/python/site-packages/jwt/api_jwt.py:147: InsecureKeyLengthWarning: The HMAC key is 0 bytes long, which is below the minimum recommended length of 32 bytes for SHA256. See RFC 7518 Section 3.2.
+    return self._jws.encode(
+
+tests/integration/test_auth_refresh.py: 20 warnings
+  /Users/sergiolr/Library/Python/3.11/lib/python/site-packages/starlette/testclient.py:445: DeprecationWarning: Setting per-request cookies=<...> is being deprecated, because the expected behaviour on cookie persistence is ambiguous. Set cookies directly on the client instance instead.
+    return super().request(
+
+tests/integration/test_auth_refresh.py::test_refresh_success_rotates_and_returns_new_access_token
+  /Users/sergiolr/Library/Python/3.11/lib/python/site-packages/jwt/api_jwt.py:365: InsecureKeyLengthWarning: The HMAC key is 0 bytes long, which is below the minimum recommended length of 32 bytes for SHA256. See RFC 7518 Section 3.2.
+    decoded = self.decode_complete(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================= 14 passed, 30 warnings in 1.86s ========================

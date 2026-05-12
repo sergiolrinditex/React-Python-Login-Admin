@@ -4,6 +4,8 @@ Hilo People — POST /api/v1/auth/sign-in router.
 Slice:  P01-S02-T002 — POST /api/v1/auth/sign-in
         (Extracted from `app/auth/router.py` in debugger cycle 1 per validator
         F1 "file size hard cap"; F5 "use Depends(get_db_session)".)
+        P01-S02-T003 — refactored to use shared `_set_refresh_cookie` helper
+        (D-RP2: byte-identical cookie attrs with /refresh).
 Phase:  P01 Auth + Data Foundation
 Responsibility: parse SignInRequest, rate-limit, dispatch to SignInUser,
                 map domain errors to the envelope, set HttpOnly refresh cookie
@@ -11,11 +13,14 @@ Responsibility: parse SignInRequest, rate-limit, dispatch to SignInUser,
 
 Decisions:
   - Cookie attributes: HttpOnly; Secure; SameSite=lax; Path=/auth (§F.7).
+    Delegated to _set_refresh_cookie (D-RP2) so cookie shape stays identical
+    across sign-in, refresh, and future 2FA-verify.
   - Access token is body-only; refresh token is cookie-only (D-RP5).
   - On the MFA branch we DO NOT set a refresh cookie (§F.2).
 
 Source refs:
   - TECHNICAL_GUIDE §6.2, §10.2; task pack P01-S02-T002 §C, §E, §F.
+  - task pack P01-S02-T003 §D-RP2 (shared _set_refresh_cookie).
   - 01-non-negotiables.md §API contract, §Security/Token storage (web).
 """
 
@@ -35,7 +40,12 @@ from app.auth.errors import (
     SignInRateLimitedError,
 )
 from app.auth.rate_limit import check_rate_limit_signin
-from app.auth.routers._helpers import _error_response, _get_client_ip, _get_request_id
+from app.auth.routers._helpers import (
+    _error_response,
+    _get_client_ip,
+    _get_request_id,
+    _set_refresh_cookie,
+)
 from app.auth.schemas import (
     ResponseMeta,
     SignInRequest,
@@ -141,7 +151,6 @@ def sign_in(
         )
 
     # No-MFA success — set refresh cookie + return access token in body
-    refresh_ttl = int(os.getenv("AUTH_REFRESH_TTL_SECONDS", "2592000"))
     envelope = SignInResponseSuccess(
         data={
             "mfa_required": False,
@@ -161,15 +170,8 @@ def sign_in(
         status_code=status.HTTP_200_OK,
         headers={"X-Request-ID": request_id},
     )
-    # D-RP4: HttpOnly; Secure; SameSite=lax; Path=/auth; Max-Age refresh TTL.
+    # D-RP2: use shared _set_refresh_cookie to ensure byte-identical cookie
+    # attrs with /refresh and future /2fa/verify (P01-S02-T003).
     # NEVER log raw refresh_token — only user_id is logged above.
-    json_resp.set_cookie(
-        key="refresh_token",
-        value=result.refresh_token,
-        httponly=True,
-        secure=True,
-        samesite="lax",
-        path="/auth",
-        max_age=refresh_ttl,
-    )
+    _set_refresh_cookie(json_resp, result.refresh_token)
     return json_resp

@@ -1,0 +1,6 @@
+audit_logs (action=auth.refresh, last 5 rows):
+action | outcome | reason
+auth.refresh | failure | user_inactive
+auth.refresh | failure | revoked
+auth.refresh | success | None
+TOTAL AUDIT ROWS FETCHED: 3

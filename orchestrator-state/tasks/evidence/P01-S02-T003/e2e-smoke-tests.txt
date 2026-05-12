@@ -1,0 +1,210 @@
+2026-05-12 08:40:29,659 app.auth.password DEBUG password.hash.start
+2026-05-12 08:40:29,693 app.auth.password DEBUG password.hash.done
+2026-05-12 08:40:29,738 asyncio DEBUG Using selector: KqueueSelector
+2026-05-12 08:40:29,741 app.db.session DEBUG db.session.open
+2026-05-12 08:40:29,743 app.auth.routers.sign_in INFO auth.sign_in.received email_domain=inditex-sandbox.com request_id=3e2beea9-d938-453d-b25b-d6d1b83f4a6a
+2026-05-12 08:40:29,743 app.auth.rate_limit DEBUG rate_limit.check.start prefix=SIGNIN ip=SIGNIN:testclient rate_per_min=20 burst=20
+2026-05-12 08:40:29,743 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=SIGNIN ip=SIGNIN:testclient new_window remaining=19
+2026-05-12 08:40:29,743 app.auth.services.sign_in INFO auth.sign_in.starting request_id=3e2beea9-d938-453d-b25b-d6d1b83f4a6a email_domain=inditex-sandbox.com
+2026-05-12 08:40:29,743 app.auth.repository DEBUG auth.repo.find_by_email.start email_domain=inditex-sandbox.com
+2026-05-12 08:40:29,747 app.auth.repository DEBUG auth.repo.find_by_email.done found=True
+2026-05-12 08:40:29,747 app.auth.services.sign_in INFO auth.sign_in.user_found user_id=dfa50d39-8ee6-4d58-97d8-17723f888d5a request_id=3e2beea9-d938-453d-b25b-d6d1b83f4a6a
+2026-05-12 08:40:29,747 app.auth.repository DEBUG auth.repo.count_signin_failures.start user_id=dfa50d39-8ee6-4d58-97d8-17723f888d5a window=900s
+2026-05-12 08:40:29,749 app.auth.repository DEBUG auth.repo.count_signin_failures.done user_id=dfa50d39-8ee6-4d58-97d8-17723f888d5a count=0
+2026-05-12 08:40:29,749 app.auth.password DEBUG password.verify_with_dummy.start has_real_hash=True
+2026-05-12 08:40:29,785 app.auth.password DEBUG password.verify_with_dummy.ok
+2026-05-12 08:40:29,789 app.auth.tokens DEBUG tokens.encode_access.start sub=dfa50d39-8ee6-4d58-97d8-17723f888d5a ttl=1800s
+2026-05-12 08:40:29,789 app.auth.tokens DEBUG tokens.encode_access.done sub=dfa50d39-8ee6-4d58-97d8-17723f888d5a exp=2026-05-12T07:10:29.787635+00:00
+2026-05-12 08:40:29,789 app.auth.repository DEBUG auth.repo.insert_refresh_token.start user_id=dfa50d39-8ee6-4d58-97d8-17723f888d5a
+2026-05-12 08:40:29,792 app.auth.repository DEBUG auth.repo.insert_refresh_token.done user_id=dfa50d39-8ee6-4d58-97d8-17723f888d5a rt_id=afbb42fe-98d1-49ba-9984-fc204d4a4d45
+2026-05-12 08:40:29,792 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.sign_in actor_user_id=dfa50d39-8ee6-4d58-97d8-17723f888d5a
+2026-05-12 08:40:29,794 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=5578deb0-6f71-42e2-afd4-09ac331ad6c4 action=auth.sign_in
+2026-05-12 08:40:29,797 app.auth.services.sign_in INFO auth.sign_in.success user_id=dfa50d39-8ee6-4d58-97d8-17723f888d5a request_id=3e2beea9-d938-453d-b25b-d6d1b83f4a6a
+2026-05-12 08:40:29,797 app.auth.routers.sign_in INFO auth.sign_in.success user_id=dfa50d39-8ee6-4d58-97d8-17723f888d5a request_id=3e2beea9-d938-453d-b25b-d6d1b83f4a6a
+2026-05-12 08:40:29,798 app.db.session DEBUG db.session.closed
+2026-05-12 08:40:29,799 httpx INFO HTTP Request: POST http://testserver/api/v1/auth/sign-in "HTTP/1.1 200 OK"
+2026-05-12 08:40:29,799 asyncio DEBUG Using selector: KqueueSelector
+2026-05-12 08:40:29,801 app.db.session DEBUG db.session.open
+2026-05-12 08:40:29,801 app.auth.routers.refresh DEBUG auth.refresh.received request_id=f430d408-7a92-4907-a32c-ebbf85e09598 ip=testclient
+2026-05-12 08:40:29,801 app.auth.rate_limit DEBUG rate_limit.check.start prefix=REFRESH ip=REFRESH:testclient rate_per_min=30 burst=30
+2026-05-12 08:40:29,801 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=REFRESH ip=REFRESH:testclient new_window remaining=29
+2026-05-12 08:40:29,801 app.auth.services.refresh DEBUG auth.refresh.execute.start request_id=f430d408-7a92-4907-a32c-ebbf85e09598 ip=testclient
+2026-05-12 08:40:29,801 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_active_for_update.start hash_prefix=a7168199...
+2026-05-12 08:40:29,804 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_active_for_update.done found=True hash_prefix=a7168199...
+2026-05-12 08:40:29,805 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_user_active.start user_id=dfa50d39-8ee6-4d58-97d8-17723f888d5a
+2026-05-12 08:40:29,806 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_user_active.done user_id=dfa50d39-8ee6-4d58-97d8-17723f888d5a active=True
+2026-05-12 08:40:29,806 app.auth.repositories.refresh DEBUG auth.repo.refresh.revoke.start token_id=afbb42fe-98d1-49ba-9984-fc204d4a4d45
+2026-05-12 08:40:29,807 app.auth.repositories.refresh DEBUG auth.repo.refresh.revoke.done token_id=afbb42fe-98d1-49ba-9984-fc204d4a4d45
+2026-05-12 08:40:29,807 app.auth.repositories.refresh DEBUG auth.repo.refresh.insert_new.start user_id=dfa50d39-8ee6-4d58-97d8-17723f888d5a
+2026-05-12 08:40:29,808 app.auth.repositories.refresh DEBUG auth.repo.refresh.insert_new.done user_id=dfa50d39-8ee6-4d58-97d8-17723f888d5a new_rt_id=e1d30bb1-c8e0-4a40-8305-1685c4811820
+2026-05-12 08:40:29,809 app.auth.tokens DEBUG tokens.encode_access.start sub=dfa50d39-8ee6-4d58-97d8-17723f888d5a ttl=1800s
+2026-05-12 08:40:29,809 app.auth.tokens DEBUG tokens.encode_access.done sub=dfa50d39-8ee6-4d58-97d8-17723f888d5a exp=2026-05-12T07:10:29.808749+00:00
+2026-05-12 08:40:29,809 app.auth.services.refresh DEBUG auth.refresh.success_audit.start user_id=dfa50d39-8ee6-4d58-97d8-17723f888d5a request_id=f430d408-7a92-4907-a32c-ebbf85e09598
+2026-05-12 08:40:29,809 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.refresh actor_user_id=dfa50d39-8ee6-4d58-97d8-17723f888d5a
+2026-05-12 08:40:29,810 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=ee9bed18-e466-485d-93a8-a3699d70a62f action=auth.refresh
+2026-05-12 08:40:29,810 app.auth.services.refresh DEBUG auth.refresh.success_audit.done user_id=dfa50d39-8ee6-4d58-97d8-17723f888d5a request_id=f430d408-7a92-4907-a32c-ebbf85e09598
+2026-05-12 08:40:29,814 app.auth.services.refresh DEBUG auth.refresh.execute.done user_id=dfa50d39-8ee6-4d58-97d8-17723f888d5a old_token_id=afbb42fe-98d1-49ba-9984-fc204d4a4d45 new_token_id=e1d30bb1-c8e0-4a40-8305-1685c4811820 request_id=f430d408-7a92-4907-a32c-ebbf85e09598
+2026-05-12 08:40:29,814 app.auth.routers.refresh DEBUG auth.refresh.success user_id=dfa50d39-8ee6-4d58-97d8-17723f888d5a old_token_id=afbb42fe-98d1-49ba-9984-fc204d4a4d45 new_token_id=e1d30bb1-c8e0-4a40-8305-1685c4811820 request_id=f430d408-7a92-4907-a32c-ebbf85e09598
+2026-05-12 08:40:29,814 app.db.session DEBUG db.session.closed
+2026-05-12 08:40:29,815 httpx INFO HTTP Request: POST http://testserver/api/v1/auth/refresh "HTTP/1.1 200 OK"
+2026-05-12 08:40:29,819 asyncio DEBUG Using selector: KqueueSelector
+2026-05-12 08:40:29,820 app.db.session DEBUG db.session.open
+2026-05-12 08:40:29,820 app.auth.routers.refresh DEBUG auth.refresh.received request_id=2503ceec-c24e-4a8a-a4c1-5b51db88fff0 ip=testclient
+2026-05-12 08:40:29,820 app.auth.rate_limit DEBUG rate_limit.check.start prefix=REFRESH ip=REFRESH:testclient rate_per_min=30 burst=30
+2026-05-12 08:40:29,820 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=REFRESH ip=REFRESH:testclient remaining=28
+2026-05-12 08:40:29,820 app.auth.services.refresh DEBUG auth.refresh.execute.start request_id=2503ceec-c24e-4a8a-a4c1-5b51db88fff0 ip=testclient
+2026-05-12 08:40:29,820 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_active_for_update.start hash_prefix=a7168199...
+2026-05-12 08:40:29,822 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_active_for_update.done found=False hash_prefix=a7168199...
+2026-05-12 08:40:29,822 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_by_hash.start hash_prefix=a7168199...
+2026-05-12 08:40:29,823 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_by_hash.done found=True
+2026-05-12 08:40:29,823 app.auth.services.refresh DEBUG auth.refresh.rejected reason=revoked request_id=2503ceec-c24e-4a8a-a4c1-5b51db88fff0
+2026-05-12 08:40:29,823 app.auth.services.refresh DEBUG auth.refresh.failure_audit.start reason=revoked request_id=2503ceec-c24e-4a8a-a4c1-5b51db88fff0
+2026-05-12 08:40:29,823 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.refresh actor_user_id=dfa50d39-8ee6-4d58-97d8-17723f888d5a
+2026-05-12 08:40:29,833 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=be252e44-10f0-41c6-9f6f-b83a6eb2fb6b action=auth.refresh
+2026-05-12 08:40:29,834 app.auth.services.refresh DEBUG auth.refresh.failure_audit.done reason=revoked request_id=2503ceec-c24e-4a8a-a4c1-5b51db88fff0
+2026-05-12 08:40:29,835 app.db.session DEBUG db.session.closed
+2026-05-12 08:40:29,835 httpx INFO HTTP Request: POST http://testserver/api/v1/auth/refresh "HTTP/1.1 401 Unauthorized"
+2026-05-12 08:40:29,836 asyncio DEBUG Using selector: KqueueSelector
+2026-05-12 08:40:29,836 app.db.session DEBUG db.session.open
+2026-05-12 08:40:29,836 app.auth.routers.refresh DEBUG auth.refresh.received request_id=386092d0-8ad7-442e-9f55-419ca2928bae ip=testclient
+2026-05-12 08:40:29,837 app.auth.rate_limit DEBUG rate_limit.check.start prefix=REFRESH ip=REFRESH:testclient rate_per_min=30 burst=30
+2026-05-12 08:40:29,837 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=REFRESH ip=REFRESH:testclient remaining=27
+2026-05-12 08:40:29,837 app.auth.services.refresh DEBUG auth.refresh.execute.start request_id=386092d0-8ad7-442e-9f55-419ca2928bae ip=testclient
+2026-05-12 08:40:29,837 app.auth.services.refresh DEBUG auth.refresh.rejected reason=no_cookie request_id=386092d0-8ad7-442e-9f55-419ca2928bae
+2026-05-12 08:40:29,837 app.auth.services.refresh DEBUG auth.refresh.failure_audit.start reason=no_cookie request_id=386092d0-8ad7-442e-9f55-419ca2928bae
+2026-05-12 08:40:29,837 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.refresh actor_user_id=NULL
+2026-05-12 08:40:29,839 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=2e19f25a-8b7c-44f1-a1ad-4d7c72cca2ec action=auth.refresh
+2026-05-12 08:40:29,839 app.auth.services.refresh DEBUG auth.refresh.failure_audit.done reason=no_cookie request_id=386092d0-8ad7-442e-9f55-419ca2928bae
+2026-05-12 08:40:29,839 app.db.session DEBUG db.session.closed
+2026-05-12 08:40:29,840 httpx INFO HTTP Request: POST http://testserver/api/v1/auth/refresh "HTTP/1.1 401 Unauthorized"
+2026-05-12 08:40:29,840 asyncio DEBUG Using selector: KqueueSelector
+2026-05-12 08:40:29,841 app.db.session DEBUG db.session.open
+2026-05-12 08:40:29,841 app.auth.routers.refresh DEBUG auth.refresh.received request_id=6b1164f9-5161-4a3e-9784-bcbb8bf77bce ip=testclient
+2026-05-12 08:40:29,841 app.auth.rate_limit DEBUG rate_limit.check.start prefix=REFRESH ip=REFRESH:testclient rate_per_min=30 burst=30
+2026-05-12 08:40:29,841 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=REFRESH ip=REFRESH:testclient remaining=26
+2026-05-12 08:40:29,841 app.auth.services.refresh DEBUG auth.refresh.execute.start request_id=6b1164f9-5161-4a3e-9784-bcbb8bf77bce ip=testclient
+2026-05-12 08:40:29,841 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_active_for_update.start hash_prefix=15833ddd...
+2026-05-12 08:40:29,843 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_active_for_update.done found=False hash_prefix=15833ddd...
+2026-05-12 08:40:29,843 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_by_hash.start hash_prefix=15833ddd...
+2026-05-12 08:40:29,843 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_by_hash.done found=False
+2026-05-12 08:40:29,843 app.auth.services.refresh DEBUG auth.refresh.rejected reason=unknown_hash request_id=6b1164f9-5161-4a3e-9784-bcbb8bf77bce
+2026-05-12 08:40:29,843 app.auth.services.refresh DEBUG auth.refresh.failure_audit.start reason=unknown_hash request_id=6b1164f9-5161-4a3e-9784-bcbb8bf77bce
+2026-05-12 08:40:29,843 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.refresh actor_user_id=NULL
+2026-05-12 08:40:29,845 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=2483a773-3793-4276-9732-3281ed8a77ca action=auth.refresh
+2026-05-12 08:40:29,846 app.auth.services.refresh DEBUG auth.refresh.failure_audit.done reason=unknown_hash request_id=6b1164f9-5161-4a3e-9784-bcbb8bf77bce
+2026-05-12 08:40:29,847 app.db.session DEBUG db.session.closed
+2026-05-12 08:40:29,847 httpx INFO HTTP Request: POST http://testserver/api/v1/auth/refresh "HTTP/1.1 401 Unauthorized"
+2026-05-12 08:40:29,847 asyncio DEBUG Using selector: KqueueSelector
+2026-05-12 08:40:29,848 app.db.session DEBUG db.session.open
+2026-05-12 08:40:29,848 app.auth.routers.refresh DEBUG auth.refresh.received request_id=b1286f6c-f7ef-4086-81e8-b93a88af4152 ip=testclient
+2026-05-12 08:40:29,848 app.auth.rate_limit DEBUG rate_limit.check.start prefix=REFRESH ip=REFRESH:testclient rate_per_min=2 burst=2
+2026-05-12 08:40:29,848 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=REFRESH ip=REFRESH:testclient new_window remaining=1
+2026-05-12 08:40:29,848 app.auth.services.refresh DEBUG auth.refresh.execute.start request_id=b1286f6c-f7ef-4086-81e8-b93a88af4152 ip=testclient
+2026-05-12 08:40:29,848 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_active_for_update.start hash_prefix=b48a5443...
+2026-05-12 08:40:29,851 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_active_for_update.done found=True hash_prefix=b48a5443...
+2026-05-12 08:40:29,851 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_user_active.start user_id=dfa50d39-8ee6-4d58-97d8-17723f888d5a
+2026-05-12 08:40:29,852 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_user_active.done user_id=dfa50d39-8ee6-4d58-97d8-17723f888d5a active=True
+2026-05-12 08:40:29,852 app.auth.repositories.refresh DEBUG auth.repo.refresh.revoke.start token_id=e1d30bb1-c8e0-4a40-8305-1685c4811820
+2026-05-12 08:40:29,852 app.auth.repositories.refresh DEBUG auth.repo.refresh.revoke.done token_id=e1d30bb1-c8e0-4a40-8305-1685c4811820
+2026-05-12 08:40:29,853 app.auth.repositories.refresh DEBUG auth.repo.refresh.insert_new.start user_id=dfa50d39-8ee6-4d58-97d8-17723f888d5a
+2026-05-12 08:40:29,853 app.auth.repositories.refresh DEBUG auth.repo.refresh.insert_new.done user_id=dfa50d39-8ee6-4d58-97d8-17723f888d5a new_rt_id=9fd76396-d9ac-42e5-86b9-c609fd830361
+2026-05-12 08:40:29,854 app.auth.tokens DEBUG tokens.encode_access.start sub=dfa50d39-8ee6-4d58-97d8-17723f888d5a ttl=1800s
+2026-05-12 08:40:29,854 app.auth.tokens DEBUG tokens.encode_access.done sub=dfa50d39-8ee6-4d58-97d8-17723f888d5a exp=2026-05-12T07:10:29.853776+00:00
+2026-05-12 08:40:29,854 app.auth.services.refresh DEBUG auth.refresh.success_audit.start user_id=dfa50d39-8ee6-4d58-97d8-17723f888d5a request_id=b1286f6c-f7ef-4086-81e8-b93a88af4152
+2026-05-12 08:40:29,854 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.refresh actor_user_id=dfa50d39-8ee6-4d58-97d8-17723f888d5a
+2026-05-12 08:40:29,855 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=a80aafed-5e8c-4ea7-a4d2-91b0d183fa01 action=auth.refresh
+2026-05-12 08:40:29,855 app.auth.services.refresh DEBUG auth.refresh.success_audit.done user_id=dfa50d39-8ee6-4d58-97d8-17723f888d5a request_id=b1286f6c-f7ef-4086-81e8-b93a88af4152
+2026-05-12 08:40:29,858 app.auth.services.refresh DEBUG auth.refresh.execute.done user_id=dfa50d39-8ee6-4d58-97d8-17723f888d5a old_token_id=e1d30bb1-c8e0-4a40-8305-1685c4811820 new_token_id=9fd76396-d9ac-42e5-86b9-c609fd830361 request_id=b1286f6c-f7ef-4086-81e8-b93a88af4152
+2026-05-12 08:40:29,858 app.auth.routers.refresh DEBUG auth.refresh.success user_id=dfa50d39-8ee6-4d58-97d8-17723f888d5a old_token_id=e1d30bb1-c8e0-4a40-8305-1685c4811820 new_token_id=9fd76396-d9ac-42e5-86b9-c609fd830361 request_id=b1286f6c-f7ef-4086-81e8-b93a88af4152
+2026-05-12 08:40:29,859 app.db.session DEBUG db.session.closed
+2026-05-12 08:40:29,859 httpx INFO HTTP Request: POST http://testserver/api/v1/auth/refresh "HTTP/1.1 200 OK"
+2026-05-12 08:40:29,859 asyncio DEBUG Using selector: KqueueSelector
+2026-05-12 08:40:29,860 app.db.session DEBUG db.session.open
+2026-05-12 08:40:29,860 app.auth.routers.refresh DEBUG auth.refresh.received request_id=5dc02152-a3cc-4368-b3d2-bfa4ce9f5c9b ip=testclient
+2026-05-12 08:40:29,860 app.auth.rate_limit DEBUG rate_limit.check.start prefix=REFRESH ip=REFRESH:testclient rate_per_min=2 burst=2
+2026-05-12 08:40:29,860 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=REFRESH ip=REFRESH:testclient remaining=0
+2026-05-12 08:40:29,860 app.auth.services.refresh DEBUG auth.refresh.execute.start request_id=5dc02152-a3cc-4368-b3d2-bfa4ce9f5c9b ip=testclient
+2026-05-12 08:40:29,860 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_active_for_update.start hash_prefix=e78cbfcb...
+2026-05-12 08:40:29,862 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_active_for_update.done found=True hash_prefix=e78cbfcb...
+2026-05-12 08:40:29,862 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_user_active.start user_id=dfa50d39-8ee6-4d58-97d8-17723f888d5a
+2026-05-12 08:40:29,863 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_user_active.done user_id=dfa50d39-8ee6-4d58-97d8-17723f888d5a active=True
+2026-05-12 08:40:29,863 app.auth.repositories.refresh DEBUG auth.repo.refresh.revoke.start token_id=9fd76396-d9ac-42e5-86b9-c609fd830361
+2026-05-12 08:40:29,863 app.auth.repositories.refresh DEBUG auth.repo.refresh.revoke.done token_id=9fd76396-d9ac-42e5-86b9-c609fd830361
+2026-05-12 08:40:29,863 app.auth.repositories.refresh DEBUG auth.repo.refresh.insert_new.start user_id=dfa50d39-8ee6-4d58-97d8-17723f888d5a
+2026-05-12 08:40:29,864 app.auth.repositories.refresh DEBUG auth.repo.refresh.insert_new.done user_id=dfa50d39-8ee6-4d58-97d8-17723f888d5a new_rt_id=ee937bd4-0224-46f9-9aec-6691ac43e3e1
+2026-05-12 08:40:29,865 app.auth.tokens DEBUG tokens.encode_access.start sub=dfa50d39-8ee6-4d58-97d8-17723f888d5a ttl=1800s
+2026-05-12 08:40:29,865 app.auth.tokens DEBUG tokens.encode_access.done sub=dfa50d39-8ee6-4d58-97d8-17723f888d5a exp=2026-05-12T07:10:29.864595+00:00
+2026-05-12 08:40:29,865 app.auth.services.refresh DEBUG auth.refresh.success_audit.start user_id=dfa50d39-8ee6-4d58-97d8-17723f888d5a request_id=5dc02152-a3cc-4368-b3d2-bfa4ce9f5c9b
+2026-05-12 08:40:29,865 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.refresh actor_user_id=dfa50d39-8ee6-4d58-97d8-17723f888d5a
+2026-05-12 08:40:29,866 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=e3a3f8c3-4756-4dce-b013-43a0a3d2a8bc action=auth.refresh
+2026-05-12 08:40:29,866 app.auth.services.refresh DEBUG auth.refresh.success_audit.done user_id=dfa50d39-8ee6-4d58-97d8-17723f888d5a request_id=5dc02152-a3cc-4368-b3d2-bfa4ce9f5c9b
+2026-05-12 08:40:29,868 app.auth.services.refresh DEBUG auth.refresh.execute.done user_id=dfa50d39-8ee6-4d58-97d8-17723f888d5a old_token_id=9fd76396-d9ac-42e5-86b9-c609fd830361 new_token_id=ee937bd4-0224-46f9-9aec-6691ac43e3e1 request_id=5dc02152-a3cc-4368-b3d2-bfa4ce9f5c9b
+2026-05-12 08:40:29,868 app.auth.routers.refresh DEBUG auth.refresh.success user_id=dfa50d39-8ee6-4d58-97d8-17723f888d5a old_token_id=9fd76396-d9ac-42e5-86b9-c609fd830361 new_token_id=ee937bd4-0224-46f9-9aec-6691ac43e3e1 request_id=5dc02152-a3cc-4368-b3d2-bfa4ce9f5c9b
+2026-05-12 08:40:29,869 app.db.session DEBUG db.session.closed
+2026-05-12 08:40:29,869 httpx INFO HTTP Request: POST http://testserver/api/v1/auth/refresh "HTTP/1.1 200 OK"
+2026-05-12 08:40:29,870 asyncio DEBUG Using selector: KqueueSelector
+2026-05-12 08:40:29,870 app.db.session DEBUG db.session.open
+2026-05-12 08:40:29,870 app.auth.routers.refresh DEBUG auth.refresh.received request_id=dd00b4de-6b7f-4151-ab76-e548c7132b8b ip=testclient
+2026-05-12 08:40:29,870 app.auth.rate_limit DEBUG rate_limit.check.start prefix=REFRESH ip=REFRESH:testclient rate_per_min=2 burst=2
+2026-05-12 08:40:29,870 app.auth.rate_limit WARNING rate_limit.check.exceeded prefix=REFRESH ip=REFRESH:testclient retry_after=60s
+2026-05-12 08:40:29,870 app.auth.routers.refresh WARNING auth.refresh.rejected reason=RATE_LIMITED ip=testclient request_id=dd00b4de-6b7f-4151-ab76-e548c7132b8b
+2026-05-12 08:40:29,871 app.db.session DEBUG db.session.closed
+2026-05-12 08:40:29,871 httpx INFO HTTP Request: POST http://testserver/api/v1/auth/refresh "HTTP/1.1 429 Too Many Requests"
+2026-05-12 08:40:29,871 asyncio DEBUG Using selector: KqueueSelector
+2026-05-12 08:40:29,872 app.db.session DEBUG db.session.open
+2026-05-12 08:40:29,872 app.auth.routers.refresh DEBUG auth.refresh.received request_id=13b900d2-bda1-44e6-9b67-9783c7efe0d9 ip=testclient
+2026-05-12 08:40:29,872 app.auth.rate_limit DEBUG rate_limit.check.start prefix=REFRESH ip=REFRESH:testclient rate_per_min=2 burst=2
+2026-05-12 08:40:29,872 app.auth.rate_limit WARNING rate_limit.check.exceeded prefix=REFRESH ip=REFRESH:testclient retry_after=60s
+2026-05-12 08:40:29,872 app.auth.routers.refresh WARNING auth.refresh.rejected reason=RATE_LIMITED ip=testclient request_id=13b900d2-bda1-44e6-9b67-9783c7efe0d9
+2026-05-12 08:40:29,872 app.db.session DEBUG db.session.closed
+2026-05-12 08:40:29,872 httpx INFO HTTP Request: POST http://testserver/api/v1/auth/refresh "HTTP/1.1 429 Too Many Requests"
+=== E2E ENDPOINT SMOKE TESTS ===
+Using TestClient (ASGI transport) — worktree code against real Postgres DB
+
+Test user created: e2e-smoke-8d247b63@inditex-sandbox.com
+Sign-in OK: status=200, cookie obtained=True
+
+--- CASE 1: happy path rotation ---
+STATUS: 200 (expected 200)
+BODY.data keys: ['access_token', 'expires_in', 'token_type']
+access_token present: True
+token_type=Bearer: True
+expires_in > 0: True
+refresh_token NOT in body: True
+new Set-Cookie differs from old: True
+X-Request-ID echoed in header: True
+meta.request_id matches: True
+errors=[]: True
+RESULT: PASS
+
+--- DB VERIFICATION after rotation ---
+old token revoked_at NOT NULL: True
+new token revoked_at IS NULL: True
+audit_log rows (auth.refresh):
+  action=auth.refresh actor=dfa50d39... outcome=success reason=None
+  action=auth.refresh actor=NULL... outcome=failure reason=no_cookie
+  action=auth.refresh actor=05f6368a... outcome=success reason=None
+  action=auth.refresh actor=NULL... outcome=failure reason=no_cookie
+  action=auth.refresh actor=ce7df069... outcome=success reason=None
+
+--- CASE 2: replay revoked token ---
+STATUS: 401 (expected 401)
+code: AUTH_SESSION_EXPIRED (expected AUTH_SESSION_EXPIRED)
+RESULT: PASS
+
+--- CASE 3: missing cookie ---
+STATUS: 401 (expected 401)
+code: AUTH_SESSION_EXPIRED (expected AUTH_SESSION_EXPIRED)
+RESULT: PASS
+
+--- CASE 4: unknown token hash ---
+STATUS: 401 (expected 401)
+code: AUTH_SESSION_EXPIRED (expected AUTH_SESSION_EXPIRED)
+RESULT: PASS
+
+--- CASE 5: rate limit (RATE_PER_MINUTE=2 BURST=2) ---
+Request statuses: [200, 200, 429]
+429 code: AUTH_REFRESH_RATE_LIMITED
+RESULT: PASS
+
+=== E2E SMOKE COMPLETE ===
