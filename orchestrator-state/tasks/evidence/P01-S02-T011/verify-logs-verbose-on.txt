@@ -1,0 +1,72 @@
+=== /verify-slice P01-S02-T011 — verbose-on logs scan (BEFORE/AFTER + no PII) ===
+Date: 2026-05-12
+
+Tokens used in flow:
+  signin_token  = 7BhUZVQQxfDJ... (full value used in literal grep)
+  refresh_token = V6w03CVysRCx... (full value used in literal grep)
+
+PII / token leak scan against log /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/orchestrator-state/dev-logs/back-verify-T011.log:
+  signin token value in log:    absent (OK)
+  refresh token value in log:   absent (OK)
+  Full email in log:            absent (OK)
+  email_domain=... present:     YES (OK)
+  hash_prefix= occurrences:     4 (expected >0 — hashed, only first 8 chars)
+
+BEFORE/AFTER pattern coverage:
+  sign_in router:    received → success
+  sign_in service:   starting → user_found → success
+  refresh router:    received → success
+  refresh service:   execute.start → execute.done → success
+  refresh repo:      find_active_for_update.start/done → revoke.start/done → insert_new.start/done
+  logout router:     received → success
+  logout service:    execute.start → execute.done
+  logout repo:       find_active_for_update.start/done → revoke.start/done
+  audit repo:        write_audit.start/done for sign_in / refresh / logout
+
+X-Request-ID correlation:
+  All 3 endpoints propagate request_id=verify-T011-{signin|refresh|logout} in logs and audit.metadata.request_id.
+
+Filtered log excerpt (router+service+repo for the 3 endpoints):
+2026-05-12 12:08:12,594 app.auth.routers.sign_in INFO auth.sign_in.received email_domain=inditex-sandbox.com request_id=verify-T011-signin
+2026-05-12 12:08:12,594 app.auth.services.sign_in INFO auth.sign_in.starting request_id=verify-T011-signin email_domain=inditex-sandbox.com
+2026-05-12 12:08:12,656 app.auth.services.sign_in INFO auth.sign_in.user_found user_id=878f8eb0-3e9f-4969-8e8d-561c8a4ee772 request_id=verify-T011-signin
+2026-05-12 12:08:12,665 app.auth.password DEBUG password.verify_with_dummy.start has_real_hash=True
+2026-05-12 12:08:12,706 app.auth.password DEBUG password.verify_with_dummy.ok
+2026-05-12 12:08:12,711 app.auth.tokens DEBUG tokens.encode_access.start sub=878f8eb0-3e9f-4969-8e8d-561c8a4ee772 ttl=1800s
+2026-05-12 12:08:12,712 app.auth.tokens DEBUG tokens.encode_access.done sub=878f8eb0-3e9f-4969-8e8d-561c8a4ee772 exp=2026-05-12T10:38:12.709546+00:00
+2026-05-12 12:08:12,715 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.sign_in actor_user_id=878f8eb0-3e9f-4969-8e8d-561c8a4ee772
+2026-05-12 12:08:12,717 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=0aa645b5-5853-4b6b-b5b7-4c6d45fbfcd4 action=auth.sign_in
+2026-05-12 12:08:12,721 app.auth.services.sign_in INFO auth.sign_in.success user_id=878f8eb0-3e9f-4969-8e8d-561c8a4ee772 request_id=verify-T011-signin
+2026-05-12 12:08:12,722 app.auth.routers.sign_in INFO auth.sign_in.success user_id=878f8eb0-3e9f-4969-8e8d-561c8a4ee772 request_id=verify-T011-signin
+2026-05-12 12:08:22,627 app.auth.routers.refresh DEBUG auth.refresh.received request_id=verify-T011-refresh ip=127.0.0.1
+2026-05-12 12:08:22,627 app.auth.services.refresh DEBUG auth.refresh.execute.start request_id=verify-T011-refresh ip=127.0.0.1
+2026-05-12 12:08:22,627 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_active_for_update.start hash_prefix=1beab2fa...
+2026-05-12 12:08:22,641 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_active_for_update.done found=True hash_prefix=1beab2fa...
+2026-05-12 12:08:22,641 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_user_active.start user_id=878f8eb0-3e9f-4969-8e8d-561c8a4ee772
+2026-05-12 12:08:22,643 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_user_active.done user_id=878f8eb0-3e9f-4969-8e8d-561c8a4ee772 active=True
+2026-05-12 12:08:22,643 app.auth.repositories.refresh DEBUG auth.repo.refresh.revoke.start token_id=2edf2861-fc44-4398-89cf-6c50ab820305
+2026-05-12 12:08:22,646 app.auth.repositories.refresh DEBUG auth.repo.refresh.revoke.done token_id=2edf2861-fc44-4398-89cf-6c50ab820305
+2026-05-12 12:08:22,646 app.auth.repositories.refresh DEBUG auth.repo.refresh.insert_new.start user_id=878f8eb0-3e9f-4969-8e8d-561c8a4ee772
+2026-05-12 12:08:22,647 app.auth.repositories.refresh DEBUG auth.repo.refresh.insert_new.done user_id=878f8eb0-3e9f-4969-8e8d-561c8a4ee772 new_rt_id=6f9ae947-d7f3-4341-88f8-0d64a6cdedce
+2026-05-12 12:08:22,648 app.auth.tokens DEBUG tokens.encode_access.start sub=878f8eb0-3e9f-4969-8e8d-561c8a4ee772 ttl=1800s
+2026-05-12 12:08:22,648 app.auth.tokens DEBUG tokens.encode_access.done sub=878f8eb0-3e9f-4969-8e8d-561c8a4ee772 exp=2026-05-12T10:38:22.647674+00:00
+2026-05-12 12:08:22,649 app.auth.services.refresh_audit DEBUG auth.refresh.success_audit.start user_id=878f8eb0-3e9f-4969-8e8d-561c8a4ee772 request_id=verify-T011-refresh
+2026-05-12 12:08:22,649 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.refresh actor_user_id=878f8eb0-3e9f-4969-8e8d-561c8a4ee772
+2026-05-12 12:08:22,650 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=ab5cc126-68ec-45d5-a778-e22d331cb96a action=auth.refresh
+2026-05-12 12:08:22,650 app.auth.services.refresh_audit DEBUG auth.refresh.success_audit.done user_id=878f8eb0-3e9f-4969-8e8d-561c8a4ee772 request_id=verify-T011-refresh
+2026-05-12 12:08:22,655 app.auth.services.refresh DEBUG auth.refresh.execute.done user_id=878f8eb0-3e9f-4969-8e8d-561c8a4ee772 old_token_id=2edf2861-fc44-4398-89cf-6c50ab820305 new_token_id=6f9ae947-d7f3-4341-88f8-0d64a6cdedce request_id=verify-T011-refresh
+2026-05-12 12:08:22,655 app.auth.routers.refresh DEBUG auth.refresh.success user_id=878f8eb0-3e9f-4969-8e8d-561c8a4ee772 old_token_id=2edf2861-fc44-4398-89cf-6c50ab820305 new_token_id=6f9ae947-d7f3-4341-88f8-0d64a6cdedce request_id=verify-T011-refresh
+2026-05-12 12:08:22,710 app.auth.routers.logout DEBUG auth.logout.received request_id=verify-T011-logout ip=127.0.0.1
+2026-05-12 12:08:22,710 app.auth.services.logout DEBUG auth.logout.execute.start request_id=verify-T011-logout ip=127.0.0.1
+2026-05-12 12:08:22,710 app.auth.tokens DEBUG tokens.decode.start
+2026-05-12 12:08:22,711 app.auth.tokens DEBUG tokens.decode.ok sub=878f8eb0-3e9f-4969-8e8d-561c8a4ee772
+2026-05-12 12:08:22,711 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_active_for_update.start hash_prefix=c0bbe43c...
+2026-05-12 12:08:22,715 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_active_for_update.done found=True hash_prefix=c0bbe43c...
+2026-05-12 12:08:22,715 app.auth.repositories.refresh DEBUG auth.repo.refresh.revoke.start token_id=6f9ae947-d7f3-4341-88f8-0d64a6cdedce
+2026-05-12 12:08:22,717 app.auth.repositories.refresh DEBUG auth.repo.refresh.revoke.done token_id=6f9ae947-d7f3-4341-88f8-0d64a6cdedce
+2026-05-12 12:08:22,718 app.auth.services.logout_audit DEBUG auth.logout.success_audit.start user_id=878f8eb0-3e9f-4969-8e8d-561c8a4ee772 request_id=verify-T011-logout
+2026-05-12 12:08:22,718 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.logout actor_user_id=878f8eb0-3e9f-4969-8e8d-561c8a4ee772
+2026-05-12 12:08:22,719 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=1c919f1c-14dd-473b-8b72-23149f1f20a9 action=auth.logout
+2026-05-12 12:08:22,719 app.auth.services.logout_audit DEBUG auth.logout.success_audit.done user_id=878f8eb0-3e9f-4969-8e8d-561c8a4ee772 request_id=verify-T011-logout
+2026-05-12 12:08:22,721 app.auth.services.logout DEBUG auth.logout.execute.done user_id=878f8eb0-3e9f-4969-8e8d-561c8a4ee772 token_id=6f9ae947-d7f3-4341-88f8-0d64a6cdedce request_id=verify-T011-logout
+2026-05-12 12:08:22,721 app.auth.routers.logout DEBUG auth.logout.success request_id=verify-T011-logout

@@ -361,7 +361,7 @@ def test_refresh_success_rotates_and_returns_new_access_token() -> None:
     assert "HttpOnly" in set_cookie_header
     assert "Secure" in set_cookie_header
     assert "SameSite=lax" in set_cookie_header.lower() or "samesite=lax" in set_cookie_header.lower()
-    assert "Path=/auth" in set_cookie_header
+    assert "Path=/api/v1/auth" in set_cookie_header  # §10.2 T011
 
     # Decode JWT — 8 claims per §10.2
     decoded = jwt.decode(

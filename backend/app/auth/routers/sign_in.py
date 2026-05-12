@@ -6,15 +6,18 @@ Slice:  P01-S02-T002 — POST /api/v1/auth/sign-in
         F1 "file size hard cap"; F5 "use Depends(get_db_session)".)
         P01-S02-T003 — refactored to use shared `_set_refresh_cookie` helper
         (D-RP2: byte-identical cookie attrs with /refresh).
+        P01-S02-T011 — docstring updated to reflect corrected cookie Path.
 Phase:  P01 Auth + Data Foundation
 Responsibility: parse SignInRequest, rate-limit, dispatch to SignInUser,
                 map domain errors to the envelope, set HttpOnly refresh cookie
                 on the no-MFA branch, return 200 envelope.
 
 Decisions:
-  - Cookie attributes: HttpOnly; Secure; SameSite=lax; Path=/auth (§F.7).
-    Delegated to _set_refresh_cookie (D-RP2) so cookie shape stays identical
-    across sign-in, refresh, and future 2FA-verify.
+  - Cookie attributes: HttpOnly; Secure; SameSite=lax; Path=/api/v1/auth (§F.7).
+    Path was corrected from /auth to /api/v1/auth in P01-S02-T011 (RFC 6265 §5.4 —
+    browser only sends cookie to URLs whose path prefix matches; /api/v1/auth/*
+    are the real endpoint paths). Delegated to _set_refresh_cookie (D-RP2) so
+    cookie shape stays identical across sign-in, refresh, and future 2FA-verify.
   - Access token is body-only; refresh token is cookie-only (D-RP5).
   - On the MFA branch we DO NOT set a refresh cookie (§F.2).
 

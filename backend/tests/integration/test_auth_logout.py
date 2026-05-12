@@ -2,6 +2,7 @@
 Hilo People — Integration tests for POST /api/v1/auth/logout.
 
 Slice:  P01-S02-T004 — POST /api/v1/auth/logout
+        P01-S02-T011 — T15 cookie-jar roundtrip test added (RFC 6265 §5.4 regression guard).
 Phase:  P01 Auth + Data Foundation
 Purpose: Real integration tests against a live FastAPI app + real Postgres DB.
          All tests use real DB rows committed via _create_user / _insert_refresh_token
@@ -54,9 +55,11 @@ import uuid
 from datetime import datetime, timedelta, timezone
 from typing import NamedTuple
 
+import httpx
 import jwt
 import pytest
 from fastapi.testclient import TestClient
+from httpx import ASGITransport
 from sqlalchemy.orm import Session
 
 from app.auth.password import hash_password
@@ -728,3 +731,83 @@ def test_logout_audit_row_persists_even_when_main_tx_rolls_back():
     assert audit is not None, "Failure audit row must persist despite main tx not committing"
     assert audit.extra_metadata.get("reason") == "user_mismatch"
     assert audit.extra_metadata.get("outcome") == "failure"
+
+
+# ---------------------------------------------------------------------------
+# T15 — Cookie-jar roundtrip: RFC 6265 §5.4 Path matching regression guard
+# ---------------------------------------------------------------------------
+
+@pytest.mark.asyncio
+async def test_logout_cookie_jar_roundtrip_no_manual_cookie_header():
+    """T15: httpx.AsyncClient+ASGITransport sign-in → logout via real cookie jar.
+
+    This is the RFC 6265 §5.4 regression guard (P01-S02-T011). httpx enforces
+    the Path attribute when deciding whether to include a cookie in a request,
+    matching real browser behavior — unlike Starlette TestClient which ignores it.
+
+    Regression test: if _set_refresh_cookie reverts Path to /auth, httpx will NOT
+    send the cookie to /api/v1/auth/logout (path prefix mismatch per RFC 6265 §5.4),
+    the server receives no cookie, and the endpoint returns 401 (no_cookie), causing
+    this test to fail.
+
+    Flow: sign-in (cookie jar populated) → logout (cookie jar auto-sends) → 204.
+    No manual Cookie header is set anywhere in this test.
+    """
+    user_data, plain_pw = _create_user()
+
+    # Use httpx.AsyncClient with ASGITransport — enforces Path AND Secure attributes.
+    # base_url is https:// so httpx will send Secure cookies (cookie has Secure=True).
+    # ASGITransport handles both http:// and https:// URLs transparently (no TLS needed).
+    # If Path reverted to /auth, httpx would NOT send the cookie to /api/v1/auth/logout
+    # (RFC 6265 §5.4: path-prefix mismatch) and logout would return 401.
+    async with httpx.AsyncClient(
+        transport=ASGITransport(app=app),
+        base_url="https://testserver",
+    ) as ac:
+        # Step 1: sign-in — the response sets a refresh_token cookie with Path=/api/v1/auth
+        r_signin = await ac.post(
+            "/api/v1/auth/sign-in",
+            json={"email": user_data.email, "password": plain_pw},
+        )
+        assert r_signin.status_code == 200, (
+            f"sign-in failed (expected 200): {r_signin.status_code} — {r_signin.text}"
+        )
+
+        data = r_signin.json().get("data", {})
+        access_token = data.get("access_token")
+        assert access_token, "No access_token in sign-in response"
+
+        # Cookie jar must have the refresh_token — if Path was wrong, it would be absent
+        assert "refresh_token" in ac.cookies, (
+            "refresh_token cookie not in httpx cookie jar after sign-in — "
+            "cookie Path may not match /api/v1/auth (RFC 6265 §5.4)"
+        )
+
+        # Step 2: logout — NO explicit Cookie header; httpx auto-sends from jar
+        # because /api/v1/auth/logout matches Path=/api/v1/auth prefix.
+        r_logout = await ac.post(
+            "/api/v1/auth/logout",
+            headers={"Authorization": f"Bearer {access_token}"},
+            # Deliberately NO Cookie header — httpx must send it automatically
+        )
+        assert r_logout.status_code == 204, (
+            f"logout failed (expected 204 No Content): {r_logout.status_code} — {r_logout.text}"
+        )
+
+    # DB: verify the refresh token was revoked (not just accepted on HTTP level)
+    # We must query by user_id since we don't have the raw opaque token directly.
+    session = _setup_session()
+    try:
+        from sqlalchemy import text as sa_text
+        result = session.execute(
+            sa_text(
+                "SELECT COUNT(*) FROM refresh_tokens "
+                "WHERE user_id = :uid AND revoked_at IS NOT NULL"
+            ),
+            {"uid": str(user_data.id)},
+        ).scalar()
+        assert result >= 1, (
+            f"Expected at least 1 revoked refresh_token for user {user_data.id}, got {result}"
+        )
+    finally:
+        session.close()

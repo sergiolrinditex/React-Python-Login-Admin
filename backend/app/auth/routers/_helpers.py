@@ -4,6 +4,9 @@ Hilo People — Auth router shared helpers.
 Slice:  P01-S02-T002 (debugger cycle 1 — extracted per validator F1).
         P01-S02-T003 — added _set_refresh_cookie helper so sign-in, refresh
                        and future 2FA-verify (T006) share byte-identical cookie attrs.
+        P01-S02-T011 — fixed cookie Path from /auth to /api/v1/auth (RFC 6265 §5.4).
+                       Extracted _REFRESH_COOKIE_PATH constant (DRY); same constant
+                       used in both _set_refresh_cookie and _clear_refresh_cookie.
 Phase:  P01 Auth + Data Foundation
 Purpose: Helpers reused by every endpoint in `app/auth/routers/*`:
            - _get_request_id: extract X-Request-ID or generate UUID v4.
@@ -11,15 +14,19 @@ Purpose: Helpers reused by every endpoint in `app/auth/routers/*`:
            - _error_response: build the {data:null, meta, errors:[…]} envelope.
            - _set_refresh_cookie: set HttpOnly refresh cookie on a JSONResponse
              with byte-identical attrs across sign-in, refresh, 2FA-verify.
+             Path=/api/v1/auth (matches real routing prefix per RFC 6265 §5.4).
+           - _clear_refresh_cookie: clear cookie on logout (Max-Age=0, same Path).
 
 These were on `router.py` before. Centralising them keeps each endpoint
 file ≤300 LOC and ensures sign-up + sign-in + refresh emit byte-identical
 envelopes and cookies.
 
 Source refs:
-  - TECHNICAL_GUIDE §6.2 envelope contract; §10.5 X-Request-ID propagation.
+  - TECHNICAL_GUIDE §6.2 envelope contract; §10.2 cookie Path contract (T011);
+    §10.5 X-Request-ID propagation.
   - task pack P01-S02-T002 §E (envelope shape).
   - task pack P01-S02-T003 §D-RP2 (cookie attrs byte-identical to T002).
+  - task pack P01-S02-T011 §front→back→DB contract (Path fix).
   - 01-non-negotiables.md §Security/Request correlation.
 """
 
@@ -32,6 +39,14 @@ from fastapi import Request
 from fastapi.responses import JSONResponse
 
 from app.auth.schemas import ErrorItem, ErrorResponse, ResponseMeta
+
+
+# Cookie Path attribute — must match the real routing prefix so RFC 6265 §5.4
+# path-matching causes the browser to send the cookie only to /api/v1/auth/* endpoints.
+# Using /auth (the sub-prefix only) would prevent the browser from sending the cookie
+# to /api/v1/auth/refresh and /api/v1/auth/logout (the actual URLs).
+# See: TECHNICAL_GUIDE §10.2; task pack P01-S02-T011 §R2.
+_REFRESH_COOKIE_PATH: str = "/api/v1/auth"
 
 
 def _get_request_id(request: Request) -> str:
@@ -88,7 +103,7 @@ def _set_refresh_cookie(json_resp: JSONResponse, opaque_refresh: str) -> None:
         httponly=True,
         secure=True,
         samesite="lax",
-        path="/auth",
+        path=_REFRESH_COOKIE_PATH,
         max_age=refresh_ttl,
     )
 
@@ -115,6 +130,6 @@ def _clear_refresh_cookie(response) -> None:
         httponly=True,
         secure=True,
         samesite="lax",
-        path="/auth",
+        path=_REFRESH_COOKIE_PATH,
         max_age=0,
     )

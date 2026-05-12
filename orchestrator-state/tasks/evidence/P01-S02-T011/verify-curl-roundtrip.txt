@@ -1,0 +1,32 @@
+=== /verify-slice P01-S02-T011 — curl roundtrip with real cookie jar (RFC 6265 §5.4) ===
+Date: 2026-05-12 (human verify, post-hard-reset)
+Backend: worktree (.claude/worktrees/agent-a46ba8f44d6390837/backend) on :8000
+Persona: employee.verification@inditex-sandbox.com (from data/verification/users/employee_primary.json)
+
+STEP A — POST /api/v1/auth/sign-in
+  HTTP: 200
+  X-Request-ID: verify-T011-signin
+  Set-Cookie: refresh_token=7BhUZVQQxfDJ4ZFY4o0H83AZtaUJAaV-KURNd5GP_1vTS-09os7uQSL7ORsgKdij;
+              HttpOnly; Max-Age=2592000; Path=/api/v1/auth; SameSite=lax; Secure
+  ✓ Path=/api/v1/auth (FIX confirmed; was /auth before)
+  ✓ HttpOnly + Secure + SameSite=lax preserved byte-identical
+  Cookie jar (/tmp/verify-T011-cookies.txt): #HttpOnly_localhost FALSE /api/v1/auth ... refresh_token=7BhU...
+
+STEP B — POST /api/v1/auth/refresh (cookie jar; NO manual Cookie header)
+  HTTP: 200
+  X-Request-ID: verify-T011-refresh
+  Set-Cookie: refresh_token=V6w03CVysRCxuHZH2CDn02vwJgWJqYSf--_l1IAJB2I9l9ZAfFxkr56aMW_6d79n;
+              HttpOnly; Max-Age=2592000; Path=/api/v1/auth; SameSite=lax; Secure
+  ✓ HTTP 200 = curl auto-sent cookie via cookie jar (jar Path /api/v1/auth matches request URL /api/v1/auth/refresh)
+  ✓ Rotated token returned (new value), Path preserved
+  ✓ If the fix had not landed (Path=/auth), curl would have refused to attach the cookie and we'd have gotten 401
+
+STEP C — POST /api/v1/auth/logout (cookie jar + Bearer; NO manual Cookie header)
+  HTTP: 204 No Content
+  X-Request-ID: verify-T011-logout
+  Set-Cookie: refresh_token=""; HttpOnly; Max-Age=0; Path=/api/v1/auth; SameSite=lax; Secure
+  ✓ HTTP 204 = curl auto-sent cookie via cookie jar AND server cleared it (Max-Age=0)
+  ✓ Cookie jar empty after this step (Max-Age=0 wins on jar update)
+  ✓ Clearer Path = Setter Path byte-identical (both /api/v1/auth)
+
+RFC 6265 §5.4 compliance: VERIFIED. curl honors Path attribute identically to Chrome/Firefox.

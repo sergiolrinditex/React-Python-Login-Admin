@@ -1,0 +1,18 @@
+=== /verify-slice P01-S02-T011 — DB verification ===
+Date: 2026-05-12 (post-hard-reset, fresh DB)
+
+refresh_tokens (employee.verification@inditex-sandbox.com):
+  Row 1: id=2edf2861.. exp=2026-06-11T10:08:12Z  is_revoked=True  (created by sign-in, revoked by refresh rotation)
+  Row 2: id=6f9ae947.. exp=2026-06-11T10:08:22Z  is_revoked=True  (created by refresh, revoked by logout)
+  Totals: total=2, revoked=2, active=0
+  ✓ Rotation behavior: sign-in token revoked when refresh rotates
+  ✓ Logout behavior: rotated token revoked on logout (single-session)
+  ✓ Net session state after flow: no active sessions remain (correct)
+
+audit_logs (verification employee, recent):
+  action=auth.sign_in   entity=user  metadata_keys=[ip, outcome, request_id, user_agent]
+  action=auth.refresh   entity=user  metadata_keys=[ip, new_token_id, old_token_id, outcome, request_id, user_agent]
+  action=auth.logout    entity=user  metadata_keys=[ip, outcome, request_id, revoked_token_id, user_agent]
+  ✓ All 3 audit entries written with request_id correlation
+  ✓ refresh entry tracks old_token_id + new_token_id (rotation trail)
+  ✓ logout entry tracks revoked_token_id (single-session revocation)

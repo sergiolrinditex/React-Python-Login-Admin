@@ -1752,7 +1752,7 @@
       "phase_id": "P01",
       "step_id": "P01-S02",
       "title": "fix dev-restart db_health race: wait for host TCP, not container-internal pg_isready",
-      "status": "ready_for_close",
+      "status": "done",
       "build_state": "planned",
       "product_increment": "current",
       "risk_level": "medium",
@@ -1805,11 +1805,12 @@
       "origin_techguide_raw": "runtime-followup#FU-20260512052820-fix-dev-restart-db-health-race-wait-for-host-tcp",
       "claimed_at": "2026-05-12T09:16:14+00:00",
       "claimed_by": "sergiolr",
-      "last_outcome": "pass",
-      "last_updated_by": "tester",
-      "last_stop_at": "2026-05-12T09:36:13+00:00",
+      "last_outcome": "committed",
+      "last_updated_by": "closer",
+      "last_stop_at": "2026-05-12T10:09:30+00:00",
       "validator_outcome": "approved",
-      "validator_next_status": "ready_for_close"
+      "validator_next_status": "ready_for_close",
+      "report_path": "orchestrator-state/tasks/reports/P01-S02-T012.md"
     },
     {
       "id": "P02-S01-T001",

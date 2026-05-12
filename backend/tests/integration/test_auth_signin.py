@@ -33,7 +33,7 @@ Test inventory (tests 1-16 required, T17 optional):
   T10: sign-in rate limit → 429 AUTH_SIGNIN_RATE_LIMITED
   T11: X-Request-ID propagation in response meta
   T12: no PII in logs (caplog)
-  T13: refresh cookie attributes (HttpOnly, Secure, SameSite=Lax, Path=/auth, Max-Age)
+  T13: refresh cookie attributes (HttpOnly, Secure, SameSite=Lax, Path=/api/v1/auth, Max-Age)
   T14: refresh token hashed in DB (SHA-256)
   T15: access token NOT in cookie
   T16: timing envelope smoke check (both branches > 50ms, diff < 500ms)
@@ -250,7 +250,7 @@ def test_signin_success_no_mfa(pg_session):
     assert "HttpOnly" in set_cookie
     assert "Secure" in set_cookie
     assert "SameSite=lax" in set_cookie or "samesite=lax" in set_cookie.lower()
-    assert "Path=/auth" in set_cookie or "path=/auth" in set_cookie.lower()
+    assert "Path=/api/v1/auth" in set_cookie or "path=/api/v1/auth" in set_cookie.lower()  # §10.2 T011
 
     # DB: refresh_tokens row inserted
     refresh_token_val = set_cookie.split("refresh_token=")[1].split(";")[0].strip()
@@ -678,7 +678,7 @@ def test_signin_no_pii_in_logs(pg_session, caplog):
 # ---------------------------------------------------------------------------
 @pytest.mark.integration
 def test_signin_refresh_cookie_attributes(pg_session):
-    """T13: Set-Cookie attributes — HttpOnly, Secure, SameSite=lax, Path=/auth, Max-Age>0."""
+    """T13: Set-Cookie attributes — HttpOnly, Secure, SameSite=lax, Path=/api/v1/auth, Max-Age>0. (§10.2 T011)"""
     _reset_rate_limit()
     u = _create_user(pg_session)
 
@@ -695,7 +695,7 @@ def test_signin_refresh_cookie_attributes(pg_session):
     assert "httponly" in cookie_lower, f"Missing HttpOnly in: {set_cookie}"
     assert "secure" in cookie_lower, f"Missing Secure in: {set_cookie}"
     assert "samesite=lax" in cookie_lower, f"Missing SameSite=lax in: {set_cookie}"
-    assert "path=/auth" in cookie_lower, f"Missing Path=/auth in: {set_cookie}"
+    assert "path=/api/v1/auth" in cookie_lower, f"Missing Path=/api/v1/auth in: {set_cookie}"  # §10.2 T011
 
     # Extract Max-Age and verify > 0
     import re
