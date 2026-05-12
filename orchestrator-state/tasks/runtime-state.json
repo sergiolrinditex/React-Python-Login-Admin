@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-05-11T18:57:00+00:00",
-  "active_phase_id": "P00",
-  "active_task_id": "P00-S02-T004",
+  "generated_at": "2026-05-12T04:33:44+00:00",
+  "next_ready_phase_id": "P01",
+  "next_ready_task_id": "P01-S02-T003",
   "last_worker": "closer",
-  "last_event": "subagent_stop",
+  "last_event": "bootstrap_refresh_preserve_runtime",
   "pending_journey_verifications": [],
   "journey_gate_mode": "frontier",
   "last_journey_verified": null,
@@ -35,6 +35,7 @@
       "promoted_task_id": "P00-S02-T004"
     }
   ],
+  "last_stop_at": "2026-05-11T18:57:00+00:00",
   "last_claimed_task_id": "P01-S02-T002",
   "last_trailer": {
     "task_id": "P01-S02-T002",
@@ -42,8 +43,5 @@
     "next_status": "ready_for_close",
     "handoff": "orchestrator-state/tasks/handoffs/P01-S02-T002.md",
     "evidence": "orchestrator-state/tasks/evidence/P01-S02-T002/"
-  },
-  "last_stop_at": "2026-05-11T18:57:00+00:00",
-  "last_followup_id": "FU-20260511145446-fix-verification-data-loader-meta-jsonb-sql-cast",
-  "last_claimed_phase_id": "P01"
+  }
 }

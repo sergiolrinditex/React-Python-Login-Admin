@@ -2,7 +2,7 @@ id: P00-S01-T001
 phase_id: P00
 step_id: P00-S01
 title: "Repo scaffold + scripts + env"
-status: ready
+status: done
 kind: "setup"
 target: "Repo scaffold + scripts + env"
 product_increment: "v1"

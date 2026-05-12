@@ -2,7 +2,7 @@ id: P01-S02-T005
 phase_id: P01
 step_id: P01-S02
 title: "Forgot and reset password endpoints"
-status: blocked
+status: ready
 kind: "api"
 target: "Forgot and reset password endpoints"
 product_increment: "v1"

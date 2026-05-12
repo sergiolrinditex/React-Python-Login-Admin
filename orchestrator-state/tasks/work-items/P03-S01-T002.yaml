@@ -2,7 +2,7 @@ id: P03-S01-T002
 phase_id: P03
 step_id: P03-S01
 title: "SignUpPage"
-status: blocked
+status: ready
 kind: "frontend"
 target: "SignUpPage"
 product_increment: "v1"

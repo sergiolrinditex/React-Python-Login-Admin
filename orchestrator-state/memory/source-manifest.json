@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-05-11T08:46:39+00:00",
+  "generated_at": "2026-05-12T04:33:44+00:00",
   "project_root": ".",
   "project_prefix": "HILO_PEOPLE",
   "source_of_truth": {
     "canonical_dir": "docs/source-of-truth",
     "discovery_mode": "canonical-strict",
-    "contract_version": "five-doc-stack-ux"
+    "contract_version": "five-file-source-of-truth"
   },
   "documents": {
     "instructions": {
@@ -14,7 +14,7 @@
     },
     "checklist": {
       "path": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md",
-      "sha256": "e72bd391d5afde9ac32dc3d45b5cea5e72f6b6d1a8aa1039484697bed37ed014"
+      "sha256": "300311146c612294e0be25179fbc5de77666f03732ccc76bd2ee66282f07a12c"
     },
     "guide": {
       "path": "docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md",
@@ -26,7 +26,7 @@
     },
     "stack_profile": {
       "path": "docs/source-of-truth/STACK_PROFILE.yaml",
-      "sha256": "6bb688e55f3c2f57f352dab5676246df2069ce49c963d3c2f0a11d9bc834c56a"
+      "sha256": "9333eb9b00385686f8a9c0894c9a1cc02e4a73e208f51a8f46ff34c6a2a74d26"
     }
   },
   "validation": {

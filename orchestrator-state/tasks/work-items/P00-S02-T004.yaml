@@ -2,7 +2,7 @@ id: P00-S02-T004
 phase_id: P00
 step_id: P00-S02
 title: "fix verification_data loader :meta::jsonb SQL cast"
-status: ready
+status: done
 kind: "bug"
 target: "fix verification_data loader :meta::jsonb SQL cast"
 product_increment: "current"
@@ -31,4 +31,4 @@ write_set:
   - "backend/tests/integration/test_verification_data_bootstrap.py"
 handoff_path: orchestrator-state/tasks/handoffs/P00-S02-T004.md
 evidence_dir: orchestrator-state/tasks/evidence/P00-S02-T004
-source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry"
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime follow-up P00-S02-T003"

@@ -2,7 +2,7 @@ id: P01-S01-T001
 phase_id: P01
 step_id: P01-S01
 title: "0001_auth_users_employee_audit.py"
-status: blocked
+status: done
 kind: "db"
 target: "0001_auth_users_employee_audit.py"
 product_increment: "v1"

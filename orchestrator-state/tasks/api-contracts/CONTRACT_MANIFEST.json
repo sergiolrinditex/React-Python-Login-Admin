@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-11T15:21:38+00:00",
+  "generated_at": "2026-05-12T04:33:44+00:00",
   "generator": ".claude/bin/generate_api_contracts.py",
   "source": "orchestrator-state/tasks/registry.json",
   "source_digest": "eee47dea42bcc7eca81d945b1e85bd3a8c337343c146f11dc8dc04f5e87d1e7c",

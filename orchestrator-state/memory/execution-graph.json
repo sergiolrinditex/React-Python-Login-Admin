@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-11T15:21:38+00:00",
+  "generated_at": "2026-05-12T04:33:44+00:00",
   "phase_order": [
     "P00",
     "P01",
@@ -14,7 +14,7 @@
       "id": "P00",
       "phase_number": 0,
       "title": "Bootstrap / foundation propia",
-      "status": "ready",
+      "status": "done",
       "depends_on": [],
       "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Phase 0 — Bootstrap / foundation propia",
       "task_ids": [
@@ -78,7 +78,7 @@
       "id": "P03",
       "phase_number": 3,
       "title": "Employee UX / Auth + Chat",
-      "status": "blocked",
+      "status": "ready",
       "depends_on": [
         "P02"
       ],
@@ -205,7 +205,7 @@
         ".env.example"
       ],
       "handoff_path": "orchestrator-state/tasks/handoffs/P00-S01-T001.md",
-      "evidence_dir": "orchestrator-state/tasks/evidence/P00-S01-T001/",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P00-S01-T001",
       "notes": [],
       "dependency_mode": "explicit_dag",
       "depends_on_raw": "—",
@@ -223,21 +223,18 @@
       "tables_raw": "—",
       "origin_instr_raw": "§1.3#stack",
       "origin_techguide_raw": "§3#commands",
-      "claimed_at": "2026-05-11T08:51:03+00:00",
-      "claimed_by": "sergiolr",
-      "claim_terminal_task_env": "P00-S01-T001",
-      "task_pack_path": "orchestrator-state/tasks/task-packs/P00-S01-T001.md",
-      "last_outcome": "committed",
-      "last_updated_by": "closer",
-      "last_stop_at": "2026-05-11T09:29:32+00:00",
       "validator_outcome": "approved",
-      "validator_next_status": "ready_for_close",
+      "last_updated_by": "closer",
+      "last_outcome": "committed",
+      "last_stop_at": "2026-05-11T09:29:32+00:00",
+      "claimed_by": "sergiolr",
+      "claimed_at": "2026-05-11T08:51:03+00:00",
       "last_blocker": {
         "reason": "blocked",
         "agent": "closer",
         "at": "2026-05-11T09:25:39+00:00"
       },
-      "report_path": "orchestrator-state/tasks/reports/P00-S01-T001.md"
+      "validator_next_status": "ready_for_close"
     },
     {
       "id": "P00-S01-T002",
@@ -282,7 +279,7 @@
         "frontend/src/app/providers.tsx"
       ],
       "handoff_path": "orchestrator-state/tasks/handoffs/P00-S01-T002.md",
-      "evidence_dir": "orchestrator-state/tasks/evidence/P00-S01-T002/",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P00-S01-T002",
       "notes": [],
       "dependency_mode": "explicit_dag",
       "depends_on_raw": "P00-S01-T001",
@@ -300,21 +297,18 @@
       "tables_raw": "—",
       "origin_instr_raw": "§11.0#frontend-libs",
       "origin_techguide_raw": "§2.0#frontend-libs",
-      "claimed_at": "2026-05-11T09:32:44+00:00",
-      "claimed_by": "sergiolr",
-      "claim_terminal_task_env": "P00-S01-T002",
-      "task_pack_path": "orchestrator-state/tasks/task-packs/P00-S01-T002.md",
-      "last_outcome": "committed",
-      "last_updated_by": "closer",
-      "last_stop_at": "2026-05-11T10:15:15+00:00",
       "validator_outcome": "approved",
-      "validator_next_status": "ready_for_close",
+      "last_updated_by": "closer",
+      "last_outcome": "committed",
+      "last_stop_at": "2026-05-11T10:15:15+00:00",
+      "claimed_by": "sergiolr",
+      "claimed_at": "2026-05-11T09:32:44+00:00",
       "last_blocker": {
         "reason": "blocked_false_done",
         "agent": "closer",
         "at": "2026-05-11T10:12:34+00:00"
       },
-      "report_path": "orchestrator-state/tasks/reports/P00-S01-T002.md"
+      "validator_next_status": "ready_for_close"
     },
     {
       "id": "P00-S01-T003",
@@ -358,7 +352,7 @@
         "backend/app/core/**"
       ],
       "handoff_path": "orchestrator-state/tasks/handoffs/P00-S01-T003.md",
-      "evidence_dir": "orchestrator-state/tasks/evidence/P00-S01-T003/",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P00-S01-T003",
       "notes": [],
       "dependency_mode": "explicit_dag",
       "depends_on_raw": "P00-S01-T001",
@@ -376,14 +370,12 @@
       "tables_raw": "—",
       "origin_instr_raw": "§11.0#backend-libs",
       "origin_techguide_raw": "§2.0#backend-libs",
-      "claimed_at": "2026-05-11T09:33:23+00:00",
-      "claimed_by": "sergiolr",
-      "claim_terminal_task_env": "P00-S01-T003",
-      "task_pack_path": "orchestrator-state/tasks/task-packs/P00-S01-T003.md",
-      "last_outcome": "committed",
-      "last_updated_by": "main-orchestrator-merge-fix",
-      "last_stop_at": "2026-05-11T12:31:19+00:00",
       "validator_outcome": "approved",
+      "last_updated_by": "main-orchestrator-merge-fix",
+      "last_outcome": "committed",
+      "last_stop_at": "2026-05-11T12:31:19+00:00",
+      "claimed_by": "sergiolr",
+      "claimed_at": "2026-05-11T09:33:23+00:00",
       "validator_next_status": "ready_for_close"
     },
     {
@@ -455,9 +447,9 @@
       "tables_raw": "—",
       "origin_instr_raw": "§7#theme",
       "origin_techguide_raw": "§7#design-system",
-      "last_outcome": "committed",
-      "last_updated_by": "main-orchestrator-merge-fix",
       "validator_outcome": "approved",
+      "last_updated_by": "main-orchestrator-merge-fix",
+      "last_outcome": "committed",
       "last_stop_at": "2026-05-11T12:31:19+00:00"
     },
     {
@@ -507,7 +499,7 @@
         "frontend/public/locales/**"
       ],
       "handoff_path": "orchestrator-state/tasks/handoffs/P00-S01-T005.md",
-      "evidence_dir": "orchestrator-state/tasks/evidence/P00-S01-T005/",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P00-S01-T005",
       "notes": [],
       "dependency_mode": "explicit_dag",
       "depends_on_raw": "P00-S01-T002,P00-S01-T004",
@@ -525,21 +517,18 @@
       "tables_raw": "users",
       "origin_instr_raw": "§6#i18n",
       "origin_techguide_raw": "§6.5#verification-data",
-      "claimed_at": "2026-05-11T13:03:21+00:00",
-      "claimed_by": "sergiolr",
-      "claim_terminal_task_env": "P00-S01-T005",
-      "task_pack_path": "orchestrator-state/tasks/task-packs/P00-S01-T005.md",
-      "last_outcome": "committed",
-      "last_updated_by": "closer",
-      "last_stop_at": "2026-05-11T13:52:40+00:00",
       "validator_outcome": "approved",
-      "validator_next_status": "ready_for_close",
+      "last_updated_by": "closer",
+      "last_outcome": "committed",
+      "last_stop_at": "2026-05-11T13:52:40+00:00",
+      "claimed_by": "sergiolr",
+      "claimed_at": "2026-05-11T13:03:21+00:00",
       "last_blocker": {
         "reason": "blocked_false_done",
         "agent": "closer",
         "at": "2026-05-11T13:51:48+00:00"
       },
-      "report_path": "orchestrator-state/tasks/reports/P00-S01-T005.md"
+      "validator_next_status": "ready_for_close"
     },
     {
       "id": "P00-S02-T001",
@@ -583,7 +572,7 @@
         "frontend/Dockerfile"
       ],
       "handoff_path": "orchestrator-state/tasks/handoffs/P00-S02-T001.md",
-      "evidence_dir": "orchestrator-state/tasks/evidence/P00-S02-T001/",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P00-S02-T001",
       "notes": [],
       "dependency_mode": "explicit_dag",
       "depends_on_raw": "P00-S01-T001",
@@ -601,16 +590,14 @@
       "tables_raw": "—",
       "origin_instr_raw": "§3.3#infra",
       "origin_techguide_raw": "§11#deploy",
-      "claimed_at": "2026-05-11T09:44:56+00:00",
-      "claimed_by": "sergiolr",
-      "claim_terminal_task_env": "P00-S02-T001",
-      "task_pack_path": "orchestrator-state/tasks/task-packs/P00-S02-T001.md",
-      "last_outcome": "pass",
-      "last_updated_by": "closer-manual-recovery",
-      "last_stop_at": "2026-05-11T10:06:36+00:00",
       "validator_outcome": "approved",
-      "validator_next_status": "ready_for_close",
-      "last_note": "manual recovery after closer git-workflow stash conflict; commit fec3aed pushed to origin/feat/P00-S02-T001-docker-compose-services"
+      "last_updated_by": "closer-manual-recovery",
+      "last_note": "manual recovery after closer git-workflow stash conflict; commit fec3aed pushed to origin/feat/P00-S02-T001-docker-compose-services",
+      "last_outcome": "pass",
+      "last_stop_at": "2026-05-11T10:06:36+00:00",
+      "claimed_by": "sergiolr",
+      "claimed_at": "2026-05-11T09:44:56+00:00",
+      "validator_next_status": "ready_for_close"
     },
     {
       "id": "P00-S02-T002",
@@ -672,9 +659,9 @@
       "tables_raw": "—",
       "origin_instr_raw": "§3.3#observability",
       "origin_techguide_raw": "§6.2#health",
-      "last_outcome": "committed",
-      "last_updated_by": "main-orchestrator-merge-fix",
       "validator_outcome": "approved",
+      "last_updated_by": "main-orchestrator-merge-fix",
+      "last_outcome": "committed",
       "last_stop_at": "2026-05-11T12:31:19+00:00"
     },
     {
@@ -732,7 +719,7 @@
         "scripts/dev-restart.sh"
       ],
       "handoff_path": "orchestrator-state/tasks/handoffs/P00-S02-T003.md",
-      "evidence_dir": "orchestrator-state/tasks/evidence/P00-S02-T003/",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P00-S02-T003",
       "notes": [],
       "dependency_mode": "explicit_dag",
       "depends_on_raw": "P00-S02-T002",
@@ -750,25 +737,20 @@
       "tables_raw": "users, employee_profiles, rag_collections, documents, ai_providers, mcp_servers, agents",
       "origin_instr_raw": "§15#verification-data",
       "origin_techguide_raw": "§6.5#verification-data",
-      "claimed_at": "2026-05-11T13:03:01+00:00",
-      "claimed_by": "sergiolr",
-      "claim_terminal_task_env": "P00-S02-T003",
-      "task_pack_path": "orchestrator-state/tasks/task-packs/P00-S02-T003.md",
-      "last_outcome": "committed",
-      "last_updated_by": "closer",
-      "last_stop_at": "2026-05-11T14:09:14+00:00",
       "validator_outcome": "approved",
-      "validator_next_status": "ready_for_close",
-      "report_path": "orchestrator-state/tasks/reports/P00-S02-T003.md"
+      "last_updated_by": "closer",
+      "last_outcome": "committed",
+      "last_stop_at": "2026-05-11T14:09:14+00:00",
+      "claimed_by": "sergiolr",
+      "claimed_at": "2026-05-11T13:03:01+00:00",
+      "validator_next_status": "ready_for_close"
     },
     {
       "id": "P00-S02-T004",
       "phase_id": "P00",
       "step_id": "P00-S02",
       "title": "fix verification_data loader :meta::jsonb SQL cast",
-      "status": "ready",
-      "kind": "bug",
-      "target": "fix verification_data loader :meta::jsonb SQL cast",
+      "status": "done",
       "build_state": "planned",
       "product_increment": "current",
       "risk_level": "medium",
@@ -776,13 +758,21 @@
       "depends_on": [
         "P00-S02-T003"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime follow-up P00-S02-T003",
       "acceptance": [
         "pytest backend/tests/integration/test_dev_restart_reset.py backend/tests/integration/test_verification_data_bootstrap.py pasa contra Postgres real con tablas auth ya migradas"
       ],
       "verification_commands": [
         "cd backend && alembic upgrade head && pytest backend/tests/integration/test_dev_restart_reset.py backend/tests/integration/test_verification_data_bootstrap.py -v"
       ],
+      "kind": "bug",
+      "target": "fix verification_data loader :meta::jsonb SQL cast",
+      "journey_refs": [],
+      "route": "",
+      "endpoint": "",
+      "tables": [],
+      "origin_instr": "runtime-followup#FU-20260511145446-fix-verification-data-loader-meta-jsonb-sql-cast",
+      "origin_techguide": "runtime-followup#FU-20260511145446-fix-verification-data-loader-meta-jsonb-sql-cast",
       "allowed_paths": [
         "backend/app/verification_data/loader.py",
         "backend/tests/integration/test_dev_restart_reset.py",
@@ -796,31 +786,37 @@
         "backend/tests/integration/test_dev_restart_reset.py",
         "backend/tests/integration/test_verification_data_bootstrap.py"
       ],
-      "journey_refs": [],
-      "route": "",
-      "endpoint": "",
-      "tables": [],
       "handoff_path": "orchestrator-state/tasks/handoffs/P00-S02-T004.md",
       "evidence_dir": "orchestrator-state/tasks/evidence/P00-S02-T004",
-      "origin": {
-        "type": "runtime_followup",
-        "followup_id": "FU-20260511145446-fix-verification-data-loader-meta-jsonb-sql-cast",
-        "origin_task_id": "P00-S02-T003",
-        "severity": "medium",
-        "kind": "bug",
-        "triage": {
-          "scope_classification": "out_of_scope",
-          "why_not_debugger": "P00-S02-T003 ya esta committed y mergeado en main; el bug del cast :meta::jsonb solo aflora ahora porque T001 crea las tablas auth que activan el code path del loader. No es fix in-scope de T001 (write_set distinto: backend/app/verification_data/loader.py).",
-          "decision": "followup_only_when_outside_current_slice",
-          "debugger_path": "in_scope_defects_use_validator_tester_debugger_retest",
-          "warnings": []
-        }
+      "notes": [],
+      "dependency_mode": "explicit_dag",
+      "depends_on_raw": "P00-S02-T003",
+      "conflict_groups_raw": "backend:verification_data",
+      "write_set_raw": "backend/app/verification_data/loader.py, backend/tests/integration/test_dev_restart_reset.py, backend/tests/integration/test_verification_data_bootstrap.py",
+      "product_increment_raw": "current",
+      "build_state_raw": "planned",
+      "risk_level_raw": "medium",
+      "verify_mode_raw": "human",
+      "kind_raw": "bug",
+      "target_raw": "fix verification_data loader :meta::jsonb SQL cast",
+      "journey_refs_raw": "—",
+      "screen_route_raw": "—",
+      "endpoint_raw": "—",
+      "tables_raw": "—",
+      "origin_instr_raw": "runtime-followup#FU-20260511145446-fix-verification-data-loader-meta-jsonb-sql-cast",
+      "origin_techguide_raw": "runtime-followup#FU-20260511145446-fix-verification-data-loader-meta-jsonb-sql-cast",
+      "validator_outcome": "approved",
+      "last_updated_by": "closer",
+      "last_outcome": "committed",
+      "last_stop_at": "2026-05-11T16:27:17+00:00",
+      "claimed_by": "sergiolr",
+      "claimed_at": "2026-05-11T15:44:30+00:00",
+      "last_blocker": {
+        "reason": "blocked_false_done",
+        "agent": "closer",
+        "at": "2026-05-11T16:25:37+00:00"
       },
-      "notes": [
-        "Runtime follow-up promoted from FU-20260511145446-fix-verification-data-loader-meta-jsonb-sql-cast",
-        "Description: backend/app/verification_data/loader.py linea ~280 usa el cast malformado :meta::jsonb que rompe los tests test_dev_restart_reset.py y test_verification_data_bootstrap.py. Detectado por validator+tester de P01-S01-T001. El cast debe ser CAST(:meta AS JSONB) o (:meta)::jsonb con el placeholder agrupado correctamente.",
-        "Triage: out_of_scope; why_not_debugger=P00-S02-T003 ya esta committed y mergeado en main; el bug del cast :meta::jsonb solo aflora ahora porque T001 crea las tablas auth que activan el code path del loader. No es fix in-scope de T001 (write_set distinto: backend/app/verification_data/loader.py)."
-      ]
+      "validator_next_status": "ready_for_close"
     },
     {
       "id": "P01-S01-T001",
@@ -877,7 +873,7 @@
         "backend/app/db/models/auth.py"
       ],
       "handoff_path": "orchestrator-state/tasks/handoffs/P01-S01-T001.md",
-      "evidence_dir": "orchestrator-state/tasks/evidence/P01-S01-T001/",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P01-S01-T001",
       "notes": [],
       "dependency_mode": "explicit_dag",
       "depends_on_raw": "P00-S02-T002",
@@ -895,28 +891,25 @@
       "tables_raw": "users, employee_profiles, roles, permissions, user_roles, refresh_tokens, mfa_totp_secrets, password_reset_tokens, audit_logs",
       "origin_instr_raw": "§3.1#auth-perfiles",
       "origin_techguide_raw": "§10.3#users",
-      "claimed_at": "2026-05-11T14:15:18+00:00",
-      "claimed_by": "sergiolr",
-      "claim_terminal_task_env": "P01-S01-T001",
-      "task_pack_path": "orchestrator-state/tasks/task-packs/P01-S01-T001.md",
-      "last_outcome": "committed",
-      "last_updated_by": "closer",
-      "last_stop_at": "2026-05-11T15:19:30+00:00",
       "validator_outcome": "approved",
-      "validator_next_status": "ready_for_close",
+      "last_updated_by": "closer",
+      "last_outcome": "committed",
+      "last_stop_at": "2026-05-11T15:19:30+00:00",
+      "claimed_by": "sergiolr",
+      "claimed_at": "2026-05-11T14:15:18+00:00",
       "last_blocker": {
         "reason": "blocked_false_done",
         "agent": "closer",
         "at": "2026-05-11T15:14:55+00:00"
       },
-      "report_path": "orchestrator-state/tasks/reports/P01-S01-T001.md"
+      "validator_next_status": "ready_for_close"
     },
     {
       "id": "P01-S02-T001",
       "phase_id": "P01",
       "step_id": "P01-S02",
       "title": "POST /api/v1/auth/sign-up",
-      "status": "ready",
+      "status": "done",
       "build_state": "planned",
       "product_increment": "v1",
       "risk_level": "medium",
@@ -975,14 +968,21 @@
       "endpoint_raw": "POST /api/v1/auth/sign-up",
       "tables_raw": "users, employee_profiles, audit_logs",
       "origin_instr_raw": "§3.1#auth-perfiles",
-      "origin_techguide_raw": "§6.2#POST-/api/v1/auth/sign-up"
+      "origin_techguide_raw": "§6.2#POST-/api/v1/auth/sign-up",
+      "validator_outcome": "approved",
+      "last_updated_by": "closer",
+      "last_outcome": "committed",
+      "last_stop_at": "2026-05-11T17:40:28+00:00",
+      "claimed_by": "sergiolr",
+      "claimed_at": "2026-05-11T16:33:10+00:00",
+      "validator_next_status": "ready_for_close"
     },
     {
       "id": "P01-S02-T002",
       "phase_id": "P01",
       "step_id": "P01-S02",
       "title": "POST /api/v1/auth/sign-in",
-      "status": "blocked",
+      "status": "ready_for_close",
       "build_state": "planned",
       "product_increment": "v1",
       "risk_level": "medium",
@@ -1040,14 +1040,21 @@
       "endpoint_raw": "POST /api/v1/auth/sign-in",
       "tables_raw": "users, refresh_tokens, audit_logs",
       "origin_instr_raw": "§3.1#auth-perfiles",
-      "origin_techguide_raw": "§6.2#POST-/api/v1/auth/sign-in"
+      "origin_techguide_raw": "§6.2#POST-/api/v1/auth/sign-in",
+      "validator_outcome": "approved",
+      "last_updated_by": "tester",
+      "last_outcome": "pass",
+      "last_stop_at": "2026-05-11T18:57:00+00:00",
+      "claimed_by": "sergiolr",
+      "claimed_at": "2026-05-11T17:49:45+00:00",
+      "validator_next_status": "ready_for_close"
     },
     {
       "id": "P01-S02-T003",
       "phase_id": "P01",
       "step_id": "P01-S02",
       "title": "POST /api/v1/auth/refresh",
-      "status": "blocked",
+      "status": "ready",
       "build_state": "planned",
       "product_increment": "v1",
       "risk_level": "medium",
@@ -1174,7 +1181,7 @@
       "phase_id": "P01",
       "step_id": "P01-S02",
       "title": "Forgot and reset password endpoints",
-      "status": "blocked",
+      "status": "ready",
       "build_state": "planned",
       "product_increment": "v1",
       "risk_level": "medium",
@@ -1242,7 +1249,7 @@
       "phase_id": "P01",
       "step_id": "P01-S02",
       "title": "POST /api/v1/auth/2fa/verify",
-      "status": "blocked",
+      "status": "ready",
       "build_state": "planned",
       "product_increment": "v1",
       "risk_level": "medium",
@@ -2340,7 +2347,7 @@
       "phase_id": "P03",
       "step_id": "P03-S01",
       "title": "SignUpPage",
-      "status": "blocked",
+      "status": "ready",
       "build_state": "planned",
       "product_increment": "v1",
       "risk_level": "medium",

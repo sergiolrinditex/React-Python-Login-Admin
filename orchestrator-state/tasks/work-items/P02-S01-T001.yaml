@@ -2,7 +2,7 @@ id: P02-S01-T001
 phase_id: P02
 step_id: P02-S01
 title: "0002_ai_chat_rag_mcp_agents.py"
-status: blocked
+status: ready
 kind: "db"
 target: "0002_ai_chat_rag_mcp_agents.py"
 product_increment: "v1"
