@@ -1,0 +1,8 @@
+==F1: GET /me admin (expect 200, employee_profile=null, roles=admin)==
+HTTP/1.1 200 OK
+date: Tue, 12 May 2026 20:53:57 GMT
+server: uvicorn
+content-length: 363
+content-type: application/json
+
+{"data":{"id":"68909510-e586-448b-bab2-5684f3c71f7e","email":"admin.peopletech@inditex-sandbox.com","full_name":"Admin People Tech","status":"active","preferred_language":"es","roles":["employee"],"employee_profile":null,"created_at":"2026-05-12T20:52:47.911104Z","updated_at":"2026-05-12T20:52:47.911104Z"},"meta":{"request_id":"verify-getme-admin"},"errors":[]}

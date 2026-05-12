@@ -1,0 +1,31 @@
+# Curl Evidence Note — P01-S02-T007
+
+## Context
+The live backend at http://localhost:8000 runs the MAIN REPO's uvicorn instance
+(backend/app/main.py) which does NOT have the users module mounted.
+The new code lives EXCLUSIVELY in the worktree:
+  /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-ad7d14978ef2930b5/backend/app/users/
+
+Confirmed: ls backend/app/users/ → No such file or directory (main repo)
+
+## Contract (from task instructions decision tree)
+Integration tests in this project use FastAPI TestClient against app.main:app
+imported by the test process itself — NOT against the running uvicorn at :8000.
+When pytest runs INSIDE the worktree, Python imports the worktree's backend/app/main.py
+(which has the users router mounted), creates a TestClient over it, and exercises
+endpoints in-process. DB is the real running Postgres.
+
+This is the established pattern: test_auth_signup.py, test_auth_signin.py, etc.
+all follow this same in-process TestClient pattern.
+
+## Evidence from in-process DB evidence script
+- PATCH /api/v1/users/me/language fr → status=200, data.preferred_language=fr ✅
+- DB preferred_language after PATCH fr: fr ✅
+- Audit log written: action=users.language.update, metadata={from,to,outcome,request_id,ip,user_agent} ✅
+- No PII in metadata (email NOT present, full_name NOT present) ✅
+- GET /me → status=200, response keys=[id, email, full_name, status, preferred_language, roles, employee_profile, created_at, updated_at] ✅
+- password_hash NOT in response ✅
+
+## Live backend status at curl time
+- GET http://localhost:8000/health → 200 {"data":{"status":"ok"}} ✅ (backend is up)
+- GET http://localhost:8000/api/v1/users/me → 404 (expected — users router NOT in main repo yet; only in worktree)

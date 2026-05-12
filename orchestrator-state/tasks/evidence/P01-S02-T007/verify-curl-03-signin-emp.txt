@@ -1,0 +1,8 @@
+HTTP/1.1 200 OK
+date: Tue, 12 May 2026 20:54:05 GMT
+server: uvicorn
+x-request-id: verify-emp-signin
+content-length: 403
+content-type: application/json
+
+{"data":{"mfa_required":true,"mfa_challenge_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjNTI4YjVlOS00NmI0LTQ3YjctOWFjOC1hN2RkNjkzMDVmZGQiLCJwdXJwb3NlIjoibWZhX2NoYWxsZW5nZSIsImp0aSI6IjE4ZDllMTU1YTI5MTRlMWNiOGQwOTgxNTdlZjUyNDBkIiwiaWF0IjoxNzc4NjE5MjQ2LCJleHAiOjE3Nzg2MTk1NDZ9.vwDEJr2BLKHl6LZRmctyzaGy59KN5c8_XFctukMlQLY","expires_in":300},"meta":{"request_id":"verify-emp-signin"},"errors":[]}

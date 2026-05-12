@@ -6,26 +6,34 @@ Phase:  P01 Auth + Data Foundation
 Purpose: Creates the FastAPI application instance and mounts routers:
          - api_router: /health, /live, /ready probes (root-level).
          - auth_router: /api/v1/auth/* — sign-up and future auth endpoints.
+         - users_router: /api/v1/users/* — P01-S02-T007 user profile endpoints.
 
-WRITE_SET_DRIFT from P01-S02-T001 (auth router) and P01-S02-T005
-(forgot/reset Pydantic-422 → 400 envelope normalization — cycle 2 debugger):
+WRITE_SET_DRIFT from P01-S02-T001 (auth router), P01-S02-T005
+(forgot/reset Pydantic-422 → 400 envelope normalization), and P01-S02-T007
+(users router + /api/v1/users/me/language added to _AUTH_INVALID_PAYLOAD_PATHS):
   - T001 added auth_router mounting (2 lines).
   - T005 cycle-2: path-scoped RequestValidationError handler for forgot-password
     and reset-password endpoints. Pinned by task pack §H-forgot-2 / §H-reset-5
     ("NO 422" alignment). Scope is path-filtered so T001 sign-up / T002 sign-in
     422 tests (test_signup_missing_full_name_422, test_signin_missing_field_returns_422)
     keep their default FastAPI 422 response.
+  - T007: mounted users_router under /api/v1; added /api/v1/users/me/language to
+    the 422→400 path set (G.7 — PATCH body validation returns 400 AUTH_INVALID_PAYLOAD
+    with field='language' per task pack §F.2).
 
 Key deps:
   - fastapi: ASGI web framework (uvicorn transport, port 8000 per STACK_PROFILE).
   - logging: stdlib; level driven by ENABLE_VERBOSE_LOGGING env var.
   - app.api.router: api_router with /health, /live, /ready.
-  - app.auth: auth_router with /api/v1/auth/sign-up.
+  - app.auth: auth_router with /api/v1/auth/sign-up and other auth endpoints.
+  - app.users: users_router with /api/v1/users/me and /api/v1/users/me/language.
 
 Source refs:
   - TECHNICAL_GUIDE §6.2 health endpoints contract.
   - STACK_PROFILE.yaml backend.dev_cmd (uvicorn port 8000).
   - 01-non-negotiables.md §Logging (BEFORE/AFTER/ERROR pattern, no PII/secrets).
+  - task pack P01-S02-T007 §G.7 (PATCH /me/language 422→400 mapping).
+  - task pack P01-S02-T007 §G.14 (router mounting, WRITE_SET_DRIFT).
 """
 
 import logging
@@ -38,6 +46,7 @@ from fastapi.responses import JSONResponse
 from app.api.router import api_router
 from app.auth import auth_router
 from app.auth.schemas import ErrorItem, ErrorResponse, ResponseMeta
+from app.users import users_router  # P01-S02-T007 WRITE_SET_DRIFT §G.14
 
 # ---------------------------------------------------------------------------
 # Logging configuration
@@ -65,9 +74,11 @@ app = FastAPI(
 # Mount routers
 # api_router: /health, /live, /ready (root-level — no prefix)
 # auth_router: /api/v1/auth/* (feature routes)
+# users_router: /api/v1/users/* (feature routes — P01-S02-T007)
 # ---------------------------------------------------------------------------
 app.include_router(api_router)
 app.include_router(auth_router, prefix="/api/v1")
+app.include_router(users_router, prefix="/api/v1")  # P01-S02-T007 WRITE_SET_DRIFT §G.14
 
 
 # ---------------------------------------------------------------------------
@@ -80,6 +91,11 @@ app.include_router(auth_router, prefix="/api/v1")
 # on payload validation errors, NOT the FastAPI default
 #   {detail:[{loc,type,msg,...}]} HTTP 422.
 #
+# P01-S02-T007: /api/v1/users/me/language added per G.7 — PATCH body
+# validation errors (invalid language, extra fields, null, empty) must
+# return 400 AUTH_INVALID_PAYLOAD with field='language' so AccountPage
+# form validation can highlight the field (errors[0].field == "language").
+#
 # The handler is registered globally but filters by request.url.path so that
 # sign-up / sign-in / refresh / logout retain their default FastAPI 422 response
 # (test_signup_missing_full_name_422, test_signin_missing_field_returns_422, etc.).
@@ -89,7 +105,8 @@ app.include_router(auth_router, prefix="/api/v1")
 _AUTH_INVALID_PAYLOAD_PATHS: frozenset[str] = frozenset({
     "/api/v1/auth/forgot-password",
     "/api/v1/auth/reset-password",
-    "/api/v1/auth/2fa/verify",  # P01-S02-T006: 422 → 400 AUTH_INVALID_PAYLOAD (WRITE_SET_DRIFT §D-MFA1.A)
+    "/api/v1/auth/2fa/verify",          # P01-S02-T006: 422 → 400 AUTH_INVALID_PAYLOAD
+    "/api/v1/users/me/language",        # P01-S02-T007: PATCH body 422 → 400 (G.7)
 })
 
 
@@ -108,7 +125,7 @@ def _resolve_request_id(request: Request) -> str:
 async def _forgot_reset_validation_handler(
     request: Request, exc: RequestValidationError
 ) -> JSONResponse:
-    """Normalize Pydantic 422 to 400 AUTH_INVALID_PAYLOAD for forgot/reset endpoints only.
+    """Normalize Pydantic 422 to 400 AUTH_INVALID_PAYLOAD for specific endpoints only.
 
     For every other route (sign-up, sign-in, refresh, logout, health, etc.) we
     delegate to FastAPI's default 422 RequestValidationError envelope.
@@ -132,7 +149,7 @@ async def _forgot_reset_validation_handler(
         field_name: str | None = None
         # Skip the leading "body" sentinel produced by FastAPI body validation
         # so the field reported in the envelope is the actual schema attribute
-        # (e.g. "email", "token", "password").
+        # (e.g. "email", "token", "password", "language").
         if isinstance(loc, (list, tuple)) and loc:
             tail = [str(part) for part in loc if part != "body"]
             field_name = tail[-1] if tail else None

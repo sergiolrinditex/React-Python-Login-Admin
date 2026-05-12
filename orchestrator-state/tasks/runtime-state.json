@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-12T18:58:18+00:00",
+  "generated_at": "2026-05-12T20:45:50+00:00",
   "next_ready_phase_id": "P01",
   "next_ready_task_id": "P01-S02-T005",
   "last_worker": "",
@@ -10,16 +10,16 @@
   "spawn_budget": 20,
   "spawns_in_current_slice": {
     "P01-S01-T001": 8,
-    "agent:planner": 14,
+    "agent:planner": 15,
     "agent:official-docs-researcher": 6,
-    "agent:developer": 13,
-    "agent:validator": 18,
-    "agent:tester": 17,
-    "agent:closer": 14,
+    "agent:developer": 14,
+    "agent:validator": 20,
+    "agent:tester": 19,
+    "agent:closer": 15,
     "P00-S02-T004": 6,
     "P01-S02-T001": 8,
     "P01-S02-T002": 8,
-    "agent:debugger": 4,
+    "agent:debugger": 5,
     "P01-S02-T008": 5,
     "P01-S02-T010": 5,
     "P01-S02-T009": 5,
@@ -29,7 +29,8 @@
     "P01-S02-T012": 5,
     "P01-S02-T011": 7,
     "P01-S02-T005": 11,
-    "P01-S02-T006": 5
+    "P01-S02-T006": 6,
+    "P01-S02-T007": 7
   },
   "open_followups": [
     {
@@ -106,7 +107,7 @@
     }
   ],
   "last_trailer": {},
-  "last_claimed_task_id": "P01-S02-T006",
-  "last_stop_at": "2026-05-12T19:01:44+00:00",
+  "last_claimed_task_id": "P01-S02-T007",
+  "last_stop_at": "2026-05-12T20:46:20+00:00",
   "last_claimed_phase_id": "P01"
 }

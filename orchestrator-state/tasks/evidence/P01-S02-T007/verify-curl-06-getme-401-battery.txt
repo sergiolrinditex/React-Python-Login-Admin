@@ -1,0 +1,48 @@
+==F3a: NO auth==
+HTTP/1.1 401 Unauthorized
+date: Tue, 12 May 2026 20:54:49 GMT
+server: uvicorn
+content-length: 196
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"ve-401-noauth"},"errors":[{"code":"AUTH_SESSION_EXPIRED","message":"Session expired or invalid credentials. Please sign in again.","field":null,"details":null}]}
+==F3b: MALFORMED Authorization==
+HTTP/1.1 401 Unauthorized
+date: Tue, 12 May 2026 20:54:49 GMT
+server: uvicorn
+content-length: 199
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"ve-401-malformed"},"errors":[{"code":"AUTH_SESSION_EXPIRED","message":"Session expired or invalid credentials. Please sign in again.","field":null,"details":null}]}
+==F3c: INVALID SIG==
+HTTP/1.1 401 Unauthorized
+date: Tue, 12 May 2026 20:54:49 GMT
+server: uvicorn
+content-length: 198
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"ve-401-tampered"},"errors":[{"code":"AUTH_SESSION_EXPIRED","message":"Session expired or invalid credentials. Please sign in again.","field":null,"details":null}]}
+==F3d: UNKNOWN SUB (real forged token)==
+HTTP/1.1 401 Unauthorized
+date: Tue, 12 May 2026 20:54:49 GMT
+server: uvicorn
+content-length: 200
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"ve-401-unknownsub"},"errors":[{"code":"AUTH_SESSION_EXPIRED","message":"Session expired or invalid credentials. Please sign in again.","field":null,"details":null}]}
+==F3e: EXPIRED (real forged token)==
+HTTP/1.1 401 Unauthorized
+date: Tue, 12 May 2026 20:54:49 GMT
+server: uvicorn
+content-length: 197
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"ve-401-expired"},"errors":[{"code":"AUTH_SESSION_EXPIRED","message":"Session expired or invalid credentials. Please sign in again.","field":null,"details":null}]}
+==F3f: MFA CHALLENGE as Bearer (purpose claim present)==
+HTTP/1.1 401 Unauthorized
+date: Tue, 12 May 2026 20:54:49 GMT
+server: uvicorn
+content-length: 203
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"ve-401-mfa-as-bearer"},"errors":[{"code":"AUTH_SESSION_EXPIRED","message":"Session expired or invalid credentials. Please sign in again.","field":null,"details":null}]}

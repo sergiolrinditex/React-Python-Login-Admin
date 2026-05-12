@@ -1,0 +1,30 @@
+# Contract Observed — P01-S02-T007
+
+## Routes observed
+GET /api/v1/users/me — mounted in worktree app.main via include_router(users_router, prefix="/api/v1")
+PATCH /api/v1/users/me/language — same router mount
+
+## Provider/client layers observed during tests
+- app.users.deps.get_current_user → Bearer token → app.auth.tokens.decode_token → DB lookup
+- app.users.repositories.user_profile.find_by_id_with_employee_and_roles (joinedload User.employee_profile + user_roles)
+- app.users.repositories.user_profile.update_language (UPDATE users SET preferred_language, updated_at WHERE id=:uid)
+- app.users.services.get_current_user_profile.build_user_profile (pure mapping)
+- app.users.services.update_user_language.patch_user_language (DB write + audit)
+- app.users.audit.LanguageUpdateAuditWriter (D-S2 pattern via audit_session_scope)
+
+## DTO/schemas observed
+- UserProfile: {id, email, full_name, status, preferred_language, roles, employee_profile, created_at, updated_at}
+- UserProfileEmployeeFields: {employee_id, brand, society, center, country, department} — exactly 6 keys, no extra_metadata leak
+- UserProfileResponse: {data: UserProfile, meta: ResponseMeta, errors: []}
+- LanguagePatchRequest: {language: Literal["es","en","fr"]} — strict Pydantic model
+
+## Tables observed during tests
+READ: users, employee_profiles (LEFT JOIN via joinedload), user_roles (joinedload), roles (joinedload)
+WRITE: users.preferred_language + users.updated_at (PATCH endpoint)
+WRITE: audit_logs (action='users.language.update', D-S2 pattern)
+
+## Auth contract observed
+- 7 failure modes → all return byte-equal AUTH_SESSION_EXPIRED envelope (T08 confirms)
+- Reason logged only in WARNING log (not in HTTP response body)
+- No audit_log write on GET /me (T09 confirms)
+- purpose=mfa_challenge tokens rejected (G.2 defensive — T05 confirms)

@@ -1,0 +1,64 @@
+==F7: PATCH language='xx' (not in whitelist)==
+HTTP/1.1 400 Bad Request
+date: Tue, 12 May 2026 20:55:44 GMT
+server: uvicorn
+content-length: 167
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"vp-xx"},"errors":[{"code":"AUTH_INVALID_PAYLOAD","message":"Input should be 'es', 'en' or 'fr'","field":"language","details":null}]}
+==F8: PATCH language='EN' (uppercase)==
+HTTP/1.1 400 Bad Request
+date: Tue, 12 May 2026 20:55:44 GMT
+server: uvicorn
+content-length: 167
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"vp-EN"},"errors":[{"code":"AUTH_INVALID_PAYLOAD","message":"Input should be 'es', 'en' or 'fr'","field":"language","details":null}]}
+==F9: PATCH language='' (empty string)==
+HTTP/1.1 400 Bad Request
+date: Tue, 12 May 2026 20:55:44 GMT
+server: uvicorn
+content-length: 170
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"vp-empty"},"errors":[{"code":"AUTH_INVALID_PAYLOAD","message":"Input should be 'es', 'en' or 'fr'","field":"language","details":null}]}
+==F10: PATCH language=null==
+HTTP/1.1 400 Bad Request
+date: Tue, 12 May 2026 20:55:44 GMT
+server: uvicorn
+content-length: 169
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"vp-null"},"errors":[{"code":"AUTH_INVALID_PAYLOAD","message":"Input should be 'es', 'en' or 'fr'","field":"language","details":null}]}
+==F11: PATCH {} (missing field)==
+HTTP/1.1 400 Bad Request
+date: Tue, 12 May 2026 20:55:44 GMT
+server: uvicorn
+content-length: 155
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"vp-empty-body"},"errors":[{"code":"AUTH_INVALID_PAYLOAD","message":"Field required","field":"language","details":null}]}
+==F12: PATCH extra field==
+HTTP/1.1 400 Bad Request
+date: Tue, 12 May 2026 20:55:44 GMT
+server: uvicorn
+content-length: 161
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"vp-extra"},"errors":[{"code":"AUTH_INVALID_PAYLOAD","message":"Extra inputs are not permitted","field":"foo","details":null}]}
+==F13: PATCH NO auth (expect 401 AUTH_SESSION_EXPIRED)==
+HTTP/1.1 401 Unauthorized
+date: Tue, 12 May 2026 20:55:44 GMT
+server: uvicorn
+content-length: 192
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"vp-noauth"},"errors":[{"code":"AUTH_SESSION_EXPIRED","message":"Session expired or invalid credentials. Please sign in again.","field":null,"details":null}]}
+==F14: PATCH expired token (expect 401)==
+HTTP/1.1 401 Unauthorized
+date: Tue, 12 May 2026 20:55:44 GMT
+server: uvicorn
+content-length: 193
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"vp-expired"},"errors":[{"code":"AUTH_SESSION_EXPIRED","message":"Session expired or invalid credentials. Please sign in again.","field":null,"details":null}]}

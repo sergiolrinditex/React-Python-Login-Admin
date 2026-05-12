@@ -1,0 +1,43 @@
+# Verification Data Contract Used — P01-S02-T007
+
+## Contract rows from task pack §L (Verification Data Contract)
+
+Row used: §6.5 row J100 auth-login
+Loader: python -m app.verification_data.bootstrap --source data/verification --only auth
+Reset: scripts/dev-restart.sh --reset
+
+## Real/provided users loaded and verified
+
+User 1 (employee):
+  email: employee.verification@inditex-sandbox.com
+  status: active
+  preferred_language: es (initial)
+  employee_profile:
+    employee_id: EMP-VERIFY-001
+    brand: Zara
+    society: ITX-ES
+    center: Madrid-HQ
+    country: ES
+    department: People & Talent
+  Confirmed in DB: SELECT email, preferred_language, status FROM users → ('employee.verification@inditex-sandbox.com', 'es', 'active')
+
+User 2 (admin):
+  email: admin.peopletech@inditex-sandbox.com
+  status: active
+  preferred_language: es (initial)
+  employee_profile: null (no employee_profile row — DISCREPANCY-3)
+  Confirmed in DB: SELECT email, preferred_language, status FROM users → ('admin.peopletech@inditex-sandbox.com', 'es', 'active')
+
+## Persisted data observed post-PATCH (from in-process DB evidence)
+
+- PATCH language 'fr' → DB preferred_language=fr (confirmed via SELECT after PATCH)
+- audit_logs row: action=users.language.update, metadata={from: es, to: fr, outcome: success, request_id: <uuid>, ip: testclient, user_agent: testclient}
+- No PII in metadata (email, full_name absent) — confirmed
+- PATCH language 'es' → DB preferred_language restored to es (T12 round-trip)
+
+## Tests using seeded data
+
+T01: employee.verification@inditex-sandbox.com — happy path GET /me with full profile
+T01a: admin.peopletech@inditex-sandbox.com — GET /me with employee_profile=null
+T29: employee.verification email + employee_id byte-equal to data/verification/users/employee_primary.json
+T13, T14, T30: audit_logs verified with real seeded user

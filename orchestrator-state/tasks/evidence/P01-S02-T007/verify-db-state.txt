@@ -1,0 +1,24 @@
+=== users (employee + admin) ===
+('admin.peopletech@inditex-sandbox.com', 'active', 'es', datetime.datetime(2026, 5, 12, 20, 52, 47, 911104, tzinfo=datetime.timezone.utc), datetime.datetime(2026, 5, 12, 20, 52, 47, 911104, tzinfo=datetime.timezone.utc))
+('employee.verification@inditex-sandbox.com', 'active', 'es', datetime.datetime(2026, 5, 12, 20, 55, 12, 886272, tzinfo=datetime.timezone.utc), datetime.datetime(2026, 5, 12, 20, 52, 47, 777066, tzinfo=datetime.timezone.utc))
+
+=== employee_profiles for employee ===
+('EMP-VERIFY-001', 'Zara', 'ITX-ES', 'Madrid-HQ', 'ES', 'People & Talent')
+
+=== audit_logs users.language.update ===
+count=3
+(UUID('494aaf67-87aa-4eaf-9fd3-11d7c34d3260'), UUID('c528b5e9-46b4-47b7-9ac8-a7dd69305fdd'), 'user', UUID('c528b5e9-46b4-47b7-9ac8-a7dd69305fdd'), 'users.language.update', {'ip': '127.0.0.1', 'to': 'fr', 'from': 'es', 'outcome': 'success', 'request_id': 'verify-patch-fr', 'user_agent': 'curl/8.7.1'}, datetime.datetime(2026, 5, 12, 20, 55, 12, 810609, tzinfo=datetime.timezone.utc))
+(UUID('29bfcdd6-ad4b-4a16-b97a-db15b96ce0b5'), UUID('c528b5e9-46b4-47b7-9ac8-a7dd69305fdd'), 'user', UUID('c528b5e9-46b4-47b7-9ac8-a7dd69305fdd'), 'users.language.update', {'ip': '127.0.0.1', 'to': 'es', 'from': 'fr', 'outcome': 'success', 'request_id': 'verify-patch-es', 'user_agent': 'curl/8.7.1'}, datetime.datetime(2026, 5, 12, 20, 55, 12, 854531, tzinfo=datetime.timezone.utc))
+(UUID('bcd18269-f6b2-44cb-bdf4-163e5e5f6d2e'), UUID('c528b5e9-46b4-47b7-9ac8-a7dd69305fdd'), 'user', UUID('c528b5e9-46b4-47b7-9ac8-a7dd69305fdd'), 'users.language.update', {'ip': '127.0.0.1', 'to': 'es', 'from': 'es', 'outcome': 'success', 'request_id': 'verify-patch-es-idem', 'user_agent': 'curl/8.7.1'}, datetime.datetime(2026, 5, 12, 20, 55, 12, 896030, tzinfo=datetime.timezone.utc))
+
+=== audit_logs PII grep (must be empty) ===
+pii_leak_count=0
+
+=== user_roles for admin (R4 check) ===
+('admin.peopletech@inditex-sandbox.com', None, None)
+
+=== audit_logs users.language.update FINAL (after 8 invalid + 2 401 PATCHes) ===
+total_count=3 (expected 3 — F4 fr, F5 es, F6 es-idem; failure paths do NOT audit per current impl, see validator N2)
+
+=== users.preferred_language FINAL ===
+('employee.verification@inditex-sandbox.com', 'es', datetime.datetime(2026, 5, 12, 20, 55, 12, 886272, tzinfo=datetime.timezone.utc))

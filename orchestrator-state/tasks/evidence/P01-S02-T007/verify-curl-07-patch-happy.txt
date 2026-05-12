@@ -1,0 +1,24 @@
+==F4: PATCH language=fr (happy)==
+HTTP/1.1 200 OK
+date: Tue, 12 May 2026 20:55:12 GMT
+server: uvicorn
+content-length: 496
+content-type: application/json
+
+{"data":{"id":"c528b5e9-46b4-47b7-9ac8-a7dd69305fdd","email":"employee.verification@inditex-sandbox.com","full_name":"Elena Verificación","status":"active","preferred_language":"fr","roles":["employee"],"employee_profile":{"employee_id":"EMP-VERIFY-001","brand":"Zara","society":"ITX-ES","center":"Madrid-HQ","country":"ES","department":"People & Talent"},"created_at":"2026-05-12T20:52:47.777066Z","updated_at":"2026-05-12T20:55:12.794091Z"},"meta":{"request_id":"verify-patch-fr"},"errors":[]}
+==F5: PATCH language=es again (round-trip)==
+HTTP/1.1 200 OK
+date: Tue, 12 May 2026 20:55:12 GMT
+server: uvicorn
+content-length: 496
+content-type: application/json
+
+{"data":{"id":"c528b5e9-46b4-47b7-9ac8-a7dd69305fdd","email":"employee.verification@inditex-sandbox.com","full_name":"Elena Verificación","status":"active","preferred_language":"es","roles":["employee"],"employee_profile":{"employee_id":"EMP-VERIFY-001","brand":"Zara","society":"ITX-ES","center":"Madrid-HQ","country":"ES","department":"People & Talent"},"created_at":"2026-05-12T20:52:47.777066Z","updated_at":"2026-05-12T20:55:12.844154Z"},"meta":{"request_id":"verify-patch-es"},"errors":[]}
+==F6: PATCH language=es again (idempotent — same value)==
+HTTP/1.1 200 OK
+date: Tue, 12 May 2026 20:55:12 GMT
+server: uvicorn
+content-length: 501
+content-type: application/json
+
+{"data":{"id":"c528b5e9-46b4-47b7-9ac8-a7dd69305fdd","email":"employee.verification@inditex-sandbox.com","full_name":"Elena Verificación","status":"active","preferred_language":"es","roles":["employee"],"employee_profile":{"employee_id":"EMP-VERIFY-001","brand":"Zara","society":"ITX-ES","center":"Madrid-HQ","country":"ES","department":"People & Talent"},"created_at":"2026-05-12T20:52:47.777066Z","updated_at":"2026-05-12T20:55:12.886272Z"},"meta":{"request_id":"verify-patch-es-idem"},"errors":[]}

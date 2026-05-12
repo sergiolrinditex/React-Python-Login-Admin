@@ -1,0 +1,9 @@
+HTTP/1.1 200 OK
+date: Tue, 12 May 2026 20:54:11 GMT
+server: uvicorn
+x-request-id: verify-emp-2fa
+content-length: 682
+content-type: application/json
+set-cookie: refresh_token=XCzU-jLj3tKfRQbIMoc7zeJUS1c0UsEYK9NDXsOaDQLlHkESSjUZ_LS-0y-zVP2J; HttpOnly; Max-Age=2592000; Path=/api/v1/auth; SameSite=lax; Secure
+
+{"data":{"access_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjNTI4YjVlOS00NmI0LTQ3YjctOWFjOC1hN2RkNjkzMDVmZGQiLCJlbWFpbCI6ImVtcGxveWVlLnZlcmlmaWNhdGlvbkBpbmRpdGV4LXNhbmRib3guY29tIiwicm9sZXMiOlsiZW1wbG95ZWUiXSwicHJlZmVycmVkX2xhbmd1YWdlIjoiZXMiLCJlbXBsb3llZV9wcm9maWxlX2lkIjpudWxsLCJqdGkiOiIyMDRjMTA3OTQ1OWM0MjQwOWNmYTJhNGRiMDQzNGYwMyIsImlhdCI6MTc3ODYxOTI1MSwiZXhwIjoxNzc4NjIxMDUxfQ.t4TH0owR2mtH5YizskEGrOmM0Q0lHfIL3JOOYhRRC3c","token_type":"Bearer","expires_in":1800,"user":{"id":"c528b5e9-46b4-47b7-9ac8-a7dd69305fdd","email":"employee.verification@inditex-sandbox.com","preferred_language":"es","roles":["employee"]}},"meta":{"request_id":"verify-emp-2fa"},"errors":[]}

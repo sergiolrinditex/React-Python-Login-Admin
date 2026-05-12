@@ -28,9 +28,10 @@
   - **P01-S02-T012 — fix dev-restart db_health race: host TCP probe (developer done, 2026-05-12)**
   - **P01-S02-T011 — fix refresh cookie Path mismatch /auth → /api/v1/auth (developer done, 2026-05-12)**
   - **P01-S02-T006 — POST /api/v1/auth/2fa/verify MFA TOTP endpoint (developer done, 2026-05-12)**
-- **Next pending slice**: Next wave per registry (P01-S02-T007 users-me or similar — depends on T006 done)
+  - **P01-S02-T007 — GET /api/v1/users/me + PATCH /api/v1/users/me/language (developer done, 2026-05-12)**
+- **Next pending slice**: Next wave per registry (P01-S03-T001 AuthProvider frontend or next ready task)
 - **Blockers**: none
-- **Generated at**: 2026-05-12T20:35:00+02:00
+- **Generated at**: 2026-05-12T21:30:00+02:00 (updated by developer P01-S02-T007)
 
 ## Infrastructure Status (P00-S02-T001)
 
@@ -87,10 +88,11 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 | Server | running | uvicorn app.main:app --port 8000 --reload |
 | Health check | 3 endpoints implemented | GET /health (backward compat), GET /live (liveness), GET /ready (readiness with DB+Redis ping) |
 | Auth endpoints | 7 implemented | POST /api/v1/auth/sign-up (T001), POST /api/v1/auth/sign-in (T002), POST /api/v1/auth/refresh (T003), POST /api/v1/auth/logout (T004) — cookie Path fixed to /api/v1/auth (T011). POST /api/v1/auth/forgot-password (T005), POST /api/v1/auth/reset-password (T005), POST /api/v1/auth/2fa/verify (T006) |
-| Endpoints implemented | 10 | GET /health, GET /live, GET /ready, POST /api/v1/auth/sign-up, POST /api/v1/auth/sign-in, POST /api/v1/auth/refresh, POST /api/v1/auth/logout, POST /api/v1/auth/forgot-password, POST /api/v1/auth/reset-password, POST /api/v1/auth/2fa/verify |
+| Users endpoints | 2 implemented (T007) | GET /api/v1/users/me (returns UserProfile + employee_profile), PATCH /api/v1/users/me/language (returns 200 + full body; whitelist es/en/fr; audit log) |
+| Endpoints implemented | 12 | GET /health, GET /live, GET /ready, POST /api/v1/auth/sign-up, POST /api/v1/auth/sign-in, POST /api/v1/auth/refresh, POST /api/v1/auth/logout, POST /api/v1/auth/forgot-password, POST /api/v1/auth/reset-password, POST /api/v1/auth/2fa/verify, GET /api/v1/users/me, PATCH /api/v1/users/me/language |
 | Migrations applied | 1 (head=0001) | 9 auth tables: users, employee_profiles, roles, permissions, user_roles, refresh_tokens, mfa_totp_secrets, password_reset_tokens, audit_logs |
 | Seed data | loader.py fixed (P00-S02-T004); bootstrap ready; dev-restart --reset self-contained (T008) | FU-20260511145446 resolved — CAST(:meta AS JSONB) + json.dumps(). T008 fix: absolute --source path + hard-fail. |
-| Backend tests | 118 passing (isolation count) | test_health.py (11) + test_dependency_smoke.py (20) + test_migrations_0001_auth.py (6) + test_dev_restart_reset.py (2) + test_verification_data_bootstrap.py (9) + test_auth_signup.py (9) + test_auth_signin.py (16) + test_auth_refresh.py (14) + test_auth_logout.py (15 — T15 NEW cookie-jar roundtrip T011) + test_password_reset.py (21) + test_mfa.py (16 — T006) — NOTE: full-suite run = 117 passed / 22 failed due to migration downgrade test dropping schema before password_reset tests (pre-existing R1-T001-S02); 130/3 without migration tests; 16/16 MFA tests in isolation |
+| Backend tests | 149 passing (isolation count) | test_health.py (11) + test_dependency_smoke.py (20) + test_migrations_0001_auth.py (6) + test_dev_restart_reset.py (2) + test_verification_data_bootstrap.py (9) + test_auth_signup.py (9) + test_auth_signin.py (16) + test_auth_refresh.py (14) + test_auth_logout.py (15 — T15 NEW cookie-jar roundtrip T011) + test_password_reset.py (21) + test_mfa.py (16 — T006) + test_users_me.py (31 — T007) — NOTE: full-suite with env exported = 130/1 (1 pre-existing test_mfa T06 failure, unrelated to T007); 31/31 users_me in isolation |
 | Backend dependencies | declared + installed | pyproject.toml: 29 packages pinned (28 + pyotp==2.9.0 added P01-S02-T006) |
 | Lint (ruff) | clean | 0 issues |
 
@@ -276,3 +278,21 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 > Updated by: developer — P01-S02-T004 POST /api/v1/auth/logout — 14 tests (101/101 suite), 7 backend endpoints total (developer done, pending validator+tester+verify-slice)
 > Updated by: developer — P01-S02-T012 fix dev-restart db_health race: host TCP probe — 2x back-to-back --reset exit 0, users>=1, negative control verified (developer done, pending validator+tester+verify-slice)
 > Updated by: developer — P01-S02-T011 fix refresh cookie Path /auth → /api/v1/auth — _REFRESH_COOKIE_PATH constant, T15 cookie-jar roundtrip, 102/102 suite PASS (developer done, pending validator+tester+verify-slice)
+
+## Users feature details (P01-S02-T007)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| GET /api/v1/users/me | implemented | Returns UserProfile (id, email, full_name, status, preferred_language, roles, employee_profile, created_at, updated_at). No audit row. |
+| PATCH /api/v1/users/me/language | implemented | Returns 200 + full UserProfile body (NOT 204 — DISCREPANCY-1 resolved). Whitelist {es,en,fr}. Audit row via D-S2 pattern. |
+| UserProfile schema | pinned | `backend/app/users/schemas.py` — merged shape for ChatHomePage + AccountPage. DISCREPANCY-2 resolved. |
+| employee_profile: null for admin | confirmed | Admin seeded user (admin.peopletech@inditex-sandbox.com) has no employee_profile row. DISCREPANCY-3 resolved. |
+| Anti-enum 401 | implemented | Byte-equal AUTH_SESSION_EXPIRED envelope for: missing header, malformed, invalid sig, expired, purpose claim, user not found, user inactive. |
+| Audit log (PATCH) | implemented | `users.language.update` action, actor_user_id, entity_id, extra_metadata={request_id, ip, user_agent, from, to, outcome}. No PII. |
+| Idempotency (G.6) | implemented | Same language PATCH twice → 200 both + 2 audit rows (records intent). |
+| updated_at (G.8) | implemented | Uses `func.now()` (DB clock) — avoids Python-clock vs DB-clock sub-second skew. |
+| module root | NEW | `backend/app/users/` (router, service×2, repository, schemas, deps, audit, errors) |
+| 31 integration tests | ALL PASS | test_users_me.py: T01-T30 (all 30 pack-required + T01a admin variant). |
+| WRITE_SET_DRIFT | declared | `backend/app/main.py` (users_router mount + /api/v1/users/me/language to 422→400 path set). |
+| Decision G.16 | SKIP (R2) | `_error_response` imported from `app.auth.routers._helpers` as transitional. Shared extraction deferred to future task. |
+| UserProfile roles (G.9) | defaults to ['employee'] | Admin seeded user has no user_roles rows → defaults to ['employee']. Role assignment is an out-of-scope concern. |

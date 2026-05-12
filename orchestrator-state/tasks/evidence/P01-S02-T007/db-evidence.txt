@@ -1,0 +1,64 @@
+tokens.jwt_key.missing JWT_PRIVATE_KEY env var is not set; JWT encoding will raise at runtime
+2026-05-12 22:37:29,618 app.auth.password DEBUG password.hash.start
+2026-05-12 22:37:29,651 app.auth.password DEBUG password.hash.done
+/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/jwt/api_jwt.py:147: InsecureKeyLengthWarning: The HMAC key is 0 bytes long, which is below the minimum recommended length of 32 bytes for SHA256. See RFC 7518 Section 3.2.
+  return self._jws.encode(
+2026-05-12 22:37:29,700 asyncio DEBUG Using selector: KqueueSelector
+2026-05-12 22:37:29,703 app.db.session DEBUG db.session.open
+2026-05-12 22:37:29,703 app.users.deps DEBUG users.deps.get_current_user.start request_id=2a1a477f-5b86-439b-a27c-c35c286c343c ip=testclient
+2026-05-12 22:37:29,703 app.auth.tokens DEBUG tokens.decode.start
+/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/jwt/api_jwt.py:365: InsecureKeyLengthWarning: The HMAC key is 0 bytes long, which is below the minimum recommended length of 32 bytes for SHA256. See RFC 7518 Section 3.2.
+  decoded = self.decode_complete(
+2026-05-12 22:37:29,703 app.auth.tokens DEBUG tokens.decode.ok sub=7a5ba31a-1f16-4ef5-8320-ad265ca53782
+2026-05-12 22:37:29,703 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.start user_id=7a5ba31a-1f16-4ef5-8320-ad265ca53782
+2026-05-12 22:37:29,726 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.done user_id=7a5ba31a-1f16-4ef5-8320-ad265ca53782 found=True
+2026-05-12 22:37:29,726 app.users.deps DEBUG users.deps.get_current_user.done user_id=7a5ba31a-1f16-4ef5-8320-ad265ca53782 request_id=2a1a477f-5b86-439b-a27c-c35c286c343c
+2026-05-12 22:37:29,727 app.users.routers.me DEBUG users.routers.me.language_patch_request received from=es to=fr user_id=7a5ba31a-1f16-4ef5-8320-ad265ca53782 request_id=edb0bc71-7bfd-4fa0-920b-639e530d211d
+2026-05-12 22:37:29,727 app.users.services.update_user_language DEBUG users.service.update_user_language.start user_id=7a5ba31a-1f16-4ef5-8320-ad265ca53782 new_language=fr request_id=edb0bc71-7bfd-4fa0-920b-639e530d211d
+2026-05-12 22:37:29,727 app.users.repositories.user_profile DEBUG user_profile.repository.update_language.start user_id=7a5ba31a-1f16-4ef5-8320-ad265ca53782 new_language=fr
+2026-05-12 22:37:29,729 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.start user_id=7a5ba31a-1f16-4ef5-8320-ad265ca53782
+2026-05-12 22:37:29,730 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.done user_id=7a5ba31a-1f16-4ef5-8320-ad265ca53782 found=True
+2026-05-12 22:37:29,730 app.users.repositories.user_profile DEBUG user_profile.repository.update_language.done user_id=7a5ba31a-1f16-4ef5-8320-ad265ca53782 new_language=fr found=True
+2026-05-12 22:37:29,731 app.users.audit DEBUG users.audit.language_update.start actor_user_id=7a5ba31a-1f16-4ef5-8320-ad265ca53782 from=es to=fr outcome=success
+2026-05-12 22:37:29,731 app.db.session DEBUG db.session.audit_scope.open
+2026-05-12 22:37:29,735 app.db.session DEBUG db.session.audit_scope.closed
+2026-05-12 22:37:29,735 app.users.audit DEBUG users.audit.language_update.done actor_user_id=7a5ba31a-1f16-4ef5-8320-ad265ca53782 outcome=success
+2026-05-12 22:37:29,738 app.users.services.get_current_user_profile DEBUG users.service.get_current_user_profile.start user_id=7a5ba31a-1f16-4ef5-8320-ad265ca53782
+2026-05-12 22:37:29,741 app.users.services.get_current_user_profile DEBUG users.service.get_current_user_profile.done user_id=7a5ba31a-1f16-4ef5-8320-ad265ca53782 roles=['employee'] has_profile=False
+2026-05-12 22:37:29,741 app.users.services.update_user_language DEBUG users.service.update_user_language.done user_id=7a5ba31a-1f16-4ef5-8320-ad265ca53782 from=es to=fr request_id=edb0bc71-7bfd-4fa0-920b-639e530d211d
+2026-05-12 22:37:29,741 app.users.routers.me DEBUG users.routers.me.language_patch_success user_id=7a5ba31a-1f16-4ef5-8320-ad265ca53782 from=fr to=fr request_id=edb0bc71-7bfd-4fa0-920b-639e530d211d
+2026-05-12 22:37:29,741 app.db.session DEBUG db.session.closed
+2026-05-12 22:37:29,742 httpx INFO HTTP Request: PATCH http://testserver/api/v1/users/me/language "HTTP/1.1 200 OK"
+2026-05-12 22:37:29,745 asyncio DEBUG Using selector: KqueueSelector
+2026-05-12 22:37:29,746 app.db.session DEBUG db.session.open
+2026-05-12 22:37:29,746 app.users.deps DEBUG users.deps.get_current_user.start request_id=ceef56bc-c58c-40c1-aa66-39dc41f63f01 ip=testclient
+2026-05-12 22:37:29,746 app.auth.tokens DEBUG tokens.decode.start
+2026-05-12 22:37:29,746 app.auth.tokens DEBUG tokens.decode.ok sub=7a5ba31a-1f16-4ef5-8320-ad265ca53782
+2026-05-12 22:37:29,746 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.start user_id=7a5ba31a-1f16-4ef5-8320-ad265ca53782
+2026-05-12 22:37:29,748 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.done user_id=7a5ba31a-1f16-4ef5-8320-ad265ca53782 found=True
+2026-05-12 22:37:29,748 app.users.deps DEBUG users.deps.get_current_user.done user_id=7a5ba31a-1f16-4ef5-8320-ad265ca53782 request_id=ceef56bc-c58c-40c1-aa66-39dc41f63f01
+2026-05-12 22:37:29,748 app.users.routers.me DEBUG users.routers.me.request_received method=GET request_id=d1b394b0-fe58-48e1-b903-97ebd080a107 ip=testclient
+2026-05-12 22:37:29,748 app.users.services.get_current_user_profile DEBUG users.service.get_current_user_profile.start user_id=7a5ba31a-1f16-4ef5-8320-ad265ca53782
+2026-05-12 22:37:29,748 app.users.services.get_current_user_profile DEBUG users.service.get_current_user_profile.done user_id=7a5ba31a-1f16-4ef5-8320-ad265ca53782 roles=['employee'] has_profile=False
+2026-05-12 22:37:29,748 app.users.routers.me DEBUG users.routers.me.response_built user_id=7a5ba31a-1f16-4ef5-8320-ad265ca53782 status=200 request_id=d1b394b0-fe58-48e1-b903-97ebd080a107
+2026-05-12 22:37:29,749 app.db.session DEBUG db.session.closed
+2026-05-12 22:37:29,749 httpx INFO HTTP Request: GET http://testserver/api/v1/users/me "HTTP/1.1 200 OK"
+Audit rows BEFORE PATCH: 0
+PATCH fr → status=200
+  data.preferred_language=fr
+  data.email present: True
+  data.password_hash present: False
+  data.employee_profile: None
+DB preferred_language after fr PATCH: fr (expected: fr)
+Audit rows AFTER PATCH: 1
+Audit metadata keys: ['ip', 'to', 'from', 'outcome', 'request_id', 'user_agent']
+  from: es
+  to: fr
+  outcome: success
+  request_id present: True
+  PII check - email in metadata: False
+  PII check - full_name in metadata: False
+GET /me → status=200
+  data keys: ['id', 'email', 'full_name', 'status', 'preferred_language', 'roles', 'employee_profile', 'created_at', 'updated_at']
+  preferred_language now fr: fr
+Evidence test user cleaned up.
