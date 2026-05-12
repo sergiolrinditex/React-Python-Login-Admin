@@ -188,3 +188,70 @@ class ErrorResponse(BaseModel):
     data: None = None
     meta: ResponseMeta
     errors: list[ErrorItem]
+
+
+# ---------------------------------------------------------------------------
+# Sign-in request/response schemas (added P01-S02-T002)
+# ---------------------------------------------------------------------------
+
+class SignInRequest(BaseModel):
+    """Request body for POST /api/v1/auth/sign-in.
+
+    Both fields are required. Sign-in DOES NOT validate corporate email domain
+    (that would create an enumeration oracle — see task pack §K Decision D-T002-1).
+
+    Pydantic only provides syntactic RFC 5322 validation (EmailStr) and length
+    guards. Business rejection (wrong password, unknown email) uses the service
+    layer with aggregate-401 to prevent user enumeration.
+
+    Attributes:
+        email: Email address (RFC 5322; no domain restriction at sign-in).
+        password: Raw password (min 1 char, max 512 char payload guard).
+    """
+
+    email: EmailStr = Field(
+        ...,
+        description="Email address. RFC 5322 syntax; domain not restricted at sign-in.",
+        json_schema_extra={"example": "employee@inditex-sandbox.com"},
+    )
+    password: str = Field(
+        ...,
+        min_length=1,
+        max_length=512,
+        description="Password. Minimum 1 char; maximum 512 char payload guard.",
+    )
+
+
+class SignInResponseSuccess(BaseModel):
+    """Response envelope for successful sign-in without MFA (HTTP 200).
+
+    Shape: {data: {mfa_required: false, access_token, token_type, expires_in},
+            meta: {request_id}, errors: []}.
+
+    The refresh token is NOT in the body — it is set as an HttpOnly cookie
+    (D-RP5: access token never in cookie; refresh token never in body).
+
+    Ref: task pack §E.2
+    """
+
+    data: dict = Field(description="Sign-in success payload with access_token.")
+    meta: ResponseMeta
+    errors: list[Any] = Field(default_factory=list)
+
+
+class SignInResponseMfaChallenge(BaseModel):
+    """Response envelope for sign-in requiring MFA (HTTP 200, mfa_required: true).
+
+    Shape: {data: {mfa_required: true, mfa_challenge_token, expires_in},
+            meta: {request_id}, errors: []}.
+
+    No access_token, no Set-Cookie in this branch.
+    mfa_challenge_token is a short-lived JWT (TTL = AUTH_MFA_CHALLENGE_TTL_SECONDS).
+    Consumed by POST /api/v1/auth/2fa/verify (T006).
+
+    Ref: task pack §E.3
+    """
+
+    data: dict = Field(description="MFA challenge payload with mfa_challenge_token.")
+    meta: ResponseMeta
+    errors: list[Any] = Field(default_factory=list)

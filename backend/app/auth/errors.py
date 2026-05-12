@@ -128,3 +128,87 @@ class RateLimitExceededError(AuthError):
         """
         super().__init__(f"Rate limit exceeded; retry after {retry_after}s")
         self.retry_after = retry_after
+
+
+# ---------------------------------------------------------------------------
+# Sign-in specific errors (added P01-S02-T002)
+# ---------------------------------------------------------------------------
+
+class InvalidCredentialsError(AuthError):
+    """Email or password is incorrect.
+
+    Returned for BOTH unknown email AND wrong password (aggregate-401) to
+    prevent user enumeration. The HTTP response body is byte-for-byte identical
+    for both failure reasons; only the audit_log.metadata.reason differs.
+
+    HTTP: 401  Code: AUTH_INVALID_CREDENTIALS
+    Ref: TECHNICAL_GUIDE §6.4, task pack §F.1
+    """
+
+    code = "AUTH_INVALID_CREDENTIALS"
+    http_status = 401
+
+    def __init__(self) -> None:
+        super().__init__("Email or password is incorrect")
+
+
+class AccountLockedError(AuthError):
+    """Account is temporarily locked after repeated failed sign-in attempts.
+
+    Triggered when the recent failure count for a user_id exceeds the
+    AUTH_SIGNIN_LOCKOUT_THRESHOLD within the AUTH_SIGNIN_LOCKOUT_WINDOW_SECONDS
+    rolling window. See task pack §F.3 for policy details.
+
+    HTTP: 423  Code: AUTH_ACCOUNT_LOCKED
+    Ref: TECHNICAL_GUIDE §6.2 (423 listed in error column), task pack §F.3
+    """
+
+    code = "AUTH_ACCOUNT_LOCKED"
+    http_status = 423
+
+    def __init__(self) -> None:
+        super().__init__("Account temporarily locked due to repeated failed sign-in attempts")
+
+
+class SignInRateLimitedError(AuthError):
+    """Too many sign-in attempts from this IP within the rate-limit window.
+
+    HTTP: 429  Code: AUTH_SIGNIN_RATE_LIMITED
+    Ref: task pack §F.4
+    """
+
+    code = "AUTH_SIGNIN_RATE_LIMITED"
+    http_status = 429
+
+    def __init__(self, retry_after: int) -> None:
+        """
+        Args:
+            retry_after: Seconds until the rate-limit window resets.
+        """
+        super().__init__(f"Too many sign-in attempts; retry after {retry_after}s")
+        self.retry_after = retry_after
+
+
+class InvalidPayloadError(AuthError):
+    """Sign-in request has empty or missing required field.
+
+    Raised by the SignIn use case (not Pydantic) when the validated payload
+    contains an empty email or empty password — policy that requires audit rows
+    and the project envelope shape (400, not Pydantic's 422).
+
+    HTTP: 400  Code: AUTH_INVALID_PAYLOAD
+    Field: email | password
+    Ref: task pack §E.4 empty-email/empty-password row
+    """
+
+    code = "AUTH_INVALID_PAYLOAD"
+    http_status = 400
+
+    def __init__(self, field: str, reason: str = "Field must not be empty") -> None:
+        """
+        Args:
+            field: Which field is invalid ('email' or 'password').
+            reason: Human-readable reason (not PII).
+        """
+        super().__init__(f"{field}: {reason}")
+        self.field = field

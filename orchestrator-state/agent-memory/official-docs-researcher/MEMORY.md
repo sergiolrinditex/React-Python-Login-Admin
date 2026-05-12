@@ -183,6 +183,66 @@ class SignUpRequest(BaseModel):
 - OWASP explicitly recommends Argon2id variant (Type.ID = default in argon2-cffi).
 - OWASP does NOT specify salt_len / hash_len — library defaults (16/32) are fine.
 
+### 2026-05-11 — P01-S02-T002 sign-in API (PyJWT pin, Starlette cookies, HS256, jti, argon2 check_needs_rehash)
+
+**Sources**: PyPI live JSON (PyJWT 2.12.1), Context7 /jpadilla/pyjwt, Starlette docs (starlette.io/responses), RFC 7519 §4.1.7 (rfc-editor.org), RFC 7518 §3.2 (rfc-editor.org), argon2-cffi ReadTheDocs.
+**Cache valid until**: 2026-05-18 (stable tech — PyJWT, Starlette, argon2-cffi, RFCs are not AI/ML volatile).
+
+#### Q1 — PyJWT pin — VERIFIED
+
+| Item | Value |
+|---|---|
+| Latest stable | **2.12.1** (2026-03-13) |
+| Python 3.12 | Confirmed via PyPI classifiers |
+| encode return | **str** (not bytes) in all 2.x |
+| decode signature | `jwt.decode(token, key, algorithms=["HS256"], options={...})` |
+| Exception hierarchy | `jwt.PyJWTError` → `jwt.InvalidTokenError` → `jwt.ExpiredSignatureError`, `jwt.InvalidSignatureError`, etc.; `jwt.MissingRequiredClaimError` for require-list misses |
+| pyproject.toml | `"PyJWT==2.12.1"` |
+
+#### Q2 — Starlette set_cookie API — VERIFIED
+
+```python
+response.set_cookie(
+    key="refresh_token",
+    value=opaque_token,
+    max_age=2592000,
+    path="/auth",
+    secure=True,
+    httponly=True,
+    samesite="lax",   # lowercase "lax" NOT "Lax"
+)
+```
+- All parameter names lowercase: `httponly`, `secure`, `samesite`, `path`, `max_age`.
+- `samesite` valid values: `"lax"`, `"strict"`, `"none"` (all lowercase).
+- `samesite="none"` requires `secure=True` (browser enforcement).
+- FastAPI's `JSONResponse.set_cookie(...)` delegates to Starlette — same API.
+
+#### Q3 — PyJWT HS256 best practice — VERIFIED
+
+- `algorithm="HS256"` confirmed correct string.
+- RFC 7518 §3.2: key MUST be ≥32 bytes (256 bits) for HS256; production: use ≥64 bytes.
+- `iat`/`exp` accept both `int` (UNIX ts) and `datetime` (timezone-aware) in PyJWT 2.x.
+- Canonical require list: `options={"require": ["exp", "iat", "sub", "jti"]}`.
+- `datetime.now(tz=timezone.utc)` is preferred for `iat`/`exp` — cleaner code.
+
+#### Q4 — jti strategy — VERIFIED
+
+- RFC 7519 §4.1.7: jti is a case-sensitive string; no format mandated; UUID satisfies uniqueness.
+- `uuid.uuid4().hex` (32-char no-hyphen hex) or `str(uuid.uuid4())` both compliant.
+- No server-side deny-list required for V1: short access token TTL (1800s) + refresh rotation + `revoked_at` on `refresh_tokens` provides revocation. Blocklist upgrade path (Redis) deferred to future phase.
+
+#### Q5 — argon2-cffi check_needs_rehash — VERIFIED
+
+- `ph.check_needs_rehash(hash: str | bytes) -> bool` — pure string parsing of PHC header.
+- I/O-free, microsecond-scale. No hashing, no DB, no network.
+- Official docs: *"best practice to check – and if necessary rehash – passwords after each successful authentication."* — intended inline use pattern.
+- Safe to call inline on every sign-in, inside the same transaction.
+
+#### Note file
+
+`orchestrator-state/memory/official-doc-notes/P01-S02-T002-pyjwt-cookies-argon2.md`
+Status: `RESOLVED: yes` — no discrepancies; all items are decision-aids filling TECHNICAL_GUIDE gaps.
+
 ## Original heading index
 - # Official Docs Researcher Memory
 - ### 2026-05-11 — P00-S02-T001 Docker Compose infra pins

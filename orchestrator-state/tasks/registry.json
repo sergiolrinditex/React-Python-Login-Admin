@@ -34,7 +34,7 @@
       "id": "P01",
       "phase_number": 1,
       "title": "Auth / base capabilities",
-      "status": "blocked",
+      "status": "ready",
       "depends_on": [
         "P00"
       ],
@@ -79,7 +79,7 @@
       "id": "P03",
       "phase_number": 3,
       "title": "Employee UX / Auth + Chat",
-      "status": "blocked",
+      "status": "ready",
       "depends_on": [
         "P02"
       ],
@@ -932,7 +932,7 @@
       "phase_id": "P01",
       "step_id": "P01-S02",
       "title": "POST /api/v1/auth/sign-up",
-      "status": "ready_for_close",
+      "status": "done",
       "build_state": "planned",
       "product_increment": "v1",
       "risk_level": "medium",
@@ -996,18 +996,19 @@
       "claimed_by": "sergiolr",
       "claim_terminal_task_env": "P01-S02-T001",
       "task_pack_path": "orchestrator-state/tasks/task-packs/P01-S02-T001.md",
-      "last_outcome": "pass",
-      "last_updated_by": "tester",
-      "last_stop_at": "2026-05-11T17:18:15+00:00",
+      "last_outcome": "committed",
+      "last_updated_by": "closer",
+      "last_stop_at": "2026-05-11T17:40:28+00:00",
       "validator_outcome": "approved",
-      "validator_next_status": "ready_for_close"
+      "validator_next_status": "ready_for_close",
+      "report_path": "orchestrator-state/tasks/reports/P01-S02-T001.md"
     },
     {
       "id": "P01-S02-T002",
       "phase_id": "P01",
       "step_id": "P01-S02",
       "title": "POST /api/v1/auth/sign-in",
-      "status": "blocked",
+      "status": "ready_for_close",
       "build_state": "planned",
       "product_increment": "v1",
       "risk_level": "medium",
@@ -1048,7 +1049,7 @@
         "backend/tests/integration/test_auth_signin.py"
       ],
       "handoff_path": "orchestrator-state/tasks/handoffs/P01-S02-T002.md",
-      "evidence_dir": "orchestrator-state/tasks/evidence/P01-S02-T002",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P01-S02-T002/",
       "notes": [],
       "dependency_mode": "explicit_dag",
       "depends_on_raw": "P01-S02-T001",
@@ -1065,7 +1066,16 @@
       "endpoint_raw": "POST /api/v1/auth/sign-in",
       "tables_raw": "users, refresh_tokens, audit_logs",
       "origin_instr_raw": "§3.1#auth-perfiles",
-      "origin_techguide_raw": "§6.2#POST-/api/v1/auth/sign-in"
+      "origin_techguide_raw": "§6.2#POST-/api/v1/auth/sign-in",
+      "claimed_at": "2026-05-11T17:49:45+00:00",
+      "claimed_by": "sergiolr",
+      "claim_terminal_task_env": "P01-S02-T002",
+      "task_pack_path": "orchestrator-state/tasks/task-packs/P01-S02-T002.md",
+      "last_outcome": "pass",
+      "last_updated_by": "tester",
+      "last_stop_at": "2026-05-11T18:57:00+00:00",
+      "validator_outcome": "approved",
+      "validator_next_status": "ready_for_close"
     },
     {
       "id": "P01-S02-T003",
@@ -1199,7 +1209,7 @@
       "phase_id": "P01",
       "step_id": "P01-S02",
       "title": "Forgot and reset password endpoints",
-      "status": "blocked",
+      "status": "ready",
       "build_state": "planned",
       "product_increment": "v1",
       "risk_level": "medium",
@@ -2365,7 +2375,7 @@
       "phase_id": "P03",
       "step_id": "P03-S01",
       "title": "SignUpPage",
-      "status": "blocked",
+      "status": "ready",
       "build_state": "planned",
       "product_increment": "v1",
       "risk_level": "medium",

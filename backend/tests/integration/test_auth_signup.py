@@ -390,31 +390,19 @@ def test_signup_logs_no_pii(caplog):
 def test_signup_rate_limit_429(monkeypatch):
     """T09: After AUTH_SIGNUP_RATE_PER_MINUTE attempts, 429 with Retry-After.
 
-    Monkeypatches _RATE_PER_MINUTE to a low value (3) so the test is fast.
-    Also resets the _store between test setups.
+    Uses monkeypatch.setenv to configure low limits so the test is fast.
+    rate_limit._load_limits() reads env vars on each call, so setenv is
+    sufficient — no module attribute needed.
     """
-    # Patch rate limit to 3 per minute for test speed
-    monkeypatch.setattr(rl_module, "_RATE_PER_MINUTE", 3)
-    monkeypatch.setattr(rl_module, "_BURST", 3)
-    _reset_rate_limit()
+    from app.auth.errors import RateLimitExceededError
+    from app.auth.rate_limit import check_rate_limit as _check
 
     ip = "1.2.3.4"
 
-    # 3 attempts from same IP should succeed (may fail sign-up for other reasons
-    # but should NOT return 429)
-    for i in range(3):
-        _reset_rate_limit()  # reset between each to test per-burst behavior
-        # Just test the rate-limit module directly is cleaner
-        from app.auth.rate_limit import check_rate_limit as _check
-        _check(ip)  # must not raise
-
-    # After exhausting the burst on a fresh reset:
+    # Direct unit check: burst=2, so 3rd call raises
+    monkeypatch.setenv("AUTH_SIGNUP_RATE_PER_MINUTE", "2")
+    monkeypatch.setenv("AUTH_SIGNUP_RATE_BURST", "2")
     _reset_rate_limit()
-    monkeypatch.setattr(rl_module, "_RATE_PER_MINUTE", 2)
-    monkeypatch.setattr(rl_module, "_BURST", 2)
-
-    from app.auth.errors import RateLimitExceededError
-    from app.auth.rate_limit import check_rate_limit as _check
 
     _check(ip)  # 1st — ok
     _check(ip)  # 2nd — ok
@@ -422,10 +410,10 @@ def test_signup_rate_limit_429(monkeypatch):
         _check(ip)  # 3rd — exceeds burst of 2
     assert exc_info.value.retry_after > 0
 
-    # Via HTTP endpoint:
+    # Via HTTP endpoint: burst=1, so 2nd HTTP call returns 429
+    monkeypatch.setenv("AUTH_SIGNUP_RATE_PER_MINUTE", "1")
+    monkeypatch.setenv("AUTH_SIGNUP_RATE_BURST", "1")
     _reset_rate_limit()
-    monkeypatch.setattr(rl_module, "_RATE_PER_MINUTE", 1)
-    monkeypatch.setattr(rl_module, "_BURST", 1)
 
     # 1st HTTP request (exhausts bucket):
     resp1 = client.post(

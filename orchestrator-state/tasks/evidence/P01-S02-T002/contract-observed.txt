@@ -1,0 +1,37 @@
+## Contract Observed — P01-S02-T002
+
+### Route / API client / DTO observed
+- Route: POST /api/v1/auth/sign-in (mounted on auth_router prefix=/auth in app.main)
+- Request DTO: SignInRequest (email: EmailStr, password: str min=1 max=512)
+- Response DTO success: SignInResponseSuccess (mfa_required, access_token, token_type, expires_in)
+- Response DTO MFA: SignInResponseMfaChallenge (mfa_required, mfa_challenge_token, expires_in)
+- Error envelope: {data: null, meta: {request_id}, errors: [{code, message, field}]}
+
+### Provider / Use case
+- Use case: SignInUser.execute() — backend/app/auth/service.py
+
+### Repository methods observed
+- AuthRepository.find_by_email(email) — backend/app/auth/repository.py
+- AuthRepository.count_recent_signin_failures(user_id, window_seconds, threshold) — repository.py
+- AuthRepository.insert_refresh_token(user_id, token_hash, expires_at) — repository.py
+- AuthRepository.write_audit(action, outcome, reason, actor_user_id, metadata) — repository.py
+
+### Tokens
+- JWT access token: encode_access_token() — tokens.py (HS256, claims: sub, email, roles, preferred_language, employee_profile_id, jti, iat, exp)
+- JWT MFA challenge: encode_mfa_challenge_token() — tokens.py (HS256, claims: sub, purpose=mfa_challenge, jti, iat, exp)
+- Refresh token: opaque secrets.token_urlsafe(48), stored as SHA-256 hex in refresh_tokens
+
+### Tables observed
+- users (lookup: find_by_email)
+- mfa_totp_secrets (check enabled flag)
+- refresh_tokens (INSERT on success)
+- audit_logs (INSERT all paths)
+
+### Session
+- get_db_session — backend/app/db/session.py (extracted from router.py per T001 nit)
+
+### Error types verified
+- InvalidCredentialsError (401 AUTH_INVALID_CREDENTIALS)
+- AccountLockedError (423 AUTH_ACCOUNT_LOCKED)
+- SignInRateLimitedError (429 AUTH_SIGNIN_RATE_LIMITED)
+- InvalidPayloadError (400 AUTH_INVALID_PAYLOAD)

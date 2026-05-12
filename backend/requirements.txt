@@ -80,6 +80,12 @@ cryptography==48.0.0
 # Source: official-doc-notes/P00-S02-T002-psycopg-version-2026-05-11.md (RESOLVED).
 psycopg[binary]==3.3.4
 
+# ── P01-S02-T002 — JWT tokens for sign-in (WRITE_SET_DRIFT) ────────────────
+# PyJWT==2.12.1 is the latest stable as of 2026-03-13; Python 3.12 confirmed.
+# Confirmed by official-docs-researcher; no breaking changes in 2.x encode/decode.
+# Source: official-doc-notes/P01-S02-T002-pyjwt-cookies-argon2.md RESOLVED.
+PyJWT==2.12.1
+
 # ── P01-S02-T001 — email validation for Pydantic EmailStr (WRITE_SET_DRIFT) ──
 # pydantic[email] extra requires email-validator. EmailStr validation for
 # the sign-up endpoint. 2.3.0 is latest stable on PyPI 2026-05-11 (MIT license).
