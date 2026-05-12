@@ -17,7 +17,7 @@
       "title": "Bootstrap / foundation propia",
       "status": "done",
       "depends_on": [],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Phase 0 — Bootstrap / foundation propia",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Phase 0 \u2014 Bootstrap / foundation propia",
       "task_ids": [
         "P00-S01-T001",
         "P00-S01-T002",
@@ -38,7 +38,7 @@
       "depends_on": [
         "P00"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Phase 1 — Auth / base capabilities",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Phase 1 \u2014 Auth / base capabilities",
       "task_ids": [
         "P01-S01-T001",
         "P01-S02-T001",
@@ -59,7 +59,7 @@
       "depends_on": [
         "P01"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Phase 2 — MOTOR / domain backend / AI",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Phase 2 \u2014 MOTOR / domain backend / AI",
       "task_ids": [
         "P02-S01-T001",
         "P02-S02-T001",
@@ -83,7 +83,7 @@
       "depends_on": [
         "P02"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Phase 3 — Employee UX / Auth + Chat",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Phase 3 \u2014 Employee UX / Auth + Chat",
       "task_ids": [
         "P03-S01-T001",
         "P03-S01-T002",
@@ -104,7 +104,7 @@
       "depends_on": [
         "P03"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Phase 4 — Admin UX",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Phase 4 \u2014 Admin UX",
       "task_ids": [
         "P04-S01-T001",
         "P04-S01-T002",
@@ -127,7 +127,7 @@
       "depends_on": [
         "P04"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Phase 5 — Journey verification and hardening",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Phase 5 \u2014 Journey verification and hardening",
       "task_ids": [
         "P05-S01-T001",
         "P05-S01-T002",
@@ -148,7 +148,7 @@
       "depends_on": [
         "P05"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Phase 6 — Release",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Phase 6 \u2014 Release",
       "task_ids": [
         "P06-S01-T001",
         "P06-S01-T002",
@@ -168,7 +168,7 @@
       "risk_level": "low",
       "verify_mode": "auto",
       "depends_on": [],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 0.1 — Project bootstrap",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 0.1 \u2014 Project bootstrap",
       "acceptance": [
         "Repo roots, env example and scripts exist",
         "health route stub compiles"
@@ -182,8 +182,8 @@
       "route": "",
       "endpoint": "GET /health",
       "tables": [],
-      "origin_instr": "§1.3#stack",
-      "origin_techguide": "§3#commands",
+      "origin_instr": "\u00a71.3#stack",
+      "origin_techguide": "\u00a73#commands",
       "allowed_paths": [
         "package.json",
         "frontend/package.json",
@@ -209,7 +209,7 @@
       "evidence_dir": "orchestrator-state/tasks/evidence/P00-S01-T001",
       "notes": [],
       "dependency_mode": "explicit_dag",
-      "depends_on_raw": "—",
+      "depends_on_raw": "\u2014",
       "conflict_groups_raw": "setup:bootstrap",
       "write_set_raw": "package.json, frontend/package.json, backend/pyproject.toml, backend/requirements*.txt, backend/app/main.py, scripts/**, .env.example",
       "product_increment_raw": "v1",
@@ -218,12 +218,12 @@
       "verify_mode_raw": "auto",
       "kind_raw": "setup",
       "target_raw": "Repo scaffold + scripts + env",
-      "journey_refs_raw": "—",
-      "screen_route_raw": "—",
+      "journey_refs_raw": "\u2014",
+      "screen_route_raw": "\u2014",
       "endpoint_raw": "GET /health",
-      "tables_raw": "—",
-      "origin_instr_raw": "§1.3#stack",
-      "origin_techguide_raw": "§3#commands",
+      "tables_raw": "\u2014",
+      "origin_instr_raw": "\u00a71.3#stack",
+      "origin_techguide_raw": "\u00a73#commands",
       "validator_outcome": "approved",
       "last_updated_by": "closer",
       "last_outcome": "committed",
@@ -250,7 +250,7 @@
       "depends_on": [
         "P00-S01-T001"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 0.1 — Project bootstrap",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 0.1 \u2014 Project bootstrap",
       "acceptance": [
         "React Router, TanStack Query, forms and i18n deps installed",
         "first provider wired"
@@ -264,8 +264,8 @@
       "route": "",
       "endpoint": "",
       "tables": [],
-      "origin_instr": "§11.0#frontend-libs",
-      "origin_techguide": "§2.0#frontend-libs",
+      "origin_instr": "\u00a711.0#frontend-libs",
+      "origin_techguide": "\u00a72.0#frontend-libs",
       "allowed_paths": [
         "frontend/package.json",
         "frontend/package-lock.json",
@@ -292,12 +292,12 @@
       "verify_mode_raw": "auto",
       "kind_raw": "library",
       "target_raw": "Frontend dependency pack",
-      "journey_refs_raw": "—",
-      "screen_route_raw": "—",
-      "endpoint_raw": "—",
-      "tables_raw": "—",
-      "origin_instr_raw": "§11.0#frontend-libs",
-      "origin_techguide_raw": "§2.0#frontend-libs",
+      "journey_refs_raw": "\u2014",
+      "screen_route_raw": "\u2014",
+      "endpoint_raw": "\u2014",
+      "tables_raw": "\u2014",
+      "origin_instr_raw": "\u00a711.0#frontend-libs",
+      "origin_techguide_raw": "\u00a72.0#frontend-libs",
       "validator_outcome": "approved",
       "last_updated_by": "closer",
       "last_outcome": "committed",
@@ -324,7 +324,7 @@
       "depends_on": [
         "P00-S01-T001"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 0.1 — Project bootstrap",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 0.1 \u2014 Project bootstrap",
       "acceptance": [
         "FastAPI, SQLAlchemy, Celery, LiteLLM, LangChain, LangGraph, DeepAgents, pgvector deps declared"
       ],
@@ -337,8 +337,8 @@
       "route": "",
       "endpoint": "",
       "tables": [],
-      "origin_instr": "§11.0#backend-libs",
-      "origin_techguide": "§2.0#backend-libs",
+      "origin_instr": "\u00a711.0#backend-libs",
+      "origin_techguide": "\u00a72.0#backend-libs",
       "allowed_paths": [
         "backend/pyproject.toml",
         "backend/requirements*.txt",
@@ -365,12 +365,12 @@
       "verify_mode_raw": "auto",
       "kind_raw": "library",
       "target_raw": "Backend dependency pack",
-      "journey_refs_raw": "—",
-      "screen_route_raw": "—",
-      "endpoint_raw": "—",
-      "tables_raw": "—",
-      "origin_instr_raw": "§11.0#backend-libs",
-      "origin_techguide_raw": "§2.0#backend-libs",
+      "journey_refs_raw": "\u2014",
+      "screen_route_raw": "\u2014",
+      "endpoint_raw": "\u2014",
+      "tables_raw": "\u2014",
+      "origin_instr_raw": "\u00a711.0#backend-libs",
+      "origin_techguide_raw": "\u00a72.0#backend-libs",
       "validator_outcome": "approved",
       "last_updated_by": "main-orchestrator-merge-fix",
       "last_outcome": "committed",
@@ -393,7 +393,7 @@
         "P00-S01-T001",
         "P00-S01-T002"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 0.1 — Project bootstrap",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 0.1 \u2014 Project bootstrap",
       "acceptance": [
         "Tokens and base components implement the Visual Implementation Contract",
         "no rounded corners",
@@ -410,8 +410,8 @@
       "route": "/showcase",
       "endpoint": "",
       "tables": [],
-      "origin_instr": "§7#theme",
-      "origin_techguide": "§7#design-system",
+      "origin_instr": "\u00a77#theme",
+      "origin_techguide": "\u00a77#design-system",
       "allowed_paths": [
         "frontend/src/shared/styles/**",
         "frontend/src/shared/design-system/**",
@@ -442,12 +442,12 @@
       "verify_mode_raw": "human",
       "kind_raw": "frontend",
       "target_raw": "Design tokens and editorial system",
-      "journey_refs_raw": "—",
+      "journey_refs_raw": "\u2014",
       "screen_route_raw": "/showcase",
-      "endpoint_raw": "—",
-      "tables_raw": "—",
-      "origin_instr_raw": "§7#theme",
-      "origin_techguide_raw": "§7#design-system",
+      "endpoint_raw": "\u2014",
+      "tables_raw": "\u2014",
+      "origin_instr_raw": "\u00a77#theme",
+      "origin_techguide_raw": "\u00a77#design-system",
       "validator_outcome": "approved",
       "last_updated_by": "main-orchestrator-merge-fix",
       "last_outcome": "committed",
@@ -467,7 +467,7 @@
         "P00-S01-T002",
         "P00-S01-T004"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 0.1 — Project bootstrap",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 0.1 \u2014 Project bootstrap",
       "acceptance": [
         "Namespaces common/auth/chat/account/admin-ai/rag/mcp/errors exist in es/en/fr with fallback es"
       ],
@@ -486,8 +486,8 @@
       "tables": [
         "users"
       ],
-      "origin_instr": "§6#i18n",
-      "origin_techguide": "§6.5#verification-data",
+      "origin_instr": "\u00a76#i18n",
+      "origin_techguide": "\u00a76.5#verification-data",
       "allowed_paths": [
         "frontend/src/i18n/**",
         "frontend/public/locales/**"
@@ -513,11 +513,11 @@
       "kind_raw": "setup",
       "target_raw": "i18n resources ES/EN/FR",
       "journey_refs_raw": "J100,J101,J102",
-      "screen_route_raw": "—",
-      "endpoint_raw": "—",
+      "screen_route_raw": "\u2014",
+      "endpoint_raw": "\u2014",
       "tables_raw": "users",
-      "origin_instr_raw": "§6#i18n",
-      "origin_techguide_raw": "§6.5#verification-data",
+      "origin_instr_raw": "\u00a76#i18n",
+      "origin_techguide_raw": "\u00a76.5#verification-data",
       "validator_outcome": "approved",
       "last_updated_by": "closer",
       "last_outcome": "committed",
@@ -544,7 +544,7 @@
       "depends_on": [
         "P00-S01-T001"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 0.2 — Infra, health and verification data",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 0.2 \u2014 Infra, health and verification data",
       "acceptance": [
         "Postgres, Redis, LiteLLM, MinIO and worker boot locally"
       ],
@@ -557,8 +557,8 @@
       "route": "",
       "endpoint": "",
       "tables": [],
-      "origin_instr": "§3.3#infra",
-      "origin_techguide": "§11#deploy",
+      "origin_instr": "\u00a73.3#infra",
+      "origin_techguide": "\u00a711#deploy",
       "allowed_paths": [
         "docker-compose.yml",
         "backend/Dockerfile",
@@ -585,12 +585,12 @@
       "verify_mode_raw": "human",
       "kind_raw": "setup",
       "target_raw": "Docker compose services",
-      "journey_refs_raw": "—",
-      "screen_route_raw": "—",
-      "endpoint_raw": "—",
-      "tables_raw": "—",
-      "origin_instr_raw": "§3.3#infra",
-      "origin_techguide_raw": "§11#deploy",
+      "journey_refs_raw": "\u2014",
+      "screen_route_raw": "\u2014",
+      "endpoint_raw": "\u2014",
+      "tables_raw": "\u2014",
+      "origin_instr_raw": "\u00a73.3#infra",
+      "origin_techguide_raw": "\u00a711#deploy",
       "validator_outcome": "approved",
       "last_updated_by": "closer-manual-recovery",
       "last_note": "manual recovery after closer git-workflow stash conflict; commit fec3aed pushed to origin/feat/P00-S02-T001-docker-compose-services",
@@ -613,7 +613,7 @@
       "depends_on": [
         "P00-S02-T001"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 0.2 — Infra, health and verification data",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 0.2 \u2014 Infra, health and verification data",
       "acceptance": [
         "Health endpoints return status and readiness checks"
       ],
@@ -626,8 +626,8 @@
       "route": "",
       "endpoint": "GET /health, GET /live, GET /ready",
       "tables": [],
-      "origin_instr": "§3.3#observability",
-      "origin_techguide": "§6.2#health",
+      "origin_instr": "\u00a73.3#observability",
+      "origin_techguide": "\u00a76.2#health",
       "allowed_paths": [
         "backend/app/main.py",
         "backend/app/api/router.py",
@@ -654,12 +654,12 @@
       "verify_mode_raw": "auto",
       "kind_raw": "api",
       "target_raw": "Health live ready endpoints",
-      "journey_refs_raw": "—",
-      "screen_route_raw": "—",
+      "journey_refs_raw": "\u2014",
+      "screen_route_raw": "\u2014",
       "endpoint_raw": "GET /health, GET /live, GET /ready",
-      "tables_raw": "—",
-      "origin_instr_raw": "§3.3#observability",
-      "origin_techguide_raw": "§6.2#health",
+      "tables_raw": "\u2014",
+      "origin_instr_raw": "\u00a73.3#observability",
+      "origin_techguide_raw": "\u00a76.2#health",
       "validator_outcome": "approved",
       "last_updated_by": "main-orchestrator-merge-fix",
       "last_outcome": "committed",
@@ -678,7 +678,7 @@
       "depends_on": [
         "P00-S02-T002"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 0.2 — Infra, health and verification data",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 0.2 \u2014 Infra, health and verification data",
       "acceptance": [
         "Verification data users/documents/providers/MCP/agents are idempotent and resettable"
       ],
@@ -706,8 +706,8 @@
         "mcp_servers",
         "agents"
       ],
-      "origin_instr": "§15#verification-data",
-      "origin_techguide": "§6.5#verification-data",
+      "origin_instr": "\u00a715#verification-data",
+      "origin_techguide": "\u00a76.5#verification-data",
       "allowed_paths": [
         "backend/app/verification_data/**",
         "scripts/dev-restart.sh"
@@ -733,11 +733,11 @@
       "kind_raw": "setup",
       "target_raw": "Verification data loader and reset",
       "journey_refs_raw": "J100,J101,J102,J103,J104,J105",
-      "screen_route_raw": "—",
-      "endpoint_raw": "—",
+      "screen_route_raw": "\u2014",
+      "endpoint_raw": "\u2014",
       "tables_raw": "users, employee_profiles, rag_collections, documents, ai_providers, mcp_servers, agents",
-      "origin_instr_raw": "§15#verification-data",
-      "origin_techguide_raw": "§6.5#verification-data",
+      "origin_instr_raw": "\u00a715#verification-data",
+      "origin_techguide_raw": "\u00a76.5#verification-data",
       "validator_outcome": "approved",
       "last_updated_by": "closer",
       "last_outcome": "committed",
@@ -800,10 +800,10 @@
       "verify_mode_raw": "human",
       "kind_raw": "bug",
       "target_raw": "fix verification_data loader :meta::jsonb SQL cast",
-      "journey_refs_raw": "—",
-      "screen_route_raw": "—",
-      "endpoint_raw": "—",
-      "tables_raw": "—",
+      "journey_refs_raw": "\u2014",
+      "screen_route_raw": "\u2014",
+      "endpoint_raw": "\u2014",
+      "tables_raw": "\u2014",
       "origin_instr_raw": "runtime-followup#FU-20260511145446-fix-verification-data-loader-meta-jsonb-sql-cast",
       "origin_techguide_raw": "runtime-followup#FU-20260511145446-fix-verification-data-loader-meta-jsonb-sql-cast",
       "validator_outcome": "approved",
@@ -832,7 +832,7 @@
       "depends_on": [
         "P00-S02-T002"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 1.1 — DB auth baseline",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 1.1 \u2014 DB auth baseline",
       "acceptance": [
         "Migration creates auth/profile/audit tables with constraints and rollback"
       ],
@@ -858,8 +858,8 @@
         "password_reset_tokens",
         "audit_logs"
       ],
-      "origin_instr": "§3.1#auth-perfiles",
-      "origin_techguide": "§10.3#users",
+      "origin_instr": "\u00a73.1#auth-perfiles",
+      "origin_techguide": "\u00a710.3#users",
       "allowed_paths": [
         "backend/alembic/versions/0001_auth_users_employee_audit.py",
         "backend/app/db/models/user.py",
@@ -887,11 +887,11 @@
       "kind_raw": "db",
       "target_raw": "0001_auth_users_employee_audit.py",
       "journey_refs_raw": "J100,J102",
-      "screen_route_raw": "—",
-      "endpoint_raw": "—",
+      "screen_route_raw": "\u2014",
+      "endpoint_raw": "\u2014",
       "tables_raw": "users, employee_profiles, roles, permissions, user_roles, refresh_tokens, mfa_totp_secrets, password_reset_tokens, audit_logs",
-      "origin_instr_raw": "§3.1#auth-perfiles",
-      "origin_techguide_raw": "§10.3#users",
+      "origin_instr_raw": "\u00a73.1#auth-perfiles",
+      "origin_techguide_raw": "\u00a710.3#users",
       "validator_outcome": "approved",
       "last_updated_by": "closer",
       "last_outcome": "committed",
@@ -918,7 +918,7 @@
       "depends_on": [
         "P01-S01-T001"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 1.2 — Auth APIs",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 1.2 \u2014 Auth APIs",
       "acceptance": [
         "Sign-up validates corporate email and legal acceptance",
         "audit log written"
@@ -938,8 +938,8 @@
         "employee_profiles",
         "audit_logs"
       ],
-      "origin_instr": "§3.1#auth-perfiles",
-      "origin_techguide": "§6.2#POST-/api/v1/auth/sign-up",
+      "origin_instr": "\u00a73.1#auth-perfiles",
+      "origin_techguide": "\u00a76.2#POST-/api/v1/auth/sign-up",
       "allowed_paths": [
         "backend/app/auth/**",
         "backend/tests/integration/test_auth_signup.py"
@@ -965,11 +965,11 @@
       "kind_raw": "api",
       "target_raw": "POST /api/v1/auth/sign-up",
       "journey_refs_raw": "J100",
-      "screen_route_raw": "—",
+      "screen_route_raw": "\u2014",
       "endpoint_raw": "POST /api/v1/auth/sign-up",
       "tables_raw": "users, employee_profiles, audit_logs",
-      "origin_instr_raw": "§3.1#auth-perfiles",
-      "origin_techguide_raw": "§6.2#POST-/api/v1/auth/sign-up",
+      "origin_instr_raw": "\u00a73.1#auth-perfiles",
+      "origin_techguide_raw": "\u00a76.2#POST-/api/v1/auth/sign-up",
       "validator_outcome": "approved",
       "last_updated_by": "closer",
       "last_outcome": "committed",
@@ -983,7 +983,7 @@
       "phase_id": "P01",
       "step_id": "P01-S02",
       "title": "POST /api/v1/auth/sign-in",
-      "status": "ready_for_close",
+      "status": "done",
       "build_state": "planned",
       "product_increment": "v1",
       "risk_level": "medium",
@@ -991,7 +991,7 @@
       "depends_on": [
         "P01-S02-T001"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 1.2 — Auth APIs",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 1.2 \u2014 Auth APIs",
       "acceptance": [
         "Sign-in verifies Argon2 password, returns MFA challenge or access token, does not leak user existence"
       ],
@@ -1010,8 +1010,8 @@
         "refresh_tokens",
         "audit_logs"
       ],
-      "origin_instr": "§3.1#auth-perfiles",
-      "origin_techguide": "§6.2#POST-/api/v1/auth/sign-in",
+      "origin_instr": "\u00a73.1#auth-perfiles",
+      "origin_techguide": "\u00a76.2#POST-/api/v1/auth/sign-in",
       "allowed_paths": [
         "backend/app/auth/**",
         "backend/tests/integration/test_auth_signin.py"
@@ -1037,15 +1037,15 @@
       "kind_raw": "api",
       "target_raw": "POST /api/v1/auth/sign-in",
       "journey_refs_raw": "J100",
-      "screen_route_raw": "—",
+      "screen_route_raw": "\u2014",
       "endpoint_raw": "POST /api/v1/auth/sign-in",
       "tables_raw": "users, refresh_tokens, audit_logs",
-      "origin_instr_raw": "§3.1#auth-perfiles",
-      "origin_techguide_raw": "§6.2#POST-/api/v1/auth/sign-in",
+      "origin_instr_raw": "\u00a73.1#auth-perfiles",
+      "origin_techguide_raw": "\u00a76.2#POST-/api/v1/auth/sign-in",
       "validator_outcome": "approved",
-      "last_updated_by": "tester",
-      "last_outcome": "pass",
-      "last_stop_at": "2026-05-11T18:57:00+00:00",
+      "last_updated_by": "closer",
+      "last_outcome": "committed",
+      "last_stop_at": "2026-05-12T04:34:19.504170+00:00",
       "claimed_by": "sergiolr",
       "claimed_at": "2026-05-11T17:49:45+00:00",
       "validator_next_status": "ready_for_close"
@@ -1063,7 +1063,7 @@
       "depends_on": [
         "P01-S02-T002"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 1.2 — Auth APIs",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 1.2 \u2014 Auth APIs",
       "acceptance": [
         "Refresh token cookie rotates and old hash is revoked"
       ],
@@ -1080,8 +1080,8 @@
       "tables": [
         "refresh_tokens"
       ],
-      "origin_instr": "§3.1#auth-perfiles",
-      "origin_techguide": "§6.2#POST-/api/v1/auth/refresh",
+      "origin_instr": "\u00a73.1#auth-perfiles",
+      "origin_techguide": "\u00a76.2#POST-/api/v1/auth/refresh",
       "allowed_paths": [
         "backend/app/auth/refresh_tokens.py",
         "backend/tests/integration/test_auth_refresh.py"
@@ -1107,11 +1107,11 @@
       "kind_raw": "api",
       "target_raw": "POST /api/v1/auth/refresh",
       "journey_refs_raw": "J100",
-      "screen_route_raw": "—",
+      "screen_route_raw": "\u2014",
       "endpoint_raw": "POST /api/v1/auth/refresh",
       "tables_raw": "refresh_tokens",
-      "origin_instr_raw": "§3.1#auth-perfiles",
-      "origin_techguide_raw": "§6.2#POST-/api/v1/auth/refresh"
+      "origin_instr_raw": "\u00a73.1#auth-perfiles",
+      "origin_techguide_raw": "\u00a76.2#POST-/api/v1/auth/refresh"
     },
     {
       "id": "P01-S02-T004",
@@ -1126,7 +1126,7 @@
       "depends_on": [
         "P01-S02-T003"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 1.2 — Auth APIs",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 1.2 \u2014 Auth APIs",
       "acceptance": [
         "Logout revokes active refresh token and clears cookie"
       ],
@@ -1144,8 +1144,8 @@
         "refresh_tokens",
         "audit_logs"
       ],
-      "origin_instr": "§3.1#auth-perfiles",
-      "origin_techguide": "§6.2#POST-/api/v1/auth/logout",
+      "origin_instr": "\u00a73.1#auth-perfiles",
+      "origin_techguide": "\u00a76.2#POST-/api/v1/auth/logout",
       "allowed_paths": [
         "backend/app/auth/router.py",
         "backend/tests/integration/test_auth_logout.py"
@@ -1171,11 +1171,11 @@
       "kind_raw": "api",
       "target_raw": "POST /api/v1/auth/logout",
       "journey_refs_raw": "J102",
-      "screen_route_raw": "—",
+      "screen_route_raw": "\u2014",
       "endpoint_raw": "POST /api/v1/auth/logout",
       "tables_raw": "refresh_tokens, audit_logs",
-      "origin_instr_raw": "§3.1#auth-perfiles",
-      "origin_techguide_raw": "§6.2#POST-/api/v1/auth/logout"
+      "origin_instr_raw": "\u00a73.1#auth-perfiles",
+      "origin_techguide_raw": "\u00a76.2#POST-/api/v1/auth/logout"
     },
     {
       "id": "P01-S02-T005",
@@ -1190,7 +1190,7 @@
       "depends_on": [
         "P01-S02-T001"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 1.2 — Auth APIs",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 1.2 \u2014 Auth APIs",
       "acceptance": [
         "Reset flow creates one-use token, sends localized email and invalidates sessions"
       ],
@@ -1209,8 +1209,8 @@
         "password_reset_tokens",
         "audit_logs"
       ],
-      "origin_instr": "§3.1#auth-perfiles",
-      "origin_techguide": "§6.2#POST-/api/v1/auth/forgot-password",
+      "origin_instr": "\u00a73.1#auth-perfiles",
+      "origin_techguide": "\u00a76.2#POST-/api/v1/auth/forgot-password",
       "allowed_paths": [
         "backend/app/auth/reset_tokens.py",
         "backend/app/mail/**",
@@ -1239,11 +1239,11 @@
       "kind_raw": "api",
       "target_raw": "Forgot and reset password endpoints",
       "journey_refs_raw": "J100",
-      "screen_route_raw": "—",
+      "screen_route_raw": "\u2014",
       "endpoint_raw": "POST /api/v1/auth/forgot-password, POST /api/v1/auth/reset-password",
       "tables_raw": "users, password_reset_tokens, audit_logs",
-      "origin_instr_raw": "§3.1#auth-perfiles",
-      "origin_techguide_raw": "§6.2#POST-/api/v1/auth/forgot-password"
+      "origin_instr_raw": "\u00a73.1#auth-perfiles",
+      "origin_techguide_raw": "\u00a76.2#POST-/api/v1/auth/forgot-password"
     },
     {
       "id": "P01-S02-T006",
@@ -1258,7 +1258,7 @@
       "depends_on": [
         "P01-S02-T002"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 1.2 — Auth APIs",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 1.2 \u2014 Auth APIs",
       "acceptance": [
         "2FA code verifies challenge, emits JWT and refresh cookie"
       ],
@@ -1277,8 +1277,8 @@
         "refresh_tokens",
         "audit_logs"
       ],
-      "origin_instr": "§3.1#auth-perfiles",
-      "origin_techguide": "§6.2#POST-/api/v1/auth/2fa/verify",
+      "origin_instr": "\u00a73.1#auth-perfiles",
+      "origin_techguide": "\u00a76.2#POST-/api/v1/auth/2fa/verify",
       "allowed_paths": [
         "backend/app/auth/mfa.py",
         "backend/tests/integration/test_mfa.py"
@@ -1304,11 +1304,11 @@
       "kind_raw": "api",
       "target_raw": "POST /api/v1/auth/2fa/verify",
       "journey_refs_raw": "J100",
-      "screen_route_raw": "—",
+      "screen_route_raw": "\u2014",
       "endpoint_raw": "POST /api/v1/auth/2fa/verify",
       "tables_raw": "mfa_totp_secrets, refresh_tokens, audit_logs",
-      "origin_instr_raw": "§3.1#auth-perfiles",
-      "origin_techguide_raw": "§6.2#POST-/api/v1/auth/2fa/verify"
+      "origin_instr_raw": "\u00a73.1#auth-perfiles",
+      "origin_techguide_raw": "\u00a76.2#POST-/api/v1/auth/2fa/verify"
     },
     {
       "id": "P01-S02-T007",
@@ -1323,7 +1323,7 @@
       "depends_on": [
         "P01-S02-T006"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 1.2 — Auth APIs",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 1.2 \u2014 Auth APIs",
       "acceptance": [
         "User profile includes employee fields and language patch persists es/en/fr only"
       ],
@@ -1342,8 +1342,8 @@
         "users",
         "employee_profiles"
       ],
-      "origin_instr": "§3.1#auth-perfiles",
-      "origin_techguide": "§6.2#GET-/api/v1/users/me",
+      "origin_instr": "\u00a73.1#auth-perfiles",
+      "origin_techguide": "\u00a76.2#GET-/api/v1/users/me",
       "allowed_paths": [
         "backend/app/users/**",
         "backend/tests/integration/test_users_me.py"
@@ -1369,11 +1369,11 @@
       "kind_raw": "api",
       "target_raw": "Current user and language endpoints",
       "journey_refs_raw": "J100,J102",
-      "screen_route_raw": "—",
+      "screen_route_raw": "\u2014",
       "endpoint_raw": "GET /api/v1/users/me, PATCH /api/v1/users/me/language",
       "tables_raw": "users, employee_profiles",
-      "origin_instr_raw": "§3.1#auth-perfiles",
-      "origin_techguide_raw": "§6.2#GET-/api/v1/users/me"
+      "origin_instr_raw": "\u00a73.1#auth-perfiles",
+      "origin_techguide_raw": "\u00a76.2#GET-/api/v1/users/me"
     },
     {
       "id": "P01-S03-T001",
@@ -1391,7 +1391,7 @@
         "P01-S02-T007",
         "P00-S01-T002"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 1.3 — Auth frontend state",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 1.3 \u2014 Auth frontend state",
       "acceptance": [
         "Auth provider handles access token memory, refresh cookie, redirects and role guards"
       ],
@@ -1410,8 +1410,8 @@
         "users",
         "refresh_tokens"
       ],
-      "origin_instr": "§3.2#login-propio",
-      "origin_techguide": "§6.1#auth-routes",
+      "origin_instr": "\u00a73.2#login-propio",
+      "origin_techguide": "\u00a76.1#auth-routes",
       "allowed_paths": [
         "frontend/src/features/auth/**",
         "frontend/src/app/router.tsx"
@@ -1438,11 +1438,11 @@
       "kind_raw": "setup",
       "target_raw": "Auth state provider and protected route guards",
       "journey_refs_raw": "J100,J102",
-      "screen_route_raw": "—",
+      "screen_route_raw": "\u2014",
       "endpoint_raw": "GET /api/v1/users/me, POST /api/v1/auth/refresh",
       "tables_raw": "users, refresh_tokens",
-      "origin_instr_raw": "§3.2#login-propio",
-      "origin_techguide_raw": "§6.1#auth-routes"
+      "origin_instr_raw": "\u00a73.2#login-propio",
+      "origin_techguide_raw": "\u00a76.1#auth-routes"
     },
     {
       "id": "P02-S01-T001",
@@ -1457,7 +1457,7 @@
       "depends_on": [
         "P01-S01-T001"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 2.1 — Data model and migrations",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 2.1 \u2014 Data model and migrations",
       "acceptance": [
         "Migration creates AI/chat/RAG/MCP/agent tables and pgvector index"
       ],
@@ -1500,8 +1500,8 @@
         "mcp_tool_invocations",
         "mcp_approvals"
       ],
-      "origin_instr": "§3.1#chat-admin-rag-mcp",
-      "origin_techguide": "§10.3#ai-chat-rag-mcp",
+      "origin_instr": "\u00a73.1#chat-admin-rag-mcp",
+      "origin_techguide": "\u00a710.3#ai-chat-rag-mcp",
       "allowed_paths": [
         "backend/alembic/versions/0002_ai_chat_rag_mcp_agents.py",
         "backend/app/db/models/**"
@@ -1527,11 +1527,11 @@
       "kind_raw": "db",
       "target_raw": "0002_ai_chat_rag_mcp_agents.py",
       "journey_refs_raw": "J101,J103,J104,J105",
-      "screen_route_raw": "—",
-      "endpoint_raw": "—",
+      "screen_route_raw": "\u2014",
+      "endpoint_raw": "\u2014",
       "tables_raw": "conversations, messages, message_citations, ai_providers, ai_provider_credentials, ai_models, ai_model_tests, llm_usage_logs, rag_collections, documents, document_versions, document_chunks, document_embeddings, vectorization_jobs, mcp_servers, mcp_credentials, mcp_tools, mcp_resources, mcp_prompts, agents, mcp_agent_bindings, agent_runs, mcp_tool_invocations, mcp_approvals",
-      "origin_instr_raw": "§3.1#chat-admin-rag-mcp",
-      "origin_techguide_raw": "§10.3#ai-chat-rag-mcp"
+      "origin_instr_raw": "\u00a73.1#chat-admin-rag-mcp",
+      "origin_techguide_raw": "\u00a710.3#ai-chat-rag-mcp"
     },
     {
       "id": "P02-S02-T001",
@@ -1547,7 +1547,7 @@
         "P01-S01-T001",
         "P00-S01-T003"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 2.2 — Security services",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 2.2 \u2014 Security services",
       "acceptance": [
         "Encryption service, permission guards and rate limit dependency have tests"
       ],
@@ -1567,8 +1567,8 @@
         "mcp_credentials",
         "audit_logs"
       ],
-      "origin_instr": "§3.3#foundation",
-      "origin_techguide": "§10.2#auth-strategy",
+      "origin_instr": "\u00a73.3#foundation",
+      "origin_techguide": "\u00a710.2#auth-strategy",
       "allowed_paths": [
         "backend/app/security/**",
         "backend/tests/unit/test_security.py"
@@ -1594,11 +1594,11 @@
       "kind_raw": "api",
       "target_raw": "Security encryption permissions rate limit",
       "journey_refs_raw": "J103,J105",
-      "screen_route_raw": "—",
+      "screen_route_raw": "\u2014",
       "endpoint_raw": "internal/no-front",
       "tables_raw": "ai_provider_credentials, mcp_credentials, audit_logs",
-      "origin_instr_raw": "§3.3#foundation",
-      "origin_techguide_raw": "§10.2#auth-strategy"
+      "origin_instr_raw": "\u00a73.3#foundation",
+      "origin_techguide_raw": "\u00a710.2#auth-strategy"
     },
     {
       "id": "P02-S03-T001",
@@ -1614,7 +1614,7 @@
         "P02-S01-T001",
         "P01-S02-T007"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 2.3 — Chat APIs",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 2.3 \u2014 Chat APIs",
       "acceptance": [
         "Employee can create/list/get only own conversations with pagination"
       ],
@@ -1634,8 +1634,8 @@
         "messages",
         "message_citations"
       ],
-      "origin_instr": "§3.1#chat-rag",
-      "origin_techguide": "§6.2#chat-conversations",
+      "origin_instr": "\u00a73.1#chat-rag",
+      "origin_techguide": "\u00a76.2#chat-conversations",
       "allowed_paths": [
         "backend/app/chat/**",
         "backend/tests/integration/test_chat_conversations.py"
@@ -1661,11 +1661,11 @@
       "kind_raw": "api",
       "target_raw": "Chat conversation CRUD endpoints",
       "journey_refs_raw": "J101,J102",
-      "screen_route_raw": "—",
+      "screen_route_raw": "\u2014",
       "endpoint_raw": "GET /api/v1/chat/conversations, POST /api/v1/chat/conversations, GET /api/v1/chat/conversations/{id}",
       "tables_raw": "conversations, messages, message_citations",
-      "origin_instr_raw": "§3.1#chat-rag",
-      "origin_techguide_raw": "§6.2#chat-conversations"
+      "origin_instr_raw": "\u00a73.1#chat-rag",
+      "origin_techguide_raw": "\u00a76.2#chat-conversations"
     },
     {
       "id": "P02-S03-T002",
@@ -1682,7 +1682,7 @@
         "P02-S04-T001",
         "P02-S05-T001"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 2.3 — Chat APIs",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 2.3 \u2014 Chat APIs",
       "acceptance": [
         "SSE/fetch stream emits chunks, persists assistant message and citations, logs cost"
       ],
@@ -1702,8 +1702,8 @@
         "llm_usage_logs",
         "document_chunks"
       ],
-      "origin_instr": "§3.1#chat-rag",
-      "origin_techguide": "§6.2#POST-/api/v1/chat/conversations/{id}/stream",
+      "origin_instr": "\u00a73.1#chat-rag",
+      "origin_techguide": "\u00a76.2#POST-/api/v1/chat/conversations/{id}/stream",
       "allowed_paths": [
         "backend/app/chat/streaming.py",
         "backend/tests/integration/test_chat_stream.py"
@@ -1729,11 +1729,11 @@
       "kind_raw": "api",
       "target_raw": "Chat streaming endpoint",
       "journey_refs_raw": "J101",
-      "screen_route_raw": "—",
+      "screen_route_raw": "\u2014",
       "endpoint_raw": "POST /api/v1/chat/conversations/{id}/stream",
       "tables_raw": "messages, message_citations, llm_usage_logs, document_chunks",
-      "origin_instr_raw": "§3.1#chat-rag",
-      "origin_techguide_raw": "§6.2#POST-/api/v1/chat/conversations/{id}/stream"
+      "origin_instr_raw": "\u00a73.1#chat-rag",
+      "origin_techguide_raw": "\u00a76.2#POST-/api/v1/chat/conversations/{id}/stream"
     },
     {
       "id": "P02-S04-T001",
@@ -1749,7 +1749,7 @@
         "P02-S01-T001",
         "P02-S05-T001"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 2.4 — RAG and workers",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 2.4 \u2014 RAG and workers",
       "acceptance": [
         "Retriever filters by language/collection and returns citation metadata"
       ],
@@ -1771,8 +1771,8 @@
         "document_embeddings",
         "message_citations"
       ],
-      "origin_instr": "§3.1#rag-admin",
-      "origin_techguide": "§10.4#rag",
+      "origin_instr": "\u00a73.1#rag-admin",
+      "origin_techguide": "\u00a710.4#rag",
       "allowed_paths": [
         "backend/app/rag/**",
         "backend/tests/ai/test_rag_retriever.py"
@@ -1798,11 +1798,11 @@
       "kind_raw": "ai",
       "target_raw": "RAG retriever + citation smoke",
       "journey_refs_raw": "J101,J104",
-      "screen_route_raw": "—",
+      "screen_route_raw": "\u2014",
       "endpoint_raw": "internal/no-front",
       "tables_raw": "rag_collections, documents, document_chunks, document_embeddings, message_citations",
-      "origin_instr_raw": "§3.1#rag-admin",
-      "origin_techguide_raw": "§10.4#rag"
+      "origin_instr_raw": "\u00a73.1#rag-admin",
+      "origin_techguide_raw": "\u00a710.4#rag"
     },
     {
       "id": "P02-S04-T002",
@@ -1817,7 +1817,7 @@
       "depends_on": [
         "P02-S04-T001"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 2.4 — RAG and workers",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 2.4 \u2014 RAG and workers",
       "acceptance": [
         "Worker extracts, chunks, embeds and updates job progress"
       ],
@@ -1838,8 +1838,8 @@
         "document_embeddings",
         "vectorization_jobs"
       ],
-      "origin_instr": "§3.1#rag-admin",
-      "origin_techguide": "§10.4#rag-ingestion",
+      "origin_instr": "\u00a73.1#rag-admin",
+      "origin_techguide": "\u00a710.4#rag-ingestion",
       "allowed_paths": [
         "backend/app/workers/tasks_documents.py",
         "backend/app/workers/tasks_embeddings.py",
@@ -1867,11 +1867,11 @@
       "kind_raw": "worker",
       "target_raw": "Celery vectorization worker",
       "journey_refs_raw": "J104",
-      "screen_route_raw": "—",
+      "screen_route_raw": "\u2014",
       "endpoint_raw": "internal/no-front",
       "tables_raw": "documents, document_versions, document_chunks, document_embeddings, vectorization_jobs",
-      "origin_instr_raw": "§3.1#rag-admin",
-      "origin_techguide_raw": "§10.4#rag-ingestion"
+      "origin_instr_raw": "\u00a73.1#rag-admin",
+      "origin_techguide_raw": "\u00a710.4#rag-ingestion"
     },
     {
       "id": "P02-S05-T001",
@@ -1887,7 +1887,7 @@
         "P02-S01-T001",
         "P02-S02-T001"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 2.5 — Admin AI APIs",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 2.5 \u2014 Admin AI APIs",
       "acceptance": [
         "Admin can create provider, store encrypted credentials, list/activate models"
       ],
@@ -1907,8 +1907,8 @@
         "ai_models",
         "audit_logs"
       ],
-      "origin_instr": "§3.1#admin-ai",
-      "origin_techguide": "§6.2#admin-ai",
+      "origin_instr": "\u00a73.1#admin-ai",
+      "origin_techguide": "\u00a76.2#admin-ai",
       "allowed_paths": [
         "backend/app/admin/providers.py",
         "backend/app/admin/model_catalog.py",
@@ -1936,11 +1936,11 @@
       "kind_raw": "api",
       "target_raw": "Admin AI providers and models endpoints",
       "journey_refs_raw": "J103",
-      "screen_route_raw": "—",
+      "screen_route_raw": "\u2014",
       "endpoint_raw": "GET /api/v1/admin/ai/providers, POST /api/v1/admin/ai/providers, GET /api/v1/admin/ai/models, PATCH /api/v1/admin/ai/models/{id}",
       "tables_raw": "ai_providers, ai_provider_credentials, ai_models, audit_logs",
-      "origin_instr_raw": "§3.1#admin-ai",
-      "origin_techguide_raw": "§6.2#admin-ai"
+      "origin_instr_raw": "\u00a73.1#admin-ai",
+      "origin_techguide_raw": "\u00a76.2#admin-ai"
     },
     {
       "id": "P02-S05-T002",
@@ -1955,7 +1955,7 @@
       "depends_on": [
         "P02-S05-T001"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 2.5 — Admin AI APIs",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 2.5 \u2014 Admin AI APIs",
       "acceptance": [
         "Admin can test model via LiteLLM sandbox and usage summary updates"
       ],
@@ -1973,8 +1973,8 @@
         "ai_model_tests",
         "llm_usage_logs"
       ],
-      "origin_instr": "§3.1#admin-ai",
-      "origin_techguide": "§6.2#POST-/api/v1/admin/ai/models/{id}/test",
+      "origin_instr": "\u00a73.1#admin-ai",
+      "origin_techguide": "\u00a76.2#POST-/api/v1/admin/ai/models/{id}/test",
       "allowed_paths": [
         "backend/app/llm_gateway/**",
         "backend/app/admin/usage.py",
@@ -2002,11 +2002,11 @@
       "kind_raw": "api",
       "target_raw": "Model test and usage endpoints",
       "journey_refs_raw": "J103",
-      "screen_route_raw": "—",
+      "screen_route_raw": "\u2014",
       "endpoint_raw": "POST /api/v1/admin/ai/models/{id}/test, GET /api/v1/admin/usage",
       "tables_raw": "ai_model_tests, llm_usage_logs",
-      "origin_instr_raw": "§3.1#admin-ai",
-      "origin_techguide_raw": "§6.2#POST-/api/v1/admin/ai/models/{id}/test"
+      "origin_instr_raw": "\u00a73.1#admin-ai",
+      "origin_techguide_raw": "\u00a76.2#POST-/api/v1/admin/ai/models/{id}/test"
     },
     {
       "id": "P02-S06-T001",
@@ -2021,7 +2021,7 @@
       "depends_on": [
         "P02-S04-T002"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 2.6 — RAG Admin APIs",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 2.6 \u2014 RAG Admin APIs",
       "acceptance": [
         "Admin uploads PDF/DOCX metadata, lists docs and enqueues index job"
       ],
@@ -2040,8 +2040,8 @@
         "document_versions",
         "vectorization_jobs"
       ],
-      "origin_instr": "§3.1#rag-admin",
-      "origin_techguide": "§6.2#rag-documents",
+      "origin_instr": "\u00a73.1#rag-admin",
+      "origin_techguide": "\u00a76.2#rag-documents",
       "allowed_paths": [
         "backend/app/rag/documents.py",
         "backend/tests/integration/test_rag_documents.py"
@@ -2067,11 +2067,11 @@
       "kind_raw": "api",
       "target_raw": "RAG document endpoints",
       "journey_refs_raw": "J104",
-      "screen_route_raw": "—",
+      "screen_route_raw": "\u2014",
       "endpoint_raw": "POST /api/v1/admin/rag/documents, GET /api/v1/admin/rag/documents, POST /api/v1/admin/rag/documents/{id}/index",
       "tables_raw": "documents, document_versions, vectorization_jobs",
-      "origin_instr_raw": "§3.1#rag-admin",
-      "origin_techguide_raw": "§6.2#rag-documents"
+      "origin_instr_raw": "\u00a73.1#rag-admin",
+      "origin_techguide_raw": "\u00a76.2#rag-documents"
     },
     {
       "id": "P02-S06-T002",
@@ -2086,7 +2086,7 @@
       "depends_on": [
         "P02-S06-T001"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 2.6 — RAG Admin APIs",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 2.6 \u2014 RAG Admin APIs",
       "acceptance": [
         "Admin lists collections and toggles vertical/language settings"
       ],
@@ -2104,8 +2104,8 @@
         "rag_collections",
         "audit_logs"
       ],
-      "origin_instr": "§3.1#rag-admin",
-      "origin_techguide": "§6.2#rag-collections",
+      "origin_instr": "\u00a73.1#rag-admin",
+      "origin_techguide": "\u00a76.2#rag-collections",
       "allowed_paths": [
         "backend/app/rag/collections.py",
         "backend/tests/integration/test_rag_collections.py"
@@ -2131,11 +2131,11 @@
       "kind_raw": "api",
       "target_raw": "RAG collection endpoints",
       "journey_refs_raw": "J104",
-      "screen_route_raw": "—",
+      "screen_route_raw": "\u2014",
       "endpoint_raw": "GET /api/v1/admin/rag/collections, PATCH /api/v1/admin/rag/collections/{id}",
       "tables_raw": "rag_collections, audit_logs",
-      "origin_instr_raw": "§3.1#rag-admin",
-      "origin_techguide_raw": "§6.2#rag-collections"
+      "origin_instr_raw": "\u00a73.1#rag-admin",
+      "origin_techguide_raw": "\u00a76.2#rag-collections"
     },
     {
       "id": "P02-S07-T001",
@@ -2151,7 +2151,7 @@
         "P02-S01-T001",
         "P02-S02-T001"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 2.7 — MCP APIs",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 2.7 \u2014 MCP APIs",
       "acceptance": [
         "MCP server registration encrypts auth, sync discovers tools, tools disabled by default"
       ],
@@ -2173,8 +2173,8 @@
         "mcp_prompts",
         "audit_logs"
       ],
-      "origin_instr": "§3.1#mcp-agents",
-      "origin_techguide": "§6.2#mcp",
+      "origin_instr": "\u00a73.1#mcp-agents",
+      "origin_techguide": "\u00a76.2#mcp",
       "allowed_paths": [
         "backend/app/mcp/**",
         "backend/tests/integration/test_mcp_registry.py"
@@ -2200,11 +2200,11 @@
       "kind_raw": "api",
       "target_raw": "MCP server and tool endpoints",
       "journey_refs_raw": "J105",
-      "screen_route_raw": "—",
+      "screen_route_raw": "\u2014",
       "endpoint_raw": "GET /api/v1/admin/ai/mcp/servers, POST /api/v1/admin/ai/mcp/servers, POST /api/v1/admin/ai/mcp/servers/{id}/sync, PATCH /api/v1/admin/ai/mcp/tools/{id}",
       "tables_raw": "mcp_servers, mcp_credentials, mcp_tools, mcp_resources, mcp_prompts, audit_logs",
-      "origin_instr_raw": "§3.1#mcp-agents",
-      "origin_techguide_raw": "§6.2#mcp"
+      "origin_instr_raw": "\u00a73.1#mcp-agents",
+      "origin_techguide_raw": "\u00a76.2#mcp"
     },
     {
       "id": "P02-S08-T001",
@@ -2220,7 +2220,7 @@
         "P02-S07-T001",
         "P02-S04-T001"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 2.8 — Agents and graphs",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 2.8 \u2014 Agents and graphs",
       "acceptance": [
         "Admin lists agents, binds approved MCP tools and starts run smoke"
       ],
@@ -2240,8 +2240,8 @@
         "agent_runs",
         "mcp_tool_invocations"
       ],
-      "origin_instr": "§3.1#mcp-agents",
-      "origin_techguide": "§10.4#deepagents",
+      "origin_instr": "\u00a73.1#mcp-agents",
+      "origin_techguide": "\u00a710.4#deepagents",
       "allowed_paths": [
         "backend/app/agents/**",
         "backend/app/graphs/**",
@@ -2270,11 +2270,11 @@
       "kind_raw": "api",
       "target_raw": "Agents endpoints and DeepAgents/LangGraph smoke",
       "journey_refs_raw": "J105",
-      "screen_route_raw": "—",
+      "screen_route_raw": "\u2014",
       "endpoint_raw": "GET /api/v1/admin/ai/agents, PATCH /api/v1/admin/ai/agents/{id}/tools, POST /api/v1/agents/runs",
       "tables_raw": "agents, mcp_agent_bindings, agent_runs, mcp_tool_invocations",
-      "origin_instr_raw": "§3.1#mcp-agents",
-      "origin_techguide_raw": "§10.4#deepagents"
+      "origin_instr_raw": "\u00a73.1#mcp-agents",
+      "origin_techguide_raw": "\u00a710.4#deepagents"
     },
     {
       "id": "P03-S01-T001",
@@ -2291,7 +2291,7 @@
         "P00-S01-T004",
         "P00-S01-T005"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 3.1 — Login pages",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 3.1 \u2014 Login pages",
       "acceptance": [
         "Editorial mobile sign-in with validation, error states and next action",
         "VISUAL_CONTRACT_CHECK documents tokens, components, required states, real data/backend and visual evidence"
@@ -2310,8 +2310,8 @@
         "users",
         "refresh_tokens"
       ],
-      "origin_instr": "§3.2#login-propio",
-      "origin_techguide": "§6.1#/auth/sign-in",
+      "origin_instr": "\u00a73.2#login-propio",
+      "origin_techguide": "\u00a76.1#/auth/sign-in",
       "allowed_paths": [
         "frontend/src/pages/auth/SignInPage.tsx",
         "frontend/src/features/auth/**"
@@ -2340,8 +2340,8 @@
       "screen_route_raw": "/auth/sign-in",
       "endpoint_raw": "POST /api/v1/auth/sign-in",
       "tables_raw": "users, refresh_tokens",
-      "origin_instr_raw": "§3.2#login-propio",
-      "origin_techguide_raw": "§6.1#/auth/sign-in"
+      "origin_instr_raw": "\u00a73.2#login-propio",
+      "origin_techguide_raw": "\u00a76.1#/auth/sign-in"
     },
     {
       "id": "P03-S01-T002",
@@ -2358,7 +2358,7 @@
         "P00-S01-T004",
         "P00-S01-T005"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 3.1 — Login pages",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 3.1 \u2014 Login pages",
       "acceptance": [
         "Sign-up form with legal acceptance and corporate email validation",
         "VISUAL_CONTRACT_CHECK documents tokens, components, required states, real data/backend and visual evidence"
@@ -2377,8 +2377,8 @@
         "users",
         "employee_profiles"
       ],
-      "origin_instr": "§3.2#login-propio",
-      "origin_techguide": "§6.1#/auth/sign-up",
+      "origin_instr": "\u00a73.2#login-propio",
+      "origin_techguide": "\u00a76.1#/auth/sign-up",
       "allowed_paths": [
         "frontend/src/pages/auth/SignUpPage.tsx"
       ],
@@ -2405,8 +2405,8 @@
       "screen_route_raw": "/auth/sign-up",
       "endpoint_raw": "POST /api/v1/auth/sign-up",
       "tables_raw": "users, employee_profiles",
-      "origin_instr_raw": "§3.2#login-propio",
-      "origin_techguide_raw": "§6.1#/auth/sign-up"
+      "origin_instr_raw": "\u00a73.2#login-propio",
+      "origin_techguide_raw": "\u00a76.1#/auth/sign-up"
     },
     {
       "id": "P03-S01-T003",
@@ -2423,7 +2423,7 @@
         "P00-S01-T004",
         "P00-S01-T005"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 3.1 — Login pages",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 3.1 \u2014 Login pages",
       "acceptance": [
         "Forgot form sends reset link and handles validation/network states",
         "VISUAL_CONTRACT_CHECK documents tokens, components, required states, real data/backend and visual evidence"
@@ -2441,8 +2441,8 @@
       "tables": [
         "password_reset_tokens"
       ],
-      "origin_instr": "§3.2#login-propio",
-      "origin_techguide": "§6.1#/auth/forgot-password",
+      "origin_instr": "\u00a73.2#login-propio",
+      "origin_techguide": "\u00a76.1#/auth/forgot-password",
       "allowed_paths": [
         "frontend/src/pages/auth/ForgotPasswordPage.tsx"
       ],
@@ -2469,8 +2469,8 @@
       "screen_route_raw": "/auth/forgot-password",
       "endpoint_raw": "POST /api/v1/auth/forgot-password",
       "tables_raw": "password_reset_tokens",
-      "origin_instr_raw": "§3.2#login-propio",
-      "origin_techguide_raw": "§6.1#/auth/forgot-password"
+      "origin_instr_raw": "\u00a73.2#login-propio",
+      "origin_techguide_raw": "\u00a76.1#/auth/forgot-password"
     },
     {
       "id": "P03-S01-T004",
@@ -2485,7 +2485,7 @@
       "depends_on": [
         "P03-S01-T003"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 3.1 — Login pages",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 3.1 \u2014 Login pages",
       "acceptance": [
         "Reset sent confirmation masks email and offers back-to-sign-in",
         "VISUAL_CONTRACT_CHECK documents tokens, components, required states, real data/backend and visual evidence"
@@ -2503,8 +2503,8 @@
       "tables": [
         "password_reset_tokens"
       ],
-      "origin_instr": "§3.2#login-propio",
-      "origin_techguide": "§6.1#/auth/reset-sent",
+      "origin_instr": "\u00a73.2#login-propio",
+      "origin_techguide": "\u00a76.1#/auth/reset-sent",
       "allowed_paths": [
         "frontend/src/pages/auth/ResetSentPage.tsx"
       ],
@@ -2529,10 +2529,10 @@
       "target_raw": "ResetSentPage",
       "journey_refs_raw": "J100",
       "screen_route_raw": "/auth/reset-sent",
-      "endpoint_raw": "—",
+      "endpoint_raw": "\u2014",
       "tables_raw": "password_reset_tokens",
-      "origin_instr_raw": "§3.2#login-propio",
-      "origin_techguide_raw": "§6.1#/auth/reset-sent"
+      "origin_instr_raw": "\u00a73.2#login-propio",
+      "origin_techguide_raw": "\u00a76.1#/auth/reset-sent"
     },
     {
       "id": "P03-S01-T005",
@@ -2548,7 +2548,7 @@
         "P01-S02-T006",
         "P03-S01-T001"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 3.1 — Login pages",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 3.1 \u2014 Login pages",
       "acceptance": [
         "Six digit 2FA UI supports paste, validation and success redirect",
         "VISUAL_CONTRACT_CHECK documents tokens, components, required states, real data/backend and visual evidence"
@@ -2567,8 +2567,8 @@
         "mfa_totp_secrets",
         "refresh_tokens"
       ],
-      "origin_instr": "§3.2#login-propio",
-      "origin_techguide": "§6.1#/auth/2fa",
+      "origin_instr": "\u00a73.2#login-propio",
+      "origin_techguide": "\u00a76.1#/auth/2fa",
       "allowed_paths": [
         "frontend/src/pages/auth/TwoFactorPage.tsx"
       ],
@@ -2595,8 +2595,8 @@
       "screen_route_raw": "/auth/2fa",
       "endpoint_raw": "POST /api/v1/auth/2fa/verify",
       "tables_raw": "mfa_totp_secrets, refresh_tokens",
-      "origin_instr_raw": "§3.2#login-propio",
-      "origin_techguide_raw": "§6.1#/auth/2fa"
+      "origin_instr_raw": "\u00a73.2#login-propio",
+      "origin_techguide_raw": "\u00a76.1#/auth/2fa"
     },
     {
       "id": "P03-S02-T001",
@@ -2614,7 +2614,7 @@
         "P00-S01-T004",
         "P00-S01-T005"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 3.2 — Chat pages",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 3.2 \u2014 Chat pages",
       "acceptance": [
         "Chat is home after login",
         "empty prompts visible and create conversation works",
@@ -2635,8 +2635,8 @@
         "users",
         "conversations"
       ],
-      "origin_instr": "§3.2#chat-home",
-      "origin_techguide": "§6.1#/chat",
+      "origin_instr": "\u00a73.2#chat-home",
+      "origin_techguide": "\u00a76.1#/chat",
       "allowed_paths": [
         "frontend/src/pages/chat/ChatHomePage.tsx",
         "frontend/src/features/chat/**"
@@ -2665,8 +2665,8 @@
       "screen_route_raw": "/chat",
       "endpoint_raw": "GET /api/v1/users/me, POST /api/v1/chat/conversations",
       "tables_raw": "users, conversations",
-      "origin_instr_raw": "§3.2#chat-home",
-      "origin_techguide_raw": "§6.1#/chat"
+      "origin_instr_raw": "\u00a73.2#chat-home",
+      "origin_techguide_raw": "\u00a76.1#/chat"
     },
     {
       "id": "P03-S02-T002",
@@ -2682,7 +2682,7 @@
         "P02-S03-T002",
         "P03-S02-T001"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 3.2 — Chat pages",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 3.2 \u2014 Chat pages",
       "acceptance": [
         "Streaming response, citations inline, no bubble design, retry on network error",
         "VISUAL_CONTRACT_CHECK documents tokens, components, required states, real data/backend and visual evidence"
@@ -2704,8 +2704,8 @@
         "message_citations",
         "llm_usage_logs"
       ],
-      "origin_instr": "§3.2#chat-home",
-      "origin_techguide": "§6.1#/chat/:conversationId",
+      "origin_instr": "\u00a73.2#chat-home",
+      "origin_techguide": "\u00a76.1#/chat/:conversationId",
       "allowed_paths": [
         "frontend/src/pages/chat/ConversationPage.tsx",
         "frontend/src/features/chat/stream.ts"
@@ -2734,8 +2734,8 @@
       "screen_route_raw": "/chat/:conversationId",
       "endpoint_raw": "GET /api/v1/chat/conversations/{id}, POST /api/v1/chat/conversations/{id}/stream",
       "tables_raw": "conversations, messages, message_citations, llm_usage_logs",
-      "origin_instr_raw": "§3.2#chat-home",
-      "origin_techguide_raw": "§6.1#/chat/:conversationId"
+      "origin_instr_raw": "\u00a73.2#chat-home",
+      "origin_techguide_raw": "\u00a76.1#/chat/:conversationId"
     },
     {
       "id": "P03-S02-T003",
@@ -2751,7 +2751,7 @@
         "P02-S03-T001",
         "P03-S02-T002"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 3.2 — Chat pages",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 3.2 \u2014 Chat pages",
       "acceptance": [
         "History grouped by date with empty/loading/error/success states",
         "VISUAL_CONTRACT_CHECK documents tokens, components, required states, real data/backend and visual evidence"
@@ -2769,8 +2769,8 @@
       "tables": [
         "conversations"
       ],
-      "origin_instr": "§3.2#chat-home",
-      "origin_techguide": "§6.1#/history",
+      "origin_instr": "\u00a73.2#chat-home",
+      "origin_techguide": "\u00a76.1#/history",
       "allowed_paths": [
         "frontend/src/pages/chat/HistoryPage.tsx"
       ],
@@ -2797,8 +2797,8 @@
       "screen_route_raw": "/history",
       "endpoint_raw": "GET /api/v1/chat/conversations",
       "tables_raw": "conversations",
-      "origin_instr_raw": "§3.2#chat-home",
-      "origin_techguide_raw": "§6.1#/history"
+      "origin_instr_raw": "\u00a73.2#chat-home",
+      "origin_techguide_raw": "\u00a76.1#/history"
     },
     {
       "id": "P03-S02-T004",
@@ -2815,7 +2815,7 @@
         "P01-S02-T007",
         "P03-S02-T001"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 3.2 — Chat pages",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 3.2 \u2014 Chat pages",
       "acceptance": [
         "Account shows employee profile, language selector ES/EN/FR and logout",
         "VISUAL_CONTRACT_CHECK documents tokens, components, required states, real data/backend and visual evidence"
@@ -2835,8 +2835,8 @@
         "employee_profiles",
         "refresh_tokens"
       ],
-      "origin_instr": "§3.2#chat-home",
-      "origin_techguide": "§6.1#/account",
+      "origin_instr": "\u00a73.2#chat-home",
+      "origin_techguide": "\u00a76.1#/account",
       "allowed_paths": [
         "frontend/src/pages/chat/AccountPage.tsx",
         "frontend/src/features/user/**"
@@ -2865,8 +2865,8 @@
       "screen_route_raw": "/account",
       "endpoint_raw": "GET /api/v1/users/me, PATCH /api/v1/users/me/language, POST /api/v1/auth/logout",
       "tables_raw": "users, employee_profiles, refresh_tokens",
-      "origin_instr_raw": "§3.2#chat-home",
-      "origin_techguide_raw": "§6.1#/account"
+      "origin_instr_raw": "\u00a73.2#chat-home",
+      "origin_techguide_raw": "\u00a76.1#/account"
     },
     {
       "id": "P04-S01-T001",
@@ -2882,7 +2882,7 @@
         "P02-S05-T002",
         "P00-S01-T004"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 4.1 — Admin AI pages",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 4.1 \u2014 Admin AI pages",
       "acceptance": [
         "Admin dashboard shows usage summary and navigation",
         "VISUAL_CONTRACT_CHECK documents tokens, components, required states, real data/backend and visual evidence"
@@ -2900,8 +2900,8 @@
       "tables": [
         "llm_usage_logs"
       ],
-      "origin_instr": "§3.2#admin-ai",
-      "origin_techguide": "§6.1#/admin",
+      "origin_instr": "\u00a73.2#admin-ai",
+      "origin_techguide": "\u00a76.1#/admin",
       "allowed_paths": [
         "frontend/src/pages/admin/AdminDashboardPage.tsx"
       ],
@@ -2928,8 +2928,8 @@
       "screen_route_raw": "/admin",
       "endpoint_raw": "GET /api/v1/admin/usage",
       "tables_raw": "llm_usage_logs",
-      "origin_instr_raw": "§3.2#admin-ai",
-      "origin_techguide_raw": "§6.1#/admin"
+      "origin_instr_raw": "\u00a73.2#admin-ai",
+      "origin_techguide_raw": "\u00a76.1#/admin"
     },
     {
       "id": "P04-S01-T002",
@@ -2945,7 +2945,7 @@
         "P02-S05-T001",
         "P04-S01-T001"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 4.1 — Admin AI pages",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 4.1 \u2014 Admin AI pages",
       "acceptance": [
         "Hairline table lists models with status dot, cost and latency",
         "VISUAL_CONTRACT_CHECK documents tokens, components, required states, real data/backend and visual evidence"
@@ -2964,8 +2964,8 @@
         "ai_providers",
         "ai_models"
       ],
-      "origin_instr": "§3.2#admin-ai",
-      "origin_techguide": "§6.1#/admin/ai/models",
+      "origin_instr": "\u00a73.2#admin-ai",
+      "origin_techguide": "\u00a76.1#/admin/ai/models",
       "allowed_paths": [
         "frontend/src/pages/admin/ai/AdminAiModelsPage.tsx"
       ],
@@ -2992,8 +2992,8 @@
       "screen_route_raw": "/admin/ai/models",
       "endpoint_raw": "GET /api/v1/admin/ai/providers, GET /api/v1/admin/ai/models",
       "tables_raw": "ai_providers, ai_models",
-      "origin_instr_raw": "§3.2#admin-ai",
-      "origin_techguide_raw": "§6.1#/admin/ai/models"
+      "origin_instr_raw": "\u00a73.2#admin-ai",
+      "origin_techguide_raw": "\u00a76.1#/admin/ai/models"
     },
     {
       "id": "P04-S01-T003",
@@ -3009,7 +3009,7 @@
         "P02-S05-T001",
         "P04-S01-T002"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 4.1 — Admin AI pages",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 4.1 \u2014 Admin AI pages",
       "acceptance": [
         "Wizard selects provider, captures credentials, lists models and validates fields",
         "VISUAL_CONTRACT_CHECK documents tokens, components, required states, real data/backend and visual evidence"
@@ -3029,8 +3029,8 @@
         "ai_provider_credentials",
         "ai_models"
       ],
-      "origin_instr": "§3.2#admin-ai",
-      "origin_techguide": "§6.1#/admin/ai/models/new",
+      "origin_instr": "\u00a73.2#admin-ai",
+      "origin_techguide": "\u00a76.1#/admin/ai/models/new",
       "allowed_paths": [
         "frontend/src/pages/admin/ai/ModelWizardPage.tsx"
       ],
@@ -3057,8 +3057,8 @@
       "screen_route_raw": "/admin/ai/models/new",
       "endpoint_raw": "POST /api/v1/admin/ai/providers, GET /api/v1/admin/ai/models",
       "tables_raw": "ai_providers, ai_provider_credentials, ai_models",
-      "origin_instr_raw": "§3.2#admin-ai",
-      "origin_techguide_raw": "§6.1#/admin/ai/models/new"
+      "origin_instr_raw": "\u00a73.2#admin-ai",
+      "origin_techguide_raw": "\u00a76.1#/admin/ai/models/new"
     },
     {
       "id": "P04-S01-T004",
@@ -3074,7 +3074,7 @@
         "P02-S05-T002",
         "P04-S01-T003"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 4.1 — Admin AI pages",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 4.1 \u2014 Admin AI pages",
       "acceptance": [
         "Drawer tests prompt, shows output, latency, cost and activate action",
         "VISUAL_CONTRACT_CHECK documents tokens, components, required states, real data/backend and visual evidence"
@@ -3094,8 +3094,8 @@
         "ai_models",
         "llm_usage_logs"
       ],
-      "origin_instr": "§3.2#admin-ai",
-      "origin_techguide": "§6.1#/admin/ai/models/:modelId/test",
+      "origin_instr": "\u00a73.2#admin-ai",
+      "origin_techguide": "\u00a76.1#/admin/ai/models/:modelId/test",
       "allowed_paths": [
         "frontend/src/pages/admin/ai/ModelTestDrawer.tsx"
       ],
@@ -3122,8 +3122,8 @@
       "screen_route_raw": "/admin/ai/models/:modelId/test",
       "endpoint_raw": "POST /api/v1/admin/ai/models/{id}/test, PATCH /api/v1/admin/ai/models/{id}",
       "tables_raw": "ai_model_tests, ai_models, llm_usage_logs",
-      "origin_instr_raw": "§3.2#admin-ai",
-      "origin_techguide_raw": "§6.1#/admin/ai/models/:modelId/test"
+      "origin_instr_raw": "\u00a73.2#admin-ai",
+      "origin_techguide_raw": "\u00a76.1#/admin/ai/models/:modelId/test"
     },
     {
       "id": "P04-S02-T001",
@@ -3139,7 +3139,7 @@
         "P02-S06-T001",
         "P00-S01-T004"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 4.2 — RAG, MCP and agents pages",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 4.2 \u2014 RAG, MCP and agents pages",
       "acceptance": [
         "Upload UI with document list, indexing status and validation states",
         "VISUAL_CONTRACT_CHECK documents tokens, components, required states, real data/backend and visual evidence"
@@ -3159,8 +3159,8 @@
         "document_versions",
         "vectorization_jobs"
       ],
-      "origin_instr": "§3.2#admin-rag",
-      "origin_techguide": "§6.1#/admin/rag/documents",
+      "origin_instr": "\u00a73.2#admin-rag",
+      "origin_techguide": "\u00a76.1#/admin/rag/documents",
       "allowed_paths": [
         "frontend/src/pages/admin/rag/RagDocumentsPage.tsx"
       ],
@@ -3187,8 +3187,8 @@
       "screen_route_raw": "/admin/rag/documents",
       "endpoint_raw": "POST /api/v1/admin/rag/documents, GET /api/v1/admin/rag/documents, POST /api/v1/admin/rag/documents/{id}/index",
       "tables_raw": "documents, document_versions, vectorization_jobs",
-      "origin_instr_raw": "§3.2#admin-rag",
-      "origin_techguide_raw": "§6.1#/admin/rag/documents"
+      "origin_instr_raw": "\u00a73.2#admin-rag",
+      "origin_techguide_raw": "\u00a76.1#/admin/rag/documents"
     },
     {
       "id": "P04-S02-T002",
@@ -3204,7 +3204,7 @@
         "P02-S06-T002",
         "P04-S02-T001"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 4.2 — RAG, MCP and agents pages",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 4.2 \u2014 RAG, MCP and agents pages",
       "acceptance": [
         "Collections table edits vertical/language/enabled and empty states",
         "VISUAL_CONTRACT_CHECK documents tokens, components, required states, real data/backend and visual evidence"
@@ -3222,8 +3222,8 @@
       "tables": [
         "rag_collections"
       ],
-      "origin_instr": "§3.2#admin-rag",
-      "origin_techguide": "§6.1#/admin/rag/collections",
+      "origin_instr": "\u00a73.2#admin-rag",
+      "origin_techguide": "\u00a76.1#/admin/rag/collections",
       "allowed_paths": [
         "frontend/src/pages/admin/rag/RagCollectionsPage.tsx"
       ],
@@ -3250,8 +3250,8 @@
       "screen_route_raw": "/admin/rag/collections",
       "endpoint_raw": "GET /api/v1/admin/rag/collections, PATCH /api/v1/admin/rag/collections/{id}",
       "tables_raw": "rag_collections",
-      "origin_instr_raw": "§3.2#admin-rag",
-      "origin_techguide_raw": "§6.1#/admin/rag/collections"
+      "origin_instr_raw": "\u00a73.2#admin-rag",
+      "origin_techguide_raw": "\u00a76.1#/admin/rag/collections"
     },
     {
       "id": "P04-S02-T003",
@@ -3267,7 +3267,7 @@
         "P02-S07-T001",
         "P00-S01-T004"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 4.2 — RAG, MCP and agents pages",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 4.2 \u2014 RAG, MCP and agents pages",
       "acceptance": [
         "MCP server list shows sync state, tool count and risk labels",
         "VISUAL_CONTRACT_CHECK documents tokens, components, required states, real data/backend and visual evidence"
@@ -3286,8 +3286,8 @@
         "mcp_servers",
         "mcp_tools"
       ],
-      "origin_instr": "§3.2#admin-mcp",
-      "origin_techguide": "§6.1#/admin/ai/mcp",
+      "origin_instr": "\u00a73.2#admin-mcp",
+      "origin_techguide": "\u00a76.1#/admin/ai/mcp",
       "allowed_paths": [
         "frontend/src/pages/admin/mcp/McpServersPage.tsx"
       ],
@@ -3314,8 +3314,8 @@
       "screen_route_raw": "/admin/ai/mcp",
       "endpoint_raw": "GET /api/v1/admin/ai/mcp/servers, POST /api/v1/admin/ai/mcp/servers/{id}/sync",
       "tables_raw": "mcp_servers, mcp_tools",
-      "origin_instr_raw": "§3.2#admin-mcp",
-      "origin_techguide_raw": "§6.1#/admin/ai/mcp"
+      "origin_instr_raw": "\u00a73.2#admin-mcp",
+      "origin_techguide_raw": "\u00a76.1#/admin/ai/mcp"
     },
     {
       "id": "P04-S02-T004",
@@ -3331,7 +3331,7 @@
         "P02-S07-T001",
         "P04-S02-T003"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 4.2 — RAG, MCP and agents pages",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 4.2 \u2014 RAG, MCP and agents pages",
       "acceptance": [
         "Wizard captures transport, endpoint, auth and test connection",
         "VISUAL_CONTRACT_CHECK documents tokens, components, required states, real data/backend and visual evidence"
@@ -3350,8 +3350,8 @@
         "mcp_servers",
         "mcp_credentials"
       ],
-      "origin_instr": "§3.2#admin-mcp",
-      "origin_techguide": "§6.1#/admin/ai/mcp/new",
+      "origin_instr": "\u00a73.2#admin-mcp",
+      "origin_techguide": "\u00a76.1#/admin/ai/mcp/new",
       "allowed_paths": [
         "frontend/src/pages/admin/mcp/McpWizardPage.tsx"
       ],
@@ -3378,8 +3378,8 @@
       "screen_route_raw": "/admin/ai/mcp/new",
       "endpoint_raw": "POST /api/v1/admin/ai/mcp/servers",
       "tables_raw": "mcp_servers, mcp_credentials",
-      "origin_instr_raw": "§3.2#admin-mcp",
-      "origin_techguide_raw": "§6.1#/admin/ai/mcp/new"
+      "origin_instr_raw": "\u00a73.2#admin-mcp",
+      "origin_techguide_raw": "\u00a76.1#/admin/ai/mcp/new"
     },
     {
       "id": "P04-S02-T005",
@@ -3395,7 +3395,7 @@
         "P02-S08-T001",
         "P04-S02-T003"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 4.2 — RAG, MCP and agents pages",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 4.2 \u2014 RAG, MCP and agents pages",
       "acceptance": [
         "Agents page binds approved tools and starts smoke run",
         "VISUAL_CONTRACT_CHECK documents tokens, components, required states, real data/backend and visual evidence"
@@ -3415,8 +3415,8 @@
         "mcp_agent_bindings",
         "agent_runs"
       ],
-      "origin_instr": "§3.2#admin-mcp",
-      "origin_techguide": "§6.1#/admin/ai/agents",
+      "origin_instr": "\u00a73.2#admin-mcp",
+      "origin_techguide": "\u00a76.1#/admin/ai/agents",
       "allowed_paths": [
         "frontend/src/pages/admin/agents/AgentsPage.tsx"
       ],
@@ -3443,8 +3443,8 @@
       "screen_route_raw": "/admin/ai/agents",
       "endpoint_raw": "GET /api/v1/admin/ai/agents, PATCH /api/v1/admin/ai/agents/{id}/tools, POST /api/v1/agents/runs",
       "tables_raw": "agents, mcp_agent_bindings, agent_runs",
-      "origin_instr_raw": "§3.2#admin-mcp",
-      "origin_techguide_raw": "§6.1#/admin/ai/agents"
+      "origin_instr_raw": "\u00a73.2#admin-mcp",
+      "origin_techguide_raw": "\u00a76.1#/admin/ai/agents"
     },
     {
       "id": "P04-S03-T001",
@@ -3460,7 +3460,7 @@
         "P01-S02-T007",
         "P00-S01-T004"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 4.3 — Audit and usage",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 4.3 \u2014 Audit and usage",
       "acceptance": [
         "Audit table filters events and handles empty/permission states",
         "VISUAL_CONTRACT_CHECK documents tokens, components, required states, real data/backend and visual evidence"
@@ -3480,8 +3480,8 @@
       "tables": [
         "audit_logs"
       ],
-      "origin_instr": "§3.2#auditoria-uso",
-      "origin_techguide": "§6.1#/admin/audit",
+      "origin_instr": "\u00a73.2#auditoria-uso",
+      "origin_techguide": "\u00a76.1#/admin/audit",
       "allowed_paths": [
         "frontend/src/pages/admin/audit/AuditLogPage.tsx"
       ],
@@ -3508,8 +3508,8 @@
       "screen_route_raw": "/admin/audit",
       "endpoint_raw": "GET /api/v1/admin/audit",
       "tables_raw": "audit_logs",
-      "origin_instr_raw": "§3.2#auditoria-uso",
-      "origin_techguide_raw": "§6.1#/admin/audit"
+      "origin_instr_raw": "\u00a73.2#auditoria-uso",
+      "origin_techguide_raw": "\u00a76.1#/admin/audit"
     },
     {
       "id": "P04-S03-T002",
@@ -3525,7 +3525,7 @@
         "P02-S05-T002",
         "P00-S01-T004"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 4.3 — Audit and usage",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 4.3 \u2014 Audit and usage",
       "acceptance": [
         "Usage page shows cost, tokens and latency by model",
         "VISUAL_CONTRACT_CHECK documents tokens, components, required states, real data/backend and visual evidence"
@@ -3543,8 +3543,8 @@
       "tables": [
         "llm_usage_logs"
       ],
-      "origin_instr": "§3.2#auditoria-uso",
-      "origin_techguide": "§6.1#/admin/usage",
+      "origin_instr": "\u00a73.2#auditoria-uso",
+      "origin_techguide": "\u00a76.1#/admin/usage",
       "allowed_paths": [
         "frontend/src/pages/admin/usage/UsagePage.tsx"
       ],
@@ -3571,8 +3571,8 @@
       "screen_route_raw": "/admin/usage",
       "endpoint_raw": "GET /api/v1/admin/usage",
       "tables_raw": "llm_usage_logs",
-      "origin_instr_raw": "§3.2#auditoria-uso",
-      "origin_techguide_raw": "§6.1#/admin/usage"
+      "origin_instr_raw": "\u00a73.2#auditoria-uso",
+      "origin_techguide_raw": "\u00a76.1#/admin/usage"
     },
     {
       "id": "P05-S01-T001",
@@ -3589,9 +3589,9 @@
         "P03-S01-T005",
         "P03-S02-T001"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 5.1 — Journey integration",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 5.1 \u2014 Journey integration",
       "acceptance": [
-        "Employee de verificación real/proporcionado entra con 2FA y llega al chat con perfil cargado"
+        "Employee de verificaci\u00f3n real/proporcionado entra con 2FA y llega al chat con perfil cargado"
       ],
       "verification_commands": [
         "/verify-journey J100"
@@ -3601,7 +3601,7 @@
       "journey_refs": [
         "J100"
       ],
-      "route": "/auth/sign-in → /auth/2fa → /chat",
+      "route": "/auth/sign-in \u2192 /auth/2fa \u2192 /chat",
       "endpoint": "POST /api/v1/auth/sign-in, POST /api/v1/auth/2fa/verify, GET /api/v1/users/me",
       "tables": [
         "users",
@@ -3610,8 +3610,8 @@
         "mfa_totp_secrets",
         "audit_logs"
       ],
-      "origin_instr": "§3.6#J100 + §3.7#J100",
-      "origin_techguide": "§6.1 + §6.2",
+      "origin_instr": "\u00a73.6#J100 + \u00a73.7#J100",
+      "origin_techguide": "\u00a76.1 + \u00a76.2",
       "allowed_paths": [
         "orchestrator-state/tasks/evidence/journeys/J100/**"
       ],
@@ -3635,11 +3635,11 @@
       "kind_raw": "journey",
       "target_raw": "J100 auth e2e",
       "journey_refs_raw": "J100",
-      "screen_route_raw": "/auth/sign-in → /auth/2fa → /chat",
+      "screen_route_raw": "/auth/sign-in \u2192 /auth/2fa \u2192 /chat",
       "endpoint_raw": "POST /api/v1/auth/sign-in, POST /api/v1/auth/2fa/verify, GET /api/v1/users/me",
       "tables_raw": "users, employee_profiles, refresh_tokens, mfa_totp_secrets, audit_logs",
-      "origin_instr_raw": "§3.6#J100 + §3.7#J100",
-      "origin_techguide_raw": "§6.1 + §6.2"
+      "origin_instr_raw": "\u00a73.6#J100 + \u00a73.7#J100",
+      "origin_techguide_raw": "\u00a76.1 + \u00a76.2"
     },
     {
       "id": "P05-S01-T002",
@@ -3656,7 +3656,7 @@
         "P03-S02-T002",
         "P02-S04-T001"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 5.1 — Journey integration",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 5.1 \u2014 Journey integration",
       "acceptance": [
         "Employee asks People policy and sees streamed response with citations"
       ],
@@ -3668,7 +3668,7 @@
       "journey_refs": [
         "J101"
       ],
-      "route": "/chat → /chat/:conversationId",
+      "route": "/chat \u2192 /chat/:conversationId",
       "endpoint": "POST /api/v1/chat/conversations, POST /api/v1/chat/conversations/{id}/stream, GET /api/v1/chat/conversations/{id}",
       "tables": [
         "conversations",
@@ -3677,8 +3677,8 @@
         "llm_usage_logs",
         "document_chunks"
       ],
-      "origin_instr": "§3.6#J101 + §3.7#J101",
-      "origin_techguide": "§6.1 + §6.2",
+      "origin_instr": "\u00a73.6#J101 + \u00a73.7#J101",
+      "origin_techguide": "\u00a76.1 + \u00a76.2",
       "allowed_paths": [
         "orchestrator-state/tasks/evidence/journeys/J101/**"
       ],
@@ -3702,11 +3702,11 @@
       "kind_raw": "journey",
       "target_raw": "J101 chat RAG e2e",
       "journey_refs_raw": "J101",
-      "screen_route_raw": "/chat → /chat/:conversationId",
+      "screen_route_raw": "/chat \u2192 /chat/:conversationId",
       "endpoint_raw": "POST /api/v1/chat/conversations, POST /api/v1/chat/conversations/{id}/stream, GET /api/v1/chat/conversations/{id}",
       "tables_raw": "conversations, messages, message_citations, llm_usage_logs, document_chunks",
-      "origin_instr_raw": "§3.6#J101 + §3.7#J101",
-      "origin_techguide_raw": "§6.1 + §6.2"
+      "origin_instr_raw": "\u00a73.6#J101 + \u00a73.7#J101",
+      "origin_techguide_raw": "\u00a76.1 + \u00a76.2"
     },
     {
       "id": "P05-S01-T003",
@@ -3723,7 +3723,7 @@
         "P03-S02-T003",
         "P03-S02-T004"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 5.1 — Journey integration",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 5.1 \u2014 Journey integration",
       "acceptance": [
         "Employee opens history and changes language to French, UI updates"
       ],
@@ -3735,15 +3735,15 @@
       "journey_refs": [
         "J102"
       ],
-      "route": "/history → /chat/:conversationId → /account",
+      "route": "/history \u2192 /chat/:conversationId \u2192 /account",
       "endpoint": "GET /api/v1/chat/conversations, GET /api/v1/chat/conversations/{id}, PATCH /api/v1/users/me/language",
       "tables": [
         "users",
         "conversations",
         "messages"
       ],
-      "origin_instr": "§3.6#J102 + §3.7#J102",
-      "origin_techguide": "§6.1 + §6.2",
+      "origin_instr": "\u00a73.6#J102 + \u00a73.7#J102",
+      "origin_techguide": "\u00a76.1 + \u00a76.2",
       "allowed_paths": [
         "orchestrator-state/tasks/evidence/journeys/J102/**"
       ],
@@ -3767,11 +3767,11 @@
       "kind_raw": "journey",
       "target_raw": "J102 history language e2e",
       "journey_refs_raw": "J102",
-      "screen_route_raw": "/history → /chat/:conversationId → /account",
+      "screen_route_raw": "/history \u2192 /chat/:conversationId \u2192 /account",
       "endpoint_raw": "GET /api/v1/chat/conversations, GET /api/v1/chat/conversations/{id}, PATCH /api/v1/users/me/language",
       "tables_raw": "users, conversations, messages",
-      "origin_instr_raw": "§3.6#J102 + §3.7#J102",
-      "origin_techguide_raw": "§6.1 + §6.2"
+      "origin_instr_raw": "\u00a73.6#J102 + \u00a73.7#J102",
+      "origin_techguide_raw": "\u00a76.1 + \u00a76.2"
     },
     {
       "id": "P05-S01-T004",
@@ -3788,7 +3788,7 @@
         "P04-S01-T003",
         "P04-S01-T004"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 5.1 — Journey integration",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 5.1 \u2014 Journey integration",
       "acceptance": [
         "Admin creates provider, tests model and activates default"
       ],
@@ -3800,7 +3800,7 @@
       "journey_refs": [
         "J103"
       ],
-      "route": "/admin/ai/models → /admin/ai/models/new → /admin/ai/models/:modelId/test",
+      "route": "/admin/ai/models \u2192 /admin/ai/models/new \u2192 /admin/ai/models/:modelId/test",
       "endpoint": "GET /api/v1/admin/ai/providers, POST /api/v1/admin/ai/providers, GET /api/v1/admin/ai/models, PATCH /api/v1/admin/ai/models/{id}, POST /api/v1/admin/ai/models/{id}/test",
       "tables": [
         "ai_providers",
@@ -3810,8 +3810,8 @@
         "llm_usage_logs",
         "audit_logs"
       ],
-      "origin_instr": "§3.6#J103 + §3.7#J103",
-      "origin_techguide": "§6.1 + §6.2",
+      "origin_instr": "\u00a73.6#J103 + \u00a73.7#J103",
+      "origin_techguide": "\u00a76.1 + \u00a76.2",
       "allowed_paths": [
         "orchestrator-state/tasks/evidence/journeys/J103/**"
       ],
@@ -3835,11 +3835,11 @@
       "kind_raw": "journey",
       "target_raw": "J103 admin AI e2e",
       "journey_refs_raw": "J103",
-      "screen_route_raw": "/admin/ai/models → /admin/ai/models/new → /admin/ai/models/:modelId/test",
+      "screen_route_raw": "/admin/ai/models \u2192 /admin/ai/models/new \u2192 /admin/ai/models/:modelId/test",
       "endpoint_raw": "GET /api/v1/admin/ai/providers, POST /api/v1/admin/ai/providers, GET /api/v1/admin/ai/models, PATCH /api/v1/admin/ai/models/{id}, POST /api/v1/admin/ai/models/{id}/test",
       "tables_raw": "ai_providers, ai_provider_credentials, ai_models, ai_model_tests, llm_usage_logs, audit_logs",
-      "origin_instr_raw": "§3.6#J103 + §3.7#J103",
-      "origin_techguide_raw": "§6.1 + §6.2"
+      "origin_instr_raw": "\u00a73.6#J103 + \u00a73.7#J103",
+      "origin_techguide_raw": "\u00a76.1 + \u00a76.2"
     },
     {
       "id": "P05-S01-T005",
@@ -3855,7 +3855,7 @@
         "P04-S02-T001",
         "P04-S02-T002"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 5.1 — Journey integration",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 5.1 \u2014 Journey integration",
       "acceptance": [
         "Admin uploads policy PDF, indexes it and sees active collection"
       ],
@@ -3867,7 +3867,7 @@
       "journey_refs": [
         "J104"
       ],
-      "route": "/admin/rag/documents → /admin/rag/collections",
+      "route": "/admin/rag/documents \u2192 /admin/rag/collections",
       "endpoint": "POST /api/v1/admin/rag/documents, GET /api/v1/admin/rag/documents, POST /api/v1/admin/rag/documents/{id}/index, GET /api/v1/admin/rag/collections, PATCH /api/v1/admin/rag/collections/{id}",
       "tables": [
         "rag_collections",
@@ -3877,8 +3877,8 @@
         "document_embeddings",
         "vectorization_jobs"
       ],
-      "origin_instr": "§3.6#J104 + §3.7#J104",
-      "origin_techguide": "§6.1 + §6.2",
+      "origin_instr": "\u00a73.6#J104 + \u00a73.7#J104",
+      "origin_techguide": "\u00a76.1 + \u00a76.2",
       "allowed_paths": [
         "orchestrator-state/tasks/evidence/journeys/J104/**"
       ],
@@ -3902,11 +3902,11 @@
       "kind_raw": "journey",
       "target_raw": "J104 RAG admin e2e",
       "journey_refs_raw": "J104",
-      "screen_route_raw": "/admin/rag/documents → /admin/rag/collections",
+      "screen_route_raw": "/admin/rag/documents \u2192 /admin/rag/collections",
       "endpoint_raw": "POST /api/v1/admin/rag/documents, GET /api/v1/admin/rag/documents, POST /api/v1/admin/rag/documents/{id}/index, GET /api/v1/admin/rag/collections, PATCH /api/v1/admin/rag/collections/{id}",
       "tables_raw": "rag_collections, documents, document_versions, document_chunks, document_embeddings, vectorization_jobs",
-      "origin_instr_raw": "§3.6#J104 + §3.7#J104",
-      "origin_techguide_raw": "§6.1 + §6.2"
+      "origin_instr_raw": "\u00a73.6#J104 + \u00a73.7#J104",
+      "origin_techguide_raw": "\u00a76.1 + \u00a76.2"
     },
     {
       "id": "P05-S01-T006",
@@ -3923,7 +3923,7 @@
         "P04-S02-T004",
         "P04-S02-T005"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 5.1 — Journey integration",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 5.1 \u2014 Journey integration",
       "acceptance": [
         "Admin registers MCP sandbox, syncs tools and binds approved tool to agent"
       ],
@@ -3935,7 +3935,7 @@
       "journey_refs": [
         "J105"
       ],
-      "route": "/admin/ai/mcp → /admin/ai/mcp/new → /admin/ai/agents",
+      "route": "/admin/ai/mcp \u2192 /admin/ai/mcp/new \u2192 /admin/ai/agents",
       "endpoint": "GET /api/v1/admin/ai/mcp/servers, POST /api/v1/admin/ai/mcp/servers, POST /api/v1/admin/ai/mcp/servers/{id}/sync, PATCH /api/v1/admin/ai/mcp/tools/{id}, GET /api/v1/admin/ai/agents, PATCH /api/v1/admin/ai/agents/{id}/tools",
       "tables": [
         "mcp_servers",
@@ -3946,8 +3946,8 @@
         "agent_runs",
         "audit_logs"
       ],
-      "origin_instr": "§3.6#J105 + §3.7#J105",
-      "origin_techguide": "§6.1 + §6.2",
+      "origin_instr": "\u00a73.6#J105 + \u00a73.7#J105",
+      "origin_techguide": "\u00a76.1 + \u00a76.2",
       "allowed_paths": [
         "orchestrator-state/tasks/evidence/journeys/J105/**"
       ],
@@ -3971,11 +3971,11 @@
       "kind_raw": "journey",
       "target_raw": "J105 MCP agents e2e",
       "journey_refs_raw": "J105",
-      "screen_route_raw": "/admin/ai/mcp → /admin/ai/mcp/new → /admin/ai/agents",
+      "screen_route_raw": "/admin/ai/mcp \u2192 /admin/ai/mcp/new \u2192 /admin/ai/agents",
       "endpoint_raw": "GET /api/v1/admin/ai/mcp/servers, POST /api/v1/admin/ai/mcp/servers, POST /api/v1/admin/ai/mcp/servers/{id}/sync, PATCH /api/v1/admin/ai/mcp/tools/{id}, GET /api/v1/admin/ai/agents, PATCH /api/v1/admin/ai/agents/{id}/tools",
       "tables_raw": "mcp_servers, mcp_credentials, mcp_tools, mcp_agent_bindings, agents, agent_runs, audit_logs",
-      "origin_instr_raw": "§3.6#J105 + §3.7#J105",
-      "origin_techguide_raw": "§6.1 + §6.2"
+      "origin_instr_raw": "\u00a73.6#J105 + \u00a73.7#J105",
+      "origin_techguide_raw": "\u00a76.1 + \u00a76.2"
     },
     {
       "id": "P05-S02-T001",
@@ -3992,7 +3992,7 @@
         "P05-S01-T005",
         "P05-S01-T006"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 5.2 — Security, observability and visual gate",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 5.2 \u2014 Security, observability and visual gate",
       "acceptance": [
         "Audit endpoint returns filtered events",
         "security headers and rate limits active"
@@ -4012,8 +4012,8 @@
       "tables": [
         "audit_logs"
       ],
-      "origin_instr": "§14#observability",
-      "origin_techguide": "§6.2#GET-/api/v1/admin/audit",
+      "origin_instr": "\u00a714#observability",
+      "origin_techguide": "\u00a76.2#GET-/api/v1/admin/audit",
       "allowed_paths": [
         "backend/app/admin/audit.py",
         "backend/app/core/security_headers.py",
@@ -4045,8 +4045,8 @@
       "screen_route_raw": "/admin/audit",
       "endpoint_raw": "GET /api/v1/admin/audit",
       "tables_raw": "audit_logs",
-      "origin_instr_raw": "§14#observability",
-      "origin_techguide_raw": "§6.2#GET-/api/v1/admin/audit"
+      "origin_instr_raw": "\u00a714#observability",
+      "origin_techguide_raw": "\u00a76.2#GET-/api/v1/admin/audit"
     },
     {
       "id": "P05-S02-T002",
@@ -4062,7 +4062,7 @@
         "P05-S01-T002",
         "P05-S01-T004"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 5.2 — Security, observability and visual gate",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 5.2 \u2014 Security, observability and visual gate",
       "acceptance": [
         "Prometheus metrics exposed",
         "chat stream and model test latency histograms populated"
@@ -4083,8 +4083,8 @@
         "vectorization_jobs",
         "mcp_tool_invocations"
       ],
-      "origin_instr": "§14#logging",
-      "origin_techguide": "§8#logging-observability",
+      "origin_instr": "\u00a714#logging",
+      "origin_techguide": "\u00a78#logging-observability",
       "allowed_paths": [
         "backend/app/core/metrics.py",
         "backend/tests/perf/**"
@@ -4110,11 +4110,11 @@
       "kind_raw": "setup",
       "target_raw": "Observability and performance smoke",
       "journey_refs_raw": "J101,J103",
-      "screen_route_raw": "—",
+      "screen_route_raw": "\u2014",
       "endpoint_raw": "internal/no-front",
       "tables_raw": "llm_usage_logs, vectorization_jobs, mcp_tool_invocations",
-      "origin_instr_raw": "§14#logging",
-      "origin_techguide_raw": "§8#logging-observability"
+      "origin_instr_raw": "\u00a714#logging",
+      "origin_techguide_raw": "\u00a78#logging-observability"
     },
     {
       "id": "P05-S02-T003",
@@ -4134,7 +4134,7 @@
         "P05-S01-T005",
         "P05-S01-T006"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 5.2 — Security, observability and visual gate",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 5.2 \u2014 Security, observability and visual gate",
       "acceptance": [
         "Screenshots show editorial tokens, hairlines, black CTA and zero rounded cards",
         "VISUAL_CONTRACT_CHECK documents tokens, components, required states, real data/backend and visual evidence"
@@ -4154,8 +4154,8 @@
       "route": "/auth/sign-in, /chat, /admin/ai/models",
       "endpoint": "",
       "tables": [],
-      "origin_instr": "§7#theme",
-      "origin_techguide": "§7#design-system",
+      "origin_instr": "\u00a77#theme",
+      "origin_techguide": "\u00a77#design-system",
       "allowed_paths": [
         "frontend/src/shared/styles/**",
         "docs/visualization/hilo-people/**"
@@ -4183,10 +4183,10 @@
       "target_raw": "Visual regression and design token gate",
       "journey_refs_raw": "J100,J101,J103,J104,J105",
       "screen_route_raw": "/auth/sign-in, /chat, /admin/ai/models",
-      "endpoint_raw": "—",
-      "tables_raw": "—",
-      "origin_instr_raw": "§7#theme",
-      "origin_techguide_raw": "§7#design-system"
+      "endpoint_raw": "\u2014",
+      "tables_raw": "\u2014",
+      "origin_instr_raw": "\u00a77#theme",
+      "origin_techguide_raw": "\u00a77#design-system"
     },
     {
       "id": "P06-S01-T001",
@@ -4203,7 +4203,7 @@
         "P05-S02-T002",
         "P05-S02-T003"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 6.1 — Build and release readiness",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 6.1 \u2014 Build and release readiness",
       "acceptance": [
         "Frontend build, backend image and compose smoke pass"
       ],
@@ -4223,8 +4223,8 @@
       "route": "",
       "endpoint": "",
       "tables": [],
-      "origin_instr": "§16#delivery",
-      "origin_techguide": "§11#deploy",
+      "origin_instr": "\u00a716#delivery",
+      "origin_techguide": "\u00a711#deploy",
       "allowed_paths": [
         "frontend/dist/**",
         "backend/Dockerfile",
@@ -4252,11 +4252,11 @@
       "kind_raw": "release",
       "target_raw": "Production build and compose smoke",
       "journey_refs_raw": "J100,J101,J102,J103,J104,J105",
-      "screen_route_raw": "—",
-      "endpoint_raw": "—",
-      "tables_raw": "—",
-      "origin_instr_raw": "§16#delivery",
-      "origin_techguide_raw": "§11#deploy"
+      "screen_route_raw": "\u2014",
+      "endpoint_raw": "\u2014",
+      "tables_raw": "\u2014",
+      "origin_instr_raw": "\u00a716#delivery",
+      "origin_techguide_raw": "\u00a711#deploy"
     },
     {
       "id": "P06-S01-T002",
@@ -4271,7 +4271,7 @@
       "depends_on": [
         "P06-S01-T001"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 6.1 — Build and release readiness",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 6.1 \u2014 Build and release readiness",
       "acceptance": [
         "Runbooks cover env, migrations, rollback, MCP allowlist and incident response"
       ],
@@ -4284,8 +4284,8 @@
       "route": "",
       "endpoint": "",
       "tables": [],
-      "origin_instr": "§16#delivery",
-      "origin_techguide": "§11#deploy",
+      "origin_instr": "\u00a716#delivery",
+      "origin_techguide": "\u00a711#deploy",
       "allowed_paths": [
         "README.md",
         "docs/runbooks/**"
@@ -4310,12 +4310,12 @@
       "verify_mode_raw": "human",
       "kind_raw": "release",
       "target_raw": "Runbooks and README",
-      "journey_refs_raw": "—",
-      "screen_route_raw": "—",
-      "endpoint_raw": "—",
-      "tables_raw": "—",
-      "origin_instr_raw": "§16#delivery",
-      "origin_techguide_raw": "§11#deploy"
+      "journey_refs_raw": "\u2014",
+      "screen_route_raw": "\u2014",
+      "endpoint_raw": "\u2014",
+      "tables_raw": "\u2014",
+      "origin_instr_raw": "\u00a716#delivery",
+      "origin_techguide_raw": "\u00a711#deploy"
     },
     {
       "id": "P06-S01-T003",
@@ -4331,7 +4331,7 @@
         "P06-S01-T001",
         "P06-S01-T002"
       ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 6.2 — Final acceptance",
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 6.2 \u2014 Final acceptance",
       "acceptance": [
         "All journeys verified, tests green, docs up to date and no critical security findings"
       ],
@@ -4353,8 +4353,8 @@
       "tables": [
         "all tables"
       ],
-      "origin_instr": "§10#acceptance",
-      "origin_techguide": "§13#milestones",
+      "origin_instr": "\u00a710#acceptance",
+      "origin_techguide": "\u00a713#milestones",
       "allowed_paths": [
         "orchestrator-state/tasks/evidence/final/**"
       ],
@@ -4381,14 +4381,14 @@
       "screen_route_raw": "all journeys",
       "endpoint_raw": "all endpoints",
       "tables_raw": "all tables",
-      "origin_instr_raw": "§10#acceptance",
-      "origin_techguide_raw": "§13#milestones"
+      "origin_instr_raw": "\u00a710#acceptance",
+      "origin_techguide_raw": "\u00a713#milestones"
     }
   ],
   "journeys": [
     {
       "id": "J100",
-      "title": "SignInPage /auth/sign-in → TwoFactorPage /auth/2fa → ChatHomePage /chat",
+      "title": "SignInPage /auth/sign-in \u2192 TwoFactorPage /auth/2fa \u2192 ChatHomePage /chat",
       "milestone": "M1",
       "screens": [
         "SignInPage /auth/sign-in",
@@ -4458,7 +4458,7 @@
     },
     {
       "id": "J101",
-      "title": "ChatHomePage /chat → ConversationPage /chat/:conversationId",
+      "title": "ChatHomePage /chat \u2192 ConversationPage /chat/:conversationId",
       "milestone": "M2",
       "screens": [
         "ChatHomePage /chat",
@@ -4519,7 +4519,7 @@
     },
     {
       "id": "J102",
-      "title": "HistoryPage /history → ConversationPage /chat/:conversationId → AccountPage /account",
+      "title": "HistoryPage /history \u2192 ConversationPage /chat/:conversationId \u2192 AccountPage /account",
       "milestone": "M2",
       "screens": [
         "HistoryPage /history",
@@ -4576,7 +4576,7 @@
     },
     {
       "id": "J103",
-      "title": "AdminAiModelsPage /admin/ai/models → ModelWizardPage /admin/ai/models/new → ModelTestDrawer /admin/ai/models/:modelId/test",
+      "title": "AdminAiModelsPage /admin/ai/models \u2192 ModelWizardPage /admin/ai/models/new \u2192 ModelTestDrawer /admin/ai/models/:modelId/test",
       "milestone": "M3",
       "screens": [
         "AdminAiModelsPage /admin/ai/models",
@@ -4639,7 +4639,7 @@
     },
     {
       "id": "J104",
-      "title": "RagDocumentsPage /admin/rag/documents → RagCollectionsPage /admin/rag/collections",
+      "title": "RagDocumentsPage /admin/rag/documents \u2192 RagCollectionsPage /admin/rag/collections",
       "milestone": "M4",
       "screens": [
         "RagDocumentsPage /admin/rag/documents",
@@ -4698,7 +4698,7 @@
     },
     {
       "id": "J105",
-      "title": "McpServersPage /admin/ai/mcp → McpWizardPage /admin/ai/mcp/new → AgentsPage /admin/ai/agents",
+      "title": "McpServersPage /admin/ai/mcp \u2192 McpWizardPage /admin/ai/mcp/new \u2192 AgentsPage /admin/ai/agents",
       "milestone": "M5",
       "screens": [
         "McpServersPage /admin/ai/mcp",
