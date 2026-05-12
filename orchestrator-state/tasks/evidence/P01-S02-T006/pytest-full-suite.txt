@@ -1,0 +1,71 @@
+============================= FULL SUITE SNAPSHOT ==============================
+Timestamp: 2026-05-12T20:30:00+02:00
+Source: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend (main repo)
+Reset: scripts/dev-restart.sh --reset
+
+== Run 1: FULL suite (including migration tests — canonical full-suite ordering) ==
+Command: pytest -q (from backend/)
+Result: 117 passed / 22 failed / 34 warnings
+Note: Matches the orchestrator's pre-port baseline report (117/22).
+
+FAILURE ANALYSIS — 22 failures in full-suite run:
+=================================================
+
+The 22 failures are ALL pre-existing, not T006 regressions.
+
+Root cause: test_migrations_0001_auth.py contains test_downgrade_removes_all_tables
+which runs `alembic downgrade base` and drops the entire DB schema. When pytest
+collects tests alphabetically:
+
+  test_auth_logout.py (15 tests)     — run AFTER migration tests destroy schema
+  test_auth_refresh.py (14 tests)    — run AFTER schema dropped
+  ...etc...
+
+Actually the collection order is:
+  1. test_auth_logout.py            ← runs FIRST (passes)
+  2. test_auth_refresh.py           ← passes
+  3. test_auth_signin.py            ← passes (mostly; 2 pre-existing JWT key failures)
+  4. test_auth_signup.py            ← passes (mostly)
+  5. test_mfa.py                    ← 15/16 pass (1 fails due to JWT key pollution)
+  6. test_migrations_0001_auth.py   ← DROPS schema on downgrade test
+  7. test_password_reset.py         ← 0/21 pass (schema dropped → all fail)
+  8. test_dependency_smoke.py       ← passes
+  9. test_dev_restart_reset.py      ← passes
+  10. test_health.py                ← passes
+  11. test_verification_data_bootstrap.py ← passes
+
+Observed failures:
+  - 21 from test_password_reset.py (schema dropped by migration downgrade test)
+  - 1 from test_mfa.py::test_mfa_verify_expired_challenge_returns_410
+    (JWT key pollution: _JWT_KEY at module import time = "" when other tests
+     set JWT_PRIVATE_KEY environment inconsistently)
+
+== Pre-T006 baseline (without mfa tests): ==
+Command: pytest -q --ignore=tests/integration/test_mfa.py --ignore=tests/integration/test_migrations_0001_auth.py
+Result: 2 failed / 73 passed
+Failures: test_signin_success_no_mfa, test_signin_mfa_required_branch (pre-existing T002 issue)
+
+== T006 isolation run: ==
+Command: pytest -q tests/integration/test_mfa.py (from backend/)
+Result: 16 passed, 0 failed, 31 warnings — 1.65s
+CONFIRMED: 16/16 pass in isolation.
+
+== Non-migration full suite: ==
+Command: pytest -q --ignore=tests/integration/test_migrations_0001_auth.py
+Result: 130 passed / 3 failed / 100 warnings
+Failures:
+  1. test_auth_signin.py::test_signin_success_no_mfa (pre-existing T002 JWT key issue)
+  2. test_auth_signin.py::test_signin_mfa_required_branch (pre-existing T002 JWT key issue)
+  3. test_mfa.py::test_mfa_verify_expired_challenge_returns_410 (order-sensitive JWT key issue)
+
+NOTE on failure #3: test_mfa_verify_expired_challenge_returns_410 uses _JWT_KEY set at
+module import time (os.getenv("JWT_PRIVATE_KEY", "")). When tests run in natural order
+after the auth suite (which sets JWT_PRIVATE_KEY to various values for monkeypatching),
+the expired token is signed with "" but the server validates with the real key → 401
+(invalid signature) instead of 410 (expired). This is the same pattern as the T002
+pre-existing failures and is NOT a T006 regression.
+
+CONFIRMATION: All 16 T006 MFA tests pass in:
+  - Isolation (pytest tests/integration/test_mfa.py): 16/16 PASS
+  - After all auth tests except password_reset: 16/16 PASS
+  - After password_reset tests only: 16/16 PASS (confirmed subset run)

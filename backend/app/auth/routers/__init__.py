@@ -19,8 +19,9 @@ Submodules:
 """
 
 from app.auth.routers.logout import logout_router
+from app.auth.routers.mfa import mfa_router
 from app.auth.routers.refresh import refresh_router
 from app.auth.routers.sign_in import sign_in_router
 from app.auth.routers.sign_up import sign_up_router
 
-__all__ = ["logout_router", "refresh_router", "sign_in_router", "sign_up_router"]
+__all__ = ["logout_router", "mfa_router", "refresh_router", "sign_in_router", "sign_up_router"]

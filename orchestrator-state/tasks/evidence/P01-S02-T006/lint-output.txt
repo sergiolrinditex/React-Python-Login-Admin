@@ -1,0 +1,7 @@
+Timestamp: 2026-05-12T20:28:00+02:00
+Command: cd backend && python3 -m ruff check app tests
+Source: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend (main repo, NOT worktree)
+
+All checks passed!
+
+Result: 0 lint issues. Ruff clean.

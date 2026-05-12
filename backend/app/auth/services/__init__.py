@@ -16,9 +16,11 @@ Submodules:
   - logout.py   — LogoutUser (P01-S02-T004)
   - password_reset_request.py — RequestPasswordReset (P01-S02-T005)
   - password_reset_consume.py — ResetPassword (P01-S02-T005)
+  - mfa.py — VerifyMfaChallenge, VerifyMfaResult (P01-S02-T006)
 """
 
 from app.auth.services.logout import LogoutUser
+from app.auth.services.mfa import VerifyMfaChallenge, VerifyMfaResult
 from app.auth.services.password_reset_consume import ResetPassword
 from app.auth.services.password_reset_request import RequestPasswordReset
 from app.auth.services.refresh import RefreshResult, RefreshTokenUser
@@ -35,4 +37,6 @@ __all__ = [
     "SignInUser",
     "SignUpResult",
     "SignUpUser",
+    "VerifyMfaChallenge",
+    "VerifyMfaResult",
 ]

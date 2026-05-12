@@ -90,6 +90,7 @@ def _load_limits(prefix: str) -> Tuple[int, int]:
         "REFRESH": ("30", None),
         "FORGOT": ("3", None),   # tight: reset emails = potential harassment vector
         "RESET": ("10", None),   # DB + argon2 path
+        "MFA_VERIFY": ("20", None),  # tight: 20/min, burst 5 (D-MFA-RL1)
     }
     default_rate, _ = defaults.get(prefix, ("10", None))
     rate_per_minute = int(os.getenv(f"AUTH_{prefix}_RATE_PER_MINUTE", default_rate))
@@ -276,3 +277,31 @@ def check_rate_limit_reset(ip: str) -> None:
     result = _check_bucket("RESET", ip, rate_per_minute, burst)
     if result < 0:
         raise ResetPasswordRateLimitedError(retry_after=abs(result))
+
+
+def check_rate_limit_mfa_verify(ip: str) -> None:
+    """Check and consume one MFA verify token for the given IP.
+
+    Separate bucket from SIGNIN, REFRESH, etc. per D-MFA-RL1.
+    Defaults: AUTH_MFA_VERIFY_RATE_PER_MINUTE=20, AUTH_MFA_VERIFY_RATE_BURST=5.
+
+    Tight defaults: a real user enters 6 digits in <60s; 20/min covers retries
+    comfortably. Burst 5 = "type-and-paste-twice" before slowing.
+
+    Args:
+        ip: Client IP address.
+
+    Raises:
+        MfaVerifyRateLimitedError: Rate limit exceeded; includes retry_after seconds.
+
+    Ref: task pack P01-S02-T006 §F.5 (D-MFA-RL1), WRITE_SET_DRIFT §D-MFA1.F
+    """
+    from app.auth.errors import MfaVerifyRateLimitedError  # noqa: PLC0415
+
+    rate_per_minute, _ = _load_limits("MFA_VERIFY")
+    # MFA_VERIFY burst defaults to 5 (not rate_per_minute) per D-MFA-RL1
+    import os as _os
+    burst = int(_os.getenv("AUTH_MFA_VERIFY_RATE_BURST", "5"))
+    result = _check_bucket("MFA_VERIFY", ip, rate_per_minute, burst)
+    if result < 0:
+        raise MfaVerifyRateLimitedError(retry_after=abs(result))

@@ -305,6 +305,61 @@ Status: `RESOLVED: yes` — no discrepancies; all items are decision-aids fillin
 - #### Hook 8 — Pydantic v2.12.5 validators — CONFIRMED
 - ## Notes for next researcher
 
+### 2026-05-12 — P01-S02-T005 Resend Python SDK, aiosmtplib, OWASP forgot-password
+
+**Sources**: PyPI live JSON (resend 2.30.0, aiosmtplib 5.1.0), Context7 /resend/resend-python, /websites/resend, /llmstxt/resend_llms-full_txt, /cole/aiosmtplib, resend.com/docs/send-with-python, resend.com/docs/dashboard/emails/idempotency-keys, cheatsheetseries.owasp.org/cheatsheets/Forgot_Password_Cheat_Sheet.html, cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html
+**Cache valid until**: 2026-05-19 (stable tech; resend is NOT AI/ML volatile, re-check if version bump suspected)
+**Note file**: `orchestrator-state/memory/official-doc-notes/P01-S02-T005-resend-mail-2026-05-12.md`
+**OUTCOME**: verified — no blocking discrepancy
+
+#### Key findings
+
+| Item | Value |
+|---|---|
+| `resend` PyPI | **2.30.0** (2026-05-04) |
+| Init | `resend.api_key = os.environ["RESEND_API_KEY"]` (module singleton, NOT class instantiation) |
+| Send sync | `resend.Emails.send(params)` → TypedDict `{"id": str}` |
+| Send async | `await resend.Emails.send_async(params)` — **native coroutine**, no run_in_threadpool needed |
+| Python casing | snake_case params (`reply_to`, NOT `replyTo`) |
+| Idempotency | `options={"idempotency_key": "..."}` — officially supported |
+| Sandbox/dry-run | **None** — zero mention in official docs; outbox-JSONL dev pattern is correct |
+| Exceptions | `resend.exceptions.{ResendError, ValidationError, MissingApiKeyError, InvalidApiKeyError, RateLimitError, MissingRequiredFieldsError, ApplicationError}` |
+| SMTP fallback | `aiosmtplib==5.1.0` (Production/Stable, Python>=3.10, zero deps) |
+| SMTP port | 587+STARTTLS (`start_tls=None` default) recommended; 465+`use_tls=True` also valid |
+| Anti-enum OWASP | Body byte-equal + timing-equal — confirmed 2026 |
+| Token generation | `secrets.token_urlsafe(32)` (256 bits) — confirmed sufficient |
+| Token storage | `sha256(raw).hexdigest()` — confirmed sufficient (256-bit entropy makes brute-force infeasible) |
+| Token TTL | OWASP says "appropriate period" — 3600s (1h) is industry consensus, aligned |
+
+### 2026-05-12 — P01-S02-T006 pyotp TOTP verify API
+
+**Sources**: PyPI live JSON (pyotp 2.9.0), Context7 /pyauth/pyotp, GitHub pyauth/pyotp source (totp.py, otp.py), GitHub security advisories, OSV.dev + NVD search.
+**Cache valid until**: 2026-05-19 (stable library; not AI/ML volatile)
+**Note file**: `orchestrator-state/memory/official-doc-notes/P01-S02-T006-pyotp-2026-05-12.md`
+**OUTCOME**: verified — no blocking discrepancy; two non-blocking recommendations
+
+#### Key findings
+
+| Item | Value |
+|---|---|
+| Latest stable | **2.9.0** (2023-07-27); 2.x is the latest series; no 3.x |
+| Pin string | `"pyotp==2.9.0"` (pyproject.toml and requirements.txt) |
+| `verify()` signature | `verify(otp: str, for_time=None, valid_window: int = 0) -> bool` |
+| 2nd param name | `for_time` (NOT `timestamp`; Context7 summary used `timestamp` — source code is authoritative) |
+| Return type | `bool` only; **never raises** on valid str input; constant-time via `utils.strings_equal` |
+| Malformed code | `str(otp)` cast; non-matching str returns `False`; no exception raised |
+| Code type | `str` only; bytes would stringify to `"b'...'"` → always `False` (no exception) |
+| valid_window=1 | Accepts [-1, 0, +1] time steps ≈ 90s window; task pack §F.2 confirmed reasonable |
+| Secret format | Plain base32 str (e.g. `"JBSWY3DPEHPK3PXP"`); NOT bytes; casefold=True; auto-padding |
+| Invalid base32 | Raises `binascii.Error` from `byte_secret()`; recommend try/except in service |
+| Replay prevention | pyotp has NONE; app MUST track consumed codes/jtis → confirms Decision F.1 |
+| CVEs | **None** as of 2026-05-12 (GitHub advisories: 0; OSV.dev: 0; NVD: 0) |
+
+#### Non-blocking recommendations to developer
+
+1. Consider `re.fullmatch(r'\d{6}', v)` in Pydantic validator instead of `v.isdigit()` to block Unicode fullwidth digits (e.g. `"１２３４５６"`).
+2. Wrap `pyotp.TOTP(seed)` construction in try/except `binascii.Error` → map to `MfaSecretMissingError` with audit reason `no_secret`.
+
 ## Canonical references
 - `.claude/orchestrator-contract.json`
 - `.claude/rules/00-source-of-truth.md`

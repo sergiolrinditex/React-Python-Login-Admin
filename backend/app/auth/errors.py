@@ -334,3 +334,136 @@ class ResetPasswordRateLimitedError(RateLimitExceededError):
         """
         AuthError.__init__(self, f"Too many reset attempts; retry after {retry_after}s")
         self.retry_after = retry_after
+
+
+# ---------------------------------------------------------------------------
+# MFA 2FA verify errors (added P01-S02-T006) — WRITE_SET_DRIFT §D-MFA1.E
+# ---------------------------------------------------------------------------
+
+class MfaInvalidPayloadError(AuthError):
+    """Request body is missing required fields or fails Pydantic validation.
+
+    HTTP: 400  Code: AUTH_INVALID_PAYLOAD
+    Used when code is empty, non-numeric, or challenge_id is missing.
+    Ref: task pack P01-S02-T006 §F.4 (audit reason: invalid_payload)
+    """
+
+    code = "AUTH_INVALID_PAYLOAD"
+    http_status = 400
+
+    def __init__(self, field: str = "code", reason: str = "Invalid 2FA payload") -> None:
+        """
+        Args:
+            field: Which field caused the validation error.
+            reason: Human-readable reason (not PII).
+        """
+        super().__init__(f"{field}: {reason}")
+        self.field = field
+
+
+class MfaChallengeInvalidError(AuthError):
+    """MFA challenge token has an invalid signature, wrong purpose, or malformed sub.
+
+    Returned as 401 (same envelope as MfaCodeInvalidError) for anti-enumeration.
+    The audit_log.metadata.reason will be 'challenge_invalid'.
+
+    HTTP: 401  Code: AUTH_MFA_CODE_INVALID
+    Ref: task pack P01-S02-T006 §F.4
+    """
+
+    code = "AUTH_MFA_CODE_INVALID"
+    http_status = 401
+
+    def __init__(self) -> None:
+        super().__init__("Invalid 2FA code or challenge")
+
+
+class MfaChallengeExpiredError(AuthError):
+    """MFA challenge token signature is valid but exp claim is in the past.
+
+    Only case that returns 410 (not 401) — visible UX: challenge expired, please
+    sign in again. Audit reason: 'challenge_expired'.
+
+    HTTP: 410  Code: AUTH_MFA_CHALLENGE_EXPIRED
+    Ref: task pack P01-S02-T006 §F.4
+    """
+
+    code = "AUTH_MFA_CHALLENGE_EXPIRED"
+    http_status = 410
+
+    def __init__(self) -> None:
+        super().__init__("MFA challenge has expired; please sign in again")
+
+
+class MfaCodeInvalidError(AuthError):
+    """TOTP code does not match the stored secret within the valid window.
+
+    Aggregate-401 — same body as MfaChallengeInvalidError, MfaSecretMissingError,
+    MfaReplayError for anti-enumeration. Reason in audit_log only.
+
+    HTTP: 401  Code: AUTH_MFA_CODE_INVALID
+    Ref: task pack P01-S02-T006 §F.3 (D-MFA-ANTI-ENUM)
+    """
+
+    code = "AUTH_MFA_CODE_INVALID"
+    http_status = 401
+
+    def __init__(self, reason: str = "wrong_code") -> None:
+        """
+        Args:
+            reason: Internal audit reason (wrong_code | user_inactive | no_secret | replay).
+        """
+        super().__init__("Invalid 2FA code or challenge")
+        self.reason = reason
+
+
+class MfaSecretMissingError(AuthError):
+    """User has no mfa_totp_secrets row or enabled=false.
+
+    The service still runs dummy_verify to equalise timing (D-MFA-ANTI-ENUM).
+    Returns same 401 envelope as MfaCodeInvalidError. Audit reason: 'no_secret'.
+
+    HTTP: 401  Code: AUTH_MFA_CODE_INVALID
+    Ref: task pack P01-S02-T006 §F.3
+    """
+
+    code = "AUTH_MFA_CODE_INVALID"
+    http_status = 401
+
+    def __init__(self) -> None:
+        super().__init__("Invalid 2FA code or challenge")
+
+
+class MfaReplayError(AuthError):
+    """MFA challenge jti was already consumed (replay attack detected).
+
+    Returns same 401 envelope as MfaCodeInvalidError. Audit reason: 'replay'.
+
+    HTTP: 401  Code: AUTH_MFA_CODE_INVALID
+    Ref: task pack P01-S02-T006 §F.1 (D-MFA-REPLAY)
+    """
+
+    code = "AUTH_MFA_CODE_INVALID"
+    http_status = 401
+
+    def __init__(self) -> None:
+        super().__init__("Invalid 2FA code or challenge")
+
+
+class MfaVerifyRateLimitedError(AuthError):
+    """Too many MFA verify attempts from this IP within the rate-limit window.
+
+    HTTP: 429  Code: AUTH_MFA_VERIFY_RATE_LIMITED
+    Ref: task pack P01-S02-T006 §F.5 (D-MFA-RL1)
+    """
+
+    code = "AUTH_MFA_VERIFY_RATE_LIMITED"
+    http_status = 429
+
+    def __init__(self, retry_after: int) -> None:
+        """
+        Args:
+            retry_after: Seconds until the rate-limit window resets.
+        """
+        super().__init__(f"Too many 2FA verify attempts; retry after {retry_after}s")
+        self.retry_after = retry_after

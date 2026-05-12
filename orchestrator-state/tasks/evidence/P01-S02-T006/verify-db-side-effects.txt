@@ -1,0 +1,12 @@
+=== refresh_tokens active rows for verification user ===
+count=2
+REFRESH: (UUID('e7f493e3-4d18-43e5-b0f9-fcbc4451b7c4'), UUID('206ac138-ca8f-45df-8502-2c8d955fe132'), '98db61908b', 64, True, datetime.datetime(2026, 6, 11, 19, 32, 51, 796768, tzinfo=datetime.timezone.utc))
+REFRESH: (UUID('f839cb5e-31c0-4d53-9fa8-099da992c64c'), UUID('206ac138-ca8f-45df-8502-2c8d955fe132'), 'da036a6083', 64, True, datetime.datetime(2026, 6, 11, 19, 32, 28, 213710, tzinfo=datetime.timezone.utc))
+
+=== audit_logs auth.mfa.verify (most recent 12) ===
+AUDIT outcome=failure reason=challenge_invalid request_id=vr-tamper actor=None
+AUDIT outcome=success reason=- request_id=verify-step3-happy actor=206ac138-ca8f-45df-8502-2c8d955fe132
+AUDIT outcome=failure reason=wrong_code request_id=vr-wrong-code actor=206ac138-ca8f-45df-8502-2c8d955fe132
+AUDIT outcome=success reason=- request_id=vr-replay-1 actor=206ac138-ca8f-45df-8502-2c8d955fe132
+AUDIT outcome=failure reason=challenge_expired request_id=vr-expired-2 actor=None
+AUDIT outcome=failure reason=replay request_id=vr-replay-2 actor=None

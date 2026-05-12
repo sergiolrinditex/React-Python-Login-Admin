@@ -531,3 +531,46 @@
 - When extending rate_limit.py or errors.py via Bash append, the `echo` at end of heredoc can accidentally append to the Python file if the heredoc delimiter line is included in the append. Always verify with `ruff check` immediately after.
 - Hook blocks Edit tool on worktree paths. Use `python3 -c "with open(path,'r+') as f: ..."` or write full file via Bash heredoc.
 - The cleanup fixture (autouse=True) should call reset_mailer() before AND after each test to avoid singleton state leaking between tests.
+
+## P01-S02-T006 — POST /api/v1/auth/2fa/verify TOTP MFA endpoint (2026-05-12)
+
+**Architecture pattern:**
+- TOTP slice splits cleanly into 5 files matching T002/T003 architecture:
+  `services/mfa.py` (use case) + `routers/mfa.py` (HTTP handler) + `repositories/mfa.py` (data) + `mfa_crypto.py` (facade) + `mfa.py` (1-line re-export shim for write_set literal).
+- Dummy-verify timing equalizer mirrors the dummy-Argon2 pattern from sign-in:
+  `pyotp.TOTP(_DUMMY_SECRET).verify(code, valid_window=1)` on the "no secret" path → equalize timing vs. real TOTP verify.
+- `_DUMMY_SECRET = "AAAAAAAAAAAAAAAA"` (16 base32 zeros) — computed at module import time, same as `_DUMMY_HASH` in password.py.
+
+**pyotp==2.9.0 usage:**
+- `pyotp.TOTP(plaintext_b32_str).verify(code, valid_window=1)` returns `bool`. Never raises on malformed code.
+- Pydantic validates 6-digit ASCII: `v.isdigit() and len(v) == 6` (functionally secure; researcher recommends `re.fullmatch(r'\d{6}', v)` for Unicode hardening — non-blocking).
+- `pyotp.TOTP(secret)` construction CAN raise `binascii.Error` for invalid base32 — wrap in try/except → `MfaSecretMissingError`.
+- Secret is plain base32 str (not bytes); auto-padding handled by pyotp.
+
+**In-memory jti consume store:**
+- `_consumed_jtis: dict[str, float] = {}` + `threading.Lock()` at module level.
+- Pattern: on verify success, INSERT `jti → exp_timestamp` AFTER the main transaction commits.
+- On entry, CHECK: `if jti in _consumed_jtis and time.time() < _consumed_jtis[jti]:` → `MfaReplayError`.
+- Opportunistic prune: on every insert, iterate `list(_consumed_jtis.items())` and delete expired keys.
+- Single-worker invariant: safe in uvicorn single-worker. Multi-worker needs Redis SETNX (P02-S02-T001).
+- This mirrors `rate_limit.py _store` pattern — same KISS V1 approach.
+
+**410 vs 401 JWT status mapping:**
+- `jwt.ExpiredSignatureError` (PyJWT) → 410 `AUTH_MFA_CHALLENGE_EXPIRED`.
+- `jwt.InvalidTokenError` / `jwt.DecodeError` / `ValueError` (purpose mismatch) → 401 `AUTH_MFA_CODE_INVALID`.
+- The distinction matters: 410 tells the frontend "challenge expired, please re-sign-in" vs. 401 "invalid credentials".
+- PyJWT raises `ExpiredSignatureError` (subclass of `InvalidTokenError`) for expired tokens when `options={"require": ["exp"]}`.
+
+**Worktree truncation finalization pattern:**
+- If a developer session truncates (session ends before handoff/PROGRESS.md update), the orchestrator can:
+  1. Port worktree changes to main via `git cherry-pick` or manual copy (leaving no orphaned worktree).
+  2. Assign a new developer session for "metadata + verification only" — no product code changes.
+  3. The new session re-runs tests from main, updates evidence to main paths, writes the handoff.
+- Key check: verify evidence files don't reference the old worktree port (:8002 instead of :8000).
+- The `_JWT_KEY = os.getenv("JWT_PRIVATE_KEY", "")` pattern at module import causes order-sensitive failures in full-suite tests. This is a known pre-existing test design issue (T002 class).
+
+**Full-suite failure analysis discipline:**
+- Always distinguish: (1) isolation run, (2) non-migration full suite, (3) full suite with migrations.
+- Migration downgrade test drops schema → all subsequent tests fail (pre-existing since T001).
+- JWT key module-import time binding → order-sensitive test failures for tests that mint+verify JWTs.
+- Neither of these is a T006 regression. Report them as pre-existing with clear root-cause attribution.

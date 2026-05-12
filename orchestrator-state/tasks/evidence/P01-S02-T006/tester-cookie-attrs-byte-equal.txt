@@ -1,0 +1,39 @@
+============================= TESTER — Cookie Attribute Byte-Equality ==============================
+Timestamp: 2026-05-12T19:32:00+02:00
+Agent: tester (P01-S02-T006)
+
+== Cookie Contract (task pack §F.6, T011 contract) ==
+Required: HttpOnly; Secure; SameSite=lax; Path=/api/v1/auth; Max-Age=AUTH_REFRESH_TTL_SECONDS
+Both sign-in (no-MFA) and 2FA verify must produce byte-identical attributes (only token value differs).
+
+== Sign-in (no-MFA user — admin.peopletech@inditex-sandbox.com) ==
+POST http://localhost:8000/api/v1/auth/sign-in (admin user, no MFA enabled)
+set-cookie: refresh_token=vPiJ8zu-DO9fIiol4GyyCBRDB6yHgfUl29ZnZXzSgxRBwy9b4vlLwh8ypBfDkQoT; HttpOnly; Max-Age=2592000; Path=/api/v1/auth; SameSite=lax; Secure
+
+Cookie attributes (after stripping token value):
+  HttpOnly; Max-Age=2592000; Path=/api/v1/auth; SameSite=lax; Secure
+
+== 2FA Verify (MFA user — employee.verification@inditex-sandbox.com) ==
+POST http://localhost:8000/api/v1/auth/2fa/verify (success path)
+set-cookie: refresh_token=f0NUR1p2DfGCzNa6iTIQVVBskHohDn5u3JhJuyj1t5mUEfYnUqlSz-vmLVZs57sz; HttpOnly; Max-Age=2592000; Path=/api/v1/auth; SameSite=lax; Secure
+
+Cookie attributes (after stripping token value):
+  HttpOnly; Max-Age=2592000; Path=/api/v1/auth; SameSite=lax; Secure
+
+== Comparison ==
+Sign-in attrs:   HttpOnly; Max-Age=2592000; Path=/api/v1/auth; SameSite=lax; Secure
+2FA verify attrs: HttpOnly; Max-Age=2592000; Path=/api/v1/auth; SameSite=lax; Secure
+
+COOKIE_ATTRS_BYTE_EQUAL: YES
+
+CHECKLIST:
+  [PASS] HttpOnly — both endpoints
+  [PASS] Secure — both endpoints
+  [PASS] SameSite=lax — both endpoints (lowercase 'lax' consistent)
+  [PASS] Path=/api/v1/auth — both endpoints (NOT /auth — T011 fix)
+  [PASS] Max-Age=2592000 — both endpoints (30 days = AUTH_REFRESH_TTL_SECONDS)
+  [PASS] Token values differ (each request generates a fresh opaque token)
+
+Also verified by T15 test:
+  test_mfa_verify_set_cookie_attrs_byte_equal_to_sign_in PASSED (isolation run 16/16)
+  T15 compares raw Set-Cookie strings from sign-in and 2FA verify TestClient responses.

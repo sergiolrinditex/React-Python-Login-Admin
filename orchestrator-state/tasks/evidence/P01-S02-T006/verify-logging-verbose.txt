@@ -1,0 +1,44 @@
+=== Verbose log lines for app.auth.mfa.* ===
+2026-05-12 20:48:46,728 app.auth.services.mfa DEBUG auth.mfa.verify.failure_audit.start reason=wrong_code request_id=993a2d27-e128-4cbd-8b22-1ca491329c3c
+2026-05-12 20:48:46,733 app.auth.services.mfa DEBUG auth.mfa.verify.failure_audit.done reason=wrong_code request_id=993a2d27-e128-4cbd-8b22-1ca491329c3c
+2026-05-12 20:48:46,751 app.auth.services.mfa INFO auth.mfa.verify.received request_id=6cba5d63-6535-4441-b60c-738880e18e1f ip=10.201.202.1
+2026-05-12 20:48:46,756 app.auth.services.mfa INFO auth.mfa.verify.failure reason=wrong_code user_id=eed5756d-dea3-4c96-a4f7-68a5fec8ba04 request_id=6cba5d63-6535-4441-b60c-738880e18e1f
+2026-05-12 20:48:46,756 app.auth.services.mfa DEBUG auth.mfa.verify.failure_audit.start reason=wrong_code request_id=6cba5d63-6535-4441-b60c-738880e18e1f
+2026-05-12 20:48:46,760 app.auth.services.mfa DEBUG auth.mfa.verify.failure_audit.done reason=wrong_code request_id=6cba5d63-6535-4441-b60c-738880e18e1f
+2026-05-12 20:48:46,779 app.auth.services.mfa INFO auth.mfa.verify.received request_id=eb92befa-fc6a-4fa4-8295-4ce3b7626416 ip=10.201.202.1
+2026-05-12 20:48:46,786 app.auth.services.mfa INFO auth.mfa.verify.failure reason=wrong_code user_id=eed5756d-dea3-4c96-a4f7-68a5fec8ba04 request_id=eb92befa-fc6a-4fa4-8295-4ce3b7626416
+2026-05-12 20:48:46,786 app.auth.services.mfa DEBUG auth.mfa.verify.failure_audit.start reason=wrong_code request_id=eb92befa-fc6a-4fa4-8295-4ce3b7626416
+2026-05-12 20:48:46,791 app.auth.services.mfa DEBUG auth.mfa.verify.failure_audit.done reason=wrong_code request_id=eb92befa-fc6a-4fa4-8295-4ce3b7626416
+2026-05-12 20:48:46,810 app.auth.services.mfa INFO auth.mfa.verify.received request_id=358bc686-de6f-4688-8e8f-323d6a6b5254 ip=10.201.202.1
+2026-05-12 20:48:46,816 app.auth.services.mfa INFO auth.mfa.verify.failure reason=wrong_code user_id=eed5756d-dea3-4c96-a4f7-68a5fec8ba04 request_id=358bc686-de6f-4688-8e8f-323d6a6b5254
+2026-05-12 20:48:46,816 app.auth.services.mfa DEBUG auth.mfa.verify.failure_audit.start reason=wrong_code request_id=358bc686-de6f-4688-8e8f-323d6a6b5254
+2026-05-12 20:48:46,821 app.auth.services.mfa DEBUG auth.mfa.verify.failure_audit.done reason=wrong_code request_id=358bc686-de6f-4688-8e8f-323d6a6b5254
+2026-05-12 20:48:46,844 app.auth.services.mfa INFO auth.mfa.verify.received request_id=2fa3cf0d-e408-4f0b-a79b-64fe639da86a ip=10.201.202.1
+2026-05-12 20:48:46,852 app.auth.services.mfa INFO auth.mfa.verify.failure reason=wrong_code user_id=eed5756d-dea3-4c96-a4f7-68a5fec8ba04 request_id=2fa3cf0d-e408-4f0b-a79b-64fe639da86a
+2026-05-12 20:48:46,852 app.auth.services.mfa DEBUG auth.mfa.verify.failure_audit.start reason=wrong_code request_id=2fa3cf0d-e408-4f0b-a79b-64fe639da86a
+2026-05-12 20:48:46,856 app.auth.services.mfa DEBUG auth.mfa.verify.failure_audit.done reason=wrong_code request_id=2fa3cf0d-e408-4f0b-a79b-64fe639da86a
+2026-05-12 20:49:31,570 app.auth.services.mfa INFO auth.mfa.verify.received request_id=3918ee82-2904-4557-99f0-64250c4d360a ip=127.0.0.1
+2026-05-12 20:49:31,586 app.auth.services.mfa INFO auth.mfa.verify.success user_id=eed5756d-dea3-4c96-a4f7-68a5fec8ba04 request_id=3918ee82-2904-4557-99f0-64250c4d360a
+2026-05-12 21:32:28,202 app.auth.services.mfa INFO auth.mfa.verify.received request_id=verify-step3-happy ip=127.0.0.1
+2026-05-12 21:32:28,222 app.auth.services.mfa INFO auth.mfa.verify.success user_id=206ac138-ca8f-45df-8502-2c8d955fe132 request_id=verify-step3-happy
+2026-05-12 21:32:51,788 app.auth.services.mfa INFO auth.mfa.verify.received request_id=vr-replay-1 ip=127.0.0.1
+2026-05-12 21:32:51,805 app.auth.services.mfa INFO auth.mfa.verify.success user_id=206ac138-ca8f-45df-8502-2c8d955fe132 request_id=vr-replay-1
+2026-05-12 21:32:51,843 app.auth.services.mfa INFO auth.mfa.verify.received request_id=vr-replay-2 ip=127.0.0.1
+2026-05-12 21:32:51,843 app.auth.services.mfa WARNING auth.mfa.verify.failure reason=replay jti_prefix=147f804b... request_id=vr-replay-2
+2026-05-12 21:32:51,843 app.auth.services.mfa DEBUG auth.mfa.verify.failure_audit.start reason=replay request_id=vr-replay-2
+2026-05-12 21:32:51,848 app.auth.services.mfa DEBUG auth.mfa.verify.failure_audit.done reason=replay request_id=vr-replay-2
+2026-05-12 21:32:52,024 app.auth.services.mfa INFO auth.mfa.verify.received request_id=vr-wrong-code ip=127.0.0.1
+2026-05-12 21:32:52,031 app.auth.services.mfa INFO auth.mfa.verify.failure reason=wrong_code user_id=206ac138-ca8f-45df-8502-2c8d955fe132 request_id=vr-wrong-code
+2026-05-12 21:32:52,031 app.auth.services.mfa DEBUG auth.mfa.verify.failure_audit.start reason=wrong_code request_id=vr-wrong-code
+2026-05-12 21:32:52,053 app.auth.services.mfa DEBUG auth.mfa.verify.failure_audit.done reason=wrong_code request_id=vr-wrong-code
+2026-05-12 21:32:52,155 app.auth.services.mfa INFO auth.mfa.verify.received request_id=vr-tamper ip=127.0.0.1
+2026-05-12 21:32:52,155 app.auth.services.mfa INFO auth.mfa.verify.failure reason=challenge_invalid request_id=vr-tamper
+2026-05-12 21:32:52,155 app.auth.services.mfa DEBUG auth.mfa.verify.failure_audit.start reason=challenge_invalid request_id=vr-tamper
+2026-05-12 21:32:52,161 app.auth.services.mfa DEBUG auth.mfa.verify.failure_audit.done reason=challenge_invalid request_id=vr-tamper
+2026-05-12 21:33:52,076 app.auth.services.mfa INFO auth.mfa.verify.received request_id=vr-expired-2 ip=127.0.0.1
+2026-05-12 21:33:52,077 app.auth.services.mfa INFO auth.mfa.verify.failure reason=challenge_expired request_id=vr-expired-2
+2026-05-12 21:33:52,078 app.auth.services.mfa DEBUG auth.mfa.verify.failure_audit.start reason=challenge_expired request_id=vr-expired-2
+2026-05-12 21:33:52,091 app.auth.services.mfa DEBUG auth.mfa.verify.failure_audit.done reason=challenge_expired request_id=vr-expired-2
+
+=== PII safety: ensure no secret/code/token leaked ===
+(if above is empty -> PII OK)

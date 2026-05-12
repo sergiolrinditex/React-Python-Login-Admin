@@ -138,6 +138,73 @@ def _load_fixtures_from_dir(
     return results
 
 
+def _load_mfa_secret(session: Any, fixture: "MfaSecretFixture") -> None:
+    """Insert or UPSERT mfa_totp_secrets row for the verification user.
+
+    Called only when mfa_primary.json.enabled=True and the DB tables exist.
+    Encrypts the plaintext TOTP seed with Fernet(MFA_ENCRYPTION_KEY) before storage.
+    Missing or invalid MFA_ENCRYPTION_KEY → warning only (loader continues).
+
+    Args:
+        session: Active SQLAlchemy Session (committed by caller).
+        fixture: Validated MfaSecretFixture from auth/mfa_primary.json.
+
+    Ref: task pack P01-S02-T006 §H Option A (WRITE_SET_DRIFT §D-MFA1.K).
+    """
+    import os
+    from sqlalchemy import text
+
+    enc_key = os.getenv("MFA_ENCRYPTION_KEY", "")
+    if not enc_key:
+        log.warning(
+            "verification_data.mfa.skip",
+            reason="MFA_ENCRYPTION_KEY not set; skipping MFA secret insert",
+        )
+        return
+    try:
+        from cryptography.fernet import Fernet
+        Fernet(enc_key.encode())  # validate key
+    except Exception as exc:
+        log.warning(
+            "verification_data.mfa.skip",
+            reason=f"MFA_ENCRYPTION_KEY invalid: {exc}",
+        )
+        return
+
+    from cryptography.fernet import Fernet
+    encrypted = Fernet(enc_key.encode()).encrypt(fixture.totp_secret.encode()).decode()
+
+    # Look up user by email ref
+    result = session.execute(
+        text("SELECT id FROM users WHERE email = :email"),
+        {"email": str(fixture.user_email_ref)},
+    ).first()
+    if result is None:
+        log.warning(
+            "verification_data.mfa.skip",
+            reason=f"user not found for email ref {fixture.user_email_ref.split('@')[0]}@...",
+        )
+        return
+
+    user_id = result[0]
+    session.execute(
+        text(
+            "INSERT INTO mfa_totp_secrets (user_id, secret_encrypted, enabled) "
+            "VALUES (:uid, :enc, :enabled) "
+            "ON CONFLICT (user_id) DO UPDATE SET "
+            "  secret_encrypted = EXCLUDED.secret_encrypted, "
+            "  enabled = EXCLUDED.enabled"
+        ),
+        {"uid": str(user_id), "enc": encrypted, "enabled": True},
+    )
+    session.commit()
+    log.info(
+        "verification_data.mfa.loaded",
+        email_domain=str(fixture.user_email_ref).split("@")[-1],
+        enabled=True,
+    )
+
+
 # ---------------------------------------------------------------------------
 # Group loader dispatchers
 # ---------------------------------------------------------------------------
@@ -169,11 +236,12 @@ def _run_auth_group(source_dir: Path, session: Any, engine: Any, dry_run: bool) 
             fx = EmployeeUserFixture.model_validate(raw)
             employee_fixtures.append(fx)
 
-    # Also validate MFA fixtures even though we don't insert yet.
+    # Load and validate MFA fixture (P01-S02-T006 WRITE_SET_DRIFT §D-MFA1.K).
+    mfa_fixture: MfaSecretFixture | None = None
     mfa_path = source_dir / "auth" / "mfa_primary.json"
     if mfa_path.exists():
         mfa_raw = _read_json(mfa_path)
-        MfaSecretFixture.model_validate(mfa_raw)  # validation only; table not created yet
+        mfa_fixture = MfaSecretFixture.model_validate(mfa_raw)
 
     if dry_run:
         if _VERBOSE:
@@ -186,6 +254,11 @@ def _run_auth_group(source_dir: Path, session: Any, engine: Any, dry_run: bool) 
         results.append(res)
     else:
         results.append(LoadResult(group="auth", status="ok", reason="no employee fixtures found"))
+
+    # Insert MFA TOTP secret for verification user if fixture declares enabled=True.
+    # Requires MFA_ENCRYPTION_KEY env var. Missing key → warning + skip (non-fatal).
+    if mfa_fixture and mfa_fixture.enabled:
+        _load_mfa_secret(session, mfa_fixture)
 
     if _VERBOSE:
         log.info("verification_data.group.auth.done")

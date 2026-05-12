@@ -1,0 +1,55 @@
+============================= TESTER — Data Contract Used ==============================
+Timestamp: 2026-05-12T19:34:00+02:00
+Agent: tester (P01-S02-T006)
+
+== Verification Data Contract (task pack §H, TECHNICAL_GUIDE §6.5) ==
+
+Row: J100 auth-login
+Required data:
+  data/verification/users/employee_primary.json
+    email: employee.verification@inditex-sandbox.com
+    password_plain: VerifyPass2024!
+    status: active
+
+  data/verification/auth/mfa_primary.json
+    user_email_ref: employee.verification@inditex-sandbox.com
+    totp_secret: JBSWY3DPEHPK3PXP (base32)
+    enabled: true (WRITE_SET_DRIFT §D-MFA1.K — flipped from false to true as Option A)
+
+Load command: python3 -m app.verification_data.bootstrap --source data/verification --only auth
+(invoked automatically by scripts/dev-restart.sh --reset per T012 contract)
+
+== Provided Verification Data Loaded ==
+After scripts/dev-restart.sh --reset:
+  Table users:
+    id: eed5756d-dea3-4c96-a4f7-68a5fec8ba04
+    email: employee.verification@inditex-sandbox.com
+    status: active
+    preferred_language: es
+
+  Table mfa_totp_secrets:
+    user_id: eed5756d-dea3-4c96-a4f7-68a5fec8ba04
+    enabled: True
+    secret_encrypted: gAAAAABqA3... (Fernet token — NOT plaintext)
+
+== Persisted Data Observed (after tester curl chain) ==
+  Table refresh_tokens:
+    user_id: eed5756d-dea3-4c96-a4f7-68a5fec8ba04
+    token_hash: 57e9f03a166a271d... (sha256 of cookie value)
+    revoked_at: NULL (active)
+    1 row created
+
+  Table audit_logs:
+    12 rows with action='auth.mfa.verify' for this user
+    1 success row (from tester curl)
+    11 failure rows (from tester curl chain wrong_code/replay tests)
+    All have: has_request_id=True, no PII
+
+== MFA_ENCRYPTION_KEY ==
+  Value: pf3nYltXYSnQKEZRibtRw77onS38Wdx5aLDY3MJhfGc= (from .env)
+  Length: 44 chars (valid Fernet URL-safe base64)
+  Validation: Fernet(key.encode()) → OK (not the placeholder)
+
+== Contract Gap ==
+None. All required data from §H present and loaded.
+Option A (enabled=true in mfa_primary.json) fully operational.

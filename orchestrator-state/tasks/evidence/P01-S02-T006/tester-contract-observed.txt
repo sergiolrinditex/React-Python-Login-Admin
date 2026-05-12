@@ -1,0 +1,62 @@
+============================= TESTER — Contract Observed ==============================
+Timestamp: 2026-05-12T19:35:00+02:00
+Agent: tester (P01-S02-T006)
+
+== Endpoint Wiring ==
+Route: POST /api/v1/auth/2fa/verify
+Router: backend/app/auth/routers/mfa.py → MfaVerifyRequest (Pydantic) → VerifyMfaChallenge
+Service: backend/app/auth/services/mfa.py::VerifyMfaChallenge.execute()
+Repository: backend/app/auth/repositories/mfa.py::MfaRepository.find_enabled_by_user_id()
+Crypto: backend/app/auth/mfa_crypto.py::decrypt_totp_secret() → verification_data.crypto.decrypt_secret()
+Replay store: backend/app/auth/repositories/mfa.py::ChallengeReplayStore.instance()
+
+== DB Tables Observed ==
+READ:
+  - users (query by id)
+  - user_roles (optional, for JWT roles claim)
+  - mfa_totp_secrets (find_enabled_by_user_id)
+
+WRITE:
+  - refresh_tokens (INSERT: user_id, token_hash=sha256(opaque), expires_at, revoked_at=NULL)
+  - audit_logs (INSERT x2: success in main tx via AuthRepository.write_audit;
+               failure in separate session via audit_session_scope → D-S2 pattern)
+
+== Request/Response Contract ==
+Request schema (Pydantic MfaVerifyRequest):
+  challenge_id: str (JWT, min_length=30, max_length=2048)
+  code: str (6 digits, validated by field_validator)
+
+Response success (MfaVerifyResponseSuccess):
+  data.access_token: JWT (HS256, AUTH_ACCESS_TTL_SECONDS=1800)
+  data.token_type: "Bearer"
+  data.expires_in: 1800
+  data.user.id: UUID
+  data.user.email: string
+  data.user.preferred_language: "es"|"en"|"fr"
+  data.user.roles: list[str]
+  meta.request_id: UUID (echoed from X-Request-ID header)
+  errors: []
+
+Response error (all failures):
+  data: null
+  meta.request_id: UUID
+  errors[0].code: AUTH_MFA_CODE_INVALID (401) | AUTH_MFA_CHALLENGE_EXPIRED (410) |
+                  AUTH_INVALID_PAYLOAD (400) | AUTH_MFA_VERIFY_RATE_LIMITED (429)
+  errors[0].field: null
+  errors[0].details: null
+
+== Cookie Contract ==
+Set-Cookie: refresh_token=<opaque>; HttpOnly; Max-Age=2592000; Path=/api/v1/auth; SameSite=lax; Secure
+(byte-identical to sign-in — REUSE _set_refresh_cookie from routers/_helpers.py)
+
+== Logging Contract (F.9) ==
+Verbose ON: INFO before + INFO after (or failure) per code path
+Verbose OFF: zero app.auth.services.mfa.* INFO lines
+
+== Security Observed ==
+- Replay prevention: in-memory ChallengeReplayStore (threading.Lock dict, TTL=exp)
+- Anti-enumeration: same 401 envelope for wrong_code, invalid_sig, no_secret, replay
+- 410 distinct: only for signature-valid + exp-past
+- Rate limit: MFA_VERIFY bucket (separate from SIGNIN)
+- Dummy-verify: pyotp.TOTP(_DUMMY_SECRET).verify() runs when no secret (timing equalization)
+- Audit: every attempt logged (success + all failure reasons) via D-S2 pattern

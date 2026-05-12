@@ -1,0 +1,72 @@
+=== P01-S02-T006 Live Curl Verification ===
+Date: 2026-05-12T20:26:00+02:00
+Main backend: http://localhost:8000 (main repo, NOT worktree port :8002)
+Reset: scripts/dev-restart.sh --reset (clean DB state)
+
+MFA_ENCRYPTION_KEY validity check:
+  python3 -c "from cryptography.fernet import Fernet; Fernet('pf3nYltXYSnQKEZRibtRw77onS38Wdx5aLDY3MJhfGc='.encode()); print('ok')"
+  Result: ok
+
+STEP 1: Sign-in with MFA-enabled employee
+--> POST http://localhost:8000/api/v1/auth/sign-in
+    Body: {"email":"employee.verification@inditex-sandbox.com","password":"VerifyPass2024!"}
+<-- 200 OK
+    mfa_required: true
+    mfa_challenge_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.[redacted]
+    expires_in: 300
+    request_id: 9d9de247-0f2a-4c15-8e7a-4acc9e8f7300
+
+STEP 2: Generate live TOTP code from verification secret
+--> python3 -c "import pyotp;print(pyotp.TOTP('JBSWY3DPEHPK3PXP').now())"
+    Code: 941944
+
+STEP 3: POST /api/v1/auth/2fa/verify
+--> POST http://localhost:8000/api/v1/auth/2fa/verify
+    Body: {"challenge_id":"<mfa_challenge_token>","code":"941944"}
+
+<-- 200 OK
+    HTTP/1.1 200 OK
+    x-request-id: 02aee479-a012-467f-94fa-6a4e0ed984ea
+    content-type: application/json
+    set-cookie: refresh_token=gvsPP26O4PuE-c0_couxj8PgGDMg4YCEd_GrbrLNtwjvZx3uCs8fgte8sWBenZId; HttpOnly; Max-Age=2592000; Path=/api/v1/auth; SameSite=lax; Secure
+
+    Body (formatted, tokens redacted):
+    {
+      "data": {
+        "access_token": "[JWT - redacted, HS256 signed]",
+        "token_type": "Bearer",
+        "expires_in": 1800,
+        "user": {
+          "id": "fc36b275-1050-47d1-87b4-dc7c3f7a0164",
+          "email": "employee.verification@inditex-sandbox.com",
+          "preferred_language": "es",
+          "roles": ["employee"]
+        }
+      },
+      "meta": {"request_id": "02aee479-a012-467f-94fa-6a4e0ed984ea"},
+      "errors": []
+    }
+
+VERIFICATION CHECKLIST:
+  [PASS] HTTP 200 OK
+  [PASS] mfa_required=true in sign-in response (MFA branch activated correctly)
+  [PASS] 200 OK from /api/v1/auth/2fa/verify
+  [PASS] access_token present (JWT, not logged)
+  [PASS] token_type: Bearer
+  [PASS] expires_in: 1800 (AUTH_ACCESS_TTL_SECONDS)
+  [PASS] user DTO: id, email, preferred_language, roles all present
+  [PASS] Set-Cookie: refresh_token present
+  [PASS] HttpOnly attribute set
+  [PASS] Secure attribute set
+  [PASS] SameSite=lax attribute set
+  [PASS] Path=/api/v1/auth (T011 contract: /api/v1/auth not /auth)
+  [PASS] Max-Age=2592000 (30 days, AUTH_REFRESH_TTL_SECONDS)
+  [PASS] X-Request-ID echoed in response header
+  [PASS] request_id in meta matches X-Request-ID header
+
+VERIFICATION DATA CONTRACT:
+  Source: data/verification/auth/mfa_primary.json (enabled: true — Option A)
+  User: employee.verification@inditex-sandbox.com (from data/verification/users/employee_primary.json)
+  TOTP secret: JBSWY3DPEHPK3PXP (base32, loaded + Fernet-encrypted by bootstrap)
+  DB row: mfa_totp_secrets WHERE user_id='fc36b275-1050-47d1-87b4-dc7c3f7a0164', enabled=True
+  Secret prefix in DB: gAAAAABqA3... (Fernet token, not plaintext)

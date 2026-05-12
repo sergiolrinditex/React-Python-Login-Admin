@@ -2,6 +2,64 @@
 
 > Reflexion-style notes. Append-only. Newest entries at the top.
 
+## 2026-05-12 — P01-S02-T005 (debug cycle 2/3) — Path-scoped Pydantic→400 normalization + Path(__file__).parent off-by-one + conditional-assertion anti-pattern recurrence
+
+### Root causes
+
+1. **`Path(__file__).resolve().parent` chains are an error trap.** `backend/app/mail/outbox.py` used 5×`.parent` to reach REPO_ROOT, walking one level above the repo into `.claude/worktrees/`. The right count for any `backend/app/<feature>/<module>.py` is 4: `module → feature → app → backend → REPO_ROOT`. Tests masked it because every fixture monkey-patches `MAIL_OUTBOX_PATH=<tmpdir>`, so the default expression never executed under pytest. Lesson: NEVER trust hand-counted `.parent` chains for files anchored to repo root. Use `Path(__file__).resolve().parents[N]` and pin `N` with a one-line repro that prints the resolved path; better yet, search-for-an-anchor (e.g. find the first ancestor containing `pyproject.toml`) so worktrees and CI both work.
+2. **Path-scoped exception handlers > global handlers for mixed envelope contracts.** T005 forgot/reset must return HTTP 400 + project envelope on Pydantic validation errors (§H-forgot-2, §H-reset-5), but T001 sign-up + T002 sign-in tests strictly assert 422 from FastAPI's default `{detail:[...]}` for missing-field cases. Installing a global `RequestValidationError` handler that unconditionally rewrites 422→400 would break `test_signup_missing_full_name_422` and `test_signin_missing_field_returns_422`. The right shape is a SINGLE global `@app.exception_handler(RequestValidationError)` that **filters by `request.url.path`** against a frozenset of in-scope routes and falls back to FastAPI's default envelope for everything else. Cleaner than per-endpoint handlers, no DI changes, no router refactor.
+3. **The conditional-assertion anti-pattern documented for P01-S02-T001 (`assert resp.status_code in (400, 422)`) reappeared in T04 of T005.** Same shape: the developer hedged the contract with a tolerant assertion ("Accept 422 (Pydantic default) or 400 (if global exception handler normalizes)") and let the test mask the missing handler. Tester ran 21/21 PASS because the test accepted 422; verify-slice human gate caught it. Lesson: developer + validator MUST grep for `in (400, 422)` / `in (200, 400)` / similar conditional status assertions and reject them as code smells. The validator now has an explicit grep check for this; debugger should run it pre-fix.
+
+### Fixes applied
+
+- **F-A** (1-line): `backend/app/mail/outbox.py` `Path(__file__).resolve().parent.parent.parent.parent.parent` → `…parent.parent.parent.parent`. Verified inside worktree: `_DEFAULT_OUTBOX = /Users/.../agent-a3760893a49df8dca/orchestrator-state/dev-logs/mail-outbox.jsonl`.
+- **F-BC**: `backend/app/main.py` — added `@app.exception_handler(RequestValidationError)` that filters `request.url.path` against `_AUTH_INVALID_PAYLOAD_PATHS = frozenset({"/api/v1/auth/forgot-password", "/api/v1/auth/reset-password"})`. Non-matching paths return FastAPI's default 422 envelope (`JSONResponse(status_code=422, content={"detail": exc.errors()})`). Matching paths build `ErrorResponse(meta=ResponseMeta(request_id=...), errors=[ErrorItem(code="AUTH_INVALID_PAYLOAD", message=msg, field=<last loc segment, skipping "body" sentinel>, details=None)])` and return HTTP 400. Reuses existing schemas — no new types. BEFORE/AFTER logging follows the project pattern.
+- **F-Tests**: T04 strict 400 + envelope shape (no `detail` key, `data is None`, `errors[0].code/field`). T14 same envelope assertions (T14 trips service-layer InvalidPayloadError, not the cycle-2 handler — kept assertion shape uniform).
+- **DB restore** (recurring MEMORY trap): after the full integration suite ran (`test_downgrade_removes_all_tables` drops users), restored via `alembic upgrade head` + `python3 -m app.verification_data.bootstrap --source ../data/verification --only auth` so subsequent validator/tester runs find a populated DB.
+
+### Patterns / gotchas to remember
+
+- **`Path(__file__).resolve().parents[N]` over chained `.parent` calls.** Or even better, anchor by ancestor-with-marker-file: `next(p for p in Path(__file__).resolve().parents if (p / "pyproject.toml").exists())`. This is robust under worktrees, CI, and reinstalled checkouts. Pin with a `python3 -c "..."` repro that prints the resolved path before merging — a 2-second check that catches off-by-one forever.
+- **Path-scoped exception handlers are a first-class FastAPI tool.** Pattern: register ONE `@app.exception_handler(SomeError)` globally and branch inside by `request.url.path in _IN_SCOPE_PATHS_FROZENSET`. The non-matching branch must mirror FastAPI's default envelope byte-for-byte (`{"detail": exc.errors()}`, status 422) so tests that asserted the default keep passing. Don't try router-level `add_exception_handler` — FastAPI's APIRouter doesn't support it (only the FastAPI app does), and converting endpoints to dict-Body to skip Pydantic at routing time is heavier than this 1-handler approach.
+- **Frozensets for in-scope path matching.** `_AUTH_INVALID_PAYLOAD_PATHS: frozenset[str]` makes "is this path in scope?" an O(1) check, documents the contract literally next to the handler, and is trivially extendable when a new endpoint joins the contract.
+- **`loc` tuple from `RequestValidationError.errors()[i]` begins with a sentinel.** FastAPI body validation produces `loc=("body", "<field>", …)`. To populate `ErrorItem.field` correctly, skip the leading `"body"` segment and pick the last meaningful tail: `tail = [str(part) for part in loc if part != "body"]; field_name = tail[-1] if tail else None`. Missing this strip would put `"body"` in `errors[].field`, which the frontend would reject.
+- **"`backend/app/main.py` — NO requiere cambios" in a task pack §M.1 can still bite you.** The pack assumed the auth router would absorb all changes, but T005's mixed-422/400 contract needs a global handler scoped by path — and APIRouter has no exception_handler decorator. Document the drift in the cycle-2 handoff under "WRITE_SET_DRIFT (controlled extension)" with a clear "why" line; validator should re-approve next cycle.
+- **Conditional status-code assertions are ALWAYS suspect.** `assert resp.status_code in (400, 422)` masks contract drift; if both branches are truly equivalent for the contract, write two tests (one per branch); if one branch silently violates an invariant (here: project envelope shape vs FastAPI default), the test is wrong, not the code. Add to validator + debugger checklist: `grep -rn "status_code in (" backend/tests/` and flag any hit that mixes 400/422 / 200/201 / 401/403 / etc.
+- **Recurring `test_downgrade_removes_all_tables` DB-drop trap.** This makes the 4th appearance in MEMORY (P00-S01-T003, P01-S02-T002 cycle 1, P01-S02-T003 cycle 1, P01-S02-T005 cycle 2). The fix is mechanical: `alembic upgrade head && python3 -m app.verification_data.bootstrap --source ../data/verification --only auth` after ANY full-suite run, before any further focused test or live curl evidence. Long-term fix is to not drop the users table in tests, but that is orchestrator-infra debt, not debugger work.
+
+### Verification commands that proved the fix
+
+```bash
+cd /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.claude/worktrees/agent-a3760893a49df8dca
+
+# Lint
+python3 -m ruff check backend/
+# → All checks passed!
+
+# BUG A — outbox default path lands inside the worktree
+python3 -c "import sys; sys.path.insert(0, 'backend'); from app.mail.outbox import _DEFAULT_OUTBOX; print(_DEFAULT_OUTBOX)"
+# → /Users/.../agent-a3760893a49df8dca/orchestrator-state/dev-logs/mail-outbox.jsonl
+
+# DB restore (recurring trap)
+cd backend && /Users/sergiolr/Library/Python/3.11/bin/alembic upgrade head
+python3 -m app.verification_data.bootstrap --source ../data/verification --only auth
+
+# Focused password_reset suite (21/21 PASS)
+set -a && . /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/.env && set +a
+python3 -m pytest tests/integration -k password_reset -v
+# → 21 passed, 71 deselected in 2.47s
+
+# Regression on T001/T002 — the 422 strict tests must still pass under the new handler
+python3 -m pytest tests/integration/test_auth_signup.py tests/integration/test_auth_signin.py -v
+# → 25 passed (includes test_signup_missing_full_name_422 + test_signin_missing_field_returns_422)
+```
+
+### Debug cycle budget
+
+Used 2 of 3 cycles. Cycle 1 = file-size/split refactor; cycle 2 = this fix. 1 cycle remains before `max_debug_cycles_reached`.
+
+---
+
 ## 2026-05-12 — P01-S02-T003 (debug cycle 1/3) — Use-case + audit refactor: extract audit writer; retire `_SessionLocal` smell with public ctx manager
 
 ### Root causes

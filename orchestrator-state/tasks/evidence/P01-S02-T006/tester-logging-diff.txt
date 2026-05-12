@@ -1,0 +1,53 @@
+============================= TESTER — Verbose vs Silent Logging Diff ==============================
+Timestamp: 2026-05-12T19:30:00+02:00
+Agent: tester (P01-S02-T006)
+
+== Logging contract (task pack §F.9) ==
+
+BEFORE: INFO:app.auth.services.mfa:auth.mfa.verify.received request_id=X ip=Y
+AFTER success: INFO:app.auth.services.mfa:auth.mfa.verify.success user_id=X request_id=Y
+AFTER failure: INFO:app.auth.services.mfa:auth.mfa.verify.failure reason=Z user_id=X request_id=Y
+
+== ENABLE_VERBOSE_LOGGING=true — observed log lines (from inline direct execution) ==
+
+For a SUCCESS cycle:
+  WARNING:app.auth.tokens:tokens.jwt_key.missing JWT_PRIVATE_KEY env var is not set; JWT encoding will raise at runtime
+  INFO:app.auth.services.mfa:auth.mfa.verify.received request_id=test-req-001 ip=127.0.0.1
+  INFO:app.auth.services.mfa:auth.mfa.verify.success user_id=0230ff82-c3af-4db7-a635-4dfcb13fae12 request_id=test-req-001
+
+For a FAILURE cycle (wrong_code example):
+  INFO:app.auth.services.mfa:auth.mfa.verify.received request_id=... ip=127.0.0.1
+  INFO:app.auth.services.mfa:auth.mfa.verify.failure reason=wrong_code user_id=... request_id=...
+
+BEFORE/AFTER confirmed: YES
+Logger name: app.auth.services.mfa (INFO level)
+
+== ENABLE_VERBOSE_LOGGING=false — observed log lines (from inline direct execution) ==
+
+For a SUCCESS cycle:
+  WARNING:app.auth.tokens:tokens.jwt_key.missing JWT_PRIVATE_KEY env var is not set; ...
+  (Python JWT library InsecureKeyLengthWarning — pre-existing test-env warning)
+  SUCCESS_SILENT_MODE (script output)
+
+NO app.auth.services.mfa.* lines visible at WARNING+ level.
+
+== T14 Test Confirmation ==
+test_mfa_verify_verbose_logging_silent_when_disabled PASSED
+  - monkeypatches ENABLE_VERBOSE_LOGGING=false
+  - calls /api/v1/auth/2fa/verify successfully
+  - captures caplog
+  - asserts: len([r for r in caplog.records if r.name == "app.auth.services.mfa" and r.levelno >= logging.WARNING]) == 0
+  RESULT: PASS (zero app.auth.mfa.* WARNING+ lines in silent mode)
+
+== NEVER LOGGED (confirmed) ==
+  - code (6-digit TOTP): NOT in any log line
+  - mfa_challenge_token (JWT string): NOT in any log line
+  - secret_encrypted (Fernet token): NOT in any log line
+  - opaque_refresh (cookie value): NOT in any log line
+  - full email address: NOT in any log line (domain only in failure logs when needed)
+  - user_id on success: UUID appears in verbose mode (non-secret identifier — acceptable)
+
+== Summary ==
+Verbose ON: BEFORE + AFTER per code path, all at INFO level. Full flow traceable.
+Verbose OFF: Zero app.auth.mfa.* INFO lines. Only WARNING/ERROR security events visible.
+LOGGING_CONTRACT: PASS

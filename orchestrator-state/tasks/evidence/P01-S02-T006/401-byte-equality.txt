@@ -1,0 +1,48 @@
+=== 401 Byte-Equality Verification ===
+Date: 2026-05-12T20:28:00+02:00
+Source: main repo (NOT worktree :8002 — updated from prior evidence)
+
+Anti-enumeration contract (§F.3 Decision D-MFA-ANTI-ENUM):
+All three 401 failure modes return the same envelope code AUTH_MFA_CODE_INVALID.
+
+Error envelope (byte-equal after stripping request_id):
+  {
+    "data": null,
+    "meta": {"request_id": "<varies per request>"},
+    "errors": [
+      {
+        "code": "AUTH_MFA_CODE_INVALID",
+        "message": "Invalid 2FA code or challenge",
+        "field": null,
+        "details": null
+      }
+    ]
+  }
+
+Failure modes tested (from test_mfa.py in isolation run):
+
+1. Wrong TOTP code (code="000000") → T08 (test_mfa_verify_wrong_code_returns_401_aggregate)
+   HTTP: 401 — code: AUTH_MFA_CODE_INVALID
+   Audit reason (in audit_logs): "wrong_code"
+
+2. Tampered JWT signature (last char corrupted) → T06 (test_mfa_verify_invalid_signature_returns_401_aggregate)
+   HTTP: 401 — code: AUTH_MFA_CODE_INVALID
+   Audit reason: "challenge_invalid"
+
+3. User has no mfa_totp_secrets row (or enabled=false) → T09 (test_mfa_verify_user_without_mfa_returns_401_aggregate_with_dummy_verify)
+   HTTP: 401 — code: AUTH_MFA_CODE_INVALID
+   Audit reason: "no_secret"
+   Note: dummy_verify(code) still runs (timing equalization per §F.3)
+
+Body byte-equal after stripping request_id: CONFIRMED (verified by T09 test assertion)
+Anti-enumeration (D-MFA-ANTI-ENUM): PASS
+
+410 exception (signature-valid + exp in past):
+  HTTP: 410 — code: AUTH_MFA_CHALLENGE_EXPIRED (T05)
+  Distinct from 401 per §F.4 design (UX CTA: "challenge expired, please sign in again")
+  Audit reason: "challenge_expired"
+  Confirmed by: test_mfa_verify_expired_challenge_returns_410 PASS (isolation run)
+
+POST /api/v1/auth/2fa/verify — 400 exception (invalid payload):
+  HTTP: 400 — code: AUTH_INVALID_PAYLOAD (T11)
+  Triggered by: empty code, non-numeric code, missing field (Pydantic 422 → 400 map)

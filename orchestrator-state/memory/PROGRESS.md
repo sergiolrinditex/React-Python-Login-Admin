@@ -27,9 +27,10 @@
   - **P01-S02-T004 — POST /api/v1/auth/logout (developer done, 2026-05-12)**
   - **P01-S02-T012 — fix dev-restart db_health race: host TCP probe (developer done, 2026-05-12)**
   - **P01-S02-T011 — fix refresh cookie Path mismatch /auth → /api/v1/auth (developer done, 2026-05-12)**
-- **Next pending slice**: Next wave per registry (P01-S02-T006 or similar)
+  - **P01-S02-T006 — POST /api/v1/auth/2fa/verify MFA TOTP endpoint (developer done, 2026-05-12)**
+- **Next pending slice**: Next wave per registry (P01-S02-T007 users-me or similar — depends on T006 done)
 - **Blockers**: none
-- **Generated at**: 2026-05-12T08:35:00+02:00
+- **Generated at**: 2026-05-12T20:35:00+02:00
 
 ## Infrastructure Status (P00-S02-T001)
 
@@ -85,13 +86,31 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 |--------|--------|---------|
 | Server | running | uvicorn app.main:app --port 8000 --reload |
 | Health check | 3 endpoints implemented | GET /health (backward compat), GET /live (liveness), GET /ready (readiness with DB+Redis ping) |
-| Auth endpoints | 6 implemented | POST /api/v1/auth/sign-up (T001), POST /api/v1/auth/sign-in (T002), POST /api/v1/auth/refresh (T003), POST /api/v1/auth/logout (T004) — cookie Path fixed to /api/v1/auth (T011). POST /api/v1/auth/forgot-password (T005), POST /api/v1/auth/reset-password (T005) |
-| Endpoints implemented | 9 | GET /health, GET /live, GET /ready, POST /api/v1/auth/sign-up, POST /api/v1/auth/sign-in, POST /api/v1/auth/refresh, POST /api/v1/auth/logout, POST /api/v1/auth/forgot-password, POST /api/v1/auth/reset-password |
+| Auth endpoints | 7 implemented | POST /api/v1/auth/sign-up (T001), POST /api/v1/auth/sign-in (T002), POST /api/v1/auth/refresh (T003), POST /api/v1/auth/logout (T004) — cookie Path fixed to /api/v1/auth (T011). POST /api/v1/auth/forgot-password (T005), POST /api/v1/auth/reset-password (T005), POST /api/v1/auth/2fa/verify (T006) |
+| Endpoints implemented | 10 | GET /health, GET /live, GET /ready, POST /api/v1/auth/sign-up, POST /api/v1/auth/sign-in, POST /api/v1/auth/refresh, POST /api/v1/auth/logout, POST /api/v1/auth/forgot-password, POST /api/v1/auth/reset-password, POST /api/v1/auth/2fa/verify |
 | Migrations applied | 1 (head=0001) | 9 auth tables: users, employee_profiles, roles, permissions, user_roles, refresh_tokens, mfa_totp_secrets, password_reset_tokens, audit_logs |
 | Seed data | loader.py fixed (P00-S02-T004); bootstrap ready; dev-restart --reset self-contained (T008) | FU-20260511145446 resolved — CAST(:meta AS JSONB) + json.dumps(). T008 fix: absolute --source path + hard-fail. |
-| Backend tests | 102 passing | test_health.py (11) + test_dependency_smoke.py (20) + test_migrations_0001_auth.py (6) + test_dev_restart_reset.py (2) + test_verification_data_bootstrap.py (9) + test_auth_signup.py (9) + test_auth_signin.py (16) + test_auth_refresh.py (14) + test_auth_logout.py (15 — T15 NEW cookie-jar roundtrip T011) |
-| Backend dependencies | declared + installed | pyproject.toml: 28 packages pinned (27 + PyJWT==2.12.1 added P01-S02-T002) |
+| Backend tests | 118 passing (isolation count) | test_health.py (11) + test_dependency_smoke.py (20) + test_migrations_0001_auth.py (6) + test_dev_restart_reset.py (2) + test_verification_data_bootstrap.py (9) + test_auth_signup.py (9) + test_auth_signin.py (16) + test_auth_refresh.py (14) + test_auth_logout.py (15 — T15 NEW cookie-jar roundtrip T011) + test_password_reset.py (21) + test_mfa.py (16 — T006) — NOTE: full-suite run = 117 passed / 22 failed due to migration downgrade test dropping schema before password_reset tests (pre-existing R1-T001-S02); 130/3 without migration tests; 16/16 MFA tests in isolation |
+| Backend dependencies | declared + installed | pyproject.toml: 29 packages pinned (28 + pyotp==2.9.0 added P01-S02-T006) |
 | Lint (ruff) | clean | 0 issues |
+
+## TOTP / MFA verify endpoint details (P01-S02-T006)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| POST /api/v1/auth/2fa/verify | implemented | 200 on success (access_token + user + Set-Cookie); 401 aggregate for all failure modes |
+| pyotp pin | pyotp==2.9.0 | researcher-confirmed; no CVE; plain base32 str; auto-padding; constant-time compare |
+| Replay prevention | in-memory jti consume store | threading.Lock dict keyed by jti → epoch expiry; opportunistic prune; Redis upgrade in P02-S02-T001 |
+| valid_window | 1 (±30s, ~90s effective) | RFC 6238 §5.2 compliant; researcher-confirmed no official doc conflict |
+| 410 vs 401 split | 410 ONLY for signature-valid + exp-past | All other failures → 401 AUTH_MFA_CODE_INVALID (anti-enumeration) |
+| Audit action | auth.mfa.verify | success in main tx; failure in audit_session_scope() (D-S2 pattern from T003/T004) |
+| Byte-equal 401 across 3 failure modes | VERIFIED | wrong_code, challenge_invalid, no_secret → same AUTH_MFA_CODE_INVALID body |
+| Dummy-verify timing | IMPLEMENTED | No mfa_totp_secrets row → dummy pyotp.TOTP(_DUMMY_SECRET).verify() runs to equalize timing |
+| mfa_crypto.py facade | NEW | decrypt_totp_secret() → verification_data.crypto.decrypt_secret() (Clean Architecture isolation) |
+| data/verification/auth/mfa_primary.json | enabled: true (Option A) | WRITE_SET_DRIFT §D-MFA1.K; verification data for /verify-slice and J100 journey |
+| Researcher note | RESOLVED (all 5 Q) | orchestrator-state/memory/official-doc-notes/P01-S02-T006-pyotp-2026-05-12.md |
+| Non-blocking recommendations from researcher | 2 | §Q3: `re.fullmatch(r'\d{6}',v)` in Pydantic validator; §Q4: wrap pyotp.TOTP() in try/except for binascii.Error |
+| 16 integration tests T01..T15+T16 | ALL PASS in isolation | Full suite: 15/16 pass (T05 order-sensitive JWT key issue — pre-existing class) |
 
 ## Logout endpoint details (P01-S02-T004)
 
@@ -160,7 +179,7 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 | Level | Count | Status |
 |-------|-------|--------|
 | Backend unit | 0 | — |
-| Backend integration | 123 | PASS (health 11 + dep smoke 20 + migrations 6 + dev restart 2 + bootstrap 9 + auth signup 9 + auth signin 16 + auth refresh 14 + auth logout 15 + password reset 21 — T005) |
+| Backend integration | 139 | PASS in isolation (health 11 + dep smoke 20 + migrations 6 + dev restart 2 + bootstrap 9 + auth signup 9 + auth signin 16 + auth refresh 14 + auth logout 15 + password reset 21 — T005 + MFA 16 — T006) — NOTE: full-suite (all at once) = 117/22 due to migration downgrade ordering; MFA isolation = 16/16 PASS |
 | Compose orchestration smoke | 11 | PASS (T1–T8 tester + verify cycle 1+2 + minio-init bucket) |
 | Frontend unit | 0 | — |
 | Frontend component | 58 | PASS (providers 4 + design-system 34 + showcase 4 + i18n 16) |
@@ -177,7 +196,7 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 
 | Journey | Milestone | Status | Slices |
 |---------|-----------|--------|--------|
-| J100 | M1 | pending (2/10 slices done) | 10 |
+| J100 | M1 | pending (3/10 slices done: T002 sign-in + T005 password-reset + T006 2fa-verify) | 10 |
 | J101 | M2 | pending | 7 |
 | J102 | M2 | pending | 6 |
 | J103 | M3 | pending | 6 |
@@ -201,6 +220,11 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 - **2026-05-11 (P01-S02-T002 debugger cycle 1)**: Promoted `password._DUMMY_HASH` (private) to `password.DUMMY_VERIFY_HASH` (public) and added `password.verify_with_dummy_fallback(stored_hash | None, plain) -> bool` helper. Sign-in service no longer reaches into another module's private API; the timing-equaliser branch is now expressed as `verify_with_dummy_fallback(None, password_plain)`.
 - **2026-05-11 (P01-S02-T002 debugger cycle 1)**: Router handlers now use `Depends(get_db_session)` from `app.db.session` instead of manual `_SessionLocal()` + `try/finally session.close()`. `_engine`/`_SessionLocal` are still in `app/db/session.py` but no longer referenced from the auth router. Test still validates real DB I/O via TestClient (ASGI transport).
 - **2026-05-11 (P01-S02-T002 debugger cycle 1)**: T08 test (`test_signin_invalid_payload_empty_email_400`) now sends `email=valid@host, password="   "` so Pydantic passes (`min_length=1`) but the service-layer `password_plain.strip()` trips `InvalidPayloadError(field="password")` → asserts HTTP 400 + `AUTH_INVALID_PAYLOAD` + audit row `outcome=failure, reason=invalid_payload`. Closes validator F6 gap (service-layer 400 branch + its audit row are now covered end-to-end).
+- **2026-05-12 (P01-S02-T006)**: pyotp==2.9.0 pinned in pyproject.toml + requirements.txt. Researcher-confirmed: no CVE, plain base32 str arg, auto-padding, constant-time verify, no server-side replay enforcement (app must track).
+- **2026-05-12 (P01-S02-T006)**: In-memory `jti` consume store (threading.Lock dict, TTL=exp). Mirrors `rate_limit.py _store` V1 pattern. `# TODO(P02-S02-T001): replace with Redis SETNX`. Single-worker invariant documented.
+- **2026-05-12 (P01-S02-T006)**: `mfa_crypto.py::decrypt_totp_secret` thin facade — auth module owns its decryption surface (Clean Architecture). Implementation delegates to `verification_data.crypto.decrypt_secret` (1 line), isolating the indirection for future KMS migration.
+- **2026-05-12 (P01-S02-T006)**: Researcher §Q3 recommends `re.fullmatch(r'\d{6}', v)` in Pydantic validator over `v.isdigit()` for Unicode digit hardening (non-blocking). Researcher §Q4 recommends wrapping `pyotp.TOTP(secret)` in try/except for `binascii.Error` → `MfaSecretMissingError` (non-blocking). Both are future hardening candidates.
+- **2026-05-12 (P01-S02-T006)**: data/verification/auth/mfa_primary.json `enabled` flipped `false→true` (Option A, WRITE_SET_DRIFT §D-MFA1.K). Required for J100 verification data contract (mfa_primary user must have MFA enabled for /verify-slice reproduction).
 
 ## Known Issues / Risks
 
@@ -241,6 +265,8 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 - **2026-05-12 (P01-S02-T004)**: All 401 failures raise `SessionExpiredError` → `AUTH_SESSION_EXPIRED` body. The reason (no_bearer, expired_bearer, invalid_bearer, no_cookie, unknown_hash, revoked, expired, user_mismatch) is captured only in `audit_logs.metadata->>'reason'` for security. T10 verifies byte-equality of 401 bodies stripping per-request meta fields.
 - **2026-05-12 (P01-S02-T004)**: hook_write_scope_guard.py resolves worktree path relative to repo root → sees `.claude/worktrees/...` → falsely triggers static config guard. Workaround: all new file creation via Bash heredoc `cat > file << 'PYEOF'`. Documented in MEMORY.md.
 
+> Last updated: 2026-05-12T20:35:00+02:00
+> Updated by: developer — P01-S02-T006 POST /api/v1/auth/2fa/verify — 16 new MFA tests (16/16 isolation PASS), 10 backend endpoints total (developer done, pending validator+tester+verify-slice)
 > Last updated: 2026-05-12T17:00:00+02:00
 > Updated by: developer — P01-S02-T005 POST /api/v1/auth/forgot-password + reset-password — 21 new tests (123/123 backend integration), 9 backend endpoints total (developer done, pending validator+tester+verify-slice)
 > Last updated: 2026-05-12T11:40:00+02:00

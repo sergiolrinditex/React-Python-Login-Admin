@@ -1,0 +1,52 @@
+============================= TESTER — Expired Challenge → 410 Verification ==============================
+Timestamp: 2026-05-12T19:24:00+02:00
+Agent: tester (P01-S02-T006)
+
+== Test: Expired mfa_challenge_token → 410 AUTH_MFA_CHALLENGE_EXPIRED ==
+
+Method: Forged expired token using the real server JWT_PRIVATE_KEY (from .env).
+Note: Forging with JWT_PRIVATE_KEY="" (empty) returns 401 (invalid sig) instead of 410
+     because the server validates against the REAL key and the signature is invalid.
+     Must use the ACTUAL server key to get a validly-signed expired token.
+
+JWT payload:
+  sub: <random uuid> (not a real user — only signature validity matters here)
+  purpose: mfa_challenge
+  jti: <random uuid hex>
+  iat: 2 hours ago
+  exp: 1 hour ago
+
+Request:
+  POST http://localhost:8000/api/v1/auth/2fa/verify
+  X-Forwarded-For: 192.168.X.Y (unique IP to avoid rate limit)
+  Body: {"challenge_id": "<expired_token>", "code": "123456"}
+
+Response:
+  HTTP Status: 410 (expected 410) — PASS
+  Body:
+  {
+    "data": null,
+    "meta": {"request_id": "2daf5444-e2ae-4314-8131-c6c7a7004ada"},
+    "errors": [
+      {
+        "code": "AUTH_MFA_CHALLENGE_EXPIRED",
+        "message": "MFA challenge has expired; please sign in again",
+        "field": null,
+        "details": null
+      }
+    ]
+  }
+
+[PASS] HTTP 410 — correct status for expired signature-valid challenge
+[PASS] code: AUTH_MFA_CHALLENGE_EXPIRED (distinct from 401 AUTH_MFA_CODE_INVALID)
+[PASS] message: "MFA challenge has expired; please sign in again" (UX CTA correct)
+
+Audit row verified by T05 test (passes in isolation):
+  action=auth.mfa.verify, outcome=failure, reason=challenge_expired
+
+Also verified by T05 test:
+  test_mfa_verify_expired_challenge_returns_410 PASSED (isolation run 16/16)
+
+Note: T05 uses time-travel via jwt.encode with past exp + the module-level _JWT_KEY (empty in tests).
+This passes because tests encode + decode with the SAME empty key, bypassing the real-key mismatch.
+Production behavior (with real key + forged expired token) confirmed via direct curl above.

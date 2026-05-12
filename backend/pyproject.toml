@@ -112,6 +112,14 @@ dependencies = [
     # Does NOT perform DNS lookup by default (check_deliverability=False in pydantic).
     # Source: task pack §F.1; email-validator==2.3.0 confirmed installed in env.
     "email-validator==2.3.0",
+
+    # ── P01-S02-T006 — TOTP 2FA verification (WRITE_SET_DRIFT §D-MFA1.J) ───────
+    # pyotp: RFC 6238/4226 TOTP/HOTP implementation.
+    # 2.9.0 is latest stable on PyPI 2026-05-12. MIT license, actively maintained.
+    # pyotp.TOTP(secret_b32_str).verify(code, valid_window=1) returns bool.
+    # pyotp does NOT enforce one-shot consumption — app tracks jti (D-MFA-REPLAY).
+    # Researcher: NEEDS_OFFICIAL_DOCS=yes — pending note in official-doc-notes/.
+    "pyotp==2.9.0",
 ]
 
 [project.optional-dependencies]

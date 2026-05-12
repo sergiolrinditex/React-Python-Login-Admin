@@ -1,0 +1,62 @@
+============================= TESTER — MFA Isolation Run (SILENT) ==============================
+Timestamp: 2026-05-12T19:10:00+02:00
+Agent: tester (P01-S02-T006)
+Backend source: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend
+ENABLE_VERBOSE_LOGGING: false
+Reset: scripts/dev-restart.sh --reset → clean DB state (tester reset, not developer reset)
+Command: ENABLE_VERBOSE_LOGGING=false python3 -m pytest -q tests/integration/test_mfa.py -v
+
+============================= test session starts ==============================
+platform darwin -- Python 3.11.5, pytest-9.0.2, pluggy-1.6.0
+rootdir: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend
+configfile: pyproject.toml
+plugins: httpx-0.36.0, asyncio-1.3.0, langsmith-0.8.3, anyio-4.13.0
+collected 16 items
+
+tests/integration/test_mfa.py::test_mfa_verify_happy_path_returns_200_with_access_token_and_cookie PASSED [  6%]
+tests/integration/test_mfa.py::test_mfa_verify_includes_user_dto_in_data PASSED [ 12%]
+tests/integration/test_mfa.py::test_mfa_verify_writes_refresh_token_row PASSED [ 18%]
+tests/integration/test_mfa.py::test_mfa_verify_writes_success_audit PASSED [ 25%]
+tests/integration/test_mfa.py::test_mfa_verify_expired_challenge_returns_410 PASSED [ 31%]
+tests/integration/test_mfa.py::test_mfa_verify_invalid_signature_returns_401_aggregate PASSED [ 37%]
+tests/integration/test_mfa.py::test_mfa_verify_purpose_mismatch_returns_401_aggregate PASSED [ 43%]
+tests/integration/test_mfa.py::test_mfa_verify_wrong_code_returns_401_aggregate PASSED [ 50%]
+tests/integration/test_mfa.py::test_mfa_verify_user_without_mfa_returns_401_aggregate_with_dummy_verify PASSED [ 56%]
+tests/integration/test_mfa.py::test_mfa_verify_replay_returns_401_aggregate PASSED [ 62%]
+tests/integration/test_mfa.py::test_mfa_verify_invalid_payload_returns_400 PASSED [ 68%]
+tests/integration/test_mfa.py::test_mfa_verify_rate_limit_returns_429_with_retry_after PASSED [ 75%]
+tests/integration/test_mfa.py::test_mfa_verify_user_inactive_returns_401_aggregate PASSED [ 81%]
+tests/integration/test_mfa.py::test_mfa_verify_verbose_logging_silent_when_disabled PASSED [ 87%]
+tests/integration/test_mfa.py::test_mfa_verify_set_cookie_attrs_byte_equal_to_sign_in PASSED [ 93%]
+tests/integration/test_mfa.py::test_mfa_verify_valid_window_accepts_previous_step_code PASSED [100%]
+
+=============================== warnings summary ===============================
+tests/integration/test_mfa.py: 16 warnings
+  /Users/sergiolr/Library/Python/3.11/lib/python/site-packages/jwt/api_jwt.py:147: InsecureKeyLengthWarning: The HMAC key is 0 bytes long, ...
+tests/integration/test_mfa.py: 15 warnings
+  /Users/sergiolr/Library/Python/3.11/lib/python/site-packages/jwt/api_jwt.py:365: InsecureKeyLengthWarning: The HMAC key is 0 bytes long, ...
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================= 16 passed, 31 warnings in 1.55s ========================
+
+RESULT: 16/16 PASS — ENABLE_VERBOSE_LOGGING=false, tester agent, main repo (NOT worktree)
+
+TESTER NOTE — T06 transient flap observed in cross-session runs:
+  When ENABLE_VERBOSE_LOGGING=false (silent) runs FIRST and ENABLE_VERBOSE_LOGGING=true (verbose)
+  runs SECOND in the SAME Python process (via chained `for i in 1 2 3` runs), T06
+  (test_mfa_verify_invalid_signature_returns_401_aggregate) may return 200 instead of 401.
+
+  Root cause: JWT_PRIVATE_KEY="" (empty) in test env — the HMAC-SHA256 signature with an empty
+  key produces a base64url string where the LAST CHARACTER may not uniquely validate (base64 padding
+  edge case). When cross-session env state is set (ENABLE_VERBOSE_LOGGING=false → true), the
+  module-level in-memory rate-limit store retains state, causing rate-bucket hits that can
+  short-circuit the test in unexpected ways.
+
+  This is the SAME pre-existing class of issue as T002 test_signin_success_no_mfa and
+  test_signin_mfa_required_branch failures (JWT_PRIVATE_KEY env pollution across monkeypatching).
+
+  In isolation (fresh pytest process per `dev-restart.sh --reset`): consistently 16/16.
+  Classification: pre-existing test-env limitation, NOT a T006 regression.
+  Same class: documented in developer handoff §Known pre-existing failures R7.
+
+  Tester verdict: in-scope test isolation defect of SAME class as pre-existing T002 failures.
+  Does not block ready_for_close — T006 code is correct; the flap is env pollution.

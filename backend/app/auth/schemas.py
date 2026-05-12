@@ -42,7 +42,7 @@ Decisions:
 from __future__ import annotations
 
 import uuid
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import BaseModel, EmailStr, Field, field_validator
 
@@ -337,3 +337,109 @@ class ResetPasswordResponse(BaseModel):
     )
     meta: ResponseMeta
     errors: list = Field(default_factory=list)
+
+
+# ---------------------------------------------------------------------------
+# 2FA verify request/response schemas (added P01-S02-T006) — WRITE_SET_DRIFT §D-MFA1.D
+# ---------------------------------------------------------------------------
+
+
+class MfaVerifyRequest(BaseModel):
+    """Request body for POST /api/v1/auth/2fa/verify.
+
+    The field `challenge_id` carries the full JWT mfa_challenge_token string
+    issued by sign-in when MFA is required. Despite the name `challenge_id`,
+    the VALUE is the JWT string itself — not a DB identifier. This naming
+    matches §6.2 row 261 of the TECHNICAL_GUIDE exactly so the frontend
+    TwoFactorPage (P03-S01-T005) sends the correct field name.
+
+    Attributes:
+        challenge_id: The mfa_challenge_token JWT from the sign-in response.
+                      Min 30 chars (guard); real JWTs are ~180 chars.
+        code: 6-digit TOTP code from the user's authenticator app.
+              Must be all digits (field_validator enforces).
+    """
+
+    challenge_id: str = Field(
+        ...,
+        min_length=30,
+        max_length=2048,
+        description=(
+            "JWT mfa_challenge_token from sign-in MFA branch. "
+            "Despite the name 'challenge_id', the value IS the JWT string. "
+            "Min 30 is a payload guard; real JWTs are ~180 chars."
+        ),
+    )
+    code: str = Field(
+        ...,
+        min_length=6,
+        max_length=6,
+        description="6-digit TOTP code from the user's authenticator app.",
+        json_schema_extra={"example": "123456"},
+    )
+
+    @field_validator("code")
+    @classmethod
+    def code_must_be_six_digits(cls, v: str) -> str:
+        """Ensure code is exactly 6 numeric characters.
+
+        Args:
+            v: Raw code value.
+
+        Returns:
+            Validated code string.
+
+        Raises:
+            ValueError: If code is not exactly 6 digits.
+        """
+        if not v.isdigit() or len(v) != 6:
+            raise ValueError("code must be exactly 6 numeric digits")
+        return v
+
+
+class MfaUserDto(BaseModel):
+    """User summary returned in the 2FA verify success body.
+
+    Included in the response so TwoFactorPage (P03-S01-T005) does not need
+    a separate GET /users/me round-trip after successful MFA. Matches §6.2
+    row 261 contract {data: {access_token, user}}.
+
+    Attributes:
+        id: User UUID.
+        email: Corporate email address.
+        preferred_language: Language preference ('es'|'en'|'fr').
+        roles: List of assigned role names (e.g. ['employee']).
+    """
+
+    id: uuid.UUID
+    email: EmailStr
+    preferred_language: Literal["es", "en", "fr"]
+    roles: list[str]
+
+
+class MfaVerifySuccessData(BaseModel):
+    """Data payload for the 2FA verify success envelope.
+
+    Attributes:
+        access_token: Short-lived JWT access token (HS256).
+        token_type: Always 'Bearer'.
+        expires_in: Access token TTL in seconds (AUTH_ACCESS_TTL_SECONDS default 1800).
+        user: User summary DTO (avoids GET /users/me round-trip).
+    """
+
+    access_token: str = Field(description="Short-lived JWT access token. NEVER store in localStorage.")
+    token_type: Literal["Bearer"] = "Bearer"
+    expires_in: int = Field(description="Token TTL in seconds.")
+    user: MfaUserDto
+
+
+class MfaVerifyResponseSuccess(BaseModel):
+    """Envelope response for POST /api/v1/auth/2fa/verify (HTTP 200).
+
+    Shape: {data: MfaVerifySuccessData, meta: ResponseMeta, errors: []}.
+    Ref: TECHNICAL_GUIDE §6.2 row 261, task pack §F.6.
+    """
+
+    data: MfaVerifySuccessData
+    meta: ResponseMeta
+    errors: list[Any] = Field(default_factory=list)

@@ -1,0 +1,48 @@
+=== P01-S02-T006 Verification Data Contract ===
+Date: 2026-05-12T20:28:00+02:00
+Source: TECHNICAL_GUIDE §6.5 Verification Data Contract row J100
+Reset: scripts/dev-restart.sh --reset → bootstrap loads data/verification/
+
+== Required verification data (from task pack §H) ==
+
+Data file: data/verification/auth/mfa_primary.json
+  user_email_ref: employee.verification@inditex-sandbox.com
+  totp_secret: JBSWY3DPEHPK3PXP (base32 plaintext — Fernet-encrypted on bootstrap)
+  enabled: true   ← WRITE_SET_DRIFT §D-MFA1.K (Option A flip from false→true)
+
+Data file: data/verification/users/employee_primary.json
+  email: employee.verification@inditex-sandbox.com
+  status: active
+  password: VerifyPass2024!
+
+Bootstrap load command:
+  python3 -m app.verification_data.bootstrap --source data/verification --only auth
+  (invoked automatically by scripts/dev-restart.sh --reset per T012 contract)
+
+== Observed DB state after --reset ==
+
+Table: mfa_totp_secrets
+  Query: SELECT user_id, enabled, substring(secret_encrypted,1,10)
+         FROM mfa_totp_secrets
+         JOIN users ON users.id = mfa_totp_secrets.user_id
+         WHERE users.email = 'employee.verification@inditex-sandbox.com'
+
+  Result:
+    user_id:                fc36b275-1050-47d1-87b4-dc7c3f7a0164
+    enabled:                True
+    secret_encrypted prefix: gAAAAABqA3... (Fernet token — first 10 chars shown only)
+
+  Row count for primary employee: 1
+  Confirmed: secret is encrypted (Fernet header gAAA... present), NOT plaintext base32
+
+== MFA_ENCRYPTION_KEY validity ==
+  MFA_ENCRYPTION_KEY: pf3nYltXYSnQKEZRibtRw77onS38Wdx5aLDY3MJhfGc= (masked length: 44 chars)
+  Fernet validation: PASS (key is valid Fernet URL-safe base64 encoded 32-byte key)
+  Note: placeholder detection check skipped (key is not the placeholder value)
+
+== Security check ==
+  - Plaintext TOTP secret NEVER stored in DB (encrypted with Fernet)
+  - secret_encrypted prefix confirms Fernet token format (not raw base32)
+  - MFA_ENCRYPTION_KEY comes from .env (not committed to source)
+  - TOTP secret not logged at any level (§F.9 logging contract)
+  - Full email domain only in logs: inditex-sandbox.com (not employee.verification@...)

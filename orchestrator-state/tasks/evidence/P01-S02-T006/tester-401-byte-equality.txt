@@ -1,0 +1,48 @@
+============================= TESTER — 401 Byte-Equality Verification ==============================
+Timestamp: 2026-05-12T19:22:00+02:00
+Agent: tester (P01-S02-T006)
+
+Anti-enumeration contract (task pack §F.3, D-MFA-ANTI-ENUM):
+All 401 failure modes return identical envelope code AUTH_MFA_CODE_INVALID.
+
+== Test 1: Wrong TOTP code (code="000000") ==
+POST http://localhost:8000/api/v1/auth/2fa/verify (with valid challenge, wrong code)
+Response: 401
+  code: AUTH_MFA_CODE_INVALID
+  message: "Invalid 2FA code or challenge"
+  data: null
+  field: null
+  details: null
+
+== Test 2: Tampered JWT signature (invalid_signature) ==
+POST http://localhost:8000/api/v1/auth/2fa/verify (challenge_id last char changed to X/Y)
+Response: 401
+  code: AUTH_MFA_CODE_INVALID
+  message: "Invalid 2FA code or challenge"
+  data: null
+  field: null
+  details: null
+
+== Byte Equality Check (after stripping request_id from meta) ==
+Body Test 1 normalized: {"data": null, "errors": [{"code": "AUTH_MFA_CODE_INVALID", "details": null, "field": null, "message": "Invalid 2FA code or challenge"}], "meta": {"request_id": "STRIPPED"}}
+Body Test 2 normalized: {"data": null, "errors": [{"code": "AUTH_MFA_CODE_INVALID", "details": null, "field": null, "message": "Invalid 2FA code or challenge"}], "meta": {"request_id": "STRIPPED"}}
+BYTE_EQUAL: YES — confirmed via shell comparison
+
+== Test 3: No MFA secret (user has no mfa_totp_secrets row) ==
+Verified via test T09 passing: 401 AUTH_MFA_CODE_INVALID, audit reason=no_secret
+Confirmed by: test_mfa_verify_user_without_mfa_returns_401_aggregate_with_dummy_verify PASSED
+
+== HTTP 410 exception (separate from 401) ==
+Expired challenge (signature valid, exp in the past):
+  Response: 410
+  code: AUTH_MFA_CHALLENGE_EXPIRED
+  message: "MFA challenge has expired; please sign in again"
+  (Different from 401 per §F.4 design — valid UX CTA distinction)
+  Verified by: direct curl with forged expired token using real server JWT_PRIVATE_KEY
+
+== Tester verification method ==
+Curl tests executed against http://localhost:8000 with X-Forwarded-For: unique IPs
+to avoid rate limit interference. Byte equality confirmed via shell string comparison
+after Python JSON normalization (sort_keys=True).
+
+ANTI_ENUM_CONTRACT: PASS

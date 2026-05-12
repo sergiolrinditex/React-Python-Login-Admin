@@ -1,0 +1,52 @@
+============================= TESTER — DB Side Effects Verification ==============================
+Timestamp: 2026-05-12T19:28:00+02:00
+Agent: tester (P01-S02-T006)
+
+== After successful 2FA verify (tester curl chain run) ==
+
+=== refresh_tokens table ===
+Query: SELECT user_id, COUNT(*) FROM refresh_tokens WHERE user_id=... AND revoked_at IS NULL
+Result: 1 active refresh_token row for employee.verification user
+
+Row details:
+  user_id: eed5756d-dea3-4c96-a4f7-68a5fec8ba04
+  token_hash_prefix: 57e9f03a166a271d... (SHA-256 of the opaque cookie value)
+  revoked_at: NULL (active)
+  Note: Token hash is sha256(opaque_refresh) — raw opaque value never stored
+
+[PASS] Exactly one new active refresh_tokens row after success
+[PASS] Token stored as SHA-256 hash, not raw value
+
+=== audit_logs table — success path ===
+Query: SELECT * FROM audit_logs WHERE action='auth.mfa.verify' AND actor_user_id=...
+Order: chronological
+
+All 12 audit rows for employee.verification:
+  [2026-05-12T18:47:32] outcome=success, reason=N/A, has_request_id=True
+  [2026-05-12T18:47:49] outcome=failure, reason=wrong_code, has_request_id=True
+  [2026-05-12T18:48:31] outcome=failure, reason=wrong_code, has_request_id=True
+  [... 9 more failure rows from tester's byte-equality and rate-limit tests ...]
+
+[PASS] Success audit row written with action='auth.mfa.verify', outcome='success'
+[PASS] Failure audit rows written for each wrong_code attempt
+[PASS] All rows have request_id in metadata (correlation)
+[PASS] No PII in audit metadata (no plaintext password, no TOTP code, no token value)
+
+=== audit_logs — D-S2 pattern verification ===
+Failure audit rows are written via audit_session_scope() (independent session).
+Confirmed: failure rows persist even if the main transaction would roll back
+(pattern established in T003 refresh + T004 logout, same code path).
+
+=== mfa_totp_secrets table ===
+Row for employee.verification:
+  user_id: eed5756d-dea3-4c96-a4f7-68a5fec8ba04
+  enabled: True (WRITE_SET_DRIFT §D-MFA1.K — Option A, enabled=true)
+  secret_encrypted prefix: gAAAAABqA3... (Fernet token — NOT plaintext base32)
+
+[PASS] MFA secret is Fernet-encrypted (not stored in plaintext)
+[PASS] enabled=True (Option A implemented — verification data contract)
+
+=== Contract observed (tester) ===
+Tables READ: users, user_roles, mfa_totp_secrets
+Tables WRITTEN: refresh_tokens (INSERT), audit_logs (INSERT, 2 paths)
+Crypto: MFA_ENCRYPTION_KEY used for Fernet decrypt of secret_encrypted

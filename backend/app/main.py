@@ -89,6 +89,7 @@ app.include_router(auth_router, prefix="/api/v1")
 _AUTH_INVALID_PAYLOAD_PATHS: frozenset[str] = frozenset({
     "/api/v1/auth/forgot-password",
     "/api/v1/auth/reset-password",
+    "/api/v1/auth/2fa/verify",  # P01-S02-T006: 422 → 400 AUTH_INVALID_PAYLOAD (WRITE_SET_DRIFT §D-MFA1.A)
 })
 
 

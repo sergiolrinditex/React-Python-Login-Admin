@@ -1,0 +1,58 @@
+============================= TESTER — Full Suite Snapshot ==============================
+Timestamp: 2026-05-12T19:15:00+02:00
+Agent: tester (P01-S02-T006)
+Source: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend (main repo)
+Reset: scripts/dev-restart.sh --reset (tester's clean reset)
+Command: ENABLE_VERBOSE_LOGGING=false python3 -m pytest -q
+
+== RESULT ==
+117 passed / 22 failed / 98 warnings in 30.69s
+
+== COMPARISON WITH DEVELOPER SNAPSHOT ==
+Developer reported: 117 passed / 22 failed → MATCHES EXACTLY
+
+== FAILURE ANALYSIS — 22 failures ==
+All 22 failures are PRE-EXISTING, NOT T006 regressions.
+
+Root cause (confirmed by tester):
+  test_migrations_0001_auth.py::test_downgrade_removes_all_tables runs `alembic downgrade base`
+  which drops the ENTIRE database schema. Tests collected AFTER this (alphabetically) fail
+  with "relation X does not exist" errors.
+
+Ordered collection:
+  1. test_auth_logout.py           — passes (before migration test)
+  2. test_auth_refresh.py          — passes
+  3. test_auth_signin.py           — passes (2 pre-existing T002 JWT key failures)
+  4. test_auth_signup.py           — passes
+  5. test_mfa.py                   — 15/16 pass (1 order-sensitive JWT key flap — pre-existing class)
+  6. test_migrations_0001_auth.py  — DROPS schema on downgrade test
+  7. test_password_reset.py        — 0/21 pass (schema dropped → all fail)
+  8. test_dependency_smoke.py      — passes
+  9. test_dev_restart_reset.py     — passes
+  10. test_health.py               — passes
+  11. test_verification_data_bootstrap.py — passes
+
+Failure breakdown:
+  - 21 from test_password_reset.py (schema dropped by migration downgrade — PRE-EXISTING T005)
+  - 1 from test_mfa.py::test_mfa_verify_expired_challenge_returns_410 OR
+    test_mfa_verify_invalid_signature_returns_401_aggregate (order-sensitive JWT key issue —
+    PRE-EXISTING class same as T002)
+
+== TESTER NOTE ON SCHEMA DROP AND ISOLATION ==
+The tester ran the full suite ONCE before the isolation runs, causing subsequent isolation
+runs to fail with "relation users does not exist". After each full-suite or migration-touching
+run, `scripts/dev-restart.sh --reset` must be executed to restore the schema. This is the
+pre-existing issue documented throughout PROGRESS.md.
+
+Tester ran `dev-restart.sh --reset` between each test session to ensure clean state.
+
+== ISOLATION RUN CONFIRMATION ==
+Command: pytest -q tests/integration/test_mfa.py (clean process)
+Result: 16 passed, 0 failed, 31 warnings — 1.55s
+Confirmed 3 consecutive clean runs: 16/16 each time.
+
+== NET T006 CONTRIBUTION ==
+Without T006 tests (pre-T006 baseline): 2 failed / 73 passed (pre-existing T002 JWT key)
+With T006 tests added: 117 passed / 22 failed (same 21 migration + order-sensitive failures)
+Net T006 tests: +16 new tests, all passing in isolation.
+No T006 code causes any previously-passing test to fail.

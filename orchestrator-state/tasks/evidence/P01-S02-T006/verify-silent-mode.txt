@@ -1,0 +1,10 @@
+=== Silent-mode live check (ENABLE_VERBOSE_LOGGING=false) ===
+/2fa/verify HTTP status (must be 200): 200
+
+INFO lines for 'app.auth.services.mfa' (must be 0):
+count=0
+
+INFO lines for 'app.auth.routers.mfa' (must be 0):
+count=0
+
+Any mfa lines remaining (DEBUG/WARN/ERROR allowed):

@@ -1,0 +1,36 @@
+=== P01-S02-T006 Verbose Logging Evidence ===
+Date: 2026-05-12T20:28:00+02:00
+Source: main repo (NOT worktree — updated from prior evidence)
+
+Logging contract (per pack §F.9):
+  BEFORE: "auth.mfa.verify.received request_id=X ip=Y" (INFO, logger=app.auth.mfa)
+  AFTER success: "auth.mfa.verify.success user_id=X request_id=Y" (INFO)
+  AFTER failure: "auth.mfa.verify.failure reason=Z user_id=X request_id=Y" (INFO/WARN)
+  NEVER logged: code, mfa_challenge_token, secret_encrypted, opaque_refresh, full email
+  Domain only in failure logs: "inditex-sandbox.com" (not full address)
+
+ENABLE_VERBOSE_LOGGING=true mode:
+  - Full flow visible: received → (outcome) → success/failure
+  - All INFO logs visible (DEBUG suppressed)
+
+ENABLE_VERBOSE_LOGGING=false mode:
+  - NO app.auth.mfa.* lines at WARNING+ (confirmed by T14)
+  - Only WARNING and ERROR logs remain visible
+
+T14 test result:
+  test_mfa_verify_verbose_logging_silent_when_disabled PASSED
+  Test action: monkeypatches ENABLE_VERBOSE_LOGGING=false, calls /2fa/verify successfully,
+               captures caplog, asserts zero lines from logger "app.auth.mfa" at WARNING+.
+
+Implementation:
+  - Router: logger.info() for BEFORE/AFTER gates (level-controlled by ENABLE_VERBOSE_LOGGING)
+  - Service: logger.info() for flow trace; logger.warning() for security events (replay, rate_limit)
+  - logger.warning() and logger.error() ALWAYS visible (WARNING+ threshold in VERBOSE=false mode)
+  - No PII in any log level: code never logged, token never logged, seed never logged
+  - Email: only domain part ("inditex-sandbox.com") logged (never full email address)
+  - user_id (UUID) is logged on success — acceptable (non-secret identifier)
+
+Sample log lines (ENABLE_VERBOSE_LOGGING=true, from backend dev log):
+  INFO:app.auth.mfa:auth.mfa.verify.received request_id=02aee479... ip=127.0.0.1
+  INFO:app.auth.mfa:auth.mfa.verify.success user_id=fc36b275-... request_id=02aee479...
+  (failure example would show: auth.mfa.verify.failure reason=wrong_code user_id=... request_id=...)

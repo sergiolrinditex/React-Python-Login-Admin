@@ -1,0 +1,51 @@
+=== STEP 1: sign-in with MFA-enabled employee ===
+{"data":{"mfa_required":true,"mfa_challenge_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMDZhYzEzOC1jYThmLTQ1ZGYtODUwMi0yYzhkOTU1ZmUxMzIiLCJwdXJwb3NlIjoibWZhX2NoYWxsZW5nZSIsImp0aSI6IjgyZjg4ZGMzY2NmYzRkZjI4NDZkYmQ0Y2Y5Y2M3YTdmIiwiaWF0IjoxNzc4NjE0MzQ4LCJleHAiOjE3Nzg2MTQ2NDh9.NVinJrp5sivHWmn37WqCoQqQ-ItY_G6sEBtf_0Dnlyc","expires_in":300},"meta":{"request_id":"verify-step1"},"errors":[]}
+HTTP_STATUS=200
+challenge_len=277
+
+=== STEP 2: generate live TOTP from JBSWY3DPEHPK3PXP ===
+live_code=755047
+
+=== STEP 3: POST /2fa/verify (happy path) ===
+HTTP/1.1 200 OK
+date: Tue, 12 May 2026 19:32:27 GMT
+server: uvicorn
+x-request-id: verify-step3-happy
+content-length: 686
+content-type: application/json
+set-cookie: refresh_token=DBfPviP5LdaC3zkuTnJy116jnpBlk4Pj25pYNV-a0oFBgTuaQP9iskhmoqXq6T0u; HttpOnly; Max-Age=2592000; Path=/api/v1/auth; SameSite=lax; Secure
+
+{"data":{"access_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMDZhYzEzOC1jYThmLTQ1ZGYtODUwMi0yYzhkOTU1ZmUxMzIiLCJlbWFpbCI6ImVtcGxveWVlLnZlcmlmaWNhdGlvbkBpbmRpdGV4LXNhbmRib3guY29tIiwicm9sZXMiOlsiZW1wbG95ZWUiXSwicHJlZmVycmVkX2xhbmd1YWdlIjoiZXMiLCJlbXBsb3llZV9wcm9maWxlX2lkIjpudWxsLCJqdGkiOiIxZGQxOTY3Yzk2ZjQ0M2YyYmIzMjhjMzE2ZWU5YjFjNCIsImlhdCI6MTc3ODYxNDM0OCwiZXhwIjoxNzc4NjE2MTQ4fQ.JQsc0y70k79XBS98Gbdbyx6YD20VcUCLQ6KDicrj0oE","token_type":"Bearer","expires_in":1800,"user":{"id":"206ac138-ca8f-45df-8502-2c8d955fe132","email":"employee.verification@inditex-sandbox.com","preferred_language":"es","roles":["employee"]}},"meta":{"request_id":"verify-step3-happy"},"errors":[]}
+
+--- cookie jar after happy ---
+=== STEP 4: REPLAY — first valid verify, then re-POST same challenge+code ===
+FIRST (must be 200):
+{"data":{"access_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMDZhYzEzOC1jYThmLTQ1ZGYtODUwMi0yYzhkOTU1ZmUxMzIiLCJlbWFpbCI6ImVtcGxveWVlLnZlcmlmaWNhdGlvbkBpbmRpdGV4LXNhbmRib3guY29tIiwicm9sZXMiOlsiZW1wbG95ZWUiXSwicHJlZmVycmVkX2xhbmd1YWdlIjoiZXMiLCJlbXBsb3llZV9wcm9maWxlX2lkIjpudWxsLCJqdGkiOiI5ZWU2NWE2NGE4Y2Y0ZjFlOWZhY2ZjMzE4Yzg4MTI1NSIsImlhdCI6MTc3ODYxNDM3MSwiZXhwIjoxNzc4NjE2MTcxfQ.lL_2CeleXFtHqQdNltvc-_ck6ayoR6da8-CHbKPf_sY","token_type":"Bearer","expires_in":1800,"user":{"id":"206ac138-ca8f-45df-8502-2c8d955fe132","email":"employee.verification@inditex-sandbox.com","preferred_language":"es","roles":["employee"]}},"meta":{"request_id":"vr-replay-1"},"errors":[]}
+HTTP_STATUS=200
+
+SECOND replay (must be 401 AUTH_MFA_CODE_INVALID):
+{"data":null,"meta":{"request_id":"vr-replay-2"},"errors":[{"code":"AUTH_MFA_CODE_INVALID","message":"Invalid 2FA code or challenge","field":null,"details":null}]}
+HTTP_STATUS=401
+
+=== STEP 5: WRONG CODE on fresh challenge ===
+{"data":null,"meta":{"request_id":"vr-wrong-code"},"errors":[{"code":"AUTH_MFA_CODE_INVALID","message":"Invalid 2FA code or challenge","field":null,"details":null}]}
+HTTP_STATUS=401
+
+=== STEP 6: INVALID PAYLOAD (non-numeric code) ===
+{"data":null,"meta":{"request_id":"vr-bad-payload"},"errors":[{"code":"AUTH_INVALID_PAYLOAD","message":"Value error, code must be exactly 6 numeric digits","field":"code","details":null}]}
+HTTP_STATUS=400
+
+=== STEP 7: TAMPERED CHALLENGE (invalid signature) ===
+{"data":null,"meta":{"request_id":"vr-tamper"},"errors":[{"code":"AUTH_MFA_CODE_INVALID","message":"Invalid 2FA code or challenge","field":null,"details":null}]}
+HTTP_STATUS=401
+
+=== STEP 8: EXPIRED CHALLENGE (forge with real key, exp in past) ===
+{"data":null,"meta":{"request_id":"vr-expired"},"errors":[{"code":"AUTH_MFA_VERIFY_RATE_LIMITED","message":"Too many 2FA verify attempts; retry after 36s","field":null,"details":null}]}
+HTTP_STATUS=429
+=== STEP 8b: capture Retry-After header on rate-limit reply ===
+HTTP/1.1 400 Bad Request
+
+(sleeping 45s for rate-limit window to recover)
+=== STEP 8c: EXPIRED CHALLENGE retry after rate-limit recovery ===
+{"data":null,"meta":{"request_id":"vr-expired-2"},"errors":[{"code":"AUTH_MFA_CHALLENGE_EXPIRED","message":"MFA challenge has expired; please sign in again","field":null,"details":null}]}
+HTTP_STATUS=410

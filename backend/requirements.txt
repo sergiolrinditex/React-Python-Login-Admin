@@ -91,3 +91,8 @@ PyJWT==2.12.1
 # the sign-up endpoint. 2.3.0 is latest stable on PyPI 2026-05-11 (MIT license).
 # Installed system: 2.3.0. No DNS lookup by default (check_deliverability=False).
 email-validator==2.3.0
+
+# ── P01-S02-T006 — TOTP 2FA verification (WRITE_SET_DRIFT §D-MFA1.J) ──────
+# pyotp: RFC 6238/4226 TOTP/HOTP. 2.9.0 latest stable 2026-05-12. MIT license.
+# verify(code, valid_window=1) returns bool; no one-shot enforcement (app tracks jti).
+pyotp==2.9.0

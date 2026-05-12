@@ -1,0 +1,45 @@
+============================= TESTER — Rate Limit Verification ==============================
+Timestamp: 2026-05-12T19:26:00+02:00
+Agent: tester (P01-S02-T006)
+
+== Rate Limit: POST /api/v1/auth/2fa/verify ==
+
+Configured defaults: AUTH_MFA_VERIFY_RATE_PER_MINUTE=20, AUTH_MFA_VERIFY_RATE_BURST=5
+Bucket: MFA_VERIFY (separate from SIGNIN, REFRESH, SIGNUP)
+
+== Test execution ==
+IP: 10.200.200.1 (unique test IP)
+Code: 000000 (wrong code — to avoid consuming valid challenge via success)
+Requests sent: 25 (loop until 429 received)
+
+Result: Got 429 on request 6
+(burst=5 allows 5 fast requests; 6th triggers rate limit)
+
+429 Response:
+  HTTP/1.1 429 Too Many Requests
+  retry-after: 60
+
+Body:
+{
+  "data": null,
+  "meta": {"request_id": "96cb368f-9893-4b79-bd44-4f90d6b5a6f2"},
+  "errors": [
+    {
+      "code": "AUTH_MFA_VERIFY_RATE_LIMITED",
+      "message": "Too many 2FA verify attempts; retry after 60s",
+      "field": null,
+      "details": null
+    }
+  ]
+}
+
+CHECKLIST:
+  [PASS] HTTP 429 returned after burst exhausted (request 6, burst=5)
+  [PASS] retry-after: 60 header present
+  [PASS] code: AUTH_MFA_VERIFY_RATE_LIMITED
+  [PASS] message includes "retry after 60s"
+  [PASS] Separate IP bucket — does not affect other IPs
+
+Also verified by T12 test:
+  test_mfa_verify_rate_limit_returns_429_with_retry_after PASSED (isolation run 16/16)
+  T12 uses monkeypatch to set AUTH_MFA_VERIFY_RATE_PER_MINUTE=2 for faster testing.

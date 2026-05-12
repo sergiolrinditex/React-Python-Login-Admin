@@ -30,6 +30,7 @@ from fastapi import APIRouter
 
 from app.auth.routers.forgot_reset import forgot_reset_router
 from app.auth.routers.logout import logout_router
+from app.auth.routers.mfa import mfa_router
 from app.auth.routers.refresh import refresh_router
 from app.auth.routers.sign_in import sign_in_router
 from app.auth.routers.sign_up import sign_up_router
@@ -40,3 +41,4 @@ auth_router.include_router(sign_in_router)
 auth_router.include_router(refresh_router)
 auth_router.include_router(logout_router)
 auth_router.include_router(forgot_reset_router)
+auth_router.include_router(mfa_router)  # POST /2fa/verify — P01-S02-T006

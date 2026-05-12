@@ -1,0 +1,47 @@
+============================= test session info ==============================
+Timestamp: 2026-05-12T20:28:00+02:00
+Runner: developer agent — P01-S02-T006 finalization run (main repo, NOT worktree)
+Backend source: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend
+ENABLE_VERBOSE_LOGGING: false
+Reset: scripts/dev-restart.sh --reset → clean DB state
+
+============================= test session starts ==============================
+platform darwin -- Python 3.11.5, pytest-9.0.2, pluggy-1.6.0
+rootdir: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend
+configfile: pyproject.toml
+plugins: httpx-0.36.0, asyncio-1.3.0, langsmith-0.8.3, anyio-4.13.0
+collected 16 items
+
+tests/integration/test_mfa.py::test_mfa_verify_happy_path_returns_200_with_access_token_and_cookie PASSED [  6%]
+tests/integration/test_mfa.py::test_mfa_verify_includes_user_dto_in_data PASSED [ 12%]
+tests/integration/test_mfa.py::test_mfa_verify_writes_refresh_token_row PASSED [ 18%]
+tests/integration/test_mfa.py::test_mfa_verify_writes_success_audit PASSED [ 25%]
+tests/integration/test_mfa.py::test_mfa_verify_expired_challenge_returns_410 PASSED [ 31%]
+tests/integration/test_mfa.py::test_mfa_verify_invalid_signature_returns_401_aggregate PASSED [ 37%]
+tests/integration/test_mfa.py::test_mfa_verify_purpose_mismatch_returns_401_aggregate PASSED [ 43%]
+tests/integration/test_mfa.py::test_mfa_verify_wrong_code_returns_401_aggregate PASSED [ 50%]
+tests/integration/test_mfa.py::test_mfa_verify_user_without_mfa_returns_401_aggregate_with_dummy_verify PASSED [ 56%]
+tests/integration/test_mfa.py::test_mfa_verify_replay_returns_401_aggregate PASSED [ 62%]
+tests/integration/test_mfa.py::test_mfa_verify_invalid_payload_returns_400 PASSED [ 68%]
+tests/integration/test_mfa.py::test_mfa_verify_rate_limit_returns_429_with_retry_after PASSED [ 75%]
+tests/integration/test_mfa.py::test_mfa_verify_user_inactive_returns_401_aggregate PASSED [ 81%]
+tests/integration/test_mfa.py::test_mfa_verify_verbose_logging_silent_when_disabled PASSED [ 87%]
+tests/integration/test_mfa.py::test_mfa_verify_set_cookie_attrs_byte_equal_to_sign_in PASSED [ 93%]
+tests/integration/test_mfa.py::test_mfa_verify_valid_window_accepts_previous_step_code PASSED [100%]
+
+=============================== warnings summary ===============================
+tests/integration/test_mfa.py: 16 warnings
+  /Users/sergiolr/Library/Python/3.11/lib/python/site-packages/jwt/api_jwt.py:147: InsecureKeyLengthWarning: The HMAC key is 0 bytes long, which is below the minimum recommended length of 32 bytes for SHA256. See RFC 7518 Section 3.2.
+    return self._jws.encode(
+
+tests/integration/test_mfa.py: 15 warnings
+  /Users/sergiolr/Library/Python/3.11/lib/python/site-packages/jwt/api_jwt.py:365: InsecureKeyLengthWarning: The HMAC key is 0 bytes long, which is below the minimum recommended length of 32 bytes for SHA256. See RFC 7518 Content 3.2.
+    decoded = self.decode_complete(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================= 16 passed, 31 warnings in 1.65s ========================
+
+RESULT: 16/16 PASS — ENABLE_VERBOSE_LOGGING=false, from main repo (NOT worktree)
+NOTE: Warnings are pre-existing InsecureKeyLengthWarning from JWT_PRIVATE_KEY=""
+      in test environment (same warning as test_auth_signin.py, test_auth_logout.py).
+      No MFA-specific security issues.

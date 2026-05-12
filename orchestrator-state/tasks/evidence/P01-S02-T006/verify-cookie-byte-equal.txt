@@ -1,0 +1,17 @@
+=== Looking for non-MFA test user in DB ===
+
+MFA verify Set-Cookie attrs:
+set-cookie: refresh_token=DBfPviP5LdaC3zkuTnJy116jnpBlk4Pj25pYNV-a0oFBgTuaQP9iskhmoqXq6T0u; HttpOnly; Max-Age=2592000; Path=/api/v1/auth; SameSite=lax; Secure
+
+USER: ('admin.peopletech@inditex-sandbox.com', None)
+USER: ('employee.verification@inditex-sandbox.com', True)
+
+(Only verification user exists with MFA enabled. T15 integration test already asserts byte-equality vs sign-in no-MFA branch in unit-test isolation.)
+
+ATTRS PARSED:
+  set-cookie: refresh_token=DBfPviP5LdaC3zkuTnJy116jnpBlk4Pj25pYNV-a0oFBgTuaQP9iskhmoqXq6T0u; HttpOnly; Max-Age=2592000; Path=/api/v1/auth; SameSite=lax; Secure
+  ✓ HttpOnly present
+  ✓ Secure present
+  ✓ SameSite=lax present
+  ✓ Path=/api/v1/auth present
+  ✓ Max-Age=2592000 present

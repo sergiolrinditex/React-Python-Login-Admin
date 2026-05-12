@@ -1,0 +1,61 @@
+============================= TESTER — MFA Isolation Run (VERBOSE) ==============================
+Timestamp: 2026-05-12T19:12:00+02:00
+Agent: tester (P01-S02-T006)
+Backend source: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend
+ENABLE_VERBOSE_LOGGING: true
+Reset: scripts/dev-restart.sh --reset → clean DB state (same tester reset as silent run)
+Command: ENABLE_VERBOSE_LOGGING=true python3 -m pytest tests/integration/test_mfa.py -v
+
+============================= test session starts ==============================
+platform darwin -- Python 3.11.5, pytest-9.0.2, pluggy-1.6.0 -- /usr/local/bin/python3
+cachedir: .pytest_cache
+rootdir: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend
+configfile: pyproject.toml
+plugins: httpx-0.36.0, asyncio-1.3.0, langsmith-0.8.3, anyio-4.13.0
+asyncio: mode=Mode.AUTO, debug=False
+collected 16 items
+
+tests/integration/test_mfa.py::test_mfa_verify_happy_path_returns_200_with_access_token_and_cookie PASSED [  6%]
+tests/integration/test_mfa.py::test_mfa_verify_includes_user_dto_in_data PASSED [ 12%]
+tests/integration/test_mfa.py::test_mfa_verify_writes_refresh_token_row PASSED [ 18%]
+tests/integration/test_mfa.py::test_mfa_verify_writes_success_audit PASSED [ 25%]
+tests/integration/test_mfa.py::test_mfa_verify_expired_challenge_returns_410 PASSED [ 31%]
+tests/integration/test_mfa.py::test_mfa_verify_invalid_signature_returns_401_aggregate PASSED [ 37%]
+tests/integration/test_mfa.py::test_mfa_verify_purpose_mismatch_returns_401_aggregate PASSED [ 43%]
+tests/integration/test_mfa.py::test_mfa_verify_wrong_code_returns_401_aggregate PASSED [ 50%]
+tests/integration/test_mfa.py::test_mfa_verify_user_without_mfa_returns_401_aggregate_with_dummy_verify PASSED [ 56%]
+tests/integration/test_mfa.py::test_mfa_verify_replay_returns_401_aggregate PASSED [ 62%]
+tests/integration/test_mfa.py::test_mfa_verify_invalid_payload_returns_400 PASSED [ 68%]
+tests/integration/test_mfa.py::test_mfa_verify_rate_limit_returns_429_with_retry_after PASSED [ 75%]
+tests/integration/test_mfa.py::test_mfa_verify_user_inactive_returns_401_aggregate PASSED [ 81%]
+tests/integration/test_mfa.py::test_mfa_verify_verbose_logging_silent_when_disabled PASSED [ 87%]
+tests/integration/test_mfa.py::test_mfa_verify_set_cookie_attrs_byte_equal_to_sign_in PASSED [ 93%]
+tests/integration/test_mfa.py::test_mfa_verify_valid_window_accepts_previous_step_code PASSED [100%]
+
+=============================== warnings summary ===============================
+tests/integration/test_mfa.py: 16 warnings
+  /Users/sergiolr/Library/Python/3.11/lib/python/site-packages/jwt/api_jwt.py:147: InsecureKeyLengthWarning: ...
+tests/integration/test_mfa.py: 15 warnings
+  /Users/sergiolr/Library/Python/3.11/lib/python/site-packages/jwt/api_jwt.py:365: InsecureKeyLengthWarning: ...
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================= 16 passed, 31 warnings in 1.50s ========================
+
+RESULT: 16/16 PASS — ENABLE_VERBOSE_LOGGING=true, tester agent, main repo (NOT worktree)
+
+VERBOSE LOGGING CONTRACT OBSERVED (from inline execution with logging.basicConfig=INFO):
+  BEFORE: INFO:app.auth.services.mfa:auth.mfa.verify.received request_id=test-req-001 ip=127.0.0.1
+  AFTER:  INFO:app.auth.services.mfa:auth.mfa.verify.success user_id=0230ff82-... request_id=test-req-001
+  FAILURE example (not logged in test mode due to caplog, but confirmed in direct execution):
+          INFO:app.auth.services.mfa:auth.mfa.verify.failure reason=wrong_code user_id=... request_id=...
+
+NEVER LOGGED (confirmed by T14 + direct inspection):
+  - code value (6-digit TOTP)
+  - mfa_challenge_token (JWT string)
+  - secret_encrypted (Fernet token)
+  - opaque_refresh (cookie value)
+  - full email address (only domain appears e.g. inditex-sandbox.com in failure logs)
+
+SILENT MODE CONFIRMATION (T14):
+  test_mfa_verify_verbose_logging_silent_when_disabled PASSED
+  When ENABLE_VERBOSE_LOGGING=false: caplog captures zero app.auth.mfa.* lines at WARNING+.
+  Only WARNING/ERROR security events (replay, rate_limit) remain visible.
