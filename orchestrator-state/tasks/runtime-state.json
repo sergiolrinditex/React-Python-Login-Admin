@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-12T05:32:56+00:00",
+  "generated_at": "2026-05-12T05:40:20+00:00",
   "next_ready_phase_id": "P01",
   "next_ready_task_id": "P01-S02-T003",
   "last_worker": "closer",
@@ -15,13 +15,13 @@
     "agent:developer": 7,
     "agent:validator": 9,
     "agent:tester": 9,
-    "agent:closer": 6,
+    "agent:closer": 7,
     "P00-S02-T004": 6,
     "P01-S02-T001": 8,
     "P01-S02-T002": 8,
     "agent:debugger": 1,
     "P01-S02-T008": 5,
-    "P01-S02-T010": 4,
+    "P01-S02-T010": 5,
     "P01-S02-T009": 4
   },
   "open_followups": [
@@ -85,14 +85,14 @@
       "why_not_debugger": "T008 acceptance is narrowly the seed --source path (lines 347-360 of scripts/dev-restart.profile.sh). The race lives in db_health() (lines 153-157) which runs pg_isready INSIDE the postgres container; meanwhile alembic upgrade head connects from the HOST at 127.0.0.1:5432 — container-internal-ready and host-TCP-forward-ready are different timings under Rancher. Two-consecutive --reset can race between compose down -v + compose up + alembic. T008 fix did not introduce this race (seed block runs after alembic), but T008's hard-fail correctly surfaces it as RESET2_EXIT=1. Bundling a wait-for-host-tcp into T008 would expand its responsibility from one bug to two unrelated bugs (KISS/YAGNI violation per .claude/rules/01-non-negotiables.md). Needs its own slice with separate acceptance: db_health (or a new wait_for_host_tcp helper) must verify host TCP 5432 reachability with credentials before returning success."
     }
   ],
-  "last_stop_at": "2026-05-12T05:32:56+00:00",
+  "last_stop_at": "2026-05-12T05:40:20+00:00",
   "last_claimed_task_id": "P01-S02-T010",
   "last_trailer": {
-    "task_id": "P01-S02-T008",
+    "task_id": "P01-S02-T010",
     "outcome": "committed",
     "next_status": "done",
-    "handoff": "orchestrator-state/tasks/handoffs/P01-S02-T008.md",
-    "report": "orchestrator-state/tasks/reports/P01-S02-T008.md",
+    "handoff": "orchestrator-state/tasks/handoffs/P01-S02-T010.md",
+    "report": "orchestrator-state/tasks/reports/P01-S02-T010.md",
     "report_ready": "yes",
     "baseline_sync_ready": "yes",
     "git_ready": "yes",

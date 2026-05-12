@@ -42,6 +42,20 @@ else
   warn ".env no existe. Continúo porque el stack profile puede apuntar a servicios externos o comandos no locales."
 fi
 
+# --- Provision dev-only secrets (P01-S02-T009) --------------------------------
+# Idempotent: only rotates JWT key if it matches the placeholder pattern
+# (empty, 'replace-with-dev-key', or len<32). Already-real keys are preserved.
+# Also forces ENABLE_VERBOSE_LOGGING=true as the dev default per non-negotiables.
+# Runs BEFORE DB migrations so subsequent steps see the rotated key + verbose flag.
+bash "$ROOT_DIR/scripts/gen-dev-secrets.sh"
+# Re-source .env so this process sees the final rotated values
+if [ -f "$PROJECT_ROOT/.env" ]; then
+  set -a
+  # shellcheck disable=SC1091
+  source "$PROJECT_ROOT/.env"
+  set +a
+fi
+
 BACKEND_EXISTS=1
 if [ "$BACKEND_ROOT" != "none" ] && [ ! -d "$PROJECT_ROOT/$BACKEND_ROOT" ]; then
   BACKEND_EXISTS=0
