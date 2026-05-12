@@ -1,7 +1,7 @@
 {
   "id": "FU-20260512044309-make-bootstrap-three-docs-py-refresh-preserve-cl",
   "schema_version": 1,
-  "status": "proposed",
+  "status": "promoted",
   "created_at": "2026-05-12T04:43:09+00:00",
   "created_by": "sergiolr",
   "origin_task_id": "P01-S02-T002",
@@ -47,5 +47,8 @@
     "debugger_path": "in_scope_defects_use_validator_tester_debugger_retest",
     "warnings": []
   },
-  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260512044309-make-bootstrap-three-docs-py-refresh-preserve-cl.yaml"
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260512044309-make-bootstrap-three-docs-py-refresh-preserve-cl.yaml",
+  "promoted_at": "2026-05-12T04:56:35+00:00",
+  "promoted_task_id": "P01-S02-T010",
+  "source_doc_updated": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md"
 }

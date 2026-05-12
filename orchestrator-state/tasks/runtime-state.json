@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-05-12T04:43:09+00:00",
+  "generated_at": "2026-05-12T05:00:36+00:00",
   "next_ready_phase_id": "P01",
   "next_ready_task_id": "P01-S02-T003",
   "last_worker": "closer",
-  "last_event": "followup_proposed",
+  "last_event": "task_claimed",
   "pending_journey_verifications": [],
   "journey_gate_mode": "frontier",
   "last_journey_verified": null,
@@ -36,40 +36,43 @@
     },
     {
       "id": "FU-20260512044241-fix-dev-restart-profile-sh-verification-data-boo",
-      "status": "proposed",
+      "status": "promoted",
       "severity": "medium",
       "origin_task_id": "P01-S02-T002",
       "title": "fix dev-restart.profile.sh verification-data bootstrap source path",
       "path": "orchestrator-state/tasks/follow-ups/FU-20260512044241-fix-dev-restart-profile-sh-verification-data-boo.yaml",
       "created_at": "2026-05-12T04:42:41+00:00",
       "scope_classification": "out_of_scope",
-      "why_not_debugger": "Bug is in scripts/dev-restart.profile.sh, not in the P01-S02-T002 sign-in write set (backend/app/auth/**). Debugger inside T002 cannot touch dev tooling without expanding Write set / Conflict group, which is exactly what FU exists for. The bug exists since the profile was first added and was just unmasked because T002 was the first slice to use --reset after the verification_data loader fix (P00-S02-T004) landed; not a regression introduced by sign-in."
+      "why_not_debugger": "Bug is in scripts/dev-restart.profile.sh, not in the P01-S02-T002 sign-in write set (backend/app/auth/**). Debugger inside T002 cannot touch dev tooling without expanding Write set / Conflict group, which is exactly what FU exists for. The bug exists since the profile was first added and was just unmasked because T002 was the first slice to use --reset after the verification_data loader fix (P00-S02-T004) landed; not a regression introduced by sign-in.",
+      "promoted_task_id": "P01-S02-T008"
     },
     {
       "id": "FU-20260512044309-generate-32-byte-jwt-dev-key-default-enable-verb",
-      "status": "proposed",
+      "status": "promoted",
       "severity": "low",
       "origin_task_id": "P01-S02-T002",
       "title": "generate ≥32-byte JWT dev key + default ENABLE_VERBOSE_LOGGING in dev .env",
       "path": "orchestrator-state/tasks/follow-ups/FU-20260512044309-generate-32-byte-jwt-dev-key-default-enable-verb.yaml",
       "created_at": "2026-05-12T04:43:09+00:00",
       "scope_classification": "out_of_scope",
-      "why_not_debugger": "The .env file in the repo (not .env.example) is developer-local state, outside the T002 Write set. The placeholder 'replace-with-dev-key' was set by setup-from-scratch and never rotated; tokens.py correctly emits a warning at startup but cannot fail-hard without breaking other devs. Fix belongs to a dedicated config-hygiene slice that generates a real ≥32-byte random dev key, wires ENABLE_VERBOSE_LOGGING=true as the dev default, and updates setup-from-scratch.sh to provision both. None of this fits the sign-in canonical Write set."
+      "why_not_debugger": "The .env file in the repo (not .env.example) is developer-local state, outside the T002 Write set. The placeholder 'replace-with-dev-key' was set by setup-from-scratch and never rotated; tokens.py correctly emits a warning at startup but cannot fail-hard without breaking other devs. Fix belongs to a dedicated config-hygiene slice that generates a real ≥32-byte random dev key, wires ENABLE_VERBOSE_LOGGING=true as the dev default, and updates setup-from-scratch.sh to provision both. None of this fits the sign-in canonical Write set.",
+      "promoted_task_id": "P01-S02-T009"
     },
     {
       "id": "FU-20260512044309-make-bootstrap-three-docs-py-refresh-preserve-cl",
-      "status": "proposed",
+      "status": "promoted",
       "severity": "medium",
       "origin_task_id": "P01-S02-T002",
       "title": "make bootstrap_three_docs.py --refresh preserve closer-set task status",
       "path": "orchestrator-state/tasks/follow-ups/FU-20260512044309-make-bootstrap-three-docs-py-refresh-preserve-cl.yaml",
       "created_at": "2026-05-12T04:43:09+00:00",
       "scope_classification": "out_of_scope",
-      "why_not_debugger": "Bug lives in the orchestrator framework (.claude/bin/bootstrap_three_docs.py + supporting modules), not in any app slice Write set. The bug only manifests when bootstrap_three_docs.py --refresh runs on a registry that has tasks at status=done from recent closers — refresh regenerates task records and resets the status to ready_for_close. I patched the registry manually for T002 (commit 570b702) but the root cause persists for any future refresh. Debugger inside T002 cannot fix orchestrator framework code without expanding Write set across the entire .claude/ static config."
+      "why_not_debugger": "Bug lives in the orchestrator framework (.claude/bin/bootstrap_three_docs.py + supporting modules), not in any app slice Write set. The bug only manifests when bootstrap_three_docs.py --refresh runs on a registry that has tasks at status=done from recent closers — refresh regenerates task records and resets the status to ready_for_close. I patched the registry manually for T002 (commit 570b702) but the root cause persists for any future refresh. Debugger inside T002 cannot fix orchestrator framework code without expanding Write set across the entire .claude/ static config.",
+      "promoted_task_id": "P01-S02-T010"
     }
   ],
   "last_stop_at": "2026-05-11T18:57:00+00:00",
-  "last_claimed_task_id": "P01-S02-T002",
+  "last_claimed_task_id": "P01-S02-T009",
   "last_trailer": {
     "task_id": "P01-S02-T002",
     "outcome": "committed",
@@ -82,5 +85,6 @@
     "push_ready": "yes",
     "worktrees_cleaned": "yes"
   },
-  "last_followup_id": "FU-20260512044309-make-bootstrap-three-docs-py-refresh-preserve-cl"
+  "last_followup_id": "FU-20260512044309-make-bootstrap-three-docs-py-refresh-preserve-cl",
+  "last_claimed_phase_id": "P01"
 }

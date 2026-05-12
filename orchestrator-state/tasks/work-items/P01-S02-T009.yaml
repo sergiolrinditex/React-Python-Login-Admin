@@ -1,0 +1,42 @@
+id: P01-S02-T009
+phase_id: P01
+step_id: P01-S02
+title: "generate ≥32-byte JWT dev key + default ENABLE_VERBOSE_LOGGING in dev .env"
+status: ready
+kind: "security"
+target: "generate ≥32-byte JWT dev key + default ENABLE_VERBOSE_LOGGING in dev .env"
+product_increment: "current"
+build_state: "planned"
+risk_level: "low"
+verify_mode: "auto"
+route: ""
+endpoint: ""
+journey_refs:
+tables:
+depends_on:
+  - P01-S02-T002
+acceptance:
+  - "After a fresh setup-from-scratch.sh run on a clean repo"
+  - ".env contains JWT_PRIVATE_KEY with len>=32 (real random"
+  - "not 'replace-with-dev-key') AND ENABLE_VERBOSE_LOGGING=true. Backend startup no longer warns about JWT key length. .env.example documents both."
+verification_commands:
+  - "Clone fresh"
+  - "run setup-from-scratch.sh"
+  - "then: (a) grep '^JWT_PRIVATE_KEY=' .env"
+  - "assert value length >= 32 and is not 'replace-with-dev-key'"
+  - "(b) grep '^ENABLE_VERBOSE_LOGGING=true' .env returns a match"
+  - "(c) start uvicorn"
+  - "assert no 'JWT_PRIVATE_KEY too short' warning in startup logs."
+allowed_paths:
+  - ".env.example"
+  - "scripts/setup-from-scratch.sh"
+  - "scripts/gen-dev-secrets.sh"
+conflict_groups:
+  - "config:env"
+write_set:
+  - ".env.example"
+  - "scripts/setup-from-scratch.sh"
+  - "scripts/gen-dev-secrets.sh"
+handoff_path: orchestrator-state/tasks/handoffs/P01-S02-T009.md
+evidence_dir: orchestrator-state/tasks/evidence/P01-S02-T009
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry"
