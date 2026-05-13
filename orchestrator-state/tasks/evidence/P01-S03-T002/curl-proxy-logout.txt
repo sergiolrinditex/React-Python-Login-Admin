@@ -1,0 +1,29 @@
+# curl-proxy-logout.txt
+# Task: P01-S03-T002 — Strategy A vite proxy (same-origin)
+# Test: POST /api/v1/auth/logout through vite proxy at :5174
+# Auth: access_token (Bearer) + refresh cookie in jar
+
+Command:
+  curl -i -s -X POST http://localhost:5174/api/v1/auth/logout \
+    -H 'Content-Type: application/json' \
+    -H 'Authorization: Bearer <access_token>' \
+    -H 'X-Request-ID: tester-proxy-logout-001' \
+    -b /tmp/tester-cookies3.txt \
+    -c /tmp/tester-cookies3.txt
+
+Response:
+  HTTP/1.1 204 No Content
+  Vary: Origin
+  date: Wed, 13 May 2026 05:22:22 GMT
+  server: uvicorn
+  x-request-id: tester-proxy-logout-001
+  set-cookie: refresh_token=""; HttpOnly; Max-Age=0; Path=/api/v1/auth; SameSite=lax; Secure
+  connection: close
+
+ASSESSMENT: PASS
+- HTTP 204 No Content — logout successful
+- Set-Cookie: refresh_token=""; Max-Age=0 — cookie cleared correctly
+  Path=/api/v1/auth; SameSite=lax; Secure — same attributes as issuance per ADR-001
+- x-request-id echoed — X-Request-ID preserved through proxy
+- No response body (correct for 204)
+- Proxy forwarded Authorization header and refresh cookie correctly to backend

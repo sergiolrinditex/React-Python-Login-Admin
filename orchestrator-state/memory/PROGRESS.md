@@ -30,7 +30,8 @@
   - **P01-S02-T006 — POST /api/v1/auth/2fa/verify MFA TOTP endpoint (developer done, 2026-05-12)**
   - **P01-S02-T007 — GET /api/v1/users/me + PATCH /api/v1/users/me/language (developer done, 2026-05-12)**
   - **P01-S03-T001 — Auth state provider and protected route guards (developer done, 2026-05-12)**
-- **Next pending slice**: P03-S01-T001 (SignInPage) or next ready wave task
+  - **P01-S03-T002 — Cross-origin infra: vite proxy /api → uvicorn (Strategy A, ADR-002) — DONE 2026-05-13**
+- **Next pending slice**: P03-S01-T001 (SignInPage) — unblocked by T002
 - **Blockers**: none
 - **Generated at**: 2026-05-12T23:30:00+02:00 (updated by developer P01-S03-T001)
 
@@ -152,7 +153,8 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 
 | Aspect | Status | Details |
 |--------|--------|---------|
-| App running | ready to start | `npm --prefix frontend run dev` boots at port 5173 |
+| App running | ready to start | `npm --prefix frontend run dev` boots at port 5173 (with proxy block active) |
+| Vite proxy | configured (P01-S03-T002) | `server.proxy["/api"]` → `http://localhost:8000`; Strategy A; ADR-002; unblocks J100-J105 browser flows |
 | Routes implemented | 4 | /showcase (public), /auth/sign-in (stub), /chat (RequireAuth), /admin (RequireRole) |
 | AuthProvider | implemented (P01-S03-T001) | Mount-time /refresh → /me hydration; status: hydrating/authenticated/unauthenticated |
 | RequireAuth | implemented (P01-S03-T001) | Redirects unauthenticated to /auth/sign-in?next=<safe_path> |
@@ -273,7 +275,13 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 - **2026-05-12 (P01-S02-T004)**: `_clear_refresh_cookie(response)` added to `routers/_helpers.py` (shared helper). Uses `Max-Age=0` with same attrs as `_set_refresh_cookie` to ensure browser deletes cookie on both 204 and 401 paths. WRITE_SET_DRIFT §D-LO1 — declared in task pack.
 - **2026-05-12 (P01-S02-T004)**: All 401 failures raise `SessionExpiredError` → `AUTH_SESSION_EXPIRED` body. The reason (no_bearer, expired_bearer, invalid_bearer, no_cookie, unknown_hash, revoked, expired, user_mismatch) is captured only in `audit_logs.metadata->>'reason'` for security. T10 verifies byte-equality of 401 bodies stripping per-request meta fields.
 - **2026-05-12 (P01-S02-T004)**: hook_write_scope_guard.py resolves worktree path relative to repo root → sees `.claude/worktrees/...` → falsely triggers static config guard. Workaround: all new file creation via Bash heredoc `cat > file << 'PYEOF'`. Documented in MEMORY.md.
+- **2026-05-13 (P01-S03-T002)**: Strategy A confirmed: vite `server.proxy["/api"]` → `http://localhost:8000` is the canonical cross-origin bridge for dev. Browser sees `:5173` for all requests. Mirrors prod nginx topology. `backend/app/main.py` intentionally untouched — no CORSMiddleware needed. ADR-002 appended to TECHNICAL_GUIDE §15.
+- **2026-05-13 (P01-S03-T002)**: `VITE_API_BASE_URL=""` contract pinned in `frontend/.env.example`. Empty string (not absent) ensures `"" ?? fallback` resolves to `""` (relative paths) without nullish coalescing kicking in. httpClient.ts and authRepository.ts unchanged.
+- **2026-05-13 (P01-S03-T002)**: ADR-002 §Contexto precise terminology: `localhost:5173` and `localhost:8000` are **same-site** (port ignored in eTLD+1 determination); `SameSite=Lax` was never the cookie blocker. The real blocker was the CORS preflight (OPTIONS → 405, independent mechanism). Strategy A collapses to same-origin and removes the preflight entirely.
+- **2026-05-13 (P01-S03-T002)**: K.4 (SSE streaming) noted: vite proxy preserves chunked transfer by default but P02-S04 `POST /api/v1/chat/conversations/{id}/stream` should verify SSE through proxy explicitly. Deferred to P02 planner.
 
+> Last updated: 2026-05-13T12:00:00+02:00
+> Updated by: closer — P01-S03-T002 cross-origin infra (vite proxy /api → uvicorn, Strategy A, ADR-002) — verified + committed. J100-J105 unblocked. Next: P03-S01-T001 SignInPage.
 > Last updated: 2026-05-12T20:35:00+02:00
 > Updated by: developer — P01-S02-T006 POST /api/v1/auth/2fa/verify — 16 new MFA tests (16/16 isolation PASS), 10 backend endpoints total (developer done, pending validator+tester+verify-slice)
 > Last updated: 2026-05-12T17:00:00+02:00

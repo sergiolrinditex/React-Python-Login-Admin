@@ -1,0 +1,23 @@
+Network requests captured by chrome-devtools MCP during verify-slice P01-S03-T002.
+
+After initial navigate to /chat (RequireAuth → AuthProvider.hydrate):
+  GET  http://localhost:5173/chat                         → 200 (vite static)
+  POST http://localhost:5173/api/v1/auth/refresh          → 401 (no cookie)
+  POST http://localhost:5173/api/v1/auth/refresh          → 401 (StrictMode 2nd mount)
+  Console: [auth] route.sign-in-stub.render (x2)
+  Console: NO CORS errors, NO net::ERR_FAILED.
+
+After full J100 flow via fetch with credentials:include (round 3):
+  POST http://localhost:5173/api/v1/auth/sign-in          → 200
+  POST http://localhost:5173/api/v1/auth/2fa/verify       → 200
+  GET  http://localhost:5173/api/v1/users/me              → 200
+  POST http://localhost:5173/api/v1/auth/refresh          → 200 (rotated)
+  POST http://localhost:5173/api/v1/auth/logout           → 204
+  POST http://localhost:5173/api/v1/auth/refresh          → 401 (post-logout)
+
+After reload to /chat (round 4, fresh login + navigation):
+  GET  http://localhost:5173/chat                         → 304 (cache)
+  POST http://localhost:5173/api/v1/auth/refresh          → 200 (hydrate success)
+  POST http://localhost:5173/api/v1/auth/refresh          → 401 (StrictMode race)
+
+All URLs are same-origin (:5173). No cross-origin XHR.

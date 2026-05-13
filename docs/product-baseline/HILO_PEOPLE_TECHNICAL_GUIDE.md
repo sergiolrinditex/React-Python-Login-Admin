@@ -547,6 +547,18 @@ Frontend: `npm --prefix frontend run build`. Backend: `docker build -f backend/D
 
 Migraciones reversibles. Activación de modelo y MCP son toggles auditados, rollback por `enabled=false` o restaurar default anterior. Documentos RAG no se borran físicamente en rollback, se desactivan por versión/colección.
 
+
+### 11.4 Cross-origin / reverse-proxy topology
+
+En dev y prod el navegador habla a UN solo origin (mismo host, mismo puerto):
+
+- **Dev**: `vite` (puerto 5173) sirve el SPA y proxy-pasa `/api/**` a `uvicorn` (:8000). Configurado en `frontend/vite.config.ts` → `server.proxy["/api"]` (ADR-002, P01-S03-T002).
+- **Prod**: `nginx` (puerto 80/443) sirve el SPA estático compilado y proxy-pasa `/api/**` al contenedor `backend`.
+
+No se usa `CORSMiddleware` en el backend porque el navegador nunca emite una request cross-origin contra el API. Razonamiento completo y alternativas descartadas en ADR-002.
+
+`frontend/.env.example` pin: `VITE_API_BASE_URL=""` — el cliente usa paths relativos para que el contrato de URL sea idéntico en dev y prod. **No** establecer `VITE_API_BASE_URL=http://localhost:8000` en dev: re-introduce cross-origin XHR y obliga a registrar `CORSMiddleware` (preflight independiente del atributo `SameSite=Lax` de la cookie de refresh — ver ADR-002 §Contexto).
+
 ## 12. Constraints & Invariants
 
 - RAG no depende de Agents ni Graphs.
@@ -594,6 +606,31 @@ La visualización estática se genera en `dist/hilo-people-preview.html` como pr
 - `Path=/auth` (status quo) — bug activo; el path no coincide con los endpoints reales; rechazado.
 
 **Consecuencias**: La cookie solo viaja a `/api/v1/auth/*`. Cambios futuros al routing prefix requieren actualizar `_REFRESH_COOKIE_PATH` y la sección §10.2. Tests T01/T13 de sign-in, T01 de refresh y el nuevo T15 de logout actúan como muro de contención.
+
+
+### ADR-002 — Cross-origin strategy: same-origin reverse proxy in dev (vite) and prod (Nginx)
+
+**Fecha**: 2026-05-13
+
+**Contexto**: El frontend dev sirve en :5173 (vite) y el backend dev en :8000 (uvicorn). `localhost:5173` y `localhost:8000` son **same-site** — la determinación de same-site usa scheme + eTLD+1 y **el puerto se ignora** (MDN Glossary/Site; web.dev "same-site-same-origin"; RFC 6265bis §5.2). Por tanto `SameSite=Lax` permite la cookie de refresh entre ambos puertos: SameSite gobierna same-site vs cross-site, no same-origin vs cross-origin, y nunca fue el bloqueo. El bloqueo real observado en `/verify-slice P01-S03-T001` F3–F5 fue el **preflight CORS** (mecanismo independiente de SameSite): `OPTIONS /api/v1/auth/refresh → 405 Method Not Allowed` porque no había `CORSMiddleware` registrado y FastAPI/Starlette no genera un handler implícito de OPTIONS. Strategy A colapsa el navegador a un único origin (`:5173` vía vite proxy) y elimina el preflight; la cookie sigue viajando porque el request sigue siendo same-site (lo era ya) y ahora además same-origin.
+
+**Decisión**: Adoptar reverse proxy same-origin en dev y prod:
+- Dev: `vite.config.ts` declara `server.proxy["/api"] = { target: "http://localhost:8000", changeOrigin: false }`. El navegador habla a :5173 para TODO (HTML, assets, /api/**) y vite reenvía /api → :8000.
+- Prod: Nginx delante del SPA estático también proxy-pasa `/api/**` al servicio backend. El navegador habla a UN solo origin (el de la app) en ambos entornos.
+
+`VITE_API_BASE_URL=""` en `frontend/.env.example` es el pin de contrato: el cliente usa paths relativos.
+
+**Alternativas descartadas**:
+- `CORSMiddleware` con `allow_origins=["http://localhost:5173"]; allow_credentials=true` — funciona pero deja prod y dev en topologías distintas (en prod hay Nginx delante; en dev hay CORS), introduce middleware adicional permanente solo por dev, requiere allowlist de orígenes mantenida a mano. Rechazado por divergencia dev/prod.
+- `CORSMiddleware` con `allow_origins=["*"]` — incompatible con `allow_credentials=true` por spec CORS; además inseguro. Rechazado.
+- `VITE_API_BASE_URL=http://localhost:8000` (status quo implícito) — re-introduce cross-origin XHR y require CORS. Rechazado.
+
+**Consecuencias**:
+- El frontend code path es idéntico en dev y prod; cero ramas `if (DEV)` alrededor de URLs.
+- La cookie refresh no necesita razonar sobre cross-origin: `SameSite=Lax` simplemente funciona.
+- El backend no necesita conocer la lista de orígenes UI; un servicio detrás de Nginx no necesita CORS.
+- SSE / streaming (P02-S04 `POST /api/v1/chat/conversations/{id}/stream`) debe verificarse explícitamente a través del proxy cuando aterrice; vite preserva chunked transfer por defecto.
+- Si en el futuro Hilo gana un consumer externo (app móvil nativa, integración B2B), se reabrirá esta decisión con un ADR que SUPERSEDE a ADR-002.
 
 ## 16. Verificación de cableado pre-entrega
 

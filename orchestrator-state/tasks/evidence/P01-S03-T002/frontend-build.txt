@@ -1,0 +1,24 @@
+# frontend-build.txt
+# Task: P01-S03-T002 — Strategy A vite proxy (same-origin)
+# Frontend build verification: confirms vite.config.ts is valid TypeScript/Vite config
+
+# Command (from main repo, using worktree's vite.config.ts copied to frontend/ dir):
+cd .claude/worktrees/agent-a38d7555ab2b16100/frontend && npm run build
+# (equivalent: cd frontend && npm run build after copying config)
+
+# Output:
+> hilo-people-frontend@0.1.0 build
+> tsc -b && vite build
+
+vite v8.0.12 building client environment for production...
+✓ 119 modules transformed.
+dist/index.html                   1.02 kB │ gzip:   0.61 kB
+dist/assets/index-FMs1kaoC.css    1.02 kB │ gzip:   0.54 kB
+dist/assets/index-BEMcMvGM.js   337.02 kB │ gzip: 106.19 kB
+
+✓ built in 182ms
+
+# ASSESSMENT: PASS — Build succeeds with 119 modules.
+# The server.proxy block in vite.config.ts is dev-only (not included in build output).
+# No TypeScript errors, no Vite build errors.
+# Source maps NOT included (security: sourcemap: false in config).

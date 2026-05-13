@@ -1,0 +1,40 @@
+# contract-observed.txt
+# Task: P01-S03-T002 — Strategy A vite proxy (same-origin)
+# Front → Back → DB contract as observed during testing
+
+# Route/proxy:
+#   Browser → :5174/api/v1/** → (vite proxy) → :8000/api/v1/**
+#   Vite config: server.proxy["/api"] = { target: "http://localhost:8000", changeOrigin: false, secure: false }
+
+# Endpoints observed through proxy (all confirmed working):
+#   POST /api/v1/auth/sign-in → 200 (mfa_required: true) for verification user
+#   POST /api/v1/auth/2fa/verify → 200 + access_token + Set-Cookie refresh_token
+#   GET /api/v1/users/me → 200 + UserProfile
+#   POST /api/v1/auth/refresh → 200 + new access_token + rotated Set-Cookie
+#   POST /api/v1/auth/logout → 204 + Set-Cookie Max-Age=0
+
+# Cookie contract preserved (per ADR-001):
+#   Set-Cookie: refresh_token=<opaque_token>; HttpOnly; Max-Age=2592000; Path=/api/v1/auth; SameSite=lax; Secure
+#   ✓ HttpOnly — confirmed
+#   ✓ Max-Age=2592000 (30 days) — confirmed
+#   ✓ Path=/api/v1/auth — confirmed
+#   ✓ SameSite=lax — confirmed
+#   ✓ Secure — confirmed
+#   Cookie bound to: :5174 (same-origin as browser; not :8000)
+
+# X-Request-ID preservation:
+#   Client sends: X-Request-ID: tester-proxy-signin-001
+#   Server echoes: x-request-id: tester-proxy-signin-001 (in response header)
+#   Also in response body: meta.request_id: "tester-proxy-signin-001"
+#   ✓ X-Request-ID preserved end-to-end through proxy
+
+# Repository/table path:
+#   users table (sign-in, /me reads)
+#   refresh_tokens table (rotate on refresh, clear on logout)
+#   audit_logs table (auth.sign_in, auth.refresh, auth.logout entries)
+#   mfa_totp_secrets table (2FA verify reads)
+#   employee_profiles table (users/me join)
+
+# Backend endpoints confirmed reachable (no CORS errors):
+#   OPTIONS /api/v1/auth/refresh → 405 (expected — no CORSMiddleware in Strategy A)
+#   All actual API calls go via proxy → same-origin → no preflight triggered

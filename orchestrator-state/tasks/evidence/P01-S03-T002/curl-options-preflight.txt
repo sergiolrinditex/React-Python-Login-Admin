@@ -1,0 +1,25 @@
+# curl-options-preflight.txt
+# Task: P01-S03-T002 — Strategy A vite proxy (same-origin)
+# Purpose: Verify that OPTIONS preflight to backend returns 405 (expected in Strategy A)
+# Explanation: Strategy A makes the browser see same-origin, so no CORS preflight occurs from the browser.
+# Hitting the backend directly with OPTIONS (simulating a cross-origin browser) still returns 405 because
+# no CORSMiddleware is registered. This is EXPECTED and CORRECT for Strategy A.
+# The real test for Strategy A is that proxy requests through :5174 reach the handler (see curl-proxy-*.txt).
+
+Command: curl -i -X OPTIONS http://localhost:8000/api/v1/auth/refresh \
+  -H 'Origin: http://localhost:5173' \
+  -H 'Access-Control-Request-Method: POST'
+
+Response:
+HTTP/1.1 405 Method Not Allowed
+date: Wed, 13 May 2026 05:17:11 GMT
+server: uvicorn
+allow: POST
+content-length: 31
+content-type: application/json
+
+{"detail":"Method Not Allowed"}
+
+ASSESSMENT: EXPECTED — Strategy A removes CORS from the picture entirely. No CORSMiddleware is registered.
+The 405 is the correct response from FastAPI when OPTIONS is sent to a POST-only endpoint with no middleware.
+This is NOT a failure. It confirms Strategy A is in place (no CORSMiddleware = no 204 preflight response).

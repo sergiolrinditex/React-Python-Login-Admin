@@ -1,0 +1,80 @@
+2026-05-13 07:52:48,245 app.auth.routers.sign_in INFO auth.sign_in.received email_domain=inditex-sandbox.com request_id=verify-slice-rehydrate
+2026-05-13 07:52:48,245 app.auth.rate_limit DEBUG rate_limit.check.start prefix=SIGNIN ip=SIGNIN:127.0.0.1 rate_per_min=20 burst=20
+2026-05-13 07:52:48,245 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=SIGNIN ip=SIGNIN:127.0.0.1 remaining=18
+2026-05-13 07:52:48,245 app.auth.services.sign_in INFO auth.sign_in.starting request_id=verify-slice-rehydrate email_domain=inditex-sandbox.com
+2026-05-13 07:52:48,245 app.auth.repository DEBUG auth.repo.find_by_email.start email_domain=inditex-sandbox.com
+2026-05-13 07:52:48,257 app.auth.repository DEBUG auth.repo.find_by_email.done found=True
+2026-05-13 07:52:48,257 app.auth.services.sign_in INFO auth.sign_in.user_found user_id=70d21af3-57fe-4904-bd5e-739c73344dbb request_id=verify-slice-rehydrate
+2026-05-13 07:52:48,257 app.auth.repository DEBUG auth.repo.count_signin_failures.start user_id=70d21af3-57fe-4904-bd5e-739c73344dbb window=900s
+2026-05-13 07:52:48,260 app.auth.repository DEBUG auth.repo.count_signin_failures.done user_id=70d21af3-57fe-4904-bd5e-739c73344dbb count=0
+2026-05-13 07:52:48,260 app.auth.password DEBUG password.verify_with_dummy.start has_real_hash=True
+2026-05-13 07:52:48,301 app.auth.password DEBUG password.verify_with_dummy.ok
+2026-05-13 07:52:48,305 app.auth.tokens DEBUG tokens.encode_mfa_challenge.start user_id=70d21af3-57fe-4904-bd5e-739c73344dbb ttl=300s
+2026-05-13 07:52:48,305 app.auth.tokens DEBUG tokens.encode_mfa_challenge.done user_id=70d21af3-57fe-4904-bd5e-739c73344dbb exp=2026-05-13T05:57:48.305037+00:00
+2026-05-13 07:52:48,305 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.sign_in actor_user_id=70d21af3-57fe-4904-bd5e-739c73344dbb
+2026-05-13 07:52:48,308 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=26bd6f45-6b90-49b6-bd43-a14d1b1fa91a action=auth.sign_in
+2026-05-13 07:52:48,315 app.auth.services.sign_in INFO auth.sign_in.mfa_challenge_issued user_id=70d21af3-57fe-4904-bd5e-739c73344dbb request_id=verify-slice-rehydrate
+2026-05-13 07:52:48,315 app.auth.routers.sign_in INFO auth.sign_in.mfa_challenge_issued user_id=70d21af3-57fe-4904-bd5e-739c73344dbb request_id=verify-slice-rehydrate
+INFO:     127.0.0.1:52348 - "POST /api/v1/auth/sign-in HTTP/1.1" 200 OK
+2026-05-13 07:52:48,317 app.db.session DEBUG db.session.closed
+2026-05-13 07:52:48,320 app.db.session DEBUG db.session.open
+2026-05-13 07:52:48,320 app.auth.routers.mfa INFO auth.mfa.verify.router.received request_id=verify-slice-rehydrate ip=127.0.0.1
+2026-05-13 07:52:48,320 app.auth.rate_limit DEBUG rate_limit.check.start prefix=MFA_VERIFY ip=MFA_VERIFY:127.0.0.1 rate_per_min=20 burst=5
+2026-05-13 07:52:48,320 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=MFA_VERIFY ip=MFA_VERIFY:127.0.0.1 remaining=3
+2026-05-13 07:52:48,320 app.auth.services.mfa INFO auth.mfa.verify.received request_id=verify-slice-rehydrate ip=127.0.0.1
+2026-05-13 07:52:48,320 app.auth.tokens DEBUG tokens.decode.start
+2026-05-13 07:52:48,320 app.auth.tokens DEBUG tokens.decode.ok sub=70d21af3-57fe-4904-bd5e-739c73344dbb
+2026-05-13 07:52:48,325 app.auth.repositories.mfa DEBUG auth.repo.mfa.find_enabled.start user_id=70d21af3-57fe-4904-bd5e-739c73344dbb
+2026-05-13 07:52:48,326 app.auth.repositories.mfa DEBUG auth.repo.mfa.find_enabled.done user_id=70d21af3-57fe-4904-bd5e-739c73344dbb found=True
+2026-05-13 07:52:48,328 app.auth.tokens DEBUG tokens.encode_access.start sub=70d21af3-57fe-4904-bd5e-739c73344dbb ttl=1800s
+2026-05-13 07:52:48,328 app.auth.tokens DEBUG tokens.encode_access.done sub=70d21af3-57fe-4904-bd5e-739c73344dbb exp=2026-05-13T06:22:48.327269+00:00
+2026-05-13 07:52:48,329 app.auth.repositories.refresh DEBUG auth.repo.refresh.insert_new.start user_id=70d21af3-57fe-4904-bd5e-739c73344dbb
+2026-05-13 07:52:48,331 app.auth.repositories.refresh DEBUG auth.repo.refresh.insert_new.done user_id=70d21af3-57fe-4904-bd5e-739c73344dbb new_rt_id=08b160c0-e589-43de-be57-7c917b105fc6
+2026-05-13 07:52:48,331 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.mfa.verify actor_user_id=70d21af3-57fe-4904-bd5e-739c73344dbb
+2026-05-13 07:52:48,332 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=31c3b0fc-9bd9-4ade-ad41-8fdc96ac9d0c action=auth.mfa.verify
+2026-05-13 07:52:48,334 app.auth.repositories.mfa DEBUG auth.repo.mfa.replay_store.consumed jti_prefix=c8801dc3...
+2026-05-13 07:52:48,337 app.auth.services.mfa INFO auth.mfa.verify.success user_id=70d21af3-57fe-4904-bd5e-739c73344dbb request_id=verify-slice-rehydrate
+2026-05-13 07:52:48,339 app.auth.routers.mfa INFO auth.mfa.verify.router.success user_id=70d21af3-57fe-4904-bd5e-739c73344dbb request_id=verify-slice-rehydrate
+INFO:     127.0.0.1:52353 - "POST /api/v1/auth/2fa/verify HTTP/1.1" 200 OK
+2026-05-13 07:52:48,340 app.db.session DEBUG db.session.closed
+2026-05-13 07:52:54,746 app.db.session DEBUG db.session.open
+2026-05-13 07:52:54,746 app.db.session DEBUG db.session.open
+2026-05-13 07:52:54,747 app.auth.routers.refresh DEBUG auth.refresh.received request_id=d132d7b9-cd46-493a-a4a6-ffba1f6f6061 ip=127.0.0.1
+2026-05-13 07:52:54,747 app.auth.rate_limit DEBUG rate_limit.check.start prefix=REFRESH ip=REFRESH:127.0.0.1 rate_per_min=30 burst=30
+2026-05-13 07:52:54,747 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=REFRESH ip=REFRESH:127.0.0.1 new_window remaining=29
+2026-05-13 07:52:54,747 app.auth.services.refresh DEBUG auth.refresh.execute.start request_id=d132d7b9-cd46-493a-a4a6-ffba1f6f6061 ip=127.0.0.1
+2026-05-13 07:52:54,747 app.auth.routers.refresh DEBUG auth.refresh.received request_id=8110362b-7d64-424d-b0ca-eebb4eba2f5b ip=127.0.0.1
+2026-05-13 07:52:54,747 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_active_for_update.start hash_prefix=682660a0...
+2026-05-13 07:52:54,748 app.auth.rate_limit DEBUG rate_limit.check.start prefix=REFRESH ip=REFRESH:127.0.0.1 rate_per_min=30 burst=30
+2026-05-13 07:52:54,748 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=REFRESH ip=REFRESH:127.0.0.1 remaining=28
+2026-05-13 07:52:54,748 app.auth.services.refresh DEBUG auth.refresh.execute.start request_id=8110362b-7d64-424d-b0ca-eebb4eba2f5b ip=127.0.0.1
+2026-05-13 07:52:54,748 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_active_for_update.start hash_prefix=682660a0...
+2026-05-13 07:52:54,753 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_active_for_update.done found=True hash_prefix=682660a0...
+2026-05-13 07:52:54,753 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_user_active.start user_id=70d21af3-57fe-4904-bd5e-739c73344dbb
+2026-05-13 07:52:54,754 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_user_active.done user_id=70d21af3-57fe-4904-bd5e-739c73344dbb active=True
+2026-05-13 07:52:54,754 app.auth.repositories.refresh DEBUG auth.repo.refresh.revoke.start token_id=08b160c0-e589-43de-be57-7c917b105fc6
+2026-05-13 07:52:54,756 app.auth.repositories.refresh DEBUG auth.repo.refresh.revoke.done token_id=08b160c0-e589-43de-be57-7c917b105fc6
+2026-05-13 07:52:54,756 app.auth.repositories.refresh DEBUG auth.repo.refresh.insert_new.start user_id=70d21af3-57fe-4904-bd5e-739c73344dbb
+2026-05-13 07:52:54,758 app.auth.repositories.refresh DEBUG auth.repo.refresh.insert_new.done user_id=70d21af3-57fe-4904-bd5e-739c73344dbb new_rt_id=9e98dd72-9151-4c13-953f-79af468d2d75
+2026-05-13 07:52:54,759 app.auth.tokens DEBUG tokens.encode_access.start sub=70d21af3-57fe-4904-bd5e-739c73344dbb ttl=1800s
+2026-05-13 07:52:54,759 app.auth.tokens DEBUG tokens.encode_access.done sub=70d21af3-57fe-4904-bd5e-739c73344dbb exp=2026-05-13T06:22:54.758146+00:00
+2026-05-13 07:52:54,759 app.auth.services.refresh_audit DEBUG auth.refresh.success_audit.start user_id=70d21af3-57fe-4904-bd5e-739c73344dbb request_id=8110362b-7d64-424d-b0ca-eebb4eba2f5b
+2026-05-13 07:52:54,759 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.refresh actor_user_id=70d21af3-57fe-4904-bd5e-739c73344dbb
+2026-05-13 07:52:54,760 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=9914546a-8b3d-453f-b944-7ecced92b4c4 action=auth.refresh
+2026-05-13 07:52:54,760 app.auth.services.refresh_audit DEBUG auth.refresh.success_audit.done user_id=70d21af3-57fe-4904-bd5e-739c73344dbb request_id=8110362b-7d64-424d-b0ca-eebb4eba2f5b
+2026-05-13 07:52:54,761 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_active_for_update.done found=False hash_prefix=682660a0...
+2026-05-13 07:52:54,761 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_by_hash.start hash_prefix=682660a0...
+2026-05-13 07:52:54,762 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_by_hash.done found=True
+2026-05-13 07:52:54,762 app.auth.services.refresh DEBUG auth.refresh.rejected reason=revoked request_id=d132d7b9-cd46-493a-a4a6-ffba1f6f6061
+2026-05-13 07:52:54,762 app.auth.services.refresh_audit DEBUG auth.refresh.failure_audit.start reason=revoked request_id=d132d7b9-cd46-493a-a4a6-ffba1f6f6061
+2026-05-13 07:52:54,762 app.db.session DEBUG db.session.audit_scope.open
+2026-05-13 07:52:54,762 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.refresh actor_user_id=70d21af3-57fe-4904-bd5e-739c73344dbb
+2026-05-13 07:52:54,764 app.auth.services.refresh DEBUG auth.refresh.execute.done user_id=70d21af3-57fe-4904-bd5e-739c73344dbb old_token_id=08b160c0-e589-43de-be57-7c917b105fc6 new_token_id=9e98dd72-9151-4c13-953f-79af468d2d75 request_id=8110362b-7d64-424d-b0ca-eebb4eba2f5b
+2026-05-13 07:52:54,764 app.auth.routers.refresh DEBUG auth.refresh.success user_id=70d21af3-57fe-4904-bd5e-739c73344dbb old_token_id=08b160c0-e589-43de-be57-7c917b105fc6 new_token_id=9e98dd72-9151-4c13-953f-79af468d2d75 request_id=8110362b-7d64-424d-b0ca-eebb4eba2f5b
+INFO:     127.0.0.1:52406 - "POST /api/v1/auth/refresh HTTP/1.1" 200 OK
+2026-05-13 07:52:54,766 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=d7583770-f629-4114-ae7e-6a7fbc8f0b96 action=auth.refresh
+2026-05-13 07:52:54,766 app.db.session DEBUG db.session.closed
+2026-05-13 07:52:54,767 app.auth.services.refresh_audit DEBUG auth.refresh.failure_audit.done reason=revoked request_id=d132d7b9-cd46-493a-a4a6-ffba1f6f6061
+2026-05-13 07:52:54,767 app.db.session DEBUG db.session.audit_scope.closed
+INFO:     127.0.0.1:52405 - "POST /api/v1/auth/refresh HTTP/1.1" 401 Unauthorized
+2026-05-13 07:52:54,768 app.db.session DEBUG db.session.closed

@@ -1,0 +1,47 @@
+# curl-proxy-signin.txt
+# Task: P01-S03-T002 — Strategy A vite proxy (same-origin)
+# Test: POST /api/v1/auth/sign-in through vite proxy at :5174
+# Vite config: server.proxy["/api"] = { target: "http://localhost:8000", changeOrigin: false }
+# Data contract: employee.verification@inditex-sandbox.com / VerifyPass2024! (employee_primary.json)
+
+# APPROACH: Started vite dev server at :5174 using the worktree's vite.config.ts
+# (copied to main frontend/ directory since node_modules must be co-located).
+# The vite.config.ts at :5174 has the proxy block; the :5173 server does not.
+
+Command:
+  curl -i -s -X POST http://localhost:5174/api/v1/auth/sign-in \
+    -H 'Content-Type: application/json' \
+    -H 'X-Request-ID: tester-proxy-signin-002' \
+    -c /tmp/tester-cookies2.txt \
+    -d '{"email":"employee.verification@inditex-sandbox.com","password":"VerifyPass2024!"}'
+
+Response:
+  HTTP/1.1 200 OK
+  Vary: Origin
+  date: Wed, 13 May 2026 05:21:32 GMT
+  server: uvicorn
+  x-request-id: tester-proxy-signin-002
+  content-length: 409
+  content-type: application/json
+  connection: close
+
+  {
+    "data": {
+      "mfa_required": true,
+      "mfa_challenge_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...YSzA4CUOslAQ1Jyqbv1hpKTfm2_pirLkhWdr540DdDo",
+      "expires_in": 300
+    },
+    "meta": {"request_id": "tester-proxy-signin-002"},
+    "errors": []
+  }
+
+ASSESSMENT: PASS
+- HTTP 200 — proxy forwarded request to backend handler
+- mfa_required: true — correct for verification user (MFA enabled per mfa_primary.json)
+- x-request-id echoed — X-Request-ID preserved end-to-end through proxy
+- No CORS error — browser sees :5174 for the request (same-origin proxy)
+- No Set-Cookie yet — correct (MFA branch withholds refresh cookie until 2FA complete)
+
+Note: Verification data was loaded via:
+  python3 -m app.verification_data.bootstrap --source ../data/verification --only auth
+  Result: {"status": "ok", "groups": [{"group": "auth", "status": "ok", "inserted": 2, ...}]}

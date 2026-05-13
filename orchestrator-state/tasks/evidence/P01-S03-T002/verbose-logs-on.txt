@@ -1,0 +1,69 @@
+# verbose-logs-on.txt
+# Task: P01-S03-T002 — Strategy A vite proxy (same-origin)
+# Backend logs with ENABLE_VERBOSE_LOGGING=true
+# Tests: test_signin_mfa_required_branch + test_refresh_success_rotates_and_returns_new_access_token
+
+# ENABLE_VERBOSE_LOGGING=true output captured via pytest --log-cli-level=DEBUG
+
+----------------------------- live log collection ------------------------------
+DEBUG    app.auth.password:password.py:71 password.hash.start
+DEBUG    app.auth.password:password.py:73 password.hash.done
+
+tests/integration/test_auth_signin.py::test_signin_mfa_required_branch
+-------------------------------- live log call ---------------------------------
+DEBUG    asyncio:selector_events.py:54 Using selector: KqueueSelector
+DEBUG    app.db.session:session.py:88 db.session.open
+INFO     app.auth.routers.sign_in:sign_in.py:93 auth.sign_in.received email_domain=inditex-sandbox.com request_id=42fd2582-1017-41f0-b1f9-4b38efd51413
+DEBUG    app.auth.rate_limit:rate_limit.py:143 rate_limit.check.start prefix=SIGNIN ip=SIGNIN:testclient rate_per_min=20 burst=20
+DEBUG    app.auth.rate_limit:rate_limit.py:155 rate_limit.check.ok prefix=SIGNIN ip=SIGNIN:testclient new_window remaining=19
+INFO     app.auth.services.sign_in:sign_in.py:100 auth.sign_in.starting request_id=42fd2582-1017-41f0-b1f9-4b38efd51413 email_domain=inditex-sandbox.com
+DEBUG    app.auth.repository:repository.py:85 auth.repo.find_by_email.start email_domain=inditex-sandbox.com
+DEBUG    app.auth.repository:repository.py:92 auth.repo.find_by_email.done found=True
+INFO     app.auth.services.sign_in:sign_in.py:112 auth.sign_in.user_found user_id=394a61d4-... request_id=42fd2582-...
+DEBUG    app.auth.repository:repository.py:241 auth.repo.count_signin_failures.start user_id=394a61d4-... window=900s
+DEBUG    app.auth.repository:repository.py:257 auth.repo.count_signin_failures.done user_id=394a61d4-... count=0
+DEBUG    app.auth.password:password.py:162 password.verify_with_dummy.start has_real_hash=True
+DEBUG    app.auth.password:password.py:165 password.verify_with_dummy.ok
+DEBUG    app.auth.tokens:tokens.py:158 tokens.encode_mfa_challenge.start user_id=394a61d4-... ttl=300s
+DEBUG    app.auth.tokens:tokens.py:164 tokens.encode_mfa_challenge.done user_id=394a61d4-... exp=2026-05-13T05:29:20Z
+DEBUG    app.auth.repository:repository.py:186 auth.repo.write_audit.start action=auth.sign_in actor_user_id=394a61d4-...
+DEBUG    app.auth.repository:repository.py:202 auth.repo.write_audit.done audit_id=d8fe0b70-... action=auth.sign_in
+INFO     app.auth.services.sign_in:sign_in.py:212 auth.sign_in.mfa_challenge_issued user_id=394a61d4-... request_id=42fd2582-...
+INFO     app.auth.routers.sign_in:sign_in.py:146 auth.sign_in.mfa_challenge_issued user_id=394a61d4-... request_id=42fd2582-...
+DEBUG    app.db.session:session.py:94 db.session.closed
+PASSED
+
+tests/integration/test_auth_refresh.py::test_refresh_success_rotates_and_returns_new_access_token
+-------------------------------- live log call ---------------------------------
+DEBUG    app.db.session:session.py:88 db.session.open
+DEBUG    app.auth.routers.refresh:refresh.py:75 auth.refresh.received request_id=d5bba04d-... ip=testclient
+DEBUG    app.auth.rate_limit:rate_limit.py:143 rate_limit.check.start prefix=REFRESH ip=REFRESH:testclient rate_per_min=30 burst=30
+DEBUG    app.auth.rate_limit:rate_limit.py:155 rate_limit.check.ok prefix=REFRESH ip=REFRESH:testclient new_window remaining=29
+DEBUG    app.auth.services.refresh:refresh.py:132 auth.refresh.execute.start request_id=d5bba04d-... ip=testclient
+DEBUG    app.auth.repositories.refresh:refresh.py:80 auth.repo.refresh.find_active_for_update.start hash_prefix=f85f54f5...
+DEBUG    app.auth.repositories.refresh:refresh.py:95 auth.repo.refresh.find_active_for_update.done found=True hash_prefix=f85f54f5...
+DEBUG    app.auth.repositories.refresh:refresh.py:198 auth.repo.refresh.find_user_active.start user_id=1e47ac21-...
+DEBUG    app.auth.repositories.refresh:refresh.py:208 auth.repo.refresh.find_user_active.done user_id=1e47ac21-... active=True
+DEBUG    app.auth.repositories.refresh:refresh.py:138 auth.repo.refresh.revoke.start token_id=baf53958-...
+DEBUG    app.auth.repositories.refresh:refresh.py:148 auth.repo.refresh.revoke.done token_id=baf53958-...
+DEBUG    app.auth.repositories.refresh:refresh.py:171 auth.repo.refresh.insert_new.start user_id=1e47ac21-...
+DEBUG    app.auth.repositories.refresh:refresh.py:182 auth.repo.refresh.insert_new.done user_id=1e47ac21-... new_rt_id=7c974b9e-...
+DEBUG    app.auth.tokens:tokens.py:123 tokens.encode_access.start sub=1e47ac21-... ttl=1800s
+DEBUG    app.auth.tokens:tokens.py:125 tokens.encode_access.done sub=1e47ac21-... exp=2026-05-13T05:54:21Z
+DEBUG    app.auth.services.refresh_audit:refresh_audit.py:108 auth.refresh.success_audit.start user_id=1e47ac21-... request_id=d5bba04d-...
+DEBUG    app.auth.repository:repository.py:186 auth.repo.write_audit.start action=auth.refresh actor_user_id=1e47ac21-...
+DEBUG    app.auth.repository:repository.py:202 auth.repo.write_audit.done audit_id=245cac53-... action=auth.refresh
+DEBUG    app.auth.services.refresh_audit:refresh_audit.py:127 auth.refresh.success_audit.done user_id=1e47ac21-... request_id=d5bba04d-...
+DEBUG    app.auth.services.refresh:refresh.py:247 auth.refresh.execute.done user_id=1e47ac21-... request_id=d5bba04d-...
+DEBUG    app.auth.routers.refresh:refresh.py:136 auth.refresh.success user_id=1e47ac21-... request_id=d5bba04d-...
+DEBUG    app.db.session:session.py:94 db.session.closed
+PASSED
+
+# ASSESSMENT: PASS — BEFORE + AFTER pattern present for every function/endpoint/use case
+# - auth.sign_in.received (BEFORE router) → auth.sign_in.mfa_challenge_issued (AFTER)
+# - auth.repo.find_by_email.start (BEFORE) → auth.repo.find_by_email.done (AFTER)
+# - auth.refresh.execute.start (BEFORE) → auth.refresh.execute.done (AFTER)
+# - No tokens, passwords, or PII visible in logs
+# - No full email shown (only email_domain)
+# - No access_token values in logs
+# - X-Request-ID threaded through all log entries

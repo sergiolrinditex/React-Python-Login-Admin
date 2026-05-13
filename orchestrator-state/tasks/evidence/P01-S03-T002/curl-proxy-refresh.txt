@@ -1,0 +1,49 @@
+# curl-proxy-refresh.txt
+# Task: P01-S03-T002 — Strategy A vite proxy (same-origin)
+# Test: POST /api/v1/auth/refresh through vite proxy at :5174
+# Cookie jar from: sign-in → 2FA verify (refresh cookie bound to :5174)
+
+# First completed 2FA verify to get refresh cookie:
+# Command: curl -si -X POST http://localhost:5174/api/v1/auth/2fa/verify
+#   -H 'Content-Type: application/json' -H 'X-Request-ID: tester-proxy-mfa-003'
+#   -c /tmp/tester-cookies3.txt -b /tmp/tester-cookies3.txt
+#   -d '{"challenge_id":"<mfa_challenge_token>","code":"347455"}'
+# Response: HTTP/1.1 200 OK
+#   set-cookie: refresh_token=btn_RA...; HttpOnly; Max-Age=2592000; Path=/api/v1/auth; SameSite=lax; Secure
+
+# Then refresh through proxy:
+Command:
+  curl -i -s -X POST http://localhost:5174/api/v1/auth/refresh \
+    -H 'Content-Type: application/json' \
+    -H 'X-Request-ID: tester-proxy-refresh-001' \
+    -b /tmp/tester-cookies3.txt \
+    -c /tmp/tester-cookies3.txt
+
+Response:
+  HTTP/1.1 200 OK
+  Vary: Origin
+  date: Wed, 13 May 2026 05:22:16 GMT
+  server: uvicorn
+  x-request-id: tester-proxy-refresh-001
+  content-length: 540
+  content-type: application/json
+  set-cookie: refresh_token=FEf3CieU9qkhzH-jNZooBgJrmjsLMr6jC1-3S2O6YDFMOLpXto_yqE0qNp93bO9Z; HttpOnly; Max-Age=2592000; Path=/api/v1/auth; SameSite=lax; Secure
+  connection: close
+
+  {
+    "data": {
+      "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...T00-0qUGD47fZXmKsL_zIid_5-ntF7jI6sqVNWxFqls",
+      "token_type": "Bearer",
+      "expires_in": 1800
+    },
+    "meta": {"request_id": "tester-proxy-refresh-001"},
+    "errors": []
+  }
+
+ASSESSMENT: PASS
+- HTTP 200 — proxy forwarded request to backend; refresh token cookie was sent and accepted
+- New access_token returned — token rotation working
+- Set-Cookie: refresh_token; HttpOnly; Max-Age=2592000; Path=/api/v1/auth; SameSite=lax; Secure
+  → ALL cookie attributes preserved correctly (Path=/api/v1/auth per ADR-001)
+- x-request-id echoed — X-Request-ID preserved through proxy
+- Refresh cookie bound to :5174 (browser's perceived origin = same-origin proxy)

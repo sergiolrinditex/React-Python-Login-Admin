@@ -1,0 +1,49 @@
+# backend-tests.txt
+# Task: P01-S03-T002 — Strategy A vite proxy (same-origin)
+# Backend test run: full auth test suite in isolation after alembic upgrade head
+
+# Pre-condition: alembic upgrade head run to restore schema
+# Command: /Users/sergiolr/Library/Python/3.11/bin/alembic upgrade head
+# Exit: 0 (schema restored)
+
+# Test command:
+cd backend && \
+  ENABLE_VERBOSE_LOGGING=true \
+  DATABASE_URL="postgresql+psycopg://hilo:hilo@localhost:5432/hilo_dev" \
+  JWT_PRIVATE_KEY=<from .env> JWT_PUBLIC_KEY=<from .env> \
+  MFA_ENCRYPTION_KEY=<from .env> ENCRYPTION_KEY=<from .env> \
+  REDIS_URL="redis://localhost:6379/0" \
+  /Users/sergiolr/Library/Python/3.11/bin/pytest -q \
+    tests/test_health.py \
+    tests/test_dependency_smoke.py \
+    tests/integration/test_auth_signup.py \
+    tests/integration/test_auth_signin.py \
+    tests/integration/test_auth_refresh.py \
+    tests/integration/test_auth_logout.py \
+    tests/integration/test_password_reset.py \
+    tests/integration/test_mfa.py \
+    tests/integration/test_users_me.py
+
+# Result:
+152 passed, 1 skipped, 23 warnings in 12.94s
+
+# Breakdown:
+# tests/test_health.py: 11 tests
+# tests/test_dependency_smoke.py: 20 tests
+# tests/integration/test_auth_signup.py: 9 tests
+# tests/integration/test_auth_signin.py: 16 tests
+# tests/integration/test_auth_refresh.py: 14 tests
+# tests/integration/test_auth_logout.py: 15 tests
+# tests/integration/test_password_reset.py: 21 tests
+# tests/integration/test_mfa.py: 16 tests
+# tests/integration/test_users_me.py: 30 passed, 1 skipped
+
+# Note on "full suite" ordering issue (pre-existing, NOT introduced by this slice):
+# Running ALL test files including tests/integration/test_migrations_* destroys the schema
+# (alembic downgrade migration test). This is a known pre-existing issue documented in
+# PROGRESS.md (R1-T001-S02). Running each file group in isolation resolves it.
+# Developer's claim of "85 passed" was subset: health+dep_smoke+signup+signin+refresh+logout = 85.
+# This tester verified all 9 test files in a single run = 152 passed, 1 skipped.
+
+# ASSESSMENT: PASS — All auth tests pass. No regressions introduced by P01-S03-T002.
+# Strategy A (vite proxy) has NO impact on backend tests — TestClient is in-process, no proxy path.

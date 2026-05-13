@@ -1,0 +1,30 @@
+# frontend-tests.txt
+# Task: P01-S03-T002 — Strategy A vite proxy (same-origin)
+# Frontend test run from main repo (worktree shares git tree, node_modules in main repo)
+# Note: worktree's vite.config.ts was copied to main frontend/ for this test session
+
+# Command:
+cd frontend && npm test -- --run
+
+# Result:
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx (34 tests) 99ms
+ ✓ src/features/auth/__tests__/auth.test.tsx (33 tests) 110ms
+ ✓ src/pages/showcase/__tests__/ShowcasePage.test.tsx (4 tests) 118ms
+
+ Test Files  5 passed (5)
+      Tests  91 passed (91)
+   Start at  07:20:31
+   Duration  1.43s (transform 365ms, setup 650ms, collect 912ms, tests 352ms, environment 2.86s, prepare 529ms)
+
+# Breakdown:
+# design-system: 34 tests
+# auth (auth.test.tsx): 33 tests
+# showcase: 4 tests
+# providers: ~4 tests
+# i18n: ~16 tests
+
+# ASSESSMENT: PASS — 91/91 frontend tests pass.
+# Impact of Strategy A on frontend tests: NONE.
+# The 33 auth tests mock global.fetch — they are path-agnostic (relative vs absolute URL).
+# The proxy is transparent to the test runner (vitest runs in jsdom, no network).
+# The vite.config.ts change (adding server.proxy) has no effect on test execution.

@@ -1,0 +1,29 @@
+# data-contract-used.txt
+# Task: P01-S03-T002 — Strategy A vite proxy (same-origin)
+
+# Verification Data Contract rows used (from TECHNICAL_GUIDE §6.5):
+
+# Row: J100 auth-login
+# Data files:
+#   - data/verification/users/employee_primary.json
+#     email: employee.verification@inditex-sandbox.com
+#     password_plain: VerifyPass2024!
+#     status: active
+#     preferred_language: es
+#   - data/verification/auth/mfa_primary.json
+#     totp_secret: JBSWY3DPEHPK3PXP (used to generate TOTP via pyotp)
+#     enabled: true
+
+# Loading command used:
+#   cd backend && python3 -m app.verification_data.bootstrap --source ../data/verification --only auth
+# Result: {"status": "ok", "groups": [{"group": "auth", "status": "ok", "inserted": 2, "updated": 0, "skipped": 0}]}
+
+# Verification data loaded: employee_primary user seeded into DB (users + employee_profiles tables)
+# User UUID confirmed: e01ed7b0-5ab3-4d17-83d8-0179a8401a6a
+
+# Data persisted observed:
+#   - users.email = employee.verification@inditex-sandbox.com (confirmed via DB query)
+#   - mfa_totp_secrets row with enabled=true (confirmed by sign-in returning mfa_required: true)
+#   - employee_profiles row present (confirmed by /users/me returning employee_profile block)
+#   - refresh_tokens rotated on each refresh call (SET-COOKIE confirmed)
+#   - audit_logs entries: auth.sign_in, auth.refresh, auth.logout written (confirmed by test_refresh_no_pii_or_token_value_in_logs pass)

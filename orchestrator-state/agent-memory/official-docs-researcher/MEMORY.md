@@ -423,6 +423,45 @@ Status: `RESOLVED: yes` — no discrepancies; all items are decision-aids fillin
   ```
 - URL parsing + same-origin check is the standard approach. react-router does not abstract this.
 
+### 2026-05-13 — P01-S03-T002 Vite proxy / FastAPI CORSMiddleware / SameSite=Lax / nginx Set-Cookie
+
+**Sources**: Context7 /vitejs/vite v8.0.10 (server-options.md); http-proxy-3 README; Context7 /websites/fastapi_tiangolo (reference/middleware, tutorial/cors); Starlette docs (starlette.io/middleware); MDN Glossary/Site; MDN Set-Cookie/SameSite; web.dev same-site-same-origin; nginx ngx_http_proxy_module official docs.
+**Cache valid until**: 2026-05-20 (stable tech — Vite proxy, FastAPI CORS, SameSite spec, nginx are not AI/ML volatile)
+**Note file**: `orchestrator-state/memory/official-doc-notes/P01-S03-T002-cors-2026-05-13.md`
+**OUTCOME**: discrepancy (two items — both low severity, no code change needed; STRATEGY-A-CONFIRMED)
+
+#### Key findings
+
+| Item | Value | Source |
+|---|---|---|
+| Vite version in project | ^8.0.12 | frontend/package.json |
+| Starlette version | 1.0.0 | pip show starlette |
+| `changeOrigin` effect | Rewrites Host header ONLY — NOT Set-Cookie Domain | http-proxy-3 README |
+| `cookieDomainRewrite` default | `false` (disabled, cookies pass through unchanged) | http-proxy-3 README |
+| `cookiePathRewrite` default | `false` (disabled) | http-proxy-3 README |
+| `secure: false` | Only needed for http→https upstream; irrelevant for localhost:8000 | Vite docs |
+| Custom request headers (X-Request-ID) | Forwarded to upstream by default | http-proxy-3 |
+| Custom response headers | Forwarded back to browser by default | http-proxy-3 |
+| WebSocket under `/api` | `ws: true` NOT needed for SSE; only for WebSocket upgrade | Vite docs |
+| CORSMiddleware OPTIONS 405 without it | Expected — FastAPI has no implicit OPTIONS handler | FastAPI tutorial/cors |
+| `allow_origins=["*"]` + `allow_credentials=True` | **Explicitly forbidden** — must use explicit list | Starlette docs + CORS spec |
+| CORSMiddleware order | Must be registered LAST (outermost) via `add_middleware` | Starlette docs |
+| `expose_headers=["X-Request-ID"]` | Required for Strategy B so JS can read response header | CORS spec / FastAPI docs |
+| localhost:5173 vs localhost:8000 same-site? | **YES — same-site** (port ignored, eTLD+1=localhost, same scheme) | MDN Glossary/Site + web.dev |
+| SameSite=Lax blocks :5173→:8000 cookie? | **NO** — they are same-site, Lax only restricts cross-site | MDN + web.dev |
+| nginx proxy_pass + Set-Cookie | **Forwarded by default** — no proxy_pass_header needed | nginx official docs |
+| nginx default hidden headers | Date, Server, X-Pad, X-Accel-* (Set-Cookie NOT in list) | nginx official docs |
+
+#### Discrepancy #1 — §B.3 SameSite reasoning imprecise (low, no code change)
+- Task pack §B.3: "SameSite=Lax does NOT block cross-origin XHR by itself" — directionally correct but imprecise.
+- Official docs: localhost:5173 and localhost:8000 are same-site (port ignored). SameSite=Lax does not block cookies between same-site origins regardless of port difference. The blocker is CORS preflight (separate mechanism from SameSite).
+- Developer may (optionally) correct ADR-002 wording. No code change required.
+
+#### Discrepancy #2 — Initial nginx Set-Cookie claim self-corrected (low, confirmed correct)
+- First fetch incorrectly suggested `proxy_pass_header Set-Cookie` is needed.
+- Corrected by second authoritative nginx docs fetch: Set-Cookie IS forwarded by default.
+- Strategy A prod topology (§11.4) is valid without extra nginx directives.
+
 ## Canonical references
 - `.claude/orchestrator-contract.json`
 - `.claude/rules/00-source-of-truth.md`

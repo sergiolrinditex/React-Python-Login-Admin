@@ -1,0 +1,36 @@
+verify-slice P01-S03-T002 — real-browser J100 flow via chrome-devtools MCP
+Date: 2026-05-13
+Reproduction: Strategy A (vite proxy /api → :8000), browser at :5173
+
+Round 1 (challenge stale) — discarded
+Round 2 (challenge stale + wrong field name) — discarded
+Round 3 (full success, TOTP=010485):
+  1.sign-in           POST /api/v1/auth/sign-in     → 200 mfa_required + challenge
+  2.2fa-verify        POST /api/v1/auth/2fa/verify  → 200 access_token + user(employee.verification@inditex-sandbox.com, es, [employee]) + Set-Cookie refresh
+  3.users-me          GET  /api/v1/users/me         → 200 UserProfile (Elena Verificación, lang=es, employee_profile=present)
+  4.refresh           POST /api/v1/auth/refresh     → 200 new access_token (rotated)
+  5.logout            POST /api/v1/auth/logout      → 204 No Content
+  6.refresh-after-out POST /api/v1/auth/refresh     → 401 AUTH_SESSION_EXPIRED
+
+All 6 requests via http://localhost:5173/api/v1/... (same-origin via proxy).
+X-Request-ID "verify-slice-J100-3" echoed end-to-end on all responses with body.
+No CORS errors. No net::ERR_FAILED. Console clean except auth verbose info logs.
+
+Round 4 (reload-hydrate test, TOTP=305533):
+  sign-in + mfa → 200, cookie set
+  navigate to /chat:
+    - AuthProvider mounts, POST /refresh → 200 (rotation succeeds, new cookie)
+    - StrictMode double-mount fires second /refresh → 401 (revoked-token race)
+    - RequireAuth redirects to /auth/sign-in?next=%2Fchat
+  The first 200 proves the proxy + cookie + refresh-rotation pipeline works.
+  The second 401 is a pre-existing StrictMode/single-use-refresh race in T001
+  (AuthProvider), NOT a regression introduced by T002. Documented as T001 issue
+  for P03-S01-T001 SignInPage slice to address (after a real SignInPage UI exists,
+  this race window vanishes because the form-submit path replaces the hydrate path).
+
+Document.cookie inspection: only `csrf_token` visible from JS; refresh_token
+(HttpOnly) absent from document.cookie → HttpOnly attribute working as designed.
+
+Cookie attrs preserved through proxy (confirmed in cycle-1 tester evidence
+curl-proxy-refresh.txt + curl-proxy-2fa.txt): HttpOnly; Secure; SameSite=Lax;
+Path=/api/v1/auth.
