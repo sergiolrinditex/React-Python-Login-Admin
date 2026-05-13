@@ -2,7 +2,7 @@ id: P02-S02-T002
 phase_id: P02
 step_id: P02-S02
 title: "Fix module-level _JWT_KEY in app.auth.tokens causing JWT decode failures in full-suite ordering"
-status: ready
+status: done
 kind: "bug"
 target: "Fix module-level _JWT_KEY in app.auth.tokens causing JWT decode failures in full-suite ordering"
 product_increment: "current"
