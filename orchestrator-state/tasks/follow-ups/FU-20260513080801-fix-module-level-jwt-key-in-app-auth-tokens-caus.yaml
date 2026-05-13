@@ -1,0 +1,45 @@
+{
+  "id": "FU-20260513080801-fix-module-level-jwt-key-in-app-auth-tokens-caus",
+  "schema_version": 1,
+  "status": "proposed",
+  "created_at": "2026-05-13T08:08:01+00:00",
+  "created_by": "sergiolr",
+  "origin_task_id": "P02-S02-T001",
+  "origin_phase_id": "P02",
+  "origin_step_id": "P02-S02",
+  "kind": "bug",
+  "product_increment": "current",
+  "build_state": "planned",
+  "severity": "medium",
+  "title": "Fix module-level _JWT_KEY in app.auth.tokens causing JWT decode failures in full-suite ordering",
+  "description": "backend/app/auth/tokens.py captures JWT_PRIVATE_KEY as a module-level constant at import time. When pytest collects the full test suite, import order causes _JWT_KEY to be empty for some test modules that run after it was first cached as empty. TestGetMeSecurityShape T27/T28/T29 fail when run under full-suite or acceptance gate ordering (they pass in isolation). The fix is to make _JWT_KEY a lazy getter (lru_cache or property) in app/auth/tokens.py, exactly as the P02-S02-T001 debugger did for test_security.py but applied to the production code.",
+  "journey_refs": [],
+  "screen_route": "—",
+  "endpoint": "—",
+  "tables": [],
+  "depends_on": [
+    "P02-S02-T001"
+  ],
+  "conflict_groups": [
+    "security:core"
+  ],
+  "write_set": [
+    "backend/app/security/**",
+    "backend/tests/unit/test_security.py"
+  ],
+  "acceptance": [
+    "pytest backend/tests -k security runs with 0 FAIL for TestGetMeSecurityShape. Full suite failure count does not regress. app.auth.tokens.decode_token works correctly regardless of import order in the test runner."
+  ],
+  "verify": [
+    "Run pytest backend/tests/integration/test_users_me.py::TestGetMeSecurityShape -v in both isolation and full-suite ordering — all 3 should pass. Run pytest backend/tests -v and confirm no regression vs pre-fix baseline."
+  ],
+  "notes": [],
+  "triage": {
+    "scope_classification": "out_of_scope",
+    "why_not_debugger": "The root cause lives in backend/app/auth/tokens.py (module-level _JWT_KEY constant evaluated at import time). Fixing it inside P02-S02-T001 write_set (backend/app/security/** + backend/tests/unit/test_security.py) is impossible — tokens.py is outside this write_set and any change to it risks regression across all 6+ auth endpoint test suites (signup, signin, refresh, logout, password_reset, mfa) that share this module.",
+    "decision": "followup_only_when_outside_current_slice",
+    "debugger_path": "in_scope_defects_use_validator_tester_debugger_retest",
+    "warnings": []
+  },
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260513080801-fix-module-level-jwt-key-in-app-auth-tokens-caus.yaml"
+}
