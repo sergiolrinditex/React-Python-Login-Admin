@@ -9,7 +9,7 @@
 - Tamaño recomendado: pantalla crítica 3-6 slices; módulo/journey lane 8-15 slices. No hagas una slice por botón/componente pequeño; tampoco cierres una pantalla sólo porque compila.
 - Defectos dentro de la pantalla actual van por `validator/tester -> debugger -> retest`. Sólo crea FU si falta trabajo nuevo fuera de scope: pantalla, endpoint, tabla, journey, contrato de datos reales o decisión humana no declarada.
 
-> Este fichero es la **fuente ejecutable** para `.claude/bin/bootstrap_three_docs.py`.
+> Este fichero es la **fuente ejecutable** para `.claude/bin/bootstrap_source_of_truth.py`.
 > ChatGPT debe devolverlo ya rellenado, sin `.template`, con prefijo real:
 > `{{APP_PREFIX}}_IMPLEMENTATION_CHECKLIST.md`.
 >
@@ -33,7 +33,7 @@
 
 ## 🔗 Contrato de Cableado — léelo ANTES de generar el Coverage Registry
 
-> Este documento es el **CONSUMIDOR FINAL** de `instrucciones.md` + `*_TECHNICAL_GUIDE.md`. El bootstrap (`.claude/bin/bootstrap_three_docs.py`) lee el Coverage Registry y genera `orchestrator-state/tasks/work-items/*.yaml` desde ahí. Lo que NO esté aquí, NO se construye — punto.
+> Este documento es el **CONSUMIDOR FINAL** de `instrucciones.md` + `*_TECHNICAL_GUIDE.md`. El bootstrap (`.claude/bin/bootstrap_source_of_truth.py`) lee el Coverage Registry y genera `orchestrator-state/tasks/work-items/*.yaml` desde ahí. Lo que NO esté aquí, NO se construye — punto.
 >
 > **Wires ENTRANTES** (cada item de los otros 2 docs DEBE convertirse en ≥1 slice aquí):
 >
@@ -389,7 +389,7 @@ Para CADA fila de la matriz:
 ## F. Última prueba mental antes de entregar
 
 1. **¿Si el `planner` selecciona el primer slice `api` y sigue `Origen-TechGuide` → encuentra recurso técnico completo en una sola sección?** Si rebota entre 3 secciones, falta detalle en TECHNICAL_GUIDE.
-2. **¿Si el `bootstrap_three_docs.py` parsea este registry, genera tantos `work-items/*.yaml` como features + endpoints + tablas + AI pieces declarados en los otros 2 docs?** Cuenta las filas y compara: si faltan, hay items huérfanos.
+2. **¿Si el `bootstrap_source_of_truth.py` parsea este registry, genera tantos `work-items/*.yaml` como features + endpoints + tablas + AI pieces declarados en los otros 2 docs?** Cuenta las filas y compara: si faltan, hay items huérfanos.
 3. **¿Si un slice de Phase 3 falla en `/verify-journey`, puede el `debugger` rastrear el `Origen-Instr` y `Origen-TechGuide` para entender qué se rompió?** Si los punteros llevan al vacío, el cableado es decorativo.
 
 Si las 3 son "sí", entrega. Si alguna es "no", arregla y vuelve a verificar.

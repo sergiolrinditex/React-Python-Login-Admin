@@ -13,7 +13,7 @@
 ```mermaid
 flowchart LR
     A[📋 Coverage Registry<br><sub>Depends on · Conflict group · Write set</sub>]
-    B[⚙️ bootstrap_three_docs.py]
+    B[⚙️ bootstrap_source_of_truth.py]
     C["🗂 registry.json<br>tasks[] + task_dag"]
     D[task-dag.json]
     E[task-dag.md]
@@ -34,7 +34,7 @@ flowchart LR
 ```
 
 > [!IMPORTANT]
-> La **única fuente editable** es la columna `Depends on` del Coverage Registry en `*_IMPLEMENTATION_CHECKLIST.md`. Editar a mano `task-dag.json` o `registry.json` está bloqueado por el hook `write_scope_guard`. Para cambiar ordenación o paralelismo: edita `Depends on` / `Conflict group` / `Write set` y rerun `bootstrap_three_docs.py --refresh` + `scripts/check-task-dag.sh --strict`.
+> La **única fuente editable** es la columna `Depends on` del Coverage Registry en `*_IMPLEMENTATION_CHECKLIST.md`. Editar a mano `task-dag.json` o `registry.json` está bloqueado por el hook `write_scope_guard`. Para cambiar ordenación o paralelismo: edita `Depends on` / `Conflict group` / `Write set` y rerun `bootstrap_source_of_truth.py --refresh` + `scripts/check-task-dag.sh --strict`.
 
 ---
 

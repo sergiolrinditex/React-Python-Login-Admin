@@ -77,7 +77,7 @@ Excepcion justificada: // ignore: design-tokens(reason: "<motivo>"). La razon es
 CLOSER_FINAL_STATUSES type= frozenset value= ['blocked', 'done', 'skipped']
 CLOSER_FINAL_OUTCOMES type= frozenset value= ['committed', 'deployed']
 PASS — constants match closer-final contract
->>> CMD 6: defensive guard + constants present in bootstrap_three_docs.py
+>>> CMD 6: defensive guard + constants present in bootstrap_source_of_truth.py
 1847:# A task is "closer-final" when its lifecycle was concluded by the closer or
 1859:# and add a defensive re-assertion at the bottom of _apply_preserved_runtime.
 1860:CLOSER_FINAL_STATUSES: frozenset[str] = frozenset({"done", "blocked", "skipped"})

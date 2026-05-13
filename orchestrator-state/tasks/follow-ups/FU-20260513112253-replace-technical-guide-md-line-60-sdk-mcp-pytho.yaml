@@ -1,0 +1,47 @@
+{
+  "id": "FU-20260513112253-replace-technical-guide-md-line-60-sdk-mcp-pytho",
+  "schema_version": 1,
+  "status": "proposed",
+  "created_at": "2026-05-13T11:22:53+00:00",
+  "created_by": "sergiolr",
+  "origin_task_id": "P02-S07-T001",
+  "origin_phase_id": "P02",
+  "origin_step_id": "P02-S07",
+  "kind": "documentation",
+  "product_increment": "current",
+  "build_state": "planned",
+  "severity": "low",
+  "title": "Replace TECHNICAL_GUIDE.md line 60 <SDK MCP Python candidato> placeholder with pinned reference",
+  "description": "Researcher (P02-S07-T001) pinned mcp==1.27.1 as the official Anthropic SDK. TECHNICAL_GUIDE.md line 60 still shows the placeholder text <SDK MCP Python candidato>. The slice chose NOT to adopt the SDK (sync-vs-async friction; see resolved official-doc note P02-S07-T001-mcp-sdk-2026-05-13.md). Reconciliation of the placeholder must happen outside any active DAG TASK_ID due to write-scope guard.",
+  "journey_refs": [],
+  "screen_route": "—",
+  "endpoint": "—",
+  "tables": [],
+  "depends_on": [
+    "P02-S07-T001"
+  ],
+  "conflict_groups": [
+    "api:mcp"
+  ],
+  "write_set": [
+    "backend/app/mcp/**",
+    "backend/tests/integration/test_mcp_registry.py"
+  ],
+  "acceptance": [
+    "TECHNICAL_GUIDE.md line 60 no longer contains <SDK MCP Python candidato>",
+    "replacement matches the researcher pin (e.g. 'mcp==1.27.1 (not adopted in P02-S07-T001",
+    "see resolved note)')."
+  ],
+  "verify": [
+    "git diff docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md shows the placeholder swap and bootstrap_source_of_truth.py --validate-only passes"
+  ],
+  "notes": [],
+  "triage": {
+    "scope_classification": "missing_coverage",
+    "why_not_debugger": "TECHNICAL_GUIDE source-of-truth edit is blocked by hook_write_scope_guard.py during active DAG slice; reconcile must occur in a dedicated maintenance slice outside any active TASK_ID",
+    "decision": "followup_only_when_outside_current_slice",
+    "debugger_path": "in_scope_defects_use_validator_tester_debugger_retest",
+    "warnings": []
+  },
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260513112253-replace-technical-guide-md-line-60-sdk-mcp-pytho.yaml"
+}

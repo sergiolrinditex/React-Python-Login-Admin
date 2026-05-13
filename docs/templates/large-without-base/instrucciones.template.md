@@ -13,7 +13,7 @@
 >
 > **TU TRABAJO aquí**: rellenar todo lo necesario para una app grande nueva. Las secciones marcadas `>>> MODELO:` se rellenan; cualquier bloque que no aplique debe resolverse como `NO APLICA` con motivo.
 >
-> Después de rellenar, copia los 5 ficheros a `docs/source-of-truth/` (sin `.template`) y corre `python3 -B -S .claude/bin/bootstrap_three_docs.py --refresh`.
+> Después de rellenar, copia los 5 ficheros a `docs/source-of-truth/` (sin `.template`) y corre `python3 -B -S .claude/bin/bootstrap_source_of_truth.py --refresh`.
 
 > Perfil: **large-without-base**. App grande nueva desde cero; AnyStack permitido vía `STACK_PROFILE.yaml`, sin asumir ningún framework salvo que el perfil lo declare.
 
@@ -243,10 +243,10 @@ No hay journeys heredados. Esta sección declara journeys reales del motor + fea
 > **Convención de IDs**:
 > - Journey IDs: `J1+` para journeys de TU app nueva. No reserves IDs para un baseline que no existe.
 > - **Phase IDs: `P00..PNN`** (0-indexed/versionado). El bootstrap deriva fases del Coverage Registry y headings `# Phase N`; no concentres más de 20 slices por phase ni más de 15 por step; objetivo recomendado por step 6-12 slices para no fragmentar demasiado ni perder visión de la app.
-> - Step IDs: `P0X-S0Y` (e.g. `P03-S02`). En modo Coverage Registry deben coincidir con la columna `Step` del CHECKLIST. Los headings `PRE-GATE`, `PHASE GATE` o notas no cuentan como steps; solo cuentan headings `## Step N.M`. En la práctica, `Step 3.2` suele mapear a `P03-S02`. La salida de `bootstrap_three_docs.py --refresh` lo confirma en `orchestrator-state/tasks/work-items/`.
+> - Step IDs: `P0X-S0Y` (e.g. `P03-S02`). En modo Coverage Registry deben coincidir con la columna `Step` del CHECKLIST. Los headings `PRE-GATE`, `PHASE GATE` o notas no cuentan como steps; solo cuentan headings `## Step N.M`. En la práctica, `Step 3.2` suele mapear a `P03-S02`. La salida de `bootstrap_source_of_truth.py --refresh` lo confirma en `orchestrator-state/tasks/work-items/`.
 > - Task IDs: `P0X-S0Y-T00Z` (e.g. `P03-S02-T001`).
 >
-> **Formatos aceptados en la columna Slices** (los expande `bootstrap_three_docs.py:_expand_slice_ref`):
+> **Formatos aceptados en la columna Slices** (los expande `bootstrap_source_of_truth.py:_expand_slice_ref`):
 > - Task ID completo: `P03-S02-T001`.
 > - Rango: `P03-S02-T001..T004`.
 > - **Step ref**: `P03-S02` → expande a TODAS las tasks de ese step (recomendado cuando todo el step pertenece al mismo journey).

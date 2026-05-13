@@ -1656,7 +1656,7 @@
       "id": "P01-S02-T010",
       "phase_id": "P01",
       "step_id": "P01-S02",
-      "title": "make bootstrap_three_docs.py --refresh preserve closer-set task status",
+      "title": "make bootstrap_source_of_truth.py --refresh preserve closer-set task status",
       "status": "done",
       "build_state": "planned",
       "product_increment": "current",
@@ -1667,13 +1667,13 @@
       ],
       "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime follow-up P01-S02-T002",
       "acceptance": [
-        "bootstrap_three_docs.py --refresh on a registry where a task has status=done + last_outcome=committed leaves those two fields unchanged. A new pytest under .claude/bin/tests/ enforces this for all closer-final statuses. Manual patch of registry.json after refresh is no longer needed."
+        "bootstrap_source_of_truth.py --refresh on a registry where a task has status=done + last_outcome=committed leaves those two fields unchanged. A new pytest under .claude/bin/tests/ enforces this for all closer-final statuses. Manual patch of registry.json after refresh is no longer needed."
       ],
       "verification_commands": [
-        "Set task P01-S02-T001.status=done in registry.json. Run python3 -B -S .claude/bin/bootstrap_three_docs.py --refresh. Assert: (a) refresh exits 0, (b) git diff registry.json shows the task's status, last_outcome, last_updated_by, last_stop_at unchanged, (c) the new pytest test_bootstrap_refresh_preserves_done_status passes."
+        "Set task P01-S02-T001.status=done in registry.json. Run python3 -B -S .claude/bin/bootstrap_source_of_truth.py --refresh. Assert: (a) refresh exits 0, (b) git diff registry.json shows the task's status, last_outcome, last_updated_by, last_stop_at unchanged, (c) the new pytest test_bootstrap_refresh_preserves_done_status passes."
       ],
       "kind": "framework",
-      "target": "make bootstrap_three_docs.py --refresh preserve closer-set task status",
+      "target": "make bootstrap_source_of_truth.py --refresh preserve closer-set task status",
       "journey_refs": [],
       "route": "",
       "endpoint": "",
@@ -1681,7 +1681,7 @@
       "origin_instr": "runtime-followup#FU-20260512044309-make-bootstrap-three-docs-py-refresh-preserve-cl",
       "origin_techguide": "runtime-followup#FU-20260512044309-make-bootstrap-three-docs-py-refresh-preserve-cl",
       "allowed_paths": [
-        ".claude/bin/bootstrap_three_docs.py",
+        ".claude/bin/bootstrap_source_of_truth.py",
         ".claude/bin/build_registry.py",
         ".claude/bin/tests/test_bootstrap_refresh_preserves_done.py"
       ],
@@ -1689,7 +1689,7 @@
         "framework:bootstrap"
       ],
       "write_set": [
-        ".claude/bin/bootstrap_three_docs.py",
+        ".claude/bin/bootstrap_source_of_truth.py",
         ".claude/bin/build_registry.py",
         ".claude/bin/tests/test_bootstrap_refresh_preserves_done.py"
       ],
@@ -1699,13 +1699,13 @@
       "dependency_mode": "explicit_dag",
       "depends_on_raw": "P01-S02-T002",
       "conflict_groups_raw": "framework:bootstrap",
-      "write_set_raw": ".claude/bin/bootstrap_three_docs.py, .claude/bin/build_registry.py, .claude/bin/tests/test_bootstrap_refresh_preserves_done.py",
+      "write_set_raw": ".claude/bin/bootstrap_source_of_truth.py, .claude/bin/build_registry.py, .claude/bin/tests/test_bootstrap_refresh_preserves_done.py",
       "product_increment_raw": "current",
       "build_state_raw": "planned",
       "risk_level_raw": "medium",
       "verify_mode_raw": "human",
       "kind_raw": "framework",
-      "target_raw": "make bootstrap_three_docs.py --refresh preserve closer-set task status",
+      "target_raw": "make bootstrap_source_of_truth.py --refresh preserve closer-set task status",
       "journey_refs_raw": "—",
       "screen_route_raw": "—",
       "endpoint_raw": "—",
@@ -2992,7 +2992,7 @@
       "phase_id": "P02",
       "step_id": "P02-S05",
       "title": "Add partial unique index for is_default=true per model_type in ai_models",
-      "status": "ready_for_close",
+      "status": "done",
       "build_state": "planned",
       "product_increment": "current",
       "risk_level": "medium",
@@ -3052,11 +3052,12 @@
       "claimed_by": "sergiolr",
       "claim_terminal_task_env": "P02-S05-T003",
       "task_pack_path": "orchestrator-state/tasks/task-packs/P02-S05-T003.md",
-      "last_outcome": "pass",
-      "last_updated_by": "tester",
-      "last_stop_at": "2026-05-13T12:43:37+00:00",
+      "last_outcome": "committed",
+      "last_updated_by": "closer",
+      "last_stop_at": "2026-05-13T15:40:35+00:00",
       "validator_outcome": "approved",
-      "validator_next_status": "ready_for_close"
+      "validator_next_status": "ready_for_close",
+      "report_path": "orchestrator-state/tasks/reports/P02-S05-T003.md"
     },
     {
       "id": "P03-S01-T001",
@@ -12409,7 +12410,7 @@
         "scripts/gen-dev-secrets.sh"
       ],
       "P01-S02-T010": [
-        ".claude/bin/bootstrap_three_docs.py",
+        ".claude/bin/bootstrap_source_of_truth.py",
         ".claude/bin/build_registry.py",
         ".claude/bin/tests/test_bootstrap_refresh_preserves_done.py"
       ],

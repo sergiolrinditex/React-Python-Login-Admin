@@ -2,11 +2,11 @@
 # Framework-only slice: no route/provider/API client/DTO/endpoint/repository/table observed.
 #
 # Artifacts exercised:
-# - .claude/bin/bootstrap_three_docs.py::generate_artifacts() — called directly by 13 tests
-# - .claude/bin/bootstrap_three_docs.py::_apply_preserved_runtime() — called internally by generate_artifacts()
-# - .claude/bin/bootstrap_three_docs.py::CLOSER_FINAL_STATUSES — frozenset constant verified
-# - .claude/bin/bootstrap_three_docs.py::CLOSER_FINAL_OUTCOMES — frozenset constant verified
-# - .claude/bin/bootstrap_three_docs.py::_RUNTIME_TASK_FIELDS_TO_PRESERVE — sentinel round-trip TC7
+# - .claude/bin/bootstrap_source_of_truth.py::generate_artifacts() — called directly by 13 tests
+# - .claude/bin/bootstrap_source_of_truth.py::_apply_preserved_runtime() — called internally by generate_artifacts()
+# - .claude/bin/bootstrap_source_of_truth.py::CLOSER_FINAL_STATUSES — frozenset constant verified
+# - .claude/bin/bootstrap_source_of_truth.py::CLOSER_FINAL_OUTCOMES — frozenset constant verified
+# - .claude/bin/bootstrap_source_of_truth.py::_RUNTIME_TASK_FIELDS_TO_PRESERVE — sentinel round-trip TC7
 # - .claude/bin/common.py::load_registry() / save_registry() — used by tests in tmp dirs
 #
 # All calls ran against tempfile.TemporaryDirectory() with synthetic source-of-truth trees.

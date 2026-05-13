@@ -384,6 +384,13 @@ Antes de pasar de phase:
 
 Bloquea si faltan tasks `done`, handoffs, evidence, reports, journeys verified/waived, follow-ups abiertos o limpieza Git cuando se exige.
 
+
+### Stack Docker compartido entre worktrees paralelos
+
+`./scripts/next-wave.sh` exporta automáticamente `COMPOSE_PROJECT_NAME` derivado del basename del root canónico. Esto fija el nombre del proyecto Docker Compose para todos los worktrees paralelos, de manera que **todos comparten el mismo stack** (postgres, redis, etc.) en lugar de que cada worktree intente arrancar su propio stack con colisiones de puerto.
+
+Si quieres usar un nombre distinto (por ejemplo para aislar deliberadamente un worktree), exporta `COMPOSE_PROJECT_NAME=<otro>` ANTES de pegar el bloque copy/paste y el bloque respeta tu valor (`${COMPOSE_PROJECT_NAME:-$(basename ...)}`).
+
 ## Comandos principales
 
 ```text

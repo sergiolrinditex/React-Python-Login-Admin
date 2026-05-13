@@ -48,8 +48,8 @@ STACK_PROFILE.template.yaml
 ## Comandos de validación
 
 ```bash
-python3 -B -S .claude/bin/bootstrap_three_docs.py --validate-only
-python3 -B -S .claude/bin/bootstrap_three_docs.py --refresh
+python3 -B -S .claude/bin/bootstrap_source_of_truth.py --validate-only
+python3 -B -S .claude/bin/bootstrap_source_of_truth.py --refresh
 ./scripts/check-task-dag.sh --strict
 ./scripts/check-journey-matrix.sh --strict
 ./scripts/check-wiring-contract.sh --strict --require-new-template-columns

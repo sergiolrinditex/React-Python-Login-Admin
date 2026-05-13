@@ -49,7 +49,7 @@ flowchart TB
         REP[reports/*.md]
     end
 
-    SOT == bootstrap_three_docs.py ==> REG
+    SOT == bootstrap_source_of_truth.py ==> REG
     REG --> DAG
     REG --> EG
     REG --> WI

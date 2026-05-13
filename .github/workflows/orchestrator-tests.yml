@@ -187,8 +187,8 @@ jobs:
         # __pycache__ from contaminating .claude/bin/ during this job.
         run: |
           set -e
-          python3 -B .claude/bin/bootstrap_three_docs.py --validate-only
-          python3 -B .claude/bin/bootstrap_three_docs.py --refresh
+          python3 -B .claude/bin/bootstrap_source_of_truth.py --validate-only
+          python3 -B .claude/bin/bootstrap_source_of_truth.py --refresh
 
       - name: Strict journey-matrix check
         if: steps.sot.outputs.present == 'true'
@@ -255,7 +255,7 @@ jobs:
       - name: Bootstrap must refuse
         run: |
           set +e
-          python3 .claude/bin/bootstrap_three_docs.py --validate-only
+          python3 .claude/bin/bootstrap_source_of_truth.py --validate-only
           rc=$?
           set -e
           if [ "$rc" -eq 0 ]; then

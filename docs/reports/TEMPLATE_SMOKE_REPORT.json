@@ -28,16 +28,16 @@
           "cmd": "./scripts/reset-for-new-project.sh",
           "returncode": 0,
           "seconds": 0.289,
-          "tail": "==> Cleaning derived orchestrator state. Source-of-truth docs are preserved.\n==> Reset complete.\nNext:\n  python3 -B -S .claude/bin/bootstrap_three_docs.py --refresh\n  ./scripts/check-task-dag.sh --strict\n  ./scripts/check-journey-matrix.sh --strict\n  ./scripts/check-wiring-contract.sh --strict --require-new-template-columns\n"
+          "tail": "==> Cleaning derived orchestrator state. Source-of-truth docs are preserved.\n==> Reset complete.\nNext:\n  python3 -B -S .claude/bin/bootstrap_source_of_truth.py --refresh\n  ./scripts/check-task-dag.sh --strict\n  ./scripts/check-journey-matrix.sh --strict\n  ./scripts/check-wiring-contract.sh --strict --require-new-template-columns\n"
         },
         {
-          "cmd": "python3 -B -S .claude/bin/bootstrap_three_docs.py --validate-only",
+          "cmd": "python3 -B -S .claude/bin/bootstrap_source_of_truth.py --validate-only",
           "returncode": 0,
           "seconds": 0.069,
           "tail": "Source-of-truth contract is valid.\n{\n  \"instructions\": [\n    \"docs/source-of-truth/instrucciones.md\"\n  ],\n  \"checklist\": [\n    \"docs/source-of-truth/POCKETPANTRY_IMPLEMENTATION_CHECKLIST.md\"\n  ],\n  \"guide\": [\n    \"docs/source-of-truth/POCKETPANTRY_TECHNICAL_GUIDE.md\"\n  ],\n  \"ux\": [\n    \"docs/source-of-truth/UX_CONTRACT.md\"\n  ],\n  \"stack_profile\": [\n    \"docs/source-of-truth/STACK_PROFILE.yaml\"\n  ]\n}\n"
         },
         {
-          "cmd": "python3 -B -S .claude/bin/bootstrap_three_docs.py --refresh --reset-runtime-state",
+          "cmd": "python3 -B -S .claude/bin/bootstrap_source_of_truth.py --refresh --reset-runtime-state",
           "returncode": 0,
           "seconds": 0.119,
           "tail": "Bootstrapped project prefix: POCKETPANTRY\nDetected phases: 2\nGenerated tasks: 4\nDetected journeys: 1\nArtifacts written under orchestrator-state/memory and orchestrator-state/tasks\n"
@@ -89,16 +89,16 @@
           "cmd": "./scripts/reset-for-new-project.sh",
           "returncode": 0,
           "seconds": 0.261,
-          "tail": "==> Cleaning derived orchestrator state. Source-of-truth docs are preserved.\n==> Reset complete.\nNext:\n  python3 -B -S .claude/bin/bootstrap_three_docs.py --refresh\n  ./scripts/check-task-dag.sh --strict\n  ./scripts/check-journey-matrix.sh --strict\n  ./scripts/check-wiring-contract.sh --strict --require-new-template-columns\n"
+          "tail": "==> Cleaning derived orchestrator state. Source-of-truth docs are preserved.\n==> Reset complete.\nNext:\n  python3 -B -S .claude/bin/bootstrap_source_of_truth.py --refresh\n  ./scripts/check-task-dag.sh --strict\n  ./scripts/check-journey-matrix.sh --strict\n  ./scripts/check-wiring-contract.sh --strict --require-new-template-columns\n"
         },
         {
-          "cmd": "python3 -B -S .claude/bin/bootstrap_three_docs.py --validate-only",
+          "cmd": "python3 -B -S .claude/bin/bootstrap_source_of_truth.py --validate-only",
           "returncode": 0,
           "seconds": 0.07,
           "tail": "Source-of-truth contract is valid.\n{\n  \"instructions\": [\n    \"docs/source-of-truth/instrucciones.md\"\n  ],\n  \"checklist\": [\n    \"docs/source-of-truth/TRAILLOG_IMPLEMENTATION_CHECKLIST.md\"\n  ],\n  \"guide\": [\n    \"docs/source-of-truth/TRAILLOG_TECHNICAL_GUIDE.md\"\n  ],\n  \"ux\": [\n    \"docs/source-of-truth/UX_CONTRACT.md\"\n  ],\n  \"stack_profile\": [\n    \"docs/source-of-truth/STACK_PROFILE.yaml\"\n  ]\n}\n"
         },
         {
-          "cmd": "python3 -B -S .claude/bin/bootstrap_three_docs.py --refresh --reset-runtime-state",
+          "cmd": "python3 -B -S .claude/bin/bootstrap_source_of_truth.py --refresh --reset-runtime-state",
           "returncode": 0,
           "seconds": 0.146,
           "tail": "Bootstrapped project prefix: TRAILLOG\nDetected phases: 2\nGenerated tasks: 4\nDetected journeys: 1\nArtifacts written under orchestrator-state/memory and orchestrator-state/tasks\n"
@@ -150,16 +150,16 @@
           "cmd": "./scripts/reset-for-new-project.sh",
           "returncode": 0,
           "seconds": 0.278,
-          "tail": "==> Cleaning derived orchestrator state. Source-of-truth docs are preserved.\n==> Reset complete.\nNext:\n  python3 -B -S .claude/bin/bootstrap_three_docs.py --refresh\n  ./scripts/check-task-dag.sh --strict\n  ./scripts/check-journey-matrix.sh --strict\n  ./scripts/check-wiring-contract.sh --strict --require-new-template-columns\n"
+          "tail": "==> Cleaning derived orchestrator state. Source-of-truth docs are preserved.\n==> Reset complete.\nNext:\n  python3 -B -S .claude/bin/bootstrap_source_of_truth.py --refresh\n  ./scripts/check-task-dag.sh --strict\n  ./scripts/check-journey-matrix.sh --strict\n  ./scripts/check-wiring-contract.sh --strict --require-new-template-columns\n"
         },
         {
-          "cmd": "python3 -B -S .claude/bin/bootstrap_three_docs.py --validate-only",
+          "cmd": "python3 -B -S .claude/bin/bootstrap_source_of_truth.py --validate-only",
           "returncode": 0,
           "seconds": 0.069,
           "tail": "Source-of-truth contract is valid.\n{\n  \"instructions\": [\n    \"docs/source-of-truth/instrucciones.md\"\n  ],\n  \"checklist\": [\n    \"docs/source-of-truth/CIVICPULSE_IMPLEMENTATION_CHECKLIST.md\"\n  ],\n  \"guide\": [\n    \"docs/source-of-truth/CIVICPULSE_TECHNICAL_GUIDE.md\"\n  ],\n  \"ux\": [\n    \"docs/source-of-truth/UX_CONTRACT.md\"\n  ],\n  \"stack_profile\": [\n    \"docs/source-of-truth/STACK_PROFILE.yaml\"\n  ]\n}\n"
         },
         {
-          "cmd": "python3 -B -S .claude/bin/bootstrap_three_docs.py --refresh --reset-runtime-state",
+          "cmd": "python3 -B -S .claude/bin/bootstrap_source_of_truth.py --refresh --reset-runtime-state",
           "returncode": 0,
           "seconds": 0.143,
           "tail": "Bootstrapped project prefix: CIVICPULSE\nDetected phases: 4\nGenerated tasks: 8\nDetected journeys: 2\nArtifacts written under orchestrator-state/memory and orchestrator-state/tasks\n"
@@ -211,16 +211,16 @@
           "cmd": "./scripts/reset-for-new-project.sh",
           "returncode": 0,
           "seconds": 0.267,
-          "tail": "==> Cleaning derived orchestrator state. Source-of-truth docs are preserved.\n==> Reset complete.\nNext:\n  python3 -B -S .claude/bin/bootstrap_three_docs.py --refresh\n  ./scripts/check-task-dag.sh --strict\n  ./scripts/check-journey-matrix.sh --strict\n  ./scripts/check-wiring-contract.sh --strict --require-new-template-columns\n"
+          "tail": "==> Cleaning derived orchestrator state. Source-of-truth docs are preserved.\n==> Reset complete.\nNext:\n  python3 -B -S .claude/bin/bootstrap_source_of_truth.py --refresh\n  ./scripts/check-task-dag.sh --strict\n  ./scripts/check-journey-matrix.sh --strict\n  ./scripts/check-wiring-contract.sh --strict --require-new-template-columns\n"
         },
         {
-          "cmd": "python3 -B -S .claude/bin/bootstrap_three_docs.py --validate-only",
+          "cmd": "python3 -B -S .claude/bin/bootstrap_source_of_truth.py --validate-only",
           "returncode": 0,
           "seconds": 0.068,
           "tail": "Source-of-truth contract is valid.\n{\n  \"instructions\": [\n    \"docs/source-of-truth/instrucciones.md\"\n  ],\n  \"checklist\": [\n    \"docs/source-of-truth/CLINICFLOW_IMPLEMENTATION_CHECKLIST.md\"\n  ],\n  \"guide\": [\n    \"docs/source-of-truth/CLINICFLOW_TECHNICAL_GUIDE.md\"\n  ],\n  \"ux\": [\n    \"docs/source-of-truth/UX_CONTRACT.md\"\n  ],\n  \"stack_profile\": [\n    \"docs/source-of-truth/STACK_PROFILE.yaml\"\n  ]\n}\n"
         },
         {
-          "cmd": "python3 -B -S .claude/bin/bootstrap_three_docs.py --refresh --reset-runtime-state",
+          "cmd": "python3 -B -S .claude/bin/bootstrap_source_of_truth.py --refresh --reset-runtime-state",
           "returncode": 0,
           "seconds": 0.153,
           "tail": "Bootstrapped project prefix: CLINICFLOW\nDetected phases: 4\nGenerated tasks: 8\nDetected journeys: 2\nArtifacts written under orchestrator-state/memory and orchestrator-state/tasks\n"
@@ -272,16 +272,16 @@
           "cmd": "./scripts/reset-for-new-project.sh",
           "returncode": 0,
           "seconds": 0.281,
-          "tail": "==> Cleaning derived orchestrator state. Source-of-truth docs are preserved.\n==> Reset complete.\nNext:\n  python3 -B -S .claude/bin/bootstrap_three_docs.py --refresh\n  ./scripts/check-task-dag.sh --strict\n  ./scripts/check-journey-matrix.sh --strict\n  ./scripts/check-wiring-contract.sh --strict --require-new-template-columns\n"
+          "tail": "==> Cleaning derived orchestrator state. Source-of-truth docs are preserved.\n==> Reset complete.\nNext:\n  python3 -B -S .claude/bin/bootstrap_source_of_truth.py --refresh\n  ./scripts/check-task-dag.sh --strict\n  ./scripts/check-journey-matrix.sh --strict\n  ./scripts/check-wiring-contract.sh --strict --require-new-template-columns\n"
         },
         {
-          "cmd": "python3 -B -S .claude/bin/bootstrap_three_docs.py --validate-only",
+          "cmd": "python3 -B -S .claude/bin/bootstrap_source_of_truth.py --validate-only",
           "returncode": 0,
           "seconds": 0.078,
           "tail": "Source-of-truth contract is valid.\n{\n  \"instructions\": [\n    \"docs/source-of-truth/instrucciones.md\"\n  ],\n  \"checklist\": [\n    \"docs/source-of-truth/INVOICEPILOT_IMPLEMENTATION_CHECKLIST.md\"\n  ],\n  \"guide\": [\n    \"docs/source-of-truth/INVOICEPILOT_TECHNICAL_GUIDE.md\"\n  ],\n  \"ux\": [\n    \"docs/source-of-truth/UX_CONTRACT.md\"\n  ],\n  \"stack_profile\": [\n    \"docs/source-of-truth/STACK_PROFILE.yaml\"\n  ]\n}\n"
         },
         {
-          "cmd": "python3 -B -S .claude/bin/bootstrap_three_docs.py --refresh --reset-runtime-state",
+          "cmd": "python3 -B -S .claude/bin/bootstrap_source_of_truth.py --refresh --reset-runtime-state",
           "returncode": 0,
           "seconds": 0.144,
           "tail": "Bootstrapped project prefix: INVOICEPILOT\nDetected phases: 3\nGenerated tasks: 7\nDetected journeys: 2\nArtifacts written under orchestrator-state/memory and orchestrator-state/tasks\n"
@@ -333,16 +333,16 @@
           "cmd": "./scripts/reset-for-new-project.sh",
           "returncode": 0,
           "seconds": 0.263,
-          "tail": "==> Cleaning derived orchestrator state. Source-of-truth docs are preserved.\n==> Reset complete.\nNext:\n  python3 -B -S .claude/bin/bootstrap_three_docs.py --refresh\n  ./scripts/check-task-dag.sh --strict\n  ./scripts/check-journey-matrix.sh --strict\n  ./scripts/check-wiring-contract.sh --strict --require-new-template-columns\n"
+          "tail": "==> Cleaning derived orchestrator state. Source-of-truth docs are preserved.\n==> Reset complete.\nNext:\n  python3 -B -S .claude/bin/bootstrap_source_of_truth.py --refresh\n  ./scripts/check-task-dag.sh --strict\n  ./scripts/check-journey-matrix.sh --strict\n  ./scripts/check-wiring-contract.sh --strict --require-new-template-columns\n"
         },
         {
-          "cmd": "python3 -B -S .claude/bin/bootstrap_three_docs.py --validate-only",
+          "cmd": "python3 -B -S .claude/bin/bootstrap_source_of_truth.py --validate-only",
           "returncode": 0,
           "seconds": 0.071,
           "tail": "Source-of-truth contract is valid.\n{\n  \"instructions\": [\n    \"docs/source-of-truth/instrucciones.md\"\n  ],\n  \"checklist\": [\n    \"docs/source-of-truth/EVENTOPS_IMPLEMENTATION_CHECKLIST.md\"\n  ],\n  \"guide\": [\n    \"docs/source-of-truth/EVENTOPS_TECHNICAL_GUIDE.md\"\n  ],\n  \"ux\": [\n    \"docs/source-of-truth/UX_CONTRACT.md\"\n  ],\n  \"stack_profile\": [\n    \"docs/source-of-truth/STACK_PROFILE.yaml\"\n  ]\n}\n"
         },
         {
-          "cmd": "python3 -B -S .claude/bin/bootstrap_three_docs.py --refresh --reset-runtime-state",
+          "cmd": "python3 -B -S .claude/bin/bootstrap_source_of_truth.py --refresh --reset-runtime-state",
           "returncode": 0,
           "seconds": 0.146,
           "tail": "Bootstrapped project prefix: EVENTOPS\nDetected phases: 3\nGenerated tasks: 7\nDetected journeys: 2\nArtifacts written under orchestrator-state/memory and orchestrator-state/tasks\n"
