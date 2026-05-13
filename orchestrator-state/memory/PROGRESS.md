@@ -6,7 +6,7 @@
 
 ## Current State
 
-- **Phase**: Phase 1 — Auth + Data Foundation
+- **Phase**: Phase 2 — Core Features (the motor)
 - **Last completed slices**:
   - P00-S01-T001 — Repo scaffold + scripts + env (done)
   - P00-S01-T002 — Frontend dependency pack (done)
@@ -31,15 +31,16 @@
   - **P01-S02-T007 — GET /api/v1/users/me + PATCH /api/v1/users/me/language (developer done, 2026-05-12)**
   - **P01-S03-T001 — Auth state provider and protected route guards (developer done, 2026-05-12)**
   - **P01-S03-T002 — Cross-origin infra: vite proxy /api → uvicorn (Strategy A, ADR-002) — DONE 2026-05-13**
-- **Next pending slice**: P03-S01-T001 (SignInPage) — unblocked by T002
+  - **P02-S01-T001 — 0002_ai_chat_rag_mcp_agents migration — developer done 2026-05-13**
+- **Next pending slice**: P02-S02-T001 (TBD — P02-S01-T001 developer done, pending validator+tester)
 - **Blockers**: none
-- **Generated at**: 2026-05-12T23:30:00+02:00 (updated by developer P01-S03-T001)
+- **Generated at**: 2026-05-13T09:40:00+02:00 (updated by developer P02-S01-T001)
 
 ## Infrastructure Status (P00-S02-T001)
 
 | Service | Image | Status | Notes |
 |---------|-------|--------|-------|
-| postgres | postgres:17-alpine | declared; healthcheck ready | No pgvector yet (P01-S01-T001) |
+| postgres | pgvector/pgvector:0.8.2-pg17 | running healthy | pgvector 0.8.2 enabled; WRITE_SET_DRIFT pre-approved by user (P02-S01-T001 §J.1 Option A) |
 | redis | valkey/valkey:8-alpine | declared; healthcheck ready (valkey-cli ping) | Service name `redis` preserves DNS |
 | litellm | ghcr.io/berriai/litellm:v1.83.14-stable.patch.3 | declared; healthcheck fixed (python-urllib) | F1 fix debugger cycle 1/3 |
 | minio | minio/minio:RELEASE.2025-09-07T16-13-09Z | declared; healthcheck ready | ports 9000/9001 |
@@ -92,7 +93,7 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 | Auth endpoints | 7 implemented | POST /api/v1/auth/sign-up (T001), POST /api/v1/auth/sign-in (T002), POST /api/v1/auth/refresh (T003), POST /api/v1/auth/logout (T004) — cookie Path fixed to /api/v1/auth (T011). POST /api/v1/auth/forgot-password (T005), POST /api/v1/auth/reset-password (T005), POST /api/v1/auth/2fa/verify (T006) |
 | Users endpoints | 2 implemented (T007) | GET /api/v1/users/me (returns UserProfile + employee_profile), PATCH /api/v1/users/me/language (returns 200 + full body; whitelist es/en/fr; audit log) |
 | Endpoints implemented | 12 | GET /health, GET /live, GET /ready, POST /api/v1/auth/sign-up, POST /api/v1/auth/sign-in, POST /api/v1/auth/refresh, POST /api/v1/auth/logout, POST /api/v1/auth/forgot-password, POST /api/v1/auth/reset-password, POST /api/v1/auth/2fa/verify, GET /api/v1/users/me, PATCH /api/v1/users/me/language |
-| Migrations applied | 1 (head=0001) | 9 auth tables: users, employee_profiles, roles, permissions, user_roles, refresh_tokens, mfa_totp_secrets, password_reset_tokens, audit_logs |
+| Migrations applied | 2 (head=0002) | 0001: 9 auth tables. 0002: +24 tables (chat 3, admin_ai 5, rag 6, mcp 5, agents 5). Total 33 tables + alembic_version. HNSW index on document_embeddings + 2 language CHECK constraints + 2 btree perf indexes. |
 | Seed data | loader.py fixed (P00-S02-T004); bootstrap ready; dev-restart --reset self-contained (T008) | FU-20260511145446 resolved — CAST(:meta AS JSONB) + json.dumps(). T008 fix: absolute --source path + hard-fail. |
 | Backend tests | 149 passing (isolation count) | test_health.py (11) + test_dependency_smoke.py (20) + test_migrations_0001_auth.py (6) + test_dev_restart_reset.py (2) + test_verification_data_bootstrap.py (9) + test_auth_signup.py (9) + test_auth_signin.py (16) + test_auth_refresh.py (14) + test_auth_logout.py (15 — T15 NEW cookie-jar roundtrip T011) + test_password_reset.py (21) + test_mfa.py (16 — T006) + test_users_me.py (31 — T007) — NOTE: full-suite with env exported = 130/1 (1 pre-existing test_mfa T06 failure, unrelated to T007); 31/31 users_me in isolation |
 | Backend dependencies | declared + installed | pyproject.toml: 29 packages pinned (28 + pyotp==2.9.0 added P01-S02-T006) |
@@ -311,3 +312,26 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 | WRITE_SET_DRIFT | declared | `backend/app/main.py` (users_router mount + /api/v1/users/me/language to 422→400 path set). |
 | Decision G.16 | SKIP (R2) | `_error_response` imported from `app.auth.routers._helpers` as transitional. Shared extraction deferred to future task. |
 | UserProfile roles (G.9) | defaults to ['employee'] | Admin seeded user has no user_roles rows → defaults to ['employee']. Role assignment is an out-of-scope concern. |
+
+## DB Schema (P02-S01-T001) — 0002_ai_chat_rag_mcp_agents
+
+| Domain | Tables | Key Notes |
+|--------|--------|-----------|
+| Chat | conversations, messages, message_citations | language CHECK ('es','en','fr'); D-LATE: citations without FK on document_id/chunk_id |
+| Admin AI | ai_providers, ai_provider_credentials, ai_models, ai_model_tests, llm_usage_logs | Fernet-encrypted secrets; SET NULL FKs for cost history preservation |
+| RAG | rag_collections, documents, document_versions, document_chunks, document_embeddings, vectorization_jobs | language CHECK on documents; vector(1536) embedding; HNSW index m=16 ef=64 |
+| MCP catalog | mcp_servers, mcp_credentials, mcp_tools, mcp_resources, mcp_prompts | tools enter disabled+require_approval=true |
+| Agents runtime | agents, mcp_agent_bindings, agent_runs, mcp_tool_invocations, mcp_approvals | SET NULL FKs for run history; approval audit trail |
+
+**Key decisions:**
+- D1-HNSW: HNSW over ivfflat (researcher D1; ivfflat on empty table explicitly discouraged per pgvector 0.8.2 docs)
+- D-LATE: message_citations.document_id/chunk_id without FK (historical citation trace survives document deletion)
+- D-VECTOR: NO DROP EXTENSION vector in downgrade (idempotent)
+- D-IDX: CHECK constraints on language columns (conversations + documents) aligned with users.preferred_language
+- Split mcp_agents.py → mcp.py (5 server catalog models) + agents.py (5 runtime models) due to 300 LOC cap
+- WRITE_SET_DRIFT: docker-compose.yml (postgres:17-alpine → pgvector/pgvector:0.8.2-pg17), tests/test_migrations_0002_ai_chat_rag_mcp.py, mcp.py + agents.py (split from mcp_agents.py)
+
+**Migration tests:** 17/17 PASS (test_migrations_0002_ai_chat_rag_mcp.py)
+**Ruff lint:** 0 issues
+**DB state:** head=0002, 33 tables total
+

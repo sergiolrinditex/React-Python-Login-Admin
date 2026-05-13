@@ -1,0 +1,51 @@
+# P02-S01-T001 — Migration 0002 Test Evidence
+# Generated: 2026-05-13
+
+## Alembic upgrade/downgrade/upgrade cycle
+$ alembic upgrade head → 0002 (head) ✓
+$ alembic downgrade -1 → 0001 ✓ (24 tables dropped, 9 auth preserved, vector extension stays)
+$ alembic upgrade head → 0002 (head) ✓ (idempotence confirmed)
+
+## DB state after upgrade head
+- Total tables: 33 (9 auth + 24 new) + alembic_version = 34 rows in pg_tables
+- Extension vector: version 0.8.2
+- Embedding type: vector(1536)
+- Index document_embeddings_vector_idx: USING hnsw (embedding vector_cosine_ops) WITH (m='16', ef_construction='64')
+- Perf indexes: conversations_user_updated_idx, messages_conversation_created_idx
+- CHECK constraints: ck_conversations_conversations_language_chk, ck_documents_documents_language_chk
+
+## Ruff lint
+$ ruff check backend → All checks passed!
+
+## Migration tests
+$ pytest tests/test_migrations_0002_ai_chat_rag_mcp.py -v
+  test_upgrade_creates_all_33_tables PASSED
+  test_vector_extension_loaded PASSED
+  test_embedding_column_is_vector_1536 PASSED
+  test_upgrade_creates_hnsw_index PASSED
+  test_conversations_user_updated_idx_exists PASSED
+  test_messages_conversation_created_idx_exists PASSED
+  test_cascade_conversations_to_users PASSED
+  test_cascade_messages_to_conversations PASSED
+  test_cascade_chunks_to_documents PASSED
+  test_cascade_embeddings_to_chunks PASSED
+  test_set_null_llm_usage_logs PASSED
+  test_cascade_mcp_tools_to_servers PASSED
+  test_cascade_agent_bindings PASSED
+  test_downgrade_drops_24_tables_preserves_auth PASSED
+  test_idempotent_upgrade_downgrade_upgrade PASSED
+  test_documents_language_check_constraint PASSED
+  test_conversations_language_check_constraint PASSED
+  17 passed in 47.11s
+
+## Backend health check
+$ curl -sf http://localhost:8000/health
+{"data":{"status":"ok","version":"0.1.0","uptime":1304.74}}
+
+## Verification data bootstrap smoke check
+$ python3 -m app.verification_data.bootstrap --source data/verification --dry-run → exit 0
+  All 6 groups loaded: auth, rag_chat, history, admin_ai, rag_docs, mcp_agents
+
+## ENABLE_VERBOSE_LOGGING
+- true: shows full 0002.upgrade.start → 0002.upgrade.done log chain ✓
+- false: only WARNING+ visible ✓

@@ -29,10 +29,13 @@
 #   /verify-slice MUST run with moby backend; nerdctl is best-effort only.
 #   Tracking: https://github.com/containerd/nerdctl/issues/2386
 #
-# PGVECTOR NOTE:
-#   postgres:17-alpine does NOT ship pgvector. When needed (P01-S01-T001),
-#   replace this image with pgvector/pgvector:pg17 or install via init-script.
-#   Decision deferred to P01 planner; do NOT change image in this slice.
+# PGVECTOR NOTE (updated P02-S01-T001, 2026-05-13):
+#   Switched from postgres:17-alpine to pgvector/pgvector:0.8.2-pg17 (Debian bookworm).
+#   Rationale: P02-S01-T001 migration 0002 creates the vector extension required for
+#   document_embeddings. No Alpine variant of pgvector exists on Docker Hub; Debian base
+#   is drop-in compatible (same pg_isready, volume mounts, env vars).
+#   WRITE_SET_DRIFT: user pre-approved in task pack §J.1 Option A.
+#   HNSW index (not ivfflat) per official pgvector 0.8.2 docs; override of §10.3 documented in handoff.
 #
 # WORKER NOTE (R5):
 #   The `worker` service references `app.worker` which does not exist until
@@ -44,7 +47,7 @@ services:
 
   # ── Postgres ────────────────────────────────────────────────────────────────
   postgres:
-    image: postgres:17-alpine
+    image: pgvector/pgvector:0.8.2-pg17
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}

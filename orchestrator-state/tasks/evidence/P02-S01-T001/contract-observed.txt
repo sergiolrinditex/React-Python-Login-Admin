@@ -1,0 +1,41 @@
+## Contract Observed — P02-S01-T001
+
+### Migration file observed
+- File: backend/alembic/versions/0002_ai_chat_rag_mcp_agents.py
+- Revision: 0002, down_revision: 0001
+- Alembic API used: op.create_table(), op.drop_table(), op.create_index(), op.drop_index(), op.execute() (for raw SQL for vector(1536) column and EXTENSION)
+
+### ORM model files observed
+- backend/app/db/models/chat.py — Conversation, Message, MessageCitation
+- backend/app/db/models/admin_ai.py — AiProvider, AiProviderCredential, AiModel, AiModelTest, LlmUsageLog
+- backend/app/db/models/rag.py — RagCollection, Document, DocumentVersion, DocumentChunk, DocumentEmbedding (VECTOR), VectorizationJob
+- backend/app/db/models/mcp.py — McpServer, McpCredential, McpTool, McpResource, McpPrompt
+- backend/app/db/models/agents.py — Agent, McpAgentBinding, AgentRun, McpToolInvocation, McpApproval
+
+### Database tables observed (33 app tables + alembic_version = 34 total)
+All 24 new tables confirmed via psql + pytest schema tests:
+Chat: conversations, messages, message_citations
+Admin AI: ai_providers, ai_provider_credentials, ai_models, ai_model_tests, llm_usage_logs
+RAG: rag_collections, documents, document_versions, document_chunks, document_embeddings, vectorization_jobs
+MCP: mcp_servers, mcp_credentials, mcp_tools, mcp_resources, mcp_prompts
+Agents: agents, mcp_agent_bindings, agent_runs, mcp_tool_invocations, mcp_approvals
+Auth (pre-existing 0001): users, employee_profiles, roles, permissions, user_roles, refresh_tokens, mfa_totp_secrets, password_reset_tokens, audit_logs
+
+### Extensions observed
+- vector 0.8.2 (pgvector) — confirmed via pg_extension query
+- pgcrypto — pre-existing from 0001
+
+### Indexes observed
+- document_embeddings_vector_idx: USING hnsw (embedding vector_cosine_ops) WITH (m='16', ef_construction='64')
+- conversations_user_updated_idx: btree on (user_id, updated_at DESC)
+- messages_conversation_created_idx: btree on (conversation_id, created_at)
+
+### CHECK constraints observed
+- ck_conversations_conversations_language_chk: CHECK language IN ('es','en','fr')
+- ck_documents_documents_language_chk: CHECK language IN ('es','en','fr')
+  Note: Names prefixed by SQLAlchemy naming_convention (ck_{table}_{name})
+
+### WRITE_SET_DRIFT observed
+- docker-compose.yml: postgres image changed from postgres:17-alpine → pgvector/pgvector:0.8.2-pg17 (user pre-approved)
+- backend/tests/test_migrations_0002_ai_chat_rag_mcp.py: test file (pattern P-2 precedent)
+- backend/app/db/models/mcp.py + agents.py: split from planned mcp_agents.py (file size cap)

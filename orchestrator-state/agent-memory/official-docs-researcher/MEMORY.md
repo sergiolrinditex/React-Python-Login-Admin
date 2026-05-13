@@ -462,6 +462,38 @@ Status: `RESOLVED: yes` — no discrepancies; all items are decision-aids fillin
 - Corrected by second authoritative nginx docs fetch: Set-Cookie IS forwarded by default.
 - Strategy A prod topology (§11.4) is valid without extra nginx directives.
 
+### 2026-05-13 — P02-S01-T001 pgvector index type + Docker image + SQLAlchemy mapping
+
+**Sources**: pgvector GitHub README (raw, v0.8.2), Context7 /pgvector/pgvector (High, 275 snippets), pgvector-python GitHub README (raw), Context7 /pgvector/pgvector-python (High, 125 snippets), Docker Hub pgvector/pgvector tags (pg17 filter).
+**Cache valid until**: 2026-05-20 (pgvector is NOT AI/ML volatile — it's a DB extension; Docker tags verified live).
+**Note file**: `orchestrator-state/memory/official-doc-notes/P02-S01-T001-pgvector-2026-05-13.md`
+**OUTCOME**: discrepancy — 3 items (1 high, 1 medium, 1 low)
+
+#### Key findings
+
+| Item | Official value | Source |
+|---|---|---|
+| pgvector stable version | **0.8.2** | Docker Hub (latest push ~3 months ago) |
+| Recommended index type | **HNSW** for production | pgvector README + Context7 llms.txt |
+| ivfflat on empty table | **Explicitly discouraged** ("create after table has some data") | pgvector README |
+| HNSW on empty table | **Explicitly safe** (no training step) | pgvector README |
+| HNSW defaults | `m=16, ef_construction=64` | pgvector README |
+| ivfflat lists formula | `rows/1000` for <1M rows | pgvector README |
+| Docker pg17 tags | `pg17`, `pg17-bookworm`, `pg17-trixie`, `0.8.2-pg17`, `0.8.2-pg17-bookworm`, `0.8.2-pg17-trixie` | Docker Hub live |
+| Alpine variant | **DOES NOT EXIST** for pg17 | Docker Hub (confirmed again) |
+| Recommended pinned tag | `pgvector/pgvector:0.8.2-pg17` (Bookworm/Debian 12) | Docker Hub |
+| pgvector-python ORM import | `from pgvector.sqlalchemy import VECTOR` (**VECTOR** all caps) | pgvector-python README |
+| SQLAlchemy 2.0.49 compat | Confirmed (uses mapped_column, select) | pgvector-python README |
+| Alembic helper | **None** — use `Index(postgresql_using='hnsw', ...)` or raw `op.execute(...)` | pgvector-python README |
+| register_vector() needed? | **No** for psycopg3 + SQLAlchemy — auto-registers on import | pgvector-python README |
+| CREATE EXTENSION needed? | **YES** — image has binaries, but `CREATE EXTENSION IF NOT EXISTS vector` in migration still required | pgvector README |
+
+#### Discrepancies vs internal §10.3
+
+1. **HIGH** — ivfflat on empty table: internal guide uses ivfflat with no lists param on empty table. Official: use HNSW (safe on empty table) or defer ivfflat index post-load.
+2. **MEDIUM** — Docker image: `postgres:17-alpine` → must change to `pgvector/pgvector:0.8.2-pg17` (pre-approved by user).
+3. **LOW** — ORM type name: `VECTOR` (all caps), not `Vector`. Only matters in ORM model files.
+
 ## Canonical references
 - `.claude/orchestrator-contract.json`
 - `.claude/rules/00-source-of-truth.md`

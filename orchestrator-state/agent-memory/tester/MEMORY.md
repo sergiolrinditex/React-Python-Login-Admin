@@ -1,5 +1,5 @@
 # Tester Agent Memory
-# Last updated: 2026-05-11
+# Last updated: 2026-05-13
 
 ## Environment notes
 
@@ -81,3 +81,33 @@
 - KEY LEARNING: For verbose logging verification in a script, capture logs with io.StringIO BEFORE any imports. Or use a fresh subprocess with env preset. Do NOT use inline process after app has already been imported.
 - Evidence: orchestrator-state/tasks/evidence/P01-S02-T003/
 - Handoff: orchestrator-state/tasks/handoffs/P01-S02-T003.md
+
+### P02-S01-T001 — 0002_ai_chat_rag_mcp_agents migration (2026-05-13) — PASS
+- OUTCOME: pass (first run)
+- TESTS: 17/17 slice tests PASS; 164/164 non-migration tests in isolation PASS; 137/187 full suite (50 contamination failures = pre-existing)
+- ACCEPTANCE CYCLE: alembic downgrade -1 → current=0001 → upgrade head → current=0002 (head) — all exit 0
+- SCHEMA: vector 0.8.2, 33 app tables + alembic_version=34, HNSW index (m=16, ef_construction=64), 2 btree perf indexes, 2 CHECK constraints (naming_convention prefixed: ck_conversations_conversations_language_chk, ck_documents_documents_language_chk)
+- KEY LEARNING: CHECK constraint names have SQLAlchemy naming_convention prefix applied (ck_{table}_{name}). When searching pg_constraint for CHECK names, use `conrelid::regclass::text IN ('tablename')` filter or `conname LIKE '%language%'` — do NOT search for bare names like 'conversations_language_chk' without the prefix.
+- KEY LEARNING: Migration test suites that use `alembic downgrade base` (autouse fixture) contaminate subsequent integration tests in the same pytest invocation. ALWAYS run migration test files in isolation from functional integration tests. Use `--ignore=tests/test_migrations_0001_auth.py --ignore=tests/test_migrations_0002_ai_chat_rag_mcp.py` when running the functional suite for regression checks.
+- KEY LEARNING: After running any migration test file in full suite, restore DB with `DATABASE_URL="..." /Users/sergiolr/Library/Python/3.11/bin/alembic upgrade head` before running functional tests or curl checks.
+- KEY LEARNING: When `test_upgrade_creates_all_9_tables` from 0001 migration test runs after 0002 is applied, it will find 34 tables (not 9) and FAIL. This is a stale assertion in the 0001 test (not a regression). The 0001 test was written assuming it was the only migration; once 0002 exists, `upgrade head` goes to 0002. Classification: pre-existing structural debt.
+- KEY LEARNING: Docker image `pgvector/pgvector:0.8.2-pg17` and `pgvector/pgvector:pg17` may map to the same image ID (check via `docker images pgvector/pgvector`). A running container may show a different tag than in docker-compose.yml if it was pulled before the compose file was updated. Always verify via `SELECT extname, extversion FROM pg_extension WHERE extname='vector'` — the extension version is the real source of truth, not the Docker tag shown in `docker ps`.
+- KEY LEARNING: For DB-only slices (no endpoints, no use cases), verbose logging verification = migration logs (upgrade.start/done per-table pattern). ENABLE_VERBOSE_LOGGING flag does NOT affect alembic CLI logs — alembic always shows INFO-level output. Document this clearly in the handoff so closer doesn't flag as incomplete.
+- KEY LEARNING: Running `python` (no 3) on this machine gives 127 "command not found". Always use `python3` explicitly. The venv in worktrees may have an `alembic` binary: check `ls backend/.venv/bin/` first, then fall back to `/Users/sergiolr/Library/Python/3.11/bin/alembic`.
+- KEY LEARNING: Source .env with `set -a && source /path/to/main/.env && set +a` to export ALL vars including DATABASE_URL. The worktree has no .env file — always source from main repo.
+- Evidence: orchestrator-state/tasks/evidence/P02-S01-T001/
+- Handoff: orchestrator-state/tasks/handoffs/P02-S01-T001.md
+
+### P02-S02-T001 — Security services (encryption, permissions, rate limit) (2026-05-13) — PASS (cycle 2)
+- OUTCOME: pass (cycle 2 re-test after debugger fix)
+- TESTS: 18/18 unit PASS (test_security.py isolated); acceptance gate (-k security) = 18 PASS + 3 FAIL pre-existing (TestGetMeSecurityShape); full-suite 21 failed (vs 23 on main — improved)
+- BASELINE COMPARISON: TestGetMeSecurityShape 3 failures are IDENTICAL on main and worktree. NO new regression introduced.
+- FU REGISTERED: FU-20260513080801-fix-module-level-jwt-key-in-app-auth-tokens-caus (medium, non-blocking)
+- REDIS: PING PONG; KEYS "rl:*" empty; DBSIZE 0 (clean teardown)
+- LINT: ruff clean on security module + test_security.py
+- KEY LEARNING: Tests matching `-k security` will collect TestGetMeSecurityShape (in test_users_me.py) in addition to the new test_security.py tests. Always verify acceptance gate FAILs against main baseline to distinguish pre-existing vs new regression.
+- KEY LEARNING: When the debugger uses `_sync_app_jwt_key()` to patch `app.auth.tokens._JWT_KEY` in test_security.py, this patching affects import-order sensitivity for OTHER test modules collected after test_security.py. TestGetMeSecurityShape tests fail not because they are buggy but because the JWT key in app.auth.tokens module gets overwritten by the test helper's fallback key. This is acceptable for this slice but the real fix is in tokens.py itself (FU registered).
+- KEY LEARNING: For pure backend library slices (no HTTP endpoints, no UI), acceptance gate = `pytest -k <module_name>`. Verbose logging is verified via caplog in the test itself. No curl smoke test needed.
+- KEY LEARNING: docker binary is at ~/.rd/bin/docker (Rancher Desktop). Use `~/.rd/bin/docker exec <container> valkey-cli PING` for redis checks. `docker compose exec` with env vars not set gives confusing warnings — use `docker exec` with container name directly.
+- Evidence: orchestrator-state/tasks/evidence/P02-S02-T001/cycle-2/
+- Handoff: orchestrator-state/tasks/handoffs/P02-S02-T001.md

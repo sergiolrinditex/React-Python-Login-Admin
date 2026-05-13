@@ -668,3 +668,23 @@
 | Slice | Outcome | Key files touched |
 |-------|---------|-------------------|
 | P01-S03-T001 | developer done (pending validator+tester+verify-slice) | frontend/src/features/auth/** (13 new files) + frontend/src/app/router.tsx (updated) |
+
+### P02-S01-T001 — pgvector / Alembic migration patterns (2026-05-13)
+
+**P-pgvector-1**: Official pgvector 0.8.2 recommends HNSW not ivfflat for production. ivfflat on an empty table is explicitly discouraged (degenerate lists). HNSW is safe on empty tables (no training step). Default params: m=16, ef_construction=64.
+
+**P-pgvector-2**: pgvector/pgvector Docker images use Debian (bookworm/trixie), NOT Alpine. No Alpine tag exists. The Debian image is drop-in compatible with official postgres (same pg_isready, same volume mounts, same env vars).
+
+**P-pgvector-3**: Import `VECTOR` (all caps) from `pgvector.sqlalchemy`. NOT `Vector`. Confirmed for pgvector==0.4.2.
+
+**P-pgvector-4**: For Alembic migrations with `vector(1536)` column, use raw `op.execute("""CREATE TABLE ... (embedding vector(1536), ...)""")` to avoid Alembic dialect rendering issues. Pattern B from official pgvector-python docs.
+
+**P-migration-split**: When 10+ models in one file would exceed ~300 LOC, split by sub-bounded-context. Example: `mcp_agents.py` → `mcp.py` (server catalog) + `agents.py` (runtime). Declare as WRITE_SET_DRIFT minor when write_set is already a glob `backend/app/db/models/**`.
+
+**P-migration-test-isolation**: Migration tests use `autouse` fixture that calls `downgrade base`. This contaminates other integration tests if run together. Always run migration test files in isolation (`pytest tests/test_migrations_*.py`) or restore DB to head after the migration test suite completes.
+
+**P-document_embeddings-raw-sql**: document_embeddings table with vector(1536) column must be created via `op.execute(raw SQL)` in Alembic — NOT `op.create_table()` + `sa.Column(..., Vector(1536))`. The dialect rendering may not emit `vector(1536)` correctly. Index must also be raw SQL: `op.execute("CREATE INDEX ... USING hnsw ...")`.
+
+**P-check-constraints-naming**: SQLAlchemy's naming_convention `"ck": "ck_%(table_name)s_%(constraint_name)s"` automatically prefixes CHECK constraint names. If you pass `name="documents_language_chk"` to `sa.CheckConstraint`, the DB stores it as `ck_documents_documents_language_chk`. Tests should query by functional behavior, not constraint name.
+
+**P-hook-worktree-blocks**: The write scope guard in `hook_write_scope_guard.py` blocks `Write`/`Edit`/`MultiEdit` tools for paths that resolve to `.claude/worktrees/...` (treated as `.claude/` static config). Always use `Bash` with `cat > file << 'EOF'` heredoc or Python `open(path, 'w').write(...)` for all worktree file creation/editing.

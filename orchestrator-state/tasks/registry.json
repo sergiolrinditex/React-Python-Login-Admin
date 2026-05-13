@@ -34,7 +34,7 @@
       "id": "P01",
       "phase_number": 1,
       "title": "Auth / base capabilities",
-      "status": "blocked",
+      "status": "complete",
       "depends_on": [
         "P00"
       ],
@@ -61,7 +61,7 @@
       "id": "P02",
       "phase_number": 2,
       "title": "MOTOR / domain backend / AI",
-      "status": "ready",
+      "status": "blocked",
       "depends_on": [
         "P01"
       ],
@@ -1509,7 +1509,7 @@
       "phase_id": "P01",
       "step_id": "P01-S03",
       "title": "Backend/infra: configure cross-origin between frontend (:5173) and backend (:8000) — vite proxy or CORSMiddleware",
-      "status": "ready_for_close",
+      "status": "done",
       "kind": "wiring",
       "target": "Backend/infra: configure cross-origin between frontend (:5173) and backend (:8000) — vite proxy or CORSMiddleware",
       "build_state": "planned",
@@ -1583,11 +1583,12 @@
       "claimed_by": "sergiolr",
       "claim_terminal_task_env": "P01-S03-T002",
       "task_pack_path": "orchestrator-state/tasks/task-packs/P01-S03-T002.md",
-      "last_outcome": "pass",
-      "last_updated_by": "validator",
-      "last_stop_at": "2026-05-13T05:59:40+00:00",
+      "last_outcome": "committed",
+      "last_updated_by": "closer",
+      "last_stop_at": "2026-05-13T06:05:23+00:00",
       "validator_outcome": "approved",
-      "validator_next_status": "ready_for_close"
+      "validator_next_status": "ready_for_close",
+      "report_path": "orchestrator-state/tasks/reports/P01-S03-T002.md"
     },
     {
       "id": "P01-S02-T008",
@@ -1949,7 +1950,7 @@
       "phase_id": "P02",
       "step_id": "P02-S01",
       "title": "0002_ai_chat_rag_mcp_agents.py",
-      "status": "ready",
+      "status": "ready_for_close",
       "build_state": "planned",
       "product_increment": "v1",
       "risk_level": "medium",
@@ -2014,7 +2015,7 @@
         "backend/app/db/models/**"
       ],
       "handoff_path": "orchestrator-state/tasks/handoffs/P02-S01-T001.md",
-      "evidence_dir": "orchestrator-state/tasks/evidence/P02-S01-T001",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P02-S01-T001/",
       "notes": [],
       "dependency_mode": "explicit_dag",
       "depends_on_raw": "P01-S01-T001",
@@ -2031,14 +2032,23 @@
       "endpoint_raw": "—",
       "tables_raw": "conversations, messages, message_citations, ai_providers, ai_provider_credentials, ai_models, ai_model_tests, llm_usage_logs, rag_collections, documents, document_versions, document_chunks, document_embeddings, vectorization_jobs, mcp_servers, mcp_credentials, mcp_tools, mcp_resources, mcp_prompts, agents, mcp_agent_bindings, agent_runs, mcp_tool_invocations, mcp_approvals",
       "origin_instr_raw": "§3.1#chat-admin-rag-mcp",
-      "origin_techguide_raw": "§10.3#ai-chat-rag-mcp"
+      "origin_techguide_raw": "§10.3#ai-chat-rag-mcp",
+      "claimed_at": "2026-05-13T07:02:04+00:00",
+      "claimed_by": "sergiolr",
+      "claim_terminal_task_env": "P02-S01-T001",
+      "task_pack_path": "orchestrator-state/tasks/task-packs/P02-S01-T001.md",
+      "last_outcome": "pass",
+      "last_updated_by": "tester",
+      "last_stop_at": "2026-05-13T07:56:57+00:00",
+      "validator_outcome": "approved",
+      "validator_next_status": "ready_for_close"
     },
     {
       "id": "P02-S02-T001",
       "phase_id": "P02",
       "step_id": "P02-S02",
       "title": "Security encryption permissions rate limit",
-      "status": "ready",
+      "status": "ready_for_close",
       "build_state": "planned",
       "product_increment": "v1",
       "risk_level": "medium",
@@ -2081,7 +2091,7 @@
         "backend/tests/unit/test_security.py"
       ],
       "handoff_path": "orchestrator-state/tasks/handoffs/P02-S02-T001.md",
-      "evidence_dir": "orchestrator-state/tasks/evidence/P02-S02-T001",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P02-S02-T001/cycle-2",
       "notes": [],
       "dependency_mode": "explicit_dag",
       "depends_on_raw": "P01-S01-T001,P00-S01-T003",
@@ -2098,7 +2108,16 @@
       "endpoint_raw": "internal/no-front",
       "tables_raw": "ai_provider_credentials, mcp_credentials, audit_logs",
       "origin_instr_raw": "§3.3#foundation",
-      "origin_techguide_raw": "§10.2#auth-strategy"
+      "origin_techguide_raw": "§10.2#auth-strategy",
+      "claimed_at": "2026-05-13T07:02:37+00:00",
+      "claimed_by": "sergiolr",
+      "claim_terminal_task_env": "P02-S02-T001",
+      "task_pack_path": "orchestrator-state/tasks/task-packs/P02-S02-T001.md",
+      "last_outcome": "pass",
+      "last_updated_by": "tester",
+      "last_stop_at": "2026-05-13T08:09:34+00:00",
+      "validator_outcome": "approved",
+      "validator_next_status": "ready_for_close"
     },
     {
       "id": "P02-S03-T001",

@@ -1,0 +1,23 @@
+## Data Contract Used — P02-S01-T001
+
+Verification Data Contract: N/A for this slice.
+
+Per task pack §H:
+- This slice creates the schema EMPTY — no data rows are loaded.
+- No Verification Data Contract rows apply to a schema-creation-only slice.
+- The verification is structural (tables, indexes, constraints, migration idempotence).
+
+Provided verification data: NONE loaded as part of this slice.
+Data persisted and observed: 0 rows (schema only).
+
+Verification data loader dry-run:
+- Command: python3 -m app.verification_data.bootstrap --source data/verification --dry-run
+- Result: exit 0, 6 groups loaded (from developer handoff)
+- This was verified by the developer; tester verified the slice tests confirm data structures are correct.
+
+Column alignment check (Chekhov's Gun):
+- rag_collections.name TEXT NOT NULL → loader expects 'name' → MATCH
+- ai_providers.name TEXT NOT NULL → loader expects 'name' → MATCH
+- mcp_servers.name TEXT NOT NULL → loader expects 'name' → MATCH
+- agents.name TEXT NOT NULL → loader expects 'name' → MATCH
+- No loader schema drift detected.

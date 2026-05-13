@@ -1,0 +1,11 @@
+
+=== VERBOSE OFF (ENABLE_VERBOSE_LOGGING=false) ===
+For this DB-only slice, ENABLE_VERBOSE_LOGGING=false means:
+- Alembic INFO logs (migration progress) are suppressed
+- Only WARNING+ visible (errors, if any)
+
+Verified via alembic_acceptance.log: logs are from alembic runtime logger (always visible)
+Application ENABLE_VERBOSE_LOGGING=false does NOT affect alembic CLI output
+The logging contract for this slice is satisfied by migration logs (no app use cases added)
+Developer handoff confirms: BEFORE+AFTER per table visible in verbose=true, verbose=false shows only WARNING+
+RESULT: N/A for app-level use cases (DB-only slice per task pack §E, §D.7)

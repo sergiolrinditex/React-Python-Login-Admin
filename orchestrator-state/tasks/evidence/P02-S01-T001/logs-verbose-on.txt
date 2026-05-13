@@ -1,0 +1,50 @@
+=== VERBOSE ON (ENABLE_VERBOSE_LOGGING=true) ===
+Note: This is a DB-only slice. No application use cases were added.
+The migration itself generates the BEFORE/AFTER logging pattern per §10.5.
+upgrade.start = BEFORE, upgrade.done = AFTER (per-table logs in between)
+
+Evidence from alembic_acceptance.log (VERBOSE logs from the upgrade/downgrade cycle):
+INFO  [alembic.runtime.migration] 0002.downgrade.start: dropping 24 AI/Chat/RAG/MCP/Agent tables in reverse FK-safe order
+INFO  [alembic.runtime.migration] 0002.downgrade: dropped mcp_approvals
+INFO  [alembic.runtime.migration] 0002.downgrade: dropped mcp_tool_invocations
+INFO  [alembic.runtime.migration] 0002.downgrade: dropped agent_runs
+INFO  [alembic.runtime.migration] 0002.downgrade: dropped mcp_agent_bindings
+INFO  [alembic.runtime.migration] 0002.downgrade: dropped agents
+INFO  [alembic.runtime.migration] 0002.downgrade: dropped mcp_prompts
+INFO  [alembic.runtime.migration] 0002.downgrade: dropped mcp_resources
+INFO  [alembic.runtime.migration] 0002.downgrade: dropped mcp_tools
+INFO  [alembic.runtime.migration] 0002.downgrade: dropped mcp_credentials
+INFO  [alembic.runtime.migration] 0002.downgrade: dropped mcp_servers
+INFO  [alembic.runtime.migration] 0002.downgrade: dropped vectorization_jobs
+INFO  [alembic.runtime.migration] 0002.downgrade: dropped performance indexes
+INFO  [alembic.runtime.migration] 0002.downgrade: dropped document_embeddings (HNSW index cascade-dropped)
+INFO  [alembic.runtime.migration] 0002.downgrade: dropped document_chunks
+INFO  [alembic.runtime.migration] 0002.downgrade: dropped document_versions
+INFO  [alembic.runtime.migration] 0002.downgrade: dropped documents
+INFO  [alembic.runtime.migration] 0002.downgrade: dropped rag_collections
+INFO  [alembic.runtime.migration] 0002.downgrade: dropped llm_usage_logs
+INFO  [alembic.runtime.migration] 0002.downgrade: dropped ai_model_tests
+INFO  [alembic.runtime.migration] 0002.downgrade: dropped ai_models
+INFO  [alembic.runtime.migration] 0002.downgrade: dropped ai_provider_credentials
+INFO  [alembic.runtime.migration] 0002.downgrade: dropped ai_providers
+INFO  [alembic.runtime.migration] 0002.downgrade: dropped message_citations
+INFO  [alembic.runtime.migration] 0002.downgrade: dropped messages
+INFO  [alembic.runtime.migration] 0002.downgrade: dropped conversations
+INFO  [alembic.runtime.migration] 0002.downgrade.done: 24 tables dropped; vector extension preserved (D-VECTOR)
+INFO  [alembic.runtime.migration] 0002.upgrade.start: creating vector extension and 24 AI/Chat/RAG/MCP tables
+INFO  [alembic.runtime.migration] 0002.upgrade: vector extension ensured
+INFO  [alembic.runtime.migration] 0002.upgrade: creating table conversations
+INFO  [alembic.runtime.migration] 0002.upgrade: table conversations created
+INFO  [alembic.runtime.migration] 0002.upgrade: creating table messages
+INFO  [alembic.runtime.migration] 0002.upgrade: table messages created
+INFO  [alembic.runtime.migration] 0002.upgrade: creating table message_citations
+INFO  [alembic.runtime.migration] 0002.upgrade: table message_citations created (D-LATE: document_id/chunk_id without FK)
+INFO  [alembic.runtime.migration] 0002.upgrade: creating table ai_providers
+INFO  [alembic.runtime.migration] 0002.upgrade: table ai_providers created
+INFO  [alembic.runtime.migration] 0002.upgrade: creating table ai_provider_credentials
+INFO  [alembic.runtime.migration] 0002.upgrade: table ai_provider_credentials created
+INFO  [alembic.runtime.migration] 0002.upgrade: creating table ai_models
+
+No tokens, passwords, PII, or encrypted_secret values appear in the logs.
+Grep check for sensitive data:
+NONE FOUND — PASS
