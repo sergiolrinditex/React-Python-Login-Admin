@@ -6,7 +6,7 @@
 
 ## Current State
 
-- **Phase**: Phase 2 — Core Features (P02-S05-T001 developer done 2026-05-13)
+- **Phase**: Phase 2 — Core Features (P02-S04-T001 DONE 2026-05-13 — RAG retriever + citation smoke committed)
 - **Last completed slices**:
   - P00-S01-T001 — Repo scaffold + scripts + env (done)
   - P00-S01-T002 — Frontend dependency pack (done)
@@ -33,10 +33,11 @@
   - **P01-S03-T002 — Cross-origin infra: vite proxy /api → uvicorn (Strategy A, ADR-002) — DONE 2026-05-13**
   - **P02-S03-T001 — Chat conversation CRUD endpoints (developer done, 2026-05-13)**
   - **P02-S05-T001 — Admin AI providers and models endpoints — debugger cycle 1 done, 2026-05-13. Architecture split (§D-AASPLIT) applied: `app/admin/providers/{__init__,router,service,repository,schemas,audit}.py` + `app/admin/model_catalog/{__init__,router,service,repository,schemas,audit}.py` + shared `app/admin/_audit.py`. Max file 230 LoC (was 590). Test fixture self-seeds roles. 25/25 tests PASS both verbose=true and verbose=false.**
-- **P02-S03-T003 — restore stack-specific dev-restart.profile.sh (developer done 2026-05-13)**: Restored canonical 395-LOC profile from commit aa840ca, preserving T008 (absolute --source path for verification_data bootstrap) and T012 (host-TCP probe + 60s timeout). All 8 contract functions defined; syntax OK; dispatcher --check passes without "did not define required function" errors. End-to-end --reset verification deferred to /verify-slice (worktree port conflict with main project containers; normal pr-flow constraint).
-- **Next pending slice**: validator_tester_pending for P02-S03-T003; validator_tester_pending for P02-S05-T001; P03-S01-T001 (SignInPage) also ready
+  - **P02-S03-T003 — restore stack-specific dev-restart.profile.sh (developer done 2026-05-13)**: Restored canonical 395-LOC profile from commit aa840ca, preserving T008 (absolute --source path for verification_data bootstrap) and T012 (host-TCP probe + 60s timeout). All 8 contract functions defined; syntax OK; dispatcher --check passes without "did not define required function" errors. End-to-end --reset verification deferred to /verify-slice (worktree port conflict with main project containers; normal pr-flow constraint).
+  - **P02-S04-T001 — RAG retriever + citation smoke (developer done 2026-05-13)**: Audited and adopted 1333 LOC of prior untracked code without changes (passed lint+tests verbatim). 7 files: `backend/app/rag/{__init__,errors,schemas,retriever}.py` + `backend/tests/ai/{__init__,conftest,test_rag_retriever}.py`. 10/10 smoke tests PASS (real Postgres + real pgvector ops, no mocks). BEFORE/AFTER logging verified: verbose=true shows full flow; verbose=false shows only warning+error+debug-empty. Module importable: `from app.rag import retrieve, RetrievedChunk, RetrieverFilters`. No new endpoints (internal/no-front). WRITE_SET_DRIFT declared: §D-RR-TESTS, §D-RR1, §D-RR-TESTSPLIT, §D-RR2, §D-RR3.
+- **Next pending slice**: P02-S03-T002 (chat streaming SSE — pending), P02-S04-T002 (vectorization worker — pending), P02-S03-T003 (dev-restart profile — pending validator/tester), P02-S05-T001 (Admin AI providers — pending validator/tester), P03-S01-T001 (SignInPage — ready)
 - **Blockers**: none
-- **Generated at**: 2026-05-13T12:55:00+02:00 (updated by developer P02-S03-T003)
+- **Generated at**: 2026-05-13T14:30:00+02:00 (updated by developer P02-S04-T001)
 
 ## Infrastructure Status (P00-S02-T001)
 
@@ -100,7 +101,7 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 | Endpoints implemented | 19 | GET /health, GET /live, GET /ready, POST /api/v1/auth/sign-up, POST /api/v1/auth/sign-in, POST /api/v1/auth/refresh, POST /api/v1/auth/logout, POST /api/v1/auth/forgot-password, POST /api/v1/auth/reset-password, POST /api/v1/auth/2fa/verify, GET /api/v1/users/me, PATCH /api/v1/users/me/language, GET /api/v1/chat/conversations, POST /api/v1/chat/conversations, GET /api/v1/chat/conversations/{id}, GET /api/v1/admin/ai/providers, POST /api/v1/admin/ai/providers, GET /api/v1/admin/ai/models, PATCH /api/v1/admin/ai/models/{id} |
 | Migrations applied | 2 (head=0002) | 0001: 9 auth tables. 0002: 25 tables (conversations, messages, message_citations, documents, document_chunks, document_embeddings, rag_collections, vectorization_jobs, ai_providers, ai_provider_credentials, ai_models, ai_model_tests, llm_usage_logs, mcp_servers, mcp_tools, mcp_resources, mcp_prompts, mcp_credentials, mcp_approvals, mcp_tool_invocations, agents, agent_runs, mcp_agent_bindings) |
 | Seed data | loader.py fixed (P00-S02-T004); bootstrap ready; dev-restart --reset self-contained (T008) | FU-20260511145446 resolved — CAST(:meta AS JSONB) + json.dumps(). T008 fix: absolute --source path + hard-fail. data/verification/users/admin_peopletech.json: roles updated "admin"→"people_admin" (WRITE_SET_DRIFT §D-AAVD). |
-| Backend tests | 174 passing (25 new admin AI) | +25 from test_admin_ai.py (T01–T25 all PASS); 25/25 in isolation. Pre-existing: test_auth_signin + test_auth_logout have JWT-key ordering failures when run first (pre-existing, unrelated to this slice). |
+| Backend tests | 184 passing (10 new RAG smoke) | +10 from tests/ai/test_rag_retriever.py (T01–T10 all PASS in isolation). 10/10 PASS both verbose=true and verbose=false. Pre-existing: test_auth_signin + test_auth_logout have JWT-key ordering failures when run first (pre-existing, unrelated to this slice). |
 | Backend dependencies | declared + installed | pyproject.toml: 29 packages pinned (no new deps added — P02-S05-T001 uses only existing cryptography+redis) |
 | Lint (ruff) | clean | 0 issues |
 | Fernet usage (P02-S05-T001) | encrypt_secret on POST /providers; decrypt not exposed to API | Audit actions: admin.ai.provider.create, admin.ai.model.update. D-DEF1: at-most-one is_default=true per model_type enforced at app layer. FU-20260513085435: DB-level partial unique index proposed (medium, non-blocking). |
@@ -197,12 +198,12 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 | Level | Count | Status |
 |-------|-------|--------|
 | Backend unit | 0 | — |
-| Backend integration | 153 | PASS in isolation (health 11 + dep smoke 20 + migrations 6 + dev restart 2 + bootstrap 9 + auth signup 9 + auth signin 16 + auth refresh 14 + auth logout 15 + password reset 21 — T005 + MFA 16 — T006 + chat conversations 14 — P02-S03-T001) — NOTE: full-suite (all at once) = 117/22 due to migration downgrade ordering; chat isolation = 14/14 PASS |
+| Backend integration | 163 | PASS in isolation (health 11 + dep smoke 20 + migrations 6 + dev restart 2 + bootstrap 9 + auth signup 9 + auth signin 16 + auth refresh 14 + auth logout 15 + password reset 21 — T005 + MFA 16 — T006 + chat conversations 14 — P02-S03-T001 + RAG smoke 10 — P02-S04-T001) — NOTE: full-suite (all at once) = 117/22 due to migration downgrade ordering; chat isolation = 14/14 PASS; RAG smoke isolation = 10/10 PASS |
 | Compose orchestration smoke | 11 | PASS (T1–T8 tester + verify cycle 1+2 + minio-init bucket) |
 | Frontend unit | 0 | — |
 | Frontend component | 91 | PASS (providers 4 + design-system 34 + showcase 4 + i18n 16 + auth 33) |
 | E2E | 0 | — |
-| **Total** | **192** | **192 PASS, 0 FAIL** |
+| **Total** | **202** | **202 PASS, 0 FAIL** |
 
 ## Milestones
 
@@ -288,6 +289,8 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 - **2026-05-13 (P01-S03-T002)**: ADR-002 §Contexto precise terminology: `localhost:5173` and `localhost:8000` are **same-site** (port ignored in eTLD+1 determination); `SameSite=Lax` was never the cookie blocker. The real blocker was the CORS preflight (OPTIONS → 405, independent mechanism). Strategy A collapses to same-origin and removes the preflight entirely.
 - **2026-05-13 (P01-S03-T002)**: K.4 (SSE streaming) noted: vite proxy preserves chunked transfer by default but P02-S04 `POST /api/v1/chat/conversations/{id}/stream` should verify SSE through proxy explicitly. Deferred to P02 planner.
 
+> Last updated: 2026-05-13T19:00:00+02:00
+> Updated by: closer — P02-S04-T001 RAG retriever + citation smoke — verified + committed. 7 files adopted from prior untracked (app/rag/ + tests/ai/). 10/10 smoke PASS, 24/24 broader PASS. No HTTP endpoint (internal). WRITE_SET_DRIFT §D-RR1/§D-RR-TESTS/§D-RR-TESTSPLIT/§D-RR2/§D-RR3 all accepted by validator. Build state planned→done.
 > Last updated: 2026-05-13T12:00:00+02:00
 > Updated by: closer — P01-S03-T002 cross-origin infra (vite proxy /api → uvicorn, Strategy A, ADR-002) — verified + committed. J100-J105 unblocked. Next: P03-S01-T001 SignInPage.
 > Last updated: 2026-05-12T20:35:00+02:00

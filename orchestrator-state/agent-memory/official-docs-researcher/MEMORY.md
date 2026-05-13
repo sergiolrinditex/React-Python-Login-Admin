@@ -494,6 +494,28 @@ Status: `RESOLVED: yes` — no discrepancies; all items are decision-aids fillin
 2. **MEDIUM** — Docker image: `postgres:17-alpine` → must change to `pgvector/pgvector:0.8.2-pg17` (pre-approved by user).
 3. **LOW** — ORM type name: `VECTOR` (all caps), not `Vector`. Only matters in ORM model files.
 
+### 2026-05-13 — P02-S04-T001 pgvector-python ORM API for RAG retriever (cosine_distance method)
+
+**Sources**: Context7 /pgvector/pgvector-python (High, 125 snippets), Context7 /pgvector/pgvector (High, 275 snippets), GitHub READMEs via Context7.
+**Cache valid until**: 2026-05-20 (pgvector-python is a DB extension binding — not AI/ML volatile).
+**Note file**: `orchestrator-state/memory/official-doc-notes/P02-S04-T001-rag-retriever-2026-05-13.md`
+**OUTCOME**: verified — no discrepancies; all 5 questions confirmed.
+
+#### Key findings (all confirmed correct for retriever.py)
+
+| Item | Official value | Source |
+|---|---|---|
+| `.cosine_distance(x)` ORM method | Official API for `<=>` operator in SQLAlchemy 2.x | pgvector-python README + Context7 |
+| `order_by(distance.asc()).limit(k)` | Canonical pattern (confirmed in official snippets) | pgvector-python Context7 |
+| `list[float]` input accepted | YES — all official snippets use plain Python lists | pgvector-python README + Context7 |
+| HNSW empty-table query | Returns `[]` cleanly — no error, no warning | pgvector README (no training step) |
+| cosine_distance(x,x) return value | `0` mathematically; `float4` internal → may produce tiny epsilon | pgvector Context7 scalar function APIDOC |
+| `[0.0, 1.001]` score tolerance | Safe — float4 internal storage can produce small epsilon in dot-product | pgvector float4 type definition |
+| i18n RAG fallback (LangChain) | No official pattern — D-RR2 "caller handles fallback" is correct | pgvector-python README (no i18n section) |
+| `score = 1.0 - cosine_distance` | Pattern confirmed in official pgvector SQL docs: `1 - (embedding <=> ...)` | pgvector/pgvector Context7 |
+
+No discrepancies with retriever.py API surface. Developer may adopt code as-is.
+
 ## Canonical references
 - `.claude/orchestrator-contract.json`
 - `.claude/rules/00-source-of-truth.md`

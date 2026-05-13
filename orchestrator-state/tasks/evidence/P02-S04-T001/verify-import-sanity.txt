@@ -1,0 +1,1 @@
+OK: retrieve= <function retrieve at 0x1094b4400> ; RetrievedChunk= <class 'app.rag.schemas.RetrievedChunk'> ; RetrieverFilters= <class 'app.rag.schemas.RetrieverFilters'> ; errors= <class 'app.rag.errors.InvalidEmbeddingDimensionError'> <class 'app.rag.errors.InvalidLanguageError'>
