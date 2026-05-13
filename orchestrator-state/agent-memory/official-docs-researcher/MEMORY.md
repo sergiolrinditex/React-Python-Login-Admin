@@ -80,6 +80,22 @@ Compact operational memory. No history was deleted.
 - - `await i18n.changeLanguage('fr')` in tests: returns a Promise. Must `await` in async test. `i18n.language` updates synchronously after resolution.
 - #### Outcome: VERIFIED — all planner decisions confirmed
 - No discrepancy notes written. Developer may proceed without reconciliation.
+
+## P02-S07-T001 MCP SDK deep verification (2026-05-13)
+- Full note: `orchestrator-state/memory/official-doc-notes/P02-S07-T001-mcp-sdk-2026-05-13.md`
+- Package: `mcp==1.27.1` (PyPI, MIT, Anthropic PBC, released 2026-05-08, 23k stars)
+- Cache: ALWAYS re-verify (AI/ML volatile ecosystem)
+- Discovery API: `await session.list_tools()` → `tools: list[Tool(name, description, inputSchema)]`; `await session.list_resources()` → `resources: list[Resource(uri, name, description, mimeType)]`; `await session.list_prompts()` → `prompts: list[Prompt(name, description, arguments)]`
+- Transport map: `transport_type='http'` → `mcp.client.streamable_http.streamable_http_client(url, http_client=httpx.AsyncClient(...))`. `transport_type='sse'` → `mcp.client.sse.sse_client(url, headers=..., timeout=..., auth=...)`
+- Timeout: streamable_http → inject `httpx.AsyncClient(timeout=10.0)`. SSE → `sse_client(url, timeout=10.0)`
+- Exception for 502: catch `(StreamableHTTPError, httpx.TimeoutException, httpx.ConnectError, httpx.HTTPStatusError)`
+- Auth injection (streamable_http): MUST use pre-built `httpx.AsyncClient` — no auth/headers param on constructor
+- Auth injection (sse): `headers=` and `auth=` params available directly on `sse_client`
+- OAuth2 refresh: implement `TokenStorage.set_tokens(tokens: OAuthToken)` → `DbTokenStorage` class writes updated encrypted_refresh_token+expires_at to mcp_credentials
+- DISCREPANCY 1 (UNRESOLVED): TECHNICAL_GUIDE line 60 placeholder `<SDK MCP Python candidato>` → resolved as `mcp==1.27.1`
+- DISCREPANCY 2 (UNRESOLVED): Exception class for 502 is `StreamableHTTPError` (SDK-specific), not just `httpx` exceptions
+- DISCREPANCY 3 (impl detail only): transport naming `{http,sse}` in DB maps to SDK classes; no contract change needed
+- DISCREPANCY 4 (impl detail only): streamable_http auth requires pre-built httpx.AsyncClient pattern
 - **Verified via PyPI live JSON + argon2-cffi ReadTheDocs + Context7 (SQLAlchemy, Alembic, structlog, pydantic) + pgvector GitHub README.**
 - #### Hook 1 — argon2-cffi — DISCREPANCY
 - | DISCREPANCY NOTE | `P00-S02-T003-argon2-cffi-2026-05-11.md` |
