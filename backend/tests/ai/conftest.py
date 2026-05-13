@@ -1,4 +1,12 @@
 """
+Hilo People — pytest fixtures and env setup for AI smoke tests.
+
+Loads the project .env before any app imports (worktree-safe pattern from
+tests/unit/conftest.py). This ensures JWT_PRIVATE_KEY, ENCRYPTION_KEY, and
+DATABASE_URL are available when the test module imports app modules.
+
+Also contains the RAG smoke fixture (rag_smoke_fixture) for P02-S04-T001.
+
 Hilo People — pytest fixtures for RAG retriever smoke tests.
 
 Slice:  P02-S04-T001 — RAG retriever + citation smoke
@@ -30,19 +38,75 @@ WRITE_SET_DRIFT: This file and tests/ai/__init__.py are outside the declared
   write_set (backend/tests/ai/test_rag_retriever.py only). They are intra-test
   helpers required for test discovery and fixture isolation — same drift pattern
   approved for T002/T004/T007. Declared in handoff P02-S04-T001.md.
+
+WRITE_SET_DRIFT §D-CONFTEST-ENV (P02-S08-T001): worktree-safe .env loader added
+  (functions _find_project_root_ai/_load_dotenv_ai and their call-site, lines
+  57–107 approx.) so smoke tests resolve DATABASE_URL/JWT_PRIVATE_KEY/
+  ENCRYPTION_KEY when pytest runs from a worktree path. Same pattern as
+  tests/unit/conftest.py. Declared in handoff P02-S08-T001.md.
 """
 
 from __future__ import annotations
 
+import os
 import uuid
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Generator
 
-import numpy as np
-import pytest
-from sqlalchemy.orm import Session
 
-from app.db.models.rag import (
+# ---------------------------------------------------------------------------
+# .env loader (worktree-safe — mirrors tests/unit/conftest.py pattern)
+# Must run before any app imports to satisfy module-level env var reads.
+# ---------------------------------------------------------------------------
+
+def _find_project_root_ai() -> Path:
+    """Resolve project root, worktree-safe."""
+    start = Path(__file__).resolve().parent
+    for candidate in [start, *start.parents]:
+        git = candidate / ".git"
+        if git.is_dir():
+            return candidate
+        if git.is_file():
+            body = git.read_text(encoding="utf-8").strip()
+            if body.startswith("gitdir:"):
+                gdir = Path(body[len("gitdir:"):].strip())
+                parts = list(gdir.parts)
+                if "worktrees" in parts:
+                    idx = parts.index("worktrees")
+                    main_git_dir = Path(*parts[:idx])
+                    return main_git_dir.parent
+            return candidate
+    return start.parents[3]
+
+
+def _load_dotenv_ai(root: Path) -> None:
+    """Parse and load a .env file into os.environ (no-override)."""
+    env_path = root / ".env"
+    if not env_path.is_file():
+        return
+    with open(env_path) as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, _, val = line.partition("=")
+            key = key.strip()
+            val = val.strip()
+            if len(val) >= 2 and val[0] == val[-1] and val[0] in ('"', "'"):
+                val = val[1:-1]
+            if key and key not in os.environ:
+                os.environ[key] = val
+
+
+_load_dotenv_ai(_find_project_root_ai())
+
+# Third-party and app imports after env is loaded  # noqa: E402
+import numpy as np  # noqa: E402
+import pytest  # noqa: E402
+from sqlalchemy.orm import Session  # noqa: E402
+
+from app.db.models.rag import (  # noqa: E402
     Document,
     DocumentChunk,
     DocumentEmbedding,

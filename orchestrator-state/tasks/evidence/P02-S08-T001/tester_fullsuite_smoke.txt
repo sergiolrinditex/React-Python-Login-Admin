@@ -1,0 +1,47 @@
+........................................................................ [ 23%]
+.........................................................F
+=================================== FAILURES ===================================
+________________ test_T06_post_server_api_key_fernet_roundtrip _________________
+../../../../Library/Python/3.11/lib/python/site-packages/cryptography/fernet.py:131: in _verify_signature
+    h.verify(data[-32:])
+E   cryptography.exceptions.InvalidSignature: Signature did not match digest.
+
+During handling of the above exception, another exception occurred:
+backend/tests/integration/test_mcp_registry.py:406: in test_T06_post_server_api_key_fernet_roundtrip
+    decrypted = f.decrypt(enc.encode()).decode()
+                ^^^^^^^^^^^^^^^^^^^^^^^
+../../../../Library/Python/3.11/lib/python/site-packages/cryptography/fernet.py:90: in decrypt
+    return self._decrypt_data(data, timestamp, time_info)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../../Library/Python/3.11/lib/python/site-packages/cryptography/fernet.py:149: in _decrypt_data
+    self._verify_signature(data)
+../../../../Library/Python/3.11/lib/python/site-packages/cryptography/fernet.py:133: in _verify_signature
+    raise InvalidToken
+E   cryptography.fernet.InvalidToken
+------------------------------ Captured log call -------------------------------
+INFO     app.auth.routers.sign_in:sign_in.py:93 auth.sign_in.received email_domain=inditex-sandbox.com request_id=3961f4ce-8388-41fc-add7-578eda63fa04
+INFO     app.auth.routers.sign_in:sign_in.py:166 auth.sign_in.success user_id=a3d8aa72-3e7a-44d6-8140-5f2dc78e7d28 request_id=3961f4ce-8388-41fc-add7-578eda63fa04
+=============================== warnings summary ===============================
+tests/ai/test_agents_smoke.py::test_tc10_bind_tools_payload_invalid_agents_smoke
+tests/ai/test_agents_smoke.py::test_tc14_start_run_payload_invalid_agents_smoke
+tests/integration/test_admin_ai.py::test_T06_post_provider_invalid_type_422
+tests/integration/test_admin_ai.py::test_T07_post_provider_missing_credentials_422
+tests/integration/test_admin_ai.py::test_T15_get_models_invalid_provider_id_422
+tests/integration/test_auth_signin.py::test_signin_missing_field_returns_422
+tests/integration/test_auth_signup.py::test_signup_missing_full_name_422
+  /Users/sergiolr/Library/Python/3.11/lib/python/site-packages/starlette/_exception_handler.py:59: DeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
+    response = await handler(conn, exc)
+
+tests/ai/test_agents_smoke.py::test_tc11_start_run_happy_path_agents_smoke
+  /Users/sergiolr/Library/Python/3.11/lib/python/site-packages/langgraph/checkpoint/serde/encrypted.py:5: LangChainPendingDeprecationWarning: The default value of `allowed_objects` will change in a future version. Pass an explicit value (e.g., allowed_objects='messages' or allowed_objects='core') to suppress this warning.
+    from langgraph.checkpoint.serde.jsonplus import JsonPlusSerializer
+
+tests/integration/test_auth_refresh.py: 20 warnings
+  /Users/sergiolr/Library/Python/3.11/lib/python/site-packages/starlette/testclient.py:445: DeprecationWarning: Setting per-request cookies=<...> is being deprecated, because the expected behaviour on cookie persistence is ambiguous. Set cookies directly on the client instance instead.
+    return super().request(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED backend/tests/integration/test_mcp_registry.py::test_T06_post_server_api_key_fernet_roundtrip
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed, 129 passed, 28 warnings in 24.98s

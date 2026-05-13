@@ -1,0 +1,44 @@
+=== agents ===
+                  id                  |     name      | enabled |                                    config                                     
+--------------------------------------+---------------+---------+-------------------------------------------------------------------------------
+ 0b23017a-fa01-42ca-bddc-5a7dc61cb87a | people_helper | t       | {"model": "gpt-4o", "max_tokens": 1024, "mcp_server_ref": "sandbox_readonly"}
+(1 fila)
+
+
+=== mcp_agent_bindings ===
+ agent_id | tool_id | enabled 
+----------+---------+---------
+(0 filas)
+
+
+=== agent_runs ===
+                  id                  |               agent_id               |               user_id                | input | status |             output              |          created_at           |          finished_at          
+--------------------------------------+--------------------------------------+--------------------------------------+-------+--------+---------------------------------+-------------------------------+-------------------------------
+ 8cf58ed9-cc41-4abc-812f-c9c1d6d7764c | 0b23017a-fa01-42ca-bddc-5a7dc61cb87a | 53be3f16-a4e1-4af1-b5dd-9a0ace12aed8 | hello | failed | Run failed: AuthenticationError | 2026-05-13 17:44:30.473886+00 | 2026-05-13 17:44:32.481953+00
+(1 fila)
+
+
+=== mcp_tool_invocations ===
+ id | tool_id | agent_run_id | status | latency_ms | error 
+----+---------+--------------+--------+------------+-------
+(0 filas)
+
+
+=== audit_logs for admin.agent.* ===
+ERROR:  column "user_id" does not exist
+LÍNEA 1: SELECT action, user_id, LEFT(metadata::text, 120) AS metadat...
+                        ^
+
+=== migration head ===
+ version_num 
+-------------
+ 0003
+(1 fila)
+
+          action          |            actor_user_id             |                                                           metadata                                                           |          created_at           
+--------------------------+--------------------------------------+------------------------------------------------------------------------------------------------------------------------------+-------------------------------
+ admin.agent.tools.update | 53be3f16-a4e1-4af1-b5dd-9a0ace12aed8 | {"ip": "127.0.0.1", "added": [], "removed": [], "tool_ids": [], "request_id": "verify-T001-V04", "user_agent": "curl/8.7.1"} | 2026-05-13 17:44:18.974603+00
+ admin.agent.run.start    | 53be3f16-a4e1-4af1-b5dd-9a0ace12aed8 | {"ip": "127.0.0.1", "agent_id": "0b23017a-fa01-42ca-bddc-5a7dc61cb87a", "request_id": "verify-T001-V08"}                     | 2026-05-13 17:44:30.501648+00
+ admin.agent.run.complete | 53be3f16-a4e1-4af1-b5dd-9a0ace12aed8 | {"status": "failed", "agent_id": "0b23017a-fa01-42ca-bddc-5a7dc61cb87a", "request_id": "verify-T001-V08"}                    | 2026-05-13 17:44:33.205785+00
+(3 filas)
+

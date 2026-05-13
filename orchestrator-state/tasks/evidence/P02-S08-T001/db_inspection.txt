@@ -1,0 +1,21 @@
+=== DB Inspection: agent_runs + audit_logs ===
+Query: agent_runs rows created by smoke test run (TC11 uses FakeListChatModel)
+
+--- agent_runs table (last 3 rows) ---
+  id=4dbd6f98-86f8-4d04-9e6b-90f5981a9373 agent_id=0f799460-0b3e-4926-913e-fdbbe2e2eb3d status=failed created_at=2026-05-13 17:14:28.210651+00 finished_at=2026-05-13 17:14:29.465374+00
+
+--- audit_logs for admin.agent.tools.update (last 3) ---
+  id=ef7ff6dc-e694-4393-8577-999e22fd9dab action=admin.agent.tools.update entity_id=0f799460-0b3e-4926-913e-fdbbe2e2eb3d actor=[PSEUDONYMIZED:4df70947261c] created_at=2026-05-13 17:14:15.872123+00
+  id=336487aa-8081-42e8-bef7-75a7799c01bc action=admin.agent.tools.update entity_id=135eb3ca-86dc-4069-a06f-44f9c44be0fe actor=[PSEUDONYMIZED:dc937b598926] created_at=2026-05-13 17:10:31.247794+00
+  id=6897c7e0-f88c-4af5-8642-fa8fde0cc8a3 action=admin.agent.tools.update entity_id=34b04d1d-d913-4b72-9f27-fa38dffdec9c actor=[PSEUDONYMIZED:dc937b598926] created_at=2026-05-13 17:10:31.131312+00
+
+--- mcp_tool_invocations (last 3) ---
+  (no rows — TC11 smoke run creates 0 invocations; people_helper smoke
+   step does not exercise MCP tool calls in the FakeListChatModel path)
+
+--- audit_logs for admin.agent.run.* (last 5) ---
+  id=1eb952fd-9b50-49cf-b797-7e33fc38175a action=admin.agent.run.complete entity_id=4dbd6f98-86f8-4d04-9e6b-90f5981a9373 actor=[PSEUDONYMIZED:4df70947261c] created_at=2026-05-13 17:14:30.235014+00
+  id=c684e615-42d3-4190-830b-da4a7807aa8b action=admin.agent.run.start entity_id=4dbd6f98-86f8-4d04-9e6b-90f5981a9373 actor=[PSEUDONYMIZED:4df70947261c] created_at=2026-05-13 17:14:28.250215+00
+  id=207c9233-501a-4315-aab5-ea0bd0193beb action=admin.agent.run.complete entity_id=805cac95-67e6-4517-b65d-744dd5e072d2 actor=[PSEUDONYMIZED:dc937b598926] created_at=2026-05-13 17:10:32.969308+00
+  id=2f902004-a33d-4f6e-ba70-b190dfe4435a action=admin.agent.run.start entity_id=805cac95-67e6-4517-b65d-744dd5e072d2 actor=[PSEUDONYMIZED:dc937b598926] created_at=2026-05-13 17:10:32.908282+00
+  id=912848bb-a160-41dc-8867-a667b3794968 action=admin.agent.run.complete entity_id=dc1bbd67-d145-4119-aaa8-9e2fcaaf576a actor=[PSEUDONYMIZED:dc937b598926] created_at=2026-05-13 17:10:32.780581+00

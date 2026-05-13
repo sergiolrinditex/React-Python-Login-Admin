@@ -1,0 +1,16 @@
+=== POST /api/v1/agents/runs ===
+Command: curl -s -D - -X POST -H 'Authorization: Bearer [ADMIN_JWT_REDACTED]' -H 'Content-Type: application/json' -d '{"agent_id":"AGENT_UUID","input":"hello"}' http://localhost:8001/api/v1/agents/runs
+JWT: Bearer [ADMIN_JWT_REDACTED]
+Note: In live evidence capture, POST /runs attempts real LLM call (gpt-4o).
+      In tests, a FakeListChatModel mock is injected at the LLM HTTP boundary
+      (per 01-non-negotiables.md: only external LLM HTTP client is mocked).
+      Without a valid OPENAI_API_KEY/LiteLLM config, the live endpoint returns 502.
+      The smoke test (TC11) proves the full path works with the FakeListChatModel.
+
+HTTP/1.1 502 Bad Gateway
+date: Wed, 13 May 2026 17:14:27 GMT
+server: uvicorn
+content-length: 183
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"evidence-curl-003"},"errors":[{"code":"AGENT_RUN_FAILED","message":"Agent run failed. Check server logs for details.","field":null,"details":null}]}

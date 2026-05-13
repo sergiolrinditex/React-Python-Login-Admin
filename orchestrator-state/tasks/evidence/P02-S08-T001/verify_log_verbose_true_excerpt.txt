@@ -1,0 +1,52 @@
+2026-05-13 19:44:11,296 app.agents.router_agents DEBUG agents.router.list_agents.start user_id=53be3f16-a4e1-4af1-b5dd-9a0ace12aed8 request_id=verify-T001-V01
+2026-05-13 19:44:11,296 app.agents.service_list DEBUG agents.service.list_agents.start request_id=verify-T001-V01
+2026-05-13 19:44:11,296 app.agents.repository_agents DEBUG agents.repository.list_agents.start
+2026-05-13 19:44:11,313 app.agents.repository_agents DEBUG agents.repository.list_agents.ok count=1
+2026-05-13 19:44:11,313 app.agents.service_list DEBUG agents.service.list_agents.ok count=1 request_id=verify-T001-V01
+2026-05-13 19:44:11,314 app.agents.router_agents DEBUG agents.router.list_agents.ok user_id=53be3f16-a4e1-4af1-b5dd-9a0ace12aed8 count=1 request_id=verify-T001-V01
+2026-05-13 19:44:18,937 app.agents.router_agents DEBUG agents.router.list_agents.start user_id=53be3f16-a4e1-4af1-b5dd-9a0ace12aed8 request_id=185eb86a-8037-4bb2-bd5c-feb6e6d65232
+2026-05-13 19:44:18,937 app.agents.service_list DEBUG agents.service.list_agents.start request_id=185eb86a-8037-4bb2-bd5c-feb6e6d65232
+2026-05-13 19:44:18,937 app.agents.repository_agents DEBUG agents.repository.list_agents.start
+2026-05-13 19:44:18,944 app.agents.repository_agents DEBUG agents.repository.list_agents.ok count=1
+2026-05-13 19:44:18,944 app.agents.service_list DEBUG agents.service.list_agents.ok count=1 request_id=185eb86a-8037-4bb2-bd5c-feb6e6d65232
+2026-05-13 19:44:18,944 app.agents.router_agents DEBUG agents.router.list_agents.ok user_id=53be3f16-a4e1-4af1-b5dd-9a0ace12aed8 count=1 request_id=185eb86a-8037-4bb2-bd5c-feb6e6d65232
+2026-05-13 19:44:19,029 app.agents.router_agents DEBUG agents.router.patch_tools.start user_id=53be3f16-a4e1-4af1-b5dd-9a0ace12aed8 agent_id=0b23017a-fa01-42ca-bddc-5a7dc61cb87a tool_count=0 request_id=verify-T001-V04
+2026-05-13 19:44:19,029 app.agents.service_bind_tools DEBUG agents.service.bind_tools.start agent_id=0b23017a-fa01-42ca-bddc-5a7dc61cb87a tool_count=0 request_id=verify-T001-V04
+2026-05-13 19:44:19,029 app.agents.repository_agents DEBUG agents.repository.get_agent.start agent_id=0b23017a-fa01-42ca-bddc-5a7dc61cb87a
+2026-05-13 19:44:19,033 app.agents.repository_agents DEBUG agents.repository.get_agent.ok agent_id=0b23017a-fa01-42ca-bddc-5a7dc61cb87a bound_tools=0
+2026-05-13 19:44:19,033 app.agents.repository_agents DEBUG agents.repository.bind_tools.start agent_id=0b23017a-fa01-42ca-bddc-5a7dc61cb87a tool_count=0
+2026-05-13 19:44:19,036 app.agents.repository_agents DEBUG agents.repository.bind_tools.ok agent_id=0b23017a-fa01-42ca-bddc-5a7dc61cb87a added=0 removed=0
+2026-05-13 19:44:19,041 app.agents.repository_agents DEBUG agents.repository.get_agent.start agent_id=0b23017a-fa01-42ca-bddc-5a7dc61cb87a
+2026-05-13 19:44:19,045 app.agents.repository_agents DEBUG agents.repository.get_agent.ok agent_id=0b23017a-fa01-42ca-bddc-5a7dc61cb87a bound_tools=0
+2026-05-13 19:44:19,045 app.agents.service_bind_tools DEBUG agents.service.bind_tools.ok agent_id=0b23017a-fa01-42ca-bddc-5a7dc61cb87a added=0 removed=0 request_id=verify-T001-V04
+2026-05-13 19:44:19,048 app.agents.router_agents DEBUG agents.router.patch_tools.ok user_id=53be3f16-a4e1-4af1-b5dd-9a0ace12aed8 agent_id=0b23017a-fa01-42ca-bddc-5a7dc61cb87a request_id=verify-T001-V04
+2026-05-13 19:44:30,485 app.agents.router_agents DEBUG agents.router.patch_tools.start user_id=53be3f16-a4e1-4af1-b5dd-9a0ace12aed8 agent_id=00000000-0000-0000-0000-000000000000 tool_count=0 request_id=verify-T001-V06
+2026-05-13 19:44:30,485 app.agents.service_bind_tools DEBUG agents.service.bind_tools.start agent_id=00000000-0000-0000-0000-000000000000 tool_count=0 request_id=verify-T001-V06
+2026-05-13 19:44:30,485 app.agents.repository_agents DEBUG agents.repository.get_agent.start agent_id=00000000-0000-0000-0000-000000000000
+2026-05-13 19:44:30,489 app.agents.repository_agents WARNING agents.repository.get_agent.not_found agent_id=00000000-0000-0000-0000-000000000000
+2026-05-13 19:44:30,512 app.agents.router_agents DEBUG agents.router.patch_tools.start user_id=53be3f16-a4e1-4af1-b5dd-9a0ace12aed8 agent_id=0b23017a-fa01-42ca-bddc-5a7dc61cb87a tool_count=1 request_id=verify-T001-V07
+2026-05-13 19:44:30,512 app.agents.service_bind_tools DEBUG agents.service.bind_tools.start agent_id=0b23017a-fa01-42ca-bddc-5a7dc61cb87a tool_count=1 request_id=verify-T001-V07
+2026-05-13 19:44:30,512 app.agents.repository_agents DEBUG agents.repository.get_agent.start agent_id=0b23017a-fa01-42ca-bddc-5a7dc61cb87a
+2026-05-13 19:44:30,514 app.agents.repository_agents DEBUG agents.repository.get_agent.ok agent_id=0b23017a-fa01-42ca-bddc-5a7dc61cb87a bound_tools=0
+2026-05-13 19:44:30,514 app.agents.repository_agents DEBUG agents.repository.validate_tools.start count=1
+2026-05-13 19:44:30,516 app.agents.repository_agents WARNING agents.repository.validate_tools.not_found tool_id=00000000-0000-0000-0000-000000000999
+2026-05-13 19:44:30,546 app.agents.router_runs DEBUG agents.router.start_run.start user_id=53be3f16-a4e1-4af1-b5dd-9a0ace12aed8 agent_id=0b23017a-fa01-42ca-bddc-5a7dc61cb87a input_len=5 request_id=verify-T001-V08
+2026-05-13 19:44:30,546 app.agents.service_start_run DEBUG agents.service.start_run.start agent_id=0b23017a-fa01-42ca-bddc-5a7dc61cb87a input_len=5 request_id=verify-T001-V08
+2026-05-13 19:44:30,546 app.agents.repository_agents DEBUG agents.repository.get_agent.start agent_id=0b23017a-fa01-42ca-bddc-5a7dc61cb87a
+2026-05-13 19:44:30,548 app.agents.repository_agents DEBUG agents.repository.get_agent.ok agent_id=0b23017a-fa01-42ca-bddc-5a7dc61cb87a bound_tools=0
+2026-05-13 19:44:30,548 app.agents.repository_runs DEBUG agents.repository.create_run.start agent_id=0b23017a-fa01-42ca-bddc-5a7dc61cb87a user_id=53be3f16-a4e1-4af1-b5dd-9a0ace12aed8
+2026-05-13 19:44:30,552 app.agents.repository_runs DEBUG agents.repository.create_run.ok run_id=8cf58ed9-cc41-4abc-812f-c9c1d6d7764c
+2026-05-13 19:44:30,571 app.agents.service_start_run_tools DEBUG agents.service.start_run.approved_tools count=0 run_id=8cf58ed9-cc41-4abc-812f-c9c1d6d7764c
+2026-05-13 19:44:32,345 app.agents.deepagents_runtime DEBUG agents.deepagents_runtime.build_agent.start run_id=8cf58ed9-cc41-4abc-812f-c9c1d6d7764c tool_count=0 request_id=verify-T001-V08
+2026-05-13 19:44:32,539 app.agents.deepagents_runtime DEBUG agents.deepagents_runtime.build_agent.ok run_id=8cf58ed9-cc41-4abc-812f-c9c1d6d7764c tools=2 request_id=verify-T001-V08
+2026-05-13 19:44:32,539 app.agents.repository_runs DEBUG agents.repository.update_run_status.start run_id=8cf58ed9-cc41-4abc-812f-c9c1d6d7764c status=running
+2026-05-13 19:44:32,543 app.agents.repository_runs DEBUG agents.repository.update_run_status.ok run_id=8cf58ed9-cc41-4abc-812f-c9c1d6d7764c status=running
+2026-05-13 19:44:32,549 app.agents.deepagents_runtime DEBUG agents.deepagents_runtime.invoke_agent.start run_id=8cf58ed9-cc41-4abc-812f-c9c1d6d7764c input_len=5 request_id=verify-T001-V08
+2026-05-13 19:44:33,238 app.agents.service_start_run ERROR agents.service.start_run.error run_id=8cf58ed9-cc41-4abc-812f-c9c1d6d7764c error=AuthenticationError request_id=verify-T001-V08
+2026-05-13 19:44:33,255 app.agents.repository_runs DEBUG agents.repository.update_run_status.start run_id=8cf58ed9-cc41-4abc-812f-c9c1d6d7764c status=failed
+2026-05-13 19:44:33,262 app.agents.repository_runs DEBUG agents.repository.update_run_status.ok run_id=8cf58ed9-cc41-4abc-812f-c9c1d6d7764c status=failed
+2026-05-13 19:44:33,277 app.agents.router_runs ERROR agents.router.start_run.failed user_id=53be3f16-a4e1-4af1-b5dd-9a0ace12aed8 agent_id=0b23017a-fa01-42ca-bddc-5a7dc61cb87a request_id=verify-T001-V08 error=Agent run failed: AuthenticationError
+2026-05-13 19:45:03,930 app.agents.router_runs DEBUG agents.router.start_run.start user_id=53be3f16-a4e1-4af1-b5dd-9a0ace12aed8 agent_id=00000000-0000-0000-0000-000000000000 input_len=2 request_id=verify-T001-V09
+2026-05-13 19:45:03,930 app.agents.service_start_run DEBUG agents.service.start_run.start agent_id=00000000-0000-0000-0000-000000000000 input_len=2 request_id=verify-T001-V09
+2026-05-13 19:45:03,930 app.agents.repository_agents DEBUG agents.repository.get_agent.start agent_id=00000000-0000-0000-0000-000000000000
+2026-05-13 19:45:03,932 app.agents.repository_agents WARNING agents.repository.get_agent.not_found agent_id=00000000-0000-0000-0000-000000000000

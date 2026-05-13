@@ -1,0 +1,2 @@
+2026-05-13 19:46:03,170 app.agents.service_start_run ERROR agents.service.start_run.error run_id=afbe5de2-d320-4ee4-bcb4-754e32ef53fd error=AuthenticationError request_id=vfb-run
+2026-05-13 19:46:03,263 app.agents.router_runs ERROR agents.router.start_run.failed user_id=53be3f16-a4e1-4af1-b5dd-9a0ace12aed8 agent_id=0b23017a-fa01-42ca-bddc-5a7dc61cb87a request_id=vfb-run error=Agent run failed: AuthenticationError
