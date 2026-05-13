@@ -1,0 +1,39 @@
+verify-slice migration round-trip (P02-S05-T003)
+================================================
+Run at: 2026-05-13T17:20:00+02:00
+DB: postgresql+psycopg://hilo@localhost:5432/hilo_dev
+Alembic binary: /Users/sergiolr/Library/Python/3.11/bin/alembic
+
+Step 1: alembic current
+  → 0003 (head)
+
+Step 2: index BEFORE downgrade
+  pg_indexes WHERE tablename='ai_models' AND indexname='ai_models_default_per_type_uidx'
+  → ai_models_default_per_type_uidx          (present ✅)
+
+Step 3: alembic downgrade -1
+  → (no output; exit 0)
+
+Step 4: alembic current after downgrade
+  → 0002
+
+Step 5: index AFTER downgrade
+  pg_indexes WHERE tablename='ai_models' AND indexname='ai_models_default_per_type_uidx'
+  → (empty result — index dropped ✅)
+
+Step 6: alembic upgrade head
+  → (no output; exit 0)
+
+Step 7: alembic current after upgrade
+  → 0003 (head)
+
+Step 8: index AFTER upgrade
+  pg_indexes WHERE tablename='ai_models' AND indexname='ai_models_default_per_type_uidx'
+  → ai_models_default_per_type_uidx
+    CREATE UNIQUE INDEX ai_models_default_per_type_uidx ON public.ai_models
+      USING btree (model_type) WHERE (is_default = true)
+
+Conclusion: migration 0003 reversible (down+up round-trip clean);
+            partial unique index with exact `WHERE (is_default = true)`
+            predicate confirmed at DB level.
+            Acceptance A.1 + A.2 satisfied.

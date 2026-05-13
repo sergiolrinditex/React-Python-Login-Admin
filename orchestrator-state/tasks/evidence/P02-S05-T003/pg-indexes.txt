@@ -1,0 +1,6 @@
+            indexname            |                                                          indexdef                                                          
+---------------------------------+----------------------------------------------------------------------------------------------------------------------------
+ ai_models_default_per_type_uidx | CREATE UNIQUE INDEX ai_models_default_per_type_uidx ON public.ai_models USING btree (model_type) WHERE (is_default = true)
+ pk_ai_models                    | CREATE UNIQUE INDEX pk_ai_models ON public.ai_models USING btree (id)
+(2 filas)
+

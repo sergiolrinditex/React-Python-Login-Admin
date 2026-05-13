@@ -1,0 +1,24 @@
+# Contract Observed — P02-S05-T003
+
+## Front → Back → DB contract verification
+
+| Layer | Artifact | Observed |
+|-------|----------|---------|
+| Endpoint | PATCH /api/v1/admin/ai/models/{id} | Returns 409 AI_MODEL_DEFAULT_CONFLICT on concurrent is_default conflict |
+| Endpoint | PATCH /api/v1/admin/ai/models/{id} | Returns 200 with AiModel data on success |
+| Use case | app/admin/model_catalog/service.patch_model | Catches sqlalchemy.exc.IntegrityError, inspects diag.constraint_name, raises ModelDefaultConflictError |
+| Domain error | app/admin/model_catalog/errors.ModelDefaultConflictError | Exists, mapped to HTTP 409 in router |
+| DB | ai_models partial unique index | CREATE UNIQUE INDEX ai_models_default_per_type_uidx ON ai_models USING btree (model_type) WHERE (is_default = true) — confirmed via pg_indexes |
+| DB | Invariant enforcement | T26 concurrent PATCH: DB rejects second commit with UniqueViolation (pgcode=23505) |
+| Migration | backend/alembic/versions/0003_ai_models_default_per_type_uidx.py | upgrade: 0002→0003 creates index; downgrade: drops index; round-trip clean |
+| ORM | app/db/models/admin_ai.AiModel.__table_args__ | Index declared for ORM parity (§D-ORM-INDEX) |
+| Audit | audit_logs | success + failure(reason=default_conflict) rows for concurrent PATCH scenario |
+| Logging | service.py | WARN on conflict path with constraint_name + pgcode; no PII; request_id propagated |
+
+## DB index confirmation
+indexname: ai_models_default_per_type_uidx
+indexdef: CREATE UNIQUE INDEX ai_models_default_per_type_uidx ON public.ai_models USING btree (model_type) WHERE (is_default = true)
+
+## Test counts
+- test_admin_ai.py: 26/26 PASS (verbose=true), 26/26 PASS (verbose=false)
+- regression suite (excluding admin_ai + migration tests): 202/202 PASS

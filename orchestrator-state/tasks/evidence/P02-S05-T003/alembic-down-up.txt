@@ -1,0 +1,25 @@
+# Alembic Down-Up Round-Trip — P02-S05-T003
+# Executed by tester 2026-05-13
+
+# Step 1: check current version before round-trip
+# Result: 0003 (head) [already at head before test]
+
+# Step 2: alembic upgrade head (idempotent check)
+# (no output = already at head, idempotent)
+
+# Step 3: alembic downgrade -1
+# Result: no stdout error output = clean downgrade
+# After downgrade: current = 0002
+
+# Step 4: alembic upgrade head
+# Result: no stdout error output = clean upgrade back
+# After upgrade: current = 0003 (head)
+
+--- DOWNGRADE DONE ---
+0002
+--- UPGRADING BACK ---
+--- UPGRADE HEAD DONE ---
+0003 (head)
+
+# Both operations: CLEAN, no errors
+# Reversibility: CONFIRMED

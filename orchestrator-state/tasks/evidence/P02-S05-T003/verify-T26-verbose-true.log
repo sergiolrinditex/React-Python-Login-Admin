@@ -1,0 +1,117 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.5, pytest-9.0.2, pluggy-1.6.0 -- /Library/Frameworks/Python.framework/Versions/3.11/bin/python3.11
+cachedir: .pytest_cache
+rootdir: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P02-S05-T003/backend
+configfile: pyproject.toml
+plugins: httpx-0.36.0, asyncio-1.3.0, langsmith-0.8.3, anyio-4.13.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... 
+----------------------------- live log collection ------------------------------
+DEBUG    app.auth.password:password.py:71 password.hash.start
+DEBUG    app.auth.password:password.py:73 password.hash.done
+collected 1 item
+
+tests/integration/test_admin_ai.py::test_T26_concurrent_patch_default_conflict 
+-------------------------------- live log setup --------------------------------
+DEBUG    app.security._redis_client:_redis_client.py:69 security.redis_client.init url=redis://localhost:6379/0
+DEBUG    app.security._redis_client:_redis_client.py:81 security.redis_client.ready
+-------------------------------- live log call ---------------------------------
+DEBUG    asyncio:selector_events.py:54 Using selector: KqueueSelector
+DEBUG    app.db.session:session.py:88 db.session.open
+INFO     app.auth.routers.sign_in:sign_in.py:93 auth.sign_in.received email_domain=inditex-sandbox.com request_id=aca73b12-3aba-4d58-9db9-2a47a8dafe20
+DEBUG    app.auth.rate_limit:rate_limit.py:143 rate_limit.check.start prefix=SIGNIN ip=SIGNIN:testclient rate_per_min=20 burst=20
+DEBUG    app.auth.rate_limit:rate_limit.py:155 rate_limit.check.ok prefix=SIGNIN ip=SIGNIN:testclient new_window remaining=19
+INFO     app.auth.services.sign_in:sign_in.py:100 auth.sign_in.starting request_id=aca73b12-3aba-4d58-9db9-2a47a8dafe20 email_domain=inditex-sandbox.com
+DEBUG    app.auth.repository:repository.py:85 auth.repo.find_by_email.start email_domain=inditex-sandbox.com
+DEBUG    app.auth.repository:repository.py:92 auth.repo.find_by_email.done found=True
+INFO     app.auth.services.sign_in:sign_in.py:112 auth.sign_in.user_found user_id=d255e958-33c8-4607-b90d-8803f89f2e54 request_id=aca73b12-3aba-4d58-9db9-2a47a8dafe20
+DEBUG    app.auth.repository:repository.py:241 auth.repo.count_signin_failures.start user_id=d255e958-33c8-4607-b90d-8803f89f2e54 window=900s
+DEBUG    app.auth.repository:repository.py:257 auth.repo.count_signin_failures.done user_id=d255e958-33c8-4607-b90d-8803f89f2e54 count=0
+DEBUG    app.auth.password:password.py:162 password.verify_with_dummy.start has_real_hash=True
+DEBUG    app.auth.password:password.py:165 password.verify_with_dummy.ok
+DEBUG    app.auth.tokens:tokens.py:198 tokens.encode_access.start sub=d255e958-33c8-4607-b90d-8803f89f2e54 ttl=1800s
+DEBUG    app.auth.tokens:tokens.py:108 tokens.jwt_key.resolved bytes=45
+DEBUG    app.auth.tokens:tokens.py:200 tokens.encode_access.done sub=d255e958-33c8-4607-b90d-8803f89f2e54 exp=2026-05-13T15:52:30.648106+00:00
+DEBUG    app.auth.repository:repository.py:285 auth.repo.insert_refresh_token.start user_id=d255e958-33c8-4607-b90d-8803f89f2e54
+DEBUG    app.auth.repository:repository.py:296 auth.repo.insert_refresh_token.done user_id=d255e958-33c8-4607-b90d-8803f89f2e54 rt_id=498f2dee-3268-44b7-b08b-b4fae4a7932e
+DEBUG    app.auth.repository:repository.py:186 auth.repo.write_audit.start action=auth.sign_in actor_user_id=d255e958-33c8-4607-b90d-8803f89f2e54
+DEBUG    app.auth.repository:repository.py:202 auth.repo.write_audit.done audit_id=403cc387-c795-4883-ac6c-fddc7936234d action=auth.sign_in
+INFO     app.auth.services.sign_in:sign_in.py:237 auth.sign_in.success user_id=d255e958-33c8-4607-b90d-8803f89f2e54 request_id=aca73b12-3aba-4d58-9db9-2a47a8dafe20
+INFO     app.auth.routers.sign_in:sign_in.py:166 auth.sign_in.success user_id=d255e958-33c8-4607-b90d-8803f89f2e54 request_id=aca73b12-3aba-4d58-9db9-2a47a8dafe20
+DEBUG    app.db.session:session.py:94 db.session.closed
+INFO     httpx:_client.py:1025 HTTP Request: POST http://testserver/api/v1/auth/sign-in "HTTP/1.1 200 OK"
+DEBUG    asyncio:selector_events.py:54 Using selector: KqueueSelector
+DEBUG    app.db.session:session.py:88 db.session.open
+DEBUG    app.users.deps:deps.py:106 users.deps.get_current_user.start request_id=f24ed69b-1fe6-4212-b44f-f741a070c285 ip=testclient
+DEBUG    app.auth.tokens:tokens.py:270 tokens.decode.start
+DEBUG    app.auth.tokens:tokens.py:287 tokens.decode.ok sub=d255e958-33c8-4607-b90d-8803f89f2e54
+DEBUG    app.users.repositories.user_profile:user_profile.py:70 user_profile.repository.find_by_id.start user_id=d255e958-33c8-4607-b90d-8803f89f2e54
+DEBUG    app.users.repositories.user_profile:user_profile.py:84 user_profile.repository.find_by_id.done user_id=d255e958-33c8-4607-b90d-8803f89f2e54 found=True
+DEBUG    app.users.deps:deps.py:183 users.deps.get_current_user.done user_id=d255e958-33c8-4607-b90d-8803f89f2e54 request_id=f24ed69b-1fe6-4212-b44f-f741a070c285
+DEBUG    app.security.permissions:permissions.py:118 security.permissions.require_role.start role=people_admin user_id=d255e958-33c8-4607-b90d-8803f89f2e54 request_id=7393f067-d749-4376-959b-1a88a56bc364
+DEBUG    app.security.permissions:permissions.py:134 security.permissions.require_role.ok role=people_admin user_id=d255e958-33c8-4607-b90d-8803f89f2e54 request_id=7393f067-d749-4376-959b-1a88a56bc364
+DEBUG    app.security.rate_limit:rate_limit.py:154 security.rate_limit.check.start prefix=ADMIN_AI ip=testclient per_minute=20 window=60s request_id=bca481a7-9998-4632-9a2c-a1c5c24ddb66
+DEBUG    app.security.rate_limit:rate_limit.py:221 security.rate_limit.check.ok prefix=ADMIN_AI ip=testclient count=1 remaining=19 request_id=bca481a7-9998-4632-9a2c-a1c5c24ddb66
+DEBUG    app.admin.providers.router:router.py:162 admin.providers.create.start user_id=d255e958-33c8-4607-b90d-8803f89f2e54 provider_type=litellm name_len=22 request_id=2efb5728-dc65-4392-b2bb-accb51c50774
+DEBUG    app.admin.providers.service:service.py:103 admin.providers.service.create.start provider_type=litellm name_len=22 request_id=2efb5728-dc65-4392-b2bb-accb51c50774
+DEBUG    app.admin.providers.repository:repository.py:142 admin.providers.repository.create.start provider_type=litellm name_len=22
+DEBUG    app.security.encryption:encryption.py:124 security.encryption.encrypt.start length=18
+DEBUG    app.security.encryption:encryption.py:70 security.encryption.load_key key_env=ENCRYPTION_KEY present=True
+DEBUG    app.security.encryption:encryption.py:94 security.encryption.load_key.ok
+DEBUG    app.security.encryption:encryption.py:129 security.encryption.encrypt.ok
+DEBUG    app.admin.providers.repository:repository.py:176 admin.providers.repository.create.ok provider_id=56f037b2-6626-43f8-b6a3-7fe451d9d345
+DEBUG    app.admin._audit:_audit.py:63 admin._audit.write.start actor=d255e958-33c8-4607-b90d-8803f89f2e54 action=admin.ai.provider.create entity_id=56f037b2-6626-43f8-b6a3-7fe451d9d345
+DEBUG    app.db.session:session.py:115 db.session.audit_scope.open
+DEBUG    app.db.session:session.py:121 db.session.audit_scope.closed
+DEBUG    app.admin._audit:_audit.py:83 admin._audit.write.ok actor=d255e958-33c8-4607-b90d-8803f89f2e54 action=admin.ai.provider.create entity_id=56f037b2-6626-43f8-b6a3-7fe451d9d345
+DEBUG    app.admin.providers.service:service.py:176 admin.providers.service.create.ok provider_id=56f037b2-6626-43f8-b6a3-7fe451d9d345 request_id=2efb5728-dc65-4392-b2bb-accb51c50774
+DEBUG    app.admin.providers.router:router.py:216 admin.providers.create.ok user_id=d255e958-33c8-4607-b90d-8803f89f2e54 provider_id=56f037b2-6626-43f8-b6a3-7fe451d9d345 request_id=2efb5728-dc65-4392-b2bb-accb51c50774
+DEBUG    app.db.session:session.py:94 db.session.closed
+INFO     httpx:_client.py:1025 HTTP Request: POST http://testserver/api/v1/admin/ai/providers "HTTP/1.1 201 Created"
+DEBUG    asyncio:selector_events.py:54 Using selector: KqueueSelector
+DEBUG    asyncio:selector_events.py:54 Using selector: KqueueSelector
+DEBUG    app.db.session:session.py:88 db.session.open
+DEBUG    app.db.session:session.py:88 db.session.open
+DEBUG    app.users.deps:deps.py:106 users.deps.get_current_user.start request_id=cbeb7ff0-aeb3-4292-b42b-44c4dd94d9eb ip=testclient
+DEBUG    app.users.deps:deps.py:106 users.deps.get_current_user.start request_id=0d2f13ed-623d-496a-a86f-645a4558b059 ip=testclient
+DEBUG    app.auth.tokens:tokens.py:270 tokens.decode.start
+DEBUG    app.auth.tokens:tokens.py:270 tokens.decode.start
+DEBUG    app.auth.tokens:tokens.py:287 tokens.decode.ok sub=d255e958-33c8-4607-b90d-8803f89f2e54
+DEBUG    app.auth.tokens:tokens.py:287 tokens.decode.ok sub=d255e958-33c8-4607-b90d-8803f89f2e54
+DEBUG    app.users.repositories.user_profile:user_profile.py:70 user_profile.repository.find_by_id.start user_id=d255e958-33c8-4607-b90d-8803f89f2e54
+DEBUG    app.users.repositories.user_profile:user_profile.py:70 user_profile.repository.find_by_id.start user_id=d255e958-33c8-4607-b90d-8803f89f2e54
+DEBUG    app.users.repositories.user_profile:user_profile.py:84 user_profile.repository.find_by_id.done user_id=d255e958-33c8-4607-b90d-8803f89f2e54 found=True
+DEBUG    app.users.deps:deps.py:183 users.deps.get_current_user.done user_id=d255e958-33c8-4607-b90d-8803f89f2e54 request_id=0d2f13ed-623d-496a-a86f-645a4558b059
+DEBUG    app.security.permissions:permissions.py:118 security.permissions.require_role.start role=people_admin user_id=d255e958-33c8-4607-b90d-8803f89f2e54 request_id=b8da8556-c9d4-4258-b098-2fba06fc9961
+DEBUG    app.security.permissions:permissions.py:134 security.permissions.require_role.ok role=people_admin user_id=d255e958-33c8-4607-b90d-8803f89f2e54 request_id=b8da8556-c9d4-4258-b098-2fba06fc9961
+DEBUG    app.admin.model_catalog.router:router.py:159 admin.models.patch.start user_id=d255e958-33c8-4607-b90d-8803f89f2e54 model_id=dce9cb9b-b5cb-4f5f-b3c7-b47247851ede request_id=065f5599-f5be-48d0-93dc-ef19a68bc5a1
+DEBUG    app.admin.model_catalog.service:service.py:121 admin.models.service.patch.start actor=d255e958-33c8-4607-b90d-8803f89f2e54 model_id=dce9cb9b-b5cb-4f5f-b3c7-b47247851ede request_id=065f5599-f5be-48d0-93dc-ef19a68bc5a1
+DEBUG    app.users.repositories.user_profile:user_profile.py:84 user_profile.repository.find_by_id.done user_id=d255e958-33c8-4607-b90d-8803f89f2e54 found=True
+DEBUG    app.users.deps:deps.py:183 users.deps.get_current_user.done user_id=d255e958-33c8-4607-b90d-8803f89f2e54 request_id=cbeb7ff0-aeb3-4292-b42b-44c4dd94d9eb
+DEBUG    app.security.permissions:permissions.py:118 security.permissions.require_role.start role=people_admin user_id=d255e958-33c8-4607-b90d-8803f89f2e54 request_id=e302fcf9-ad11-42a6-b094-4cc60fe6e375
+DEBUG    app.security.permissions:permissions.py:134 security.permissions.require_role.ok role=people_admin user_id=d255e958-33c8-4607-b90d-8803f89f2e54 request_id=e302fcf9-ad11-42a6-b094-4cc60fe6e375
+DEBUG    app.admin.model_catalog.router:router.py:159 admin.models.patch.start user_id=d255e958-33c8-4607-b90d-8803f89f2e54 model_id=1cfe93b5-b68a-44fc-8d11-b1f321944a2a request_id=4fe5ee2c-fa75-4144-945a-4d74c76acd78
+DEBUG    app.admin.model_catalog.service:service.py:121 admin.models.service.patch.start actor=d255e958-33c8-4607-b90d-8803f89f2e54 model_id=1cfe93b5-b68a-44fc-8d11-b1f321944a2a request_id=4fe5ee2c-fa75-4144-945a-4d74c76acd78
+DEBUG    app.admin.model_catalog.repository:repository.py:138 admin.models.repository.patch.start model_id=dce9cb9b-b5cb-4f5f-b3c7-b47247851ede enabled=None is_default=True
+DEBUG    app.admin.model_catalog.repository:repository.py:138 admin.models.repository.patch.start model_id=1cfe93b5-b68a-44fc-8d11-b1f321944a2a enabled=None is_default=True
+DEBUG    app.admin.model_catalog.repository:repository.py:166 admin.models.repository.patch.ok model_id=dce9cb9b-b5cb-4f5f-b3c7-b47247851ede
+DEBUG    app.admin.model_catalog.repository:repository.py:166 admin.models.repository.patch.ok model_id=1cfe93b5-b68a-44fc-8d11-b1f321944a2a
+WARNING  app.admin.model_catalog.service:service.py:152 admin.models.service.patch.conflict actor=d255e958-33c8-4607-b90d-8803f89f2e54 model_id=1cfe93b5-b68a-44fc-8d11-b1f321944a2a model_type=chat request_id=4fe5ee2c-fa75-4144-945a-4d74c76acd78 constraint=ai_models_default_per_type_uidx
+DEBUG    app.admin._audit:_audit.py:63 admin._audit.write.start actor=d255e958-33c8-4607-b90d-8803f89f2e54 action=admin.ai.model.update entity_id=1cfe93b5-b68a-44fc-8d11-b1f321944a2a
+DEBUG    app.db.session:session.py:115 db.session.audit_scope.open
+DEBUG    app.admin._audit:_audit.py:63 admin._audit.write.start actor=d255e958-33c8-4607-b90d-8803f89f2e54 action=admin.ai.model.update entity_id=dce9cb9b-b5cb-4f5f-b3c7-b47247851ede
+DEBUG    app.db.session:session.py:115 db.session.audit_scope.open
+DEBUG    app.db.session:session.py:121 db.session.audit_scope.closed
+DEBUG    app.admin._audit:_audit.py:83 admin._audit.write.ok actor=d255e958-33c8-4607-b90d-8803f89f2e54 action=admin.ai.model.update entity_id=1cfe93b5-b68a-44fc-8d11-b1f321944a2a
+WARNING  app.admin.model_catalog.router:router.py:195 admin.models.patch.conflict_409 user_id=d255e958-33c8-4607-b90d-8803f89f2e54 model_id=1cfe93b5-b68a-44fc-8d11-b1f321944a2a model_type=chat request_id=4fe5ee2c-fa75-4144-945a-4d74c76acd78
+DEBUG    app.db.session:session.py:94 db.session.closed
+INFO     httpx:_client.py:1025 HTTP Request: PATCH http://testserver/api/v1/admin/ai/models/1cfe93b5-b68a-44fc-8d11-b1f321944a2a "HTTP/1.1 409 Conflict"
+DEBUG    app.db.session:session.py:121 db.session.audit_scope.closed
+DEBUG    app.admin._audit:_audit.py:83 admin._audit.write.ok actor=d255e958-33c8-4607-b90d-8803f89f2e54 action=admin.ai.model.update entity_id=dce9cb9b-b5cb-4f5f-b3c7-b47247851ede
+DEBUG    app.admin.model_catalog.service:service.py:231 admin.models.service.patch.ok actor=d255e958-33c8-4607-b90d-8803f89f2e54 model_id=dce9cb9b-b5cb-4f5f-b3c7-b47247851ede request_id=065f5599-f5be-48d0-93dc-ef19a68bc5a1
+DEBUG    app.admin.model_catalog.router:router.py:237 admin.models.patch.ok user_id=d255e958-33c8-4607-b90d-8803f89f2e54 model_id=dce9cb9b-b5cb-4f5f-b3c7-b47247851ede request_id=065f5599-f5be-48d0-93dc-ef19a68bc5a1
+DEBUG    app.db.session:session.py:94 db.session.closed
+INFO     httpx:_client.py:1025 HTTP Request: PATCH http://testserver/api/v1/admin/ai/models/dce9cb9b-b5cb-4f5f-b3c7-b47247851ede "HTTP/1.1 200 OK"
+PASSED                                                                   [100%]
+
+============================== 1 passed in 0.93s ===============================

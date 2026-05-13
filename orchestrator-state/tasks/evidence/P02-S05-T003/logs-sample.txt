@@ -1,0 +1,25 @@
+# Representative log samples from back.log (verbose=true mode)
+
+## BEFORE/AFTER pattern (provider creation)
+2026-05-13 12:24:21,751 app.admin.providers.router DEBUG admin.providers.create.start user_id=103c5542... provider_type=openai name_len=8 request_id=3ec64ccc...
+2026-05-13 12:24:21,751 app.admin.providers.service DEBUG admin.providers.service.create.start provider_type=openai name_len=8 request_id=3ec64ccc...
+2026-05-13 12:24:21,751 app.admin.providers.repository DEBUG admin.providers.repository.create.start provider_type=openai name_len=8
+2026-05-13 12:24:21,756 app.admin.providers.repository DEBUG admin.providers.repository.create.ok provider_id=df8d64c3...
+2026-05-13 12:24:21,765 app.admin.providers.service DEBUG admin.providers.service.create.ok provider_id=df8d64c3... request_id=3ec64ccc...
+2026-05-13 12:24:21,767 app.admin.providers.router DEBUG admin.providers.create.ok user_id=103c5542... provider_id=df8d64c3... request_id=3ec64ccc...
+
+## request_id propagated through chain confirmed
+
+## No PII/tokens in any log line (from back.log scan):
+# - No raw email addresses
+# - No JWT tokens (no "eyJ..." prefix)
+# - No secret_plain values
+# - Encryption operations log only "length=N" not actual value
+
+## Conflict path logging (from service.py code inspection):
+# logger.warning("admin.models.service.patch.conflict actor=... model_id=... model_type=... request_id=... constraint_name=ai_models_default_per_type_uidx pgcode=23505")
+# This WARN line appears in BOTH verbose=true and verbose=false (warning level is always visible)
+# The constraint_name and pgcode are safe (no SQL fragments, no PII)
+
+## verbose=false: only WARNING+ visible, no DEBUG (start/ok lines suppressed)
+## verbose=true: full chain including DEBUG lines
