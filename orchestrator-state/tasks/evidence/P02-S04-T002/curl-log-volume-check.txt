@@ -1,0 +1,17 @@
+Verbose BEFORE count: 6 (should be > 0)
+Verbose AFTER.OK count: 6 (should be > 0)
+  BEFORE: vectorization.start.before
+  BEFORE: vectorization.read_storage.before
+  BEFORE: vectorization.extract_text.before
+  BEFORE: vectorization.version_create.before
+  BEFORE: vectorization.chunk_text.before
+  BEFORE: vectorization.chunks_persist.before
+  AFTER_OK: vectorization.read_storage.after.ok
+  AFTER_OK: vectorization.extract_text.after.ok
+  AFTER_OK: vectorization.version_create.after.ok
+  AFTER_OK: vectorization.chunk_text.after.ok
+  AFTER_OK: vectorization.chunks_persist.after.ok
+  AFTER_OK: vectorization.start.after.ok
+PII canary in logs: False (must be False)
+LiteLLM key in logs: False (must be False)
+DONE

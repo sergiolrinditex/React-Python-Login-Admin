@@ -1,0 +1,5 @@
+vectorization_jobs: 9
+document_chunks: 9
+document_embeddings: 0
+document_versions: 9
+ai_models (embeddings type): 9

@@ -1,0 +1,26 @@
+ 
+ -------------- celery@AXG6GLCJ3Y54 v5.6.3 (recovery)
+--- ***** ----- 
+-- ******* ---- macOS-15.7.3-arm64-arm-64bit 2026-05-13 19:27:52
+- *** --- * --- 
+- ** ---------- [config]
+- ** ---------- .> app:         hilo_workers:0x10535ef10
+- ** ---------- .> transport:   redis://localhost:6379/0
+- ** ---------- .> results:     redis://localhost:6379/0
+- *** --- * --- .> concurrency: 12 (prefork)
+-- ******* ---- .> task events: OFF (enable -E to monitor tasks in this worker)
+--- ***** ----- 
+ -------------- [queues]
+                .> celery           exchange=celery(direct) key=celery
+                
+
+[tasks]
+  . hilo.vectorization.embed_chunks
+  . hilo.vectorization.extract_and_chunk
+
+[2026-05-13 19:27:53,560: INFO/MainProcess] Connected to redis://localhost:6379/0
+[2026-05-13 19:27:53,565: INFO/MainProcess] mingle: searching for neighbors
+[2026-05-13 19:27:54,583: INFO/MainProcess] mingle: all alone
+[2026-05-13 19:27:54,627: INFO/MainProcess] celery@AXG6GLCJ3Y54 ready.
+
+worker: Warm shutdown (MainProcess)

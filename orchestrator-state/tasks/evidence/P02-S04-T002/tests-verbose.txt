@@ -1,0 +1,26 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.5, pytest-9.0.2, pluggy-1.6.0 -- /Library/Frameworks/Python.framework/Versions/3.11/bin/python3.11
+cachedir: .pytest_cache
+rootdir: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P02-S04-T002/backend
+configfile: pyproject.toml
+plugins: httpx-0.36.0, asyncio-1.3.0, langsmith-0.8.3, anyio-4.13.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 15 items
+
+tests/integration/test_vectorization_worker.py::test_pending_job_runs_to_done_happy_path SKIPPED
+tests/integration/test_vectorization_worker.py::test_chunks_persisted_with_metadata SKIPPED
+tests/integration/test_vectorization_worker.py::test_version_created_when_absent PASSED
+tests/integration/test_vectorization_worker.py::test_version_reused_when_checksum_matches PASSED
+tests/integration/test_vectorization_worker.py::test_version_bumped_when_checksum_changes PASSED
+tests/integration/test_vectorization_worker.py::test_embeddings_persisted_with_correct_dim SKIPPED
+tests/integration/test_vectorization_worker.py::test_progress_updates_visible_intermediate SKIPPED
+tests/integration/test_vectorization_worker.py::test_failure_marks_status_failed_with_error PASSED
+tests/integration/test_vectorization_worker.py::test_no_pii_in_logs SKIPPED
+tests/integration/test_vectorization_worker.py::test_verbose_logging_modes PASSED
+tests/integration/test_vectorization_worker.py::test_idempotent_reentry_on_done_job SKIPPED
+tests/integration/test_vectorization_worker.py::test_unsupported_mimetype_fails_cleanly PASSED
+tests/integration/test_vectorization_worker.py::test_no_default_embeddings_model_fails PASSED
+tests/integration/test_vectorization_worker.py::test_litellm_5xx_retries_then_fails PASSED
+tests/integration/test_vectorization_worker.py::test_docx_extraction PASSED
+
+========================= 9 passed, 6 skipped in 1.52s =========================
