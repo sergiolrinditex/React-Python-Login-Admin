@@ -1,0 +1,19 @@
+=== POST-EDIT VERIFICATION RESULTS ===
+Date: 2026-05-13
+TASK_ID: P02-S07-T002
+
+CHECK 3 — placeholder gone (grep "SDK MCP Python candidato"):
+(0 matches, grep exit=1 — correct)
+
+CHECK 4 — pin present (grep "mcp==1.27.1"):
+60:| MCP client | `mcp==1.27.1` (not adopted in P02-S07-T001, see resolved official-doc note) | modelcontextprotocol.io | Backend | conectar servidores MCP externos | JSON-RPC artesanal | reservado — adopción decidida en slice MCP integration posterior | P00-S01-T003 |
+
+CHECK 5 — validate-only after edit:
+Source-of-truth contract is valid. (exit 0)
+
+CHECK 6a — diff stat:
+ docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+CHECK 7 — git status --porcelain docs/source-of-truth/:
+ M docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md

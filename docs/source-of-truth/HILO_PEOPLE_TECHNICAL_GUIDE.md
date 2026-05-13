@@ -57,7 +57,7 @@ El empleado entra y aterriza en `/chat`. Admin AI es una superficie independient
 | RAG | `langchain` | python.langchain.com | Backend | loaders, splitters y retriever | Splitters propios extensos | pendiente — official-docs-researcher confirmará al implementar | P00-S01-T003 |
 | LangGraph | `langgraph` | langchain-ai.github.io/langgraph | Backend | workflows con estado y approvals | FSM propia | pendiente — official-docs-researcher confirmará al implementar | P00-S01-T003 |
 | DeepAgents | `deepagents` | github/docs oficiales del paquete | Backend | agentes con tools RAG/MCP/Admin | Agent loop propio | pendiente — official-docs-researcher confirmará al implementar | P00-S01-T003 |
-| MCP client | `<SDK MCP Python candidato>` | modelcontextprotocol.io | Backend | conectar servidores MCP externos | JSON-RPC artesanal | pendiente — official-docs-researcher confirmará al implementar | P00-S01-T003 |
+| MCP client | `mcp==1.27.1` (not adopted in P02-S07-T001, see resolved official-doc note) | modelcontextprotocol.io | Backend | conectar servidores MCP externos | JSON-RPC artesanal | reservado — adopción decidida en slice MCP integration posterior | P00-S01-T003 |
 | Token counting | `tiktoken` | github.com/openai/tiktoken | Backend | estimación coste y límites | conteo aproximado manual | pendiente — official-docs-researcher confirmará al implementar | P00-S01-T003 |
 
 ### 2.1 Stack — paquetes auxiliares

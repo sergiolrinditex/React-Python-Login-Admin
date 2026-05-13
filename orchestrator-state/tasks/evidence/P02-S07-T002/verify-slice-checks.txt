@@ -1,0 +1,66 @@
+=== verify-slice evidence for P02-S07-T002 ===
+Timestamp: 2026-05-13T19:36:25Z
+Mode: pre-closer
+
+=== 1) Pre-check: placeholder removed ===
+grep exit: 1
+
+=== 2) Pin present on line 60 ===
+60:| MCP client | `mcp==1.27.1` (not adopted in P02-S07-T001, see resolved official-doc note) | modelcontextprotocol.io | Backend | conectar servidores MCP externos | JSON-RPC artesanal | reservado — adopción decidida en slice MCP integration posterior | P00-S01-T003 |
+
+=== 3) Exact line 60 ===
+| MCP client | `mcp==1.27.1` (not adopted in P02-S07-T001, see resolved official-doc note) | modelcontextprotocol.io | Backend | conectar servidores MCP externos | JSON-RPC artesanal | reservado — adopción decidida en slice MCP integration posterior | P00-S01-T003 |
+
+=== 4) Bootstrap validate-only ===
+Source-of-truth contract is valid.
+{
+  "instructions": [
+    "docs/source-of-truth/instrucciones.md"
+  ],
+  "checklist": [
+    "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md"
+  ],
+  "guide": [
+    "docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md"
+  ],
+  "ux": [
+    "docs/source-of-truth/UX_CONTRACT.md"
+  ],
+  "stack_profile": [
+    "docs/source-of-truth/STACK_PROFILE.yaml"
+  ]
+}
+
+=== 5) git diff --stat ===
+ docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+=== 6) git diff content ===
+diff --git a/docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md b/docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md
+index 218c1d7..75f6e3a 100644
+--- a/docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md
++++ b/docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md
+@@ -57,7 +57,7 @@ El empleado entra y aterriza en `/chat`. Admin AI es una superficie independient
+ | RAG | `langchain` | python.langchain.com | Backend | loaders, splitters y retriever | Splitters propios extensos | pendiente — official-docs-researcher confirmará al implementar | P00-S01-T003 |
+ | LangGraph | `langgraph` | langchain-ai.github.io/langgraph | Backend | workflows con estado y approvals | FSM propia | pendiente — official-docs-researcher confirmará al implementar | P00-S01-T003 |
+ | DeepAgents | `deepagents` | github/docs oficiales del paquete | Backend | agentes con tools RAG/MCP/Admin | Agent loop propio | pendiente — official-docs-researcher confirmará al implementar | P00-S01-T003 |
+-| MCP client | `<SDK MCP Python candidato>` | modelcontextprotocol.io | Backend | conectar servidores MCP externos | JSON-RPC artesanal | pendiente — official-docs-researcher confirmará al implementar | P00-S01-T003 |
++| MCP client | `mcp==1.27.1` (not adopted in P02-S07-T001, see resolved official-doc note) | modelcontextprotocol.io | Backend | conectar servidores MCP externos | JSON-RPC artesanal | reservado — adopción decidida en slice MCP integration posterior | P00-S01-T003 |
+ | Token counting | `tiktoken` | github.com/openai/tiktoken | Backend | estimación coste y límites | conteo aproximado manual | pendiente — official-docs-researcher confirmará al implementar | P00-S01-T003 |
+ 
+ ### 2.1 Stack — paquetes auxiliares
+
+=== 7) Adjacent lines 58-63 (must be intact except 60) ===
+| LangGraph | `langgraph` | langchain-ai.github.io/langgraph | Backend | workflows con estado y approvals | FSM propia | pendiente — official-docs-researcher confirmará al implementar | P00-S01-T003 |
+| DeepAgents | `deepagents` | github/docs oficiales del paquete | Backend | agentes con tools RAG/MCP/Admin | Agent loop propio | pendiente — official-docs-researcher confirmará al implementar | P00-S01-T003 |
+| MCP client | `mcp==1.27.1` (not adopted in P02-S07-T001, see resolved official-doc note) | modelcontextprotocol.io | Backend | conectar servidores MCP externos | JSON-RPC artesanal | reservado — adopción decidida en slice MCP integration posterior | P00-S01-T003 |
+| Token counting | `tiktoken` | github.com/openai/tiktoken | Backend | estimación coste y límites | conteo aproximado manual | pendiente — official-docs-researcher confirmará al implementar | P00-S01-T003 |
+
+### 2.1 Stack — paquetes auxiliares
+
+=== 8) git status --porcelain (tracked) ===
+ M docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md
+
+=== 9) Resolved note exists ===
+-rw-r--r--  1 sergiolr  staff  11767 13 may 21:09 orchestrator-state/memory/official-doc-notes/P02-S07-T001-mcp-sdk-2026-05-13.md
+1

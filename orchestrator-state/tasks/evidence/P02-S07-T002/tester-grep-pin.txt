@@ -1,0 +1,4 @@
+=== TEST 2: grep pin mcp==1.27.1 (expect ≥1 match) ===
+60:| MCP client | `mcp==1.27.1` (not adopted in P02-S07-T001, see resolved official-doc note) | modelcontextprotocol.io | Backend | conectar servidores MCP externos | JSON-RPC artesanal | reservado — adopción decidida en slice MCP integration posterior | P00-S01-T003 |
+EXIT_CODE:0
+RESULT: PASS — 1 match on line 60
