@@ -2,6 +2,74 @@
 
 > Reflexion-style notes. Append-only. Newest entries at the top.
 
+## 2026-05-13 — P02-S05-T001 (debug cycle 2) — Same `main.py` mount drift, second slice in a row
+
+### What happened
+`/verify-slice` reproduced the admin AI slice against live back+front+DB after cycle-2 tester PASS. 4 admin endpoints returned 404. `git diff backend/app/main.py` showed the file was modified for P02-S03-T001 (chat_router) but NOT for P02-S05-T001 (admin_router) — the 2 lines (§D-AAM `from app.admin import admin_router` + `app.include_router(admin_router, prefix="/api/v1/admin/ai", tags=["admin-ai"])`) declared in the developer run and confirmed by cycle-1 validator + cycle-2 tester curl smoke (200 OK) were missing from disk. The `backend/app/admin/` sub-packages were UNTRACKED-but-present and importable; only the 2 tracked lines in `main.py` were missing. Identical pattern to the P02-S03-T001 cycle 2/3 `git checkout HEAD --` event 2 days earlier: tracked file reverted, untracked package files survive.
+
+### Detection signal (re-confirmation of high-value pattern)
+For ANY slice that adds a new feature router and declares §D-AA* / §G.14-style WRITE_SET_DRIFT on `backend/app/main.py`:
+1. Before debugger touches anything, run `git diff HEAD -- backend/app/main.py` and `grep '<router_name>' backend/app/main.py`. If the diff doesn't show the WRITE_SET_DRIFT lines AND grep returns 0 matches → working-tree drift, not a code defect.
+2. Always cross-check with `bash-ledger.jsonl` for `git checkout HEAD --` events between developer/handoff timestamp and current time.
+3. The fix is verbatim re-apply of the 2 declared lines using the existing same-feature convention (look at how `chat_router` / `users_router` are mounted and mirror exactly).
+
+### Lesson learned (carry forward)
+- `app/main.py` is a contended file across slices (5+ feature routers stacked). Every slice that touches it is at risk of drift if any out-of-band `git checkout` runs. Closer's atomic commit closes the gap, but mid-pipeline reverts (between cycle-2 close and verify-slice) leave the working tree in a half-state.
+- Untracked subpackages (`backend/app/<feature>/**`) survive `git checkout HEAD --` because git doesn't touch them. Tracked main.py does not. So "import works, mount missing, 404 at runtime" is the canonical symptom.
+- Fix takes ~2 lines and ~30 seconds once detected. Re-running tests + ruff + curl smoke takes ~5 minutes. No FU needed.
+
+### Smoke commands that catch this in <30s
+```bash
+# Are admin routes mounted on the FastAPI app instance?
+set -a && source .env && set +a
+cd backend && PYTHONPATH=. python3 -c \
+  "from app.main import app; print(sorted({r.path for r in app.routes if 'admin' in getattr(r,'path','')}))"
+# Expect 3 unique paths (GET+POST /providers, GET /models, PATCH /models/{id}).
+
+# Confirm WRITE_SET_DRIFT line is on disk
+grep '§D-AAM' backend/app/main.py  # → 2 hits (import + include_router)
+```
+
+---
+
+## 2026-05-13 — P02-S03-T001 (debug cycle 2/3) — Out-of-band `git checkout HEAD` wipes mid-pipeline work (recurring high-value pattern)
+
+### What happened
+After tester cycle 2 PASS + validator cycle 2 APPROVED on the chat-conversation slice, a previous Claude Code session ran `git checkout HEAD -- backend/app/main.py data/verification/users/admin_peopletech.json` outside the active pipeline. The command is logged verbatim in `orchestrator-state/tasks/bash-ledger.jsonl` at 2026-05-13T09:35:48Z. That single command reverted `backend/app/main.py` to HEAD (md5 5043559eb36a7335e10c469c9eee8552), wiping BOTH the developer's `app.include_router(chat_router, prefix="/api/v1")` (+1 LOC) AND the debugger cycle-1 F-1 fix (~25 LOC: `_CHAT_INVALID_PAYLOAD_PATHS` set + union + helper + handler rewire). The chat package files (`backend/app/chat/**`) and integration test survived because they were UNTRACKED in git — `git checkout HEAD --` only touches tracked files. `/verify-slice` caught it: OpenAPI listed 12 paths with 0 chat routes; POST → 404 default `{"detail":"Not Found"}` instead of project envelope.
+
+### Detection signal (high-value pattern)
+If `git diff HEAD -- <file>` returns 0 lines but the handoff documents an edit to `<file>` AND there is an entry in `bash-ledger.jsonl` matching `git checkout HEAD -- <file>` between handoff write and current time → working tree was reverted out-of-band. Re-apply the documented diff verbatim. NOT a code defect, NOT a FU; in-scope debugger cycle.
+
+Companion check: `git status --short` showing `?? <feature-package>/` for new files that the developer documented as "Modified files / new" means the new files survived (untracked) but the tracked file changes were lost. Re-apply tracked changes only; new files stay as-is.
+
+### Fix pattern
+Re-apply the verbatim diff documented in handoff §Developer run §Scope-Modified files and §Debugger fix §fix_applied. Do NOT re-design. Validator cycle 2 already approved the byte-by-byte shape; rebuilding from scratch risks drift. For the chat-conversation slice the recovered diff was: 1 import (`from app.chat.routers import router as chat_router`), 1 mount (`app.include_router(chat_router, prefix="/api/v1")`), 1 frozenset (`_CHAT_INVALID_PAYLOAD_PATHS`), 1 union (`_INVALID_PAYLOAD_PATHS`), 1 helper (`_invalid_payload_code_for_path`), 1 handler filter swap (`_AUTH_INVALID_PAYLOAD_PATHS` → `_INVALID_PAYLOAD_PATHS`), 1 ErrorItem code swap (`"AUTH_INVALID_PAYLOAD"` → `error_code`). ~32 LOC total, all inside the declared WRITE_SET_DRIFT for `backend/app/main.py`.
+
+### Verification commands that worked
+```bash
+# Confirm restoration vs HEAD (should now show ~50+ diff lines)
+git diff HEAD -- backend/app/main.py | wc -l
+
+# Confirm router registered without booting uvicorn (cheap + deterministic)
+cd backend && set -a && source ../.env && set +a && python3 -c "
+from app.main import app
+paths = [r.path for r in app.routes if hasattr(r,'path')]
+print('CHAT_ROUTES=', [p for p in paths if 'chat' in p])
+"
+
+# Focused + regression
+cd backend && set -a && source ../.env && set +a && python3 -m pytest tests/integration/test_chat_conversations.py -v
+cd backend && set -a && source ../.env && set +a && python3 -m pytest tests/integration/test_auth_signin.py tests/integration/test_users_me.py -v
+```
+
+### Cross-slice contamination preservation
+`backend/app/auth/tokens.py` from parallel DAG worker P02-S02-T002 was ALSO modified in working tree (`set -a && source ../.env` is required to run pytest without 13/14 500-failures from `_get_jwt_key()` raising on missing keys). NOT this slice's responsibility — closer must path-scope `git add` to T001's declared write set only. The fixture file `data/verification/users/admin_peopletech.json` was also reverted by the same `git checkout HEAD`, but at HEAD content it is operationally correct (verify-slice was able to bootstrap admin_ai and sign-in admin V01 returned 200). Did NOT touch in cycle 2 — restoring it would be guesswork without a documented expected diff.
+
+### Debug cycle budget
+Used 2 of 3 cycles. Cycle 1 = F-1 fix (added the chat-scoped error code). Cycle 2 = restore everything cycle-1 and developer had already done after out-of-band revert. Cycle 3 reserved for any NEW finding from the next `/verify-slice` run.
+
+---
+
 ## 2026-05-12 — P01-S02-T005 (debug cycle 2/3) — Path-scoped Pydantic→400 normalization + Path(__file__).parent off-by-one + conditional-assertion anti-pattern recurrence
 
 ### Root causes

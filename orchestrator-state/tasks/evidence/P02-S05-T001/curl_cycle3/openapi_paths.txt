@@ -1,0 +1,2 @@
+All paths: 17
+Admin paths: ['/api/v1/admin/ai/models', '/api/v1/admin/ai/models/{model_id}', '/api/v1/admin/ai/providers']

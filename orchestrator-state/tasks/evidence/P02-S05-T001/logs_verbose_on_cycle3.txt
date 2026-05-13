@@ -1,0 +1,685 @@
+INFO:     Started server process [32378]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-05-13 12:16:06,120 app.api.router INFO health.check.start route=/health
+2026-05-13 12:16:06,120 app.api.router INFO health.check.ok status=ok uptime=2.65
+INFO:     127.0.0.1:62750 - "GET /health HTTP/1.1" 200 OK
+2026-05-13 12:16:21,285 app.db.session DEBUG db.session.open
+2026-05-13 12:16:21,299 app.auth.routers.sign_in INFO auth.sign_in.received email_domain=inditex-sandbox.com request_id=78a4b439-654f-4bde-983b-9f7b7b7a5577
+2026-05-13 12:16:21,299 app.auth.rate_limit DEBUG rate_limit.check.start prefix=SIGNIN ip=SIGNIN:127.0.0.1 rate_per_min=20 burst=20
+2026-05-13 12:16:21,299 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=SIGNIN ip=SIGNIN:127.0.0.1 new_window remaining=19
+2026-05-13 12:16:21,299 app.auth.services.sign_in INFO auth.sign_in.starting request_id=78a4b439-654f-4bde-983b-9f7b7b7a5577 email_domain=inditex-sandbox.com
+2026-05-13 12:16:21,299 app.auth.repository DEBUG auth.repo.find_by_email.start email_domain=inditex-sandbox.com
+2026-05-13 12:16:21,384 app.auth.repository DEBUG auth.repo.find_by_email.done found=True
+2026-05-13 12:16:21,384 app.auth.services.sign_in INFO auth.sign_in.user_found user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=78a4b439-654f-4bde-983b-9f7b7b7a5577
+2026-05-13 12:16:21,384 app.auth.repository DEBUG auth.repo.count_signin_failures.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 window=900s
+2026-05-13 12:16:21,387 app.auth.repository DEBUG auth.repo.count_signin_failures.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 count=0
+2026-05-13 12:16:21,387 app.auth.password DEBUG password.verify_with_dummy.start has_real_hash=True
+2026-05-13 12:16:21,426 app.auth.password DEBUG password.verify_with_dummy.ok
+2026-05-13 12:16:21,433 app.auth.tokens DEBUG tokens.encode_access.start sub=70903d1e-279a-4f24-aab1-96c4b1fc6043 ttl=1800s
+2026-05-13 12:16:21,433 app.auth.tokens DEBUG tokens.jwt_key.resolved bytes=64
+2026-05-13 12:16:21,433 app.auth.tokens DEBUG tokens.encode_access.done sub=70903d1e-279a-4f24-aab1-96c4b1fc6043 exp=2026-05-13T10:46:21.429252+00:00
+2026-05-13 12:16:21,433 app.auth.repository DEBUG auth.repo.insert_refresh_token.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:21,436 app.auth.repository DEBUG auth.repo.insert_refresh_token.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 rt_id=4e132c41-909c-4dbb-b2b1-c86cc5ac3bfe
+2026-05-13 12:16:21,436 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.sign_in actor_user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:21,438 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=86f2873c-eefd-4589-a297-b43457b68ebf action=auth.sign_in
+2026-05-13 12:16:21,442 app.auth.services.sign_in INFO auth.sign_in.success user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=78a4b439-654f-4bde-983b-9f7b7b7a5577
+2026-05-13 12:16:21,443 app.auth.routers.sign_in INFO auth.sign_in.success user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=78a4b439-654f-4bde-983b-9f7b7b7a5577
+INFO:     127.0.0.1:62762 - "POST /api/v1/auth/sign-in HTTP/1.1" 200 OK
+2026-05-13 12:16:21,445 app.db.session DEBUG db.session.closed
+2026-05-13 12:16:21,470 app.db.session DEBUG db.session.open
+2026-05-13 12:16:21,470 app.users.deps DEBUG users.deps.get_current_user.start request_id=tester-c3-A ip=127.0.0.1
+2026-05-13 12:16:21,470 app.auth.tokens DEBUG tokens.decode.start
+2026-05-13 12:16:21,470 app.auth.tokens DEBUG tokens.decode.ok sub=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:21,470 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:21,476 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 found=True
+2026-05-13 12:16:21,476 app.users.deps DEBUG users.deps.get_current_user.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=tester-c3-A
+2026-05-13 12:16:21,476 app.security.permissions DEBUG security.permissions.require_role.start role=people_admin user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=tester-c3-A
+2026-05-13 12:16:21,477 app.security.permissions DEBUG security.permissions.require_role.ok role=people_admin user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=tester-c3-A
+2026-05-13 12:16:21,477 app.admin.providers.router DEBUG admin.providers.list.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=tester-c3-A
+2026-05-13 12:16:21,477 app.admin.providers.repository DEBUG admin.providers.repository.list.start
+2026-05-13 12:16:21,478 app.admin.providers.repository DEBUG admin.providers.repository.list.ok count=2
+2026-05-13 12:16:21,478 app.admin.providers.router DEBUG admin.providers.list.ok user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=tester-c3-A count=2
+INFO:     127.0.0.1:62766 - "GET /api/v1/admin/ai/providers HTTP/1.1" 200 OK
+2026-05-13 12:16:21,479 app.db.session DEBUG db.session.closed
+2026-05-13 12:16:21,529 app.db.session DEBUG db.session.open
+2026-05-13 12:16:21,529 app.users.deps DEBUG users.deps.get_current_user.start request_id=tester-c3-B ip=127.0.0.1
+2026-05-13 12:16:21,529 app.auth.tokens DEBUG tokens.decode.start
+2026-05-13 12:16:21,529 app.auth.tokens DEBUG tokens.decode.ok sub=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:21,529 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:21,534 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 found=True
+2026-05-13 12:16:21,534 app.users.deps DEBUG users.deps.get_current_user.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=tester-c3-B
+2026-05-13 12:16:21,534 app.security.permissions DEBUG security.permissions.require_role.start role=people_admin user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=tester-c3-B
+2026-05-13 12:16:21,534 app.security.permissions DEBUG security.permissions.require_role.ok role=people_admin user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=tester-c3-B
+2026-05-13 12:16:21,535 app.security.rate_limit DEBUG security.rate_limit.check.start prefix=ADMIN_AI ip=127.0.0.1 per_minute=20 window=60s request_id=tester-c3-B
+2026-05-13 12:16:21,535 app.security._redis_client DEBUG security.redis_client.init url=redis://localhost:6379/0
+2026-05-13 12:16:21,536 app.security._redis_client DEBUG security.redis_client.ready
+2026-05-13 12:16:21,544 app.security.rate_limit DEBUG security.rate_limit.check.ok prefix=ADMIN_AI ip=127.0.0.1 count=1 remaining=19 request_id=tester-c3-B
+2026-05-13 12:16:21,544 app.admin.providers.router DEBUG admin.providers.create.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 provider_type=anthropic name_len=19 request_id=tester-c3-B
+2026-05-13 12:16:21,544 app.admin.providers.service DEBUG admin.providers.service.create.start provider_type=anthropic name_len=19 request_id=tester-c3-B
+2026-05-13 12:16:21,544 app.admin.providers.repository DEBUG admin.providers.repository.create.start provider_type=anthropic name_len=19
+2026-05-13 12:16:21,544 app.security.encryption DEBUG security.encryption.encrypt.start length=13
+2026-05-13 12:16:21,544 app.security.encryption DEBUG security.encryption.load_key key_env=ENCRYPTION_KEY present=True
+2026-05-13 12:16:21,544 app.security.encryption DEBUG security.encryption.load_key.ok
+2026-05-13 12:16:21,551 app.security.encryption DEBUG security.encryption.encrypt.ok
+2026-05-13 12:16:21,557 app.admin.providers.repository DEBUG admin.providers.repository.create.ok provider_id=affd3ab1-251e-4e9d-9b41-18f178fb6f85
+2026-05-13 12:16:21,565 app.admin._audit DEBUG admin._audit.write.start actor=70903d1e-279a-4f24-aab1-96c4b1fc6043 action=admin.ai.provider.create entity_id=affd3ab1-251e-4e9d-9b41-18f178fb6f85
+2026-05-13 12:16:21,565 app.db.session DEBUG db.session.audit_scope.open
+2026-05-13 12:16:21,581 app.db.session DEBUG db.session.audit_scope.closed
+2026-05-13 12:16:21,581 app.admin._audit DEBUG admin._audit.write.ok actor=70903d1e-279a-4f24-aab1-96c4b1fc6043 action=admin.ai.provider.create entity_id=affd3ab1-251e-4e9d-9b41-18f178fb6f85
+2026-05-13 12:16:21,581 app.admin.providers.service DEBUG admin.providers.service.create.ok provider_id=affd3ab1-251e-4e9d-9b41-18f178fb6f85 request_id=tester-c3-B
+2026-05-13 12:16:21,586 app.admin.providers.router DEBUG admin.providers.create.ok user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 provider_id=affd3ab1-251e-4e9d-9b41-18f178fb6f85 request_id=tester-c3-B
+INFO:     127.0.0.1:62768 - "POST /api/v1/admin/ai/providers HTTP/1.1" 201 Created
+2026-05-13 12:16:21,587 app.db.session DEBUG db.session.closed
+2026-05-13 12:16:21,768 app.db.session DEBUG db.session.open
+2026-05-13 12:16:21,768 app.users.deps DEBUG users.deps.get_current_user.start request_id=tester-c3-C ip=127.0.0.1
+2026-05-13 12:16:21,768 app.auth.tokens DEBUG tokens.decode.start
+2026-05-13 12:16:21,768 app.auth.tokens DEBUG tokens.decode.ok sub=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:21,768 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:21,778 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 found=True
+2026-05-13 12:16:21,778 app.users.deps DEBUG users.deps.get_current_user.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=tester-c3-C
+2026-05-13 12:16:21,778 app.security.permissions DEBUG security.permissions.require_role.start role=people_admin user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=tester-c3-C
+2026-05-13 12:16:21,778 app.security.permissions DEBUG security.permissions.require_role.ok role=people_admin user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=tester-c3-C
+2026-05-13 12:16:21,778 app.admin.providers.router DEBUG admin.providers.list.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=tester-c3-C
+2026-05-13 12:16:21,778 app.admin.providers.repository DEBUG admin.providers.repository.list.start
+2026-05-13 12:16:21,781 app.admin.providers.repository DEBUG admin.providers.repository.list.ok count=3
+2026-05-13 12:16:21,781 app.admin.providers.router DEBUG admin.providers.list.ok user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=tester-c3-C count=3
+INFO:     127.0.0.1:62775 - "GET /api/v1/admin/ai/providers HTTP/1.1" 200 OK
+2026-05-13 12:16:21,783 app.db.session DEBUG db.session.closed
+2026-05-13 12:16:21,823 app.db.session DEBUG db.session.open
+2026-05-13 12:16:21,823 app.users.deps DEBUG users.deps.get_current_user.start request_id=tester-c3-D ip=127.0.0.1
+2026-05-13 12:16:21,823 app.auth.tokens DEBUG tokens.decode.start
+2026-05-13 12:16:21,823 app.auth.tokens DEBUG tokens.decode.ok sub=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:21,823 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:21,829 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 found=True
+2026-05-13 12:16:21,829 app.users.deps DEBUG users.deps.get_current_user.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=tester-c3-D
+2026-05-13 12:16:21,829 app.security.permissions DEBUG security.permissions.require_role.start role=people_admin user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=tester-c3-D
+2026-05-13 12:16:21,829 app.security.permissions DEBUG security.permissions.require_role.ok role=people_admin user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=tester-c3-D
+2026-05-13 12:16:21,829 app.admin.model_catalog.router DEBUG admin.models.list.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 provider_filter=none request_id=tester-c3-D
+2026-05-13 12:16:21,829 app.admin.model_catalog.repository DEBUG admin.models.repository.list.start provider_filter=none
+2026-05-13 12:16:21,834 app.admin.model_catalog.repository DEBUG admin.models.repository.list.ok count=0
+2026-05-13 12:16:21,834 app.admin.model_catalog.router DEBUG admin.models.list.ok user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=tester-c3-D count=0
+INFO:     127.0.0.1:62777 - "GET /api/v1/admin/ai/models HTTP/1.1" 200 OK
+2026-05-13 12:16:21,835 app.db.session DEBUG db.session.closed
+2026-05-13 12:16:33,251 app.db.session DEBUG db.session.open
+2026-05-13 12:16:33,254 app.auth.routers.sign_in INFO auth.sign_in.received email_domain=inditex-sandbox.com request_id=e7c22920-8841-425e-bc1c-d7fa086d0ba8
+2026-05-13 12:16:33,254 app.auth.rate_limit DEBUG rate_limit.check.start prefix=SIGNIN ip=SIGNIN:127.0.0.1 rate_per_min=20 burst=20
+2026-05-13 12:16:33,254 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=SIGNIN ip=SIGNIN:127.0.0.1 remaining=18
+2026-05-13 12:16:33,254 app.auth.services.sign_in INFO auth.sign_in.starting request_id=e7c22920-8841-425e-bc1c-d7fa086d0ba8 email_domain=inditex-sandbox.com
+2026-05-13 12:16:33,254 app.auth.repository DEBUG auth.repo.find_by_email.start email_domain=inditex-sandbox.com
+2026-05-13 12:16:33,272 app.auth.repository DEBUG auth.repo.find_by_email.done found=True
+2026-05-13 12:16:33,272 app.auth.services.sign_in INFO auth.sign_in.user_found user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=e7c22920-8841-425e-bc1c-d7fa086d0ba8
+2026-05-13 12:16:33,272 app.auth.repository DEBUG auth.repo.count_signin_failures.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 window=900s
+2026-05-13 12:16:33,275 app.auth.repository DEBUG auth.repo.count_signin_failures.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 count=0
+2026-05-13 12:16:33,275 app.auth.password DEBUG password.verify_with_dummy.start has_real_hash=True
+2026-05-13 12:16:33,314 app.auth.password DEBUG password.verify_with_dummy.ok
+2026-05-13 12:16:33,323 app.auth.tokens DEBUG tokens.encode_access.start sub=70903d1e-279a-4f24-aab1-96c4b1fc6043 ttl=1800s
+2026-05-13 12:16:33,324 app.auth.tokens DEBUG tokens.encode_access.done sub=70903d1e-279a-4f24-aab1-96c4b1fc6043 exp=2026-05-13T10:46:33.318118+00:00
+2026-05-13 12:16:33,324 app.auth.repository DEBUG auth.repo.insert_refresh_token.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:33,330 app.auth.repository DEBUG auth.repo.insert_refresh_token.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 rt_id=3f597f36-2abe-4863-9871-a801bf354d1a
+2026-05-13 12:16:33,331 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.sign_in actor_user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:33,333 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=0f352e3e-1f9d-4c6e-ab2d-93892054c6ad action=auth.sign_in
+2026-05-13 12:16:33,345 app.auth.services.sign_in INFO auth.sign_in.success user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=e7c22920-8841-425e-bc1c-d7fa086d0ba8
+2026-05-13 12:16:33,345 app.auth.routers.sign_in INFO auth.sign_in.success user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=e7c22920-8841-425e-bc1c-d7fa086d0ba8
+INFO:     127.0.0.1:62789 - "POST /api/v1/auth/sign-in HTTP/1.1" 200 OK
+2026-05-13 12:16:33,347 app.db.session DEBUG db.session.closed
+2026-05-13 12:16:33,368 app.db.session DEBUG db.session.open
+2026-05-13 12:16:33,368 app.users.deps DEBUG users.deps.get_current_user.start request_id=tester-c3-E ip=127.0.0.1
+2026-05-13 12:16:33,368 app.auth.tokens DEBUG tokens.decode.start
+2026-05-13 12:16:33,368 app.auth.tokens DEBUG tokens.decode.ok sub=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:33,368 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:33,376 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 found=True
+2026-05-13 12:16:33,376 app.users.deps DEBUG users.deps.get_current_user.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=tester-c3-E
+2026-05-13 12:16:33,376 app.security.permissions DEBUG security.permissions.require_role.start role=people_admin user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=tester-c3-E
+2026-05-13 12:16:33,376 app.security.permissions DEBUG security.permissions.require_role.ok role=people_admin user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=tester-c3-E
+2026-05-13 12:16:33,376 app.admin.model_catalog.router DEBUG admin.models.patch.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 model_id=00000000-0000-0000-0000-000000000099 request_id=tester-c3-E
+2026-05-13 12:16:33,376 app.admin.model_catalog.service DEBUG admin.models.service.patch.start actor=70903d1e-279a-4f24-aab1-96c4b1fc6043 model_id=00000000-0000-0000-0000-000000000099 request_id=tester-c3-E
+2026-05-13 12:16:33,380 app.admin.model_catalog.router WARNING admin.models.patch.not_found user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 model_id=00000000-0000-0000-0000-000000000099 request_id=tester-c3-E
+INFO:     127.0.0.1:62791 - "PATCH /api/v1/admin/ai/models/00000000-0000-0000-0000-000000000099 HTTP/1.1" 404 Not Found
+2026-05-13 12:16:33,383 app.db.session DEBUG db.session.closed
+2026-05-13 12:16:33,472 app.db.session DEBUG db.session.open
+2026-05-13 12:16:33,472 app.users.deps DEBUG users.deps.get_current_user.start request_id=tester-c3-F ip=127.0.0.1
+2026-05-13 12:16:33,472 app.users.deps WARNING users.deps.auth_failed reason=missing_bearer request_id=tester-c3-F
+2026-05-13 12:16:33,472 app.security.permissions DEBUG security.permissions.require_role.auth_failed role=people_admin
+INFO:     127.0.0.1:62793 - "GET /api/v1/admin/ai/providers HTTP/1.1" 401 Unauthorized
+2026-05-13 12:16:33,472 app.db.session DEBUG db.session.closed
+2026-05-13 12:16:43,770 app.db.session DEBUG db.session.open
+2026-05-13 12:16:43,771 app.auth.routers.sign_in INFO auth.sign_in.received email_domain=inditex-sandbox.com request_id=1d3d65ab-05ca-4a99-a616-94d08d72d873
+2026-05-13 12:16:43,771 app.auth.rate_limit DEBUG rate_limit.check.start prefix=SIGNIN ip=SIGNIN:127.0.0.1 rate_per_min=20 burst=20
+2026-05-13 12:16:43,771 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=SIGNIN ip=SIGNIN:127.0.0.1 remaining=17
+2026-05-13 12:16:43,771 app.auth.services.sign_in INFO auth.sign_in.starting request_id=1d3d65ab-05ca-4a99-a616-94d08d72d873 email_domain=inditex-sandbox.com
+2026-05-13 12:16:43,771 app.auth.repository DEBUG auth.repo.find_by_email.start email_domain=inditex-sandbox.com
+2026-05-13 12:16:43,784 app.auth.repository DEBUG auth.repo.find_by_email.done found=True
+2026-05-13 12:16:43,785 app.auth.services.sign_in INFO auth.sign_in.user_found user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=1d3d65ab-05ca-4a99-a616-94d08d72d873
+2026-05-13 12:16:43,785 app.auth.repository DEBUG auth.repo.count_signin_failures.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 window=900s
+2026-05-13 12:16:43,788 app.auth.repository DEBUG auth.repo.count_signin_failures.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 count=0
+2026-05-13 12:16:43,788 app.auth.password DEBUG password.verify_with_dummy.start has_real_hash=True
+2026-05-13 12:16:43,843 app.auth.password DEBUG password.verify_with_dummy.ok
+2026-05-13 12:16:43,850 app.auth.tokens DEBUG tokens.encode_access.start sub=70903d1e-279a-4f24-aab1-96c4b1fc6043 ttl=1800s
+2026-05-13 12:16:43,850 app.auth.tokens DEBUG tokens.encode_access.done sub=70903d1e-279a-4f24-aab1-96c4b1fc6043 exp=2026-05-13T10:46:43.847143+00:00
+2026-05-13 12:16:43,851 app.auth.repository DEBUG auth.repo.insert_refresh_token.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:43,855 app.auth.repository DEBUG auth.repo.insert_refresh_token.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 rt_id=c44780b2-747c-4a33-9e43-e1847cf055c9
+2026-05-13 12:16:43,855 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.sign_in actor_user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:43,857 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=6afce5fc-85cf-4c8c-9816-dee1b4b80e86 action=auth.sign_in
+2026-05-13 12:16:43,862 app.auth.services.sign_in INFO auth.sign_in.success user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=1d3d65ab-05ca-4a99-a616-94d08d72d873
+2026-05-13 12:16:43,862 app.auth.routers.sign_in INFO auth.sign_in.success user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=1d3d65ab-05ca-4a99-a616-94d08d72d873
+INFO:     127.0.0.1:62804 - "POST /api/v1/auth/sign-in HTTP/1.1" 200 OK
+2026-05-13 12:16:43,864 app.db.session DEBUG db.session.closed
+2026-05-13 12:16:44,119 app.db.session DEBUG db.session.open
+2026-05-13 12:16:44,119 app.users.deps DEBUG users.deps.get_current_user.start request_id=rate-test-1 ip=127.0.0.1
+2026-05-13 12:16:44,119 app.auth.tokens DEBUG tokens.decode.start
+2026-05-13 12:16:44,119 app.auth.tokens DEBUG tokens.decode.ok sub=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:44,119 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:44,125 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 found=True
+2026-05-13 12:16:44,125 app.users.deps DEBUG users.deps.get_current_user.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-1
+2026-05-13 12:16:44,125 app.security.permissions DEBUG security.permissions.require_role.start role=people_admin user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-1
+2026-05-13 12:16:44,125 app.security.permissions DEBUG security.permissions.require_role.ok role=people_admin user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-1
+2026-05-13 12:16:44,125 app.security.rate_limit DEBUG security.rate_limit.check.start prefix=ADMIN_AI ip=127.0.0.1 per_minute=20 window=60s request_id=rate-test-1
+2026-05-13 12:16:44,130 app.security.rate_limit DEBUG security.rate_limit.check.ok prefix=ADMIN_AI ip=127.0.0.1 count=1 remaining=19 request_id=rate-test-1
+2026-05-13 12:16:44,130 app.admin.providers.router DEBUG admin.providers.create.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 provider_type=openai name_len=11 request_id=rate-test-1
+2026-05-13 12:16:44,130 app.admin.providers.service DEBUG admin.providers.service.create.start provider_type=openai name_len=11 request_id=rate-test-1
+2026-05-13 12:16:44,130 app.admin.providers.repository DEBUG admin.providers.repository.create.start provider_type=openai name_len=11
+2026-05-13 12:16:44,130 app.security.encryption DEBUG security.encryption.encrypt.start length=14
+2026-05-13 12:16:44,131 app.security.encryption DEBUG security.encryption.encrypt.ok
+2026-05-13 12:16:44,135 app.admin.providers.repository DEBUG admin.providers.repository.create.ok provider_id=14eb5858-861f-4d3f-b11b-cdf778b8bb83
+2026-05-13 12:16:44,141 app.admin._audit DEBUG admin._audit.write.start actor=70903d1e-279a-4f24-aab1-96c4b1fc6043 action=admin.ai.provider.create entity_id=14eb5858-861f-4d3f-b11b-cdf778b8bb83
+2026-05-13 12:16:44,142 app.db.session DEBUG db.session.audit_scope.open
+2026-05-13 12:16:44,145 app.db.session DEBUG db.session.audit_scope.closed
+2026-05-13 12:16:44,145 app.admin._audit DEBUG admin._audit.write.ok actor=70903d1e-279a-4f24-aab1-96c4b1fc6043 action=admin.ai.provider.create entity_id=14eb5858-861f-4d3f-b11b-cdf778b8bb83
+2026-05-13 12:16:44,145 app.admin.providers.service DEBUG admin.providers.service.create.ok provider_id=14eb5858-861f-4d3f-b11b-cdf778b8bb83 request_id=rate-test-1
+2026-05-13 12:16:44,147 app.admin.providers.router DEBUG admin.providers.create.ok user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 provider_id=14eb5858-861f-4d3f-b11b-cdf778b8bb83 request_id=rate-test-1
+INFO:     127.0.0.1:62808 - "POST /api/v1/admin/ai/providers HTTP/1.1" 201 Created
+2026-05-13 12:16:44,148 app.db.session DEBUG db.session.closed
+2026-05-13 12:16:44,181 app.db.session DEBUG db.session.open
+2026-05-13 12:16:44,181 app.users.deps DEBUG users.deps.get_current_user.start request_id=rate-test-2 ip=127.0.0.1
+2026-05-13 12:16:44,181 app.auth.tokens DEBUG tokens.decode.start
+2026-05-13 12:16:44,181 app.auth.tokens DEBUG tokens.decode.ok sub=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:44,181 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:44,185 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 found=True
+2026-05-13 12:16:44,186 app.users.deps DEBUG users.deps.get_current_user.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-2
+2026-05-13 12:16:44,186 app.security.permissions DEBUG security.permissions.require_role.start role=people_admin user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-2
+2026-05-13 12:16:44,186 app.security.permissions DEBUG security.permissions.require_role.ok role=people_admin user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-2
+2026-05-13 12:16:44,186 app.security.rate_limit DEBUG security.rate_limit.check.start prefix=ADMIN_AI ip=127.0.0.1 per_minute=20 window=60s request_id=rate-test-2
+2026-05-13 12:16:44,187 app.security.rate_limit DEBUG security.rate_limit.check.ok prefix=ADMIN_AI ip=127.0.0.1 count=2 remaining=18 request_id=rate-test-2
+2026-05-13 12:16:44,187 app.admin.providers.router DEBUG admin.providers.create.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 provider_type=openai name_len=11 request_id=rate-test-2
+2026-05-13 12:16:44,187 app.admin.providers.service DEBUG admin.providers.service.create.start provider_type=openai name_len=11 request_id=rate-test-2
+2026-05-13 12:16:44,187 app.admin.providers.repository DEBUG admin.providers.repository.create.start provider_type=openai name_len=11
+2026-05-13 12:16:44,187 app.security.encryption DEBUG security.encryption.encrypt.start length=14
+2026-05-13 12:16:44,187 app.security.encryption DEBUG security.encryption.encrypt.ok
+2026-05-13 12:16:44,190 app.admin.providers.repository DEBUG admin.providers.repository.create.ok provider_id=f62cf63a-7114-476b-ad53-86ca4d8d6d8c
+2026-05-13 12:16:44,194 app.admin._audit DEBUG admin._audit.write.start actor=70903d1e-279a-4f24-aab1-96c4b1fc6043 action=admin.ai.provider.create entity_id=f62cf63a-7114-476b-ad53-86ca4d8d6d8c
+2026-05-13 12:16:44,194 app.db.session DEBUG db.session.audit_scope.open
+2026-05-13 12:16:44,199 app.db.session DEBUG db.session.audit_scope.closed
+2026-05-13 12:16:44,199 app.admin._audit DEBUG admin._audit.write.ok actor=70903d1e-279a-4f24-aab1-96c4b1fc6043 action=admin.ai.provider.create entity_id=f62cf63a-7114-476b-ad53-86ca4d8d6d8c
+2026-05-13 12:16:44,199 app.admin.providers.service DEBUG admin.providers.service.create.ok provider_id=f62cf63a-7114-476b-ad53-86ca4d8d6d8c request_id=rate-test-2
+2026-05-13 12:16:44,200 app.admin.providers.router DEBUG admin.providers.create.ok user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 provider_id=f62cf63a-7114-476b-ad53-86ca4d8d6d8c request_id=rate-test-2
+INFO:     127.0.0.1:62810 - "POST /api/v1/admin/ai/providers HTTP/1.1" 201 Created
+2026-05-13 12:16:44,201 app.db.session DEBUG db.session.closed
+2026-05-13 12:16:44,232 app.db.session DEBUG db.session.open
+2026-05-13 12:16:44,232 app.users.deps DEBUG users.deps.get_current_user.start request_id=rate-test-3 ip=127.0.0.1
+2026-05-13 12:16:44,232 app.auth.tokens DEBUG tokens.decode.start
+2026-05-13 12:16:44,232 app.auth.tokens DEBUG tokens.decode.ok sub=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:44,232 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:44,237 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 found=True
+2026-05-13 12:16:44,237 app.users.deps DEBUG users.deps.get_current_user.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-3
+2026-05-13 12:16:44,237 app.security.permissions DEBUG security.permissions.require_role.start role=people_admin user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-3
+2026-05-13 12:16:44,237 app.security.permissions DEBUG security.permissions.require_role.ok role=people_admin user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-3
+2026-05-13 12:16:44,237 app.security.rate_limit DEBUG security.rate_limit.check.start prefix=ADMIN_AI ip=127.0.0.1 per_minute=20 window=60s request_id=rate-test-3
+2026-05-13 12:16:44,238 app.security.rate_limit DEBUG security.rate_limit.check.ok prefix=ADMIN_AI ip=127.0.0.1 count=3 remaining=17 request_id=rate-test-3
+2026-05-13 12:16:44,239 app.admin.providers.router DEBUG admin.providers.create.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 provider_type=openai name_len=11 request_id=rate-test-3
+2026-05-13 12:16:44,239 app.admin.providers.service DEBUG admin.providers.service.create.start provider_type=openai name_len=11 request_id=rate-test-3
+2026-05-13 12:16:44,239 app.admin.providers.repository DEBUG admin.providers.repository.create.start provider_type=openai name_len=11
+2026-05-13 12:16:44,239 app.security.encryption DEBUG security.encryption.encrypt.start length=14
+2026-05-13 12:16:44,239 app.security.encryption DEBUG security.encryption.encrypt.ok
+2026-05-13 12:16:44,242 app.admin.providers.repository DEBUG admin.providers.repository.create.ok provider_id=dd837ef8-7bc5-4c76-aa02-c4577d90eb75
+2026-05-13 12:16:44,248 app.admin._audit DEBUG admin._audit.write.start actor=70903d1e-279a-4f24-aab1-96c4b1fc6043 action=admin.ai.provider.create entity_id=dd837ef8-7bc5-4c76-aa02-c4577d90eb75
+2026-05-13 12:16:44,248 app.db.session DEBUG db.session.audit_scope.open
+2026-05-13 12:16:44,254 app.db.session DEBUG db.session.audit_scope.closed
+2026-05-13 12:16:44,254 app.admin._audit DEBUG admin._audit.write.ok actor=70903d1e-279a-4f24-aab1-96c4b1fc6043 action=admin.ai.provider.create entity_id=dd837ef8-7bc5-4c76-aa02-c4577d90eb75
+2026-05-13 12:16:44,254 app.admin.providers.service DEBUG admin.providers.service.create.ok provider_id=dd837ef8-7bc5-4c76-aa02-c4577d90eb75 request_id=rate-test-3
+2026-05-13 12:16:44,256 app.admin.providers.router DEBUG admin.providers.create.ok user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 provider_id=dd837ef8-7bc5-4c76-aa02-c4577d90eb75 request_id=rate-test-3
+INFO:     127.0.0.1:62812 - "POST /api/v1/admin/ai/providers HTTP/1.1" 201 Created
+2026-05-13 12:16:44,257 app.db.session DEBUG db.session.closed
+2026-05-13 12:16:44,288 app.db.session DEBUG db.session.open
+2026-05-13 12:16:44,288 app.users.deps DEBUG users.deps.get_current_user.start request_id=rate-test-4 ip=127.0.0.1
+2026-05-13 12:16:44,288 app.auth.tokens DEBUG tokens.decode.start
+2026-05-13 12:16:44,288 app.auth.tokens DEBUG tokens.decode.ok sub=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:44,288 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:44,292 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 found=True
+2026-05-13 12:16:44,292 app.users.deps DEBUG users.deps.get_current_user.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-4
+2026-05-13 12:16:44,292 app.security.permissions DEBUG security.permissions.require_role.start role=people_admin user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-4
+2026-05-13 12:16:44,292 app.security.permissions DEBUG security.permissions.require_role.ok role=people_admin user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-4
+2026-05-13 12:16:44,292 app.security.rate_limit DEBUG security.rate_limit.check.start prefix=ADMIN_AI ip=127.0.0.1 per_minute=20 window=60s request_id=rate-test-4
+2026-05-13 12:16:44,293 app.security.rate_limit DEBUG security.rate_limit.check.ok prefix=ADMIN_AI ip=127.0.0.1 count=4 remaining=16 request_id=rate-test-4
+2026-05-13 12:16:44,293 app.admin.providers.router DEBUG admin.providers.create.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 provider_type=openai name_len=11 request_id=rate-test-4
+2026-05-13 12:16:44,293 app.admin.providers.service DEBUG admin.providers.service.create.start provider_type=openai name_len=11 request_id=rate-test-4
+2026-05-13 12:16:44,293 app.admin.providers.repository DEBUG admin.providers.repository.create.start provider_type=openai name_len=11
+2026-05-13 12:16:44,293 app.security.encryption DEBUG security.encryption.encrypt.start length=14
+2026-05-13 12:16:44,293 app.security.encryption DEBUG security.encryption.encrypt.ok
+2026-05-13 12:16:44,297 app.admin.providers.repository DEBUG admin.providers.repository.create.ok provider_id=00229f8b-874f-4b35-99d7-d2bc22115c51
+2026-05-13 12:16:44,301 app.admin._audit DEBUG admin._audit.write.start actor=70903d1e-279a-4f24-aab1-96c4b1fc6043 action=admin.ai.provider.create entity_id=00229f8b-874f-4b35-99d7-d2bc22115c51
+2026-05-13 12:16:44,301 app.db.session DEBUG db.session.audit_scope.open
+2026-05-13 12:16:44,306 app.db.session DEBUG db.session.audit_scope.closed
+2026-05-13 12:16:44,306 app.admin._audit DEBUG admin._audit.write.ok actor=70903d1e-279a-4f24-aab1-96c4b1fc6043 action=admin.ai.provider.create entity_id=00229f8b-874f-4b35-99d7-d2bc22115c51
+2026-05-13 12:16:44,306 app.admin.providers.service DEBUG admin.providers.service.create.ok provider_id=00229f8b-874f-4b35-99d7-d2bc22115c51 request_id=rate-test-4
+2026-05-13 12:16:44,308 app.admin.providers.router DEBUG admin.providers.create.ok user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 provider_id=00229f8b-874f-4b35-99d7-d2bc22115c51 request_id=rate-test-4
+INFO:     127.0.0.1:62814 - "POST /api/v1/admin/ai/providers HTTP/1.1" 201 Created
+2026-05-13 12:16:44,309 app.db.session DEBUG db.session.closed
+2026-05-13 12:16:44,339 app.db.session DEBUG db.session.open
+2026-05-13 12:16:44,339 app.users.deps DEBUG users.deps.get_current_user.start request_id=rate-test-5 ip=127.0.0.1
+2026-05-13 12:16:44,339 app.auth.tokens DEBUG tokens.decode.start
+2026-05-13 12:16:44,339 app.auth.tokens DEBUG tokens.decode.ok sub=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:44,339 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:44,344 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 found=True
+2026-05-13 12:16:44,344 app.users.deps DEBUG users.deps.get_current_user.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-5
+2026-05-13 12:16:44,344 app.security.permissions DEBUG security.permissions.require_role.start role=people_admin user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-5
+2026-05-13 12:16:44,344 app.security.permissions DEBUG security.permissions.require_role.ok role=people_admin user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-5
+2026-05-13 12:16:44,344 app.security.rate_limit DEBUG security.rate_limit.check.start prefix=ADMIN_AI ip=127.0.0.1 per_minute=20 window=60s request_id=rate-test-5
+2026-05-13 12:16:44,346 app.security.rate_limit DEBUG security.rate_limit.check.ok prefix=ADMIN_AI ip=127.0.0.1 count=5 remaining=15 request_id=rate-test-5
+2026-05-13 12:16:44,346 app.admin.providers.router DEBUG admin.providers.create.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 provider_type=openai name_len=11 request_id=rate-test-5
+2026-05-13 12:16:44,346 app.admin.providers.service DEBUG admin.providers.service.create.start provider_type=openai name_len=11 request_id=rate-test-5
+2026-05-13 12:16:44,346 app.admin.providers.repository DEBUG admin.providers.repository.create.start provider_type=openai name_len=11
+2026-05-13 12:16:44,346 app.security.encryption DEBUG security.encryption.encrypt.start length=14
+2026-05-13 12:16:44,346 app.security.encryption DEBUG security.encryption.encrypt.ok
+2026-05-13 12:16:44,349 app.admin.providers.repository DEBUG admin.providers.repository.create.ok provider_id=c18aadb1-d654-490b-8da3-14fc66ce90b0
+2026-05-13 12:16:44,355 app.admin._audit DEBUG admin._audit.write.start actor=70903d1e-279a-4f24-aab1-96c4b1fc6043 action=admin.ai.provider.create entity_id=c18aadb1-d654-490b-8da3-14fc66ce90b0
+2026-05-13 12:16:44,355 app.db.session DEBUG db.session.audit_scope.open
+2026-05-13 12:16:44,361 app.db.session DEBUG db.session.audit_scope.closed
+2026-05-13 12:16:44,361 app.admin._audit DEBUG admin._audit.write.ok actor=70903d1e-279a-4f24-aab1-96c4b1fc6043 action=admin.ai.provider.create entity_id=c18aadb1-d654-490b-8da3-14fc66ce90b0
+2026-05-13 12:16:44,361 app.admin.providers.service DEBUG admin.providers.service.create.ok provider_id=c18aadb1-d654-490b-8da3-14fc66ce90b0 request_id=rate-test-5
+2026-05-13 12:16:44,363 app.admin.providers.router DEBUG admin.providers.create.ok user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 provider_id=c18aadb1-d654-490b-8da3-14fc66ce90b0 request_id=rate-test-5
+INFO:     127.0.0.1:62816 - "POST /api/v1/admin/ai/providers HTTP/1.1" 201 Created
+2026-05-13 12:16:44,364 app.db.session DEBUG db.session.closed
+2026-05-13 12:16:44,392 app.db.session DEBUG db.session.open
+2026-05-13 12:16:44,392 app.users.deps DEBUG users.deps.get_current_user.start request_id=rate-test-6 ip=127.0.0.1
+2026-05-13 12:16:44,392 app.auth.tokens DEBUG tokens.decode.start
+2026-05-13 12:16:44,392 app.auth.tokens DEBUG tokens.decode.ok sub=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:44,392 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:44,399 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 found=True
+2026-05-13 12:16:44,399 app.users.deps DEBUG users.deps.get_current_user.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-6
+2026-05-13 12:16:44,399 app.security.permissions DEBUG security.permissions.require_role.start role=people_admin user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-6
+2026-05-13 12:16:44,399 app.security.permissions DEBUG security.permissions.require_role.ok role=people_admin user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-6
+2026-05-13 12:16:44,399 app.security.rate_limit DEBUG security.rate_limit.check.start prefix=ADMIN_AI ip=127.0.0.1 per_minute=20 window=60s request_id=rate-test-6
+2026-05-13 12:16:44,400 app.security.rate_limit DEBUG security.rate_limit.check.ok prefix=ADMIN_AI ip=127.0.0.1 count=6 remaining=14 request_id=rate-test-6
+2026-05-13 12:16:44,400 app.admin.providers.router DEBUG admin.providers.create.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 provider_type=openai name_len=11 request_id=rate-test-6
+2026-05-13 12:16:44,400 app.admin.providers.service DEBUG admin.providers.service.create.start provider_type=openai name_len=11 request_id=rate-test-6
+2026-05-13 12:16:44,400 app.admin.providers.repository DEBUG admin.providers.repository.create.start provider_type=openai name_len=11
+2026-05-13 12:16:44,400 app.security.encryption DEBUG security.encryption.encrypt.start length=14
+2026-05-13 12:16:44,400 app.security.encryption DEBUG security.encryption.encrypt.ok
+2026-05-13 12:16:44,406 app.admin.providers.repository DEBUG admin.providers.repository.create.ok provider_id=1d307ed4-04cb-4a91-bfb0-6f5c537853ad
+2026-05-13 12:16:44,410 app.admin._audit DEBUG admin._audit.write.start actor=70903d1e-279a-4f24-aab1-96c4b1fc6043 action=admin.ai.provider.create entity_id=1d307ed4-04cb-4a91-bfb0-6f5c537853ad
+2026-05-13 12:16:44,410 app.db.session DEBUG db.session.audit_scope.open
+2026-05-13 12:16:44,414 app.db.session DEBUG db.session.audit_scope.closed
+2026-05-13 12:16:44,414 app.admin._audit DEBUG admin._audit.write.ok actor=70903d1e-279a-4f24-aab1-96c4b1fc6043 action=admin.ai.provider.create entity_id=1d307ed4-04cb-4a91-bfb0-6f5c537853ad
+2026-05-13 12:16:44,414 app.admin.providers.service DEBUG admin.providers.service.create.ok provider_id=1d307ed4-04cb-4a91-bfb0-6f5c537853ad request_id=rate-test-6
+2026-05-13 12:16:44,415 app.admin.providers.router DEBUG admin.providers.create.ok user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 provider_id=1d307ed4-04cb-4a91-bfb0-6f5c537853ad request_id=rate-test-6
+INFO:     127.0.0.1:62818 - "POST /api/v1/admin/ai/providers HTTP/1.1" 201 Created
+2026-05-13 12:16:44,417 app.db.session DEBUG db.session.closed
+2026-05-13 12:16:44,451 app.db.session DEBUG db.session.open
+2026-05-13 12:16:44,452 app.users.deps DEBUG users.deps.get_current_user.start request_id=rate-test-7 ip=127.0.0.1
+2026-05-13 12:16:44,452 app.auth.tokens DEBUG tokens.decode.start
+2026-05-13 12:16:44,452 app.auth.tokens DEBUG tokens.decode.ok sub=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:44,452 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:44,456 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 found=True
+2026-05-13 12:16:44,456 app.users.deps DEBUG users.deps.get_current_user.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-7
+2026-05-13 12:16:44,456 app.security.permissions DEBUG security.permissions.require_role.start role=people_admin user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-7
+2026-05-13 12:16:44,456 app.security.permissions DEBUG security.permissions.require_role.ok role=people_admin user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-7
+2026-05-13 12:16:44,456 app.security.rate_limit DEBUG security.rate_limit.check.start prefix=ADMIN_AI ip=127.0.0.1 per_minute=20 window=60s request_id=rate-test-7
+2026-05-13 12:16:44,457 app.security.rate_limit DEBUG security.rate_limit.check.ok prefix=ADMIN_AI ip=127.0.0.1 count=7 remaining=13 request_id=rate-test-7
+2026-05-13 12:16:44,457 app.admin.providers.router DEBUG admin.providers.create.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 provider_type=openai name_len=11 request_id=rate-test-7
+2026-05-13 12:16:44,457 app.admin.providers.service DEBUG admin.providers.service.create.start provider_type=openai name_len=11 request_id=rate-test-7
+2026-05-13 12:16:44,457 app.admin.providers.repository DEBUG admin.providers.repository.create.start provider_type=openai name_len=11
+2026-05-13 12:16:44,457 app.security.encryption DEBUG security.encryption.encrypt.start length=14
+2026-05-13 12:16:44,457 app.security.encryption DEBUG security.encryption.encrypt.ok
+2026-05-13 12:16:44,460 app.admin.providers.repository DEBUG admin.providers.repository.create.ok provider_id=3511536b-22ea-446a-94f6-5d551f573d31
+2026-05-13 12:16:44,463 app.admin._audit DEBUG admin._audit.write.start actor=70903d1e-279a-4f24-aab1-96c4b1fc6043 action=admin.ai.provider.create entity_id=3511536b-22ea-446a-94f6-5d551f573d31
+2026-05-13 12:16:44,463 app.db.session DEBUG db.session.audit_scope.open
+2026-05-13 12:16:44,467 app.db.session DEBUG db.session.audit_scope.closed
+2026-05-13 12:16:44,467 app.admin._audit DEBUG admin._audit.write.ok actor=70903d1e-279a-4f24-aab1-96c4b1fc6043 action=admin.ai.provider.create entity_id=3511536b-22ea-446a-94f6-5d551f573d31
+2026-05-13 12:16:44,467 app.admin.providers.service DEBUG admin.providers.service.create.ok provider_id=3511536b-22ea-446a-94f6-5d551f573d31 request_id=rate-test-7
+2026-05-13 12:16:44,470 app.admin.providers.router DEBUG admin.providers.create.ok user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 provider_id=3511536b-22ea-446a-94f6-5d551f573d31 request_id=rate-test-7
+INFO:     127.0.0.1:62820 - "POST /api/v1/admin/ai/providers HTTP/1.1" 201 Created
+2026-05-13 12:16:44,474 app.db.session DEBUG db.session.closed
+2026-05-13 12:16:44,502 app.db.session DEBUG db.session.open
+2026-05-13 12:16:44,502 app.users.deps DEBUG users.deps.get_current_user.start request_id=rate-test-8 ip=127.0.0.1
+2026-05-13 12:16:44,502 app.auth.tokens DEBUG tokens.decode.start
+2026-05-13 12:16:44,502 app.auth.tokens DEBUG tokens.decode.ok sub=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:44,502 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:44,507 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 found=True
+2026-05-13 12:16:44,507 app.users.deps DEBUG users.deps.get_current_user.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-8
+2026-05-13 12:16:44,507 app.security.permissions DEBUG security.permissions.require_role.start role=people_admin user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-8
+2026-05-13 12:16:44,507 app.security.permissions DEBUG security.permissions.require_role.ok role=people_admin user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-8
+2026-05-13 12:16:44,507 app.security.rate_limit DEBUG security.rate_limit.check.start prefix=ADMIN_AI ip=127.0.0.1 per_minute=20 window=60s request_id=rate-test-8
+2026-05-13 12:16:44,508 app.security.rate_limit DEBUG security.rate_limit.check.ok prefix=ADMIN_AI ip=127.0.0.1 count=8 remaining=12 request_id=rate-test-8
+2026-05-13 12:16:44,508 app.admin.providers.router DEBUG admin.providers.create.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 provider_type=openai name_len=11 request_id=rate-test-8
+2026-05-13 12:16:44,508 app.admin.providers.service DEBUG admin.providers.service.create.start provider_type=openai name_len=11 request_id=rate-test-8
+2026-05-13 12:16:44,508 app.admin.providers.repository DEBUG admin.providers.repository.create.start provider_type=openai name_len=11
+2026-05-13 12:16:44,508 app.security.encryption DEBUG security.encryption.encrypt.start length=14
+2026-05-13 12:16:44,508 app.security.encryption DEBUG security.encryption.encrypt.ok
+2026-05-13 12:16:44,511 app.admin.providers.repository DEBUG admin.providers.repository.create.ok provider_id=3b9fca0d-c8f2-4601-bbfb-28c56f2aa98e
+2026-05-13 12:16:44,516 app.admin._audit DEBUG admin._audit.write.start actor=70903d1e-279a-4f24-aab1-96c4b1fc6043 action=admin.ai.provider.create entity_id=3b9fca0d-c8f2-4601-bbfb-28c56f2aa98e
+2026-05-13 12:16:44,516 app.db.session DEBUG db.session.audit_scope.open
+2026-05-13 12:16:44,520 app.db.session DEBUG db.session.audit_scope.closed
+2026-05-13 12:16:44,520 app.admin._audit DEBUG admin._audit.write.ok actor=70903d1e-279a-4f24-aab1-96c4b1fc6043 action=admin.ai.provider.create entity_id=3b9fca0d-c8f2-4601-bbfb-28c56f2aa98e
+2026-05-13 12:16:44,520 app.admin.providers.service DEBUG admin.providers.service.create.ok provider_id=3b9fca0d-c8f2-4601-bbfb-28c56f2aa98e request_id=rate-test-8
+2026-05-13 12:16:44,523 app.admin.providers.router DEBUG admin.providers.create.ok user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 provider_id=3b9fca0d-c8f2-4601-bbfb-28c56f2aa98e request_id=rate-test-8
+INFO:     127.0.0.1:62822 - "POST /api/v1/admin/ai/providers HTTP/1.1" 201 Created
+2026-05-13 12:16:44,524 app.db.session DEBUG db.session.closed
+2026-05-13 12:16:44,555 app.db.session DEBUG db.session.open
+2026-05-13 12:16:44,555 app.users.deps DEBUG users.deps.get_current_user.start request_id=rate-test-9 ip=127.0.0.1
+2026-05-13 12:16:44,555 app.auth.tokens DEBUG tokens.decode.start
+2026-05-13 12:16:44,555 app.auth.tokens DEBUG tokens.decode.ok sub=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:44,555 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:44,572 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 found=True
+2026-05-13 12:16:44,572 app.users.deps DEBUG users.deps.get_current_user.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-9
+2026-05-13 12:16:44,572 app.security.permissions DEBUG security.permissions.require_role.start role=people_admin user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-9
+2026-05-13 12:16:44,572 app.security.permissions DEBUG security.permissions.require_role.ok role=people_admin user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-9
+2026-05-13 12:16:44,572 app.security.rate_limit DEBUG security.rate_limit.check.start prefix=ADMIN_AI ip=127.0.0.1 per_minute=20 window=60s request_id=rate-test-9
+2026-05-13 12:16:44,573 app.security.rate_limit DEBUG security.rate_limit.check.ok prefix=ADMIN_AI ip=127.0.0.1 count=9 remaining=11 request_id=rate-test-9
+2026-05-13 12:16:44,573 app.admin.providers.router DEBUG admin.providers.create.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 provider_type=openai name_len=11 request_id=rate-test-9
+2026-05-13 12:16:44,573 app.admin.providers.service DEBUG admin.providers.service.create.start provider_type=openai name_len=11 request_id=rate-test-9
+2026-05-13 12:16:44,573 app.admin.providers.repository DEBUG admin.providers.repository.create.start provider_type=openai name_len=11
+2026-05-13 12:16:44,573 app.security.encryption DEBUG security.encryption.encrypt.start length=14
+2026-05-13 12:16:44,573 app.security.encryption DEBUG security.encryption.encrypt.ok
+2026-05-13 12:16:44,576 app.admin.providers.repository DEBUG admin.providers.repository.create.ok provider_id=4d66e674-a4c4-4518-a582-91ccccb102b1
+2026-05-13 12:16:44,579 app.admin._audit DEBUG admin._audit.write.start actor=70903d1e-279a-4f24-aab1-96c4b1fc6043 action=admin.ai.provider.create entity_id=4d66e674-a4c4-4518-a582-91ccccb102b1
+2026-05-13 12:16:44,580 app.db.session DEBUG db.session.audit_scope.open
+2026-05-13 12:16:44,582 app.db.session DEBUG db.session.audit_scope.closed
+2026-05-13 12:16:44,583 app.admin._audit DEBUG admin._audit.write.ok actor=70903d1e-279a-4f24-aab1-96c4b1fc6043 action=admin.ai.provider.create entity_id=4d66e674-a4c4-4518-a582-91ccccb102b1
+2026-05-13 12:16:44,583 app.admin.providers.service DEBUG admin.providers.service.create.ok provider_id=4d66e674-a4c4-4518-a582-91ccccb102b1 request_id=rate-test-9
+2026-05-13 12:16:44,584 app.admin.providers.router DEBUG admin.providers.create.ok user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 provider_id=4d66e674-a4c4-4518-a582-91ccccb102b1 request_id=rate-test-9
+INFO:     127.0.0.1:62824 - "POST /api/v1/admin/ai/providers HTTP/1.1" 201 Created
+2026-05-13 12:16:44,585 app.db.session DEBUG db.session.closed
+2026-05-13 12:16:44,613 app.db.session DEBUG db.session.open
+2026-05-13 12:16:44,613 app.users.deps DEBUG users.deps.get_current_user.start request_id=rate-test-10 ip=127.0.0.1
+2026-05-13 12:16:44,613 app.auth.tokens DEBUG tokens.decode.start
+2026-05-13 12:16:44,613 app.auth.tokens DEBUG tokens.decode.ok sub=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:44,613 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:44,618 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 found=True
+2026-05-13 12:16:44,618 app.users.deps DEBUG users.deps.get_current_user.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-10
+2026-05-13 12:16:44,618 app.security.permissions DEBUG security.permissions.require_role.start role=people_admin user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-10
+2026-05-13 12:16:44,618 app.security.permissions DEBUG security.permissions.require_role.ok role=people_admin user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-10
+2026-05-13 12:16:44,618 app.security.rate_limit DEBUG security.rate_limit.check.start prefix=ADMIN_AI ip=127.0.0.1 per_minute=20 window=60s request_id=rate-test-10
+2026-05-13 12:16:44,619 app.security.rate_limit DEBUG security.rate_limit.check.ok prefix=ADMIN_AI ip=127.0.0.1 count=10 remaining=10 request_id=rate-test-10
+2026-05-13 12:16:44,619 app.admin.providers.router DEBUG admin.providers.create.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 provider_type=openai name_len=12 request_id=rate-test-10
+2026-05-13 12:16:44,619 app.admin.providers.service DEBUG admin.providers.service.create.start provider_type=openai name_len=12 request_id=rate-test-10
+2026-05-13 12:16:44,619 app.admin.providers.repository DEBUG admin.providers.repository.create.start provider_type=openai name_len=12
+2026-05-13 12:16:44,619 app.security.encryption DEBUG security.encryption.encrypt.start length=15
+2026-05-13 12:16:44,619 app.security.encryption DEBUG security.encryption.encrypt.ok
+2026-05-13 12:16:44,623 app.admin.providers.repository DEBUG admin.providers.repository.create.ok provider_id=5db4b45f-dbc6-4853-b4b5-bb220c33d5b2
+2026-05-13 12:16:44,628 app.admin._audit DEBUG admin._audit.write.start actor=70903d1e-279a-4f24-aab1-96c4b1fc6043 action=admin.ai.provider.create entity_id=5db4b45f-dbc6-4853-b4b5-bb220c33d5b2
+2026-05-13 12:16:44,628 app.db.session DEBUG db.session.audit_scope.open
+2026-05-13 12:16:44,632 app.db.session DEBUG db.session.audit_scope.closed
+2026-05-13 12:16:44,632 app.admin._audit DEBUG admin._audit.write.ok actor=70903d1e-279a-4f24-aab1-96c4b1fc6043 action=admin.ai.provider.create entity_id=5db4b45f-dbc6-4853-b4b5-bb220c33d5b2
+2026-05-13 12:16:44,632 app.admin.providers.service DEBUG admin.providers.service.create.ok provider_id=5db4b45f-dbc6-4853-b4b5-bb220c33d5b2 request_id=rate-test-10
+2026-05-13 12:16:44,634 app.admin.providers.router DEBUG admin.providers.create.ok user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 provider_id=5db4b45f-dbc6-4853-b4b5-bb220c33d5b2 request_id=rate-test-10
+INFO:     127.0.0.1:62826 - "POST /api/v1/admin/ai/providers HTTP/1.1" 201 Created
+2026-05-13 12:16:44,636 app.db.session DEBUG db.session.closed
+2026-05-13 12:16:44,665 app.db.session DEBUG db.session.open
+2026-05-13 12:16:44,665 app.users.deps DEBUG users.deps.get_current_user.start request_id=rate-test-11 ip=127.0.0.1
+2026-05-13 12:16:44,665 app.auth.tokens DEBUG tokens.decode.start
+2026-05-13 12:16:44,665 app.auth.tokens DEBUG tokens.decode.ok sub=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:44,665 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:44,669 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 found=True
+2026-05-13 12:16:44,669 app.users.deps DEBUG users.deps.get_current_user.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-11
+2026-05-13 12:16:44,669 app.security.permissions DEBUG security.permissions.require_role.start role=people_admin user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-11
+2026-05-13 12:16:44,669 app.security.permissions DEBUG security.permissions.require_role.ok role=people_admin user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-11
+2026-05-13 12:16:44,670 app.security.rate_limit DEBUG security.rate_limit.check.start prefix=ADMIN_AI ip=127.0.0.1 per_minute=20 window=60s request_id=rate-test-11
+2026-05-13 12:16:44,671 app.security.rate_limit DEBUG security.rate_limit.check.ok prefix=ADMIN_AI ip=127.0.0.1 count=11 remaining=9 request_id=rate-test-11
+2026-05-13 12:16:44,671 app.admin.providers.router DEBUG admin.providers.create.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 provider_type=openai name_len=12 request_id=rate-test-11
+2026-05-13 12:16:44,671 app.admin.providers.service DEBUG admin.providers.service.create.start provider_type=openai name_len=12 request_id=rate-test-11
+2026-05-13 12:16:44,671 app.admin.providers.repository DEBUG admin.providers.repository.create.start provider_type=openai name_len=12
+2026-05-13 12:16:44,671 app.security.encryption DEBUG security.encryption.encrypt.start length=15
+2026-05-13 12:16:44,671 app.security.encryption DEBUG security.encryption.encrypt.ok
+2026-05-13 12:16:44,673 app.admin.providers.repository DEBUG admin.providers.repository.create.ok provider_id=daacdc38-5943-4ca1-9b61-d02f5c2991cd
+2026-05-13 12:16:44,678 app.admin._audit DEBUG admin._audit.write.start actor=70903d1e-279a-4f24-aab1-96c4b1fc6043 action=admin.ai.provider.create entity_id=daacdc38-5943-4ca1-9b61-d02f5c2991cd
+2026-05-13 12:16:44,678 app.db.session DEBUG db.session.audit_scope.open
+2026-05-13 12:16:44,682 app.db.session DEBUG db.session.audit_scope.closed
+2026-05-13 12:16:44,682 app.admin._audit DEBUG admin._audit.write.ok actor=70903d1e-279a-4f24-aab1-96c4b1fc6043 action=admin.ai.provider.create entity_id=daacdc38-5943-4ca1-9b61-d02f5c2991cd
+2026-05-13 12:16:44,682 app.admin.providers.service DEBUG admin.providers.service.create.ok provider_id=daacdc38-5943-4ca1-9b61-d02f5c2991cd request_id=rate-test-11
+2026-05-13 12:16:44,683 app.admin.providers.router DEBUG admin.providers.create.ok user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 provider_id=daacdc38-5943-4ca1-9b61-d02f5c2991cd request_id=rate-test-11
+INFO:     127.0.0.1:62828 - "POST /api/v1/admin/ai/providers HTTP/1.1" 201 Created
+2026-05-13 12:16:44,685 app.db.session DEBUG db.session.closed
+2026-05-13 12:16:44,725 app.db.session DEBUG db.session.open
+2026-05-13 12:16:44,725 app.users.deps DEBUG users.deps.get_current_user.start request_id=rate-test-12 ip=127.0.0.1
+2026-05-13 12:16:44,725 app.auth.tokens DEBUG tokens.decode.start
+2026-05-13 12:16:44,725 app.auth.tokens DEBUG tokens.decode.ok sub=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:44,725 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:44,732 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 found=True
+2026-05-13 12:16:44,732 app.users.deps DEBUG users.deps.get_current_user.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-12
+2026-05-13 12:16:44,732 app.security.permissions DEBUG security.permissions.require_role.start role=people_admin user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-12
+2026-05-13 12:16:44,732 app.security.permissions DEBUG security.permissions.require_role.ok role=people_admin user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-12
+2026-05-13 12:16:44,732 app.security.rate_limit DEBUG security.rate_limit.check.start prefix=ADMIN_AI ip=127.0.0.1 per_minute=20 window=60s request_id=rate-test-12
+2026-05-13 12:16:44,733 app.security.rate_limit DEBUG security.rate_limit.check.ok prefix=ADMIN_AI ip=127.0.0.1 count=12 remaining=8 request_id=rate-test-12
+2026-05-13 12:16:44,733 app.admin.providers.router DEBUG admin.providers.create.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 provider_type=openai name_len=12 request_id=rate-test-12
+2026-05-13 12:16:44,733 app.admin.providers.service DEBUG admin.providers.service.create.start provider_type=openai name_len=12 request_id=rate-test-12
+2026-05-13 12:16:44,733 app.admin.providers.repository DEBUG admin.providers.repository.create.start provider_type=openai name_len=12
+2026-05-13 12:16:44,733 app.security.encryption DEBUG security.encryption.encrypt.start length=15
+2026-05-13 12:16:44,733 app.security.encryption DEBUG security.encryption.encrypt.ok
+2026-05-13 12:16:44,735 app.admin.providers.repository DEBUG admin.providers.repository.create.ok provider_id=15a9915e-a0d3-4def-9759-3adfd9d2b178
+2026-05-13 12:16:44,740 app.admin._audit DEBUG admin._audit.write.start actor=70903d1e-279a-4f24-aab1-96c4b1fc6043 action=admin.ai.provider.create entity_id=15a9915e-a0d3-4def-9759-3adfd9d2b178
+2026-05-13 12:16:44,740 app.db.session DEBUG db.session.audit_scope.open
+2026-05-13 12:16:44,744 app.db.session DEBUG db.session.audit_scope.closed
+2026-05-13 12:16:44,744 app.admin._audit DEBUG admin._audit.write.ok actor=70903d1e-279a-4f24-aab1-96c4b1fc6043 action=admin.ai.provider.create entity_id=15a9915e-a0d3-4def-9759-3adfd9d2b178
+2026-05-13 12:16:44,744 app.admin.providers.service DEBUG admin.providers.service.create.ok provider_id=15a9915e-a0d3-4def-9759-3adfd9d2b178 request_id=rate-test-12
+2026-05-13 12:16:44,747 app.admin.providers.router DEBUG admin.providers.create.ok user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 provider_id=15a9915e-a0d3-4def-9759-3adfd9d2b178 request_id=rate-test-12
+INFO:     127.0.0.1:62831 - "POST /api/v1/admin/ai/providers HTTP/1.1" 201 Created
+2026-05-13 12:16:44,748 app.db.session DEBUG db.session.closed
+2026-05-13 12:16:44,780 app.db.session DEBUG db.session.open
+2026-05-13 12:16:44,780 app.users.deps DEBUG users.deps.get_current_user.start request_id=rate-test-13 ip=127.0.0.1
+2026-05-13 12:16:44,780 app.auth.tokens DEBUG tokens.decode.start
+2026-05-13 12:16:44,780 app.auth.tokens DEBUG tokens.decode.ok sub=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:44,780 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:44,784 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 found=True
+2026-05-13 12:16:44,784 app.users.deps DEBUG users.deps.get_current_user.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-13
+2026-05-13 12:16:44,784 app.security.permissions DEBUG security.permissions.require_role.start role=people_admin user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-13
+2026-05-13 12:16:44,784 app.security.permissions DEBUG security.permissions.require_role.ok role=people_admin user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-13
+2026-05-13 12:16:44,784 app.security.rate_limit DEBUG security.rate_limit.check.start prefix=ADMIN_AI ip=127.0.0.1 per_minute=20 window=60s request_id=rate-test-13
+2026-05-13 12:16:44,785 app.security.rate_limit DEBUG security.rate_limit.check.ok prefix=ADMIN_AI ip=127.0.0.1 count=13 remaining=7 request_id=rate-test-13
+2026-05-13 12:16:44,785 app.admin.providers.router DEBUG admin.providers.create.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 provider_type=openai name_len=12 request_id=rate-test-13
+2026-05-13 12:16:44,785 app.admin.providers.service DEBUG admin.providers.service.create.start provider_type=openai name_len=12 request_id=rate-test-13
+2026-05-13 12:16:44,785 app.admin.providers.repository DEBUG admin.providers.repository.create.start provider_type=openai name_len=12
+2026-05-13 12:16:44,785 app.security.encryption DEBUG security.encryption.encrypt.start length=15
+2026-05-13 12:16:44,785 app.security.encryption DEBUG security.encryption.encrypt.ok
+2026-05-13 12:16:44,790 app.admin.providers.repository DEBUG admin.providers.repository.create.ok provider_id=7bc25d55-72af-4b1a-87ab-57f07e049253
+2026-05-13 12:16:44,796 app.admin._audit DEBUG admin._audit.write.start actor=70903d1e-279a-4f24-aab1-96c4b1fc6043 action=admin.ai.provider.create entity_id=7bc25d55-72af-4b1a-87ab-57f07e049253
+2026-05-13 12:16:44,796 app.db.session DEBUG db.session.audit_scope.open
+2026-05-13 12:16:44,801 app.db.session DEBUG db.session.audit_scope.closed
+2026-05-13 12:16:44,801 app.admin._audit DEBUG admin._audit.write.ok actor=70903d1e-279a-4f24-aab1-96c4b1fc6043 action=admin.ai.provider.create entity_id=7bc25d55-72af-4b1a-87ab-57f07e049253
+2026-05-13 12:16:44,801 app.admin.providers.service DEBUG admin.providers.service.create.ok provider_id=7bc25d55-72af-4b1a-87ab-57f07e049253 request_id=rate-test-13
+2026-05-13 12:16:44,804 app.admin.providers.router DEBUG admin.providers.create.ok user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 provider_id=7bc25d55-72af-4b1a-87ab-57f07e049253 request_id=rate-test-13
+INFO:     127.0.0.1:62833 - "POST /api/v1/admin/ai/providers HTTP/1.1" 201 Created
+2026-05-13 12:16:44,806 app.db.session DEBUG db.session.closed
+2026-05-13 12:16:44,835 app.db.session DEBUG db.session.open
+2026-05-13 12:16:44,835 app.users.deps DEBUG users.deps.get_current_user.start request_id=rate-test-14 ip=127.0.0.1
+2026-05-13 12:16:44,835 app.auth.tokens DEBUG tokens.decode.start
+2026-05-13 12:16:44,835 app.auth.tokens DEBUG tokens.decode.ok sub=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:44,836 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:44,840 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 found=True
+2026-05-13 12:16:44,840 app.users.deps DEBUG users.deps.get_current_user.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-14
+2026-05-13 12:16:44,840 app.security.permissions DEBUG security.permissions.require_role.start role=people_admin user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-14
+2026-05-13 12:16:44,840 app.security.permissions DEBUG security.permissions.require_role.ok role=people_admin user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-14
+2026-05-13 12:16:44,840 app.security.rate_limit DEBUG security.rate_limit.check.start prefix=ADMIN_AI ip=127.0.0.1 per_minute=20 window=60s request_id=rate-test-14
+2026-05-13 12:16:44,841 app.security.rate_limit DEBUG security.rate_limit.check.ok prefix=ADMIN_AI ip=127.0.0.1 count=14 remaining=6 request_id=rate-test-14
+2026-05-13 12:16:44,841 app.admin.providers.router DEBUG admin.providers.create.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 provider_type=openai name_len=12 request_id=rate-test-14
+2026-05-13 12:16:44,841 app.admin.providers.service DEBUG admin.providers.service.create.start provider_type=openai name_len=12 request_id=rate-test-14
+2026-05-13 12:16:44,841 app.admin.providers.repository DEBUG admin.providers.repository.create.start provider_type=openai name_len=12
+2026-05-13 12:16:44,841 app.security.encryption DEBUG security.encryption.encrypt.start length=15
+2026-05-13 12:16:44,841 app.security.encryption DEBUG security.encryption.encrypt.ok
+2026-05-13 12:16:44,844 app.admin.providers.repository DEBUG admin.providers.repository.create.ok provider_id=d6d140ee-8ff3-484f-97eb-5f91c2bfd920
+2026-05-13 12:16:44,848 app.admin._audit DEBUG admin._audit.write.start actor=70903d1e-279a-4f24-aab1-96c4b1fc6043 action=admin.ai.provider.create entity_id=d6d140ee-8ff3-484f-97eb-5f91c2bfd920
+2026-05-13 12:16:44,848 app.db.session DEBUG db.session.audit_scope.open
+2026-05-13 12:16:44,855 app.db.session DEBUG db.session.audit_scope.closed
+2026-05-13 12:16:44,855 app.admin._audit DEBUG admin._audit.write.ok actor=70903d1e-279a-4f24-aab1-96c4b1fc6043 action=admin.ai.provider.create entity_id=d6d140ee-8ff3-484f-97eb-5f91c2bfd920
+2026-05-13 12:16:44,855 app.admin.providers.service DEBUG admin.providers.service.create.ok provider_id=d6d140ee-8ff3-484f-97eb-5f91c2bfd920 request_id=rate-test-14
+2026-05-13 12:16:44,857 app.admin.providers.router DEBUG admin.providers.create.ok user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 provider_id=d6d140ee-8ff3-484f-97eb-5f91c2bfd920 request_id=rate-test-14
+INFO:     127.0.0.1:62835 - "POST /api/v1/admin/ai/providers HTTP/1.1" 201 Created
+2026-05-13 12:16:44,858 app.db.session DEBUG db.session.closed
+2026-05-13 12:16:44,887 app.db.session DEBUG db.session.open
+2026-05-13 12:16:44,887 app.users.deps DEBUG users.deps.get_current_user.start request_id=rate-test-15 ip=127.0.0.1
+2026-05-13 12:16:44,887 app.auth.tokens DEBUG tokens.decode.start
+2026-05-13 12:16:44,887 app.auth.tokens DEBUG tokens.decode.ok sub=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:44,888 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:44,892 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 found=True
+2026-05-13 12:16:44,892 app.users.deps DEBUG users.deps.get_current_user.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-15
+2026-05-13 12:16:44,892 app.security.permissions DEBUG security.permissions.require_role.start role=people_admin user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-15
+2026-05-13 12:16:44,892 app.security.permissions DEBUG security.permissions.require_role.ok role=people_admin user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-15
+2026-05-13 12:16:44,892 app.security.rate_limit DEBUG security.rate_limit.check.start prefix=ADMIN_AI ip=127.0.0.1 per_minute=20 window=60s request_id=rate-test-15
+2026-05-13 12:16:44,893 app.security.rate_limit DEBUG security.rate_limit.check.ok prefix=ADMIN_AI ip=127.0.0.1 count=15 remaining=5 request_id=rate-test-15
+2026-05-13 12:16:44,893 app.admin.providers.router DEBUG admin.providers.create.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 provider_type=openai name_len=12 request_id=rate-test-15
+2026-05-13 12:16:44,893 app.admin.providers.service DEBUG admin.providers.service.create.start provider_type=openai name_len=12 request_id=rate-test-15
+2026-05-13 12:16:44,893 app.admin.providers.repository DEBUG admin.providers.repository.create.start provider_type=openai name_len=12
+2026-05-13 12:16:44,893 app.security.encryption DEBUG security.encryption.encrypt.start length=15
+2026-05-13 12:16:44,893 app.security.encryption DEBUG security.encryption.encrypt.ok
+2026-05-13 12:16:44,899 app.admin.providers.repository DEBUG admin.providers.repository.create.ok provider_id=1649ed6d-39a5-4687-af4d-0269ff78ffb7
+2026-05-13 12:16:44,905 app.admin._audit DEBUG admin._audit.write.start actor=70903d1e-279a-4f24-aab1-96c4b1fc6043 action=admin.ai.provider.create entity_id=1649ed6d-39a5-4687-af4d-0269ff78ffb7
+2026-05-13 12:16:44,905 app.db.session DEBUG db.session.audit_scope.open
+2026-05-13 12:16:44,909 app.db.session DEBUG db.session.audit_scope.closed
+2026-05-13 12:16:44,909 app.admin._audit DEBUG admin._audit.write.ok actor=70903d1e-279a-4f24-aab1-96c4b1fc6043 action=admin.ai.provider.create entity_id=1649ed6d-39a5-4687-af4d-0269ff78ffb7
+2026-05-13 12:16:44,909 app.admin.providers.service DEBUG admin.providers.service.create.ok provider_id=1649ed6d-39a5-4687-af4d-0269ff78ffb7 request_id=rate-test-15
+2026-05-13 12:16:44,911 app.admin.providers.router DEBUG admin.providers.create.ok user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 provider_id=1649ed6d-39a5-4687-af4d-0269ff78ffb7 request_id=rate-test-15
+INFO:     127.0.0.1:62837 - "POST /api/v1/admin/ai/providers HTTP/1.1" 201 Created
+2026-05-13 12:16:44,912 app.db.session DEBUG db.session.closed
+2026-05-13 12:16:44,945 app.db.session DEBUG db.session.open
+2026-05-13 12:16:44,945 app.users.deps DEBUG users.deps.get_current_user.start request_id=rate-test-16 ip=127.0.0.1
+2026-05-13 12:16:44,945 app.auth.tokens DEBUG tokens.decode.start
+2026-05-13 12:16:44,945 app.auth.tokens DEBUG tokens.decode.ok sub=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:44,945 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:44,950 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 found=True
+2026-05-13 12:16:44,950 app.users.deps DEBUG users.deps.get_current_user.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-16
+2026-05-13 12:16:44,950 app.security.permissions DEBUG security.permissions.require_role.start role=people_admin user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-16
+2026-05-13 12:16:44,950 app.security.permissions DEBUG security.permissions.require_role.ok role=people_admin user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-16
+2026-05-13 12:16:44,950 app.security.rate_limit DEBUG security.rate_limit.check.start prefix=ADMIN_AI ip=127.0.0.1 per_minute=20 window=60s request_id=rate-test-16
+2026-05-13 12:16:44,951 app.security.rate_limit DEBUG security.rate_limit.check.ok prefix=ADMIN_AI ip=127.0.0.1 count=16 remaining=4 request_id=rate-test-16
+2026-05-13 12:16:44,951 app.admin.providers.router DEBUG admin.providers.create.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 provider_type=openai name_len=12 request_id=rate-test-16
+2026-05-13 12:16:44,951 app.admin.providers.service DEBUG admin.providers.service.create.start provider_type=openai name_len=12 request_id=rate-test-16
+2026-05-13 12:16:44,951 app.admin.providers.repository DEBUG admin.providers.repository.create.start provider_type=openai name_len=12
+2026-05-13 12:16:44,951 app.security.encryption DEBUG security.encryption.encrypt.start length=15
+2026-05-13 12:16:44,951 app.security.encryption DEBUG security.encryption.encrypt.ok
+2026-05-13 12:16:44,955 app.admin.providers.repository DEBUG admin.providers.repository.create.ok provider_id=ae3bc09d-3339-4826-9cc3-772bf6f0a195
+2026-05-13 12:16:44,959 app.admin._audit DEBUG admin._audit.write.start actor=70903d1e-279a-4f24-aab1-96c4b1fc6043 action=admin.ai.provider.create entity_id=ae3bc09d-3339-4826-9cc3-772bf6f0a195
+2026-05-13 12:16:44,959 app.db.session DEBUG db.session.audit_scope.open
+2026-05-13 12:16:44,965 app.db.session DEBUG db.session.audit_scope.closed
+2026-05-13 12:16:44,965 app.admin._audit DEBUG admin._audit.write.ok actor=70903d1e-279a-4f24-aab1-96c4b1fc6043 action=admin.ai.provider.create entity_id=ae3bc09d-3339-4826-9cc3-772bf6f0a195
+2026-05-13 12:16:44,965 app.admin.providers.service DEBUG admin.providers.service.create.ok provider_id=ae3bc09d-3339-4826-9cc3-772bf6f0a195 request_id=rate-test-16
+2026-05-13 12:16:44,967 app.admin.providers.router DEBUG admin.providers.create.ok user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 provider_id=ae3bc09d-3339-4826-9cc3-772bf6f0a195 request_id=rate-test-16
+INFO:     127.0.0.1:62839 - "POST /api/v1/admin/ai/providers HTTP/1.1" 201 Created
+2026-05-13 12:16:44,968 app.db.session DEBUG db.session.closed
+2026-05-13 12:16:44,996 app.db.session DEBUG db.session.open
+2026-05-13 12:16:44,996 app.users.deps DEBUG users.deps.get_current_user.start request_id=rate-test-17 ip=127.0.0.1
+2026-05-13 12:16:44,996 app.auth.tokens DEBUG tokens.decode.start
+2026-05-13 12:16:44,996 app.auth.tokens DEBUG tokens.decode.ok sub=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:44,996 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:45,000 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 found=True
+2026-05-13 12:16:45,000 app.users.deps DEBUG users.deps.get_current_user.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-17
+2026-05-13 12:16:45,000 app.security.permissions DEBUG security.permissions.require_role.start role=people_admin user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-17
+2026-05-13 12:16:45,000 app.security.permissions DEBUG security.permissions.require_role.ok role=people_admin user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-17
+2026-05-13 12:16:45,000 app.security.rate_limit DEBUG security.rate_limit.check.start prefix=ADMIN_AI ip=127.0.0.1 per_minute=20 window=60s request_id=rate-test-17
+2026-05-13 12:16:45,001 app.security.rate_limit DEBUG security.rate_limit.check.ok prefix=ADMIN_AI ip=127.0.0.1 count=17 remaining=3 request_id=rate-test-17
+2026-05-13 12:16:45,001 app.admin.providers.router DEBUG admin.providers.create.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 provider_type=openai name_len=12 request_id=rate-test-17
+2026-05-13 12:16:45,001 app.admin.providers.service DEBUG admin.providers.service.create.start provider_type=openai name_len=12 request_id=rate-test-17
+2026-05-13 12:16:45,001 app.admin.providers.repository DEBUG admin.providers.repository.create.start provider_type=openai name_len=12
+2026-05-13 12:16:45,001 app.security.encryption DEBUG security.encryption.encrypt.start length=15
+2026-05-13 12:16:45,001 app.security.encryption DEBUG security.encryption.encrypt.ok
+2026-05-13 12:16:45,007 app.admin.providers.repository DEBUG admin.providers.repository.create.ok provider_id=149d2ea8-6246-449a-904f-0af4073d2cd2
+2026-05-13 12:16:45,016 app.admin._audit DEBUG admin._audit.write.start actor=70903d1e-279a-4f24-aab1-96c4b1fc6043 action=admin.ai.provider.create entity_id=149d2ea8-6246-449a-904f-0af4073d2cd2
+2026-05-13 12:16:45,017 app.db.session DEBUG db.session.audit_scope.open
+2026-05-13 12:16:45,020 app.db.session DEBUG db.session.audit_scope.closed
+2026-05-13 12:16:45,020 app.admin._audit DEBUG admin._audit.write.ok actor=70903d1e-279a-4f24-aab1-96c4b1fc6043 action=admin.ai.provider.create entity_id=149d2ea8-6246-449a-904f-0af4073d2cd2
+2026-05-13 12:16:45,020 app.admin.providers.service DEBUG admin.providers.service.create.ok provider_id=149d2ea8-6246-449a-904f-0af4073d2cd2 request_id=rate-test-17
+2026-05-13 12:16:45,021 app.admin.providers.router DEBUG admin.providers.create.ok user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 provider_id=149d2ea8-6246-449a-904f-0af4073d2cd2 request_id=rate-test-17
+INFO:     127.0.0.1:62841 - "POST /api/v1/admin/ai/providers HTTP/1.1" 201 Created
+2026-05-13 12:16:45,023 app.db.session DEBUG db.session.closed
+2026-05-13 12:16:45,054 app.db.session DEBUG db.session.open
+2026-05-13 12:16:45,054 app.users.deps DEBUG users.deps.get_current_user.start request_id=rate-test-18 ip=127.0.0.1
+2026-05-13 12:16:45,054 app.auth.tokens DEBUG tokens.decode.start
+2026-05-13 12:16:45,055 app.auth.tokens DEBUG tokens.decode.ok sub=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:45,055 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:45,057 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 found=True
+2026-05-13 12:16:45,057 app.users.deps DEBUG users.deps.get_current_user.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-18
+2026-05-13 12:16:45,057 app.security.permissions DEBUG security.permissions.require_role.start role=people_admin user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-18
+2026-05-13 12:16:45,057 app.security.permissions DEBUG security.permissions.require_role.ok role=people_admin user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-18
+2026-05-13 12:16:45,057 app.security.rate_limit DEBUG security.rate_limit.check.start prefix=ADMIN_AI ip=127.0.0.1 per_minute=20 window=60s request_id=rate-test-18
+2026-05-13 12:16:45,058 app.security.rate_limit DEBUG security.rate_limit.check.ok prefix=ADMIN_AI ip=127.0.0.1 count=18 remaining=2 request_id=rate-test-18
+2026-05-13 12:16:45,058 app.admin.providers.router DEBUG admin.providers.create.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 provider_type=openai name_len=12 request_id=rate-test-18
+2026-05-13 12:16:45,058 app.admin.providers.service DEBUG admin.providers.service.create.start provider_type=openai name_len=12 request_id=rate-test-18
+2026-05-13 12:16:45,058 app.admin.providers.repository DEBUG admin.providers.repository.create.start provider_type=openai name_len=12
+2026-05-13 12:16:45,058 app.security.encryption DEBUG security.encryption.encrypt.start length=15
+2026-05-13 12:16:45,058 app.security.encryption DEBUG security.encryption.encrypt.ok
+2026-05-13 12:16:45,060 app.admin.providers.repository DEBUG admin.providers.repository.create.ok provider_id=18aa7220-9ae6-405b-ad9b-6b467dc36ba1
+2026-05-13 12:16:45,062 app.admin._audit DEBUG admin._audit.write.start actor=70903d1e-279a-4f24-aab1-96c4b1fc6043 action=admin.ai.provider.create entity_id=18aa7220-9ae6-405b-ad9b-6b467dc36ba1
+2026-05-13 12:16:45,062 app.db.session DEBUG db.session.audit_scope.open
+2026-05-13 12:16:45,064 app.db.session DEBUG db.session.audit_scope.closed
+2026-05-13 12:16:45,064 app.admin._audit DEBUG admin._audit.write.ok actor=70903d1e-279a-4f24-aab1-96c4b1fc6043 action=admin.ai.provider.create entity_id=18aa7220-9ae6-405b-ad9b-6b467dc36ba1
+2026-05-13 12:16:45,064 app.admin.providers.service DEBUG admin.providers.service.create.ok provider_id=18aa7220-9ae6-405b-ad9b-6b467dc36ba1 request_id=rate-test-18
+2026-05-13 12:16:45,065 app.admin.providers.router DEBUG admin.providers.create.ok user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 provider_id=18aa7220-9ae6-405b-ad9b-6b467dc36ba1 request_id=rate-test-18
+INFO:     127.0.0.1:62843 - "POST /api/v1/admin/ai/providers HTTP/1.1" 201 Created
+2026-05-13 12:16:45,066 app.db.session DEBUG db.session.closed
+2026-05-13 12:16:45,093 app.db.session DEBUG db.session.open
+2026-05-13 12:16:45,093 app.users.deps DEBUG users.deps.get_current_user.start request_id=rate-test-19 ip=127.0.0.1
+2026-05-13 12:16:45,093 app.auth.tokens DEBUG tokens.decode.start
+2026-05-13 12:16:45,093 app.auth.tokens DEBUG tokens.decode.ok sub=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:45,093 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:45,095 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 found=True
+2026-05-13 12:16:45,096 app.users.deps DEBUG users.deps.get_current_user.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-19
+2026-05-13 12:16:45,096 app.security.permissions DEBUG security.permissions.require_role.start role=people_admin user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-19
+2026-05-13 12:16:45,096 app.security.permissions DEBUG security.permissions.require_role.ok role=people_admin user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-19
+2026-05-13 12:16:45,096 app.security.rate_limit DEBUG security.rate_limit.check.start prefix=ADMIN_AI ip=127.0.0.1 per_minute=20 window=60s request_id=rate-test-19
+2026-05-13 12:16:45,096 app.security.rate_limit DEBUG security.rate_limit.check.ok prefix=ADMIN_AI ip=127.0.0.1 count=19 remaining=1 request_id=rate-test-19
+2026-05-13 12:16:45,096 app.admin.providers.router DEBUG admin.providers.create.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 provider_type=openai name_len=12 request_id=rate-test-19
+2026-05-13 12:16:45,096 app.admin.providers.service DEBUG admin.providers.service.create.start provider_type=openai name_len=12 request_id=rate-test-19
+2026-05-13 12:16:45,096 app.admin.providers.repository DEBUG admin.providers.repository.create.start provider_type=openai name_len=12
+2026-05-13 12:16:45,096 app.security.encryption DEBUG security.encryption.encrypt.start length=15
+2026-05-13 12:16:45,096 app.security.encryption DEBUG security.encryption.encrypt.ok
+2026-05-13 12:16:45,098 app.admin.providers.repository DEBUG admin.providers.repository.create.ok provider_id=b50552c9-7c97-4946-9c22-126b111f377b
+2026-05-13 12:16:45,100 app.admin._audit DEBUG admin._audit.write.start actor=70903d1e-279a-4f24-aab1-96c4b1fc6043 action=admin.ai.provider.create entity_id=b50552c9-7c97-4946-9c22-126b111f377b
+2026-05-13 12:16:45,100 app.db.session DEBUG db.session.audit_scope.open
+2026-05-13 12:16:45,103 app.db.session DEBUG db.session.audit_scope.closed
+2026-05-13 12:16:45,103 app.admin._audit DEBUG admin._audit.write.ok actor=70903d1e-279a-4f24-aab1-96c4b1fc6043 action=admin.ai.provider.create entity_id=b50552c9-7c97-4946-9c22-126b111f377b
+2026-05-13 12:16:45,103 app.admin.providers.service DEBUG admin.providers.service.create.ok provider_id=b50552c9-7c97-4946-9c22-126b111f377b request_id=rate-test-19
+2026-05-13 12:16:45,104 app.admin.providers.router DEBUG admin.providers.create.ok user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 provider_id=b50552c9-7c97-4946-9c22-126b111f377b request_id=rate-test-19
+INFO:     127.0.0.1:62845 - "POST /api/v1/admin/ai/providers HTTP/1.1" 201 Created
+2026-05-13 12:16:45,104 app.db.session DEBUG db.session.closed
+2026-05-13 12:16:45,138 app.db.session DEBUG db.session.open
+2026-05-13 12:16:45,138 app.users.deps DEBUG users.deps.get_current_user.start request_id=rate-test-20 ip=127.0.0.1
+2026-05-13 12:16:45,138 app.auth.tokens DEBUG tokens.decode.start
+2026-05-13 12:16:45,138 app.auth.tokens DEBUG tokens.decode.ok sub=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:45,138 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:45,142 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 found=True
+2026-05-13 12:16:45,142 app.users.deps DEBUG users.deps.get_current_user.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-20
+2026-05-13 12:16:45,142 app.security.permissions DEBUG security.permissions.require_role.start role=people_admin user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-20
+2026-05-13 12:16:45,142 app.security.permissions DEBUG security.permissions.require_role.ok role=people_admin user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-20
+2026-05-13 12:16:45,142 app.security.rate_limit DEBUG security.rate_limit.check.start prefix=ADMIN_AI ip=127.0.0.1 per_minute=20 window=60s request_id=rate-test-20
+2026-05-13 12:16:45,144 app.security.rate_limit DEBUG security.rate_limit.check.ok prefix=ADMIN_AI ip=127.0.0.1 count=20 remaining=0 request_id=rate-test-20
+2026-05-13 12:16:45,144 app.admin.providers.router DEBUG admin.providers.create.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 provider_type=openai name_len=12 request_id=rate-test-20
+2026-05-13 12:16:45,144 app.admin.providers.service DEBUG admin.providers.service.create.start provider_type=openai name_len=12 request_id=rate-test-20
+2026-05-13 12:16:45,144 app.admin.providers.repository DEBUG admin.providers.repository.create.start provider_type=openai name_len=12
+2026-05-13 12:16:45,144 app.security.encryption DEBUG security.encryption.encrypt.start length=15
+2026-05-13 12:16:45,144 app.security.encryption DEBUG security.encryption.encrypt.ok
+2026-05-13 12:16:45,148 app.admin.providers.repository DEBUG admin.providers.repository.create.ok provider_id=4f56f3d1-759e-41c7-b96d-5e0f3cd19b56
+2026-05-13 12:16:45,152 app.admin._audit DEBUG admin._audit.write.start actor=70903d1e-279a-4f24-aab1-96c4b1fc6043 action=admin.ai.provider.create entity_id=4f56f3d1-759e-41c7-b96d-5e0f3cd19b56
+2026-05-13 12:16:45,152 app.db.session DEBUG db.session.audit_scope.open
+2026-05-13 12:16:45,154 app.db.session DEBUG db.session.audit_scope.closed
+2026-05-13 12:16:45,154 app.admin._audit DEBUG admin._audit.write.ok actor=70903d1e-279a-4f24-aab1-96c4b1fc6043 action=admin.ai.provider.create entity_id=4f56f3d1-759e-41c7-b96d-5e0f3cd19b56
+2026-05-13 12:16:45,154 app.admin.providers.service DEBUG admin.providers.service.create.ok provider_id=4f56f3d1-759e-41c7-b96d-5e0f3cd19b56 request_id=rate-test-20
+2026-05-13 12:16:45,155 app.admin.providers.router DEBUG admin.providers.create.ok user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 provider_id=4f56f3d1-759e-41c7-b96d-5e0f3cd19b56 request_id=rate-test-20
+INFO:     127.0.0.1:62847 - "POST /api/v1/admin/ai/providers HTTP/1.1" 201 Created
+2026-05-13 12:16:45,156 app.db.session DEBUG db.session.closed
+2026-05-13 12:16:45,186 app.db.session DEBUG db.session.open
+2026-05-13 12:16:45,186 app.users.deps DEBUG users.deps.get_current_user.start request_id=rate-test-21 ip=127.0.0.1
+2026-05-13 12:16:45,186 app.auth.tokens DEBUG tokens.decode.start
+2026-05-13 12:16:45,186 app.auth.tokens DEBUG tokens.decode.ok sub=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:45,186 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043
+2026-05-13 12:16:45,190 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 found=True
+2026-05-13 12:16:45,190 app.users.deps DEBUG users.deps.get_current_user.done user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-21
+2026-05-13 12:16:45,190 app.security.permissions DEBUG security.permissions.require_role.start role=people_admin user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-21
+2026-05-13 12:16:45,190 app.security.permissions DEBUG security.permissions.require_role.ok role=people_admin user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=rate-test-21
+2026-05-13 12:16:45,190 app.security.rate_limit DEBUG security.rate_limit.check.start prefix=ADMIN_AI ip=127.0.0.1 per_minute=20 window=60s request_id=rate-test-21
+2026-05-13 12:16:45,192 app.security.rate_limit WARNING security.rate_limit.exceeded prefix=ADMIN_AI ip=127.0.0.1 count=21 burst=20 retry_after=59s request_id=rate-test-21
+INFO:     127.0.0.1:62849 - "POST /api/v1/admin/ai/providers HTTP/1.1" 429 Too Many Requests
+2026-05-13 12:16:45,195 app.db.session DEBUG db.session.closed
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [32378]

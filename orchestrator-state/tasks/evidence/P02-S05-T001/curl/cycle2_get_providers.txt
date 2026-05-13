@@ -1,0 +1,40 @@
+{
+    "data": [
+        {
+            "id": "0404b5c6-7f38-4791-af39-9067814c1680",
+            "name": "litellm_verification_sandbox",
+            "provider_type": "litellm",
+            "base_url": "http://localhost:4000",
+            "status": "active",
+            "created_by": null,
+            "has_credentials": false,
+            "credential_auth_type": null,
+            "expires_at": null
+        },
+        {
+            "id": "6b230a0e-6658-4237-82d4-7f84a532a21e",
+            "name": "TestProvider",
+            "provider_type": "openai",
+            "base_url": null,
+            "status": "draft",
+            "created_by": null,
+            "has_credentials": false,
+            "credential_auth_type": null,
+            "expires_at": null
+        },
+        {
+            "id": "8e50b8c7-4469-44c4-8363-a428d0436980",
+            "name": "TestProvider",
+            "provider_type": "openai",
+            "base_url": null,
+            "status": "draft",
+            "created_by": null,
+            "has_credentials": false,
+            "credential_auth_type": null,
+            "expires_at": null
+        }
+    ],
+    "meta": {
+        "request_id": "tester-cycle2-smoke-001"
+    }
+}

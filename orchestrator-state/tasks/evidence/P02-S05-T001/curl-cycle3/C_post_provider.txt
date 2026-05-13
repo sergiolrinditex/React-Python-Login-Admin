@@ -1,0 +1,2 @@
+{"data":null,"meta":{"request_id":"v3-C-create"},"errors":[{"code":"INTERNAL_ERROR","message":"Failed to create provider.","field":null,"details":null}]}
+HTTP 500

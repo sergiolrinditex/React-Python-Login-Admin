@@ -1,0 +1,1 @@
+{"data":null,"meta":{"request_id":"rate-test-21"},"errors":[{"code":"RATE_LIMITED","message":"Too many requests. Retry after 59 seconds.","field":null,"details":null}]}

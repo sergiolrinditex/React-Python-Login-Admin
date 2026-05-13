@@ -1,0 +1,32 @@
+DEBUG    app.security.permissions:permissions.py:118 security.permissions.require_role.start role=people_admin user_id=205b58a5-3f7c-4f3b-905c-768f30766fc5 request_id=2b41feab-497b-4a6f-8da9-27b8b74287c7
+DEBUG    app.security.permissions:permissions.py:134 security.permissions.require_role.ok role=people_admin user_id=205b58a5-3f7c-4f3b-905c-768f30766fc5 request_id=2b41feab-497b-4a6f-8da9-27b8b74287c7
+DEBUG    app.security.rate_limit:rate_limit.py:154 security.rate_limit.check.start prefix=ADMIN_AI ip=testclient per_minute=20 window=60s request_id=c50b51c1-297b-4e70-8f0b-6be32adb9cd1
+DEBUG    app.security.rate_limit:rate_limit.py:221 security.rate_limit.check.ok prefix=ADMIN_AI ip=testclient count=1 remaining=19 request_id=c50b51c1-297b-4e70-8f0b-6be32adb9cd1
+DEBUG    app.admin.providers.router:router.py:162 admin.providers.create.start user_id=205b58a5-3f7c-4f3b-905c-768f30766fc5 provider_type=litellm name_len=19 request_id=518b761d-e9d1-400d-96ba-ddfc5e454928
+DEBUG    app.admin.providers.service:service.py:103 admin.providers.service.create.start provider_type=litellm name_len=19 request_id=518b761d-e9d1-400d-96ba-ddfc5e454928
+DEBUG    app.admin.providers.repository:repository.py:142 admin.providers.repository.create.start provider_type=litellm name_len=19
+DEBUG    app.security.encryption:encryption.py:124 security.encryption.encrypt.start length=36
+DEBUG    app.security.encryption:encryption.py:70 security.encryption.load_key key_env=ENCRYPTION_KEY present=True
+DEBUG    app.security.encryption:encryption.py:94 security.encryption.load_key.ok
+DEBUG    app.security.encryption:encryption.py:129 security.encryption.encrypt.ok
+DEBUG    app.admin.providers.repository:repository.py:176 admin.providers.repository.create.ok provider_id=304b9db8-b302-4587-a9ef-c64439a58a4b
+DEBUG    app.admin._audit:_audit.py:63 admin._audit.write.start actor=205b58a5-3f7c-4f3b-905c-768f30766fc5 action=admin.ai.provider.create entity_id=304b9db8-b302-4587-a9ef-c64439a58a4b
+DEBUG    app.admin._audit:_audit.py:83 admin._audit.write.ok actor=205b58a5-3f7c-4f3b-905c-768f30766fc5 action=admin.ai.provider.create entity_id=304b9db8-b302-4587-a9ef-c64439a58a4b
+DEBUG    app.admin.providers.service:service.py:176 admin.providers.service.create.ok provider_id=304b9db8-b302-4587-a9ef-c64439a58a4b request_id=518b761d-e9d1-400d-96ba-ddfc5e454928
+DEBUG    app.admin.providers.router:router.py:216 admin.providers.create.ok user_id=205b58a5-3f7c-4f3b-905c-768f30766fc5 provider_id=304b9db8-b302-4587-a9ef-c64439a58a4b request_id=518b761d-e9d1-400d-96ba-ddfc5e454928
+DEBUG    app.security.permissions:permissions.py:118 security.permissions.require_role.start role=people_admin user_id=6e149024-e062-4d9a-868e-ba21b209c1ef request_id=test-t05
+DEBUG    app.security.permissions:permissions.py:134 security.permissions.require_role.ok role=people_admin user_id=6e149024-e062-4d9a-868e-ba21b209c1ef request_id=test-t05
+DEBUG    app.security.rate_limit:rate_limit.py:154 security.rate_limit.check.start prefix=ADMIN_AI ip=testclient per_minute=20 window=60s request_id=test-t05
+DEBUG    app.security.rate_limit:rate_limit.py:221 security.rate_limit.check.ok prefix=ADMIN_AI ip=testclient count=1 remaining=19 request_id=test-t05
+DEBUG    app.admin.providers.router:router.py:162 admin.providers.create.start user_id=6e149024-e062-4d9a-868e-ba21b209c1ef provider_type=litellm name_len=20 request_id=test-t05
+DEBUG    app.admin.providers.service:service.py:103 admin.providers.service.create.start provider_type=litellm name_len=20 request_id=test-t05
+DEBUG    app.admin.providers.repository:repository.py:142 admin.providers.repository.create.start provider_type=litellm name_len=20
+DEBUG    app.security.encryption:encryption.py:124 security.encryption.encrypt.start length=32
+DEBUG    app.security.encryption:encryption.py:70 security.encryption.load_key key_env=ENCRYPTION_KEY present=True
+DEBUG    app.security.encryption:encryption.py:94 security.encryption.load_key.ok
+DEBUG    app.security.encryption:encryption.py:129 security.encryption.encrypt.ok
+DEBUG    app.admin.providers.repository:repository.py:176 admin.providers.repository.create.ok provider_id=2b93ad8f-fec6-4309-a1b1-85d1099a33b3
+DEBUG    app.admin._audit:_audit.py:63 admin._audit.write.start actor=6e149024-e062-4d9a-868e-ba21b209c1ef action=admin.ai.provider.create entity_id=2b93ad8f-fec6-4309-a1b1-85d1099a33b3
+DEBUG    app.admin._audit:_audit.py:83 admin._audit.write.ok actor=6e149024-e062-4d9a-868e-ba21b209c1ef action=admin.ai.provider.create entity_id=2b93ad8f-fec6-4309-a1b1-85d1099a33b3
+DEBUG    app.admin.providers.service:service.py:176 admin.providers.service.create.ok provider_id=2b93ad8f-fec6-4309-a1b1-85d1099a33b3 request_id=test-t05
+DEBUG    app.admin.providers.router:router.py:216 admin.providers.create.ok user_id=6e149024-e062-4d9a-868e-ba21b209c1ef provider_id=2b93ad8f-fec6-4309-a1b1-85d1099a33b3 request_id=test-t05

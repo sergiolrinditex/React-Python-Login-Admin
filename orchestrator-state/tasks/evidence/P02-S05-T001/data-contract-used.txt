@@ -1,0 +1,41 @@
+## Verification Data Contract — P02-S05-T001 (Tester Cycle 2)
+
+Source: task-pack §6.5 Verification Data Contract for J103
+
+### Rows used from contract
+
+1. Persona: admin_peopletech
+   - File: data/verification/users/admin_peopletech.json
+   - Email: admin.peopletech@inditex-sandbox.com
+   - Password: AdminVerify2024!
+   - Roles: ["people_admin"] (updated from ["admin"] per D-AAVD drift fix)
+   - Status: active
+   - Used in: ALL tests (admin JWT minted via real sign-in HTTP call)
+
+2. Provider sandbox fixture:
+   - File: data/verification/admin_ai/providers/litellm_verification.json
+   - credential_plain: null (no credential seeded — tests create providers via POST endpoint directly)
+   - Observed in live DB: "litellm_verification_sandbox" row visible in GET /providers response
+   - has_credentials: false (consistent with null credential_plain)
+
+### Data provided/used in tests
+
+- Admin user created directly in DB via conftest (not via bootstrap) with role assignment to people_admin
+- Employee user created directly in DB via conftest for negative RBAC tests
+- ENCRYPTION_KEY: freshly generated Fernet key per test session (not in env for live server)
+- Providers and models created via endpoint calls within test transactions; cleaned up by fixture teardown
+
+### Persisted data observed
+
+- ai_providers: test rows created and removed within each test (T25 confirms count=0 after suite)
+- ai_provider_credentials: encrypted_secret != secret_plain, verified in T05 via decrypt_secret
+- audit_logs: admin.ai.provider.create and admin.ai.model.update rows written (T05, T17)
+- Live DB (from GET /providers curl): litellm_verification_sandbox row from bootstrap seed
+
+### Observation: ENCRYPTION_KEY not set in live server environment
+
+- POST /providers returns 500 INTERNAL_ERROR on live server because ENCRYPTION_KEY env var is missing
+- This is a runtime config gap affecting manual curl smoke only
+- Tests are NOT affected (conftest generates and sets a valid Fernet key)
+- Not an in-scope code defect: the encryption code is correct and tests prove it
+- Resolution: operator must set ENCRYPTION_KEY=<fernet_key> in the uvicorn process environment

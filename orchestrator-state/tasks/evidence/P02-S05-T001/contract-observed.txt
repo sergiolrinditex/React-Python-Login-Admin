@@ -1,0 +1,50 @@
+## Contract Observed — P02-S05-T001 (Tester Cycle 2)
+
+### Routes / Endpoints (observed via curl + pytest)
+
+| Endpoint | Method | HTTP Status (observed) | Auth | Notes |
+|----------|--------|----------------------|------|-------|
+| /api/v1/admin/ai/providers | GET | 200 | Bearer (admin) | Returns list with meta.request_id |
+| /api/v1/admin/ai/providers | POST | 500 | Bearer (admin) | Live server only: ENCRYPTION_KEY missing in env. Tests: 201 pass. |
+| /api/v1/admin/ai/models | GET | 200 | Bearer (admin) | Returns empty list (no models seeded in live DB) |
+| /api/v1/admin/ai/models/{id} | PATCH | 404 | Bearer (admin) | Non-existent id → AI_MODEL_NOT_FOUND |
+| /api/v1/admin/ai/providers | GET | 401 | invalid token | AUTH_SESSION_EXPIRED correct |
+
+### API Client / DTO observed
+
+- Request: CreateProviderRequest (provider_type, name, base_url?, credentials: ProviderCredentialsInput)
+- Request: UpdateModelRequest (enabled?, is_default?)
+- Response: ProviderOut (id, name, provider_type, base_url, status, created_by, has_credentials, credential_auth_type, expires_at)
+- Response: ModelOut (id, provider_id, model_id, model_type, capabilities, enabled, is_default, pricing, latency_ms_avg)
+- Envelope: {"data": ..., "meta": {"request_id": "..."}} — confirmed in T24 and curl
+
+### Module/subpackage structure observed (after §D-AASPLIT)
+
+- backend/app/admin/__init__.py — package, re-exports admin_router
+- backend/app/admin/_audit.py — shared _write_admin_ai_audit helper
+- backend/app/admin/providers/__init__.py — re-exports providers_router
+- backend/app/admin/providers/router.py — GET/POST handlers
+- backend/app/admin/providers/service.py — _create_provider orchestration
+- backend/app/admin/providers/repository.py — _list_providers, _create_provider_db
+- backend/app/admin/providers/schemas.py — ProviderOut, CreateProviderRequest, ProviderCredentialsInput
+- backend/app/admin/providers/audit.py — calls _write_admin_ai_audit
+- backend/app/admin/model_catalog/__init__.py — re-exports models_router
+- backend/app/admin/model_catalog/router.py — GET/PATCH handlers
+- backend/app/admin/model_catalog/service.py — _update_model orchestration
+- backend/app/admin/model_catalog/repository.py — _list_models, _get_model, _update_model_db
+- backend/app/admin/model_catalog/schemas.py — ModelOut, UpdateModelRequest
+- backend/app/admin/model_catalog/audit.py — calls _write_admin_ai_audit
+
+### DB tables observed
+
+- ai_providers: INSERT on POST, SELECT on GET
+- ai_provider_credentials: INSERT on POST (encrypted_secret, auth_type, expires_at)
+- ai_models: SELECT on GET, UPDATE on PATCH (enabled, is_default)
+- audit_logs: INSERT on POST providers (admin.ai.provider.create) and PATCH models (admin.ai.model.update)
+
+### Security deps observed
+
+- app.security.encryption.encrypt_secret (Fernet AEAD) — used in providers/repository.py
+- app.security.permissions.require_admin (RBAC) — wired on all 4 endpoints via Depends
+- app.security.rate_limit.RateLimiter — wired on POST /providers only (ADMIN_AI prefix)
+- app.db.session.audit_session_scope — used in _audit._write_admin_ai_audit

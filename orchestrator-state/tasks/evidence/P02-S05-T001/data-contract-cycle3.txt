@@ -1,0 +1,33 @@
+## Verification Data Contract used (cycle 3)
+
+Source: docs/source-of-truth/*_TECHNICAL_GUIDE.md §6.5 Verification Data Contract J103
+
+Rows used:
+- Persona: admin.peopletech@inditex-sandbox.com (data/verification/users/admin_peopletech.json)
+  - Password: AdminVerify2024!
+  - Role assigned: people_admin (SQL-seeded after bootstrap: bootstrap does not assign roles from fixture)
+  - User ID: 70903d1e-279a-4f24-aab1-96c4b1fc6043
+
+- Provider sandbox: data/verification/admin_ai/providers/litellm_verification.json
+  - Name: litellm_verification_sandbox
+  - credential_plain: null (no credential row inserted by bootstrap; fixture has no credential)
+  - Loaded by bootstrap: yes (1 provider row, 0 credential rows)
+
+Data setup steps (cycle 3):
+1. Confirmed DB at alembic head=0002 (34 tables)
+2. Ran: python3 -m app.verification_data.bootstrap --source data/verification (full bootstrap)
+3. SQL-seeded canonical roles (employee, people_admin, people_auditor, super_admin)
+4. SQL-assigned people_admin to admin user (bootstrap does not assign roles from fixture)
+5. Started uvicorn with ENCRYPTION_KEY=<valid_fernet_key> ENABLE_VERBOSE_LOGGING=true
+
+Persisted data observed (post curl smoke):
+- ai_providers: 3 rows (1 from bootstrap, 2 from tester curl smoke)
+- ai_provider_credentials: 2 rows (both from tester curl smoke; encrypted_secret = gAAA... Fernet tokens)
+- audit_logs: admin.ai.provider.create present for each curl smoke POST
+- ai_models: 0 rows (no models seeded in this session)
+
+Verification data contract check:
+- credential_plain null in fixture → no credential seeded by bootstrap (CONFIRMED)
+- tester created providers directly via POST endpoint (CONFIRMED)
+- encrypted_secret is Fernet token (starts gAAA...) not plaintext (CONFIRMED)
+- audit log has admin.ai.provider.create action (CONFIRMED)

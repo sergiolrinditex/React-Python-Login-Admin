@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-05-13T10:20:04+00:00",
+  "generated_at": "2026-05-13T10:29:12+00:00",
   "next_ready_phase_id": "P02",
   "next_ready_task_id": "P02-S05-T001",
-  "last_worker": "tester",
+  "last_worker": "closer",
   "last_event": "subagent_stop",
   "pending_journey_verifications": [],
   "last_journey_verified": null,
@@ -14,7 +14,7 @@
     "agent:developer": 20,
     "agent:validator": 34,
     "agent:tester": 31,
-    "agent:closer": 21,
+    "agent:closer": 23,
     "P00-S02-T004": 6,
     "P01-S02-T001": 8,
     "P01-S02-T002": 8,
@@ -34,7 +34,7 @@
     "P01-S03-T002": 11,
     "P02-S02-T001": 8,
     "P02-S01-T001": 6,
-    "P02-S03-T001": 10,
+    "P02-S03-T001": 12,
     "P02-S05-T001": 7,
     "P02-S02-T002": 5
   },
@@ -148,25 +148,32 @@
     },
     {
       "id": "FU-20260513094006-restore-stack-specific-dev-restart-profile-sh-br",
-      "status": "proposed",
+      "status": "promoted",
       "severity": "high",
       "origin_task_id": "P02-S03-T001",
       "title": "restore stack-specific dev-restart.profile.sh broken by framework refactor c4c91ae",
       "path": "orchestrator-state/tasks/follow-ups/FU-20260513094006-restore-stack-specific-dev-restart-profile-sh-br.yaml",
       "created_at": "2026-05-13T09:40:06+00:00",
       "scope_classification": "out_of_scope",
-      "why_not_debugger": "El commit framework-refactor c4c91ae redujo scripts/dev-restart.profile.sh de 390 LOC funcionales a 41 LOC de stubs neutrales (back_start/front_start/db_reset todos llaman fail()). El bug NO está en el write_set de P02-S03-T001 (backend/app/chat/** + main.py + tests). Fix correcto: slice dedicada que reintroduzca el profile stack-specific desde commit ec801a4 (P01-S02-T008) y lo armonice con el nuevo STACK_PROFILE.yaml refactorizado. Esto excede write_set y conflict_group de cualquier slice activa."
+      "why_not_debugger": "El commit framework-refactor c4c91ae redujo scripts/dev-restart.profile.sh de 390 LOC funcionales a 41 LOC de stubs neutrales (back_start/front_start/db_reset todos llaman fail()). El bug NO está en el write_set de P02-S03-T001 (backend/app/chat/** + main.py + tests). Fix correcto: slice dedicada que reintroduzca el profile stack-specific desde commit ec801a4 (P01-S02-T008) y lo armonice con el nuevo STACK_PROFILE.yaml refactorizado. Esto excede write_set y conflict_group de cualquier slice activa.",
+      "promoted_task_id": "P02-S03-T003"
     }
   ],
   "last_claimed_task_id": "P02-S02-T002",
   "last_trailer": {
-    "task_id": "P02-S05-T001",
-    "outcome": "pass",
-    "next_status": "ready_for_close",
-    "handoff": "orchestrator-state/tasks/handoffs/P02-S05-T001.md",
-    "evidence": "orchestrator-state/tasks/evidence/P02-S05-T001/"
+    "task_id": "P02-S03-T001",
+    "outcome": "committed",
+    "next_status": "done",
+    "handoff": "orchestrator-state/tasks/handoffs/P02-S03-T001.md",
+    "evidence": "orchestrator-state/tasks/evidence/P02-S03-T001/",
+    "report": "orchestrator-state/tasks/reports/P02-S03-T001.md",
+    "report_ready": "yes",
+    "baseline_sync_ready": "yes",
+    "git_ready": "yes",
+    "push_ready": "yes",
+    "worktrees_cleaned": "yes"
   },
-  "last_stop_at": "2026-05-13T10:20:04+00:00",
+  "last_stop_at": "2026-05-13T10:29:12+00:00",
   "last_claimed_phase_id": "P02",
   "last_followup_id": "FU-20260513094006-restore-stack-specific-dev-restart-profile-sh-br"
 }

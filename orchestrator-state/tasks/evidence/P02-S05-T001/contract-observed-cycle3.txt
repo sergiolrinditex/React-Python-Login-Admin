@@ -1,0 +1,38 @@
+## Contract observed (cycle 3) — Front → Back → DB
+
+Router/Endpoint observed via live uvicorn:
+- GET /api/v1/admin/ai/providers → 200 (admin bearer): data=list, meta.request_id present, no encrypted_secret
+- POST /api/v1/admin/ai/providers → 201 (admin bearer, valid payload): data=provider obj, has_credentials=True, no secret fields
+- GET /api/v1/admin/ai/providers → 200 (post-create, list grows by 1 each POST)
+- GET /api/v1/admin/ai/models → 200 (admin bearer): data=list (0 models), meta.request_id present
+- PATCH /api/v1/admin/ai/models/{fake_uuid} → 404 AI_MODEL_NOT_FOUND
+- GET /api/v1/admin/ai/providers (no bearer) → 401 AUTH_SESSION_EXPIRED
+- POST /api/v1/admin/ai/providers × 21 rapid → 21st gets 429 RATE_LIMITED
+
+OpenAPI paths registered:
+- /api/v1/admin/ai/models (GET)
+- /api/v1/admin/ai/models/{model_id} (PATCH)
+- /api/v1/admin/ai/providers (GET, POST)
+Total: 17 paths (3 admin paths including {model_id} variant)
+
+DB tables observed:
+- ai_providers: rows created and persisted
+- ai_provider_credentials: encrypted_secret stored as Fernet token (gAAA... prefix)
+- audit_logs: admin.ai.provider.create written for each successful POST
+- roles: employee, people_admin, people_auditor, super_admin (SQL-seeded)
+- user_roles: admin→people_admin assignment
+
+Security module chain observed:
+- app.security.permissions.require_admin (RBAC check logged)
+- app.security.rate_limit.RateLimiter (rate check logged, 429 on 21st)
+- app.security.encryption.encrypt_secret (encryption OK with valid Fernet key)
+- app.db.session.audit_session_scope (audit write via D-S2 independent session)
+
+Logging observed (ENABLE_VERBOSE_LOGGING=true):
+- BEFORE: admin.providers.router.list.start, admin.providers.create.start
+- AFTER: admin.providers.router.list.ok, admin.providers.create.ok
+- ERROR path: EncryptionKeyError logged (when placeholder key used)
+- NO credential leakage: 0 lines containing secret_plain/encrypted_secret in logs
+
+Logging observed (ENABLE_VERBOSE_LOGGING=false):
+- 0 lines in uvicorn output (only warning+error visible)

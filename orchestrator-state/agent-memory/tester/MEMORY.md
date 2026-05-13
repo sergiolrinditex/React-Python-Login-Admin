@@ -111,3 +111,29 @@
 - KEY LEARNING: docker binary is at ~/.rd/bin/docker (Rancher Desktop). Use `~/.rd/bin/docker exec <container> valkey-cli PING` for redis checks. `docker compose exec` with env vars not set gives confusing warnings — use `docker exec` with container name directly.
 - Evidence: orchestrator-state/tasks/evidence/P02-S02-T001/cycle-2/
 - Handoff: orchestrator-state/tasks/handoffs/P02-S02-T001.md
+
+### P02-S02-T002 — Fix module-level _JWT_KEY lazy getter (2026-05-13) — PASS
+- OUTCOME: pass (first run)
+- TESTS: 6/6 unit (test_auth_tokens.py T1–T5+T3b); 3/3 TestGetMeSecurityShape isolation; 18/18 test_security.py isolation; 24/24 all unit tests combined; full-suite 196 PASS / 54 FAIL (all 54 pre-existing, 0 new regressions)
+- CURL: GET /api/v1/users/me with Bearer token (admin.peopletech@inditex-sandbox.com) → HTTP 200 + UserProfile. JWT encode/decode end-to-end verified.
+- LOGGING: verbose=true shows `tokens.jwt_key.resolved bytes=48` + encode/decode BEFORE/AFTER; no key value. verbose=false: no debug output.
+- SECRET LEAK: actual JWT_PRIVATE_KEY value not found in any evidence file. Only byte-length logged.
+- KEY LEARNING: Developer baseline "234 PASS / 16 FAIL" was captured BEFORE P02-S03-T001 (chat) and P02-S05-T001 (admin_ai) added their test files. The tester full-suite run AFTER those slices shows 54 FAIL because 38 of those failures are from chat (14) and admin_ai (24) tests returning 404 — endpoints not mounted in main.py (those tasks are in validator_tester_pending). This is NOT a regression from T002. Classify correctly as pre-existing before escalating.
+- KEY LEARNING: TestPermissions in test_security.py fails in FULL SUITE when run after test_migrations_0001_auth.py::test_downgrade_removes_all_tables drops all tables. In isolation they pass (18/18). This is the pre-existing R1-T001-S02 issue — not caused by T002. Always confirm isolation results before declaring regression.
+- KEY LEARNING: The backend server may go DOWN during full test suite if migration downgrade tests corrupt schema. After the full suite, `curl -sf http://localhost:8000/health` may fail. This is acceptable — the tests use TestClient (ASGI) not the live server. Restore schema with alembic before curl smoke tests.
+- KEY LEARNING: Verification user employee.verification@inditex-sandbox.com has MFA enabled (mfa_primary.json enabled:true). Use admin.peopletech@inditex-sandbox.com (no MFA) for simple sign-in → Bearer → GET /me smoke tests.
+- KEY LEARNING: Import JWT_PRIVATE_KEY with `JWT_KEY=$(grep '^JWT_PRIVATE_KEY=' .env | head -1 | cut -d= -f2-)` then `JWT_PRIVATE_KEY="$JWT_KEY" python3 -m pytest ...`. Running pytest from inside `backend/` dir, the .env is in parent dir — source appropriately.
+- Evidence: orchestrator-state/tasks/evidence/P02-S02-T002/
+- Handoff: orchestrator-state/tasks/handoffs/P02-S02-T002.md
+
+### P02-S03-T001 — Chat conversation CRUD APIs (2026-05-13) — PASS (cycle 3)
+- OUTCOME: pass (cycle 3 focused recovery retest, post debugger cycle 2 main.py revert restoration)
+- TESTS: 14/14 chat PASS; 63/63 regression (auth_signin+users_me+mfa) PASS
+- CURL: T01 POST+initial_message→201; T02 POST empty→201+title=""; T03 language='de'→400+CHAT_INVALID_PAYLOAD; T04 GET list→200+pagination; T05 GET detail→200+messages+citations; T06 no auth→401+AUTH_SESSION_EXPIRED; T07 nonexistent UUID→404+CHAT_CONVERSATION_NOT_FOUND; T08 invalid cursor→400+CHAT_INVALID_CURSOR; T09 ownership→403+CHAT_CONVERSATION_FORBIDDEN; T10 pagination 25 convs 3 pages (10+10+5) disjoint ✓
+- LOGGING: verbose=on: 56 structured lines, uid_hash present, no PII; verbose=off: ONLY uvicorn access-log lines, zero app.chat.* or chat.routers.* lines
+- KEY LEARNING: To start backend with verbose=false for logging check: extract individual env vars from root .env with `grep '^VARNAME=' .env | cut -d= -f2-`, then pass them explicitly as env prefix to uvicorn: `cd backend && JWT_PRIVATE_KEY="$KEY" DATABASE_URL="$DB" ... ENABLE_VERBOSE_LOGGING=false python3 -m uvicorn app.main:app --port 8000`. The `set -a && source .env && set +a` trick from root dir doesn't work if uvicorn is run as `backend.app.main:app` (module path error); must cd into backend/ first. The `env $(grep -v '^#' .env | xargs)` trick doesn't handle multiline values (RSA keys span multiple lines and break xargs).
+- KEY LEARNING: For verbose=off check, sign in via POST /api/v1/auth/sign-in (hyphenated, NOT /auth/signin). The openapi.json reveals the correct paths at `/openapi.json`.
+- KEY LEARNING: admin_peopletech.json has `roles: ["people_admin"]` (not "admin") after P02-S02-T002 update. The email/password are unchanged: admin.peopletech@inditex-sandbox.com / AdminVerify2024!.
+- cross_slice_contamination: backend/app/auth/tokens.py + test_users_me.py + test_security.py + admin_peopletech.json belong to parallel P02-S02-T002 worker. Closer MUST path-scope git add to T001 write_set only.
+- Evidence: orchestrator-state/tasks/evidence/P02-S03-T001/tester_cycle_3/
+- Handoff: orchestrator-state/tasks/handoffs/P02-S03-T001.md

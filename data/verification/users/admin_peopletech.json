@@ -5,5 +5,5 @@
   "password_plain": "AdminVerify2024!",
   "status": "active",
   "preferred_language": "es",
-  "roles": ["admin"]
+  "roles": ["people_admin"]
 }

@@ -1,0 +1,30 @@
+2026-05-13 12:16:21,477 app.admin.providers.router DEBUG admin.providers.list.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=tester-c3-A
+2026-05-13 12:16:21,477 app.admin.providers.repository DEBUG admin.providers.repository.list.start
+2026-05-13 12:16:21,478 app.admin.providers.repository DEBUG admin.providers.repository.list.ok count=2
+2026-05-13 12:16:21,478 app.admin.providers.router DEBUG admin.providers.list.ok user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=tester-c3-A count=2
+2026-05-13 12:16:21,544 app.admin.providers.router DEBUG admin.providers.create.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 provider_type=anthropic name_len=19 request_id=tester-c3-B
+2026-05-13 12:16:21,544 app.admin.providers.service DEBUG admin.providers.service.create.start provider_type=anthropic name_len=19 request_id=tester-c3-B
+2026-05-13 12:16:21,544 app.admin.providers.repository DEBUG admin.providers.repository.create.start provider_type=anthropic name_len=19
+2026-05-13 12:16:21,557 app.admin.providers.repository DEBUG admin.providers.repository.create.ok provider_id=affd3ab1-251e-4e9d-9b41-18f178fb6f85
+2026-05-13 12:16:21,565 app.admin._audit DEBUG admin._audit.write.start actor=70903d1e-279a-4f24-aab1-96c4b1fc6043 action=admin.ai.provider.create entity_id=affd3ab1-251e-4e9d-9b41-18f178fb6f85
+2026-05-13 12:16:21,581 app.admin._audit DEBUG admin._audit.write.ok actor=70903d1e-279a-4f24-aab1-96c4b1fc6043 action=admin.ai.provider.create entity_id=affd3ab1-251e-4e9d-9b41-18f178fb6f85
+2026-05-13 12:16:21,581 app.admin.providers.service DEBUG admin.providers.service.create.ok provider_id=affd3ab1-251e-4e9d-9b41-18f178fb6f85 request_id=tester-c3-B
+2026-05-13 12:16:21,586 app.admin.providers.router DEBUG admin.providers.create.ok user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 provider_id=affd3ab1-251e-4e9d-9b41-18f178fb6f85 request_id=tester-c3-B
+2026-05-13 12:16:21,778 app.admin.providers.router DEBUG admin.providers.list.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=tester-c3-C
+2026-05-13 12:16:21,778 app.admin.providers.repository DEBUG admin.providers.repository.list.start
+2026-05-13 12:16:21,781 app.admin.providers.repository DEBUG admin.providers.repository.list.ok count=3
+2026-05-13 12:16:21,781 app.admin.providers.router DEBUG admin.providers.list.ok user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 request_id=tester-c3-C count=3
+2026-05-13 12:16:44,130 app.admin.providers.router DEBUG admin.providers.create.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 provider_type=openai name_len=11 request_id=rate-test-1
+2026-05-13 12:16:44,130 app.admin.providers.service DEBUG admin.providers.service.create.start provider_type=openai name_len=11 request_id=rate-test-1
+2026-05-13 12:16:44,130 app.admin.providers.repository DEBUG admin.providers.repository.create.start provider_type=openai name_len=11
+2026-05-13 12:16:44,135 app.admin.providers.repository DEBUG admin.providers.repository.create.ok provider_id=14eb5858-861f-4d3f-b11b-cdf778b8bb83
+2026-05-13 12:16:44,141 app.admin._audit DEBUG admin._audit.write.start actor=70903d1e-279a-4f24-aab1-96c4b1fc6043 action=admin.ai.provider.create entity_id=14eb5858-861f-4d3f-b11b-cdf778b8bb83
+2026-05-13 12:16:44,145 app.admin._audit DEBUG admin._audit.write.ok actor=70903d1e-279a-4f24-aab1-96c4b1fc6043 action=admin.ai.provider.create entity_id=14eb5858-861f-4d3f-b11b-cdf778b8bb83
+2026-05-13 12:16:44,145 app.admin.providers.service DEBUG admin.providers.service.create.ok provider_id=14eb5858-861f-4d3f-b11b-cdf778b8bb83 request_id=rate-test-1
+2026-05-13 12:16:44,147 app.admin.providers.router DEBUG admin.providers.create.ok user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 provider_id=14eb5858-861f-4d3f-b11b-cdf778b8bb83 request_id=rate-test-1
+2026-05-13 12:16:44,187 app.admin.providers.router DEBUG admin.providers.create.start user_id=70903d1e-279a-4f24-aab1-96c4b1fc6043 provider_type=openai name_len=11 request_id=rate-test-2
+2026-05-13 12:16:44,187 app.admin.providers.service DEBUG admin.providers.service.create.start provider_type=openai name_len=11 request_id=rate-test-2
+2026-05-13 12:16:44,187 app.admin.providers.repository DEBUG admin.providers.repository.create.start provider_type=openai name_len=11
+2026-05-13 12:16:44,190 app.admin.providers.repository DEBUG admin.providers.repository.create.ok provider_id=f62cf63a-7114-476b-ad53-86ca4d8d6d8c
+2026-05-13 12:16:44,194 app.admin._audit DEBUG admin._audit.write.start actor=70903d1e-279a-4f24-aab1-96c4b1fc6043 action=admin.ai.provider.create entity_id=f62cf63a-7114-476b-ad53-86ca4d8d6d8c
+2026-05-13 12:16:44,199 app.admin._audit DEBUG admin._audit.write.ok actor=70903d1e-279a-4f24-aab1-96c4b1fc6043 action=admin.ai.provider.create entity_id=f62cf63a-7114-476b-ad53-86ca4d8d6d8c

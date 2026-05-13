@@ -1,0 +1,14 @@
+{
+    "data": null,
+    "meta": {
+        "request_id": "tester-cycle2-smoke-002"
+    },
+    "errors": [
+        {
+            "code": "INTERNAL_ERROR",
+            "message": "Failed to create provider.",
+            "field": null,
+            "details": null
+        }
+    ]
+}

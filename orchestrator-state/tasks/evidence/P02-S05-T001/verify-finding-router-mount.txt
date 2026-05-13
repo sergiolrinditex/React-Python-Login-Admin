@@ -1,0 +1,44 @@
+P02-S05-T001 VERIFY-SLICE — primary finding
+============================================
+
+Status: ISSUES FOUND (router mount missing in main.py)
+
+Evidence
+--------
+- Backend up: PID see back.pid, /health 200, uptime fresh
+- Schema: head=0002, 34 tables, ai_providers/ai_provider_credentials/ai_models present
+- Admin user role assignment correct:
+    SELECT r.name FROM user_roles ur JOIN roles r ON r.id=ur.role_id
+    JOIN users u ON u.id=ur.user_id
+    WHERE u.email='admin.peopletech@inditex-sandbox.com';
+    => [('people_admin',)]
+- Sign-in works, JWT claim roles: ['people_admin']
+- BUT admin endpoints return 404:
+    curl -H "Authorization: Bearer $TOKEN" http://localhost:8000/api/v1/admin/ai/providers
+    => HTTP 404 {"detail":"Not Found"}
+    curl -H "Authorization: Bearer $TOKEN" http://localhost:8000/api/v1/admin/ai/models
+    => HTTP 404 {"detail":"Not Found"}
+- OpenAPI has 14 paths total, NONE matching /admin/ai/*
+- git diff backend/app/main.py shows it includes chat_router (P02-S03-T001) but NOT admin_router (P02-S05-T001)
+- backend/app/admin/ exists (untracked) with __init__.py exposing admin_router correctly
+
+Root cause
+----------
+backend/app/main.py is missing the 2 lines that WRITE_SET_DRIFT §D-AAM declared:
+    from app.admin import admin_router  # P02-S05-T001 WRITE_SET_DRIFT §D-AAM
+    app.include_router(admin_router, prefix="/api/v1/admin/ai", tags=["admin-ai"])
+
+This is an in-scope defect for debugger (2-line wiring fix in main.py).
+The §D-AAM WRITE_SET_DRIFT was already declared in handoff section §Files added.
+Validator cycle 1 reported "main.py mount present" — that observation no longer holds in
+the current working tree. Cycle-2 tester showed curl smoke 200 OK against /admin/ai/* —
+indicating the mount existed at some point in cycle 2 but is absent now (possibly
+overwritten by a subsequent edit that did not preserve the §D-AAM lines).
+
+Secondary observation
+---------------------
+data/verification/users/admin_peopletech.json on disk shows "roles": ["admin"]
+(NOT "people_admin" as handoff §D-AAVD claimed). git diff is empty.
+Impact: low — load_admin_users does not assign roles from this fixture (verified empirically
+by the bootstrap output and by the lack of user_role rows after bootstrap). Tests + verify
+seed role assignments directly via SQL (this verify-slice did it manually).

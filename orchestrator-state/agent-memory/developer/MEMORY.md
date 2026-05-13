@@ -687,4 +687,44 @@
 
 **P-check-constraints-naming**: SQLAlchemy's naming_convention `"ck": "ck_%(table_name)s_%(constraint_name)s"` automatically prefixes CHECK constraint names. If you pass `name="documents_language_chk"` to `sa.CheckConstraint`, the DB stores it as `ck_documents_documents_language_chk`. Tests should query by functional behavior, not constraint name.
 
+## P02-S03-T001 — Chat Conversation CRUD patterns (2026-05-13)
+
+### P-21: FastAPI session.begin() anti-pattern
+
+- `get_db_session` yields a session with `autocommit=False`. The `get_current_user` dependency issues a SELECT as the first query, which implicitly starts a transaction on the session.
+- Calling `with session.begin()` AFTER the session already has an active transaction raises "A transaction is already begun on this Session."
+- **Fix**: Always call `session.commit()` directly in the router AFTER the service call. Do NOT use `with session.begin()` inside a FastAPI endpoint that uses `get_db_session`.
+- Pattern used by auth module (sign-in service.execute() calls session.commit() at end) is the canonical approach.
+
+### P-22: Cursor pagination base64url pattern
+
+- Cursor = `base64url(f"{updated_at_iso}|{uuid}")` — no padding, URL-safe.
+- Restore padding: `cursor + "=" * (4 - len(cursor) % 4)` (but only when `len % 4 != 0`).
+- Updated_at normalization: `datetime.fromisoformat(ts.replace("Z", "+00:00"))` (Python 3.10-compat).
+- WHERE clause for DESC cursor: `(updated_at < cursor_updated_at) OR (updated_at == cursor_updated_at AND id < cursor_id)`.
+- Always use `limit+1` query: if `len(rows) > limit`, set `has_more=True`, discard `rows[limit]`, build `next_cursor` from `rows[-1]` (the last RETURNED row, not the discarded one).
+
+### P-23: Chat module ORM attachment pattern (avoiding model mutation)
+
+- To avoid mutating the ORM models from P02-S01-T001 (which are READ-ONLY in T001), attach related rows as plain Python attributes: `conv._messages = messages_list`, `conv._citations = citations_list`.
+- Access with `getattr(conv, "_messages", [])` in the service/router to be defensive.
+- This avoids defining SQLAlchemy `relationship()` on the model, which would require touching the original model file.
+
+### P-24: Integration test token minting for employees
+
+- `encode_access_token(user: User)` takes a User ORM object, not keyword args.
+- For test helpers that don't have a live ORM User: mint tokens directly via `jwt.encode(payload, JWT_PRIVATE_KEY, algorithm=JWT_ALGORITHM)`.
+- Required payload fields: `sub, email, roles, preferred_language, employee_profile_id, jti, iat, exp`.
+- Mirror the `_mint_access_token` pattern from `test_users_me.py`.
+
+### P-25: EmployeeProfile required fields for test user creation
+
+- `employee_profiles` table has NOT NULL constraints on: `brand, society, center, country, department`.
+- When creating test users, always provide these fields: `brand="Zara", society="ITX", center="C001", country="ES", department="HR"` (or any non-null values).
+- Forgetting these causes `psycopg.errors.NotNullViolation` on test setup.
+
+| Slice | Outcome | Key files touched |
+|-------|---------|-------------------|
+| P02-S03-T001 | developer done (pending validator+tester+verify-slice) | backend/app/chat/** (11 new files) + backend/tests/integration/test_chat_conversations.py + backend/app/main.py (+2 lines) |
+
 **P-hook-worktree-blocks**: The write scope guard in `hook_write_scope_guard.py` blocks `Write`/`Edit`/`MultiEdit` tools for paths that resolve to `.claude/worktrees/...` (treated as `.claude/` static config). Always use `Bash` with `cat > file << 'EOF'` heredoc or Python `open(path, 'w').write(...)` for all worktree file creation/editing.

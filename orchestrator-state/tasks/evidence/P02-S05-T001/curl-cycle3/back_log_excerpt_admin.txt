@@ -1,0 +1,15 @@
+2026-05-13 12:22:58,039 app.admin.providers.router DEBUG admin.providers.create.ok user_id=103c5542-8e87-48d2-a51c-1d3bc7d4e011 provider_id=1ba2f515-8c5d-422f-a4c1-dbe608a953d3 request_id=v3-H-13
+2026-05-13 12:22:58,085 app.admin.providers.router DEBUG admin.providers.create.start user_id=103c5542-8e87-48d2-a51c-1d3bc7d4e011 provider_type=openai name_len=10 request_id=v3-H-14
+2026-05-13 12:22:58,096 app.admin.providers.router DEBUG admin.providers.create.ok user_id=103c5542-8e87-48d2-a51c-1d3bc7d4e011 provider_id=55284b83-3c46-48d9-b0ff-f876fd486082 request_id=v3-H-14
+2026-05-13 12:22:58,131 app.admin.providers.router DEBUG admin.providers.create.start user_id=103c5542-8e87-48d2-a51c-1d3bc7d4e011 provider_type=openai name_len=10 request_id=v3-H-15
+2026-05-13 12:22:58,140 app.admin.providers.router DEBUG admin.providers.create.ok user_id=103c5542-8e87-48d2-a51c-1d3bc7d4e011 provider_id=9e4104fc-ad74-457f-9ef3-d32addf2ac15 request_id=v3-H-15
+2026-05-13 12:22:58,171 app.admin.providers.router DEBUG admin.providers.create.start user_id=103c5542-8e87-48d2-a51c-1d3bc7d4e011 provider_type=openai name_len=10 request_id=v3-H-16
+2026-05-13 12:22:58,186 app.admin.providers.router DEBUG admin.providers.create.ok user_id=103c5542-8e87-48d2-a51c-1d3bc7d4e011 provider_id=1103e275-19e7-4a02-bdd6-368ca4bd09e9 request_id=v3-H-16
+2026-05-13 12:22:58,218 app.admin.providers.router DEBUG admin.providers.create.start user_id=103c5542-8e87-48d2-a51c-1d3bc7d4e011 provider_type=openai name_len=10 request_id=v3-H-17
+2026-05-13 12:22:58,232 app.admin.providers.router DEBUG admin.providers.create.ok user_id=103c5542-8e87-48d2-a51c-1d3bc7d4e011 provider_id=39b4dbfd-3ab0-47aa-80e5-4772d560d2a9 request_id=v3-H-17
+2026-05-13 12:22:58,263 app.admin.providers.router DEBUG admin.providers.create.start user_id=103c5542-8e87-48d2-a51c-1d3bc7d4e011 provider_type=openai name_len=10 request_id=v3-H-18
+2026-05-13 12:22:58,275 app.admin.providers.router DEBUG admin.providers.create.ok user_id=103c5542-8e87-48d2-a51c-1d3bc7d4e011 provider_id=9cc7c4cd-785c-44e2-86a7-edbccf24438f request_id=v3-H-18
+2026-05-13 12:22:58,305 app.admin.providers.router DEBUG admin.providers.create.start user_id=103c5542-8e87-48d2-a51c-1d3bc7d4e011 provider_type=openai name_len=10 request_id=v3-H-19
+2026-05-13 12:22:58,347 app.admin.providers.router DEBUG admin.providers.create.ok user_id=103c5542-8e87-48d2-a51c-1d3bc7d4e011 provider_id=2801a02e-e335-4719-bb53-84ffc481ea8e request_id=v3-H-19
+2026-05-13 12:24:21,751 app.admin.providers.router DEBUG admin.providers.create.start user_id=103c5542-8e87-48d2-a51c-1d3bc7d4e011 provider_type=openai name_len=8 request_id=3ec64ccc-ba6b-4066-9043-e17c19183f24
+2026-05-13 12:24:21,767 app.admin.providers.router DEBUG admin.providers.create.ok user_id=103c5542-8e87-48d2-a51c-1d3bc7d4e011 provider_id=df8d64c3-982b-476a-8c33-5738baa72a2d request_id=3ec64ccc-ba6b-4066-9043-e17c19183f24

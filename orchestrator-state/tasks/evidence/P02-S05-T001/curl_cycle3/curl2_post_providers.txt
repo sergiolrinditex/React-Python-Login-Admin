@@ -1,0 +1,1 @@
+{"data":{"id":"3464295c-52e8-495d-8cc2-6d971e747e39","name":"tester-c3-live-openai","provider_type":"openai","base_url":null,"status":"draft","created_by":"70903d1e-279a-4f24-aab1-96c4b1fc6043","has_credentials":true,"credential_auth_type":"api_key","expires_at":null},"meta":{"request_id":"tester-c3-final-post1"}}

@@ -1,0 +1,1 @@
+{"data":[{"id":"2bdbdc29-dbb6-407f-a6aa-c69913861386","name":"litellm_verification_sandbox","provider_type":"litellm","base_url":"http://localhost:4000","status":"active","created_by":null,"has_credentials":false,"credential_auth_type":null,"expires_at":null}],"meta":{"request_id":"tester-c3-curl1"}}

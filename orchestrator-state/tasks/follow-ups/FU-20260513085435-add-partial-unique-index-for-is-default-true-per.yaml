@@ -1,0 +1,50 @@
+{
+  "id": "FU-20260513085435-add-partial-unique-index-for-is-default-true-per",
+  "schema_version": 1,
+  "status": "proposed",
+  "created_at": "2026-05-13T08:54:35+00:00",
+  "created_by": "sergiolr",
+  "origin_task_id": "P02-S05-T001",
+  "origin_phase_id": "P02",
+  "origin_step_id": "P02-S05",
+  "kind": "bug",
+  "product_increment": "current",
+  "build_state": "planned",
+  "severity": "medium",
+  "title": "Add partial unique index for is_default=true per model_type in ai_models",
+  "description": "The at-most-one-default-per-model_type invariant (D-DEF1) is currently enforced at application layer only in PATCH /models/{id}. The TECHNICAL_GUIDE §10.3 does not declare a partial unique index for this constraint. A DB-level constraint (CREATE UNIQUE INDEX ai_models_default_per_type_uidx ON ai_models(model_type) WHERE is_default = true) would make the invariant race-safe under concurrent PATCH requests and is the canonical production pattern per 01-non-negotiables.md §Security (External provider keys). Requires new migration 0003.",
+  "journey_refs": [],
+  "screen_route": "—",
+  "endpoint": "—",
+  "tables": [],
+  "depends_on": [
+    "P02-S05-T001"
+  ],
+  "conflict_groups": [
+    "api:admin-ai"
+  ],
+  "write_set": [
+    "backend/app/admin/providers.py",
+    "backend/app/admin/model_catalog.py",
+    "backend/tests/integration/test_admin_ai.py"
+  ],
+  "acceptance": [
+    "Migration 0003 with partial unique index applied",
+    "existing integration tests (T18) still pass",
+    "a concurrent-PATCH test proves the DB rejects the second concurrent SET is_default=true for same model_type."
+  ],
+  "verify": [
+    "Run pytest backend/tests/integration -k admin_ai_models",
+    "try concurrent PATCHes setting is_default=true on two models of same type",
+    "verify DB raises unique_violation instead of silently allowing two defaults."
+  ],
+  "notes": [],
+  "triage": {
+    "scope_classification": "missing_coverage",
+    "why_not_debugger": "Requires a new Alembic migration file (0003) to add a partial unique index: CREATE UNIQUE INDEX ai_models_default_per_type_uidx ON ai_models(model_type) WHERE is_default = true. This is a DB schema change outside the P02-S05-T001 write set (backend/app/admin/providers.py, model_catalog.py, tests/integration/test_admin_ai.py). Cannot be fixed by debugger within current task pack.",
+    "decision": "followup_only_when_outside_current_slice",
+    "debugger_path": "in_scope_defects_use_validator_tester_debugger_retest",
+    "warnings": []
+  },
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260513085435-add-partial-unique-index-for-is-default-true-per.yaml"
+}
