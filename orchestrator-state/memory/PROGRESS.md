@@ -6,7 +6,7 @@
 
 ## Current State
 
-- **Phase**: Phase 2 — Core Features (P02-S05-T001 developer done 2026-05-13)
+- **Phase**: Phase 2 — Core Features (P02-S07-T001 developer done 2026-05-13)
 - **Last completed slices**:
   - P00-S01-T001 — Repo scaffold + scripts + env (done)
   - P00-S01-T002 — Frontend dependency pack (done)
@@ -33,7 +33,8 @@
   - **P01-S03-T002 — Cross-origin infra: vite proxy /api → uvicorn (Strategy A, ADR-002) — DONE 2026-05-13**
   - **P02-S03-T001 — Chat conversation CRUD endpoints (developer done, 2026-05-13)**
   - **P02-S05-T001 — Admin AI providers and models endpoints — debugger cycle 1 done, 2026-05-13. Architecture split (§D-AASPLIT) applied: `app/admin/providers/{__init__,router,service,repository,schemas,audit}.py` + `app/admin/model_catalog/{__init__,router,service,repository,schemas,audit}.py` + shared `app/admin/_audit.py`. Max file 230 LoC (was 590). Test fixture self-seeds roles. 25/25 tests PASS both verbose=true and verbose=false.**
-- **Next pending slice**: validator_tester_pending for P02-S05-T001 (re-validation after debugger cycle 1); P03-S01-T001 (SignInPage) also ready
+  - **P02-S07-T001 — MCP server and tool endpoints — developer done 2026-05-13. New module `app/mcp/**` (15 files, max 276 LoC). 4 endpoints (GET/POST /servers, POST /sync, PATCH /tools). WRITE_SET_DRIFT §D-MCPWIRE (app/admin/__init__.py, +3 lines). 25/25 tests PASS both verbose=true and verbose=false.**
+- **Next pending slice**: validator_tester_pending for P02-S07-T001; P02-S05-T001 validator_tester_pending; P03-S01-T001 (SignInPage) also ready
 - **Blockers**: none
 - **Generated at**: 2026-05-13T11:30:00+02:00 (updated by developer P02-S05-T001)
 
@@ -95,11 +96,12 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 | Users endpoints | 2 implemented (T007) | GET /api/v1/users/me (returns UserProfile + employee_profile), PATCH /api/v1/users/me/language (returns 200 + full body; whitelist es/en/fr; audit log) |
 | Chat endpoints | 3 implemented (P02-S03-T001) | GET /api/v1/chat/conversations (list, cursor pagination D-PAG1), POST /api/v1/chat/conversations (create, atomic D-TX1), GET /api/v1/chat/conversations/{id} (detail with messages+citations, ownership 403/404) |
 | Admin AI endpoints | 4 implemented (P02-S05-T001) | GET /api/v1/admin/ai/providers (list, masked creds), POST /api/v1/admin/ai/providers (create+encrypt, rate-limit, audit), GET /api/v1/admin/ai/models (list, provider_id filter), PATCH /api/v1/admin/ai/models/{id} (partial update, D-DEF1 default invariant, audit) |
-| Endpoints implemented | 19 | GET /health, GET /live, GET /ready, POST /api/v1/auth/sign-up, POST /api/v1/auth/sign-in, POST /api/v1/auth/refresh, POST /api/v1/auth/logout, POST /api/v1/auth/forgot-password, POST /api/v1/auth/reset-password, POST /api/v1/auth/2fa/verify, GET /api/v1/users/me, PATCH /api/v1/users/me/language, GET /api/v1/chat/conversations, POST /api/v1/chat/conversations, GET /api/v1/chat/conversations/{id}, GET /api/v1/admin/ai/providers, POST /api/v1/admin/ai/providers, GET /api/v1/admin/ai/models, PATCH /api/v1/admin/ai/models/{id} |
+| Admin MCP endpoints | 4 implemented (P02-S07-T001) | GET /api/v1/admin/ai/mcp/servers (list), POST /api/v1/admin/ai/mcp/servers (register+encrypt, allowlist, rate-limit, audit), POST /api/v1/admin/ai/mcp/servers/{id}/sync (discover tools, D-SYNC1, audit), PATCH /api/v1/admin/ai/mcp/tools/{id} (partial update, audit) |
+| Endpoints implemented | 23 | GET /health, GET /live, GET /ready, POST /api/v1/auth/sign-up, POST /api/v1/auth/sign-in, POST /api/v1/auth/refresh, POST /api/v1/auth/logout, POST /api/v1/auth/forgot-password, POST /api/v1/auth/reset-password, POST /api/v1/auth/2fa/verify, GET /api/v1/users/me, PATCH /api/v1/users/me/language, GET /api/v1/chat/conversations, POST /api/v1/chat/conversations, GET /api/v1/chat/conversations/{id}, GET /api/v1/admin/ai/providers, POST /api/v1/admin/ai/providers, GET /api/v1/admin/ai/models, PATCH /api/v1/admin/ai/models/{id}, GET /api/v1/admin/ai/mcp/servers, POST /api/v1/admin/ai/mcp/servers, POST /api/v1/admin/ai/mcp/servers/{id}/sync, PATCH /api/v1/admin/ai/mcp/tools/{id} |
 | Migrations applied | 2 (head=0002) | 0001: 9 auth tables. 0002: 25 tables (conversations, messages, message_citations, documents, document_chunks, document_embeddings, rag_collections, vectorization_jobs, ai_providers, ai_provider_credentials, ai_models, ai_model_tests, llm_usage_logs, mcp_servers, mcp_tools, mcp_resources, mcp_prompts, mcp_credentials, mcp_approvals, mcp_tool_invocations, agents, agent_runs, mcp_agent_bindings) |
 | Seed data | loader.py fixed (P00-S02-T004); bootstrap ready; dev-restart --reset self-contained (T008) | FU-20260511145446 resolved — CAST(:meta AS JSONB) + json.dumps(). T008 fix: absolute --source path + hard-fail. data/verification/users/admin_peopletech.json: roles updated "admin"→"people_admin" (WRITE_SET_DRIFT §D-AAVD). |
-| Backend tests | 174 passing (25 new admin AI) | +25 from test_admin_ai.py (T01–T25 all PASS); 25/25 in isolation. Pre-existing: test_auth_signin + test_auth_logout have JWT-key ordering failures when run first (pre-existing, unrelated to this slice). |
-| Backend dependencies | declared + installed | pyproject.toml: 29 packages pinned (no new deps added — P02-S05-T001 uses only existing cryptography+redis) |
+| Backend tests | 199 passing (+25 MCP registry) | +25 from test_mcp_registry.py (T01–T25 all PASS both verbose=true and verbose=false). Pre-existing: test_auth_signin + test_auth_logout have JWT-key ordering failures when run first (pre-existing, unrelated to this slice). |
+| Backend dependencies | declared + installed | pyproject.toml: 29 packages pinned (no new deps added — P02-S07-T001 uses existing httpx+cryptography+redis) |
 | Lint (ruff) | clean | 0 issues |
 | Fernet usage (P02-S05-T001) | encrypt_secret on POST /providers; decrypt not exposed to API | Audit actions: admin.ai.provider.create, admin.ai.model.update. D-DEF1: at-most-one is_default=true per model_type enforced at app layer. FU-20260513085435: DB-level partial unique index proposed (medium, non-blocking). |
 
@@ -195,7 +197,7 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 | Level | Count | Status |
 |-------|-------|--------|
 | Backend unit | 0 | — |
-| Backend integration | 153 | PASS in isolation (health 11 + dep smoke 20 + migrations 6 + dev restart 2 + bootstrap 9 + auth signup 9 + auth signin 16 + auth refresh 14 + auth logout 15 + password reset 21 — T005 + MFA 16 — T006 + chat conversations 14 — P02-S03-T001) — NOTE: full-suite (all at once) = 117/22 due to migration downgrade ordering; chat isolation = 14/14 PASS |
+| Backend integration | 178 | PASS in isolation (health 11 + dep smoke 20 + migrations 6 + dev restart 2 + bootstrap 9 + auth signup 9 + auth signin 16 + auth refresh 14 + auth logout 15 + password reset 21 — T005 + MFA 16 — T006 + chat conversations 14 — P02-S03-T001 + MCP registry 25 — P02-S07-T001) — NOTE: full-suite (all at once) has migration downgrade ordering issue (pre-existing) |
 | Compose orchestration smoke | 11 | PASS (T1–T8 tester + verify cycle 1+2 + minio-init bucket) |
 | Frontend unit | 0 | — |
 | Frontend component | 91 | PASS (providers 4 + design-system 34 + showcase 4 + i18n 16 + auth 33) |
@@ -286,6 +288,8 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 - **2026-05-13 (P01-S03-T002)**: ADR-002 §Contexto precise terminology: `localhost:5173` and `localhost:8000` are **same-site** (port ignored in eTLD+1 determination); `SameSite=Lax` was never the cookie blocker. The real blocker was the CORS preflight (OPTIONS → 405, independent mechanism). Strategy A collapses to same-origin and removes the preflight entirely.
 - **2026-05-13 (P01-S03-T002)**: K.4 (SSE streaming) noted: vite proxy preserves chunked transfer by default but P02-S04 `POST /api/v1/chat/conversations/{id}/stream` should verify SSE through proxy explicitly. Deferred to P02 planner.
 
+> Last updated: 2026-05-13T14:30:00+02:00
+> Updated by: developer — P02-S07-T001 MCP server and tool endpoints — 4 new endpoints + new module `app/mcp/**` (15 files, max 276 LoC). 25/25 tests PASS (both verbose modes). WRITE_SET_DRIFT §D-MCPWIRE (app/admin/__init__.py +3 lines). 23 endpoints total. (developer done, pending validator+tester+verify-slice)
 > Last updated: 2026-05-13T12:00:00+02:00
 > Updated by: closer — P01-S03-T002 cross-origin infra (vite proxy /api → uvicorn, Strategy A, ADR-002) — verified + committed. J100-J105 unblocked. Next: P03-S01-T001 SignInPage.
 > Last updated: 2026-05-12T20:35:00+02:00
@@ -317,6 +321,37 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 | WRITE_SET_DRIFT | declared | `backend/app/main.py` (users_router mount + /api/v1/users/me/language to 422→400 path set). |
 | Decision G.16 | SKIP (R2) | `_error_response` imported from `app.auth.routers._helpers` as transitional. Shared extraction deferred to future task. |
 | UserProfile roles (G.9) | defaults to ['employee'] | Admin seeded user has no user_roles rows → defaults to ['employee']. Role assignment is an out-of-scope concern. |
+
+## P02 MCP Registry Layer (P02-S07-T001 — developer done 2026-05-13)
+
+### MCP Module Status
+
+| Component | Status | Notes |
+|-----------|--------|-------|
+| `backend/app/mcp/` | Created | New module — Clean Architecture (presentation→domain←data) |
+| `backend/app/mcp/errors.py` | Done | McpServerNotFoundError, McpToolNotFoundError, McpServerUnreachableError |
+| `backend/app/mcp/schemas.py` | Done | CreateServerRequest, ServerOut, SyncResponse, PatchToolRequest, ToolOut — Pydantic v2 |
+| `backend/app/mcp/audit.py` | Done | audit_server_create, audit_server_sync, audit_tool_update — delegates to app.admin._audit |
+| `backend/app/mcp/client.py` | Done | JSON-RPC over HTTP client; httpx-based; discover(endpoint, auth_type, secret) |
+| `backend/app/mcp/repository.py` | Done | Re-export shim |
+| `backend/app/mcp/repository_servers.py` | Done | list_servers, create_server, get_server_by_id, get_credential_for_server, create_credential, update_server_sync_at |
+| `backend/app/mcp/repository_tools.py` | Done | upsert_tools, upsert_resources, upsert_prompts, get_tool_by_id, update_tool |
+| `backend/app/mcp/service.py` | Done | Re-export shim + register_server_limiter + sync_server_limiter |
+| `backend/app/mcp/service_register.py` | Done | register_server use case (encrypt, persist, audit, allowlist) |
+| `backend/app/mcp/service_sync.py` | Done | sync_server use case (D-SYNC1 idempotent upsert) |
+| `backend/app/mcp/service_update_tool.py` | Done | update_mcp_tool use case (PATCH semantics, audit) |
+| `backend/app/mcp/router.py` | Done | Aggregator shim |
+| `backend/app/mcp/router_servers.py` | Done | GET /mcp/servers, POST /mcp/servers, POST /mcp/servers/{id}/sync |
+| `backend/app/mcp/router_tools.py` | Done | PATCH /mcp/tools/{id} |
+| `backend/app/admin/__init__.py` | Updated | +3 lines — WRITE_SET_DRIFT §D-MCPWIRE (includes mcp_router in admin aggregator) |
+| 25 integration tests | ALL PASS | T01–T25 both verbose=true and verbose=false |
+
+### Backend Status After P02-S07-T001
+
+- **Total endpoints**: 23 (+4 MCP)
+- **New modules**: `app/mcp/` (15 files, max 276 LoC)
+- **Tests**: 25 new integration tests in `tests/integration/test_mcp_registry.py`
+- **Decisions**: D-1 (sync inline), D-SYNC1 (idempotent no-delete), D-TRANSPORT (reject stdio), D-ALLOWLIST (endpoint allowlist), D-CLIENT-OFFICIAL (httpx JSON-RPC), D-AUDIT-NO-SECRETS
 
 ## P02 Chat CRUD Layer (P02-S03-T001 — developer done 2026-05-13)
 

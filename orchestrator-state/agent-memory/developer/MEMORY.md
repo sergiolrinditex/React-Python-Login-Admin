@@ -726,5 +726,53 @@
 | Slice | Outcome | Key files touched |
 |-------|---------|-------------------|
 | P02-S03-T001 | developer done (pending validator+tester+verify-slice) | backend/app/chat/** (11 new files) + backend/tests/integration/test_chat_conversations.py + backend/app/main.py (+2 lines) |
+| P02-S07-T001 | developer done (pending validator+tester+verify-slice) | backend/app/mcp/** (15 new files) + backend/tests/integration/test_mcp_registry.py + backend/app/admin/__init__.py (§D-MCPWIRE +3 lines) |
 
 **P-hook-worktree-blocks**: The write scope guard in `hook_write_scope_guard.py` blocks `Write`/`Edit`/`MultiEdit` tools for paths that resolve to `.claude/worktrees/...` (treated as `.claude/` static config). Always use `Bash` with `cat > file << 'EOF'` heredoc or Python `open(path, 'w').write(...)` for all worktree file creation/editing.
+
+## P02-S07-T001 — MCP Registry endpoints (2026-05-13)
+
+### audit_logs column name
+- The `audit_logs` table uses column `metadata` (NOT `extra_metadata`). The ORM model `AuditLog.extra_metadata` maps to the `metadata` column in the DB (SQLAlchemy `mapped_column(name="metadata")`). Raw SQL queries must use `metadata`, not `extra_metadata`.
+
+### Rate limit cross-test bleed prevention
+- Redis rate limiters share state across tests since all tests use `client` from `testclient` (same IP).
+- Pattern: add `_reset_rate_limits()` function + `@pytest.fixture(autouse=True)` that clears both in-memory auth RL store AND Redis keys for all relevant prefixes before each test.
+- Use `r.keys(f"{prefix}:*")` to delete ALL keys for a bucket prefix (not just the current window bucket).
+
+### Router prefix layering
+- When `mcp_router = APIRouter(prefix="/mcp")` and sub-routers use paths like `/servers`, the final path is `/mcp/servers`.
+- Do NOT add `/mcp/` prefix AGAIN in the sub-router paths — leads to double prefix `/mcp/mcp/servers`.
+- Pattern: mcp_router at prefix "/mcp", sub-routers at "/" paths (e.g., "/servers", "/tools/{id}").
+
+### Module split for file-size compliance
+- When a module would exceed 300 lines, split by responsibility:
+  - `service.py` → `service_<usecase>.py` + `service.py` (re-export shim + rate limiters)
+  - `router.py` → `router_<group>.py` + `router.py` (aggregator shim)
+  - `repository.py` → `repository_<entity>.py` + `repository.py` (re-export shim)
+- Re-export shims (`__all__` + `from module import ...`) keep callers using a single import path.
+- Rate limiters MUST stay in the `service.py` shim (not sub-modules) so FastAPI Depends() captures stable object identity.
+
+### JSON-RPC httpx client pattern
+- MCP servers use JSON-RPC 2.0 POST over HTTP. Pattern:
+  ```python
+  payload = {"jsonrpc": "2.0", "id": str(uuid.uuid4()), "method": method, "params": {}}
+  response = httpx.Client(timeout=10).post(endpoint, json=payload, headers=headers)
+  body = response.json()
+  result = body.get("result", {})
+  ```
+- Use deferred `import httpx` inside the function body to allow test mocking via `patch("app.mcp.client.discover")`.
+- Wrap httpx errors as domain error `McpServerUnreachableError` — never let raw httpx exceptions leak to the router.
+
+### test_mcp_registry.py pattern
+- Mock `app.mcp.client.discover` (not the httpx module) — the mock must be at the call site used by `service_sync.py`:
+  ```python
+  with patch("app.mcp.client.discover", return_value=(tools, [], [])):
+  ```
+- Note: `service_sync.py` uses deferred `from app.mcp import client as _mcp_client` → calls `_mcp_client.discover(...)`. The mock must patch `app.mcp.client.discover` (not `app.mcp.service_sync._mcp_client.discover`).
+
+### D-S2 pattern for MCP
+- Same pattern as providers: rollback → write failure audit (independent session). Works identically.
+- `audit_server_create(... outcome='failure')` writes `admin.ai.mcp.server.create.failed` action.
+- T10 tests the EncryptionError → 500 path: valid FERNET key → break key → test → restore key.
+- Reset fernet cache with `reset_fernet_cache()` before AND after changing `ENCRYPTION_KEY` in tests.
