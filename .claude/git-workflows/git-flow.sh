@@ -131,8 +131,6 @@ rebase_onto_develop() {
 merge_into() {
   local target="$1"
   local source_branch="$2"
-  local current_sha
-  current_sha="$(git rev-parse HEAD)"
 
   git checkout "$target" >/dev/null 2>&1
   # Fast-forward target to remote state first.

@@ -19,14 +19,33 @@ import hook_capture_subagent_stop as hook
 from _helpers import make_subagent_stop_payload
 
 
-def _seed_journey(jid: str = "J101") -> None:
+def _seed_journey(jid: str = "J101", *, task_ids: list[str] | None = None) -> None:
+    """Seed a journey AND mark its task_ids as done.
+
+    The conftest fixture creates P00-S01-T001 as `ready`; the FW-001 gate in
+    `common.add_pending_journey_verification` rejects journeys whose task_ids
+    are not all `done`. To exercise the realistic production path (closer
+    of the last slice → JOURNEY_PENDING_VERIFY accepted), we transition the
+    referenced task_ids to `done` here.
+    """
+    if task_ids is None:
+        task_ids = ["P00-S01-T001"]
     registry = common.load_registry()
+    # Transition referenced tasks to done so FW-001 accepts the JID.
+    for tid in task_ids:
+        for task in (registry.get("tasks") or []):
+            if task.get("id") == tid:
+                task["status"] = "done"
+                break
+        else:
+            # Task not in the fixture seed → add it as done so the journey is closable.
+            registry.setdefault("tasks", []).append({"id": tid, "status": "done"})
     registry.setdefault("journeys", []).append({
         "id": jid,
         "title": f"Journey {jid}",
         "milestone": "M1",
         "screens": ["/login", "/home"],
-        "task_ids": ["P00-S01-T001"],
+        "task_ids": task_ids,
         "verification_status": "pending",
         "verified_at": None,
     })
@@ -78,9 +97,11 @@ def test_remove_pending_without_mark_verified_does_not_touch_registry(seeded_reg
     assert journey["verification_status"] == "pending"
 
 
-def test_waive_records_reason(seeded_registry):
+def test_waive_records_reason(seeded_registry, monkeypatch):
     _seed_journey("J101")
     common.add_pending_journey_verification("J101")
+    # FW-013: waiver requires explicit human signature via env var.
+    monkeypatch.setenv("CLAUDE_ALLOW_JOURNEY_WAIVER", "J101")
     common.waive_journey_verification("J101", "human override 2026-04-26")
 
     state = common.load_runtime_state()
@@ -94,13 +115,24 @@ def test_waive_records_reason(seeded_registry):
 
 def test_hook_integration_closer_emits_pending(seeded_registry, monkeypatch):
     """Simula el cierre de la ÚLTIMA slice de un journey: closer emite
-    JOURNEY_PENDING_VERIFY → hook lo añade a runtime-state."""
+    JOURNEY_PENDING_VERIFY → hook lo añade a runtime-state.
+
+    Note: includes the full closer proof trailer (REPORT_READY/...) because the
+    hook's enforce_closer_done_guardrail (added in 1724b2c) rewrites NEXT_STATUS
+    to blocked when proof is missing, which would cascade-block the journey
+    gate via FW-001 (task not 'done').
+    """
     _seed_journey("J101")
 
     payload = make_subagent_stop_payload("closer", [
         "TASK_ID: P00-S01-T001",
         "OUTCOME: committed",
         "NEXT_STATUS: done",
+        "REPORT_READY: yes",
+        "BASELINE_SYNC_READY: yes",
+        "GIT_READY: yes",
+        "PUSH_READY: yes",
+        "WORKTREES_CLEANED: yes",
         "JOURNEY_PENDING_VERIFY: J101",
     ])
     monkeypatch.setattr(sys, "stdin", io.StringIO(payload))

@@ -204,6 +204,10 @@ def test_git_workflow_direct_main_alias_pushes_to_main(tmp_path):
     remote = tmp_path / "origin.git"
     subprocess.run(["git", "init", "-q", "--bare", str(remote)], check=True)
     subprocess.run(["git", "remote", "add", "origin", str(remote)], cwd=repo, check=True)
+    # Seed origin/main so git-workflow.sh's fetch-up-to-date check passes
+    # (real production scenarios always have origin/main; the bare-empty
+    # case here is an artifact of the test sandbox).
+    subprocess.run(["git", "push", "-q", "origin", "main"], cwd=repo, check=True)
     result = subprocess.run(["bash", "scripts/git-workflow.sh"], cwd=repo, text=True, capture_output=True, timeout=30)
     assert result.returncode == 0, result.stdout + result.stderr
     assert "GIT_WORKFLOW_READY: yes" in result.stdout
@@ -229,6 +233,11 @@ def test_git_workflow_amends_late_ledger_before_push(tmp_path):
     remote = tmp_path / "origin-ledger.git"
     subprocess.run(["git", "init", "-q", "--bare", str(remote)], check=True)
     subprocess.run(["git", "remote", "add", "origin", str(remote)], cwd=repo, check=True)
+    # Seed origin/main BEFORE the "track ledger" commit so that after the
+    # workflow's amend, local main is cleanly 1 commit ahead of origin/main
+    # (not diverged). Real production scenarios always have origin/main as
+    # the baseline before a slice commit.
+    subprocess.run(["git", "push", "-q", "origin", "main"], cwd=repo, check=True)
     ledger = repo / "orchestrator-state" / "tasks" / "ledger.jsonl"
     ledger.parent.mkdir(parents=True, exist_ok=True)
     ledger.write_text('{"event":"before_close"}\n', encoding="utf-8")
