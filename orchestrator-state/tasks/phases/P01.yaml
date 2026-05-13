@@ -1,6 +1,6 @@
 id: P01
 title: "Auth / base capabilities"
-status: complete
+status: done
 depends_on:
   - P00
 task_ids:

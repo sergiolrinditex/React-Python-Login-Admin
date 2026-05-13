@@ -90,7 +90,10 @@ claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slic
 claude --agent main-orchestrator --permission-mode bypassPermissions "/verify-slice P02-S03-T001"
 
 # 4) Tras /verify-slice + closer/commit, ya puedes reutilizar el terminal.
-unset CLAUDE_ACTIVE_TASK_ID CLAUDE_TASK_PACK
+unset CLAUDE_ACTIVE_TASK_ID
+unset CLAUDE_TASK_PACK
+unset CLAUDE_WORKTREE_ROOT
+unset CLAUDE_ORCHESTRATOR_ROOT
 ```
 
 Cerrar el terminal equivale a limpiar esos exports. Si reutilizas la misma terminal para otra task, haz siempre el `unset` antes de pegar el nuevo `export`, para no ejecutar una slice con un `TASK_ID` viejo.
@@ -277,7 +280,10 @@ No promuevas FU desde un terminal worker que está ejecutando otra slice si pued
 ### Promoción segura de FU
 
 ```bash
-unset CLAUDE_ACTIVE_TASK_ID CLAUDE_TASK_PACK
+unset CLAUDE_ACTIVE_TASK_ID
+unset CLAUDE_TASK_PACK
+unset CLAUDE_WORKTREE_ROOT
+unset CLAUDE_ORCHESTRATOR_ROOT
 claude --agent main-orchestrator --permission-mode bypassPermissions "/promote-followup <FOLLOWUP_ID>"
 ```
 

@@ -57,7 +57,10 @@ y copiar el nuevo `export CLAUDE_ACTIVE_TASK_ID=... CLAUDE_TASK_PACK=...`; despu
 Para continuar desde el mismo terminal después de cerrar una task:
 
 ```bash
-unset CLAUDE_ACTIVE_TASK_ID CLAUDE_TASK_PACK
+unset CLAUDE_ACTIVE_TASK_ID
+unset CLAUDE_TASK_PACK
+unset CLAUDE_WORKTREE_ROOT
+unset CLAUDE_ORCHESTRATOR_ROOT
 ./scripts/next-wave.sh --limit 1
 # copiar el export recomendado y lanzar Claude Code así:
 claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice <NEXT_TASK_ID>"
@@ -70,7 +73,10 @@ Los follow-ups productivos no los promueve el closer automáticamente. El closer
 **Comando de promoción seguro**: usa `/promote-followup` desde el main-orchestrator, no desde el closer ni desde un worker activo. Si tienes `CLAUDE_ACTIVE_TASK_ID` exportado en ese terminal, primero limpia el entorno o usa una terminal de control:
 
 ```bash
-unset CLAUDE_ACTIVE_TASK_ID CLAUDE_TASK_PACK
+unset CLAUDE_ACTIVE_TASK_ID
+unset CLAUDE_TASK_PACK
+unset CLAUDE_WORKTREE_ROOT
+unset CLAUDE_ORCHESTRATOR_ROOT
 claude --agent main-orchestrator --permission-mode bypassPermissions "/promote-followup <FOLLOWUP_ID>"
 ```
 
@@ -239,7 +245,10 @@ claude --agent main-orchestrator --permission-mode bypassPermissions "/verify-sl
 Cuando `/verify-slice` haya ejecutado el `closer` y la task quede cerrada, limpia el terminal antes de reclamar otra task:
 
 ```bash
-unset CLAUDE_ACTIVE_TASK_ID CLAUDE_TASK_PACK
+unset CLAUDE_ACTIVE_TASK_ID
+unset CLAUDE_TASK_PACK
+unset CLAUDE_WORKTREE_ROOT
+unset CLAUDE_ORCHESTRATOR_ROOT
 ```
 
 Cerrar el terminal hace el mismo efecto práctico que `unset`. Si reutilizas la terminal sin limpiar, puedes quedarte con un `TASK_ID` viejo y ejecutar comandos sobre la slice incorrecta.

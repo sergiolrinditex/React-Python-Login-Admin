@@ -38,3 +38,60 @@ def test_cleanup_worktrees_noops_outside_git(tmp_path):
     result = subprocess.run(["bash", str(SCRIPT), "--verbose"], cwd=tmp_path, text=True, capture_output=True, check=True)
     assert "git_repository=no" in result.stdout
     assert "matched=0" in result.stdout
+
+
+def test_cleanup_worktrees_removes_empty_container_dir(tmp_path):
+    """Tras borrar la última slice de la wave, el directorio padre <repo>-worktrees/
+    debe quedar vacío y eliminarse para no dejar carpetas huérfanas al lado del repo."""
+    repo = tmp_path / "repo"
+    container = tmp_path / "repo-worktrees"  # convención: <root>-worktrees al lado
+    container.mkdir()
+    wt = container / "P00-S01-T001"
+
+    repo.mkdir()
+    run(["git", "init", "-b", "main"], repo)
+    run(["git", "config", "user.email", "test@example.com"], repo)
+    run(["git", "config", "user.name", "Test User"], repo)
+    (repo / "README.md").write_text("hello\n", encoding="utf-8")
+    run(["git", "add", "README.md"], repo)
+    run(["git", "commit", "-m", "init"], repo)
+    run(["git", "branch", "dev/P00-S01-T001"], repo)
+    run(["git", "worktree", "add", str(wt), "dev/P00-S01-T001"], repo)
+
+    assert wt.exists() and container.exists()
+
+    applied = run(["bash", str(SCRIPT), "--apply", "--task", "P00-S01-T001"], repo)
+    assert "removed:" in applied.stdout
+    assert not wt.exists()
+    # NUEVO: contenedor vacío debe haberse eliminado también
+    assert not container.exists(), f"container should be removed when empty: {applied.stdout}"
+    assert "removed empty container" in applied.stdout
+
+
+def test_cleanup_worktrees_keeps_container_when_not_empty(tmp_path):
+    """Si tras un --task X queda otro worktree en el contenedor, NO se borra el padre."""
+    repo = tmp_path / "repo"
+    container = tmp_path / "repo-worktrees"
+    container.mkdir()
+    wt_a = container / "P00-S01-T001"
+    wt_b = container / "P00-S01-T002"
+
+    repo.mkdir()
+    run(["git", "init", "-b", "main"], repo)
+    run(["git", "config", "user.email", "test@example.com"], repo)
+    run(["git", "config", "user.name", "Test User"], repo)
+    (repo / "README.md").write_text("hello\n", encoding="utf-8")
+    run(["git", "add", "README.md"], repo)
+    run(["git", "commit", "-m", "init"], repo)
+    run(["git", "branch", "dev/P00-S01-T001"], repo)
+    run(["git", "branch", "dev/P00-S01-T002"], repo)
+    run(["git", "worktree", "add", str(wt_a), "dev/P00-S01-T001"], repo)
+    run(["git", "worktree", "add", str(wt_b), "dev/P00-S01-T002"], repo)
+
+    # Borramos solo el A
+    applied = run(["bash", str(SCRIPT), "--apply", "--task", "P00-S01-T001"], repo)
+    assert not wt_a.exists()
+    # B sigue ahí, por tanto el contenedor NO se borra
+    assert wt_b.exists()
+    assert container.exists(), "container must remain while other worktrees live in it"
+    assert "removed empty container" not in applied.stdout
