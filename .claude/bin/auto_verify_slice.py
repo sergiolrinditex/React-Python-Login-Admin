@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 import argparse, json, os, subprocess, sys
-from common import ensure_parent, find_task, journeys_closing_at_task, load_registry, now_iso, project_root, relpath, tasks_dir
+from common import ensure_parent, find_task, journeys_closing_at_task, load_registry, now_iso, project_root, workspace_root, relpath, tasks_dir
 
 ALLOWED_STATUS = {"ready_for_close", "done"}
 
 def run_command(command: str, timeout: int) -> dict[str, object]:
-    proc = subprocess.run(command, cwd=project_root(), shell=True, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=timeout)
+    proc = subprocess.run(command, cwd=workspace_root(), shell=True, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=timeout)
     return {"command": command, "returncode": proc.returncode, "stdout_tail": proc.stdout[-4000:], "stderr_tail": proc.stderr[-4000:]}
 
 def append_handoff(task_id: str, section: str):

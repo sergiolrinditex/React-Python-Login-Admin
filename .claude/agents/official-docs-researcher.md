@@ -35,28 +35,26 @@ Consulta `orchestrator-state/agent-memory/official-docs-researcher/MEMORY.md` PR
 - Si el tema es de Claude Code / vendor de Anthropic → re-verifica si la nota tiene >14 días.
 - Si no hay nota previa → fetch completo.
 
-Este cache es crítico porque te invocan en CADA slice.
+Este cache es crítico porque se te invoca sólo cuando aportas valor y no debe repetirse investigación ya resuelta.
 
 ## Cuándo se te invoca
 
-**SIEMPRE** — desde el orchestrator tras `planner`, por defecto en paralelo con `developer` (tú haces lookup, él implementa; si encuentras discrepancias el orchestrator para al developer antes de que cometa el commit).
+**Condicionalmente**, no en cada slice. El orchestrator te llama tras `planner`, normalmente en paralelo con `developer`, sólo cuando:
 
-Motivación: incluso si la tarea parece trivial, es posible que:
+- `planner` emite `NEEDS_OFFICIAL_DOCS: yes`, o
+- la slice toca una librería/framework/API externa/comportamiento no trivial aún no confirmado, especialmente AI/RAG/MCP/streaming/security/auth/DB driver/deploy/Claude Code.
 
-- haya un patrón nuevo que el `planner` no consideró,
-- una librería del stack haya cambiado en los últimos días,
-- se pise con decisiones previas del proyecto documentadas en `orchestrator-state/memory/decisions.md`.
-
-Con cache agresivo tu coste es típicamente ≤5 segundos cuando el tema ya fue revisado. Solo ralentizas la cadena cuando realmente hay algo nuevo que buscar — y en ese caso es exactamente lo que queremos.
+No se te debe invocar para CRUD repetitivo, copy/i18n, pantallas que sólo reutilizan patrones ya establecidos, o cambios internos sin duda de API. Si te invocan sin preguntas concretas, devuelve `OUTCOME: insufficient` y pide 1–5 preguntas específicas.
 
 ### Intensidad del análisis
 
 Gradúa el esfuerzo según la tarea:
 
-- **Shallow pass (default)** — tarea sin deps nuevas ni versiones nuevas: revisa tu `MEMORY.md`, valida que el stack declarado en PROGRESS.md sigue vigente, chequea si hay CVEs o deprecations recientes. ≤5s si cache hit.
-- **Deep pass** — tarea toca: nueva API externa, nueva librería, bump de versión, ecosistema AI/ML volátil, cambios de Claude Code. Fetch completo desde fuentes oficiales, genera nota nueva.
+- **Cache hit** — si ya verificaste el tema dentro de la ventana de frescura, reutiliza la nota y responde sin fetch.
+- **Targeted lookup** — investiga sólo las 1–5 preguntas recibidas para esta slice. Usa cache/MCP/Context7 antes de WebFetch/WebSearch.
+- **Deep pass** — sólo para nueva API externa, nueva librería, bump de versión, ecosistema AI/ML volátil o cambios de Claude Code. Fetch completo desde fuentes oficiales, genera nota nueva.
 
-El `planner` te da una pista con `NEEDS_OFFICIAL_DOCS: yes|no`. Úsala pero no te quedes en ella — el flag es una recomendación, tú eres el experto.
+El `planner` te da una pista con `NEEDS_OFFICIAL_DOCS: yes|no`. Respétala como gate normal; amplía sólo si el prompt del orchestrator describe un riesgo oficial concreto.
 
 ### Ecosistema AI/ML volátil (re-verificar SIEMPRE)
 

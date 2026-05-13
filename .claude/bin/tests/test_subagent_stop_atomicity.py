@@ -24,12 +24,20 @@ if str(_BIN) not in sys.path:
     sys.path.insert(0, str(_BIN))
 
 
+def _copy_contract(root: Path) -> None:
+    (root / ".claude").mkdir(parents=True, exist_ok=True)
+    contract_src = _BIN.parent / "orchestrator-contract.json"
+    if contract_src.exists():
+        (root / ".claude" / "orchestrator-contract.json").write_text(contract_src.read_text(encoding="utf-8"), encoding="utf-8")
+
+
 def _setup_tmp_project():
     """Returns (tmp_path: Path, cleanup: callable)."""
     td = tempfile.TemporaryDirectory()
     root = Path(td.name)
     (root / "orchestrator-state" / "tasks").mkdir(parents=True)
     (root / "orchestrator-state" / "memory").mkdir(parents=True)
+    _copy_contract(root)
     return root, td
 
 

@@ -62,97 +62,24 @@ KEY_RE = {
     "worktrees_cleaned": re.compile(r"^WORKTREES_CLEANED:\s*(.+?)\s*$", re.MULTILINE),
 }
 
-# Agents whose trailers are informational only — they do NOT mutate
-# task.status. For roles that also emit NEXT_STATUS (validator), the hook stores
-# the value as metadata only, so tester/debugger/closer own lifecycle state.
-# Roles without NEXT_STATUS still get schema validation and ledger visibility.
-INFO_ONLY_AGENTS = {"validator", "official-docs-researcher", "planner", "main-orchestrator"}
-
-# Agents whose trailer is REQUIRED for the pipeline to make progress. These
-# own (or report to) the registry's task lifecycle. If they finish without a
-# parseable trailer, the SubagentStop hook surfaces a visible error so the
-# orchestrator does not silently lose state.
-LIFECYCLE_AGENTS = {"developer", "tester", "debugger", "closer", "deployer"}
-
-# Agents that report informational state. Validator MUST emit TASK_ID +
-# OUTCOME because the closer's pre-check reads the handoff for the active
-# task. The docs researcher may run during bootstrap before a TASK_ID exists,
-# so it only requires OUTCOME.
-REPORTING_AGENTS = {"validator"}
-LOOSE_REPORTING_AGENTS = {"official-docs-researcher"}
-
-# Only these agents may mutate registry lifecycle/metadata from a trailer.
-# Bootstrap/planning agents often emit informational trailers with TASK_ID:none;
-# unknown agents must never be able to advance a DAG node accidentally.
-STATE_MUTATING_AGENTS = LIFECYCLE_AGENTS | INFO_ONLY_AGENTS
-
-# Required keys per role.
-_REQUIRED_FOR_LIFECYCLE = {"task_id", "outcome", "next_status"}
-_REQUIRED_FOR_REPORTING = {"task_id", "outcome"}
-_REQUIRED_FOR_LOOSE_REPORTING = {"outcome"}
-
-ALLOWED_OUTCOMES = {
-    "developer": {"success", "blocked", "failed"},
-    "tester": {"pass", "fail", "blocked"},
-    "debugger": {"fixed", "blocked", "failed"},
-    "closer": {"committed", "blocked"},
-    "deployer": {"deployed", "planned", "blocked", "failed"},
-    "validator": {"approved", "changes_requested", "blocked"},
-    "official-docs-researcher": {"verified", "discrepancy", "insufficient"},
-    "document-analyzer": {"valid", "invalid"},
-    "project-architect": {"ready", "blocked"},
-    "task-planner": {"ready", "blocked"},
-    "planner": {"ready", "blocked"},
-    "main-orchestrator": {"ready", "blocked"},
-}
-
-ALLOWED_NEXT_STATUS = {
-    "developer": {"validator_tester_pending", "blocked"},
-    "tester": {"ready_for_close", "needs_debug", "blocked"},
-    "debugger": {"validator_tester_pending", "blocked"},
-    "closer": {"done", "blocked"},
-    "deployer": {"done", "blocked"},
-    "validator": {"ready_for_close", "needs_debug", "blocked"},
-}
-
-
 def load_enum_contracts() -> tuple[dict[str, set[str]], dict[str, set[str]]]:
     """Load role enums from `.claude/orchestrator-contract.json`.
 
-    Source of truth order:
-    1. `trailer_schema.roles[*].outcome_values/next_status_values`.
-    2. Backward-compatible mirrors `outcome_enums` / `next_status_enums`.
-    3. Local constants as damaged-install fallback only.
-
-    This keeps prompts, agents and runtime validation aligned around one
-    machine-readable contract instead of scattered enum prose.
+    The runtime schema is single-source. If the schema is unavailable or a role
+    is missing, the hook logs a visible error and refuses lifecycle mutation
+    rather than accepting stale enum copies.
     """
-    try:
-        from common import project_root
-        contract_path = project_root() / ".claude" / "orchestrator-contract.json"
-        data = json.loads(contract_path.read_text(encoding="utf-8"))
-
-        roles = ((data.get("trailer_schema") or {}).get("roles") or {})
-        outcomes: dict[str, set[str]] = {}
-        statuses: dict[str, set[str]] = {}
-        for role, spec in roles.items():
-            if not isinstance(spec, dict):
-                continue
-            outcome_values = spec.get("outcome_values") or []
-            next_status_values = spec.get("next_status_values") or []
-            if outcome_values:
-                outcomes[str(role)] = {str(x).lower() for x in outcome_values}
-            if next_status_values:
-                statuses[str(role)] = {str(x).lower() for x in next_status_values}
-
-        if not outcomes:
-            outcomes = {str(k): {str(x).lower() for x in v} for k, v in (data.get("outcome_enums") or {}).items()}
-        if not statuses:
-            statuses = {str(k): {str(x).lower() for x in v} for k, v in (data.get("next_status_enums") or {}).items()}
-
-        return outcomes or ALLOWED_OUTCOMES, statuses or ALLOWED_NEXT_STATUS
-    except Exception:
-        return ALLOWED_OUTCOMES, ALLOWED_NEXT_STATUS
+    roles = load_role_schema()
+    outcomes: dict[str, set[str]] = {}
+    statuses: dict[str, set[str]] = {}
+    for role, spec in roles.items():
+        outcome_values = spec.get("outcome_values") or []
+        next_status_values = spec.get("next_status_values") or []
+        if outcome_values:
+            outcomes[str(role)] = {str(x).lower() for x in outcome_values}
+        if next_status_values:
+            statuses[str(role)] = {str(x).lower() for x in next_status_values}
+    return outcomes, statuses
 
 # Fenced JSON trailer fallback. Some agents emit code blocks more reliably
 # than line-prefixed plain text; this lets them produce a structured trailer
@@ -161,6 +88,27 @@ JSON_TRAILER_RE = re.compile(
     r"```(?:json)?\s*\n(\{.*?\})\s*\n```",
     re.DOTALL,
 )
+
+
+
+
+def role_spec(agent_type: str | None) -> dict[str, object]:
+    if not agent_type:
+        return {}
+    return load_role_schema().get(agent_type, {})
+
+
+def role_is_info_only(agent_type: str | None) -> bool:
+    return bool(role_spec(agent_type).get("info_only"))
+
+
+def role_can_write_registry_metadata(agent_type: str | None) -> bool:
+    spec = role_spec(agent_type)
+    return bool(spec and (spec.get("info_only") or spec.get("mutates_registry_lifecycle")))
+
+
+def role_mutates_lifecycle(agent_type: str | None) -> bool:
+    return bool(role_spec(agent_type).get("mutates_registry_lifecycle"))
 
 
 def parse_json_trailer(text: str) -> dict[str, str]:
@@ -204,9 +152,9 @@ def parse_json_trailer(text: str) -> dict[str, str]:
 def load_role_schema() -> dict[str, dict[str, object]]:
     """Load role schema from the central orchestrator contract.
 
-    Runtime validation must follow the same source as the agent prompts:
-    `.claude/orchestrator-contract.json -> trailer_schema.roles`. Local
-    constants remain as damaged-install fallback only.
+    Runtime validation follows exactly `.claude/orchestrator-contract.json ->
+    trailer_schema.roles`. Missing schema is a configuration error, not an
+    alternate runtime mode.
     """
     try:
         from common import project_root
@@ -215,8 +163,8 @@ def load_role_schema() -> dict[str, dict[str, object]]:
         roles = ((data.get("trailer_schema") or {}).get("roles") or {})
         if isinstance(roles, dict) and roles:
             return {str(role): spec for role, spec in roles.items() if isinstance(spec, dict)}
-    except Exception:
-        pass
+    except Exception as exc:
+        log_hook_error("hook_capture_subagent_stop.contract_schema", exc)
     return {}
 
 
@@ -225,12 +173,6 @@ def required_keys_for(agent_type: str | None) -> set[str]:
         role_schema = load_role_schema().get(agent_type)
         if role_schema:
             return {str(k).strip().lower() for k in role_schema.get("required_keys", []) if str(k).strip()}
-    if agent_type in LIFECYCLE_AGENTS:
-        return set(_REQUIRED_FOR_LIFECYCLE)
-    if agent_type in REPORTING_AGENTS:
-        return set(_REQUIRED_FOR_REPORTING)
-    if agent_type in LOOSE_REPORTING_AGENTS:
-        return set(_REQUIRED_FOR_LOOSE_REPORTING)
     return set()
 
 
@@ -250,13 +192,18 @@ def trailer_value_errors(trailer: dict[str, str], agent_type: str | None) -> lis
     if not agent_type:
         return []
     errors: list[str] = []
+    roles = load_role_schema()
+    if not roles:
+        return ["trailer_schema.roles unavailable; refusing schema-free lifecycle mutation"]
+    if agent_type not in roles:
+        return [f"agent_type={agent_type!r} missing from trailer_schema.roles"]
     allowed_outcomes, allowed_statuses = load_enum_contracts()
     outcome = str(trailer.get("outcome", "")).strip().lower()
-    if outcome and agent_type in allowed_outcomes and outcome not in allowed_outcomes[agent_type]:
-        errors.append(f"OUTCOME={outcome!r} not allowed for {agent_type}; allowed={sorted(allowed_outcomes[agent_type])}")
+    if outcome and outcome not in allowed_outcomes.get(agent_type, set()):
+        errors.append(f"OUTCOME={outcome!r} not allowed for {agent_type}; allowed={sorted(allowed_outcomes.get(agent_type, set()))}")
     next_status = str(trailer.get("next_status", "")).strip().lower()
-    if next_status and agent_type in allowed_statuses and next_status not in allowed_statuses[agent_type]:
-        errors.append(f"NEXT_STATUS={next_status!r} not allowed for {agent_type}; allowed={sorted(allowed_statuses[agent_type])}")
+    if next_status and next_status not in allowed_statuses.get(agent_type, set()):
+        errors.append(f"NEXT_STATUS={next_status!r} not allowed for {agent_type}; allowed={sorted(allowed_statuses.get(agent_type, set()))}")
     return errors
 
 
@@ -444,7 +391,7 @@ def main() -> int:
         # If the line-prefixed parse came up empty (or partial), try the
         # fenced-JSON fallback. Merge: regex wins per-key when both define it,
         # because indented lines were intentional design.
-        if not trailer or len(trailer) < len(_REQUIRED_FOR_LIFECYCLE):
+        if not trailer or len(trailer) < 2:
             json_fallback = parse_json_trailer(last_message)
             if json_fallback:
                 merged = dict(json_fallback)
@@ -499,7 +446,7 @@ def main() -> int:
         if enum_errors:
             log_hook_error("hook_capture_subagent_stop.trailer_schema", RuntimeError("; ".join(enum_errors)))
             trailer["trailer_schema_error"] = "; ".join(enum_errors)
-            if agent_type in STATE_MUTATING_AGENTS:
+            if role_can_write_registry_metadata(agent_type):
                 allow_registry_mutation = False
 
         append_jsonl(ledger_path(), {
@@ -549,17 +496,22 @@ def main() -> int:
         #       — those become reentrant under file_lock's depth counter and
         #       cost nothing extra.
         with file_lock(registry_path()):
-            if allow_registry_mutation and agent_type in STATE_MUTATING_AGENTS and trailer.get("task_id") and trailer.get("next_status"):
+            can_apply_trailer = bool(
+                trailer.get("task_id")
+                and (trailer.get("next_status") or (role_is_info_only(agent_type) and trailer.get("outcome")))
+            )
+            if allow_registry_mutation and role_can_write_registry_metadata(agent_type) and can_apply_trailer:
                 registry = load_registry()
                 task = find_task(registry, trailer["task_id"])
                 if task:
-                    if agent_type in INFO_ONLY_AGENTS:
+                    if role_is_info_only(agent_type):
                         # Informational write — capture as metadata, do NOT
                         # mutate the lifecycle status. This guarantees that
                         # when validator and tester race on the same task,
                         # the tester's pass/fail decides task.status.
                         task[f"{agent_type}_outcome"] = trailer.get("outcome")
-                        task[f"{agent_type}_next_status"] = trailer["next_status"]
+                        if trailer.get("next_status"):
+                            task[f"{agent_type}_next_status"] = trailer.get("next_status")
                         task["last_updated_by"] = agent_type
                         task["last_stop_at"] = now_iso()
                     else:

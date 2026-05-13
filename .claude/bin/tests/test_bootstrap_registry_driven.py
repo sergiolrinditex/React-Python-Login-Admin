@@ -30,7 +30,7 @@ _BIN = Path(__file__).resolve().parent.parent
 if str(_BIN) not in sys.path:
     sys.path.insert(0, str(_BIN))
 
-import bootstrap_three_docs as boot  # noqa: E402
+import bootstrap_source_of_truth as boot  # noqa: E402
 import common  # noqa: E402
 
 # Derive the repo root from this file's location so the E2E test runs on any
@@ -375,37 +375,6 @@ class BuildPhasesAndTasksRegistryDrivenTests(unittest.TestCase):
 
 
 # ---------------------------------------------------------------------------
-# Build phases & tasks — body-only generation fallback (no registry)
-# ---------------------------------------------------------------------------
-@unittest.skip("DAG-only requires Coverage Registry with Depends on; body-only generation tests retired")
-class BuildPhasesAndTasksMissingDependencyColumnFallbackTests(unittest.TestCase):
-
-    def test_no_registry_uses_positional_path(self):
-        cl = (
-            "# MissingDependencyColumn Checklist\n\n"
-            "# Phase 0 — Stuff\n\n"
-            "## Step 0.1 — Scaffold\n\n"
-            "- [ ] One thing\n"
-            "- [ ] Another thing\n"
-        )
-        _, tasks = boot.build_phases_and_tasks(Path("c.md"), cl)
-        self.assertEqual(len(tasks), 2)
-        self.assertEqual(tasks[0]["id"], "P00-S01-T001")
-        self.assertEqual(tasks[1]["id"], "P00-S01-T002")
-
-    def test_missing_dependency_column_pre_gate_still_filtered(self):
-        """Even without registry, PRE-GATE / PHASE GATE should not become a step."""
-        cl = (
-            "# MissingDependencyColumn\n\n# Phase 0 — Stuff\n\n"
-            "## ⚠️ PRE-GATE\n\n- noise\n\n"
-            "## Step 0.1 — Real step\n\n- [ ] Real item\n"
-        )
-        _, tasks = boot.build_phases_and_tasks(Path("c.md"), cl)
-        for t in tasks:
-            self.assertNotIn("PRE-GATE", t["title"].upper())
-
-
-# ---------------------------------------------------------------------------
 # Journey slice cleaning (Fix B4)
 # ---------------------------------------------------------------------------
 class JourneyBackticksAreStrippedTests(unittest.TestCase):
@@ -706,7 +675,6 @@ class BootstrapRuntimePreservationTests(unittest.TestCase):
                     "last_worker": "tester",
                     "last_event": "subagent_stop",
                     "pending_journey_verifications": ["J1"],
-                    "journey_gate_mode": "frontier",
                     "open_followups": [{"id": "FU-test", "status": "proposed"}],
                     "spawn_budget": 20,
                     "spawns_in_current_slice": {"P00-S02-T001": 4},
@@ -728,6 +696,62 @@ class BootstrapRuntimePreservationTests(unittest.TestCase):
                 self.assertEqual(runtime["last_worker"], "tester")
                 self.assertEqual(runtime["pending_journey_verifications"], ["J1"])
                 self.assertEqual(runtime["open_followups"][0]["id"], "FU-test")
+        finally:
+            td.cleanup()
+
+    def test_refresh_blocks_done_task_when_source_fingerprint_changes(self):
+        td, root = self._root()
+        try:
+            with self._with_root(root) as (boot_mod, common_mod):
+                self.assertTrue(boot_mod.generate_artifacts()["ok"])
+                registry = common_mod.load_registry()
+                first = registry["tasks"][0]
+                self.assertIn("source_fingerprint", first)
+                old_fp = first["source_fingerprint"]
+                first["status"] = "done"
+                first["last_outcome"] = "committed"
+                first["last_updated_by"] = "closer"
+                first["last_stop_at"] = "2026-05-11T00:00:00Z"
+                common_mod.save_registry(registry)
+
+                sot = root / "docs/source-of-truth"
+                changed = self.CHECKLIST.replace("create scaffold", "create scaffold plus verified env docs")
+                (sot / "APP_IMPLEMENTATION_CHECKLIST.md").write_text(changed, encoding="utf-8")
+
+                result = boot_mod.generate_artifacts()
+                self.assertTrue(result["ok"])
+                refreshed = common_mod.load_registry()
+                by_id = {t["id"]: t for t in refreshed["tasks"]}
+                task = by_id["P00-S01-T001"]
+                self.assertNotEqual(task["source_fingerprint"], old_fp)
+                self.assertEqual(task["status"], "blocked")
+                self.assertEqual(task["blocked_reason"], "source_of_truth_changed_after_runtime_state")
+                self.assertTrue(task.get("source_fingerprint_changed"))
+                self.assertEqual(task.get("previous_runtime_status"), "done")
+        finally:
+            td.cleanup()
+
+    def test_refresh_reasserts_closer_final_when_source_fingerprint_matches(self):
+        td, root = self._root()
+        try:
+            with self._with_root(root) as (boot_mod, common_mod):
+                self.assertTrue(boot_mod.generate_artifacts()["ok"])
+                registry = common_mod.load_registry()
+                registry["tasks"][0]["status"] = "done"
+                registry["tasks"][0]["last_outcome"] = "committed"
+                registry["tasks"][0]["last_updated_by"] = "closer"
+                registry["tasks"][0]["last_stop_at"] = "2026-05-11T00:00:00Z"
+                common_mod.save_registry(registry)
+
+                result = boot_mod.generate_artifacts()
+                self.assertTrue(result["ok"])
+                refreshed = common_mod.load_registry()
+                task = {t["id"]: t for t in refreshed["tasks"]}["P00-S01-T001"]
+                self.assertEqual(task["status"], "done")
+                self.assertEqual(task["last_outcome"], "committed")
+                self.assertEqual(task["last_updated_by"], "closer")
+                self.assertEqual(task["last_stop_at"], "2026-05-11T00:00:00Z")
+                self.assertFalse(task.get("source_fingerprint_changed", False))
         finally:
             td.cleanup()
 

@@ -6,6 +6,7 @@ depends_on:
 task_ids:
   - P02-S01-T001
   - P02-S02-T001
+  - P02-S02-T002
   - P02-S03-T001
   - P02-S03-T002
   - P02-S04-T001

@@ -18,7 +18,6 @@ from common import (
     find_task,
     active_conflict_blockers,
     blocking_open_followups,
-    journey_gate_mode,
     pending_journey_blockers_for_task,
     load_registry,
     load_runtime_state,
@@ -154,12 +153,10 @@ def claim_task(task_id: str, *, force: bool = False) -> tuple[bool, dict[str, An
         runtime = load_runtime_state()
         journey_blockers = pending_journey_blockers_for_task(task, runtime)
         if journey_blockers and not force:
-            mode = journey_gate_mode(runtime)
             return False, {
                 "error": f"TASK_ID is deferred by pending journey verification(s): {task_id}",
-                "journey_gate_mode": mode,
                 "pending_journey_blockers": journey_blockers,
-                "hint": "Run /verify-journey <JID>. In frontier mode only tasks that reference the pending journey are blocked; strict mode blocks globally.",
+                "hint": "Run /verify-journey <JID>. DAG-only journey gate defers only tasks that reference the pending journey.",
                 "task": task,
             }
 
@@ -178,7 +175,7 @@ def claim_task(task_id: str, *, force: bool = False) -> tuple[bool, dict[str, An
         task["task_pack_path"] = _ensure_minimal_task_pack(task)
         save_registry(promote_ready_tasks(registry))
 
-        # No global DAG task/phase mirror is written. Worker terminals are
+        # No global DAG task/phase selector file is written. Worker terminals are
         # scoped exclusively by CLAUDE_ACTIVE_TASK_ID + CLAUDE_TASK_PACK.
         with file_lock(runtime_state_path()):
             runtime = load_runtime_state()
@@ -215,7 +212,6 @@ def main() -> int:
                 for item in result["blocking_followups"]:
                     print(f"Blocking follow-up: {item.get('id')} severity={item.get('severity')} origin={item.get('origin_task_id')} title={item.get('title')}")
             if result.get("pending_journey_blockers"):
-                print("Journey gate mode: " + str(result.get("journey_gate_mode") or "frontier"))
                 print("Pending journey blockers: " + ", ".join(result["pending_journey_blockers"]))
                 print(str(result.get("hint") or ""))
             if result.get("conflict_blockers"):

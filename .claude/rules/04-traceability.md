@@ -1,6 +1,6 @@
 # Traceability and control
 
-- `orchestrator-state/tasks/registry.json` mirrors the real execution state. Bootstrap/claim/hooks write it under locks; `planner` reads it and writes the per-task pack, while closer verifies before final state.
+- `orchestrator-state/tasks/registry.json` records the real execution state. Bootstrap/claim/hooks write it under locks; `planner` reads it and writes the per-task pack, while closer verifies before final state.
 - `orchestrator-state/tasks/runtime-state.json` tracks last worker + last event. Updated by claim scripts and the SubagentStop hook automatically.
 - `orchestrator-state/tasks/ledger.jsonl` is a local high-churn runtime trace for Write/Edit/MultiEdit/NotebookEdit and lifecycle events. Bash PostToolUse records go to `orchestrator-state/tasks/bash-ledger.jsonl`. Both are runtime-only/ignored by Git so close-time Bash hooks cannot dirty the repo after commit/push.
 - In explicit DAG mode, `CLAUDE_ACTIVE_TASK_ID` + `orchestrator-state/tasks/task-packs/<TASK_ID>.md` are authoritative. There is no global DAG task/phase file.
@@ -48,7 +48,7 @@ A task is `done` only when all of the following exist:
 El gate de journey tiene dos rutas. La ruta normal evita el doble gate:
 
 - **Inline** (rama "ahora" en `/verify-slice §5.bis`): el comando ejecuta verify-journey aprovechando el entorno ya reseteado y los datos reales/proporcionados cargados. Apendiza `## verify-journey` al **mismo handoff** del slice (no usa `journey-handoffs/`). El closer al ver `JOURNEY_VERIFY_OUTCOME: verified` emite `JOURNEY_VERIFIED_INLINE: <JID>` y el SubagentStop hook marca el journey como `verified` bajo lock, sin añadirlo a `pending_journey_verifications`.
-- **Aparte** (rama "aparte" en `/verify-slice §5.bis`, o falta de la sección): el closer emite `JOURNEY_PENDING_VERIFY: <JID>` como hasta ahora; el SubagentStop hook lo añade a `runtime-state.pending_journey_verifications`; con `journey_gate_mode=frontier` el planner difiere solo tasks que referencian ese JID; con `strict` bloquea nuevas claims hasta que el usuario lance `/verify-journey <JID>` por separado (que escribe en `journey-handoffs/<JID>.md` y emite trailer reconocido por el hook).
+- **Aparte** (rama "aparte" en `/verify-slice §5.bis`, o falta de la sección): el closer emite `JOURNEY_PENDING_VERIFY: <JID>` como hasta ahora; el SubagentStop hook lo añade a `runtime-state.pending_journey_verifications`; en DAG-only el planner difiere solo tasks que referencian ese JID hasta que el usuario lance `/verify-journey <JID>` por separado (que escribe en `journey-handoffs/<JID>.md` y emite trailer reconocido por el hook).
 
 `JOURNEY_VERIFIED_INLINE` sí lo procesa el hook: marca el journey como `verified`, limpia cualquier pending anterior y actualiza `last_journey_verified`. El campo `runtime-state.pending_journey_verifications` sigue siendo el mecanismo de bloqueo para journeys que quedaron en modo "aparte".
 
@@ -60,7 +60,7 @@ When two subagents run in parallel and both finish on the same task (the canonic
 - `validator` is **informational** for the registry: the hook stores its trailer as `task.validator_outcome` + `task.validator_next_status`. It does NOT touch `task.status`. The validator's `OUTCOME` is still bloqueante for the `closer` — the closer reads the handoff and rejects the commit if validator did not approve.
 - `official-docs-researcher` is informational for the same reason (parallel with `developer`).
 
-The whitelist lives in `.claude/bin/hook_capture_subagent_stop.py:INFO_ONLY_AGENTS`. The lock around the registry write is still acquired (atomicity), but the read-modify-write decision is now agent-aware, so the order of arrival of the two parallel stops no longer affects the final state.
+The info-only/lifecycle classification lives only in `.claude/orchestrator-contract.json -> trailer_schema.roles.<agent>` (`info_only`, `mutates_registry_lifecycle`). The hook derives behavior from that schema at runtime; there is no hardcoded agent whitelist in code. The lock around the registry write is still acquired (atomicity), but the read-modify-write decision is schema-aware, so the order of arrival of parallel stops no longer affects the final state.
 
 
 
@@ -85,7 +85,7 @@ The whitelist lives in `.claude/bin/hook_capture_subagent_stop.py:INFO_ONLY_AGEN
 
 Campos añadidos a `runtime-state.json` por la feature de journey-verification:
 
-- `pending_journey_verifications`: list[str] — JOURNEY_IDs cuyos slices están todos `done` pero aún no tienen `/verify-journey` o verificación inline. El planner los lee al arrancar: en `frontier` difiere solo tasks que referencian esos JIDs; en `strict` devuelve `CONTEXT_READY: no` si la lista no está vacía.
+- `pending_journey_verifications`: list[str] — JOURNEY_IDs cuyos slices están todos `done` pero aún no tienen `/verify-journey` o verificación inline. En DAG-only difiere solo tasks que referencian esos JIDs; ramas independientes pueden seguir.
 - `last_journey_verified`: str | null — último JOURNEY_ID verificado (informativo, surface en SessionStart hook).
 
 ## Journey state in registry.json

@@ -28,9 +28,16 @@ if str(_BIN) not in sys.path:
     sys.path.insert(0, str(_BIN))
 
 
+def _copy_contract(root: Path) -> None:
+    (root / ".claude").mkdir(parents=True, exist_ok=True)
+    contract_src = _BIN.parent / "orchestrator-contract.json"
+    if contract_src.exists():
+        (root / ".claude" / "orchestrator-contract.json").write_text(contract_src.read_text(encoding="utf-8"), encoding="utf-8")
+
+
 # ---------------------------------------------------------------------------
 # Shared harness (kept here intentionally — these tests are about cross-hook
-# choreography, so the harness mirrors the real flow rather than reusing
+# choreography, so the harness replays the real flow rather than reusing
 # fixtures from other test files that test isolated invariants).
 # ---------------------------------------------------------------------------
 
@@ -61,6 +68,7 @@ def _setup_tmp_project() -> tuple[Path, tempfile.TemporaryDirectory]:
     root = Path(td.name)
     (root / "orchestrator-state" / "tasks").mkdir(parents=True)
     (root / "orchestrator-state" / "memory").mkdir(parents=True)
+    _copy_contract(root)
     return root, td
 
 

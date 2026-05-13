@@ -37,8 +37,8 @@ def _default_phase_id(registry: dict[str, Any], runtime: dict[str, Any]) -> str 
     """Return the first phase that is not fully done.
 
     DAG-only mode has no runtime implicit selector singleton; phase gates should be
-    called with an explicit phase_id when possible. This fallback is only a
-    convenience for interactive maintenance.
+    called with an explicit phase_id when possible. This auto-selection is only a
+    convenience for interactive maintenance; scripts should pass phase_id explicitly.
     """
     tasks = registry.get("tasks", []) or []
     by_phase = {}

@@ -34,6 +34,10 @@ def tmp_project(tmp_path, monkeypatch):
 
     (tmp_path / "orchestrator-state" / "tasks").mkdir(parents=True)
     (tmp_path / "orchestrator-state" / "memory").mkdir(parents=True)
+    (tmp_path / ".claude").mkdir(parents=True)
+    contract_src = _BIN_DIR.parent / "orchestrator-contract.json"
+    if contract_src.exists():
+        (tmp_path / ".claude" / "orchestrator-contract.json").write_text(contract_src.read_text(encoding="utf-8"), encoding="utf-8")
 
     # Limpiar el counter de lock entre tests (estado de módulo).
     import common  # noqa: WPS433 (intencional)

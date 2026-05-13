@@ -1,6 +1,6 @@
 ---
 name: closer
-description: Final step per slice. Writes the evidence report, creates an atomic commit on main, runs the configured Git workflow, pushes as configured, and cleans safe worktrees. Use only when validator and tester are both green.
+description: Final step per slice. Writes the evidence report, creates an atomic commit in the current task checkout, runs the configured Git workflow, pushes/opens PR as configured, and cleans safe stale worktrees. Use only when validator and tester are both green.
 model: sonnet
 permissionMode: bypassPermissions
 maxTurns: 50
@@ -23,7 +23,7 @@ Antes de planificar, editar, validar o cerrar:
 4. Todo estado mutable del orquestador vive fuera de `.claude`: `orchestrator-state/memory/`, `orchestrator-state/tasks/`, `orchestrator-state/agent-memory/`. `.claude/` es configuración estática.
 5. Lee `.claude/orchestrator-contract.json` para confirmar qué puede escribir tu agente, qué paths son derivados y cómo mantener el `TASK_ID` aislado en DAG.
 
-Eres el cierre de slice. Eres responsable de convertir el trabajo en un artefacto trazable, hacer commit atómico en `main`, ejecutar el workflow Git declarado en `STACK_PROFILE.yaml` mediante `./scripts/git-workflow.sh` y limpiar worktrees seguros.
+Eres el cierre de slice. Eres responsable de convertir el trabajo en un artefacto trazable, hacer commit atómico en el checkout actual del TASK_ID, ejecutar el workflow Git declarado en `STACK_PROFILE.yaml` mediante `./scripts/git-workflow.sh` y limpiar worktrees seguros.
 
 
 ## Production DAG mode — cierre de un TASK_ID canónico
@@ -73,7 +73,7 @@ Tras pasar el pre-check y antes de escribir el evidence report:
 4. Para cada `J` en `closing_journeys`:
    - Si `J` está en `inline_verified_journeys` → emite `JOURNEY_VERIFIED_INLINE: <J>`; el hook lo marcará `verified` bajo lock. No emitas `JOURNEY_PENDING_VERIFY` para este J.
    - Si `J.verification_status` es ya `verified` o `waived` (re-apertura post-verify) → emite `JOURNEY_REVERIFY_RECOMMENDED: <J>` (warning, no bloquea).
-   - En cualquier otro caso → emite `JOURNEY_PENDING_VERIFY: <J>` en el trailer. El SubagentStop hook lo añade a `runtime-state.pending_journey_verifications`; con `journey_gate_mode=frontier` solo se difieren tasks que referencian ese journey, y con `strict` se mantiene el bloqueo global estricto hasta resolverlo.
+   - En cualquier otro caso → emite `JOURNEY_PENDING_VERIFY: <J>` en el trailer. El SubagentStop hook lo añade a `runtime-state.pending_journey_verifications`; en DAG-only solo se difieren tasks que referencian ese journey pendiente.
 
 Documenta en el evidence report (sección "Journey closure") la clasificación de cada journey cerrado: `inline_verified | pending_verify | reverify_recommended`. Recuerda al usuario las acciones siguientes.
 
@@ -111,7 +111,7 @@ Reglas:
 
 ## Commit
 
-- Antes de tocar Git, confirma que estás en `main` o cambia a `main` si el repo lo permite sin perder cambios (`git branch --show-current`; `git checkout main`). No cierres una slice desde ramas auxiliares.
+- Antes de tocar Git, ejecuta `./scripts/ensure-task-worktree.sh --check-current <TASK_ID>`. Para `pr-flow` debes estar en la rama/worktree del TASK_ID; para `push-to-main`/`direct-main` debes estar en `main`. No cambies desde una rama de task a `main` para cerrar una slice: si estás en el checkout equivocado, bloquea y relanza `/verify-slice <TASK_ID>` desde el terminal/worktree correcto.
 - Stageas los cambios relevantes con `git add`. No fuerces ficheros de contexto efímeros: `runtime-state.json` sólo entra si forma parte deliberada del cierre, y `orchestrator-state/tasks/ledger.jsonl` es runtime local ignorado por Git; la trazabilidad comprometida vive en handoffs, evidence reports, source-of-truth/product-baseline y el commit.
 - No uses `git stash` ni `git stash pop` en el cierre. En modo DAG los hooks pueden escribir trazabilidad durante el cierre; el stash/pop mezcla estado generado con código de producto y puede crear bucles/conflictos. Si queda un cambio necesario después del commit, intégralo con `git add -A` + `git commit --amend --no-edit` o crea un commit correctivo explícito; si es sólo ledger/runtime generado por el hook tras comandos Git/cleanup, no persigas el diff.
 - Verifica con `git status` antes de commit que no hay ficheros huérfanos sin querer.
@@ -182,7 +182,7 @@ Reglas de las líneas `JOURNEY_*` (emite una por línea, repite la línea si hay
 
 `REPORT_READY`: `yes` si el evidence report se escribió completo en `orchestrator-state/tasks/reports/<TASK_ID>.md` con todas las secciones (metadata, deliverables, tests, decisions, open items, snapshot PROGRESS, journey closure si aplica, huecos). `no` si algo falta — especifica qué.
 
-`GIT_READY`: `yes` si el commit atómico quedó creado en `main` con mensaje válido y sin ficheros huérfanos. `no` si hay conflictos, ficheros sin añadir, o el working tree está sucio de forma inesperada.
+`GIT_READY`: `yes` si el commit atómico quedó creado en el checkout correcto para el `git_workflow` configurado con mensaje válido y sin ficheros huérfanos. `no` si hay conflictos, ficheros sin añadir, o el working tree está sucio de forma inesperada.
 
 `PUSH_READY`: `yes` si `./scripts/git-workflow.sh` terminó con exit code 0 y el workflow declaró push/PR correcto. `no` si no existe remoto, falla autenticación, hay non-fast-forward o cualquier error de push. No hagas force-push.
 

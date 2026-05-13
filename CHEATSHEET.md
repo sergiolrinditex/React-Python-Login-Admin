@@ -4,7 +4,7 @@
 
 ```text
 5 source-of-truth docs
-  -> bootstrap_three_docs.py
+  -> bootstrap_source_of_truth.py
   -> registry.json + task-packs + DAG derivado
   -> next-wave / claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice <TASK_ID>"
   -> verify-slice
@@ -26,8 +26,8 @@ docs/source-of-truth/STACK_PROFILE.yaml
 ```bash
 ./scripts/reset-for-new-project.sh
 # pegar los 5 source-of-truth docs en docs/source-of-truth/
-python3 -B -S .claude/bin/bootstrap_three_docs.py --validate-only
-python3 -B -S .claude/bin/bootstrap_three_docs.py --refresh
+python3 -B -S .claude/bin/bootstrap_source_of_truth.py --validate-only
+python3 -B -S .claude/bin/bootstrap_source_of_truth.py --refresh
 ./scripts/check-task-dag.sh --strict
 ./scripts/check-journey-matrix.sh --strict
 ./scripts/check-wiring-contract.sh --strict --require-new-template-columns
@@ -36,7 +36,7 @@ python3 -B -S .claude/bin/bootstrap_three_docs.py --refresh
 
 `reset-for-new-project.sh` limpia estado derivado, locks, runtime y memoria archivada, pero conserva los source-of-truth docs.
 
-`bootstrap_three_docs.py --refresh` preserva runtime por defecto: estados de tasks existentes, `runtime-state.json`, blockers y follow-ups abiertos. Para un reset destructivo explícito usa `--reset-runtime-state`; no lo uses a mitad de una app/slice.
+`bootstrap_source_of_truth.py --refresh` preserva runtime por defecto: estados de tasks existentes, `runtime-state.json`, blockers y follow-ups abiertos. Para un reset destructivo explícito usa `--reset-runtime-state`; no lo uses a mitad de una app/slice.
 
 Production DAG-only: `./scripts/check-task-dag.sh --strict` debe reportar `mode=explicit_dag`. Si sale `missing dependency column`, corrige `Depends on` en el Coverage Registry antes de abrir workers.
 
@@ -63,7 +63,7 @@ claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slic
 Ejemplo de salida/copy-paste esperado:
 
 ```bash
-export CLAUDE_ACTIVE_TASK_ID=P02-S03-T001 CLAUDE_TASK_PACK=orchestrator-state/tasks/task-packs/P02-S03-T001.md && echo 'Ahora ejecuta en Claude Code: claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice P02-S03-T001"'
+BOOTSTRAP_ROOT="${CLAUDE_ORCHESTRATOR_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd -P)}" && ROOT="$($BOOTSTRAP_ROOT/scripts/ensure-task-worktree.sh --print-root)" && WT="$($ROOT/scripts/ensure-task-worktree.sh P02-S03-T001)" && cd "$WT" && export CLAUDE_ORCHESTRATOR_ROOT="$ROOT" CLAUDE_WORKTREE_ROOT="$WT" CLAUDE_ACTIVE_TASK_ID=P02-S03-T001 CLAUDE_TASK_PACK="$ROOT/orchestrator-state/tasks/task-packs/P02-S03-T001.md" && echo 'Ahora ejecuta en Claude Code: claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice P02-S03-T001"'
 ```
 
 ### Uso correcto del terminal worker

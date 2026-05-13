@@ -25,19 +25,23 @@ from common import (
     ledger_path,
     now_iso,
     project_root,
+    workspace_root,
     relpath,
     sha256_file,
 )
 try:
     from check_handoff_contract import validate as validate_handoff_contract
-except Exception:  # pragma: no cover - broken install fallback
+except Exception:  # pragma: no cover - optional import guard
     validate_handoff_contract = None  # type: ignore[assignment]
 
 MANIFEST_NAME = "BASELINE_MANIFEST.json"
 
 
 def baseline_dir() -> Path:
-    return project_root() / "docs" / "product-baseline"
+    # Versioned product snapshot belongs to the current task checkout/branch,
+    # not necessarily the canonical state repo. In pr-flow the closer runs from
+    # a per-TASK_ID worktree and must commit this snapshot on that branch.
+    return workspace_root() / "docs" / "product-baseline"
 
 
 def manifest_path() -> Path:
@@ -83,8 +87,15 @@ def _load_manifest() -> dict[str, Any]:
         }
 
 
+def _workspace_rel(path: Path) -> str:
+    try:
+        return path.resolve().relative_to(workspace_root().resolve()).as_posix()
+    except Exception:
+        return relpath(path)
+
+
 def _chosen_docs() -> dict[str, Path]:
-    docs = discover_source_docs(project_root())
+    docs = discover_source_docs(workspace_root())
     required = ("instructions", "guide", "checklist", "ux", "stack_profile")
     invalid = [k for k in required if len(docs.get(k) or []) != 1]
     if invalid:
@@ -149,8 +160,8 @@ def _snapshot_docs() -> dict[str, Any]:
     for kind, src in docs.items():
         target = _target_for(kind, src)
         snapshot[kind] = {
-            "source": relpath(src),
-            "target": relpath(target),
+            "source": _workspace_rel(src),
+            "target": _workspace_rel(target),
             "source_sha256": sha256_file(src),
             "target_sha256": sha256_file(target) if target.exists() else None,
             "in_sync": target.exists() and sha256_file(src) == sha256_file(target),
@@ -202,8 +213,8 @@ def status(args: argparse.Namespace) -> dict[str, Any]:
         source_pack_error = str(exc)
     return {
         "ok": True,
-        "baseline_dir": relpath(baseline_dir()),
-        "manifest": relpath(manifest_path()),
+        "baseline_dir": _workspace_rel(baseline_dir()),
+        "manifest": _workspace_rel(manifest_path()),
         "latest_version": manifest.get("latest_version"),
         "snapshot_count": len(manifest.get("snapshots") or []),
         "source_pack_ready": source_pack_ready,
@@ -233,8 +244,8 @@ def sync(args: argparse.Namespace) -> dict[str, Any]:
             _remove_stale_target(kind, target)
             shutil.copy2(src, target)
             copied[kind] = {
-                "source": relpath(src),
-                "target": relpath(target),
+                "source": _workspace_rel(src),
+                "target": _workspace_rel(target),
                 "sha256": sha256_file(target),
             }
         manifest = _load_manifest()
@@ -260,7 +271,7 @@ def sync(args: argparse.Namespace) -> dict[str, Any]:
         manifest["snapshots"] = snapshots[-200:]
         _write_manifest_unlocked(manifest)
     append_jsonl(ledger_path(), {"ts": now_iso(), "event": "product_baseline_synced", "writer": "sync_product_baseline.py", "version": version, "task_id": task_id, "reason": reason, "docs": copied})
-    return {"ok": True, "version": version, "task_id": task_id, "manifest": relpath(manifest_path()), "docs": copied}
+    return {"ok": True, "version": version, "task_id": task_id, "manifest": _workspace_rel(manifest_path()), "docs": copied}
 
 
 def print_human(result: dict[str, Any]) -> None:

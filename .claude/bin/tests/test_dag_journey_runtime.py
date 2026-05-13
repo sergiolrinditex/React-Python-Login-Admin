@@ -149,7 +149,7 @@ def test_closer_infers_pending_journey_when_trailer_omits_journey_line(tmp_proje
 
 
 def test_bootstrap_enriches_journey_task_order_and_terminal_frontier():
-    import bootstrap_three_docs
+    import bootstrap_source_of_truth
 
     tasks = [
         {"id": "P00-S01-T001"},
@@ -169,7 +169,7 @@ def test_bootstrap_enriches_journey_task_order_and_terminal_frontier():
         "task_ids": ["P00-S01-T002", "P00-S01-T001", "P00-S01-T003"],
     }]
 
-    out = bootstrap_three_docs.enrich_journey_completion_metadata(journeys, tasks, task_dag)[0]
+    out = bootstrap_source_of_truth.enrich_journey_completion_metadata(journeys, tasks, task_dag)[0]
 
     assert out["task_ids_source_order"] == ["P00-S01-T002", "P00-S01-T001", "P00-S01-T003"]
     assert out["task_ids"] == ["P00-S01-T001", "P00-S01-T003", "P00-S01-T002"]

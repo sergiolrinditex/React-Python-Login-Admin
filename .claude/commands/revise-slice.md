@@ -32,7 +32,7 @@ Lee solo lo necesario:
 5. Secciones fuente apuntadas por el registry en el source-of-truth pack.
 6. Motivo de revisión pasado en `$ARGUMENTS`.
 
-Si `runtime-state.pending_journey_verifications` contiene journeys que no pertenecen a este TASK_ID, informa que la revisión puede seguir. En modo `frontier` solo se diferirán tasks que referencian esos journeys; en `strict` el próximo `/next-slice` quedará bloqueado hasta resolverlos.
+Si `runtime-state.pending_journey_verifications` contiene journeys que no pertenecen a este TASK_ID, informa que la revisión puede seguir. En DAG-only sólo se diferirán tasks que referencian esos journeys.
 
 ## Paso 2 — Plan de revisión y aprobación
 

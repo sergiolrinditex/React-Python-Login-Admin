@@ -23,20 +23,18 @@
     "task_id_env": "CLAUDE_ACTIVE_TASK_ID",
     "task_pack_env": "CLAUDE_TASK_PACK",
     "task_pack_template": "orchestrator-state/tasks/task-packs/<TASK_ID>.md",
-    "legacy_active_task": "orchestrator-state/memory/active-task.md",
-    "legacy_policy": "advisory only in explicit DAG mode"
+    "policy": "DAG-only. Worker identity comes exclusively from CLAUDE_ACTIVE_TASK_ID + CLAUDE_TASK_PACK. No implicit task/phase selector exists."
   },
   "derived_core_state": {
-    "policy": "Only bootstrap/claim/hooks/checker scripts may write these files directly.",
+    "policy": "Only bootstrap/claim/hooks/checker scripts may write these files directly. DAG-only mode stores no global task/implicit selector.",
     "files": [
       "orchestrator-state/tasks/registry.json",
       "orchestrator-state/tasks/runtime-state.json",
       "orchestrator-state/tasks/ledger.jsonl",
+      "orchestrator-state/tasks/bash-ledger.jsonl",
       "orchestrator-state/memory/task-dag.json",
       "orchestrator-state/memory/task-dag.md",
-      "orchestrator-state/memory/execution-graph.json",
-      "orchestrator-state/memory/active-task.json",
-      "orchestrator-state/memory/active-phase.json"
+      "orchestrator-state/memory/execution-graph.json"
     ],
     "override_env": "CLAUDE_ALLOW_CORE_STATE_WRITES",
     "canonical_dag_source": "orchestrator-state/tasks/registry.json -> tasks[] + task_dag.source_digest; task-dag.json/md and execution-graph.json are derived views checked for drift by check-task-dag --strict"
@@ -45,8 +43,6 @@
     "planner": {
       "may_write": [
         "orchestrator-state/tasks/task-packs/<TASK_ID>.md",
-        "orchestrator-state/memory/active-task.md legacy mirror",
-        "orchestrator-state/memory/active-phase.md legacy mirror",
         "orchestrator-state/agent-memory/planner/MEMORY.md",
         "orchestrator-state/agent-memory/planner/archive/**"
       ],
@@ -58,7 +54,7 @@
     "developer": {
       "may_write": [
         "product code inside task scope",
-        "shared config files explicitly declared in the active task Write set (e.g. docker-compose.yml, Dockerfile*, .env.example, .github/workflows/**)",
+        "shared config files explicitly declared in the DAG task Write set (e.g. docker-compose.yml, Dockerfile*, .env.example, .github/workflows/**)",
         "orchestrator-state/memory/PROGRESS.md",
         "orchestrator-state/tasks/handoffs/<TASK_ID>.md",
         "orchestrator-state/tasks/evidence/<TASK_ID>/developer-*",
@@ -124,11 +120,11 @@
       "may_write": [
         "orchestrator-state/tasks/reports/<TASK_ID>.md",
         "append close summary to handoff",
-        "git commit on main",
+        "git commit in configured workflow checkout",
         "configured Git workflow via ./scripts/git-workflow.sh",
         "safe worktree cleanup",
-        "docs/product-baseline/* via sync_product_baseline.py",
-        "docs/product-baseline/BASELINE_MANIFEST.json via sync_product_baseline.py",
+        "docs/product-baseline/* via sync_product_baseline.py after verified handoff only",
+        "docs/product-baseline/BASELINE_MANIFEST.json via sync_product_baseline.py after verified handoff only",
         "orchestrator-state/agent-memory/closer/MEMORY.md",
         "orchestrator-state/agent-memory/closer/archive/**"
       ],
@@ -241,25 +237,12 @@
         "promote follow-ups",
         "follow-up YAMLs directly",
         "register_followup_task.py promote",
-        "register_followup_task.py propose; only the main-orchestrator or /verify-slice registers FU after reading followup_candidate=yes"
+        "register_followup_task.py propose; only the main-orchestrator or /verify-slice registers FU after reading followup_candidate=yes",
+        "no follow-up promotion or proposal; report followup_candidate in handoff only"
       ]
     }
   },
   "trailers": {
-    "lifecycle_agents": [
-      "closer",
-      "debugger",
-      "deployer",
-      "developer",
-      "tester"
-    ],
-    "info_only_agents": [
-      "official-docs-researcher",
-      "validator",
-      "planner",
-      "main-orchestrator",
-      "screen-journey-reviewer"
-    ],
     "required_lifecycle_keys": [
       "TASK_ID",
       "OUTCOME",
@@ -354,7 +337,7 @@
     "manifest": "docs/product-baseline/BASELINE_MANIFEST.json",
     "sync_command": "./scripts/sync-product-baseline.sh sync --version <v0|v1|v2|current> --task <TASK_ID>",
     "status_command": "./scripts/sync-product-baseline.sh status",
-    "policy": "Closer syncs docs/source-of-truth into docs/product-baseline after verified slice evidence is ready and before the atomic commit. Do not hand-edit baseline snapshot during active DAG tasks.",
+    "policy": "Only closer syncs the verified five-file baseline: docs/source-of-truth is copied into docs/product-baseline only after /verify-slice wrote VERIFY_OUTCOME=verified and validator/tester handoff sections are approved/pass. sync_product_baseline.py enforces this unless --allow-unverified is used for explicit orchestrator maintenance. Do not hand-edit baseline snapshot during active DAG tasks.",
     "coverage_registry_columns": [
       "Product increment",
       "Build state"
@@ -365,68 +348,6 @@
       "ready": "force ready root when dependencies allow",
       "blocked": "force blocked"
     }
-  },
-  "outcome_enums": {
-    "closer": [
-      "committed",
-      "blocked"
-    ],
-    "debugger": [
-      "fixed",
-      "blocked",
-      "failed"
-    ],
-    "deployer": [
-      "deployed",
-      "planned",
-      "blocked",
-      "failed"
-    ],
-    "developer": [
-      "success",
-      "blocked",
-      "failed"
-    ],
-    "document-analyzer": [
-      "valid",
-      "invalid"
-    ],
-    "official-docs-researcher": [
-      "verified",
-      "discrepancy",
-      "insufficient"
-    ],
-    "project-architect": [
-      "ready",
-      "blocked"
-    ],
-    "task-planner": [
-      "ready",
-      "blocked"
-    ],
-    "tester": [
-      "pass",
-      "fail",
-      "blocked"
-    ],
-    "validator": [
-      "approved",
-      "changes_requested",
-      "blocked"
-    ],
-    "planner": [
-      "ready",
-      "blocked"
-    ],
-    "main-orchestrator": [
-      "ready",
-      "blocked"
-    ],
-    "screen-journey-reviewer": [
-      "approved",
-      "changes_requested",
-      "blocked"
-    ]
   },
   "verify_policy": {
     "risk_level": [
@@ -441,44 +362,9 @@
     ],
     "auto_verify_requires": "low risk, deterministic commands, no closing journey, real/provided data evidence"
   },
-  "next_status_enums": {
-    "closer": [
-      "done",
-      "blocked"
-    ],
-    "debugger": [
-      "validator_tester_pending",
-      "blocked"
-    ],
-    "deployer": [
-      "done",
-      "blocked"
-    ],
-    "developer": [
-      "validator_tester_pending",
-      "blocked"
-    ],
-    "document-analyzer": [],
-    "official-docs-researcher": [],
-    "project-architect": [],
-    "task-planner": [],
-    "tester": [
-      "ready_for_close",
-      "needs_debug",
-      "blocked"
-    ],
-    "validator": [
-      "ready_for_close",
-      "needs_debug",
-      "blocked"
-    ],
-    "planner": [],
-    "main-orchestrator": [],
-    "screen-journey-reviewer": []
-  },
   "trailer_schema": {
     "source_of_truth": ".claude/orchestrator-contract.json",
-    "policy": "All agents must emit trailers using the role-specific enums below. Hooks load this schema first; hardcoded hook enums are fallback only for damaged/partial installs.",
+    "policy": "All agents must emit trailers using the role-specific enums below. Hooks validate against this schema only; if the schema is unavailable or a role is missing, hooks log a visible error and refuse lifecycle mutation.",
     "global_keys": [
       "TASK_ID",
       "OUTCOME",
@@ -739,18 +625,14 @@
           "NEXT_STATUS": "<role next status>"
         }
       },
-      "plain_text_fallback": [
+      "plain_text_accepted_format": [
         "TASK_ID: <TASK_ID>",
         "OUTCOME: <role outcome>",
         "NEXT_STATUS: <role next status>"
       ]
     }
   },
-  "outcome_enums_source": "trailer_schema.roles[*].outcome_values",
-  "next_status_enums_source": "trailer_schema.roles[*].next_status_values",
   "journey_gate": {
-    "default_mode": "frontier",
-    "frontier_policy": "pending journeys defer only tasks whose Journey refs/dependencies reference that JID",
-    "strict_policy": "legacy global block until pending journeys are verified or waived"
+    "policy": "pending journeys defer only tasks whose Journey refs/dependencies reference that JID"
   }
 }

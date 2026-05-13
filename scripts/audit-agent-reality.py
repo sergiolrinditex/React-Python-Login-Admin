@@ -264,18 +264,19 @@ def audit_main_orchestrator_thread_contract(errors: list[str]) -> None:
 
 
 def audit_contract_derived_views(contract: dict[str, Any], roles: dict[str, dict[str, Any]], errors: list[str]) -> None:
-    lifecycle_from_schema = [role for role, spec in roles.items() if spec.get("mutates_registry_lifecycle")]
-    info_only_from_schema = [role for role, spec in roles.items() if spec.get("info_only")]
-    if contract.get("trailers", {}).get("lifecycle_agents") != lifecycle_from_schema:
-        fail(errors, "contract.trailers.lifecycle_agents does not match trailer_schema.roles[*].mutates_registry_lifecycle")
-    if contract.get("trailers", {}).get("info_only_agents") != info_only_from_schema:
-        fail(errors, "contract.trailers.info_only_agents does not match trailer_schema.roles[*].info_only")
-    expected_outcome = {role: spec.get("outcome_values", []) for role, spec in roles.items()}
-    expected_next = {role: spec.get("next_status_values", []) for role, spec in roles.items()}
-    if contract.get("outcome_enums") != expected_outcome:
-        fail(errors, "contract.outcome_enums mirror does not match trailer_schema.roles[*].outcome_values")
-    if contract.get("next_status_enums") != expected_next:
-        fail(errors, "contract.next_status_enums mirror does not match trailer_schema.roles[*].next_status_values")
+    trailers = contract.get("trailers", {})
+    if isinstance(trailers, dict):
+        for duplicated_key in ("lifecycle_agents", "info_only_agents"):
+            if duplicated_key in trailers:
+                fail(errors, f"contract.trailers.{duplicated_key} duplicates trailer_schema role metadata")
+    for duplicated_key in ("outcome" + "_enums", "next_status" + "_enums", "outcome" + "_enums_source", "next_status" + "_enums_source"):
+        if duplicated_key in contract:
+            fail(errors, f"contract.{duplicated_key} duplicates trailer_schema.roles and must not exist")
+    for role, spec in roles.items():
+        if not isinstance(spec.get("outcome_values"), list):
+            fail(errors, f"trailer_schema.roles.{role}.outcome_values must be a list")
+        if not isinstance(spec.get("next_status_values"), list):
+            fail(errors, f"trailer_schema.roles.{role}.next_status_values must be a list")
 
 
 def audit_agent_memory_contract(role: str, text: str, contract: dict[str, Any], errors: list[str], agent_path: Path) -> None:

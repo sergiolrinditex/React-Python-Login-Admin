@@ -150,8 +150,8 @@ Next.js frontend/API with SQLite.
 | P02-S01-T001 | frontend | notes page | Step 2.1 | v1 | planned | medium | human | P01-S01-T001 | front:notes | web/src/app/notes/**; web/src/theme/** | J1 | /notes | GET /api/notes | notes | J1 | §2 | page lists persisted notes | pnpm test -- notes.page |
 """, encoding="utf-8")
     cmds = [
-        ["python3", "-B", "-S", ".claude/bin/bootstrap_three_docs.py", "--validate-only"],
-        ["python3", "-B", "-S", ".claude/bin/bootstrap_three_docs.py", "--refresh"],
+        ["python3", "-B", "-S", ".claude/bin/bootstrap_source_of_truth.py", "--validate-only"],
+        ["python3", "-B", "-S", ".claude/bin/bootstrap_source_of_truth.py", "--refresh"],
         ["bash", "scripts/check-task-dag.sh", "--strict"],
         ["bash", "scripts/check-journey-matrix.sh", "--strict"],
         ["bash", "scripts/check-wiring-contract.sh", "--strict", "--require-new-template-columns"],

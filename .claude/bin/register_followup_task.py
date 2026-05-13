@@ -27,7 +27,7 @@ try:
 except Exception:  # pragma: no cover
     yaml = None
 
-from bootstrap_three_docs import (
+from bootstrap_source_of_truth import (
     build_task_dag,
     enrich_journey_completion_metadata,
     render_task_dag_markdown,

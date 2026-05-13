@@ -13,7 +13,14 @@ _BIN = Path(__file__).resolve().parent.parent
 if str(_BIN) not in sys.path:
     sys.path.insert(0, str(_BIN))
 
-import bootstrap_three_docs as boot  # noqa: E402
+
+def _copy_contract(root: Path) -> None:
+    (root / ".claude").mkdir(parents=True, exist_ok=True)
+    contract_src = _BIN.parent / "orchestrator-contract.json"
+    if contract_src.exists():
+        (root / ".claude" / "orchestrator-contract.json").write_text(contract_src.read_text(encoding="utf-8"), encoding="utf-8")
+
+import bootstrap_source_of_truth as boot  # noqa: E402
 
 
 class _Sandbox:
@@ -42,6 +49,7 @@ def _setup_root():
     (root / "orchestrator-state" / "tasks" / "handoffs").mkdir(parents=True)
     (root / "orchestrator-state" / "tasks" / "evidence").mkdir(parents=True)
     (root / "orchestrator-state" / "memory").mkdir(parents=True)
+    _copy_contract(root)
     return root, td
 
 

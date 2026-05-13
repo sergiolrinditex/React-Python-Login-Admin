@@ -94,17 +94,17 @@ orchestrator-state/memory/task-dag.md     human-readable waves
 orchestrator-state/tasks/registry.json    task_dag copy used by planner/checks
 ```
 
-The matrix is derived, not authored. To change ordering or parallelism, edit only the Coverage Registry `Depends on`, `Conflict group` and `Write set` cells and rerun `bootstrap_three_docs.py --refresh` + `scripts/check-task-dag.sh --strict`. `Depends on` controls DAG readiness; `Conflict group`/`Write set` control safe same-wave scheduling.
+The matrix is derived, not authored. To change ordering or parallelism, edit only the Coverage Registry `Depends on`, `Conflict group` and `Write set` cells and rerun `bootstrap_source_of_truth.py --refresh` + `scripts/check-task-dag.sh --strict`. `Depends on` controls DAG readiness; `Conflict group`/`Write set` control safe same-wave scheduling.
 
 For large products, the Coverage Registry is cumulative: `Product increment` labels `v0`, `v1`, `v2`, ... and `Build state` keeps already-built rows at `done` while new rows remain `planned`. This preserves full product context without rebuilding closed increments.
 
-Parallel execution uses separate terminals, not extra agent types. Run `/next-wave` to list ready independent tasks, then start one terminal per selected task with both `CLAUDE_ACTIVE_TASK_ID=<TASK_ID>` and `CLAUDE_TASK_PACK=orchestrator-state/tasks/task-packs/<TASK_ID>.md`, then run `/next-slice <TASK_ID>`. The task environment is critical: hooks use `CLAUDE_ACTIVE_TASK_ID` for spawn budget, ledger, session context and SubagentStop accounting; agents use the per-task pack so memory remains scoped to the correct slice. `CLAUDE_ACTIVE_TASK_ID` + `CLAUDE_TASK_PACK` are the only DAG task authority.
+Parallel execution uses separate terminals, not extra agent types. Run `/next-wave` to list ready independent tasks, then start one terminal per selected task with both `CLAUDE_ACTIVE_TASK_ID=<TASK_ID>` and `CLAUDE_TASK_PACK=orchestrator-state/tasks/task-packs/<TASK_ID>.md`, then run `/next-slice <TASK_ID>` from the printed command. For pr-flow, the command first creates/enters the per-TASK_ID worktree so all subagents see the same branch. The task environment is critical: hooks use `CLAUDE_ACTIVE_TASK_ID` for spawn budget, ledger, session context and SubagentStop accounting; agents use the per-task pack so memory remains scoped to the correct slice. `CLAUDE_ACTIVE_TASK_ID` + `CLAUDE_TASK_PACK` are the only DAG task authority.
 
 All existing gates still apply in each node: planner writes/enriches `orchestrator-state/tasks/task-packs/<TASK_ID>.md`, developer + official-docs-researcher run with that pack, validator + tester read that same pack, debugger loops on the same `TASK_ID`, then `/verify-slice`, closer, journey verification. A task is promotable only when every `depends_on` predecessor is `done`; a task is claimable only when no DAG task conflicts via `Conflict group`/`Write set`; the planner still respects phase order, phase gates and pending journey blocks.
 
 ## Central runtime contract
 
-`.claude/orchestrator-contract.json` is the compact machine-readable index for what each agent may write, which files are generated core state, what trailer fields are required, and which UX fields must reach every UI task pack. The human-readable mirror is `.claude/rules/05-runtime-write-contract.md`. Hooks enforce code + `orchestrator-contract.json`; they do not parse `.claude/rules/*.md` as runtime policy. If you edit rules/agents/contract during a live Claude session, restart or `/clear` before relying on the new instructions so agents and hooks do not reason from different snapshots.
+`.claude/orchestrator-contract.json` is the compact machine-readable index for what each agent may write, which files are generated core state, what trailer fields are required, and which UX fields must reach every UI task pack. Human guidance lives in `.claude/rules/05-runtime-write-contract.md`, but it is not a runtime policy source. Hooks enforce code + `orchestrator-contract.json`; they do not parse `.claude/rules/*.md` as runtime policy. If you edit rules/agents/contract during a live Claude session, restart or `/clear` before relying on the new instructions so agents and hooks do not reason from different context snapshots.
 
 Use this to keep prompts shorter: agents do not need to rediscover write policy. They load the contract, then write only their own slice artifacts. In DAG mode every artifact containing a `TASK_ID` must match `CLAUDE_ACTIVE_TASK_ID`; hooks enforce that mechanically.
 
@@ -116,7 +116,7 @@ Total: 13 agents. Per slice max 20 spawns (steps above). Bootstrap-only: `docume
 
 Manual-memory agents: `planner`, `developer`, `validator`, `debugger`, `official-docs-researcher`, `project-architect`, `screen-journey-reviewer`, plus `task-planner` for bootstrap learnings. Memory is stored in `orchestrator-state/agent-memory/<agent>/MEMORY.md`; `.claude/` stays static.
 
-Isolation (worktree): only `developer`, `debugger`, `deployer`.
+Task worktree isolation is session-level, not subagent-level: `/next-wave` moves pr-flow worker terminals into a per-TASK_ID worktree before `claude --agent main-orchestrator` starts. Do not add `isolation: worktree` to lifecycle subagents; validator/tester/debugger/closer must inspect the same checkout.
 
 ## Rules
 
@@ -144,7 +144,7 @@ Four hook groups are wired in `settings.json`. They are intentionally small and 
 - `SubagentStop` → `hook_capture_subagent_stop.py`. Parses the final `CLAUDE_TRAILER:` block (`TASK_ID` / `OUTCOME` / `NEXT_STATUS` / `HANDOFF` / `EVIDENCE` / `REPORT`), increments spawn counters, and syncs `registry.json` + `runtime-state.json` under ordered locks. If the trailer is missing or partial, it writes a visible error; it does not silently drop state. In DAG worker terminals, a trailer with a different `TASK_ID` is logged as a scope mismatch and cannot mutate another node.
 - `SessionStart` → `hook_session_context.py`. Emits `additionalContext` with the project state, unresolved docs discrepancies, spawn counts, and recent hook errors.
 
-All hook root resolution is worktree-safe: when a subagent runs with `isolation: worktree`, scripts resolve the canonical main repo before touching `orchestrator-state/tasks/` or `orchestrator-state/memory/`. Hook failures write a timestamped entry to `orchestrator-state/hook-errors.log`; the SessionStart hook surfaces recent entries at restart so corruption is visible instead of silent.
+Root resolution is split deliberately: orchestrator state writes resolve to the canonical main repo, while product verification commands resolve to the current task worktree via `CLAUDE_WORKTREE_ROOT`/cwd. Hook failures write a timestamped entry to `orchestrator-state/hook-errors.log`; the SessionStart hook surfaces recent entries at restart so corruption is visible instead of silent.
 
 ## Mutable state policy
 
@@ -167,7 +167,7 @@ Do not create hidden runtime folders such as `.orchestrator/`. The only hidden c
 - `/register-followup propose|waive|list` — registra/waivea hallazgos reales de validator/tester/verify como propuestas YAML.
 - `/promote-followup <FU_ID>` — promoción segura vía main-orchestrator: convierte una FU aprobada en task DAG persistente en source-of-truth + registry + work-items.
 - `./scripts/sync-product-baseline.sh status|sync` — mantiene `docs/product-baseline/` como snapshot construido acumulativo para el siguiente incremento. `sync` requiere handoff verificado salvo migración manual explícita con `--allow-unverified`.
-- `/verify-journey <JID>` — gate humano end-to-end **a nivel journey** (multi-pantalla, no por slice). Se lanza tras el `closer` de la ÚLTIMA slice de un journey declarado en la Journey Coverage Matrix de `instrucciones.md` (sección §3.5 en baseline histórico, §3.7 en feature-app — el bootstrap la localiza por nombre, no por número). `journey_gate_mode=frontier` es el default: `pending_journey_verifications[]` solo difiere tasks que referencian esos journeys; `strict` mantiene un bloqueo global de journey. Hard reset + datos reales/proporcionados consolidados + reproducción del flujo entero + estados marginales (empty/error/permission/back/deep_link) + next action. Resiliente al `/clear`.
+- `/verify-journey <JID>` — gate humano end-to-end **a nivel journey** (multi-pantalla, no por slice). Se lanza tras el `closer` de la ÚLTIMA slice de un journey declarado en la Journey Coverage Matrix de `instrucciones.md` (sección Journey Coverage Matrix; el bootstrap la localiza por nombre, no por número). `pending_journey_verifications[]` difiere solo las tasks que referencian esos journeys. No existe modo alternativo de journey gate en DAG-only. Hard reset + datos reales/proporcionados consolidados + reproducción del flujo entero + estados marginales (empty/error/permission/back/deep_link) + next action. Resiliente al `/clear`.
 - `/slice-maintain clean|compact|compact-agent-memory` — mantenimiento entre slices, compactación de PROGRESS.md y compactación lossless de memorias de agentes.
 
 Recommended order when closing a slice: tester pass → (optional `/clear` to free context) → `/verify-slice` (spawns `closer` if verified) → `/slice-maintain clean` → `/clear` → `/next-slice`.
@@ -187,7 +187,7 @@ Si aparece trabajo real fuera del TASK_ID actual, no se deja en el handoff como 
 ## Entry points
 
 - Start: `claude --agent main-orchestrator --permission-mode bypassPermissions`.
-- Bootstrap: run `python3 -B -S .claude/bin/bootstrap_three_docs.py --validate-only` and then `python3 -B -S .claude/bin/bootstrap_three_docs.py --refresh`.
+- Bootstrap: run `python3 -B -S .claude/bin/bootstrap_source_of_truth.py --validate-only` and then `python3 -B -S .claude/bin/bootstrap_source_of_truth.py --refresh`.
 - Slice: `/next-slice`.
 - Verify: `/verify-slice`.
 - Maintain: `/slice-maintain clean` or `/slice-maintain compact`.

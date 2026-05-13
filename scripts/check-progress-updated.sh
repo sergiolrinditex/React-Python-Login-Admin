@@ -90,7 +90,7 @@ if [[ -z "$WORKTREE" && "$AUTO" == "1" ]]; then
   fi
 
   if [[ -z "$WORKTREE" ]]; then
-    # Fallback: usa CWD (developer puede no haber usado worktree aislado).
+    # Fallback: usa CWD (push-to-main or manual task terminal without a separate worktree).
     WORKTREE="$(pwd)"
   fi
 fi

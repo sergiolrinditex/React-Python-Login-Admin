@@ -15,12 +15,13 @@ import sys
 from typing import Any
 
 from check_task_dag import validate_registry_dag
+from stack_profile import load_stack_profile
 from common import (
     SCHEDULER_ACTIVE_STATUSES,
+    project_root,
     load_registry,
     load_runtime_state,
     blocking_open_followups,
-    journey_gate_mode,
     pending_journey_blockers_for_task,
     promote_ready_tasks,
     task_conflict_reasons,
@@ -70,8 +71,6 @@ def compute_wave(registry: dict[str, Any], *, phase_id: str | None = None, limit
     registry = promote_ready_tasks(copy.deepcopy(registry))
     runtime = load_runtime_state()
     pending = [str(j).strip() for j in (runtime.get("pending_journey_verifications") or []) if str(j).strip()]
-    gate_mode = journey_gate_mode(runtime)
-    strict_journey_block = bool(pending and gate_mode == "strict")
     blocking_followups = blocking_open_followups(runtime)
     dag, warnings, errors = validate_registry_dag(registry)
     errors = list(errors or [])
@@ -83,7 +82,7 @@ def compute_wave(registry: dict[str, Any], *, phase_id: str | None = None, limit
     deferred_journey_gate: list[dict[str, Any]] = []
     ready_total = 0
 
-    if selected_phase and not strict_journey_block and not blocking_followups and not errors:
+    if selected_phase and not blocking_followups and not errors:
         for task in _phase_tasks(registry, selected_phase):
             status = task.get("status")
             if status == "done" or status in SCHEDULER_ACTIVE_STATUSES or (status == "blocked" and task_is_ready(registry, task)):
@@ -93,7 +92,6 @@ def compute_wave(registry: dict[str, Any], *, phase_id: str | None = None, limit
                 journey_blockers = pending_journey_blockers_for_task(task, runtime)
                 if journey_blockers:
                     enriched = dict(task)
-                    enriched["journey_gate_mode"] = gate_mode
                     enriched["journey_gate_blockers"] = journey_blockers
                     enriched["journey_gate_reason"] = "pending journeys: " + ", ".join(journey_blockers)
                     deferred_journey_gate.append(enriched)
@@ -114,7 +112,7 @@ def compute_wave(registry: dict[str, Any], *, phase_id: str | None = None, limit
                     break
 
     return {
-        "ok": not errors and not strict_journey_block and not blocking_followups,
+        "ok": not errors and not blocking_followups,
         "dag_mode": dag.get("mode"),
         "phase": selected_phase,
         "ready_total": ready_total,
@@ -126,24 +124,41 @@ def compute_wave(registry: dict[str, Any], *, phase_id: str | None = None, limit
         "warnings": warnings,
         "errors": errors,
         "pending_journey_verifications": pending,
-        "journey_gate_mode": gate_mode,
         "blocking_followups": blocking_followups,
     }
+
+
+def _git_workflow() -> str:
+    raw = str(load_stack_profile(project_root()).get("git_workflow") or "push-to-main")
+    safe = "".join(ch for ch in raw if ch.isalnum() or ch in {"-", "_"})
+    if safe in {"direct-main", "direct-main-push", "push-main"}:
+        return "push-to-main"
+    return safe or "push-to-main"
 
 
 def _terminal_command(task_id: str) -> str:
     # Do not pre-claim here. `/next-slice <TASK_ID>` performs the atomic claim
     # after the human approves the plan, avoiding a double-claim denial. The
-    # task-pack export is advisory until claim/planner create the file, but it
-    # gives every downstream agent a per-node path instead of the global
-    # DAG implicit selector.
+    # task-pack export gives every downstream agent a per-node path; DAG-only
+    # has no implicit global selector. For pr-flow projects the terminal is moved
+    # into a per-TASK_ID worktree/branch before Claude Code starts, so validator,
+    # tester, debugger, verify-slice and closer all look at the same checkout.
     pack = f"orchestrator-state/tasks/task-packs/{task_id}.md"
-    claude_cmd = (
-        f'claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice {task_id}"'
-    )
+    claude_cmd = f'claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice {task_id}"'
+    workflow = _git_workflow()
+    if workflow == "push-to-main":
+        return (
+            f"export CLAUDE_ACTIVE_TASK_ID={task_id} "
+            f"CLAUDE_TASK_PACK={pack} && "
+            f"echo 'Ahora ejecuta en Claude Code: {claude_cmd}'"
+        )
     return (
-        f"export CLAUDE_ACTIVE_TASK_ID={task_id} "
-        f"CLAUDE_TASK_PACK={pack} && "
+        'BOOTSTRAP_ROOT="${CLAUDE_ORCHESTRATOR_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd -P)}" && '
+        'ROOT="$($BOOTSTRAP_ROOT/scripts/ensure-task-worktree.sh --print-root)" && '
+        f'WT="$($ROOT/scripts/ensure-task-worktree.sh {task_id})" && '
+        'cd "$WT" && '
+        f'export CLAUDE_ORCHESTRATOR_ROOT="$ROOT" CLAUDE_WORKTREE_ROOT="$WT" '
+        f'CLAUDE_ACTIVE_TASK_ID={task_id} CLAUDE_TASK_PACK="$ROOT/{pack}" && '
         f"echo 'Ahora ejecuta en Claude Code: {claude_cmd}'"
     )
 
@@ -159,15 +174,10 @@ def print_markdown(result: dict[str, Any]) -> None:
     pending = result.get("pending_journey_verifications") or []
     if pending:
         print()
-        mode = result.get("journey_gate_mode") or "frontier"
-        print(f"## Journeys pendientes (`journey_gate_mode={mode}`)")
-        if mode == "strict":
-            for jid in pending:
-                print(f"- Bloqueo global estricto: ejecuta `/verify-journey {jid}` antes de abrir nueva wave.")
-        else:
-            print("- Modo frontier: solo se difieren las tasks que referencian esos journeys; las ramas independientes pueden continuar.")
-            for jid in pending:
-                print(f"- `{jid}` pendiente: `/verify-journey {jid}`")
+        print("## Journeys pendientes")
+        print("- DAG-only: solo se difieren las tasks que referencian esos journeys; las ramas independientes pueden continuar.")
+        for jid in pending:
+            print(f"- `{jid}` pendiente: `/verify-journey {jid}`")
     blocking_followups = result.get("blocking_followups") or []
     if blocking_followups:
         print()

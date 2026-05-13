@@ -45,22 +45,17 @@ Lee en paralelo:
 
 ### 1.bis Gate de journeys pendientes
 
-Comprueba `runtime-state.pending_journey_verifications` y `runtime-state.journey_gate_mode` (`frontier` por defecto, `strict`).
-
-- `frontier`: NO bloquea todo el DAG. Solo devuelve `CONTEXT_READY: no` si el `TASK_ID` pedido referencia alguno de los journeys pendientes en `Journey refs`, `depends_on_journeys` o `journey_gate_refs`. Las ramas independientes pueden seguir.
-- `strict`: conserva el bloqueo global estricto; si hay journeys pendientes, no selecciones tarea nueva.
-- Nunca mutes registry, runtime-state ni implicit selector desde el planner.
+Comprueba `runtime-state.pending_journey_verifications`. En DAG-only NO bloquea todo el DAG: solo devuelve `CONTEXT_READY: no` si el `TASK_ID` pedido referencia alguno de los journeys pendientes en `Journey refs`, `depends_on_journeys` o `journey_gate_refs`. Las ramas independientes pueden seguir. Nunca mutes registry, runtime-state ni implicit selector desde el planner.
 
 Si la task queda diferida por el gate, emite:
 
 ```
 CONTEXT_READY: no
 PENDING_JOURNEY_VERIFICATIONS: <lista>
-JOURNEY_GATE_MODE: <frontier|strict>
 REASON: "Journey gate pendiente. Lanza /verify-journey <JID> o usa waiver explícito con JOURNEY_VERIFY_WAIVED en el journey-handoff."
 ```
 
-Si existe una nota sobre este patrón en `orchestrator-state/agent-memory/planner/MEMORY.md`, úsala como memoria auxiliar; el contrato autoritativo sigue siendo `runtime-state.pending_journey_verifications` + `journey_gate_mode`.
+Si existe una nota sobre este patrón en `orchestrator-state/agent-memory/planner/MEMORY.md`, úsala como memoria auxiliar; el contrato autoritativo sigue siendo `runtime-state.pending_journey_verifications` + los `Journey refs` del TASK_ID.
 
 ### 1.ter Gate de spawn budget (BLOQUEANTE)
 
@@ -234,7 +229,7 @@ PARALLEL_CANDIDATES: <otras task-ids ready que no pisan; "none" si no aplica>
 TASK_PACK: orchestrator-state/tasks/task-packs/<TASK_ID>.md
 ```
 
-Si alguno de los 5 ficheros source-of-truth no se pudo extraer, o `PROGRESS.md` falta tras bootstrap sin explicación → `CONTEXT_READY: no` + razón. El developer no arranca hasta que sea `yes`. Si `PENDING_JOURNEY_VERIFICATIONS` no es "none", aplica §1.bis: `frontier` solo difiere tasks afectadas; `strict` bloquea globalmente.
+Si alguno de los 5 ficheros source-of-truth no se pudo extraer, o `PROGRESS.md` falta tras bootstrap sin explicación → `CONTEXT_READY: no` + razón. El developer no arranca hasta que sea `yes`. Si `PENDING_JOURNEY_VERIFICATIONS` no es "none", aplica la política única DAG-only: difiere sólo tasks que referencian esos JIDs; ramas independientes pueden seguir.
 
 
 ## DAG planner supplement

@@ -7,36 +7,32 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[3]
 
 
-def test_trailer_schema_matches_outcome_enums_mirror():
+def test_trailer_schema_is_single_enum_source():
     contract = json.loads((ROOT / ".claude/orchestrator-contract.json").read_text(encoding="utf-8"))
-    schema_outcomes = {
-        role: set(spec.get("outcome_values", []))
-        for role, spec in contract["trailer_schema"]["roles"].items()
-    }
-    mirror_outcomes = {
-        role: set(values)
-        for role, values in contract["outcome_enums"].items()
-    }
-    assert schema_outcomes == mirror_outcomes, (
-        f"trailer_schema y outcome_enums divergen: "
-        f"schema={schema_outcomes} mirror={mirror_outcomes}"
-    )
+    roles = contract["trailer_schema"]["roles"]
+    assert roles, "trailer_schema.roles must exist"
+    assert "outcome" + "_enums" not in contract
+    assert "next_status" + "_enums" not in contract
+    assert "outcome" + "_enums_source" not in contract
+    assert "next_status" + "_enums_source" not in contract
+    for role, spec in roles.items():
+        assert isinstance(spec.get("outcome_values"), list), f"{role} missing outcome_values list"
+        assert isinstance(spec.get("next_status_values"), list), f"{role} missing next_status_values list"
 
 
-def test_trailer_schema_matches_next_status_enums_mirror():
+def test_trailer_agent_classes_are_derived_from_schema_only():
     contract = json.loads((ROOT / ".claude/orchestrator-contract.json").read_text(encoding="utf-8"))
-    schema_statuses = {
-        role: set(spec.get("next_status_values", []))
-        for role, spec in contract["trailer_schema"]["roles"].items()
-    }
-    mirror_statuses = {
-        role: set(values)
-        for role, values in contract["next_status_enums"].items()
-    }
-    assert schema_statuses == mirror_statuses, (
-        f"trailer_schema y next_status_enums divergen: "
-        f"schema={schema_statuses} mirror={mirror_statuses}"
-    )
+    trailers = contract.get("trailers", {})
+    assert "lifecycle_agents" not in trailers
+    assert "info_only_agents" not in trailers
+    roles = contract["trailer_schema"]["roles"]
+    lifecycle = {role for role, spec in roles.items() if spec.get("mutates_registry_lifecycle")}
+    info_only = {role for role, spec in roles.items() if spec.get("info_only")}
+    assert "developer" in lifecycle
+    assert "tester" in lifecycle
+    assert "closer" in lifecycle
+    assert "validator" in info_only
+    assert "screen-journey-reviewer" in info_only
 
 
 def test_agent_prompts_reference_existing_schema_roles():

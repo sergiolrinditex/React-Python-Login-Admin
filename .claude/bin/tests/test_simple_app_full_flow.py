@@ -158,7 +158,7 @@ def run_py(script: str, root: Path, *args: str) -> subprocess.CompletedProcess[s
 
 def test_simple_app_template_to_dag_flow(tmp_project):
     write_simple_app_docs(tmp_project)
-    result = run_py("bootstrap_three_docs.py", tmp_project, "--refresh", "--json")
+    result = run_py("bootstrap_source_of_truth.py", tmp_project, "--refresh", "--json")
     assert result.returncode == 0, result.stderr + result.stdout
     payload = json.loads(result.stdout)
     assert payload["ok"] is True

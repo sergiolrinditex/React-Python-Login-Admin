@@ -444,8 +444,8 @@ def smoke_app(temp_root: Path, app: App, keep: bool) -> dict[str, Any]:
     checks = []
     for cmd in [
         ["./scripts/reset-for-new-project.sh"],
-        ["python3", "-B", "-S", ".claude/bin/bootstrap_three_docs.py", "--validate-only"],
-        ["python3", "-B", "-S", ".claude/bin/bootstrap_three_docs.py", "--refresh", "--reset-runtime-state"],
+        ["python3", "-B", "-S", ".claude/bin/bootstrap_source_of_truth.py", "--validate-only"],
+        ["python3", "-B", "-S", ".claude/bin/bootstrap_source_of_truth.py", "--refresh", "--reset-runtime-state"],
         ["./scripts/check-task-dag.sh", "--strict"],
         ["./scripts/check-journey-matrix.sh", "--strict"],
         ["./scripts/check-wiring-contract.sh", "--strict", "--require-new-template-columns"],

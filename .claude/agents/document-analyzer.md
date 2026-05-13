@@ -40,7 +40,7 @@ Canonical location: `docs/source-of-truth/`. Templates live in `docs/templates/`
 
 ## Protocolo
 
-1. Ejecuta `python3 -B -S .claude/bin/bootstrap_three_docs.py --validate-only`; si no hay un source-of-truth pack válido, detén el flujo. Después usa `--refresh`.
+1. Ejecuta `python3 -B -S .claude/bin/bootstrap_source_of_truth.py --validate-only`; si no hay un source-of-truth pack válido, detén el flujo. Después usa `--refresh`.
 2. Verifica:
    - existencia única de los ficheros canónicos,
    - consistencia de prefijo entre guide y checklist,

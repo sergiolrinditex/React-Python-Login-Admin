@@ -153,7 +153,7 @@ Allowed max chain = 20 spawns, with aggressive parallelism:
 1. `planner` (blocking — selects task, builds pack, impact analysis)
 2. `developer` (+ `official-docs-researcher` si aplica; mismo mensaje cuando se invoque)
    - `developer` implements.
-   - `official-docs-researcher` runs only when the planner marks `NEEDS_OFFICIAL_DOCS: yes` or the slice touches unconfirmed external API/library/security/AI/RAG/MCP/streaming/DB/deploy behavior. Give it 1–5 concrete questions; it uses cache/MCP/Context7 first and writes a discrepancy note only when official docs contradict the source-of-truth.
+   - `official-docs-researcher` runs only when the planner marks `NEEDS_OFFICIAL_DOCS: yes` or the slice touches unconfirmed external API/library/security/AI/RAG/MCP/streaming/DB/deploy behavior. Give it 1–5 concrete questions; it uses cache/MCP/Context7 first and writes a discrepancy note only for a real official-doc mismatch with the source-of-truth.
 3. `validator` ‖ `tester` (parallel — one message, two Agent calls)
 4. `debugger` (if tester fails OR validator requests changes; then re-run step 3). Max 3 cycles; on the 4th failure the debugger emits `OUTCOME: blocked` with reason `max_debug_cycles_reached` and escalates to the human.
 5. `closer` (evidence + atomic commit via configured Git workflow (`./scripts/git-workflow.sh`) + safe worktree cleanup)

@@ -43,7 +43,7 @@ Incorrecto: lanzar `claude` normal y pedir que “use” `main-orchestrator` com
 
 ## Invariante production DAG-only
 
-Este orquestador trabaja exclusivamente en DAG de producción. Antes de abrir o continuar una slice, confirma que `orchestrator-state/tasks/registry.json -> task_dag.mode` es `explicit_dag` y que cada task viene del Coverage Registry con `Depends on`, `Conflict group` y `Write set` coherentes. Si falta la columna `Depends on`, bloquea, pide corregir el Coverage Registry y ejecutar `python3 -B -S .claude/bin/bootstrap_three_docs.py --refresh` de nuevo. No existe implicit selector/fase en DAG; la identidad de ejecución es `CLAUDE_ACTIVE_TASK_ID` + `orchestrator-state/tasks/task-packs/<TASK_ID>.md`.
+Este orquestador trabaja exclusivamente en DAG de producción. Antes de abrir o continuar una slice, confirma que `orchestrator-state/tasks/registry.json -> task_dag.mode` es `explicit_dag` y que cada task viene del Coverage Registry con `Depends on`, `Conflict group` y `Write set` coherentes. Si falta la columna `Depends on`, bloquea, pide corregir el Coverage Registry y ejecutar `python3 -B -S .claude/bin/bootstrap_source_of_truth.py --refresh` de nuevo. No existe implicit selector/fase en DAG; la identidad de ejecución es `CLAUDE_ACTIVE_TASK_ID` + `orchestrator-state/tasks/task-packs/<TASK_ID>.md`.
 
 Lee `.claude/rules/` para los non-negotiables del proyecto. No los repitas aquí — aplícalos.
 
@@ -105,7 +105,7 @@ no agotar el budget en cadenas seriales.
 
 ### Pipeline `/next-slice` (acaba en `tester pass`)
 
-1. **`planner`** — blocking. Valida el `TASK_ID` explícito, extrae secciones de los documentos source-of-truth + PROGRESS.md, hace análisis de impacto y escribe/enriquece el pack canónico `orchestrator-state/tasks/task-packs/<TASK_ID>.md`. Cierre requerido: `CONTEXT_READY: yes`, `IMPACT_READY: yes`, `ACTIVE_TASK: <ID>`, `TASK_PACK: <path>`. Si `runtime-state.pending_journey_verifications` no está vacía, devuelve `CONTEXT_READY: no` y pide lanzar `/verify-journey <JID>` primero.
+1. **`planner`** — blocking. Valida el `TASK_ID` explícito, extrae secciones de los documentos source-of-truth + PROGRESS.md, hace análisis de impacto y escribe/enriquece el pack canónico `orchestrator-state/tasks/task-packs/<TASK_ID>.md`. Cierre requerido: `CONTEXT_READY: yes`, `IMPACT_READY: yes`, `ACTIVE_TASK: <ID>`, `TASK_PACK: <path>`. Si `runtime-state.pending_journey_verifications` contiene un `JID` referenciado por esta task, devuelve `CONTEXT_READY: no` y pide `/verify-journey <JID>`; si los pending journeys no afectan al TASK_ID, la rama independiente puede seguir.
 2. **`developer` (+ `official-docs-researcher` si aplica)** — un único mensaje con 1–2 Agent calls. El researcher corre sólo si el planner marca `NEEDS_OFFICIAL_DOCS: yes` o la slice toca API/librería externa, seguridad, AI/RAG/MCP, streaming, DB/deploy behavior no confirmado. Si detecta discrepancia → escribe nota en `orchestrator-state/memory/official-doc-notes/` (warn-only, no bloquea); el developer reconcilia y añade `RESOLVED: <how>` antes de seguir.
 3. **`validator` ‖ `tester`** — un único mensaje con 2 Agent calls (paralelismo obligatorio). `validator` es info-only (su `NEXT_STATUS` no muta `task.status`); `tester` es lifecycle.
 4. **`debugger`** — si `tester` falló O `validator` pidió cambios. Corrige dentro del mismo `TASK_ID`, escribe en el handoff, vuelve al paso 3. Máximo 3 ciclos por task; si tras 3 ciclos siguen `tester=fail` o `validator=changes_requested`, el debugger emite `OUTCOME: blocked` y escala al humano.
@@ -125,9 +125,8 @@ vigila logs en vivo, y apendiza `## verify-slice` al handoff con
     apendiza `## verify-journey` al MISMO handoff. El closer emitirá
     `JOURNEY_VERIFIED_INLINE: <JID>` y el hook lo marcará `verified` bajo lock.
   - **"aparte"** → flujo separado. El closer emitirá `JOURNEY_PENDING_VERIFY: <JID>`,
-    el hook lo mete en `pending_journey_verifications`; en `frontier` solo se
-    difieren tasks que referencian ese journey, y en `strict` se conserva el
-    bloqueo global hasta `/verify-journey <JID>`.
+    el hook lo mete en `pending_journey_verifications`; en DAG-only solo se
+    difieren tasks que referencian ese journey hasta `/verify-journey <JID>`.
 - **`VERIFY_OUTCOME: verified`** + task frontend/ux/journey/gate o con `VISUAL_CONTRACT_CHECK` → /verify-slice spawnea primero `screen-journey-reviewer` info-only; si `approved`, continúa a journey/closer; si `changes_requested`, va a `debugger/retest`; si `blocked`, pide FU triageada o decisión humana.
 - **`VERIFY_OUTCOME: verified`** sin journey ni pantalla/UX → /verify-slice spawnea `closer` directo.
 - **`VERIFY_OUTCOME: issues_found`** → spawnea `debugger`, vuelve al paso 3.
@@ -199,7 +198,7 @@ No te detengas si:
 - hay una tarea activa sin handoff,
 - el registro quedó en estado intermedio,
 - hay una discrepancia documental sin documentar.
-- hay journeys en `runtime-state.pending_journey_verifications` sin resolver (lanza `/verify-journey <JID>` o waiver explícito antes de `/next-slice`).
+- el `TASK_ID` referencia un journey incluido en `runtime-state.pending_journey_verifications` (lanza `/verify-journey <JID>` o waiver explícito antes de esa slice; ramas sin ese journey pueden seguir).
 
 ## Cierre entre agentes
 
@@ -240,7 +239,7 @@ Production mode is `registry.task_dag.mode == "explicit_dag"`. Keep the existing
 2. Promote tasks whose `depends_on` predecessors are all `done`.
 3. Select from the earliest incomplete phase. If multiple tasks are `ready`, they are a wave; do not execute all inside one session. Use `/next-wave` to present the wave and command lines for separate terminals.
 4. In a worker terminal, honor `CLAUDE_ACTIVE_TASK_ID` and run `.claude/bin/claim_task.py <TASK_ID>` after user approval, before spawning agents.
-5. Pass `TASK_PACK=orchestrator-state/tasks/task-packs/<TASK_ID>.md` to every downstream Agent call. The global `orchestrator-state/tasks/task-packs/<TASK_ID>.md` mirrors are removed from DAG-only mode and must not be used.
+5. Pass `TASK_PACK=orchestrator-state/tasks/task-packs/<TASK_ID>.md` to every downstream Agent call. There is no global task selector in DAG-only mode; use only this explicit task pack path.
 6. Never relax the journey gate, spawn budget, hooks, lock order, handoff contract or closer verification. DAG is a scheduling layer, not a quality shortcut.
 
 ## Follow-up task registration

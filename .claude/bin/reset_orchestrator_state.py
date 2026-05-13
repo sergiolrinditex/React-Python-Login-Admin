@@ -126,10 +126,10 @@ def main() -> int:
     print("Next:")
     if source_of_truth_is_empty():
         print("  1) Generate the five source-of-truth files from docs/templates/ into docs/source-of-truth/.")
-        print("  2) python3 -B -S .claude/bin/bootstrap_three_docs.py --validate-only")
-        print("  3) python3 -B -S .claude/bin/bootstrap_three_docs.py --refresh --reset-runtime-state")
+        print("  2) python3 -B -S .claude/bin/bootstrap_source_of_truth.py --validate-only")
+        print("  3) python3 -B -S .claude/bin/bootstrap_source_of_truth.py --refresh --reset-runtime-state")
     else:
-        print("  python3 -B -S .claude/bin/bootstrap_three_docs.py --refresh")
+        print("  python3 -B -S .claude/bin/bootstrap_source_of_truth.py --refresh")
         print("  ./scripts/check-task-dag.sh --strict")
         print("  ./scripts/check-journey-matrix.sh --strict")
         print("  ./scripts/check-wiring-contract.sh --strict --require-new-template-columns")

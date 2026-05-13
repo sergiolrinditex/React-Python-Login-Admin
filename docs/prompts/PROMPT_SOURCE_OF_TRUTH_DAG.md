@@ -182,7 +182,7 @@ El `Canonical Coverage Registry` es la fuente principal para el DAG. Debe conten
 
 Reglas:
 
-- `Depends on` activa `explicit_dag`; no lo omitas. El resultado esperado de los checkers es `mode=explicit_dag`, nunca `legacy_linear` para docs nuevos.
+- `Depends on` activa `explicit_dag`; no lo omitas. El resultado esperado de los checkers es `mode=explicit_dag`, siempre `explicit_dag` para docs nuevos.
 - `Risk level`: `low|medium|high|critical`.
 - `Verify mode`: `auto` solo para low-risk que no cierran journey; `human` para UI, auth, datos, journeys y riesgo medio/alto.
 - `Verify mínimo` contiene comandos/evidencia reales. No puede ser solo `auto` o `human`.
@@ -238,8 +238,8 @@ Antes de entregar, haz dos revisiones y corrige errores:
 Después verifica mentalmente que estos comandos pasarían:
 
 ```bash
-python3 -B -S .claude/bin/bootstrap_three_docs.py --validate-only
-python3 -B -S .claude/bin/bootstrap_three_docs.py --refresh
+python3 -B -S .claude/bin/bootstrap_source_of_truth.py --validate-only
+python3 -B -S .claude/bin/bootstrap_source_of_truth.py --refresh
 ./scripts/check-task-dag.sh --strict
 ./scripts/check-journey-matrix.sh --strict
 ./scripts/check-wiring-contract.sh --strict --require-new-template-columns
@@ -258,3 +258,6 @@ No entregues documentos que tengan:
 - `Verify mínimo=auto` o `Verify mínimo=human` como si fuera comando.
 - mega-phase con decenas de tasks si puede partirse por pantalla/lane.
 - existing baseline copiada a una app que no debe heredarla.
+
+
+Nota worktree: en proyectos `pr-flow`, `./scripts/next-wave.sh` imprime un bloque que crea/entra en el worktree `dev/<TASK_ID>` antes de lanzar Claude Code. Usa el bloque exacto que imprime; no lances `/next-slice` desde `main` para una task de PR.

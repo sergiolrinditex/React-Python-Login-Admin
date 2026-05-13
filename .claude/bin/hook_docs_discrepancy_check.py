@@ -31,10 +31,12 @@ try:
         has_unresolved_doc_discrepancies,
         log_hook_error,
         project_root,
+        workspace_root,
     )
 except Exception:
     has_unresolved_doc_discrepancies = lambda: (False, [])  # type: ignore[assignment]
     project_root = lambda: Path(".")  # type: ignore[assignment]
+    workspace_root = lambda: Path(".")  # type: ignore[assignment]
     def log_hook_error(name, exc):  # type: ignore[no-redef]
         return None
 
@@ -71,12 +73,18 @@ def _is_allowlisted(target: str) -> bool:
         return False
     # Normalise to a repo-relative path (best effort).
     try:
-        root = project_root().resolve()
-        p = Path(target).resolve()
-        try:
-            rel = p.relative_to(root).as_posix()
-        except ValueError:
-            rel = target
+        roots = [workspace_root().resolve(), project_root().resolve()]
+        p = Path(target)
+        if not p.is_absolute():
+            p = roots[0] / p
+        p = p.resolve()
+        rel = target
+        for root in roots:
+            try:
+                rel = p.relative_to(root).as_posix()
+                break
+            except ValueError:
+                continue
     except Exception:
         rel = target
     # Strip a leading "./" prefix only, preserving any leading dot directory

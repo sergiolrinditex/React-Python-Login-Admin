@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-13T04:38:00+00:00",
+  "generated_at": "2026-05-13T08:25:40+00:00",
   "phase_order": [
     "P00",
     "P01",
@@ -33,7 +33,7 @@
       "id": "P01",
       "phase_number": 1,
       "title": "Auth / base capabilities",
-      "status": "blocked",
+      "status": "complete",
       "depends_on": [
         "P00"
       ],
@@ -68,6 +68,7 @@
       "task_ids": [
         "P02-S01-T001",
         "P02-S02-T001",
+        "P02-S02-T002",
         "P02-S03-T001",
         "P02-S03-T002",
         "P02-S04-T001",
@@ -1429,7 +1430,7 @@
       "phase_id": "P01",
       "step_id": "P01-S03",
       "title": "Auth state provider and protected route guards",
-      "status": "ready_for_close",
+      "status": "done",
       "build_state": "planned",
       "product_increment": "v1",
       "risk_level": "medium",
@@ -1496,18 +1497,19 @@
       "claimed_by": "sergiolr",
       "claim_terminal_task_env": null,
       "task_pack_path": "orchestrator-state/tasks/task-packs/P01-S03-T001.md",
-      "last_outcome": "pass",
-      "last_updated_by": "tester",
-      "last_stop_at": "2026-05-12T21:38:29+00:00",
+      "last_outcome": "committed",
+      "last_updated_by": "closer",
+      "last_stop_at": "2026-05-13T04:48:58+00:00",
       "validator_outcome": "approved",
-      "validator_next_status": "ready_for_close"
+      "validator_next_status": "ready_for_close",
+      "report_path": "orchestrator-state/tasks/reports/P01-S03-T001.md"
     },
     {
       "id": "P01-S03-T002",
       "phase_id": "P01",
       "step_id": "P01-S03",
       "title": "Backend/infra: configure cross-origin between frontend (:5173) and backend (:8000) — vite proxy or CORSMiddleware",
-      "status": "blocked",
+      "status": "done",
       "kind": "wiring",
       "target": "Backend/infra: configure cross-origin between frontend (:5173) and backend (:8000) — vite proxy or CORSMiddleware",
       "build_state": "planned",
@@ -1557,7 +1559,7 @@
       "endpoint": "",
       "tables": [],
       "handoff_path": "orchestrator-state/tasks/handoffs/P01-S03-T002.md",
-      "evidence_dir": "orchestrator-state/tasks/evidence/P01-S03-T002",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P01-S03-T002/",
       "origin": {
         "type": "runtime_followup",
         "followup_id": "FU-20260513043500-backend-infra-configure-cross-origin-between-fro",
@@ -1576,7 +1578,17 @@
         "Runtime follow-up promoted from FU-20260513043500-backend-infra-configure-cross-origin-between-fro",
         "Description: From the browser, every cross-origin XHR from http://localhost:5173 to http://localhost:8000 fails the CORS preflight: OPTIONS /api/v1/auth/refresh → 405 Method Not Allowed (no OPTIONS handler, no CORSMiddleware registered). frontend/vite.config.ts has no server.proxy block. As a result, AuthProvider.hydrate's POST /api/v1/auth/refresh on every protected-route mount is rejected by the browser with net::ERR_FAILED (caught by the auth code as a session-expired fallback, which is correct defensive behavior, but blocks all positive end-to-end auth flows from a real browser). All three contractually consumed endpoints by T001 (POST /auth/refresh, GET /users/me, POST /auth/logout) are equally blocked. This will block P03-S01-T001 SignInPage immediately when its form submits POST /api/v1/auth/sign-in. TECHNICAL_GUIDE has no spec for cross-origin or reverse proxy. STACK_PROFILE declares :5173 frontend and :8000 backend on different origins without a documented bridge.\\n\\nObserved during /verify-slice P01-S03-T001:\\n  - F1, F2 (redirect-to-sign-in flows) PASS — they happen client-side without backend.\\n  - F6 (token-storage invariant) PASS — code never touches storage.\\n  - F7 (open-redirect smoke on stub) PASS — stub is read-only.\\n  - F3, F4, F5 (sign-in → /me → logout) BLOCKED — cannot reproduce in browser without same-origin or CORS.",
         "Triage: missing_coverage; why_not_debugger=CORS configuration is outside T001's Write set (frontend/src/features/auth/** + frontend/src/app/router.tsx). The two clean fixes both live elsewhere: (a) frontend/vite.config.ts server.proxy reverse-proxying /api → http://localhost:8000 (recommended; same pattern as nginx/cloudfront in prod, BFF-style same-origin); (b) backend/app/main.py registering CORSMiddleware(allow_origins=['http://localhost:5173'], allow_credentials=true, allow_headers=['authorization','content-type','x-request-id'], allow_methods=['GET','POST','PATCH','PUT','DELETE','OPTIONS']). Either path requires Write set expansion outside T001 plus a TECHNICAL_GUIDE amendment to spec the cross-origin / reverse-proxy strategy. Debugger inside T001 cannot legitimately touch any of these paths without violating Write set discipline. T001 is the slice that EXPOSES the gap (first frontend slice making cross-origin XHR from a real browser); it does not introduce the gap."
-      ]
+      ],
+      "claimed_at": "2026-05-13T04:53:19+00:00",
+      "claimed_by": "sergiolr",
+      "claim_terminal_task_env": "P01-S03-T002",
+      "task_pack_path": "orchestrator-state/tasks/task-packs/P01-S03-T002.md",
+      "last_outcome": "committed",
+      "last_updated_by": "closer",
+      "last_stop_at": "2026-05-13T06:05:23+00:00",
+      "validator_outcome": "approved",
+      "validator_next_status": "ready_for_close",
+      "report_path": "orchestrator-state/tasks/reports/P01-S03-T002.md"
     },
     {
       "id": "P01-S02-T008",
@@ -1938,7 +1950,7 @@
       "phase_id": "P02",
       "step_id": "P02-S01",
       "title": "0002_ai_chat_rag_mcp_agents.py",
-      "status": "ready",
+      "status": "done",
       "build_state": "planned",
       "product_increment": "v1",
       "risk_level": "medium",
@@ -2003,7 +2015,7 @@
         "backend/app/db/models/**"
       ],
       "handoff_path": "orchestrator-state/tasks/handoffs/P02-S01-T001.md",
-      "evidence_dir": "orchestrator-state/tasks/evidence/P02-S01-T001",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P02-S01-T001/",
       "notes": [],
       "dependency_mode": "explicit_dag",
       "depends_on_raw": "P01-S01-T001",
@@ -2020,14 +2032,24 @@
       "endpoint_raw": "—",
       "tables_raw": "conversations, messages, message_citations, ai_providers, ai_provider_credentials, ai_models, ai_model_tests, llm_usage_logs, rag_collections, documents, document_versions, document_chunks, document_embeddings, vectorization_jobs, mcp_servers, mcp_credentials, mcp_tools, mcp_resources, mcp_prompts, agents, mcp_agent_bindings, agent_runs, mcp_tool_invocations, mcp_approvals",
       "origin_instr_raw": "§3.1#chat-admin-rag-mcp",
-      "origin_techguide_raw": "§10.3#ai-chat-rag-mcp"
+      "origin_techguide_raw": "§10.3#ai-chat-rag-mcp",
+      "claimed_at": "2026-05-13T07:02:04+00:00",
+      "claimed_by": "sergiolr",
+      "claim_terminal_task_env": "P02-S01-T001",
+      "task_pack_path": "orchestrator-state/tasks/task-packs/P02-S01-T001.md",
+      "last_outcome": "committed",
+      "last_updated_by": "closer",
+      "last_stop_at": "2026-05-13T08:15:06+00:00",
+      "validator_outcome": "approved",
+      "validator_next_status": "ready_for_close",
+      "report_path": "orchestrator-state/tasks/reports/P02-S01-T001.md"
     },
     {
       "id": "P02-S02-T001",
       "phase_id": "P02",
       "step_id": "P02-S02",
       "title": "Security encryption permissions rate limit",
-      "status": "ready",
+      "status": "ready_for_close",
       "build_state": "planned",
       "product_increment": "v1",
       "risk_level": "medium",
@@ -2070,7 +2092,7 @@
         "backend/tests/unit/test_security.py"
       ],
       "handoff_path": "orchestrator-state/tasks/handoffs/P02-S02-T001.md",
-      "evidence_dir": "orchestrator-state/tasks/evidence/P02-S02-T001",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P02-S02-T001/cycle-2",
       "notes": [],
       "dependency_mode": "explicit_dag",
       "depends_on_raw": "P01-S01-T001,P00-S01-T003",
@@ -2087,14 +2109,82 @@
       "endpoint_raw": "internal/no-front",
       "tables_raw": "ai_provider_credentials, mcp_credentials, audit_logs",
       "origin_instr_raw": "§3.3#foundation",
-      "origin_techguide_raw": "§10.2#auth-strategy"
+      "origin_techguide_raw": "§10.2#auth-strategy",
+      "claimed_at": "2026-05-13T07:02:37+00:00",
+      "claimed_by": "sergiolr",
+      "claim_terminal_task_env": "P02-S02-T001",
+      "task_pack_path": "orchestrator-state/tasks/task-packs/P02-S02-T001.md",
+      "last_outcome": "pass",
+      "last_updated_by": "tester",
+      "last_stop_at": "2026-05-13T08:09:34+00:00",
+      "validator_outcome": "approved",
+      "validator_next_status": "ready_for_close"
+    },
+    {
+      "id": "P02-S02-T002",
+      "phase_id": "P02",
+      "step_id": "P02-S02",
+      "title": "Fix module-level _JWT_KEY in app.auth.tokens causing JWT decode failures in full-suite ordering",
+      "status": "blocked",
+      "kind": "bug",
+      "target": "Fix module-level _JWT_KEY in app.auth.tokens causing JWT decode failures in full-suite ordering",
+      "build_state": "planned",
+      "product_increment": "current",
+      "risk_level": "medium",
+      "verify_mode": "human",
+      "depends_on": [
+        "P02-S02-T001"
+      ],
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry",
+      "acceptance": [
+        "pytest backend/tests -k security runs with 0 FAIL for TestGetMeSecurityShape. Full suite failure count does not regress. app.auth.tokens.decode_token works correctly regardless of import order in the test runner."
+      ],
+      "verification_commands": [
+        "Run pytest backend/tests/integration/test_users_me.py::TestGetMeSecurityShape -v in both isolation and full-suite ordering — all 3 should pass. Run pytest backend/tests -v and confirm no regression vs pre-fix baseline."
+      ],
+      "allowed_paths": [
+        "backend/app/security/**",
+        "backend/tests/unit/test_security.py"
+      ],
+      "conflict_groups": [
+        "security:core"
+      ],
+      "write_set": [
+        "backend/app/security/**",
+        "backend/tests/unit/test_security.py"
+      ],
+      "journey_refs": [],
+      "route": "",
+      "endpoint": "",
+      "tables": [],
+      "handoff_path": "orchestrator-state/tasks/handoffs/P02-S02-T002.md",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P02-S02-T002",
+      "origin": {
+        "type": "runtime_followup",
+        "followup_id": "FU-20260513080801-fix-module-level-jwt-key-in-app-auth-tokens-caus",
+        "origin_task_id": "P02-S02-T001",
+        "severity": "medium",
+        "kind": "bug",
+        "triage": {
+          "scope_classification": "out_of_scope",
+          "why_not_debugger": "The root cause lives in backend/app/auth/tokens.py (module-level _JWT_KEY constant evaluated at import time). Fixing it inside P02-S02-T001 write_set (backend/app/security/** + backend/tests/unit/test_security.py) is impossible — tokens.py is outside this write_set and any change to it risks regression across all 6+ auth endpoint test suites (signup, signin, refresh, logout, password_reset, mfa) that share this module.",
+          "decision": "followup_only_when_outside_current_slice",
+          "debugger_path": "in_scope_defects_use_validator_tester_debugger_retest",
+          "warnings": []
+        }
+      },
+      "notes": [
+        "Runtime follow-up promoted from FU-20260513080801-fix-module-level-jwt-key-in-app-auth-tokens-caus",
+        "Description: backend/app/auth/tokens.py captures JWT_PRIVATE_KEY as a module-level constant at import time. When pytest collects the full test suite, import order causes _JWT_KEY to be empty for some test modules that run after it was first cached as empty. TestGetMeSecurityShape T27/T28/T29 fail when run under full-suite or acceptance gate ordering (they pass in isolation). The fix is to make _JWT_KEY a lazy getter (lru_cache or property) in app/auth/tokens.py, exactly as the P02-S02-T001 debugger did for test_security.py but applied to the production code.",
+        "Triage: out_of_scope; why_not_debugger=The root cause lives in backend/app/auth/tokens.py (module-level _JWT_KEY constant evaluated at import time). Fixing it inside P02-S02-T001 write_set (backend/app/security/** + backend/tests/unit/test_security.py) is impossible — tokens.py is outside this write_set and any change to it risks regression across all 6+ auth endpoint test suites (signup, signin, refresh, logout, password_reset, mfa) that share this module."
+      ]
     },
     {
       "id": "P02-S03-T001",
       "phase_id": "P02",
       "step_id": "P02-S03",
       "title": "Chat conversation CRUD endpoints",
-      "status": "blocked",
+      "status": "ready",
       "build_state": "planned",
       "product_increment": "v1",
       "risk_level": "medium",
@@ -2770,7 +2860,7 @@
       "phase_id": "P03",
       "step_id": "P03-S01",
       "title": "SignInPage",
-      "status": "blocked",
+      "status": "ready",
       "build_state": "planned",
       "product_increment": "v1",
       "risk_level": "medium",
@@ -4932,6 +5022,7 @@
         "P01-S02-T005",
         "P01-S02-T006",
         "P01-S02-T007",
+        "P01-S03-T002",
         "P01-S02-T008",
         "P01-S02-T009",
         "P01-S02-T010",
@@ -4939,8 +5030,7 @@
         "P01-S02-T012",
         "P03-S01-T001",
         "P03-S01-T005",
-        "P05-S01-T001",
-        "P01-S03-T002"
+        "P05-S01-T001"
       ],
       "slices_raw": "P01-S02, P03-S01-T001, P03-S01-T005, P05-S01-T001",
       "verification": "/verify-journey J100",
@@ -5002,14 +5092,14 @@
         "P05-S01-T002"
       ],
       "task_ids_source_order": [
+        "P01-S03-T002",
         "P02-S03-T001",
         "P02-S03-T002",
         "P02-S04-T001",
         "P02-S04-T002",
         "P03-S02-T001",
         "P03-S02-T002",
-        "P05-S01-T002",
-        "P01-S03-T002"
+        "P05-S01-T002"
       ],
       "slices_raw": "P02-S03, P02-S04, P03-S02-T001, P03-S02-T002, P05-S01-T002",
       "verification": "/verify-journey J101",
@@ -5065,12 +5155,12 @@
       ],
       "task_ids_source_order": [
         "P01-S02-T007",
+        "P01-S03-T002",
         "P02-S03-T001",
         "P03-S02-T002",
         "P03-S02-T003",
         "P03-S02-T004",
-        "P05-S01-T003",
-        "P01-S03-T002"
+        "P05-S01-T003"
       ],
       "slices_raw": "P01-S02-T007, P02-S03-T001, P03-S02-T002..T004, P05-S01-T003",
       "verification": "/verify-journey J102",
@@ -5130,13 +5220,13 @@
         "P05-S01-T004"
       ],
       "task_ids_source_order": [
+        "P01-S03-T002",
         "P02-S05-T001",
         "P02-S05-T002",
         "P04-S01-T002",
         "P04-S01-T003",
         "P04-S01-T004",
-        "P05-S01-T004",
-        "P01-S03-T002"
+        "P05-S01-T004"
       ],
       "slices_raw": "P02-S05, P04-S01-T002..T004, P05-S01-T004",
       "verification": "/verify-journey J103",
@@ -5193,12 +5283,12 @@
         "P05-S01-T005"
       ],
       "task_ids_source_order": [
+        "P01-S03-T002",
         "P02-S06-T001",
         "P02-S06-T002",
         "P04-S02-T001",
         "P04-S02-T002",
-        "P05-S01-T005",
-        "P01-S03-T002"
+        "P05-S01-T005"
       ],
       "slices_raw": "P02-S06, P04-S02-T001..T002, P05-S01-T005",
       "verification": "/verify-journey J104",
@@ -5260,13 +5350,13 @@
         "P05-S01-T006"
       ],
       "task_ids_source_order": [
+        "P01-S03-T002",
         "P02-S07-T001",
         "P02-S08-T001",
         "P04-S02-T003",
         "P04-S02-T004",
         "P04-S02-T005",
-        "P05-S01-T006",
-        "P01-S03-T002"
+        "P05-S01-T006"
       ],
       "slices_raw": "P02-S07, P02-S08, P04-S02-T003..T005, P05-S01-T006",
       "verification": "/verify-journey J105",
@@ -5311,6 +5401,7 @@
       "P01-S02-T012",
       "P02-S01-T001",
       "P02-S02-T001",
+      "P02-S02-T002",
       "P02-S03-T001",
       "P02-S03-T002",
       "P02-S04-T001",
@@ -5478,6 +5569,10 @@
       [
         "P00-S01-T003",
         "P02-S02-T001"
+      ],
+      [
+        "P02-S02-T001",
+        "P02-S02-T002"
       ],
       [
         "P02-S01-T001",
@@ -5891,48 +5986,49 @@
       "P01-S02-T012": 23,
       "P02-S01-T001": 24,
       "P02-S02-T001": 25,
-      "P02-S03-T001": 26,
-      "P02-S03-T002": 27,
-      "P02-S04-T001": 28,
-      "P02-S04-T002": 29,
-      "P02-S05-T001": 30,
-      "P02-S05-T002": 31,
-      "P02-S06-T001": 32,
-      "P02-S06-T002": 33,
-      "P02-S07-T001": 34,
-      "P02-S08-T001": 35,
-      "P03-S01-T001": 36,
-      "P03-S01-T002": 37,
-      "P03-S01-T003": 38,
-      "P03-S01-T004": 39,
-      "P03-S01-T005": 40,
-      "P03-S02-T001": 41,
-      "P03-S02-T002": 42,
-      "P03-S02-T003": 43,
-      "P03-S02-T004": 44,
-      "P04-S01-T001": 45,
-      "P04-S01-T002": 46,
-      "P04-S01-T003": 47,
-      "P04-S01-T004": 48,
-      "P04-S02-T001": 49,
-      "P04-S02-T002": 50,
-      "P04-S02-T003": 51,
-      "P04-S02-T004": 52,
-      "P04-S02-T005": 53,
-      "P04-S03-T001": 54,
-      "P04-S03-T002": 55,
-      "P05-S01-T001": 56,
-      "P05-S01-T002": 57,
-      "P05-S01-T003": 58,
-      "P05-S01-T004": 59,
-      "P05-S01-T005": 60,
-      "P05-S01-T006": 61,
-      "P05-S02-T001": 62,
-      "P05-S02-T002": 63,
-      "P05-S02-T003": 64,
-      "P06-S01-T001": 65,
-      "P06-S01-T002": 66,
-      "P06-S01-T003": 67
+      "P02-S02-T002": 26,
+      "P02-S03-T001": 27,
+      "P02-S03-T002": 28,
+      "P02-S04-T001": 29,
+      "P02-S04-T002": 30,
+      "P02-S05-T001": 31,
+      "P02-S05-T002": 32,
+      "P02-S06-T001": 33,
+      "P02-S06-T002": 34,
+      "P02-S07-T001": 35,
+      "P02-S08-T001": 36,
+      "P03-S01-T001": 37,
+      "P03-S01-T002": 38,
+      "P03-S01-T003": 39,
+      "P03-S01-T004": 40,
+      "P03-S01-T005": 41,
+      "P03-S02-T001": 42,
+      "P03-S02-T002": 43,
+      "P03-S02-T003": 44,
+      "P03-S02-T004": 45,
+      "P04-S01-T001": 46,
+      "P04-S01-T002": 47,
+      "P04-S01-T003": 48,
+      "P04-S01-T004": 49,
+      "P04-S02-T001": 50,
+      "P04-S02-T002": 51,
+      "P04-S02-T003": 52,
+      "P04-S02-T004": 53,
+      "P04-S02-T005": 54,
+      "P04-S03-T001": 55,
+      "P04-S03-T002": 56,
+      "P05-S01-T001": 57,
+      "P05-S01-T002": 58,
+      "P05-S01-T003": 59,
+      "P05-S01-T004": 60,
+      "P05-S01-T005": 61,
+      "P05-S01-T006": 62,
+      "P05-S02-T001": 63,
+      "P05-S02-T002": 64,
+      "P05-S02-T003": 65,
+      "P06-S01-T001": 66,
+      "P06-S01-T002": 67,
+      "P06-S01-T003": 68
     },
     "adjacency_matrix": [
       [
@@ -6003,6 +6099,7 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
@@ -6024,6 +6121,7 @@
         0,
         0,
         1,
+        0,
         0,
         0,
         0,
@@ -6143,6 +6241,7 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
@@ -6151,6 +6250,7 @@
         0,
         0,
         1,
+        0,
         0,
         0,
         0,
@@ -6252,6 +6352,7 @@
         0,
         0,
         0,
+        0,
         1,
         1,
         1,
@@ -6293,6 +6394,7 @@
         0,
         0,
         1,
+        0,
         0,
         0,
         0,
@@ -6423,6 +6525,7 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
@@ -6435,6 +6538,7 @@
         0,
         0,
         1,
+        0,
         0,
         0,
         0,
@@ -6563,6 +6667,7 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
@@ -6592,6 +6697,7 @@
         0,
         1,
         1,
+        0,
         0,
         0,
         0,
@@ -6673,6 +6779,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -6728,6 +6835,7 @@
         1,
         1,
         1,
+        0,
         0,
         0,
         0,
@@ -6843,6 +6951,7 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
@@ -6869,6 +6978,7 @@
         0,
         0,
         1,
+        0,
         0,
         0,
         0,
@@ -6954,6 +7064,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -7026,6 +7137,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -7074,6 +7186,7 @@
         0,
         0,
         1,
+        0,
         0,
         0,
         0,
@@ -7162,6 +7275,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -7196,6 +7310,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -7333,9 +7448,11 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -7473,9 +7590,11 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -7613,9 +7732,11 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -7712,6 +7833,7 @@
         0,
         0,
         0,
+        1,
         0,
         0,
         0,
@@ -7721,6 +7843,48 @@
         0,
         0,
         1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -7753,6 +7917,35 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
         0
       ],
       [
@@ -7783,6 +7976,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -7826,6 +8020,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -7923,6 +8118,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         1,
@@ -7998,6 +8194,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -8036,6 +8233,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -8151,6 +8349,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -8176,6 +8375,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -8296,6 +8496,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -8316,6 +8517,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -8439,6 +8641,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -8456,6 +8659,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -8593,9 +8797,11 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -8733,9 +8939,11 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -8848,6 +9056,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         1,
@@ -8876,6 +9085,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -9004,6 +9214,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -9016,6 +9227,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -9132,6 +9344,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -9203,6 +9416,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -9226,6 +9440,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -9355,6 +9570,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -9366,6 +9582,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -9496,6 +9713,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -9506,6 +9724,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -9637,6 +9856,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -9646,6 +9866,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -9783,6 +10004,7 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
@@ -9853,9 +10075,11 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -9989,6 +10213,7 @@
         0,
         0,
         0,
+        0,
         1,
         1,
         0,
@@ -9996,6 +10221,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -10128,6 +10354,7 @@
         0,
         0,
         0,
+        0,
         1,
         1,
         1,
@@ -10136,6 +10363,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -10268,6 +10496,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         1,
@@ -10276,6 +10505,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -10411,6 +10641,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0
@@ -10481,11 +10712,13 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -10623,9 +10856,11 @@
         0,
         0,
         0,
+        0,
         1
       ],
       [
+        0,
         0,
         0,
         0,
@@ -10799,9 +11034,11 @@
         "P02-S07-T001"
       ],
       "P02-S02-T001": [
+        "P02-S02-T002",
         "P02-S05-T001",
         "P02-S07-T001"
       ],
+      "P02-S02-T002": [],
       "P02-S03-T001": [
         "P02-S03-T002",
         "P03-S02-T001",
@@ -11033,6 +11270,9 @@
         "P01-S01-T001",
         "P00-S01-T003"
       ],
+      "P02-S02-T002": [
+        "P02-S02-T001"
+      ],
       "P02-S03-T001": [
         "P02-S01-T001",
         "P01-S02-T007"
@@ -11241,6 +11481,7 @@
       [
         "P01-S02-T002",
         "P01-S02-T005",
+        "P02-S02-T002",
         "P02-S05-T001",
         "P02-S07-T001",
         "P03-S01-T002"
@@ -11399,6 +11640,9 @@
         "db:migrations"
       ],
       "P02-S02-T001": [
+        "security:core"
+      ],
+      "P02-S02-T002": [
         "security:core"
       ],
       "P02-S03-T001": [
@@ -11657,6 +11901,10 @@
         "backend/app/security/**",
         "backend/tests/unit/test_security.py"
       ],
+      "P02-S02-T002": [
+        "backend/app/security/**",
+        "backend/tests/unit/test_security.py"
+      ],
       "P02-S03-T001": [
         "backend/app/chat/**",
         "backend/tests/integration/test_chat_conversations.py"
@@ -11836,6 +12084,7 @@
       "P01-S02-T012": "medium",
       "P02-S01-T001": "medium",
       "P02-S02-T001": "medium",
+      "P02-S02-T002": "medium",
       "P02-S03-T001": "medium",
       "P02-S03-T002": "high",
       "P02-S04-T001": "medium",
@@ -11906,6 +12155,7 @@
       "P01-S02-T012": "human",
       "P02-S01-T001": "human",
       "P02-S02-T001": "human",
+      "P02-S02-T002": "human",
       "P02-S03-T001": "human",
       "P02-S03-T002": "human",
       "P02-S04-T001": "human",
@@ -11950,7 +12200,7 @@
       "P06-S01-T003": "human"
     },
     "canonical_source": "registry.tasks",
-    "source_digest": "7029e41c4f0122564298ba01fab2153204fd93de8ba255f219b3a1ceb0519e83",
+    "source_digest": "291e37b46a4d6368ad978ed0636c25235fd770df54d268c7b4112f5950b6881a",
     "errors": []
   }
 }

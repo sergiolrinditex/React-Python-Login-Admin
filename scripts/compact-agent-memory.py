@@ -141,7 +141,7 @@ def compact_text(agent: str, original: str, archive_rel: str, original_lines: in
     if agent == "developer":
         out.extend([
             "- Production work is DAG-only: `task_dag.mode` must be `explicit_dag`.",
-            "- `bootstrap_three_docs.py --refresh` preserves runtime by default; use `--reset-runtime-state` only for intentional destructive reset.",
+            "- `bootstrap_source_of_truth.py --refresh` preserves runtime by default; use `--reset-runtime-state` only for intentional destructive reset.",
             "- Never edit generated `registry.json`, `runtime-state.json`, `task-dag.json`, or `execution-graph.json` directly.",
             "- Scope every write by `CLAUDE_ACTIVE_TASK_ID` and `CLAUDE_TASK_PACK`.",
             "- Touch only paths present in the DAG task pack `Write set` / `allowed_paths`.",

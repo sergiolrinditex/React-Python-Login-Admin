@@ -6,8 +6,11 @@ permissionMode: bypassPermissions
 maxTurns: 150
 skills: [build-task-pack, write-handoff]
 effort: high
-isolation: worktree
 ---
+
+## Task worktree contract
+
+This agent does not request its own nested `isolation: worktree`. `/next-wave` launches the whole Claude Code worker session inside the per-TASK_ID worktree when the Git workflow uses feature branches/PRs. All subagents in the slice must inspect and edit that same checkout. Do not create or switch to a second worktree from inside the subagent.
 
 ## Startup obligatorio del agente
 

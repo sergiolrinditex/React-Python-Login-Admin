@@ -106,8 +106,11 @@ def test_official_docs_researcher_is_info_only_too(seeded_registry, monkeypatch)
     """researcher corre paralelo con developer; tampoco debe mover status."""
     tid = "P00-S01-T001"
 
-    _run_hook(monkeypatch, "official-docs-researcher",
-              _trailer(tid, "verified", "ready"))
+    _run_hook(monkeypatch, "official-docs-researcher", [
+        f"TASK_ID: {tid}",
+        "OUTCOME: verified",
+        f"HANDOFF: orchestrator-state/tasks/handoffs/{tid}.md",
+    ])
     reg = common.load_registry()
     task = common.find_task(reg, tid)
     assert task["status"] == "ready"  # sin cambios

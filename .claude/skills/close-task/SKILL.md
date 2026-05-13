@@ -43,7 +43,7 @@ lifecycle trailer. Decision tree (read the handoff to decide):
   → `OUTCOME: blocked`. The closer must NOT commit; the debugger picks up.
 - Anything else (no inline section, the user picked "aparte", or the user
   skipped §5.bis) → emit `JOURNEY_PENDING_VERIFY: <JID>`. The hook adds the
-  JID to `pending_journey_verifications`. In `frontier` mode the planner defers only tasks that reference that journey; in `strict` it refuses `/next-slice` globally until `/verify-journey <JID>` resolves it.
+  JID to `pending_journey_verifications`. In DAG-only the planner defers only tasks that reference that journey until `/verify-journey <JID>` resolves it.
 
 A single slice may close more than one journey (rare). Emit one
 `JOURNEY_PENDING_VERIFY:` (or `JOURNEY_VERIFIED_INLINE:`) line per JID.

@@ -10,7 +10,7 @@ Antes de ejecutar este comando, considera cargadas las reglas no-scoped de `.cla
 
 Gate humano **a nivel journey**, complementario a `/verify-slice`. Mientras `/verify-slice` valida UNA slice (atómica) en su contexto técnico, `/verify-journey` valida el **flujo completo del usuario** que cruza varias slices ya cerradas (login → dashboard → upload → resultado, por ejemplo).
 
-**Cuándo se lanza**: cuando todos los slices de un journey (definido en la Journey Coverage Matrix de `instrucciones.md`) están `done` y el usuario eligió verificarlo aparte. El `closer` emite trailer `JOURNEY_PENDING_VERIFY: JXXX`, el SubagentStop hook lo añade a `runtime-state.pending_journey_verifications[]`, y el `planner` se niega a arrancar la siguiente slice (`CONTEXT_READY: no`) hasta que tú lances este comando.
+**Cuándo se lanza**: cuando todos los slices de un journey (definido en la Journey Coverage Matrix de `instrucciones.md`) están `done` y el usuario eligió verificarlo aparte. El `closer` emite trailer `JOURNEY_PENDING_VERIFY: JXXX` y el SubagentStop hook lo añade a `runtime-state.pending_journey_verifications[]`. En DAG-only, sólo se difieren las siguientes slices que referencian ese `JID`; ramas independientes pueden seguir.
 
 **Resiliente a `/clear`**: igual que `/verify-slice`. Reconstruye contexto desde disco (registry.json, runtime-state.json, journey-handoffs/, TECHNICAL_GUIDE).
 

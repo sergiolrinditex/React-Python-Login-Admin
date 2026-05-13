@@ -13,7 +13,7 @@ from common import (
     ledger_path,
     load_registry,
     now_iso,
-    project_root,
+    workspace_root,
     run_commands,
     tasks_dir,
 )
@@ -42,7 +42,7 @@ def main() -> int:
     lock_file.parent.mkdir(parents=True, exist_ok=True)
     lock_file.write_text(now_iso(), encoding="utf-8")
     try:
-        results = run_commands(commands, cwd=project_root(), timeout=900)
+        results = run_commands(commands, cwd=workspace_root(), timeout=900)
         evidence_dir = tasks_dir() / "evidence" / task_id
         evidence_dir.mkdir(parents=True, exist_ok=True)
         log_file = evidence_dir / "async-check.log"

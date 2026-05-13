@@ -16,13 +16,13 @@ Detect the source-of-truth pack, validate it, generate runtime artifacts, verify
 1. Validate the source-of-truth contract:
    - Use ONLY `docs/source-of-truth/` as the canonical folder; no fallback.
    - Locate exactly one `instrucciones.md`, one `*_IMPLEMENTATION_CHECKLIST.md`, one `*_TECHNICAL_GUIDE.md`.
-2. Run `python3 -B -S .claude/bin/bootstrap_three_docs.py --refresh`.
+2. Run `python3 -B -S .claude/bin/bootstrap_source_of_truth.py --refresh`.
 3. Use `document-analyzer` to validate results.
 4. Use `official-docs-researcher` to verify current Claude Code behaviors for: subagents, skills, hooks, settings, permissions, agent teams.
 5. Use `project-architect` to build the executable architecture contract.
 6. Use `task-planner` to build/refresh the task registry.
 7. Use `planner`/bootstrap to materialize per-task packs under `orchestrator-state/tasks/task-packs/`.
-8. If session task tools are available, mirror the first ready DAG task into the session task list for visibility only.
+8. If session task tools are available, you may display the first ready DAG task in the session task list for visibility only; never treat it as execution authority.
 9. Report: detected docs, blocking issues, first ready DAG task, official-doc discrepancies if any.
 
 Do NOT code product features during bootstrap.

@@ -1,6 +1,6 @@
 # Runtime write contract
 
-This rule is the human-readable mirror of `.claude/orchestrator-contract.json`. Read the JSON when you need exact paths or per-agent permissions.
+This rule is human guidance for agents. `.claude/orchestrator-contract.json` is the only machine-readable runtime policy for hooks, exact paths and per-agent permissions.
 
 ## Principle
 
@@ -62,7 +62,7 @@ Each role declares:
 - `next_status_values`
 - whether the role mutates registry lifecycle or is info-only
 
-Agent markdown may show examples, but the JSON schema is authoritative. `hook_capture_subagent_stop.py` loads `trailer_schema` first and falls back to local constants only for damaged/partial installs.
+Agent markdown may show examples, but the JSON schema is authoritative. `hook_capture_subagent_stop.py` validates against `trailer_schema`; if the schema is unavailable or a role is missing, it logs a visible error and refuses lifecycle mutation.
 
 ## Agent write map
 
@@ -77,7 +77,7 @@ Agent markdown may show examples, but the JSON schema is authoritative. `hook_ca
 
 ## Product baseline snapshot
 
-`docs/product-baseline/` is the cumulative built baseline passed back to ChatGPT for the next product increment. It mirrors the current accepted `docs/source-of-truth/` after verified closure and includes `BASELINE_MANIFEST.json`. Do not hand-edit it during an DAG task; closer/safe maintenance sync it with:
+`docs/product-baseline/` is the cumulative built baseline passed back to ChatGPT for the next product increment. It snapshots the current accepted `docs/source-of-truth/` after verified closure and includes `BASELINE_MANIFEST.json`. Do not hand-edit it during a DAG task; closer/safe maintenance sync it with:
 
 ```bash
 ./scripts/sync-product-baseline.sh sync --version <v0|v1|v2|current> --task <TASK_ID>  # closer only; requires verified handoff
@@ -91,7 +91,7 @@ The Coverage Registry columns `Product increment` and `Build state` are mandator
 `docs/source-of-truth/` may be edited while generating or reconciling the five source-of-truth docs. Do not edit it while a slice is active. If the contract changes, rerun:
 
 ```bash
-python3 -B -S .claude/bin/bootstrap_three_docs.py --refresh
+python3 -B -S .claude/bin/bootstrap_source_of_truth.py --refresh
 ./scripts/check-task-dag.sh --strict
 ./scripts/check-journey-matrix.sh --strict
 ./scripts/check-wiring-contract.sh --strict --require-new-template-columns

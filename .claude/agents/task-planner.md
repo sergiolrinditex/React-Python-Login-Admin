@@ -132,7 +132,7 @@ Ejemplo: `P02-S03-T014`.
 
 ## Salida
 
-No escribas `registry.json`, `runtime-state.json`, `task-dag.json` ni work-items generados con Write/Edit/MultiEdit. Esos artefactos los produce `python3 -B -S .claude/bin/bootstrap_three_docs.py --refresh` bajo el contrato de source-of-truth.
+No escribas `registry.json`, `runtime-state.json`, `task-dag.json` ni work-items generados con Write/Edit/MultiEdit. Esos artefactos los produce `python3 -B -S .claude/bin/bootstrap_source_of_truth.py --refresh` bajo el contrato de source-of-truth.
 
 Tu salida es:
 

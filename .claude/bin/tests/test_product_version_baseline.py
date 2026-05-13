@@ -6,7 +6,7 @@ from pathlib import Path
 
 
 def test_coverage_registry_product_increment_and_build_state_drive_initial_status(tmp_project):
-    import bootstrap_three_docs as boot
+    import bootstrap_source_of_truth as boot
 
     checklist = tmp_project / "docs" / "source-of-truth" / "APP_IMPLEMENTATION_CHECKLIST.md"
     checklist.parent.mkdir(parents=True, exist_ok=True)
@@ -134,7 +134,7 @@ def test_sync_product_baseline_refuses_unverified_task(tmp_project):
 
 
 def test_runtime_followup_registry_phase_without_heading_is_executable(tmp_project):
-    import bootstrap_three_docs as boot
+    import bootstrap_source_of_truth as boot
     from common import promote_ready_tasks
 
     checklist = tmp_project / "docs" / "source-of-truth" / "APP_IMPLEMENTATION_CHECKLIST.md"

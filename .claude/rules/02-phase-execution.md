@@ -20,7 +20,7 @@ Typical examples, not a contract:
 1. Validate prerequisites (PRE-GATE: all previous tests green).
 2. Read PROGRESS.md to understand current state.
 3. `planner` — selects next ready task, extracts the full source-of-truth pack, does impact analysis. Blocking. Must output `CONTEXT_READY: yes`.
-4. `developer` ‖ `official-docs-researcher` — parallel, one message with two Agent calls.
+4. `developer` plus optional `official-docs-researcher` — one message with one or two Agent calls.
    - `developer` implements DB/migration → backend (endpoint + service + repo + tests + logs) → frontend (domain + data + presentation + tests + logs) → updates PROGRESS.md → writes handoff.
    - `official-docs-researcher` runs only when the `planner` marks `NEEDS_OFFICIAL_DOCS: yes` or the slice touches unconfirmed external API/library/security/AI/RAG/MCP/streaming/DB/deploy behavior. It receives 1–5 concrete questions and uses cache/MCP/Context7 first. If it detects a discrepancy with internal docs → writes a note in `orchestrator-state/memory/official-doc-notes/`; the PreToolUse docs-discrepancy hook warns the developer on the next Write/Edit (warn-only, never blocks) so the developer reconciles the source-of-truth pack and adds a `RESOLVED: <how>` line before continuing.
 5. `validator` ‖ `tester` — parallel, one message with two Agent calls.
@@ -30,14 +30,14 @@ Typical examples, not a contract:
    - Create FU only for out-of-scope work: missing Coverage Registry row, new route/endpoint/table/journey, write_set/conflict_group expansion, missing real/provided data contract, external dependency, or explicit human product decision.
 7. **Visual verification** via `/verify-slice` — hard reset + datos reales/proporcionados + human reproduction in browser (or the method defined in TECHNICAL_GUIDE: emulator, simulator, device, etc.). Resilient to `/clear`: rebuilds state from disk. Appends `## verify-slice` with `VERIFY_OUTCOME: verified|issues_found` to the handoff.
    - **§5.bis — Journey-closing inline (gate humano único)**. Si la slice cierra al menos un journey de `registry.journeys[]` Y `VERIFY_OUTCOME: verified`, el comando pregunta al usuario si verifica el journey end-to-end ahora aprovechando el entorno ya reseteado. Si "ahora" → ejecuta verify-journey inline (estados marginales, deep links, next action) y apendiza `## verify-journey` al handoff con `JOURNEY_VERIFY_OUTCOME: verified|issues_found`. Si "aparte" → mantiene la rama tradicional (closer emite `JOURNEY_PENDING_VERIFY`, planner bloqueará).
-8. `closer` — writes evidence report, commits atomically on `main`, pushes `origin/main`, and cleans safe worktrees. Pre-check requires `VERIFY_OUTCOME: verified` (or an explicit `VERIFY_WAIVED: <reason>`). Detects journey-closing slices with `list_journey_closures.py`/`completion_policy=all_task_ids_done`, never with positional `task_ids[-1]`:
+8. `closer` — writes evidence report, creates the atomic commit for this `TASK_ID`, runs the configured `./scripts/git-workflow.sh`, and cleans safe worktrees. Pre-check requires `VERIFY_OUTCOME: verified` (or an explicit `VERIFY_WAIVED: <reason>`). Detects journey-closing slices with `list_journey_closures.py`/`completion_policy=all_task_ids_done`, never with positional `task_ids[-1]`:
    - Si el handoff tiene `## verify-journey` con `JOURNEY_VERIFY_OUTCOME: verified` para ese JID → emite `JOURNEY_VERIFIED_INLINE: <JID>`; el hook lo marca `verified` bajo lock.
    - Si el handoff tiene `## verify-journey` con `issues_found` → `OUTCOME: blocked` (lanza debugger).
    - En cualquier otro caso → emite `JOURNEY_PENDING_VERIFY: <JID>` (rama tradicional).
    - Tras push, dispara `bash scripts/slice-clean.sh --apply` y `bash scripts/cleanup-worktrees.sh --apply --task <TASK_ID>` (housekeeping silencioso; no borra worktrees dirty).
-9. **Journey gate aparte** (solo si verify-slice eligió "aparte" o waiver) — `/verify-journey <JID>` resuelve los pending. El `planner` refuses with `CONTEXT_READY: no` while `runtime-state.pending_journey_verifications` is non-empty. Hard reset + datos reales/proporcionados consolidados + reproducción end-to-end multi-pantalla. Resilient to `/clear`. Waiver via `JOURNEY_VERIFY_WAIVED: <reason>` in the trailer (only with explicit human signature).
+9. **Journey gate aparte** (solo si verify-slice eligió "aparte" o waiver) — `/verify-journey <JID>` resuelve los pending. En DAG-only, pending journeys difieren sólo las tasks que referencian ese `JID`; ramas independientes pueden seguir. Hard reset + datos reales/proporcionados consolidados + reproducción end-to-end multi-pantalla. Resilient to `/clear`. Waiver via `JOURNEY_VERIFY_WAIVED: <reason>` in the trailer (only with explicit human signature).
 
-Stop immediately if: official docs contradict internal docs, `planner` returns `CONTEXT_READY: no`, or the current phase/task depends on incomplete predecessors.
+Stop immediately if: `planner` returns `CONTEXT_READY: no`, official-doc discrepancy remains unresolved for files this slice needs to edit, or the current task depends on incomplete predecessors.
 
 ## Tool-call fan-out dentro de cada agente
 

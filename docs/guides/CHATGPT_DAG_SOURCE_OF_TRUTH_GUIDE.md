@@ -217,8 +217,8 @@ Debe haber exactamente un `instrucciones.md`, un `*_TECHNICAL_GUIDE.md` y un `*_
 Ejecuta:
 
 ```bash
-python3 -B -S .claude/bin/bootstrap_three_docs.py --validate-only
-python3 -B -S .claude/bin/bootstrap_three_docs.py --refresh
+python3 -B -S .claude/bin/bootstrap_source_of_truth.py --validate-only
+python3 -B -S .claude/bin/bootstrap_source_of_truth.py --refresh
 ./scripts/check-task-dag.sh --strict
 ./scripts/check-journey-matrix.sh --strict
 ./scripts/check-wiring-contract.sh --strict --require-new-template-columns
@@ -263,7 +263,7 @@ Pide la wave actual:
 El script imprime comandos copy/paste de este estilo:
 
 ```bash
-export CLAUDE_ACTIVE_TASK_ID=P02-S03-T001 CLAUDE_TASK_PACK=orchestrator-state/tasks/task-packs/P02-S03-T001.md && echo 'Ahora ejecuta en Claude Code: claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice P02-S03-T001"'
+BOOTSTRAP_ROOT="${CLAUDE_ORCHESTRATOR_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd -P)}" && ROOT="$($BOOTSTRAP_ROOT/scripts/ensure-task-worktree.sh --print-root)" && WT="$($ROOT/scripts/ensure-task-worktree.sh P02-S03-T001)" && cd "$WT" && export CLAUDE_ORCHESTRATOR_ROOT="$ROOT" CLAUDE_WORKTREE_ROOT="$WT" CLAUDE_ACTIVE_TASK_ID=P02-S03-T001 CLAUDE_TASK_PACK="$ROOT/orchestrator-state/tasks/task-packs/P02-S03-T001.md" && echo 'Ahora ejecuta en Claude Code: claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice P02-S03-T001"'
 ```
 
 Abre un terminal por task ready. En cada terminal:

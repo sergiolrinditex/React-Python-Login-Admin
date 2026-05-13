@@ -41,6 +41,25 @@ def main() -> int:
         if banned in claude_index:
             fail(errors, f".claude/CLAUDE.md contains stale wording: {banned}")
 
+    # Source-of-truth bootstrap must not carry the historical numbered name.
+    historical_bootstrap = "bootstrap_" + "three_docs.py"
+    if (ROOT / ".claude/bin" / historical_bootstrap).exists():
+        fail(errors, "historical numbered bootstrap script must not exist; use bootstrap_source_of_truth.py")
+    for path in ROOT.rglob("*"):
+        if not path.is_file():
+            continue
+        if any(part in {".git", "__pycache__", ".pytest_cache", "node_modules"} for part in path.parts):
+            continue
+        if path.suffix in {".pyc", ".zip", ".png", ".jpg", ".jpeg", ".gif", ".webp", ".ico"}:
+            continue
+        try:
+            text = path.read_text(encoding="utf-8", errors="replace")
+        except Exception:
+            continue
+        if ("bootstrap_" + "three_docs") in text:
+            fail(errors, f"{path.relative_to(ROOT)} still references historical numbered bootstrap name")
+            break
+
     settings = json.loads(read(".claude/settings.json"))
     if settings.get("agent") != "main-orchestrator":
         fail(errors, ".claude/settings.json must set agent=main-orchestrator")
@@ -126,6 +145,61 @@ def main() -> int:
     if "RESOLVED(?:" not in common_py or "\\d{4}-\\d{2}-\\d{2}" not in common_py:
         fail(errors, "official-doc note resolution marker must accept RESOLVED: and RESOLVED YYYY-MM-DD forms")
 
+
+    # Worktree policy: task worktree isolation is session-level, not per-subagent.
+    # Otherwise developer/debugger can edit a different checkout than
+    # validator/tester/closer are inspecting.
+    for agent in (ROOT / ".claude" / "agents").glob("*.md"):
+        body = agent.read_text(encoding="utf-8", errors="replace")
+        if re.search(r"(?m)^isolation:\s*worktree\s*$", body):
+            fail(errors, f"{agent.relative_to(ROOT)} must not declare subagent isolation: worktree; /next-wave owns per-TASK_ID worktree checkout")
+    if "workspace_root" not in read(".claude/bin/common.py"):
+        fail(errors, "common.py must expose workspace_root() for product commands in task worktrees")
+    if "ensure-task-worktree.sh" not in read(".claude/bin/next_wave.py"):
+        fail(errors, "next_wave.py must route pr-flow worker terminals into per-TASK_ID worktrees")
+    next_wave_py = read(".claude/bin/next_wave.py")
+    if "--print-root" not in next_wave_py or "BOOTSTRAP_ROOT" not in next_wave_py:
+        fail(errors, "next_wave.py must canonicalize the main repo root before entering a task worktree")
+    task_wt = read("scripts/ensure-task-worktree.sh")
+    if "--print-root" not in task_wt or "CANONICAL_ROOT" not in task_wt or "git -C \"$ROOT\" worktree add" not in task_wt:
+        fail(errors, "ensure-task-worktree.sh must resolve the canonical main root and avoid nested worktrees when invoked from a task worktree")
+    closer_body = read(".claude/agents/closer.md")
+    if "git checkout main" in closer_body or "cambia a `main`" in closer_body or "created in `main`" in closer_body:
+        fail(errors, "closer must not switch to main in pr-flow; it must close the current TASK_ID checkout")
+
+    # Operational docs must not reintroduce stale all-slice docs research,
+    # global journey gates, direct-main push wording, or dual-mode journey gates.
+    operational_drift_patterns = [
+        (r"\*\*SIEMPRE\*\*\s+—", "official-docs-researcher must not be documented as always invoked"),
+        (r"te invocan en CADA slice|invoked in every slice|for every slice", "official-docs-researcher must not be documented as invoked for every slice"),
+        (r"ALWAYS runs", "official-docs-researcher must not be documented as always running"),
+        (r"frontier.*strict|strict.*frontier", "journey gate must be single-policy DAG-only, not frontier/strict"),
+        (r"commits atomically on `main`, pushes `origin/main`", "closer must use configured git-workflow wording, not direct main push wording"),
+        (r"planner.*pending_journey_verifications.*no est[aá] vac[ií]o.*CONTEXT_READY: no", "pending journeys must not globally block all next-slice work"),
+        (r"planner.*rejects.*pending_journey_verifications.*non-empty", "pending journeys must not globally block all next-slice work"),
+        (r"datos-real_o_prod|prod--like", "docs/site must not use prod-like data badge wording"),
+    ]
+    operational_drift_paths = [
+        ".claude/agents/official-docs-researcher.md",
+        ".claude/agents/main-orchestrator.md",
+        ".claude/rules/01-non-negotiables.md",
+        ".claude/rules/02-phase-execution.md",
+        ".claude/rules/04-traceability.md",
+        ".claude/skills/phase-execution/SKILL.md",
+        ".claude/commands/verify-journey.md",
+        ".claude/commands/revise-slice.md",
+        "site/diagrams/comandos.md",
+        "site/html-site/comandos.html",
+        "site/html-site/terminales.html",
+    ]
+    for rel in operational_drift_paths:
+        if not (ROOT / rel).exists():
+            continue
+        text = read(rel)
+        for pattern, message in operational_drift_patterns:
+            if re.search(pattern, text, flags=re.IGNORECASE | re.DOTALL):
+                fail(errors, f"{rel}: {message}")
+
     # Operational command/rule docs can mention lorem/mocks only as prohibitions,
     # but should not use the old positive fixture/prod-like closure language.
     operational_paths = [
@@ -160,6 +234,41 @@ def main() -> int:
     if "has_resolved_doc_discrepancy_marker" not in common or "RESOLVED 2026" not in common:
         fail(errors, "docs-discrepancy resolution detector must accept date-prefixed RESOLVED lines")
 
+
+    # Single journey gate policy: DAG-only has no configured mode or global-block branch.
+    journey_sensitive = [
+        "README.md",
+        "CHEATSHEET.md",
+        "docs/guides/CHEATSHEET.md",
+        "docs/README.md",
+        ".claude/CLAUDE.md",
+        ".claude/agents/planner.md",
+        ".claude/agents/closer.md",
+        ".claude/commands/next-wave.md",
+        ".claude/commands/verify-slice.md",
+        ".claude/rules/04-traceability.md",
+        ".claude/skills/close-task/SKILL.md",
+        "site/diagrams/dag-flujo.md",
+        "site/diagrams/outcomes.md",
+        "site/html-site/tecnico.html",
+        "site/html-site/outcomes.html",
+    ]
+    for rel in journey_sensitive:
+        path = ROOT / rel
+        if not path.exists():
+            continue
+        text = path.read_text(encoding="utf-8", errors="replace")
+        if ("journey" + "_gate" + "_mode") in text or "bloqueo global estricto" in text or "global" + "/strict" in text or ("fallback " + "hardcoded") in text or ("fallback " + "defensivo") in text:
+            fail(errors, f"{rel} contains stale dual-mode/fallback wording")
+
+    capture_hook = read(".claude/bin/hook_capture_subagent_stop.py")
+    if "ALLOWED_OUTCOMES" in capture_hook or "ALLOWED_NEXT_STATUS" in capture_hook or "damaged-install fallback" in capture_hook or "fallback only for damaged" in capture_hook:
+        fail(errors, "hook_capture_subagent_stop.py must be schema-only; no hardcoded enum fallback")
+    contract_json = json.loads(read(".claude/orchestrator-contract.json"))
+    journey_policy = json.dumps(contract_json.get("journey_gate", {}), ensure_ascii=False)
+    if "strict" in journey_policy or ("journey" + "_gate" + "_mode") in journey_policy:
+        fail(errors, "orchestrator-contract journey_gate must be single-policy DAG-only, not mode-based")
+
     # DAG-only task context: production has no global task/phase selector
     # writer or migration flag. Hooks must use CLAUDE_ACTIVE_TASK_ID only.
     forbidden_helpers = [
@@ -188,6 +297,35 @@ def main() -> int:
         hook_text = hook.read_text(encoding="utf-8", errors="replace")
         if ".claude/rules" in hook_text or "rules/" in hook_text:
             fail(errors, f"{hook.relative_to(ROOT)} must not parse .claude/rules/*.md at runtime; use code + orchestrator-contract.json")
+
+    stale_terms = [
+        "INFO" + "_ONLY_AGENTS",
+        "LIFECYCLE" + "_AGENTS",
+        "STATE_MUTATING" + "_AGENTS",
+        "plain_text" + "_fallback",
+        "body-only generation" + " fallback",
+        "broken install" + " fallback",
+    ]
+    scan_roots = [ROOT / ".claude", ROOT / "scripts", ROOT / "docs", ROOT / "site"]
+    scan_files = [ROOT / "README.md", ROOT / "CHEATSHEET.md", ROOT / ".github" / "workflows" / "orchestrator-tests.yml"]
+    for base in scan_roots:
+        if base.exists():
+            for path in base.rglob("*"):
+                if not path.is_file() or path.suffix in {".pyc", ".png", ".jpg", ".jpeg", ".gif", ".zip"}:
+                    continue
+                try:
+                    body = path.read_text(encoding="utf-8", errors="replace")
+                except Exception:
+                    continue
+                for term in stale_terms:
+                    if term in body:
+                        fail(errors, f"{path.relative_to(ROOT)} contains stale refactor term: {term}")
+    for path in scan_files:
+        if path.exists():
+            body = path.read_text(encoding="utf-8", errors="replace")
+            for term in stale_terms:
+                if term in body:
+                    fail(errors, f"{path.relative_to(ROOT)} contains stale refactor term: {term}")
 
     if errors:
         print("ORCHESTRATOR_REFACTOR_CONSISTENCY_AUDIT: failed", file=sys.stderr)

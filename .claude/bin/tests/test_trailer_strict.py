@@ -47,6 +47,10 @@ def _setup():
     root = Path(td.name)
     (root / "orchestrator-state" / "tasks").mkdir(parents=True)
     (root / "orchestrator-state" / "memory").mkdir(parents=True)
+    (root / ".claude").mkdir(parents=True)
+    contract_src = _BIN.parent / "orchestrator-contract.json"
+    if contract_src.exists():
+        (root / ".claude" / "orchestrator-contract.json").write_text(contract_src.read_text(encoding="utf-8"), encoding="utf-8")
     return root, td
 
 
@@ -173,8 +177,8 @@ class HookSurfacesIncompleteTrailerTests(unittest.TestCase):
         finally:
             td.cleanup()
 
-    def test_planner_without_trailer_does_not_log(self):
-        """Planner is not in LIFECYCLE/REPORTING; missing trailer is OK."""
+    def test_planner_without_trailer_logs_error(self):
+        """Planner has a schema role; missing OUTCOME must be visible."""
         root, td = _setup()
         try:
             with _Sandbox(root):
@@ -190,10 +194,9 @@ class HookSurfacesIncompleteTrailerTests(unittest.TestCase):
                 self.assertEqual(rc, 0)
 
                 err_log = root / "orchestrator-state" / "hook-errors.log"
-                if err_log.exists():
-                    body = err_log.read_text(encoding="utf-8")
-                    self.assertNotIn("trailer incomplete", body,
-                        "planner is not required to emit a trailer")
+                self.assertTrue(err_log.exists(), "planner without required OUTCOME must log a visible trailer error")
+                body = err_log.read_text(encoding="utf-8")
+                self.assertIn("trailer incomplete", body)
         finally:
             td.cleanup()
 

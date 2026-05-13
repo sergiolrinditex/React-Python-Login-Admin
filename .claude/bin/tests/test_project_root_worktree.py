@@ -1,11 +1,7 @@
 """project_root() must always resolve to the MAIN repo, even when called
 from inside a git worktree.
 
-Background: developer/debugger/deployer agents run in a git worktree (per the
-project's chain rules in `02-phase-execution.md`). If a hook fires from inside
-the worktree and `project_root()` returns the worktree path, the registry +
-runtime-state writes split between repo and worktree, leaving the orchestrator
-out of sync. These tests pin the worktree-aware behavior.
+Background: `/next-wave` can launch the whole worker session in a per-TASK_ID git worktree. Hooks still need orchestrator state in the canonical main repo; product commands need the current worktree. These tests pin that split-root behavior.
 
 Each test manages its own tempdir and env to avoid pytest fixture coupling
 (so the same file runs under pytest AND under the lightweight runner used
@@ -114,3 +110,38 @@ class ProjectRootEnvTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
+
+class WorkspaceRootTests(unittest.TestCase):
+
+    def test_workspace_root_returns_worktree_not_main_repo(self):
+        with tempfile.TemporaryDirectory() as td, _EnvSandbox():
+            main = _make_main_repo((Path(td) / "main").resolve())
+            wt = _make_worktree(main, "P00-S01-T001")
+            prev_pwd = os.environ.get("PWD")
+            prev_wt = os.environ.pop("CLAUDE_WORKTREE_ROOT", None)
+            try:
+                os.environ["PWD"] = str(wt)
+                os.environ["CLAUDE_PROJECT_DIR"] = str(wt)
+                self.assertEqual(common.workspace_root(), wt.resolve())
+                self.assertEqual(common.project_root(), main.resolve())
+            finally:
+                if prev_pwd is None:
+                    os.environ.pop("PWD", None)
+                else:
+                    os.environ["PWD"] = prev_pwd
+                if prev_wt is not None:
+                    os.environ["CLAUDE_WORKTREE_ROOT"] = prev_wt
+
+    def test_workspace_root_env_override(self):
+        with tempfile.TemporaryDirectory() as td, _EnvSandbox():
+            wt = (Path(td) / "custom-wt").resolve()
+            wt.mkdir()
+            prev = os.environ.get("CLAUDE_WORKTREE_ROOT")
+            try:
+                os.environ["CLAUDE_WORKTREE_ROOT"] = str(wt)
+                self.assertEqual(common.workspace_root(), wt)
+            finally:
+                if prev is None:
+                    os.environ.pop("CLAUDE_WORKTREE_ROOT", None)
+                else:
+                    os.environ["CLAUDE_WORKTREE_ROOT"] = prev

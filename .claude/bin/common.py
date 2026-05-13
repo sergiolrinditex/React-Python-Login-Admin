@@ -95,8 +95,8 @@ def project_root() -> Path:
          parent repository even if Claude Code is running inside a worktree.
       2. ``CLAUDE_PROJECT_DIR`` — official Claude Code project root env var.
          We still pass it through ``_resolve_main_repo`` instead of returning
-         it raw: with ``isolation: worktree`` Claude may set it to the
-         temporary worktree root, and the orchestrator state must remain under the
+         it raw: a pr-flow worker terminal may set it to the
+         per-TASK_ID worktree root, and the orchestrator state must remain under the
          main repo's ``orchestrator-state/``.
       3. Walk up from this file looking for a ``.git`` marker. A directory
          marker -> repo root. A file marker -> main repo (worktree-aware).
@@ -113,13 +113,56 @@ def project_root() -> Path:
     return _resolve_main_repo(archived_default)
 
 
+
+
+def _resolve_worktree_repo(start: Path) -> Path:
+    """Return the actual checkout/worktree root, not the canonical main repo.
+
+    `project_root()` intentionally resolves a git worktree back to the main repo
+    so hooks write registry/runtime/handoffs in one place. Product commands are
+    different: tests, linters and visual checks must run against the checkout
+    where the TASK_ID is being implemented. When `.git` is a worktree file, this
+    helper returns the directory containing that file.
+    """
+    current = start.resolve()
+    for candidate in [current, *current.parents]:
+        git = candidate / ".git"
+        if git.is_dir() or git.is_file():
+            return candidate
+    return start.resolve()
+
+
+def workspace_root(start: Path | None = None) -> Path:
+    """Resolve the checkout that product code commands should operate on.
+
+    In a task terminal this is the per-TASK_ID git worktree. In the main checkout
+    it is the main repo. Orchestrator state still uses `project_root()`.
+    Tests and explicit callers may set `CLAUDE_PROJECT_DIR`; unlike
+    `project_root()`, this function keeps that checkout rather than resolving a
+    worktree back to the canonical main repo.
+    """
+    explicit = (
+        os.environ.get("CLAUDE_WORKTREE_ROOT")
+        or os.environ.get("CLAUDE_WORKSPACE_ROOT")
+        or os.environ.get("CLAUDE_PROJECT_DIR")
+    )
+    if explicit:
+        return _resolve_worktree_repo(Path(explicit).expanduser())
+    if start is not None:
+        return _resolve_worktree_repo(start)
+    raw_pwd = os.environ.get("PWD")
+    base = Path(raw_pwd).expanduser() if raw_pwd else Path.cwd()
+    if not base.is_absolute():
+        base = Path.cwd() / base
+    return _resolve_worktree_repo(base)
+
+
 def claude_dir() -> Path:
     return project_root() / ".claude"
 
 
 STATE_DIR_NAME = os.environ.get("CLAUDE_ORCHESTRATOR_STATE_DIR", "orchestrator-state")
 DEFAULT_SPAWN_BUDGET = 20
-DEFAULT_JOURNEY_GATE_MODE = "frontier"
 # Tasks in these statuses own their declared conflict groups/write-set.
 # Plain `blocked` is dependency-blocked by default and must NOT block unrelated waves;
 # active_conflict_blockers() treats `blocked` as a blocker only when its deps are already satisfied.
@@ -502,58 +545,52 @@ def save_registry(data: dict[str, Any]) -> None:
 
 
 def load_runtime_state() -> dict[str, Any]:
-    """Read runtime-state.json with safe defaults.
+    """Read runtime-state.json with DAG-only defaults and a small schema.
 
-    Adds back-compat keys (pending_journey_verifications, last_journey_verified)
-    if a older runtime-state file (predating the journey-verification feature) lacks
-    them. Callers that expect lists/strings can rely on the defaults — no
-    KeyError, no None-vs-list confusion.
+    Runtime state is scheduler/support metadata, not task identity. Worker
+    identity comes from CLAUDE_ACTIVE_TASK_ID + CLAUDE_TASK_PACK. Unknown keys
+    from older installs are dropped when the state is loaded and saved again.
     """
-    state = read_json(runtime_state_path(), {})
+    raw_state = read_json(runtime_state_path(), {})
+    allowed_keys = {
+        "generated_at",
+        "last_worker",
+        "last_event",
+        "last_journey_verified",
+        "pending_journey_verifications",
+        "spawn_budget",
+        "spawns_in_current_slice",
+        "open_followups",
+        "last_trailer",
+        "last_stop_at",
+        "last_followup_id",
+        "last_claimed_task_id",
+        "last_claimed_phase_id",
+        "next_ready_task_id",
+        "next_ready_phase_id",
+    }
+    state = {k: v for k, v in raw_state.items() if k in allowed_keys}
     defaults = {
         "generated_at": None,
         "last_worker": None,
         "last_event": None,
         "pending_journey_verifications": [],
-        "journey_gate_mode": DEFAULT_JOURNEY_GATE_MODE,
         "last_journey_verified": None,
-        # Spawn-budget invariant: mechanical counter the hook bumps on every
-        # SubagentStop. The planner reads this (TASK_ID -> count) and
-        # refuses CONTEXT_READY when over `spawn_budget`. Reset is explicit per DAG task.
         "spawn_budget": DEFAULT_SPAWN_BUDGET,
         "spawns_in_current_slice": {},
-        # Follow-up proposals created by validator/tester when they discover
-        # real out-of-scope work. High/blocker proposals gate new DAG claims
-        # until promoted into a real task or explicitly waived.
         "open_followups": [],
     }
     for key, default in defaults.items():
         state.setdefault(key, default)
-    # Normalize: if pending_journey_verifications is something weird, force list
     if not isinstance(state.get("pending_journey_verifications"), list):
         state["pending_journey_verifications"] = []
-    state["journey_gate_mode"] = normalize_journey_gate_mode(state.get("journey_gate_mode"))
+    if not isinstance(state.get("spawns_in_current_slice"), dict):
+        state["spawns_in_current_slice"] = {}
+    if not isinstance(state.get("open_followups"), list):
+        state["open_followups"] = []
     return state
 
 
-
-
-def normalize_journey_gate_mode(value: Any) -> str:
-    """Return the configured journey gate mode.
-
-    ``frontier`` is the production default: pending journey verifications only
-    defer tasks that reference those journeys. ``strict`` preserves the archived
-    global block for teams that want a hard sequential journey gate.
-    """
-    raw = str(value or DEFAULT_JOURNEY_GATE_MODE).strip().lower()
-    if raw in {"strict", "archived", "global", "global_block"}:
-        return "strict"
-    return "frontier"
-
-
-def journey_gate_mode(runtime: dict[str, Any] | None = None) -> str:
-    runtime = runtime or load_runtime_state()
-    return normalize_journey_gate_mode(runtime.get("journey_gate_mode"))
 
 
 def _as_list(value: Any) -> list[str]:
@@ -599,15 +636,13 @@ def task_journey_refs(task: dict[str, Any]) -> list[str]:
 def pending_journey_blockers_for_task(task: dict[str, Any], runtime: dict[str, Any] | None = None) -> list[str]:
     """Return pending journeys that should defer/deny this task.
 
-    In ``strict`` mode every pending journey blocks every task. In ``frontier``
-    mode only tasks that explicitly reference the pending journey are blocked.
+    DAG-only journey gate: pending journey verifications defer only tasks that
+    explicitly reference those journeys. There is no alternate journey-gate mode.
     """
     runtime = runtime or load_runtime_state()
     pending = [str(j).strip().upper() for j in (runtime.get("pending_journey_verifications") or []) if str(j).strip()]
     if not pending:
         return []
-    if journey_gate_mode(runtime) == "strict":
-        return pending
     refs = set(task_journey_refs(task))
     return [jid for jid in pending if jid in refs]
 
@@ -626,7 +661,7 @@ def blocking_open_followups(runtime: dict[str, Any] | None = None) -> list[dict[
 
     Validator/tester may discover production-relevant work that is outside the
     current slice. Such findings are first written as proposal YAML under
-    ``orchestrator-state/tasks/follow-ups/`` and mirrored in runtime-state.
+    ``orchestrator-state/tasks/follow-ups/`` and recorded in runtime-state.
     Critical/high/blocker proposals must be promoted into a real DAG task or
     waived before a closer can mark the origin done or a new wave can start.
     """
@@ -1075,7 +1110,7 @@ def has_resolved_doc_discrepancy_marker(text: str) -> bool:
 
 
 def run_commands(commands: list[str], cwd: Path | None = None, timeout: int = 900) -> list[dict[str, Any]]:
-    cwd = cwd or project_root()
+    cwd = cwd or workspace_root()
     results: list[dict[str, Any]] = []
     for cmd in commands:
         proc = subprocess.run(

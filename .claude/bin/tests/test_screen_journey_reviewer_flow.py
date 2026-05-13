@@ -16,9 +16,9 @@ def test_screen_journey_reviewer_agent_is_info_only_contract_role() -> None:
     assert role["next_status_values"] == []
     assert role["info_only"] is True
     assert role["mutates_registry_lifecycle"] is False
-    assert "screen-journey-reviewer" in contract["trailers"]["info_only_agents"]
-    assert contract["outcome_enums"]["screen-journey-reviewer"] == role["outcome_values"]
-    assert contract["next_status_enums"]["screen-journey-reviewer"] == []
+    assert role["info_only"] is True
+    assert "outcome" + "_enums" not in contract
+    assert "next_status" + "_enums" not in contract
 
 
 def test_screen_journey_reviewer_prompt_has_visual_contract_and_no_lifecycle_status() -> None:

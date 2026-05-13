@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 from pathlib import Path
@@ -1839,26 +1840,98 @@ def write_task_yaml(path: Path, task: dict[str, Any]) -> None:
     lines.append(f"handoff_path: {task['handoff_path']}")
     lines.append(f"evidence_dir: {task['evidence_dir']}")
     lines.append(f"source_ref: {json.dumps(task['source_ref'], ensure_ascii=False)}")
+    if task.get("source_fingerprint"):
+        lines.append(f"source_fingerprint: {json.dumps(task['source_fingerprint'], ensure_ascii=False)}")
     write_text(path, "\n".join(lines) + "\n")
 
 
-# Closer-final state contract — P01-S02-T010 (FU-20260512044309)
-#
-# A task is "closer-final" when its lifecycle was concluded by the closer or
-# deployer.  Bootstrap --refresh MUST preserve every lifecycle/runtime field
-# for these tasks so that a refresh run does not undo the closed state.
-#
-# See .claude/orchestrator-contract.json -> trailer_schema.roles.closer /
-# trailer_schema.roles.deployer for the canonical enum sources.
-#
-# Historical note: manual recovery commit 570b702 was required after a
-# bootstrap --refresh run clobbered P01-S02-T002's status/last_outcome
-# because the closer's SubagentStop hook had written status=ready_for_close
-# to disk (tester value) rather than status=done before the refresh ran.
-# These constants make the expected preservation contract importable by tests
-# and add a defensive re-assertion at the bottom of _apply_preserved_runtime.
-CLOSER_FINAL_STATUSES: frozenset[str] = frozenset({"done", "blocked", "skipped"})
-CLOSER_FINAL_OUTCOMES: frozenset[str] = frozenset({"committed", "deployed"})
+
+_SOURCE_FINGERPRINT_FIELDS = (
+    "id",
+    "phase_id",
+    "step_id",
+    "title",
+    "kind",
+    "target",
+    "product_increment",
+    "build_state",
+    "risk_level",
+    "verify_mode",
+    "depends_on",
+    "conflict_groups",
+    "write_set",
+    "allowed_paths",
+    "acceptance",
+    "verification_commands",
+    "journey_refs",
+    "route",
+    "endpoint",
+    "tables",
+    "origin_instr",
+    "origin_techguide",
+)
+
+CLOSER_FINAL_STATUSES = {"done"}
+CLOSER_FINAL_OUTCOMES = {"committed"}
+
+
+def _canonical_for_fingerprint(value: Any) -> Any:
+    """Return a stable JSON-serializable value for source fingerprinting."""
+    if isinstance(value, dict):
+        return {str(k): _canonical_for_fingerprint(value[k]) for k in sorted(value)}
+    if isinstance(value, list):
+        return [_canonical_for_fingerprint(v) for v in value]
+    if isinstance(value, tuple):
+        return [_canonical_for_fingerprint(v) for v in value]
+    return value
+
+
+def task_source_fingerprint(task: dict[str, Any]) -> str:
+    """Fingerprint the source-of-truth definition of a task.
+
+    Runtime fields are intentionally excluded. A stable fingerprint lets
+    `--refresh` preserve lifecycle state only when the same TASK_ID still
+    represents the same Coverage Registry definition.
+    """
+    payload = {field: _canonical_for_fingerprint(task.get(field)) for field in _SOURCE_FINGERPRINT_FIELDS}
+    blob = json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(blob.encode("utf-8")).hexdigest()
+
+
+def attach_task_source_fingerprints(tasks: list[dict[str, Any]]) -> None:
+    """Attach source fingerprints after all source-derived enrichment is done."""
+    for task in tasks:
+        task["source_fingerprint"] = task_source_fingerprint(task)
+
+
+def _is_closer_final_task(task: dict[str, Any]) -> bool:
+    return str(task.get("status") or "") in CLOSER_FINAL_STATUSES or str(task.get("last_outcome") or "") in CLOSER_FINAL_OUTCOMES
+
+
+def _mark_source_fingerprint_changed(task: dict[str, Any], old: dict[str, Any]) -> None:
+    """Block a task whose source definition changed under an existing TASK_ID."""
+    old_status = old.get("status")
+    old_outcome = old.get("last_outcome")
+    task["status"] = "blocked"
+    task["blocked_reason"] = "source_of_truth_changed_after_runtime_state"
+    blockers = task.get("blocked_by")
+    if not isinstance(blockers, list):
+        blockers = []
+    blocker = "source_fingerprint_changed"
+    if blocker not in blockers:
+        blockers.append(blocker)
+    task["blocked_by"] = blockers
+    task["last_blocker"] = {
+        "type": "source_fingerprint_changed",
+        "previous_status": old_status,
+        "previous_last_outcome": old_outcome,
+        "old_source_fingerprint": old.get("source_fingerprint"),
+        "new_source_fingerprint": task.get("source_fingerprint"),
+        "ts": now_iso(),
+    }
+    task["source_fingerprint_changed"] = True
+    task["previous_runtime_status"] = old_status
+    task["previous_runtime_last_outcome"] = old_outcome
 
 _RUNTIME_TASK_FIELDS_TO_PRESERVE = {
     "status",
@@ -1887,7 +1960,6 @@ _RUNTIME_KEYS_TO_PRESERVE = {
     "last_worker",
     "last_event",
     "pending_journey_verifications",
-    "journey_gate_mode",
     "last_journey_verified",
     "spawn_budget",
     "spawns_in_current_slice",
@@ -1899,23 +1971,17 @@ _RUNTIME_KEYS_TO_PRESERVE = {
 
 
 def _apply_preserved_runtime(tasks: list[dict[str, Any]], phases: list[dict[str, Any]], previous_registry: dict[str, Any]) -> tuple[list[dict[str, Any]], list[dict[str, Any]], int]:
-    """Keep live DAG runtime fields for unchanged task IDs during bootstrap refresh.
+    """Preserve live DAG runtime fields across source-of-truth refresh.
 
-    Source-of-truth fields such as title, acceptance, Depends on, Write set and
-    Conflict group are still regenerated from docs. Only runtime/lifecycle
-    fields owned by claim/hooks are carried forward. This makes
-    `bootstrap_three_docs.py --refresh` safe to run inside an active DAG project.
+    The Coverage Registry remains authoritative for task definitions: title,
+    depends_on, conflict_groups, write_set, allowed_paths, acceptance,
+    verification_commands, routes, endpoints and tables are always regenerated.
 
-    Closer-final tasks (status in CLOSER_FINAL_STATUSES AND/OR last_outcome in
-    CLOSER_FINAL_OUTCOMES) get a defensive re-assertion after the field-copy loop
-    to guarantee that no downstream code path can silently revert their lifecycle
-    state.  This guards against the race documented in commit 570b702 (manual
-    recovery for P01-S02-T002) and pinned by test_bootstrap_refresh_preserves_done.py.
-
-    Note: derived source-of-truth fields (title, depends_on, conflict_groups,
-    write_set, acceptance, verification_commands, allowed_paths) are always
-    refreshed from the Coverage Registry — even for closer-final tasks.  Only
-    the runtime/lifecycle fields in _RUNTIME_TASK_FIELDS_TO_PRESERVE are frozen.
+    Only lifecycle/runtime fields owned by claim/hooks/closer are carried
+    forward, and only when the same TASK_ID still has the same source
+    fingerprint. A refresh must never silently reopen a closer-final task, and
+    it must never silently keep a task done when its source-of-truth definition
+    changed.
     """
     old_by_id = {str(t.get("id")): t for t in previous_registry.get("tasks", []) if t.get("id")}
     preserved = 0
@@ -1923,20 +1989,23 @@ def _apply_preserved_runtime(tasks: list[dict[str, Any]], phases: list[dict[str,
         old = old_by_id.get(str(task.get("id")))
         if not old:
             continue
+        old_fp = old.get("source_fingerprint")
+        new_fp = task.get("source_fingerprint")
+        same_definition = bool(old_fp and new_fp and old_fp == new_fp)
+        # Migration path: registries generated before source_fingerprint existed
+        # are allowed to preserve once. The freshly generated task receives a
+        # fingerprint, so the next refresh becomes fully drift-aware.
+        missing_previous_fingerprint = not old_fp
+        if not (same_definition or missing_previous_fingerprint):
+            _mark_source_fingerprint_changed(task, old)
+            continue
         for key in _RUNTIME_TASK_FIELDS_TO_PRESERVE:
             if key in old:
                 task[key] = old[key]
-        # Defensive re-assertion for closer-final tasks (P01-S02-T010).
-        # After the copy loop above, verify that the lifecycle tuple is still
-        # intact.  If any field was somehow dropped by a future refactor, we
-        # restore it from old here — making the invariant impossible to break.
-        old_status = old.get("status", "")
-        old_outcome = old.get("last_outcome", "")
-        is_closer_final = (
-            old_status in CLOSER_FINAL_STATUSES
-            or old_outcome in CLOSER_FINAL_OUTCOMES
-        )
-        if is_closer_final:
+        # Defensive re-assertion for closer-final tasks. If a task has already
+        # been committed/closed by closer and the source definition has not
+        # changed, refresh must never reopen it.
+        if _is_closer_final_task(old):
             for key in ("status", "last_outcome", "last_updated_by", "last_stop_at"):
                 if key in old:
                     task[key] = old[key]
@@ -1956,7 +2025,6 @@ def _apply_preserved_runtime(tasks: list[dict[str, Any]], phases: list[dict[str,
             phase["status"] = "blocked"
     return tasks, phases, preserved
 
-
 def _runtime_after_refresh(previous_runtime: dict[str, Any], tasks: list[dict[str, Any]], phases: list[dict[str, Any]], *, preserve_runtime_state: bool) -> dict[str, Any]:
     next_ready_task = next((t for t in tasks if t.get("status") == "ready"), None)
     next_ready_phase_id = (next_ready_task or {}).get("phase_id") or (phases[0].get("id") if phases else None)
@@ -1967,7 +2035,6 @@ def _runtime_after_refresh(previous_runtime: dict[str, Any], tasks: list[dict[st
         "last_worker": None,
         "last_event": "bootstrap_refresh",
         "pending_journey_verifications": [],
-        "journey_gate_mode": "frontier",
         "last_journey_verified": None,
         "spawn_budget": 20,
         "spawns_in_current_slice": {},
@@ -2012,6 +2079,7 @@ def generate_artifacts(*, preserve_runtime_state: bool = True) -> dict[str, Any]
     manifest = build_manifest(instructions_path, checklist_path, guide_path, validation, ux_path=ux_path, stack_profile_path=stack_profile_path)
     phases, tasks = build_phases_and_tasks(checklist_path, checklist_text)
     _augment_task_scope_from_text(tasks)
+    attach_task_source_fingerprints(tasks)
     # Lift the coarse-synthetic warnings (if any) into validation so the
     # user sees them on the bootstrap CLI output and in source-manifest.
     coarse_warnings_local = phases[0].pop("_coarse_warnings", []) if phases else []
@@ -2146,7 +2214,7 @@ def generate_artifacts(*, preserve_runtime_state: bool = True) -> dict[str, Any]
 ---
 
 > Last updated: {now_iso()}
-> Updated by: bootstrap_three_docs.py
+> Updated by: bootstrap_source_of_truth.py
 """
         write_text(progress_path, progress_content)
 

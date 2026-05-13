@@ -28,7 +28,7 @@ def test_auto_verify_requires_low_auto():
 
 
 def test_bootstrap_journey_matrix_header_inserted_column_not_positional():
-    import bootstrap_three_docs as boot
+    import bootstrap_source_of_truth as boot
     text = """## Journey Coverage Matrix
 
 | ID | Extra | Milestone | Pantallas (en orden) | Acciones clave | Endpoints | Tablas DB | Estado cliente | Slices | Verificación |
@@ -41,7 +41,7 @@ def test_bootstrap_journey_matrix_header_inserted_column_not_positional():
 
 
 def test_bootstrap_verify_mode_is_not_verification_command():
-    import bootstrap_three_docs as boot
+    import bootstrap_source_of_truth as boot
     text = """| Slice ID | Tipo | Target | Step | Product increment | Build state | Risk level | Verify mode | Depends on | Conflict group | Write set | Journey refs | Pantalla/Ruta | Endpoint | Tablas DB | Origen-Instr | Origen-TechGuide | Acceptance mínimo | Verify mínimo |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | P00-S01-T001 | api | GET /health | Step 0.1 | v1 | planned | low | auto | — | api:health | api/** | — | — | GET /health | — | §3.1 | §6.2 | ok | curl /health |
@@ -58,7 +58,7 @@ def test_wiring_contract_rejects_auto_verify_placeholder():
 
 
 def test_bootstrap_registry_carries_front_back_db_wiring_metadata():
-    import bootstrap_three_docs as boot
+    import bootstrap_source_of_truth as boot
     text = """| Slice ID | Tipo | Target | Step | Product increment | Build state | Risk level | Verify mode | Depends on | Conflict group | Write set | Journey refs | Pantalla/Ruta | Endpoint | Tablas DB | Origen-Instr | Origen-TechGuide | Acceptance mínimo | Verify mínimo |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | P03-S01-T001 | flutter | TasksPage | Step 3.1 | v1 | planned | medium | human | P02-S01-T001 | front:tasks, router | app/lib/features/tasks/**; app/lib/core/router.dart | J101 | TasksPage /tasks | GET /api/v1/tasks | tasks | §3.7#J101 | §6.1#/tasks | UI wired | /verify-slice con backend real |
@@ -109,8 +109,8 @@ def test_orchestrator_contract_has_role_trailer_schema():
     assert roles["tester"]["next_status_values"] == ["ready_for_close", "needs_debug", "blocked"]
     assert roles["closer"]["outcome_values"] == ["committed", "blocked"]
     assert roles["closer"]["next_status_values"] == ["done", "blocked"]
-    assert contract["outcome_enums_source"] == "trailer_schema.roles[*].outcome_values"
-    assert contract["next_status_enums_source"] == "trailer_schema.roles[*].next_status_values"
+    assert "outcome" + "_enums" not in contract
+    assert "next_status" + "_enums" not in contract
 
 
 def test_hook_loads_enums_from_trailer_schema_contract():

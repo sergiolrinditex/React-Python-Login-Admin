@@ -237,7 +237,7 @@ def main() -> int:
         print("\nCómo arreglar:")
         print("  1. Si la celda apunta a algo que SÍ existe pero con otro nombre → renombra en la matriz.")
         print("  2. Si la celda apunta a algo que aún no existe → créalo en su sección canónica y actualiza la matriz.")
-        print("  3. Si la slice no existe pero ya está en CHECKLIST → corre bootstrap_three_docs.py --refresh.")
+        print("  3. Si la slice no existe pero ya está en CHECKLIST → corre bootstrap_source_of_truth.py --refresh.")
         return 1
 
     log(f"✓ Journey matrix coherent — {len(rows)} journeys validadas, 0 drifts")

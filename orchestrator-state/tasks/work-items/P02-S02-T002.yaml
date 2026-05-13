@@ -1,0 +1,32 @@
+id: P02-S02-T002
+phase_id: P02
+step_id: P02-S02
+title: "Fix module-level _JWT_KEY in app.auth.tokens causing JWT decode failures in full-suite ordering"
+status: blocked
+kind: "bug"
+target: "Fix module-level _JWT_KEY in app.auth.tokens causing JWT decode failures in full-suite ordering"
+product_increment: "current"
+build_state: "planned"
+risk_level: "medium"
+verify_mode: "human"
+route: ""
+endpoint: ""
+journey_refs:
+tables:
+depends_on:
+  - P02-S02-T001
+acceptance:
+  - "pytest backend/tests -k security runs with 0 FAIL for TestGetMeSecurityShape. Full suite failure count does not regress. app.auth.tokens.decode_token works correctly regardless of import order in the test runner."
+verification_commands:
+  - "Run pytest backend/tests/integration/test_users_me.py::TestGetMeSecurityShape -v in both isolation and full-suite ordering — all 3 should pass. Run pytest backend/tests -v and confirm no regression vs pre-fix baseline."
+allowed_paths:
+  - "backend/app/security/**"
+  - "backend/tests/unit/test_security.py"
+conflict_groups:
+  - "security:core"
+write_set:
+  - "backend/app/security/**"
+  - "backend/tests/unit/test_security.py"
+handoff_path: orchestrator-state/tasks/handoffs/P02-S02-T002.md
+evidence_dir: orchestrator-state/tasks/evidence/P02-S02-T002
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry"

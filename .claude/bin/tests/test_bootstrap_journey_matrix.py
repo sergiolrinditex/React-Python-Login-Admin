@@ -20,7 +20,7 @@ _BIN = Path(__file__).resolve().parent.parent
 if str(_BIN) not in sys.path:
     sys.path.insert(0, str(_BIN))
 
-import bootstrap_three_docs as boot
+import bootstrap_source_of_truth as boot
 
 
 def _all_tasks() -> list[dict]:

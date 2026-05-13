@@ -11,6 +11,9 @@ Antes de ejecutar este comando, considera cargadas las reglas no-scoped de `.cla
 
 ## Production DAG mode — recordatorio obligatorio
 
+Antes de verificar, confirma el checkout correcto: ejecuta `./scripts/ensure-task-worktree.sh --check-current <TASK_ID>`. En `pr-flow`, `/verify-slice` debe correr desde el worktree/rama del TASK_ID; en `push-to-main`, desde `main`. Si estás en otro checkout, PARA: no verifiques una rama distinta a la que implementó el developer.
+
+
 Antes de reconstruir contexto, verificar, decidir `pre-closer`/`post-closer`, spawnear `debugger` o spawnear `closer`, repite internamente este invariante y respétalo durante todo el comando:
 
 ```text
@@ -332,7 +335,7 @@ Recapitula al usuario el estado real (con la información de §5.bis si aplica):
 <si quedó "aparte":>
    ⏸ Journey(s) <lista JIDs> queda(n) pendiente(s) — el closer emitirá
      JOURNEY_PENDING_VERIFY. En modo frontier solo se diferirán tasks que
-     referencien esos JIDs; en strict lanza /verify-journey <JID> antes de seguir.
+     referencien esos JIDs. No existe otro modo de journey gate.
 <si la slice no cierra journey:>
    (esta slice no cierra ningún journey — flujo normal)
 

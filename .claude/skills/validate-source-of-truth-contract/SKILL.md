@@ -11,7 +11,7 @@ Canonical location: `docs/source-of-truth/`.
 
 Run:
 
-- `python3 -B -S .claude/bin/bootstrap_three_docs.py --validate-only`
+- `python3 -B -S .claude/bin/bootstrap_source_of_truth.py --validate-only`
 
 If valid, summarize:
 

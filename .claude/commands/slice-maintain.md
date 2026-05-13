@@ -315,7 +315,7 @@ orchestrator-state/agent-memory/<agent>/archive/MEMORY.full.<YYYY-MM-DD-HHMMSS>.
 Para `developer`:
 
 - production DAG-only / `explicit_dag`;
-- `bootstrap_three_docs.py --refresh` preserva runtime por defecto;
+- `bootstrap_source_of_truth.py --refresh` preserva runtime por defecto;
 - no editar `registry.json`, `runtime-state.json`, `task-dag.json` o `execution-graph.json` directamente;
 - scope por `CLAUDE_ACTIVE_TASK_ID` / `CLAUDE_TASK_PACK`;
 - `allowed_paths` / `Write set`;

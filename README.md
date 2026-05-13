@@ -11,7 +11,7 @@ Para operación diaria rápida, ver [`CHEATSHEET.md`](CHEATSHEET.md). La misma g
 ```text
 ChatGPT Pro rellena templates
   -> 5 docs source-of-truth acumulativos
-  -> bootstrap_three_docs.py
+  -> bootstrap_source_of_truth.py
   -> registry.json canonical + derived views (work-items/*.yaml, task-dag.json/md, execution-graph.json)
   -> /next-wave propone nodos DAG seguros
   -> claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice <TASK_ID>" ejecuta agentes en un terminal aislado
@@ -22,7 +22,7 @@ ChatGPT Pro rellena templates
 
 La matriz de adyacencia no se escribe a mano. Se deriva del `Canonical Coverage Registry` del checklist, concretamente de `Depends on`. La fuente runtime canónica del DAG es `orchestrator-state/tasks/registry.json` (`tasks[]` + `task_dag.source_digest`); `task-dag.json`, `task-dag.md` y `execution-graph.json` son vistas derivadas que `./scripts/check-task-dag.sh --strict` compara contra el registry antes de paralelizar. `Conflict group` y `Write set` evitan paralelizar slices que pisan los mismos ficheros o recursos.
 
-**Production DAG-only**: en operación normal `task_dag.mode` debe ser `explicit_dag`. Si falta `Depends on`, el bootstrap/checker debe bloquear: faltan dependencias reales o el Coverage Registry está incompleto. Corrige los source-of-truth docs y vuelve a ejecutar `bootstrap_three_docs.py --refresh`.
+**Production DAG-only**: en operación normal `task_dag.mode` debe ser `explicit_dag`. Si falta `Depends on`, el bootstrap/checker debe bloquear: faltan dependencias reales o el Coverage Registry está incompleto. Corrige los source-of-truth docs y vuelve a ejecutar `bootstrap_source_of_truth.py --refresh`.
 
 **Main thread obligatorio**: Claude Code debe arrancar con `main-orchestrator` como agente principal, no como subagente. El repo fija `.claude/settings.json -> agent: main-orchestrator`, y los comandos operativos usan siempre `claude --agent main-orchestrator --permission-mode bypassPermissions`. No añadas `tools:` al frontmatter de `.claude/agents/main-orchestrator.md`: omitir `tools` es intencional para heredar todas las herramientas disponibles de la sesión, incluidos MCPs y `Agent`; una lista `tools:` sería un allowlist y podría limitar el orquestador.
 
@@ -63,7 +63,7 @@ unset CLAUDE_ACTIVE_TASK_ID CLAUDE_TASK_PACK
 claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice <NEXT_TASK_ID>"
 ```
 
-Si el cierre genera `JOURNEY_PENDING_VERIFY`, `/next-wave` aplica `journey_gate_mode=frontier` por defecto: difiere solo tasks que referencian ese journey pendiente. `journey_gate_mode=strict` conserva el bloqueo global estricto. Los follow-ups bloqueantes y conflictos activos sí impiden abrir terminales inseguras.
+Si el cierre genera `JOURNEY_PENDING_VERIFY`, `/next-wave` en DAG-only difiere solo tasks que referencian ese journey pendiente. Los follow-ups bloqueantes y conflictos activos sí impiden abrir terminales inseguras.
 
 Los follow-ups productivos no los promueve el closer automáticamente. El closer sólo bloquea si hay FU `high|critical|blocker` propuestas para la slice; la decisión explícita de promoción es `/promote-followup <FU_ID>`; el waiver sigue siendo `/register-followup waive <FU_ID>`. Si un promote crea una task que pisa `Conflict group`/`Write set` de una task activa, queda `blocked` hasta que el DAG sea seguro.
 
@@ -85,7 +85,7 @@ La fuente única de valores de trailer está en:
 .claude/orchestrator-contract.json -> trailer_schema.roles.<agent-name>
 ```
 
-Ahí se declaran `required_keys`, `outcome_values`, `next_status_values` y si el rol puede mutar lifecycle. `outcome_enums` y `next_status_enums` son vistas read-only derivadas del schema para checks antiguos del engine; no son fuente normativa. `hook_capture_subagent_stop.py` carga primero `trailer_schema`; sus constantes internas son fallback para instalaciones dañadas, no fuente normativa.
+Ahí se declaran `required_keys`, `outcome_values`, `next_status_values`, `info_only` y `mutates_registry_lifecycle`. Es la única fuente machine-readable de trailers; no hay tablas de enums duplicadas ni fallback hardcodeado. `hook_capture_subagent_stop.py` carga `trailer_schema`; si el schema falta o un rol no existe, registra error visible y no muta lifecycle.
 
 
 ## Source-of-truth acumulativo: existing baseline + v1 + v2 + ...
@@ -151,10 +151,10 @@ Origen-Instr, Origen-TechGuide, Acceptance mínimo, Verify mínimo
 ## Bootstrap y checks obligatorios
 
 ```bash
-python3 -B -S .claude/bin/bootstrap_three_docs.py --validate-only
-python3 -B -S .claude/bin/bootstrap_three_docs.py --refresh
+python3 -B -S .claude/bin/bootstrap_source_of_truth.py --validate-only
+python3 -B -S .claude/bin/bootstrap_source_of_truth.py --refresh
 # --refresh preserva runtime-state/task lifecycle por defecto. Para reset destructivo explícito:
-# python3 -B -S .claude/bin/bootstrap_three_docs.py --refresh --reset-runtime-state
+# python3 -B -S .claude/bin/bootstrap_source_of_truth.py --refresh --reset-runtime-state
 ./scripts/check-task-dag.sh --strict
 ./scripts/check-journey-matrix.sh --strict
 ./scripts/check-wiring-contract.sh --strict --require-new-template-columns
@@ -171,12 +171,12 @@ Wiring contract coherent — <R> routes, <E> endpoints, <T> registry rows, <J> j
 
 Si falta la columna `Depends on` o no está rellena, el bootstrap/checker bloquea. En este orquestador eso es bloqueo de producción: corrige el Coverage Registry y no abras workers hasta volver a `explicit_dag`.
 
-`bootstrap_three_docs.py --refresh` es seguro para proyectos activos: preserva `runtime-state.json`, estados de tasks ya existentes, `last_*`, blockers y follow-ups abiertos. Usa `--reset-runtime-state` sólo cuando quieras reconstruir desde cero de forma intencional.
+`bootstrap_source_of_truth.py --refresh` es seguro para proyectos activos: preserva `runtime-state.json`, estados de tasks ya existentes, `last_*`, blockers y follow-ups abiertos. Usa `--reset-runtime-state` sólo cuando quieras reconstruir desde cero de forma intencional.
 
 
 ## Contratos API generados
 
-El registry es la fuente de endpoints. En cada `bootstrap_three_docs.py --refresh` se genera:
+El registry es la fuente de endpoints. En cada `bootstrap_source_of_truth.py --refresh` se genera:
 
 ```text
 orchestrator-state/tasks/api-contracts/
@@ -215,7 +215,7 @@ El smoke crea dos apps temporales por perfil (`minimal`, `large-without-base`, `
 El script imprime bloques copiables:
 
 ```bash
-export CLAUDE_ACTIVE_TASK_ID=P02-S03-T001 CLAUDE_TASK_PACK=orchestrator-state/tasks/task-packs/P02-S03-T001.md && echo 'Ahora ejecuta en Claude Code: claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice P02-S03-T001"'
+BOOTSTRAP_ROOT="${CLAUDE_ORCHESTRATOR_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd -P)}" && ROOT="$($BOOTSTRAP_ROOT/scripts/ensure-task-worktree.sh --print-root)" && WT="$($ROOT/scripts/ensure-task-worktree.sh P02-S03-T001)" && cd "$WT" && export CLAUDE_ORCHESTRATOR_ROOT="$ROOT" CLAUDE_WORKTREE_ROOT="$WT" CLAUDE_ACTIVE_TASK_ID=P02-S03-T001 CLAUDE_TASK_PACK="$ROOT/orchestrator-state/tasks/task-packs/P02-S03-T001.md" && echo 'Ahora ejecuta en Claude Code: claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice P02-S03-T001"'
 ```
 
 En ese terminal worker, lanza Claude Code con el orquestador explícito:
@@ -425,7 +425,7 @@ Solo al cambiar de app y después de pegar los cinco docs source-of-truth nuevos
 
 ```bash
 ./scripts/reset-for-new-project.sh
-python3 -B -S .claude/bin/bootstrap_three_docs.py --refresh
+python3 -B -S .claude/bin/bootstrap_source_of_truth.py --refresh
 ```
 
 No borres `orchestrator-state/` entre slices de la misma app: ahí vive la memoria que permite continuar tras `/clear`.

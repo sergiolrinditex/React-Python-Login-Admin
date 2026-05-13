@@ -27,6 +27,7 @@ from common import (
     log_hook_error,
     now_iso,
     project_root,
+    workspace_root,
     task_write_set,
     write_patterns_conflict,
 )
@@ -65,16 +66,23 @@ def _target_path(data: dict[str, Any]) -> str:
 def _repo_rel(path_text: str) -> str:
     if not path_text:
         return ""
-    root = project_root().resolve()
+    workspace = workspace_root().resolve()
+    orchestrator = project_root().resolve()
     raw = Path(path_text).expanduser()
     if not raw.is_absolute():
-        raw = root / raw
-    try:
-        rel = raw.resolve().relative_to(root).as_posix()
-    except Exception:
-        rel = str(path_text).replace("\\", "/")
-        if rel.startswith("./"):
-            rel = rel[2:]
+        raw = workspace / raw
+    resolved = raw.resolve()
+    # Product writes happen in the active task worktree; state writes happen in
+    # the canonical orchestrator repo. Try workspace first to avoid treating
+    # worktree product paths as absolute paths outside the repo.
+    for root in (workspace, orchestrator):
+        try:
+            return resolved.relative_to(root).as_posix()
+        except Exception:
+            pass
+    rel = str(path_text).replace("\\", "/")
+    if rel.startswith("./"):
+        rel = rel[2:]
     return rel
 
 

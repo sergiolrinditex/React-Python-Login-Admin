@@ -27,13 +27,15 @@ Si en cualquier momento dudas si estás en DAG, para y ejecuta/consulta `./scrip
 
 **Comandos hermanos**: `/verify-slice` (gate humano + orquesta `closer`), `/revise-slice <TASK_ID>` (corrección) y `/slice-maintain clean|compact` (limpieza + compactación). Orden recomendado al cerrar una slice: `/next-slice` pausa en tester pass → (opcional `/clear`) → `/verify-slice` (spawnea `closer` si verificado) → `/slice-maintain clean` → `/clear` → `/next-slice`.
 
-**Gate adicional — DAG-only producción**: antes de reclamar una task, valida que `registry.json -> task_dag.mode` sea `explicit_dag`. Si sale `missing dependency column`, PARA: faltan `Depends on` reales en el Coverage Registry o el bootstrap no derivó DAG. No continúes en modo DAG-disabled improvisado; corrige source-of-truth y reejecuta `python3 -B -S .claude/bin/bootstrap_three_docs.py --refresh`.
+**Gate adicional — DAG-only producción**: antes de reclamar una task, valida que `registry.json -> task_dag.mode` sea `explicit_dag`. Si sale `missing dependency column`, PARA: faltan `Depends on` reales en el Coverage Registry o el bootstrap no derivó DAG. No continúes en modo DAG-disabled improvisado; corrige source-of-truth y reejecuta `python3 -B -S .claude/bin/bootstrap_source_of_truth.py --refresh`.
 
 **Gate adicional — follow-ups productivos**: antes de reclamar una task, revisa `runtime-state.open_followups`. Si hay propuestas `high|critical|blocker` en estado `proposed`, no sigas: primero comprueba que no sean defectos in-scope que deberían ir por `debugger/retest`; después usa `/promote-followup <ID>` para convertirlas en task DAG real o `/register-followup waive <ID>` con decisión humana. No permitas que un hallazgo de validator/tester quede solo en handoff, pero tampoco conviertas bugs reparables de la slice en FU. Las FU reales deben traer `--scope-classification` y `--why-not-debugger`.
 
 **Gate adicional — journey verification**: si al cerrar esta slice todos los demás slices de un journey ya están `done`, **`/verify-slice` integrará el gate de journey** en su §5.bis: ofrecerá al usuario verificar el journey inline (mismo entorno, mismos datos cargados, un solo gate humano) o dejarlo "aparte" para `/verify-journey <JID>` después. La detección se hace con `list_journey_closures.py`, no con `task_ids[-1]`, para soportar DAGs y matrices desordenadas. Si elige aparte, el closer emitirá `JOURNEY_PENDING_VERIFY` y el próximo `/next-slice` quedará bloqueado por el planner hasta que se resuelva.
 
 **Este comando NO invoca `closer`.** El pipeline de `/next-slice` termina en `tester pass`. El cierre (closer) es responsabilidad de `/verify-slice`, que actúa como gate humano previo al commit.
+
+Antes de reclamar la task, ejecuta `./scripts/ensure-task-worktree.sh --check-current <TASK_ID>` si el repo es Git. En `pr-flow`, debes estar en el worktree/rama del TASK_ID; en `push-to-main`, en `main`. Si falla, para y usa el comando exacto impreso por `./scripts/next-wave.sh`.
 
 **REGLA DE ORO**: NO toques código, NO lances workers, NO mutes registry hasta que el usuario apruebe el plan en el **Paso 4**. Solo permitido antes: leer ficheros, listar estado del entorno, levantar dev-restart en modo `--soft`, y presentar el plan.
 
@@ -191,10 +193,11 @@ Si `$ARGUMENTS` contiene un `TASK_ID` concreto o el entorno tiene `CLAUDE_ACTIVE
 ```bash
 export CLAUDE_ACTIVE_TASK_ID=<TASK_ID>
 python3 -B -S .claude/bin/claim_task.py <TASK_ID>
-export CLAUDE_TASK_PACK=orchestrator-state/tasks/task-packs/<TASK_ID>.md
+ROOT="${CLAUDE_ORCHESTRATOR_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd -P)}"
+export CLAUDE_TASK_PACK="${CLAUDE_TASK_PACK:-$ROOT/orchestrator-state/tasks/task-packs/<TASK_ID>.md}"
 ```
 
-Si `claim_task.py` devuelve `CLAIM_DENIED`, no ejecutes la slice: informa la causa (deps incompletas, ya claimed o conflicto activo por `Conflict group`/`Write set`) y vuelve al planner. `/next-wave` solo imprime el `export` y el `/next-slice`; el claim atómico ocurre aquí, una sola vez, después de la aprobación humana. En modo secuencial sin `TASK_ID` explícito, no hace falta claim manual. El claim crea un pack mínimo por task; el `planner` debe enriquecer `CLAUDE_TASK_PACK` con los extractos de los documentos source-of-truth antes de arrancar `developer`.
+Si `claim_task.py` devuelve `CLAIM_DENIED`, no ejecutes la slice: informa la causa (deps incompletas, ya claimed o conflicto activo por `Conflict group`/`Write set`) y vuelve al planner. `/next-wave` solo imprime el `export` y el `/next-slice`; el claim atómico ocurre aquí, una sola vez, después de la aprobación humana. El claim crea un pack mínimo por task; el `planner` debe enriquecer `CLAUDE_TASK_PACK` con los extractos de los documentos source-of-truth antes de arrancar `developer`.
 
 - Relee PROGRESS.md (cabecera + últimas 3 slices).
 - Confirma entorno sano (`--check` del script de dev-restart).

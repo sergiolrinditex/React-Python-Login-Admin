@@ -15,7 +15,7 @@ if str(_BIN) not in sys.path:
 
 
 def _seed_dag(tmp_project):
-    import bootstrap_three_docs as boot
+    import bootstrap_source_of_truth as boot
     import common
 
     tasks = [
@@ -67,36 +67,32 @@ def test_next_wave_frontier_only_defers_tasks_referencing_pending_journey(tmp_pr
 
     runtime = common.load_runtime_state()
     runtime["pending_journey_verifications"] = ["J101"]
-    runtime["journey_gate_mode"] = "frontier"
     common.save_runtime_state(runtime)
 
     result = next_wave.compute_wave(common.load_registry())
     assert result["ok"] is True
-    assert result["journey_gate_mode"] == "frontier"
     assert [t["id"] for t in result["ready"]] == ["P00-S01-T002"]
     assert [t["id"] for t in result["deferred_due_journey_gate"]] == ["P00-S01-T001"]
     assert result["pending_journey_verifications"] == ["J101"]
 
 
-def test_next_wave_strict_mode_keeps_missing_dependency_column_global_journey_block(tmp_project):
+def test_next_wave_pending_journey_without_matching_refs_does_not_global_block(tmp_project):
     import common
     import next_wave
 
     _seed_dag(tmp_project)
     runtime = common.load_runtime_state()
     runtime["pending_journey_verifications"] = ["J101"]
-    runtime["journey_gate_mode"] = "strict"
     common.save_runtime_state(runtime)
 
     result = next_wave.compute_wave(common.load_registry())
-    assert result["ok"] is False
-    assert result["journey_gate_mode"] == "strict"
-    assert result["ready"] == []
+    assert result["ok"] is True
+    assert [t["id"] for t in result["ready"]] == ["P00-S01-T001", "P00-S01-T002"]
     assert result["pending_journey_verifications"] == ["J101"]
 
 
 def test_next_wave_can_print_more_than_two_terminal_commands(tmp_project):
-    import bootstrap_three_docs as boot
+    import bootstrap_source_of_truth as boot
     import common
     import next_wave
 
@@ -132,13 +128,14 @@ def test_next_wave_terminal_command_exports_task_pack_and_does_not_preclaim():
 
     cmd = next_wave._terminal_command("P00-S01-T001")
     assert "CLAUDE_ACTIVE_TASK_ID=P00-S01-T001" in cmd
-    assert "CLAUDE_TASK_PACK=orchestrator-state/tasks/task-packs/P00-S01-T001.md" in cmd
+    assert "CLAUDE_TASK_PACK=" in cmd
+    assert "orchestrator-state/tasks/task-packs/P00-S01-T001.md" in cmd
     assert 'claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice P00-S01-T001"' in cmd
     assert "claim_task.py" not in cmd
 
 
 def test_next_wave_rejects_missing_dag_dependencies_registry_drift(tmp_project):
-    import bootstrap_three_docs as boot
+    import bootstrap_source_of_truth as boot
     import common
     import next_wave
 
@@ -165,3 +162,20 @@ def test_next_wave_rejects_missing_dag_dependencies_registry_drift(tmp_project):
     assert result["ok"] is False
     assert result["ready"] == []
     assert any("mode drift" in e for e in result["errors"])
+
+def test_next_wave_pr_flow_terminal_command_enters_task_worktree(tmp_project):
+    import next_wave
+
+    stack = tmp_project / "docs" / "source-of-truth" / "STACK_PROFILE.yaml"
+    stack.parent.mkdir(parents=True, exist_ok=True)
+    stack.write_text("profile_version: stack-profile-v1\ngit_workflow: pr-flow\n", encoding="utf-8")
+
+    cmd = next_wave._terminal_command("P00-S01-T001")
+    assert "ensure-task-worktree.sh" in cmd
+    assert "--print-root" in cmd
+    assert "P00-S01-T001" in cmd
+    assert "cd \"$WT\"" in cmd
+    assert "CLAUDE_ORCHESTRATOR_ROOT=\"$ROOT\"" in cmd
+    assert "CLAUDE_WORKTREE_ROOT=\"$WT\"" in cmd
+    assert "CLAUDE_TASK_PACK=\"$ROOT/orchestrator-state/tasks/task-packs/P00-S01-T001.md\"" in cmd
+    assert 'claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice P00-S01-T001"' in cmd

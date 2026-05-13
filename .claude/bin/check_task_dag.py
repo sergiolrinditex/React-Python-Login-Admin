@@ -13,7 +13,7 @@ import json
 import sys
 from typing import Any
 
-from bootstrap_three_docs import build_task_dag
+from bootstrap_source_of_truth import build_task_dag
 from common import load_registry, memory_dir, now_iso, read_json
 
 
@@ -56,18 +56,18 @@ def validate_dag_view_files(registry: dict[str, Any]) -> list[str]:
         view = read_json(task_dag_path, {})
         for key in ("mode", "nodes", "edges", "adjacency_matrix", "topological_levels", "source_digest"):
             if view.get(key) != stored.get(key):
-                warnings.append(f"task-dag.json view drift at {key}; rerun bootstrap_three_docs.py --refresh")
+                warnings.append(f"task-dag.json view drift at {key}; rerun bootstrap_source_of_truth.py --refresh")
                 break
     else:
-        warnings.append("task-dag.json view missing; rerun bootstrap_three_docs.py --refresh")
+        warnings.append("task-dag.json view missing; rerun bootstrap_source_of_truth.py --refresh")
     exec_path = memory_dir() / "execution-graph.json"
     if exec_path.exists():
         exec_view = read_json(exec_path, {})
         exec_dag = exec_view.get("task_dag") or {}
         if exec_dag.get("source_digest") != stored.get("source_digest"):
-            warnings.append("execution-graph.json view drift from registry.task_dag; rerun bootstrap_three_docs.py --refresh")
+            warnings.append("execution-graph.json view drift from registry.task_dag; rerun bootstrap_source_of_truth.py --refresh")
     else:
-        warnings.append("execution-graph.json view missing; rerun bootstrap_three_docs.py --refresh")
+        warnings.append("execution-graph.json view missing; rerun bootstrap_source_of_truth.py --refresh")
     return warnings
 
 
@@ -76,7 +76,7 @@ def validate_registry_dag(registry: dict[str, Any]) -> tuple[dict[str, Any], lis
     warnings: list[str] = []
     errors: list[str] = []
     if not isinstance(tasks, list) or not tasks:
-        errors.append("registry.tasks is empty; run bootstrap_three_docs.py --refresh after filling source-of-truth docs")
+        errors.append("registry.tasks is empty; run bootstrap_source_of_truth.py --refresh after filling source-of-truth docs")
         return build_task_dag([]), warnings, errors
 
     recomputed = build_task_dag(tasks)
@@ -86,7 +86,7 @@ def validate_registry_dag(registry: dict[str, Any]) -> tuple[dict[str, Any], lis
 
     stored = registry.get("task_dag") or {}
     if not stored:
-        warnings.append("registry.task_dag is missing; rerun bootstrap_three_docs.py --refresh")
+        warnings.append("registry.task_dag is missing; rerun bootstrap_source_of_truth.py --refresh")
     else:
         if stored.get("mode") != recomputed.get("mode"):
             errors.append(f"registry.task_dag.mode drift: stored={stored.get('mode')} recomputed={recomputed.get('mode')}")
