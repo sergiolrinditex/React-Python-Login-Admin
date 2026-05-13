@@ -1,0 +1,16 @@
+=== audit-agent-reality ===
+task-planner              ready|blocked                       <none>                               false      <none>                         ok    
+tester                    pass|fail|blocked                   ready_for_close|needs_debug|blocked  false      write-handoff                  ok    
+validator                 approved|changes_requested|blocked  ready_for_close|needs_debug|blocked  true       close-task,write-handoff       ok    
+
+AGENT_REALITY_AUDIT: ok
+
+=== audit-agent-trailer-vocabulary ===
+task-planner              ready|blocked                       ready|blocked                                              <none>                               <none>                                          
+tester                    pass|fail|blocked                   pass|fail|blocked, fail                                    ready_for_close|needs_debug|blocked  ready_for_close|needs_debug|blocked, needs_debug
+validator                 approved|changes_requested|blocked  changes_requested, approved|changes_requested|blocked      ready_for_close|needs_debug|blocked  ready_for_close|needs_debug|blocked, needs_debug
+
+TRAILER_VOCABULARY_AUDIT: ok
+
+=== audit-template-screen-journey-redactor ===
+TEMPLATE_SCREEN_JOURNEY_REDACTOR_AUDIT: ok

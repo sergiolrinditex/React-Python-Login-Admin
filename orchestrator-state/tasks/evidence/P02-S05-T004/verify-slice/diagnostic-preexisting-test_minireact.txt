@@ -1,0 +1,25 @@
+Diagnostic: test_minireact_source_docs_bootstrap_without_flutter_tables
+
+Status: pre-existing local-only Mac flake. CI green. Not introduced by P02-S05-T004.
+
+Evidence:
+- Failure reproduces on plain `git checkout 8e52ed3` (PR #17 merge, before this slice opened).
+- Failure also reproduces on `f1b8ea1` (PR #15 merge, current HEAD).
+- `gh run list --workflow="Orchestrator tests"` shows the 4 most recent runs all SUCCESS:
+    * 2026-05-13T21:21:44Z main
+    * 2026-05-13T21:14:08Z dev/P02-S05-T002
+    * 2026-05-13T21:13:28Z main
+    * 2026-05-13T21:11:37Z chore/orchestrator-ci-fix
+- Root cause hypothesis: `scripts/check-task-dag.sh` resolves ROOT from
+  `BASH_SOURCE[0]/..`. The test copytree's `__pycache__` (or Python's import
+  machinery) appears to bleed real-repo paths into the temp sandbox on macOS,
+  but not on the Linux runners used by GitHub Actions. CI is the source of
+  truth for the acceptance "All 3 jobs of Orchestrator tests workflow turn
+  green on a PR against main".
+- Validator already noted this in handoff (§Validator review preexisting_failure_handling).
+- Tester already noted this in handoff (§Pre-existing failure note).
+
+No FU created. Reasons:
+- Not a regression caused by this slice (it was failing identically at 8e52ed3).
+- CI is the canonical acceptance proof, and CI is green.
+- Different conflict_group than `orchestrator:tests` for this slice.

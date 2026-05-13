@@ -1,0 +1,30 @@
+E                 "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md"
+E               ],
+E               "guide": [
+E                 "docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md"
+E               ],
+E               "ux": [
+E                 "docs/source-of-truth/UX_CONTRACT.md"
+E               ],
+E               "stack_profile": [
+E                 "docs/source-of-truth/STACK_PROFILE.yaml"
+E               ]
+E             }
+E             
+E             Bootstrapped project prefix: HILO_PEOPLE
+E             Detected phases: 7
+E             Generated tasks: 78
+E             Detected journeys: 6
+E             Artifacts written under orchestrator-state/memory and orchestrator-state/tasks
+E             Runtime state preserved by default (78 matching task(s)). Use --reset-runtime-state only for intentional destructive resets.
+E             
+E             Task DAG: INVALID mode=explicit_dag nodes=78 edges=137 waves=17
+E             WARNING: P02: 22 tasks exceeds max 20; split by screen/module lane
+E             
+E           assert 1 == 0
+E            +  where 1 = CompletedProcess(args=['bash', 'scripts/check-task-dag.sh', '--strict'], returncode=1, stdout='Task DAG: INVALID mode=...icit_dag nodes=78 edges=137 waves=17\nWARNING: P02: 22 tasks exceeds max 20; split by screen/module lane\n', stderr='').returncode
+
+.claude/bin/tests/test_stack_profile_contract.py:163: AssertionError
+=========================== short test summary info ============================
+FAILED .claude/bin/tests/test_stack_profile_contract.py::test_minireact_source_docs_bootstrap_without_flutter_tables
+1 failed, 340 passed, 5 skipped, 145 subtests passed in 21.43s

@@ -1,0 +1,154 @@
+....... [  2%]
+...............................................sssss............ [ 20%]
+........................................................................ [ 41%]
+........................................................................ [ 62%]
+...........................................F............................ [ 82%]
+...........................................................              [100%]
+=================================== FAILURES ===================================
+_________ test_minireact_source_docs_bootstrap_without_flutter_tables __________
+
+tmp_path = PosixPath('/private/var/folders/kq/5bd5xyhn5pxdfh5_jbjpgw7c0000gr/T/pytest-of-sergiolr/pytest-276/test_minireact_source_docs_boo0')
+
+    def test_minireact_source_docs_bootstrap_without_flutter_tables(tmp_path):
+        repo = tmp_path / "repo"
+        shutil.copytree(ROOT, repo)
+        sot = repo / "docs" / "source-of-truth"
+        for p in sot.glob("*"):
+            if p.name != ".gitkeep":
+                p.unlink()
+        (sot / "STACK_PROFILE.yaml").write_text("""
+    profile_version: stack-profile-v1
+    frontend:
+      language: typescript
+      framework: nextjs
+      module_root: web/src
+      theme_root: web/src/theme
+      test_cmd: pnpm test
+      dev_cmd: pnpm dev
+      visual_check: browser
+    backend:
+      language: typescript
+      framework: nextjs-api
+      module_root: web/src/server
+      test_cmd: pnpm test
+      dev_cmd: pnpm dev
+      health_url: http://localhost:3000/api/health
+    db:
+      engine: sqlite
+      migrate_cmd: pnpm prisma migrate deploy
+      seed_cmd: pnpm seed
+    git_workflow: pr-flow
+    design_tokens_enforcer: design_tokens_v1
+    """, encoding="utf-8")
+        (sot / "UX_CONTRACT.md").write_text("""# UX_CONTRACT — MiniReact
+    
+    ## 1. UX purpose
+    Small note app.
+    
+    ## 2. Persona
+    | Persona | Goal | Journey | Data required |
+    |---|---|---|---|
+    | User | Create and list notes | J1 | persisted notes rows |
+    
+    ## 3. Screen inventory
+    | Route | Screen/Page | Primary journey refs | Required UI states | Real data contract |
+    |---|---|---|---|---|
+    | /notes | NotesPage | J1 | loading,error,success,empty | sqlite notes rows |
+    """, encoding="utf-8")
+        (sot / "instrucciones.md").write_text("""# MiniReact Instructions
+    
+    ## Journey Coverage Matrix
+    | ID | Milestone | Pantallas/Screens | Acciones/Actions | Endpoints | Tablas/Tables | Estado cliente/Client state | Slices | Verificación/Verification |
+    |---|---|---|---|---|---|---|---|---|
+    | J1 | Notes CRUD | /notes | create note, list notes | POST /api/notes, GET /api/notes | notes | notesStore | P00-S01-T001, P01-S01-T001, P02-S01-T001 | Browser + SQLite persisted rows |
+    """, encoding="utf-8")
+        (sot / "MINIREACT_TECHNICAL_GUIDE.md").write_text("""# MINIREACT Technical Guide
+    
+    ## 1 Architecture
+    Next.js frontend/API with SQLite.
+    
+    ## 2 Routes
+    | Ruta | Page | Auth | Journey refs | Endpoints consumidos | Estado cliente/provider | Estados UI obligatorios | Next action | Slice ID |
+    |---|---|---|---|---|---|---|---|---|
+    | /notes | NotesPage | none | J1 | GET /api/notes, POST /api/notes | notesStore | loading,error,success,empty | create note | P02-S01-T001 |
+    
+    ## 3 Endpoints
+    | Method | Path | Request | Response | Auth | Errors | Consumidor front/journey | Tablas/side effects | Slice ID |
+    |---|---|---|---|---|---|---|---|---|
+    | POST | /api/notes | title | note | none | 400 | /notes J1 | notes insert | P01-S01-T001 |
+    | GET | /api/notes | none | notes[] | none | 500 | /notes J1 | notes select | P02-S01-T001 |
+    
+    ## Verification Data Contract
+    | Flow/Journey | Persona/Rol | Datos reales/proporcionados requeridos | Carga de datos reales/proporcionados permitida | Reset/Cleanup | Slices/Journeys |
+    |---|---|---|---|---|---|
+    | Notes CRUD | User | sqlite notes row | resettable provided data | delete notes | J1 |
+    """, encoding="utf-8")
+        (sot / "MINIREACT_IMPLEMENTATION_CHECKLIST.md").write_text("""# MINIREACT Implementation Checklist
+    
+    # Phase 0 — DB lane
+    ## Step 0.1 — SQLite notes table
+    - [ ] notes table exists
+    
+    # Phase 1 — API lane
+    ## Step 1.1 — Notes API
+    - [ ] POST /api/notes works
+    
+    # Phase 2 — UI lane
+    ## Step 2.1 — Notes page
+    - [ ] /notes consumes real API
+    
+    ## Canonical Coverage Registry
+    | Slice ID | Tipo | Target | Step | Product increment | Build state | Risk level | Verify mode | Depends on | Conflict group | Write set | Journey refs | Pantalla/Ruta | Endpoint | Tablas DB | Origen-Instr | Origen-TechGuide | Acceptance mínimo | Verify mínimo |
+    |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+    | P00-S01-T001 | db | notes schema | Step 0.1 | v1 | planned | low | auto | — | db:migrations | prisma/schema.prisma; web/tests/**/notes* | J1 | — | — | notes | J1 | §1 | notes table exists | pnpm test -- notes.schema |
+    | P01-S01-T001 | api | create note API | Step 1.1 | v1 | planned | medium | human | P00-S01-T001 | api:notes | web/src/server/**/notes*; web/tests/**/notes* | J1 | — | POST /api/notes | notes | J1 | §3 | creates persisted note | pnpm test -- notes.api |
+    | P02-S01-T001 | frontend | notes page | Step 2.1 | v1 | planned | medium | human | P01-S01-T001 | front:notes | web/src/app/notes/**; web/src/theme/** | J1 | /notes | GET /api/notes | notes | J1 | §2 | page lists persisted notes | pnpm test -- notes.page |
+    """, encoding="utf-8")
+        cmds = [
+            ["python3", "-B", "-S", ".claude/bin/bootstrap_source_of_truth.py", "--validate-only"],
+            ["python3", "-B", "-S", ".claude/bin/bootstrap_source_of_truth.py", "--refresh"],
+            ["bash", "scripts/check-task-dag.sh", "--strict"],
+            ["bash", "scripts/check-journey-matrix.sh", "--strict"],
+            ["bash", "scripts/check-wiring-contract.sh", "--strict", "--require-new-template-columns"],
+        ]
+        outputs = []
+        for cmd in cmds:
+            res = subprocess.run(cmd, cwd=repo, text=True, capture_output=True, timeout=60)
+            outputs.append(res.stdout + res.stderr)
+>           assert res.returncode == 0, "\n".join(outputs)
+E           AssertionError: Source-of-truth contract is valid.
+E             {
+E               "instructions": [
+E                 "docs/source-of-truth/instrucciones.md"
+E               ],
+E               "checklist": [
+E                 "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md"
+E               ],
+E               "guide": [
+E                 "docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md"
+E               ],
+E               "ux": [
+E                 "docs/source-of-truth/UX_CONTRACT.md"
+E               ],
+E               "stack_profile": [
+E                 "docs/source-of-truth/STACK_PROFILE.yaml"
+E               ]
+E             }
+E             
+E             Bootstrapped project prefix: HILO_PEOPLE
+E             Detected phases: 7
+E             Generated tasks: 78
+E             Detected journeys: 6
+E             Artifacts written under orchestrator-state/memory and orchestrator-state/tasks
+E             Runtime state preserved by default (78 matching task(s)). Use --reset-runtime-state only for intentional destructive resets.
+E             
+E             Task DAG: INVALID mode=explicit_dag nodes=78 edges=137 waves=17
+E             WARNING: P02: 22 tasks exceeds max 20; split by screen/module lane
+E             
+E           assert 1 == 0
+E            +  where 1 = CompletedProcess(args=['bash', 'scripts/check-task-dag.sh', '--strict'], returncode=1, stdout='Task DAG: INVALID mode=...icit_dag nodes=78 edges=137 waves=17\nWARNING: P02: 22 tasks exceeds max 20; split by screen/module lane\n', stderr='').returncode
+
+.claude/bin/tests/test_stack_profile_contract.py:163: AssertionError
+=========================== short test summary info ============================
+FAILED .claude/bin/tests/test_stack_profile_contract.py::test_minireact_source_docs_bootstrap_without_flutter_tables
+1 failed, 340 passed, 5 skipped, 145 subtests passed in 27.73s
