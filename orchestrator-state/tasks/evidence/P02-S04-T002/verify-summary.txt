@@ -1,0 +1,35 @@
+=== verify-slice summary 2026-05-13T17:29:07Z ===
+
+## Hard reset
+  scripts/dev-restart.sh --reset → destroyed pg_data volume (remote daemon)
+  port 4000 collision with SSH tunnel during recreate; manual recovery below
+  alembic upgrade head → head=0003, 34 tables in public schema
+  python -m app.verification_data.bootstrap --only rag_docs → stub OK
+
+## Services state
+{"data":{"db":{"status":"ok"},"redis":{"status":"ok"},"litellm":{"status":"unknown"}}}
+"I'm alive!"
+
+## Worker tests — VERBOSE
+
+========================= 9 passed, 6 skipped in 1.53s =========================
+
+## Worker tests — QUIET
+
+========================= 9 passed, 6 skipped in 1.49s =========================
+
+## Celery worker boot smoke (real Redis broker)
+- ** ---------- .> app:         hilo_workers:0x10535ef10
+  . hilo.vectorization.embed_chunks
+  . hilo.vectorization.extract_and_chunk
+[2026-05-13 19:27:53,560: INFO/MainProcess] Connected to redis://localhost:6379/0
+[2026-05-13 19:27:54,627: INFO/MainProcess] celery@AXG6GLCJ3Y54 ready.
+
+## DB final state
+  vectorization_jobs: 0 rows
+  document_chunks: 0 rows
+  document_embeddings: 0 rows
+  document_versions: 0 rows
+  documents: 0 rows
+  rag_collections: 0 rows
+  ai_models: 0 rows
