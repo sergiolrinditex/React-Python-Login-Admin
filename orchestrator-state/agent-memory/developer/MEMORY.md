@@ -811,3 +811,46 @@
 | Slice | Outcome | Key files touched |
 |-------|---------|-------------------|
 | P02-S03-T003 | developer done (pending validator+tester+verify-slice) | scripts/dev-restart.profile.sh (restored 39-LOC stub → 395-LOC canonical profile) |
+| P02-S04-T001 | developer done (pending validator+tester+verify-slice) | Adopted 7 untracked files: backend/app/rag/{__init__,errors,schemas,retriever}.py + backend/tests/ai/{__init__,conftest,test_rag_retriever}.py — no code written |
+
+## P02-S04-T001 — RAG retriever patterns (2026-05-13)
+
+### pgvector-python 0.4.2 ORM API (confirmed working)
+- `DocumentEmbedding.embedding.cosine_distance(query_embedding)` → produces `<=>` SQL operator with HNSW pushdown.
+- `query_embedding` can be `list[float]` (no numpy array required). Pydantic or Python list both work.
+- `(1.0 - distance).label("score")` — standard pattern for cosine similarity from cosine distance.
+- `order_by(distance.asc())` — ascending distance = descending similarity.
+- `DocumentEmbedding.embedding.isnot(None)` — correct SQLAlchemy ORM null check for VECTOR columns.
+- `DocumentEmbedding.embedding.cosine_distance(q)` does NOT require register_vector() with psycopg3+SQLAlchemy.
+
+### HNSW index EMPTY TABLE behavior (confirmed safe)
+- Real Postgres with 0 rows in document_embeddings + HNSW index → `SELECT ... LIMIT k` returns [] without error.
+- Test T08 confirms this: real DB, real pgvector, no embeddings → empty list.
+- This is the official guarantee: HNSW has no training step, so empty table is fine.
+
+### extra_metadata / metadata ORM column naming pattern
+- `DocumentChunk.extra_metadata` (Python ORM attr) ↔ `metadata` (DB column) — standard pattern for SQLAlchemy Reserved Words.
+- `mapped_column("metadata", JSONB, ...)` — first arg is the DB column name override.
+- In SQLAlchemy select/label: `DocumentChunk.extra_metadata.label("metadata")` produces SQL col alias `metadata` in result row.
+- Accessing `row.metadata` on the Row object works correctly after `.label("metadata")`.
+- Pattern also used on `RagCollection.extra_metadata`.
+
+### RAG retriever integration test pattern
+- Function-scoped fixture + transactional rollback (pg_session) is the correct pattern.
+- No need for teardown DELETE — rollback handles it.
+- Synthetic deterministic vectors: `numpy.random.default_rng(seed).standard_normal(1536)` + L2 normalize. Seeds 101/202/303 for ES/EN/disabled.
+- T08 (empty DB test): do NOT include `rag_smoke_fixture` — test must depend only on `pg_session`. The pg_session isolation ensures no other test's rows are visible.
+- Assertions on score: use `-0.01 <= score <= 1.001` tolerance for unit-normalised vectors (pgvector FP arithmetic can yield slightly negative cosine similarities for near-orthogonal vectors).
+
+### Audit-first approach for prior untracked code
+- Read all files → run lint → run tests → decide per file before writing anything.
+- Verbatim adoption is the right outcome if code passes lint + tests + semantic review.
+- Document the audit in handoff §Prior Untracked Audit even for ADOPT verdicts (traceability).
+- WRITE_SET_DRIFT declarations are still required even when code is adopted not written.
+
+### Verbose logging semantics for retriever
+- verbose=true: INFO for `search.start` (BEFORE) and `search.ok` (AFTER), plus `search.invalid_dim` ERROR.
+- verbose=false: no INFO for happy path. DEBUG for `search.empty` (empty result). ERROR for `search.invalid_dim`.
+- Note: `search.empty` at DEBUG-level is visible in `--log-cli-level=DEBUG` pytest but NOT in production (WARNING threshold). Validator may question whether DEBUG is "only warning+error" per non-negotiables §A12.
+- No PII in any log: no embedding floats, no chunk content, no user data.
+- `request_id` defaults to `str(uuid.uuid4())` if caller doesn't provide one — ensures every log line is correlated.
