@@ -73,9 +73,9 @@ orchestrator-state/tasks/api-contracts/*
 
 No edites `registry.json`, `runtime-state.json`, `task-dag.json` ni `task-dag.md` a mano. Son derivados por bootstrap y scripts con locks.
 
-## Journeys y frontier gate
+## Journeys y gate por referencias
 
-`journey_gate_mode=frontier` es el default: journeys pendientes solo difieren tasks que referencian esos journey IDs. `journey_gate_mode=strict` conserva el bloqueo global legacy.
+En modo DAG-only, journeys pendientes en `runtime-state.pending_journey_verifications` solo difieren tasks que referencian esos journey IDs (`task.journey_refs`). Ramas independientes del DAG siguen avanzando. No existe modo de bloqueo alternativo.
 
 ## Follow-ups formales
 

@@ -337,7 +337,7 @@ sequenceDiagram
 ```
 
 > [!NOTE]
-> **El validator no toca `task.status`**. Su `NEXT_STATUS` se guarda como `validator_next_status` (metadata informativa). Esto elimina la race condition cuando ambos cierran a la vez en el par paralelo. El **closer** lee el `OUTCOME` del validator desde el handoff antes de cerrar y rechaza el commit si no es `approved`. La whitelist vive en `.claude/bin/hook_capture_subagent_stop.py:INFO_ONLY_AGENTS`.
+> **El validator no toca `task.status`**. Su `NEXT_STATUS` se guarda como `validator_next_status` (metadata informativa). Esto elimina la race condition cuando ambos cierran a la vez en el par paralelo. El **closer** lee el `OUTCOME` del validator desde el handoff antes de cerrar y rechaza el commit si no es `approved`. La clasificación lifecycle vs info-only vive en `.claude/orchestrator-contract.json → trailer_schema.roles.<agent>.info_only` (más `mutates_registry_lifecycle`); el hook `hook_capture_subagent_stop.py` deriva el comportamiento del schema en runtime.
 
 ---
 

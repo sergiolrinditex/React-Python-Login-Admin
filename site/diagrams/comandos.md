@@ -92,7 +92,7 @@ flowchart LR
 ### `/verify-slice TASK_ID`
 
 ![Tipo](https://img.shields.io/badge/tipo-gate_humano-f59e0b?style=flat-square)
-![Datos](https://img.shields.io/badge/datos-real_o_prod--like-ec4899?style=flat-square)
+![Datos](https://img.shields.io/badge/datos-reales_o_proporcionados-ec4899?style=flat-square)
 
 Verificación con datos reales del `Verification Data Contract` definido en el `*_TECHNICAL_GUIDE.md`. Reset controlado, carga de datos reales/proporcionados y reproducción humana usando el método declarado en `STACK_PROFILE.frontend.visual_check` (browser, emulador, simulador, device), logs vivos.
 

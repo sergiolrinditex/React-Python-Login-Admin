@@ -9,7 +9,7 @@
 ---
 
 > [!IMPORTANT]
-> Esta tabla refleja `orchestrator-contract.json → trailer_schema.roles`. El hook `capture_subagent_stop` carga el schema primero; los enums hardcoded son **fallback defensivo**. El test `test_contract_invariants.py` verifica que los enums no diverjan.
+> Esta tabla refleja `orchestrator-contract.json → trailer_schema.roles`. El hook `capture_subagent_stop` carga el schema como fuente única. Los enums repetidos en `.claude/bin/*.py` son solo mirrors documentales: el test `test_contract_invariants.py` verifica que no diverjan del schema.
 
 ---
 
@@ -198,7 +198,7 @@ Líneas reservadas que el hook reconoce además de `OUTCOME` / `NEXT_STATUS`:
 flowchart LR
     SRC[trailer_schema.roles<br>orchestrator-contract.json]
     MIRROR[outcome_enums<br>next_status_enums<br><i>solo mirror</i>]
-    HOOK[hook_capture_subagent_stop.py<br>ALLOWED_OUTCOMES<br><i>fallback hardcoded</i>]
+    HOOK[hook_capture_subagent_stop.py<br>loads trailer_schema.roles<br><i>schema mirror</i>]
     TEST[test_contract_invariants.py<br>verifica que no diverjan]
 
     SRC -.legacy mirror.-> MIRROR
