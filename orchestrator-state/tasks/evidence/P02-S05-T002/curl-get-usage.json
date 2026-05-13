@@ -1,0 +1,2 @@
+{"data":{"from":"2026-05-01T00:00:00+00:00","to":"2026-05-13T23:59:59+00:00","group_by":"model","rows":[],"totals":{"tokens_in":0,"tokens_out":0,"estimated_cost":0.0,"invocations":0,"latency_ms_avg":null}},"meta":{"request_id":"3e1d7d26-b80d-4343-b8f5-8411eebd7ed2"}}
+HTTP 200

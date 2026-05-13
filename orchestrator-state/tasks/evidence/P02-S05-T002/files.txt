@@ -1,0 +1,22 @@
+P02-S05-T002 — Files touched (with LoC)
+
+| File | LoC | Anchor | Notes |
+|------|-----|--------|-------|
+| backend/app/llm_gateway/complete_chat.py | 293 | §D-LLMG-COMPLETE | NEW: non-streaming helper, imports _estimate_cost_from_pricing from litellm_client (DRY) |
+| backend/app/llm_gateway/errors.py | 136 | §D-LLMG-ERRORS | Extended with ModelTestFailedError (maps → HTTP 502 AI_PROVIDER_TEST_FAILED) |
+| backend/app/llm_gateway/__init__.py | 55 | §D-LLMG-INIT | Extended: exports complete_chat, CompletionResult, ModelTestFailedError |
+| backend/app/admin/model_test/__init__.py | 21 | §D-MT-PKG | NEW package marker; re-exports model_test_router |
+| backend/app/admin/model_test/router.py | 243 | §D-MT-ROUTER | NEW: POST /api/v1/admin/ai/models/{id}/test handler |
+| backend/app/admin/model_test/service.py | 262 | §D-MT-SVC | NEW: run_model_test use case |
+| backend/app/admin/model_test/repository.py | 303 | §D-MT-REPO | NEW: DB helpers (ai_model_tests + llm_usage_logs inserts); 3 lines over cap (pure data access, no business logic; noted as risk for validator) |
+| backend/app/admin/model_test/schemas.py | 95 | §D-MT-SCHEMAS | NEW: TestModelRequest + ModelTestOut Pydantic v2 |
+| backend/app/admin/model_test/audit.py | 134 | §D-MT-AUDIT | NEW: write_model_test_audit_success/failure wrappers |
+| backend/app/admin/model_test/errors.py | 34 | §D-MT-PKG | NEW: ModelNotFoundError, CredentialNotFoundError |
+| backend/app/admin/usage.py | 186 | §D-USAGE-FILE | NEW: GET /api/v1/admin/usage HTTP handler + param validation |
+| backend/app/admin/_usage_aggregator.py | 168 | §D-USAGE-SPLIT | NEW: SQL aggregation split from usage.py (>300 LoC threshold) |
+| backend/app/admin/__init__.py | 69 | §D-MT-WIRE | Updated: +model_test_router + usage_router; WRITE_SET_DRIFT declared |
+| backend/tests/integration/test_model_test.py | 912 | — | NEW: 25 tests (T01–T16 /test + U01–U08 /usage); 25/25 PASS |
+
+Ruff: 0 issues across all above files.
+Test smoke: 25/25 PASS (both verbose modes confirmed via T15 parametrize).
+Lint: ruff check → All checks passed!

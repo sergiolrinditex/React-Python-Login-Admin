@@ -2,7 +2,11 @@
 Hilo People — FastAPI application entry point.
 
 Slice:  P01-S02-T001 — POST /api/v1/auth/sign-up (WRITE_SET_DRIFT: main.py)
-Phase:  P01 Auth + Data Foundation
+        P02-S05-T002 — Model test and usage endpoints (WRITE_SET_DRIFT §D-USAGE-WIRE:
+                       admin_usage_router mounted at /api/v1/admin so GET /api/v1/admin/usage
+                       is reachable at the correct TECHNICAL_GUIDE path, distinct from
+                       admin_router which is at /api/v1/admin/ai)
+Phase:  P01 Auth + Data Foundation / P02 Core Features
 Purpose: Creates the FastAPI application instance and mounts routers:
          - api_router: /health, /live, /ready probes (root-level).
          - auth_router: /api/v1/auth/* — sign-up and future auth endpoints.
@@ -11,6 +15,7 @@ Purpose: Creates the FastAPI application instance and mounts routers:
 WRITE_SET_DRIFT from P01-S02-T001 (auth router), P01-S02-T005
 (forgot/reset Pydantic-422 → 400 envelope normalization), and P01-S02-T007
 (users router + /api/v1/users/me/language added to _AUTH_INVALID_PAYLOAD_PATHS):
+WRITE_SET_DRIFT §D-USAGE-WIRE (P02-S05-T002): admin_usage_router mounted at /api/v1/admin.
   - T001 added auth_router mounting (2 lines).
   - T005 cycle-2: path-scoped RequestValidationError handler for forgot-password
     and reset-password endpoints. Pinned by task pack §H-forgot-2 / §H-reset-5
@@ -43,7 +48,7 @@ from fastapi import FastAPI, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
-from app.admin import admin_router  # P02-S05-T001 WRITE_SET_DRIFT §D-AAM
+from app.admin import admin_router, admin_usage_router  # P02-S05-T001 §D-AAM; P02-S05-T002 §D-USAGE-WIRE
 from app.agents import agents_runs_router  # P02-S08-T001 WRITE_SET_DRIFT §D-AGWIRE-MAIN
 from app.api.router import api_router
 from app.auth import auth_router
@@ -85,6 +90,7 @@ app.include_router(auth_router, prefix="/api/v1")
 app.include_router(users_router, prefix="/api/v1")  # P01-S02-T007 WRITE_SET_DRIFT §G.14
 app.include_router(chat_router, prefix="/api/v1")  # P02-S03-T001 WRITE_SET_DRIFT
 app.include_router(admin_router, prefix="/api/v1/admin/ai", tags=["admin-ai"])  # P02-S05-T001 WRITE_SET_DRIFT §D-AAM
+app.include_router(admin_usage_router, prefix="/api/v1/admin", tags=["admin-usage"])  # P02-S05-T002 WRITE_SET_DRIFT §D-USAGE-WIRE
 app.include_router(agents_runs_router, prefix="/api/v1", tags=["agents"])  # P02-S08-T001 WRITE_SET_DRIFT §D-AGWIRE-MAIN
 app.include_router(rag_documents_router, prefix="/api/v1/admin/rag", tags=["admin-rag"])  # P02-S06-T001 WRITE_SET_DRIFT §D-RAGDOCS-MAIN
 

@@ -1,0 +1,35 @@
+# Contract observed — P02-S05-T002
+
+## Front → Back → DB wiring verified during tests
+
+| Layer | Component | Path | Observed |
+|---|---|---|---|
+| HTTP route | POST /api/v1/admin/ai/models/{model_id}/test | backend/app/admin/model_test/router.py | yes — curl smoke 502 (expected R-CREDS), tests all pass |
+| HTTP route | GET /api/v1/admin/usage | backend/app/admin/usage.py | yes — curl smoke 200 + correct envelope |
+| Use case | run_model_test | backend/app/admin/model_test/service.py | yes — T01 success, T07/T08/T09 failure paths all exercise service |
+| Repository | model_test INSERTs | backend/app/admin/model_test/repository.py | yes — DB rows verified in T01, T09 |
+| Repository | usage aggregation | backend/app/admin/_usage_aggregator.py | yes — U01-U03 verify aggregated rows |
+| LLM gateway | complete_chat | backend/app/llm_gateway/complete_chat.py | yes — mocked at litellm.acompletion boundary |
+| DB table | ai_model_tests | migration 0002 | yes — rows inserted+verified in T01; status=failure in curl smoke |
+| DB table | llm_usage_logs | migration 0002 | yes — rows inserted+verified in T01; seeded in U01-U03 |
+| DB table | audit_logs | existing | yes — 33 rows action='admin.ai.model.test' observed post-run |
+| Auth | require_admin | backend/app/security/permissions.py | yes — T10 403, T11 401 |
+| Rate limit | RateLimiter ADMIN_AI_TEST | backend/app/security/rate_limit.py | yes — T12 429 |
+| Encryption | decrypt_secret | backend/app/security/encryption.py | yes — T07 decrypt failure path |
+
+## OpenAPI routes registered (from running backend)
+- POST /api/v1/admin/ai/models/{model_id}/test — confirmed via direct import check
+- GET /api/v1/admin/usage — confirmed via curl 200
+
+## Error codes observed in tests
+- 200 (success, T01, T16)
+- 422 (Pydantic validation, T02/T03/T04, U04/U05/U08)
+- 401 AUTH_SESSION_EXPIRED (T11)
+- 403 AUTH_PERMISSION_DENIED (T10, U07)
+- 404 AI_MODEL_NOT_FOUND (T05)
+- 404 AI_PROVIDER_CREDENTIAL_NOT_FOUND (T06)
+- 429 RATE_LIMITED (T12)
+- 502 AI_PROVIDER_TEST_FAILED (T07, T08, T09; curl smoke)
+- 422 ADMIN_USAGE_INVALID_PAYLOAD (U04)
+- 422 ADMIN_USAGE_WINDOW_TOO_WIDE (U05)
+

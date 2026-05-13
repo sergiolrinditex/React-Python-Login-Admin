@@ -96,3 +96,41 @@ class EmbeddingError(LlmGatewayError):
         self.message = message
         self.cause = cause
         super().__init__(message)
+
+
+# WRITE_SET_DRIFT §D-LLMG-ERRORS (P02-S05-T002): ModelTestFailedError for the
+# non-streaming admin model-test endpoint. Maps to HTTP 502 AI_PROVIDER_TEST_FAILED.
+class ModelTestFailedError(LlmGatewayError):
+    """Raised when a non-streaming model test invocation fails at the LiteLLM boundary.
+
+    Used by complete_chat.py to wrap any litellm exception (except timeout) so
+    the admin/model_test router can map it to HTTP 502 AI_PROVIDER_TEST_FAILED
+    without leaking litellm internals or provider error messages.
+
+    Attributes:
+        code: Machine-readable error code.
+        message: Description (no API key, no prompt content).
+        cause: Original exception.
+        status: ai_model_tests status value — 'failure' or 'timeout'.
+    """
+
+    code = "AI_PROVIDER_TEST_FAILED"
+    status: str = "failure"
+
+    def __init__(
+        self,
+        message: str = "Model test invocation failed.",
+        cause: Exception | None = None,
+        status: str = "failure",
+    ) -> None:
+        """Initialize with a message, optional cause and status.
+
+        Args:
+            message: Human-readable error description (no secrets).
+            cause:   Original exception.
+            status:  'failure' | 'timeout' for ai_model_tests.status column.
+        """
+        self.message = message
+        self.cause = cause
+        self.status = status
+        super().__init__(message)
