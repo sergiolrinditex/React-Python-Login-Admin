@@ -187,22 +187,20 @@ def _create_test_user(
 
 
 def _sync_app_jwt_key() -> None:
-    """Re-sync app.auth.tokens module-level JWT key/algorithm with current env.
+    """Ensure app.auth.tokens lazy key cache is primed with the current env.
 
-    Why: pytest imports backend/tests/test_health.py at the project root
-    BEFORE backend/tests/unit/conftest.py has loaded .env. That early import
-    pulls in app.main -> app.auth.tokens, which captures
-    `_JWT_KEY = os.getenv("JWT_PRIVATE_KEY", "")` as an empty string. The
-    cached module value is then used by decode_token at request time, so
-    tokens minted here (with the real key) are rejected with invalid_token.
+    P02-S02-T002 migration note: the original implementation mutated
+    `app.auth.tokens._JWT_KEY` directly (T001 debugger workaround). That
+    attribute no longer exists — _JWT_KEY is now a lazy @lru_cache getter
+    (_get_jwt_key). Instead, we clear the cache so the next call re-reads
+    the env var, which is the idiomatic way to force re-evaluation.
 
-    Patching the module attributes back to the env-loaded values restores
-    encode/decode symmetry without modifying production code (which is
-    outside the slice write_set). This is test-only infrastructure.
+    WRITE_SET_DRIFT (Option I.3.b): backend/tests/unit/test_security.py was
+    not in P02-S02-T002 write_set but must be updated to avoid AttributeError
+    on the removed _JWT_KEY module attribute. See handoff §I.2.
     """
-    import app.auth.tokens as _toks
-    _toks._JWT_KEY = _get_jwt_key()
-    _toks._JWT_ALGORITHM = _get_jwt_alg()
+    from app.auth.tokens import _clear_jwt_key_cache
+    _clear_jwt_key_cache()
 
 
 def _mint_token(user_data: UserData) -> str:
@@ -210,8 +208,8 @@ def _mint_token(user_data: UserData) -> str:
 
     Uses the same JWT_PRIVATE_KEY + JWT_ALGORITHM as encode_access_token.
     Direct jwt.encode call avoids SQLAlchemy DetachedInstanceError (D-T5).
-    Calls _sync_app_jwt_key() to ensure the app-side decoder uses the same
-    key (see _sync_app_jwt_key docstring for the import-order rationale).
+    Calls _sync_app_jwt_key() to ensure the app-side lazy key cache is
+    primed with the current env value before the request hits decode_token.
 
     Args:
         user_data: UserData record with id, email, and roles.

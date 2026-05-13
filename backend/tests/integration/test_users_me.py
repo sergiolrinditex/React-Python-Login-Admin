@@ -83,10 +83,47 @@ from app.db.session import _SessionLocal
 from app.main import app
 
 # ---------------------------------------------------------------------------
-# Constants
+# Lazy JWT key / algorithm getters (P02-S02-T002 fix)
 # ---------------------------------------------------------------------------
-_JWT_KEY: str = os.getenv("JWT_PRIVATE_KEY", "")
-_JWT_ALG: str = os.getenv("JWT_ALGORITHM", "HS256")
+# Why lazy: if pytest imports this module before JWT_PRIVATE_KEY is set in
+# os.environ (e.g. conftest has not loaded .env yet at collection time),
+# capturing the key at module-level pins "" for the entire session.
+# Using call-time lookup mirrors the production fix in app.auth.tokens
+# (_get_jwt_key lazy getter, D-TK6). See task pack P02-S02-T002 §F.5.
+
+
+def _get_jwt_key() -> str:
+    """Return JWT_PRIVATE_KEY at call time; falls back to test-only secret if absent.
+
+    Falls back to a deterministic test-only secret when JWT_PRIVATE_KEY is not
+    in os.environ (e.g. when pytest runs without .env exported). The fallback is
+    written back into os.environ AND the app.auth.tokens lazy cache is cleared so
+    that encode_access_token and decode_token (called via the real ASGI app) use
+    the same key as _mint_access_token here.
+
+    Mirrors the pattern from tests/unit/test_security.py::_get_jwt_key + _sync_app_jwt_key
+    (T001 debugger cycle). Both must agree on the key for token round-trips to work.
+
+    Returns:
+        Non-empty JWT signing key (real from env, or test-only fallback).
+    """
+    key = os.getenv("JWT_PRIVATE_KEY", "")
+    if not key:
+        key = "test-dev-jwt-secret-key-for-integration-only-32b+"
+        os.environ["JWT_PRIVATE_KEY"] = key
+        # Clear the app-side lru_cache so next decode_token call re-reads env
+        from app.auth.tokens import _clear_jwt_key_cache
+        _clear_jwt_key_cache()
+    return key
+
+
+def _get_jwt_alg() -> str:
+    """Return JWT_ALGORITHM at call time (defaults to HS256).
+
+    Returns:
+        JWT algorithm string.
+    """
+    return os.getenv("JWT_ALGORITHM", "HS256")
 
 # Seeded verification users (from data/verification/users/)
 _EMPLOYEE_EMAIL = "employee.verification@inditex-sandbox.com"
@@ -222,7 +259,7 @@ def _mint_access_token(user_id: uuid.UUID, email: str, *, expired: bool = False)
         "iat": iat,
         "exp": exp,
     }
-    return jwt.encode(payload, _JWT_KEY, algorithm=_JWT_ALG)
+    return jwt.encode(payload, _get_jwt_key(), algorithm=_get_jwt_alg())
 
 
 def _get_seeded_user_id(email: str) -> uuid.UUID | None:
