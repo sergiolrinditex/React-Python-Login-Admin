@@ -1,0 +1,28 @@
+=== TESTER Data Contract Used ===
+
+Verification Data Contract rows from task pack §E.4:
+  1. Active chat model (is_default=true, enabled=true, model_type='chat') — SEEDED per-test via _seed_active_chat_model()
+  2. Active embeddings model (model_type='embeddings', is_default=true) — SEEDED per-test via _seed_active_embeddings_model()
+  3. AI provider with encrypted credential — SEEDED per-test using generated Fernet key
+  4. Employee user with persistent conversation — CREATED per-test via _create_user() + _create_conversation()
+
+NOTE: The tests do NOT rely on the production verification_data bootstrap
+(python -m app.verification_data.bootstrap --only rag_chat) because:
+  - ENCRYPTION_KEY blocker prevents live AI model seed from working
+  - Tests generate their own Fernet key and seed models inline
+  - This is the correct integration test isolation pattern per AC tests contract
+
+ENCRYPTION_KEY handling:
+  - Placeholder "replace-with-dev-key" in .env is detected by test setup
+  - Test replaces it with `Fernet.generate_key()` before any app import
+  - All encryption/decryption in test scope uses this test-generated key
+  - T17: tests seed model with known api_key "SUPER-SECRET-API-KEY-DO-NOT-LOG"
+    and assert it never appears in logs
+
+Persisted data observed (via T01-T14 DB assertions, all PASSED):
+  - messages rows (role=user + role=assistant) per TestClient request
+  - message_citations rows linked to assistant message_id
+  - llm_usage_logs row with tokens_in, tokens_out, estimated_cost, latency_ms
+  - conversations.updated_at bumped after stream
+
+Full production verification data deferred to /verify-slice after FU resolution.

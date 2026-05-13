@@ -1,0 +1,23 @@
+=== verify-slice curl smoke on worktree backend :8002 ===
+Date: 2026-05-13T17:43:09Z
+
+--- 1) /health ---
+{"data":{"status":"ok","version":"0.1.0","uptime":13.95}}
+HTTP=200
+
+--- 2) /ready ---
+{"data":{"db":{"status":"ok"},"redis":{"status":"ok"},"litellm":{"status":"unknown"}}}
+HTTP=200
+
+--- 3) OpenAPI presence of /api/v1/chat/conversations/{conversation_id}/stream ---
+paths_matching = ['/api/v1/chat/conversations/{conversation_id}/stream']
+  /api/v1/chat/conversations/{conversation_id}/stream methods=['post']
+
+--- 4) POST stream without auth (expect 401 AUTH_SESSION_EXPIRED) ---
+{"data":null,"meta":{"request_id":"verify-slice-noauth-001"},"errors":[{"code":"AUTH_SESSION_EXPIRED","message":"Session expired or invalid credentials. Please sign in again.","field":null,"details":null}]}
+HTTP=401
+Content-Type=application/json
+
+--- 5) POST stream malformed body (no auth path 401 wins; same expected) ---
+{"detail":[{"type":"uuid_parsing","loc":["path","conversation_id"],"msg":"Input should be a valid UUID, invalid character: expected an optional prefix of `urn:uuid:` followed by [0-9a-fA-F-], found `n` at 1","input":"not-a-uuid","ctx":{"error":"invalid character: expected an optional prefix of `urn:uuid:` followed by [0-9a-fA-F-], found `n` at 1"}}]}
+HTTP=422
