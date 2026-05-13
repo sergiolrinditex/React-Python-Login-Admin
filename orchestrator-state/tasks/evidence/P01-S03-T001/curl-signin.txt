@@ -1,0 +1,14 @@
+HTTP/1.1 200 OK
+date: Tue, 12 May 2026 21:34:43 GMT
+server: uvicorn
+x-request-id: tester-T001-signin-1778621684
+content-length: 415
+content-type: application/json
+
+{"data":{"mfa_required":true,"mfa_challenge_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjNTI4YjVlOS00NmI0LTQ3YjctOWFjOC1hN2RkNjkzMDVmZGQiLCJwdXJwb3NlIjoibWZhX2NoYWxsZW5nZSIsImp0aSI6IjhkMGMwOGRiNDNkZjQ5Y2NhMmU1OWU1ZmVlMGIxZTM5IiwiaWF0IjoxNzc4NjIxNjg0LCJleHAiOjE3Nzg2MjE5ODR9._caXh0yd3XQHIgjKmk0NnfetYUylHsbb8cvBR6f6JcA","expires_in":300},"meta":{"request_id":"tester-T001-signin-1778621684"},"errors":[]}HTTP/1.1 400 Bad Request
+date: Tue, 12 May 2026 21:35:19 GMT
+server: uvicorn
+content-length: 172
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"tester-T001-2fa-1778621719"},"errors":[{"code":"AUTH_INVALID_PAYLOAD","message":"Field required","field":"challenge_id","details":null}]}

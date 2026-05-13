@@ -2,6 +2,19 @@
 
 ## Review history
 
+### P01-S03-T001 — Auth state provider and protected route guards (2026-05-13)
+- OUTCOME: approved
+- Kind: setup (frontend guard mechanism, no new screen, Pantalla/Ruta blank)
+- Route: n/a — redirect mechanism only; stubs /auth/sign-in, /admin, /chat are non-productive placeholders
+- Key patterns learned:
+  - Slices with Pantalla/Ruta blank in the registry are guard/infrastructure slices. VISUAL_CONTRACT_CHECK block is correctly absent; UX_CONTRACT §5 applies only to "pantalla productiva".
+  - RequireAuth→RequireRole composition safety: RequireRole delegates to RequireAuth when status !== 'authenticated'; role check runs synchronously after authentication is confirmed. No transient leak window.
+  - hydrating placeholder minimum: div with role="status", aria-live="polite", aria-label="Loading authentication state". No children, no redirect. Satisfies race-free render per UX_CONTRACT §3.
+  - CORS blockage (F3-F5) was already a promoted FU (P01-S03-T002). Do not re-flag in Screen/Journey review — just note in coverage_notes.
+  - When verify-slice shows CORS blocks positive auth flows but redirect flows (F1/F2) are verified and token-storage invariant (F6) + open-redirect (F7) pass, the redirect mechanism contract is satisfied for this scope. F3-F5 belong to CORS FU task.
+  - page-level UI states (loading, empty, error_network, etc.) belong to page slices (P03). Guard slices own only hydrating state. UX_CONTRACT §3 screen inventory has no row for this slice's route.
+  - not_applicable: no — this task has frontend/UX scope (route guards, hydration) and VISUAL_CONTRACT_CHECK was referenced in verify-slice context; reviewer was correctly invoked.
+
 ### P00-S01-T005 — i18n resources ES/EN/FR (2026-05-11)
 - OUTCOME: approved
 - Kind: setup/infrastructure (frontend, VISUAL_CONTRACT_CHECK present)

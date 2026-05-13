@@ -360,6 +360,69 @@ Status: `RESOLVED: yes` — no discrepancies; all items are decision-aids fillin
 1. Consider `re.fullmatch(r'\d{6}', v)` in Pydantic validator instead of `v.isdigit()` to block Unicode fullwidth digits (e.g. `"１２３４５６"`).
 2. Wrap `pyotp.TOTP(seed)` construction in try/except `binascii.Error` → map to `MfaSecretMissingError` with audit reason `no_secret`.
 
+### 2026-05-12 — P01-S03-T001 React Router v7, TanStack Query v5 single-flight, OWASP token storage, React 19 Context/use()
+
+**Sources**: Context7 /remix-run/react-router (1115 snippets, v7.6.2 latest); Context7 /websites/tanstack_query_v5 (3008 snippets, v5.90.3 latest); Context7 /websites/react_dev_reference (React 19); react.dev/blog/2024/04/25/react-19; OWASP Session Management CS; OWASP CSRF Prevention CS.
+**Cache valid until**: 2026-05-19 (stable tech: react-router, react-query, React 19 APIs, OWASP policies are not AI/ML volatile)
+**Note file**: `orchestrator-state/memory/official-doc-notes/P01-S03-T001-owasp-samesite-2026-05-12.md`
+**OUTCOME**: verified — one low-severity discrepancy note written (SameSite=Lax vs Strict preference language); RESOLVED inline (no code change required)
+
+#### Q1 — React Router v7 protected route pattern (verified)
+
+- `<BrowserRouter>` + `<Routes>` + `<Route>` are FULLY SUPPORTED in v7. No forced migration to `createBrowserRouter`.
+- **Two canonical patterns coexist** and react-router v7 docs show BOTH with official examples:
+  1. **Component wrapper** (`<RequireAuth>` reads auth context, returns `<Navigate to="/login" state={{ from: location }} replace />`). This is the CANONICAL pattern for client-side auth state in a Context Provider (the auth-example in the repo uses exactly this). Works with `<BrowserRouter>`.
+  2. **Loader redirect** (`loader: () => redirect("/login?from=...")` returning `redirect()`). This is the data-router pattern — requires `createBrowserRouter` / `RouterProvider`. Does NOT work with the JSX `<Routes>` API.
+- **Recommendation for this project**: Component wrapper with `<BrowserRouter>`. Loader redirect requires data-router migration and is NOT needed for client-side auth state.
+- **`?next=` state pattern**: Official react-router example uses `state={{ from: location }}` (location object in router state, not URL query param). The data-router example uses `?from=...` query param. Both are valid; query param is more portable (survives page reload). No built-in open-redirect guard in either approach.
+
+#### Q2 — TanStack Query v5 single-flight 401 refresh (verified)
+
+- **No official v5 react-query docs page recommends a single-flight interceptor pattern at the react-query layer.** The docs cover `retry` (count/function), `retryDelay` (exponential backoff), `defaultQueryFn` (global queryFn), and `QueryCache.onError`. None of these handle single-flight refresh natively.
+- **Canonical v5 recommendation**: Handle 401 → refresh → retry in the **fetch wrapper layer** (outside react-query). React-query's `retry` function can detect HTTP status but cannot do async side effects (the retry function is synchronous). The correct architecture is: custom `httpClient` that (a) intercepts 401 responses, (b) queues the failed request, (c) fires ONE refresh (in-flight promise shared), (d) on success replays all queued requests. React-query wraps this opaquely and sees only success or error.
+- **`QueryCache.onError`** is a notification callback — appropriate for logging/toast but NOT for async retry coordination.
+- **`defaultOptions.queries.retry` function** is synchronous (receives `failureCount, error`) — can return `false` to stop retries but cannot await a refresh call.
+- Pattern for single-flight: exported singleton `let refreshPromise: Promise<string> | null = null` in `accessTokenStore.ts`; httpClient checks this before initiating a new refresh call.
+
+#### Q3 — OWASP token storage 2025-2026 (verified, minor discrepancy written)
+
+- OWASP CSRF CS: `SameSite=Lax` is the recommended default ("reasonable balance between security and usability"). CONFIRMED for our pattern.
+- OWASP Session CS: `Strict` is "preferred"; `Lax` is "acceptable". This is preference language, not a prohibition.
+- **DISCREPANCY NOTE**: `P01-S03-T001-owasp-samesite-2026-05-12.md` — RESOLVED: `SameSite=Lax` confirmed correct for our `Path=/api/v1/auth`-scoped cookie. No code change.
+- BFF pattern: OWASP docs do NOT mandate BFF for all SPAs in 2025-2026. The in-memory access token + HttpOnly refresh cookie pattern is the documented OWASP-compliant approach (OWASP CSRF CS, HTML5 CS). Access token in JS memory (closure/module singleton) is explicitly safer than localStorage per OWASP HTML5 CS.
+- No 2025-2026 updates change the documented BFF-or-memory pattern for SPAs.
+
+#### Q4 — React 19 Context Provider / use() hook impact (verified)
+
+- **`<Context.Provider>` is deprecated** (not removed) in React 19; new syntax is `<Context value={...}>`. The old form still works but will warn in future. Developer should use `<AuthContext value={...}>` in `AuthProvider.tsx`.
+- **`useEffect(() => { fetch... }, [])` is still valid and documented** in React 19 for client-side data fetching. React docs explicitly show it as a `useEffect` pattern with ignore-flag for race-condition safety. Not deprecated.
+- **`use(promise)` + Suspense**: available in React 19 for data fetching during render. BUT: (a) the promise must be created OUTSIDE render (e.g., passed as prop or created at module level); (b) React 19 docs explicitly warn "don't create promises in render". For `AuthProvider` mount-time `/refresh` this would require creating the promise outside the component — adds complexity with no benefit for a single fire-once call.
+- **Recommendation**: Keep `useEffect(() => { doRefresh() }, [])` for `AuthProvider` mount-time hydration. This is the simpler, documented pattern and has NO breaking change in React 19. The `use(promise)` pattern is better suited for data-fetching components already in a Suspense tree (e.g., post-auth data), not for the auth bootstrap itself.
+- **Automatic batching**: React 19 extends automatic batching further (was already improved in React 18). No breaking change for `AuthProvider` — state updates inside `useEffect` are batched together correctly in React 18+ and continue to be in React 19.
+- Context value change re-renders consumers: no change from React 18. Same reference equality check applies — memoize the context value object if it's created inline.
+
+#### Q5 — react-router v7 open-redirect guard (verified)
+
+- **No built-in utility** in react-router v7 for validating `?next=` or any redirect target. The docs show raw path reads from `location.state` or `useSearchParams().get("from")` without validation.
+- **Recommended manual guard** (industry consensus, no official react-router snippet): 
+  ```ts
+  function safeRedirectTarget(raw: string | null, fallback = "/chat"): string {
+    if (!raw) return fallback;
+    try {
+      // Reject absolute URLs (protocol://, //host, data:, javascript:)
+      if (/^(https?:|\/\/|javascript:|data:)/i.test(raw)) return fallback;
+      // Reject backslash (IE path confusion)  
+      if (raw.includes("\\")) return fallback;
+      // Must start with /
+      if (!raw.startsWith("/")) return fallback;
+      return raw;
+    } catch {
+      return fallback;
+    }
+  }
+  ```
+- URL parsing + same-origin check is the standard approach. react-router does not abstract this.
+
 ## Canonical references
 - `.claude/orchestrator-contract.json`
 - `.claude/rules/00-source-of-truth.md`

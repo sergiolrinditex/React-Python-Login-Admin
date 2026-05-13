@@ -1,0 +1,61 @@
+2026-05-12 23:35:37,656 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.mfa.verify actor_user_id=c528b5e9-46b4-47b7-9ac8-a7dd69305fdd
+2026-05-12 23:35:37,657 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=6e374134-5101-49fe-b1b5-c45af02ff92c action=auth.mfa.verify
+2026-05-12 23:35:37,658 app.auth.repositories.mfa DEBUG auth.repo.mfa.replay_store.consumed jti_prefix=a17e3936...
+2026-05-12 23:35:37,660 app.auth.services.mfa INFO auth.mfa.verify.success user_id=c528b5e9-46b4-47b7-9ac8-a7dd69305fdd request_id=tester-T001-2fa-1778621737
+2026-05-12 23:35:37,663 app.auth.routers.mfa INFO auth.mfa.verify.router.success user_id=c528b5e9-46b4-47b7-9ac8-a7dd69305fdd request_id=tester-T001-2fa-1778621737
+INFO:     127.0.0.1:54918 - "POST /api/v1/auth/2fa/verify HTTP/1.1" 200 OK
+2026-05-12 23:35:37,664 app.db.session DEBUG db.session.closed
+2026-05-12 23:35:47,685 app.db.session DEBUG db.session.open
+2026-05-12 23:35:47,686 app.users.deps DEBUG users.deps.get_current_user.start request_id=tester-T001-me-1778621747 ip=127.0.0.1
+2026-05-12 23:35:47,686 app.auth.tokens DEBUG tokens.decode.start
+2026-05-12 23:35:47,686 app.auth.tokens DEBUG tokens.decode.ok sub=c528b5e9-46b4-47b7-9ac8-a7dd69305fdd
+2026-05-12 23:35:47,686 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.start user_id=c528b5e9-46b4-47b7-9ac8-a7dd69305fdd
+2026-05-12 23:35:47,699 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.done user_id=c528b5e9-46b4-47b7-9ac8-a7dd69305fdd found=True
+2026-05-12 23:35:47,700 app.users.deps DEBUG users.deps.get_current_user.done user_id=c528b5e9-46b4-47b7-9ac8-a7dd69305fdd request_id=tester-T001-me-1778621747
+2026-05-12 23:35:47,700 app.users.routers.me DEBUG users.routers.me.request_received method=GET request_id=tester-T001-me-1778621747 ip=127.0.0.1
+2026-05-12 23:35:47,700 app.users.services.get_current_user_profile DEBUG users.service.get_current_user_profile.start user_id=c528b5e9-46b4-47b7-9ac8-a7dd69305fdd
+2026-05-12 23:35:47,700 app.users.services.get_current_user_profile DEBUG users.service.get_current_user_profile.done user_id=c528b5e9-46b4-47b7-9ac8-a7dd69305fdd roles=['employee'] has_profile=True
+2026-05-12 23:35:47,700 app.users.routers.me DEBUG users.routers.me.response_built user_id=c528b5e9-46b4-47b7-9ac8-a7dd69305fdd status=200 request_id=tester-T001-me-1778621747
+INFO:     127.0.0.1:54926 - "GET /api/v1/users/me HTTP/1.1" 200 OK
+2026-05-12 23:35:47,702 app.db.session DEBUG db.session.closed
+2026-05-12 23:35:51,462 app.db.session DEBUG db.session.open
+2026-05-12 23:35:51,462 app.auth.routers.refresh DEBUG auth.refresh.received request_id=tester-T001-refresh-1778621751 ip=127.0.0.1
+2026-05-12 23:35:51,462 app.auth.rate_limit DEBUG rate_limit.check.start prefix=REFRESH ip=REFRESH:127.0.0.1 rate_per_min=30 burst=30
+2026-05-12 23:35:51,462 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=REFRESH ip=REFRESH:127.0.0.1 new_window remaining=29
+2026-05-12 23:35:51,462 app.auth.services.refresh DEBUG auth.refresh.execute.start request_id=tester-T001-refresh-1778621751 ip=127.0.0.1
+2026-05-12 23:35:51,462 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_active_for_update.start hash_prefix=5cecf584...
+2026-05-12 23:35:51,468 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_active_for_update.done found=True hash_prefix=5cecf584...
+2026-05-12 23:35:51,468 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_user_active.start user_id=c528b5e9-46b4-47b7-9ac8-a7dd69305fdd
+2026-05-12 23:35:51,470 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_user_active.done user_id=c528b5e9-46b4-47b7-9ac8-a7dd69305fdd active=True
+2026-05-12 23:35:51,470 app.auth.repositories.refresh DEBUG auth.repo.refresh.revoke.start token_id=8ee557e7-83fa-4756-9a51-a15f9b227037
+2026-05-12 23:35:51,473 app.auth.repositories.refresh DEBUG auth.repo.refresh.revoke.done token_id=8ee557e7-83fa-4756-9a51-a15f9b227037
+2026-05-12 23:35:51,473 app.auth.repositories.refresh DEBUG auth.repo.refresh.insert_new.start user_id=c528b5e9-46b4-47b7-9ac8-a7dd69305fdd
+2026-05-12 23:35:51,474 app.auth.repositories.refresh DEBUG auth.repo.refresh.insert_new.done user_id=c528b5e9-46b4-47b7-9ac8-a7dd69305fdd new_rt_id=bf4faef6-43d2-40a2-a40f-cdb52473fff3
+2026-05-12 23:35:51,475 app.auth.tokens DEBUG tokens.encode_access.start sub=c528b5e9-46b4-47b7-9ac8-a7dd69305fdd ttl=1800s
+2026-05-12 23:35:51,475 app.auth.tokens DEBUG tokens.encode_access.done sub=c528b5e9-46b4-47b7-9ac8-a7dd69305fdd exp=2026-05-12T22:05:51.474717+00:00
+2026-05-12 23:35:51,475 app.auth.services.refresh_audit DEBUG auth.refresh.success_audit.start user_id=c528b5e9-46b4-47b7-9ac8-a7dd69305fdd request_id=tester-T001-refresh-1778621751
+2026-05-12 23:35:51,475 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.refresh actor_user_id=c528b5e9-46b4-47b7-9ac8-a7dd69305fdd
+2026-05-12 23:35:51,477 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=86e1dcc5-93b6-447e-ae16-8787dba9c26e action=auth.refresh
+2026-05-12 23:35:51,477 app.auth.services.refresh_audit DEBUG auth.refresh.success_audit.done user_id=c528b5e9-46b4-47b7-9ac8-a7dd69305fdd request_id=tester-T001-refresh-1778621751
+2026-05-12 23:35:51,483 app.auth.services.refresh DEBUG auth.refresh.execute.done user_id=c528b5e9-46b4-47b7-9ac8-a7dd69305fdd old_token_id=8ee557e7-83fa-4756-9a51-a15f9b227037 new_token_id=bf4faef6-43d2-40a2-a40f-cdb52473fff3 request_id=tester-T001-refresh-1778621751
+2026-05-12 23:35:51,483 app.auth.routers.refresh DEBUG auth.refresh.success user_id=c528b5e9-46b4-47b7-9ac8-a7dd69305fdd old_token_id=8ee557e7-83fa-4756-9a51-a15f9b227037 new_token_id=bf4faef6-43d2-40a2-a40f-cdb52473fff3 request_id=tester-T001-refresh-1778621751
+INFO:     127.0.0.1:54932 - "POST /api/v1/auth/refresh HTTP/1.1" 200 OK
+2026-05-12 23:35:51,484 app.db.session DEBUG db.session.closed
+2026-05-12 23:35:57,726 app.db.session DEBUG db.session.open
+2026-05-12 23:35:57,727 app.auth.routers.logout DEBUG auth.logout.received request_id=tester-T001-logout-1778621757 ip=127.0.0.1
+2026-05-12 23:35:57,727 app.auth.services.logout DEBUG auth.logout.execute.start request_id=tester-T001-logout-1778621757 ip=127.0.0.1
+2026-05-12 23:35:57,727 app.auth.tokens DEBUG tokens.decode.start
+2026-05-12 23:35:57,727 app.auth.tokens DEBUG tokens.decode.ok sub=c528b5e9-46b4-47b7-9ac8-a7dd69305fdd
+2026-05-12 23:35:57,727 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_active_for_update.start hash_prefix=13356e1c...
+2026-05-12 23:35:57,744 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_active_for_update.done found=True hash_prefix=13356e1c...
+2026-05-12 23:35:57,744 app.auth.repositories.refresh DEBUG auth.repo.refresh.revoke.start token_id=bf4faef6-43d2-40a2-a40f-cdb52473fff3
+2026-05-12 23:35:57,746 app.auth.repositories.refresh DEBUG auth.repo.refresh.revoke.done token_id=bf4faef6-43d2-40a2-a40f-cdb52473fff3
+2026-05-12 23:35:57,746 app.auth.services.logout_audit DEBUG auth.logout.success_audit.start user_id=c528b5e9-46b4-47b7-9ac8-a7dd69305fdd request_id=tester-T001-logout-1778621757
+2026-05-12 23:35:57,746 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.logout actor_user_id=c528b5e9-46b4-47b7-9ac8-a7dd69305fdd
+2026-05-12 23:35:57,749 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=83461c86-de6e-463a-b184-bdf4ad83b93c action=auth.logout
+2026-05-12 23:35:57,749 app.auth.services.logout_audit DEBUG auth.logout.success_audit.done user_id=c528b5e9-46b4-47b7-9ac8-a7dd69305fdd request_id=tester-T001-logout-1778621757
+2026-05-12 23:35:57,750 app.auth.services.logout DEBUG auth.logout.execute.done user_id=c528b5e9-46b4-47b7-9ac8-a7dd69305fdd token_id=bf4faef6-43d2-40a2-a40f-cdb52473fff3 request_id=tester-T001-logout-1778621757
+2026-05-12 23:35:57,750 app.auth.routers.logout DEBUG auth.logout.success request_id=tester-T001-logout-1778621757
+INFO:     127.0.0.1:54939 - "POST /api/v1/auth/logout HTTP/1.1" 204 No Content
+2026-05-12 23:35:57,751 app.db.session DEBUG db.session.closed
+OK: no raw tokens or passwords in backend logs

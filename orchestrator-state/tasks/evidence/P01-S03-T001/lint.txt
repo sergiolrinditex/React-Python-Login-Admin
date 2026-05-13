@@ -1,0 +1,5 @@
+
+> hilo-people-frontend@0.1.0 lint
+> eslint src
+
+OK Design tokens - web literals are outside app code or inside token/theme modules.

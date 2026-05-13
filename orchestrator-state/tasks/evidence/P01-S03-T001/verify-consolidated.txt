@@ -1,0 +1,25 @@
+=== verify-slice consolidated 2026-05-13T04:34:27Z ===
+
+FLOWS:
+  F1 PASS  /chat → /auth/sign-in?next=%2Fchat
+  F2 PASS  /admin → /auth/sign-in?next=%2Fadmin
+  F3 BLOCK net::ERR_FAILED on POST /api/v1/auth/refresh (CORS)
+  F4 BLOCK depends on F3
+  F5 BLOCK depends on F3
+  F6 PASS  localStorage=0, sessionStorage=0, document.cookie=empty
+  F7 PASS  ?next=https://evil.com/pwn rendered as text-only on stub
+
+CORS DIAGNOSTIC:
+  curl -X OPTIONS http://localhost:8000/api/v1/auth/refresh \
+    -H 'Origin: http://localhost:5173' \
+    -H 'Access-Control-Request-Method: POST'
+  → HTTP 405 Method Not Allowed (no CORSMiddleware registered)
+
+BACKEND main.py middleware: only routers + path-scoped 422→400 handler. NO CORSMiddleware.
+FRONTEND vite.config.ts: no server.proxy block.
+AUTH_REPO: API_BASE = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'
+
+WORKTREE PROMOTION (process metadata):
+  cp .claude/worktrees/agent-a391ff9cde99dbab3/frontend/src/{features/auth,app/router.tsx} main/
+  sha256 of router.tsx verified byte-identical between worktree and main.
+  Post-promotion: npm test -t auth → 37 PASS; npm run build → tsc-b + vite build OK.

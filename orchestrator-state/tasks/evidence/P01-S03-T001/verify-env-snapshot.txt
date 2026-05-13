@@ -1,0 +1,8 @@
+=== verify-slice environment snapshot 2026-05-13T04:18:28Z ===
+Backend pid: 86492
+Frontend pid: 86577
+Backend health: {"data":{"status":"ok","version":"0.1.0","uptime":53.69}}
+Backend ready : {"data":{"db":{"status":"ok"},"redis":{"status":"ok"},"litellm":{"status":"unknown"}}}
+Frontend root : HTTP 200
+ENABLE_VERBOSE_LOGGING (back .env): ENABLE_VERBOSE_LOGGING=true
+VITE_ENABLE_VERBOSE_LOGGING (front shell): true (passed at vite start)

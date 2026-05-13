@@ -1,0 +1,15 @@
+# Logging evidence: VITE_ENABLE_VERBOSE_LOGGING=false
+# Verified by T20: when verbose=false, console.info is NOT called for store operations.
+# Only console.warn and console.error fire.
+
+# T20 assertion: vi.spyOn(console, 'info') → not.toHaveBeenCalled()
+# Result: PASS ✓
+
+# In production (verbose=false):
+# - auth.store.set.start → SUPPRESSED (info-level)
+# - auth.store.set.ok    → SUPPRESSED (info-level)
+# - auth.store.clear.*   → SUPPRESSED (info-level)
+# - auth.provider.hydrate.start → SUPPRESSED (info-level)
+# - auth.http.request.start → SUPPRESSED (info-level)
+# Warnings (auth.provider.session_expired.local_cleared) → VISIBLE
+# Errors (auth.repo.fetchMe.error, auth.repo.logout.error) → VISIBLE

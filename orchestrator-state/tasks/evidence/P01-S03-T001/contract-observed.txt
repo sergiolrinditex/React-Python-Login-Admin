@@ -1,0 +1,30 @@
+## Front → Back → DB Contract Observed — P01-S03-T001
+
+### Routes/Provider Observed
+- frontend/src/features/auth/presentation/AuthProvider.tsx — React context provider, mount-time /refresh → /me hydration
+- frontend/src/features/auth/presentation/RequireAuth.tsx — redirects unauthenticated to /auth/sign-in?next=<path>
+- frontend/src/features/auth/presentation/RequireRole.tsx — role mismatch → /chat redirect
+- frontend/src/app/router.tsx — wraps guarded routes with <RequireAuth> and <RequireRole>
+
+### API Client / DTO Observed
+- frontend/src/features/auth/data/httpClient.ts — fetch wrapper with credentials:include, X-Request-ID, 401 single-flight interceptor
+- frontend/src/features/auth/data/accessTokenStore.ts — in-memory closure, never localStorage/sessionStorage
+- frontend/src/features/auth/data/authRepository.ts — concrete implementation of AuthRepository port
+
+### Domain Types Observed
+- frontend/src/features/auth/domain/AuthSession.ts — status: hydrating | authenticated | unauthenticated
+- frontend/src/features/auth/domain/types.ts — UserProfile, Role types matching backend schema
+
+### Endpoints Verified
+- POST /api/v1/auth/sign-in → 200 mfa_required:true + challenge token (or access_token on non-MFA)
+- POST /api/v1/auth/2fa/verify → 200 + access_token + Set-Cookie refresh_token
+- POST /api/v1/auth/refresh → 200 + new access_token + rotated cookie (Path=/api/v1/auth)
+- GET /api/v1/users/me → 200 + UserProfile (all fields present, matching frontend domain types)
+- POST /api/v1/auth/logout → 204 + Max-Age=0 cookie clear
+
+### Tables Observed (read-only via backend)
+- users: active record for employee.verification@inditex-sandbox.com
+- refresh_tokens: rotated on /refresh, revoked on /logout (observed in audit logs)
+- mfa_totp_secrets: active for employee.verification user
+- audit_logs: auth.mfa.verify + auth.refresh + auth.logout entries
+

@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-05-12T20:45:50+00:00",
+  "generated_at": "2026-05-13T04:38:00+00:00",
   "next_ready_phase_id": "P01",
   "next_ready_task_id": "P01-S02-T005",
-  "last_worker": "",
+  "last_worker": "screen-journey-reviewer",
   "last_event": "subagent_stop",
   "pending_journey_verifications": [],
   "journey_gate_mode": "frontier",
@@ -10,12 +10,12 @@
   "spawn_budget": 20,
   "spawns_in_current_slice": {
     "P01-S01-T001": 8,
-    "agent:planner": 15,
-    "agent:official-docs-researcher": 6,
-    "agent:developer": 14,
-    "agent:validator": 20,
-    "agent:tester": 19,
-    "agent:closer": 15,
+    "agent:planner": 16,
+    "agent:official-docs-researcher": 7,
+    "agent:developer": 15,
+    "agent:validator": 21,
+    "agent:tester": 20,
+    "agent:closer": 16,
     "P00-S02-T004": 6,
     "P01-S02-T001": 8,
     "P01-S02-T002": 8,
@@ -25,12 +25,13 @@
     "P01-S02-T009": 5,
     "P01-S02-T003": 9,
     "P01-S02-T004": 6,
-    "agent:screen-journey-reviewer": 1,
+    "agent:screen-journey-reviewer": 2,
     "P01-S02-T012": 5,
     "P01-S02-T011": 7,
     "P01-S02-T005": 11,
     "P01-S02-T006": 6,
-    "P01-S02-T007": 7
+    "P01-S02-T007": 8,
+    "P01-S03-T001": 6
   },
   "open_followups": [
     {
@@ -104,10 +105,27 @@
       "scope_classification": "scope_expansion",
       "why_not_debugger": "Fix changes _helpers._set_refresh_cookie path attribute, which is consumed identically by T002 sign-in (setter), T003 refresh (consumer), and T004 logout (consumer). A coordinated fix must re-verify T002 sign-in cookie still arrives at /api/v1/auth/refresh and /api/v1/auth/logout, T003 refresh still revokes+rotates, and reconcile TECHNICAL_GUIDE §10.2 (which does not currently pin a Path attribute; only HttpOnly Secure SameSite=Lax). Debugger inside T004 alone cannot mutate T002/T003 contracts and would silently change cookie attrs across the auth surface, which is the exact pattern this triage rule prevents.",
       "promoted_task_id": "P01-S02-T011"
+    },
+    {
+      "id": "FU-20260513043500-backend-infra-configure-cross-origin-between-fro",
+      "status": "promoted",
+      "severity": "critical",
+      "origin_task_id": "P01-S03-T001",
+      "title": "Backend/infra: configure cross-origin between frontend (:5173) and backend (:8000) — vite proxy or CORSMiddleware",
+      "path": "orchestrator-state/tasks/follow-ups/FU-20260513043500-backend-infra-configure-cross-origin-between-fro.yaml",
+      "created_at": "2026-05-13T04:35:00+00:00",
+      "scope_classification": "missing_coverage",
+      "why_not_debugger": "CORS configuration is outside T001's Write set (frontend/src/features/auth/** + frontend/src/app/router.tsx). The two clean fixes both live elsewhere: (a) frontend/vite.config.ts server.proxy reverse-proxying /api → http://localhost:8000 (recommended; same pattern as nginx/cloudfront in prod, BFF-style same-origin); (b) backend/app/main.py registering CORSMiddleware(allow_origins=['http://localhost:5173'], allow_credentials=true, allow_headers=['authorization','content-type','x-request-id'], allow_methods=['GET','POST','PATCH','PUT','DELETE','OPTIONS']). Either path requires Write set expansion outside T001 plus a TECHNICAL_GUIDE amendment to spec the cross-origin / reverse-proxy strategy. Debugger inside T001 cannot legitimately touch any of these paths without violating Write set discipline. T001 is the slice that EXPOSES the gap (first frontend slice making cross-origin XHR from a real browser); it does not introduce the gap.",
+      "promoted_task_id": "P01-S03-T002"
     }
   ],
-  "last_trailer": {},
-  "last_claimed_task_id": "P01-S02-T007",
-  "last_stop_at": "2026-05-12T20:46:20+00:00",
-  "last_claimed_phase_id": "P01"
+  "last_trailer": {
+    "task_id": "P01-S03-T001",
+    "outcome": "approved",
+    "handoff": "orchestrator-state/tasks/handoffs/P01-S03-T001.md"
+  },
+  "last_claimed_task_id": "P01-S03-T001",
+  "last_stop_at": "2026-05-13T04:43:00+00:00",
+  "last_claimed_phase_id": "P01",
+  "last_followup_id": "FU-20260513043500-backend-infra-configure-cross-origin-between-fro"
 }

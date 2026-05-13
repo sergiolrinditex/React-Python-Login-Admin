@@ -29,9 +29,10 @@
   - **P01-S02-T011 — fix refresh cookie Path mismatch /auth → /api/v1/auth (developer done, 2026-05-12)**
   - **P01-S02-T006 — POST /api/v1/auth/2fa/verify MFA TOTP endpoint (developer done, 2026-05-12)**
   - **P01-S02-T007 — GET /api/v1/users/me + PATCH /api/v1/users/me/language (developer done, 2026-05-12)**
-- **Next pending slice**: Next wave per registry (P01-S03-T001 AuthProvider frontend or next ready task)
+  - **P01-S03-T001 — Auth state provider and protected route guards (developer done, 2026-05-12)**
+- **Next pending slice**: P03-S01-T001 (SignInPage) or next ready wave task
 - **Blockers**: none
-- **Generated at**: 2026-05-12T21:30:00+02:00 (updated by developer P01-S02-T007)
+- **Generated at**: 2026-05-12T23:30:00+02:00 (updated by developer P01-S03-T001)
 
 ## Infrastructure Status (P00-S02-T001)
 
@@ -152,7 +153,13 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 | Aspect | Status | Details |
 |--------|--------|---------|
 | App running | ready to start | `npm --prefix frontend run dev` boots at port 5173 |
-| Routes implemented | 1 | /showcase (design-system demo) |
+| Routes implemented | 4 | /showcase (public), /auth/sign-in (stub), /chat (RequireAuth), /admin (RequireRole) |
+| AuthProvider | implemented (P01-S03-T001) | Mount-time /refresh → /me hydration; status: hydrating/authenticated/unauthenticated |
+| RequireAuth | implemented (P01-S03-T001) | Redirects unauthenticated to /auth/sign-in?next=<safe_path> |
+| RequireRole | implemented (P01-S03-T001) | Role mismatch → /chat; requires any-of intersection with user.roles |
+| accessTokenStore | implemented (P01-S03-T001) | In-memory closure, NEVER localStorage/sessionStorage |
+| httpClient | implemented (P01-S03-T001) | Single-flight 401 refresh interceptor, X-Request-ID, credentials:include |
+| redirectAfterAuth | implemented (P01-S03-T001) | getSafeRedirect() with 7-rule open-redirect guard; unit tested |
 | Design tokens | 8 canonical tokens | tokens.css: --color-bg/ink/paper, --font-display/sans, --hairline, --tracking-label, --radius=0 |
 | Base components | 9 | Wordmark, TrackedLabel, EditorialInput, SolidCTA, HairlineTable, StatusDot, MobileFrame, AdminShell, CitationInline |
 | Vite runtime | complete | vite.config.ts, tsconfig.json, tsconfig.node.json, index.html, src/main.tsx, src/vite-env.d.ts |
@@ -184,7 +191,7 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 | Backend integration | 139 | PASS in isolation (health 11 + dep smoke 20 + migrations 6 + dev restart 2 + bootstrap 9 + auth signup 9 + auth signin 16 + auth refresh 14 + auth logout 15 + password reset 21 — T005 + MFA 16 — T006) — NOTE: full-suite (all at once) = 117/22 due to migration downgrade ordering; MFA isolation = 16/16 PASS |
 | Compose orchestration smoke | 11 | PASS (T1–T8 tester + verify cycle 1+2 + minio-init bucket) |
 | Frontend unit | 0 | — |
-| Frontend component | 58 | PASS (providers 4 + design-system 34 + showcase 4 + i18n 16) |
+| Frontend component | 91 | PASS (providers 4 + design-system 34 + showcase 4 + i18n 16 + auth 33) |
 | E2E | 0 | — |
 | **Total** | **192** | **192 PASS, 0 FAIL** |
 

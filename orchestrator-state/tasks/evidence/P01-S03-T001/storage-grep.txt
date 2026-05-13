@@ -1,0 +1,7 @@
+.claude/worktrees/agent-a391ff9cde99dbab3/frontend/src/features/auth/__tests__/auth.test.tsx:25: *   - T01: localStorage is NEVER touched by accessTokenStore.
+.claude/worktrees/agent-a391ff9cde99dbab3/frontend/src/features/auth/__tests__/auth.test.tsx:124:// T01 — accessTokenStore: in-memory only, never localStorage
+.claude/worktrees/agent-a391ff9cde99dbab3/frontend/src/features/auth/__tests__/auth.test.tsx:157:  it("NEVER calls localStorage.setItem", () => {
+.claude/worktrees/agent-a391ff9cde99dbab3/frontend/src/features/auth/__tests__/auth.test.tsx:163:  it("NEVER calls localStorage.getItem", () => {
+.claude/worktrees/agent-a391ff9cde99dbab3/frontend/src/features/auth/data/accessTokenStore.ts:9: *   nunca persistido). NUNCA access ni refresh en localStorage ni sessionStorage."
+.claude/worktrees/agent-a391ff9cde99dbab3/frontend/src/features/auth/data/accessTokenStore.ts:12: *   1. NEVER write to localStorage, sessionStorage, or IndexedDB.
+.claude/worktrees/agent-a391ff9cde99dbab3/frontend/src/features/auth/data/accessTokenStore.ts:19: * Test note: T01 verifies that localStorage is NEVER touched.

@@ -1,0 +1,48 @@
+id: P01-S03-T002
+phase_id: P01
+step_id: P01-S03
+title: "Backend/infra: configure cross-origin between frontend (:5173) and backend (:8000) — vite proxy or CORSMiddleware"
+status: blocked
+kind: "wiring"
+target: "Backend/infra: configure cross-origin between frontend (:5173) and backend (:8000) — vite proxy or CORSMiddleware"
+product_increment: "current"
+build_state: "planned"
+risk_level: "critical"
+verify_mode: "human"
+route: ""
+endpoint: ""
+journey_refs:
+  - "J100"
+  - "J101"
+  - "J102"
+  - "J103"
+  - "J104"
+  - "J105"
+tables:
+depends_on:
+  - P01-S03-T001
+acceptance:
+  - "From a real browser at http://localhost:5173"
+  - "a fetch with credentials:'include' to http://localhost:8000/api/v1/auth/refresh (or to /api/v1/auth/refresh same-origin if the chosen fix is vite proxy) succeeds preflight and reaches the backend handler"
+  - "returning the documented 200 (with refresh cookie) or 401 AUTH_SESSION_EXPIRED envelope. Same for POST /api/v1/auth/sign-in"
+  - "POST /api/v1/auth/2fa/verify"
+  - "GET /api/v1/users/me"
+  - "POST /api/v1/auth/logout. TECHNICAL_GUIDE updated to document the chosen cross-origin strategy (vite proxy vs backend CORS) and STACK_PROFILE/Coverage Registry reflect any new write_set."
+verification_commands:
+  - "Re-run /verify-slice P01-S03-T001 F3-F5 in browser end-to-end with the J100 verification user (employee.verification@inditex-sandbox.com + TOTP from data/verification/auth/mfa_primary.json): sign-in → 2fa/verify → cookie set → reload protected route → AuthProvider.hydrate /refresh + /me → status authenticated → renders children → logout → cookie cleared → reload → redirect to /auth/sign-in?next=… . All without net::ERR_FAILED in DevTools network tab. Confirm OPTIONS preflight succeeds: curl -i -X OPTIONS http://localhost:8000/api/v1/auth/refresh -H 'Origin: http://localhost:5173' -H 'Access-Control-Request-Method: POST' returns 200/204 with Access-Control-Allow-Credentials:true and Access-Control-Allow-Origin echoed back (or proxy-mode: same-origin path returns the actual handler response)."
+allowed_paths:
+  - "backend/app/main.py"
+  - "frontend/vite.config.ts"
+  - "frontend/.env.example"
+  - "docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md"
+conflict_groups:
+  - "back:infra"
+  - "front:infra"
+write_set:
+  - "backend/app/main.py"
+  - "frontend/vite.config.ts"
+  - "frontend/.env.example"
+  - "docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md"
+handoff_path: orchestrator-state/tasks/handoffs/P01-S03-T002.md
+evidence_dir: orchestrator-state/tasks/evidence/P01-S03-T002
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry"

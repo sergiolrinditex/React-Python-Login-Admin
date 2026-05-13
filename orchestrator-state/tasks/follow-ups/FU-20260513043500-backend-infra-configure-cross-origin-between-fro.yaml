@@ -1,0 +1,63 @@
+{
+  "id": "FU-20260513043500-backend-infra-configure-cross-origin-between-fro",
+  "schema_version": 1,
+  "status": "promoted",
+  "created_at": "2026-05-13T04:35:00+00:00",
+  "created_by": "sergiolr",
+  "origin_task_id": "P01-S03-T001",
+  "origin_phase_id": "P01",
+  "origin_step_id": "P01-S03",
+  "kind": "wiring",
+  "product_increment": "current",
+  "build_state": "planned",
+  "severity": "critical",
+  "title": "Backend/infra: configure cross-origin between frontend (:5173) and backend (:8000) — vite proxy or CORSMiddleware",
+  "description": "From the browser, every cross-origin XHR from http://localhost:5173 to http://localhost:8000 fails the CORS preflight: OPTIONS /api/v1/auth/refresh → 405 Method Not Allowed (no OPTIONS handler, no CORSMiddleware registered). frontend/vite.config.ts has no server.proxy block. As a result, AuthProvider.hydrate's POST /api/v1/auth/refresh on every protected-route mount is rejected by the browser with net::ERR_FAILED (caught by the auth code as a session-expired fallback, which is correct defensive behavior, but blocks all positive end-to-end auth flows from a real browser). All three contractually consumed endpoints by T001 (POST /auth/refresh, GET /users/me, POST /auth/logout) are equally blocked. This will block P03-S01-T001 SignInPage immediately when its form submits POST /api/v1/auth/sign-in. TECHNICAL_GUIDE has no spec for cross-origin or reverse proxy. STACK_PROFILE declares :5173 frontend and :8000 backend on different origins without a documented bridge.\\n\\nObserved during /verify-slice P01-S03-T001:\\n  - F1, F2 (redirect-to-sign-in flows) PASS — they happen client-side without backend.\\n  - F6 (token-storage invariant) PASS — code never touches storage.\\n  - F7 (open-redirect smoke on stub) PASS — stub is read-only.\\n  - F3, F4, F5 (sign-in → /me → logout) BLOCKED — cannot reproduce in browser without same-origin or CORS.",
+  "journey_refs": [
+    "J100",
+    "J101",
+    "J102",
+    "J103",
+    "J104",
+    "J105"
+  ],
+  "screen_route": "—",
+  "endpoint": "—",
+  "tables": [],
+  "depends_on": [
+    "P01-S03-T001"
+  ],
+  "conflict_groups": [
+    "back:infra",
+    "front:infra"
+  ],
+  "write_set": [
+    "backend/app/main.py",
+    "frontend/vite.config.ts",
+    "frontend/.env.example",
+    "docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md"
+  ],
+  "acceptance": [
+    "From a real browser at http://localhost:5173",
+    "a fetch with credentials:'include' to http://localhost:8000/api/v1/auth/refresh (or to /api/v1/auth/refresh same-origin if the chosen fix is vite proxy) succeeds preflight and reaches the backend handler",
+    "returning the documented 200 (with refresh cookie) or 401 AUTH_SESSION_EXPIRED envelope. Same for POST /api/v1/auth/sign-in",
+    "POST /api/v1/auth/2fa/verify",
+    "GET /api/v1/users/me",
+    "POST /api/v1/auth/logout. TECHNICAL_GUIDE updated to document the chosen cross-origin strategy (vite proxy vs backend CORS) and STACK_PROFILE/Coverage Registry reflect any new write_set."
+  ],
+  "verify": [
+    "Re-run /verify-slice P01-S03-T001 F3-F5 in browser end-to-end with the J100 verification user (employee.verification@inditex-sandbox.com + TOTP from data/verification/auth/mfa_primary.json): sign-in → 2fa/verify → cookie set → reload protected route → AuthProvider.hydrate /refresh + /me → status authenticated → renders children → logout → cookie cleared → reload → redirect to /auth/sign-in?next=… . All without net::ERR_FAILED in DevTools network tab. Confirm OPTIONS preflight succeeds: curl -i -X OPTIONS http://localhost:8000/api/v1/auth/refresh -H 'Origin: http://localhost:5173' -H 'Access-Control-Request-Method: POST' returns 200/204 with Access-Control-Allow-Credentials:true and Access-Control-Allow-Origin echoed back (or proxy-mode: same-origin path returns the actual handler response)."
+  ],
+  "notes": [],
+  "triage": {
+    "scope_classification": "missing_coverage",
+    "why_not_debugger": "CORS configuration is outside T001's Write set (frontend/src/features/auth/** + frontend/src/app/router.tsx). The two clean fixes both live elsewhere: (a) frontend/vite.config.ts server.proxy reverse-proxying /api → http://localhost:8000 (recommended; same pattern as nginx/cloudfront in prod, BFF-style same-origin); (b) backend/app/main.py registering CORSMiddleware(allow_origins=['http://localhost:5173'], allow_credentials=true, allow_headers=['authorization','content-type','x-request-id'], allow_methods=['GET','POST','PATCH','PUT','DELETE','OPTIONS']). Either path requires Write set expansion outside T001 plus a TECHNICAL_GUIDE amendment to spec the cross-origin / reverse-proxy strategy. Debugger inside T001 cannot legitimately touch any of these paths without violating Write set discipline. T001 is the slice that EXPOSES the gap (first frontend slice making cross-origin XHR from a real browser); it does not introduce the gap.",
+    "decision": "followup_only_when_outside_current_slice",
+    "debugger_path": "in_scope_defects_use_validator_tester_debugger_retest",
+    "warnings": []
+  },
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260513043500-backend-infra-configure-cross-origin-between-fro.yaml",
+  "promoted_at": "2026-05-13T04:38:00+00:00",
+  "promoted_task_id": "P01-S03-T002",
+  "source_doc_updated": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md"
+}

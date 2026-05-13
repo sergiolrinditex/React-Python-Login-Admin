@@ -1,0 +1,28 @@
+## Verification Data Contract Used — P01-S03-T001
+
+### Contract Rows Applied
+- J100 auth-login row: employee.verification@inditex-sandbox.com / VerifyPass2024!
+- MFA enabled: TOTP secret JBSWY3DPEHPK3PXP from data/verification/auth/mfa_primary.json
+
+### Real Data Loaded (dev seed)
+- User: employee.verification@inditex-sandbox.com (UUID: c528b5e9-46b4-47b7-9ac8-a7dd69305fdd)
+- employee_profile: EMP-VERIFY-001, Zara, ITX-ES, Madrid-HQ, ES, People & Talent
+- MFA TOTP enabled: true
+
+### Curl Chain Executed
+1. POST /api/v1/auth/sign-in → 200 + mfa_required:true + mfa_challenge_token
+2. POST /api/v1/auth/2fa/verify (challenge_id + TOTP code) → 200 + access_token + Set-Cookie refresh_token (HttpOnly; Secure; Path=/api/v1/auth; SameSite=lax)
+3. GET /api/v1/users/me (Bearer) → 200 + UserProfile (id, email, full_name, status, preferred_language, roles, employee_profile, created_at, updated_at)
+4. POST /api/v1/auth/refresh (cookie) → 200 + rotated access_token + rotated Set-Cookie (same path)
+5. POST /api/v1/auth/logout (Bearer + cookie) → 204 + Set-Cookie Max-Age=0
+
+### Persisted Data Observed
+- audit_logs: auth.mfa.verify, auth.refresh, auth.logout entries with request_id propagation
+- refresh_tokens: rotated on /refresh, revoked on /logout
+
+### Backend Log Verified
+- BEFORE/AFTER events present for all operations
+- No raw token values in logs (only hash_prefix truncated)
+- No PII (email domain-only or UUID-only in structured fields)
+- request_id propagated end-to-end (X-Request-ID header matched in response and audit)
+

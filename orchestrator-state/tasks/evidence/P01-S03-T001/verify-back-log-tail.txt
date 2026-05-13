@@ -1,0 +1,60 @@
+time="2026-05-13T06:17:33+02:00" level=warning msg="The \"MINIO_ROOT_USER\" variable is not set. Defaulting to a blank string."
+time="2026-05-13T06:17:33+02:00" level=warning msg="The \"MINIO_ROOT_PASSWORD\" variable is not set. Defaulting to a blank string."
+time="2026-05-13T06:17:33+02:00" level=warning msg="The \"MINIO_ROOT_USER\" variable is not set. Defaulting to a blank string."
+time="2026-05-13T06:17:33+02:00" level=warning msg="The \"MINIO_ROOT_PASSWORD\" variable is not set. Defaulting to a blank string."
+time="2026-05-13T06:17:34+02:00" level=warning msg="No services to build"
+ Container react-python-login-admin-postgres-1 Running 
+ Container react-python-login-admin-redis-1 Running 
+INFO:     Will watch for changes in these directories: ['/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend']
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [86492] using WatchFiles
+INFO:     Started server process [86497]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+2026-05-13 06:17:35,424 app.api.router INFO health.check.start route=/health
+2026-05-13 06:17:35,424 app.api.router INFO health.check.ok status=ok uptime=0.39
+INFO:     127.0.0.1:49559 - "GET /health HTTP/1.1" 200 OK
+2026-05-13 06:17:36,594 app.api.router INFO health.check.start route=/health
+2026-05-13 06:17:36,594 app.api.router INFO health.check.ok status=ok uptime=1.56
+INFO:     127.0.0.1:49565 - "GET /health HTTP/1.1" 200 OK
+2026-05-13 06:17:45,358 app.api.router INFO health.check.start route=/health
+2026-05-13 06:17:45,358 app.api.router INFO health.check.ok status=ok uptime=10.33
+INFO:     127.0.0.1:49578 - "GET /health HTTP/1.1" 200 OK
+2026-05-13 06:17:45,378 app.api.router INFO health.ready.start route=/ready
+2026-05-13 06:17:45,378 app.api.router INFO health.ready.db.ping.start engine=Engine
+2026-05-13 06:17:45,412 app.api.router INFO health.ready.db.ping.ok
+2026-05-13 06:17:45,412 app.api.router INFO health.ready.redis.ping.start
+2026-05-13 06:17:45,418 app.api.router INFO health.ready.redis.ping.ok
+2026-05-13 06:17:45,418 app.api.router INFO health.ready.ok db=ok redis=ok
+INFO:     127.0.0.1:49580 - "GET /ready HTTP/1.1" 200 OK
+2026-05-13 06:18:28,718 app.api.router INFO health.check.start route=/health
+2026-05-13 06:18:28,719 app.api.router INFO health.check.ok status=ok uptime=53.69
+INFO:     127.0.0.1:49624 - "GET /health HTTP/1.1" 200 OK
+2026-05-13 06:18:28,739 app.api.router INFO health.ready.start route=/ready
+2026-05-13 06:18:28,739 app.api.router INFO health.ready.db.ping.start engine=Engine
+2026-05-13 06:18:28,744 app.api.router INFO health.ready.db.ping.ok
+2026-05-13 06:18:28,744 app.api.router INFO health.ready.redis.ping.start
+2026-05-13 06:18:28,746 app.api.router INFO health.ready.redis.ping.ok
+2026-05-13 06:18:28,746 app.api.router INFO health.ready.ok db=ok redis=ok
+INFO:     127.0.0.1:49627 - "GET /ready HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49932 - "OPTIONS /api/v1/auth/refresh HTTP/1.1" 405 Method Not Allowed
+INFO:     127.0.0.1:49934 - "OPTIONS /api/v1/auth/refresh HTTP/1.1" 405 Method Not Allowed
+2026-05-13 06:26:33,766 app.db.session DEBUG db.session.open
+2026-05-13 06:26:33,776 app.auth.routers.refresh DEBUG auth.refresh.received request_id=5a272b39-7829-4511-9669-9879835b9707 ip=127.0.0.1
+2026-05-13 06:26:33,776 app.auth.rate_limit DEBUG rate_limit.check.start prefix=REFRESH ip=REFRESH:127.0.0.1 rate_per_min=30 burst=30
+2026-05-13 06:26:33,776 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=REFRESH ip=REFRESH:127.0.0.1 new_window remaining=29
+2026-05-13 06:26:33,777 app.auth.services.refresh DEBUG auth.refresh.execute.start request_id=5a272b39-7829-4511-9669-9879835b9707 ip=127.0.0.1
+2026-05-13 06:26:33,777 app.auth.services.refresh DEBUG auth.refresh.rejected reason=no_cookie request_id=5a272b39-7829-4511-9669-9879835b9707
+2026-05-13 06:26:33,778 app.auth.services.refresh_audit DEBUG auth.refresh.failure_audit.start reason=no_cookie request_id=5a272b39-7829-4511-9669-9879835b9707
+2026-05-13 06:26:33,778 app.db.session DEBUG db.session.audit_scope.open
+2026-05-13 06:26:33,778 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.refresh actor_user_id=NULL
+2026-05-13 06:26:33,871 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=037cb055-1fad-4d38-b4fd-87e31dbc3aea action=auth.refresh
+2026-05-13 06:26:33,872 app.auth.services.refresh_audit DEBUG auth.refresh.failure_audit.done reason=no_cookie request_id=5a272b39-7829-4511-9669-9879835b9707
+2026-05-13 06:26:33,872 app.db.session DEBUG db.session.audit_scope.closed
+INFO:     127.0.0.1:49940 - "POST /api/v1/auth/refresh HTTP/1.1" 401 Unauthorized
+2026-05-13 06:26:33,878 app.db.session DEBUG db.session.closed
+INFO:     127.0.0.1:49944 - "OPTIONS /api/v1/auth/refresh HTTP/1.1" 405 Method Not Allowed
+INFO:     127.0.0.1:49977 - "OPTIONS /api/v1/auth/refresh HTTP/1.1" 405 Method Not Allowed
+INFO:     127.0.0.1:49979 - "OPTIONS /api/v1/auth/refresh HTTP/1.1" 405 Method Not Allowed
+INFO:     127.0.0.1:50005 - "OPTIONS /api/v1/auth/refresh HTTP/1.1" 405 Method Not Allowed
+INFO:     127.0.0.1:50005 - "OPTIONS /api/v1/auth/refresh HTTP/1.1" 405 Method Not Allowed

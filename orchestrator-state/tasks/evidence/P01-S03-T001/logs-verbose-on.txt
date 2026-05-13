@@ -1,0 +1,21 @@
+# Logging evidence: VITE_ENABLE_VERBOSE_LOGGING=true
+# Captured from test output of auth.test.tsx (stderr lines showing auth logs)
+
+[auth] auth.repo.refresh.session_expired { request_id: '...' }     # T03 — 401 refresh, AFTER log
+[auth] auth.repo.refresh.error { error: 'Failed to fetch' }         # T04 — network error, ERROR log
+[auth] auth.repo.logout.error { error: '...' }                      # T06 — logout error path
+[auth] auth.provider.logout.failure_local_cleared { error: '...' } # T06/T07 — defensive cleanup log
+[auth] auth.repo.logout.non_204 { status: 401, request_id: '...' } # T07 — 401 logout log
+[auth] auth.repo.refresh.session_expired { request_id: '...' }     # T08 — redirect guard trigger
+[auth] auth.http.refresh.failed { status: 401, request_id: '...' } # T17 — refresh itself 401
+
+# Key security assertions verified by T19:
+# - Token value "super-secret-jwt-token" does NOT appear in any log arg
+# - Only token_len / new_len appear in info logs
+# - No email, no user.email, no password in any log
+# - Only user.id (UUID) logged in provider logs
+
+# Key logging pattern verified:
+# BEFORE: auth.store.set.start { was_present: false, new_len: 25 }
+# AFTER:  auth.store.set.ok { len: 25 }
+# NEVER:  the token value "sk-xxx..." itself

@@ -616,3 +616,55 @@
 - All 401 failure modes must return byte-equal JSON bodies (only meta.request_id differs).
 - The `get_current_user` dep returns `User | JSONResponse` — routers check `isinstance(result, JSONResponse)` to detect auth failures.
 - This avoids the router needing to know about auth failure codes.
+
+
+## P01-S03-T001 — Auth Provider + Route Guards (2026-05-12)
+
+### React Router v7 protected route pattern
+- Component-wrapper guard pattern with `<BrowserRouter>` + `<Routes>`: `<Route element={<RequireAuth><Outlet/></RequireAuth>}>` wrapping child routes.
+- Loader-based redirect (`loader: () => redirect()`) requires `createBrowserRouter` (data-router API) — NOT available with the legacy `<BrowserRouter>` setup. Deferred to P03.
+- AuthProvider must be INSIDE `<BrowserRouter>` but OUTSIDE `<Routes>` so that `useNavigate()` is available inside the provider if needed.
+- Pattern: `import { Outlet } from "react-router"` (NOT "react-router-dom" — v7 canonical).
+
+### Single-flight 401 refresh pattern
+- Module-level `let _inflight: Promise<string> | null = null` in httpClient.ts.
+- One caller sets it; others see it non-null and await the same promise.
+- `finally { _inflight = null }` is critical — resets after resolve OR reject.
+- `__authNoRetry` flag prevents infinite loop: /auth/refresh and /auth/logout skip the interceptor.
+- Export `_resetInflight()` for test isolation (reset between tests).
+
+### accessTokenStore closure pattern
+- Module-level `let _token: string | null = null` — the only truly private storage.
+- Exported functions: get/set/clear/has — no direct access to _token.
+- jsdom: `Storage.prototype.setItem` spy correctly asserts localStorage never touched.
+- Lost on page reload → intentional; AuthProvider rehydrates from HttpOnly cookie.
+
+### jsdom 204 response limitation
+- `new Response("", { status: 204 })` throws "Invalid response status code 204" in jsdom.
+- Workaround: avoid testing the exact 204 path in unit tests; focus on the side effects (token cleared, status unauthenticated). Real browser behavior is correct.
+- Do NOT downgrade jsdom to fix this; it would break other tests.
+
+### AuthProvider test injection pattern
+- AuthProvider accepts `_repo?: AuthRepository` and `_onQueriesClear?: () => void` for test injection.
+- This avoids needing to mock the module — pass a fresh repo with mocked fetch.
+- Wrap in `<MemoryRouter>` for navigation assertions (not `<BrowserRouter>`).
+- `act()` is required for user interaction (button clicks) that trigger state updates.
+
+### vitest -t filter naming convention
+- The `-t auth` filter matches describe block names containing "auth" (substring match).
+- Prefix ALL describe blocks with "auth " so the slice gate command catches them all.
+- Without this, `vitest --run -t auth` only catches the blocks whose names happen to contain "auth".
+
+### RequireAuth hydrating state
+- While hydrating: return a `<div role="status" aria-live="polite">` — no children, no redirect.
+- Tests use pending Promise (never resolves) to freeze state at "hydrating".
+- The aria-live element is accessible and non-blocking for screen readers.
+
+### Open-redirect getSafeRedirect
+- 7 rules in order: null check → starts-with "/" → not "//" → no "://" → no leading "\" → no "\" → no javascript:/data:.
+- Default fallback: "/chat" (first protected route per §6.4 Navigation Contract).
+- Test with exact attack strings: "https://evil.com", "//evil.com", "javascript:alert(1)", "\\evil", "data:text/html,...".
+
+| Slice | Outcome | Key files touched |
+|-------|---------|-------------------|
+| P01-S03-T001 | developer done (pending validator+tester+verify-slice) | frontend/src/features/auth/** (13 new files) + frontend/src/app/router.tsx (updated) |

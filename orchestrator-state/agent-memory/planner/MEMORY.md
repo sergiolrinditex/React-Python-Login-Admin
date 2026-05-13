@@ -176,6 +176,20 @@
 - **TestClient is a Path-blind verifier**: 44 tests passing across sign-in+refresh+logout did NOT catch the Path bug because Starlette TestClient does not enforce cookie Path attribute. Any future "cookie semantics" slice must add at least one cookie-jar-respecting test (httpx.AsyncClient + ASGITransport, or requests.Session against live uvicorn). Encode this as an acceptance requirement in the FU template, not just as a "nice to have" in the pack.
 - **httpx async test in a sync TestClient suite**: viable with `asyncio.run(...)` inside a sync test body if `pytest-asyncio`/`pytest-anyio` are not configured. Cheaper than expanding `requirements-test.txt`. Mention both options in the pack so the developer picks the conservative one.
 
+### P-17 — Frontend auth-state slice (P01-S03-T001 AuthProvider pattern)
+
+- A task carrying `journey_refs: [Jxxx]` in the Coverage Registry does NOT necessarily close those journeys. Cross-check `registry.journeys[*].task_ids` for membership; if `TASK_ID` is absent there, this slice is infrastructure for the journey, not a closer. Emit `CLOSES_JOURNEY: none` and tell the closer to NOT emit `JOURNEY_PENDING_VERIFY` for those JIDs.
+- Frontend auth slices in this stack have THREE security surfaces that are non-negotiable and must be pinned in the pack verbatim:
+  1. Access token in memory only (no `localStorage`/`sessionStorage` ever).
+  2. Refresh token HttpOnly cookie with `Path=/api/v1/auth` (T011 contract pinned in ADR-001) — the cookie is invisible to JS by design.
+  3. Single-flight refresh on 401: N concurrent failed requests trigger EXACTLY ONE `/auth/refresh` call. This is the #1 silent bug source if not tested.
+- `providers.tsx` composition-root contract (P-7): the file is route-agnostic and stays untouched by auth slices. `<AuthProvider>` is mounted INSIDE `router.tsx` (or via a `features/auth/presentation/AuthRoot.tsx` import) AFTER `<I18nextProvider><QueryClientProvider>`. Do NOT add `providers.tsx` to write_set.
+- Identity comes from `GET /api/v1/users/me`, NEVER from decoding the JWT in the client. Decoding couples the UI to the server's signing algorithm and bypasses status (`inactive`/`locked`). Treat the access token as opaque.
+- The `?next=` redirect-after-auth is an open-redirect attack vector. Always require: starts with `/`, no `//`, no `://`, no `\\\\`, fallback to `/chat` on invalid. Encode as a pure function (`redirectAfterAuth.ts`) with unit tests — never inline regex at consumer sites.
+- TestClient/fetch-mock are PATH-BLIND for cookies (T011 debugger lesson re-applies). Cookie semantics MUST be verified end-to-end in `/verify-slice` with a real browser, not in vitest. Pin this gate in the test plan §K.
+- Stub vs no-stub choice for `verify_mode=human` on an infrastructure slice with no new screen: offer BOTH options in the pack (curl-driven demo OR minimal placeholder route) and let the developer pick. Both are acceptable, both demonstrate the redirect contract. Document the WRITE_SET_DRIFT possibility if the stub is chosen.
+- Researcher questions for frontend auth slices are concentrated on 3 surfaces: react-router v7 protected-route pattern, react-query v5 401 interceptor pattern, and 2025-2026 OWASP token storage guidance. Cap at 5 narrow questions; cite RESOLVED notes from earlier slices to prevent re-research of PyJWT/Argon2/cookie attrs.
+
 ### P-16 — MFA-style "consume a short-lived JWT" endpoints (P01-S02-T006 2FA verify pattern)
 
 - When an endpoint **consumes** a short-lived JWT minted by a previous endpoint (here: sign-in mints `mfa_challenge_token` purpose-scoped JWT, 2FA-verify consumes it): the consumer must reuse the project's `decode_token(token, expected_purpose="<purpose>")` helper, not re-implement signature/exp/purpose checks. T002 already added the `expected_purpose` parameter precisely for this case — refusing to use it is a code-duplication smell that the validator will catch.

@@ -1,0 +1,6 @@
+HTTP/1.1 204 No Content
+date: Tue, 12 May 2026 21:35:57 GMT
+server: uvicorn
+x-request-id: tester-T001-logout-1778621757
+set-cookie: refresh_token=""; HttpOnly; Max-Age=0; Path=/api/v1/auth; SameSite=lax; Secure
+
