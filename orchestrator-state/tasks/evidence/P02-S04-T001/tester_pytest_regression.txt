@@ -1,0 +1,78 @@
+........................................................................ [ 28%]
+.......................................F
+=================================== FAILURES ===================================
+______________________ test_upgrade_creates_all_9_tables _______________________
+
+    @pytest.mark.integration
+    def test_upgrade_creates_all_9_tables():
+        """After upgrade head, exactly 9 auth tables + alembic_version must exist."""
+        result = _run_alembic("upgrade", "head")
+        assert result.returncode == 0, f"upgrade failed: {result.stderr}"
+    
+        engine = _get_sync_engine()
+        tables = _get_tables(engine)
+        engine.dispose()
+    
+        expected = {
+            "alembic_version",
+            "users",
+            "employee_profiles",
+            "roles",
+            "permissions",
+            "user_roles",
+            "refresh_tokens",
+            "mfa_totp_secrets",
+            "password_reset_tokens",
+            "audit_logs",
+        }
+>       assert set(tables) == expected, f"Expected {expected}, got {set(tables)}"
+E       AssertionError: Expected {'password_reset_tokens', 'user_roles', 'mfa_totp_secrets', 'users', 'audit_logs', 'roles', 'alembic_version', 'permissions', 'refresh_tokens', 'employee_profiles'}, got {'rag_collections', 'ai_model_tests', 'user_roles', 'ai_models', 'alembic_version', 'mcp_agent_bindings', 'ai_provider_credentials', 'refresh_tokens', 'roles', 'document_chunks', 'messages', 'agents', 'mcp_tool_invocations', 'mfa_totp_secrets', 'users', 'documents', 'mcp_servers', 'permissions', 'conversations', 'vectorization_jobs', 'mcp_credentials', 'llm_usage_logs', 'ai_providers', 'message_citations', 'employee_profiles', 'agent_runs', 'mcp_approvals', 'mcp_resources', 'password_reset_tokens', 'mcp_tools', 'document_embeddings', 'audit_logs', 'document_versions', 'mcp_prompts'}
+E       assert {'agent_runs'...oviders', ...} == {'alembic_ver...issions', ...}
+E         
+E         Extra items in the left set:
+E         'rag_collections'
+E         'ai_model_tests'
+E         'ai_models'
+E         'mcp_agent_bindings'
+E         'ai_provider_credentials'...
+E         
+E         ...Full output truncated (20 lines hidden), use '-vv' to show
+
+backend/tests/integration/test_migrations_0001_auth.py:135: AssertionError
+=============================== warnings summary ===============================
+tests/integration/test_admin_ai.py::test_T06_post_provider_invalid_type_422
+tests/integration/test_admin_ai.py::test_T07_post_provider_missing_credentials_422
+tests/integration/test_admin_ai.py::test_T15_get_models_invalid_provider_id_422
+tests/integration/test_auth_signin.py::test_signin_missing_field_returns_422
+tests/integration/test_auth_signup.py::test_signup_missing_full_name_422
+  /Users/sergiolr/Library/Python/3.11/lib/python/site-packages/starlette/_exception_handler.py:59: DeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
+    response = await handler(conn, exc)
+
+tests/integration/test_auth_refresh.py: 20 warnings
+  /Users/sergiolr/Library/Python/3.11/lib/python/site-packages/starlette/testclient.py:445: DeprecationWarning: Setting per-request cookies=<...> is being deprecated, because the expected behaviour on cookie persistence is ambiguous. Set cookies directly on the client instance instead.
+    return super().request(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED backend/tests/integration/test_migrations_0001_auth.py::test_upgrade_creates_all_9_tables
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed, 111 passed, 25 warnings in 20.36s
+
+## Tester note on regression failure
+
+The failure in test_migrations_0001_auth.py::test_upgrade_creates_all_9_tables is a
+PRE-EXISTING known issue documented in PROGRESS.md §Known Issues / Risks R1-T001-S02:
+
+"test_downgrade_removes_all_tables (migration test) destroys the schema on each full test
+run. After running the full test suite, must re-run alembic upgrade head to restore schema
+before using the live DB. (Known test ordering gotcha — all tests pass but DB state
+post-suite needs upgrade.)"
+
+PROGRESS.md also explicitly notes: "full-suite (all at once) = 117/22 due to migration
+downgrade ordering; chat isolation = 14/14 PASS; rag isolation = 10/10 PASS"
+
+The test_upgrade_creates_all_9_tables test hardcodes "9 tables" which is now stale since
+migration 0002 added 25 more tables. This is NOT a new failure introduced by P02-S04-T001.
+This slice added NO new migrations and NO new tables.
+
+DB was restored to head=0002 after regression suite ran (alembic upgrade head).

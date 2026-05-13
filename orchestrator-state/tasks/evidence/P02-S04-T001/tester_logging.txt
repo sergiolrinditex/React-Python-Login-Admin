@@ -1,0 +1,61 @@
+## Logging Verification — P02-S04-T001
+
+### Method
+Canonical test command (pytest backend/tests/ai -k rag_retriever_smoke) does not capture 
+log output to stdout by default. Logging was verified by running individual tests with 
+--log-cli-level=DEBUG against the isolated test file after DB restore.
+
+### verbose=true BEFORE/AFTER symmetry
+Command: ENABLE_VERBOSE_LOGGING=true pytest backend/tests/ai/test_rag_retriever.py 
+         -k "rag_retriever_smoke and not invalid_language and not invalid_embedding"
+         --log-cli-level=DEBUG -s -v
+
+Results:
+- start count: 11 (BEFORE log: rag.retriever.search.start)
+- ok count: 11 (AFTER log: rag.retriever.search.ok)
+- Symmetry: PASS (start == ok for all 8 non-error tests; T06 calls retrieve 3 times -> 3 starts + 3 oks in that test)
+
+Sample log lines observed:
+  INFO  hilo.rag.retriever:retriever.py:193 rag.retriever.search.start
+  INFO  hilo.rag.retriever:retriever.py:236 rag.retriever.search.ok
+
+Log contains: request_id, language, collection_ids_count, k, embedding_dim (BEFORE)
+Log contains: request_id, result_count, duration_ms, top_score (AFTER)
+No embedding floats observed. No chunk content observed.
+
+### verbose=false application log lines = 0
+Command: ENABLE_VERBOSE_LOGGING=false pytest backend/tests/ai/test_rag_retriever.py 
+         -k "rag_retriever_smoke and not invalid_language and not invalid_embedding"
+         --log-cli-level=INFO -s -v
+
+Results:
+- INFO rag.* lines: 0
+- Application rag.* log lines visible: 0
+- Only warning/error logged on exception paths (expected)
+
+### Note on module-level _VERBOSE flag
+The _VERBOSE flag in retriever.py is set at module import time:
+  _VERBOSE: bool = os.getenv("ENABLE_VERBOSE_LOGGING", "false").lower() == "true"
+This means ENABLE_VERBOSE_LOGGING must be set before pytest imports the module.
+When using pytest with --log-cli-level=INFO and running the FULL test suite,
+migration teardown tests destroy the schema first (pre-existing R1-T001-S02 issue).
+Isolated test runs per test file work correctly.
+
+### Conclusion
+LOGGING_VERBOSE_ON: BEFORE/AFTER symmetry — pass
+LOGGING_VERBOSE_OFF: application log lines = 0
+
+### Additional note: pre-existing module-level VERBOSE flag
+The _VERBOSE flag in retriever.py is evaluated at module import time:
+  _VERBOSE: bool = os.getenv("ENABLE_VERBOSE_LOGGING", "false").lower() == "true"
+This is correct and follows the project convention. The pytest invocation with
+ENABLE_VERBOSE_LOGGING=true sets the env before Python imports the module, so
+the flag captures the correct value.
+
+Logging compliance verdict:
+- BEFORE: rag.retriever.search.start (with request_id, language, collection_ids_count, k, embedding_dim)
+- AFTER:  rag.retriever.search.ok (with request_id, result_count, duration_ms, top_score)
+- ERROR:  rag.retriever.search.error and rag.retriever.search.invalid_dim (logged correctly by T09/T10)
+- No embedding floats, no chunk content, no PII in any log line
+- verbose=false: 0 INFO-level rag.* lines emitted
+- COMPLIANT with .claude/rules/01-non-negotiables.md §Logging

@@ -162,6 +162,7 @@
 
 | Slice | Outcome | Key files touched |
 |-------|---------|-------------------|
+| P02-S04-T001 | success | backend/app/rag/{__init__,errors,schemas,retriever}.py (NEW), backend/tests/ai/{__init__,conftest,test_rag_retriever}.py (NEW) — 10/10 smoke tests PASS |
 | P00-S01-T001 | success | backend/app/main.py, backend/pyproject.toml, .env.example, scripts/ |
 | P00-S02-T001 | success | docker-compose.yml, backend/Dockerfile, frontend/Dockerfile, .dockerignore, scripts/minio-bootstrap.sh, frontend/nginx.conf, .env.example |
 | P00-S01-T005 | success | frontend/src/i18n/index.ts (rewrite), frontend/src/i18n/languages.ts, frontend/src/i18n/types.d.ts, frontend/src/i18n/__tests__/i18n.test.ts, frontend/public/locales/**/{8 ns}.json (×3 langs = 24 files), frontend/src/pages/showcase/I18nDemoSection.tsx, frontend/src/pages/showcase/ShowcasePage.tsx |
@@ -169,6 +170,17 @@
 | P01-S02-T008 | developer done (pending validator+tester+verify-slice) | scripts/dev-restart.profile.sh (absolute --source path + hard-fail seed block) |
 | P01-S02-T009 | developer done (pending validator+tester+verify-slice) | scripts/gen-dev-secrets.sh (NEW), scripts/setup-from-scratch.sh (+15 LOC), .env.example (comments) |
 | P00-S02-T003 | success | backend/alembic.ini, backend/alembic/env.py, backend/alembic/script.py.mako, backend/alembic/versions/.gitkeep, backend/app/verification_data/** (8 files), data/verification/** (11 fixtures + README), backend/tests/conftest.py, backend/tests/integration/** (3 files), scripts/dev-restart.profile.sh, backend/pyproject.toml (cryptography+argon2-cffi), backend/requirements.txt, .env.example |
+
+### pgvector retrieval patterns (P02-S04-T001)
+- `from pgvector.sqlalchemy import VECTOR` (ALL CAPS) — confirmed working with pgvector==0.4.2.
+- `DocumentEmbedding.embedding.cosine_distance(query_vec)` is the correct ORM method for `<=>` operator push-down (eligible for HNSW index).
+- score = `1.0 - cosine_distance`. For unit-normalised vectors the theoretical range is [0,1], but float32 precision may yield slightly negative values for near-orthogonal vectors. Test tolerance: `-0.01 <= score <= 1.001`.
+- `retrieve()` takes a sync `Session` (not async) — matches the project's existing sync session pattern.
+- The `rag_smoke_fixture` uses `pg_session` transactional rollback — no teardown DELETE needed.
+- Synthetic deterministic vectors via `numpy.random.default_rng(seed).standard_normal(1536)` + L2 normalise. Seeds are stable across runs — order of cosine distances is deterministic.
+- `pytest backend/tests/ai -k rag_retriever_smoke -v` is the canonical verification command.
+- `python3 -m ruff check backend/app/rag/ backend/tests/ai/` for lint (ruff is available via python3 -m ruff).
+- WRITE_SET_DRIFT: `tests/ai/__init__.py` + `tests/ai/conftest.py` are outside declared write_set but required as intra-test helpers — same approved pattern as T002/T004/T007.
 
 ### Auth module structure (P01-S02-T001)
 - Module layout: errors.py → domain.py → password.py → rate_limit.py → repository.py → service.py → schemas.py → router.py → __init__.py

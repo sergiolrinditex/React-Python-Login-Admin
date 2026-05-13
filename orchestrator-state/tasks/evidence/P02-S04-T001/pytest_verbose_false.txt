@@ -1,0 +1,21 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.5, pytest-9.0.2, pluggy-1.6.0 -- /usr/local/bin/python3
+cachedir: .pytest_cache
+rootdir: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P02-S04-T001/backend
+configfile: pyproject.toml
+plugins: httpx-0.36.0, asyncio-1.3.0, langsmith-0.8.3, anyio-4.13.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 10 items
+
+backend/tests/ai/test_rag_retriever.py::test_rag_retriever_smoke_filter_by_language_es_only PASSED
+backend/tests/ai/test_rag_retriever.py::test_rag_retriever_smoke_filter_by_collection_excludes_others PASSED
+backend/tests/ai/test_rag_retriever.py::test_rag_retriever_smoke_combined_filters_AND PASSED
+backend/tests/ai/test_rag_retriever.py::test_rag_retriever_smoke_disabled_collection_excluded PASSED
+backend/tests/ai/test_rag_retriever.py::test_rag_retriever_smoke_citation_metadata_shape PASSED
+backend/tests/ai/test_rag_retriever.py::test_rag_retriever_smoke_k_limit_respected PASSED
+backend/tests/ai/test_rag_retriever.py::test_rag_retriever_smoke_unknown_collection_returns_empty PASSED
+backend/tests/ai/test_rag_retriever.py::test_rag_retriever_smoke_empty_database_returns_empty PASSED
+backend/tests/ai/test_rag_retriever.py::test_rag_retriever_smoke_invalid_language_raises PASSED
+backend/tests/ai/test_rag_retriever.py::test_rag_retriever_smoke_invalid_embedding_dim_raises PASSED
+
+============================== 10 passed in 0.43s ==============================

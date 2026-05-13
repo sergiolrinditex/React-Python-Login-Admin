@@ -1,0 +1,31 @@
+## Contract Observed — P02-S04-T001
+
+### Python Module API (no HTTP endpoint — internal module)
+- Module: backend/app/rag/retriever.py
+- Public function: retrieve(session, query_embedding, filters) -> list[RetrievedChunk]
+- Import path confirmed: from app.rag import retrieve, RetrievedChunk, RetrieverFilters
+- Session type: sqlalchemy.orm.Session (sync, matching project pattern)
+
+### ORM Models Read (read-only, no writes in production code)
+- RagCollection (rag_collections table) — filter by enabled=True
+- Document (documents table) — filter by language
+- DocumentChunk (document_chunks table) — content, chunk_index, metadata
+- DocumentEmbedding (document_embeddings table) — cosine_distance via HNSW index
+
+### DB Tables Observed During Tests
+- rag_collections: INSERT (fixture), SELECT (retriever query)
+- documents: INSERT (fixture), SELECT (retriever query)
+- document_versions: INSERT (fixture)
+- document_chunks: INSERT (fixture), SELECT (retriever query)
+- document_embeddings: INSERT (fixture), SELECT (retriever query via HNSW index)
+- message_citations: NOT used in this slice (no writes)
+- ai_models: FK reference only (model_id=None in test embeddings)
+
+### HNSW Index Observed
+- Index: document_embeddings_vector_idx
+- Type: hnsw (embedding vector_cosine_ops) WITH (m='16', ef_construction='64')
+- Confirmed via psql \d+ document_embeddings
+
+### Error Types Raised (verified by tests)
+- pydantic.ValidationError — when language not in {"es","en","fr"} (T09)
+- app.rag.errors.InvalidEmbeddingDimensionError — when len(query_embedding) != 1536 (T10)

@@ -532,6 +532,39 @@ Status: `RESOLVED: yes` — no discrepancies; all items are decision-aids fillin
 
 No discrepancies with retriever.py API surface. Developer may adopt code as-is.
 
+### 2026-05-13 — P02-S04-T001 pgvector-python 0.4.2 version-pinned deep dive (cosine_distance + psycopg3 async binding + HNSW ef_search)
+
+> Complementary follow-up note from a parallel researcher run focused on the **pinned** 0.4.2 version (the prior note above used Context7's "current" docs). Same OUTCOME but adds versioning, async binding and ef_search details.
+
+**Sources**: pgvector-python v0.4.2 README (raw tag), Context7 /pgvector/pgvector-python (High, 125 snippets), Context7 /pgvector/pgvector (High, 275 snippets).
+**Cache valid until**: 2026-05-20 (pgvector-python 0.4.2 is a pinned version — stable).
+**Note file**: `orchestrator-state/memory/official-doc-notes/P02-S04-T001-pgvector-2026-05-13.md`
+**OUTCOME**: verified — no discrepancies with internal pack; 3 questions answered.
+
+#### Key findings
+
+| Item | Value | Source |
+|---|---|---|
+| `cosine_distance` method exists in 0.4.2 | **YES** | v0.4.2 README verbatim |
+| SQL operator emitted by cosine_distance | `<=>` | pgvector operator mapping (L2=`<->`, cosine=`<=>`, IP=`<#>`) |
+| HNSW `vector_cosine_ops` uses `<=>` | **YES** — index IS used by cosine_distance | pgvector README |
+| Import at v0.4.2 | `from pgvector.sqlalchemy import Vector` (title-case) | v0.4.2 README |
+| query_vec Python type | `list[float]` is fine; `numpy.ndarray` also works | v0.4.2 README examples |
+| register_vector for SQLAlchemy ORM + psycopg3 | **REQUIRED** via `event.listens_for(engine, "connect")` | v0.4.2 README |
+| Async engine pattern | `event.listens_for(engine.sync_engine, "connect")` + `dbapi_connection.run_async(register_vector_async)` | v0.4.2 README |
+| Per-call registration needed? | **NO** — event listener fires once per new connection | v0.4.2 README |
+| hnsw.ef_search default | **40** | pgvector README |
+| ef_search=40 on ~30 rows | Sufficient — ef_search > table_size = full index scan | pgvector README |
+| HNSW determinism on equal-distance vectors | **NON-DETERMINISTIC** for tie-breaking | pgvector ANN nature |
+| Smoke test assertion strategy | Set membership (doc_id IN results), not exact rank order | — |
+
+#### Note on `Vector` vs `VECTOR` naming across versions
+
+- 0.4.2 README: `from pgvector.sqlalchemy import Vector` (title-case)
+- Latest/current (Context7): `from pgvector.sqlalchemy import VECTOR` (all-caps)
+- Both may be exported as aliases. For 0.4.2, use `Vector` per pinned README.
+- P02-S01-T001 note said "use VECTOR (all-caps)" based on current docs — may need to recheck against actual installed 0.4.2 package if import errors occur.
+
 ## Canonical references
 - `.claude/orchestrator-contract.json`
 - `.claude/rules/00-source-of-truth.md`

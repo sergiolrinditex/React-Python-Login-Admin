@@ -1,0 +1,10 @@
+time="2026-05-13T13:46:39+02:00" level=warning msg="The \"MINIO_ROOT_USER\" variable is not set. Defaulting to a blank string."
+time="2026-05-13T13:46:39+02:00" level=warning msg="The \"MINIO_ROOT_PASSWORD\" variable is not set. Defaulting to a blank string."
+time="2026-05-13T13:46:39+02:00" level=warning msg="The \"MINIO_ROOT_USER\" variable is not set. Defaulting to a blank string."
+time="2026-05-13T13:46:39+02:00" level=warning msg="The \"MINIO_ROOT_PASSWORD\" variable is not set. Defaulting to a blank string."
+time="2026-05-13T13:46:39+02:00" level=warning msg="The \"LITELLM_MASTER_KEY\" variable is not set. Defaulting to a blank string."
+           indexname            |                                                                        indexdef                                                                        
+--------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------
+ document_embeddings_vector_idx | CREATE INDEX document_embeddings_vector_idx ON public.document_embeddings USING hnsw (embedding vector_cosine_ops) WITH (m='16', ef_construction='64')
+(1 row)
+

@@ -1,0 +1,27 @@
+## Verification Data Contract — P02-S04-T001
+
+### Verification Data Contract Row Used (from TECHNICAL_GUIDE §6.5)
+J101 chat-rag | empleado + colección activa | documento política vacaciones ES indexado, modelo chat de verificación activo
+NOTE: The full J101 verification data (PDF + LiteLLM pipeline) is NOT required for this slice.
+This slice uses synthetic deterministic fixtures (acceptable per task pack §Test data setup).
+
+### Real/Provided Data Used (fixture-injected into real test DB)
+The rag_smoke_fixture inserts the following real rows into real Postgres tables:
+- rag_collections: 3 rows (c_es/enabled=True, c_en/enabled=True, c_off/enabled=False)
+- documents: 3 rows (doc_es language=es, doc_en language=en, doc_es_c_off language=es in c_off)
+- document_versions: 3 rows (one per document, version=1)
+- document_chunks: 3 rows (chunk_es, chunk_en, chunk_off, chunk_index=0)
+- document_embeddings: 3 rows with deterministic 1536-dim unit vectors (seeds 101, 202, 303)
+
+### Synthetic Data Justification
+Embedding vectors are synthetic deterministic (numpy seed-based unit vectors) because:
+1. The production embedding model (LiteLLM) does not exist yet in this slice (P02-S04-T002 concern)
+2. The task pack §Test data setup explicitly approves synthetic vectors for smoke tests
+3. Cosine distances between seed-based unit vectors are deterministic and provable
+4. Real DB (Postgres + pgvector HNSW) is exercised for the actual retrieval logic
+
+### Persisted Data Observed During Tests
+- All fixture rows are created in the real test DB (hilo_dev) via pg_session.flush()
+- After each test, pg_session performs transactional rollback — rows disappear
+- Test T06 (k_limit) inserts 12 additional DocumentEmbedding rows to verify k capping
+- No verification_data files from data/verification/rag_chat/ were required for this slice

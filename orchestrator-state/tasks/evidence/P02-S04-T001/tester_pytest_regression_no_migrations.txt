@@ -1,0 +1,10 @@
+tests/integration/test_auth_refresh.py: 20 warnings
+  /Users/sergiolr/Library/Python/3.11/lib/python/site-packages/starlette/testclient.py:445: DeprecationWarning: Setting per-request cookies=<...> is being deprecated, because the expected behaviour on cookie persistence is ambiguous. Set cookies directly on the client instance instead.
+    return super().request(
+
+tests/test_dependency_smoke.py::test_dependency_smoke[deepagents-deepagents-None]
+  /Users/sergiolr/Library/Python/3.11/lib/python/site-packages/langgraph/checkpoint/serde/encrypted.py:5: LangChainPendingDeprecationWarning: The default value of `allowed_objects` will change in a future version. Pass an explicit value (e.g., allowed_objects='messages' or allowed_objects='core') to suppress this warning.
+    from langgraph.checkpoint.serde.jsonplus import JsonPlusSerializer
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+227 passed, 26 warnings in 27.68s
