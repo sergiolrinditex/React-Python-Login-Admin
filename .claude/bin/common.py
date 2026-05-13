@@ -197,13 +197,52 @@ def tasks_dir() -> Path:
     return state_dir() / "tasks"
 
 
+def per_slice_state_dir() -> Path:
+    """Per-slice state root (handoff/evidence/report/task-pack).
+
+    FW-024: per-slice files live in the active checkout (workspace_root):
+      - In push-to-main, workspace_root == project_root (same dir).
+      - In pr-flow, workspace_root is the per-TASK_ID git worktree, so files
+        the agent writes via relative paths land in the worktree's
+        orchestrator-state. The closer commits them on the slice's feature
+        branch; merge brings them into main naturally.
+
+    Shared state (registry/runtime-state/ledger/memory/agent-memory) keeps
+    project_root() because those must be visible to every parallel worker.
+    """
+    raw = os.environ.get("CLAUDE_ORCHESTRATOR_STATE_DIR")
+    if raw:
+        path = Path(raw).expanduser()
+        if path.is_absolute():
+            return path
+        return workspace_root() / path
+    return workspace_root() / STATE_DIR_NAME
+
+
+def per_slice_tasks_dir() -> Path:
+    return per_slice_state_dir() / "tasks"
+
+
+def handoff_path(task_id: str | None) -> Path:
+    return per_slice_tasks_dir() / "handoffs" / f"{task_id or 'unknown'}.md"
+
+
+def evidence_dir(task_id: str | None) -> Path:
+    return per_slice_tasks_dir() / "evidence" / str(task_id or "unknown")
+
+
+def report_path(task_id: str | None) -> Path:
+    return per_slice_tasks_dir() / "reports" / f"{task_id or 'unknown'}.md"
+
+
 def task_packs_dir() -> Path:
     """Per-task context packs used by DAG worker terminals.
 
-    The per-task pack is the production DAG authority. DAG-only execution has no
-    global task/implicit selector.
+    FW-024: moved under per_slice_tasks_dir(). The pack is per-slice content;
+    in pr-flow it must live in the worktree so the agent's relative writes
+    actually land there. In push-to-main this is identical to canonical.
     """
-    return tasks_dir() / "task-packs"
+    return per_slice_tasks_dir() / "task-packs"
 
 
 def task_pack_path(task_id: str | None) -> Path:
@@ -1133,6 +1172,172 @@ def run_commands(commands: list[str], cwd: Path | None = None, timeout: int = 90
 
 
 # ---------------------------------------------------------------------------
+# Reconciler — single defense at the canonical state layer (FW-003/004/006/007/017).
+# Cross-checks every runtime-state aggregate that is written by an unvalidated
+# mutator upstream against registry.json + on-disk YAMLs, drops drift.
+# ---------------------------------------------------------------------------
+
+
+def _followup_yaml_status(fu_id: str) -> str | None:
+    if not fu_id:
+        return None
+    yaml_path = tasks_dir() / "follow-ups" / f"{fu_id}.yaml"
+    if not yaml_path.exists():
+        return None
+    try:
+        text = yaml_path.read_text(encoding="utf-8", errors="replace")
+    except Exception:
+        return None
+    for line in text.splitlines():
+        s = line.strip()
+        if s.startswith("status:"):
+            return s.split(":", 1)[1].strip().strip('"').strip("'") or None
+    return None
+
+
+def reconcile_runtime_state(
+    registry: dict[str, Any] | None = None,
+    runtime: dict[str, Any] | None = None,
+    *,
+    apply: bool = False,
+) -> tuple[dict[str, Any], list[dict[str, Any]]]:
+    """Drop runtime-state entries that no longer agree with the registry/disk.
+
+    Returns (reconciled_runtime, repairs). Pure when apply=False; persists
+    under runtime-state lock when apply=True. Never raises — log + continue.
+
+    Rules:
+      pending_journey_verifications -- drop JIDs that (a) are not in
+        registry.journeys, (b) are already verified/waived, (c) have
+        completion_policy != all_task_ids_done, or (d) have at least one
+        task_id whose status != 'done'.
+      next_ready_task_id / next_ready_phase_id -- clear if the task no
+        longer exists or its status is no longer 'ready'.
+      spawns_in_current_slice -- drop entries for task_ids absent from
+        registry. `agent:*` cumulative counters are preserved.
+      open_followups -- reconcile each entry's status against the YAML on
+        disk (disk is the truer signal). Missing YAML -> drop. Status
+        differs -> update. Status other than 'proposed' -> drop (not
+        blocking).
+    """
+    reg = registry if registry is not None else load_registry()
+    rt = dict(runtime) if runtime is not None else load_runtime_state()
+    repairs: list[dict[str, Any]] = []
+
+    statuses = _journey_task_statuses(reg)
+    raw_pending = list(rt.get("pending_journey_verifications") or [])
+    kept_pending: list[str] = []
+    for raw in raw_pending:
+        jid = str(raw or "").strip()
+        if not jid:
+            repairs.append({"field": "pending_journey_verifications", "removed": raw, "reason": "empty"})
+            continue
+        journey = find_journey(reg, jid)
+        if not journey:
+            repairs.append({"field": "pending_journey_verifications", "removed": jid, "reason": "unknown_journey_id"})
+            continue
+        vstatus = str(journey.get("verification_status") or "pending").lower()
+        if vstatus in {"verified", "waived"}:
+            repairs.append({"field": "pending_journey_verifications", "removed": jid, "reason": f"already_{vstatus}"})
+            continue
+        policy = str(journey.get("completion_policy") or "all_task_ids_done").lower()
+        if policy != "all_task_ids_done":
+            repairs.append({"field": "pending_journey_verifications", "removed": jid, "reason": f"unsupported_policy_{policy}"})
+            continue
+        task_ids = [str(t) for t in (journey.get("task_ids") or []) if t]
+        if not task_ids:
+            repairs.append({"field": "pending_journey_verifications", "removed": jid, "reason": "no_task_ids"})
+            continue
+        not_done = [tid for tid in task_ids if statuses.get(tid) != "done"]
+        if not_done:
+            repairs.append({"field": "pending_journey_verifications", "removed": jid, "reason": "incomplete_task_ids", "not_done": not_done})
+            continue
+        if jid not in kept_pending:
+            kept_pending.append(jid)
+    if kept_pending != raw_pending:
+        rt["pending_journey_verifications"] = kept_pending
+
+    nrt = rt.get("next_ready_task_id")
+    if nrt and isinstance(nrt, str):
+        t = find_task(reg, nrt)
+        if not t:
+            repairs.append({"field": "next_ready_task_id", "removed": nrt, "reason": "task_not_in_registry"})
+            rt["next_ready_task_id"] = None
+            rt["next_ready_phase_id"] = None
+        elif str(t.get("status") or "") != "ready":
+            repairs.append({"field": "next_ready_task_id", "removed": nrt, "reason": f"task_status={t.get('status')!r}"})
+            rt["next_ready_task_id"] = None
+            rt["next_ready_phase_id"] = None
+
+    counts = rt.get("spawns_in_current_slice") or {}
+    if isinstance(counts, dict):
+        valid_ids = {str(t.get("id")) for t in (reg.get("tasks") or []) if t.get("id")}
+        cleaned: dict[str, int] = {}
+        for k, v in counts.items():
+            ks = str(k)
+            if ks.startswith("agent:"):
+                cleaned[ks] = v
+                continue
+            if ks in valid_ids:
+                cleaned[ks] = v
+            else:
+                repairs.append({"field": "spawns_in_current_slice", "removed": ks, "reason": "task_not_in_registry"})
+        if cleaned != counts:
+            rt["spawns_in_current_slice"] = cleaned
+
+    open_followups = rt.get("open_followups") or []
+    if isinstance(open_followups, list):
+        cleaned_fu: list[dict[str, Any]] = []
+        for entry in open_followups:
+            if not isinstance(entry, dict):
+                repairs.append({"field": "open_followups", "removed": entry, "reason": "non_dict_entry"})
+                continue
+            fu_id = str(entry.get("id") or "").strip()
+            if not fu_id:
+                repairs.append({"field": "open_followups", "removed": entry, "reason": "missing_id"})
+                continue
+            disk_status = _followup_yaml_status(fu_id)
+            if disk_status is None:
+                repairs.append({"field": "open_followups", "removed": fu_id, "reason": "yaml_missing"})
+                continue
+            entry_status = str(entry.get("status") or "proposed").strip().lower()
+            if entry_status != disk_status:
+                repairs.append({"field": "open_followups", "changed": fu_id, "from": entry_status, "to": disk_status})
+                entry = dict(entry)
+                entry["status"] = disk_status
+            if disk_status == "proposed":
+                cleaned_fu.append(entry)
+            else:
+                repairs.append({"field": "open_followups", "removed": fu_id, "reason": f"yaml_status={disk_status}"})
+        if cleaned_fu != open_followups:
+            rt["open_followups"] = cleaned_fu
+
+    if repairs:
+        try:
+            log_hook_error("common.reconcile_runtime_state",
+                           RuntimeError(f"reconciled {len(repairs)} drift entr{'y' if len(repairs)==1 else 'ies'}: {repairs[:5]}"))
+        except Exception:
+            pass
+
+    if apply and repairs:
+        with file_lock(runtime_state_path()):
+            current = load_runtime_state()
+            current["pending_journey_verifications"] = rt.get("pending_journey_verifications", [])
+            current["next_ready_task_id"] = rt.get("next_ready_task_id")
+            current["next_ready_phase_id"] = rt.get("next_ready_phase_id")
+            current["spawns_in_current_slice"] = rt.get("spawns_in_current_slice", {})
+            current["open_followups"] = rt.get("open_followups", [])
+            # Don't clobber a more specific last_event written by a concurrent mutator.
+            specific = {"journey_pending_verify", "journey_verified", "journey_waived",
+                        "task_claimed", "subagent_stop", "bootstrap_refresh",
+                        "bootstrap_refresh_preserve_runtime", "bootstrap_refresh_reconciled"}
+            if current.get("last_event") not in specific:
+                current["last_event"] = "runtime_reconciled"
+            save_runtime_state(current)
+    return rt, repairs
+
+
+# ---------------------------------------------------------------------------
 # Journey state helpers (added by journey-verification feature)
 #
 # Estos helpers son aditivos: no tocan ninguna lógica preexistente. Si la
@@ -1238,11 +1443,45 @@ def get_pending_journey_verifications() -> list[str]:
     return [str(j) for j in pending if j]
 
 
-def add_pending_journey_verification(journey_id: str) -> None:
+def add_pending_journey_verification(journey_id: str, *, registry: dict[str, Any] | None = None, force: bool = False) -> dict[str, Any]:
     """Añade un JOURNEY_ID a pending_journey_verifications bajo file lock.
-    Idempotente: si ya está, no hace nada."""
+
+    FW-001 — defense at the root: a JID is only enqueued if it exists in
+    registry.journeys, is not already verified/waived, completion_policy is
+    `all_task_ids_done`, and EVERY task_id in the journey is `done`. Anything
+    else is rejected and logged. This was the J103 root cause: an alucinated
+    closer emitting JOURNEY_PENDING_VERIFY for a journey whose tasks were
+    not all done used to be accepted silently.
+
+    Returns {"ok": bool, "reason": str, "journey_id": str}.
+    Idempotent: re-enqueuing an already pending JID returns ok=True.
+    `force=True` is only for maintenance scripts; never from agents/hooks.
+    """
     if not journey_id:
-        return
+        return {"ok": False, "reason": "empty_journey_id", "journey_id": journey_id}
+    if not force:
+        reg = registry if registry is not None else load_registry()
+        journey = find_journey(reg, journey_id)
+        if not journey:
+            log_hook_error("common.add_pending_journey_verification",
+                           RuntimeError(f"unknown JID rejected: {journey_id}"))
+            return {"ok": False, "reason": "unknown_journey_id", "journey_id": journey_id}
+        vstatus = str(journey.get("verification_status") or "pending").lower()
+        if vstatus in {"verified", "waived"}:
+            return {"ok": False, "reason": f"already_{vstatus}", "journey_id": journey_id}
+        policy = str(journey.get("completion_policy") or "all_task_ids_done").lower()
+        if policy != "all_task_ids_done":
+            return {"ok": False, "reason": f"unsupported_policy_{policy}", "journey_id": journey_id}
+        task_ids = [str(t) for t in (journey.get("task_ids") or []) if t]
+        if not task_ids:
+            return {"ok": False, "reason": "journey_has_no_task_ids", "journey_id": journey_id}
+        statuses = _journey_task_statuses(reg)
+        not_done = [tid for tid in task_ids if statuses.get(tid) != "done"]
+        if not_done:
+            log_hook_error("common.add_pending_journey_verification",
+                           RuntimeError(f"JID {journey_id} rejected: tasks not done = {not_done}"))
+            return {"ok": False, "reason": "incomplete_task_ids",
+                    "journey_id": journey_id, "not_done": not_done}
     with file_lock(runtime_state_path()):
         state = load_runtime_state()
         pending = list(state.get("pending_journey_verifications", []) or [])
@@ -1251,6 +1490,7 @@ def add_pending_journey_verification(journey_id: str) -> None:
         state["pending_journey_verifications"] = pending
         state["last_event"] = "journey_pending_verify"
         save_runtime_state(state)
+    return {"ok": True, "reason": "queued", "journey_id": journey_id}
 
 
 def remove_pending_journey_verification(journey_id: str, mark_verified: bool = True) -> None:
@@ -1281,14 +1521,25 @@ def remove_pending_journey_verification(journey_id: str, mark_verified: bool = T
             save_runtime_state(state)
 
 
-def waive_journey_verification(journey_id: str, reason: str) -> None:
+def waive_journey_verification(journey_id: str, reason: str, *, force: bool = False) -> dict[str, Any]:
     """Marca un journey como waived (verificación saltada con motivo explícito).
-    Quita de pending y marca en registry.
 
-    Lock order: registry first, runtime-state second (project-wide convention).
+    FW-013 — human signature required. The waiver only proceeds when the
+    operator has exported CLAUDE_ALLOW_JOURNEY_WAIVER=<JID> in their
+    terminal. An agent emitting JOURNEY_VERIFY_WAIVED on its own cannot
+    skip the gate. Use force=True only for maintenance scripts.
+
+    Returns {"ok": bool, "reason": str, "journey_id": str}.
+    Lock order: registry first, runtime-state second.
     """
     if not journey_id:
-        return
+        return {"ok": False, "reason": "empty_journey_id", "journey_id": journey_id}
+    if not force:
+        gate = (os.environ.get("CLAUDE_ALLOW_JOURNEY_WAIVER") or "").strip()
+        if gate != journey_id:
+            log_hook_error("common.waive_journey_verification",
+                           RuntimeError(f"waiver refused for {journey_id}: env=CLAUDE_ALLOW_JOURNEY_WAIVER={gate!r}"))
+            return {"ok": False, "reason": "human_signature_missing", "journey_id": journey_id}
     with file_lock(registry_path()):
         registry = load_registry()
         for j in (registry.get("journeys", []) or []):
@@ -1303,3 +1554,4 @@ def waive_journey_verification(journey_id: str, reason: str) -> None:
             state["pending_journey_verifications"] = pending
             state["last_event"] = "journey_waived"
             save_runtime_state(state)
+    return {"ok": True, "reason": "waived", "journey_id": journey_id}

@@ -671,6 +671,14 @@ class BootstrapRuntimePreservationTests(unittest.TestCase):
                 registry["tasks"][1]["status"] = "claimed"
                 registry["tasks"][1]["claimed_by"] = "worker-2"
                 common_mod.save_registry(registry)
+                # FW-006: reconciler keeps open_followups entries only when
+                # the YAML exists on disk (disk is the source of truth).
+                fu_dir = root / "orchestrator-state/tasks/follow-ups"
+                fu_dir.mkdir(parents=True, exist_ok=True)
+                (fu_dir / "FU-test.yaml").write_text(
+                    "id: FU-test\nstatus: proposed\norigin_task_id: P00-S02-T001\n",
+                    encoding="utf-8",
+                )
                 common_mod.save_runtime_state({
                     "last_worker": "tester",
                     "last_event": "subagent_stop",
@@ -694,7 +702,9 @@ class BootstrapRuntimePreservationTests(unittest.TestCase):
                 self.assertNotIn("last_claimed_task_id", runtime)
                 self.assertEqual(runtime.get("last_worker"), "tester")
                 self.assertEqual(runtime["last_worker"], "tester")
-                self.assertEqual(runtime["pending_journey_verifications"], ["J1"])
+                # FW-003: bootstrap reconciliation drops orphan JIDs (J1 was set
+                # in pending but registry.journeys does not declare it -> dropped).
+                self.assertEqual(runtime["pending_journey_verifications"], [])
                 self.assertEqual(runtime["open_followups"][0]["id"], "FU-test")
         finally:
             td.cleanup()

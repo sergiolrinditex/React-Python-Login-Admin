@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flujo per-slice · OrquestadorDAG AnyStack</title>
+<link rel="stylesheet" href="assets/styles.css">
+<style>
+  .pipeline-stage { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 12px; padding: 22px; margin: 16px 0; }
+  .pipeline-stage.parallel { border-left: 4px solid var(--purple); }
+  .pipeline-stage.gate { border-left: 4px solid var(--warn); }
+  .pipeline-stage.lifecycle { border-left: 4px solid var(--accent-2); }
+  .stage-num { display: inline-block; width: 28px; height: 28px; background: var(--accent); color: #0d1117; border-radius: 50%; text-align: center; line-height: 28px; font-weight: 700; margin-right: 10px; font-family: var(--mono); }
+  .pipeline-stage h3 { margin: 0 0 4px; display: flex; align-items: center; }
+  .stage-meta { font-family: var(--mono); font-size: 12px; color: var(--text-faint); margin-bottom: 12px; margin-left: 38px; }
+  .step-detail { margin: 12px 0 12px 38px; }
+  .step-detail h4 { font-size: 14px; color: var(--accent); margin: 14px 0 4px; }
+  .step-detail ul { margin: 4px 0 8px 0; padding-left: 20px; font-size: 14px; color: var(--text-dim); }
+  .step-detail li { margin-bottom: 3px; }
+  .branch-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 14px 0 0 0; }
+  .branch { background: var(--bg-elev); border: 1px solid var(--border); border-radius: 8px; padding: 14px; }
+  .branch h5 { margin: 0 0 6px; font-size: 13px; font-family: var(--mono); color: var(--accent-2); }
+  .branch.bad h5 { color: var(--warn); }
+  @media (max-width: 700px) { .branch-row { grid-template-columns: 1fr; } }
+
+  .terminal-block { background: #0d1117; border: 1px solid var(--border); border-radius: 8px; padding: 14px; font-family: var(--mono); font-size: 12px; line-height: 1.6; }
+  .terminal-block .prompt { color: var(--accent-2); }
+  .terminal-block .cmd { color: var(--text); }
+  .terminal-block .out { color: var(--text-dim); }
+  .terminal-block .comment { color: var(--text-faint); }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="nav-brand"><span class="dot"></span> OrquestadorDAG · AnyStack</div>
+    <ul>
+      <li><a href="index.html">Visión general</a></li>
+      <li><a href="agentes.html">Agentes</a></li>
+      <li><a href="flujo.html" class="active">Flujo per-slice</a></li>
+      <li><a href="maquina-estados.html">Máquina de estados</a></li>
+      <li><a href="dag.html">DAG &amp; Write set</a></li>
+      <li><a href="hooks-locks.html">Hooks &amp; Locks</a></li>
+      <li><a href="scripts-git.html">Scripts &amp; Git</a></li>
+      <li><a href="buenas-practicas.html">Buenas prácticas Claude</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="page-header">
+  <div class="crumbs">Página 3 de 7 · Tripas</div>
+  <h1>El flujo per-slice, paso a paso</h1>
+  <p class="lede">Una "slice" es una fila del Coverage Registry: una tarea atómica con dependencias, write set y verificación. Toda slice atraviesa la misma cadena de subagentes, gates y commits. Aquí está el viaje completo, desde abrir terminal hasta cerrar la tarea.</p>
+</header>
+
+<div class="container">
+
+<section>
+  <h2><span class="num">01</span>Qué pasa antes de invocar al primer agente</h2>
+  <p class="section-lead">El pipeline no arranca sin contexto. Antes de <code>/next-slice</code> hay tres pre-requisitos.</p>
+
+  <div class="grid grid-3">
+    <div class="card">
+      <h3>① El proyecto bootstrapeado</h3>
+      <p>Los 5 docs source-of-truth existen y son coherentes. <code>bootstrap_source_of_truth.py --refresh</code> ya generó <code>registry.json</code> y <code>task-dag.json</code>.</p>
+    </div>
+    <div class="card">
+      <h3>② Servidores arriba</h3>
+      <p>Backend (<code>curl /health → 200</code>), frontend dev server o emulador según TECHNICAL_GUIDE, y base de datos con migraciones aplicadas. Si algo está caído, no se trabaja.</p>
+    </div>
+    <div class="card">
+      <h3>③ Terminal scoped + worktree del TASK_ID</h3>
+      <p>Has elegido un <code>TASK_ID</code> con <code>/next-wave</code> y, antes de arrancar Claude, te has movido al checkout correcto (en <code>pr-flow</code> el worktree creado por <code>ensure-task-worktree.sh</code>; en <code>push-to-main</code> la rama <code>main</code>):</p>
+<pre><code>cd "$(./scripts/ensure-task-worktree.sh P02-S03-T001)"
+export CLAUDE_ACTIVE_TASK_ID=P02-S03-T001
+export CLAUDE_TASK_PACK=orchestrator-state/tasks/
+  task-packs/P02-S03-T001.md</code></pre>
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>Cambio reciente · worktree session-level:</strong> antes el aislamiento Git lo declaraba cada subagente con <code>isolation: worktree</code>. Ahora es el terminal worker entero el que entra en el worktree del TASK_ID, vía <code>./scripts/ensure-task-worktree.sh</code>. Todos los subagentes ven el mismo checkout — validator/tester pueden inspeccionar lo que escribió developer, closer commitea desde ahí. Más detalle en la <a href="agentes.html#memory">página de agentes</a>.
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">02</span>El comando que dispara todo: <code>/next-slice</code></h2>
+  <p class="section-lead">Es un slash command definido en <code>.claude/commands/next-slice.md</code>. Recibe el <code>TASK_ID</code> y orquesta los pasos 1 a 4 del pipeline. Termina en "tester pass" — no llama al closer.</p>
+
+  <div class="terminal-block">
+<span class="prompt">$</span> <span class="cmd">claude --agent main-orchestrator --permission-mode bypassPermissions \</span>
+<span class="cmd">       "/next-slice P02-S03-T001"</span>
+<span class="out">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+<span class="comment"># Sesión arrancada como main-orchestrator</span>
+<span class="comment"># SessionStart hook inyecta: PROGRESS.md head, journeys pendientes, blockers</span>
+<span class="comment"># El comando lee task-pack y orquesta los agentes</span>
+  </div>
+
+  <p style="color:var(--text-dim); font-size:14px">El flag <code>--permission-mode bypassPermissions</code> evita prompts de aprobación. Es seguro aquí porque los hooks del proyecto enforcen scope, presupuesto y trailers; el bypass no anula los hooks.</p>
+</section>
+
+<section>
+  <h2><span class="num">03</span>El pipeline completo, paso a paso</h2>
+  <p class="section-lead">Cada bloque es una etapa. Las etapas con borde violeta corren <strong>dos agentes en paralelo</strong> (un solo mensaje con dos llamadas <code>Agent</code>). El borde naranja marca un <strong>gate humano</strong>. El borde verde marca una <strong>etapa de cierre con lifecycle</strong>.</p>
+
+  <div class="pipeline-stage">
+    <h3><span class="stage-num">1</span>planner</h3>
+    <div class="stage-meta">opus · maxTurns 80 · blocking · sin worktree</div>
+    <div class="step-detail">
+      <p>Es el primer agente y es <strong>blocking</strong>: si emite <code>CONTEXT_READY: no</code>, todo el pipeline se detiene aquí.</p>
+
+      <h4>Qué hace</h4>
+      <ul>
+        <li>Lee <code>registry.json</code> y verifica que el TASK_ID está <code>ready</code> y sus deps están <code>done</code>.</li>
+        <li>Comprueba que no hay journeys pendientes ni FU bloqueantes que afecten a la slice.</li>
+        <li>Extrae de los 5 source-of-truth docs sólo las secciones relevantes (acceptance, verify, write set, allowed_paths, endpoints, tablas, journey refs).</li>
+        <li>Las consolida en <code>orchestrator-state/tasks/task-packs/&lt;TASK_ID&gt;.md</code>.</li>
+        <li>Decide si necesita docs oficiales (<code>NEEDS_OFFICIAL_DOCS: yes</code>) según el stack y la slice.</li>
+      </ul>
+
+      <h4>Salida</h4>
+<pre><code>OUTCOME: ready
+CONTEXT_READY: yes
+NEEDS_OFFICIAL_DOCS: yes
+IMPACT_READY: yes
+JOURNEY_SCOPE: J104
+CLOSES_JOURNEY: none</code></pre>
+    </div>
+  </div>
+
+  <div class="pipeline-stage parallel">
+    <h3><span class="stage-num">2</span>developer ‖ official-docs-researcher</h3>
+    <div class="stage-meta">paralelo · una sola llamada Agent con dos invocaciones</div>
+    <div class="step-detail">
+      <p>El main-orchestrator envía <strong>un solo mensaje</strong> con dos <code>Agent</code> tool calls. Claude Code los ejecuta concurrentemente.</p>
+
+      <h4>developer (sonnet · maxTurns 150 · worktree)</h4>
+      <p>Trabaja en un <code>git worktree</code> aislado. Implementa en orden estricto: <strong>DB → backend → frontend</strong>. Cada función con logging BEFORE/AFTER. Actualiza <code>PROGRESS.md</code> e inicializa el handoff con sus secciones.</p>
+
+      <h4>official-docs-researcher (sonnet · maxTurns 50 · background)</h4>
+      <p>Sólo si <code>NEEDS_OFFICIAL_DOCS: yes</code>. Recibe 1-5 preguntas concretas, usa cache + MCPs antes de WebFetch oficial. Si encuentra discrepancia con los docs internos, escribe nota en <code>memory/official-doc-notes/&lt;tema&gt;.md</code> con campo <code>RESOLVED:</code> pendiente.</p>
+
+      <div class="callout">
+        El siguiente <code>Write/Edit</code> del developer dispara <code>hook_docs_discrepancy_check.py</code>, que <strong>avisa</strong> de la discrepancia sin resolver. El developer debe reconciliar (actualizar task pack y poner <code>RESOLVED: &lt;fecha&gt;</code>) antes de continuar.
+      </div>
+
+      <h4>Trailer del developer</h4>
+<pre><code>TASK_ID: P02-S03-T001
+OUTCOME: success
+NEXT_STATUS: validator_tester_pending
+HANDOFF: orchestrator-state/tasks/handoffs/P02-S03-T001.md
+EVIDENCE: orchestrator-state/tasks/evidence/P02-S03-T001/</code></pre>
+    </div>
+  </div>
+
+  <div class="pipeline-stage parallel">
+    <h3><span class="stage-num">3</span>validator ‖ tester</h3>
+    <div class="stage-meta">paralelo · gana tester en lifecycle, validator info-only</div>
+    <div class="step-detail">
+      <p>Misma mecánica que el paso 2: un mensaje, dos <code>Agent</code> calls. Pero aquí el conflicto al cerrar es real.</p>
+
+      <h4>validator (opus · maxTurns 60 · info-only)</h4>
+      <p>Lee el diff y el handoff. Comprueba arquitectura, file size, logging, security, journey matrix, wiring. No corre tests. No toca código. Apendea sección <code>## validator</code> al handoff con su <code>OUTCOME</code>.</p>
+
+      <h4>tester (sonnet · maxTurns 80 · lifecycle)</h4>
+      <p>Corre tests reales contra backend+DB+frontend levantados. Smoke <code>curl</code>. Verifica logs con ambos modos de verbosidad. Guarda outputs en <code>evidence/&lt;TASK_ID&gt;/</code>. Apendea sección <code>## tester</code> al handoff.</p>
+
+      <h4>Quién manda en el status</h4>
+      <p>Cuando ambos terminan, el hook <code>SubagentStop</code> adquiere <code>file_lock(registry.json)</code> y, según el orden de llegada:</p>
+      <ul>
+        <li>Si llega <strong>tester</strong> primero → escribe <code>task.status = ready_for_close</code> o <code>needs_debug</code>.</li>
+        <li>Si llega <strong>validator</strong> primero → escribe <code>task.validator_outcome</code> y <code>validator_next_status</code> como metadatos (info-only).</li>
+        <li>El segundo en llegar respeta la regla de su rol y el resultado final es deterministico: <strong>tester gana lifecycle, validator gana metadata</strong>.</li>
+      </ul>
+
+      <h4>Qué decide el siguiente paso</h4>
+      <div class="branch-row">
+        <div class="branch">
+          <h5>Camino feliz</h5>
+          <p style="font-size:13px; margin:0; color:var(--text-dim)">tester <code>pass</code> + validator <code>approved</code> → pipeline pausa. Tester pass es el punto de salida de <code>/next-slice</code>.</p>
+        </div>
+        <div class="branch bad">
+          <h5>Camino con defecto</h5>
+          <p style="font-size:13px; margin:0; color:var(--text-dim)">tester <code>fail</code> o validator <code>changes_requested</code> → invoca debugger (paso 4) y vuelve a este paso 3.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pipeline-stage">
+    <h3><span class="stage-num">4</span>debugger (condicional)</h3>
+    <div class="stage-meta">opus · maxTurns 120 · worktree · sólo si hay defecto in-scope</div>
+    <div class="step-detail">
+      <p>Aplica el fix mínimo dentro del mismo <code>write_set</code> de la slice. Si el defecto exige cambiar scope (nueva ruta, nueva tabla, nueva pantalla), <strong>no fixea</strong> — registra follow-up formal.</p>
+
+      <h4>Las 3 reglas duras</h4>
+      <ul>
+        <li>Máximo 3 ciclos de debugger por TASK_ID. El hook lo cuenta en el handoff.</li>
+        <li>4º intento → <code>OUTCOME: blocked · reason: max_debug_cycles_reached</code>. Decisión humana.</li>
+        <li>Si el fix sale del <code>write_set</code> declarado → no fix, se crea FU con <code>register-followup-task.sh propose</code>.</li>
+      </ul>
+
+      <p>Tras el fix, el pipeline <strong>vuelve al paso 3</strong>: <code>validator ‖ tester</code> de nuevo. Si pasan, sale a tester pass.</p>
+    </div>
+  </div>
+
+  <div class="callout green">
+    <strong>Aquí termina <code>/next-slice</code>.</strong> El pipeline pausa con <code>tester pass</code>. Lo siguiente es la decisión humana de verificar en navegador. Conviene hacer <kbd>/clear</kbd> aquí para liberar ~150k tokens del pipeline previo antes del gate humano.
+  </div>
+
+  <div class="pipeline-stage gate">
+    <h3><span class="stage-num">5</span>/verify-slice — el gate humano</h3>
+    <div class="stage-meta">comando slash · resiliente a /clear · hard reset + datos reales</div>
+    <div class="step-detail">
+      <p>El comando <code>/verify-slice TASK_ID</code> hace algo radical: <strong>reconstruye todo el contexto desde disco</strong>. Lee <code>PROGRESS.md</code>, <code>registry.json</code>, <code>runtime-state.json</code>, el handoff, el task pack y el TECHNICAL_GUIDE. No depende del contexto previo de Claude.</p>
+
+      <h4>Qué pide</h4>
+      <ul>
+        <li>Hard reset del entorno (<code>dev-restart.sh</code> + DB clean).</li>
+        <li>Carga del <em>Verification Data Contract</em>: datos reales o proporcionados, nunca mocks.</li>
+        <li>Reproducción humana en navegador (o emulador) del flujo front→back→DB.</li>
+        <li>Vigilancia simultánea de 3 logs: backend, frontend, DB.</li>
+        <li>Validación de la tabla del task pack: ¿cada celda acceptance se cumple?</li>
+      </ul>
+
+      <h4>Reviewer especial: screen-journey-reviewer</h4>
+      <p>Si la slice toca pantalla, UX, journey o tiene <code>VISUAL_CONTRACT_CHECK</code>, <code>/verify-slice</code> invoca primero <code>screen-journey-reviewer</code> (info-only). Apendea <code>## Screen/Journey review</code> al handoff con los estados UI obligatorios y notas a11y. Si el review pide cambios, vuelve a debugger; no es FU.</p>
+
+      <h4>§5.bis · Journey-closing inline</h4>
+      <p>Si la slice cierra al menos un journey de la matriz, el comando te pregunta:</p>
+      <div class="branch-row">
+        <div class="branch">
+          <h5>"Ahora"</h5>
+          <p style="font-size:13px; margin:0; color:var(--text-dim)">Aprovecha el entorno cargado y verifica el journey end-to-end inline. Apendea <code>## verify-journey</code> al mismo handoff. El closer leerá <code>JOURNEY_VERIFY_OUTCOME: verified</code> y emitirá <code>JOURNEY_VERIFIED_INLINE</code>. Un solo gate.</p>
+        </div>
+        <div class="branch">
+          <h5>"Aparte"</h5>
+          <p style="font-size:13px; margin:0; color:var(--text-dim)">Deja el journey pendiente. El closer emite <code>JOURNEY_PENDING_VERIFY: &lt;JID&gt;</code> y el planner difiere futuras slices que referencien ese journey hasta que ejecutes <code>/verify-journey &lt;JID&gt;</code>.</p>
+        </div>
+      </div>
+
+      <h4>Qué emite verify-slice</h4>
+<pre><code>## verify-slice
+VERIFY_OUTCOME: verified         <span style="color:var(--text-faint)"># o issues_found</span>
+DATA_USED: cuenta_sandbox_42, dataset_v2
+HUMAN: yes
+SCREENSHOTS: evidence/P02-S03-T001/verify-*</code></pre>
+
+      <div class="branch-row">
+        <div class="branch">
+          <h5>verified</h5>
+          <p style="font-size:13px; margin:0; color:var(--text-dim)">spawnea closer (paso 6).</p>
+        </div>
+        <div class="branch bad">
+          <h5>issues_found</h5>
+          <p style="font-size:13px; margin:0; color:var(--text-dim)">spawnea debugger → vuelve al paso 3.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pipeline-stage lifecycle">
+    <h3><span class="stage-num">6</span>closer — commit atómico</h3>
+    <div class="stage-meta">sonnet · maxTurns 50 · checkout de la sesión · lifecycle owner</div>
+    <div class="step-detail">
+      <p>Lo invoca <code>/verify-slice</code> sólo si <code>VERIFY_OUTCOME: verified</code>. Hace 7 cosas en orden:</p>
+
+      <ol>
+        <li><strong>Pre-check del handoff</strong> con <code>check-handoff-contract.sh</code>. Exige las secciones machine-readable: validator approved, tester pass, verify-slice verified. Para slices UI/journey, también Screen/Journey review approved.</li>
+        <li><strong>Pre-check Git</strong>: ejecuta <code>./scripts/ensure-task-worktree.sh --check-current &lt;TASK_ID&gt;</code>. En <code>pr-flow</code> exige estar en el worktree/rama <code>dev/&lt;TASK_ID&gt;</code>; en <code>push-to-main</code> exige rama <code>main</code>. Si está en otro checkout, bloquea: no cambia de rama por su cuenta.</li>
+        <li><strong>Escribe el report</strong> en <code>orchestrator-state/tasks/reports/&lt;TASK_ID&gt;.md</code> consolidando handoff + evidence.</li>
+        <li><strong>Sincroniza el baseline</strong> con <code>./scripts/sync-product-baseline.sh sync --version &lt;vN&gt; --task &lt;TASK_ID&gt;</code>. Esto actualiza <code>docs/product-baseline/</code> como snapshot acumulativo para futuros increments.</li>
+        <li><strong>Commit atómico</strong> en el <strong>checkout actual</strong> (<code>main</code> en push-to-main, <code>dev/&lt;TASK_ID&gt;</code> en pr-flow). Sin <code>Co-authored-by: Claude</code>, sin <code>git stash</code>. Si hay trazas tardías (ledger, runtime-state) se integran con <code>git commit --amend --no-edit</code> antes del push.</li>
+        <li><strong>Push + auto-merge</strong> con <code>./scripts/git-workflow.sh</code>, que delega al plugin declarado en STACK_PROFILE. En <code>pr-flow</code> (default desde la última versión), <code>pr-flow.sh</code> hace push + <code>gh pr create --fill</code> + <code>gh pr merge --squash --delete-branch --admin</code> (fallback a <code>--auto</code> si no eres admin) — el PR se mergea solo a main sin que apruebes nada. En <code>push-to-main</code>, push directo a main como antes.</li>
+        <li><strong>Housekeeping</strong>: <code>slice-clean.sh</code> + <code>cleanup-worktrees.sh --apply --task &lt;TASK_ID&gt;</code>.</li>
+      </ol>
+
+      <h4>Trailer del closer (todas las pruebas obligatorias)</h4>
+<pre><code>TASK_ID: P02-S03-T001
+OUTCOME: committed
+NEXT_STATUS: done
+REPORT: orchestrator-state/tasks/reports/P02-S03-T001.md
+REPORT_READY: yes
+BASELINE_SYNC_READY: yes
+GIT_READY: yes
+PUSH_READY: yes
+WORKTREES_CLEANED: yes
+JOURNEY_VERIFIED_INLINE: J104    <span style="color:var(--text-faint)"># si aplica</span></code></pre>
+
+      <div class="callout warn">
+        <strong>El guardrail final:</strong> aunque emita <code>committed/done</code>, si falta cualquiera de las 5 pruebas <code>*_READY=yes</code>, el hook <code>SubagentStop</code> sobrescribe el resultado a <code>blocked</code>. No hay <code>done</code> sin las 5 marcas.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">04</span>El handoff: el fichero que cuenta la historia</h2>
+  <p class="section-lead">Todo lo que ocurre en una slice queda registrado en un único fichero: <code>orchestrator-state/tasks/handoffs/&lt;TASK_ID&gt;.md</code>. Crece a lo largo del pipeline. Nadie sobrescribe — sólo apendea su sección.</p>
+
+  <div class="ascii-flow"><span class="hl">orchestrator-state/tasks/handoffs/P02-S03-T001.md</span>
+
+# Handoff P02-S03-T001
+
+## developer                <span class="dim">← lo escribe developer al terminar</span>
+OUTCOME: success
+NEXT_STATUS: validator_tester_pending
+Files: src/features/x/...
+Migrations: 0042_add_x.sql
+Logs verified: yes (both modes)
+
+## validator                <span class="dim">← lo escribe validator (info-only)</span>
+OUTCOME: approved
+Findings: none
+Architecture: clean
+File size: ok (largest 187 lines)
+
+## tester                   <span class="dim">← lo escribe tester (lifecycle owner)</span>
+OUTCOME: pass
+NEXT_STATUS: ready_for_close
+Backend tests: 14 passed
+Frontend tests: 9 passed
+Curl: 200 OK
+Evidence: orchestrator-state/tasks/evidence/P02-S03-T001/
+
+## verify-slice             <span class="dim">← lo apendea /verify-slice tras gate humano</span>
+VERIFY_OUTCOME: verified
+DATA_USED: cuenta_sandbox_42
+HUMAN: yes
+Screenshots: 6 files
+
+## Screen/Journey review    <span class="dim">← sólo si la slice es UI/journey</span>
+OUTCOME: approved
+UI states: loading/empty/error_network/success all present
+A11y: keyboard nav ok, alt text ok
+
+## verify-journey           <span class="dim">← sólo si rama "ahora" en §5.bis</span>
+JOURNEY_ID: J104
+JOURNEY_VERIFY_OUTCOME: verified
+SLICES_COVERED: P02-S03-T001, P02-S03-T002, P02-S03-T003
+MARGINAL_STATES_TESTED: back, reload, deep_link, error_network</div>
+
+  <p>El closer <strong>lee este fichero entero</strong> para decidir si puede commitear. <code>check-handoff-contract.sh</code> valida que están las secciones requeridas con los enums esperados antes de invocar al closer.</p>
+</section>
+
+<section>
+  <h2><span class="num">05</span>Resiliente a <kbd>/clear</kbd>: el truco operacional</h2>
+  <p class="section-lead">Una slice consume ~150-200k tokens entre planner, developer, validator, tester y posibles ciclos de debugger. Si entras al gate humano con todo eso en contexto, gastas batería y latencia para nada: <code>/verify-slice</code> no necesita ese contexto.</p>
+
+  <h3>La secuencia recomendada</h3>
+
+  <div class="terminal-block">
+<span class="comment"># Terminal worker, ya con CLAUDE_ACTIVE_TASK_ID exportado</span>
+<span class="prompt">claude&gt;</span> <span class="cmd">/next-slice P02-S03-T001</span>
+<span class="out">  ... planner → developer → validator‖tester → tester pass ✓</span>
+
+<span class="comment"># Liberas ~150k tokens</span>
+<span class="prompt">claude&gt;</span> <span class="cmd">/clear</span>
+
+<span class="comment"># /verify-slice reconstruye TODO desde disco</span>
+<span class="prompt">claude&gt;</span> <span class="cmd">/verify-slice P02-S03-T001</span>
+<span class="out">  ... lee PROGRESS.md + registry + handoff + task pack + TECHNICAL_GUIDE</span>
+<span class="out">  ... pide hard reset + datos reales + reproducción</span>
+<span class="out">  → si verified: spawnea closer</span>
+<span class="out">  → si issues:    spawnea debugger</span>
+  </div>
+
+  <p style="color:var(--text-dim); font-size:14px">El comando es <em>idempotente</em> en cuanto a reconstrucción de contexto: aunque corras Claude desde otra máquina con otra sesión, mientras tengas los mismos ficheros en disco y el mismo <code>TASK_ID</code> exportado, el verify-slice ve exactamente lo mismo.</p>
+</section>
+
+<section>
+  <h2><span class="num">06</span>Multi-terminal: cómo se coordinan varias slices a la vez</h2>
+  <p class="section-lead">Si la wave actual del DAG tiene 3 tasks paralelizables sin conflicto, abres 3 terminales. Cada uno con su propio <code>CLAUDE_ACTIVE_TASK_ID</code>. No hay notificaciones push entre ellos — la sincronización es <strong>por disco</strong>.</p>
+
+  <div class="ascii-flow"><span class="hl">Terminal A</span>                  <span class="hl">Terminal B</span>                  <span class="hl">Terminal C</span>
+TASK_ID=P02-S03-T001        TASK_ID=P02-S03-T002        TASK_ID=P02-S03-T003
+/next-slice P02-S03-T001    /next-slice P02-S03-T002    /next-slice P02-S03-T003
+   │                             │                             │
+   ▼                             ▼                             ▼
+   tester pass                   tester pass                   tester pass
+   /verify-slice                 /verify-slice                 /verify-slice
+   closer commit                 closer commit                 closer commit
+   │                             │                             │
+   └─ hook actualiza             └─ hook actualiza             └─ hook actualiza
+      registry.status=done          registry.status=done          registry.status=done
+      bajo file_lock                bajo file_lock                bajo file_lock
+
+   En cualquier momento, otro terminal puede ejecutar:
+   <span class="hl3">./scripts/next-wave.sh --limit 4</span>
+   para ver qué tasks se han desbloqueado tras los cierres.</div>
+
+  <p>El <code>claim_task.py</code> protege los terminales entre sí: antes de empezar, comprueba bajo lock que (a) las deps están <code>done</code>, (b) no hay journeys pendientes, (c) no hay FU bloqueantes, (d) el <code>Write set</code> de esta task no choca con tasks <code>in_progress</code> ni <code>claimed</code> por otro terminal. Si choca, devuelve error y no corrompe el DAG.</p>
+</section>
+
+<section>
+  <h2><span class="num">07</span>Variantes del flujo</h2>
+  <p class="section-lead">El pipeline básico es uno solo, pero hay 4 caminos alternativos según el caso.</p>
+
+  <details>
+    <summary>/auto-verify-slice — saltarse el gate humano (sólo low+auto)</summary>
+    <p>Para slices con <code>Risk level: low</code> + <code>Verify mode: auto</code> que <strong>no cierran journey</strong>. Ejecuta las <code>verification_commands</code> del task pack automáticamente, genera evidencia JSON y apendea <code>## verify-slice</code>. Útil para migraciones, foundation, code-only sin UI.</p>
+    <p><strong>Rechaza:</strong> UI, journey-closing, auth, endpoints mutantes, pagos, datos personales, severity medium+.</p>
+  </details>
+
+  <details>
+    <summary>/verify-journey — gate de journey en modo "aparte"</summary>
+    <p>Cuando una slice cierra journey y elegiste "aparte" en §5.bis. El closer emite <code>JOURNEY_PENDING_VERIFY: &lt;JID&gt;</code>, el hook lo añade a <code>runtime-state.pending_journey_verifications</code>, y el planner difiere futuras slices que referencien ese journey.</p>
+    <p>Cuando ejecutas <code>/verify-journey &lt;JID&gt;</code>: hard reset + datos consolidados de TODAS las slices del journey + reproducción end-to-end + estados marginales obligatorios (<code>back, reload, empty, error_network, permission_denied, deep_link, next_action</code>). Escribe <code>journey-handoffs/&lt;JID&gt;.md</code> y trailer <code>JOURNEY_VERIFY_OUTCOME</code> que el hook procesa para limpiar el pending.</p>
+  </details>
+
+  <details>
+    <summary>/revise-slice — corrección sobre slice canónica</summary>
+    <p>Cuando una slice ya cerrada necesita ajustes (típicamente tras una verify-journey aparte que descubre un problema). NO crea un TASK_ID nuevo, NO cambia el DAG. Apendea <code>## revision-debugger</code> al mismo handoff, evidence en <code>evidence/&lt;TASK_ID&gt;/revision-*</code>, report en <code>reports/&lt;TASK_ID&gt;-revision-&lt;ts&gt;.md</code>. El closer correctivo commitea sobre el mismo TASK_ID.</p>
+  </details>
+
+  <details>
+    <summary>/phase-gate — cierre real de fase</summary>
+    <p>Antes de abrir la siguiente fase, ejecuta <code>./scripts/phase-gate.sh &lt;PHASE_ID&gt;</code>. Bloquea si: faltan tasks <code>done</code>, hay handoffs/evidence/reports ausentes, hay journeys pendientes/no waived, hay FU <code>high|critical|blocker</code> abiertas. Con <code>--require-git-clean</code> exige árbol limpio.</p>
+  </details>
+</section>
+
+<section>
+  <h2><span class="num">08</span>Fallos típicos y qué hacer</h2>
+  <p class="section-lead">Estas son las situaciones reales que te vas a encontrar y cómo el orquestador las maneja.</p>
+
+  <div class="grid grid-2">
+    <div class="card">
+      <h3>tester falla 3 veces seguidas</h3>
+      <p>El debugger emite <code>OUTCOME: blocked · reason: max_debug_cycles_reached</code>. El pipeline se detiene. Tienes que mirar el handoff y la evidencia para entender por qué; probablemente el scope estaba mal y necesitas <code>/revise-slice</code> o una FU.</p>
+    </div>
+    <div class="card">
+      <h3>verify-slice encuentra issue</h3>
+      <p>Spawnea debugger automáticamente con scope verify. Tras el fix vuelve a <code>validator ‖ tester</code> y a <code>/verify-slice</code>. Si el issue está fuera del write set → no fix, FU formal.</p>
+    </div>
+    <div class="card">
+      <h3>el push falla en cleanly</h3>
+      <p>El closer ejecuta <code>./scripts/git-workflow.sh</code>. Si el plugin destino falla, el closer emite <code>PUSH_READY: no</code> → el hook marca <code>blocked</code>. No hay fallback a <code>git push</code> manual: el cierre se trata como fallo y necesita reparación.</p>
+    </div>
+    <div class="card">
+      <h3>spawn budget agotado (21 spawns)</h3>
+      <p>El hook <code>hook_spawn_budget.py</code> devuelve <code>permissionDecision: deny</code> en el spawn 21. La slice debe cerrarse o bloquearse con lo que tiene. Indica que el pipeline está ineficiente — revisa por qué se gastaron 20.</p>
+    </div>
+    <div class="card">
+      <h3>doc oficial contradice tu source-of-truth</h3>
+      <p>El researcher escribe una nota en <code>memory/official-doc-notes/</code>. El hook <code>docs-discrepancy</code> alerta en el siguiente Write del developer. Reconcilia los docs internos y pon <code>RESOLVED:</code> en la nota antes de seguir.</p>
+    </div>
+    <div class="card">
+      <h3>otro terminal tomó la task</h3>
+      <p><code>claim_task.py</code> bajo lock devuelve error. Significa que esa task ya está reclamada en otro worktree. Elige otra con <code>/next-wave</code>.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="next-cta">
+    <div>
+      <h3>Siguiente página</h3>
+      <p>Ya entiendes el flujo por dentro. La pieza que lo hace seguro en paralelo es el DAG y los write sets.</p>
+    </div>
+    <a class="cta-btn" href="dag.html">Ir a DAG &amp; Write set →</a>
+  </div>
+</section>
+
+</div>
+
+<footer>
+  Documentación de <code>OrquestadorDAG-AnyStack</code> · página 3 de 7 · <a href="index.html">volver al índice</a>
+</footer>
+
+</body>
+</html>

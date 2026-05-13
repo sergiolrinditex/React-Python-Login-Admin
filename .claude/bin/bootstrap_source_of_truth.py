@@ -2054,6 +2054,23 @@ def _runtime_after_refresh(previous_runtime: dict[str, Any], tasks: list[dict[st
         state["open_followups"] = []
     state["generated_at"] = now_iso()
     state["last_event"] = "bootstrap_refresh_preserve_runtime"
+    # FW-003 wiring: preserved aggregates get re-validated against the fresh
+    # registry. Stale JIDs (J103 capa-4), gone follow-ups, ready hints to done
+    # tasks — all dropped.
+    try:
+        from common import reconcile_runtime_state as _reconcile, load_registry as _load_registry
+        proj_reg = _load_registry()
+        if proj_reg:
+            cleaned, repairs = _reconcile(proj_reg, state, apply=False)
+            if repairs:
+                state["pending_journey_verifications"] = cleaned.get("pending_journey_verifications", [])
+                state["next_ready_task_id"] = cleaned.get("next_ready_task_id")
+                state["next_ready_phase_id"] = cleaned.get("next_ready_phase_id")
+                state["spawns_in_current_slice"] = cleaned.get("spawns_in_current_slice", {})
+                state["open_followups"] = cleaned.get("open_followups", [])
+                state["last_event"] = "bootstrap_refresh_reconciled"
+    except Exception:
+        pass
     return state
 
 

@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Máquina de estados · OrquestadorDAG AnyStack</title>
+<link rel="stylesheet" href="assets/styles.css">
+<style>
+  .fsm-box { width: 100%; background: var(--bg-soft); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin: 16px 0; overflow-x: auto; }
+  .fsm-box svg { width: 100%; height: auto; }
+  .fsm-legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 12px; color: var(--text-dim); margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border-soft); }
+  .fsm-legend .swatch { display: inline-block; width: 14px; height: 14px; border-radius: 3px; margin-right: 6px; vertical-align: middle; border: 1px solid var(--border); }
+  .fsm-legend .sw-init { background: rgba(126,231,135,0.2); border-color: var(--accent-2); }
+  .fsm-legend .sw-active { background: rgba(88,166,255,0.15); border-color: var(--accent); }
+  .fsm-legend .sw-final { background: rgba(126,231,135,0.3); border-color: var(--accent-2); }
+  .fsm-legend .sw-error { background: rgba(248,81,73,0.2); border-color: var(--danger); }
+  .fsm-legend .sw-wait { background: rgba(240,136,62,0.15); border-color: var(--warn); }
+
+  .transition-table th { font-size: 11px; }
+  .transition-table td { font-family: var(--mono); font-size: 12px; padding: 6px 10px; }
+  .transition-table td.from, .transition-table td.to { font-weight: 600; }
+  .transition-table td.to.done { color: var(--accent-2); }
+  .transition-table td.to.blocked { color: var(--danger); }
+  .transition-table td.to.needs_debug { color: var(--warn); }
+
+  .lifecycle-step { display: grid; grid-template-columns: 60px 1fr; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--border-soft); align-items: start; }
+  .lifecycle-step:last-child { border-bottom: 0; }
+  .lifecycle-step .ls-num { width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--purple)); color: #0d1117; font-weight: 700; font-family: var(--mono); display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .lifecycle-step h4 { margin: 0 0 4px; font-size: 15px; }
+  .lifecycle-step .ls-meta { font-family: var(--mono); font-size: 11px; color: var(--text-faint); margin-bottom: 6px; }
+  .lifecycle-step p { margin: 4px 0; color: var(--text-dim); font-size: 14px; }
+
+  .seq-diagram { background: var(--bg-elev); border: 1px solid var(--border); border-radius: 8px; padding: 16px; font-family: var(--mono); font-size: 12px; color: var(--text-dim); overflow-x: auto; }
+  .seq-diagram .actor { color: var(--accent); font-weight: 600; }
+  .seq-diagram .msg { color: var(--text); }
+  .seq-diagram .ret { color: var(--accent-2); }
+  .seq-diagram .blocked { color: var(--danger); }
+  .seq-diagram .note { color: var(--text-faint); font-style: italic; }
+
+  .state-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin: 14px 0; }
+  .state-cell { background: var(--bg-elev); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; }
+  .state-cell .sname { font-family: var(--mono); font-size: 13px; color: var(--accent); font-weight: 600; margin-bottom: 4px; }
+  .state-cell .sdesc { font-size: 12px; color: var(--text-dim); }
+  .state-cell.initial { border-color: var(--accent-2); }
+  .state-cell.terminal { border-color: var(--accent-2); border-style: double; border-width: 3px; }
+  .state-cell.error { border-color: var(--danger); }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="nav-brand"><span class="dot"></span> OrquestadorDAG · AnyStack</div>
+    <ul>
+      <li><a href="index.html">Visión general</a></li>
+      <li><a href="agentes.html">Agentes</a></li>
+      <li><a href="flujo.html">Flujo per-slice</a></li>
+      <li><a href="maquina-estados.html" class="active">Máquina de estados</a></li>
+      <li><a href="dag.html">DAG &amp; Write set</a></li>
+      <li><a href="hooks-locks.html">Hooks &amp; Locks</a></li>
+      <li><a href="scripts-git.html">Scripts &amp; Git</a></li>
+      <li><a href="buenas-practicas.html">Buenas prácticas Claude</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="page-header">
+  <div class="crumbs">Página 4 de 8 · Detalle de ingeniería</div>
+  <h1>Máquina de estados completa</h1>
+  <p class="lede">Esta página rompe el "happy path" lineal y enseña cada estado posible del orquestador: cómo se mueve una task por su lifecycle, qué transiciones disparan los trailers, cómo entra y sale del estado <code>blocked</code>, y qué pasa cuando varios subagentes terminan a la vez. Pensada para ingenieros que necesitan razonar sobre fallos, no sólo sobre el caso bueno.</p>
+</header>
+
+<div class="container">
+
+<section>
+  <h2><span class="num">01</span>Qué máquinas de estado tiene el orquestador</h2>
+  <p class="section-lead">El sistema combina <strong>seis máquinas de estado</strong> que comparten registro y locks. Conocer las 6 — y cómo se sincronizan — es lo que permite operar el orquestador en producción.</p>
+
+  <div class="grid grid-2">
+    <a class="card-link" href="#task-fsm"><div class="card"><h3>① Lifecycle de una Task</h3><p>El estado canónico de cada <code>TASK_ID</code> en <code>registry.json → tasks[].status</code>. 9 estados, transiciones disparadas por trailers de subagentes bajo lock.</p></div></a>
+    <a class="card-link" href="#tool-fsm"><div class="card"><h3>② Lifecycle de una Tool Call</h3><p>Cada invocación de Write/Edit/Bash/Agent atraviesa PreToolUse → ejecución → PostToolUse. PreToolUse puede denegar; los demás son auditoría.</p></div></a>
+    <a class="card-link" href="#subagent-fsm"><div class="card"><h3>③ Lifecycle de un Subagente</h3><p>Desde que <code>main-orchestrator</code> invoca <code>Agent</code> hasta que el SubagentStop hook parsea el trailer y muta el registry bajo lock.</p></div></a>
+    <a class="card-link" href="#journey-fsm"><div class="card"><h3>④ Lifecycle de un Journey</h3><p>Recorridos del usuario declarados en la matriz. Estados: <code>open</code>, <code>pending_verify</code>, <code>verified</code>, <code>waived</code>.</p></div></a>
+    <a class="card-link" href="#followup-fsm"><div class="card"><h3>⑤ Lifecycle de un Follow-up</h3><p>Trabajo descubierto fuera de scope. Estados: <code>proposed</code>, <code>promoted</code>, <code>waived</code>.</p></div></a>
+    <a class="card-link" href="#phase-fsm"><div class="card"><h3>⑥ Lifecycle de una Phase</h3><p>Bloque de tasks con gate humano antes de abrir la siguiente. <code>not_started</code> → <code>in_progress</code> → <code>gate_pending</code> → <code>done</code>.</p></div></a>
+  </div>
+</section>
+
+<section id="task-fsm">
+  <h2><span class="num">02</span>Máquina de estados de una Task</h2>
+  <p class="section-lead">El estado de una task vive en <code>registry.json → tasks["P02-S03-T001"].status</code>. <strong>Sólo agentes lifecycle</strong> (developer, tester, debugger, closer, deployer) pueden mutarlo; el hook <code>SubagentStop</code> es el único punto de mutación y lo hace bajo <code>file_lock(registry.json)</code>.</p>
+
+  <div class="fsm-box">
+  <svg viewBox="0 0 980 560" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="arr1" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L9,3 z" fill="#8b949e" />
+      </marker>
+      <marker id="arr-err" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L9,3 z" fill="#f85149" />
+      </marker>
+      <marker id="arr-ok" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L9,3 z" fill="#7ee787" />
+      </marker>
+      <style>
+        .st { fill: #1f2937; stroke: #58a6ff; stroke-width: 1.5; }
+        .st.init { stroke: #7ee787; }
+        .st.final { stroke: #7ee787; stroke-width: 3; }
+        .st.err { stroke: #f85149; }
+        .st.wait { stroke: #f0883e; }
+        .st-text { fill: #e6edf3; font-family: ui-monospace, monospace; font-size: 13px; font-weight: 600; }
+        .st-sub { fill: #8b949e; font-family: ui-monospace, monospace; font-size: 10px; }
+        .edge { stroke: #6e7681; stroke-width: 1.4; fill: none; }
+        .edge.ok { stroke: #7ee787; }
+        .edge.err { stroke: #f85149; }
+        .edge-label { fill: #8b949e; font-family: ui-monospace, monospace; font-size: 10px; }
+        .edge-label.ok { fill: #7ee787; }
+        .edge-label.err { fill: #f85149; }
+      </style>
+    </defs>
+
+    <!-- Initial circle -->
+    <circle cx="40" cy="60" r="6" fill="#7ee787" />
+    <text x="48" y="40" class="st-sub">bootstrap</text>
+
+    <!-- States -->
+    <rect class="st init" x="80" y="40" width="100" height="42" rx="6" />
+    <text class="st-text" x="130" y="58" text-anchor="middle">pending</text>
+    <text class="st-sub" x="130" y="72" text-anchor="middle">deps no done</text>
+
+    <rect class="st" x="230" y="40" width="100" height="42" rx="6" />
+    <text class="st-text" x="280" y="58" text-anchor="middle">ready</text>
+    <text class="st-sub" x="280" y="72" text-anchor="middle">deps done</text>
+
+    <rect class="st" x="380" y="40" width="100" height="42" rx="6" />
+    <text class="st-text" x="430" y="58" text-anchor="middle">claimed</text>
+    <text class="st-sub" x="430" y="72" text-anchor="middle">claim_task.py</text>
+
+    <rect class="st" x="530" y="40" width="120" height="42" rx="6" />
+    <text class="st-text" x="590" y="58" text-anchor="middle">in_progress</text>
+    <text class="st-sub" x="590" y="72" text-anchor="middle">planner ran</text>
+
+    <rect class="st" x="700" y="40" width="240" height="42" rx="6" />
+    <text class="st-text" x="820" y="58" text-anchor="middle">validator_tester_pending</text>
+    <text class="st-sub" x="820" y="72" text-anchor="middle">developer success</text>
+
+    <!-- second row -->
+    <rect class="st wait" x="380" y="200" width="160" height="42" rx="6" />
+    <text class="st-text" x="460" y="218" text-anchor="middle">needs_debug</text>
+    <text class="st-sub" x="460" y="232" text-anchor="middle">tester fail</text>
+
+    <rect class="st" x="700" y="200" width="240" height="42" rx="6" />
+    <text class="st-text" x="820" y="218" text-anchor="middle">ready_for_close</text>
+    <text class="st-sub" x="820" y="232" text-anchor="middle">tester pass</text>
+
+    <!-- third row -->
+    <rect class="st final" x="780" y="360" width="120" height="46" rx="6" />
+    <text class="st-text" x="840" y="380" text-anchor="middle">done</text>
+    <text class="st-sub" x="840" y="394" text-anchor="middle">closer committed + 5 readys</text>
+
+    <rect class="st err" x="350" y="440" width="120" height="46" rx="6" />
+    <text class="st-text" x="410" y="460" text-anchor="middle">blocked</text>
+    <text class="st-sub" x="410" y="474" text-anchor="middle">terminal</text>
+
+    <!-- Transitions row 1 -->
+    <path class="edge" d="M 180 61 L 230 61" marker-end="url(#arr1)" />
+    <text class="edge-label" x="205" y="55" text-anchor="middle">promote</text>
+
+    <path class="edge" d="M 330 61 L 380 61" marker-end="url(#arr1)" />
+    <text class="edge-label" x="355" y="55" text-anchor="middle">claim</text>
+
+    <path class="edge" d="M 480 61 L 530 61" marker-end="url(#arr1)" />
+    <text class="edge-label" x="505" y="55" text-anchor="middle">planner ready</text>
+
+    <path class="edge" d="M 650 61 L 700 61" marker-end="url(#arr1)" />
+    <text class="edge-label" x="675" y="55" text-anchor="middle">developer success</text>
+
+    <!-- Transition to needs_debug -->
+    <path class="edge err" d="M 780 82 Q 600 130, 540 200" marker-end="url(#arr-err)" />
+    <text class="edge-label err" x="640" y="150">tester fail</text>
+
+    <!-- Transition to ready_for_close -->
+    <path class="edge ok" d="M 820 82 L 820 200" marker-end="url(#arr-ok)" />
+    <text class="edge-label ok" x="828" y="145">tester pass</text>
+
+    <!-- needs_debug back to validator_tester_pending -->
+    <path class="edge" d="M 540 220 Q 700 180, 780 100" marker-end="url(#arr1)" />
+    <text class="edge-label" x="660" y="175">debugger fixed</text>
+
+    <!-- needs_debug → blocked (max cycles) -->
+    <path class="edge err" d="M 410 242 L 410 440" marker-end="url(#arr-err)" />
+    <text class="edge-label err" x="418" y="345">max debug cycles</text>
+
+    <!-- ready_for_close → done -->
+    <path class="edge ok" d="M 820 242 Q 820 320, 840 360" marker-end="url(#arr-ok)" />
+    <text class="edge-label ok" x="848" y="310">closer + 5 readys</text>
+
+    <!-- ready_for_close → blocked (closer fail) -->
+    <path class="edge err" d="M 700 242 Q 550 350, 470 440" marker-end="url(#arr-err)" />
+    <text class="edge-label err" x="555" y="380">closer missing readys</text>
+
+    <!-- ready_for_close → needs_debug (verify-slice issues) -->
+    <path class="edge err" d="M 700 220 L 540 220" marker-end="url(#arr-err)" />
+    <text class="edge-label err" x="620" y="214">verify-slice issues_found</text>
+
+    <!-- Legend rect -->
+    <rect class="st init" x="40" y="510" width="20" height="14" rx="3" />
+    <text class="edge-label" x="68" y="521">inicial</text>
+    <rect class="st" x="120" y="510" width="20" height="14" rx="3" />
+    <text class="edge-label" x="148" y="521">activa</text>
+    <rect class="st wait" x="200" y="510" width="20" height="14" rx="3" />
+    <text class="edge-label" x="228" y="521">requiere acción</text>
+    <rect class="st final" x="320" y="510" width="20" height="14" rx="3" />
+    <text class="edge-label" x="348" y="521">final OK</text>
+    <rect class="st err" x="410" y="510" width="20" height="14" rx="3" />
+    <text class="edge-label" x="438" y="521">final ERR</text>
+  </svg>
+  </div>
+
+  <h3>Los 9 estados explicados</h3>
+  <div class="state-grid">
+    <div class="state-cell initial"><div class="sname">pending</div><div class="sdesc">Estado inicial tras bootstrap. Las deps no están todas <code>done</code> aún. No es reclamable.</div></div>
+    <div class="state-cell"><div class="sname">ready</div><div class="sdesc">Todas las deps <code>done</code>. <code>promote_ready_tasks</code> la promovió. Reclamable.</div></div>
+    <div class="state-cell"><div class="sname">claimed</div><div class="sdesc">Un terminal la tomó con <code>claim_task.py</code> bajo lock. Otros terminales no pueden reclamarla.</div></div>
+    <div class="state-cell"><div class="sname">in_progress</div><div class="sdesc">El <code>planner</code> emitió <code>OUTCOME: ready · CONTEXT_READY: yes</code>. El developer empieza a editar.</div></div>
+    <div class="state-cell"><div class="sname">validator_tester_pending</div><div class="sdesc">El <code>developer</code> terminó con éxito. validator‖tester van a correr en paralelo.</div></div>
+    <div class="state-cell"><div class="sname">needs_debug</div><div class="sdesc">El <code>tester</code> falló o el validator pidió cambios → el debugger debe arreglar.</div></div>
+    <div class="state-cell"><div class="sname">ready_for_close</div><div class="sdesc">Validator <code>approved</code> + tester <code>pass</code>. Listo para <code>/verify-slice</code> humano y <code>closer</code>.</div></div>
+    <div class="state-cell terminal"><div class="sname">done</div><div class="sdesc">Closer commiteó, pusheó, baseline sincronizado, worktrees limpios. <strong>Las 5 pruebas <code>*_READY</code> emitidas</strong>.</div></div>
+    <div class="state-cell error"><div class="sname">blocked</div><div class="sdesc">Algo bloqueó terminalmente: 3 ciclos debugger fallidos, push falló, schema mismatch, conflicto con otra task activa. Requiere decisión humana.</div></div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">03</span>Tabla maestra de transiciones</h2>
+  <p class="section-lead">Cada transición tiene: <strong>quién</strong> la dispara (subagente o script), <strong>qué trailer</strong> emite, <strong>qué hook</strong> la captura, <strong>qué lock</strong> se adquiere.</p>
+
+  <div style="overflow-x:auto">
+  <table class="compact transition-table">
+    <thead><tr><th>From</th><th>To</th><th>Quien dispara</th><th>Trailer / acción</th><th>Hook que muta</th><th>Lock</th></tr></thead>
+    <tbody>
+      <tr><td class="from">∅</td><td class="to">pending</td><td>bootstrap_source_of_truth.py</td><td>parseo del Coverage Registry</td><td>—</td><td>file_lock(registry)</td></tr>
+      <tr><td class="from">pending</td><td class="to">ready</td><td><code>promote_ready_tasks</code> (common.py)</td><td>todas las deps en <code>done</code></td><td>SubagentStop (cuando cierra una dep)</td><td>file_lock(registry)</td></tr>
+      <tr><td class="from">ready</td><td class="to">claimed</td><td>claim_task.py</td><td>verificación de conflict_group + write_set + journeys + FU</td><td>—</td><td>file_lock(registry) + file_lock(runtime-state)</td></tr>
+      <tr><td class="from">claimed</td><td class="to">in_progress</td><td>planner</td><td><code>OUTCOME: ready · CONTEXT_READY: yes</code></td><td>SubagentStop</td><td>file_lock(registry)</td></tr>
+      <tr><td class="from">in_progress</td><td class="to">validator_tester_pending</td><td>developer</td><td><code>OUTCOME: success · NEXT_STATUS: validator_tester_pending</code></td><td>SubagentStop</td><td>file_lock(registry)</td></tr>
+      <tr><td class="from">validator_tester_pending</td><td class="to">ready_for_close</td><td>tester (gana lifecycle)</td><td><code>OUTCOME: pass · NEXT_STATUS: ready_for_close</code></td><td>SubagentStop</td><td>file_lock(registry)</td></tr>
+      <tr><td class="from">validator_tester_pending</td><td class="to needs_debug">needs_debug</td><td>tester</td><td><code>OUTCOME: fail · NEXT_STATUS: needs_debug</code></td><td>SubagentStop</td><td>file_lock(registry)</td></tr>
+      <tr><td class="from">needs_debug</td><td class="to">validator_tester_pending</td><td>debugger</td><td><code>OUTCOME: fixed · NEXT_STATUS: validator_tester_pending</code></td><td>SubagentStop</td><td>file_lock(registry)</td></tr>
+      <tr><td class="from">needs_debug</td><td class="to blocked">blocked</td><td>debugger (4º intento)</td><td><code>OUTCOME: blocked · reason: max_debug_cycles_reached</code></td><td>SubagentStop</td><td>file_lock(registry)</td></tr>
+      <tr><td class="from">ready_for_close</td><td class="to needs_debug">needs_debug</td><td>debugger (post /verify-slice issues)</td><td><code>OUTCOME: fixed → validator_tester_pending</code> (efectivo)</td><td>SubagentStop</td><td>file_lock(registry)</td></tr>
+      <tr><td class="from">ready_for_close</td><td class="to done">done</td><td>closer</td><td><code>committed/done + 5×*_READY=yes</code></td><td>SubagentStop (valida 5 pruebas)</td><td>file_lock(registry) + file_lock(runtime-state)</td></tr>
+      <tr><td class="from">ready_for_close</td><td class="to blocked">blocked</td><td>closer (cierre incompleto)</td><td><code>committed</code> pero falta algún <code>*_READY</code></td><td>SubagentStop <strong>reescribe a blocked</strong></td><td>file_lock(registry)</td></tr>
+      <tr><td class="from">any</td><td class="to blocked">blocked</td><td>cualquier agente con OUTCOME=blocked</td><td><code>OUTCOME: blocked · reason: &lt;motivo&gt;</code></td><td>SubagentStop</td><td>file_lock(registry)</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="callout">
+    <strong>Validator NO aparece en esta tabla como mutador lifecycle.</strong> Su trailer <code>OUTCOME: approved | changes_requested | blocked</code> se guarda en <code>task.validator_outcome</code> (info-only). Es <em>tester</em> quien mueve el status. La política está en <code>orchestrator-contract.json → trailer_schema.roles.validator.info_only = true</code>.
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">04</span>Trailer → mutación de estado (mapeo schema-aware)</h2>
+  <p class="section-lead">El hook <code>hook_capture_subagent_stop.py</code> no tiene lógica hardcodeada sobre qué agente muta qué. Lee el schema de <code>orchestrator-contract.json</code> y aplica la regla.</p>
+
+  <pre><code>def on_subagent_stop(trailer):
+    role = trailer.role
+    role_schema = contract.trailer_schema.roles[role]
+
+    # 1. validar OUTCOME contra enum
+    if trailer.OUTCOME not in role_schema.outcome_values:
+        log_hook_error(f"invalid OUTCOME={trailer.OUTCOME} for {role}")
+        return  # no muta
+
+    # 2. validar NEXT_STATUS si el rol lo declara required
+    if "NEXT_STATUS" in role_schema.required_keys:
+        if trailer.NEXT_STATUS not in role_schema.next_status_values:
+            log_hook_error(...)
+            return
+
+    # 3. adquirir locks en orden
+    with file_lock(registry_path):
+        with file_lock(runtime_state_path):
+            if role_schema.info_only:
+                # validator, official-docs-researcher, planner, ...
+                task[f"{role}_outcome"] = trailer.OUTCOME
+                task[f"{role}_next_status"] = trailer.NEXT_STATUS
+                # NO muta task.status
+            elif role_schema.mutates_registry_lifecycle:
+                # developer, tester, debugger, closer, deployer
+                # Guardrail especial: closer needs 5 readys
+                if role == "closer" and trailer.OUTCOME == "committed":
+                    if not all_readys_present(trailer):
+                        trailer.OUTCOME = "blocked"
+                        trailer.NEXT_STATUS = "blocked"
+                        log_hook_error("closer missing *_READY proofs")
+
+                task.status = trailer.NEXT_STATUS
+                task[f"{role}_outcome"] = trailer.OUTCOME
+
+            # 4. journeys y FU
+            process_journey_trailer(trailer)
+            process_followup_trailer(trailer)
+
+            # 5. promote downstream
+            promote_ready_tasks()
+
+    save_registry()
+    save_runtime_state()</code></pre>
+</section>
+
+<section id="tool-fsm">
+  <h2><span class="num">05</span>Lifecycle de una Tool Call</h2>
+  <p class="section-lead">Cada vez que un agente invoca <code>Write</code>, <code>Edit</code>, <code>Bash</code> o <code>Agent</code>, Claude Code dispara hooks alrededor. Sólo <code>PreToolUse</code> puede <strong>denegar</strong> la operación.</p>
+
+  <div class="seq-diagram"><span class="actor">[Agent]</span>                <span class="actor">[Claude Code]</span>          <span class="actor">[Hook PreToolUse]</span>      <span class="actor">[Hook PostToolUse]</span>     <span class="actor">[Tool]</span>
+   │                          │                          │                          │                          │
+   │── invoca <span class="msg">Write/Edit</span> ───────►│                          │                          │                          │
+   │                          │── despacha matcher ─────►│                          │                          │
+   │                          │                          │ valida write_scope_guard │                          │
+   │                          │                          │ valida docs_discrepancy  │                          │
+   │                          │                          │                          │                          │
+   │                          │                          │ <span class="ret">stdout: { } o deny</span>      │                          │
+   │                          │◄────────────────────────│                          │                          │
+   │                          │                          │                          │                          │
+   │                          │ si <span class="ret">allow</span> ──────────────────────────────────────────────────────────►│ ejecuta
+   │                          │                          │                          │                          │ Write/Edit
+   │                          │◄───────────────── <span class="ret">resultado tool</span> ──────────────────────────────────────│
+   │                          │                          │                          │                          │
+   │                          │── PostToolUse ─────────────────────────────────────►│                          │
+   │                          │                          │                          │ hook_update_ledger.py    │
+   │                          │                          │                          │ append ledger.jsonl /    │
+   │                          │                          │                          │        bash-ledger.jsonl │
+   │                          │                          │                          │                          │
+   │◄── <span class="ret">resultado al agente</span> ──│                          │                          │                          │
+   │                          │                          │                          │                          │
+
+   <span class="note">Si PreToolUse devuelve permissionDecision: deny:</span>
+   │                          │                          │                          │                          │
+   │                          │ <span class="blocked">tool NO se ejecuta</span>     │                          │                          │
+   │◄── <span class="blocked">error al agente</span> ─────│                          │                          │                          │</div>
+
+  <h3>Cómo decide cada PreToolUse</h3>
+  <table class="compact">
+    <thead><tr><th>Hook</th><th>Decisión posible</th><th>Cuándo deny</th></tr></thead>
+    <tbody>
+      <tr><td><code>hook_spawn_budget.py</code> (matcher: Agent)</td><td>allow / deny</td><td>cuando spawn_count[TASK_ID] ≥ 20</td></tr>
+      <tr><td><code>hook_write_scope_guard.py</code> (Write/Edit/...)</td><td>allow / deny</td><td>edits a <code>.claude/</code>, cross-task, source-of-truth con TASK_ID activo, core state generado</td></tr>
+      <tr><td><code>hook_docs_discrepancy_check.py</code> (Write/Edit/...)</td><td>allow + warn</td><td>nunca bloquea; sólo inyecta <code>additionalContext</code></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="subagent-fsm">
+  <h2><span class="num">06</span>Lifecycle de un Subagente</h2>
+  <p class="section-lead">Desde que el <code>main-orchestrator</code> lo invoca hasta que muta el registry. Este es el camino crítico — cada subagente lo recorre por completo.</p>
+
+  <div class="fsm-box">
+  <svg viewBox="0 0 980 380" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="arr2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L9,3 z" fill="#8b949e" />
+      </marker>
+      <style>
+        .ss { fill: #1f2937; stroke: #58a6ff; stroke-width: 1.5; }
+        .ss.lock { stroke: #d2a8ff; }
+        .ss.err { stroke: #f85149; }
+        .ss-text { fill: #e6edf3; font-family: ui-monospace, monospace; font-size: 12px; }
+        .ss-sub { fill: #8b949e; font-family: ui-monospace, monospace; font-size: 10px; }
+        .ss-edge { stroke: #6e7681; stroke-width: 1.4; fill: none; }
+        .ss-edge-label { fill: #8b949e; font-family: ui-monospace, monospace; font-size: 10px; }
+      </style>
+    </defs>
+
+    <circle cx="40" cy="80" r="6" fill="#7ee787" />
+
+    <rect class="ss" x="60" y="60" width="140" height="42" rx="6" />
+    <text class="ss-text" x="130" y="78" text-anchor="middle">requested</text>
+    <text class="ss-sub" x="130" y="92" text-anchor="middle">Agent tool invoked</text>
+
+    <rect class="ss" x="240" y="60" width="160" height="42" rx="6" />
+    <text class="ss-text" x="320" y="78" text-anchor="middle">budget check</text>
+    <text class="ss-sub" x="320" y="92" text-anchor="middle">PreToolUse Agent</text>
+
+    <rect class="ss err" x="240" y="170" width="160" height="42" rx="6" />
+    <text class="ss-text" x="320" y="188" text-anchor="middle">denied (21º spawn)</text>
+    <text class="ss-sub" x="320" y="202" text-anchor="middle">budget exhausted</text>
+
+    <rect class="ss" x="440" y="60" width="160" height="42" rx="6" />
+    <text class="ss-text" x="520" y="78" text-anchor="middle">running</text>
+    <text class="ss-sub" x="520" y="92" text-anchor="middle">own context · own cwd</text>
+
+    <rect class="ss" x="640" y="60" width="140" height="42" rx="6" />
+    <text class="ss-text" x="710" y="78" text-anchor="middle">emitted trailer</text>
+    <text class="ss-sub" x="710" y="92" text-anchor="middle">CLAVE: valor</text>
+
+    <rect class="ss" x="820" y="60" width="140" height="42" rx="6" />
+    <text class="ss-text" x="890" y="78" text-anchor="middle">SubagentStop</text>
+    <text class="ss-sub" x="890" y="92" text-anchor="middle">hook dispara</text>
+
+    <!-- second row: lock acquisition -->
+    <rect class="ss lock" x="640" y="180" width="140" height="42" rx="6" />
+    <text class="ss-text" x="710" y="198" text-anchor="middle">parse + validate</text>
+    <text class="ss-sub" x="710" y="212" text-anchor="middle">vs trailer_schema</text>
+
+    <rect class="ss lock" x="820" y="180" width="140" height="42" rx="6" />
+    <text class="ss-text" x="890" y="198" text-anchor="middle">file_lock(registry)</text>
+    <text class="ss-sub" x="890" y="212" text-anchor="middle">orden 1º</text>
+
+    <rect class="ss lock" x="640" y="240" width="140" height="42" rx="6" />
+    <text class="ss-text" x="710" y="258" text-anchor="middle">mutate task.status</text>
+    <text class="ss-sub" x="710" y="272" text-anchor="middle">o metadata si info_only</text>
+
+    <rect class="ss lock" x="820" y="240" width="140" height="42" rx="6" />
+    <text class="ss-text" x="890" y="258" text-anchor="middle">file_lock(runtime)</text>
+    <text class="ss-sub" x="890" y="272" text-anchor="middle">orden 2º</text>
+
+    <rect class="ss" x="640" y="320" width="320" height="42" rx="6" />
+    <text class="ss-text" x="800" y="338" text-anchor="middle">promote_ready_tasks + save atómico</text>
+    <text class="ss-sub" x="800" y="352" text-anchor="middle">temp file + os.replace</text>
+
+    <!-- edges -->
+    <path class="ss-edge" d="M 46 80 L 60 80" marker-end="url(#arr2)" />
+    <path class="ss-edge" d="M 200 80 L 240 80" marker-end="url(#arr2)" />
+    <path class="ss-edge" d="M 400 80 L 440 80" marker-end="url(#arr2)" />
+    <path class="ss-edge" d="M 600 80 L 640 80" marker-end="url(#arr2)" />
+    <path class="ss-edge" d="M 780 80 L 820 80" marker-end="url(#arr2)" />
+
+    <path class="ss-edge" stroke="#f85149" d="M 320 102 L 320 170" marker-end="url(#arr2)" />
+    <text class="ss-edge-label" x="328" y="135" fill="#f85149">deny</text>
+
+    <text class="ss-edge-label" x="610" y="74">allow</text>
+    <text class="ss-edge-label" x="410" y="74">allow</text>
+
+    <!-- chain in lock area -->
+    <path class="ss-edge" d="M 890 102 Q 890 140, 710 180" marker-end="url(#arr2)" />
+    <path class="ss-edge" d="M 780 201 L 820 201" marker-end="url(#arr2)" />
+    <path class="ss-edge" d="M 890 222 L 890 240" marker-end="url(#arr2)" />
+    <path class="ss-edge" d="M 820 261 L 780 261" marker-end="url(#arr2)" />
+    <path class="ss-edge" d="M 710 282 L 710 320" marker-end="url(#arr2)" />
+  </svg>
+  </div>
+
+  <h3>Qué pasa si el trailer es inválido</h3>
+  <ul>
+    <li><strong>OUTCOME fuera de enum:</strong> el hook escribe a <code>hook-errors.log</code> y NO muta lifecycle. La task se queda en su estado anterior.</li>
+    <li><strong>NEXT_STATUS fuera de enum (cuando es required):</strong> mismo tratamiento, no muta.</li>
+    <li><strong>TASK_ID distinto de <code>CLAUDE_ACTIVE_TASK_ID</code></strong> (terminal worker): el hook lo etiqueta como <em>scope mismatch</em>, registra la nota en ledger, pero rechaza la mutación. Esto evita que un subagente desbocado mute la task del terminal vecino.</li>
+    <li><strong>Schema ausente o rol no declarado:</strong> el hook escribe error visible y se niega a mutar (fail-safe).</li>
+    <li><strong style="color:var(--accent-2)">[Nuevo] Trailer ausente (mensaje truncado):</strong> caso real "developer escribió 170 líneas de handoff pero su mensaje final se cortó antes del bloque <code>CLAUDE_TRAILER:</code>". Antes la task quedaba colgada en <code>in_progress</code>. Ahora el hook hace <strong>fallback al handoff en disco</strong>: lee <code>orchestrator-state/tasks/handoffs/&lt;TASK_ID&gt;.md</code>, busca un bloque marcado <code>## CLAUDE_TRAILER</code> con campos <code>AGENT:</code> + <code>TASK_ID:</code> coincidentes, y muta el registry desde ahí. Logea <code>recovered_from_handoff</code> en <code>hook-errors.log</code> para que SessionStart lo surfacee.</li>
+  </ul>
+</section>
+
+<section>
+  <h2><span class="num">07</span>La carrera resuelta: validator ‖ tester (sequence diagram)</h2>
+  <p class="section-lead">Dos subagentes terminan a la vez. Ambos quieren mutar el registry. El lock POSIX serializa la escritura; el schema decide quién gana lifecycle.</p>
+
+  <div class="seq-diagram"><span class="actor">[validator]</span>           <span class="actor">[tester]</span>          <span class="actor">[Claude Code]</span>           <span class="actor">[SubagentStop hook]</span>   <span class="actor">[registry.json]</span>
+   │                       │                     │                          │                          │
+   │ emite trailer ────────────────────────────►│                          │                          │
+   │                       │ emite trailer ─────►│                          │                          │
+   │                       │                     │                          │                          │
+   │                       │                     │── stop(validator) ──────►│                          │
+   │                       │                     │── stop(tester) ─────────►│                          │
+   │                       │                     │                          │ (carrera, llegan ~iguales)│
+   │                       │                     │                          │                          │
+   │                       │                     │                          │ <span class="msg">flock(registry) [EX]</span> ─────►│ adquirido por validator
+   │                       │                     │                          │ schema.role=validator    │
+   │                       │                     │                          │ info_only: true          │
+   │                       │                     │                          │ task.validator_outcome = │
+   │                       │                     │                          │      approved            │
+   │                       │                     │                          │ <span class="msg">save_registry()</span>          │ atómico (temp+rename)
+   │                       │                     │                          │ <span class="ret">flock release</span>            │
+   │                       │                     │                          │                          │
+   │                       │                     │                          │ <span class="note">tester estaba waiting...</span>  │
+   │                       │                     │                          │ <span class="msg">flock(registry) [EX]</span> ─────►│ adquirido por tester
+   │                       │                     │                          │ schema.role=tester       │
+   │                       │                     │                          │ mutates_lifecycle: true  │
+   │                       │                     │                          │ task.status =            │
+   │                       │                     │                          │      ready_for_close     │
+   │                       │                     │                          │ <span class="msg">save_registry()</span>          │ atómico
+   │                       │                     │                          │ <span class="ret">flock release</span>            │
+   │                       │                     │                          │                          │
+   │                       │                     │                          │ <span class="note">resultado deterministico:</span>  │
+   │                       │                     │                          │ <span class="note">tester gana status,</span>        │
+   │                       │                     │                          │ <span class="note">validator gana metadata</span>     │</div>
+
+  <div class="callout">
+    <strong>Si llegaran al revés (tester primero)</strong>, el resultado sería <em>idéntico</em>. La regla "tester gana lifecycle, validator gana metadata" está en el schema, no en el orden de llegada. El lock garantiza atomicidad, el schema garantiza determinismo.
+  </div>
+</section>
+
+<section id="journey-fsm">
+  <h2><span class="num">08</span>Máquina de estados de un Journey</h2>
+  <p class="section-lead">Los journeys son recorridos del usuario declarados en la Journey Coverage Matrix. Su estado vive en <code>registry.json → journeys[].verification_status</code>.</p>
+
+  <div class="fsm-box">
+  <svg viewBox="0 0 900 320" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="arrJ" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L9,3 z" fill="#8b949e" />
+      </marker>
+      <marker id="arrJok" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L9,3 z" fill="#7ee787" />
+      </marker>
+      <style>
+        .js { fill: #1f2937; stroke: #58a6ff; stroke-width: 1.5; }
+        .js.init { stroke: #7ee787; }
+        .js.final { stroke: #7ee787; stroke-width: 3; }
+        .js.wait { stroke: #f0883e; }
+        .js-text { fill: #e6edf3; font-family: ui-monospace, monospace; font-size: 13px; font-weight: 600; }
+        .js-sub { fill: #8b949e; font-family: ui-monospace, monospace; font-size: 10px; }
+        .js-edge { stroke: #6e7681; stroke-width: 1.4; fill: none; }
+        .js-edge-label { fill: #8b949e; font-family: ui-monospace, monospace; font-size: 10px; }
+      </style>
+    </defs>
+
+    <circle cx="40" cy="160" r="6" fill="#7ee787" />
+
+    <rect class="js init" x="80" y="140" width="100" height="42" rx="6" />
+    <text class="js-text" x="130" y="158" text-anchor="middle">open</text>
+    <text class="js-sub" x="130" y="172" text-anchor="middle">tasks abiertas</text>
+
+    <rect class="js" x="240" y="140" width="160" height="42" rx="6" />
+    <text class="js-text" x="320" y="158" text-anchor="middle">all_tasks_done</text>
+    <text class="js-sub" x="320" y="172" text-anchor="middle">cerrando journey</text>
+
+    <rect class="js wait" x="460" y="40" width="160" height="42" rx="6" />
+    <text class="js-text" x="540" y="58" text-anchor="middle">pending_verify</text>
+    <text class="js-sub" x="540" y="72" text-anchor="middle">modo "aparte"</text>
+
+    <rect class="js final" x="700" y="140" width="160" height="46" rx="6" />
+    <text class="js-text" x="780" y="160" text-anchor="middle">verified</text>
+    <text class="js-sub" x="780" y="174" text-anchor="middle">/verify-journey OK</text>
+
+    <rect class="js final" x="460" y="240" width="160" height="46" rx="6" />
+    <text class="js-text" x="540" y="260" text-anchor="middle">waived</text>
+    <text class="js-sub" x="540" y="274" text-anchor="middle">decisión humana</text>
+
+    <!-- edges -->
+    <path class="js-edge" d="M 180 161 L 240 161" marker-end="url(#arrJ)" />
+    <text class="js-edge-label" x="210" y="155" text-anchor="middle">deps complete</text>
+
+    <path class="js-edge" stroke="#7ee787" d="M 400 150 Q 480 100, 700 161" marker-end="url(#arrJok)" />
+    <text class="js-edge-label" x="540" y="115" text-anchor="middle" fill="#7ee787">verify-slice §5.bis "ahora"<tspan x="540" dy="12">JOURNEY_VERIFIED_INLINE</tspan></text>
+
+    <path class="js-edge" d="M 400 170 L 460 70" marker-end="url(#arrJ)" />
+    <text class="js-edge-label" x="450" y="125" fill="#f0883e">verify-slice §5.bis "aparte"<tspan x="450" dy="12">JOURNEY_PENDING_VERIFY</tspan></text>
+
+    <path class="js-edge" stroke="#7ee787" d="M 620 70 Q 720 100, 780 140" marker-end="url(#arrJok)" />
+    <text class="js-edge-label" x="700" y="80" fill="#7ee787">/verify-journey verified</text>
+
+    <path class="js-edge" d="M 540 82 Q 540 160, 540 240" marker-end="url(#arrJ)" />
+    <text class="js-edge-label" x="548" y="180">JOURNEY_VERIFY_WAIVED</text>
+
+  </svg>
+  </div>
+
+  <h3>Cómo afecta al DAG</h3>
+  <p>Mientras un journey está en <code>pending_verify</code>, <code>runtime-state.pending_journey_verifications[]</code> contiene su JID. <code>/next-wave</code> y <code>claim_task.py</code> filtran (defieren) <strong>sólo las tasks que referencian ese JID</strong>. El resto del DAG sigue corriendo. <em>En DAG-only no existe modo "strict" que bloquee todo el grafo.</em></p>
+</section>
+
+<section id="followup-fsm">
+  <h2><span class="num">09</span>Máquina de estados de un Follow-up</h2>
+  <p class="section-lead">Los Follow-ups (FU) son trabajo descubierto fuera del scope de la slice actual. Su estado vive en <code>runtime-state.open_followups[]</code> y en el fichero YAML <code>follow-ups/FU-&lt;id&gt;.yaml</code>.</p>
+
+  <div class="fsm-box">
+  <svg viewBox="0 0 900 240" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="arrF" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L9,3 z" fill="#8b949e" />
+      </marker>
+      <style>
+        .fu { fill: #1f2937; stroke: #58a6ff; stroke-width: 1.5; }
+        .fu.init { stroke: #7ee787; }
+        .fu.final { stroke: #7ee787; stroke-width: 3; }
+        .fu-text { fill: #e6edf3; font-family: ui-monospace, monospace; font-size: 13px; font-weight: 600; }
+        .fu-sub { fill: #8b949e; font-family: ui-monospace, monospace; font-size: 10px; }
+        .fu-edge { stroke: #6e7681; stroke-width: 1.4; fill: none; }
+        .fu-edge-label { fill: #8b949e; font-family: ui-monospace, monospace; font-size: 10px; }
+      </style>
+    </defs>
+
+    <circle cx="40" cy="120" r="6" fill="#7ee787" />
+
+    <rect class="fu init" x="80" y="100" width="160" height="42" rx="6" />
+    <text class="fu-text" x="160" y="118" text-anchor="middle">proposed</text>
+    <text class="fu-sub" x="160" y="132" text-anchor="middle">YAML escrito</text>
+
+    <rect class="fu final" x="400" y="40" width="160" height="46" rx="6" />
+    <text class="fu-text" x="480" y="60" text-anchor="middle">promoted</text>
+    <text class="fu-sub" x="480" y="74" text-anchor="middle">→ nueva task DAG</text>
+
+    <rect class="fu final" x="400" y="160" width="160" height="46" rx="6" />
+    <text class="fu-text" x="480" y="180" text-anchor="middle">waived</text>
+    <text class="fu-sub" x="480" y="194" text-anchor="middle">decisión humana</text>
+
+    <rect class="fu" x="680" y="100" width="180" height="42" rx="6" />
+    <text class="fu-text" x="770" y="118" text-anchor="middle">expired</text>
+    <text class="fu-sub" x="770" y="132" text-anchor="middle">opcional · sin acción humana</text>
+
+    <path class="fu-edge" d="M 240 110 L 400 65" marker-end="url(#arrF)" />
+    <text class="fu-edge-label" x="290" y="80">/promote-followup</text>
+
+    <path class="fu-edge" d="M 240 130 L 400 180" marker-end="url(#arrF)" />
+    <text class="fu-edge-label" x="290" y="170">register-followup-task.sh waive</text>
+
+    <path class="fu-edge" stroke-dasharray="3 3" d="M 240 125 L 680 122" marker-end="url(#arrF)" />
+    <text class="fu-edge-label" x="450" y="115" fill="#8b949e">opcional</text>
+
+  </svg>
+  </div>
+
+  <h3>FU bloqueantes (severity high|critical|blocker)</h3>
+  <p>Mientras existe un FU <code>proposed · high|critical|blocker</code>, el orquestador bloquea:</p>
+  <ul>
+    <li><code>/next-wave</code> — no propone nuevas tasks.</li>
+    <li><code>claim_task.py</code> — rechaza claims.</li>
+    <li><code>closer</code> — devuelve <code>blocked</code> si encuentra FU bloqueantes asociadas a la slice.</li>
+  </ul>
+  <p>Para desbloquear hay que <code>/promote-followup</code> (humano firma <code>PROMOTE &lt;ID&gt;</code>) o <code>register-followup-task.sh waive</code>.</p>
+</section>
+
+<section id="phase-fsm">
+  <h2><span class="num">10</span>Máquina de estados de una Phase</h2>
+  <p class="section-lead">Las phases son lotes de tasks que comparten contexto de producto. Hay un gate humano explícito antes de abrir la siguiente.</p>
+
+  <div class="fsm-box">
+  <svg viewBox="0 0 900 200" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="arrP" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L9,3 z" fill="#8b949e" />
+      </marker>
+      <style>
+        .ph { fill: #1f2937; stroke: #58a6ff; stroke-width: 1.5; }
+        .ph.init { stroke: #7ee787; }
+        .ph.final { stroke: #7ee787; stroke-width: 3; }
+        .ph.wait { stroke: #f0883e; }
+        .ph-text { fill: #e6edf3; font-family: ui-monospace, monospace; font-size: 13px; font-weight: 600; }
+        .ph-sub { fill: #8b949e; font-family: ui-monospace, monospace; font-size: 10px; }
+        .ph-edge { stroke: #6e7681; stroke-width: 1.4; fill: none; }
+        .ph-edge-label { fill: #8b949e; font-family: ui-monospace, monospace; font-size: 10px; }
+      </style>
+    </defs>
+
+    <circle cx="40" cy="100" r="6" fill="#7ee787" />
+
+    <rect class="ph init" x="80" y="80" width="140" height="42" rx="6" />
+    <text class="ph-text" x="150" y="98" text-anchor="middle">not_started</text>
+    <text class="ph-sub" x="150" y="112" text-anchor="middle">phase futura</text>
+
+    <rect class="ph" x="270" y="80" width="140" height="42" rx="6" />
+    <text class="ph-text" x="340" y="98" text-anchor="middle">in_progress</text>
+    <text class="ph-sub" x="340" y="112" text-anchor="middle">tasks en vuelo</text>
+
+    <rect class="ph wait" x="460" y="80" width="160" height="42" rx="6" />
+    <text class="ph-text" x="540" y="98" text-anchor="middle">gate_pending</text>
+    <text class="ph-sub" x="540" y="112" text-anchor="middle">todas done, falta /phase-gate</text>
+
+    <rect class="ph final" x="680" y="80" width="160" height="46" rx="6" />
+    <text class="ph-text" x="760" y="100" text-anchor="middle">done</text>
+    <text class="ph-sub" x="760" y="114" text-anchor="middle">/phase-gate OK</text>
+
+    <path class="ph-edge" d="M 220 101 L 270 101" marker-end="url(#arrP)" />
+    <text class="ph-edge-label" x="245" y="95" text-anchor="middle">deps phase anterior done</text>
+
+    <path class="ph-edge" d="M 410 101 L 460 101" marker-end="url(#arrP)" />
+    <text class="ph-edge-label" x="435" y="95" text-anchor="middle">todas tasks done</text>
+
+    <path class="ph-edge" d="M 620 101 L 680 101" marker-end="url(#arrP)" />
+    <text class="ph-edge-label" x="650" y="95" text-anchor="middle">/phase-gate</text>
+
+  </svg>
+  </div>
+
+  <h3>Qué valida <code>/phase-gate &lt;PHASE_ID&gt;</code></h3>
+  <ul>
+    <li>Todas las tasks de la phase en <code>status: done</code>.</li>
+    <li>Todos los journeys de esa phase en <code>verification_status: verified | waived</code>.</li>
+    <li>Sin FU <code>proposed</code> con severity <code>high|critical|blocker</code> que referencien tasks de la phase.</li>
+    <li>(Opcional con <code>--require-git-clean</code>) árbol de trabajo limpio.</li>
+    <li>Existencia de handoff + evidence + report para cada task.</li>
+  </ul>
+</section>
+
+<section>
+  <h2><span class="num">11</span>Contador de spawn budget</h2>
+  <p class="section-lead">No es una máquina de estados clásica, pero es un contador acotado que bloquea cuando se agota. Vive en <code>runtime-state.json → spawn_counts[TASK_ID]</code>.</p>
+
+  <div class="seq-diagram"><span class="actor">[main-orchestrator]</span>      <span class="actor">[PreToolUse Agent hook]</span>    <span class="actor">[runtime-state.json]</span>
+   │                            │                              │
+   │── Agent: planner ─────────►│                              │
+   │                            │ count = 0 → allow            │
+   │                            │ count = 1 ───────────────────►│
+   │                            │                              │
+   │── Agent: developer ───────►│                              │
+   │                            │ count = 1 → allow            │
+   │                            │ count = 2 ───────────────────►│
+   │                            │                              │
+   │ ... pasan 18 spawns ...   │                              │
+   │                            │                              │
+   │── Agent: closer (20º) ────►│                              │
+   │                            │ count = 19 → allow           │
+   │                            │ count = 20 ──────────────────►│
+   │                            │                              │
+   │── Agent: anything (21º) ──►│                              │
+   │                            │ count = 20 → <span class="blocked">DENY</span>             │
+   │                            │ "Spawn budget agotado"       │
+   │◄── <span class="blocked">permissionDecision: deny</span>│                              │
+   │                            │                              │
+   │ <span class="note">main-orchestrator no puede invocar más agentes en esta slice</span>
+   │ <span class="note">debe cerrar con lo que tiene o bloquear la task</span></div>
+
+  <p style="color:var(--text-dim); font-size:14px">El counter se incrementa al final del SubagentStop hook (cuando el subagente termina con éxito). Si el hook capture rechaza la mutación por trailer inválido, el counter no avanza.</p>
+</section>
+
+<section>
+  <h2><span class="num">12</span>Estados de bloqueo: cuándo y cómo entra una task en <code>blocked</code></h2>
+  <p class="section-lead">El estado <code>blocked</code> es terminal pero recuperable con intervención humana. Estas son las rutas que llevan ahí.</p>
+
+  <table class="compact">
+    <thead><tr><th>Origen</th><th>Quien lo escribe</th><th>Razón típica</th><th>Recuperación</th></tr></thead>
+    <tbody>
+      <tr><td>debugger 4º intento</td><td>debugger trailer</td><td><code>max_debug_cycles_reached</code></td><td><code>/revise-slice</code> o crear FU formal</td></tr>
+      <tr><td>closer sin pruebas</td><td>hook reescribe</td><td>falta algún <code>*_READY=yes</code></td><td>reparar el problema (push, baseline, worktrees) y relanzar <code>/verify-slice</code></td></tr>
+      <tr><td>closer checkout wrong</td><td>closer trailer</td><td>rama incorrecta detectada por <code>ensure-task-worktree.sh --check-current</code></td><td>moverse al worktree correcto y relanzar</td></tr>
+      <tr><td>planner CONTEXT_READY: no</td><td>planner info-only</td><td>source-of-truth roto o deps incoherentes</td><td>reparar docs y reejecutar bootstrap</td></tr>
+      <tr><td>schema mismatch</td><td>hook log + no mutate</td><td>OUTCOME fuera de enum del rol</td><td>revisar contract.json; el subagente debe reemitir trailer correcto</td></tr>
+      <tr><td>scope mismatch TASK_ID</td><td>hook log + no mutate</td><td>terminal worker con <code>CLAUDE_ACTIVE_TASK_ID</code> distinto</td><td>revisar exports del terminal</td></tr>
+      <tr><td>journey issues</td><td>closer</td><td>verify-journey inline emitió <code>issues_found</code></td><td>debugger → re-verify</td></tr>
+      <tr><td>FU bloqueante</td><td>main-orchestrator gate</td><td>existe FU <code>proposed · high|critical|blocker</code></td><td>/promote-followup o waive</td></tr>
+      <tr><td>conflict_group / write_set</td><td>claim_task.py</td><td>otra task activa ya tiene esos recursos</td><td>esperar a que cierre o serializar</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <strong>Detección:</strong> el <code>SessionStart hook</code> surface <code>blocked</code> recientes en el primer turno tras <code>/clear</code>, y <code>hook-errors.log</code> contiene el detalle de cada bloqueo del hook capture.
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">13</span>Lo que persiste vs lo que es efímero</h2>
+  <p class="section-lead">Reglas de retención sobre <code>/clear</code>, <code>/compact</code> y restart del terminal.</p>
+
+  <div class="split">
+    <div class="card">
+      <h3 style="color:var(--accent-2)">Persiste (sobrevive a todo)</h3>
+      <ul>
+        <li><code>orchestrator-state/tasks/registry.json</code> — estado canónico de tasks/journeys/phases</li>
+        <li><code>orchestrator-state/tasks/runtime-state.json</code> — counters, último worker, pending journeys, FU abiertas</li>
+        <li><code>orchestrator-state/tasks/handoffs/&lt;TASK_ID&gt;.md</code> — historia secuencial de la slice</li>
+        <li><code>orchestrator-state/tasks/evidence/&lt;TASK_ID&gt;/</code></li>
+        <li><code>orchestrator-state/tasks/reports/&lt;TASK_ID&gt;.md</code></li>
+        <li><code>orchestrator-state/memory/PROGRESS.md</code></li>
+        <li><code>orchestrator-state/agent-memory/&lt;agente&gt;/MEMORY.md</code></li>
+        <li><code>orchestrator-state/tasks/follow-ups/FU-*.yaml</code></li>
+        <li><code>orchestrator-state/hook-errors.log</code></li>
+        <li>Los 5 docs source-of-truth (Git-controlled)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--warn)">Efímero (se pierde con /clear o restart)</h3>
+      <ul>
+        <li>El contexto conversacional del agente actual</li>
+        <li>Cualquier "lo que estaba pensando" del modelo</li>
+        <li>Variables no exportadas del terminal</li>
+        <li><code>CLAUDE_ACTIVE_TASK_ID</code> si haces <code>unset</code> o abres terminal nuevo</li>
+        <li>Worktree dirty cambios sin commit (si no estaban en el commit del closer)</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Recuperación tras <code>/clear</code></h3>
+  <ol>
+    <li><code>SessionStart hook</code> dispara automáticamente.</li>
+    <li>Inyecta <code>additionalContext</code> con: phase/task activos, spawn count, journeys pendientes, doc discrepancies, head de PROGRESS.md, errores recientes.</li>
+    <li>El siguiente turn del agente ya tiene lo crítico cargado.</li>
+    <li>Para tareas concretas (<code>/verify-slice</code>, <code>/next-slice</code>), el comando reconstruye lo que necesita desde disco con reads explícitos.</li>
+  </ol>
+</section>
+
+<section>
+  <h2><span class="num">14</span>Sincronización entre las 6 máquinas</h2>
+  <p class="section-lead">Las 6 máquinas no son independientes. Una transición en una puede disparar transiciones en otras. Aquí están los acoples.</p>
+
+  <table>
+    <thead><tr><th>Origen</th><th>Disparo</th><th>Efecto en otra máquina</th></tr></thead>
+    <tbody>
+      <tr><td>Task: → <code>done</code></td><td>SubagentStop con closer commit OK</td><td>Journey: si era la última task, → <code>all_tasks_done</code> o <code>verified</code> (inline)</td></tr>
+      <tr><td>Task: → <code>done</code></td><td>SubagentStop</td><td>Otras tasks: <code>promote_ready_tasks</code> mueve sucesores <code>pending → ready</code></td></tr>
+      <tr><td>Task: → <code>done</code></td><td>SubagentStop</td><td>Phase: si era la última task de la phase, → <code>gate_pending</code></td></tr>
+      <tr><td>Journey: → <code>pending_verify</code></td><td>closer emite <code>JOURNEY_PENDING_VERIFY</code></td><td>Tasks que referencian el JID: <code>claim_task.py</code> las rechaza hasta <code>verified</code> o <code>waived</code></td></tr>
+      <tr><td>FU: → <code>proposed · high+</code></td><td>register-followup-task.sh propose</td><td>Tasks: <code>/next-wave</code> bloquea claims globalmente hasta resolución</td></tr>
+      <tr><td>FU: → <code>promoted</code></td><td>/promote-followup</td><td>Tasks: nueva fila en Coverage Registry + DAG regenerado + posible <code>blocked: conflict_with_worker_task</code> si choca</td></tr>
+      <tr><td>Phase: → <code>done</code></td><td>/phase-gate</td><td>Phase N+1: → <code>in_progress</code> (puede empezar a reclamar tasks)</td></tr>
+      <tr><td>Tool call: deny PreToolUse</td><td>spawn budget agotado</td><td>Subagente: nunca entra en <code>running</code>; main-orchestrator debe cerrar slice con lo que tiene</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <strong>Toda esta sincronización ocurre dentro de <code>file_lock(registry.json)</code></strong> en el SubagentStop hook. Por eso el orden de locks (<code>registry primero, runtime-state después</code>) es crítico: garantiza que las propagaciones cross-machine son atómicas.
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">15</span>Resumen mental para ingenieros</h2>
+
+  <div class="grid grid-2">
+    <div class="card">
+      <h3>Quien muta el estado</h3>
+      <ul style="font-size:14px">
+        <li><strong>Task lifecycle</strong> → SubagentStop hook (lifecycle agents)</li>
+        <li><strong>Journey</strong> → SubagentStop hook (closer/journey verify)</li>
+        <li><strong>FU</strong> → register-followup-task.py + /promote-followup</li>
+        <li><strong>Phase</strong> → check_phase_gate.py (via /phase-gate)</li>
+        <li><strong>Tool call</strong> → Claude Code runtime (con hooks)</li>
+        <li><strong>Spawn count</strong> → SubagentStop hook (incremento) + PreToolUse Agent (read)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Quien NO puede mutar nada</h3>
+      <ul style="font-size:14px">
+        <li>Validator (info-only)</li>
+        <li>Official-docs-researcher (info-only)</li>
+        <li>Planner (info-only para registry)</li>
+        <li>Screen-journey-reviewer (info-only)</li>
+        <li>main-orchestrator (info-only, sólo orquesta)</li>
+        <li><strong>Cualquiera con escritura directa al registry/runtime-state.</strong> Sólo scripts/hooks bajo lock.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>Si tienes que debug un fallo de orquestador</strong>, mira primero:
+    <ol style="margin-top:8px">
+      <li><code>orchestrator-state/hook-errors.log</code> — qué hook falló y por qué</li>
+      <li><code>orchestrator-state/tasks/registry.json</code> — estado real de la task</li>
+      <li><code>orchestrator-state/tasks/runtime-state.json</code> — spawn counts, pending journeys, open FU</li>
+      <li><code>orchestrator-state/tasks/handoffs/&lt;TASK_ID&gt;.md</code> — qué pasó en cada paso</li>
+      <li><code>orchestrator-state/tasks/ledger.jsonl</code> — qué writes/edits ocurrieron y cuándo</li>
+    </ol>
+  </div>
+</section>
+
+<section>
+  <div class="next-cta">
+    <div>
+      <h3>Siguiente página</h3>
+      <p>Ya tienes la vista de máquinas de estados. La página de DAG explica cómo se materializa el grafo desde el checklist.</p>
+    </div>
+    <a class="cta-btn" href="dag.html">Ir a DAG &amp; Write set →</a>
+  </div>
+</section>
+
+</div>
+
+<footer>Documentación de <code>OrquestadorDAG-AnyStack</code> · página 4 de 8 · <a href="index.html">volver al índice</a></footer>
+
+</body>
+</html>

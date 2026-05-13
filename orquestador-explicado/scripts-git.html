@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scripts, bin y Git · OrquestadorDAG AnyStack</title>
+<link rel="stylesheet" href="assets/styles.css">
+<style>
+  .script-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; margin-bottom: 10px; }
+  .script-head { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; flex-wrap: wrap; }
+  .script-head h4 { margin: 0; font-size: 15px; font-family: var(--mono); color: var(--accent); }
+  .script-body { font-size: 14px; color: var(--text-dim); }
+  .script-body p { margin: 6px 0; }
+  .category-head { background: var(--bg-elev); padding: 14px 18px; border-radius: 8px; border-left: 4px solid var(--accent); margin: 30px 0 12px; }
+  .category-head h3 { margin: 0; font-size: 16px; color: var(--accent); }
+  .category-head p { margin: 4px 0 0; font-size: 13px; color: var(--text-dim); }
+  .git-flow { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 16px 0; }
+  .git-flow h4 { margin: 0 0 12px; }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="nav-brand"><span class="dot"></span> OrquestadorDAG · AnyStack</div>
+    <ul>
+      <li><a href="index.html">Visión general</a></li>
+      <li><a href="agentes.html">Agentes</a></li>
+      <li><a href="flujo.html">Flujo per-slice</a></li>
+      <li><a href="maquina-estados.html">Máquina de estados</a></li>
+      <li><a href="dag.html">DAG &amp; Write set</a></li>
+      <li><a href="hooks-locks.html">Hooks &amp; Locks</a></li>
+      <li><a href="scripts-git.html" class="active">Scripts &amp; Git</a></li>
+      <li><a href="buenas-practicas.html">Buenas prácticas Claude</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="page-header">
+  <div class="crumbs">Página 6 de 7 · Tripas</div>
+  <h1>Scripts, bin y el cierre Git</h1>
+  <p class="lede">La mecánica del orquestador vive en Python (<code>.claude/bin/</code>) y en shell scripts (<code>scripts/</code>). Aquí está cada uno clasificado, más el cierre Git completo.</p>
+</header>
+
+<div class="container">
+
+<section>
+  <h2><span class="num">01</span>Dos carpetas, dos propósitos</h2>
+  <div class="split">
+    <div class="card">
+      <h3><code>.claude/bin/</code></h3>
+      <p>Python puro. Implementa hooks, bootstrap, claim, integrity checks, baseline sync, contracts. Una librería compartida (<code>common.py</code>) provee <code>file_lock</code>, IO atómico, helpers del registry.</p>
+    </div>
+    <div class="card">
+      <h3><code>scripts/</code></h3>
+      <p>Shell wrappers que leen <code>STACK_PROFILE.yaml</code> y delegan al Python. Unos pocos tienen lógica propia: <code>git-workflow.sh</code>, <code>slice-clean.sh</code>, <code>cleanup-worktrees.sh</code>, enforcers de tokens.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">02</span>Recorrido por <code>.claude/bin/</code></h2>
+
+  <div class="category-head"><h3>Hooks (los dispara Claude Code automáticamente)</h3></div>
+
+  <div class="script-card"><div class="script-head"><h4>hook_spawn_budget.py</h4><span class="tag danger">PreToolUse Agent</span><span class="tag">bloquea</span></div><div class="script-body"><p>Rechaza el spawn 21 para <code>CLAUDE_ACTIVE_TASK_ID</code>. Devuelve <code>permissionDecision: deny</code>.</p></div></div>
+
+  <div class="script-card"><div class="script-head"><h4>hook_write_scope_guard.py</h4><span class="tag danger">PreToolUse Write/Edit</span><span class="tag">bloquea</span></div><div class="script-body"><p>Bloquea 5 familias de escrituras peligrosas (<code>.claude/</code> activo, cross-task, source-of-truth con TASK_ID, baseline directa, core state generado). Avisa si fuera del <code>write_set</code>.</p></div></div>
+
+  <div class="script-card"><div class="script-head"><h4>hook_docs_discrepancy_check.py</h4><span class="tag warn">PreToolUse</span><span class="tag">warn-only</span></div><div class="script-body"><p>Avisa de notas <code>memory/official-doc-notes/</code> sin <code>RESOLVED:</code>.</p></div></div>
+
+  <div class="script-card"><div class="script-head"><h4>hook_update_ledger.py</h4><span class="tag blue">PostToolUse</span></div><div class="script-body"><p>Ledger versionado (Write/Edit) + ledger Bash separado (no versionado). La separación impide que hooks post-commit re-ensucien el repo.</p></div></div>
+
+  <div class="script-card"><div class="script-head"><h4>hook_capture_subagent_stop.py</h4><span class="tag blue">SubagentStop</span><span class="tag purple">muta bajo lock</span></div><div class="script-body"><p>Parsea trailer, valida contra <code>trailer_schema</code>, adquiere <code>file_lock</code>, muta status (lifecycle) o metadata (info-only). Aplica guardrail del closer.</p></div></div>
+
+  <div class="script-card"><div class="script-head"><h4>hook_session_context.py</h4><span class="tag purple">SessionStart</span></div><div class="script-body"><p>Inyecta como <code>additionalContext</code>: phase/task activos, spawn count, journeys pendientes, doc discrepancies, head de PROGRESS.md.</p></div></div>
+
+  <div class="category-head"><h3>Librería compartida</h3></div>
+
+  <div class="script-card"><div class="script-head"><h4>common.py</h4><span class="tag">librería</span></div><div class="script-body">
+    <p>Provee: <code>project_root()</code> worktree-safe, <code>file_lock</code> reentrante, <code>read_json/write_json</code> atómicos, helpers del registry (<code>task_is_ready</code>, <code>promote_ready_tasks</code>, <code>active_conflict_blockers</code>, <code>task_write_set</code>), journeys (<code>journeys_closing_at_task</code>, <code>pending_journey_blockers_for_task</code>), <code>bump_spawn_count</code>, <code>log_hook_error</code>.</p>
+  </div></div>
+
+  <div class="category-head"><h3>Bootstrap y materialización del DAG</h3></div>
+
+  <div class="script-card"><div class="script-head"><h4>bootstrap_source_of_truth.py</h4></div><div class="script-body"><p>Lee los 5 docs canónicos. Materializa <code>registry.json</code>, <code>task-dag.json/md</code>, task packs iniciales. Detecta <code>explicit_dag</code> por columna <code>Depends on</code>. Modos: <code>--validate-only</code>, <code>--refresh</code>.</p></div></div>
+
+  <div class="script-card"><div class="script-head"><h4>claim_task.py</h4><span class="tag purple">muta bajo lock</span></div><div class="script-body"><p>Reclama atómicamente un TASK_ID. Verifica deps, FU bloqueantes, journeys pendientes, conflict groups, write sets. Marca <code>status=claimed</code>.</p></div></div>
+
+  <div class="script-card"><div class="script-head"><h4>next_wave.py</h4><span class="tag">read-only</span></div><div class="script-body"><p>Lista TASK_IDs ready paralelizables sin conflicto. No claima ni muta.</p></div></div>
+
+  <div class="category-head"><h3>Integrity checks</h3></div>
+
+  <div class="script-card"><div class="script-head"><h4>check_task_dag.py</h4></div><div class="script-body"><p>Recomputa adyacencia desde registry, detecta drift, ciclos, deps a TASK_IDs inexistentes. <code>--strict</code> aborta.</p></div></div>
+
+  <div class="script-card"><div class="script-head"><h4>check_wiring_contract.py</h4></div><div class="script-body"><p>Verifica que rutas, endpoints, tablas DB, JIDs y TASK_IDs cruzan correctamente los 5 docs.</p></div></div>
+
+  <div class="script-card"><div class="script-head"><h4>check_journey_matrix.py</h4></div><div class="script-body"><p>Drift checker de la Journey Coverage Matrix.</p></div></div>
+
+  <div class="script-card"><div class="script-head"><h4>check_phase_gate.py</h4></div><div class="script-body"><p>Cierre real de fase: tasks <code>done</code>, journeys verified/waived, sin FU bloqueantes. <code>--require-git-clean</code>.</p></div></div>
+
+  <div class="script-card"><div class="script-head"><h4>check_handoff_contract.py</h4></div><div class="script-body"><p>Antes del closer, valida que el handoff tiene las secciones machine-readable con los enums esperados.</p></div></div>
+
+  <div class="category-head"><h3>Follow-ups, baseline, journeys, verificación</h3></div>
+
+  <div class="script-card"><div class="script-head"><h4>register_followup_task.py</h4></div><div class="script-body"><p><code>propose | promote | waive</code>. Rechaza <code>in_scope_defect</code>. Exige <code>--why-not-debugger</code> para severity alta.</p></div></div>
+
+  <div class="script-card"><div class="script-head"><h4>sync_product_baseline.py</h4><span class="tag">sólo closer</span></div><div class="script-body"><p>Sincroniza <code>docs/source-of-truth/</code> → <code>docs/product-baseline/</code> con manifest SHA-256.</p></div></div>
+
+  <div class="script-card"><div class="script-head"><h4>list_journey_closures.py</h4></div><div class="script-body"><p>Dado un TASK_ID, devuelve los JIDs que quedarían listos para <code>/verify-journey</code>.</p></div></div>
+
+  <div class="script-card"><div class="script-head"><h4>update_journey_verification.py</h4></div><div class="script-body"><p>CLI para mutar estado de journeys (verified/waived) bajo locks.</p></div></div>
+
+  <div class="script-card"><div class="script-head"><h4>auto_verify_slice.py</h4></div><div class="script-body"><p>Ejecuta <code>verification_commands</code> automáticamente para slices low+auto que NO cierran journey.</p></div></div>
+
+  <div class="script-card"><div class="script-head"><h4>run_tests_async.py</h4></div><div class="script-body"><p>Ejecuta tests en background con <code>file_lock</code> para evitar solapamientos.</p></div></div>
+
+  <div class="script-card"><div class="script-head"><h4>generate_api_contracts.py</h4></div><div class="script-body"><p>Mini OpenAPI + stubs frontend desde endpoints del registry. Hace visible el drift front/back.</p></div></div>
+
+  <div class="script-card"><div class="script-head"><h4>stack_profile.py</h4></div><div class="script-body"><p>Parser YAML mínimo (stdlib-only) de <code>STACK_PROFILE.yaml</code>. Hace el motor stack-agnóstico.</p></div></div>
+
+  <div class="script-card"><div class="script-head"><h4>reset_orchestrator_state.py</h4><span class="tag danger">destructivo</span></div><div class="script-body"><p>Borra <code>orchestrator-state/memory/</code>, <code>orchestrator-state/tasks/</code>, <code>agent-memory/</code>. Falla si los docs source-of-truth contienen marcadores de template.</p></div></div>
+</section>
+
+<section>
+  <h2><span class="num">03</span>Recorrido por <code>scripts/</code></h2>
+
+  <div class="category-head"><h3>Wrappers puros (delegan al Python homónimo)</h3></div>
+  <div class="script-card"><div class="script-body">
+    <p>Sin lógica añadida:</p>
+    <ul style="columns:2; column-gap:24px; font-family:var(--mono); font-size:13px">
+      <li>next-wave.sh</li>
+      <li>phase-gate.sh</li>
+      <li>register-followup-task.sh</li>
+      <li>check-handoff-contract.sh</li>
+      <li>check-task-dag.sh</li>
+      <li>check-wiring-contract.sh</li>
+      <li>check-journey-matrix.sh</li>
+      <li>update-journey-verification.sh</li>
+      <li>generate-api-contracts.sh</li>
+      <li>auto-verify-slice.sh</li>
+      <li>journey-closures.sh</li>
+      <li>reset-for-new-project.sh</li>
+    </ul>
+  </div></div>
+  <div class="script-card"><div class="script-head"><h4>sync-product-baseline.sh</h4><span class="tag">wrapper con extra</span></div><div class="script-body"><p>Exporta <code>CLAUDE_ALLOW_BASELINE_SYNC_WRITES=1</code> antes de delegar para que el write-scope-guard permita escribir <code>docs/product-baseline/</code>.</p></div></div>
+
+  <div class="category-head"><h3>Lógica propia importante</h3></div>
+
+  <div class="script-card"><div class="script-head"><h4>git-workflow.sh</h4><span class="tag warn">cierre</span></div><div class="script-body">
+    <p>Dispatcher productivo del cierre. Lee <code>git_workflow</code> de STACK_PROFILE. Antes de delegar:</p>
+    <ol style="font-size:13px"><li><strong>Rechaza plugins con <code>git stash</code></strong>.</li><li><strong>Amenda automáticamente sólo trazas tardías</strong> (<code>ledger.jsonl</code>, <code>bash-ledger.jsonl</code>, <code>runtime-state.json</code>) con <code>git commit --amend --no-edit</code>. Cualquier otro path dirty aborta.</li></ol>
+  </div></div>
+
+  <div class="script-card"><div class="script-head"><h4>slice-clean.sh</h4><span class="tag">housekeeping</span></div><div class="script-body"><p>Post-closer. Dry-run por defecto. Rota ledgers &gt; 200KB a <code>.gz</code>, borra cachés regenerables, archiva handoffs antiguos. No toca código ni source-of-truth ni registry.</p></div></div>
+
+  <div class="script-card"><div class="script-head"><h4>cleanup-worktrees.sh</h4><span class="tag">housekeeping</span></div><div class="script-body"><p>Borrado seguro de worktrees post push. Dry-run por defecto. <strong>Nunca</strong> toca worktree primario, ramas <code>main</code>/<code>master</code>, ni worktrees dirty.</p>
+  <p style="font-size:13px"><strong style="color:var(--accent-2)">[Nuevo]</strong> Tras borrar el último worktree del TASK_ID, comprueba si el directorio padre <code>&lt;repo&gt;-worktrees/</code> quedó vacío y lo elimina (línea <code>"removed empty container: ..."</code> en la salida). Si todavía hay otros worktrees vivos dentro, lo respeta.</p></div></div>
+
+  <div class="script-card"><div class="script-head"><h4>ensure-task-worktree.sh</h4><span class="tag purple">nuevo</span><span class="tag">pre-flight Git</span></div><div class="script-body">
+    <p>Crea o localiza el worktree por-TASK_ID antes de arrancar Claude Code. Lee <code>git_workflow</code> de <code>STACK_PROFILE.yaml</code>:</p>
+    <ul style="font-size:13px">
+      <li><code>push-to-main</code> (alias <code>direct-main</code>) → no abre worktree extra; exige rama <code>main</code> e imprime la raíz canónica del repo.</li>
+      <li><code>pr-flow</code> → crea/reusa la rama <code>dev/&lt;TASK_ID&gt;</code> en <code>&lt;root&gt;-worktrees/&lt;TASK_ID&gt;</code> (configurable con <code>CLAUDE_TASK_WORKTREES_DIR</code>) e imprime esa ruta.</li>
+    </ul>
+    <p style="font-size:13px">Modos: invocación normal (imprime ruta), <code>--check-current &lt;TASK_ID&gt;</code> (gate: <code>TASK_WORKTREE_READY: yes|no</code>), <code>--print-root</code> (raíz canónica, no la del worktree actual). Lo invocan <code>/next-wave</code> en el bloque copy/paste, <code>/next-slice</code> y <code>/verify-slice</code> al arrancar, y el <code>closer</code> antes del commit.</p>
+  </div></div>
+
+  <div class="script-card"><div class="script-head"><h4>check-design-tokens.sh</h4><span class="tag">enforcer</span></div><div class="script-body"><p>Dispatcher stack-agnóstico. Invoca <code>.claude/enforcers/&lt;enforcer&gt;.sh</code> según STACK_PROFILE.</p></div></div>
+
+  <div class="script-card"><div class="script-head"><h4>check_design_tokens.py / check_web_design_tokens.py</h4></div><div class="script-body"><p>Linters context-aware de tokens visuales para Flutter y Web. Strippean comentarios y strings antes de buscar literales.</p></div></div>
+
+  <div class="script-card"><div class="script-head"><h4>dev-restart.sh + profile.sh / run-all-tests.sh / setup-from-scratch.sh</h4></div><div class="script-body"><p>Dispatchers stack-agnósticos que leen comandos del STACK_PROFILE. Contrato <code>--soft | --check | --reset</code>.</p></div></div>
+
+  <div class="script-card"><div class="script-head"><h4>check-progress-updated.sh</h4></div><div class="script-body"><p>Gate del validator: PROGRESS.md tocado en la slice activa.</p></div></div>
+
+  <div class="script-card"><div class="script-head"><h4>compact-agent-memory.py</h4></div><div class="script-body"><p>Compactación lossless de <code>MEMORY.md</code> por agente. Archiva original primero. Dry-run por defecto.</p></div></div>
+</section>
+
+<section>
+  <h2><span class="num">04</span>El cierre Git en detalle</h2>
+  <p class="section-lead">El paso más delicado: cerrar y commitear sin dejar el árbol sucio.</p>
+
+  <div class="git-flow"><h4>① Pre-flight Git con <code>ensure-task-worktree.sh</code></h4>
+    <p>Antes del commit, el closer ejecuta <code>./scripts/ensure-task-worktree.sh --check-current &lt;TASK_ID&gt;</code>. En <code>pr-flow</code> debe estar en la rama/worktree <code>dev/&lt;TASK_ID&gt;</code>; en <code>push-to-main</code> debe estar en <code>main</code>. Si el checkout es incorrecto, el closer bloquea (no cambia de rama por su cuenta).</p>
+  </div>
+
+  <div class="git-flow"><h4>② Closer prepara los artefactos antes del commit</h4>
+    <p><strong>No hace <code>git stash</code></strong>. Antes del commit, el árbol contiene:</p>
+    <ul><li>Cambios del developer (código del slice)</li><li>Handoffs y evidence apendados</li><li>Report nuevo en <code>reports/&lt;TASK_ID&gt;.md</code></li><li>Baseline actualizado en <code>docs/product-baseline/</code></li><li>PROGRESS.md actualizado</li></ul>
+  </div>
+
+  <div class="git-flow"><h4>③ Commit atómico en el checkout actual</h4>
+    <p><code>git add -A</code> + <code>git commit -m "&lt;mensaje&gt;"</code>. El commit cae en la rama actual: <code>main</code> si el workflow es push-to-main, <code>dev/&lt;TASK_ID&gt;</code> si es pr-flow. Reglas:</p>
+    <ul><li>Mensaje conciso con TASK_ID</li><li><strong>SIN <code>Co-authored-by: Claude</code></strong></li><li>SIN <code>git stash</code></li></ul>
+  </div>
+
+  <div class="git-flow"><h4>③ <code>./scripts/git-workflow.sh</code> hace el push</h4>
+    <p>Lee <code>STACK_PROFILE.yaml → git_workflow</code>. Antes de delegar:</p>
+    <ul><li>Verifica que el plugin destino no use <code>git stash</code></li><li>Si quedaron trazas tardías (3 ficheros runtime), amenda con <code>git commit --amend --no-edit</code></li><li>Si hay otros paths sucios, aborta</li></ul>
+  </div>
+
+  <div class="callout"><strong>Cambio reciente · pr-flow es ahora el default</strong>. Los templates en <code>docs/templates/*/STACK_PROFILE.template.yaml</code> traen <code>git_workflow: pr-flow</code> literal (no <code>{{git_workflow}}</code> placeholder). El prompt para ChatGPT también lo indica como default. <code>push-to-main</code> ahora es la <em>excepción</em>, sólo para proyectos single-developer single-slice sin PRs.</div>
+
+  <div class="git-flow"><h4>④ Plugin <code>push-to-main.sh</code> (default)</h4>
+<pre><code>#!/usr/bin/env bash
+set -euo pipefail
+current_branch=$(git symbolic-ref --short HEAD)
+if [ "$current_branch" != "main" ]; then
+  echo "GIT_WORKFLOW_READY: no" &gt;&amp;2
+  exit 1
+fi
+git push origin main
+echo "GIT_WORKFLOW_READY: yes"
+echo "PUSH_READY: yes"</code></pre>
+    <p>El closer parsea esta salida para emitir <code>GIT_READY: yes</code> y <code>PUSH_READY: yes</code>.</p>
+  </div>
+
+  <div class="git-flow"><h4>⑤ Plugin <code>pr-flow.sh</code> (default · rebase + auto-merge)</h4>
+    <p>Ahora hace fetch + rebase + push + create PR + <strong>auto-merge sin tu validación</strong>. Estrategia:</p>
+    <ol>
+      <li><strong style="color:var(--accent-2)">[Nuevo] Pre-push rebase</strong>: <code>git fetch &lt;remote&gt; main</code> + <code>git rebase &lt;remote&gt;/main</code>. Si main avanzó mientras la slice estaba viva (cosa común con paralelismo), integra esos commits antes del push. Evita "PR mergeable: CONFLICTING" en la mayoría de los casos.</li>
+      <li>Si el rebase tiene <strong>conflicto real</strong> → aborta limpiamente con <code>git rebase --abort</code>, emite <code>REBASE_CONFLICT: yes</code> + <code>GIT_WORKFLOW_READY: blocked</code> + comandos para resolver manualmente. Closer sale con exit 4, NO empuja nada a medias.</li>
+      <li><code>git push -u --force-with-lease origin &lt;branch&gt;</code> (force-with-lease porque el rebase reescribe SHAs; seguro contra pushes concurrentes)</li>
+      <li><code>gh pr create --fill</code> (o reusa el PR del branch si ya existe)</li>
+      <li><code>gh pr merge --squash --delete-branch <strong>--admin</strong></code> → merge inmediato bypass de checks (porque <code>/verify-slice</code> ya verificó humanamente)</li>
+      <li>Si <code>--admin</code> falla (no eres admin) → fallback a <code>--auto</code> (cola hasta que pasen required checks de GitHub)</li>
+      <li>Si los dos fallan → deja el PR creado y emite <code>MERGED: no</code> con URL para revisión manual</li>
+    </ol>
+    <p>El cierre se vuelve completamente automático: tras <code>/verify-slice verified</code> + closer, tu rama queda commiteada y mergeada a main sin que abras ningún PR a mano.</p>
+    <p style="font-size:13px; color:var(--text-dim)">Salida machine-readable: <code>GIT_WORKFLOW_READY</code>, <code>PUSH_READY</code>, <code>PR_READY</code>, <code>MERGED: yes | auto-queued | no</code>, <code>PR_URL: &lt;url&gt;</code>.</p>
+    <p style="font-size:13px; color:var(--text-dim)"><strong>Requisitos en tu Mac:</strong> <code>gh auth status</code> autenticado (`gh auth login` la primera vez), <code>--admin</code> requiere ser admin del repo, <code>--auto</code> requiere que el repo tenga auto-merge habilitado.</p>
+  </div>
+
+  <div class="git-flow"><h4>⑥ Housekeeping post-push</h4>
+<pre><code>./scripts/slice-clean.sh --apply
+./scripts/cleanup-worktrees.sh --apply --task P02-S03-T001</code></pre>
+  </div>
+
+  <div class="git-flow"><h4>⑦ Trailer del closer (las 5 pruebas)</h4>
+<pre><code>TASK_ID: P02-S03-T001
+OUTCOME: committed
+NEXT_STATUS: done
+REPORT: orchestrator-state/tasks/reports/P02-S03-T001.md
+REPORT_READY: yes
+BASELINE_SYNC_READY: yes
+GIT_READY: yes
+PUSH_READY: yes
+WORKTREES_CLEANED: yes</code></pre>
+    <p>El hook <code>SubagentStop</code> lee estas 5 líneas. Si falta alguna, sobrescribe a <code>blocked</code>. No hay <code>done</code> sin pruebas.</p>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">05</span>Por qué dos ledgers separados</h2>
+  <div class="callout">
+    <strong>Problema sin separar:</strong> <code>git push</code> es Bash → dispara PostToolUse → <code>hook_update_ledger.py</code> escribe entrada. Si fuera versionado, el árbol acabaría dirty justo después del push, rompiendo el invariante "tras push, working tree limpio".
+  </div>
+  <h3>Solución</h3>
+  <ul>
+    <li><code>ledger.jsonl</code> → Write/Edit/MultiEdit/NotebookEdit. Versionado por Git. Captura cambios reales.</li>
+    <li><code>bash-ledger.jsonl</code> → Bash. Ignorado por Git. Las invocaciones shell post-commit no re-ensucian.</li>
+  </ul>
+  <p>Y si algún PostToolUse de Bash toca <code>runtime-state.json</code>, <code>git-workflow.sh</code> hace <code>amend --no-edit</code> antes del push para integrar esa traza tardía.</p>
+</section>
+
+<section>
+  <h2><span class="num">06</span>Settings.json: la pegamento</h2>
+<pre><code>{
+  "agent": "main-orchestrator",
+  "permissions": { "defaultMode": "bypassPermissions" },
+  "env": {
+    "ENABLE_VERBOSE_LOGGING": "true",
+    "ORCHESTRATOR_SPAWN_BUDGET": "20"
+  },
+  "hooks": [
+    { "event": "PreToolUse",  "matcher": {"toolNames": ["Agent"]},
+      "command": "python3 .claude/bin/hook_spawn_budget.py", "timeout": 15000 },
+    { "event": "PreToolUse",  "matcher": {"toolNames": ["Write","Edit","MultiEdit","NotebookEdit"]},
+      "command": "python3 .claude/bin/hook_write_scope_guard.py", "timeout": 15000 },
+    { "event": "PreToolUse",  "matcher": {"toolNames": ["Write","Edit","MultiEdit","NotebookEdit"]},
+      "command": "python3 .claude/bin/hook_docs_discrepancy_check.py", "timeout": 15000 },
+    { "event": "PostToolUse", "matcher": {"toolNames": ["Write","Edit","MultiEdit","Bash","NotebookEdit"]},
+      "command": "python3 .claude/bin/hook_update_ledger.py", "timeout": 15000 },
+    { "event": "SubagentStop",
+      "command": "python3 .claude/bin/hook_capture_subagent_stop.py", "timeout": 45000 },
+    { "event": "SessionStart",
+      "command": "python3 .claude/bin/hook_session_context.py", "timeout": 20000 }
+  ],
+  "mcpServers": []
+}</code></pre>
+</section>
+
+<section>
+  <h2><span class="num">07</span>Variables de entorno clave</h2>
+
+  <table>
+    <thead><tr><th>Variable</th><th>Quién la setea</th><th>Para qué</th></tr></thead>
+    <tbody>
+      <tr><td><code>CLAUDE_ACTIVE_TASK_ID</code></td><td><code>next-wave.sh</code> / claim</td><td>Identidad del TASK_ID activo del terminal. Sin esto no se trabaja.</td></tr>
+      <tr><td><code>CLAUDE_TASK_PACK</code></td><td><code>next-wave.sh</code> / claim</td><td>Path al task pack del TASK_ID activo.</td></tr>
+      <tr><td><code>CLAUDE_ORCHESTRATOR_ROOT</code></td><td><code>next-wave.sh</code></td><td>Raíz canónica del repo principal (donde vive <code>orchestrator-state/</code>). Distinto del worktree del TASK_ID.</td></tr>
+      <tr><td><code>CLAUDE_WORKTREE_ROOT</code></td><td><code>next-wave.sh</code></td><td>Raíz del worktree del TASK_ID (en pr-flow, <code>&lt;repo&gt;-worktrees/&lt;TASK_ID&gt;/</code>). Para comandos de producto.</td></tr>
+      <tr><td><code>COMPOSE_PROJECT_NAME</code></td><td><code>next-wave.sh</code> (auto)</td><td><strong>Fija el nombre del proyecto Docker Compose</strong> al basename del root canónico (ej. <code>react-python-login-admin</code>). Con esto, todos los worktrees paralelos comparten el mismo stack Docker (postgres, redis, ...) en lugar de cada uno arrancar el suyo con colisiones de puerto. Respeta override del user si ya estaba exportada (<code>${COMPOSE_PROJECT_NAME:-$(basename ...)}</code>).</td></tr>
+      <tr><td><code>ENABLE_VERBOSE_LOGGING</code></td><td>settings.json</td><td>Verbosidad de logs del producto.</td></tr>
+      <tr><td><code>ORCHESTRATOR_SPAWN_BUDGET</code></td><td>settings.json</td><td>Tope mecánico que aplica el hook.</td></tr>
+      <tr><td><code>CLAUDE_ALLOW_STATIC_CONFIG_WRITES</code></td><td>Mantenimiento manual</td><td>Permite editar <code>.claude/</code> con TASK_ID activo.</td></tr>
+      <tr><td><code>CLAUDE_ALLOW_BASELINE_SYNC_WRITES</code></td><td><code>sync-product-baseline.sh</code></td><td>Permite escribir baseline.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <div class="next-cta">
+    <div><h3>Última página</h3><p>Si tuvieras que construir un orquestador parecido para otro dominio, ¿cómo lo pensarías?</p></div>
+    <a class="cta-btn" href="buenas-practicas.html">Ir a Buenas prácticas oficiales →</a>
+  </div>
+</section>
+
+</div>
+
+<footer>Documentación de <code>OrquestadorDAG-AnyStack</code> · página 6 de 7 · <a href="index.html">volver al índice</a></footer>
+
+</body>
+</html>

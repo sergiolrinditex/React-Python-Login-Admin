@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buenas prácticas oficiales · OrquestadorDAG AnyStack</title>
+<link rel="stylesheet" href="assets/styles.css">
+<style>
+  .principle { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 14px 0; border-left: 4px solid var(--accent); }
+  .principle h3 { margin: 0 0 8px; font-size: 19px; }
+  .principle .ours { margin-top: 14px; padding: 12px 16px; background: rgba(126,231,135,0.06); border: 1px solid rgba(126,231,135,0.2); border-left: 3px solid var(--accent-2); border-radius: 6px; font-size: 14px; }
+  .principle .ours strong { color: var(--accent-2); }
+  .source-list { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 10px; padding: 18px; }
+  .source-list h3 { margin: 0 0 8px; font-size: 16px; }
+  .source-list ul { margin: 0; padding-left: 20px; }
+  .source-list a { font-size: 14px; }
+  .step-build { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 10px; padding: 18px; margin: 10px 0; display: flex; gap: 16px; align-items: flex-start; }
+  .step-build .n { flex-shrink: 0; width: 36px; height: 36px; background: linear-gradient(135deg, var(--accent), var(--purple)); color: #0d1117; border-radius: 50%; text-align: center; line-height: 36px; font-weight: 700; font-family: var(--mono); }
+  .step-build .body { flex: 1; }
+  .step-build h4 { margin: 0 0 6px; }
+  .checklist-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 700px) { .checklist-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="nav-brand"><span class="dot"></span> OrquestadorDAG · AnyStack</div>
+    <ul>
+      <li><a href="index.html">Visión general</a></li>
+      <li><a href="agentes.html">Agentes</a></li>
+      <li><a href="flujo.html">Flujo per-slice</a></li>
+      <li><a href="maquina-estados.html">Máquina de estados</a></li>
+      <li><a href="dag.html">DAG &amp; Write set</a></li>
+      <li><a href="hooks-locks.html">Hooks &amp; Locks</a></li>
+      <li><a href="scripts-git.html">Scripts &amp; Git</a></li>
+      <li><a href="buenas-practicas.html" class="active">Buenas prácticas Claude</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="page-header">
+  <div class="crumbs">Página 7 de 7 · Tripas</div>
+  <h1>Cómo pensar un orquestador (según Claude oficial)</h1>
+  <p class="lede">Si mañana te pidieran construir un orquestador parecido para otro dominio (legal, médico, financiero), ¿cómo lo pensarías? Esta página resume cómo Claude Code recomienda diseñarlo y cómo cada decisión está implementada en este proyecto.</p>
+</header>
+
+<div class="container">
+
+<section>
+  <h2><span class="num">01</span>Qué piezas oficiales tienes a tu disposición</h2>
+  <p class="section-lead">Claude Code ofrece 6 mecanismos para construir orquestadores.</p>
+
+  <table>
+    <thead><tr><th>Mecanismo</th><th>Para qué sirve</th><th>Dónde se define</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Subagentes</strong></td><td>Aislar una responsabilidad con su propio contexto y permisos</td><td><code>.claude/agents/&lt;name&gt;.md</code></td></tr>
+      <tr><td><strong>Hooks</strong></td><td>Interceptar el ciclo de vida</td><td><code>.claude/settings.json → hooks[]</code></td></tr>
+      <tr><td><strong>Slash commands</strong></td><td>Atajos para invocar workflows complejos</td><td><code>.claude/commands/&lt;name&gt;.md</code></td></tr>
+      <tr><td><strong>Skills</strong></td><td>Habilidades reutilizables auto-invocables</td><td><code>.claude/skills/&lt;name&gt;/SKILL.md</code></td></tr>
+      <tr><td><strong>Settings</strong></td><td>Configuración compartida del proyecto</td><td><code>.claude/settings.json</code></td></tr>
+      <tr><td><strong>Worktrees</strong></td><td>Aislar trabajo paralelo en copias del repo</td><td>Frontmatter: <code>isolation: worktree</code></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2><span class="num">02</span>Las restricciones que te impone Claude Code</h2>
+  <p class="section-lead">Antes de diseñar nada, hay 4 reglas duras del runtime que tienes que aceptar.</p>
+
+  <div class="principle">
+    <h3>① Un subagente no puede orquestar a otros subagentes</h3>
+    <p>Sólo el agente del <em>main thread</em> puede invocar la herramienta <code>Agent</code>. Si un subagente intenta lanzar otros, Claude Code falla la operación. Previene cadenas infinitas y mantiene jerarquía de mando clara.</p>
+    <div class="ours"><strong>En este proyecto:</strong> el <code>main-orchestrator</code> arranca como sesión principal (<code>"agent": "main-orchestrator"</code>). Todos los demás se invocan desde él. NO lleva <code>tools:</code> en frontmatter para no convertirla en allowlist.</div>
+  </div>
+
+  <div class="principle">
+    <h3>② Sólo PreToolUse puede bloquear una acción</h3>
+    <p>De los 4 tipos de hook, sólo <code>PreToolUse</code> puede devolver <code>permissionDecision: deny</code>. PostToolUse, SubagentStop y SessionStart son informativos.</p>
+    <div class="ours"><strong>Aquí:</strong> los enforcement reales son PreToolUse: <code>hook_spawn_budget.py</code> y <code>hook_write_scope_guard.py</code>. El resto (ledger, capture, session context) son PostToolUse / SubagentStop / SessionStart.</div>
+  </div>
+
+  <div class="principle">
+    <h3>③ El contexto del subagente es aislado</h3>
+    <p>Cada subagente arranca con su propio system prompt y NO ve la conversación del main thread. Para pasarle información: prompt explícito o disco.</p>
+    <div class="ours"><strong>Aquí:</strong> los <code>task-packs</code> y <code>handoffs</code> son disco-first. El main-orchestrator pasa al developer el path al task pack; el developer lo lee y trabaja desde ahí.</div>
+  </div>
+
+  <div class="principle">
+    <h3>④ Worktrees aislados son declarativos · pero session-level ≫ subagent-level</h3>
+    <p>Claude Code permite declarar <code>isolation: worktree</code> en el frontmatter de un subagente. Sin embargo, si varios subagentes de la misma slice abren worktrees distintos, dejan de ver el trabajo del otro (validator no encuentra el código del developer, etc.).</p>
+    <div class="ours"><strong>Aquí:</strong> <strong>ningún subagente</strong> lleva <code>isolation: worktree</code>. El aislamiento Git por TASK_ID se hace una vez por terminal worker, antes de arrancar Claude Code, vía <code>./scripts/ensure-task-worktree.sh</code>. Así todos los subagentes de la slice (developer, validator, tester, debugger, closer) inspeccionan y editan el mismo checkout. El paralelismo se mantiene a nivel terminal: dos terminales en dos TASK_IDs distintos → dos worktrees distintos.</div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">03</span>Los 10 principios para orquestadores robustos</h2>
+  <p class="section-lead">Recogidos de la documentación oficial de Claude Code, traducidos y contextualizados.</p>
+
+  <div class="principle">
+    <h3>1 · Separación de responsabilidades estricta</h3>
+    <p>Cada subagente hace <strong>una sola cosa</strong>. Un agente "todo-en-uno" infla el contexto y genera decisiones inconsistentes.</p>
+    <div class="ours"><strong>Aquí:</strong> 13 agentes con scope acotado. planner sólo planifica, developer sólo programa, validator sólo revisa, tester sólo testea.</div>
+  </div>
+
+  <div class="principle">
+    <h3>2 · Disco &gt; contexto</h3>
+    <p>El contexto de Claude es efímero (se borra con <code>/clear</code>). Los ficheros en disco son la única fuente persistente.</p>
+    <div class="ours"><strong>Aquí:</strong> todo el estado vive en <code>orchestrator-state/</code> y los 5 docs source-of-truth. <code>/verify-slice</code> reconstruye todo desde disco. Puedes hacer <code>/clear</code> entre tester pass y verify sin perder nada.</div>
+  </div>
+
+  <div class="principle">
+    <h3>3 · Trailers machine-readable</h3>
+    <p>La conversación es texto libre, pero la coordinación entre agentes necesita campos parseables. Define un schema de "trailer" (líneas <code>CLAVE: valor</code>) que cada agente debe emitir. Un hook lo parsea.</p>
+    <div class="ours"><strong>Aquí:</strong> <code>orchestrator-contract.json → trailer_schema</code> declara <code>required_keys</code>, <code>outcome_values</code>, <code>next_status_values</code> por rol. <code>hook_capture_subagent_stop.py</code> los valida.</div>
+  </div>
+
+  <div class="principle">
+    <h3>4 · Locks para concurrencia</h3>
+    <p>Si dos subagentes pueden tocar el mismo fichero a la vez, envuelve la operación en <code>fcntl.flock</code>. Sin esto, races corrompen el estado.</p>
+    <div class="ours"><strong>Aquí:</strong> <code>common.py → file_lock</code> reentrante por proceso. Orden global: registry primero, runtime-state después.</div>
+  </div>
+
+  <div class="principle">
+    <h3>5 · Dependencias explícitas, no implícitas</h3>
+    <p>No le digas al modelo "después de A, haz B". Declara las dependencias en datos. El scheduler las consulta. Orden deterministico y paralelización segura.</p>
+    <div class="ours"><strong>Aquí:</strong> columna <code>Depends on</code> del Coverage Registry. <code>bootstrap_source_of_truth.py</code> deriva el grafo. <code>/next-wave</code> lo lee. El modelo nunca decide el orden.</div>
+  </div>
+
+  <div class="principle">
+    <h3>6 · Gates con evidencia tangible</h3>
+    <p>Antes de cualquier acción "no reversible" (commit, deploy), exige evidencia en disco. Screenshots, test outputs, curls, logs.</p>
+    <div class="ours"><strong>Aquí:</strong> el closer no commitea sin las 5 pruebas <code>*_READY=yes</code>. <code>check-handoff-contract.sh</code> rechaza handoffs sin secciones machine-readable. <code>/verify-slice</code> exige reproducción humana con datos reales.</div>
+  </div>
+
+  <div class="principle">
+    <h3>7 · Permisos en capas (defense in depth)</h3>
+    <p>Combina los permisos de Claude Code (<code>permissionMode</code>) con guardrails propios (hooks). Si el modelo decide algo peligroso, queda atrapado en al menos una capa.</p>
+    <div class="ours"><strong>Aquí:</strong> el orquestador corre con <code>bypassPermissions</code> (sin prompts), pero los hooks PreToolUse aplican scope guard, spawn budget y discrepancy check.</div>
+  </div>
+
+  <div class="principle">
+    <h3>8 · Memoria persistente por agente</h3>
+    <p>Cada subagente puede mantener su <em>memoria a largo plazo</em> en disco (<code>MEMORY.md</code>). Sobrevive a <code>/clear</code>.</p>
+    <div class="ours"><strong>Aquí:</strong> <code>orchestrator-state/agent-memory/&lt;agente&gt;/MEMORY.md</code>. <code>compact-agent-memory.py</code> la comprime sin perder info (archiva original primero).</div>
+  </div>
+
+  <div class="principle">
+    <h3>9 · Reseteo estratégico de contexto</h3>
+    <p>El contexto crece. Entre fases críticas, ejecuta <code>/clear</code>. Los artefactos en disco hacen que el siguiente turn reconstruya lo que necesita.</p>
+    <div class="ours"><strong>Aquí:</strong> el flujo: <code>/next-slice</code> hasta tester pass → <code>/clear</code> → <code>/verify-slice</code>. <code>hook_session_context.py</code> reinyecta lo crítico tras el clear.</div>
+  </div>
+
+  <div class="principle">
+    <h3>10 · Reglas mecánicas, no culturales</h3>
+    <p>"El developer debe respetar el write set" es cultura — el modelo puede olvidarlo. "El hook bloquea cualquier write fuera del write set" es mecánica — no se puede saltar.</p>
+    <div class="ours"><strong>Aquí:</strong> spawn budget (hook), write scope guard (hook), closer guardrail (hook), git-workflow rechazando stash (script), trailer schema (validación machine), claim atómico (lock+check).</div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">04</span>Cómo diseñarías uno desde cero (10 pasos)</h2>
+
+  <div class="step-build"><div class="n">1</div><div class="body"><h4>Define las fuentes de verdad</h4><p>¿Cuáles son los documentos canónicos que describen el dominio? Aquí son 5. En otro proyecto podrían ser 3 o 7. Decide qué NO es source-of-truth: todo lo demás es derivado.</p></div></div>
+
+  <div class="step-build"><div class="n">2</div><div class="body"><h4>Identifica los roles necesarios</h4><p>Lista las responsabilidades: planificar, implementar, revisar, testear, arreglar, cerrar. Cada una → un subagente. Si dudas en separar dos roles, sepáralos.</p></div></div>
+
+  <div class="step-build"><div class="n">3</div><div class="body"><h4>Diseña el trailer schema</h4><p>Decide qué <code>OUTCOME</code> puede emitir cada agente y qué <code>NEXT_STATUS</code>. Codifícalo en JSON. Si un agente muta lifecycle, marca <code>info_only: false</code>. Resuelve race conditions de pares paralelos.</p></div></div>
+
+  <div class="step-build"><div class="n">4</div><div class="body"><h4>Modela las dependencias</h4><p>Si el trabajo es secuencial, lista. Si quieres paralelismo, grafo. Decide qué columna del documento canónico es la fuente del grafo y materialízalo en runtime.</p></div></div>
+
+  <div class="step-build"><div class="n">5</div><div class="body"><h4>Define write sets y conflict groups</h4><p>Para cada tarea: ¿qué ficheros toca? ¿Qué tareas no deben correr a la vez? Sin esto no puedes paralelizar con seguridad.</p></div></div>
+
+  <div class="step-build"><div class="n">6</div><div class="body"><h4>Diseña los hooks mínimos</h4><p>Los 4 imprescindibles:</p>
+    <ol><li><strong>Write scope guard (PreToolUse)</strong></li><li><strong>Trailer capture (SubagentStop)</strong></li><li><strong>Spawn budget (PreToolUse Agent)</strong></li><li><strong>Session context (SessionStart)</strong></li></ol>
+  </div></div>
+
+  <div class="step-build"><div class="n">7</div><div class="body"><h4>Elige el modo de permisos</h4><p><code>bypassPermissions</code> sólo si tienes hooks rigurosos. Para exploración o prototipos, mejor <code>acceptEdits</code>.</p></div></div>
+
+  <div class="step-build"><div class="n">8</div><div class="body"><h4>Decide cómo aislar el Git por tarea</h4><p>Dos opciones reales:</p>
+    <ul>
+      <li><strong>Subagent-level</strong> (<code>isolation: worktree</code> en frontmatter): cada subagente abre su propio worktree. Útil si cada agente es totalmente independiente.</li>
+      <li><strong>Session-level</strong> (recomendado para pipelines colaborativos): el terminal worker entra en el worktree del TASK_ID <em>antes</em> de arrancar Claude Code. Todos los subagentes de la sesión comparten checkout. Es lo que hace este proyecto vía <code>ensure-task-worktree.sh</code>.</li>
+    </ul>
+    <p>Para orquestadores con handoff (developer → validator → tester → closer), session-level evita el caso "cada agente ve un árbol distinto".</p>
+  </div></div>
+
+  <div class="step-build"><div class="n">9</div><div class="body"><h4>Diseña los slash commands</h4><p>Tres canónicos: <code>/next-wave</code> (read-only), <code>/next-slice</code> (ejecutar), <code>/verify-slice</code> (gate humano). En tu dominio podrían ser otros, pero piensa siempre en pares "ejecutar / verificar".</p></div></div>
+
+  <div class="step-build"><div class="n">10</div><div class="body"><h4>Establece el cierre Git como ritual</h4><p>Define: qué puede estar dirty, qué jamás, quién hace el push, cómo se prueba que fue exitoso (las 5 marcas <code>*_READY=yes</code>).</p></div></div>
+</section>
+
+<section>
+  <h2><span class="num">05</span>Anti-patrones reconocidos</h2>
+
+  <div class="checklist-grid">
+    <div class="card">
+      <h3 style="color:var(--danger)">Subagentes anidados</h3>
+      <p>Diseñar un subagente "supervisor" que invoca otros. Claude Code no lo permite. <strong>Solución:</strong> ese supervisor es el main-orchestrator.</p>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--danger)">Estado solo en contexto</h3>
+      <p>Confiar en el historial conversacional. Se pierde con <code>/clear</code>. <strong>Solución:</strong> handoffs en disco con secciones claras.</p>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--danger)">Scope creep en debugger</h3>
+      <p>Un debugger que añade pantallas/endpoints para arreglar un test. <strong>Solución:</strong> debugger sólo toca paths del <code>write_set</code>. Si necesita más, FU formal.</p>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--danger)"><code>git stash</code> como flujo normal</h3>
+      <p>Esconder cambios durante el cierre. Genera estados sin historia. <strong>Solución:</strong> closer commitea atómico. Cualquier cambio fuera del commit es FU.</p>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--danger)"><code>tools:</code> allowlist en main-orchestrator</h3>
+      <p>Listar tools en frontmatter parece prudente pero convierte la lista en allowlist. MCPs nuevos no llegan. <strong>Solución:</strong> omitir <code>tools:</code>.</p>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--danger)">Mocks en lugar de datos reales</h3>
+      <p>Verificar con datos inventados que pasan tests pero no representan producción. <strong>Solución:</strong> Verification Data Contract. Sin datos reales → FU formal.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">06</span>Patrones recomendados</h2>
+
+  <details open>
+    <summary>Patrón: separación clara entre "ejecutar" y "verificar"</summary>
+    <p>El pipeline puede ser automático; la verificación es donde el humano (o un check determinístico) decide. <strong>Aquí:</strong> <code>/next-slice</code> ejecuta. <code>/verify-slice</code> es el gate humano. El cierre lo invoca <code>/verify-slice</code>, nunca <code>/next-slice</code>.</p>
+  </details>
+
+  <details open>
+    <summary>Patrón: skills para checks reutilizables, subagentes para roles</summary>
+    <p>Un skill es un fragmento que el modelo invoca cuando detecta un trigger. Un subagente es un rol con contexto propio. <strong>Aquí:</strong> skills (<code>dev-loop</code>, <code>dev-verify</code>, <code>write-handoff</code>, <code>close-task</code>) son rutinas que cualquier agente puede invocar. Los 13 subagentes son los roles.</p>
+  </details>
+
+  <details open>
+    <summary>Patrón: trailers como API contract entre agentes</summary>
+    <p>Si pides "resumen estructurado", el modelo a veces inventa campos. Si declaras un schema y un hook que lo valida, el output queda forzado. <strong>Aquí:</strong> <code>trailer_schema.roles.&lt;agente&gt;</code> declara campos required y enums válidos.</p>
+  </details>
+
+  <details open>
+    <summary>Patrón: ledger inmutable como auditoría</summary>
+    <p>Cada modificación queda registrada en ledger append-only. <strong>Aquí:</strong> <code>ledger.jsonl</code> versionado + <code>bash-ledger.jsonl</code> no versionado (para no re-ensuciar post-push).</p>
+  </details>
+
+  <details>
+    <summary>Patrón: configuración del stack en datos, no en código</summary>
+    <p>Un orquestador AnyStack no debe asumir framework. Solución: <code>STACK_PROFILE.yaml</code> declarativo que los scripts leen. <strong>Aquí:</strong> framework, paths, comandos, enforcer visual, workflow Git. Scripts delegan a plugins según el profile.</p>
+  </details>
+
+  <details>
+    <summary>Patrón: comandos slash idempotentes y resilientes a /clear</summary>
+    <p>Si tus comandos slash reconstruyen estado desde disco, sobreviven a <code>/clear</code>. <strong>Aquí:</strong> <code>/verify-slice</code> lee PROGRESS.md + registry + runtime-state + handoff + task pack + technical guide. No depende de contexto previo.</p>
+  </details>
+</section>
+
+<section>
+  <h2><span class="num">07</span>Plantilla mental para nuevos orquestadores</h2>
+
+  <div class="ascii-flow">┌─────────────────────────────────────────────────────────────────────┐
+│  PLANTILLA DE ORQUESTADOR CLAUDE CODE                               │
+├─────────────────────────────────────────────────────────────────────┤
+│  ① Fuentes de verdad (N docs declarativos)                          │
+│     <span class="dim">→ describen el dominio, los reviewa un humano</span>                  │
+│  ② Bootstrap → estado runtime derivado                              │
+│     <span class="dim">→ registry.json + grafo de dependencias + work items</span>           │
+│  ③ Subagentes con UN rol claro cada uno                             │
+│     <span class="dim">→ frontmatter mínimo, isolation: worktree sólo si edita código</span>  │
+│  ④ Trailer schema machine-readable                                  │
+│     <span class="dim">→ orchestrator-contract.json con outcomes, next_status, info_only</span>│
+│  ⑤ Hooks como guardrails mecánicos                                  │
+│     <span class="dim">→ write scope, spawn budget, trailer capture, session context</span>   │
+│  ⑥ Locks POSIX para concurrencia                                    │
+│     <span class="dim">→ file_lock(state) en orden global consistente</span>                  │
+│  ⑦ Comandos slash de entrada                                        │
+│     <span class="dim">→ /next-wave (ver) · /next-slice (ejecutar) · /verify-slice (gate)</span>│
+│  ⑧ Cierre con evidencia tangible                                    │
+│     <span class="dim">→ 5 marcas *_READY=yes, commit atómico, push vía workflow plugin</span>│
+└─────────────────────────────────────────────────────────────────────┘</div>
+
+  <p>Adaptas las piezas al dominio. Ejemplo para revisión legal de contratos:</p>
+  <ul>
+    <li>Source-of-truth: el contrato, la cláusula estándar, la matriz de riesgos.</li>
+    <li>Subagentes: <code>extractor</code>, <code>validator</code>, <code>annotator</code>, <code>summarizer</code>.</li>
+    <li>Trailer: <code>OUTCOME: aligned | divergent | missing</code>; <code>SEVERITY: low | medium | high</code>.</li>
+    <li>Gate humano: revisión por el abogado antes de devolver al cliente.</li>
+  </ul>
+  <p>La estructura es la misma. Cambia el dominio.</p>
+</section>
+
+<section>
+  <h2><span class="num">08</span>Fuentes oficiales consultadas</h2>
+
+  <div class="grid grid-2">
+    <div class="source-list">
+      <h3>Documentación oficial de Claude Code</h3>
+      <ul>
+        <li><a href="https://docs.claude.com/en/docs/claude-code/sub-agents" target="_blank">Sub-agents</a></li>
+        <li><a href="https://docs.claude.com/en/docs/claude-code/hooks" target="_blank">Hooks</a></li>
+        <li><a href="https://docs.claude.com/en/docs/claude-code/slash-commands" target="_blank">Slash commands</a></li>
+        <li><a href="https://docs.claude.com/en/docs/claude-code/skills" target="_blank">Skills</a></li>
+        <li><a href="https://docs.claude.com/en/docs/claude-code/settings" target="_blank">Settings</a></li>
+        <li><a href="https://docs.claude.com/en/docs/claude-code/permission-modes" target="_blank">Permission modes</a></li>
+        <li><a href="https://docs.claude.com/en/docs/claude-code/worktrees" target="_blank">Worktrees</a></li>
+        <li><a href="https://docs.claude.com/en/docs/claude-code/best-practices" target="_blank">Best practices</a></li>
+      </ul>
+    </div>
+    <div class="source-list">
+      <h3>Documentos internos del proyecto</h3>
+      <ul>
+        <li><code>.claude/CLAUDE.md</code></li>
+        <li><code>.claude/orchestrator-contract.json</code></li>
+        <li><code>.claude/rules/00-source-of-truth.md</code></li>
+        <li><code>.claude/rules/01-non-negotiables.md</code></li>
+        <li><code>.claude/rules/02-phase-execution.md</code></li>
+        <li><code>.claude/rules/03-dev-loop.md</code></li>
+        <li><code>.claude/rules/04-traceability.md</code></li>
+        <li><code>.claude/rules/05-runtime-write-contract.md</code></li>
+        <li><code>docs/prompts/PROMPT_SOURCE_OF_TRUTH_DAG.md</code></li>
+        <li><code>docs/guides/CHEATSHEET.md</code></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">09</span>Cuándo NO usar este patrón</h2>
+
+  <div class="split">
+    <div class="card">
+      <h3 style="color:var(--accent-2)">✓ Vale la pena</h3>
+      <ul style="font-size:14px">
+        <li>Estás construyendo producción</li>
+        <li>Múltiples agentes paralelos tocan estado compartido</li>
+        <li>Necesitas auditoría / trazabilidad legal</li>
+        <li>El proyecto durará semanas/meses</li>
+        <li>Hay varios humanos con roles distintos</li>
+        <li>Las decisiones erróneas son costosas de revertir</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--warn)">✗ Es overkill</h3>
+      <ul style="font-size:14px">
+        <li>Una sola persona, un script puntual</li>
+        <li>POC / prototipo throw-away</li>
+        <li>Tareas que duran &lt; 1 hora</li>
+        <li>Sin estado compartido entre pasos</li>
+        <li>Sin gates humanos necesarios</li>
+        <li>El coste de fallo es trivial</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="next-cta">
+    <div><h3>Has llegado al final</h3><p>Si has leído las 7 páginas, entiendes el orquestador a un nivel que la mayoría de mantenedores no alcanza nunca.</p></div>
+    <a class="cta-btn" href="index.html">← Volver al índice</a>
+  </div>
+</section>
+
+</div>
+
+<footer>Documentación de <code>OrquestadorDAG-AnyStack</code> · página 7 de 7 · gracias por leer</footer>
+
+</body>
+</html>

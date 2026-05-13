@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OrquestadorDAG AnyStack · Explicado de tripas a piel</title>
+<link rel="stylesheet" href="assets/styles.css">
+<style>
+  .hero { padding: 80px 24px 60px; text-align: center; max-width: 1200px; margin: 0 auto; }
+  .hero h1 { font-size: clamp(32px, 5vw, 56px); margin: 0 0 16px; letter-spacing: -0.03em; font-weight: 800;
+    background: linear-gradient(135deg, var(--text) 0%, var(--accent) 60%, var(--purple) 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hero p.lede { font-size: 20px; color: var(--text-dim); max-width: 760px; margin: 0 auto 32px; }
+  .hero .badges { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 32px; }
+  .badge { background: var(--bg-soft); border: 1px solid var(--border); padding: 6px 12px; border-radius: 999px; font-size: 12px; color: var(--text-dim); font-family: var(--mono); }
+  .badge.green { color: var(--accent-2); border-color: rgba(126,231,135,0.3); }
+  .badge.blue { color: var(--accent); border-color: rgba(88,166,255,0.3); }
+  .badge.purple { color: var(--purple); border-color: rgba(210,168,255,0.3); }
+  .pillars { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+  .pillar { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 10px; padding: 20px; }
+  .pillar .ico { font-size: 22px; margin-bottom: 6px; font-family: var(--mono); color: var(--accent); }
+  .pillar h4 { margin: 0 0 6px; font-size: 16px; }
+  .pillar p { font-size: 13px; color: var(--text-dim); margin: 0; }
+  .docs-five { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+  .doc-tile { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 8px; padding: 14px; font-size: 13px; }
+  .doc-tile strong { display: block; color: var(--accent); font-family: var(--mono); font-size: 11px; margin-bottom: 4px; letter-spacing: 0.05em; text-transform: uppercase; }
+  .doc-tile p { margin: 0; color: var(--text-dim); font-size: 12px; }
+  @media (max-width: 800px) { .docs-five { grid-template-columns: 1fr 1fr; } }
+  .glossary dl { display: grid; grid-template-columns: 1fr 2fr; gap: 4px 24px; }
+  .glossary dt { font-family: var(--mono); color: var(--accent-2); padding: 12px 0; border-top: 1px solid var(--border-soft); }
+  .glossary dd { padding: 12px 0; margin: 0; color: var(--text-dim); border-top: 1px solid var(--border-soft); }
+  .glossary dl > dt:first-child, .glossary dl > dt:first-child + dd { border-top: 0; }
+  @media (max-width: 700px) { .glossary dl { grid-template-columns: 1fr; gap: 0; }
+    .glossary dd { padding-top: 0; border-top: 0; padding-bottom: 16px; }
+    .glossary dt { padding-bottom: 4px; } }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="nav-brand"><span class="dot"></span> OrquestadorDAG · AnyStack</div>
+    <ul>
+      <li><a href="index.html" class="active">Visión general</a></li>
+      <li><a href="agentes.html">Agentes</a></li>
+      <li><a href="flujo.html">Flujo per-slice</a></li>
+      <li><a href="maquina-estados.html">Máquina de estados</a></li>
+      <li><a href="dag.html">DAG &amp; Write set</a></li>
+      <li><a href="hooks-locks.html">Hooks &amp; Locks</a></li>
+      <li><a href="scripts-git.html">Scripts &amp; Git</a></li>
+      <li><a href="buenas-practicas.html">Buenas prácticas Claude</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="badges">
+    <span class="badge blue">Claude Code</span>
+    <span class="badge green">Production DAG</span>
+    <span class="badge purple">AnyStack</span>
+    <span class="badge">Multi-terminal</span>
+    <span class="badge">5 source-of-truth docs</span>
+  </div>
+  <h1>El orquestador, explicado de tripas a piel</h1>
+  <p class="lede">Esta es la guía técnica completa de tu orquestador <code>OrquestadorDAG-AnyStack</code>: qué hace, cómo está construido, por qué cada pieza existe y cómo se coordinan entre sí. Pensada para ingenieros sin experiencia previa con IA agéntica.</p>
+  <div class="next-cta" style="max-width: 760px; margin: 0 auto;">
+    <div>
+      <h3>¿Por dónde empezar?</h3>
+      <p>Si lees esta página entera entiendes <em>qué</em> hace. Las otras 6 páginas son las <em>tripas</em>.</p>
+    </div>
+    <a class="cta-btn" href="flujo.html">Saltar al flujo →</a>
+  </div>
+</header>
+
+<div class="container">
+
+<section>
+  <h2><span class="num">01</span>¿Qué es esto, en una frase?</h2>
+  <p class="section-lead">Es una <strong>línea de montaje automatizada</strong> que usa Claude (modelo de lenguaje de Anthropic) para construir aplicaciones fullstack de calidad de producción, paso a paso, con verificación humana en puntos clave y trazabilidad total en disco.</p>
+
+  <div class="callout">
+    <strong>Piénsalo así:</strong> en una fábrica de coches, cada estación hace una sola cosa (chasis, motor, pintura, control de calidad). Aquí cada <em>estación</em> es un <strong>subagente de Claude</strong> con un rol acotado: uno planifica, otro programa, otro valida arquitectura, otro corre tests, otro arregla bugs, otro commitea a Git. El "orquestador" es quien decide qué estación entra en juego, en qué orden y bajo qué reglas.
+  </div>
+
+  <h3>Lo que NO es</h3>
+  <ul>
+    <li>No es un "ChatGPT que escribe código". Eso sería el modelo crudo. Aquí hay <strong>protocolo, gates, locks, hooks y disco</strong> alrededor del modelo para que se pueda confiar en su salida.</li>
+    <li>No es un prototipo: el contrato es <strong>código de producción desde el día 1</strong> — validaciones reales, tests reales contra base de datos real, seguridad real.</li>
+    <li>No improvisa: cada cambio sigue un grafo dirigido (DAG) construido a partir de cinco documentos canónicos. Si los documentos no están bien, el sistema se niega a empezar.</li>
+  </ul>
+</section>
+
+<section>
+  <h2><span class="num">02</span>Modelo mental en 7 piezas</h2>
+  <p class="section-lead">El orquestador es la suma de estas siete piezas. Cada una vive en una carpeta distinta del repo, y cada una tiene su propia página detallada en esta guía.</p>
+
+  <div class="grid grid-2">
+    <a class="card-link" href="flujo.html"><div class="card">
+      <h3>① Fuentes de verdad (5 docs)</h3>
+      <p>Cinco documentos canónicos en <code>docs/source-of-truth/</code> describen el producto, la arquitectura, las pantallas, el stack y el plan. Son la <strong>única autoridad</strong>: el orquestador deriva todo desde ahí.</p>
+    </div></a>
+    <a class="card-link" href="dag.html"><div class="card">
+      <h3>② DAG explícito</h3>
+      <p>Una tabla (<em>Coverage Registry</em>) en el checklist declara qué tareas dependen de cuáles. El bootstrap convierte esa tabla en un grafo (<code>task-dag.json</code>) que ordena el trabajo y permite paralelismo seguro.</p>
+    </div></a>
+    <a class="card-link" href="agentes.html"><div class="card">
+      <h3>③ Subagentes especializados</h3>
+      <p>13 subagentes con un rol estricto cada uno: <code>planner</code>, <code>developer</code>, <code>validator</code>, <code>tester</code>, <code>debugger</code>, <code>closer</code>, etc. Cada uno declara qué puede escribir y qué no.</p>
+    </div></a>
+    <a class="card-link" href="hooks-locks.html"><div class="card">
+      <h3>④ Hooks de Claude Code</h3>
+      <p>Cuatro <em>guardias</em> que Claude Code dispara antes/después de cada herramienta: presupuesto de spawns, scope de escrituras, captura de resultados y contexto de sesión.</p>
+    </div></a>
+    <a class="card-link" href="hooks-locks.html#locks"><div class="card">
+      <h3>⑤ Locks POSIX para concurrencia</h3>
+      <p>Cuando dos agentes (<code>validator ‖ tester</code>) terminan a la vez y quieren tocar el mismo fichero, un <code>fcntl.flock</code> serializa la escritura. Sin esto, el estado del proyecto se corrompería.</p>
+    </div></a>
+    <a class="card-link" href="scripts-git.html"><div class="card">
+      <h3>⑥ Scripts y CLI</h3>
+      <p>Scripts en <code>scripts/</code> y <code>.claude/bin/</code> implementan las operaciones mecánicas: bootstrap, claim de tareas, checks de integridad, generación de contratos API, git workflow, follow-ups formales.</p>
+    </div></a>
+    <a class="card-link" href="agentes.html#memory"><div class="card">
+      <h3>⑦ Memoria en disco</h3>
+      <p>Toda la coordinación vive en <code>orchestrator-state/</code>: registry, runtime-state, handoffs, evidence, ledger, memoria por agente. Sobrevive a <code>/clear</code> y a reinicios. <strong>El disco es la verdad, el contexto es efímero.</strong></p>
+    </div></a>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">03</span>Los 5 documentos source-of-truth</h2>
+  <p class="section-lead">Todo arranca aquí. Los cinco documentos viven en <code>docs/source-of-truth/</code> y los rellena un humano (típicamente con ayuda de ChatGPT y los prompts de <code>docs/prompts/</code>). Sin ellos completos, <code>bootstrap_source_of_truth.py</code> rechaza arrancar el orquestador.</p>
+
+  <div class="docs-five">
+    <div class="doc-tile"><strong>① instrucciones.md</strong><p>Objetivo del producto, alcance, reglas de negocio y la Journey Coverage Matrix (recorridos del usuario).</p></div>
+    <div class="doc-tile"><strong>② *_TECHNICAL_GUIDE.md</strong><p>Arquitectura, contratos front↔back, endpoints, esquema de DB, ADRs, verification data contract.</p></div>
+    <div class="doc-tile"><strong>③ *_IMPLEMENTATION_CHECKLIST.md</strong><p>Fases, steps, Coverage Registry con dependencias, write sets, conflict groups, journey refs.</p></div>
+    <div class="doc-tile"><strong>④ STACK_PROFILE.yaml</strong><p>Stack concreto, paths del frontend, comandos de test/build, enforcer de tokens visuales, workflow Git.</p></div>
+    <div class="doc-tile"><strong>⑤ UX_CONTRACT.md</strong><p>Personas, inventario de pantallas, estados UI obligatorios (loading/empty/error/...) y reglas de verificación.</p></div>
+  </div>
+
+  <div class="callout warn">
+    <strong>Por qué cinco y no uno:</strong> el orquestador es <em>AnyStack</em>: no asume ningún framework concreto. Para que el motor funcione con Flutter, Next.js, SwiftUI o lo que toque, el stack vive aparte (<code>STACK_PROFILE.yaml</code>) y los hooks/scripts despachan a plugins (<code>.claude/enforcers/</code>, <code>.claude/git-workflows/</code>) según ese perfil.
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">04</span>El flujo en una imagen</h2>
+  <p class="section-lead">Una <em>slice</em> es la unidad mínima de trabajo: una fila del Coverage Registry. Cada slice atraviesa esta cadena de subagentes. El budget total por slice es de <strong>20 spawns máximo</strong> (lo enforce un hook).</p>
+
+  <div class="ascii-flow"><span class="hl">ChatGPT</span> rellena templates
+   │
+   ▼
+<span class="hl">5 docs source-of-truth</span>  ─────►  <span class="hl3">bootstrap_source_of_truth.py</span>
+                              │
+                              ▼
+              <span class="hl">registry.json</span>  +  <span class="hl">task-dag.json</span>  +  <span class="hl">work-items/*.yaml</span>
+                              │
+                              ▼
+           ┌──────────  <span class="hl3">/next-wave</span>  (propone TASK_IDs ready y seguros)
+           │
+   <span class="hl2">terminal worker</span>
+   export CLAUDE_ACTIVE_TASK_ID=P02-S03-T001
+   export CLAUDE_TASK_PACK=orchestrator-state/tasks/task-packs/P02-S03-T001.md
+           │
+           ▼
+    <span class="hl3">/next-slice TASK_ID</span>
+           │
+           ├─ 1. <span class="hl">planner</span>                  (blocking · selecciona y prepara contexto)
+           ├─ 2. <span class="hl">developer</span> ‖ <span class="hl">official-docs-researcher</span>   (paralelo)
+           ├─ 3. <span class="hl">validator</span> ‖ <span class="hl">tester</span>      (paralelo)
+           ├─ 4. <span class="hl">debugger</span>                 (sólo si tester=fail o validator=changes)
+           └─ termina en "tester pass"
+           │
+           ▼
+    <span class="hl3">/verify-slice</span>  ─ gate humano: hard reset + datos reales + reproducción
+           │
+   ┌───────┴────────┐
+   │ verified       │ issues_found
+   ▼                ▼
+ <span class="hl">closer</span>           <span class="hl">debugger</span>  ◄── vuelve al paso 3
+ (commit atómico +
+  push + cleanup)
+</div>
+</section>
+
+<section>
+  <h2><span class="num">05</span>Las 4 ideas clave</h2>
+  <p class="section-lead">Si solo recuerdas cuatro cosas de este orquestador, recuerda éstas.</p>
+
+  <div class="callout" style="margin-bottom:18px"><strong>Cambios recientes integrados:</strong> <code>pr-flow</code> es ahora el git_workflow por defecto (cada terminal en su worktree, PRs auto-mergeados sin tu validación), el bloque copy/paste de <code>/next-wave</code> hace <code>unset</code> de las 4 variables de scope antes de exportar las nuevas, el closer recupera el trailer del handoff si el mensaje del agente se trunca, <code>scripts/dev-restart.profile.sh</code> está protegido contra aplastamiento durante slice, y el contenedor <code>&lt;repo&gt;-worktrees/</code> se borra solo cuando queda vacío. Detalles en las páginas de <a href="hooks-locks.html">Hooks &amp; Locks</a> y <a href="scripts-git.html">Scripts &amp; Git</a>.</div>
+
+  <div class="pillars">
+    <div class="pillar"><div class="ico">①</div><h4>Una cosa a la vez, declarada</h4><p>Cada terminal tiene exactamente un <code>CLAUDE_ACTIVE_TASK_ID</code> activo. Sin tarea explícita no se trabaja. El DAG explícito impide que dos terminales pisen los mismos ficheros.</p></div>
+    <div class="pillar"><div class="ico">②</div><h4>Disco &gt; contexto</h4><p>Cada agente lee y escribe estado en ficheros (<code>handoffs/</code>, <code>evidence/</code>, <code>registry.json</code>). Cuando haces <kbd>/clear</kbd>, el contexto se borra pero el trabajo persiste. <code>/verify-slice</code> reconstruye todo desde disco.</p></div>
+    <div class="pillar"><div class="ico">③</div><h4>Gates humanos no opcionales</h4><p>Ningún commit ocurre sin que un humano haya ejecutado <code>/verify-slice</code> con datos reales y reproducción en navegador. Un hook se niega a marcar la tarea como <code>done</code> sin esa prueba.</p></div>
+    <div class="pillar"><div class="ico">④</div><h4>Reglas mecánicas, no culturales</h4><p>Las reglas las imponen los hooks de Claude Code, no la educación del modelo: presupuesto de spawns, scope de escrituras, validación de trailer. Si el modelo intenta algo prohibido, el hook lo bloquea físicamente.</p></div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">06</span>Glosario operativo</h2>
+  <p class="section-lead">Los términos que vas a oír en cada página. Si te pierdes en alguno, vuelve aquí.</p>
+
+  <div class="glossary">
+    <dl>
+      <dt>Subagente</dt><dd>Una "instancia" de Claude con prompt + permisos propios, definida en <code>.claude/agents/&lt;nombre&gt;.md</code>. Se invoca desde el agente principal (main thread) con la herramienta <code>Agent</code>. Vive en su propio contexto: no contamina al resto.</dd>
+      <dt>main-orchestrator</dt><dd>El subagente que actúa como sesión principal de Claude Code. Es el único autorizado a orquestar al resto. Arranca con <code>claude --agent main-orchestrator --permission-mode bypassPermissions</code>.</dd>
+      <dt>Slice / Task</dt><dd>Una fila del Coverage Registry. Tiene <code>TASK_ID</code>, dependencias, write set, conflict group, acceptance, verify. Se ejecuta en un terminal único de principio a fin.</dd>
+      <dt>Pipeline per-slice</dt><dd>La cadena planner → developer → validator‖tester → debugger → verify-slice → closer. Máximo 20 spawns por slice (un hook lo enforce).</dd>
+      <dt>Handoff</dt><dd>El fichero <code>orchestrator-state/tasks/handoffs/&lt;TASK_ID&gt;.md</code>. Lo inicializa el developer y los siguientes agentes le añaden secciones. No se sobrescribe: solo se apendea.</dd>
+      <dt>Trailer</dt><dd>Las últimas líneas que cada subagente emite al terminar: <code>TASK_ID:</code>, <code>OUTCOME:</code>, <code>NEXT_STATUS:</code>, etc. El hook <code>SubagentStop</code> las parsea y actualiza el registry bajo lock.</dd>
+      <dt>Hook</dt><dd>Un script que Claude Code dispara automáticamente: antes de una tool (<code>PreToolUse</code>), después (<code>PostToolUse</code>), al terminar un subagente (<code>SubagentStop</code>), al iniciar sesión (<code>SessionStart</code>). Sólo PreToolUse puede <strong>bloquear</strong>.</dd>
+      <dt>DAG</dt><dd>Directed Acyclic Graph. Grafo dirigido sin ciclos de dependencias entre TASK_IDs, derivado de la columna <code>Depends on</code> del Coverage Registry.</dd>
+      <dt>Write set</dt><dd>Los globs de paths que una tarea está autorizada a tocar. Si una task escribe fuera de su write set, el hook avisa o bloquea.</dd>
+      <dt>Conflict group</dt><dd>Una etiqueta que comparten tareas que <em>no</em> pueden correr en paralelo aunque sus dependencias estén satisfechas.</dd>
+      <dt>Worktree aislado</dt><dd>Git crea una copia física separada del repo para que <code>developer</code> / <code>debugger</code> / <code>deployer</code> trabajen sin pisar el principal.</dd>
+      <dt>Journey</dt><dd>Un recorrido completo del usuario (multi-pantalla) declarado en la Journey Coverage Matrix de <code>instrucciones.md</code>.</dd>
+      <dt>Follow-up (FU)</dt><dd>Una propuesta formal de trabajo descubierto fuera del scope de la slice actual. Se crea con <code>register-followup-task.sh propose</code>.</dd>
+      <dt>Verification Data Contract</dt><dd>Datos reales o proporcionados (no mocks) que <code>/verify-slice</code> y <code>/verify-journey</code> usan para reproducir el flujo.</dd>
+    </dl>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">07</span>Ahora elige por dónde seguir</h2>
+  <p class="section-lead">Las páginas siguientes desarman cada pieza. Puedes leerlas en orden o saltar a la que te interese.</p>
+
+  <div class="grid grid-2">
+    <a class="card-link" href="agentes.html"><div class="card"><h3>→ Agentes y subagentes</h3><p>Los 13 subagentes uno por uno: qué hace, qué escribe, en qué worktree corre, qué trailer emite, cómo conecta con el siguiente.</p></div></a>
+    <a class="card-link" href="flujo.html"><div class="card"><h3>→ Flujo per-slice</h3><p>Pipeline paso a paso: <code>/next-slice</code> → planner → developer → validator‖tester → debugger → /verify-slice → closer.</p></div></a>
+    <a class="card-link" href="dag.html"><div class="card"><h3>→ DAG, write set y conflict groups</h3><p>Cómo se construye la matriz de adyacencia, cómo se decide qué tareas pueden ir en paralelo, cómo coordinan varios terminales.</p></div></a>
+    <a class="card-link" href="hooks-locks.html"><div class="card"><h3>→ Hooks y locks POSIX</h3><p>Los 4 hooks de Claude Code, el <code>file_lock</code> con <code>fcntl.flock</code>, y por qué validator‖tester no se pisan.</p></div></a>
+    <a class="card-link" href="scripts-git.html"><div class="card"><h3>→ Scripts, bin y Git</h3><p>Recorrido por <code>.claude/bin/</code>, <code>scripts/</code> y <code>.claude/git-workflows/</code>. Cómo es el cierre atómico.</p></div></a>
+    <a class="card-link" href="buenas-practicas.html"><div class="card"><h3>→ Buenas prácticas oficiales</h3><p>Cómo Claude Code recomienda construir orquestadores: subagentes, hooks, slash commands, skills, settings, worktrees.</p></div></a>
+  </div>
+</section>
+
+</div>
+
+<footer>Documentación generada para <code>OrquestadorDAG-AnyStack</code> · 7 páginas · navega con la barra superior</footer>
+
+</body>
+</html>

@@ -14,7 +14,7 @@ import sys
 from pathlib import Path
 from typing import Dict, List, Tuple
 
-from common import project_root
+from common import handoff_path as _handoff_path_resolver, project_root
 
 SECTION_RE = re.compile(r"^##\s+(.+?)\s*$")
 KEY_RE = re.compile(r"^\s*-?\s*(?P<key>[A-Za-z][A-Za-z0-9_]*):\s*(?P<value>.*?)\s*$")
@@ -44,7 +44,9 @@ def _has_unregistered_followup_candidate(text: str) -> bool:
 
 
 def _handoff_path(task_id: str) -> Path:
-    return project_root() / "orchestrator-state" / "tasks" / "handoffs" / f"{task_id}.md"
+    # FW-024: per-slice files (handoff) live in workspace_root, which is the
+    # per-TASK_ID worktree in pr-flow and the canonical repo in push-to-main.
+    return _handoff_path_resolver(task_id)
 
 
 def _parse_sections(text: str) -> Dict[str, List[Tuple[str, str]]]:

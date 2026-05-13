@@ -371,7 +371,10 @@ class JourneyClosingChoreographyTests(unittest.TestCase):
         root, td = _setup_tmp_project()
         try:
             with _Sandbox(root):
-                import common
+                import common, os
+                # FW-013: waiver requires CLAUDE_ALLOW_JOURNEY_WAIVER==<JID>.
+                os.environ["CLAUDE_ALLOW_JOURNEY_WAIVER"] = "J1"
+                self.addCleanup(os.environ.pop, "CLAUDE_ALLOW_JOURNEY_WAIVER", None)
                 self._seed_with_journey()
 
                 _fire_subagent_stop("closer", _trailer(

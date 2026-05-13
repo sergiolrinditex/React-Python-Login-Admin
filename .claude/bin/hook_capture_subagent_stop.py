@@ -26,6 +26,7 @@ import sys
 from common import (
     dag_worker_task_id,
     add_pending_journey_verification,
+    reconcile_runtime_state,
     blocking_followups_for_task,
     append_jsonl,
     bump_spawn_count,
@@ -283,8 +284,11 @@ def recover_trailer_from_handoff(
     if not task_id:
         return {}
     try:
-        from common import tasks_dir  # local import to avoid circular at module load
-        handoff_path = tasks_dir() / "handoffs" / f"{task_id}.md"
+        # FW-024: per-slice files use workspace_root() via handoff_path().
+        # In pr-flow this resolves to the worktree (where the agent's relative
+        # Write actually landed). In push-to-main it's identical to canonical.
+        from common import handoff_path as _handoff_path
+        handoff_path = _handoff_path(task_id)
         if not handoff_path.exists():
             return {}
         text = handoff_path.read_text(encoding="utf-8", errors="replace")
@@ -636,6 +640,10 @@ def main() -> int:
                         task["last_outcome"] = trailer.get("outcome")
                         task["last_updated_by"] = agent_type
                         task["last_stop_at"] = now_iso()
+                        # FW-018: debugger cycle counter on the registry. Debugger
+                        # reads this (not handoff prose) to honor max-3-cycles.
+                        if agent_type == "debugger":
+                            task["debug_cycles"] = int(task.get("debug_cycles") or 0) + 1
                         if trailer.get("next_status") == "blocked":
                             task["last_blocker"] = {
                                 "reason": trailer.get("closer_guardrail") or trailer.get("outcome") or "blocked_by_agent",
@@ -685,6 +693,12 @@ def main() -> int:
                     "issues_found": None,
                     "skipped_due_task_scope": True,
                 }
+
+            # FW-003/004/006/007/017: reconcile drift continuously.
+            try:
+                reconcile_runtime_state(load_registry(), apply=True)
+            except Exception as _rec_exc:
+                log_hook_error("hook_capture_subagent_stop.reconcile", _rec_exc)
 
             with file_lock(runtime_state_path()):
                 runtime = load_runtime_state()

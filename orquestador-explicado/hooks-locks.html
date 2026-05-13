@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hooks y Locks · OrquestadorDAG AnyStack</title>
+<link rel="stylesheet" href="assets/styles.css">
+<style>
+  .hook-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 16px; }
+  .hook-card.blocks { border-left: 4px solid var(--danger); }
+  .hook-card.warns { border-left: 4px solid var(--warn); }
+  .hook-card.audits { border-left: 4px solid var(--accent); }
+  .hook-card.context { border-left: 4px solid var(--purple); }
+  .hook-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-bottom: 10px; }
+  .hook-head h3 { margin: 0; font-size: 20px; }
+  .hook-head h3 code { font-size: 14px; color: var(--accent-2); background: var(--bg-elev); padding: 2px 8px; }
+  .hook-meta { font-family: var(--mono); font-size: 11px; color: var(--text-faint); }
+  .hook-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 14px; }
+  .hook-grid .pane { background: var(--bg-elev); border: 1px solid var(--border); border-radius: 8px; padding: 14px; }
+  .hook-grid .pane h5 { margin: 0 0 8px; font-size: 12px; font-family: var(--mono); color: var(--accent); letter-spacing: 0.05em; text-transform: uppercase; }
+  .hook-grid .pane ul { margin: 0; padding-left: 18px; font-size: 13px; color: var(--text-dim); }
+  @media (max-width: 700px) { .hook-grid { grid-template-columns: 1fr; } }
+  .timeline-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .timeline-2 .col { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+  .timeline-2 .col h4 { margin: 0 0 10px; font-family: var(--mono); font-size: 13px; color: var(--accent); }
+  .race-row { display: flex; align-items: center; gap: 10px; padding: 6px 0; font-family: var(--mono); font-size: 12px; border-bottom: 1px solid var(--border-soft); }
+  .race-row:last-child { border-bottom: 0; }
+  .race-row .t { color: var(--text-faint); width: 50px; }
+  .race-row .e { color: var(--text-dim); }
+  .race-row .e.wait { color: var(--warn); }
+  .race-row .e.write { color: var(--accent-2); }
+  @media (max-width: 700px) { .timeline-2 { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="nav-brand"><span class="dot"></span> OrquestadorDAG · AnyStack</div>
+    <ul>
+      <li><a href="index.html">Visión general</a></li>
+      <li><a href="agentes.html">Agentes</a></li>
+      <li><a href="flujo.html">Flujo per-slice</a></li>
+      <li><a href="maquina-estados.html">Máquina de estados</a></li>
+      <li><a href="dag.html">DAG &amp; Write set</a></li>
+      <li><a href="hooks-locks.html" class="active">Hooks &amp; Locks</a></li>
+      <li><a href="scripts-git.html">Scripts &amp; Git</a></li>
+      <li><a href="buenas-practicas.html">Buenas prácticas Claude</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="page-header">
+  <div class="crumbs">Página 5 de 7 · Tripas</div>
+  <h1>Hooks y locks: las reglas mecánicas</h1>
+  <p class="lede">Si los agentes son <em>quién</em> hace el trabajo, los hooks son <em>qué pueden y no pueden hacer</em>. Son scripts que Claude Code dispara automáticamente. Los locks POSIX (<code>fcntl.flock</code>) garantizan que cuando varios agentes terminan a la vez, el estado del proyecto queda consistente.</p>
+</header>
+
+<div class="container">
+
+<section>
+  <h2><span class="num">01</span>Los 4 tipos de hooks de Claude Code</h2>
+  <table>
+    <thead><tr><th>Tipo</th><th>Cuándo dispara</th><th>¿Bloquea?</th><th>Salidas posibles</th></tr></thead>
+    <tbody>
+      <tr><td><code>PreToolUse</code></td><td>Antes de cualquier herramienta</td><td><strong style="color:var(--danger)">SÍ</strong></td><td><code>permissionDecision: deny</code>, <code>additionalContext</code></td></tr>
+      <tr><td><code>PostToolUse</code></td><td>Después de la herramienta</td><td>No</td><td><code>additionalContext</code>, registros</td></tr>
+      <tr><td><code>SubagentStop</code></td><td>Subagente termina</td><td>No</td><td>Mutar estado, logs, <code>additionalContext</code></td></tr>
+      <tr><td><code>SessionStart</code></td><td>Inicio sesión Claude Code</td><td>No</td><td><code>additionalContext</code></td></tr>
+    </tbody>
+  </table>
+  <div class="callout">
+    <strong>Sólo PreToolUse puede bloquear.</strong> Los demás son informativos o de auditoría.
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">02</span>Cómo se declaran en <code>settings.json</code></h2>
+<pre><code>{
+  "agent": "main-orchestrator",
+  "permissions": { "defaultMode": "bypassPermissions" },
+  "hooks": [
+    { "event": "PreToolUse", "matcher": {"toolNames": ["Agent"]},
+      "command": "python3 .claude/bin/hook_spawn_budget.py", "timeout": 15000 },
+    { "event": "PreToolUse", "matcher": {"toolNames": ["Write","Edit","MultiEdit","NotebookEdit"]},
+      "command": "python3 .claude/bin/hook_write_scope_guard.py", "timeout": 15000 },
+    { "event": "PreToolUse", "matcher": {"toolNames": ["Write","Edit","MultiEdit","NotebookEdit"]},
+      "command": "python3 .claude/bin/hook_docs_discrepancy_check.py", "timeout": 15000 },
+    { "event": "PostToolUse", "matcher": {"toolNames": ["Write","Edit","MultiEdit","Bash","NotebookEdit"]},
+      "command": "python3 .claude/bin/hook_update_ledger.py", "timeout": 15000 },
+    { "event": "SubagentStop",
+      "command": "python3 .claude/bin/hook_capture_subagent_stop.py", "timeout": 45000 },
+    { "event": "SessionStart",
+      "command": "python3 .claude/bin/hook_session_context.py", "timeout": 20000 }
+  ]
+}</code></pre>
+</section>
+
+<section>
+  <h2><span class="num">03</span>Los 5 hooks reales del orquestador</h2>
+
+  <div class="hook-card blocks">
+    <div class="hook-head"><h3>① <code>hook_spawn_budget.py</code></h3><div class="hook-meta">PreToolUse · matcher: Agent · BLOQUEA</div></div>
+    <p>Cuenta subagentes completados para <code>CLAUDE_ACTIVE_TASK_ID</code> y rechaza el spawn 21 (budget 20 por slice).</p>
+    <div class="hook-grid">
+      <div class="pane"><h5>Qué lee</h5><ul><li><code>runtime-state.json</code> (counters por TASK_ID)</li></ul></div>
+      <div class="pane"><h5>Devolución en spawn 21</h5><pre><code>{
+  "permissionDecision": "deny",
+  "reason": "Spawn budget agotado
+            (20/20)"
+}</code></pre></div>
+    </div>
+    <p style="color:var(--text-dim); font-size:13px"><strong>Por qué:</strong> sin este límite, un agente podría entrar en bucle (spawn → fail → debugger → spawn → ...) y consumir todo el budget.</p>
+  </div>
+
+  <div class="hook-card blocks">
+    <div class="hook-head"><h3>② <code>hook_write_scope_guard.py</code></h3><div class="hook-meta">PreToolUse · Write/Edit/MultiEdit/NotebookEdit · BLOQUEA</div></div>
+    <p>El guardián principal. Bloquea 6 familias de escrituras peligrosas.</p>
+    <div class="hook-grid">
+      <div class="pane"><h5>Qué bloquea</h5><ul>
+        <li>Edits en <code>.claude/</code> con TASK_ID activo</li>
+        <li>Cross-task: handoff/evidence/report de otro TASK_ID</li>
+        <li>Edits en <code>docs/source-of-truth/</code> con TASK_ID activo</li>
+        <li>Edits directos en <code>docs/product-baseline/</code></li>
+        <li>Edits directos a core state: <code>registry.json</code>, <code>runtime-state.json</code>, <code>task-dag.*</code>, ledgers</li>
+        <li><strong style="color:var(--accent-2)">[Nuevo]</strong> Edits a <code>scripts/dev-restart.profile.sh</code> y <code>scripts/dev-restart.sh</code> durante slice. Evita que un closer paralelo aplaste el profile concreto con los stubs neutrales del meta-orquestador.</li>
+      </ul></div>
+      <div class="pane"><h5>Excepciones controladas</h5><ul>
+        <li><code>CLAUDE_ALLOW_BASELINE_SYNC_WRITES=1</code> → permite baseline</li>
+        <li><code>CLAUDE_ALLOW_STATIC_CONFIG_WRITES=1</code> → para mantenimiento</li>
+        <li><code>CLAUDE_ALLOW_DEV_PROFILE_WRITES=1</code> → permite editar dev-restart.profile fuera de slice</li>
+      </ul><h5>Qué avisa (no bloquea)</h5><ul>
+        <li>Write fuera del <code>write_set</code> declarado: anota warning, sigue</li>
+      </ul></div>
+    </div>
+  </div>
+
+  <div class="hook-card warns">
+    <div class="hook-head"><h3>③ <code>hook_docs_discrepancy_check.py</code></h3><div class="hook-meta">PreToolUse · Write/Edit · WARN-ONLY</div></div>
+    <p>Si el researcher escribió notas en <code>memory/official-doc-notes/</code> sin <code>RESOLVED:</code>, este hook avisa antes del siguiente write del developer. Nunca bloquea.</p>
+    <p style="color:var(--text-dim); font-size:13px">Excluye writes a la propia carpeta de notas, a source-of-truth y a handoffs (para no aullar mientras reconcilias).</p>
+  </div>
+
+  <div class="hook-card audits">
+    <div class="hook-head"><h3>④ <code>hook_update_ledger.py</code></h3><div class="hook-meta">PostToolUse · auditoría</div></div>
+    <p>Registra <em>todos</em> los eventos de modificación. Dos ledgers separados:</p>
+    <div class="hook-grid">
+      <div class="pane"><h5>Ledger versionado</h5><p style="font-size:13px"><code>ledger.jsonl</code> → eventos Write/Edit/MultiEdit/NotebookEdit. <strong>Versionado por Git</strong>.</p></div>
+      <div class="pane"><h5>Ledger no versionado</h5><p style="font-size:13px"><code>bash-ledger.jsonl</code> → eventos Bash. <strong>Ignorado por Git</strong>.</p></div>
+    </div>
+    <div class="callout"><strong>¿Por qué separados?</strong> El closer hace <code>git push</code> (un Bash) → dispara PostToolUse → escribe en ledger. Si fuera versionado, ensuciaría el árbol justo después del push, rompiendo el invariante "tras push, working tree limpio".</div>
+  </div>
+
+  <div class="hook-card audits">
+    <div class="hook-head"><h3>⑤ <code>hook_capture_subagent_stop.py</code></h3><div class="hook-meta">SubagentStop · MUTA BAJO LOCK</div></div>
+    <p>El corazón del estado del proyecto. 7 fases:</p>
+    <ol style="font-size:14px">
+      <li><strong>Parse trailer</strong> del último mensaje del agente (línea-prefijo o JSON fenced).</li>
+      <li><strong style="color:var(--accent-2)">[Nuevo] Fallback al handoff si stdin trailer vacío</strong>: si el mensaje del agente se truncó (token cap, network drop, model stop), el hook lee el bloque <code>CLAUDE_TRAILER</code> del handoff en disco como recuperación. Valida con <code>AGENT:</code> y <code>TASK_ID:</code> que no es un trailer viejo del fichero acumulativo. Logea <code>recovered_from_handoff</code> para que SessionStart lo surfacee.</li>
+      <li><strong>Valida contra schema</strong>: lee <code>trailer_schema.roles.&lt;agente&gt;</code>. Si OUTCOME no está en <code>outcome_values</code>, registra error y NO muta.</li>
+      <li><strong>Adquiere locks</strong>: <code>file_lock(registry)</code> primero, <code>file_lock(runtime-state)</code> después.</li>
+      <li><strong>Decide info-only vs lifecycle</strong>: validator → metadata; tester → <code>task.status</code>.</li>
+      <li><strong>Guardrails</strong>: si closer dice done sin las 5 pruebas, reescribe a blocked.</li>
+      <li><strong>Procesa journey trailer</strong>: <code>JOURNEY_PENDING_VERIFY</code>, <code>JOURNEY_VERIFIED_INLINE</code>.</li>
+    </ol>
+    <p style="color:var(--text-dim); font-size:13px"><strong>Mismatch de TASK_ID:</strong> si el trailer reporta TASK_ID distinto de <code>CLAUDE_ACTIVE_TASK_ID</code>, niega la mutación pero conserva la nota en ledger.</p>
+    <div class="callout"><strong>Sobre el fallback handoff:</strong> el agente debe incluir un bloque <code>## CLAUDE_TRAILER</code> al final del handoff con campos como <code>AGENT: developer</code>, <code>TASK_ID: ...</code>, <code>OUTCOME: ...</code>, <code>NEXT_STATUS: ...</code>. La marca <code>AGENT:</code> hace que el fallback distinga el trailer de <em>esta</em> ejecución del de un agente anterior en el mismo fichero acumulativo. Cubre el caso real "developer escribió 170 líneas de handoff pero el mensaje final se cortó antes del bloque trailer".</div>
+  </div>
+
+  <div class="hook-card context">
+    <div class="hook-head"><h3>⑥ <code>hook_session_context.py</code></h3><div class="hook-meta">SessionStart · INYECTA CONTEXTO</div></div>
+    <p>Cuando arrancas Claude Code o tras <code>/clear</code>, prepara el contexto del primer turno.</p>
+    <h4>Inyecta como <code>additionalContext</code></h4>
+    <ul>
+      <li>Phase y task activos + status</li>
+      <li>Spawn count vs budget</li>
+      <li>Último worker que tocó algo</li>
+      <li>Journeys pendientes (con bloqueo de <code>/next-slice</code>)</li>
+      <li>Doc discrepancies sin resolver</li>
+      <li>Sugerencias de mantenimiento (PROGRESS.md &gt; 8KB, ledger &gt; 200KB)</li>
+      <li>Errores recientes de hooks (de <code>hook-errors.log</code>)</li>
+      <li>Head compacto de PROGRESS.md (≤3000 chars)</li>
+    </ul>
+    <p style="color:var(--text-dim); font-size:13px"><strong>Es la magia detrás del "resiliente a /clear":</strong> tras borrar contexto, el siguiente turn arranca con todo lo crítico pre-cargado.</p>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">04</span>Manejo de errores en hooks</h2>
+  <p class="section-lead">Si un hook lanza excepción, NO propaga: escribe a <code>orchestrator-state/hook-errors.log</code> y devuelve exit 0.</p>
+<pre><code>orchestrator-state/hook-errors.log
+
+2026-05-13T10:23:14Z  hook_write_scope_guard.py  IOError  registry.json
+                       Reading registry failed: [Errno 13] Permission denied
+                       Tool=Write  Path=src/features/x.py  TASK=P02-S03-T001
+2026-05-13T11:45:02Z  hook_capture_subagent_stop.py  KeyError  'OUTCOME'
+                       Agent=validator  Trailer didn't include OUTCOME field</code></pre>
+  <p>El hook SessionStart surface estos errores al inicio: si hay entradas recientes (&lt;24h), las muestra como aviso.</p>
+</section>
+
+<section id="locks">
+  <h2><span class="num">05</span>Locks POSIX: <code>fcntl.flock</code></h2>
+  <p class="section-lead">Validator y tester corren en paralelo y ambos quieren mutar el mismo <code>registry.json</code>. Sin lock, races silenciosas corrompen el estado.</p>
+
+  <h3>El context manager <code>file_lock</code></h3>
+<pre><code><span style="color:var(--text-faint)"># En .claude/bin/common.py</span>
+@contextmanager
+def file_lock(path, shared=False):
+    """
+    Adquiere fcntl.flock sobre &lt;path&gt;.lock.
+    LOCK_EX (exclusivo) por defecto, LOCK_SH si shared=True.
+    Reentrante por proceso vía contador _LOCK_DEPTH.
+    """
+    lock_path = path + ".lock"
+    key = os.path.abspath(lock_path)
+
+    if _LOCK_DEPTH.get(key, 0) &gt; 0:
+        _LOCK_DEPTH[key] += 1
+        yield
+        _LOCK_DEPTH[key] -= 1
+        return
+
+    fd = open(lock_path, "a+")
+    try:
+        fcntl.flock(fd, fcntl.LOCK_SH if shared else fcntl.LOCK_EX)
+        _LOCK_DEPTH[key] = 1
+        yield
+    finally:
+        _LOCK_DEPTH[key] = 0
+        fcntl.flock(fd, fcntl.LOCK_UN)
+        fd.close()</code></pre>
+
+  <h3>Propiedades clave</h3>
+  <ul>
+    <li><strong>Exclusivo por defecto:</strong> otros procesos esperan a nivel kernel.</li>
+    <li><strong>Reentrante por proceso:</strong> el mismo proceso puede entrar dos veces sin deadlock (contador <code>_LOCK_DEPTH</code>).</li>
+    <li><strong>POSIX-only:</strong> en Windows es no-op.</li>
+    <li><strong>Liberación garantizada:</strong> el <code>finally</code> libera incluso si hay excepción.</li>
+  </ul>
+
+  <h3>Escrituras atómicas</h3>
+  <p><code>write_json</code> y <code>append_jsonl</code> hacen <strong>temp file + <code>os.replace</code></strong> bajo lock, con <code>os.fsync</code>. Un crash a media operación deja el fichero original íntegro.</p>
+</section>
+
+<section>
+  <h2><span class="num">06</span>La carrera resuelta: validator ‖ tester</h2>
+  <p class="section-lead">Coreografía completa cuando ambos paralelos terminan.</p>
+
+  <div class="timeline-2">
+    <div class="col">
+      <h4>Validator (info-only) llega primero</h4>
+      <div class="race-row"><span class="t">t=0</span><span class="e">SubagentStop dispara para validator</span></div>
+      <div class="race-row"><span class="t">t=1</span><span class="e">parsea trailer: OUTCOME=approved</span></div>
+      <div class="race-row"><span class="t">t=2</span><span class="e write">flock(registry) adquirido</span></div>
+      <div class="race-row"><span class="t">t=3</span><span class="e">schema dice info_only=true</span></div>
+      <div class="race-row"><span class="t">t=4</span><span class="e write">task.validator_outcome = approved</span></div>
+      <div class="race-row"><span class="t">t=5</span><span class="e">NO toca task.status</span></div>
+      <div class="race-row"><span class="t">t=6</span><span class="e">flock liberado</span></div>
+    </div>
+    <div class="col">
+      <h4>Tester (lifecycle) llega segundo</h4>
+      <div class="race-row"><span class="t">t=2</span><span class="e">SubagentStop dispara para tester</span></div>
+      <div class="race-row"><span class="t">t=3</span><span class="e">parsea trailer: OUTCOME=pass</span></div>
+      <div class="race-row"><span class="t">t=4</span><span class="e wait">flock(registry) ocupado · espera</span></div>
+      <div class="race-row"><span class="t">t=6</span><span class="e write">flock adquirido tras liberación</span></div>
+      <div class="race-row"><span class="t">t=7</span><span class="e">schema dice lifecycle=true</span></div>
+      <div class="race-row"><span class="t">t=8</span><span class="e write">task.status = ready_for_close</span></div>
+      <div class="race-row"><span class="t">t=9</span><span class="e">flock liberado</span></div>
+    </div>
+  </div>
+
+  <h3>Resultado final en registry</h3>
+<pre><code>"P02-S03-T001": {
+  "status": "ready_for_close",        <span style="color:var(--text-faint)"># tester gana</span>
+  "validator_outcome": "approved",    <span style="color:var(--text-faint)"># validator persisted</span>
+  "validator_next_status": "ready_for_close",
+  "tester_outcome": "pass",
+  ...
+}</code></pre>
+
+  <p>Si el orden fuera al revés (tester primero), el resultado sería <strong>idéntico</strong>: la regla "tester gana lifecycle, validator gana metadata" está en el schema, no depende del orden.</p>
+
+  <div class="callout">
+    <strong>El truco:</strong> el schema dice quién muta qué. El hook lee el schema. Cambiar la naturaleza de un rol requiere editar <code>orchestrator-contract.json → trailer_schema.roles.&lt;rol&gt;.info_only</code>.
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">07</span>Orden de locks (project-wide)</h2>
+  <p class="section-lead">Cuando un hook o script toca varios ficheros bajo lock, el orden es siempre el mismo. Evita deadlocks.</p>
+
+<pre><code>1. file_lock(registry.json)         <span style="color:var(--text-faint)"># siempre primero</span>
+2. file_lock(runtime-state.json)    <span style="color:var(--text-faint)"># siempre segundo</span></code></pre>
+
+  <h3>Quién aplica este orden</h3>
+  <ul>
+    <li><code>hook_capture_subagent_stop.py</code></li>
+    <li><code>claim_task.py</code></li>
+    <li><code>register-followup-task.sh promote</code></li>
+    <li><code>remove_pending_journey_verification</code></li>
+    <li><code>waive_journey_verification</code></li>
+    <li><code>sync_runtime_state_from_registry</code></li>
+  </ul>
+
+  <p>Si alguna función tomara runtime-state primero y luego registry, abriría ventana de deadlock con otra que ya tiene registry y quiere ir a runtime-state.</p>
+</section>
+
+<section>
+  <h2><span class="num">08</span>Presupuesto de spawns en detalle</h2>
+  <p class="section-lead">Reparto típico de 20 spawns en una slice.</p>
+
+  <table class="compact">
+    <thead><tr><th>Spawn</th><th>Agente</th><th>Acumulado</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>planner</td><td>1</td></tr>
+      <tr><td>2-3</td><td>developer + official-docs-researcher</td><td>3</td></tr>
+      <tr><td>4-5</td><td>validator + tester</td><td>5</td></tr>
+      <tr><td>6</td><td>debugger (ciclo 1)</td><td>6</td></tr>
+      <tr><td>7-8</td><td>validator + tester (re-run)</td><td>8</td></tr>
+      <tr><td>9</td><td>debugger (ciclo 2)</td><td>9</td></tr>
+      <tr><td>10-11</td><td>validator + tester (re-run)</td><td>11</td></tr>
+      <tr><td>12</td><td>screen-journey-reviewer (si UI)</td><td>12</td></tr>
+      <tr><td>13</td><td>closer</td><td>13</td></tr>
+      <tr><td>14-19</td><td>buffer para revisiones</td><td>19</td></tr>
+      <tr><td>20</td><td>último permitido</td><td>20</td></tr>
+      <tr><td>21</td><td>BLOQUEADO</td><td><strong style="color:var(--danger)">deny</strong></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2><span class="num">09</span>Permisos y bypass</h2>
+  <p class="section-lead">El orquestador corre con <code>bypassPermissions</code>. Los hooks aplican su propia capa por encima.</p>
+
+  <div class="split">
+    <div class="card">
+      <h3>Capa Claude Code (permission modes)</h3>
+      <p>Cuatro modos: <code>default</code>, <code>acceptEdits</code>, <code>plan</code>, <code>bypassPermissions</code>.</p>
+      <p><code>bypassPermissions</code> salta prompts interactivos.</p>
+    </div>
+    <div class="card">
+      <h3>Capa del orquestador (hooks)</h3>
+      <p>El bypass no afecta a los hooks. <code>hook_write_scope_guard.py</code> sigue denegando escrituras peligrosas. <code>hook_spawn_budget.py</code> sigue cortando el spawn 21.</p>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <strong>Nunca uses <code>bypassPermissions</code> en exploración interactiva con prompts externos sin guardrails.</strong> Es seguro aquí porque los hooks son rigurosos.
+  </div>
+</section>
+
+<section>
+  <div class="next-cta">
+    <div><h3>Siguiente página</h3><p>Hooks y locks vistos como bloque. Toca abrir los scripts uno a uno: <code>.claude/bin/</code>, <code>scripts/</code> y el cierre Git.</p></div>
+    <a class="cta-btn" href="scripts-git.html">Ir a Scripts &amp; Git →</a>
+  </div>
+</section>
+
+</div>
+
+<footer>Documentación de <code>OrquestadorDAG-AnyStack</code> · página 5 de 7 · <a href="index.html">volver al índice</a></footer>
+
+</body>
+</html>

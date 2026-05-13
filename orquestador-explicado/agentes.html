@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agentes y subagentes · OrquestadorDAG AnyStack</title>
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="nav-brand"><span class="dot"></span> OrquestadorDAG · AnyStack</div>
+    <ul>
+      <li><a href="index.html">Visión general</a></li>
+      <li><a href="agentes.html" class="active">Agentes</a></li>
+      <li><a href="flujo.html">Flujo per-slice</a></li>
+      <li><a href="maquina-estados.html">Máquina de estados</a></li>
+      <li><a href="dag.html">DAG &amp; Write set</a></li>
+      <li><a href="hooks-locks.html">Hooks &amp; Locks</a></li>
+      <li><a href="scripts-git.html">Scripts &amp; Git</a></li>
+      <li><a href="buenas-practicas.html">Buenas prácticas Claude</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="page-header">
+  <div class="crumbs">Página 2 de 7 · Tripas</div>
+  <h1>Los 13 subagentes</h1>
+  <p class="lede">Un subagente es Claude con un prompt acotado, una lista de herramientas y, opcionalmente, un worktree aislado. Cada uno hace <strong>una sola cosa bien</strong>. Aquí están los 13 que componen tu orquestador, qué escriben y qué emiten al terminar.</p>
+</header>
+
+<div class="container">
+
+<section>
+  <h2><span class="num">01</span>Qué es exactamente un subagente</h2>
+  <p class="section-lead">Cuando Claude Code arranca, hay un agente principal (el <em>main thread</em>). Ese agente puede invocar a otros agentes con la herramienta <code>Agent</code>. Cada uno se define en un fichero markdown en <code>.claude/agents/&lt;nombre&gt;.md</code>.</p>
+
+  <div class="split">
+    <div class="card">
+      <h3>El fichero de un subagente</h3>
+      <p>Cada agente es un <code>.md</code> con dos partes: <strong>frontmatter YAML</strong> (configuración) y <strong>cuerpo markdown</strong> (su system prompt).</p>
+<pre><code>---
+name: developer
+description: Implementa código del slice activo
+model: sonnet
+maxTurns: 150
+permissionMode: bypassPermissions
+---
+
+# Developer agent
+
+You are the developer. Your job is to implement
+the code for the current TASK_ID exactly as the
+task pack describes...
+
+## Task worktree contract
+
+This agent does not request its own nested
+`isolation: worktree`. `/next-wave` launches
+the whole Claude Code worker session inside
+the per-TASK_ID worktree when the Git workflow
+uses feature branches/PRs. All subagents in
+the slice must inspect and edit that same
+checkout.</code></pre>
+    </div>
+    <div class="card">
+      <h3>Cómo se invocan</h3>
+      <p>El agente principal escribe un mensaje <code>Agent</code> con el nombre del subagente y un prompt. Claude Code:</p>
+      <ol>
+        <li>Crea una sesión nueva con el prompt del subagente.</li>
+        <li>El subagente hereda el <code>cwd</code> del terminal worker (que ya es el worktree del TASK_ID en <code>pr-flow</code>).</li>
+        <li>Cuando el subagente termina, devuelve un mensaje final con un <em>trailer</em>.</li>
+        <li>El hook <code>SubagentStop</code> parsea ese trailer y actualiza disco.</li>
+      </ol>
+      <div class="callout warn" style="margin-top:14px"><strong>Regla dura:</strong> un subagente no puede invocar a otro. Solo el <em>main thread</em> orquesta. Esto es una restricción de Claude Code, no del proyecto.</div>
+    </div>
+  </div>
+  <div class="callout">
+    <strong>Cambio reciente · worktree a nivel sesión:</strong> ningún subagente lleva ya <code>isolation: worktree</code> en su frontmatter. El aislamiento Git por TASK_ID ahora se hace <em>antes</em> de arrancar Claude Code, vía <code>./scripts/ensure-task-worktree.sh</code>. Así <strong>todos los subagentes de la slice ven el mismo checkout</strong> (developer escribe, validator/tester lo inspeccionan en el mismo árbol) en vez de cada uno crear un worktree separado.
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">02</span>Resumen tabla</h2>
+  <p class="section-lead">Cuatro grupos según cuándo y dónde corren. <strong>Lifecycle</strong> = puede mutar <code>task.status</code>. <strong>Info-only</strong> = sus resultados se guardan como metadatos. La columna <strong>Worktree</strong> es heredada del terminal: todos los subagentes de una misma slice ven el mismo checkout (creado por <code>ensure-task-worktree.sh</code> antes de arrancar Claude Code en <code>pr-flow</code>; <code>main</code> en <code>push-to-main</code>).</p>
+
+  <div style="overflow-x:auto">
+  <table class="compact">
+    <thead><tr><th>Agente</th><th>Modelo</th><th>Memoria</th><th>Lifecycle</th><th>Info-only</th><th>Cuándo</th></tr></thead>
+    <tbody>
+      <tr><td><strong>main-orchestrator</strong></td><td>opus</td><td>—</td><td>—</td><td>✓</td><td>sesión</td></tr>
+      <tr><td><strong>planner</strong></td><td>opus</td><td>✓</td><td>—</td><td>✓</td><td>per-slice</td></tr>
+      <tr><td><strong>developer</strong></td><td>sonnet</td><td>✓</td><td>✓</td><td>—</td><td>per-slice</td></tr>
+      <tr><td><strong>official-docs-researcher</strong></td><td>sonnet</td><td>✓</td><td>—</td><td>✓</td><td>per-slice opcional</td></tr>
+      <tr><td><strong>validator</strong></td><td>opus</td><td>✓</td><td>—</td><td>✓</td><td>per-slice</td></tr>
+      <tr><td><strong>tester</strong></td><td>sonnet</td><td>✓</td><td>✓</td><td>—</td><td>per-slice</td></tr>
+      <tr><td><strong>debugger</strong></td><td>opus</td><td>✓</td><td>✓</td><td>—</td><td>si tester falla</td></tr>
+      <tr><td><strong>screen-journey-reviewer</strong></td><td>sonnet</td><td>✓</td><td>—</td><td>✓</td><td>verify-slice UI</td></tr>
+      <tr><td><strong>closer</strong></td><td>sonnet</td><td>✓</td><td>✓</td><td>—</td><td>tras verify-slice OK</td></tr>
+      <tr><td><strong>deployer</strong></td><td>sonnet</td><td>✓</td><td>✓</td><td>—</td><td>sólo release</td></tr>
+      <tr><td><strong>document-analyzer</strong></td><td>sonnet</td><td>—</td><td>—</td><td>—</td><td>bootstrap</td></tr>
+      <tr><td><strong>project-architect</strong></td><td>opus</td><td>✓</td><td>—</td><td>—</td><td>bootstrap</td></tr>
+      <tr><td><strong>task-planner</strong></td><td>sonnet</td><td>✓</td><td>—</td><td>—</td><td>bootstrap</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">03</span>El write map: quién puede escribir qué</h2>
+  <p class="section-lead">Cada agente declara en <code>.claude/orchestrator-contract.json</code> sus <code>may_write</code> (lo permitido) y <code>must_not_write</code> (lo prohibido). El hook <code>hook_write_scope_guard.py</code> lo aplica antes de cada Write/Edit y bloquea físicamente si alguien se sale.</p>
+
+  <table>
+    <thead><tr><th>Agente</th><th>Sí puede escribir</th><th>NO puede escribir</th></tr></thead>
+    <tbody>
+      <tr><td>planner</td><td><code>task-packs/&lt;TASK_ID&gt;.md</code>, su MEMORY.md</td><td>Código de producto, handoff, registry</td></tr>
+      <tr><td>developer</td><td>Código del slice, PROGRESS.md, handoff, evidence del mismo TASK_ID</td><td>Source-of-truth, registry, otros TASK_IDs</td></tr>
+      <tr><td>official-docs-researcher</td><td><code>memory/official-doc-notes/*.md</code>, su MEMORY.md</td><td>Código, handoff de la slice</td></tr>
+      <tr><td>validator</td><td>Sección validator del handoff (append-only)</td><td>Código de producto, registry</td></tr>
+      <tr><td>tester</td><td>Sección tester del handoff, <code>evidence/&lt;TASK_ID&gt;/</code></td><td>Código (no arregla bugs)</td></tr>
+      <tr><td>debugger</td><td>Fix mínimo dentro del mismo <code>write_set</code>, sección debugger</td><td>Cambiar scope, tocar otros TASK_IDs</td></tr>
+      <tr><td>screen-journey-reviewer</td><td>Sección Screen/Journey review del handoff</td><td>Código, promover follow-ups</td></tr>
+      <tr><td>closer</td><td><code>reports/&lt;TASK_ID&gt;.md</code>, commit, push, baseline snapshot</td><td>Código, <code>Co-authored-by: Claude</code>, <code>git stash</code></td></tr>
+      <tr><td>deployer</td><td>Manifiestos de release, evidencia de deploy</td><td>Código de producto</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout danger">
+    <strong>Generated core state · prohibido escribir a mano:</strong> nadie escribe directamente <code>registry.json</code>, <code>runtime-state.json</code>, <code>ledger.jsonl</code>, <code>bash-ledger.jsonl</code>, <code>task-dag.json/md</code>, <code>execution-graph.json</code>. Solo scripts y hooks bajo lock mutan estos ficheros. Editarlos manualmente corrompe el DAG.
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">04</span>El trailer schema</h2>
+  <p class="section-lead">Cuando un subagente termina, emite un bloque final de líneas <code>CLAVE: valor</code>. El hook <code>SubagentStop</code> las parsea. Los valores válidos están declarados en <code>.claude/orchestrator-contract.json → trailer_schema.roles</code>.</p>
+
+  <h3>Claves globales</h3>
+<pre><code>TASK_ID:                 <span style="color:var(--text-faint)"># coincide con CLAUDE_ACTIVE_TASK_ID</span>
+OUTCOME:                 <span style="color:var(--text-faint)"># varía por rol</span>
+NEXT_STATUS:             <span style="color:var(--text-faint)"># sólo roles que mutan lifecycle</span>
+HANDOFF:                 <span style="color:var(--text-faint)"># path al handoff actualizado</span>
+EVIDENCE:                <span style="color:var(--text-faint)"># path al directorio de evidencia</span>
+REPORT:                  <span style="color:var(--text-faint)"># path del report (sólo closer)</span>
+REPORT_READY: yes|no     <span style="color:var(--text-faint)"># closer</span>
+BASELINE_SYNC_READY:     <span style="color:var(--text-faint)"># closer</span>
+GIT_READY:               <span style="color:var(--text-faint)"># closer</span>
+PUSH_READY:              <span style="color:var(--text-faint)"># closer</span>
+WORKTREES_CLEANED:       <span style="color:var(--text-faint)"># closer</span>
+JOURNEY_PENDING_VERIFY:  <span style="color:var(--text-faint)"># JID si cierra journey aparte</span>
+JOURNEY_VERIFIED_INLINE: <span style="color:var(--text-faint)"># JID si verificado inline</span>
+JOURNEY_VERIFY_OUTCOME:  <span style="color:var(--text-faint)"># verified | issues_found</span></code></pre>
+
+  <h3>OUTCOME / NEXT_STATUS por rol</h3>
+  <div style="overflow-x:auto">
+  <table class="compact">
+    <thead><tr><th>Rol</th><th>outcome_values</th><th>next_status_values</th><th>Naturaleza</th></tr></thead>
+    <tbody>
+      <tr><td><strong>closer</strong></td><td><code>committed</code> · <code>blocked</code></td><td><code>done</code> · <code>blocked</code></td><td>Lifecycle · cierre</td></tr>
+      <tr><td><strong>debugger</strong></td><td><code>fixed</code> · <code>blocked</code> · <code>failed</code></td><td><code>validator_tester_pending</code> · <code>blocked</code></td><td>Lifecycle</td></tr>
+      <tr><td><strong>deployer</strong></td><td><code>deployed</code> · <code>planned</code> · <code>blocked</code> · <code>failed</code></td><td><code>done</code> · <code>blocked</code></td><td>Lifecycle</td></tr>
+      <tr><td><strong>developer</strong></td><td><code>success</code> · <code>blocked</code> · <code>failed</code></td><td><code>validator_tester_pending</code> · <code>blocked</code></td><td>Lifecycle</td></tr>
+      <tr><td><strong>tester</strong></td><td><code>pass</code> · <code>fail</code> · <code>blocked</code></td><td><code>ready_for_close</code> · <code>needs_debug</code> · <code>blocked</code></td><td>Lifecycle (dueño status)</td></tr>
+      <tr><td><strong>validator</strong></td><td><code>approved</code> · <code>changes_requested</code> · <code>blocked</code></td><td>(metadata)</td><td>Info-only · bloquea closer</td></tr>
+      <tr><td><strong>official-docs-researcher</strong></td><td><code>verified</code> · <code>discrepancy</code> · <code>insufficient</code></td><td>—</td><td>Info-only</td></tr>
+      <tr><td><strong>planner</strong></td><td><code>ready</code> · <code>blocked</code></td><td>—</td><td>Info-only</td></tr>
+      <tr><td><strong>screen-journey-reviewer</strong></td><td><code>approved</code> · <code>changes_requested</code> · <code>blocked</code></td><td>—</td><td>Info-only</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="callout">
+    <strong>El guardrail del closer:</strong> aunque emita <code>committed/done</code>, si faltan las 5 pruebas <code>*_READY=yes</code> el hook reescribe el resultado a <code>blocked</code>.
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">05</span>Fichas del pipeline per-slice</h2>
+
+  <div id="planner" class="agent-card featured">
+    <div class="agent-head"><h3>planner <span class="model">opus · maxTurns 80</span></h3>
+      <div class="agent-meta"><span class="tag blue">blocking</span><span class="tag green">info-only</span><span class="tag">memoria</span></div></div>
+    <p>Primer agente del pipeline. Su misión: dado un <code>TASK_ID</code>, dejar el contexto preparado para el resto sin volver a leer los 5 source-of-truth completos.</p>
+    <div class="agent-grid">
+      <div class="pane"><h5>Qué lee</h5><ul><li>PROGRESS.md</li><li>registry.json (su TASK_ID)</li><li>runtime-state.json</li><li>Las secciones relevantes de los 5 docs</li><li>Su MEMORY.md</li></ul></div>
+      <div class="pane"><h5>Qué escribe</h5><ul><li><code>task-packs/&lt;TASK_ID&gt;.md</code> con front→back→DB map, allowed_paths, acceptance, verify, journey refs</li><li>Apuntes en su MEMORY.md</li></ul></div>
+      <div class="pane"><h5>Gates que comprueba</h5><ul><li>Deps del TASK_ID = done</li><li>Sin journeys pendientes</li><li>Sin FU bloqueantes</li><li>Spawn budget no agotado</li></ul></div>
+      <div class="pane"><h5>Trailer típico</h5><pre><code>OUTCOME: ready
+CONTEXT_READY: yes
+NEEDS_OFFICIAL_DOCS: yes|no
+CLOSES_JOURNEY: J104|none</code></pre></div>
+    </div>
+    <p style="color:var(--text-dim); font-size:14px">Si emite <code>CONTEXT_READY: no</code> → todo el pipeline se detiene.</p>
+  </div>
+
+  <div id="developer" class="agent-card">
+    <div class="agent-head"><h3>developer <span class="model">sonnet · maxTurns 150</span></h3>
+      <div class="agent-meta"><span class="tag blue">lifecycle</span><span class="tag purple">worktree-sesión</span><span class="tag">memoria</span></div></div>
+    <p>El único que escribe código de producto. Trabaja en <strong>el checkout que ya tiene el terminal worker</strong> (en <code>pr-flow</code>, el worktree <code>dev/&lt;TASK_ID&gt;</code> creado por <code>ensure-task-worktree.sh</code>; en <code>push-to-main</code>, directamente <code>main</code>). Sigue orden estricto: <strong>DB → backend → frontend</strong>.</p>
+    <div class="agent-grid">
+      <div class="pane"><h5>Qué hace en orden</h5><ol style="margin:0; padding-left:18px; font-size:13px; color:var(--text-dim)"><li>Migración + entidad DB</li><li>Repository + service backend</li><li>Endpoint + tests backend</li><li>Use case + data layer frontend</li><li>UI + tests frontend</li><li>Actualiza PROGRESS.md</li><li>Inicializa handoff</li></ol></div>
+      <div class="pane"><h5>Trailer</h5><pre><code>OUTCOME: success
+NEXT_STATUS: validator_tester_pending
+HANDOFF: ...
+EVIDENCE: ...</code></pre></div>
+    </div>
+    <p style="color:var(--text-dim); font-size:14px"><strong>Logging obligatorio:</strong> cada función emite log BEFORE/AFTER. Verbosidad controlada por <code>ENABLE_VERBOSE_LOGGING</code>; validator chequea ambos modos.</p>
+  </div>
+
+  <div id="official-docs" class="agent-card">
+    <div class="agent-head"><h3>official-docs-researcher <span class="model">sonnet · maxTurns 50</span></h3>
+      <div class="agent-meta"><span class="tag green">info-only</span><span class="tag">paralelo</span></div></div>
+    <p>Sólo si planner marcó <code>NEEDS_OFFICIAL_DOCS: yes</code> o la slice toca librerías volátiles. Corre <em>en paralelo</em> con developer en el mismo mensaje.</p>
+    <div class="agent-grid">
+      <div class="pane"><h5>Cuándo</h5><ul><li>AI/ML volátiles (LangChain, OpenAI SDK, ...)</li><li>SDKs en major bump</li><li>APIs externas nuevas</li><li>Patrones de seguridad / streaming / OAuth</li></ul></div>
+      <div class="pane"><h5>Qué produce</h5><ul><li>Notas en <code>memory/official-doc-notes/*.md</code></li><li>Si discrepancia, el hook <code>docs-discrepancy</code> alerta al developer en el siguiente Write (warn-only)</li></ul></div>
+    </div>
+  </div>
+
+  <div id="validator" class="agent-card">
+    <div class="agent-head"><h3>validator <span class="model">opus · maxTurns 60</span></h3>
+      <div class="agent-meta"><span class="tag green">info-only</span><span class="tag">paralelo con tester</span></div></div>
+    <p>Revisa <em>cómo</em> está hecho el código. No corre tests, no toca código. Lee diff + handoff + contexto.</p>
+    <div class="agent-grid">
+      <div class="pane"><h5>Qué revisa</h5><ul><li>Clean Architecture</li><li>File size ~200/300 · funciones &lt;50</li><li>Logging BEFORE/AFTER + ambos modos verbose</li><li>Tests reales (no mocks de negocio)</li><li>PROGRESS.md actualizado</li><li>Security checklist</li><li>A11y</li><li>Journey matrix / wiring drift</li></ul></div>
+      <div class="pane"><h5>Por qué info-only</h5><p style="font-size:13px">Corre en paralelo con tester. Para evitar race en el registry, tester es <strong>dueño del status</strong>; validator escribe <code>validator_outcome</code> y <code>validator_next_status</code> como metadatos.</p><p style="font-size:13px">Pero <code>changes_requested</code> bloquea al closer (que lee el handoff).</p></div>
+    </div>
+  </div>
+
+  <div id="tester" class="agent-card">
+    <div class="agent-head"><h3>tester <span class="model">sonnet · maxTurns 80</span></h3>
+      <div class="agent-meta"><span class="tag blue">lifecycle</span><span class="tag">paralelo con validator</span></div></div>
+    <p>Tests reales contra backend + DB + frontend levantados. Backend tests pegan a DB real, frontend integración hace requests reales al backend.</p>
+    <div class="agent-grid">
+      <div class="pane"><h5>Qué ejecuta</h5><ul><li>Backend lint + tests</li><li>Frontend lint + tests</li><li>Smoke <code>curl</code></li><li>Logs con ambos modos <code>ENABLE_VERBOSE_LOGGING</code></li><li>Outputs en <code>evidence/&lt;TASK_ID&gt;/</code></li></ul></div>
+      <div class="pane"><h5>Trailer</h5><pre><code>OUTCOME: pass | fail
+NEXT_STATUS: ready_for_close
+             | needs_debug
+EVIDENCE: ...</code></pre></div>
+    </div>
+    <p style="color:var(--text-dim); font-size:14px"><strong>Si <code>fail</code></strong> → debugger. Máximo 3 ciclos; al 4º se bloquea con <code>max_debug_cycles_reached</code>.</p>
+  </div>
+
+  <div id="debugger" class="agent-card">
+    <div class="agent-head"><h3>debugger <span class="model">opus · maxTurns 120</span></h3>
+      <div class="agent-meta"><span class="tag blue">lifecycle</span><span class="tag purple">worktree-sesión</span><span class="tag">memoria</span></div></div>
+    <p>Fix mínimo dentro del mismo <code>write_set</code>, en el mismo checkout que el developer (no abre un worktree nuevo). NO cambia scope, NO toca otras tasks, NO añade features.</p>
+    <div class="agent-grid">
+      <div class="pane"><h5>Reglas</h5><ul><li>Máx 3 ciclos por TASK_ID</li><li>4º intento → <code>blocked · max_debug_cycles_reached</code></li><li>Si fix sale del write_set → no fix, sino FU formal</li></ul></div>
+      <div class="pane"><h5>Trailer</h5><pre><code>OUTCOME: fixed | blocked | failed
+NEXT_STATUS: validator_tester_pending
+             | blocked</code></pre></div>
+    </div>
+    <p style="color:var(--text-dim); font-size:14px">Tras el fix vuelve al paso 3 (validator ‖ tester).</p>
+  </div>
+
+  <div id="screen-journey-reviewer" class="agent-card">
+    <div class="agent-head"><h3>screen-journey-reviewer <span class="model">sonnet · maxTurns 40</span></h3>
+      <div class="agent-meta"><span class="tag green">info-only</span><span class="tag warn">sólo verify-slice</span></div></div>
+    <p>Solo entra en <code>/verify-slice</code> cuando la slice es de pantalla, UX, journey o tiene <code>VISUAL_CONTRACT_CHECK</code>.</p>
+    <div class="agent-grid">
+      <div class="pane"><h5>Estados UI que exige</h5><ul><li>loading</li><li>empty</li><li>error_network</li><li>error_validation</li><li>permission_denied</li><li>success</li><li>streaming / uploading / indexing (si aplica)</li></ul></div>
+      <div class="pane"><h5>Política de FU</h5><p style="font-size:13px">Único reviewer info-only que puede marcar <code>followup_candidate=yes</code>. <code>/verify-slice</code> decide si crear FU formal. El reviewer no la crea por sí mismo.</p></div>
+    </div>
+  </div>
+
+  <div id="closer" class="agent-card featured">
+    <div class="agent-head"><h3>closer <span class="model">sonnet · maxTurns 50</span></h3>
+      <div class="agent-meta"><span class="tag blue">lifecycle</span><span class="tag warn">cierre con guardrail</span></div></div>
+    <p>El único que cierra una task. Lo invoca <code>/verify-slice</code> cuando hay <code>VERIFY_OUTCOME: verified</code>. Hace 6 cosas en orden:</p>
+    <ol>
+      <li>Pre-check del handoff con <code>check-handoff-contract.sh</code>.</li>
+      <li>Escribe <code>reports/&lt;TASK_ID&gt;.md</code>.</li>
+      <li>Sincroniza baseline con <code>sync-product-baseline.sh sync</code>.</li>
+      <li>Pre-check Git: <code>./scripts/ensure-task-worktree.sh --check-current &lt;TASK_ID&gt;</code>. En <code>pr-flow</code> exige el worktree/rama del TASK_ID; en <code>push-to-main</code> exige <code>main</code>.</li>
+      <li>Commit atómico en el <strong>checkout actual del TASK_ID</strong> (<code>main</code> en push-to-main, <code>dev/&lt;TASK_ID&gt;</code> en pr-flow) · sin <code>Co-authored-by</code> · sin <code>git stash</code>.</li>
+      <li>Push con <code>./scripts/git-workflow.sh</code>.</li>
+      <li>Housekeeping: <code>slice-clean.sh</code> + <code>cleanup-worktrees.sh</code>.</li>
+    </ol>
+    <div class="callout warn"><strong>Cierre real sólo con las 5 pruebas:</strong> <code>REPORT_READY=yes</code>, <code>BASELINE_SYNC_READY=yes</code>, <code>GIT_READY=yes</code>, <code>PUSH_READY=yes</code>, <code>WORKTREES_CLEANED=yes</code>. Sin ellas el hook reescribe a <code>blocked</code>.</div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">06</span>Bootstrap y especiales</h2>
+  <div id="document-analyzer" class="agent-card">
+    <div class="agent-head"><h3>document-analyzer <span class="model">sonnet · maxTurns 30</span></h3><div class="agent-meta"><span class="tag">bootstrap</span></div></div>
+    <p>Valida los 5 docs source-of-truth. Ejecuta <code>bootstrap_source_of_truth.py --validate-only</code> y <code>--refresh</code>. Trailer: <code>valid | invalid</code>.</p>
+  </div>
+  <div id="project-architect" class="agent-card">
+    <div class="agent-head"><h3>project-architect <span class="model">opus · maxTurns 80</span></h3><div class="agent-meta"><span class="tag">bootstrap</span></div></div>
+    <p>Compila <code>architecture-contract.md</code>, <code>decisions.md</code>, <code>risk-register.md</code> derivados de los 5 docs.</p>
+  </div>
+  <div id="task-planner" class="agent-card">
+    <div class="agent-head"><h3>task-planner <span class="model">sonnet · maxTurns 60</span></h3><div class="agent-meta"><span class="tag">bootstrap</span><span class="tag">memoria persistente</span></div></div>
+    <p>Diseña el schema del registry. Memoria persiste entre proyectos: aprende qué patrones de Coverage Registry funcionan mejor.</p>
+  </div>
+
+  <div id="main-orchestrator" class="agent-card featured">
+    <div class="agent-head"><h3>main-orchestrator <span class="model">opus · maxTurns 150</span></h3><div class="agent-meta"><span class="tag blue">sesión principal</span></div></div>
+    <p>Es <strong>la sesión de Claude Code</strong>, no un subagente invocable. Sólo este agente puede invocar a otros con <code>Agent</code>.</p>
+    <div class="callout danger"><strong>Anti-patrón:</strong> ejecutar <code>claude</code> plano y luego invocar main-orchestrator como subagente. Un subagente no puede orquestar otros. <code>.claude/settings.json → "agent": "main-orchestrator"</code> lo arranca correctamente.</div>
+    <h4>Por qué NO lleva <code>tools:</code> en frontmatter</h4>
+    <p>Omitir <code>tools:</code> hace que herede <em>todas</em> las herramientas disponibles, incluidos MCPs y la propia <code>Agent</code>. Si pones una lista, se convierte en allowlist y un MCP nuevo no llegaría.</p>
+  </div>
+
+  <div id="deployer" class="agent-card">
+    <div class="agent-head"><h3>deployer <span class="model">sonnet · maxTurns 80</span></h3><div class="agent-meta"><span class="tag purple">worktree-sesión</span><span class="tag warn">sólo Phase 5</span></div></div>
+    <p>Sólo en release. Corre en el mismo checkout que el resto de la sesión worker (no abre un worktree propio). Exige closer committed previo, dry-run, plan de rollback. Trailer: <code>deployed | planned | blocked | failed</code> → <code>done | blocked</code>.</p>
+  </div>
+</section>
+
+<section id="memory">
+  <h2><span class="num">07</span>Memoria por agente · Reflexion-style</h2>
+  <p class="section-lead">Cada agente puede mantener un <code>orchestrator-state/agent-memory/&lt;agente&gt;/MEMORY.md</code> que sobrevive a <code>/clear</code>, reinicios y slices. Inspirado en <em>Reflexion</em>: el agente apunta lo que aprende, los bugs recurrentes, las decisiones que funcionaron.</p>
+
+  <div class="split">
+    <div class="card"><h3>Qué guarda cada uno</h3><ul>
+      <li><strong>planner</strong> — patrones de task pack útiles</li>
+      <li><strong>developer</strong> — convenciones del proyecto, gotchas del stack</li>
+      <li><strong>validator</strong> — defectos arquitectónicos recurrentes</li>
+      <li><strong>debugger</strong> — bugs vistos y causas raíz</li>
+      <li><strong>official-docs-researcher</strong> — cache de versiones verificadas</li>
+      <li><strong>task-planner</strong> — patrones de Coverage Registry (persistente entre proyectos)</li>
+    </ul></div>
+    <div class="card"><h3>Compactación segura</h3>
+      <p>Cuando una memoria crece: <code>scripts/compact-agent-memory.py --agent developer --apply</code>. <strong>Archiva el original</strong> a <code>archive/MEMORY.full.&lt;ts&gt;.md</code> antes de reescribir un índice corto. Nunca pierde info histórica.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">08</span>Worktrees aislados (a nivel sesión, no subagente)</h2>
+  <p class="section-lead">Versión actual: <strong>ningún subagente lleva <code>isolation: worktree</code></strong>. El aislamiento Git por TASK_ID ocurre <em>una vez por terminal worker</em>, antes de que Claude Code arranque. Así todos los subagentes de la slice (developer, validator, tester, debugger, closer) inspeccionan y editan el <strong>mismo checkout</strong>.</p>
+
+  <h3>Quién crea el worktree</h3>
+  <p>El nuevo script <code>./scripts/ensure-task-worktree.sh</code>. Lo invoca <code>/next-wave</code> dentro del bloque copy/paste que imprime, antes de lanzar <code>claude --agent main-orchestrator</code>.</p>
+
+  <ol>
+    <li>Lee <code>git_workflow</code> de <code>STACK_PROFILE.yaml</code>.</li>
+    <li>Si <code>git_workflow: push-to-main</code> (o alias <code>direct-main</code>) → imprime la raíz canónica del repo y exige rama <code>main</code>. No abre worktree extra.</li>
+    <li>Si <code>git_workflow: pr-flow</code> → crea (o reusa) la rama <code>dev/&lt;TASK_ID&gt;</code> en un worktree en <code>&lt;root&gt;-worktrees/&lt;TASK_ID&gt;</code> (configurable con <code>CLAUDE_TASK_WORKTREES_DIR</code>). Imprime esa ruta para que el terminal haga <code>cd</code> antes de arrancar Claude.</li>
+  </ol>
+
+  <h3>Modos de invocación</h3>
+<pre><code>./scripts/ensure-task-worktree.sh P02-S03-T001          <span style="color:var(--text-faint)"># crea/reusa y imprime la ruta</span>
+./scripts/ensure-task-worktree.sh --check-current P02-S03-T001
+                                                          <span style="color:var(--text-faint)"># gate: TASK_WORKTREE_READY: yes|no</span>
+./scripts/ensure-task-worktree.sh --print-root            <span style="color:var(--text-faint)"># raíz canónica (no la del worktree actual)</span></code></pre>
+
+  <h3>Por qué session-level y no subagente</h3>
+  <ul>
+    <li><strong>Validator/tester ven lo que escribió el developer</strong> — antes, si cada subagente abría su propio worktree, el validator inspeccionaba un árbol distinto al del developer.</li>
+    <li><strong>Un solo git por slice</strong> — el closer commitea y hace push desde el mismo checkout donde se trabajó. Sin saltar entre worktrees.</li>
+    <li><strong>Paralelismo entre terminales sigue intacto</strong> — cada terminal worker tiene SU propio TASK_ID y SU propio worktree. Dos terminales en paralelo no se pisan.</li>
+  </ul>
+
+  <h3>Por qué importa</h3>
+  <ul>
+    <li><strong>Paralelismo seguro</strong> — dos slices distintas nunca tocan el mismo árbol físico.</li>
+    <li><strong>Rollback gratis</strong> — borrar el worktree (<code>cleanup-worktrees.sh</code>) descarta los cambios sin tocar el resto.</li>
+    <li><strong>Main siempre limpio en push-to-main; rama por task en pr-flow</strong> — el flujo Git encaja con el patrón declarado en STACK_PROFILE.</li>
+  </ul>
+
+  <div class="callout">
+    <code>./scripts/cleanup-worktrees.sh --apply --task &lt;TASK_ID&gt;</code> nunca borra worktrees dirty, ni el primario, ni ramas <code>main</code>/<code>master</code>. El closer lo invoca tras el push.
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">09</span>La carrera silenciosa: validator ‖ tester</h2>
+  <p class="section-lead">Dos agentes terminan a la vez y quieren mutar el registry. Sin tratamiento, sería race condition.</p>
+
+  <div class="ascii-flow">  <span class="hl">main-orchestrator</span>
+        │
+        ├─ Agent: <span class="hl2">validator</span>  ────┐
+        └─ Agent: <span class="hl2">tester</span>     ────┤  paralelo
+                                  │
+   ┌──────────────────────────────┘
+   ▼
+  SubagentStop hook  ─►  <span class="hl3">file_lock(registry.json)</span>
+                              │
+                              ├─ validator (info-only):
+                              │   escribe task.validator_outcome (metadata)
+                              │   NO toca task.status
+                              │
+                              └─ tester (lifecycle):
+                                  escribe task.status = ready_for_close / needs_debug
+
+  Schema dice quién es info-only. Hook lo lee.
+  Resultado deterministico: tester gana lifecycle, validator gana metadata.</div>
+
+  <p>Esto está declarado en <code>.claude/orchestrator-contract.json → trailer_schema.roles.validator.info_only = true</code>. El hook lo lee y aplica la regla automáticamente.</p>
+</section>
+
+<section>
+  <div class="next-cta">
+    <div><h3>Siguiente página</h3><p>Ya sabes qué hace cada subagente. Toca ver cómo encajan: el pipeline paso a paso.</p></div>
+    <a class="cta-btn" href="flujo.html">Ir al flujo per-slice →</a>
+  </div>
+</section>
+
+</div>
+
+<footer>Documentación de <code>OrquestadorDAG-AnyStack</code> · página 2 de 7 · <a href="index.html">volver al índice</a></footer>
+
+</body>
+</html>

@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DAG, Write set y Conflict groups · OrquestadorDAG AnyStack</title>
+<link rel="stylesheet" href="assets/styles.css">
+<style>
+  .registry-row { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; margin: 8px 0; font-family: var(--mono); font-size: 12px; }
+  .registry-row .label { color: var(--accent); margin-right: 8px; font-weight: 600; }
+  .registry-row .val { color: var(--text); }
+  .registry-row .sep { color: var(--text-faint); margin: 0 8px; }
+  .graph-svg { width: 100%; background: var(--bg-soft); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin: 16px 0; }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="nav-brand"><span class="dot"></span> OrquestadorDAG · AnyStack</div>
+    <ul>
+      <li><a href="index.html">Visión general</a></li>
+      <li><a href="agentes.html">Agentes</a></li>
+      <li><a href="flujo.html">Flujo per-slice</a></li>
+      <li><a href="maquina-estados.html">Máquina de estados</a></li>
+      <li><a href="dag.html" class="active">DAG &amp; Write set</a></li>
+      <li><a href="hooks-locks.html">Hooks &amp; Locks</a></li>
+      <li><a href="scripts-git.html">Scripts &amp; Git</a></li>
+      <li><a href="buenas-practicas.html">Buenas prácticas Claude</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="page-header">
+  <div class="crumbs">Página 4 de 7 · Tripas</div>
+  <h1>DAG, Write set y Conflict groups</h1>
+  <p class="lede">El DAG (grafo dirigido acíclico) es lo que permite paralelizar slices con seguridad. El <em>Write set</em> y el <em>Conflict group</em> son las dos columnas que impiden que dos terminales se pisen los ficheros. Aquí está la mecánica completa.</p>
+</header>
+
+<div class="container">
+
+<section>
+  <h2><span class="num">01</span>De celda a grafo: el viaje</h2>
+  <p class="section-lead">Todo empieza en una tabla markdown del implementation checklist. <code>bootstrap_source_of_truth.py</code> la lee y la convierte en el grafo. El humano nunca toca el grafo directamente — sólo la tabla.</p>
+
+  <div class="ascii-flow"><span class="hl">docs/source-of-truth/&lt;APP&gt;_IMPLEMENTATION_CHECKLIST.md</span>
+
+| Slice ID         | Depends on        | Conflict group | Write set                   | ...
+|------------------|-------------------|----------------|-----------------------------|
+| P01-S01-T001     | —                 | foundation     | api/migrations/**           |
+| P01-S01-T002     | P01-S01-T001      | foundation     | api/features/auth/**        |
+| P01-S02-T001     | P01-S01-T002      | front:auth     | src/features/auth/**        |
+| P02-S01-T001     | P01-S01-T002      | back:profile   | api/features/profile/**     |
+| P02-S01-T002     | P02-S01-T001      | front:profile  | src/features/profile/**     |
+
+                            │
+                            ▼  <span class="hl3">bootstrap_source_of_truth.py --refresh</span>
+                            │
+                            ▼
+<span class="hl">orchestrator-state/tasks/registry.json</span>      <span class="dim">(canónico runtime)</span>
+<span class="hl">orchestrator-state/memory/task-dag.json</span>     <span class="dim">(grafo derivado)</span>
+<span class="hl">orchestrator-state/memory/task-dag.md</span>       <span class="dim">(humano)</span>
+<span class="hl">orchestrator-state/memory/execution-graph.json</span>   <span class="dim">(vista runner)</span></div>
+
+  <div class="callout">
+    <strong>La fuente canónica del runtime es <code>registry.json → tasks[]</code></strong>. Los <code>task-dag.json</code> y <code>.md</code> son vistas derivadas. <code>check-task-dag.sh --strict</code> verifica que las vistas no han driftado del registry antes de paralelizar.
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">02</span>Las 4 columnas que controlan el DAG</h2>
+  <p class="section-lead">El Coverage Registry tiene 19 columnas, pero estas 4 son las que el motor consulta para decidir orden y paralelismo.</p>
+
+  <div class="grid grid-2">
+    <div class="card">
+      <h3>Depends on</h3>
+      <p>Las dependencias duras. Acepta:</p>
+      <ul>
+        <li><code>—</code> o vacío → nodo raíz</li>
+        <li><code>P02-S01-T001</code> → un ID concreto</li>
+        <li><code>P02-S01-T001..T004</code> → un rango</li>
+        <li><code>P03-S02</code> → todas las tasks de ese step</li>
+        <li><code>P03</code> → todas las tasks de esa phase</li>
+        <li><code>previous</code> → la anterior en la lista</li>
+      </ul>
+      <p style="color:var(--text-dim); font-size:13px"><strong>Si falta esta columna entera</strong> → bootstrap rechaza arrancar. Sin DAG implícito.</p>
+    </div>
+
+    <div class="card">
+      <h3>Conflict group</h3>
+      <p>Etiqueta libre que comparten tasks que <strong>no</strong> deben correr a la vez aunque sus deps estén satisfechas.</p>
+      <p>Convención común:</p>
+      <ul>
+        <li><code>front:&lt;feature&gt;</code> — mismo módulo frontend</li>
+        <li><code>back:&lt;feature&gt;</code> — mismo módulo backend</li>
+        <li><code>migrations</code> — todas las que añaden tablas</li>
+        <li><code>auth</code>, <code>infra</code>, <code>config</code> — dominios sensibles</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>Write set</h3>
+      <p>Globs de paths que la task está autorizada a escribir. El hook <code>hook_write_scope_guard.py</code> avisa si una escritura cae fuera; <code>claim_task.py</code> rechaza la task si intersecta con tasks activas.</p>
+<pre><code>src/features/login/**
+api/features/auth/login.py
+api/migrations/0042_*.sql</code></pre>
+    </div>
+
+    <div class="card">
+      <h3>Journey refs</h3>
+      <p>IDs del journey (de la Journey Coverage Matrix de <code>instrucciones.md</code>).</p>
+<pre><code>J104                 <span style="color:var(--text-faint)"># un journey</span>
+J104, J201           <span style="color:var(--text-faint)"># dos journeys</span>
+—                    <span style="color:var(--text-faint)"># foundation/infra</span></code></pre>
+      <p style="color:var(--text-dim); font-size:13px">Cuando todas las tasks de un journey terminan, ese journey queda <strong>cerrado</strong> y necesita <code>/verify-journey</code>.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">03</span>Fila completa de ejemplo</h2>
+  <p class="section-lead">Ejemplo real de una fila del Coverage Registry una vez parseada.</p>
+
+  <div class="registry-row"><span class="label">Slice ID:</span><span class="val">P02-S03-T001</span><span class="sep">·</span><span class="label">Tipo:</span><span class="val">screen</span><span class="sep">·</span><span class="label">Target:</span><span class="val">ResultsPage</span></div>
+  <div class="registry-row"><span class="label">Product increment:</span><span class="val">v1</span><span class="sep">·</span><span class="label">Build state:</span><span class="val">planned</span><span class="sep">·</span><span class="label">Risk:</span><span class="val">medium</span><span class="sep">·</span><span class="label">Verify mode:</span><span class="val">manual</span></div>
+  <div class="registry-row"><span class="label">Depends on:</span><span class="val">P02-S02-T003, P02-S03-T000</span></div>
+  <div class="registry-row"><span class="label">Conflict group:</span><span class="val">front:results</span><span class="sep">·</span><span class="label">Write set:</span><span class="val">src/features/results/**, api/features/results/results_endpoint.py</span></div>
+  <div class="registry-row"><span class="label">Journey refs:</span><span class="val">J104</span><span class="sep">·</span><span class="label">Endpoint:</span><span class="val">GET /api/v1/results</span><span class="sep">·</span><span class="label">Tablas:</span><span class="val">results, queries</span></div>
+  <div class="registry-row"><span class="label">Acceptance mínimo:</span><span class="val">muestra resultados con paginación, estados empty/error_network</span></div>
+  <div class="registry-row"><span class="label">Verify mínimo:</span><span class="val">/verify-slice reproduce búsqueda → resultados visibles con datos sandbox</span></div>
+</section>
+
+<section>
+  <h2><span class="num">04</span>Visualización del grafo</h2>
+  <p class="section-lead">Versión simplificada para ver cómo las dependencias generan <em>waves</em>.</p>
+
+  <div class="graph-svg">
+  <svg viewBox="0 0 900 360" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:auto">
+    <defs>
+      <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+        <path d="M0,0 L0,6 L9,3 z" fill="#8b949e" />
+      </marker>
+      <style>
+        .node-bg { fill: #1f2937; stroke: #58a6ff; stroke-width: 1.5; }
+        .node-bg.done { stroke: #7ee787; }
+        .node-text { fill: #e6edf3; font-family: ui-monospace, monospace; font-size: 11px; }
+        .node-sub { fill: #8b949e; font-family: ui-monospace, monospace; font-size: 9px; }
+        .edge { stroke: #6e7681; stroke-width: 1.4; fill: none; }
+        .wave-line { stroke: #30363d; stroke-dasharray: 4 4; stroke-width: 1; }
+        .wave-label { fill: #6e7681; font-family: ui-monospace, monospace; font-size: 10px; }
+      </style>
+    </defs>
+    <line class="wave-line" x1="150" y1="20" x2="150" y2="340" />
+    <line class="wave-line" x1="350" y1="20" x2="350" y2="340" />
+    <line class="wave-line" x1="550" y1="20" x2="550" y2="340" />
+    <line class="wave-line" x1="750" y1="20" x2="750" y2="340" />
+    <text x="75" y="20" class="wave-label" text-anchor="middle">Wave 0</text>
+    <text x="250" y="20" class="wave-label" text-anchor="middle">Wave 1</text>
+    <text x="450" y="20" class="wave-label" text-anchor="middle">Wave 2</text>
+    <text x="650" y="20" class="wave-label" text-anchor="middle">Wave 3</text>
+    <text x="850" y="20" class="wave-label" text-anchor="middle">Wave 4</text>
+    <rect class="node-bg done" x="20" y="160" width="110" height="40" rx="6" /><text class="node-text" x="75" y="178" text-anchor="middle">P01-S01-T001</text><text class="node-sub" x="75" y="192" text-anchor="middle">migrations</text>
+    <rect class="node-bg" x="190" y="80" width="120" height="40" rx="6" /><text class="node-text" x="250" y="98" text-anchor="middle">P01-S01-T002</text><text class="node-sub" x="250" y="112" text-anchor="middle">back:auth</text>
+    <rect class="node-bg" x="190" y="160" width="120" height="40" rx="6" /><text class="node-text" x="250" y="178" text-anchor="middle">P01-S02-T001</text><text class="node-sub" x="250" y="192" text-anchor="middle">back:profile</text>
+    <rect class="node-bg" x="190" y="240" width="120" height="40" rx="6" /><text class="node-text" x="250" y="258" text-anchor="middle">P01-S03-T001</text><text class="node-sub" x="250" y="272" text-anchor="middle">back:results</text>
+    <rect class="node-bg" x="390" y="60" width="120" height="40" rx="6" /><text class="node-text" x="450" y="78" text-anchor="middle">P02-S01-T001</text><text class="node-sub" x="450" y="92" text-anchor="middle">front:auth</text>
+    <rect class="node-bg" x="390" y="140" width="120" height="40" rx="6" /><text class="node-text" x="450" y="158" text-anchor="middle">P02-S02-T001</text><text class="node-sub" x="450" y="172" text-anchor="middle">front:profile</text>
+    <rect class="node-bg" x="390" y="220" width="120" height="40" rx="6" /><text class="node-text" x="450" y="238" text-anchor="middle">P02-S03-T001</text><text class="node-sub" x="450" y="252" text-anchor="middle">front:results</text>
+    <rect class="node-bg" x="390" y="300" width="120" height="40" rx="6" /><text class="node-text" x="450" y="318" text-anchor="middle">P02-S03-T002</text><text class="node-sub" x="450" y="332" text-anchor="middle">front:results</text>
+    <rect class="node-bg" x="590" y="140" width="120" height="40" rx="6" /><text class="node-text" x="650" y="158" text-anchor="middle">P03-S01-T001</text><text class="node-sub" x="650" y="172" text-anchor="middle">e2e:login</text>
+    <rect class="node-bg" x="590" y="240" width="120" height="40" rx="6" /><text class="node-text" x="650" y="258" text-anchor="middle">P03-S02-T001</text><text class="node-sub" x="650" y="272" text-anchor="middle">e2e:results</text>
+    <rect class="node-bg" x="790" y="180" width="100" height="40" rx="6" /><text class="node-text" x="840" y="198" text-anchor="middle">P05-T001</text><text class="node-sub" x="840" y="212" text-anchor="middle">release</text>
+    <path class="edge" d="M 130 175 Q 165 130, 190 100" marker-end="url(#arrow)" />
+    <path class="edge" d="M 130 180 L 190 180" marker-end="url(#arrow)" />
+    <path class="edge" d="M 130 185 Q 165 230, 190 255" marker-end="url(#arrow)" />
+    <path class="edge" d="M 310 100 Q 350 80, 390 80" marker-end="url(#arrow)" />
+    <path class="edge" d="M 310 180 Q 350 160, 390 160" marker-end="url(#arrow)" />
+    <path class="edge" d="M 310 260 Q 350 240, 390 240" marker-end="url(#arrow)" />
+    <path class="edge" d="M 310 260 Q 350 320, 390 320" marker-end="url(#arrow)" />
+    <path class="edge" d="M 510 80 Q 555 110, 590 155" marker-end="url(#arrow)" />
+    <path class="edge" d="M 510 240 Q 555 250, 590 255" marker-end="url(#arrow)" />
+    <path class="edge" d="M 510 320 Q 555 290, 590 270" marker-end="url(#arrow)" />
+    <path class="edge" d="M 710 160 Q 750 175, 790 195" marker-end="url(#arrow)" />
+    <path class="edge" d="M 710 260 Q 750 220, 790 205" marker-end="url(#arrow)" />
+  </svg>
+  </div>
+
+  <p style="color:var(--text-dim); font-size:14px">Las waves se calculan por <em>longest path from root</em>: una task pertenece a la wave N donde N = 1 + max(wave de sus deps). Dentro de una wave, las tasks pueden correr en paralelo <strong>siempre que sus Conflict groups y Write sets no choquen</strong>.</p>
+</section>
+
+<section>
+  <h2><span class="num">05</span>El comando <code>/next-wave</code></h2>
+  <p class="section-lead">Script <code>next_wave.py</code> envuelto en <code>./scripts/next-wave.sh</code>. Read-only sobre el registry.</p>
+
+  <h3>Qué hace internamente</h3>
+  <ol>
+    <li>Encuentra la primera fase incompleta.</li>
+    <li>Filtra tasks <code>status: ready</code> con todas sus deps <code>done</code>.</li>
+    <li>Comprueba que no hay <code>pending_journey_verifications</code>.</li>
+    <li>Comprueba que no hay FU <code>high|critical|blocker</code> proposed.</li>
+    <li>Busca el subconjunto más grande sin <strong>conflict group repetido</strong> ni <strong>write set intersectado</strong>.</li>
+    <li>Imprime los exports listos para pegar.</li>
+  </ol>
+
+  <h3>Output típico (versión actual, con pr-flow default)</h3>
+<pre><code>$ ./scripts/next-wave.sh --limit 4
+
+# DAG wave propuesta
+
+&gt; <strong>Antes de reclamar una task en este terminal</strong>, limpia las 4
+&gt; variables de scope para no mezclar contextos entre slices:
+&gt;
+&gt; ```bash
+&gt; unset CLAUDE_ACTIVE_TASK_ID
+&gt; unset CLAUDE_TASK_PACK
+&gt; unset CLAUDE_WORKTREE_ROOT
+&gt; unset CLAUDE_ORCHESTRATOR_ROOT
+&gt; ```
+
+- DAG mode: explicit_dag
+- Phase: P02
+- Ready nodes total: 4
+- Ready nodes seguros: 2
+
+## Copia y pega por terminal
+
+### Terminal 1 — P02-S01-T001
+```bash
+unset CLAUDE_ACTIVE_TASK_ID CLAUDE_TASK_PACK CLAUDE_WORKTREE_ROOT CLAUDE_ORCHESTRATOR_ROOT \
+  &amp;&amp; BOOTSTRAP_ROOT="..." \
+  &amp;&amp; ROOT="$($BOOTSTRAP_ROOT/scripts/ensure-task-worktree.sh --print-root)" \
+  &amp;&amp; WT="$($ROOT/scripts/ensure-task-worktree.sh P02-S01-T001)" \
+  &amp;&amp; cd "$WT" \
+  &amp;&amp; export CLAUDE_ORCHESTRATOR_ROOT="$ROOT" CLAUDE_WORKTREE_ROOT="$WT" \
+            CLAUDE_ACTIVE_TASK_ID=P02-S01-T001 \
+            CLAUDE_TASK_PACK="$ROOT/orchestrator-state/tasks/task-packs/P02-S01-T001.md" \
+  &amp;&amp; echo 'Ahora ejecuta: claude --agent main-orchestrator ... "/next-slice P02-S01-T001"'
+```
+
+Skipped (conflict):
+  P02-S03-T002  conflict_group front:results coincide con P02-S03-T001</code></pre>
+
+  <p style="color:var(--text-dim); font-size:14px">El bloque copy/paste empieza con <code>unset</code> de las 4 variables: aunque pegues el bloque en una terminal que tenía variables viejas de otra slice, lo primero que hace es limpiar el scope antes de exportar las nuevas. Imposible arrastrar contexto entre slices.</p>
+</section>
+
+<section>
+  <h2><span class="num">06</span>El claim atómico (<code>claim_task.py</code>)</h2>
+  <p class="section-lead">Antes de empezar una slice, hay que <em>reclamarla</em>. Es la barrera contra dos terminales con el mismo TASK_ID.</p>
+
+  <div class="ascii-flow">  <span class="hl">claim_task.py P02-S03-T001</span>
+        │
+        ▼
+   <span class="hl3">file_lock(registry.json)</span>     <span class="dim"># orden: registry primero</span>
+        │
+        ├─ ¿task.status ∈ {ready, in_progress}?
+        ├─ ¿deps todas done?
+        ├─ ¿no hay pending_journey_verifications?
+        ├─ ¿no hay FU bloqueantes proposed?
+        ├─ ¿conflict_group no coincide con task in_progress/claimed?
+        ├─ ¿write_set no intersecta con task in_progress/claimed?
+        │
+        ├─ TODO OK:
+        │     task.status = claimed
+        │     last_claimed_task_id = TASK_ID
+        │     crea task-pack mínimo si no existe
+        │     <span class="dim">file_lock(runtime-state.json)</span>      # orden: runtime después
+        │     runtime-state.last_worker = caller
+        │     imprime exports
+        │
+        └─ ALGO FALLA:
+              return error con razón concreta
+              registry intacto</div>
+
+  <div class="callout">
+    <strong>Orden de locks "registry FIRST, runtime-state SECOND"</strong> es project-wide. Todos los scripts y hooks lo respetan. Invertir abriría ventana de deadlock.
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">07</span>Conflict group vs Write set: ¿no es lo mismo?</h2>
+  <p class="section-lead">No. Son dos guardas diferentes que se complementan.</p>
+
+  <div class="split">
+    <div class="card">
+      <h3>Write set protege ficheros físicos</h3>
+      <p>Glob de paths. Regla: <strong>dos tasks no activas si sus globs intersectan</strong>. Test mecánico: ¿algún path matchea ambos globs?</p>
+    </div>
+    <div class="card">
+      <h3>Conflict group protege dominios</h3>
+      <p>Etiqueta libre. Regla: <strong>dos tasks no activas si comparten conflict_group</strong>, aunque sus write sets no se solapen.</p>
+      <p>Ejemplo: dos slices de auth tocan partes diferentes (login UI vs register UI) pero ambas importan <code>src/shared/auth/token_store.ts</code>. <code>conflict_group: auth</code> las serializa.</p>
+    </div>
+  </div>
+
+  <h3>El bug que un Conflict group previene</h3>
+<pre><code><span style="color:var(--text-faint)"># Sin conflict group:</span>
+P02-S01-T001 (login UI)     write_set: src/features/auth/login/**
+P02-S01-T002 (register UI)  write_set: src/features/auth/register/**
+
+<span style="color:var(--text-faint)"># Globs NO intersectan. /next-wave los propone en paralelo.</span>
+<span style="color:var(--text-faint)"># Ambos importan src/shared/auth/token_store.ts.</span>
+<span style="color:var(--text-faint)"># Si login cambia firma y register no lo sabe, frontend se rompe.</span>
+
+<span style="color:var(--text-faint)"># Con conflict group:</span>
+P02-S01-T001  conflict_group: auth   write_set: src/features/auth/login/**
+P02-S01-T002  conflict_group: auth   write_set: src/features/auth/register/**
+
+<span style="color:var(--text-faint)"># /next-wave se niega a proponerlos en paralelo. Una primero, otra después.</span></code></pre>
+</section>
+
+<section>
+  <h2><span class="num">08</span>Cumulative product: v0 + v1 + v2 + ...</h2>
+  <p class="section-lead">El Coverage Registry no se reescribe. Crece. <code>Product increment</code> y <code>Build state</code> marcan qué filas ya están construidas.</p>
+
+<pre><code>| Slice ID    | Product increment | Build state | ...
+| P01-S01-T001 | v0 (baseline)    | done        |   <span style="color:var(--text-faint)"># ya construida</span>
+| P03-S01-T001 | v1               | done        |   <span style="color:var(--text-faint)"># incremento previo</span>
+| P04-S01-T001 | v2               | planned     |   <span style="color:var(--text-faint)"># incremento actual</span>
+| P04-S01-T002 | v2               | planned     |</code></pre>
+
+  <p>El closer, tras cerrar la última slice de un incremento, ejecuta <code>./scripts/sync-product-baseline.sh sync --version v2 --task P04-S99-T999</code>. Copia <code>docs/source-of-truth/</code> a <code>docs/product-baseline/</code> con manifest SHA-256.</p>
+</section>
+
+<section>
+  <h2><span class="num">09</span>Journeys: el otro tipo de dependencia</h2>
+  <p class="section-lead">Además del DAG de tasks hay un grafo paralelo: los <strong>journeys</strong>. Recorridos del usuario que cruzan varias slices.</p>
+
+  <h3>Cuándo se cierra un journey</h3>
+  <p>Cuando <strong>todas las tasks que lo referencian están <code>done</code></strong>. <code>journeys_closing_at_task</code> en <code>common.py</code> lo calcula status-based.</p>
+
+  <h3>Qué hace el cierre</h3>
+  <ul>
+    <li>Inline (§5.bis "ahora") → <code>JOURNEY_VERIFIED_INLINE: J104</code> → hook marca <code>journey.verification_status = verified</code>.</li>
+    <li>Aparte → <code>JOURNEY_PENDING_VERIFY: J104</code> → hook lo añade a <code>runtime-state.pending_journey_verifications</code>.</li>
+  </ul>
+
+  <h3>Cómo bloquea el DAG</h3>
+  <p>Con un journey pendiente, <code>/next-wave</code> y <code>claim_task.py</code> filtran las tasks que lo referencian. El resto del DAG sigue.</p>
+</section>
+
+<section>
+  <h2><span class="num">10</span>Sizing recomendado</h2>
+  <p class="section-lead">Si bootstrap detecta una fase con &gt;20 slices o un step con &gt;15, emite warning.</p>
+
+  <table>
+    <thead><tr><th>Unidad</th><th>Qué es</th><th>Tamaño sano</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Phase</strong></td><td>Milestone o módulo completo</td><td>≤20 slices</td></tr>
+      <tr><td><strong>Step</strong></td><td>Lane coherente: pantalla/journey, módulo dominio, foundation lane</td><td>6-12 slices, max 15</td></tr>
+      <tr><td><strong>Slice/Task</strong></td><td>Unidad ejecutable y verificable por un worker en un terminal</td><td>1 slice = 1 acceptance verificable</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout warn">
+    <strong>Anti-patrón:</strong> dividir por capas (<code>backend → frontend → UX polish</code>). Cada pantalla importante debe cubrir contrato + API/datos + UI conectada + estados UX + verify de journey, todo en una slice.
+  </div>
+</section>
+
+<section>
+  <div class="next-cta">
+    <div><h3>Siguiente página</h3><p>Ya sabes cómo el DAG ordena el trabajo. La maquinaria que lo hace seguro en concurrencia son los hooks y los locks.</p></div>
+    <a class="cta-btn" href="hooks-locks.html">Ir a Hooks &amp; Locks →</a>
+  </div>
+</section>
+
+</div>
+
+<footer>Documentación de <code>OrquestadorDAG-AnyStack</code> · página 4 de 7 · <a href="index.html">volver al índice</a></footer>
+
+</body>
+</html>
