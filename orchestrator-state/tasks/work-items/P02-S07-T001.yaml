@@ -2,7 +2,7 @@ id: P02-S07-T001
 phase_id: P02
 step_id: P02-S07
 title: "MCP server and tool endpoints"
-status: ready
+status: done
 kind: "api"
 target: "MCP server and tool endpoints"
 product_increment: "v1"

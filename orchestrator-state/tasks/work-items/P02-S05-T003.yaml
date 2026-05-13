@@ -2,7 +2,7 @@ id: P02-S05-T003
 phase_id: P02
 step_id: P02-S05
 title: "Add partial unique index for is_default=true per model_type in ai_models"
-status: ready
+status: done
 kind: "bug"
 target: "Add partial unique index for is_default=true per model_type in ai_models"
 product_increment: "current"

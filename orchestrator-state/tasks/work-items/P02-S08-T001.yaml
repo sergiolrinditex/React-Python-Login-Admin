@@ -2,7 +2,7 @@ id: P02-S08-T001
 phase_id: P02
 step_id: P02-S08
 title: "Agents endpoints and DeepAgents/LangGraph smoke"
-status: blocked
+status: ready
 kind: "api"
 target: "Agents endpoints and DeepAgents/LangGraph smoke"
 product_increment: "v1"

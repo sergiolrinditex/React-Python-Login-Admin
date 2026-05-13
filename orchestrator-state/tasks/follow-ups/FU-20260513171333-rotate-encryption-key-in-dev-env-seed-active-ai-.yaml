@@ -1,7 +1,7 @@
 {
   "id": "FU-20260513171333-rotate-encryption-key-in-dev-env-seed-active-ai-",
   "schema_version": 1,
-  "status": "proposed",
+  "status": "promoted",
   "created_at": "2026-05-13T17:13:33+00:00",
   "created_by": "sergiolr",
   "origin_task_id": "P02-S03-T002",
@@ -13,19 +13,27 @@
   "severity": "medium",
   "title": "Rotate ENCRYPTION_KEY in dev .env + seed active AI provider with encrypted credentials",
   "description": "The dev .env still has ENCRYPTION_KEY=replace-with-dev-key (placeholder). The first slice requiring live decrypt_secret() calls is P02-S03-T002 (chat streaming). scripts/gen-dev-secrets.sh only rotates JWT_PRIVATE_KEY; it does not rotate ENCRYPTION_KEY or MFA_ENCRYPTION_KEY. Additionally, at least one ai_providers row with a valid encrypted credential (is_default=true, enabled=true, model_type=chat) must be loaded via data/verification for end-to-end curl verification to pass.",
-  "journey_refs": [],
+  "journey_refs": [
+    "J101",
+    "J103"
+  ],
   "screen_route": "—",
   "endpoint": "—",
-  "tables": [],
+  "tables": [
+    "ai_providers",
+    "ai_provider_credentials",
+    "ai_models"
+  ],
   "depends_on": [
     "P02-S03-T002"
   ],
   "conflict_groups": [
-    "api:chat-stream"
+    "infra:dev-secrets"
   ],
   "write_set": [
-    "backend/app/chat/streaming.py",
-    "backend/tests/integration/test_chat_stream.py"
+    "scripts/gen-dev-secrets.sh",
+    ".env.example",
+    "data/verification/admin_ai/**"
   ],
   "acceptance": [
     "scripts/gen-dev-secrets.sh rotates ENCRYPTION_KEY if placeholder (Fernet.generate_key() pattern)",
@@ -44,5 +52,8 @@
     "debugger_path": "in_scope_defects_use_validator_tester_debugger_retest",
     "warnings": []
   },
-  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260513171333-rotate-encryption-key-in-dev-env-seed-active-ai-.yaml"
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260513171333-rotate-encryption-key-in-dev-env-seed-active-ai-.yaml",
+  "promoted_at": "2026-05-13T18:45:20+00:00",
+  "promoted_task_id": "P02-S03-T004",
+  "source_doc_updated": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md"
 }

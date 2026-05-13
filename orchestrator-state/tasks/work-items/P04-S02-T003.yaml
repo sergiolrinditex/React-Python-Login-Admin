@@ -2,7 +2,7 @@ id: P04-S02-T003
 phase_id: P04
 step_id: P04-S02
 title: "McpServersPage"
-status: blocked
+status: ready
 kind: "frontend"
 target: "McpServersPage"
 product_increment: "v1"

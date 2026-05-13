@@ -2,7 +2,7 @@ id: P02-S03-T002
 phase_id: P02
 step_id: P02-S03
 title: "Chat streaming endpoint"
-status: blocked
+status: done
 kind: "api"
 target: "Chat streaming endpoint"
 product_increment: "v1"

@@ -1,0 +1,34 @@
+id: P02-S07-T002
+phase_id: P02
+step_id: P02-S07
+title: "Replace TECHNICAL_GUIDE.md line 60 <SDK MCP Python candidato> placeholder with pinned reference"
+status: ready
+kind: "documentation"
+target: "Replace TECHNICAL_GUIDE.md line 60 <SDK MCP Python candidato> placeholder with pinned reference"
+product_increment: "current"
+build_state: "planned"
+risk_level: "low"
+verify_mode: "auto"
+route: ""
+endpoint: ""
+journey_refs:
+tables:
+depends_on:
+  - P02-S07-T001
+acceptance:
+  - "TECHNICAL_GUIDE.md line 60 no longer contains <SDK MCP Python candidato>"
+  - "replacement matches the researcher pin (e.g. 'mcp==1.27.1 (not adopted in P02-S07-T001"
+  - "see resolved note)')."
+verification_commands:
+  - "git diff docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md shows the placeholder swap and bootstrap_source_of_truth.py --validate-only passes"
+allowed_paths:
+  - "backend/app/mcp/**"
+  - "backend/tests/integration/test_mcp_registry.py"
+conflict_groups:
+  - "api:mcp"
+write_set:
+  - "backend/app/mcp/**"
+  - "backend/tests/integration/test_mcp_registry.py"
+handoff_path: orchestrator-state/tasks/handoffs/P02-S07-T002.md
+evidence_dir: orchestrator-state/tasks/evidence/P02-S07-T002
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry"

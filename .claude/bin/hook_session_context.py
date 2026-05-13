@@ -63,17 +63,26 @@ LEDGER_BIG_BYTES = 200 * 1024      # ledger.jsonl > 200KB → suggest /slice-mai
 
 
 def _safe_read(path: Path, max_lines: int = 40) -> str:
+    # Tail semantics: surface the most recent N lines, not the oldest.
+    # Hook errors are append-only; the user cares about what just happened,
+    # not about resolved issues from days ago that linger at the top of
+    # the file. We keep memory bounded with a deque so big logs do not
+    # blow up the SessionStart hook.
     try:
         if not path.exists():
             return ""
+        from collections import deque
+        tail: "deque[str]" = deque(maxlen=max_lines)
+        truncated = False
         with path.open("r", encoding="utf-8", errors="replace") as fh:
-            lines = []
-            for i, line in enumerate(fh):
-                if i >= max_lines:
-                    lines.append("... (truncated)\n")
-                    break
-                lines.append(line)
-            return "".join(lines).rstrip()
+            for line in fh:
+                if len(tail) == max_lines:
+                    truncated = True
+                tail.append(line)
+        out = list(tail)
+        if truncated:
+            out.insert(0, "... (older entries truncated)\n")
+        return "".join(out).rstrip()
     except Exception:
         return ""
 

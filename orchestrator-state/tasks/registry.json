@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-13T10:39:24+00:00",
+  "generated_at": "2026-05-13T18:37:30+00:00",
   "project_prefix": "HILO_PEOPLE",
   "phase_order": [
     "P00",
@@ -71,6 +71,7 @@
         "P02-S02-T001",
         "P02-S03-T001",
         "P02-S03-T002",
+        "P02-S03-T004",
         "P02-S04-T001",
         "P02-S04-T002",
         "P02-S05-T001",
@@ -78,6 +79,7 @@
         "P02-S06-T001",
         "P02-S06-T002",
         "P02-S07-T001",
+        "P02-S07-T002",
         "P02-S08-T001",
         "P02-S02-T002",
         "P02-S03-T003",
@@ -234,18 +236,18 @@
       "origin_instr_raw": "§1.3#stack",
       "origin_techguide_raw": "§3#commands",
       "source_fingerprint": "22f88417e95a1b95a592355532c6fbf3babbbddf35abb47da045db4e5b24740c",
+      "last_updated_by": "closer",
+      "claimed_at": "2026-05-11T08:51:03+00:00",
+      "validator_next_status": "ready_for_close",
       "validator_outcome": "approved",
+      "last_stop_at": "2026-05-11T09:29:32+00:00",
       "last_outcome": "committed",
-      "claimed_by": "sergiolr",
       "last_blocker": {
         "reason": "blocked",
         "agent": "closer",
         "at": "2026-05-11T09:25:39+00:00"
       },
-      "claimed_at": "2026-05-11T08:51:03+00:00",
-      "last_updated_by": "closer",
-      "last_stop_at": "2026-05-11T09:29:32+00:00",
-      "validator_next_status": "ready_for_close"
+      "claimed_by": "sergiolr"
     },
     {
       "id": "P00-S01-T002",
@@ -309,18 +311,18 @@
       "origin_instr_raw": "§11.0#frontend-libs",
       "origin_techguide_raw": "§2.0#frontend-libs",
       "source_fingerprint": "49cdb5957572cb5e189bad9a71717c8faacd0529e94c333992681ba81ca50a19",
+      "last_updated_by": "closer",
+      "claimed_at": "2026-05-11T09:32:44+00:00",
+      "validator_next_status": "ready_for_close",
       "validator_outcome": "approved",
+      "last_stop_at": "2026-05-11T10:15:15+00:00",
       "last_outcome": "committed",
-      "claimed_by": "sergiolr",
       "last_blocker": {
         "reason": "blocked_false_done",
         "agent": "closer",
         "at": "2026-05-11T10:12:34+00:00"
       },
-      "claimed_at": "2026-05-11T09:32:44+00:00",
-      "last_updated_by": "closer",
-      "last_stop_at": "2026-05-11T10:15:15+00:00",
-      "validator_next_status": "ready_for_close"
+      "claimed_by": "sergiolr"
     },
     {
       "id": "P00-S01-T003",
@@ -383,13 +385,13 @@
       "origin_instr_raw": "§11.0#backend-libs",
       "origin_techguide_raw": "§2.0#backend-libs",
       "source_fingerprint": "e0b09a513d29d1a92d88b8c7c0cd9e84bb855f1076724d4b22aa045a5265e9a8",
-      "validator_outcome": "approved",
-      "last_outcome": "committed",
-      "claimed_by": "sergiolr",
-      "claimed_at": "2026-05-11T09:33:23+00:00",
       "last_updated_by": "main-orchestrator-merge-fix",
+      "claimed_at": "2026-05-11T09:33:23+00:00",
+      "validator_next_status": "ready_for_close",
+      "validator_outcome": "approved",
       "last_stop_at": "2026-05-11T12:31:19+00:00",
-      "validator_next_status": "ready_for_close"
+      "last_outcome": "committed",
+      "claimed_by": "sergiolr"
     },
     {
       "id": "P00-S01-T004",
@@ -461,10 +463,10 @@
       "origin_instr_raw": "§7#theme",
       "origin_techguide_raw": "§7#design-system",
       "source_fingerprint": "cecf2be4f7dd78f49639c22f293a4210dcd7f8a54109180af5b707dbbd7ec02f",
-      "validator_outcome": "approved",
-      "last_outcome": "committed",
       "last_updated_by": "main-orchestrator-merge-fix",
-      "last_stop_at": "2026-05-11T12:31:19+00:00"
+      "validator_outcome": "approved",
+      "last_stop_at": "2026-05-11T12:31:19+00:00",
+      "last_outcome": "committed"
     },
     {
       "id": "P00-S01-T005",
@@ -532,18 +534,18 @@
       "origin_instr_raw": "§6#i18n",
       "origin_techguide_raw": "§6.5#verification-data",
       "source_fingerprint": "e8ffe71a17ceee3092dfd96d363d6d65da79ac83bb503d54a02f6c695868b24e",
+      "last_updated_by": "closer",
+      "claimed_at": "2026-05-11T13:03:21+00:00",
+      "validator_next_status": "ready_for_close",
       "validator_outcome": "approved",
+      "last_stop_at": "2026-05-11T13:52:40+00:00",
       "last_outcome": "committed",
-      "claimed_by": "sergiolr",
       "last_blocker": {
         "reason": "blocked_false_done",
         "agent": "closer",
         "at": "2026-05-11T13:51:48+00:00"
       },
-      "claimed_at": "2026-05-11T13:03:21+00:00",
-      "last_updated_by": "closer",
-      "last_stop_at": "2026-05-11T13:52:40+00:00",
-      "validator_next_status": "ready_for_close"
+      "claimed_by": "sergiolr"
     },
     {
       "id": "P00-S02-T001",
@@ -606,14 +608,14 @@
       "origin_instr_raw": "§3.3#infra",
       "origin_techguide_raw": "§11#deploy",
       "source_fingerprint": "b7fb4f9a491d190a2dafd0cfd01993fbc702b9cbdd365030448ec6251ad6aa60",
-      "validator_outcome": "approved",
-      "last_outcome": "pass",
-      "claimed_by": "sergiolr",
-      "claimed_at": "2026-05-11T09:44:56+00:00",
       "last_updated_by": "closer-manual-recovery",
-      "last_stop_at": "2026-05-11T10:06:36+00:00",
+      "claimed_at": "2026-05-11T09:44:56+00:00",
       "validator_next_status": "ready_for_close",
-      "last_note": "manual recovery after closer git-workflow stash conflict; commit fec3aed pushed to origin/feat/P00-S02-T001-docker-compose-services"
+      "validator_outcome": "approved",
+      "last_stop_at": "2026-05-11T10:06:36+00:00",
+      "last_note": "manual recovery after closer git-workflow stash conflict; commit fec3aed pushed to origin/feat/P00-S02-T001-docker-compose-services",
+      "last_outcome": "pass",
+      "claimed_by": "sergiolr"
     },
     {
       "id": "P00-S02-T002",
@@ -676,10 +678,10 @@
       "origin_instr_raw": "§3.3#observability",
       "origin_techguide_raw": "§6.2#health",
       "source_fingerprint": "b942021870106990ecfe422861c0adcfabb88578fb126cf4523c715fda436b5b",
-      "validator_outcome": "approved",
-      "last_outcome": "committed",
       "last_updated_by": "main-orchestrator-merge-fix",
-      "last_stop_at": "2026-05-11T12:31:19+00:00"
+      "validator_outcome": "approved",
+      "last_stop_at": "2026-05-11T12:31:19+00:00",
+      "last_outcome": "committed"
     },
     {
       "id": "P00-S02-T003",
@@ -755,13 +757,13 @@
       "origin_instr_raw": "§15#verification-data",
       "origin_techguide_raw": "§6.5#verification-data",
       "source_fingerprint": "e16e196647af58343b42da870369ef6d5b535c63beb2a92f11a6f2eedbe84139",
-      "validator_outcome": "approved",
-      "last_outcome": "committed",
-      "claimed_by": "sergiolr",
-      "claimed_at": "2026-05-11T13:03:01+00:00",
       "last_updated_by": "closer",
+      "claimed_at": "2026-05-11T13:03:01+00:00",
+      "validator_next_status": "ready_for_close",
+      "validator_outcome": "approved",
       "last_stop_at": "2026-05-11T14:09:14+00:00",
-      "validator_next_status": "ready_for_close"
+      "last_outcome": "committed",
+      "claimed_by": "sergiolr"
     },
     {
       "id": "P00-S02-T004",
@@ -824,18 +826,18 @@
       "origin_instr_raw": "runtime-followup#FU-20260511145446-fix-verification-data-loader-meta-jsonb-sql-cast",
       "origin_techguide_raw": "runtime-followup#FU-20260511145446-fix-verification-data-loader-meta-jsonb-sql-cast",
       "source_fingerprint": "49e4b395bc7f35d7310415436c600ba7a0e26b13451f0ca2000ba3de6bd16d22",
+      "last_updated_by": "closer",
+      "claimed_at": "2026-05-11T15:44:30+00:00",
+      "validator_next_status": "ready_for_close",
       "validator_outcome": "approved",
+      "last_stop_at": "2026-05-11T16:27:17+00:00",
       "last_outcome": "committed",
-      "claimed_by": "sergiolr",
       "last_blocker": {
         "reason": "blocked_false_done",
         "agent": "closer",
         "at": "2026-05-11T16:25:37+00:00"
       },
-      "claimed_at": "2026-05-11T15:44:30+00:00",
-      "last_updated_by": "closer",
-      "last_stop_at": "2026-05-11T16:27:17+00:00",
-      "validator_next_status": "ready_for_close"
+      "claimed_by": "sergiolr"
     },
     {
       "id": "P01-S01-T001",
@@ -911,18 +913,18 @@
       "origin_instr_raw": "§3.1#auth-perfiles",
       "origin_techguide_raw": "§10.3#users",
       "source_fingerprint": "03fc614361d6520ba7216a0315d3cc16f84dd37d1188890afcb4711d2a9d972d",
+      "last_updated_by": "closer",
+      "claimed_at": "2026-05-11T14:15:18+00:00",
+      "validator_next_status": "ready_for_close",
       "validator_outcome": "approved",
+      "last_stop_at": "2026-05-11T15:19:30+00:00",
       "last_outcome": "committed",
-      "claimed_by": "sergiolr",
       "last_blocker": {
         "reason": "blocked_false_done",
         "agent": "closer",
         "at": "2026-05-11T15:14:55+00:00"
       },
-      "claimed_at": "2026-05-11T14:15:18+00:00",
-      "last_updated_by": "closer",
-      "last_stop_at": "2026-05-11T15:19:30+00:00",
-      "validator_next_status": "ready_for_close"
+      "claimed_by": "sergiolr"
     },
     {
       "id": "P01-S02-T001",
@@ -990,13 +992,13 @@
       "origin_instr_raw": "§3.1#auth-perfiles",
       "origin_techguide_raw": "§6.2#POST-/api/v1/auth/sign-up",
       "source_fingerprint": "4e1ee33a90f078c4bd8b83944417ed32c205d60ef4335cd3e2b79c20390e91a8",
-      "validator_outcome": "approved",
-      "last_outcome": "committed",
-      "claimed_by": "sergiolr",
-      "claimed_at": "2026-05-11T16:33:10+00:00",
       "last_updated_by": "closer",
+      "claimed_at": "2026-05-11T16:33:10+00:00",
+      "validator_next_status": "ready_for_close",
+      "validator_outcome": "approved",
       "last_stop_at": "2026-05-11T17:40:28+00:00",
-      "validator_next_status": "ready_for_close"
+      "last_outcome": "committed",
+      "claimed_by": "sergiolr"
     },
     {
       "id": "P01-S02-T002",
@@ -1063,13 +1065,13 @@
       "origin_instr_raw": "§3.1#auth-perfiles",
       "origin_techguide_raw": "§6.2#POST-/api/v1/auth/sign-in",
       "source_fingerprint": "d757bed2cd28506790f891ba20560d3ca9980bfd4b24805eaa79d483cb3e046d",
-      "validator_outcome": "approved",
-      "last_outcome": "committed",
-      "claimed_by": "sergiolr",
-      "claimed_at": "2026-05-11T17:49:45+00:00",
       "last_updated_by": "closer",
+      "claimed_at": "2026-05-11T17:49:45+00:00",
+      "validator_next_status": "ready_for_close",
+      "validator_outcome": "approved",
       "last_stop_at": "2026-05-12T04:34:19.504170+00:00",
-      "validator_next_status": "ready_for_close"
+      "last_outcome": "committed",
+      "claimed_by": "sergiolr"
     },
     {
       "id": "P01-S02-T003",
@@ -1134,13 +1136,13 @@
       "origin_instr_raw": "§3.1#auth-perfiles",
       "origin_techguide_raw": "§6.2#POST-/api/v1/auth/refresh",
       "source_fingerprint": "044fadfd75108afd5546a17a777cfbcaa999069d2cc7a90efebccabb19cbffaa",
-      "validator_outcome": "approved",
-      "last_outcome": "committed",
-      "claimed_by": "sergiolr",
-      "claimed_at": "2026-05-12T06:05:28+00:00",
       "last_updated_by": "closer",
+      "claimed_at": "2026-05-12T06:05:28+00:00",
+      "validator_next_status": "ready_for_close",
+      "validator_outcome": "approved",
       "last_stop_at": "2026-05-12T07:23:32+00:00",
-      "validator_next_status": "ready_for_close"
+      "last_outcome": "committed",
+      "claimed_by": "sergiolr"
     },
     {
       "id": "P01-S02-T004",
@@ -1206,13 +1208,13 @@
       "origin_instr_raw": "§3.1#auth-perfiles",
       "origin_techguide_raw": "§6.2#POST-/api/v1/auth/logout",
       "source_fingerprint": "f3e13af9ccdb6965a7ba7122636d87aaed6218225545c09c060d1ed662f56cd0",
-      "validator_outcome": "approved",
-      "last_outcome": "committed",
-      "claimed_by": "sergiolr",
-      "claimed_at": "2026-05-12T07:33:44+00:00",
       "last_updated_by": "closer",
+      "claimed_at": "2026-05-12T07:33:44+00:00",
+      "validator_next_status": "ready_for_close",
+      "validator_outcome": "approved",
       "last_stop_at": "2026-05-12T08:40:19+00:00",
-      "validator_next_status": "ready_for_close"
+      "last_outcome": "committed",
+      "claimed_by": "sergiolr"
     },
     {
       "id": "P01-S02-T005",
@@ -1282,13 +1284,13 @@
       "origin_instr_raw": "§3.1#auth-perfiles",
       "origin_techguide_raw": "§6.2#POST-/api/v1/auth/forgot-password",
       "source_fingerprint": "2cb06443b863c297682c8d657d7df9bb24fedbfbc191d7587fb155257a1ad6ad",
-      "validator_outcome": "approved",
-      "last_outcome": "committed",
-      "claimed_by": "sergiolr",
-      "claimed_at": "2026-05-12T14:51:19+00:00",
       "last_updated_by": "closer",
+      "claimed_at": "2026-05-12T14:51:19+00:00",
+      "validator_next_status": "ready_for_close",
+      "validator_outcome": "approved",
       "last_stop_at": "2026-05-12T17:17:29+00:00",
-      "validator_next_status": "ready_for_close"
+      "last_outcome": "committed",
+      "claimed_by": "sergiolr"
     },
     {
       "id": "P01-S02-T006",
@@ -1355,13 +1357,13 @@
       "origin_instr_raw": "§3.1#auth-perfiles",
       "origin_techguide_raw": "§6.2#POST-/api/v1/auth/2fa/verify",
       "source_fingerprint": "222961ffb2cb1834ddaa512e5e918f25b50d5fc676c3caef8d7e59a7de5d94f6",
-      "validator_outcome": "approved",
-      "last_outcome": "committed",
-      "claimed_by": "sergiolr",
-      "claimed_at": "2026-05-12T17:20:49+00:00",
       "last_updated_by": "closer",
+      "claimed_at": "2026-05-12T17:20:49+00:00",
+      "validator_next_status": "ready_for_close",
+      "validator_outcome": "approved",
       "last_stop_at": "2026-05-12T19:53:24+00:00",
-      "validator_next_status": "ready_for_close"
+      "last_outcome": "committed",
+      "claimed_by": "sergiolr"
     },
     {
       "id": "P01-S02-T007",
@@ -1428,13 +1430,13 @@
       "origin_instr_raw": "§3.1#auth-perfiles",
       "origin_techguide_raw": "§6.2#GET-/api/v1/users/me",
       "source_fingerprint": "217a477739793cd5f601bc7b23ca1f6a80dd4d8cba1fb063fa337dc6a7499297",
-      "validator_outcome": "approved",
-      "last_outcome": "committed",
-      "claimed_by": "sergiolr",
-      "claimed_at": "2026-05-12T20:00:49+00:00",
       "last_updated_by": "closer",
+      "claimed_at": "2026-05-12T20:00:49+00:00",
+      "validator_next_status": "ready_for_close",
+      "validator_outcome": "approved",
       "last_stop_at": "2026-05-12T21:04:09+00:00",
-      "validator_next_status": "ready_for_close"
+      "last_outcome": "committed",
+      "claimed_by": "sergiolr"
     },
     {
       "id": "P01-S03-T001",
@@ -1505,13 +1507,13 @@
       "origin_instr_raw": "§3.2#login-propio",
       "origin_techguide_raw": "§6.1#auth-routes",
       "source_fingerprint": "27ad7b5ea7057c149129c69e0752eaa62796f70aa5f13e47a8844c43d8d5174c",
-      "validator_outcome": "approved",
-      "last_outcome": "committed",
-      "claimed_by": "sergiolr",
-      "claimed_at": "2026-05-12T21:07:00+00:00",
       "last_updated_by": "closer",
+      "claimed_at": "2026-05-12T21:07:00+00:00",
+      "validator_next_status": "ready_for_close",
+      "validator_outcome": "approved",
       "last_stop_at": "2026-05-13T04:48:58+00:00",
-      "validator_next_status": "ready_for_close"
+      "last_outcome": "committed",
+      "claimed_by": "sergiolr"
     },
     {
       "id": "P01-S02-T008",
@@ -1570,13 +1572,13 @@
       "origin_instr_raw": "runtime-followup#FU-20260512044241-fix-dev-restart-profile-sh-verification-data-boo",
       "origin_techguide_raw": "runtime-followup#FU-20260512044241-fix-dev-restart-profile-sh-verification-data-boo",
       "source_fingerprint": "52e82118b3214b53a3b2b9b81f031a3cefef90e61a54e35816604dec2baf41df",
-      "validator_outcome": "approved",
-      "last_outcome": "committed",
-      "claimed_by": "sergiolr",
-      "claimed_at": "2026-05-12T05:00:25+00:00",
       "last_updated_by": "closer",
+      "claimed_at": "2026-05-12T05:00:25+00:00",
+      "validator_next_status": "ready_for_close",
+      "validator_outcome": "approved",
       "last_stop_at": "2026-05-12T05:32:56+00:00",
-      "validator_next_status": "ready_for_close"
+      "last_outcome": "committed",
+      "claimed_by": "sergiolr"
     },
     {
       "id": "P01-S02-T009",
@@ -1644,13 +1646,13 @@
         "infra:env"
       ],
       "source_fingerprint": "2ac3e6eb0b7b312fbbfc43b2343213a5ced30f3c1200fa03cc79c3eb66afa98a",
-      "validator_outcome": "approved",
-      "last_outcome": "committed",
-      "claimed_by": "sergiolr",
-      "claimed_at": "2026-05-12T05:00:36+00:00",
       "last_updated_by": "closer",
+      "claimed_at": "2026-05-12T05:00:36+00:00",
+      "validator_next_status": "ready_for_close",
+      "validator_outcome": "approved",
       "last_stop_at": "2026-05-12T05:46:16+00:00",
-      "validator_next_status": "ready_for_close"
+      "last_outcome": "committed",
+      "claimed_by": "sergiolr"
     },
     {
       "id": "P01-S02-T010",
@@ -1658,7 +1660,7 @@
       "step_id": "P01-S02",
       "title": "make bootstrap_source_of_truth.py --refresh preserve closer-set task status",
       "status": "done",
-      "build_state": "planned",
+      "build_state": "done",
       "product_increment": "current",
       "risk_level": "medium",
       "verify_mode": "human",
@@ -1712,14 +1714,13 @@
       "tables_raw": "—",
       "origin_instr_raw": "runtime-followup#FU-20260512044309-make-bootstrap-three-docs-py-refresh-preserve-cl",
       "origin_techguide_raw": "runtime-followup#FU-20260512044309-make-bootstrap-three-docs-py-refresh-preserve-cl",
-      "source_fingerprint": "22f46d06b1a2ce440e77bb95410aa6168ca8de731ea5d72c1c99f87791cd686c",
-      "validator_outcome": "approved",
+      "source_fingerprint": "e433f5ccefb0680f155f3dd50db450fe367ea0a1bda6fa4923c491da2e0176f9",
+      "source_fingerprint_changed": true,
+      "previous_runtime_status": "done",
+      "previous_runtime_last_outcome": "committed",
       "last_outcome": "committed",
-      "claimed_by": "sergiolr",
-      "claimed_at": "2026-05-12T05:03:03+00:00",
       "last_updated_by": "closer",
-      "last_stop_at": "2026-05-12T05:40:20+00:00",
-      "validator_next_status": "ready_for_close"
+      "last_stop_at": "2026-05-12T05:40:20+00:00"
     },
     {
       "id": "P01-S02-T011",
@@ -1791,18 +1792,18 @@
       "origin_instr_raw": "runtime-followup#FU-20260512082956-fix-refresh-cookie-path-mismatch-auth-vs-api-v1-",
       "origin_techguide_raw": "runtime-followup#FU-20260512082956-fix-refresh-cookie-path-mismatch-auth-vs-api-v1-",
       "source_fingerprint": "563fc325aaee1fd5e4d1770b3f7798f596af07dc0c523603dc063e13bf704c78",
+      "last_updated_by": "closer",
+      "claimed_at": "2026-05-12T09:26:10+00:00",
+      "validator_next_status": "ready_for_close",
       "validator_outcome": "approved",
+      "last_stop_at": "2026-05-12T13:56:59+00:00",
       "last_outcome": "committed",
-      "claimed_by": "sergiolr",
       "last_blocker": {
         "reason": "blocked_false_done",
         "agent": "closer",
         "at": "2026-05-12T13:55:38+00:00"
       },
-      "claimed_at": "2026-05-12T09:26:10+00:00",
-      "last_updated_by": "closer",
-      "last_stop_at": "2026-05-12T13:56:59+00:00",
-      "validator_next_status": "ready_for_close"
+      "claimed_by": "sergiolr"
     },
     {
       "id": "P01-S02-T012",
@@ -1861,13 +1862,13 @@
       "origin_instr_raw": "runtime-followup#FU-20260512052820-fix-dev-restart-db-health-race-wait-for-host-tcp",
       "origin_techguide_raw": "runtime-followup#FU-20260512052820-fix-dev-restart-db-health-race-wait-for-host-tcp",
       "source_fingerprint": "8f6cbf437d4f8456653c1da13f4668a21839e854de4fc9d902274427b75e4fbb",
-      "validator_outcome": "approved",
-      "last_outcome": "committed",
-      "claimed_by": "sergiolr",
-      "claimed_at": "2026-05-12T09:16:14+00:00",
       "last_updated_by": "closer",
+      "claimed_at": "2026-05-12T09:16:14+00:00",
+      "validator_next_status": "ready_for_close",
+      "validator_outcome": "approved",
       "last_stop_at": "2026-05-12T10:09:30+00:00",
-      "validator_next_status": "ready_for_close"
+      "last_outcome": "committed",
+      "claimed_by": "sergiolr"
     },
     {
       "id": "P01-S03-T002",
@@ -1940,13 +1941,13 @@
       "origin_instr_raw": "runtime-followup#FU-20260513043500-backend-infra-configure-cross-origin-between-fro",
       "origin_techguide_raw": "runtime-followup#FU-20260513043500-backend-infra-configure-cross-origin-between-fro",
       "source_fingerprint": "5a869aa9da11e1bb4de71e862284874fb06f489fbae086a913c0f02bf389afef",
-      "validator_outcome": "approved",
-      "last_outcome": "committed",
-      "claimed_by": "sergiolr",
-      "claimed_at": "2026-05-13T04:53:19+00:00",
       "last_updated_by": "closer",
+      "claimed_at": "2026-05-13T04:53:19+00:00",
+      "validator_next_status": "ready_for_close",
+      "validator_outcome": "approved",
       "last_stop_at": "2026-05-13T06:05:23+00:00",
-      "validator_next_status": "ready_for_close"
+      "last_outcome": "committed",
+      "claimed_by": "sergiolr"
     },
     {
       "id": "P02-S01-T001",
@@ -2037,13 +2038,13 @@
       "origin_instr_raw": "§3.1#chat-admin-rag-mcp",
       "origin_techguide_raw": "§10.3#ai-chat-rag-mcp",
       "source_fingerprint": "be66ac7dbace08999c385814a95eea25f0247e2293ae6211f5bfd40404eef3ea",
-      "validator_outcome": "approved",
-      "last_outcome": "committed",
-      "claimed_by": "sergiolr",
-      "claimed_at": "2026-05-13T07:02:04+00:00",
       "last_updated_by": "closer",
+      "claimed_at": "2026-05-13T07:02:04+00:00",
+      "validator_next_status": "ready_for_close",
+      "validator_outcome": "approved",
       "last_stop_at": "2026-05-13T08:15:06+00:00",
-      "validator_next_status": "ready_for_close"
+      "last_outcome": "committed",
+      "claimed_by": "sergiolr"
     },
     {
       "id": "P02-S02-T001",
@@ -2112,13 +2113,13 @@
       "origin_instr_raw": "§3.3#foundation",
       "origin_techguide_raw": "§10.2#auth-strategy",
       "source_fingerprint": "228effafed55a5e7bd74c5a0690434c717eb7daca16df8af1fb8d9b2bfc20b9e",
-      "validator_outcome": "approved",
-      "last_outcome": "committed",
-      "claimed_by": "sergiolr",
-      "claimed_at": "2026-05-13T07:02:37+00:00",
       "last_updated_by": "closer",
+      "claimed_at": "2026-05-13T07:02:37+00:00",
+      "validator_next_status": "ready_for_close",
+      "validator_outcome": "approved",
       "last_stop_at": "2026-05-13T08:25:41+00:00",
-      "validator_next_status": "ready_for_close"
+      "last_outcome": "committed",
+      "claimed_by": "sergiolr"
     },
     {
       "id": "P02-S03-T001",
@@ -2187,25 +2188,25 @@
       "origin_instr_raw": "§3.1#chat-rag",
       "origin_techguide_raw": "§6.2#chat-conversations",
       "source_fingerprint": "b6cd974ce108c40dac8eb70bc087bdf2055b10d94278500a38c767a8e89c3539",
+      "last_updated_by": "closer",
+      "claimed_at": "2026-05-13T08:36:32+00:00",
+      "validator_next_status": "ready_for_close",
       "validator_outcome": "approved",
+      "last_stop_at": "2026-05-13T10:29:12+00:00",
       "last_outcome": "committed",
-      "claimed_by": "sergiolr",
       "last_blocker": {
         "reason": "blocked_false_done",
         "agent": "closer",
         "at": "2026-05-13T10:23:41+00:00"
       },
-      "claimed_at": "2026-05-13T08:36:32+00:00",
-      "last_updated_by": "closer",
-      "last_stop_at": "2026-05-13T10:29:12+00:00",
-      "validator_next_status": "ready_for_close"
+      "claimed_by": "sergiolr"
     },
     {
       "id": "P02-S03-T002",
       "phase_id": "P02",
       "step_id": "P02-S03",
       "title": "Chat streaming endpoint",
-      "status": "ready",
+      "status": "done",
       "build_state": "planned",
       "product_increment": "v1",
       "risk_level": "high",
@@ -2267,7 +2268,81 @@
       "tables_raw": "messages, message_citations, llm_usage_logs, document_chunks",
       "origin_instr_raw": "§3.1#chat-rag",
       "origin_techguide_raw": "§6.2#POST-/api/v1/chat/conversations/{id}/stream",
-      "source_fingerprint": "e5ada674dfe8dbeb9f89f4686b2d0b4a1d0d4354b6d6906066d68e7a7d6f0f89"
+      "source_fingerprint": "e5ada674dfe8dbeb9f89f4686b2d0b4a1d0d4354b6d6906066d68e7a7d6f0f89",
+      "last_updated_by": "closer",
+      "last_stop_at": "2026-05-13T18:33:50+00:00",
+      "last_outcome": "committed"
+    },
+    {
+      "id": "P02-S03-T004",
+      "phase_id": "P02",
+      "step_id": "P02-S03",
+      "title": "Rotate ENCRYPTION_KEY in dev .env + seed active AI provider with encrypted credentials",
+      "status": "ready",
+      "kind": "data",
+      "target": "Rotate ENCRYPTION_KEY in dev .env + seed active AI provider with encrypted credentials",
+      "build_state": "planned",
+      "product_increment": "current",
+      "risk_level": "medium",
+      "verify_mode": "human",
+      "depends_on": [
+        "P02-S03-T002"
+      ],
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry",
+      "acceptance": [
+        "scripts/gen-dev-secrets.sh rotates ENCRYPTION_KEY if placeholder (Fernet.generate_key() pattern)",
+        "data/verification loads at least one ai_providers row with encrypted credential for an active chat model",
+        "ENCRYPTION_KEY is valid Fernet key (44 base64-url chars + =)"
+      ],
+      "verification_commands": [
+        "After rotation: curl POST /api/v1/chat/conversations creates a conv (201)",
+        "curl POST /api/v1/chat/conversations/{id}/stream returns text/event-stream with meta->chunk->usage->done SSE events"
+      ],
+      "allowed_paths": [
+        "scripts/gen-dev-secrets.sh",
+        ".env.example",
+        "data/verification/admin_ai/**"
+      ],
+      "conflict_groups": [
+        "infra:dev-secrets"
+      ],
+      "write_set": [
+        "scripts/gen-dev-secrets.sh",
+        ".env.example",
+        "data/verification/admin_ai/**"
+      ],
+      "journey_refs": [
+        "J101",
+        "J103"
+      ],
+      "route": "",
+      "endpoint": "",
+      "tables": [
+        "ai_providers",
+        "ai_provider_credentials",
+        "ai_models"
+      ],
+      "handoff_path": "orchestrator-state/tasks/handoffs/P02-S03-T004.md",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P02-S03-T004",
+      "origin": {
+        "type": "runtime_followup",
+        "followup_id": "FU-20260513171333-rotate-encryption-key-in-dev-env-seed-active-ai-",
+        "origin_task_id": "P02-S03-T002",
+        "severity": "medium",
+        "kind": "data",
+        "triage": {
+          "scope_classification": "missing_real_data",
+          "why_not_debugger": "ENCRYPTION_KEY hygiene and AI provider seeding for live env are outside this slice's write_set (backend/app/chat/streaming/**, backend/app/llm_gateway/**, backend/tests/**). The ENCRYPTION_KEY placeholder bug exists since .env was created (P00-S01-T001) and surfaces here because P02-S03-T002 is the first slice to require live encrypted AI provider credentials end-to-end. Pattern parallel to P01-S02-T009 JWT key hygiene but for Fernet key. The debugger cannot fix this: it would require modifying scripts/gen-dev-secrets.sh (not in write_set) and data/verification/admin_ai (not in write_set).",
+          "decision": "followup_only_when_outside_current_slice",
+          "debugger_path": "in_scope_defects_use_validator_tester_debugger_retest",
+          "warnings": []
+        }
+      },
+      "notes": [
+        "Runtime follow-up promoted from FU-20260513171333-rotate-encryption-key-in-dev-env-seed-active-ai-",
+        "Description: The dev .env still has ENCRYPTION_KEY=replace-with-dev-key (placeholder). The first slice requiring live decrypt_secret() calls is P02-S03-T002 (chat streaming). scripts/gen-dev-secrets.sh only rotates JWT_PRIVATE_KEY; it does not rotate ENCRYPTION_KEY or MFA_ENCRYPTION_KEY. Additionally, at least one ai_providers row with a valid encrypted credential (is_default=true, enabled=true, model_type=chat) must be loaded via data/verification for end-to-end curl verification to pass.",
+        "Triage: missing_real_data; why_not_debugger=ENCRYPTION_KEY hygiene and AI provider seeding for live env are outside this slice's write_set (backend/app/chat/streaming/**, backend/app/llm_gateway/**, backend/tests/**). The ENCRYPTION_KEY placeholder bug exists since .env was created (P00-S01-T001) and surfaces here because P02-S03-T002 is the first slice to require live encrypted AI provider credentials end-to-end. Pattern parallel to P01-S02-T009 JWT key hygiene but for Fernet key. The debugger cannot fix this: it would require modifying scripts/gen-dev-secrets.sh (not in write_set) and data/verification/admin_ai (not in write_set)."
+      ]
     },
     {
       "id": "P02-S04-T001",
@@ -2338,26 +2413,21 @@
       "origin_instr_raw": "§3.1#rag-admin",
       "origin_techguide_raw": "§10.4#rag",
       "source_fingerprint": "37fce694bc5c6b7675cf12d011b3a8ea489c591af9b05f6f095388512a87cc25",
-      "claimed_at": "2026-05-13T11:14:47+00:00",
-      "claimed_by": "sergiolr",
-      "claim_terminal_task_env": null,
-      "task_pack_path": "orchestrator-state/tasks/task-packs/P02-S04-T001.md",
-      "planner_outcome": "ready",
       "last_updated_by": "closer",
-      "last_stop_at": "2026-05-13T15:17:26+00:00",
-      "official-docs-researcher_outcome": "verified",
-      "last_outcome": "committed",
-      "validator_outcome": "approved",
+      "claimed_at": "2026-05-13T11:14:47+00:00",
       "validator_next_status": "ready_for_close",
-      "report_path": "orchestrator-state/tasks/reports/P02-S04-T001.md"
+      "validator_outcome": "approved",
+      "last_stop_at": "2026-05-13T15:17:26+00:00",
+      "last_outcome": "committed",
+      "claimed_by": "sergiolr"
     },
     {
       "id": "P02-S04-T002",
       "phase_id": "P02",
       "step_id": "P02-S04",
       "title": "Celery vectorization worker",
-      "status": "ready",
-      "build_state": "planned",
+      "status": "done",
+      "build_state": "done",
       "product_increment": "v1",
       "risk_level": "medium",
       "verify_mode": "human",
@@ -2419,7 +2489,10 @@
       "tables_raw": "documents, document_versions, document_chunks, document_embeddings, vectorization_jobs",
       "origin_instr_raw": "§3.1#rag-admin",
       "origin_techguide_raw": "§10.4#rag-ingestion",
-      "source_fingerprint": "f72eddb1a4bf80ea49d4675a54c212a3d7314c373e37949ba9dee6c9c880dcc3"
+      "source_fingerprint": "f72eddb1a4bf80ea49d4675a54c212a3d7314c373e37949ba9dee6c9c880dcc3",
+      "last_outcome": "committed",
+      "last_updated_by": "closer",
+      "last_stop_at": "2026-05-13T17:30:00+00:00"
     },
     {
       "id": "P02-S05-T001",
@@ -2490,13 +2563,13 @@
       "origin_instr_raw": "§3.1#admin-ai",
       "origin_techguide_raw": "§6.2#admin-ai",
       "source_fingerprint": "927002efafcc8db233abbe6972d41413968f4667f9450f2f7e150d7cd7f4832c",
-      "validator_outcome": "approved",
-      "last_outcome": "committed",
-      "claimed_by": "sergiolr",
-      "claimed_at": "2026-05-13T08:36:58+00:00",
       "last_updated_by": "closer",
+      "claimed_at": "2026-05-13T08:36:58+00:00",
+      "validator_next_status": "ready_for_close",
+      "validator_outcome": "approved",
       "last_stop_at": "2026-05-13T10:34:07+00:00",
-      "validator_next_status": "ready_for_close"
+      "last_outcome": "committed",
+      "claimed_by": "sergiolr"
     },
     {
       "id": "P02-S05-T002",
@@ -2746,7 +2819,7 @@
         "backend/tests/integration/test_mcp_registry.py"
       ],
       "handoff_path": "orchestrator-state/tasks/handoffs/P02-S07-T001.md",
-      "evidence_dir": "orchestrator-state/tasks/evidence/P02-S07-T001/",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P02-S07-T001",
       "notes": [],
       "dependency_mode": "explicit_dag",
       "depends_on_raw": "P02-S01-T001,P02-S02-T001",
@@ -2765,25 +2838,81 @@
       "origin_instr_raw": "§3.1#mcp-agents",
       "origin_techguide_raw": "§6.2#mcp",
       "source_fingerprint": "9681131c9e5219a21316a907ce6fd9aac3c09cc6209d050629fd75ba656c3564",
-      "claimed_at": "2026-05-13T10:44:17+00:00",
-      "claimed_by": "sergiolr",
-      "claim_terminal_task_env": "P02-S07-T001",
-      "task_pack_path": "orchestrator-state/tasks/task-packs/P02-S07-T001.md",
-      "planner_outcome": "ready",
       "last_updated_by": "closer",
-      "last_stop_at": "2026-05-13T11:57:29+00:00",
-      "official-docs-researcher_outcome": "discrepancy",
-      "last_outcome": "committed",
-      "validator_outcome": "approved",
+      "claimed_at": "2026-05-13T10:44:17+00:00",
       "validator_next_status": "ready_for_close",
-      "report_path": "orchestrator-state/tasks/reports/P02-S07-T001.md"
+      "validator_outcome": "approved",
+      "last_stop_at": "2026-05-13T11:57:29+00:00",
+      "last_outcome": "committed",
+      "claimed_by": "sergiolr"
+    },
+    {
+      "id": "P02-S07-T002",
+      "phase_id": "P02",
+      "step_id": "P02-S07",
+      "title": "Replace TECHNICAL_GUIDE.md line 60 <SDK MCP Python candidato> placeholder with pinned reference",
+      "status": "ready",
+      "kind": "documentation",
+      "target": "Replace TECHNICAL_GUIDE.md line 60 <SDK MCP Python candidato> placeholder with pinned reference",
+      "build_state": "planned",
+      "product_increment": "current",
+      "risk_level": "low",
+      "verify_mode": "auto",
+      "depends_on": [
+        "P02-S07-T001"
+      ],
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry",
+      "acceptance": [
+        "TECHNICAL_GUIDE.md line 60 no longer contains <SDK MCP Python candidato>",
+        "replacement matches the researcher pin (e.g. 'mcp==1.27.1 (not adopted in P02-S07-T001",
+        "see resolved note)')."
+      ],
+      "verification_commands": [
+        "git diff docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md shows the placeholder swap and bootstrap_source_of_truth.py --validate-only passes"
+      ],
+      "allowed_paths": [
+        "backend/app/mcp/**",
+        "backend/tests/integration/test_mcp_registry.py"
+      ],
+      "conflict_groups": [
+        "api:mcp"
+      ],
+      "write_set": [
+        "backend/app/mcp/**",
+        "backend/tests/integration/test_mcp_registry.py"
+      ],
+      "journey_refs": [],
+      "route": "",
+      "endpoint": "",
+      "tables": [],
+      "handoff_path": "orchestrator-state/tasks/handoffs/P02-S07-T002.md",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P02-S07-T002",
+      "origin": {
+        "type": "runtime_followup",
+        "followup_id": "FU-20260513112253-replace-technical-guide-md-line-60-sdk-mcp-pytho",
+        "origin_task_id": "P02-S07-T001",
+        "severity": "low",
+        "kind": "documentation",
+        "triage": {
+          "scope_classification": "missing_coverage",
+          "why_not_debugger": "TECHNICAL_GUIDE source-of-truth edit is blocked by hook_write_scope_guard.py during active DAG slice; reconcile must occur in a dedicated maintenance slice outside any active TASK_ID",
+          "decision": "followup_only_when_outside_current_slice",
+          "debugger_path": "in_scope_defects_use_validator_tester_debugger_retest",
+          "warnings": []
+        }
+      },
+      "notes": [
+        "Runtime follow-up promoted from FU-20260513112253-replace-technical-guide-md-line-60-sdk-mcp-pytho",
+        "Description: Researcher (P02-S07-T001) pinned mcp==1.27.1 as the official Anthropic SDK. TECHNICAL_GUIDE.md line 60 still shows the placeholder text <SDK MCP Python candidato>. The slice chose NOT to adopt the SDK (sync-vs-async friction; see resolved official-doc note P02-S07-T001-mcp-sdk-2026-05-13.md). Reconciliation of the placeholder must happen outside any active DAG TASK_ID due to write-scope guard.",
+        "Triage: missing_coverage; why_not_debugger=TECHNICAL_GUIDE source-of-truth edit is blocked by hook_write_scope_guard.py during active DAG slice; reconcile must occur in a dedicated maintenance slice outside any active TASK_ID"
+      ]
     },
     {
       "id": "P02-S08-T001",
       "phase_id": "P02",
       "step_id": "P02-S08",
       "title": "Agents endpoints and DeepAgents/LangGraph smoke",
-      "status": "ready",
+      "status": "done",
       "build_state": "planned",
       "product_increment": "v1",
       "risk_level": "high",
@@ -2847,7 +2976,11 @@
       "tables_raw": "agents, mcp_agent_bindings, agent_runs, mcp_tool_invocations",
       "origin_instr_raw": "§3.1#mcp-agents",
       "origin_techguide_raw": "§10.4#deepagents",
-      "source_fingerprint": "ef38063ff967d71857dddd55ea59721918c6a6f713117cd4dc73379123a9fc6b"
+      "source_fingerprint": "ef38063ff967d71857dddd55ea59721918c6a6f713117cd4dc73379123a9fc6b",
+      "last_outcome": "committed",
+      "last_updated_by": "closer",
+      "last_stop_at": "2026-05-13T18:42:33+00:00",
+      "report_path": "orchestrator-state/tasks/reports/P02-S08-T001.md"
     },
     {
       "id": "P02-S02-T002",
@@ -2910,13 +3043,13 @@
       "origin_instr_raw": "runtime-followup#FU-20260513080801-fix-module-level-jwt-key-in-app-auth-tokens-caus",
       "origin_techguide_raw": "runtime-followup#FU-20260513080801-fix-module-level-jwt-key-in-app-auth-tokens-caus",
       "source_fingerprint": "5887a8da657c3dff191e80d8749801a65dd6f5242d0368660d1c71cdbf8bb5e0",
-      "validator_outcome": "approved",
-      "last_outcome": "committed",
-      "claimed_by": "sergiolr",
-      "claimed_at": "2026-05-13T08:49:10+00:00",
       "last_updated_by": "closer",
+      "claimed_at": "2026-05-13T08:49:10+00:00",
+      "validator_next_status": "ready_for_close",
+      "validator_outcome": "approved",
       "last_stop_at": "2026-05-13T10:09:32+00:00",
-      "validator_next_status": "ready_for_close"
+      "last_outcome": "committed",
+      "claimed_by": "sergiolr"
     },
     {
       "id": "P02-S03-T003",
@@ -2956,7 +3089,7 @@
         "scripts/dev-restart.profile.sh"
       ],
       "handoff_path": "orchestrator-state/tasks/handoffs/P02-S03-T003.md",
-      "evidence_dir": "orchestrator-state/tasks/evidence/P02-S03-T003/",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P02-S03-T003",
       "notes": [],
       "dependency_mode": "explicit_dag",
       "depends_on_raw": "P02-S03-T001",
@@ -2975,17 +3108,13 @@
       "origin_instr_raw": "runtime-followup#FU-20260513094006-restore-stack-specific-dev-restart-profile-sh-br",
       "origin_techguide_raw": "runtime-followup#FU-20260513094006-restore-stack-specific-dev-restart-profile-sh-br",
       "source_fingerprint": "ba235ca2c0db3ebbec43598c1a4c9c5984ed8c88bec3e25a7f42877beca4d69b",
-      "claimed_at": "2026-05-13T10:44:14+00:00",
-      "claimed_by": "sergiolr",
-      "claim_terminal_task_env": "P02-S03-T003",
-      "task_pack_path": "orchestrator-state/tasks/task-packs/P02-S03-T003.md",
-      "planner_outcome": "ready",
       "last_updated_by": "closer",
+      "claimed_at": "2026-05-13T10:44:14+00:00",
+      "validator_next_status": "ready_for_close",
+      "validator_outcome": "approved",
       "last_stop_at": "2026-05-13T11:25:53+00:00",
       "last_outcome": "committed",
-      "validator_outcome": "approved",
-      "validator_next_status": "ready_for_close",
-      "report_path": "orchestrator-state/tasks/reports/P02-S03-T003.md"
+      "claimed_by": "sergiolr"
     },
     {
       "id": "P02-S05-T003",
@@ -3029,7 +3158,7 @@
         "backend/tests/integration/test_admin_ai.py"
       ],
       "handoff_path": "orchestrator-state/tasks/handoffs/P02-S05-T003.md",
-      "evidence_dir": "orchestrator-state/tasks/evidence/P02-S05-T003/",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P02-S05-T003",
       "notes": [],
       "dependency_mode": "explicit_dag",
       "depends_on_raw": "P02-S05-T001",
@@ -3048,16 +3177,13 @@
       "origin_instr_raw": "runtime-followup#FU-20260513085435-add-partial-unique-index-for-is-default-true-per",
       "origin_techguide_raw": "runtime-followup#FU-20260513085435-add-partial-unique-index-for-is-default-true-per",
       "source_fingerprint": "578dde4653ccf8063757f7da29e1bfb21ff5606f5963b219033ee0593b7ad793",
-      "claimed_at": "2026-05-13T12:15:04+00:00",
-      "claimed_by": "sergiolr",
-      "claim_terminal_task_env": "P02-S05-T003",
-      "task_pack_path": "orchestrator-state/tasks/task-packs/P02-S05-T003.md",
-      "last_outcome": "committed",
       "last_updated_by": "closer",
-      "last_stop_at": "2026-05-13T15:40:35+00:00",
-      "validator_outcome": "approved",
+      "claimed_at": "2026-05-13T12:15:04+00:00",
       "validator_next_status": "ready_for_close",
-      "report_path": "orchestrator-state/tasks/reports/P02-S05-T003.md"
+      "validator_outcome": "approved",
+      "last_stop_at": "2026-05-13T15:40:35+00:00",
+      "last_outcome": "committed",
+      "claimed_by": "sergiolr"
     },
     {
       "id": "P03-S01-T001",
@@ -5317,6 +5443,7 @@
       "task_ids": [
         "P02-S03-T001",
         "P02-S03-T002",
+        "P02-S03-T004",
         "P02-S04-T001",
         "P02-S04-T002",
         "P02-S03-T003",
@@ -5327,9 +5454,10 @@
       "task_ids_source_order": [
         "P02-S03-T001",
         "P02-S03-T002",
-        "P02-S03-T003",
+        "P02-S03-T004",
         "P02-S04-T001",
         "P02-S04-T002",
+        "P02-S03-T003",
         "P03-S02-T001",
         "P03-S02-T002",
         "P05-S01-T002"
@@ -5343,6 +5471,7 @@
       "completion_policy": "all_task_ids_done",
       "task_order_policy": "dag_topological_order",
       "terminal_task_ids": [
+        "P02-S03-T004",
         "P02-S04-T002",
         "P02-S03-T003",
         "P05-S01-T002"
@@ -5441,6 +5570,7 @@
         "testDrawerStore"
       ],
       "task_ids": [
+        "P02-S03-T004",
         "P02-S05-T001",
         "P02-S05-T002",
         "P02-S05-T003",
@@ -5450,6 +5580,7 @@
         "P05-S01-T004"
       ],
       "task_ids_source_order": [
+        "P02-S03-T004",
         "P02-S05-T001",
         "P02-S05-T002",
         "P02-S05-T003",
@@ -5467,6 +5598,7 @@
       "completion_policy": "all_task_ids_done",
       "task_order_policy": "dag_topological_order",
       "terminal_task_ids": [
+        "P02-S03-T004",
         "P02-S05-T003",
         "P05-S01-T004"
       ]
@@ -5627,6 +5759,7 @@
       "P02-S02-T001",
       "P02-S03-T001",
       "P02-S03-T002",
+      "P02-S03-T004",
       "P02-S04-T001",
       "P02-S04-T002",
       "P02-S05-T001",
@@ -5634,6 +5767,7 @@
       "P02-S06-T001",
       "P02-S06-T002",
       "P02-S07-T001",
+      "P02-S07-T002",
       "P02-S08-T001",
       "P02-S02-T002",
       "P02-S03-T003",
@@ -5817,6 +5951,10 @@
         "P02-S03-T002"
       ],
       [
+        "P02-S03-T002",
+        "P02-S03-T004"
+      ],
+      [
         "P02-S01-T001",
         "P02-S04-T001"
       ],
@@ -5855,6 +5993,10 @@
       [
         "P02-S02-T001",
         "P02-S07-T001"
+      ],
+      [
+        "P02-S07-T001",
+        "P02-S07-T002"
       ],
       [
         "P02-S07-T001",
@@ -6222,49 +6364,51 @@
       "P02-S02-T001": 25,
       "P02-S03-T001": 26,
       "P02-S03-T002": 27,
-      "P02-S04-T001": 28,
-      "P02-S04-T002": 29,
-      "P02-S05-T001": 30,
-      "P02-S05-T002": 31,
-      "P02-S06-T001": 32,
-      "P02-S06-T002": 33,
-      "P02-S07-T001": 34,
-      "P02-S08-T001": 35,
-      "P02-S02-T002": 36,
-      "P02-S03-T003": 37,
-      "P02-S05-T003": 38,
-      "P03-S01-T001": 39,
-      "P03-S01-T002": 40,
-      "P03-S01-T003": 41,
-      "P03-S01-T004": 42,
-      "P03-S01-T005": 43,
-      "P03-S02-T001": 44,
-      "P03-S02-T002": 45,
-      "P03-S02-T003": 46,
-      "P03-S02-T004": 47,
-      "P04-S01-T001": 48,
-      "P04-S01-T002": 49,
-      "P04-S01-T003": 50,
-      "P04-S01-T004": 51,
-      "P04-S02-T001": 52,
-      "P04-S02-T002": 53,
-      "P04-S02-T003": 54,
-      "P04-S02-T004": 55,
-      "P04-S02-T005": 56,
-      "P04-S03-T001": 57,
-      "P04-S03-T002": 58,
-      "P05-S01-T001": 59,
-      "P05-S01-T002": 60,
-      "P05-S01-T003": 61,
-      "P05-S01-T004": 62,
-      "P05-S01-T005": 63,
-      "P05-S01-T006": 64,
-      "P05-S02-T001": 65,
-      "P05-S02-T002": 66,
-      "P05-S02-T003": 67,
-      "P06-S01-T001": 68,
-      "P06-S01-T002": 69,
-      "P06-S01-T003": 70
+      "P02-S03-T004": 28,
+      "P02-S04-T001": 29,
+      "P02-S04-T002": 30,
+      "P02-S05-T001": 31,
+      "P02-S05-T002": 32,
+      "P02-S06-T001": 33,
+      "P02-S06-T002": 34,
+      "P02-S07-T001": 35,
+      "P02-S07-T002": 36,
+      "P02-S08-T001": 37,
+      "P02-S02-T002": 38,
+      "P02-S03-T003": 39,
+      "P02-S05-T003": 40,
+      "P03-S01-T001": 41,
+      "P03-S01-T002": 42,
+      "P03-S01-T003": 43,
+      "P03-S01-T004": 44,
+      "P03-S01-T005": 45,
+      "P03-S02-T001": 46,
+      "P03-S02-T002": 47,
+      "P03-S02-T003": 48,
+      "P03-S02-T004": 49,
+      "P04-S01-T001": 50,
+      "P04-S01-T002": 51,
+      "P04-S01-T003": 52,
+      "P04-S01-T004": 53,
+      "P04-S02-T001": 54,
+      "P04-S02-T002": 55,
+      "P04-S02-T003": 56,
+      "P04-S02-T004": 57,
+      "P04-S02-T005": 58,
+      "P04-S03-T001": 59,
+      "P04-S03-T002": 60,
+      "P05-S01-T001": 61,
+      "P05-S01-T002": 62,
+      "P05-S01-T003": 63,
+      "P05-S01-T004": 64,
+      "P05-S01-T005": 65,
+      "P05-S01-T006": 66,
+      "P05-S02-T001": 67,
+      "P05-S02-T002": 68,
+      "P05-S02-T003": 69,
+      "P06-S01-T001": 70,
+      "P06-S01-T002": 71,
+      "P06-S01-T003": 72
     },
     "adjacency_matrix": [
       [
@@ -6338,6 +6482,8 @@
         0,
         0,
         0,
+        0,
+        0,
         0
       ],
       [
@@ -6359,6 +6505,8 @@
         0,
         0,
         1,
+        0,
+        0,
         0,
         0,
         0,
@@ -6484,6 +6632,8 @@
         0,
         0,
         0,
+        0,
+        0,
         0
       ],
       [
@@ -6526,6 +6676,8 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
         1,
         1,
@@ -6560,6 +6712,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -6599,6 +6752,7 @@
         0,
         0,
         0,
+        0,
         1,
         1,
         1,
@@ -6640,6 +6794,7 @@
         0,
         0,
         1,
+        0,
         0,
         0,
         0,
@@ -6703,6 +6858,7 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
@@ -6716,6 +6872,7 @@
         1,
         0,
         1,
+        0,
         0,
         0,
         0,
@@ -6776,6 +6933,7 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
@@ -6788,6 +6946,7 @@
         0,
         0,
         1,
+        0,
         0,
         0,
         0,
@@ -6849,9 +7008,12 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -6995,6 +7157,8 @@
         0,
         0,
         0,
+        0,
+        0,
         0
       ],
       [
@@ -7013,6 +7177,8 @@
         0,
         0,
         1,
+        0,
+        0,
         0,
         0,
         0,
@@ -7141,6 +7307,8 @@
         0,
         0,
         0,
+        0,
+        0,
         0
       ],
       [
@@ -7214,6 +7382,8 @@
         0,
         0,
         0,
+        0,
+        0,
         0
       ],
       [
@@ -7239,6 +7409,7 @@
         0,
         0,
         1,
+        0,
         0,
         0,
         0,
@@ -7264,6 +7435,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -7290,6 +7462,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -7331,6 +7504,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -7381,6 +7555,7 @@
         0,
         1,
         1,
+        0,
         0,
         0,
         0,
@@ -7406,6 +7581,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -7463,6 +7639,7 @@
         0,
         0,
         1,
+        0,
         0,
         0,
         0,
@@ -7480,6 +7657,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -7533,6 +7711,8 @@
         0,
         0,
         1,
+        0,
+        0,
         0,
         0,
         0,
@@ -7652,9 +7832,13 @@
         0,
         0,
         0,
+        0,
+        0,
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -7798,6 +7982,8 @@
         0,
         0,
         0,
+        0,
+        0,
         0
       ],
       [
@@ -7871,9 +8057,12 @@
         0,
         0,
         0,
+        0,
+        0,
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -7944,9 +8133,11 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -8017,6 +8208,7 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
@@ -8047,6 +8239,7 @@
         0,
         0,
         1,
+        0,
         0,
         1,
         0,
@@ -8090,9 +8283,11 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -8129,6 +8324,7 @@
         0,
         1,
         0,
+        0,
         1,
         0,
         0,
@@ -8194,6 +8390,8 @@
         0,
         0,
         1,
+        0,
+        0,
         0,
         0,
         0,
@@ -8267,6 +8465,8 @@
         0,
         0,
         0,
+        1,
+        0,
         0,
         0,
         0,
@@ -8285,6 +8485,22 @@
         0,
         0,
         1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -8293,6 +8509,42 @@
         0,
         0,
         0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -8309,6 +8561,29 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
         0
       ],
       [
@@ -8340,6 +8615,7 @@
         0,
         0,
         1,
+        0,
         0,
         1,
         0,
@@ -8347,6 +8623,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -8417,7 +8694,9 @@
         0,
         0,
         0,
+        0,
         1,
+        0,
         0,
         0,
         0,
@@ -8486,10 +8765,12 @@
         0,
         0,
         1,
+        0,
         1,
         0,
         0,
         1,
+        0,
         0,
         0,
         0,
@@ -8531,6 +8812,8 @@
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -8637,7 +8920,9 @@
         0,
         0,
         0,
+        0,
         1,
+        0,
         0,
         0,
         0,
@@ -8730,6 +9015,8 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
         0,
         0,
@@ -8750,6 +9037,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -8786,6 +9074,7 @@
         0,
         0,
         1,
+        1,
         0,
         0,
         0,
@@ -8806,6 +9095,77 @@
         0,
         1,
         1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -8820,6 +9180,10 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
+        0,
         0
       ],
       [
@@ -8879,6 +9243,8 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
         0,
         0,
@@ -8966,9 +9332,12 @@
         0,
         0,
         0,
+        0,
+        0,
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -9039,9 +9408,11 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -9112,9 +9483,11 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -9158,6 +9531,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -9188,6 +9562,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -9258,9 +9633,12 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -9404,9 +9782,13 @@
         0,
         0,
         0,
+        0,
+        0,
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -9525,6 +9907,8 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
         0,
         1,
@@ -9599,6 +9983,8 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
         0,
         0,
@@ -9626,6 +10012,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -9687,6 +10074,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -9699,6 +10087,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -9760,6 +10149,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -9772,6 +10162,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -9821,6 +10212,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -9845,6 +10237,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -9895,6 +10288,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -9918,6 +10312,8 @@
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -10053,6 +10449,8 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
         0,
         0,
@@ -10064,6 +10462,8 @@
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -10200,6 +10600,8 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
         0,
         0,
@@ -10265,6 +10667,8 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
         1,
         0,
@@ -10283,6 +10687,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -10347,6 +10752,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -10356,6 +10762,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -10420,6 +10827,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -10429,6 +10837,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -10499,9 +10908,11 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -10572,9 +10983,12 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -10714,6 +11128,8 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
         1,
         0,
@@ -10721,6 +11137,8 @@
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -10859,6 +11277,8 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
         1,
         1,
@@ -10932,6 +11352,8 @@
         0,
         0,
         0,
+        0,
+        0,
         1,
         0,
         1,
@@ -10940,6 +11362,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -11005,6 +11428,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         1,
@@ -11013,6 +11437,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -11081,11 +11506,13 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -11154,11 +11581,13 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -11227,11 +11656,14 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -11375,9 +11807,13 @@
         0,
         0,
         0,
+        0,
+        0,
         1
       ],
       [
+        0,
+        0,
         0,
         0,
         0,
@@ -11565,8 +12001,10 @@
         "P03-S02-T003"
       ],
       "P02-S03-T002": [
+        "P02-S03-T004",
         "P03-S02-T002"
       ],
+      "P02-S03-T004": [],
       "P02-S04-T001": [
         "P02-S03-T002",
         "P02-S04-T002",
@@ -11597,10 +12035,12 @@
         "P04-S02-T002"
       ],
       "P02-S07-T001": [
+        "P02-S07-T002",
         "P02-S08-T001",
         "P04-S02-T003",
         "P04-S02-T004"
       ],
+      "P02-S07-T002": [],
       "P02-S08-T001": [
         "P04-S02-T005"
       ],
@@ -11803,6 +12243,9 @@
         "P02-S04-T001",
         "P02-S05-T001"
       ],
+      "P02-S03-T004": [
+        "P02-S03-T002"
+      ],
       "P02-S04-T001": [
         "P02-S01-T001",
         "P02-S05-T001"
@@ -11826,6 +12269,9 @@
       "P02-S07-T001": [
         "P02-S01-T001",
         "P02-S02-T001"
+      ],
+      "P02-S07-T002": [
+        "P02-S07-T001"
       ],
       "P02-S08-T001": [
         "P02-S07-T001",
@@ -12024,6 +12470,7 @@
         "P01-S02-T010",
         "P02-S04-T001",
         "P02-S05-T002",
+        "P02-S07-T002",
         "P02-S05-T003",
         "P03-S01-T003",
         "P04-S02-T003"
@@ -12060,6 +12507,7 @@
         "P05-S01-T006"
       ],
       [
+        "P02-S03-T004",
         "P03-S01-T005",
         "P03-S02-T002",
         "P03-S02-T004",
@@ -12180,6 +12628,9 @@
       "P02-S03-T002": [
         "api:chat-stream"
       ],
+      "P02-S03-T004": [
+        "infra:dev-secrets"
+      ],
       "P02-S04-T001": [
         "ai:rag"
       ],
@@ -12199,6 +12650,9 @@
         "api:rag-collections"
       ],
       "P02-S07-T001": [
+        "api:mcp"
+      ],
+      "P02-S07-T002": [
         "api:mcp"
       ],
       "P02-S08-T001": [
@@ -12447,6 +12901,11 @@
         "backend/app/chat/streaming.py",
         "backend/tests/integration/test_chat_stream.py"
       ],
+      "P02-S03-T004": [
+        "scripts/gen-dev-secrets.sh",
+        ".env.example",
+        "data/verification/admin_ai/**"
+      ],
       "P02-S04-T001": [
         "backend/app/rag/**",
         "backend/tests/ai/test_rag_retriever.py"
@@ -12475,6 +12934,10 @@
         "backend/tests/integration/test_rag_collections.py"
       ],
       "P02-S07-T001": [
+        "backend/app/mcp/**",
+        "backend/tests/integration/test_mcp_registry.py"
+      ],
+      "P02-S07-T002": [
         "backend/app/mcp/**",
         "backend/tests/integration/test_mcp_registry.py"
       ],
@@ -12633,6 +13096,7 @@
       "P02-S02-T001": "medium",
       "P02-S03-T001": "medium",
       "P02-S03-T002": "high",
+      "P02-S03-T004": "medium",
       "P02-S04-T001": "medium",
       "P02-S04-T002": "medium",
       "P02-S05-T001": "high",
@@ -12640,6 +13104,7 @@
       "P02-S06-T001": "high",
       "P02-S06-T002": "medium",
       "P02-S07-T001": "high",
+      "P02-S07-T002": "low",
       "P02-S08-T001": "high",
       "P02-S02-T002": "medium",
       "P02-S03-T003": "high",
@@ -12706,6 +13171,7 @@
       "P02-S02-T001": "human",
       "P02-S03-T001": "human",
       "P02-S03-T002": "human",
+      "P02-S03-T004": "human",
       "P02-S04-T001": "human",
       "P02-S04-T002": "human",
       "P02-S05-T001": "human",
@@ -12713,6 +13179,7 @@
       "P02-S06-T001": "human",
       "P02-S06-T002": "human",
       "P02-S07-T001": "human",
+      "P02-S07-T002": "auto",
       "P02-S08-T001": "human",
       "P02-S02-T002": "human",
       "P02-S03-T003": "human",
@@ -12751,7 +13218,7 @@
       "P06-S01-T003": "human"
     },
     "canonical_source": "registry.tasks",
-    "source_digest": "bb4a46a5eab93f16c3db5e4ec305c962feb508112191578569d9c1e5fd51a0f0",
+    "source_digest": "e323193211e5041df34372df33d6fac57019d1cc6c537bb16d8688631e005782",
     "errors": []
   }
 }

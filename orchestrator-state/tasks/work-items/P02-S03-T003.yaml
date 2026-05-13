@@ -2,7 +2,7 @@ id: P02-S03-T003
 phase_id: P02
 step_id: P02-S03
 title: "restore stack-specific dev-restart.profile.sh broken by framework refactor c4c91ae"
-status: ready
+status: done
 kind: "wiring"
 target: "restore stack-specific dev-restart.profile.sh broken by framework refactor c4c91ae"
 product_increment: "current"
