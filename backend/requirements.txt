@@ -23,6 +23,11 @@
 fastapi==0.135.2
 uvicorn[standard]==0.42.0
 pydantic==2.12.5
+# python-multipart: required for FastAPI UploadFile + Form() (§D-RAGDOCS-DEPS).
+# NOT a transitive dep of fastapi base package — only in fastapi[standard] extra.
+# FastAPI 0.60.2+ raises ImportError at startup if any File()/Form() route is
+# registered without this installed. Researcher Q1 confirmed 0.0.28 (2026-05-13).
+python-multipart==0.0.28
 
 # ── T003 §2.0 — PDF / Office backends ──────────────────────────────────────
 pypdf==6.11.0

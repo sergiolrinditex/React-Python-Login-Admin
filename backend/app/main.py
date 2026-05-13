@@ -49,6 +49,7 @@ from app.api.router import api_router
 from app.auth import auth_router
 from app.auth.schemas import ErrorItem, ErrorResponse, ResponseMeta
 from app.chat.routers import router as chat_router  # P02-S03-T001 WRITE_SET_DRIFT
+from app.rag.documents import rag_documents_router  # P02-S06-T001 WRITE_SET_DRIFT §D-RAGDOCS-MAIN
 from app.users import users_router  # P01-S02-T007 WRITE_SET_DRIFT §G.14
 
 # ---------------------------------------------------------------------------
@@ -85,6 +86,7 @@ app.include_router(users_router, prefix="/api/v1")  # P01-S02-T007 WRITE_SET_DRI
 app.include_router(chat_router, prefix="/api/v1")  # P02-S03-T001 WRITE_SET_DRIFT
 app.include_router(admin_router, prefix="/api/v1/admin/ai", tags=["admin-ai"])  # P02-S05-T001 WRITE_SET_DRIFT §D-AAM
 app.include_router(agents_runs_router, prefix="/api/v1", tags=["agents"])  # P02-S08-T001 WRITE_SET_DRIFT §D-AGWIRE-MAIN
+app.include_router(rag_documents_router, prefix="/api/v1/admin/rag", tags=["admin-rag"])  # P02-S06-T001 WRITE_SET_DRIFT §D-RAGDOCS-MAIN
 
 
 # ---------------------------------------------------------------------------
