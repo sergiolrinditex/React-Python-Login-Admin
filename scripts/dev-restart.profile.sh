@@ -237,12 +237,12 @@ back_start() {
   log "Starting backend (uvicorn) on :${HILO_BACKEND_PORT}..."
 
   # Launch uvicorn from backend/ so `app.main:app` resolves correctly.
-  cd "${HILO_BACKEND_DIR}"
+  cd "${HILO_BACKEND_DIR}" || fail "cd ${HILO_BACKEND_DIR} failed"
   nohup "${py}" -m uvicorn app.main:app \
         --host 0.0.0.0 --port "${HILO_BACKEND_PORT}" --reload \
         >>"${BACK_LOG}" 2>&1 &
   echo $! > "${BACK_PID_FILE}"
-  cd "${ROOT_DIR}"
+  cd "${ROOT_DIR}" || fail "cd ${ROOT_DIR} failed"
 
   if ! wait_for back_health 30 "backend"; then
     warn "Backend did not become healthy in 30s. See ${BACK_LOG} for details."
@@ -275,24 +275,24 @@ front_start() {
   fi
   if [ ! -d "${HILO_FRONTEND_DIR}/node_modules" ]; then
     log "frontend/node_modules missing — running npm install..."
-    cd "${HILO_FRONTEND_DIR}"
+    cd "${HILO_FRONTEND_DIR}" || fail "cd ${HILO_FRONTEND_DIR} failed"
     if ! npm install >>"${FRONT_LOG}" 2>&1; then
-      cd "${ROOT_DIR}"
+      cd "${ROOT_DIR}" || fail "cd ${ROOT_DIR} failed"
       fail "npm install failed; see ${FRONT_LOG}"
     fi
-    cd "${ROOT_DIR}"
+    cd "${ROOT_DIR}" || fail "cd ${ROOT_DIR} failed"
   fi
 
   stop_orphan_on_port "${HILO_FRONTEND_PORT}" "frontend"
   log "Starting frontend (vite) on :${HILO_FRONTEND_PORT}..."
 
-  cd "${HILO_FRONTEND_DIR}"
+  cd "${HILO_FRONTEND_DIR}" || fail "cd ${HILO_FRONTEND_DIR} failed"
   # package.json "dev" script already binds --host 0.0.0.0; we pass --port so
   # the port is explicit and matches BACKEND_PORT / FRONTEND_PORT env vars.
   nohup npm run dev -- --port "${HILO_FRONTEND_PORT}" \
         >>"${FRONT_LOG}" 2>&1 &
   echo $! > "${FRONT_PID_FILE}"
-  cd "${ROOT_DIR}"
+  cd "${ROOT_DIR}" || fail "cd ${ROOT_DIR} failed"
 
   if ! wait_for front_health 60 "frontend"; then
     warn "Frontend did not respond in 60s. See ${FRONT_LOG} for details."
@@ -371,15 +371,15 @@ db_reset() {
   fi
 
   log "Applying alembic migrations (alembic upgrade head)..."
-  cd "${HILO_BACKEND_DIR}"
+  cd "${HILO_BACKEND_DIR}" || fail "cd ${HILO_BACKEND_DIR} failed"
   if ! "${alembic_cli}" upgrade head >>"${BACK_LOG}" 2>&1; then
-    cd "${ROOT_DIR}"
+    cd "${ROOT_DIR}" || fail "cd ${ROOT_DIR} failed"
     fail "alembic upgrade head failed; see ${BACK_LOG}"
   fi
-  cd "${ROOT_DIR}"
+  cd "${ROOT_DIR}" || fail "cd ${ROOT_DIR} failed"
 
   log "Loading verification_data (real/provided fixtures)..."
-  cd "${HILO_BACKEND_DIR}"
+  cd "${HILO_BACKEND_DIR}" || fail "cd ${HILO_BACKEND_DIR} failed"
   # `python -m app.verification_data.bootstrap` is safe here: `app` is a real
   # package at backend/app/, and there is no top-level module that shadows it.
   # --source uses an absolute path derived from ROOT_DIR so that cwd=backend/
@@ -387,9 +387,9 @@ db_reset() {
   # backend/data/verification (which does not exist). P01-S02-T008 fix.
   if ! "${py}" -m app.verification_data.bootstrap \
         --source "${ROOT_DIR}/data/verification" >>"${BACK_LOG}" 2>&1; then
-    cd "${ROOT_DIR}"
+    cd "${ROOT_DIR}" || fail "cd ${ROOT_DIR} failed"
     fail "verification_data bootstrap failed; see ${BACK_LOG}."
   fi
   log "verification_data bootstrap complete."
-  cd "${ROOT_DIR}"
+  cd "${ROOT_DIR}" || fail "cd ${ROOT_DIR} failed"
 }
