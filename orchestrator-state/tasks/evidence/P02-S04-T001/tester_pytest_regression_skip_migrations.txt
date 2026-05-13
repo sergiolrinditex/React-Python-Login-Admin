@@ -1,0 +1,20 @@
+tests/integration/test_auth_signup.py::test_signup_missing_full_name_422
+  /Users/sergiolr/Library/Python/3.11/lib/python/site-packages/starlette/_exception_handler.py:59: DeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
+    response = await handler(conn, exc)
+
+tests/integration/test_auth_refresh.py: 20 warnings
+  /Users/sergiolr/Library/Python/3.11/lib/python/site-packages/starlette/testclient.py:445: DeprecationWarning: Setting per-request cookies=<...> is being deprecated, because the expected behaviour on cookie persistence is ambiguous. Set cookies directly on the client instance instead.
+    return super().request(
+
+tests/test_dependency_smoke.py::test_dependency_smoke[deepagents-deepagents-None]
+  /Users/sergiolr/Library/Python/3.11/lib/python/site-packages/langgraph/checkpoint/serde/encrypted.py:5: LangChainPendingDeprecationWarning: The default value of `allowed_objects` will change in a future version. Pass an explicit value (e.g., allowed_objects='messages' or allowed_objects='core') to suppress this warning.
+    from langgraph.checkpoint.serde.jsonplus import JsonPlusSerializer
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED backend/tests/integration/test_mfa.py::test_mfa_verify_invalid_signature_returns_401_aggregate
+FAILED backend/tests/unit/test_security.py::TestPermissions::test_require_admin_returns_403_when_authenticated_but_missing_role
+FAILED backend/tests/unit/test_security.py::TestPermissions::test_require_admin_returns_200_for_people_admin_user
+FAILED backend/tests/unit/test_security.py::TestPermissions::test_require_admin_also_grants_super_admin
+FAILED backend/tests/unit/test_security.py::TestPermissions::test_require_role_factory_composes_multi_role_users
+5 failed, 239 passed, 26 warnings in 79.36s (0:01:19)

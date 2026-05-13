@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-05-13T11:17:31+00:00",
+  "generated_at": "2026-05-13T15:17:26+00:00",
   "next_ready_phase_id": "P02",
   "next_ready_task_id": "P02-S04-T001",
-  "last_worker": "debugger",
+  "last_worker": "closer",
   "last_event": "subagent_stop",
   "pending_journey_verifications": [
     "J103"
@@ -11,16 +11,16 @@
   "spawn_budget": 20,
   "spawns_in_current_slice": {
     "P01-S01-T001": 8,
-    "agent:planner": 24,
-    "agent:official-docs-researcher": 10,
-    "agent:developer": 22,
-    "agent:validator": 36,
-    "agent:tester": 33,
-    "agent:closer": 24,
+    "agent:planner": 26,
+    "agent:official-docs-researcher": 12,
+    "agent:developer": 25,
+    "agent:validator": 40,
+    "agent:tester": 37,
+    "agent:closer": 27,
     "P00-S02-T004": 6,
     "P01-S02-T001": 8,
     "P01-S02-T002": 8,
-    "agent:debugger": 10,
+    "agent:debugger": 11,
     "P01-S02-T008": 5,
     "P01-S02-T010": 5,
     "P01-S02-T009": 5,
@@ -39,8 +39,10 @@
     "P02-S03-T001": 12,
     "P02-S05-T001": 8,
     "P02-S02-T002": 5,
-    "P02-S03-T003": 4,
-    "P02-S07-T001": 5
+    "P02-S03-T003": 5,
+    "P02-S07-T001": 9,
+    "P02-S04-T001": 11,
+    "P02-S05-T003": 3
   },
   "open_followups": [
     {
@@ -162,10 +164,22 @@
       "scope_classification": "out_of_scope",
       "why_not_debugger": "El commit framework-refactor c4c91ae redujo scripts/dev-restart.profile.sh de 390 LOC funcionales a 41 LOC de stubs neutrales (back_start/front_start/db_reset todos llaman fail()). El bug NO está en el write_set de P02-S03-T001 (backend/app/chat/** + main.py + tests). Fix correcto: slice dedicada que reintroduzca el profile stack-specific desde commit ec801a4 (P01-S02-T008) y lo armonice con el nuevo STACK_PROFILE.yaml refactorizado. Esto excede write_set y conflict_group de cualquier slice activa.",
       "promoted_task_id": "P02-S03-T003"
+    },
+    {
+      "id": "FU-20260513112253-replace-technical-guide-md-line-60-sdk-mcp-pytho",
+      "status": "proposed",
+      "severity": "low",
+      "origin_task_id": "P02-S07-T001",
+      "title": "Replace TECHNICAL_GUIDE.md line 60 <SDK MCP Python candidato> placeholder with pinned reference",
+      "path": "orchestrator-state/tasks/follow-ups/FU-20260513112253-replace-technical-guide-md-line-60-sdk-mcp-pytho.yaml",
+      "created_at": "2026-05-13T11:22:53+00:00",
+      "scope_classification": "missing_coverage",
+      "why_not_debugger": "TECHNICAL_GUIDE source-of-truth edit is blocked by hook_write_scope_guard.py during active DAG slice; reconcile must occur in a dedicated maintenance slice outside any active TASK_ID"
     }
   ],
-  "last_stop_at": "2026-05-13T11:19:39+00:00",
+  "last_stop_at": "2026-05-13T15:22:37+00:00",
   "last_trailer": {},
-  "last_claimed_task_id": "P02-S04-T001",
-  "last_claimed_phase_id": "P02"
+  "last_claimed_task_id": "P02-S05-T003",
+  "last_claimed_phase_id": "P02",
+  "last_followup_id": "FU-20260513112253-replace-technical-guide-md-line-60-sdk-mcp-pytho"
 }

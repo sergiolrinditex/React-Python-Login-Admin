@@ -80,6 +80,22 @@ Compact operational memory. No history was deleted.
 - - `await i18n.changeLanguage('fr')` in tests: returns a Promise. Must `await` in async test. `i18n.language` updates synchronously after resolution.
 - #### Outcome: VERIFIED — all planner decisions confirmed
 - No discrepancy notes written. Developer may proceed without reconciliation.
+
+## P02-S07-T001 MCP SDK deep verification (2026-05-13)
+- Full note: `orchestrator-state/memory/official-doc-notes/P02-S07-T001-mcp-sdk-2026-05-13.md`
+- Package: `mcp==1.27.1` (PyPI, MIT, Anthropic PBC, released 2026-05-08, 23k stars)
+- Cache: ALWAYS re-verify (AI/ML volatile ecosystem)
+- Discovery API: `await session.list_tools()` → `tools: list[Tool(name, description, inputSchema)]`; `await session.list_resources()` → `resources: list[Resource(uri, name, description, mimeType)]`; `await session.list_prompts()` → `prompts: list[Prompt(name, description, arguments)]`
+- Transport map: `transport_type='http'` → `mcp.client.streamable_http.streamable_http_client(url, http_client=httpx.AsyncClient(...))`. `transport_type='sse'` → `mcp.client.sse.sse_client(url, headers=..., timeout=..., auth=...)`
+- Timeout: streamable_http → inject `httpx.AsyncClient(timeout=10.0)`. SSE → `sse_client(url, timeout=10.0)`
+- Exception for 502: catch `(StreamableHTTPError, httpx.TimeoutException, httpx.ConnectError, httpx.HTTPStatusError)`
+- Auth injection (streamable_http): MUST use pre-built `httpx.AsyncClient` — no auth/headers param on constructor
+- Auth injection (sse): `headers=` and `auth=` params available directly on `sse_client`
+- OAuth2 refresh: implement `TokenStorage.set_tokens(tokens: OAuthToken)` → `DbTokenStorage` class writes updated encrypted_refresh_token+expires_at to mcp_credentials
+- DISCREPANCY 1 (UNRESOLVED): TECHNICAL_GUIDE line 60 placeholder `<SDK MCP Python candidato>` → resolved as `mcp==1.27.1`
+- DISCREPANCY 2 (UNRESOLVED): Exception class for 502 is `StreamableHTTPError` (SDK-specific), not just `httpx` exceptions
+- DISCREPANCY 3 (impl detail only): transport naming `{http,sse}` in DB maps to SDK classes; no contract change needed
+- DISCREPANCY 4 (impl detail only): streamable_http auth requires pre-built httpx.AsyncClient pattern
 - **Verified via PyPI live JSON + argon2-cffi ReadTheDocs + Context7 (SQLAlchemy, Alembic, structlog, pydantic) + pgvector GitHub README.**
 - #### Hook 1 — argon2-cffi — DISCREPANCY
 - | DISCREPANCY NOTE | `P00-S02-T003-argon2-cffi-2026-05-11.md` |
@@ -493,6 +509,61 @@ Status: `RESOLVED: yes` — no discrepancies; all items are decision-aids fillin
 1. **HIGH** — ivfflat on empty table: internal guide uses ivfflat with no lists param on empty table. Official: use HNSW (safe on empty table) or defer ivfflat index post-load.
 2. **MEDIUM** — Docker image: `postgres:17-alpine` → must change to `pgvector/pgvector:0.8.2-pg17` (pre-approved by user).
 3. **LOW** — ORM type name: `VECTOR` (all caps), not `Vector`. Only matters in ORM model files.
+
+### 2026-05-13 — P02-S04-T001 pgvector-python ORM API for RAG retriever (cosine_distance method)
+
+**Sources**: Context7 /pgvector/pgvector-python (High, 125 snippets), Context7 /pgvector/pgvector (High, 275 snippets), GitHub READMEs via Context7.
+**Cache valid until**: 2026-05-20 (pgvector-python is a DB extension binding — not AI/ML volatile).
+**Note file**: `orchestrator-state/memory/official-doc-notes/P02-S04-T001-rag-retriever-2026-05-13.md`
+**OUTCOME**: verified — no discrepancies; all 5 questions confirmed.
+
+#### Key findings (all confirmed correct for retriever.py)
+
+| Item | Official value | Source |
+|---|---|---|
+| `.cosine_distance(x)` ORM method | Official API for `<=>` operator in SQLAlchemy 2.x | pgvector-python README + Context7 |
+| `order_by(distance.asc()).limit(k)` | Canonical pattern (confirmed in official snippets) | pgvector-python Context7 |
+| `list[float]` input accepted | YES — all official snippets use plain Python lists | pgvector-python README + Context7 |
+| HNSW empty-table query | Returns `[]` cleanly — no error, no warning | pgvector README (no training step) |
+| cosine_distance(x,x) return value | `0` mathematically; `float4` internal → may produce tiny epsilon | pgvector Context7 scalar function APIDOC |
+| `[0.0, 1.001]` score tolerance | Safe — float4 internal storage can produce small epsilon in dot-product | pgvector float4 type definition |
+| i18n RAG fallback (LangChain) | No official pattern — D-RR2 "caller handles fallback" is correct | pgvector-python README (no i18n section) |
+| `score = 1.0 - cosine_distance` | Pattern confirmed in official pgvector SQL docs: `1 - (embedding <=> ...)` | pgvector/pgvector Context7 |
+
+No discrepancies with retriever.py API surface. Developer may adopt code as-is.
+
+### 2026-05-13 — P02-S04-T001 pgvector-python 0.4.2 version-pinned deep dive (cosine_distance + psycopg3 async binding + HNSW ef_search)
+
+> Complementary follow-up note from a parallel researcher run focused on the **pinned** 0.4.2 version (the prior note above used Context7's "current" docs). Same OUTCOME but adds versioning, async binding and ef_search details.
+
+**Sources**: pgvector-python v0.4.2 README (raw tag), Context7 /pgvector/pgvector-python (High, 125 snippets), Context7 /pgvector/pgvector (High, 275 snippets).
+**Cache valid until**: 2026-05-20 (pgvector-python 0.4.2 is a pinned version — stable).
+**Note file**: `orchestrator-state/memory/official-doc-notes/P02-S04-T001-pgvector-2026-05-13.md`
+**OUTCOME**: verified — no discrepancies with internal pack; 3 questions answered.
+
+#### Key findings
+
+| Item | Value | Source |
+|---|---|---|
+| `cosine_distance` method exists in 0.4.2 | **YES** | v0.4.2 README verbatim |
+| SQL operator emitted by cosine_distance | `<=>` | pgvector operator mapping (L2=`<->`, cosine=`<=>`, IP=`<#>`) |
+| HNSW `vector_cosine_ops` uses `<=>` | **YES** — index IS used by cosine_distance | pgvector README |
+| Import at v0.4.2 | `from pgvector.sqlalchemy import Vector` (title-case) | v0.4.2 README |
+| query_vec Python type | `list[float]` is fine; `numpy.ndarray` also works | v0.4.2 README examples |
+| register_vector for SQLAlchemy ORM + psycopg3 | **REQUIRED** via `event.listens_for(engine, "connect")` | v0.4.2 README |
+| Async engine pattern | `event.listens_for(engine.sync_engine, "connect")` + `dbapi_connection.run_async(register_vector_async)` | v0.4.2 README |
+| Per-call registration needed? | **NO** — event listener fires once per new connection | v0.4.2 README |
+| hnsw.ef_search default | **40** | pgvector README |
+| ef_search=40 on ~30 rows | Sufficient — ef_search > table_size = full index scan | pgvector README |
+| HNSW determinism on equal-distance vectors | **NON-DETERMINISTIC** for tie-breaking | pgvector ANN nature |
+| Smoke test assertion strategy | Set membership (doc_id IN results), not exact rank order | — |
+
+#### Note on `Vector` vs `VECTOR` naming across versions
+
+- 0.4.2 README: `from pgvector.sqlalchemy import Vector` (title-case)
+- Latest/current (Context7): `from pgvector.sqlalchemy import VECTOR` (all-caps)
+- Both may be exported as aliases. For 0.4.2, use `Vector` per pinned README.
+- P02-S01-T001 note said "use VECTOR (all-caps)" based on current docs — may need to recheck against actual installed 0.4.2 package if import errors occur.
 
 ## Canonical references
 - `.claude/orchestrator-contract.json`

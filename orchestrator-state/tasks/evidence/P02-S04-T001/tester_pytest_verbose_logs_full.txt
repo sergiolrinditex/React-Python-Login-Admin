@@ -1,0 +1,2108 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.5, pytest-9.0.2, pluggy-1.6.0 -- /usr/local/bin/python3
+cachedir: .pytest_cache
+rootdir: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P02-S04-T001/backend
+configfile: pyproject.toml
+plugins: httpx-0.36.0, asyncio-1.3.0, langsmith-0.8.3, anyio-4.13.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 10 items
+
+backend/tests/ai/test_rag_retriever.py::test_rag_retriever_smoke_filter_by_language_es_only ERROR
+backend/tests/ai/test_rag_retriever.py::test_rag_retriever_smoke_filter_by_collection_excludes_others ERROR
+backend/tests/ai/test_rag_retriever.py::test_rag_retriever_smoke_combined_filters_AND ERROR
+backend/tests/ai/test_rag_retriever.py::test_rag_retriever_smoke_disabled_collection_excluded ERROR
+backend/tests/ai/test_rag_retriever.py::test_rag_retriever_smoke_citation_metadata_shape ERROR
+backend/tests/ai/test_rag_retriever.py::test_rag_retriever_smoke_k_limit_respected ERROR
+backend/tests/ai/test_rag_retriever.py::test_rag_retriever_smoke_unknown_collection_returns_empty ERROR
+backend/tests/ai/test_rag_retriever.py::test_rag_retriever_smoke_empty_database_returns_empty 
+-------------------------------- live log call ---------------------------------
+INFO     hilo.rag.retriever:retriever.py:193 rag.retriever.search.start
+ERROR    hilo.rag.retriever:retriever.py:223 rag.retriever.search.error
+Traceback (most recent call last):
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py", line 117, in execute
+    raise ex.with_traceback(None)
+psycopg.errors.UndefinedTable: relation "document_embeddings" does not exist
+LINE 2: FROM document_embeddings JOIN document_chunks ON document_ch...
+             ^
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P02-S04-T001/backend/app/rag/retriever.py", line 208, in retrieve
+    result = session.execute(stmt)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py", line 2351, in execute
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py", line 2249, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+             ^^^^^^^^^^^^^
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1419, in execute
+    return meth(
+           ^^^^^
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/sql/elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py", line 117, in execute
+    raise ex.with_traceback(None)
+sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation "document_embeddings" does not exist
+LINE 2: FROM document_embeddings JOIN document_chunks ON document_ch...
+             ^
+[SQL: SELECT document_chunks.id AS chunk_id, document_chunks.document_id, documents.collection_id, documents.language, document_chunks.chunk_index, document_chunks.content, document_chunks.metadata AS metadata, %(param_1)s - (document_embeddings.embedding <=> %(embedding_1)s) AS score 
+FROM document_embeddings JOIN document_chunks ON document_chunks.id = document_embeddings.chunk_id JOIN documents ON documents.id = document_chunks.document_id JOIN rag_collections ON rag_collections.id = documents.collection_id 
+WHERE documents.language = %(language_1)s::VARCHAR AND rag_collections.enabled IS true AND document_embeddings.embedding IS NOT NULL ORDER BY (document_embeddings.embedding <=> %(embedding_1)s) ASC 
+ LIMIT %(param_2)s::INTEGER]
+[parameters: {'param_1': 1.0, 'embedding_1': '[0.019671505317091942,-0.012759815901517868,-0.052688393741846085,-0.0001600800605956465,0.013531948439776897,-0.013175697065889835,-0.00755016179755 ... (32354 characters truncated) ... .0032860927749425173,0.006996505428105593,0.005484148394316435,0.033576976507902145,-0.005106234923005104,0.0005461339023895562,0.046687014400959015]', 'language_1': 'es', 'param_2': 5}]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+FAILED
+backend/tests/ai/test_rag_retriever.py::test_rag_retriever_smoke_invalid_language_raises PASSED
+backend/tests/ai/test_rag_retriever.py::test_rag_retriever_smoke_invalid_embedding_dim_raises 
+-------------------------------- live log call ---------------------------------
+INFO     hilo.rag.retriever:retriever.py:193 rag.retriever.search.start
+ERROR    hilo.rag.retriever:retriever.py:213 rag.retriever.search.invalid_dim
+PASSED
+
+==================================== ERRORS ====================================
+____ ERROR at setup of test_rag_retriever_smoke_filter_by_language_es_only _____
+
+self = <sqlalchemy.engine.base.Connection object at 0x1211f3290>
+dialect = <sqlalchemy.dialects.postgresql.psycopg.PGDialect_psycopg object at 0x12122bf50>
+context = <sqlalchemy.dialects.postgresql.psycopg.PGExecutionContext_psycopg object at 0x121ca5ed0>
+statement = <sqlalchemy.dialects.postgresql.psycopg.PGCompiler_psycopg object at 0x121ca6050>
+parameters = [{'enabled': True, 'id': UUID('4b9b2e40-0ab4-4727-85c2-3c4706e5db73'), 'language': 'es', 'metadata': Jsonb({}), ...}, ..., {'enabled': False, 'id': UUID('ee33cd82-6a9a-440d-a150-1ab96dfd54de'), 'language': 'es', 'metadata': Jsonb({}), ...}]
+
+    def _exec_single_context(
+        self,
+        dialect: Dialect,
+        context: ExecutionContext,
+        statement: Union[str, Compiled],
+        parameters: Optional[_AnyMultiExecuteParams],
+    ) -> CursorResult[Any]:
+        """continue the _execute_context() method for a single DBAPI
+        cursor.execute() or cursor.executemany() call.
+    
+        """
+        if dialect.bind_typing is BindTyping.SETINPUTSIZES:
+            generic_setinputsizes = context._prepare_set_input_sizes()
+    
+            if generic_setinputsizes:
+                try:
+                    dialect.do_set_input_sizes(
+                        context.cursor, generic_setinputsizes, context
+                    )
+                except BaseException as e:
+                    self._handle_dbapi_exception(
+                        e, str(statement), parameters, None, context
+                    )
+    
+        cursor, str_statement, parameters = (
+            context.cursor,
+            context.statement,
+            context.parameters,
+        )
+    
+        effective_parameters: Optional[_AnyExecuteParams]
+    
+        if not context.executemany:
+            effective_parameters = parameters[0]
+        else:
+            effective_parameters = parameters
+    
+        if self._has_events or self.engine._has_events:
+            for fn in self.dispatch.before_cursor_execute:
+                str_statement, effective_parameters = fn(
+                    self,
+                    cursor,
+                    str_statement,
+                    effective_parameters,
+                    context,
+                    context.executemany,
+                )
+    
+        if self._echo:
+            self._log_info(str_statement)
+    
+            stats = context._get_cache_stats()
+    
+            if not self.engine.hide_parameters:
+                self._log_info(
+                    "[%s] %r",
+                    stats,
+                    sql_util._repr_params(
+                        effective_parameters,
+                        batches=10,
+                        ismulti=context.executemany,
+                    ),
+                )
+            else:
+                self._log_info(
+                    "[%s] [SQL parameters hidden due to hide_parameters=True]",
+                    stats,
+                )
+    
+        evt_handled: bool = False
+        try:
+            if context.execute_style is ExecuteStyle.EXECUTEMANY:
+                effective_parameters = cast(
+                    "_CoreMultiExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_executemany:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+>                   self.dialect.do_executemany(
+                        cursor,
+                        str_statement,
+                        effective_parameters,
+                        context,
+
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1936: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:949: in do_executemany
+    cursor.executemany(statement, parameters)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <psycopg.Cursor [closed] [IDLE] (host=localhost user=hilo database=hilo_dev) at 0x1219b3400>
+query = 'INSERT INTO rag_collections (id, name, vertical, language, enabled, metadata) VALUES (%(id)s::UUID, %(name)s::VARCHAR, %(vertical)s::VARCHAR, %(language)s::VARCHAR, %(enabled)s, %(metadata)s::JSONB)'
+params_seq = [{'enabled': True, 'id': UUID('4b9b2e40-0ab4-4727-85c2-3c4706e5db73'), 'language': 'es', 'metadata': Jsonb({}), ...}, ..., {'enabled': False, 'id': UUID('ee33cd82-6a9a-440d-a150-1ab96dfd54de'), 'language': 'es', 'metadata': Jsonb({}), ...}]
+
+    def executemany(
+        self, query: Query, params_seq: Iterable[Params], *, returning: bool = False
+    ) -> None:
+        """
+        Execute the same command with a sequence of input data.
+        """
+        try:
+            with self._conn.lock:
+                if Pipeline.is_supported():
+                    # If there is already a pipeline, ride it, in order to avoid
+                    # sending unnecessary Sync.
+                    if self._conn._pipeline:
+                        self._conn.wait(
+                            self._executemany_gen_pipeline(query, params_seq, returning)
+                        )
+                    else:
+                        # Otherwise, make a new one
+                        with self._conn._pipeline_nolock():
+                            self._conn.wait(
+                                self._executemany_gen_pipeline(
+                                    query, params_seq, returning
+                                )
+                            )
+                else:
+                    self._conn.wait(
+                        self._executemany_gen_no_pipeline(query, params_seq, returning)
+                    )
+        except e._NO_TRACEBACK as ex:
+>           raise ex.with_traceback(None)
+E           psycopg.errors.UndefinedTable: relation "rag_collections" does not exist
+E           LINE 1: INSERT INTO rag_collections (id, name, vertical, language, e...
+E                               ^
+
+../../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:148: UndefinedTable
+
+The above exception was the direct cause of the following exception:
+
+fixturedef = <FixtureDef argname='rag_smoke_fixture' scope='function' baseid='tests/ai'>
+request = <SubRequest 'rag_smoke_fixture' for <Function test_rag_retriever_smoke_filter_by_language_es_only>>
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -> object | None:
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+                return (yield)
+            if not _is_coroutine_or_asyncgen(fixturedef.func):
+>               return (yield)
+                        ^^^^^
+
+../../../../Library/Python/3.11/lib/python/site-packages/pytest_asyncio/plugin.py:730: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+backend/tests/ai/conftest.py:186: in rag_smoke_fixture
+    pg_session.flush()
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:4331: in flush
+    self._flush(objects)
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:4466: in _flush
+    with util.safe_reraise():
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/util/langhelpers.py:121: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:4427: in _flush
+    flush_context.execute()
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/unitofwork.py:466: in execute
+    rec.execute(self)
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/unitofwork.py:642: in execute
+    util.preloaded.orm_persistence.save_obj(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/persistence.py:93: in save_obj
+    _emit_insert_statements(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/persistence.py:1048: in _emit_insert_statements
+    result = connection.execute(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1419: in execute
+    return meth(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/sql/elements.py:527: in _execute_on_connection
+    return connection._execute_clauseelement(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1641: in _execute_clauseelement
+    ret = self._execute_context(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1846: in _execute_context
+    return self._exec_single_context(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1986: in _exec_single_context
+    self._handle_dbapi_exception(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:2363: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1936: in _exec_single_context
+    self.dialect.do_executemany(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:949: in do_executemany
+    cursor.executemany(statement, parameters)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <psycopg.Cursor [closed] [IDLE] (host=localhost user=hilo database=hilo_dev) at 0x1219b3400>
+query = 'INSERT INTO rag_collections (id, name, vertical, language, enabled, metadata) VALUES (%(id)s::UUID, %(name)s::VARCHAR, %(vertical)s::VARCHAR, %(language)s::VARCHAR, %(enabled)s, %(metadata)s::JSONB)'
+params_seq = [{'enabled': True, 'id': UUID('4b9b2e40-0ab4-4727-85c2-3c4706e5db73'), 'language': 'es', 'metadata': Jsonb({}), ...}, ..., {'enabled': False, 'id': UUID('ee33cd82-6a9a-440d-a150-1ab96dfd54de'), 'language': 'es', 'metadata': Jsonb({}), ...}]
+
+    def executemany(
+        self, query: Query, params_seq: Iterable[Params], *, returning: bool = False
+    ) -> None:
+        """
+        Execute the same command with a sequence of input data.
+        """
+        try:
+            with self._conn.lock:
+                if Pipeline.is_supported():
+                    # If there is already a pipeline, ride it, in order to avoid
+                    # sending unnecessary Sync.
+                    if self._conn._pipeline:
+                        self._conn.wait(
+                            self._executemany_gen_pipeline(query, params_seq, returning)
+                        )
+                    else:
+                        # Otherwise, make a new one
+                        with self._conn._pipeline_nolock():
+                            self._conn.wait(
+                                self._executemany_gen_pipeline(
+                                    query, params_seq, returning
+                                )
+                            )
+                else:
+                    self._conn.wait(
+                        self._executemany_gen_no_pipeline(query, params_seq, returning)
+                    )
+        except e._NO_TRACEBACK as ex:
+>           raise ex.with_traceback(None)
+E           sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation "rag_collections" does not exist
+E           LINE 1: INSERT INTO rag_collections (id, name, vertical, language, e...
+E                               ^
+E           [SQL: INSERT INTO rag_collections (id, name, vertical, language, enabled, metadata) VALUES (%(id)s::UUID, %(name)s::VARCHAR, %(vertical)s::VARCHAR, %(language)s::VARCHAR, %(enabled)s, %(metadata)s::JSONB)]
+E           [parameters: [{'id': UUID('4b9b2e40-0ab4-4727-85c2-3c4706e5db73'), 'name': 't_es_coll', 'vertical': 'hr', 'language': 'es', 'enabled': True, 'metadata': Jsonb({})}, {'id': UUID('074d9acb-9274-47aa-9fee-067abb077816'), 'name': 't_en_coll', 'vertical': 'hr', 'language': 'en', 'enabled': True, 'metadata': Jsonb({})}, {'id': UUID('ee33cd82-6a9a-440d-a150-1ab96dfd54de'), 'name': 't_off_coll', 'vertical': 'hr', 'language': 'es', 'enabled': False, 'metadata': Jsonb({})}]]
+E           (Background on this error at: https://sqlalche.me/e/20/f405)
+
+../../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:148: ProgrammingError
+_ ERROR at setup of test_rag_retriever_smoke_filter_by_collection_excludes_others _
+
+self = <sqlalchemy.engine.base.Connection object at 0x122fd8550>
+dialect = <sqlalchemy.dialects.postgresql.psycopg.PGDialect_psycopg object at 0x12122bf50>
+context = <sqlalchemy.dialects.postgresql.psycopg.PGExecutionContext_psycopg object at 0x122fda490>
+statement = <sqlalchemy.dialects.postgresql.psycopg.PGCompiler_psycopg object at 0x121ca6050>
+parameters = [{'enabled': True, 'id': UUID('51613ef4-6eac-495a-bc0e-d4241b503a5e'), 'language': 'es', 'metadata': Jsonb({}), ...}, ..., {'enabled': False, 'id': UUID('9167eaf8-174f-4c0a-a62f-c56a38743c68'), 'language': 'es', 'metadata': Jsonb({}), ...}]
+
+    def _exec_single_context(
+        self,
+        dialect: Dialect,
+        context: ExecutionContext,
+        statement: Union[str, Compiled],
+        parameters: Optional[_AnyMultiExecuteParams],
+    ) -> CursorResult[Any]:
+        """continue the _execute_context() method for a single DBAPI
+        cursor.execute() or cursor.executemany() call.
+    
+        """
+        if dialect.bind_typing is BindTyping.SETINPUTSIZES:
+            generic_setinputsizes = context._prepare_set_input_sizes()
+    
+            if generic_setinputsizes:
+                try:
+                    dialect.do_set_input_sizes(
+                        context.cursor, generic_setinputsizes, context
+                    )
+                except BaseException as e:
+                    self._handle_dbapi_exception(
+                        e, str(statement), parameters, None, context
+                    )
+    
+        cursor, str_statement, parameters = (
+            context.cursor,
+            context.statement,
+            context.parameters,
+        )
+    
+        effective_parameters: Optional[_AnyExecuteParams]
+    
+        if not context.executemany:
+            effective_parameters = parameters[0]
+        else:
+            effective_parameters = parameters
+    
+        if self._has_events or self.engine._has_events:
+            for fn in self.dispatch.before_cursor_execute:
+                str_statement, effective_parameters = fn(
+                    self,
+                    cursor,
+                    str_statement,
+                    effective_parameters,
+                    context,
+                    context.executemany,
+                )
+    
+        if self._echo:
+            self._log_info(str_statement)
+    
+            stats = context._get_cache_stats()
+    
+            if not self.engine.hide_parameters:
+                self._log_info(
+                    "[%s] %r",
+                    stats,
+                    sql_util._repr_params(
+                        effective_parameters,
+                        batches=10,
+                        ismulti=context.executemany,
+                    ),
+                )
+            else:
+                self._log_info(
+                    "[%s] [SQL parameters hidden due to hide_parameters=True]",
+                    stats,
+                )
+    
+        evt_handled: bool = False
+        try:
+            if context.execute_style is ExecuteStyle.EXECUTEMANY:
+                effective_parameters = cast(
+                    "_CoreMultiExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_executemany:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+>                   self.dialect.do_executemany(
+                        cursor,
+                        str_statement,
+                        effective_parameters,
+                        context,
+
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1936: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:949: in do_executemany
+    cursor.executemany(statement, parameters)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <psycopg.Cursor [closed] [IDLE] (host=localhost user=hilo database=hilo_dev) at 0x1219b3d00>
+query = 'INSERT INTO rag_collections (id, name, vertical, language, enabled, metadata) VALUES (%(id)s::UUID, %(name)s::VARCHAR, %(vertical)s::VARCHAR, %(language)s::VARCHAR, %(enabled)s, %(metadata)s::JSONB)'
+params_seq = [{'enabled': True, 'id': UUID('51613ef4-6eac-495a-bc0e-d4241b503a5e'), 'language': 'es', 'metadata': Jsonb({}), ...}, ..., {'enabled': False, 'id': UUID('9167eaf8-174f-4c0a-a62f-c56a38743c68'), 'language': 'es', 'metadata': Jsonb({}), ...}]
+
+    def executemany(
+        self, query: Query, params_seq: Iterable[Params], *, returning: bool = False
+    ) -> None:
+        """
+        Execute the same command with a sequence of input data.
+        """
+        try:
+            with self._conn.lock:
+                if Pipeline.is_supported():
+                    # If there is already a pipeline, ride it, in order to avoid
+                    # sending unnecessary Sync.
+                    if self._conn._pipeline:
+                        self._conn.wait(
+                            self._executemany_gen_pipeline(query, params_seq, returning)
+                        )
+                    else:
+                        # Otherwise, make a new one
+                        with self._conn._pipeline_nolock():
+                            self._conn.wait(
+                                self._executemany_gen_pipeline(
+                                    query, params_seq, returning
+                                )
+                            )
+                else:
+                    self._conn.wait(
+                        self._executemany_gen_no_pipeline(query, params_seq, returning)
+                    )
+        except e._NO_TRACEBACK as ex:
+>           raise ex.with_traceback(None)
+E           psycopg.errors.UndefinedTable: relation "rag_collections" does not exist
+E           LINE 1: INSERT INTO rag_collections (id, name, vertical, language, e...
+E                               ^
+
+../../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:148: UndefinedTable
+
+The above exception was the direct cause of the following exception:
+
+fixturedef = <FixtureDef argname='rag_smoke_fixture' scope='function' baseid='tests/ai'>
+request = <SubRequest 'rag_smoke_fixture' for <Function test_rag_retriever_smoke_filter_by_collection_excludes_others>>
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -> object | None:
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+                return (yield)
+            if not _is_coroutine_or_asyncgen(fixturedef.func):
+>               return (yield)
+                        ^^^^^
+
+../../../../Library/Python/3.11/lib/python/site-packages/pytest_asyncio/plugin.py:730: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+backend/tests/ai/conftest.py:186: in rag_smoke_fixture
+    pg_session.flush()
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:4331: in flush
+    self._flush(objects)
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:4466: in _flush
+    with util.safe_reraise():
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/util/langhelpers.py:121: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:4427: in _flush
+    flush_context.execute()
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/unitofwork.py:466: in execute
+    rec.execute(self)
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/unitofwork.py:642: in execute
+    util.preloaded.orm_persistence.save_obj(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/persistence.py:93: in save_obj
+    _emit_insert_statements(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/persistence.py:1048: in _emit_insert_statements
+    result = connection.execute(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1419: in execute
+    return meth(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/sql/elements.py:527: in _execute_on_connection
+    return connection._execute_clauseelement(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1641: in _execute_clauseelement
+    ret = self._execute_context(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1846: in _execute_context
+    return self._exec_single_context(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1986: in _exec_single_context
+    self._handle_dbapi_exception(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:2363: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1936: in _exec_single_context
+    self.dialect.do_executemany(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:949: in do_executemany
+    cursor.executemany(statement, parameters)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <psycopg.Cursor [closed] [IDLE] (host=localhost user=hilo database=hilo_dev) at 0x1219b3d00>
+query = 'INSERT INTO rag_collections (id, name, vertical, language, enabled, metadata) VALUES (%(id)s::UUID, %(name)s::VARCHAR, %(vertical)s::VARCHAR, %(language)s::VARCHAR, %(enabled)s, %(metadata)s::JSONB)'
+params_seq = [{'enabled': True, 'id': UUID('51613ef4-6eac-495a-bc0e-d4241b503a5e'), 'language': 'es', 'metadata': Jsonb({}), ...}, ..., {'enabled': False, 'id': UUID('9167eaf8-174f-4c0a-a62f-c56a38743c68'), 'language': 'es', 'metadata': Jsonb({}), ...}]
+
+    def executemany(
+        self, query: Query, params_seq: Iterable[Params], *, returning: bool = False
+    ) -> None:
+        """
+        Execute the same command with a sequence of input data.
+        """
+        try:
+            with self._conn.lock:
+                if Pipeline.is_supported():
+                    # If there is already a pipeline, ride it, in order to avoid
+                    # sending unnecessary Sync.
+                    if self._conn._pipeline:
+                        self._conn.wait(
+                            self._executemany_gen_pipeline(query, params_seq, returning)
+                        )
+                    else:
+                        # Otherwise, make a new one
+                        with self._conn._pipeline_nolock():
+                            self._conn.wait(
+                                self._executemany_gen_pipeline(
+                                    query, params_seq, returning
+                                )
+                            )
+                else:
+                    self._conn.wait(
+                        self._executemany_gen_no_pipeline(query, params_seq, returning)
+                    )
+        except e._NO_TRACEBACK as ex:
+>           raise ex.with_traceback(None)
+E           sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation "rag_collections" does not exist
+E           LINE 1: INSERT INTO rag_collections (id, name, vertical, language, e...
+E                               ^
+E           [SQL: INSERT INTO rag_collections (id, name, vertical, language, enabled, metadata) VALUES (%(id)s::UUID, %(name)s::VARCHAR, %(vertical)s::VARCHAR, %(language)s::VARCHAR, %(enabled)s, %(metadata)s::JSONB)]
+E           [parameters: [{'id': UUID('51613ef4-6eac-495a-bc0e-d4241b503a5e'), 'name': 't_es_coll', 'vertical': 'hr', 'language': 'es', 'enabled': True, 'metadata': Jsonb({})}, {'id': UUID('e1fa4eba-ab94-4ede-a52d-f0705967c8ab'), 'name': 't_en_coll', 'vertical': 'hr', 'language': 'en', 'enabled': True, 'metadata': Jsonb({})}, {'id': UUID('9167eaf8-174f-4c0a-a62f-c56a38743c68'), 'name': 't_off_coll', 'vertical': 'hr', 'language': 'es', 'enabled': False, 'metadata': Jsonb({})}]]
+E           (Background on this error at: https://sqlalche.me/e/20/f405)
+
+../../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:148: ProgrammingError
+_______ ERROR at setup of test_rag_retriever_smoke_combined_filters_AND ________
+
+self = <sqlalchemy.engine.base.Connection object at 0x123568790>
+dialect = <sqlalchemy.dialects.postgresql.psycopg.PGDialect_psycopg object at 0x12122bf50>
+context = <sqlalchemy.dialects.postgresql.psycopg.PGExecutionContext_psycopg object at 0x123569e10>
+statement = <sqlalchemy.dialects.postgresql.psycopg.PGCompiler_psycopg object at 0x121ca6050>
+parameters = [{'enabled': True, 'id': UUID('fe3703de-3e91-4f0b-a35d-22566d2429b1'), 'language': 'es', 'metadata': Jsonb({}), ...}, ..., {'enabled': False, 'id': UUID('1f45b61c-3898-4a81-ab8d-b9b3fd0c8ff9'), 'language': 'es', 'metadata': Jsonb({}), ...}]
+
+    def _exec_single_context(
+        self,
+        dialect: Dialect,
+        context: ExecutionContext,
+        statement: Union[str, Compiled],
+        parameters: Optional[_AnyMultiExecuteParams],
+    ) -> CursorResult[Any]:
+        """continue the _execute_context() method for a single DBAPI
+        cursor.execute() or cursor.executemany() call.
+    
+        """
+        if dialect.bind_typing is BindTyping.SETINPUTSIZES:
+            generic_setinputsizes = context._prepare_set_input_sizes()
+    
+            if generic_setinputsizes:
+                try:
+                    dialect.do_set_input_sizes(
+                        context.cursor, generic_setinputsizes, context
+                    )
+                except BaseException as e:
+                    self._handle_dbapi_exception(
+                        e, str(statement), parameters, None, context
+                    )
+    
+        cursor, str_statement, parameters = (
+            context.cursor,
+            context.statement,
+            context.parameters,
+        )
+    
+        effective_parameters: Optional[_AnyExecuteParams]
+    
+        if not context.executemany:
+            effective_parameters = parameters[0]
+        else:
+            effective_parameters = parameters
+    
+        if self._has_events or self.engine._has_events:
+            for fn in self.dispatch.before_cursor_execute:
+                str_statement, effective_parameters = fn(
+                    self,
+                    cursor,
+                    str_statement,
+                    effective_parameters,
+                    context,
+                    context.executemany,
+                )
+    
+        if self._echo:
+            self._log_info(str_statement)
+    
+            stats = context._get_cache_stats()
+    
+            if not self.engine.hide_parameters:
+                self._log_info(
+                    "[%s] %r",
+                    stats,
+                    sql_util._repr_params(
+                        effective_parameters,
+                        batches=10,
+                        ismulti=context.executemany,
+                    ),
+                )
+            else:
+                self._log_info(
+                    "[%s] [SQL parameters hidden due to hide_parameters=True]",
+                    stats,
+                )
+    
+        evt_handled: bool = False
+        try:
+            if context.execute_style is ExecuteStyle.EXECUTEMANY:
+                effective_parameters = cast(
+                    "_CoreMultiExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_executemany:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+>                   self.dialect.do_executemany(
+                        cursor,
+                        str_statement,
+                        effective_parameters,
+                        context,
+
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1936: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:949: in do_executemany
+    cursor.executemany(statement, parameters)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <psycopg.Cursor [closed] [IDLE] (host=localhost user=hilo database=hilo_dev) at 0x1219b3880>
+query = 'INSERT INTO rag_collections (id, name, vertical, language, enabled, metadata) VALUES (%(id)s::UUID, %(name)s::VARCHAR, %(vertical)s::VARCHAR, %(language)s::VARCHAR, %(enabled)s, %(metadata)s::JSONB)'
+params_seq = [{'enabled': True, 'id': UUID('fe3703de-3e91-4f0b-a35d-22566d2429b1'), 'language': 'es', 'metadata': Jsonb({}), ...}, ..., {'enabled': False, 'id': UUID('1f45b61c-3898-4a81-ab8d-b9b3fd0c8ff9'), 'language': 'es', 'metadata': Jsonb({}), ...}]
+
+    def executemany(
+        self, query: Query, params_seq: Iterable[Params], *, returning: bool = False
+    ) -> None:
+        """
+        Execute the same command with a sequence of input data.
+        """
+        try:
+            with self._conn.lock:
+                if Pipeline.is_supported():
+                    # If there is already a pipeline, ride it, in order to avoid
+                    # sending unnecessary Sync.
+                    if self._conn._pipeline:
+                        self._conn.wait(
+                            self._executemany_gen_pipeline(query, params_seq, returning)
+                        )
+                    else:
+                        # Otherwise, make a new one
+                        with self._conn._pipeline_nolock():
+                            self._conn.wait(
+                                self._executemany_gen_pipeline(
+                                    query, params_seq, returning
+                                )
+                            )
+                else:
+                    self._conn.wait(
+                        self._executemany_gen_no_pipeline(query, params_seq, returning)
+                    )
+        except e._NO_TRACEBACK as ex:
+>           raise ex.with_traceback(None)
+E           psycopg.errors.UndefinedTable: relation "rag_collections" does not exist
+E           LINE 1: INSERT INTO rag_collections (id, name, vertical, language, e...
+E                               ^
+
+../../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:148: UndefinedTable
+
+The above exception was the direct cause of the following exception:
+
+fixturedef = <FixtureDef argname='rag_smoke_fixture' scope='function' baseid='tests/ai'>
+request = <SubRequest 'rag_smoke_fixture' for <Function test_rag_retriever_smoke_combined_filters_AND>>
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -> object | None:
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+                return (yield)
+            if not _is_coroutine_or_asyncgen(fixturedef.func):
+>               return (yield)
+                        ^^^^^
+
+../../../../Library/Python/3.11/lib/python/site-packages/pytest_asyncio/plugin.py:730: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+backend/tests/ai/conftest.py:186: in rag_smoke_fixture
+    pg_session.flush()
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:4331: in flush
+    self._flush(objects)
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:4466: in _flush
+    with util.safe_reraise():
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/util/langhelpers.py:121: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:4427: in _flush
+    flush_context.execute()
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/unitofwork.py:466: in execute
+    rec.execute(self)
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/unitofwork.py:642: in execute
+    util.preloaded.orm_persistence.save_obj(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/persistence.py:93: in save_obj
+    _emit_insert_statements(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/persistence.py:1048: in _emit_insert_statements
+    result = connection.execute(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1419: in execute
+    return meth(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/sql/elements.py:527: in _execute_on_connection
+    return connection._execute_clauseelement(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1641: in _execute_clauseelement
+    ret = self._execute_context(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1846: in _execute_context
+    return self._exec_single_context(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1986: in _exec_single_context
+    self._handle_dbapi_exception(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:2363: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1936: in _exec_single_context
+    self.dialect.do_executemany(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:949: in do_executemany
+    cursor.executemany(statement, parameters)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <psycopg.Cursor [closed] [IDLE] (host=localhost user=hilo database=hilo_dev) at 0x1219b3880>
+query = 'INSERT INTO rag_collections (id, name, vertical, language, enabled, metadata) VALUES (%(id)s::UUID, %(name)s::VARCHAR, %(vertical)s::VARCHAR, %(language)s::VARCHAR, %(enabled)s, %(metadata)s::JSONB)'
+params_seq = [{'enabled': True, 'id': UUID('fe3703de-3e91-4f0b-a35d-22566d2429b1'), 'language': 'es', 'metadata': Jsonb({}), ...}, ..., {'enabled': False, 'id': UUID('1f45b61c-3898-4a81-ab8d-b9b3fd0c8ff9'), 'language': 'es', 'metadata': Jsonb({}), ...}]
+
+    def executemany(
+        self, query: Query, params_seq: Iterable[Params], *, returning: bool = False
+    ) -> None:
+        """
+        Execute the same command with a sequence of input data.
+        """
+        try:
+            with self._conn.lock:
+                if Pipeline.is_supported():
+                    # If there is already a pipeline, ride it, in order to avoid
+                    # sending unnecessary Sync.
+                    if self._conn._pipeline:
+                        self._conn.wait(
+                            self._executemany_gen_pipeline(query, params_seq, returning)
+                        )
+                    else:
+                        # Otherwise, make a new one
+                        with self._conn._pipeline_nolock():
+                            self._conn.wait(
+                                self._executemany_gen_pipeline(
+                                    query, params_seq, returning
+                                )
+                            )
+                else:
+                    self._conn.wait(
+                        self._executemany_gen_no_pipeline(query, params_seq, returning)
+                    )
+        except e._NO_TRACEBACK as ex:
+>           raise ex.with_traceback(None)
+E           sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation "rag_collections" does not exist
+E           LINE 1: INSERT INTO rag_collections (id, name, vertical, language, e...
+E                               ^
+E           [SQL: INSERT INTO rag_collections (id, name, vertical, language, enabled, metadata) VALUES (%(id)s::UUID, %(name)s::VARCHAR, %(vertical)s::VARCHAR, %(language)s::VARCHAR, %(enabled)s, %(metadata)s::JSONB)]
+E           [parameters: [{'id': UUID('fe3703de-3e91-4f0b-a35d-22566d2429b1'), 'name': 't_es_coll', 'vertical': 'hr', 'language': 'es', 'enabled': True, 'metadata': Jsonb({})}, {'id': UUID('14037987-969b-4ba7-8ebf-c463803bbb6d'), 'name': 't_en_coll', 'vertical': 'hr', 'language': 'en', 'enabled': True, 'metadata': Jsonb({})}, {'id': UUID('1f45b61c-3898-4a81-ab8d-b9b3fd0c8ff9'), 'name': 't_off_coll', 'vertical': 'hr', 'language': 'es', 'enabled': False, 'metadata': Jsonb({})}]]
+E           (Background on this error at: https://sqlalche.me/e/20/f405)
+
+../../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:148: ProgrammingError
+___ ERROR at setup of test_rag_retriever_smoke_disabled_collection_excluded ____
+
+self = <sqlalchemy.engine.base.Connection object at 0x123130950>
+dialect = <sqlalchemy.dialects.postgresql.psycopg.PGDialect_psycopg object at 0x12122bf50>
+context = <sqlalchemy.dialects.postgresql.psycopg.PGExecutionContext_psycopg object at 0x123131950>
+statement = <sqlalchemy.dialects.postgresql.psycopg.PGCompiler_psycopg object at 0x121ca6050>
+parameters = [{'enabled': True, 'id': UUID('6b3731ff-92cd-4cc0-829f-b5bcb185e8c3'), 'language': 'es', 'metadata': Jsonb({}), ...}, ..., {'enabled': False, 'id': UUID('ab695a56-8022-4d12-8e2d-7b719cf3a0d9'), 'language': 'es', 'metadata': Jsonb({}), ...}]
+
+    def _exec_single_context(
+        self,
+        dialect: Dialect,
+        context: ExecutionContext,
+        statement: Union[str, Compiled],
+        parameters: Optional[_AnyMultiExecuteParams],
+    ) -> CursorResult[Any]:
+        """continue the _execute_context() method for a single DBAPI
+        cursor.execute() or cursor.executemany() call.
+    
+        """
+        if dialect.bind_typing is BindTyping.SETINPUTSIZES:
+            generic_setinputsizes = context._prepare_set_input_sizes()
+    
+            if generic_setinputsizes:
+                try:
+                    dialect.do_set_input_sizes(
+                        context.cursor, generic_setinputsizes, context
+                    )
+                except BaseException as e:
+                    self._handle_dbapi_exception(
+                        e, str(statement), parameters, None, context
+                    )
+    
+        cursor, str_statement, parameters = (
+            context.cursor,
+            context.statement,
+            context.parameters,
+        )
+    
+        effective_parameters: Optional[_AnyExecuteParams]
+    
+        if not context.executemany:
+            effective_parameters = parameters[0]
+        else:
+            effective_parameters = parameters
+    
+        if self._has_events or self.engine._has_events:
+            for fn in self.dispatch.before_cursor_execute:
+                str_statement, effective_parameters = fn(
+                    self,
+                    cursor,
+                    str_statement,
+                    effective_parameters,
+                    context,
+                    context.executemany,
+                )
+    
+        if self._echo:
+            self._log_info(str_statement)
+    
+            stats = context._get_cache_stats()
+    
+            if not self.engine.hide_parameters:
+                self._log_info(
+                    "[%s] %r",
+                    stats,
+                    sql_util._repr_params(
+                        effective_parameters,
+                        batches=10,
+                        ismulti=context.executemany,
+                    ),
+                )
+            else:
+                self._log_info(
+                    "[%s] [SQL parameters hidden due to hide_parameters=True]",
+                    stats,
+                )
+    
+        evt_handled: bool = False
+        try:
+            if context.execute_style is ExecuteStyle.EXECUTEMANY:
+                effective_parameters = cast(
+                    "_CoreMultiExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_executemany:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+>                   self.dialect.do_executemany(
+                        cursor,
+                        str_statement,
+                        effective_parameters,
+                        context,
+
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1936: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:949: in do_executemany
+    cursor.executemany(statement, parameters)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <psycopg.Cursor [closed] [IDLE] (host=localhost user=hilo database=hilo_dev) at 0x1219b3e80>
+query = 'INSERT INTO rag_collections (id, name, vertical, language, enabled, metadata) VALUES (%(id)s::UUID, %(name)s::VARCHAR, %(vertical)s::VARCHAR, %(language)s::VARCHAR, %(enabled)s, %(metadata)s::JSONB)'
+params_seq = [{'enabled': True, 'id': UUID('6b3731ff-92cd-4cc0-829f-b5bcb185e8c3'), 'language': 'es', 'metadata': Jsonb({}), ...}, ..., {'enabled': False, 'id': UUID('ab695a56-8022-4d12-8e2d-7b719cf3a0d9'), 'language': 'es', 'metadata': Jsonb({}), ...}]
+
+    def executemany(
+        self, query: Query, params_seq: Iterable[Params], *, returning: bool = False
+    ) -> None:
+        """
+        Execute the same command with a sequence of input data.
+        """
+        try:
+            with self._conn.lock:
+                if Pipeline.is_supported():
+                    # If there is already a pipeline, ride it, in order to avoid
+                    # sending unnecessary Sync.
+                    if self._conn._pipeline:
+                        self._conn.wait(
+                            self._executemany_gen_pipeline(query, params_seq, returning)
+                        )
+                    else:
+                        # Otherwise, make a new one
+                        with self._conn._pipeline_nolock():
+                            self._conn.wait(
+                                self._executemany_gen_pipeline(
+                                    query, params_seq, returning
+                                )
+                            )
+                else:
+                    self._conn.wait(
+                        self._executemany_gen_no_pipeline(query, params_seq, returning)
+                    )
+        except e._NO_TRACEBACK as ex:
+>           raise ex.with_traceback(None)
+E           psycopg.errors.UndefinedTable: relation "rag_collections" does not exist
+E           LINE 1: INSERT INTO rag_collections (id, name, vertical, language, e...
+E                               ^
+
+../../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:148: UndefinedTable
+
+The above exception was the direct cause of the following exception:
+
+fixturedef = <FixtureDef argname='rag_smoke_fixture' scope='function' baseid='tests/ai'>
+request = <SubRequest 'rag_smoke_fixture' for <Function test_rag_retriever_smoke_disabled_collection_excluded>>
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -> object | None:
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+                return (yield)
+            if not _is_coroutine_or_asyncgen(fixturedef.func):
+>               return (yield)
+                        ^^^^^
+
+../../../../Library/Python/3.11/lib/python/site-packages/pytest_asyncio/plugin.py:730: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+backend/tests/ai/conftest.py:186: in rag_smoke_fixture
+    pg_session.flush()
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:4331: in flush
+    self._flush(objects)
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:4466: in _flush
+    with util.safe_reraise():
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/util/langhelpers.py:121: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:4427: in _flush
+    flush_context.execute()
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/unitofwork.py:466: in execute
+    rec.execute(self)
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/unitofwork.py:642: in execute
+    util.preloaded.orm_persistence.save_obj(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/persistence.py:93: in save_obj
+    _emit_insert_statements(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/persistence.py:1048: in _emit_insert_statements
+    result = connection.execute(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1419: in execute
+    return meth(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/sql/elements.py:527: in _execute_on_connection
+    return connection._execute_clauseelement(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1641: in _execute_clauseelement
+    ret = self._execute_context(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1846: in _execute_context
+    return self._exec_single_context(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1986: in _exec_single_context
+    self._handle_dbapi_exception(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:2363: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1936: in _exec_single_context
+    self.dialect.do_executemany(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:949: in do_executemany
+    cursor.executemany(statement, parameters)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <psycopg.Cursor [closed] [IDLE] (host=localhost user=hilo database=hilo_dev) at 0x1219b3e80>
+query = 'INSERT INTO rag_collections (id, name, vertical, language, enabled, metadata) VALUES (%(id)s::UUID, %(name)s::VARCHAR, %(vertical)s::VARCHAR, %(language)s::VARCHAR, %(enabled)s, %(metadata)s::JSONB)'
+params_seq = [{'enabled': True, 'id': UUID('6b3731ff-92cd-4cc0-829f-b5bcb185e8c3'), 'language': 'es', 'metadata': Jsonb({}), ...}, ..., {'enabled': False, 'id': UUID('ab695a56-8022-4d12-8e2d-7b719cf3a0d9'), 'language': 'es', 'metadata': Jsonb({}), ...}]
+
+    def executemany(
+        self, query: Query, params_seq: Iterable[Params], *, returning: bool = False
+    ) -> None:
+        """
+        Execute the same command with a sequence of input data.
+        """
+        try:
+            with self._conn.lock:
+                if Pipeline.is_supported():
+                    # If there is already a pipeline, ride it, in order to avoid
+                    # sending unnecessary Sync.
+                    if self._conn._pipeline:
+                        self._conn.wait(
+                            self._executemany_gen_pipeline(query, params_seq, returning)
+                        )
+                    else:
+                        # Otherwise, make a new one
+                        with self._conn._pipeline_nolock():
+                            self._conn.wait(
+                                self._executemany_gen_pipeline(
+                                    query, params_seq, returning
+                                )
+                            )
+                else:
+                    self._conn.wait(
+                        self._executemany_gen_no_pipeline(query, params_seq, returning)
+                    )
+        except e._NO_TRACEBACK as ex:
+>           raise ex.with_traceback(None)
+E           sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation "rag_collections" does not exist
+E           LINE 1: INSERT INTO rag_collections (id, name, vertical, language, e...
+E                               ^
+E           [SQL: INSERT INTO rag_collections (id, name, vertical, language, enabled, metadata) VALUES (%(id)s::UUID, %(name)s::VARCHAR, %(vertical)s::VARCHAR, %(language)s::VARCHAR, %(enabled)s, %(metadata)s::JSONB)]
+E           [parameters: [{'id': UUID('6b3731ff-92cd-4cc0-829f-b5bcb185e8c3'), 'name': 't_es_coll', 'vertical': 'hr', 'language': 'es', 'enabled': True, 'metadata': Jsonb({})}, {'id': UUID('087eb76f-6dc0-4ed5-bfc5-66408d57c1f2'), 'name': 't_en_coll', 'vertical': 'hr', 'language': 'en', 'enabled': True, 'metadata': Jsonb({})}, {'id': UUID('ab695a56-8022-4d12-8e2d-7b719cf3a0d9'), 'name': 't_off_coll', 'vertical': 'hr', 'language': 'es', 'enabled': False, 'metadata': Jsonb({})}]]
+E           (Background on this error at: https://sqlalche.me/e/20/f405)
+
+../../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:148: ProgrammingError
+______ ERROR at setup of test_rag_retriever_smoke_citation_metadata_shape ______
+
+self = <sqlalchemy.engine.base.Connection object at 0x1226bcbd0>
+dialect = <sqlalchemy.dialects.postgresql.psycopg.PGDialect_psycopg object at 0x12122bf50>
+context = <sqlalchemy.dialects.postgresql.psycopg.PGExecutionContext_psycopg object at 0x1226bdad0>
+statement = <sqlalchemy.dialects.postgresql.psycopg.PGCompiler_psycopg object at 0x121ca6050>
+parameters = [{'enabled': True, 'id': UUID('1e52d20f-ba0c-4018-95b3-d4ce11fd0238'), 'language': 'es', 'metadata': Jsonb({}), ...}, ..., {'enabled': False, 'id': UUID('788b39a9-8e88-407a-ad74-e18e0212e7d7'), 'language': 'es', 'metadata': Jsonb({}), ...}]
+
+    def _exec_single_context(
+        self,
+        dialect: Dialect,
+        context: ExecutionContext,
+        statement: Union[str, Compiled],
+        parameters: Optional[_AnyMultiExecuteParams],
+    ) -> CursorResult[Any]:
+        """continue the _execute_context() method for a single DBAPI
+        cursor.execute() or cursor.executemany() call.
+    
+        """
+        if dialect.bind_typing is BindTyping.SETINPUTSIZES:
+            generic_setinputsizes = context._prepare_set_input_sizes()
+    
+            if generic_setinputsizes:
+                try:
+                    dialect.do_set_input_sizes(
+                        context.cursor, generic_setinputsizes, context
+                    )
+                except BaseException as e:
+                    self._handle_dbapi_exception(
+                        e, str(statement), parameters, None, context
+                    )
+    
+        cursor, str_statement, parameters = (
+            context.cursor,
+            context.statement,
+            context.parameters,
+        )
+    
+        effective_parameters: Optional[_AnyExecuteParams]
+    
+        if not context.executemany:
+            effective_parameters = parameters[0]
+        else:
+            effective_parameters = parameters
+    
+        if self._has_events or self.engine._has_events:
+            for fn in self.dispatch.before_cursor_execute:
+                str_statement, effective_parameters = fn(
+                    self,
+                    cursor,
+                    str_statement,
+                    effective_parameters,
+                    context,
+                    context.executemany,
+                )
+    
+        if self._echo:
+            self._log_info(str_statement)
+    
+            stats = context._get_cache_stats()
+    
+            if not self.engine.hide_parameters:
+                self._log_info(
+                    "[%s] %r",
+                    stats,
+                    sql_util._repr_params(
+                        effective_parameters,
+                        batches=10,
+                        ismulti=context.executemany,
+                    ),
+                )
+            else:
+                self._log_info(
+                    "[%s] [SQL parameters hidden due to hide_parameters=True]",
+                    stats,
+                )
+    
+        evt_handled: bool = False
+        try:
+            if context.execute_style is ExecuteStyle.EXECUTEMANY:
+                effective_parameters = cast(
+                    "_CoreMultiExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_executemany:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+>                   self.dialect.do_executemany(
+                        cursor,
+                        str_statement,
+                        effective_parameters,
+                        context,
+
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1936: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:949: in do_executemany
+    cursor.executemany(statement, parameters)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <psycopg.Cursor [closed] [IDLE] (host=localhost user=hilo database=hilo_dev) at 0x1219b34c0>
+query = 'INSERT INTO rag_collections (id, name, vertical, language, enabled, metadata) VALUES (%(id)s::UUID, %(name)s::VARCHAR, %(vertical)s::VARCHAR, %(language)s::VARCHAR, %(enabled)s, %(metadata)s::JSONB)'
+params_seq = [{'enabled': True, 'id': UUID('1e52d20f-ba0c-4018-95b3-d4ce11fd0238'), 'language': 'es', 'metadata': Jsonb({}), ...}, ..., {'enabled': False, 'id': UUID('788b39a9-8e88-407a-ad74-e18e0212e7d7'), 'language': 'es', 'metadata': Jsonb({}), ...}]
+
+    def executemany(
+        self, query: Query, params_seq: Iterable[Params], *, returning: bool = False
+    ) -> None:
+        """
+        Execute the same command with a sequence of input data.
+        """
+        try:
+            with self._conn.lock:
+                if Pipeline.is_supported():
+                    # If there is already a pipeline, ride it, in order to avoid
+                    # sending unnecessary Sync.
+                    if self._conn._pipeline:
+                        self._conn.wait(
+                            self._executemany_gen_pipeline(query, params_seq, returning)
+                        )
+                    else:
+                        # Otherwise, make a new one
+                        with self._conn._pipeline_nolock():
+                            self._conn.wait(
+                                self._executemany_gen_pipeline(
+                                    query, params_seq, returning
+                                )
+                            )
+                else:
+                    self._conn.wait(
+                        self._executemany_gen_no_pipeline(query, params_seq, returning)
+                    )
+        except e._NO_TRACEBACK as ex:
+>           raise ex.with_traceback(None)
+E           psycopg.errors.UndefinedTable: relation "rag_collections" does not exist
+E           LINE 1: INSERT INTO rag_collections (id, name, vertical, language, e...
+E                               ^
+
+../../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:148: UndefinedTable
+
+The above exception was the direct cause of the following exception:
+
+fixturedef = <FixtureDef argname='rag_smoke_fixture' scope='function' baseid='tests/ai'>
+request = <SubRequest 'rag_smoke_fixture' for <Function test_rag_retriever_smoke_citation_metadata_shape>>
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -> object | None:
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+                return (yield)
+            if not _is_coroutine_or_asyncgen(fixturedef.func):
+>               return (yield)
+                        ^^^^^
+
+../../../../Library/Python/3.11/lib/python/site-packages/pytest_asyncio/plugin.py:730: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+backend/tests/ai/conftest.py:186: in rag_smoke_fixture
+    pg_session.flush()
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:4331: in flush
+    self._flush(objects)
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:4466: in _flush
+    with util.safe_reraise():
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/util/langhelpers.py:121: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:4427: in _flush
+    flush_context.execute()
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/unitofwork.py:466: in execute
+    rec.execute(self)
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/unitofwork.py:642: in execute
+    util.preloaded.orm_persistence.save_obj(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/persistence.py:93: in save_obj
+    _emit_insert_statements(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/persistence.py:1048: in _emit_insert_statements
+    result = connection.execute(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1419: in execute
+    return meth(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/sql/elements.py:527: in _execute_on_connection
+    return connection._execute_clauseelement(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1641: in _execute_clauseelement
+    ret = self._execute_context(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1846: in _execute_context
+    return self._exec_single_context(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1986: in _exec_single_context
+    self._handle_dbapi_exception(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:2363: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1936: in _exec_single_context
+    self.dialect.do_executemany(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:949: in do_executemany
+    cursor.executemany(statement, parameters)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <psycopg.Cursor [closed] [IDLE] (host=localhost user=hilo database=hilo_dev) at 0x1219b34c0>
+query = 'INSERT INTO rag_collections (id, name, vertical, language, enabled, metadata) VALUES (%(id)s::UUID, %(name)s::VARCHAR, %(vertical)s::VARCHAR, %(language)s::VARCHAR, %(enabled)s, %(metadata)s::JSONB)'
+params_seq = [{'enabled': True, 'id': UUID('1e52d20f-ba0c-4018-95b3-d4ce11fd0238'), 'language': 'es', 'metadata': Jsonb({}), ...}, ..., {'enabled': False, 'id': UUID('788b39a9-8e88-407a-ad74-e18e0212e7d7'), 'language': 'es', 'metadata': Jsonb({}), ...}]
+
+    def executemany(
+        self, query: Query, params_seq: Iterable[Params], *, returning: bool = False
+    ) -> None:
+        """
+        Execute the same command with a sequence of input data.
+        """
+        try:
+            with self._conn.lock:
+                if Pipeline.is_supported():
+                    # If there is already a pipeline, ride it, in order to avoid
+                    # sending unnecessary Sync.
+                    if self._conn._pipeline:
+                        self._conn.wait(
+                            self._executemany_gen_pipeline(query, params_seq, returning)
+                        )
+                    else:
+                        # Otherwise, make a new one
+                        with self._conn._pipeline_nolock():
+                            self._conn.wait(
+                                self._executemany_gen_pipeline(
+                                    query, params_seq, returning
+                                )
+                            )
+                else:
+                    self._conn.wait(
+                        self._executemany_gen_no_pipeline(query, params_seq, returning)
+                    )
+        except e._NO_TRACEBACK as ex:
+>           raise ex.with_traceback(None)
+E           sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation "rag_collections" does not exist
+E           LINE 1: INSERT INTO rag_collections (id, name, vertical, language, e...
+E                               ^
+E           [SQL: INSERT INTO rag_collections (id, name, vertical, language, enabled, metadata) VALUES (%(id)s::UUID, %(name)s::VARCHAR, %(vertical)s::VARCHAR, %(language)s::VARCHAR, %(enabled)s, %(metadata)s::JSONB)]
+E           [parameters: [{'id': UUID('1e52d20f-ba0c-4018-95b3-d4ce11fd0238'), 'name': 't_es_coll', 'vertical': 'hr', 'language': 'es', 'enabled': True, 'metadata': Jsonb({})}, {'id': UUID('9629019b-e128-4dd7-931d-803b8ba87266'), 'name': 't_en_coll', 'vertical': 'hr', 'language': 'en', 'enabled': True, 'metadata': Jsonb({})}, {'id': UUID('788b39a9-8e88-407a-ad74-e18e0212e7d7'), 'name': 't_off_coll', 'vertical': 'hr', 'language': 'es', 'enabled': False, 'metadata': Jsonb({})}]]
+E           (Background on this error at: https://sqlalche.me/e/20/f405)
+
+../../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:148: ProgrammingError
+_________ ERROR at setup of test_rag_retriever_smoke_k_limit_respected _________
+
+self = <sqlalchemy.engine.base.Connection object at 0x124023b10>
+dialect = <sqlalchemy.dialects.postgresql.psycopg.PGDialect_psycopg object at 0x12122bf50>
+context = <sqlalchemy.dialects.postgresql.psycopg.PGExecutionContext_psycopg object at 0x124021ed0>
+statement = <sqlalchemy.dialects.postgresql.psycopg.PGCompiler_psycopg object at 0x121ca6050>
+parameters = [{'enabled': True, 'id': UUID('2d3ae1b1-a997-46b3-8b1d-1d125ded0f88'), 'language': 'es', 'metadata': Jsonb({}), ...}, ..., {'enabled': False, 'id': UUID('30fe0aae-29e2-4d68-815c-f479bc05ce60'), 'language': 'es', 'metadata': Jsonb({}), ...}]
+
+    def _exec_single_context(
+        self,
+        dialect: Dialect,
+        context: ExecutionContext,
+        statement: Union[str, Compiled],
+        parameters: Optional[_AnyMultiExecuteParams],
+    ) -> CursorResult[Any]:
+        """continue the _execute_context() method for a single DBAPI
+        cursor.execute() or cursor.executemany() call.
+    
+        """
+        if dialect.bind_typing is BindTyping.SETINPUTSIZES:
+            generic_setinputsizes = context._prepare_set_input_sizes()
+    
+            if generic_setinputsizes:
+                try:
+                    dialect.do_set_input_sizes(
+                        context.cursor, generic_setinputsizes, context
+                    )
+                except BaseException as e:
+                    self._handle_dbapi_exception(
+                        e, str(statement), parameters, None, context
+                    )
+    
+        cursor, str_statement, parameters = (
+            context.cursor,
+            context.statement,
+            context.parameters,
+        )
+    
+        effective_parameters: Optional[_AnyExecuteParams]
+    
+        if not context.executemany:
+            effective_parameters = parameters[0]
+        else:
+            effective_parameters = parameters
+    
+        if self._has_events or self.engine._has_events:
+            for fn in self.dispatch.before_cursor_execute:
+                str_statement, effective_parameters = fn(
+                    self,
+                    cursor,
+                    str_statement,
+                    effective_parameters,
+                    context,
+                    context.executemany,
+                )
+    
+        if self._echo:
+            self._log_info(str_statement)
+    
+            stats = context._get_cache_stats()
+    
+            if not self.engine.hide_parameters:
+                self._log_info(
+                    "[%s] %r",
+                    stats,
+                    sql_util._repr_params(
+                        effective_parameters,
+                        batches=10,
+                        ismulti=context.executemany,
+                    ),
+                )
+            else:
+                self._log_info(
+                    "[%s] [SQL parameters hidden due to hide_parameters=True]",
+                    stats,
+                )
+    
+        evt_handled: bool = False
+        try:
+            if context.execute_style is ExecuteStyle.EXECUTEMANY:
+                effective_parameters = cast(
+                    "_CoreMultiExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_executemany:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+>                   self.dialect.do_executemany(
+                        cursor,
+                        str_statement,
+                        effective_parameters,
+                        context,
+
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1936: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:949: in do_executemany
+    cursor.executemany(statement, parameters)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <psycopg.Cursor [closed] [IDLE] (host=localhost user=hilo database=hilo_dev) at 0x1219b3c40>
+query = 'INSERT INTO rag_collections (id, name, vertical, language, enabled, metadata) VALUES (%(id)s::UUID, %(name)s::VARCHAR, %(vertical)s::VARCHAR, %(language)s::VARCHAR, %(enabled)s, %(metadata)s::JSONB)'
+params_seq = [{'enabled': True, 'id': UUID('2d3ae1b1-a997-46b3-8b1d-1d125ded0f88'), 'language': 'es', 'metadata': Jsonb({}), ...}, ..., {'enabled': False, 'id': UUID('30fe0aae-29e2-4d68-815c-f479bc05ce60'), 'language': 'es', 'metadata': Jsonb({}), ...}]
+
+    def executemany(
+        self, query: Query, params_seq: Iterable[Params], *, returning: bool = False
+    ) -> None:
+        """
+        Execute the same command with a sequence of input data.
+        """
+        try:
+            with self._conn.lock:
+                if Pipeline.is_supported():
+                    # If there is already a pipeline, ride it, in order to avoid
+                    # sending unnecessary Sync.
+                    if self._conn._pipeline:
+                        self._conn.wait(
+                            self._executemany_gen_pipeline(query, params_seq, returning)
+                        )
+                    else:
+                        # Otherwise, make a new one
+                        with self._conn._pipeline_nolock():
+                            self._conn.wait(
+                                self._executemany_gen_pipeline(
+                                    query, params_seq, returning
+                                )
+                            )
+                else:
+                    self._conn.wait(
+                        self._executemany_gen_no_pipeline(query, params_seq, returning)
+                    )
+        except e._NO_TRACEBACK as ex:
+>           raise ex.with_traceback(None)
+E           psycopg.errors.UndefinedTable: relation "rag_collections" does not exist
+E           LINE 1: INSERT INTO rag_collections (id, name, vertical, language, e...
+E                               ^
+
+../../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:148: UndefinedTable
+
+The above exception was the direct cause of the following exception:
+
+fixturedef = <FixtureDef argname='rag_smoke_fixture' scope='function' baseid='tests/ai'>
+request = <SubRequest 'rag_smoke_fixture' for <Function test_rag_retriever_smoke_k_limit_respected>>
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -> object | None:
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+                return (yield)
+            if not _is_coroutine_or_asyncgen(fixturedef.func):
+>               return (yield)
+                        ^^^^^
+
+../../../../Library/Python/3.11/lib/python/site-packages/pytest_asyncio/plugin.py:730: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+backend/tests/ai/conftest.py:186: in rag_smoke_fixture
+    pg_session.flush()
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:4331: in flush
+    self._flush(objects)
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:4466: in _flush
+    with util.safe_reraise():
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/util/langhelpers.py:121: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:4427: in _flush
+    flush_context.execute()
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/unitofwork.py:466: in execute
+    rec.execute(self)
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/unitofwork.py:642: in execute
+    util.preloaded.orm_persistence.save_obj(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/persistence.py:93: in save_obj
+    _emit_insert_statements(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/persistence.py:1048: in _emit_insert_statements
+    result = connection.execute(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1419: in execute
+    return meth(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/sql/elements.py:527: in _execute_on_connection
+    return connection._execute_clauseelement(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1641: in _execute_clauseelement
+    ret = self._execute_context(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1846: in _execute_context
+    return self._exec_single_context(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1986: in _exec_single_context
+    self._handle_dbapi_exception(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:2363: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1936: in _exec_single_context
+    self.dialect.do_executemany(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:949: in do_executemany
+    cursor.executemany(statement, parameters)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <psycopg.Cursor [closed] [IDLE] (host=localhost user=hilo database=hilo_dev) at 0x1219b3c40>
+query = 'INSERT INTO rag_collections (id, name, vertical, language, enabled, metadata) VALUES (%(id)s::UUID, %(name)s::VARCHAR, %(vertical)s::VARCHAR, %(language)s::VARCHAR, %(enabled)s, %(metadata)s::JSONB)'
+params_seq = [{'enabled': True, 'id': UUID('2d3ae1b1-a997-46b3-8b1d-1d125ded0f88'), 'language': 'es', 'metadata': Jsonb({}), ...}, ..., {'enabled': False, 'id': UUID('30fe0aae-29e2-4d68-815c-f479bc05ce60'), 'language': 'es', 'metadata': Jsonb({}), ...}]
+
+    def executemany(
+        self, query: Query, params_seq: Iterable[Params], *, returning: bool = False
+    ) -> None:
+        """
+        Execute the same command with a sequence of input data.
+        """
+        try:
+            with self._conn.lock:
+                if Pipeline.is_supported():
+                    # If there is already a pipeline, ride it, in order to avoid
+                    # sending unnecessary Sync.
+                    if self._conn._pipeline:
+                        self._conn.wait(
+                            self._executemany_gen_pipeline(query, params_seq, returning)
+                        )
+                    else:
+                        # Otherwise, make a new one
+                        with self._conn._pipeline_nolock():
+                            self._conn.wait(
+                                self._executemany_gen_pipeline(
+                                    query, params_seq, returning
+                                )
+                            )
+                else:
+                    self._conn.wait(
+                        self._executemany_gen_no_pipeline(query, params_seq, returning)
+                    )
+        except e._NO_TRACEBACK as ex:
+>           raise ex.with_traceback(None)
+E           sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation "rag_collections" does not exist
+E           LINE 1: INSERT INTO rag_collections (id, name, vertical, language, e...
+E                               ^
+E           [SQL: INSERT INTO rag_collections (id, name, vertical, language, enabled, metadata) VALUES (%(id)s::UUID, %(name)s::VARCHAR, %(vertical)s::VARCHAR, %(language)s::VARCHAR, %(enabled)s, %(metadata)s::JSONB)]
+E           [parameters: [{'id': UUID('2d3ae1b1-a997-46b3-8b1d-1d125ded0f88'), 'name': 't_es_coll', 'vertical': 'hr', 'language': 'es', 'enabled': True, 'metadata': Jsonb({})}, {'id': UUID('e4292cf8-3c94-4b7c-961d-0e390a4bd1bc'), 'name': 't_en_coll', 'vertical': 'hr', 'language': 'en', 'enabled': True, 'metadata': Jsonb({})}, {'id': UUID('30fe0aae-29e2-4d68-815c-f479bc05ce60'), 'name': 't_off_coll', 'vertical': 'hr', 'language': 'es', 'enabled': False, 'metadata': Jsonb({})}]]
+E           (Background on this error at: https://sqlalche.me/e/20/f405)
+
+../../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:148: ProgrammingError
+_ ERROR at setup of test_rag_retriever_smoke_unknown_collection_returns_empty __
+
+self = <sqlalchemy.engine.base.Connection object at 0x121dd8d10>
+dialect = <sqlalchemy.dialects.postgresql.psycopg.PGDialect_psycopg object at 0x12122bf50>
+context = <sqlalchemy.dialects.postgresql.psycopg.PGExecutionContext_psycopg object at 0x121dd8410>
+statement = <sqlalchemy.dialects.postgresql.psycopg.PGCompiler_psycopg object at 0x121ca6050>
+parameters = [{'enabled': True, 'id': UUID('5178a77f-317c-4d81-83b2-7bde2a442d4f'), 'language': 'es', 'metadata': Jsonb({}), ...}, ..., {'enabled': False, 'id': UUID('4b96d1b1-b5d9-4684-983a-ef5d0836bb5a'), 'language': 'es', 'metadata': Jsonb({}), ...}]
+
+    def _exec_single_context(
+        self,
+        dialect: Dialect,
+        context: ExecutionContext,
+        statement: Union[str, Compiled],
+        parameters: Optional[_AnyMultiExecuteParams],
+    ) -> CursorResult[Any]:
+        """continue the _execute_context() method for a single DBAPI
+        cursor.execute() or cursor.executemany() call.
+    
+        """
+        if dialect.bind_typing is BindTyping.SETINPUTSIZES:
+            generic_setinputsizes = context._prepare_set_input_sizes()
+    
+            if generic_setinputsizes:
+                try:
+                    dialect.do_set_input_sizes(
+                        context.cursor, generic_setinputsizes, context
+                    )
+                except BaseException as e:
+                    self._handle_dbapi_exception(
+                        e, str(statement), parameters, None, context
+                    )
+    
+        cursor, str_statement, parameters = (
+            context.cursor,
+            context.statement,
+            context.parameters,
+        )
+    
+        effective_parameters: Optional[_AnyExecuteParams]
+    
+        if not context.executemany:
+            effective_parameters = parameters[0]
+        else:
+            effective_parameters = parameters
+    
+        if self._has_events or self.engine._has_events:
+            for fn in self.dispatch.before_cursor_execute:
+                str_statement, effective_parameters = fn(
+                    self,
+                    cursor,
+                    str_statement,
+                    effective_parameters,
+                    context,
+                    context.executemany,
+                )
+    
+        if self._echo:
+            self._log_info(str_statement)
+    
+            stats = context._get_cache_stats()
+    
+            if not self.engine.hide_parameters:
+                self._log_info(
+                    "[%s] %r",
+                    stats,
+                    sql_util._repr_params(
+                        effective_parameters,
+                        batches=10,
+                        ismulti=context.executemany,
+                    ),
+                )
+            else:
+                self._log_info(
+                    "[%s] [SQL parameters hidden due to hide_parameters=True]",
+                    stats,
+                )
+    
+        evt_handled: bool = False
+        try:
+            if context.execute_style is ExecuteStyle.EXECUTEMANY:
+                effective_parameters = cast(
+                    "_CoreMultiExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_executemany:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+>                   self.dialect.do_executemany(
+                        cursor,
+                        str_statement,
+                        effective_parameters,
+                        context,
+
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1936: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:949: in do_executemany
+    cursor.executemany(statement, parameters)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <psycopg.Cursor [closed] [IDLE] (host=localhost user=hilo database=hilo_dev) at 0x1219b37c0>
+query = 'INSERT INTO rag_collections (id, name, vertical, language, enabled, metadata) VALUES (%(id)s::UUID, %(name)s::VARCHAR, %(vertical)s::VARCHAR, %(language)s::VARCHAR, %(enabled)s, %(metadata)s::JSONB)'
+params_seq = [{'enabled': True, 'id': UUID('5178a77f-317c-4d81-83b2-7bde2a442d4f'), 'language': 'es', 'metadata': Jsonb({}), ...}, ..., {'enabled': False, 'id': UUID('4b96d1b1-b5d9-4684-983a-ef5d0836bb5a'), 'language': 'es', 'metadata': Jsonb({}), ...}]
+
+    def executemany(
+        self, query: Query, params_seq: Iterable[Params], *, returning: bool = False
+    ) -> None:
+        """
+        Execute the same command with a sequence of input data.
+        """
+        try:
+            with self._conn.lock:
+                if Pipeline.is_supported():
+                    # If there is already a pipeline, ride it, in order to avoid
+                    # sending unnecessary Sync.
+                    if self._conn._pipeline:
+                        self._conn.wait(
+                            self._executemany_gen_pipeline(query, params_seq, returning)
+                        )
+                    else:
+                        # Otherwise, make a new one
+                        with self._conn._pipeline_nolock():
+                            self._conn.wait(
+                                self._executemany_gen_pipeline(
+                                    query, params_seq, returning
+                                )
+                            )
+                else:
+                    self._conn.wait(
+                        self._executemany_gen_no_pipeline(query, params_seq, returning)
+                    )
+        except e._NO_TRACEBACK as ex:
+>           raise ex.with_traceback(None)
+E           psycopg.errors.UndefinedTable: relation "rag_collections" does not exist
+E           LINE 1: INSERT INTO rag_collections (id, name, vertical, language, e...
+E                               ^
+
+../../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:148: UndefinedTable
+
+The above exception was the direct cause of the following exception:
+
+fixturedef = <FixtureDef argname='rag_smoke_fixture' scope='function' baseid='tests/ai'>
+request = <SubRequest 'rag_smoke_fixture' for <Function test_rag_retriever_smoke_unknown_collection_returns_empty>>
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -> object | None:
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+                return (yield)
+            if not _is_coroutine_or_asyncgen(fixturedef.func):
+>               return (yield)
+                        ^^^^^
+
+../../../../Library/Python/3.11/lib/python/site-packages/pytest_asyncio/plugin.py:730: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+backend/tests/ai/conftest.py:186: in rag_smoke_fixture
+    pg_session.flush()
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:4331: in flush
+    self._flush(objects)
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:4466: in _flush
+    with util.safe_reraise():
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/util/langhelpers.py:121: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:4427: in _flush
+    flush_context.execute()
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/unitofwork.py:466: in execute
+    rec.execute(self)
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/unitofwork.py:642: in execute
+    util.preloaded.orm_persistence.save_obj(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/persistence.py:93: in save_obj
+    _emit_insert_statements(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/persistence.py:1048: in _emit_insert_statements
+    result = connection.execute(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1419: in execute
+    return meth(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/sql/elements.py:527: in _execute_on_connection
+    return connection._execute_clauseelement(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1641: in _execute_clauseelement
+    ret = self._execute_context(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1846: in _execute_context
+    return self._exec_single_context(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1986: in _exec_single_context
+    self._handle_dbapi_exception(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:2363: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1936: in _exec_single_context
+    self.dialect.do_executemany(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:949: in do_executemany
+    cursor.executemany(statement, parameters)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <psycopg.Cursor [closed] [IDLE] (host=localhost user=hilo database=hilo_dev) at 0x1219b37c0>
+query = 'INSERT INTO rag_collections (id, name, vertical, language, enabled, metadata) VALUES (%(id)s::UUID, %(name)s::VARCHAR, %(vertical)s::VARCHAR, %(language)s::VARCHAR, %(enabled)s, %(metadata)s::JSONB)'
+params_seq = [{'enabled': True, 'id': UUID('5178a77f-317c-4d81-83b2-7bde2a442d4f'), 'language': 'es', 'metadata': Jsonb({}), ...}, ..., {'enabled': False, 'id': UUID('4b96d1b1-b5d9-4684-983a-ef5d0836bb5a'), 'language': 'es', 'metadata': Jsonb({}), ...}]
+
+    def executemany(
+        self, query: Query, params_seq: Iterable[Params], *, returning: bool = False
+    ) -> None:
+        """
+        Execute the same command with a sequence of input data.
+        """
+        try:
+            with self._conn.lock:
+                if Pipeline.is_supported():
+                    # If there is already a pipeline, ride it, in order to avoid
+                    # sending unnecessary Sync.
+                    if self._conn._pipeline:
+                        self._conn.wait(
+                            self._executemany_gen_pipeline(query, params_seq, returning)
+                        )
+                    else:
+                        # Otherwise, make a new one
+                        with self._conn._pipeline_nolock():
+                            self._conn.wait(
+                                self._executemany_gen_pipeline(
+                                    query, params_seq, returning
+                                )
+                            )
+                else:
+                    self._conn.wait(
+                        self._executemany_gen_no_pipeline(query, params_seq, returning)
+                    )
+        except e._NO_TRACEBACK as ex:
+>           raise ex.with_traceback(None)
+E           sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation "rag_collections" does not exist
+E           LINE 1: INSERT INTO rag_collections (id, name, vertical, language, e...
+E                               ^
+E           [SQL: INSERT INTO rag_collections (id, name, vertical, language, enabled, metadata) VALUES (%(id)s::UUID, %(name)s::VARCHAR, %(vertical)s::VARCHAR, %(language)s::VARCHAR, %(enabled)s, %(metadata)s::JSONB)]
+E           [parameters: [{'id': UUID('5178a77f-317c-4d81-83b2-7bde2a442d4f'), 'name': 't_es_coll', 'vertical': 'hr', 'language': 'es', 'enabled': True, 'metadata': Jsonb({})}, {'id': UUID('dd997a1d-1a1f-46e7-9015-6c4151dad56e'), 'name': 't_en_coll', 'vertical': 'hr', 'language': 'en', 'enabled': True, 'metadata': Jsonb({})}, {'id': UUID('4b96d1b1-b5d9-4684-983a-ef5d0836bb5a'), 'name': 't_off_coll', 'vertical': 'hr', 'language': 'es', 'enabled': False, 'metadata': Jsonb({})}]]
+E           (Background on this error at: https://sqlalche.me/e/20/f405)
+
+../../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:148: ProgrammingError
+=================================== FAILURES ===================================
+____________ test_rag_retriever_smoke_empty_database_returns_empty _____________
+
+self = <sqlalchemy.engine.base.Connection object at 0x122928e90>
+dialect = <sqlalchemy.dialects.postgresql.psycopg.PGDialect_psycopg object at 0x12122bf50>
+context = <sqlalchemy.dialects.postgresql.psycopg.PGExecutionContext_psycopg object at 0x121d31250>
+statement = <sqlalchemy.dialects.postgresql.psycopg.PGCompiler_psycopg object at 0x1236fb2d0>
+parameters = [{'embedding_1': '[0.019671505317091942,-0.012759815901517868,-0.052688393741846085,-0.0001600800605956465,0.013531948...,-0.005106234923005104,0.0005461339023895562,0.046687014400959015]', 'language_1': 'es', 'param_1': 1.0, 'param_2': 5}]
+
+    def _exec_single_context(
+        self,
+        dialect: Dialect,
+        context: ExecutionContext,
+        statement: Union[str, Compiled],
+        parameters: Optional[_AnyMultiExecuteParams],
+    ) -> CursorResult[Any]:
+        """continue the _execute_context() method for a single DBAPI
+        cursor.execute() or cursor.executemany() call.
+    
+        """
+        if dialect.bind_typing is BindTyping.SETINPUTSIZES:
+            generic_setinputsizes = context._prepare_set_input_sizes()
+    
+            if generic_setinputsizes:
+                try:
+                    dialect.do_set_input_sizes(
+                        context.cursor, generic_setinputsizes, context
+                    )
+                except BaseException as e:
+                    self._handle_dbapi_exception(
+                        e, str(statement), parameters, None, context
+                    )
+    
+        cursor, str_statement, parameters = (
+            context.cursor,
+            context.statement,
+            context.parameters,
+        )
+    
+        effective_parameters: Optional[_AnyExecuteParams]
+    
+        if not context.executemany:
+            effective_parameters = parameters[0]
+        else:
+            effective_parameters = parameters
+    
+        if self._has_events or self.engine._has_events:
+            for fn in self.dispatch.before_cursor_execute:
+                str_statement, effective_parameters = fn(
+                    self,
+                    cursor,
+                    str_statement,
+                    effective_parameters,
+                    context,
+                    context.executemany,
+                )
+    
+        if self._echo:
+            self._log_info(str_statement)
+    
+            stats = context._get_cache_stats()
+    
+            if not self.engine.hide_parameters:
+                self._log_info(
+                    "[%s] %r",
+                    stats,
+                    sql_util._repr_params(
+                        effective_parameters,
+                        batches=10,
+                        ismulti=context.executemany,
+                    ),
+                )
+            else:
+                self._log_info(
+                    "[%s] [SQL parameters hidden due to hide_parameters=True]",
+                    stats,
+                )
+    
+        evt_handled: bool = False
+        try:
+            if context.execute_style is ExecuteStyle.EXECUTEMANY:
+                effective_parameters = cast(
+                    "_CoreMultiExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_executemany:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_executemany(
+                        cursor,
+                        str_statement,
+                        effective_parameters,
+                        context,
+                    )
+            elif not effective_parameters and context.no_parameters:
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute_no_params:
+                        if fn(cursor, str_statement, context):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_execute_no_params(
+                        cursor, str_statement, context
+                    )
+            else:
+                effective_parameters = cast(
+                    "_CoreSingleExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+>                   self.dialect.do_execute(
+                        cursor, str_statement, effective_parameters, context
+                    )
+
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <psycopg.Cursor [closed] [INERROR] (host=localhost user=hilo database=hilo_dev) at 0x1224c4100>
+query = 'SELECT document_chunks.id AS chunk_id, document_chunks.document_id, documents.collection_id, documents.language, docu...s.embedding IS NOT NULL ORDER BY (document_embeddings.embedding <=> %(embedding_1)s) ASC \n LIMIT %(param_2)s::INTEGER'
+params = {'embedding_1': '[0.019671505317091942,-0.012759815901517868,-0.052688393741846085,-0.0001600800605956465,0.0135319484...5,-0.005106234923005104,0.0005461339023895562,0.046687014400959015]', 'language_1': 'es', 'param_1': 1.0, 'param_2': 5}
+
+    def execute(
+        self,
+        query: Query,
+        params: Params | None = None,
+        *,
+        prepare: bool | None = None,
+        binary: bool | None = None,
+    ) -> Self:
+        """
+        Execute a query or command to the database.
+        """
+        try:
+            with self._conn.lock:
+                self._conn.wait(
+                    self._execute_gen(query, params, prepare=prepare, binary=binary)
+                )
+        except e._NO_TRACEBACK as ex:
+>           raise ex.with_traceback(None)
+E           psycopg.errors.UndefinedTable: relation "document_embeddings" does not exist
+E           LINE 2: FROM document_embeddings JOIN document_chunks ON document_ch...
+E                        ^
+
+../../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: UndefinedTable
+
+The above exception was the direct cause of the following exception:
+
+pg_session = <sqlalchemy.orm.session.Session object at 0x122928dd0>
+
+    def test_rag_retriever_smoke_empty_database_returns_empty(
+        pg_session: Session,
+    ) -> None:
+        """Assert retrieve() returns [] when document_embeddings is empty.
+    
+        This test does NOT use rag_smoke_fixture, so the transactional session
+        has no embedding rows. The result must be [] without any exception.
+    
+        Note: Other tests running in the same process may have committed rows,
+        but pg_session uses savepoints/nested transactions so these are not
+        visible here (each pg_session starts in its own transaction).
+    
+        Acceptance: A8 — empty embeddings table returns empty.
+        """
+        # Use a query vector that would match anything if embeddings existed
+        query = _unit_vec(seed=999)
+        filters = RetrieverFilters(language="es")
+>       results = retrieve(
+            session=pg_session,
+            query_embedding=query,
+            filters=filters,
+        )
+
+backend/tests/ai/test_rag_retriever.py:472: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+backend/app/rag/retriever.py:208: in retrieve
+    result = session.execute(stmt)
+             ^^^^^^^^^^^^^^^^^^^^^
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:2351: in execute
+    return self._execute_internal(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:2249: in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/context.py:306: in orm_execute_statement
+    result = conn.execute(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1419: in execute
+    return meth(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/sql/elements.py:527: in _execute_on_connection
+    return connection._execute_clauseelement(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1641: in _execute_clauseelement
+    ret = self._execute_context(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1846: in _execute_context
+    return self._exec_single_context(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1986: in _exec_single_context
+    self._handle_dbapi_exception(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:2363: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <psycopg.Cursor [closed] [INERROR] (host=localhost user=hilo database=hilo_dev) at 0x1224c4100>
+query = 'SELECT document_chunks.id AS chunk_id, document_chunks.document_id, documents.collection_id, documents.language, docu...s.embedding IS NOT NULL ORDER BY (document_embeddings.embedding <=> %(embedding_1)s) ASC \n LIMIT %(param_2)s::INTEGER'
+params = {'embedding_1': '[0.019671505317091942,-0.012759815901517868,-0.052688393741846085,-0.0001600800605956465,0.0135319484...5,-0.005106234923005104,0.0005461339023895562,0.046687014400959015]', 'language_1': 'es', 'param_1': 1.0, 'param_2': 5}
+
+    def execute(
+        self,
+        query: Query,
+        params: Params | None = None,
+        *,
+        prepare: bool | None = None,
+        binary: bool | None = None,
+    ) -> Self:
+        """
+        Execute a query or command to the database.
+        """
+        try:
+            with self._conn.lock:
+                self._conn.wait(
+                    self._execute_gen(query, params, prepare=prepare, binary=binary)
+                )
+        except e._NO_TRACEBACK as ex:
+>           raise ex.with_traceback(None)
+E           sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation "document_embeddings" does not exist
+E           LINE 2: FROM document_embeddings JOIN document_chunks ON document_ch...
+E                        ^
+E           [SQL: SELECT document_chunks.id AS chunk_id, document_chunks.document_id, documents.collection_id, documents.language, document_chunks.chunk_index, document_chunks.content, document_chunks.metadata AS metadata, %(param_1)s - (document_embeddings.embedding <=> %(embedding_1)s) AS score 
+E           FROM document_embeddings JOIN document_chunks ON document_chunks.id = document_embeddings.chunk_id JOIN documents ON documents.id = document_chunks.document_id JOIN rag_collections ON rag_collections.id = documents.collection_id 
+E           WHERE documents.language = %(language_1)s::VARCHAR AND rag_collections.enabled IS true AND document_embeddings.embedding IS NOT NULL ORDER BY (document_embeddings.embedding <=> %(embedding_1)s) ASC 
+E            LIMIT %(param_2)s::INTEGER]
+E           [parameters: {'param_1': 1.0, 'embedding_1': '[0.019671505317091942,-0.012759815901517868,-0.052688393741846085,-0.0001600800605956465,0.013531948439776897,-0.013175697065889835,-0.00755016179755 ... (32354 characters truncated) ... .0032860927749425173,0.006996505428105593,0.005484148394316435,0.033576976507902145,-0.005106234923005104,0.0005461339023895562,0.046687014400959015]', 'language_1': 'es', 'param_2': 5}]
+E           (Background on this error at: https://sqlalche.me/e/20/f405)
+
+../../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: ProgrammingError
+------------------------------ Captured log call -------------------------------
+INFO     hilo.rag.retriever:retriever.py:193 rag.retriever.search.start
+ERROR    hilo.rag.retriever:retriever.py:223 rag.retriever.search.error
+Traceback (most recent call last):
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py", line 117, in execute
+    raise ex.with_traceback(None)
+psycopg.errors.UndefinedTable: relation "document_embeddings" does not exist
+LINE 2: FROM document_embeddings JOIN document_chunks ON document_ch...
+             ^
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P02-S04-T001/backend/app/rag/retriever.py", line 208, in retrieve
+    result = session.execute(stmt)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py", line 2351, in execute
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py", line 2249, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+             ^^^^^^^^^^^^^
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1419, in execute
+    return meth(
+           ^^^^^
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/sql/elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py", line 117, in execute
+    raise ex.with_traceback(None)
+sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation "document_embeddings" does not exist
+LINE 2: FROM document_embeddings JOIN document_chunks ON document_ch...
+             ^
+[SQL: SELECT document_chunks.id AS chunk_id, document_chunks.document_id, documents.collection_id, documents.language, document_chunks.chunk_index, document_chunks.content, document_chunks.metadata AS metadata, %(param_1)s - (document_embeddings.embedding <=> %(embedding_1)s) AS score 
+FROM document_embeddings JOIN document_chunks ON document_chunks.id = document_embeddings.chunk_id JOIN documents ON documents.id = document_chunks.document_id JOIN rag_collections ON rag_collections.id = documents.collection_id 
+WHERE documents.language = %(language_1)s::VARCHAR AND rag_collections.enabled IS true AND document_embeddings.embedding IS NOT NULL ORDER BY (document_embeddings.embedding <=> %(embedding_1)s) ASC 
+ LIMIT %(param_2)s::INTEGER]
+[parameters: {'param_1': 1.0, 'embedding_1': '[0.019671505317091942,-0.012759815901517868,-0.052688393741846085,-0.0001600800605956465,0.013531948439776897,-0.013175697065889835,-0.00755016179755 ... (32354 characters truncated) ... .0032860927749425173,0.006996505428105593,0.005484148394316435,0.033576976507902145,-0.005106234923005104,0.0005461339023895562,0.046687014400959015]', 'language_1': 'es', 'param_2': 5}]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+=============================== warnings summary ===============================
+tests/ai/test_rag_retriever.py::test_rag_retriever_smoke_filter_by_language_es_only
+tests/ai/test_rag_retriever.py::test_rag_retriever_smoke_filter_by_collection_excludes_others
+tests/ai/test_rag_retriever.py::test_rag_retriever_smoke_combined_filters_AND
+tests/ai/test_rag_retriever.py::test_rag_retriever_smoke_disabled_collection_excluded
+tests/ai/test_rag_retriever.py::test_rag_retriever_smoke_citation_metadata_shape
+tests/ai/test_rag_retriever.py::test_rag_retriever_smoke_k_limit_respected
+tests/ai/test_rag_retriever.py::test_rag_retriever_smoke_unknown_collection_returns_empty
+  /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P02-S04-T001/backend/tests/conftest.py:77: SAWarning: transaction already deassociated from connection
+    transaction.rollback()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED backend/tests/ai/test_rag_retriever.py::test_rag_retriever_smoke_empty_database_returns_empty
+ERROR backend/tests/ai/test_rag_retriever.py::test_rag_retriever_smoke_filter_by_language_es_only
+ERROR backend/tests/ai/test_rag_retriever.py::test_rag_retriever_smoke_filter_by_collection_excludes_others
+ERROR backend/tests/ai/test_rag_retriever.py::test_rag_retriever_smoke_combined_filters_AND
+ERROR backend/tests/ai/test_rag_retriever.py::test_rag_retriever_smoke_disabled_collection_excluded
+ERROR backend/tests/ai/test_rag_retriever.py::test_rag_retriever_smoke_citation_metadata_shape
+ERROR backend/tests/ai/test_rag_retriever.py::test_rag_retriever_smoke_k_limit_respected
+ERROR backend/tests/ai/test_rag_retriever.py::test_rag_retriever_smoke_unknown_collection_returns_empty
+============== 1 failed, 2 passed, 7 warnings, 7 errors in 1.74s ===============

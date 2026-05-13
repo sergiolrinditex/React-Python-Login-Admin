@@ -1,0 +1,15 @@
+                                              Table "public.document_embeddings"
+   Column   |           Type           | Collation | Nullable | Default | Storage  | Compression | Stats target | Description 
+------------+--------------------------+-----------+----------+---------+----------+-------------+--------------+-------------
+ chunk_id   | uuid                     |           | not null |         | plain    |             |              | 
+ embedding  | vector(1536)             |           |          |         | external |             |              | 
+ model_id   | uuid                     |           |          |         | plain    |             |              | 
+ created_at | timestamp with time zone |           | not null | now()   | plain    |             |              | 
+Indexes:
+    "document_embeddings_pkey" PRIMARY KEY, btree (chunk_id)
+    "document_embeddings_vector_idx" hnsw (embedding vector_cosine_ops) WITH (m='16', ef_construction='64')
+Foreign-key constraints:
+    "document_embeddings_chunk_id_fkey" FOREIGN KEY (chunk_id) REFERENCES document_chunks(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED
+    "document_embeddings_model_id_fkey" FOREIGN KEY (model_id) REFERENCES ai_models(id) ON DELETE SET NULL
+Access method: heap
+

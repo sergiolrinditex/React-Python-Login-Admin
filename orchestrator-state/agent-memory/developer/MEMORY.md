@@ -162,6 +162,7 @@
 
 | Slice | Outcome | Key files touched |
 |-------|---------|-------------------|
+| P02-S04-T001 | success | backend/app/rag/{__init__,errors,schemas,retriever}.py (NEW), backend/tests/ai/{__init__,conftest,test_rag_retriever}.py (NEW) — 10/10 smoke tests PASS |
 | P00-S01-T001 | success | backend/app/main.py, backend/pyproject.toml, .env.example, scripts/ |
 | P00-S02-T001 | success | docker-compose.yml, backend/Dockerfile, frontend/Dockerfile, .dockerignore, scripts/minio-bootstrap.sh, frontend/nginx.conf, .env.example |
 | P00-S01-T005 | success | frontend/src/i18n/index.ts (rewrite), frontend/src/i18n/languages.ts, frontend/src/i18n/types.d.ts, frontend/src/i18n/__tests__/i18n.test.ts, frontend/public/locales/**/{8 ns}.json (×3 langs = 24 files), frontend/src/pages/showcase/I18nDemoSection.tsx, frontend/src/pages/showcase/ShowcasePage.tsx |
@@ -169,6 +170,17 @@
 | P01-S02-T008 | developer done (pending validator+tester+verify-slice) | scripts/dev-restart.profile.sh (absolute --source path + hard-fail seed block) |
 | P01-S02-T009 | developer done (pending validator+tester+verify-slice) | scripts/gen-dev-secrets.sh (NEW), scripts/setup-from-scratch.sh (+15 LOC), .env.example (comments) |
 | P00-S02-T003 | success | backend/alembic.ini, backend/alembic/env.py, backend/alembic/script.py.mako, backend/alembic/versions/.gitkeep, backend/app/verification_data/** (8 files), data/verification/** (11 fixtures + README), backend/tests/conftest.py, backend/tests/integration/** (3 files), scripts/dev-restart.profile.sh, backend/pyproject.toml (cryptography+argon2-cffi), backend/requirements.txt, .env.example |
+
+### pgvector retrieval patterns (P02-S04-T001)
+- `from pgvector.sqlalchemy import VECTOR` (ALL CAPS) — confirmed working with pgvector==0.4.2.
+- `DocumentEmbedding.embedding.cosine_distance(query_vec)` is the correct ORM method for `<=>` operator push-down (eligible for HNSW index).
+- score = `1.0 - cosine_distance`. For unit-normalised vectors the theoretical range is [0,1], but float32 precision may yield slightly negative values for near-orthogonal vectors. Test tolerance: `-0.01 <= score <= 1.001`.
+- `retrieve()` takes a sync `Session` (not async) — matches the project's existing sync session pattern.
+- The `rag_smoke_fixture` uses `pg_session` transactional rollback — no teardown DELETE needed.
+- Synthetic deterministic vectors via `numpy.random.default_rng(seed).standard_normal(1536)` + L2 normalise. Seeds are stable across runs — order of cosine distances is deterministic.
+- `pytest backend/tests/ai -k rag_retriever_smoke -v` is the canonical verification command.
+- `python3 -m ruff check backend/app/rag/ backend/tests/ai/` for lint (ruff is available via python3 -m ruff).
+- WRITE_SET_DRIFT: `tests/ai/__init__.py` + `tests/ai/conftest.py` are outside declared write_set but required as intra-test helpers — same approved pattern as T002/T004/T007.
 
 ### Auth module structure (P01-S02-T001)
 - Module layout: errors.py → domain.py → password.py → rate_limit.py → repository.py → service.py → schemas.py → router.py → __init__.py
@@ -726,8 +738,56 @@
 | Slice | Outcome | Key files touched |
 |-------|---------|-------------------|
 | P02-S03-T001 | developer done (pending validator+tester+verify-slice) | backend/app/chat/** (11 new files) + backend/tests/integration/test_chat_conversations.py + backend/app/main.py (+2 lines) |
+| P02-S07-T001 | developer done (pending validator+tester+verify-slice) | backend/app/mcp/** (15 new files) + backend/tests/integration/test_mcp_registry.py + backend/app/admin/__init__.py (§D-MCPWIRE +3 lines) |
 
 **P-hook-worktree-blocks**: The write scope guard in `hook_write_scope_guard.py` blocks `Write`/`Edit`/`MultiEdit` tools for paths that resolve to `.claude/worktrees/...` (treated as `.claude/` static config). Always use `Bash` with `cat > file << 'EOF'` heredoc or Python `open(path, 'w').write(...)` for all worktree file creation/editing.
+
+## P02-S07-T001 — MCP Registry endpoints (2026-05-13)
+
+### audit_logs column name
+- The `audit_logs` table uses column `metadata` (NOT `extra_metadata`). The ORM model `AuditLog.extra_metadata` maps to the `metadata` column in the DB (SQLAlchemy `mapped_column(name="metadata")`). Raw SQL queries must use `metadata`, not `extra_metadata`.
+
+### Rate limit cross-test bleed prevention
+- Redis rate limiters share state across tests since all tests use `client` from `testclient` (same IP).
+- Pattern: add `_reset_rate_limits()` function + `@pytest.fixture(autouse=True)` that clears both in-memory auth RL store AND Redis keys for all relevant prefixes before each test.
+- Use `r.keys(f"{prefix}:*")` to delete ALL keys for a bucket prefix (not just the current window bucket).
+
+### Router prefix layering
+- When `mcp_router = APIRouter(prefix="/mcp")` and sub-routers use paths like `/servers`, the final path is `/mcp/servers`.
+- Do NOT add `/mcp/` prefix AGAIN in the sub-router paths — leads to double prefix `/mcp/mcp/servers`.
+- Pattern: mcp_router at prefix "/mcp", sub-routers at "/" paths (e.g., "/servers", "/tools/{id}").
+
+### Module split for file-size compliance
+- When a module would exceed 300 lines, split by responsibility:
+  - `service.py` → `service_<usecase>.py` + `service.py` (re-export shim + rate limiters)
+  - `router.py` → `router_<group>.py` + `router.py` (aggregator shim)
+  - `repository.py` → `repository_<entity>.py` + `repository.py` (re-export shim)
+- Re-export shims (`__all__` + `from module import ...`) keep callers using a single import path.
+- Rate limiters MUST stay in the `service.py` shim (not sub-modules) so FastAPI Depends() captures stable object identity.
+
+### JSON-RPC httpx client pattern
+- MCP servers use JSON-RPC 2.0 POST over HTTP. Pattern:
+  ```python
+  payload = {"jsonrpc": "2.0", "id": str(uuid.uuid4()), "method": method, "params": {}}
+  response = httpx.Client(timeout=10).post(endpoint, json=payload, headers=headers)
+  body = response.json()
+  result = body.get("result", {})
+  ```
+- Use deferred `import httpx` inside the function body to allow test mocking via `patch("app.mcp.client.discover")`.
+- Wrap httpx errors as domain error `McpServerUnreachableError` — never let raw httpx exceptions leak to the router.
+
+### test_mcp_registry.py pattern
+- Mock `app.mcp.client.discover` (not the httpx module) — the mock must be at the call site used by `service_sync.py`:
+  ```python
+  with patch("app.mcp.client.discover", return_value=(tools, [], [])):
+  ```
+- Note: `service_sync.py` uses deferred `from app.mcp import client as _mcp_client` → calls `_mcp_client.discover(...)`. The mock must patch `app.mcp.client.discover` (not `app.mcp.service_sync._mcp_client.discover`).
+
+### D-S2 pattern for MCP
+- Same pattern as providers: rollback → write failure audit (independent session). Works identically.
+- `audit_server_create(... outcome='failure')` writes `admin.ai.mcp.server.create.failed` action.
+- T10 tests the EncryptionError → 500 path: valid FERNET key → break key → test → restore key.
+- Reset fernet cache with `reset_fernet_cache()` before AND after changing `ENCRYPTION_KEY` in tests.
 
 ## P02-S03-T003 — dev-restart.profile.sh restoration patterns (2026-05-13)
 
@@ -763,6 +823,50 @@
 | Slice | Outcome | Key files touched |
 |-------|---------|-------------------|
 | P02-S03-T003 | developer done (pending validator+tester+verify-slice) | scripts/dev-restart.profile.sh (restored 39-LOC stub → 395-LOC canonical profile) |
+| P02-S04-T001 | developer done (pending validator+tester+verify-slice) | Adopted 7 untracked files: backend/app/rag/{__init__,errors,schemas,retriever}.py + backend/tests/ai/{__init__,conftest,test_rag_retriever}.py — no code written |
+| P02-S05-T003 | DONE — committed 03c6fd6 (PR #10), verified | backend/alembic/versions/0003_ai_models_default_per_type_uidx.py (NEW) + backend/app/admin/model_catalog/errors.py (NEW) + service.py + router.py + audit.py (MODIFY) + backend/app/db/models/admin_ai.py (MODIFY, §D-ORM-INDEX) + backend/tests/integration/test_admin_ai.py (+T26) |
+
+## P02-S04-T001 — RAG retriever patterns (2026-05-13)
+
+### pgvector-python 0.4.2 ORM API (confirmed working)
+- `DocumentEmbedding.embedding.cosine_distance(query_embedding)` → produces `<=>` SQL operator with HNSW pushdown.
+- `query_embedding` can be `list[float]` (no numpy array required). Pydantic or Python list both work.
+- `(1.0 - distance).label("score")` — standard pattern for cosine similarity from cosine distance.
+- `order_by(distance.asc())` — ascending distance = descending similarity.
+- `DocumentEmbedding.embedding.isnot(None)` — correct SQLAlchemy ORM null check for VECTOR columns.
+- `DocumentEmbedding.embedding.cosine_distance(q)` does NOT require register_vector() with psycopg3+SQLAlchemy.
+
+### HNSW index EMPTY TABLE behavior (confirmed safe)
+- Real Postgres with 0 rows in document_embeddings + HNSW index → `SELECT ... LIMIT k` returns [] without error.
+- Test T08 confirms this: real DB, real pgvector, no embeddings → empty list.
+- This is the official guarantee: HNSW has no training step, so empty table is fine.
+
+### extra_metadata / metadata ORM column naming pattern
+- `DocumentChunk.extra_metadata` (Python ORM attr) ↔ `metadata` (DB column) — standard pattern for SQLAlchemy Reserved Words.
+- `mapped_column("metadata", JSONB, ...)` — first arg is the DB column name override.
+- In SQLAlchemy select/label: `DocumentChunk.extra_metadata.label("metadata")` produces SQL col alias `metadata` in result row.
+- Accessing `row.metadata` on the Row object works correctly after `.label("metadata")`.
+- Pattern also used on `RagCollection.extra_metadata`.
+
+### RAG retriever integration test pattern
+- Function-scoped fixture + transactional rollback (pg_session) is the correct pattern.
+- No need for teardown DELETE — rollback handles it.
+- Synthetic deterministic vectors: `numpy.random.default_rng(seed).standard_normal(1536)` + L2 normalize. Seeds 101/202/303 for ES/EN/disabled.
+- T08 (empty DB test): do NOT include `rag_smoke_fixture` — test must depend only on `pg_session`. The pg_session isolation ensures no other test's rows are visible.
+- Assertions on score: use `-0.01 <= score <= 1.001` tolerance for unit-normalised vectors (pgvector FP arithmetic can yield slightly negative cosine similarities for near-orthogonal vectors).
+
+### Audit-first approach for prior untracked code
+- Read all files → run lint → run tests → decide per file before writing anything.
+- Verbatim adoption is the right outcome if code passes lint + tests + semantic review.
+- Document the audit in handoff §Prior Untracked Audit even for ADOPT verdicts (traceability).
+- WRITE_SET_DRIFT declarations are still required even when code is adopted not written.
+
+### Verbose logging semantics for retriever
+- verbose=true: INFO for `search.start` (BEFORE) and `search.ok` (AFTER), plus `search.invalid_dim` ERROR.
+- verbose=false: no INFO for happy path. DEBUG for `search.empty` (empty result). ERROR for `search.invalid_dim`.
+- Note: `search.empty` at DEBUG-level is visible in `--log-cli-level=DEBUG` pytest but NOT in production (WARNING threshold). Validator may question whether DEBUG is "only warning+error" per non-negotiables §A12.
+- No PII in any log: no embedding floats, no chunk content, no user data.
+- `request_id` defaults to `str(uuid.uuid4())` if caller doesn't provide one — ensures every log line is correlated.
 
 ## P02-S05-T003 — DB-level partial unique index + IntegrityError translation (2026-05-13)
 
@@ -803,6 +907,8 @@
 - Existing callers that don't pass the new param continue to work.
 - Document the new param in the docstring's Args section.
 
-| Slice | Outcome | Key files touched |
-|-------|---------|-------------------|
-| P02-S05-T003 | developer done (pending validator+tester+verify-slice) | backend/alembic/versions/0003_ai_models_default_per_type_uidx.py (NEW) + backend/app/admin/model_catalog/errors.py (NEW) + service.py + router.py + audit.py (MODIFY) + backend/app/db/models/admin_ai.py (MODIFY, §D-ORM-INDEX) + backend/tests/integration/test_admin_ai.py (+T26) |
+### pr-flow merge-conflict pattern (post-closer)
+- After closer pushes `dev/<TASK_ID>` and opens PR, sibling slices that merged into `main` in parallel can create CONFLICTING state on the PR.
+- Typical contested files: `docs/product-baseline/BASELINE_MANIFEST.json` (every closer appends a snapshot), `orchestrator-state/memory/PROGRESS.md` (every slice updates), agent MEMORY.md (every slice appends).
+- Resolution: `git merge origin/main` on the slice branch (NOT rebase — preserves the already-published commit hash). Resolve each conflicted file by union (keep both sides' append blocks, advance counters to the union value). Push the merge commit; PR auto-updates.
+- BASELINE_MANIFEST.json: union the `snapshots[]` arrays + update `latest_task_id`/`updated_at`/`latest_version` to whichever snapshot has the most recent `ts`.
