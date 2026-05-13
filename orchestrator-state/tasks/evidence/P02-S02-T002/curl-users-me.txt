@@ -1,0 +1,30 @@
+=== E2E SMOKE: GET /api/v1/users/me ===
+Endpoint: GET /api/v1/users/me
+Auth: Bearer (sign-in via admin.peopletech@inditex-sandbox.com)
+Verification Data Source: data/verification/users/admin_peopletech.json
+
+--- Request ---
+GET /api/v1/users/me
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhNGU1MGY1NC0...
+
+--- Response ---
+{
+  "data": {
+    "id": "a4e50f54-6f02-47fd-bca2-d9f03ba908ee",
+    "email": "admin.peopletech@inditex-sandbox.com",
+    "full_name": "Admin People Tech",
+    "status": "active",
+    "preferred_language": "es",
+    "roles": [
+      "employee"
+    ],
+    "employee_profile": null,
+    "created_at": "2026-05-13T09:45:06.684929Z",
+    "updated_at": "2026-05-13T09:45:06.684929Z"
+  },
+  "meta": {
+    "request_id": "tester-e2e-final"
+  },
+  "errors": []
+}
+HTTP Status: 200

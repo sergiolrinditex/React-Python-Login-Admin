@@ -1,0 +1,2 @@
+{"data":{"id":"5e014b90-4f6b-4133-94ac-28338a58fad1","email":"admin.peopletech@inditex-sandbox.com","full_name":"Admin People Tech","status":"active","preferred_language":"es","roles":["employee"],"employee_profile":null,"created_at":"2026-05-13T10:03:07.930102Z","updated_at":"2026-05-13T10:03:07.930102Z"},"meta":{"request_id":"verify-slice-P02-S02-T002-me-1778666599"},"errors":[]}
+HTTP_CODE=200

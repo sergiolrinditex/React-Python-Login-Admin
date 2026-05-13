@@ -1,0 +1,30 @@
+## Data Contract Used — P02-S02-T002
+
+### Verification Data Contract
+Source: TECHNICAL_GUIDE §H §Verification Data Contract — N/A for this slice
+Declared: task pack §H explicitly states "Verification Data Contract — n/a for this slice (no UI/journey reproducer)"
+
+### E2E Smoke — Verification Data Used
+
+Source file: data/verification/users/admin_peopletech.json
+User: admin.peopletech@inditex-sandbox.com
+Password: AdminVerify2024!
+Used for: sign-in → Bearer token → GET /api/v1/users/me (smoke E2E)
+Result: HTTP 200, UserProfile returned with correct email
+
+Source file: data/verification/users/employee_primary.json
+User: employee.verification@inditex-sandbox.com
+Password: VerifyPass2024!
+Used for: smoke attempt — MFA required (mfa_primary.json has enabled:true), skipped for E2E.
+
+### Data Persisted Observed
+
+- users table: 2 rows (admin + employee seeded verification users)
+- No new data persisted by T002 (infra/bug-fix slice, no new endpoints)
+
+### Contract Observed
+
+- Endpoint: GET /api/v1/users/me → HTTP 200, UserProfile
+- JWT encode/decode pipeline: tokens.py _get_jwt_key() lazy getter
+- Repository: users table read (GET /api/v1/users/me → users.deps.get_current_user → decode_token)
+- No new tables, no new endpoints, no new routes

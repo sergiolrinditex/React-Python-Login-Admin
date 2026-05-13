@@ -1,0 +1,28 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.5, pytest-9.0.2, pluggy-1.6.0 -- /usr/local/bin/python3
+cachedir: .pytest_cache
+rootdir: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend
+configfile: pyproject.toml
+plugins: httpx-0.36.0, asyncio-1.3.0, langsmith-0.8.3, anyio-4.13.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... 
+----------------------------- live log collection ------------------------------
+DEBUG    app.auth.password:password.py:71 password.hash.start
+DEBUG    app.auth.password:password.py:73 password.hash.done
+collected 1 item
+
+tests/unit/test_auth_tokens.py::test_encode_then_decode_roundtrip_with_env_set 
+-------------------------------- live log setup --------------------------------
+DEBUG    app.auth.tokens:tokens.py:127 tokens.jwt_key.cache_cleared
+-------------------------------- live log call ---------------------------------
+DEBUG    app.auth.tokens:tokens.py:198 tokens.encode_access.start sub=35d98346-cb98-4676-bba5-88c04ff99dda ttl=1800s
+DEBUG    app.auth.tokens:tokens.py:108 tokens.jwt_key.resolved bytes=48
+DEBUG    app.auth.tokens:tokens.py:200 tokens.encode_access.done sub=35d98346-cb98-4676-bba5-88c04ff99dda exp=2026-05-13T10:14:49.930917+00:00
+DEBUG    app.auth.tokens:tokens.py:270 tokens.decode.start
+DEBUG    app.auth.tokens:tokens.py:287 tokens.decode.ok sub=35d98346-cb98-4676-bba5-88c04ff99dda
+PASSED
+------------------------------ live log teardown -------------------------------
+DEBUG    app.auth.tokens:tokens.py:127 tokens.jwt_key.cache_cleared
+
+
+============================== 1 passed in 0.51s ===============================

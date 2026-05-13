@@ -1,0 +1,11 @@
+============================= test session starts ==============================
+collecting ... collected 6 items
+
+tests/unit/test_auth_tokens.py::test_encode_then_decode_roundtrip_with_env_set PASSED [ 16%]
+tests/unit/test_auth_tokens.py::test_decode_works_after_module_import_with_empty_env PASSED [ 33%]
+tests/unit/test_auth_tokens.py::test_encode_raises_runtime_error_when_jwt_key_missing PASSED [ 50%]
+tests/unit/test_auth_tokens.py::test_get_jwt_key_raises_runtime_error_on_empty_string PASSED [ 66%]
+tests/unit/test_auth_tokens.py::test_jwt_key_getter_is_cached PASSED     [ 83%]
+tests/unit/test_auth_tokens.py::test_clear_jwt_key_cache_allows_env_rotation PASSED [100%]
+
+============================== 6 passed in 0.60s ===============================

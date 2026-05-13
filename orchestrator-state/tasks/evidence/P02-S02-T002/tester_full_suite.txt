@@ -1,0 +1,1834 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.5, pytest-9.0.2, pluggy-1.6.0 -- /usr/local/bin/python3
+cachedir: .pytest_cache
+rootdir: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend
+configfile: pyproject.toml
+plugins: httpx-0.36.0, asyncio-1.3.0, langsmith-0.8.3, anyio-4.13.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 250 items
+
+tests/integration/test_admin_ai.py::test_T01_get_providers_admin_200 FAILED [  0%]
+tests/integration/test_admin_ai.py::test_T02_get_providers_employee_403 FAILED [  0%]
+tests/integration/test_admin_ai.py::test_T03_get_providers_no_bearer_401 FAILED [  1%]
+tests/integration/test_admin_ai.py::test_T04_get_providers_has_credentials FAILED [  1%]
+tests/integration/test_admin_ai.py::test_T05_post_provider_creates_encrypted_credential FAILED [  2%]
+tests/integration/test_admin_ai.py::test_T06_post_provider_invalid_type_422 FAILED [  2%]
+tests/integration/test_admin_ai.py::test_T07_post_provider_missing_credentials_422 FAILED [  2%]
+tests/integration/test_admin_ai.py::test_T08_post_provider_auth_failures FAILED [  3%]
+tests/integration/test_admin_ai.py::test_T09_post_provider_rate_limit_429 FAILED [  3%]
+tests/integration/test_admin_ai.py::test_T10_post_provider_redis_down_503 FAILED [  4%]
+tests/integration/test_admin_ai.py::test_T11_post_provider_encryption_error_500 FAILED [  4%]
+tests/integration/test_admin_ai.py::test_T12_verbose_logging_no_secret_in_logs PASSED [  4%]
+tests/integration/test_admin_ai.py::test_T13_get_models_admin_200 FAILED [  5%]
+tests/integration/test_admin_ai.py::test_T14_get_models_provider_filter FAILED [  5%]
+tests/integration/test_admin_ai.py::test_T15_get_models_invalid_provider_id_422 FAILED [  6%]
+tests/integration/test_admin_ai.py::test_T16_get_models_auth_failures FAILED [  6%]
+tests/integration/test_admin_ai.py::test_T17_patch_model_enabled FAILED  [  6%]
+tests/integration/test_admin_ai.py::test_T18_patch_model_is_default_clears_previous FAILED [  7%]
+tests/integration/test_admin_ai.py::test_T19_patch_model_empty_payload_400 FAILED [  7%]
+tests/integration/test_admin_ai.py::test_T20_patch_model_not_found_404 FAILED [  8%]
+tests/integration/test_admin_ai.py::test_T21_patch_model_auth_failures FAILED [  8%]
+tests/integration/test_admin_ai.py::test_T22_patch_model_remove_only_default FAILED [  8%]
+tests/integration/test_admin_ai.py::test_T23_request_id_propagated FAILED [  9%]
+tests/integration/test_admin_ai.py::test_T24_response_envelope_shape FAILED [  9%]
+tests/integration/test_admin_ai.py::test_T25_no_test_residue FAILED      [ 10%]
+tests/integration/test_auth_logout.py::test_logout_success_revokes_token_and_clears_cookie PASSED [ 10%]
+tests/integration/test_auth_logout.py::test_logout_no_bearer_returns_401 PASSED [ 10%]
+tests/integration/test_auth_logout.py::test_logout_invalid_bearer_returns_401 PASSED [ 11%]
+tests/integration/test_auth_logout.py::test_logout_expired_bearer_returns_401 PASSED [ 11%]
+tests/integration/test_auth_logout.py::test_logout_no_cookie_returns_401 PASSED [ 12%]
+tests/integration/test_auth_logout.py::test_logout_unknown_cookie_returns_401 PASSED [ 12%]
+tests/integration/test_auth_logout.py::test_logout_expired_cookie_returns_401 PASSED [ 12%]
+tests/integration/test_auth_logout.py::test_logout_revoked_cookie_returns_401 PASSED [ 13%]
+tests/integration/test_auth_logout.py::test_logout_user_mismatch_returns_401 PASSED [ 13%]
+tests/integration/test_auth_logout.py::test_logout_401_body_byte_identical_for_all_failure_reasons PASSED [ 14%]
+tests/integration/test_auth_logout.py::test_logout_does_not_revoke_other_users_tokens PASSED [ 14%]
+tests/integration/test_auth_logout.py::test_logout_request_id_propagated_in_response_header_and_audit PASSED [ 14%]
+tests/integration/test_auth_logout.py::test_logout_no_pii_or_token_value_in_logs PASSED [ 15%]
+tests/integration/test_auth_logout.py::test_logout_audit_row_persists_even_when_main_tx_rolls_back PASSED [ 15%]
+tests/integration/test_auth_logout.py::test_logout_cookie_jar_roundtrip_no_manual_cookie_header PASSED [ 16%]
+tests/integration/test_auth_refresh.py::test_refresh_success_rotates_and_returns_new_access_token PASSED [ 16%]
+tests/integration/test_auth_refresh.py::test_refresh_no_cookie_returns_401_session_expired PASSED [ 16%]
+tests/integration/test_auth_refresh.py::test_refresh_unknown_token_returns_401 PASSED [ 17%]
+tests/integration/test_auth_refresh.py::test_refresh_expired_token_returns_401 PASSED [ 17%]
+tests/integration/test_auth_refresh.py::test_refresh_revoked_token_returns_401 PASSED [ 18%]
+tests/integration/test_auth_refresh.py::test_refresh_inactive_user_returns_401 PASSED [ 18%]
+tests/integration/test_auth_refresh.py::test_refresh_replay_old_token_returns_401 PASSED [ 18%]
+tests/integration/test_auth_refresh.py::test_refresh_concurrent_requests_only_one_wins PASSED [ 19%]
+tests/integration/test_auth_refresh.py::test_refresh_rate_limit_returns_429 PASSED [ 19%]
+tests/integration/test_auth_refresh.py::test_refresh_no_pii_or_token_value_in_logs PASSED [ 20%]
+tests/integration/test_auth_refresh.py::test_refresh_request_id_in_response_header_and_meta PASSED [ 20%]
+tests/integration/test_auth_refresh.py::test_refresh_body_has_no_refresh_token PASSED [ 20%]
+tests/integration/test_auth_refresh.py::test_refresh_new_refresh_hashed_in_db PASSED [ 21%]
+tests/integration/test_auth_refresh.py::test_refresh_401_body_byte_identical_for_all_failure_reasons PASSED [ 21%]
+tests/integration/test_auth_signin.py::test_signin_success_no_mfa PASSED [ 22%]
+tests/integration/test_auth_signin.py::test_signin_mfa_required_branch PASSED [ 22%]
+tests/integration/test_auth_signin.py::test_signin_wrong_password_401_indistinguishable PASSED [ 22%]
+tests/integration/test_auth_signin.py::test_signin_unknown_email_401_indistinguishable PASSED [ 23%]
+tests/integration/test_auth_signin.py::test_signin_unknown_and_wrong_have_same_response_body PASSED [ 23%]
+tests/integration/test_auth_signin.py::test_signin_user_inactive_returns_401 PASSED [ 24%]
+tests/integration/test_auth_signin.py::test_signin_lockout_returns_423_after_threshold PASSED [ 24%]
+tests/integration/test_auth_signin.py::test_signin_invalid_payload_empty_email_400 PASSED [ 24%]
+tests/integration/test_auth_signin.py::test_signin_missing_field_returns_422 PASSED [ 25%]
+tests/integration/test_auth_signin.py::test_signin_rate_limit_429 PASSED [ 25%]
+tests/integration/test_auth_signin.py::test_signin_response_includes_request_id_meta PASSED [ 26%]
+tests/integration/test_auth_signin.py::test_signin_no_pii_in_logs PASSED [ 26%]
+tests/integration/test_auth_signin.py::test_signin_refresh_cookie_attributes PASSED [ 26%]
+tests/integration/test_auth_signin.py::test_signin_refresh_token_hashed_in_db PASSED [ 27%]
+tests/integration/test_auth_signin.py::test_signin_access_token_not_in_cookie PASSED [ 27%]
+tests/integration/test_auth_signin.py::test_signin_response_timing_envelope PASSED [ 28%]
+tests/integration/test_auth_signup.py::test_signup_happy_path_201 PASSED [ 28%]
+tests/integration/test_auth_signup.py::test_signup_non_corporate_email_400 PASSED [ 28%]
+tests/integration/test_auth_signup.py::test_signup_legal_not_accepted_400 PASSED [ 29%]
+tests/integration/test_auth_signup.py::test_signup_missing_full_name_422 PASSED [ 29%]
+tests/integration/test_auth_signup.py::test_signup_duplicate_email_409 PASSED [ 30%]
+tests/integration/test_auth_signup.py::test_signup_password_too_short_400 PASSED [ 30%]
+tests/integration/test_auth_signup.py::test_signup_password_hashed_argon2id PASSED [ 30%]
+tests/integration/test_auth_signup.py::test_signup_logs_no_pii PASSED    [ 31%]
+tests/integration/test_auth_signup.py::test_signup_rate_limit_429 PASSED [ 31%]
+tests/integration/test_chat_conversations.py::test_post_creates_conversation_success FAILED [ 32%]
+tests/integration/test_chat_conversations.py::test_post_without_initial_message_creates_empty_conversation FAILED [ 32%]
+tests/integration/test_chat_conversations.py::test_post_uses_user_preferred_language_when_omitted FAILED [ 32%]
+tests/integration/test_chat_conversations.py::test_post_uses_explicit_language_override FAILED [ 33%]
+tests/integration/test_chat_conversations.py::test_post_rejects_invalid_language FAILED [ 33%]
+tests/integration/test_chat_conversations.py::test_post_unauthenticated_returns_401_anti_enum FAILED [ 34%]
+tests/integration/test_chat_conversations.py::test_get_list_returns_only_own_conversations FAILED [ 34%]
+tests/integration/test_chat_conversations.py::test_get_list_pagination_roundtrip FAILED [ 34%]
+tests/integration/test_chat_conversations.py::test_get_list_pagination_orders_by_updated_at_desc FAILED [ 35%]
+tests/integration/test_chat_conversations.py::test_get_list_empty_returns_empty_envelope FAILED [ 35%]
+tests/integration/test_chat_conversations.py::test_get_list_invalid_cursor_returns_400 FAILED [ 36%]
+tests/integration/test_chat_conversations.py::test_get_detail_returns_full_conversation_with_messages FAILED [ 36%]
+tests/integration/test_chat_conversations.py::test_get_detail_404_when_uuid_not_exists FAILED [ 36%]
+tests/integration/test_chat_conversations.py::test_get_detail_403_when_not_owner FAILED [ 37%]
+tests/integration/test_dev_restart_reset.py::test_db_reset_cycle_exits_zero FAILED [ 37%]
+tests/integration/test_dev_restart_reset.py::test_reset_exits_zero_and_is_idempotent FAILED [ 38%]
+tests/integration/test_mfa.py::test_mfa_verify_happy_path_returns_200_with_access_token_and_cookie PASSED [ 38%]
+tests/integration/test_mfa.py::test_mfa_verify_includes_user_dto_in_data PASSED [ 38%]
+tests/integration/test_mfa.py::test_mfa_verify_writes_refresh_token_row PASSED [ 39%]
+tests/integration/test_mfa.py::test_mfa_verify_writes_success_audit PASSED [ 39%]
+tests/integration/test_mfa.py::test_mfa_verify_expired_challenge_returns_410 PASSED [ 40%]
+tests/integration/test_mfa.py::test_mfa_verify_invalid_signature_returns_401_aggregate PASSED [ 40%]
+tests/integration/test_mfa.py::test_mfa_verify_purpose_mismatch_returns_401_aggregate PASSED [ 40%]
+tests/integration/test_mfa.py::test_mfa_verify_wrong_code_returns_401_aggregate PASSED [ 41%]
+tests/integration/test_mfa.py::test_mfa_verify_user_without_mfa_returns_401_aggregate_with_dummy_verify PASSED [ 41%]
+tests/integration/test_mfa.py::test_mfa_verify_replay_returns_401_aggregate PASSED [ 42%]
+tests/integration/test_mfa.py::test_mfa_verify_invalid_payload_returns_400 PASSED [ 42%]
+tests/integration/test_mfa.py::test_mfa_verify_rate_limit_returns_429_with_retry_after PASSED [ 42%]
+tests/integration/test_mfa.py::test_mfa_verify_user_inactive_returns_401_aggregate PASSED [ 43%]
+tests/integration/test_mfa.py::test_mfa_verify_verbose_logging_silent_when_disabled PASSED [ 43%]
+tests/integration/test_mfa.py::test_mfa_verify_set_cookie_attrs_byte_equal_to_sign_in PASSED [ 44%]
+tests/integration/test_mfa.py::test_mfa_verify_valid_window_accepts_previous_step_code PASSED [ 44%]
+tests/integration/test_migrations_0001_auth.py::test_upgrade_creates_all_9_tables FAILED [ 44%]
+tests/integration/test_migrations_0001_auth.py::test_check_language_constraint_rejects_invalid PASSED [ 45%]
+tests/integration/test_migrations_0001_auth.py::test_unique_email_constraint_rejects_duplicate FAILED [ 45%]
+tests/integration/test_migrations_0001_auth.py::test_on_delete_cascade_removes_child_rows FAILED [ 46%]
+tests/integration/test_migrations_0001_auth.py::test_audit_log_actor_set_null_on_user_delete PASSED [ 46%]
+tests/integration/test_migrations_0001_auth.py::test_downgrade_removes_all_tables FAILED [ 46%]
+tests/integration/test_password_reset.py::test_t01_forgot_existing_user_200_outbox PASSED [ 47%]
+tests/integration/test_password_reset.py::test_t02_forgot_unknown_email_200_no_outbox PASSED [ 47%]
+tests/integration/test_password_reset.py::test_t03_forgot_disabled_user_200_no_outbox PASSED [ 48%]
+tests/integration/test_password_reset.py::test_t04_forgot_malformed_email_400 PASSED [ 48%]
+tests/integration/test_password_reset.py::test_t05_forgot_rate_limit_429 PASSED [ 48%]
+tests/integration/test_password_reset.py::test_t06_forgot_antienum_timing PASSED [ 49%]
+tests/integration/test_password_reset.py::test_t07_forgot_pii_safety PASSED [ 49%]
+tests/integration/test_password_reset.py::test_t08_forgot_verbose_off_silent PASSED [ 50%]
+tests/integration/test_password_reset.py::test_t09_forgot_locale_fallback PASSED [ 50%]
+tests/integration/test_password_reset.py::test_t10_reset_ok PASSED       [ 50%]
+tests/integration/test_password_reset.py::test_t11_reset_unknown_token_410 PASSED [ 51%]
+tests/integration/test_password_reset.py::test_t12_reset_expired_token_410 PASSED [ 51%]
+tests/integration/test_password_reset.py::test_t13_reset_used_token_410_same_body_as_unknown PASSED [ 52%]
+tests/integration/test_password_reset.py::test_t14_reset_weak_password_400 PASSED [ 52%]
+tests/integration/test_password_reset.py::test_t15_reset_concurrency PASSED [ 52%]
+tests/integration/test_password_reset.py::test_t16_reset_revokes_all_sessions PASSED [ 53%]
+tests/integration/test_password_reset.py::test_t17_reset_idempotency PASSED [ 53%]
+tests/integration/test_password_reset.py::test_t18_reset_rate_limit_429 PASSED [ 54%]
+tests/integration/test_password_reset.py::test_t19_reset_pii_safety PASSED [ 54%]
+tests/integration/test_password_reset.py::test_t20_reset_old_password_rejected_new_accepted PASSED [ 54%]
+tests/integration/test_password_reset.py::test_t21_e2e_forgot_extract_reset_signin PASSED [ 55%]
+tests/integration/test_users_me.py::TestGetMeHappyPath::test_get_me_happy_path_returns_full_profile PASSED [ 55%]
+tests/integration/test_users_me.py::TestGetMeAdmin::test_get_me_admin_user_has_null_employee_profile PASSED [ 56%]
+tests/integration/test_users_me.py::TestGetMeAuthFailures::test_get_me_without_authorization_returns_401_aggregate PASSED [ 56%]
+tests/integration/test_users_me.py::TestGetMeAuthFailures::test_get_me_with_expired_access_token_returns_401_aggregate PASSED [ 56%]
+tests/integration/test_users_me.py::TestGetMeAuthFailures::test_get_me_with_invalid_signature_returns_401_aggregate PASSED [ 57%]
+tests/integration/test_users_me.py::TestGetMeAuthFailures::test_get_me_with_mfa_challenge_token_returns_401_aggregate PASSED [ 57%]
+tests/integration/test_users_me.py::TestGetMeAuthFailures::test_get_me_with_unknown_sub_returns_401_aggregate PASSED [ 58%]
+tests/integration/test_users_me.py::TestGetMeAuthFailures::test_get_me_with_inactive_user_returns_401_aggregate PASSED [ 58%]
+tests/integration/test_users_me.py::TestGetMeByteEqualAntiEnum::test_get_me_byte_equal_401_across_5_failure_modes PASSED [ 58%]
+tests/integration/test_users_me.py::TestGetMeNoAudit::test_get_me_does_not_write_audit_log_row PASSED [ 59%]
+tests/integration/test_users_me.py::TestPatchLanguagePersists::test_patch_me_language_to_en_persists PASSED [ 59%]
+tests/integration/test_users_me.py::TestPatchLanguagePersists::test_patch_me_language_to_fr_persists PASSED [ 60%]
+tests/integration/test_users_me.py::TestPatchLanguagePersists::test_patch_me_language_to_es_persists PASSED [ 60%]
+tests/integration/test_users_me.py::TestPatchLanguageAudit::test_patch_me_language_writes_audit_log PASSED [ 60%]
+tests/integration/test_users_me.py::TestPatchLanguageIdempotent::test_patch_me_language_idempotent_no_op PASSED [ 61%]
+tests/integration/test_users_me.py::TestPatchLanguageValidation::test_patch_me_language_invalid_value_returns_400_field_error PASSED [ 61%]
+tests/integration/test_users_me.py::TestPatchLanguageValidation::test_patch_me_language_empty_string_returns_400 PASSED [ 62%]
+tests/integration/test_users_me.py::TestPatchLanguageValidation::test_patch_me_language_null_returns_400 PASSED [ 62%]
+tests/integration/test_users_me.py::TestPatchLanguageValidation::test_patch_me_language_missing_field_returns_400 PASSED [ 62%]
+tests/integration/test_users_me.py::TestPatchLanguageValidation::test_patch_me_language_extra_field_returns_400 PASSED [ 63%]
+tests/integration/test_users_me.py::TestPatchLanguageValidation::test_patch_me_language_uppercase_returns_400 PASSED [ 63%]
+tests/integration/test_users_me.py::TestPatchLanguageAuthFailures::test_patch_me_language_without_authorization_returns_401 PASSED [ 64%]
+tests/integration/test_users_me.py::TestPatchLanguageAuthFailures::test_patch_me_language_with_inactive_user_returns_401 PASSED [ 64%]
+tests/integration/test_users_me.py::TestPatchLanguageNoPII::test_patch_me_language_audit_no_pii PASSED [ 64%]
+tests/integration/test_users_me.py::TestPatchLanguageUpdatedAt::test_patch_me_language_updates_updated_at PASSED [ 65%]
+tests/integration/test_users_me.py::TestLoggingSilent::test_get_me_silent_when_verbose_disabled PASSED [ 65%]
+tests/integration/test_users_me.py::TestLoggingSilent::test_patch_me_language_silent_when_verbose_disabled PASSED [ 66%]
+tests/integration/test_users_me.py::TestGetMeSecurityShape::test_get_me_response_excludes_password_hash PASSED [ 66%]
+tests/integration/test_users_me.py::TestGetMeSecurityShape::test_get_me_response_excludes_extra_metadata PASSED [ 66%]
+tests/integration/test_users_me.py::TestGetMeSecurityShape::test_get_me_uses_real_seeded_data PASSED [ 67%]
+tests/integration/test_users_me.py::TestPatchLanguageAuditCount::test_patch_me_language_audit_count_doubles_on_repeat PASSED [ 67%]
+tests/integration/test_verification_data_bootstrap.py::test_idempotency_two_runs_same_state PASSED [ 68%]
+tests/integration/test_verification_data_bootstrap.py::test_missing_dir_fails_with_clear_error PASSED [ 68%]
+tests/integration/test_verification_data_bootstrap.py::test_missing_required_field_fails_with_field_name PASSED [ 68%]
+tests/integration/test_verification_data_bootstrap.py::test_only_flag_filters_groups PASSED [ 69%]
+tests/integration/test_verification_data_bootstrap.py::test_invalid_only_flag_lists_valid_choices PASSED [ 69%]
+tests/integration/test_verification_data_bootstrap.py::test_dry_run_does_not_touch_db PASSED [ 70%]
+tests/integration/test_verification_data_bootstrap.py::test_deferred_groups_log_warn_when_tables_missing PASSED [ 70%]
+tests/integration/test_verification_data_bootstrap.py::test_redaction_in_logs_no_password_no_token PASSED [ 70%]
+tests/integration/test_verification_data_bootstrap.py::test_verbose_off_no_info_logs PASSED [ 71%]
+tests/test_dependency_smoke.py::test_dependency_smoke[pypdf-pypdf-__version__] PASSED [ 71%]
+tests/test_dependency_smoke.py::test_dependency_smoke[python-docx-docx-__version__] PASSED [ 72%]
+tests/test_dependency_smoke.py::test_dependency_smoke[celery-celery-__version__] PASSED [ 72%]
+tests/test_dependency_smoke.py::test_dependency_smoke[redis-redis-__version__] PASSED [ 72%]
+tests/test_dependency_smoke.py::test_dependency_smoke[resend-resend-__version__] PASSED [ 73%]
+tests/test_dependency_smoke.py::test_dependency_smoke[structlog-structlog-None] PASSED [ 73%]
+tests/test_dependency_smoke.py::test_dependency_smoke[prometheus-client-prometheus_client-__version__] PASSED [ 74%]
+tests/test_dependency_smoke.py::test_dependency_smoke[boto3-boto3-__version__] PASSED [ 74%]
+tests/test_dependency_smoke.py::test_dependency_smoke[pgvector-pgvector-None] PASSED [ 74%]
+tests/test_dependency_smoke.py::test_dependency_smoke[litellm-litellm-None] PASSED [ 75%]
+tests/test_dependency_smoke.py::test_dependency_smoke[langchain-langchain-__version__] PASSED [ 75%]
+tests/test_dependency_smoke.py::test_dependency_smoke[langchain-core-langchain_core-__version__] PASSED [ 76%]
+tests/test_dependency_smoke.py::test_dependency_smoke[langchain-community-langchain_community-__version__] PASSED [ 76%]
+tests/test_dependency_smoke.py::test_dependency_smoke[langchain-text-splitters-langchain_text_splitters-None] PASSED [ 76%]
+tests/test_dependency_smoke.py::test_dependency_smoke[langgraph-langgraph-None] PASSED [ 77%]
+tests/test_dependency_smoke.py::test_dependency_smoke[deepagents-deepagents-None] PASSED [ 77%]
+tests/test_dependency_smoke.py::test_dependency_smoke[mcp-mcp-None] PASSED [ 78%]
+tests/test_dependency_smoke.py::test_dependency_smoke[tiktoken-tiktoken-None] PASSED [ 78%]
+tests/test_dependency_smoke.py::test_dependency_smoke[sqlalchemy-sqlalchemy-__version__] PASSED [ 78%]
+tests/test_dependency_smoke.py::test_dependency_smoke[alembic-alembic-__version__] PASSED [ 79%]
+tests/test_health.py::test_legacy_health_still_returns_200 PASSED        [ 79%]
+tests/test_health.py::test_health_envelope_shape PASSED                  [ 80%]
+tests/test_health.py::test_health_live_returns_200_ok PASSED             [ 80%]
+tests/test_health.py::test_health_ready_returns_200_when_all_ok PASSED   [ 80%]
+tests/test_health.py::test_health_ready_returns_503_when_db_degraded PASSED [ 81%]
+tests/test_health.py::test_health_ready_returns_503_when_redis_connection_error PASSED [ 81%]
+tests/test_health.py::test_health_ready_returns_503_when_redis_timeout PASSED [ 82%]
+tests/test_health.py::test_health_ready_returns_503_when_both_degraded PASSED [ 82%]
+tests/test_health.py::test_health_ready_body_includes_litellm_unknown PASSED [ 82%]
+tests/test_health.py::test_logging_verbose_mode_logs_before_after PASSED [ 83%]
+tests/test_health.py::test_logging_quiet_mode_suppresses_info PASSED     [ 83%]
+tests/test_migrations_0002_ai_chat_rag_mcp.py::test_upgrade_creates_all_33_tables FAILED [ 84%]
+tests/test_migrations_0002_ai_chat_rag_mcp.py::test_vector_extension_loaded FAILED [ 84%]
+tests/test_migrations_0002_ai_chat_rag_mcp.py::test_embedding_column_is_vector_1536 FAILED [ 84%]
+tests/test_migrations_0002_ai_chat_rag_mcp.py::test_upgrade_creates_hnsw_index FAILED [ 85%]
+tests/test_migrations_0002_ai_chat_rag_mcp.py::test_conversations_user_updated_idx_exists FAILED [ 85%]
+tests/test_migrations_0002_ai_chat_rag_mcp.py::test_messages_conversation_created_idx_exists FAILED [ 86%]
+tests/test_migrations_0002_ai_chat_rag_mcp.py::test_cascade_conversations_to_users PASSED [ 86%]
+tests/test_migrations_0002_ai_chat_rag_mcp.py::test_cascade_messages_to_conversations PASSED [ 86%]
+tests/test_migrations_0002_ai_chat_rag_mcp.py::test_cascade_chunks_to_documents PASSED [ 87%]
+tests/test_migrations_0002_ai_chat_rag_mcp.py::test_cascade_embeddings_to_chunks PASSED [ 87%]
+tests/test_migrations_0002_ai_chat_rag_mcp.py::test_set_null_llm_usage_logs PASSED [ 88%]
+tests/test_migrations_0002_ai_chat_rag_mcp.py::test_cascade_mcp_tools_to_servers PASSED [ 88%]
+tests/test_migrations_0002_ai_chat_rag_mcp.py::test_cascade_agent_bindings PASSED [ 88%]
+tests/test_migrations_0002_ai_chat_rag_mcp.py::test_downgrade_drops_24_tables_preserves_auth PASSED [ 89%]
+tests/test_migrations_0002_ai_chat_rag_mcp.py::test_idempotent_upgrade_downgrade_upgrade PASSED [ 89%]
+tests/test_migrations_0002_ai_chat_rag_mcp.py::test_documents_language_check_constraint PASSED [ 90%]
+tests/test_migrations_0002_ai_chat_rag_mcp.py::test_conversations_language_check_constraint PASSED [ 90%]
+tests/unit/test_auth_tokens.py::test_encode_then_decode_roundtrip_with_env_set PASSED [ 90%]
+tests/unit/test_auth_tokens.py::test_decode_works_after_module_import_with_empty_env PASSED [ 91%]
+tests/unit/test_auth_tokens.py::test_encode_raises_runtime_error_when_jwt_key_missing PASSED [ 91%]
+tests/unit/test_auth_tokens.py::test_get_jwt_key_raises_runtime_error_on_empty_string PASSED [ 92%]
+tests/unit/test_auth_tokens.py::test_jwt_key_getter_is_cached PASSED     [ 92%]
+tests/unit/test_auth_tokens.py::test_clear_jwt_key_cache_allows_env_rotation PASSED [ 92%]
+tests/unit/test_security.py::TestEncryption::test_encrypt_decrypt_roundtrip_plain_text PASSED [ 93%]
+tests/unit/test_security.py::TestEncryption::test_encrypt_produces_different_ciphertexts_for_same_plaintext PASSED [ 93%]
+tests/unit/test_security.py::TestEncryption::test_encrypt_ciphertext_is_not_plaintext PASSED [ 94%]
+tests/unit/test_security.py::TestEncryption::test_encryption_key_missing_raises PASSED [ 94%]
+tests/unit/test_security.py::TestEncryption::test_encryption_key_placeholder_raises PASSED [ 94%]
+tests/unit/test_security.py::TestEncryption::test_decrypt_invalid_token_raises_typed_error PASSED [ 95%]
+tests/unit/test_security.py::TestPermissions::test_require_user_returns_401_when_no_bearer PASSED [ 95%]
+tests/unit/test_security.py::TestPermissions::test_require_role_returns_401_when_no_bearer PASSED [ 96%]
+tests/unit/test_security.py::TestPermissions::test_require_admin_returns_403_when_authenticated_but_missing_role FAILED [ 96%]
+tests/unit/test_security.py::TestPermissions::test_require_admin_returns_200_for_people_admin_user FAILED [ 96%]
+tests/unit/test_security.py::TestPermissions::test_require_admin_also_grants_super_admin FAILED [ 97%]
+tests/unit/test_security.py::TestPermissions::test_require_role_factory_composes_multi_role_users FAILED [ 97%]
+tests/unit/test_security.py::TestRateLimit::test_rate_limit_allows_under_burst PASSED [ 98%]
+tests/unit/test_security.py::TestRateLimit::test_rate_limit_blocks_when_burst_exhausted PASSED [ 98%]
+tests/unit/test_security.py::TestRateLimit::test_rate_limit_resets_after_window_expires PASSED [ 98%]
+tests/unit/test_security.py::TestRateLimit::test_rate_limit_per_ip_isolation PASSED [ 99%]
+tests/unit/test_security.py::TestRateLimit::test_rate_limit_per_prefix_isolation PASSED [ 99%]
+tests/unit/test_security.py::TestRateLimit::test_rate_limit_logs_warning_on_exceeded_and_debug_under_verbose PASSED [100%]
+
+=================================== FAILURES ===================================
+_______________________ test_T01_get_providers_admin_200 _______________________
+tests/integration/test_admin_ai.py:353: in test_T01_get_providers_admin_200
+    assert resp.status_code == 200
+E   assert 404 == 200
+E    +  where 404 = <Response [404 Not Found]>.status_code
+_____________________ test_T02_get_providers_employee_403 ______________________
+tests/integration/test_admin_ai.py:374: in test_T02_get_providers_employee_403
+    assert resp.status_code == 403
+E   assert 404 == 403
+E    +  where 404 = <Response [404 Not Found]>.status_code
+_____________________ test_T03_get_providers_no_bearer_401 _____________________
+tests/integration/test_admin_ai.py:385: in test_T03_get_providers_no_bearer_401
+    assert resp.status_code == 401
+E   assert 404 == 401
+E    +  where 404 = <Response [404 Not Found]>.status_code
+____________________ test_T04_get_providers_has_credentials ____________________
+tests/integration/test_admin_ai.py:400: in test_T04_get_providers_has_credentials
+    provider = _create_test_provider(token)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/integration/test_admin_ai.py:247: in _create_test_provider
+    assert resp.status_code == 201, f"Create provider failed: {resp.text}"
+E   AssertionError: Create provider failed: {"detail":"Not Found"}
+E   assert 404 == 201
+E    +  where 404 = <Response [404 Not Found]>.status_code
+_____________ test_T05_post_provider_creates_encrypted_credential ______________
+tests/integration/test_admin_ai.py:441: in test_T05_post_provider_creates_encrypted_credential
+    assert resp.status_code == 201, resp.text
+E   AssertionError: {"detail":"Not Found"}
+E   assert 404 == 201
+E    +  where 404 = <Response [404 Not Found]>.status_code
+___________________ test_T06_post_provider_invalid_type_422 ____________________
+tests/integration/test_admin_ai.py:516: in test_T06_post_provider_invalid_type_422
+    assert resp.status_code == 422
+E   assert 404 == 422
+E    +  where 404 = <Response [404 Not Found]>.status_code
+________________ test_T07_post_provider_missing_credentials_422 ________________
+tests/integration/test_admin_ai.py:536: in test_T07_post_provider_missing_credentials_422
+    assert resp.status_code == 422
+E   assert 404 == 422
+E    +  where 404 = <Response [404 Not Found]>.status_code
+_____________________ test_T08_post_provider_auth_failures _____________________
+tests/integration/test_admin_ai.py:558: in test_T08_post_provider_auth_failures
+    assert resp_403.status_code == 403
+E   assert 404 == 403
+E    +  where 404 = <Response [404 Not Found]>.status_code
+____________________ test_T09_post_provider_rate_limit_429 _____________________
+tests/integration/test_admin_ai.py:608: in test_T09_post_provider_rate_limit_429
+    assert last_status == 429, f"Expected 429 after 21 requests, got {last_status}"
+E   AssertionError: Expected 429 after 21 requests, got 404
+E   assert 404 == 429
+____________________ test_T10_post_provider_redis_down_503 _____________________
+tests/integration/test_admin_ai.py:638: in test_T10_post_provider_redis_down_503
+    assert resp.status_code == 503
+E   assert 404 == 503
+E    +  where 404 = <Response [404 Not Found]>.status_code
+_________________ test_T11_post_provider_encryption_error_500 __________________
+tests/integration/test_admin_ai.py:670: in test_T11_post_provider_encryption_error_500
+    assert resp.status_code == 500
+E   assert 404 == 500
+E    +  where 404 = <Response [404 Not Found]>.status_code
+________________________ test_T13_get_models_admin_200 _________________________
+tests/integration/test_admin_ai.py:742: in test_T13_get_models_admin_200
+    assert resp.status_code == 200
+E   assert 404 == 200
+E    +  where 404 = <Response [404 Not Found]>.status_code
+_____________________ test_T14_get_models_provider_filter ______________________
+tests/integration/test_admin_ai.py:760: in test_T14_get_models_provider_filter
+    provider = _create_test_provider(token)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/integration/test_admin_ai.py:247: in _create_test_provider
+    assert resp.status_code == 201, f"Create provider failed: {resp.text}"
+E   AssertionError: Create provider failed: {"detail":"Not Found"}
+E   assert 404 == 201
+E    +  where 404 = <Response [404 Not Found]>.status_code
+_________________ test_T15_get_models_invalid_provider_id_422 __________________
+tests/integration/test_admin_ai.py:797: in test_T15_get_models_invalid_provider_id_422
+    assert resp.status_code == 422
+E   assert 404 == 422
+E    +  where 404 = <Response [404 Not Found]>.status_code
+______________________ test_T16_get_models_auth_failures _______________________
+tests/integration/test_admin_ai.py:813: in test_T16_get_models_auth_failures
+    assert resp_403.status_code == 403
+E   assert 404 == 403
+E    +  where 404 = <Response [404 Not Found]>.status_code
+_________________________ test_T17_patch_model_enabled _________________________
+tests/integration/test_admin_ai.py:828: in test_T17_patch_model_enabled
+    provider = _create_test_provider(token)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/integration/test_admin_ai.py:247: in _create_test_provider
+    assert resp.status_code == 201, f"Create provider failed: {resp.text}"
+E   AssertionError: Create provider failed: {"detail":"Not Found"}
+E   assert 404 == 201
+E    +  where 404 = <Response [404 Not Found]>.status_code
+_______________ test_T18_patch_model_is_default_clears_previous ________________
+tests/integration/test_admin_ai.py:880: in test_T18_patch_model_is_default_clears_previous
+    provider = _create_test_provider(token)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/integration/test_admin_ai.py:247: in _create_test_provider
+    assert resp.status_code == 201, f"Create provider failed: {resp.text}"
+E   AssertionError: Create provider failed: {"detail":"Not Found"}
+E   assert 404 == 201
+E    +  where 404 = <Response [404 Not Found]>.status_code
+____________________ test_T19_patch_model_empty_payload_400 ____________________
+tests/integration/test_admin_ai.py:940: in test_T19_patch_model_empty_payload_400
+    provider = _create_test_provider(token)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/integration/test_admin_ai.py:247: in _create_test_provider
+    assert resp.status_code == 201, f"Create provider failed: {resp.text}"
+E   AssertionError: Create provider failed: {"detail":"Not Found"}
+E   assert 404 == 201
+E    +  where 404 = <Response [404 Not Found]>.status_code
+______________________ test_T20_patch_model_not_found_404 ______________________
+tests/integration/test_admin_ai.py:970: in test_T20_patch_model_not_found_404
+    assert any(e["code"] == "AI_MODEL_NOT_FOUND" for e in body["errors"])
+                                                          ^^^^^^^^^^^^^^
+E   KeyError: 'errors'
+______________________ test_T21_patch_model_auth_failures ______________________
+tests/integration/test_admin_ai.py:981: in test_T21_patch_model_auth_failures
+    provider = _create_test_provider(admin_token)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/integration/test_admin_ai.py:247: in _create_test_provider
+    assert resp.status_code == 201, f"Create provider failed: {resp.text}"
+E   AssertionError: Create provider failed: {"detail":"Not Found"}
+E   assert 404 == 201
+E    +  where 404 = <Response [404 Not Found]>.status_code
+___________________ test_T22_patch_model_remove_only_default ___________________
+tests/integration/test_admin_ai.py:1011: in test_T22_patch_model_remove_only_default
+    provider = _create_test_provider(token)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/integration/test_admin_ai.py:247: in _create_test_provider
+    assert resp.status_code == 201, f"Create provider failed: {resp.text}"
+E   AssertionError: Create provider failed: {"detail":"Not Found"}
+E   assert 404 == 201
+E    +  where 404 = <Response [404 Not Found]>.status_code
+________________________ test_T23_request_id_propagated ________________________
+tests/integration/test_admin_ai.py:1047: in test_T23_request_id_propagated
+    assert resp.status_code == 200
+E   assert 404 == 200
+E    +  where 404 = <Response [404 Not Found]>.status_code
+_______________________ test_T24_response_envelope_shape _______________________
+tests/integration/test_admin_ai.py:1063: in test_T24_response_envelope_shape
+    assert resp.status_code == 200
+E   assert 404 == 200
+E    +  where 404 = <Response [404 Not Found]>.status_code
+___________________________ test_T25_no_test_residue ___________________________
+tests/integration/test_admin_ai.py:1114: in test_T25_no_test_residue
+    assert resp.status_code == 201
+E   assert 404 == 201
+E    +  where 404 = <Response [404 Not Found]>.status_code
+____________________ test_post_creates_conversation_success ____________________
+tests/integration/test_chat_conversations.py:256: in test_post_creates_conversation_success
+    assert resp.status_code == 201, resp.text
+E   AssertionError: {"detail":"Not Found"}
+E   assert 404 == 201
+E    +  where 404 = <Response [404 Not Found]>.status_code
+_________ test_post_without_initial_message_creates_empty_conversation _________
+tests/integration/test_chat_conversations.py:297: in test_post_without_initial_message_creates_empty_conversation
+    assert resp.status_code == 201, resp.text
+E   AssertionError: {"detail":"Not Found"}
+E   assert 404 == 201
+E    +  where 404 = <Response [404 Not Found]>.status_code
+_____________ test_post_uses_user_preferred_language_when_omitted ______________
+tests/integration/test_chat_conversations.py:327: in test_post_uses_user_preferred_language_when_omitted
+    assert resp.status_code == 201, resp.text
+E   AssertionError: {"detail":"Not Found"}
+E   assert 404 == 201
+E    +  where 404 = <Response [404 Not Found]>.status_code
+__________________ test_post_uses_explicit_language_override ___________________
+tests/integration/test_chat_conversations.py:352: in test_post_uses_explicit_language_override
+    assert resp.status_code == 201, resp.text
+E   AssertionError: {"detail":"Not Found"}
+E   assert 404 == 201
+E    +  where 404 = <Response [404 Not Found]>.status_code
+______________________ test_post_rejects_invalid_language ______________________
+tests/integration/test_chat_conversations.py:384: in test_post_rejects_invalid_language
+    assert resp.status_code == 400, resp.text
+E   AssertionError: {"detail":"Not Found"}
+E   assert 404 == 400
+E    +  where 404 = <Response [404 Not Found]>.status_code
+_______________ test_post_unauthenticated_returns_401_anti_enum ________________
+tests/integration/test_chat_conversations.py:402: in test_post_unauthenticated_returns_401_anti_enum
+    assert resp.status_code == 401, resp.text
+E   AssertionError: {"detail":"Not Found"}
+E   assert 404 == 401
+E    +  where 404 = <Response [404 Not Found]>.status_code
+_________________ test_get_list_returns_only_own_conversations _________________
+tests/integration/test_chat_conversations.py:422: in test_get_list_returns_only_own_conversations
+    assert resp.status_code == 200, resp.text
+E   AssertionError: {"detail":"Not Found"}
+E   assert 404 == 200
+E    +  where 404 = <Response [404 Not Found]>.status_code
+______________________ test_get_list_pagination_roundtrip ______________________
+tests/integration/test_chat_conversations.py:452: in test_get_list_pagination_roundtrip
+    assert resp1.status_code == 200, resp1.text
+E   AssertionError: {"detail":"Not Found"}
+E   assert 404 == 200
+E    +  where 404 = <Response [404 Not Found]>.status_code
+______________ test_get_list_pagination_orders_by_updated_at_desc ______________
+tests/integration/test_chat_conversations.py:502: in test_get_list_pagination_orders_by_updated_at_desc
+    assert resp.status_code == 200, resp.text
+E   AssertionError: {"detail":"Not Found"}
+E   assert 404 == 200
+E    +  where 404 = <Response [404 Not Found]>.status_code
+__________________ test_get_list_empty_returns_empty_envelope __________________
+tests/integration/test_chat_conversations.py:524: in test_get_list_empty_returns_empty_envelope
+    assert resp.status_code == 200, resp.text
+E   AssertionError: {"detail":"Not Found"}
+E   assert 404 == 200
+E    +  where 404 = <Response [404 Not Found]>.status_code
+___________________ test_get_list_invalid_cursor_returns_400 ___________________
+tests/integration/test_chat_conversations.py:543: in test_get_list_invalid_cursor_returns_400
+    assert resp.status_code == 400, resp.text
+E   AssertionError: {"detail":"Not Found"}
+E   assert 404 == 400
+E    +  where 404 = <Response [404 Not Found]>.status_code
+___________ test_get_detail_returns_full_conversation_with_messages ____________
+tests/integration/test_chat_conversations.py:591: in test_get_detail_returns_full_conversation_with_messages
+    assert resp.status_code == 200, resp.text
+E   AssertionError: {"detail":"Not Found"}
+E   assert 404 == 200
+E    +  where 404 = <Response [404 Not Found]>.status_code
+___________________ test_get_detail_404_when_uuid_not_exists ___________________
+tests/integration/test_chat_conversations.py:623: in test_get_detail_404_when_uuid_not_exists
+    assert body["errors"][0]["code"] == "CHAT_CONVERSATION_NOT_FOUND"
+           ^^^^^^^^^^^^^^
+E   KeyError: 'errors'
+______________________ test_get_detail_403_when_not_owner ______________________
+tests/integration/test_chat_conversations.py:642: in test_get_detail_403_when_not_owner
+    assert resp.status_code == 403, resp.text
+E   AssertionError: {"detail":"Not Found"}
+E   assert 404 == 403
+E    +  where 404 = <Response [404 Not Found]>.status_code
+________________________ test_db_reset_cycle_exits_zero ________________________
+tests/integration/test_dev_restart_reset.py:96: in test_db_reset_cycle_exits_zero
+    assert r2.returncode == 0, (
+E   AssertionError: alembic upgrade head failed (exit 1).
+E     stdout: 
+E     stderr: Traceback (most recent call last):
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+E         self.dialect.do_execute(
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+E         cursor.execute(statement, parameters)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py", line 117, in execute
+E         raise ex.with_traceback(None)
+E     psycopg.errors.DuplicateTable: relation "users" already exists
+E     
+E     The above exception was the direct cause of the following exception:
+E     
+E     Traceback (most recent call last):
+E       File "/Users/sergiolr/Library/Python/3.11/bin/alembic", line 8, in <module>
+E         sys.exit(main())
+E                  ^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/config.py", line 1047, in main
+E         CommandLine(prog=prog).main(argv=argv)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/config.py", line 1037, in main
+E         self.run_cmd(cfg, options)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/config.py", line 971, in run_cmd
+E         fn(
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/command.py", line 483, in upgrade
+E         script.run_env()
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/script/base.py", line 545, in run_env
+E         util.load_python_file(self.dir, "env.py")
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/util/pyfiles.py", line 116, in load_python_file
+E         module = load_module_py(module_id, path)
+E                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/util/pyfiles.py", line 136, in load_module_py
+E         spec.loader.exec_module(module)  # type: ignore
+E         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+E       File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+E       File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/alembic/env.py", line 135, in <module>
+E         run_migrations_online()
+E       File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/alembic/env.py", line 128, in run_migrations_online
+E         context.run_migrations()
+E       File "<string>", line 8, in run_migrations
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/runtime/environment.py", line 969, in run_migrations
+E         self.get_context().run_migrations(**kw)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/runtime/migration.py", line 626, in run_migrations
+E         step.migration_fn(**kw)
+E       File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/alembic/versions/0001_auth_users_employee_audit.py", line 80, in upgrade
+E         op.create_table(
+E       File "<string>", line 8, in create_table
+E       File "<string>", line 3, in create_table
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/operations/ops.py", line 1331, in create_table
+E         return operations.invoke(op)
+E                ^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/operations/base.py", line 452, in invoke
+E         return fn(self, operation)
+E                ^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/operations/toimpl.py", line 140, in create_table
+E         operations.impl.create_table(table, **kw)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/ddl/impl.py", line 442, in create_table
+E         self._exec(schema.CreateTable(table, **kw))
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/ddl/impl.py", line 256, in _exec
+E         return conn.execute(construct, params)
+E                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1419, in execute
+E         return meth(
+E                ^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/sql/ddl.py", line 187, in _execute_on_connection
+E         return connection._execute_ddl(
+E                ^^^^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1530, in _execute_ddl
+E         ret = self._execute_context(
+E               ^^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+E         return self._exec_single_context(
+E                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+E         self._handle_dbapi_exception(
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 2363, in _handle_dbapi_exception
+E         raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+E         self.dialect.do_execute(
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+E         cursor.execute(statement, parameters)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py", line 117, in execute
+E         raise ex.with_traceback(None)
+E     sqlalchemy.exc.ProgrammingError: (psycopg.errors.DuplicateTable) relation "users" already exists
+E     [SQL: 
+E     CREATE TABLE users (
+E     	id UUID DEFAULT gen_random_uuid() NOT NULL, 
+E     	email TEXT NOT NULL, 
+E     	password_hash TEXT NOT NULL, 
+E     	full_name TEXT NOT NULL, 
+E     	status TEXT DEFAULT 'active' NOT NULL, 
+E     	preferred_language TEXT DEFAULT 'es' NOT NULL, 
+E     	created_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL, 
+E     	updated_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL, 
+E     	CONSTRAINT pk_users PRIMARY KEY (id), 
+E     	CONSTRAINT users_email_key UNIQUE (email), 
+E     	CONSTRAINT ck_users_users_language_chk CHECK (preferred_language IN ('es','en','fr'))
+E     )
+E     
+E     ]
+E     (Background on this error at: https://sqlalche.me/e/20/f405)
+E     
+E   assert 1 == 0
+E    +  where 1 = CompletedProcess(args=['/Users/sergiolr/Library/Python/3.11/bin/alembic', 'upgrade', 'head'], returncode=1, stdout='', stderr='Traceback (most recent call last):\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context\n    self.dialect.do_execute(\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute\n    cursor.execute(statement, parameters)\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py", line 117, in execute\n    raise ex.with_traceback(None)\npsycopg.errors.DuplicateTable: relation "users" already exists\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File "/Users/sergiolr/Library/Python/3.11/bin/alembic", line 8, in <module>\n    sys.exit(main())\n             ^^^^^^\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/config.py", line 1047, in main\n    CommandLine(prog=prog).main(argv=argv)\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/config.py", line 1037, in main\n.../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context\n    self.dialect.do_execute(\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute\n    cursor.execute(statement, parameters)\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py", line 117, in execute\n    raise ex.with_traceback(None)\nsqlalchemy.exc.ProgrammingError: (psycopg.errors.DuplicateTable) relation "users" already exists\n[SQL: \nCREATE TABLE users (\n\tid UUID DEFAULT gen_random_uuid() NOT NULL, \n\temail TEXT NOT NULL, \n\tpassword_hash TEXT NOT NULL, \n\tfull_name TEXT NOT NULL, \n\tstatus TEXT DEFAULT \'active\' NOT NULL, \n\tpreferred_language TEXT DEFAULT \'es\' NOT NULL, \n\tcreated_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL, \n\tupdated_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL, \n\tCONSTRAINT pk_users PRIMARY KEY (id), \n\tCONSTRAINT users_email_key UNIQUE (email), \n\tCONSTRAINT ck_users_users_language_chk CHECK (preferred_language IN (\'es\',\'en\',\'fr\'))\n)\n\n]\n(Background on this error at: https://sqlalche.me/e/20/f405)\n').returncode
+___________________ test_reset_exits_zero_and_is_idempotent ____________________
+tests/integration/test_dev_restart_reset.py:148: in test_reset_exits_zero_and_is_idempotent
+    assert r2.returncode == 0, (
+E   AssertionError: Run 1 alembic upgrade failed. stderr=Traceback (most recent call last):
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+E         self.dialect.do_execute(
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+E         cursor.execute(statement, parameters)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py", line 117, in execute
+E         raise ex.with_traceback(None)
+E     psycopg.errors.DuplicateTable: relation "users" already exists
+E     
+E     The above exception was the direct cause of the following exception:
+E     
+E     Traceback (most recent call last):
+E       File "/Users/sergiolr/Library/Python/3.11/bin/alembic", line 8, in <module>
+E         sys.exit(main())
+E                  ^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/config.py", line 1047, in main
+E         CommandLine(prog=prog).main(argv=argv)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/config.py", line 1037, in main
+E         self.run_cmd(cfg, options)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/config.py", line 971, in run_cmd
+E         fn(
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/command.py", line 483, in upgrade
+E         script.run_env()
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/script/base.py", line 545, in run_env
+E         util.load_python_file(self.dir, "env.py")
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/util/pyfiles.py", line 116, in load_python_file
+E         module = load_module_py(module_id, path)
+E                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/util/pyfiles.py", line 136, in load_module_py
+E         spec.loader.exec_module(module)  # type: ignore
+E         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+E       File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+E       File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/alembic/env.py", line 135, in <module>
+E         run_migrations_online()
+E       File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/alembic/env.py", line 128, in run_migrations_online
+E         context.run_migrations()
+E       File "<string>", line 8, in run_migrations
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/runtime/environment.py", line 969, in run_migrations
+E         self.get_context().run_migrations(**kw)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/runtime/migration.py", line 626, in run_migrations
+E         step.migration_fn(**kw)
+E       File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/alembic/versions/0001_auth_users_employee_audit.py", line 80, in upgrade
+E         op.create_table(
+E       File "<string>", line 8, in create_table
+E       File "<string>", line 3, in create_table
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/operations/ops.py", line 1331, in create_table
+E         return operations.invoke(op)
+E                ^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/operations/base.py", line 452, in invoke
+E         return fn(self, operation)
+E                ^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/operations/toimpl.py", line 140, in create_table
+E         operations.impl.create_table(table, **kw)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/ddl/impl.py", line 442, in create_table
+E         self._exec(schema.CreateTable(table, **kw))
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/ddl/impl.py", line 256, in _exec
+E         return conn.execute(construct, params)
+E                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1419, in execute
+E         return meth(
+E                ^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/sql/ddl.py", line 187, in _execute_on_connection
+E         return connection._execute_ddl(
+E                ^^^^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1530, in _execute_ddl
+E         ret = self._execute_context(
+E               ^^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+E         return self._exec_single_context(
+E                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+E         self._handle_dbapi_exception(
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 2363, in _handle_dbapi_exception
+E         raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+E         self.dialect.do_execute(
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+E         cursor.execute(statement, parameters)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py", line 117, in execute
+E         raise ex.with_traceback(None)
+E     sqlalchemy.exc.ProgrammingError: (psycopg.errors.DuplicateTable) relation "users" already exists
+E     [SQL: 
+E     CREATE TABLE users (
+E     	id UUID DEFAULT gen_random_uuid() NOT NULL, 
+E     	email TEXT NOT NULL, 
+E     	password_hash TEXT NOT NULL, 
+E     	full_name TEXT NOT NULL, 
+E     	status TEXT DEFAULT 'active' NOT NULL, 
+E     	preferred_language TEXT DEFAULT 'es' NOT NULL, 
+E     	created_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL, 
+E     	updated_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL, 
+E     	CONSTRAINT pk_users PRIMARY KEY (id), 
+E     	CONSTRAINT users_email_key UNIQUE (email), 
+E     	CONSTRAINT ck_users_users_language_chk CHECK (preferred_language IN ('es','en','fr'))
+E     )
+E     
+E     ]
+E     (Background on this error at: https://sqlalche.me/e/20/f405)
+E     
+E   assert 1 == 0
+E    +  where 1 = CompletedProcess(args=['/Users/sergiolr/Library/Python/3.11/bin/alembic', 'upgrade', 'head'], returncode=1, stdout='', stderr='Traceback (most recent call last):\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context\n    self.dialect.do_execute(\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute\n    cursor.execute(statement, parameters)\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py", line 117, in execute\n    raise ex.with_traceback(None)\npsycopg.errors.DuplicateTable: relation "users" already exists\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File "/Users/sergiolr/Library/Python/3.11/bin/alembic", line 8, in <module>\n    sys.exit(main())\n             ^^^^^^\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/config.py", line 1047, in main\n    CommandLine(prog=prog).main(argv=argv)\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/config.py", line 1037, in main\n.../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context\n    self.dialect.do_execute(\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute\n    cursor.execute(statement, parameters)\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py", line 117, in execute\n    raise ex.with_traceback(None)\nsqlalchemy.exc.ProgrammingError: (psycopg.errors.DuplicateTable) relation "users" already exists\n[SQL: \nCREATE TABLE users (\n\tid UUID DEFAULT gen_random_uuid() NOT NULL, \n\temail TEXT NOT NULL, \n\tpassword_hash TEXT NOT NULL, \n\tfull_name TEXT NOT NULL, \n\tstatus TEXT DEFAULT \'active\' NOT NULL, \n\tpreferred_language TEXT DEFAULT \'es\' NOT NULL, \n\tcreated_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL, \n\tupdated_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL, \n\tCONSTRAINT pk_users PRIMARY KEY (id), \n\tCONSTRAINT users_email_key UNIQUE (email), \n\tCONSTRAINT ck_users_users_language_chk CHECK (preferred_language IN (\'es\',\'en\',\'fr\'))\n)\n\n]\n(Background on this error at: https://sqlalche.me/e/20/f405)\n').returncode
+______________________ test_upgrade_creates_all_9_tables _______________________
+tests/integration/test_migrations_0001_auth.py:117: in test_upgrade_creates_all_9_tables
+    assert result.returncode == 0, f"upgrade failed: {result.stderr}"
+E   AssertionError: upgrade failed: INFO  [alembic] alembic.env.online.start
+E     INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+E     INFO  [alembic.runtime.migration] Will assume transactional DDL.
+E     INFO  [alembic.runtime.migration] Running upgrade  -> 0001, 0001 — auth/users/employee_profiles/audit tables baseline.
+E     INFO  [alembic.runtime.migration] 0001.upgrade.start: creating pgcrypto extension and 9 auth tables
+E     INFO  [alembic.runtime.migration] 0001.upgrade: pgcrypto extension ensured
+E     INFO  [alembic.runtime.migration] 0001.upgrade: creating table users
+E     Traceback (most recent call last):
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+E         self.dialect.do_execute(
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+E         cursor.execute(statement, parameters)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py", line 117, in execute
+E         raise ex.with_traceback(None)
+E     psycopg.errors.DuplicateTable: relation "users" already exists
+E     
+E     The above exception was the direct cause of the following exception:
+E     
+E     Traceback (most recent call last):
+E       File "/Users/sergiolr/Library/Python/3.11/bin/alembic", line 8, in <module>
+E         sys.exit(main())
+E                  ^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/config.py", line 1047, in main
+E         CommandLine(prog=prog).main(argv=argv)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/config.py", line 1037, in main
+E         self.run_cmd(cfg, options)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/config.py", line 971, in run_cmd
+E         fn(
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/command.py", line 483, in upgrade
+E         script.run_env()
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/script/base.py", line 545, in run_env
+E         util.load_python_file(self.dir, "env.py")
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/util/pyfiles.py", line 116, in load_python_file
+E         module = load_module_py(module_id, path)
+E                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/util/pyfiles.py", line 136, in load_module_py
+E         spec.loader.exec_module(module)  # type: ignore
+E         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+E       File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+E       File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/alembic/env.py", line 135, in <module>
+E         run_migrations_online()
+E       File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/alembic/env.py", line 128, in run_migrations_online
+E         context.run_migrations()
+E       File "<string>", line 8, in run_migrations
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/runtime/environment.py", line 969, in run_migrations
+E         self.get_context().run_migrations(**kw)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/runtime/migration.py", line 626, in run_migrations
+E         step.migration_fn(**kw)
+E       File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/alembic/versions/0001_auth_users_employee_audit.py", line 80, in upgrade
+E         op.create_table(
+E       File "<string>", line 8, in create_table
+E       File "<string>", line 3, in create_table
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/operations/ops.py", line 1331, in create_table
+E         return operations.invoke(op)
+E                ^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/operations/base.py", line 452, in invoke
+E         return fn(self, operation)
+E                ^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/operations/toimpl.py", line 140, in create_table
+E         operations.impl.create_table(table, **kw)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/ddl/impl.py", line 442, in create_table
+E         self._exec(schema.CreateTable(table, **kw))
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/ddl/impl.py", line 256, in _exec
+E         return conn.execute(construct, params)
+E                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1419, in execute
+E         return meth(
+E                ^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/sql/ddl.py", line 187, in _execute_on_connection
+E         return connection._execute_ddl(
+E                ^^^^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1530, in _execute_ddl
+E         ret = self._execute_context(
+E               ^^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+E         return self._exec_single_context(
+E                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+E         self._handle_dbapi_exception(
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 2363, in _handle_dbapi_exception
+E         raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+E         self.dialect.do_execute(
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+E         cursor.execute(statement, parameters)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py", line 117, in execute
+E         raise ex.with_traceback(None)
+E     sqlalchemy.exc.ProgrammingError: (psycopg.errors.DuplicateTable) relation "users" already exists
+E     [SQL: 
+E     CREATE TABLE users (
+E     	id UUID DEFAULT gen_random_uuid() NOT NULL, 
+E     	email TEXT NOT NULL, 
+E     	password_hash TEXT NOT NULL, 
+E     	full_name TEXT NOT NULL, 
+E     	status TEXT DEFAULT 'active' NOT NULL, 
+E     	preferred_language TEXT DEFAULT 'es' NOT NULL, 
+E     	created_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL, 
+E     	updated_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL, 
+E     	CONSTRAINT pk_users PRIMARY KEY (id), 
+E     	CONSTRAINT users_email_key UNIQUE (email), 
+E     	CONSTRAINT ck_users_users_language_chk CHECK (preferred_language IN ('es','en','fr'))
+E     )
+E     
+E     ]
+E     (Background on this error at: https://sqlalche.me/e/20/f405)
+E     
+E   assert 1 == 0
+E    +  where 1 = CompletedProcess(args=['/Users/sergiolr/Library/Python/3.11/bin/alembic', 'upgrade', 'head'], returncode=1, stdout='', stderr='INFO  [alembic] alembic.env.online.start\nINFO  [alembic.runtime.migration] Context impl PostgresqlImpl.\nINFO  [alembic.runtime.migration] Will assume transactional DDL.\nINFO  [alembic.runtime.migration] Running upgrade  -> 0001, 0001 — auth/users/employee_profiles/audit tables baseline.\nINFO  [alembic.runtime.migration] 0001.upgrade.start: creating pgcrypto extension and 9 auth tables\nINFO  [alembic.runtime.migration] 0001.upgrade: pgcrypto extension ensured\nINFO  [alembic.runtime.migration] 0001.upgrade: creating table users\nTraceback (most recent call last):\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context\n    self.dialect.do_execute(\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute\n    cursor.execute(statement, parameters)\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py", line 117, in execute\n    raise ex.with_traceback(None)\npsycopg.errors.Dupl.../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context\n    self.dialect.do_execute(\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute\n    cursor.execute(statement, parameters)\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py", line 117, in execute\n    raise ex.with_traceback(None)\nsqlalchemy.exc.ProgrammingError: (psycopg.errors.DuplicateTable) relation "users" already exists\n[SQL: \nCREATE TABLE users (\n\tid UUID DEFAULT gen_random_uuid() NOT NULL, \n\temail TEXT NOT NULL, \n\tpassword_hash TEXT NOT NULL, \n\tfull_name TEXT NOT NULL, \n\tstatus TEXT DEFAULT \'active\' NOT NULL, \n\tpreferred_language TEXT DEFAULT \'es\' NOT NULL, \n\tcreated_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL, \n\tupdated_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL, \n\tCONSTRAINT pk_users PRIMARY KEY (id), \n\tCONSTRAINT users_email_key UNIQUE (email), \n\tCONSTRAINT ck_users_users_language_chk CHECK (preferred_language IN (\'es\',\'en\',\'fr\'))\n)\n\n]\n(Background on this error at: https://sqlalche.me/e/20/f405)\n').returncode
+________________ test_unique_email_constraint_rejects_duplicate ________________
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   psycopg.errors.UniqueViolation: duplicate key value violates unique constraint "users_email_key"
+E   DETAIL:  Key (email)=(dup@test.com) already exists.
+
+The above exception was the direct cause of the following exception:
+tests/integration/test_migrations_0001_auth.py:172: in test_unique_email_constraint_rejects_duplicate
+    conn.execute(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1419: in execute
+    return meth(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/sql/elements.py:527: in _execute_on_connection
+    return connection._execute_clauseelement(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1641: in _execute_clauseelement
+    ret = self._execute_context(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1846: in _execute_context
+    return self._exec_single_context(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1986: in _exec_single_context
+    self._handle_dbapi_exception(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:2363: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   sqlalchemy.exc.IntegrityError: (psycopg.errors.UniqueViolation) duplicate key value violates unique constraint "users_email_key"
+E   DETAIL:  Key (email)=(dup@test.com) already exists.
+E   [SQL: INSERT INTO users (email, password_hash, full_name) VALUES (%(email)s, %(pw)s, %(name)s)]
+E   [parameters: {'email': 'dup@test.com', 'pw': 'hash1', 'name': 'User A'}]
+E   (Background on this error at: https://sqlalche.me/e/20/gkpj)
+__________________ test_on_delete_cascade_removes_child_rows ___________________
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   psycopg.errors.UniqueViolation: duplicate key value violates unique constraint "roles_name_key"
+E   DETAIL:  Key (name)=(user) already exists.
+
+The above exception was the direct cause of the following exception:
+tests/integration/test_migrations_0001_auth.py:227: in test_on_delete_cascade_removes_child_rows
+    conn.execute(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1419: in execute
+    return meth(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/sql/elements.py:527: in _execute_on_connection
+    return connection._execute_clauseelement(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1641: in _execute_clauseelement
+    ret = self._execute_context(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1846: in _execute_context
+    return self._exec_single_context(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1986: in _exec_single_context
+    self._handle_dbapi_exception(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:2363: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   sqlalchemy.exc.IntegrityError: (psycopg.errors.UniqueViolation) duplicate key value violates unique constraint "roles_name_key"
+E   DETAIL:  Key (name)=(user) already exists.
+E   [SQL: INSERT INTO roles (id, name) VALUES (%(id)s, %(name)s)]
+E   [parameters: {'id': '1b728962-490e-43dc-ace6-a8a86e3350e9', 'name': 'user'}]
+E   (Background on this error at: https://sqlalche.me/e/20/gkpj)
+______________________ test_downgrade_removes_all_tables _______________________
+tests/integration/test_migrations_0001_auth.py:336: in test_downgrade_removes_all_tables
+    assert result.returncode == 0, f"downgrade failed: {result.stderr}"
+E   AssertionError: downgrade failed: INFO  [alembic] alembic.env.online.start
+E     INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+E     INFO  [alembic.runtime.migration] Will assume transactional DDL.
+E     ERROR [alembic.util.messaging] Relative revision -1 didn't produce 1 migrations
+E     
+E   assert 255 == 0
+E    +  where 255 = CompletedProcess(args=['/Users/sergiolr/Library/Python/3.11/bin/alembic', 'downgrade', '-1'], returncode=255, stdout="FAILED: Relative revision -1 didn't produce 1 migrations\n", stderr="INFO  [alembic] alembic.env.online.start\nINFO  [alembic.runtime.migration] Context impl PostgresqlImpl.\nINFO  [alembic.runtime.migration] Will assume transactional DDL.\nERROR [alembic.util.messaging] Relative revision -1 didn't produce 1 migrations\n").returncode
+______________________ test_upgrade_creates_all_33_tables ______________________
+tests/test_migrations_0002_ai_chat_rag_mcp.py:146: in test_upgrade_creates_all_33_tables
+    assert result.returncode == 0, f"upgrade failed:\n{result.stderr}"
+E   AssertionError: upgrade failed:
+E     Traceback (most recent call last):
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+E         self.dialect.do_execute(
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+E         cursor.execute(statement, parameters)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py", line 117, in execute
+E         raise ex.with_traceback(None)
+E     psycopg.errors.DuplicateTable: relation "users" already exists
+E     
+E     The above exception was the direct cause of the following exception:
+E     
+E     Traceback (most recent call last):
+E       File "/Users/sergiolr/Library/Python/3.11/bin/alembic", line 8, in <module>
+E         sys.exit(main())
+E                  ^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/config.py", line 1047, in main
+E         CommandLine(prog=prog).main(argv=argv)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/config.py", line 1037, in main
+E         self.run_cmd(cfg, options)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/config.py", line 971, in run_cmd
+E         fn(
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/command.py", line 483, in upgrade
+E         script.run_env()
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/script/base.py", line 545, in run_env
+E         util.load_python_file(self.dir, "env.py")
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/util/pyfiles.py", line 116, in load_python_file
+E         module = load_module_py(module_id, path)
+E                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/util/pyfiles.py", line 136, in load_module_py
+E         spec.loader.exec_module(module)  # type: ignore
+E         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+E       File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+E       File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/alembic/env.py", line 135, in <module>
+E         run_migrations_online()
+E       File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/alembic/env.py", line 128, in run_migrations_online
+E         context.run_migrations()
+E       File "<string>", line 8, in run_migrations
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/runtime/environment.py", line 969, in run_migrations
+E         self.get_context().run_migrations(**kw)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/runtime/migration.py", line 626, in run_migrations
+E         step.migration_fn(**kw)
+E       File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/alembic/versions/0001_auth_users_employee_audit.py", line 80, in upgrade
+E         op.create_table(
+E       File "<string>", line 8, in create_table
+E       File "<string>", line 3, in create_table
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/operations/ops.py", line 1331, in create_table
+E         return operations.invoke(op)
+E                ^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/operations/base.py", line 452, in invoke
+E         return fn(self, operation)
+E                ^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/operations/toimpl.py", line 140, in create_table
+E         operations.impl.create_table(table, **kw)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/ddl/impl.py", line 442, in create_table
+E         self._exec(schema.CreateTable(table, **kw))
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/ddl/impl.py", line 256, in _exec
+E         return conn.execute(construct, params)
+E                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1419, in execute
+E         return meth(
+E                ^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/sql/ddl.py", line 187, in _execute_on_connection
+E         return connection._execute_ddl(
+E                ^^^^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1530, in _execute_ddl
+E         ret = self._execute_context(
+E               ^^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+E         return self._exec_single_context(
+E                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+E         self._handle_dbapi_exception(
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 2363, in _handle_dbapi_exception
+E         raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+E         self.dialect.do_execute(
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+E         cursor.execute(statement, parameters)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py", line 117, in execute
+E         raise ex.with_traceback(None)
+E     sqlalchemy.exc.ProgrammingError: (psycopg.errors.DuplicateTable) relation "users" already exists
+E     [SQL: 
+E     CREATE TABLE users (
+E     	id UUID DEFAULT gen_random_uuid() NOT NULL, 
+E     	email TEXT NOT NULL, 
+E     	password_hash TEXT NOT NULL, 
+E     	full_name TEXT NOT NULL, 
+E     	status TEXT DEFAULT 'active' NOT NULL, 
+E     	preferred_language TEXT DEFAULT 'es' NOT NULL, 
+E     	created_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL, 
+E     	updated_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL, 
+E     	CONSTRAINT pk_users PRIMARY KEY (id), 
+E     	CONSTRAINT users_email_key UNIQUE (email), 
+E     	CONSTRAINT ck_users_users_language_chk CHECK (preferred_language IN ('es','en','fr'))
+E     )
+E     
+E     ]
+E     (Background on this error at: https://sqlalche.me/e/20/f405)
+E     
+E   assert 1 == 0
+E    +  where 1 = CompletedProcess(args=['/Users/sergiolr/Library/Python/3.11/bin/alembic', 'upgrade', 'head'], returncode=1, stdout='', stderr='Traceback (most recent call last):\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context\n    self.dialect.do_execute(\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute\n    cursor.execute(statement, parameters)\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py", line 117, in execute\n    raise ex.with_traceback(None)\npsycopg.errors.DuplicateTable: relation "users" already exists\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File "/Users/sergiolr/Library/Python/3.11/bin/alembic", line 8, in <module>\n    sys.exit(main())\n             ^^^^^^\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/config.py", line 1047, in main\n    CommandLine(prog=prog).main(argv=argv)\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/config.py", line 1037, in main\n.../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context\n    self.dialect.do_execute(\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute\n    cursor.execute(statement, parameters)\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py", line 117, in execute\n    raise ex.with_traceback(None)\nsqlalchemy.exc.ProgrammingError: (psycopg.errors.DuplicateTable) relation "users" already exists\n[SQL: \nCREATE TABLE users (\n\tid UUID DEFAULT gen_random_uuid() NOT NULL, \n\temail TEXT NOT NULL, \n\tpassword_hash TEXT NOT NULL, \n\tfull_name TEXT NOT NULL, \n\tstatus TEXT DEFAULT \'active\' NOT NULL, \n\tpreferred_language TEXT DEFAULT \'es\' NOT NULL, \n\tcreated_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL, \n\tupdated_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL, \n\tCONSTRAINT pk_users PRIMARY KEY (id), \n\tCONSTRAINT users_email_key UNIQUE (email), \n\tCONSTRAINT ck_users_users_language_chk CHECK (preferred_language IN (\'es\',\'en\',\'fr\'))\n)\n\n]\n(Background on this error at: https://sqlalche.me/e/20/f405)\n').returncode
+_________________________ test_vector_extension_loaded _________________________
+tests/test_migrations_0002_ai_chat_rag_mcp.py:169: in test_vector_extension_loaded
+    assert result.returncode == 0, f"upgrade failed:\n{result.stderr}"
+E   AssertionError: upgrade failed:
+E     Traceback (most recent call last):
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+E         self.dialect.do_execute(
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+E         cursor.execute(statement, parameters)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py", line 117, in execute
+E         raise ex.with_traceback(None)
+E     psycopg.errors.DuplicateTable: relation "users" already exists
+E     
+E     The above exception was the direct cause of the following exception:
+E     
+E     Traceback (most recent call last):
+E       File "/Users/sergiolr/Library/Python/3.11/bin/alembic", line 8, in <module>
+E         sys.exit(main())
+E                  ^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/config.py", line 1047, in main
+E         CommandLine(prog=prog).main(argv=argv)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/config.py", line 1037, in main
+E         self.run_cmd(cfg, options)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/config.py", line 971, in run_cmd
+E         fn(
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/command.py", line 483, in upgrade
+E         script.run_env()
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/script/base.py", line 545, in run_env
+E         util.load_python_file(self.dir, "env.py")
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/util/pyfiles.py", line 116, in load_python_file
+E         module = load_module_py(module_id, path)
+E                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/util/pyfiles.py", line 136, in load_module_py
+E         spec.loader.exec_module(module)  # type: ignore
+E         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+E       File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+E       File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/alembic/env.py", line 135, in <module>
+E         run_migrations_online()
+E       File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/alembic/env.py", line 128, in run_migrations_online
+E         context.run_migrations()
+E       File "<string>", line 8, in run_migrations
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/runtime/environment.py", line 969, in run_migrations
+E         self.get_context().run_migrations(**kw)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/runtime/migration.py", line 626, in run_migrations
+E         step.migration_fn(**kw)
+E       File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/alembic/versions/0001_auth_users_employee_audit.py", line 80, in upgrade
+E         op.create_table(
+E       File "<string>", line 8, in create_table
+E       File "<string>", line 3, in create_table
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/operations/ops.py", line 1331, in create_table
+E         return operations.invoke(op)
+E                ^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/operations/base.py", line 452, in invoke
+E         return fn(self, operation)
+E                ^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/operations/toimpl.py", line 140, in create_table
+E         operations.impl.create_table(table, **kw)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/ddl/impl.py", line 442, in create_table
+E         self._exec(schema.CreateTable(table, **kw))
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/ddl/impl.py", line 256, in _exec
+E         return conn.execute(construct, params)
+E                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1419, in execute
+E         return meth(
+E                ^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/sql/ddl.py", line 187, in _execute_on_connection
+E         return connection._execute_ddl(
+E                ^^^^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1530, in _execute_ddl
+E         ret = self._execute_context(
+E               ^^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+E         return self._exec_single_context(
+E                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+E         self._handle_dbapi_exception(
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 2363, in _handle_dbapi_exception
+E         raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+E         self.dialect.do_execute(
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+E         cursor.execute(statement, parameters)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py", line 117, in execute
+E         raise ex.with_traceback(None)
+E     sqlalchemy.exc.ProgrammingError: (psycopg.errors.DuplicateTable) relation "users" already exists
+E     [SQL: 
+E     CREATE TABLE users (
+E     	id UUID DEFAULT gen_random_uuid() NOT NULL, 
+E     	email TEXT NOT NULL, 
+E     	password_hash TEXT NOT NULL, 
+E     	full_name TEXT NOT NULL, 
+E     	status TEXT DEFAULT 'active' NOT NULL, 
+E     	preferred_language TEXT DEFAULT 'es' NOT NULL, 
+E     	created_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL, 
+E     	updated_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL, 
+E     	CONSTRAINT pk_users PRIMARY KEY (id), 
+E     	CONSTRAINT users_email_key UNIQUE (email), 
+E     	CONSTRAINT ck_users_users_language_chk CHECK (preferred_language IN ('es','en','fr'))
+E     )
+E     
+E     ]
+E     (Background on this error at: https://sqlalche.me/e/20/f405)
+E     
+E   assert 1 == 0
+E    +  where 1 = CompletedProcess(args=['/Users/sergiolr/Library/Python/3.11/bin/alembic', 'upgrade', 'head'], returncode=1, stdout='', stderr='Traceback (most recent call last):\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context\n    self.dialect.do_execute(\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute\n    cursor.execute(statement, parameters)\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py", line 117, in execute\n    raise ex.with_traceback(None)\npsycopg.errors.DuplicateTable: relation "users" already exists\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File "/Users/sergiolr/Library/Python/3.11/bin/alembic", line 8, in <module>\n    sys.exit(main())\n             ^^^^^^\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/config.py", line 1047, in main\n    CommandLine(prog=prog).main(argv=argv)\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/config.py", line 1037, in main\n.../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context\n    self.dialect.do_execute(\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute\n    cursor.execute(statement, parameters)\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py", line 117, in execute\n    raise ex.with_traceback(None)\nsqlalchemy.exc.ProgrammingError: (psycopg.errors.DuplicateTable) relation "users" already exists\n[SQL: \nCREATE TABLE users (\n\tid UUID DEFAULT gen_random_uuid() NOT NULL, \n\temail TEXT NOT NULL, \n\tpassword_hash TEXT NOT NULL, \n\tfull_name TEXT NOT NULL, \n\tstatus TEXT DEFAULT \'active\' NOT NULL, \n\tpreferred_language TEXT DEFAULT \'es\' NOT NULL, \n\tcreated_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL, \n\tupdated_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL, \n\tCONSTRAINT pk_users PRIMARY KEY (id), \n\tCONSTRAINT users_email_key UNIQUE (email), \n\tCONSTRAINT ck_users_users_language_chk CHECK (preferred_language IN (\'es\',\'en\',\'fr\'))\n)\n\n]\n(Background on this error at: https://sqlalche.me/e/20/f405)\n').returncode
+_____________________ test_embedding_column_is_vector_1536 _____________________
+tests/test_migrations_0002_ai_chat_rag_mcp.py:187: in test_embedding_column_is_vector_1536
+    assert result.returncode == 0, f"upgrade failed:\n{result.stderr}"
+E   AssertionError: upgrade failed:
+E     Traceback (most recent call last):
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+E         self.dialect.do_execute(
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+E         cursor.execute(statement, parameters)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py", line 117, in execute
+E         raise ex.with_traceback(None)
+E     psycopg.errors.DuplicateTable: relation "users" already exists
+E     
+E     The above exception was the direct cause of the following exception:
+E     
+E     Traceback (most recent call last):
+E       File "/Users/sergiolr/Library/Python/3.11/bin/alembic", line 8, in <module>
+E         sys.exit(main())
+E                  ^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/config.py", line 1047, in main
+E         CommandLine(prog=prog).main(argv=argv)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/config.py", line 1037, in main
+E         self.run_cmd(cfg, options)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/config.py", line 971, in run_cmd
+E         fn(
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/command.py", line 483, in upgrade
+E         script.run_env()
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/script/base.py", line 545, in run_env
+E         util.load_python_file(self.dir, "env.py")
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/util/pyfiles.py", line 116, in load_python_file
+E         module = load_module_py(module_id, path)
+E                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/util/pyfiles.py", line 136, in load_module_py
+E         spec.loader.exec_module(module)  # type: ignore
+E         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+E       File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+E       File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/alembic/env.py", line 135, in <module>
+E         run_migrations_online()
+E       File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/alembic/env.py", line 128, in run_migrations_online
+E         context.run_migrations()
+E       File "<string>", line 8, in run_migrations
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/runtime/environment.py", line 969, in run_migrations
+E         self.get_context().run_migrations(**kw)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/runtime/migration.py", line 626, in run_migrations
+E         step.migration_fn(**kw)
+E       File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/alembic/versions/0001_auth_users_employee_audit.py", line 80, in upgrade
+E         op.create_table(
+E       File "<string>", line 8, in create_table
+E       File "<string>", line 3, in create_table
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/operations/ops.py", line 1331, in create_table
+E         return operations.invoke(op)
+E                ^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/operations/base.py", line 452, in invoke
+E         return fn(self, operation)
+E                ^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/operations/toimpl.py", line 140, in create_table
+E         operations.impl.create_table(table, **kw)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/ddl/impl.py", line 442, in create_table
+E         self._exec(schema.CreateTable(table, **kw))
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/ddl/impl.py", line 256, in _exec
+E         return conn.execute(construct, params)
+E                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1419, in execute
+E         return meth(
+E                ^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/sql/ddl.py", line 187, in _execute_on_connection
+E         return connection._execute_ddl(
+E                ^^^^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1530, in _execute_ddl
+E         ret = self._execute_context(
+E               ^^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+E         return self._exec_single_context(
+E                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+E         self._handle_dbapi_exception(
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 2363, in _handle_dbapi_exception
+E         raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+E         self.dialect.do_execute(
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+E         cursor.execute(statement, parameters)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py", line 117, in execute
+E         raise ex.with_traceback(None)
+E     sqlalchemy.exc.ProgrammingError: (psycopg.errors.DuplicateTable) relation "users" already exists
+E     [SQL: 
+E     CREATE TABLE users (
+E     	id UUID DEFAULT gen_random_uuid() NOT NULL, 
+E     	email TEXT NOT NULL, 
+E     	password_hash TEXT NOT NULL, 
+E     	full_name TEXT NOT NULL, 
+E     	status TEXT DEFAULT 'active' NOT NULL, 
+E     	preferred_language TEXT DEFAULT 'es' NOT NULL, 
+E     	created_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL, 
+E     	updated_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL, 
+E     	CONSTRAINT pk_users PRIMARY KEY (id), 
+E     	CONSTRAINT users_email_key UNIQUE (email), 
+E     	CONSTRAINT ck_users_users_language_chk CHECK (preferred_language IN ('es','en','fr'))
+E     )
+E     
+E     ]
+E     (Background on this error at: https://sqlalche.me/e/20/f405)
+E     
+E   assert 1 == 0
+E    +  where 1 = CompletedProcess(args=['/Users/sergiolr/Library/Python/3.11/bin/alembic', 'upgrade', 'head'], returncode=1, stdout='', stderr='Traceback (most recent call last):\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context\n    self.dialect.do_execute(\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute\n    cursor.execute(statement, parameters)\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py", line 117, in execute\n    raise ex.with_traceback(None)\npsycopg.errors.DuplicateTable: relation "users" already exists\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File "/Users/sergiolr/Library/Python/3.11/bin/alembic", line 8, in <module>\n    sys.exit(main())\n             ^^^^^^\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/config.py", line 1047, in main\n    CommandLine(prog=prog).main(argv=argv)\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/config.py", line 1037, in main\n.../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context\n    self.dialect.do_execute(\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute\n    cursor.execute(statement, parameters)\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py", line 117, in execute\n    raise ex.with_traceback(None)\nsqlalchemy.exc.ProgrammingError: (psycopg.errors.DuplicateTable) relation "users" already exists\n[SQL: \nCREATE TABLE users (\n\tid UUID DEFAULT gen_random_uuid() NOT NULL, \n\temail TEXT NOT NULL, \n\tpassword_hash TEXT NOT NULL, \n\tfull_name TEXT NOT NULL, \n\tstatus TEXT DEFAULT \'active\' NOT NULL, \n\tpreferred_language TEXT DEFAULT \'es\' NOT NULL, \n\tcreated_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL, \n\tupdated_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL, \n\tCONSTRAINT pk_users PRIMARY KEY (id), \n\tCONSTRAINT users_email_key UNIQUE (email), \n\tCONSTRAINT ck_users_users_language_chk CHECK (preferred_language IN (\'es\',\'en\',\'fr\'))\n)\n\n]\n(Background on this error at: https://sqlalche.me/e/20/f405)\n').returncode
+_______________________ test_upgrade_creates_hnsw_index ________________________
+tests/test_migrations_0002_ai_chat_rag_mcp.py:211: in test_upgrade_creates_hnsw_index
+    assert result.returncode == 0, f"upgrade failed:\n{result.stderr}"
+E   AssertionError: upgrade failed:
+E     Traceback (most recent call last):
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+E         self.dialect.do_execute(
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+E         cursor.execute(statement, parameters)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py", line 117, in execute
+E         raise ex.with_traceback(None)
+E     psycopg.errors.DuplicateTable: relation "users" already exists
+E     
+E     The above exception was the direct cause of the following exception:
+E     
+E     Traceback (most recent call last):
+E       File "/Users/sergiolr/Library/Python/3.11/bin/alembic", line 8, in <module>
+E         sys.exit(main())
+E                  ^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/config.py", line 1047, in main
+E         CommandLine(prog=prog).main(argv=argv)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/config.py", line 1037, in main
+E         self.run_cmd(cfg, options)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/config.py", line 971, in run_cmd
+E         fn(
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/command.py", line 483, in upgrade
+E         script.run_env()
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/script/base.py", line 545, in run_env
+E         util.load_python_file(self.dir, "env.py")
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/util/pyfiles.py", line 116, in load_python_file
+E         module = load_module_py(module_id, path)
+E                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/util/pyfiles.py", line 136, in load_module_py
+E         spec.loader.exec_module(module)  # type: ignore
+E         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+E       File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+E       File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/alembic/env.py", line 135, in <module>
+E         run_migrations_online()
+E       File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/alembic/env.py", line 128, in run_migrations_online
+E         context.run_migrations()
+E       File "<string>", line 8, in run_migrations
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/runtime/environment.py", line 969, in run_migrations
+E         self.get_context().run_migrations(**kw)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/runtime/migration.py", line 626, in run_migrations
+E         step.migration_fn(**kw)
+E       File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/alembic/versions/0001_auth_users_employee_audit.py", line 80, in upgrade
+E         op.create_table(
+E       File "<string>", line 8, in create_table
+E       File "<string>", line 3, in create_table
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/operations/ops.py", line 1331, in create_table
+E         return operations.invoke(op)
+E                ^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/operations/base.py", line 452, in invoke
+E         return fn(self, operation)
+E                ^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/operations/toimpl.py", line 140, in create_table
+E         operations.impl.create_table(table, **kw)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/ddl/impl.py", line 442, in create_table
+E         self._exec(schema.CreateTable(table, **kw))
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/ddl/impl.py", line 256, in _exec
+E         return conn.execute(construct, params)
+E                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1419, in execute
+E         return meth(
+E                ^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/sql/ddl.py", line 187, in _execute_on_connection
+E         return connection._execute_ddl(
+E                ^^^^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1530, in _execute_ddl
+E         ret = self._execute_context(
+E               ^^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+E         return self._exec_single_context(
+E                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+E         self._handle_dbapi_exception(
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 2363, in _handle_dbapi_exception
+E         raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+E         self.dialect.do_execute(
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+E         cursor.execute(statement, parameters)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py", line 117, in execute
+E         raise ex.with_traceback(None)
+E     sqlalchemy.exc.ProgrammingError: (psycopg.errors.DuplicateTable) relation "users" already exists
+E     [SQL: 
+E     CREATE TABLE users (
+E     	id UUID DEFAULT gen_random_uuid() NOT NULL, 
+E     	email TEXT NOT NULL, 
+E     	password_hash TEXT NOT NULL, 
+E     	full_name TEXT NOT NULL, 
+E     	status TEXT DEFAULT 'active' NOT NULL, 
+E     	preferred_language TEXT DEFAULT 'es' NOT NULL, 
+E     	created_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL, 
+E     	updated_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL, 
+E     	CONSTRAINT pk_users PRIMARY KEY (id), 
+E     	CONSTRAINT users_email_key UNIQUE (email), 
+E     	CONSTRAINT ck_users_users_language_chk CHECK (preferred_language IN ('es','en','fr'))
+E     )
+E     
+E     ]
+E     (Background on this error at: https://sqlalche.me/e/20/f405)
+E     
+E   assert 1 == 0
+E    +  where 1 = CompletedProcess(args=['/Users/sergiolr/Library/Python/3.11/bin/alembic', 'upgrade', 'head'], returncode=1, stdout='', stderr='Traceback (most recent call last):\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context\n    self.dialect.do_execute(\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute\n    cursor.execute(statement, parameters)\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py", line 117, in execute\n    raise ex.with_traceback(None)\npsycopg.errors.DuplicateTable: relation "users" already exists\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File "/Users/sergiolr/Library/Python/3.11/bin/alembic", line 8, in <module>\n    sys.exit(main())\n             ^^^^^^\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/config.py", line 1047, in main\n    CommandLine(prog=prog).main(argv=argv)\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/config.py", line 1037, in main\n.../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context\n    self.dialect.do_execute(\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute\n    cursor.execute(statement, parameters)\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py", line 117, in execute\n    raise ex.with_traceback(None)\nsqlalchemy.exc.ProgrammingError: (psycopg.errors.DuplicateTable) relation "users" already exists\n[SQL: \nCREATE TABLE users (\n\tid UUID DEFAULT gen_random_uuid() NOT NULL, \n\temail TEXT NOT NULL, \n\tpassword_hash TEXT NOT NULL, \n\tfull_name TEXT NOT NULL, \n\tstatus TEXT DEFAULT \'active\' NOT NULL, \n\tpreferred_language TEXT DEFAULT \'es\' NOT NULL, \n\tcreated_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL, \n\tupdated_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL, \n\tCONSTRAINT pk_users PRIMARY KEY (id), \n\tCONSTRAINT users_email_key UNIQUE (email), \n\tCONSTRAINT ck_users_users_language_chk CHECK (preferred_language IN (\'es\',\'en\',\'fr\'))\n)\n\n]\n(Background on this error at: https://sqlalche.me/e/20/f405)\n').returncode
+__________________ test_conversations_user_updated_idx_exists __________________
+tests/test_migrations_0002_ai_chat_rag_mcp.py:236: in test_conversations_user_updated_idx_exists
+    assert result.returncode == 0, f"upgrade failed:\n{result.stderr}"
+E   AssertionError: upgrade failed:
+E     Traceback (most recent call last):
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+E         self.dialect.do_execute(
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+E         cursor.execute(statement, parameters)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py", line 117, in execute
+E         raise ex.with_traceback(None)
+E     psycopg.errors.DuplicateTable: relation "users" already exists
+E     
+E     The above exception was the direct cause of the following exception:
+E     
+E     Traceback (most recent call last):
+E       File "/Users/sergiolr/Library/Python/3.11/bin/alembic", line 8, in <module>
+E         sys.exit(main())
+E                  ^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/config.py", line 1047, in main
+E         CommandLine(prog=prog).main(argv=argv)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/config.py", line 1037, in main
+E         self.run_cmd(cfg, options)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/config.py", line 971, in run_cmd
+E         fn(
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/command.py", line 483, in upgrade
+E         script.run_env()
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/script/base.py", line 545, in run_env
+E         util.load_python_file(self.dir, "env.py")
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/util/pyfiles.py", line 116, in load_python_file
+E         module = load_module_py(module_id, path)
+E                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/util/pyfiles.py", line 136, in load_module_py
+E         spec.loader.exec_module(module)  # type: ignore
+E         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+E       File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+E       File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/alembic/env.py", line 135, in <module>
+E         run_migrations_online()
+E       File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/alembic/env.py", line 128, in run_migrations_online
+E         context.run_migrations()
+E       File "<string>", line 8, in run_migrations
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/runtime/environment.py", line 969, in run_migrations
+E         self.get_context().run_migrations(**kw)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/runtime/migration.py", line 626, in run_migrations
+E         step.migration_fn(**kw)
+E       File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/alembic/versions/0001_auth_users_employee_audit.py", line 80, in upgrade
+E         op.create_table(
+E       File "<string>", line 8, in create_table
+E       File "<string>", line 3, in create_table
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/operations/ops.py", line 1331, in create_table
+E         return operations.invoke(op)
+E                ^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/operations/base.py", line 452, in invoke
+E         return fn(self, operation)
+E                ^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/operations/toimpl.py", line 140, in create_table
+E         operations.impl.create_table(table, **kw)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/ddl/impl.py", line 442, in create_table
+E         self._exec(schema.CreateTable(table, **kw))
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/ddl/impl.py", line 256, in _exec
+E         return conn.execute(construct, params)
+E                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1419, in execute
+E         return meth(
+E                ^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/sql/ddl.py", line 187, in _execute_on_connection
+E         return connection._execute_ddl(
+E                ^^^^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1530, in _execute_ddl
+E         ret = self._execute_context(
+E               ^^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+E         return self._exec_single_context(
+E                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+E         self._handle_dbapi_exception(
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 2363, in _handle_dbapi_exception
+E         raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+E         self.dialect.do_execute(
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+E         cursor.execute(statement, parameters)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py", line 117, in execute
+E         raise ex.with_traceback(None)
+E     sqlalchemy.exc.ProgrammingError: (psycopg.errors.DuplicateTable) relation "users" already exists
+E     [SQL: 
+E     CREATE TABLE users (
+E     	id UUID DEFAULT gen_random_uuid() NOT NULL, 
+E     	email TEXT NOT NULL, 
+E     	password_hash TEXT NOT NULL, 
+E     	full_name TEXT NOT NULL, 
+E     	status TEXT DEFAULT 'active' NOT NULL, 
+E     	preferred_language TEXT DEFAULT 'es' NOT NULL, 
+E     	created_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL, 
+E     	updated_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL, 
+E     	CONSTRAINT pk_users PRIMARY KEY (id), 
+E     	CONSTRAINT users_email_key UNIQUE (email), 
+E     	CONSTRAINT ck_users_users_language_chk CHECK (preferred_language IN ('es','en','fr'))
+E     )
+E     
+E     ]
+E     (Background on this error at: https://sqlalche.me/e/20/f405)
+E     
+E   assert 1 == 0
+E    +  where 1 = CompletedProcess(args=['/Users/sergiolr/Library/Python/3.11/bin/alembic', 'upgrade', 'head'], returncode=1, stdout='', stderr='Traceback (most recent call last):\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context\n    self.dialect.do_execute(\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute\n    cursor.execute(statement, parameters)\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py", line 117, in execute\n    raise ex.with_traceback(None)\npsycopg.errors.DuplicateTable: relation "users" already exists\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File "/Users/sergiolr/Library/Python/3.11/bin/alembic", line 8, in <module>\n    sys.exit(main())\n             ^^^^^^\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/config.py", line 1047, in main\n    CommandLine(prog=prog).main(argv=argv)\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/config.py", line 1037, in main\n.../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context\n    self.dialect.do_execute(\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute\n    cursor.execute(statement, parameters)\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py", line 117, in execute\n    raise ex.with_traceback(None)\nsqlalchemy.exc.ProgrammingError: (psycopg.errors.DuplicateTable) relation "users" already exists\n[SQL: \nCREATE TABLE users (\n\tid UUID DEFAULT gen_random_uuid() NOT NULL, \n\temail TEXT NOT NULL, \n\tpassword_hash TEXT NOT NULL, \n\tfull_name TEXT NOT NULL, \n\tstatus TEXT DEFAULT \'active\' NOT NULL, \n\tpreferred_language TEXT DEFAULT \'es\' NOT NULL, \n\tcreated_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL, \n\tupdated_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL, \n\tCONSTRAINT pk_users PRIMARY KEY (id), \n\tCONSTRAINT users_email_key UNIQUE (email), \n\tCONSTRAINT ck_users_users_language_chk CHECK (preferred_language IN (\'es\',\'en\',\'fr\'))\n)\n\n]\n(Background on this error at: https://sqlalche.me/e/20/f405)\n').returncode
+________________ test_messages_conversation_created_idx_exists _________________
+tests/test_migrations_0002_ai_chat_rag_mcp.py:254: in test_messages_conversation_created_idx_exists
+    assert result.returncode == 0, f"upgrade failed:\n{result.stderr}"
+E   AssertionError: upgrade failed:
+E     Traceback (most recent call last):
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+E         self.dialect.do_execute(
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+E         cursor.execute(statement, parameters)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py", line 117, in execute
+E         raise ex.with_traceback(None)
+E     psycopg.errors.DuplicateTable: relation "users" already exists
+E     
+E     The above exception was the direct cause of the following exception:
+E     
+E     Traceback (most recent call last):
+E       File "/Users/sergiolr/Library/Python/3.11/bin/alembic", line 8, in <module>
+E         sys.exit(main())
+E                  ^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/config.py", line 1047, in main
+E         CommandLine(prog=prog).main(argv=argv)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/config.py", line 1037, in main
+E         self.run_cmd(cfg, options)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/config.py", line 971, in run_cmd
+E         fn(
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/command.py", line 483, in upgrade
+E         script.run_env()
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/script/base.py", line 545, in run_env
+E         util.load_python_file(self.dir, "env.py")
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/util/pyfiles.py", line 116, in load_python_file
+E         module = load_module_py(module_id, path)
+E                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/util/pyfiles.py", line 136, in load_module_py
+E         spec.loader.exec_module(module)  # type: ignore
+E         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+E       File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+E       File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/alembic/env.py", line 135, in <module>
+E         run_migrations_online()
+E       File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/alembic/env.py", line 128, in run_migrations_online
+E         context.run_migrations()
+E       File "<string>", line 8, in run_migrations
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/runtime/environment.py", line 969, in run_migrations
+E         self.get_context().run_migrations(**kw)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/runtime/migration.py", line 626, in run_migrations
+E         step.migration_fn(**kw)
+E       File "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend/alembic/versions/0001_auth_users_employee_audit.py", line 80, in upgrade
+E         op.create_table(
+E       File "<string>", line 8, in create_table
+E       File "<string>", line 3, in create_table
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/operations/ops.py", line 1331, in create_table
+E         return operations.invoke(op)
+E                ^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/operations/base.py", line 452, in invoke
+E         return fn(self, operation)
+E                ^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/operations/toimpl.py", line 140, in create_table
+E         operations.impl.create_table(table, **kw)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/ddl/impl.py", line 442, in create_table
+E         self._exec(schema.CreateTable(table, **kw))
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/ddl/impl.py", line 256, in _exec
+E         return conn.execute(construct, params)
+E                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1419, in execute
+E         return meth(
+E                ^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/sql/ddl.py", line 187, in _execute_on_connection
+E         return connection._execute_ddl(
+E                ^^^^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1530, in _execute_ddl
+E         ret = self._execute_context(
+E               ^^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+E         return self._exec_single_context(
+E                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+E         self._handle_dbapi_exception(
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 2363, in _handle_dbapi_exception
+E         raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+E         self.dialect.do_execute(
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+E         cursor.execute(statement, parameters)
+E       File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py", line 117, in execute
+E         raise ex.with_traceback(None)
+E     sqlalchemy.exc.ProgrammingError: (psycopg.errors.DuplicateTable) relation "users" already exists
+E     [SQL: 
+E     CREATE TABLE users (
+E     	id UUID DEFAULT gen_random_uuid() NOT NULL, 
+E     	email TEXT NOT NULL, 
+E     	password_hash TEXT NOT NULL, 
+E     	full_name TEXT NOT NULL, 
+E     	status TEXT DEFAULT 'active' NOT NULL, 
+E     	preferred_language TEXT DEFAULT 'es' NOT NULL, 
+E     	created_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL, 
+E     	updated_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL, 
+E     	CONSTRAINT pk_users PRIMARY KEY (id), 
+E     	CONSTRAINT users_email_key UNIQUE (email), 
+E     	CONSTRAINT ck_users_users_language_chk CHECK (preferred_language IN ('es','en','fr'))
+E     )
+E     
+E     ]
+E     (Background on this error at: https://sqlalche.me/e/20/f405)
+E     
+E   assert 1 == 0
+E    +  where 1 = CompletedProcess(args=['/Users/sergiolr/Library/Python/3.11/bin/alembic', 'upgrade', 'head'], returncode=1, stdout='', stderr='Traceback (most recent call last):\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context\n    self.dialect.do_execute(\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute\n    cursor.execute(statement, parameters)\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py", line 117, in execute\n    raise ex.with_traceback(None)\npsycopg.errors.DuplicateTable: relation "users" already exists\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File "/Users/sergiolr/Library/Python/3.11/bin/alembic", line 8, in <module>\n    sys.exit(main())\n             ^^^^^^\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/config.py", line 1047, in main\n    CommandLine(prog=prog).main(argv=argv)\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/alembic/config.py", line 1037, in main\n.../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context\n    self.dialect.do_execute(\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute\n    cursor.execute(statement, parameters)\n  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py", line 117, in execute\n    raise ex.with_traceback(None)\nsqlalchemy.exc.ProgrammingError: (psycopg.errors.DuplicateTable) relation "users" already exists\n[SQL: \nCREATE TABLE users (\n\tid UUID DEFAULT gen_random_uuid() NOT NULL, \n\temail TEXT NOT NULL, \n\tpassword_hash TEXT NOT NULL, \n\tfull_name TEXT NOT NULL, \n\tstatus TEXT DEFAULT \'active\' NOT NULL, \n\tpreferred_language TEXT DEFAULT \'es\' NOT NULL, \n\tcreated_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL, \n\tupdated_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL, \n\tCONSTRAINT pk_users PRIMARY KEY (id), \n\tCONSTRAINT users_email_key UNIQUE (email), \n\tCONSTRAINT ck_users_users_language_chk CHECK (preferred_language IN (\'es\',\'en\',\'fr\'))\n)\n\n]\n(Background on this error at: https://sqlalche.me/e/20/f405)\n').returncode
+_ TestPermissions.test_require_admin_returns_403_when_authenticated_but_missing_role _
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   psycopg.errors.UndefinedTable: relation "users" does not exist
+E   LINE 1: INSERT INTO users (email, password_hash, full_name, status, ...
+E                       ^
+
+The above exception was the direct cause of the following exception:
+tests/unit/test_security.py:398: in test_require_admin_returns_403_when_authenticated_but_missing_role
+    user_data = _create_test_user(roles=["employee"])
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/unit/test_security.py:164: in _create_test_user
+    session.flush()
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:4331: in flush
+    self._flush(objects)
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:4466: in _flush
+    with util.safe_reraise():
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/util/langhelpers.py:121: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:4427: in _flush
+    flush_context.execute()
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/unitofwork.py:466: in execute
+    rec.execute(self)
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/unitofwork.py:642: in execute
+    util.preloaded.orm_persistence.save_obj(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/persistence.py:93: in save_obj
+    _emit_insert_statements(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/persistence.py:1233: in _emit_insert_statements
+    result = connection.execute(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1419: in execute
+    return meth(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/sql/elements.py:527: in _execute_on_connection
+    return connection._execute_clauseelement(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1641: in _execute_clauseelement
+    ret = self._execute_context(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1846: in _execute_context
+    return self._exec_single_context(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1986: in _exec_single_context
+    self._handle_dbapi_exception(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:2363: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation "users" does not exist
+E   LINE 1: INSERT INTO users (email, password_hash, full_name, status, ...
+E                       ^
+E   [SQL: INSERT INTO users (email, password_hash, full_name, status, preferred_language) VALUES (%(email)s::VARCHAR, %(password_hash)s::VARCHAR, %(full_name)s::VARCHAR, %(status)s::VARCHAR, %(preferred_language)s::VARCHAR) RETURNING users.id, users.created_at, users.updated_at]
+E   [parameters: {'email': 'security-test-fbfec208@inditex-sandbox.com', 'password_hash': '$argon2id$v=19$m=65536,t=3,p=4$FXGehYCL2NoM66xACTPX6A$rFWE/qqp9qjWc7fisAyxex5Dm6yBYFRBvr6HSfmvqdw', 'full_name': 'Security Test User', 'status': 'active', 'preferred_language': 'es'}]
+E   (Background on this error at: https://sqlalche.me/e/20/f405)
+_____ TestPermissions.test_require_admin_returns_200_for_people_admin_user _____
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   psycopg.errors.UndefinedTable: relation "users" does not exist
+E   LINE 1: INSERT INTO users (email, password_hash, full_name, status, ...
+E                       ^
+
+The above exception was the direct cause of the following exception:
+tests/unit/test_security.py:409: in test_require_admin_returns_200_for_people_admin_user
+    user_data = _create_test_user(roles=["people_admin"])
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/unit/test_security.py:164: in _create_test_user
+    session.flush()
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:4331: in flush
+    self._flush(objects)
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:4466: in _flush
+    with util.safe_reraise():
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/util/langhelpers.py:121: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:4427: in _flush
+    flush_context.execute()
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/unitofwork.py:466: in execute
+    rec.execute(self)
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/unitofwork.py:642: in execute
+    util.preloaded.orm_persistence.save_obj(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/persistence.py:93: in save_obj
+    _emit_insert_statements(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/persistence.py:1233: in _emit_insert_statements
+    result = connection.execute(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1419: in execute
+    return meth(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/sql/elements.py:527: in _execute_on_connection
+    return connection._execute_clauseelement(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1641: in _execute_clauseelement
+    ret = self._execute_context(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1846: in _execute_context
+    return self._exec_single_context(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1986: in _exec_single_context
+    self._handle_dbapi_exception(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:2363: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation "users" does not exist
+E   LINE 1: INSERT INTO users (email, password_hash, full_name, status, ...
+E                       ^
+E   [SQL: INSERT INTO users (email, password_hash, full_name, status, preferred_language) VALUES (%(email)s::VARCHAR, %(password_hash)s::VARCHAR, %(full_name)s::VARCHAR, %(status)s::VARCHAR, %(preferred_language)s::VARCHAR) RETURNING users.id, users.created_at, users.updated_at]
+E   [parameters: {'email': 'security-test-459875af@inditex-sandbox.com', 'password_hash': '$argon2id$v=19$m=65536,t=3,p=4$Ql1aD45gFzSmvBBRSoZxqQ$ewN3vcbigijlXCujjTbgad2r0c+Wr62bNU9uKQOOxNI', 'full_name': 'Security Test User', 'status': 'active', 'preferred_language': 'es'}]
+E   (Background on this error at: https://sqlalche.me/e/20/f405)
+__________ TestPermissions.test_require_admin_also_grants_super_admin __________
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   psycopg.errors.UndefinedTable: relation "users" does not exist
+E   LINE 1: INSERT INTO users (email, password_hash, full_name, status, ...
+E                       ^
+
+The above exception was the direct cause of the following exception:
+tests/unit/test_security.py:420: in test_require_admin_also_grants_super_admin
+    user_data = _create_test_user(roles=["super_admin"])
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/unit/test_security.py:164: in _create_test_user
+    session.flush()
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:4331: in flush
+    self._flush(objects)
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:4466: in _flush
+    with util.safe_reraise():
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/util/langhelpers.py:121: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:4427: in _flush
+    flush_context.execute()
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/unitofwork.py:466: in execute
+    rec.execute(self)
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/unitofwork.py:642: in execute
+    util.preloaded.orm_persistence.save_obj(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/persistence.py:93: in save_obj
+    _emit_insert_statements(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/persistence.py:1233: in _emit_insert_statements
+    result = connection.execute(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1419: in execute
+    return meth(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/sql/elements.py:527: in _execute_on_connection
+    return connection._execute_clauseelement(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1641: in _execute_clauseelement
+    ret = self._execute_context(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1846: in _execute_context
+    return self._exec_single_context(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1986: in _exec_single_context
+    self._handle_dbapi_exception(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:2363: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation "users" does not exist
+E   LINE 1: INSERT INTO users (email, password_hash, full_name, status, ...
+E                       ^
+E   [SQL: INSERT INTO users (email, password_hash, full_name, status, preferred_language) VALUES (%(email)s::VARCHAR, %(password_hash)s::VARCHAR, %(full_name)s::VARCHAR, %(status)s::VARCHAR, %(preferred_language)s::VARCHAR) RETURNING users.id, users.created_at, users.updated_at]
+E   [parameters: {'email': 'security-test-0c6e1bce@inditex-sandbox.com', 'password_hash': '$argon2id$v=19$m=65536,t=3,p=4$dSB3qpNa5uXrS2OwM6b+ig$YEjttwy4XyzauzKkz3ooJFOnL97FlJw0MRNH8g5HBwE', 'full_name': 'Security Test User', 'status': 'active', 'preferred_language': 'es'}]
+E   (Background on this error at: https://sqlalche.me/e/20/f405)
+_____ TestPermissions.test_require_role_factory_composes_multi_role_users ______
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   psycopg.errors.UndefinedTable: relation "users" does not exist
+E   LINE 1: INSERT INTO users (email, password_hash, full_name, status, ...
+E                       ^
+
+The above exception was the direct cause of the following exception:
+tests/unit/test_security.py:431: in test_require_role_factory_composes_multi_role_users
+    user_data = _create_test_user(roles=["people_admin", "people_auditor"])
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/unit/test_security.py:164: in _create_test_user
+    session.flush()
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:4331: in flush
+    self._flush(objects)
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:4466: in _flush
+    with util.safe_reraise():
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/util/langhelpers.py:121: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:4427: in _flush
+    flush_context.execute()
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/unitofwork.py:466: in execute
+    rec.execute(self)
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/unitofwork.py:642: in execute
+    util.preloaded.orm_persistence.save_obj(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/persistence.py:93: in save_obj
+    _emit_insert_statements(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/persistence.py:1233: in _emit_insert_statements
+    result = connection.execute(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1419: in execute
+    return meth(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/sql/elements.py:527: in _execute_on_connection
+    return connection._execute_clauseelement(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1641: in _execute_clauseelement
+    ret = self._execute_context(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1846: in _execute_context
+    return self._exec_single_context(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1986: in _exec_single_context
+    self._handle_dbapi_exception(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:2363: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation "users" does not exist
+E   LINE 1: INSERT INTO users (email, password_hash, full_name, status, ...
+E                       ^
+E   [SQL: INSERT INTO users (email, password_hash, full_name, status, preferred_language) VALUES (%(email)s::VARCHAR, %(password_hash)s::VARCHAR, %(full_name)s::VARCHAR, %(status)s::VARCHAR, %(preferred_language)s::VARCHAR) RETURNING users.id, users.created_at, users.updated_at]
+E   [parameters: {'email': 'security-test-02182a6b@inditex-sandbox.com', 'password_hash': '$argon2id$v=19$m=65536,t=3,p=4$FO+vJ+v3K7IBoixkUxtsSQ$C84iMw7Se90/VvPqMq356FBoXbJ9Wb5iiZlxpUb8RiA', 'full_name': 'Security Test User', 'status': 'active', 'preferred_language': 'es'}]
+E   (Background on this error at: https://sqlalche.me/e/20/f405)
+=============================== warnings summary ===============================
+tests/integration/test_auth_refresh.py: 20 warnings
+  /Users/sergiolr/Library/Python/3.11/lib/python/site-packages/starlette/testclient.py:445: DeprecationWarning: Setting per-request cookies=<...> is being deprecated, because the expected behaviour on cookie persistence is ambiguous. Set cookies directly on the client instance instead.
+    return super().request(
+
+tests/integration/test_auth_signin.py::test_signin_missing_field_returns_422
+tests/integration/test_auth_signup.py::test_signup_missing_full_name_422
+  /Users/sergiolr/Library/Python/3.11/lib/python/site-packages/starlette/_exception_handler.py:59: DeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
+    response = await handler(conn, exc)
+
+tests/test_dependency_smoke.py::test_dependency_smoke[deepagents-deepagents-None]
+  /Users/sergiolr/Library/Python/3.11/lib/python/site-packages/langgraph/checkpoint/serde/encrypted.py:5: LangChainPendingDeprecationWarning: The default value of `allowed_objects` will change in a future version. Pass an explicit value (e.g., allowed_objects='messages' or allowed_objects='core') to suppress this warning.
+    from langgraph.checkpoint.serde.jsonplus import JsonPlusSerializer
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/integration/test_admin_ai.py::test_T01_get_providers_admin_200
+FAILED tests/integration/test_admin_ai.py::test_T02_get_providers_employee_403
+FAILED tests/integration/test_admin_ai.py::test_T03_get_providers_no_bearer_401
+FAILED tests/integration/test_admin_ai.py::test_T04_get_providers_has_credentials
+FAILED tests/integration/test_admin_ai.py::test_T05_post_provider_creates_encrypted_credential
+FAILED tests/integration/test_admin_ai.py::test_T06_post_provider_invalid_type_422
+FAILED tests/integration/test_admin_ai.py::test_T07_post_provider_missing_credentials_422
+FAILED tests/integration/test_admin_ai.py::test_T08_post_provider_auth_failures
+FAILED tests/integration/test_admin_ai.py::test_T09_post_provider_rate_limit_429
+FAILED tests/integration/test_admin_ai.py::test_T10_post_provider_redis_down_503
+FAILED tests/integration/test_admin_ai.py::test_T11_post_provider_encryption_error_500
+FAILED tests/integration/test_admin_ai.py::test_T13_get_models_admin_200 - as...
+FAILED tests/integration/test_admin_ai.py::test_T14_get_models_provider_filter
+FAILED tests/integration/test_admin_ai.py::test_T15_get_models_invalid_provider_id_422
+FAILED tests/integration/test_admin_ai.py::test_T16_get_models_auth_failures
+FAILED tests/integration/test_admin_ai.py::test_T17_patch_model_enabled - Ass...
+FAILED tests/integration/test_admin_ai.py::test_T18_patch_model_is_default_clears_previous
+FAILED tests/integration/test_admin_ai.py::test_T19_patch_model_empty_payload_400
+FAILED tests/integration/test_admin_ai.py::test_T20_patch_model_not_found_404
+FAILED tests/integration/test_admin_ai.py::test_T21_patch_model_auth_failures
+FAILED tests/integration/test_admin_ai.py::test_T22_patch_model_remove_only_default
+FAILED tests/integration/test_admin_ai.py::test_T23_request_id_propagated - a...
+FAILED tests/integration/test_admin_ai.py::test_T24_response_envelope_shape
+FAILED tests/integration/test_admin_ai.py::test_T25_no_test_residue - assert ...
+FAILED tests/integration/test_chat_conversations.py::test_post_creates_conversation_success
+FAILED tests/integration/test_chat_conversations.py::test_post_without_initial_message_creates_empty_conversation
+FAILED tests/integration/test_chat_conversations.py::test_post_uses_user_preferred_language_when_omitted
+FAILED tests/integration/test_chat_conversations.py::test_post_uses_explicit_language_override
+FAILED tests/integration/test_chat_conversations.py::test_post_rejects_invalid_language
+FAILED tests/integration/test_chat_conversations.py::test_post_unauthenticated_returns_401_anti_enum
+FAILED tests/integration/test_chat_conversations.py::test_get_list_returns_only_own_conversations
+FAILED tests/integration/test_chat_conversations.py::test_get_list_pagination_roundtrip
+FAILED tests/integration/test_chat_conversations.py::test_get_list_pagination_orders_by_updated_at_desc
+FAILED tests/integration/test_chat_conversations.py::test_get_list_empty_returns_empty_envelope
+FAILED tests/integration/test_chat_conversations.py::test_get_list_invalid_cursor_returns_400
+FAILED tests/integration/test_chat_conversations.py::test_get_detail_returns_full_conversation_with_messages
+FAILED tests/integration/test_chat_conversations.py::test_get_detail_404_when_uuid_not_exists
+FAILED tests/integration/test_chat_conversations.py::test_get_detail_403_when_not_owner
+FAILED tests/integration/test_dev_restart_reset.py::test_db_reset_cycle_exits_zero
+FAILED tests/integration/test_dev_restart_reset.py::test_reset_exits_zero_and_is_idempotent
+FAILED tests/integration/test_migrations_0001_auth.py::test_upgrade_creates_all_9_tables
+FAILED tests/integration/test_migrations_0001_auth.py::test_unique_email_constraint_rejects_duplicate
+FAILED tests/integration/test_migrations_0001_auth.py::test_on_delete_cascade_removes_child_rows
+FAILED tests/integration/test_migrations_0001_auth.py::test_downgrade_removes_all_tables
+FAILED tests/test_migrations_0002_ai_chat_rag_mcp.py::test_upgrade_creates_all_33_tables
+FAILED tests/test_migrations_0002_ai_chat_rag_mcp.py::test_vector_extension_loaded
+FAILED tests/test_migrations_0002_ai_chat_rag_mcp.py::test_embedding_column_is_vector_1536
+FAILED tests/test_migrations_0002_ai_chat_rag_mcp.py::test_upgrade_creates_hnsw_index
+FAILED tests/test_migrations_0002_ai_chat_rag_mcp.py::test_conversations_user_updated_idx_exists
+FAILED tests/test_migrations_0002_ai_chat_rag_mcp.py::test_messages_conversation_created_idx_exists
+FAILED tests/unit/test_security.py::TestPermissions::test_require_admin_returns_403_when_authenticated_but_missing_role
+FAILED tests/unit/test_security.py::TestPermissions::test_require_admin_returns_200_for_people_admin_user
+FAILED tests/unit/test_security.py::TestPermissions::test_require_admin_also_grants_super_admin
+FAILED tests/unit/test_security.py::TestPermissions::test_require_role_factory_composes_multi_role_users
+============ 54 failed, 196 passed, 23 warnings in 72.20s (0:01:12) ============

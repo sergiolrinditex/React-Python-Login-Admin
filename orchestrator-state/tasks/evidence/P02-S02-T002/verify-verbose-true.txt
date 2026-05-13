@@ -1,0 +1,7 @@
+DEBUG    app.auth.tokens:tokens.py:127 tokens.jwt_key.cache_cleared
+DEBUG    app.auth.tokens:tokens.py:198 tokens.encode_access.start sub=8419cb80-244d-4782-b383-684820f8a816 ttl=1800s
+DEBUG    app.auth.tokens:tokens.py:108 tokens.jwt_key.resolved bytes=48
+DEBUG    app.auth.tokens:tokens.py:200 tokens.encode_access.done sub=8419cb80-244d-4782-b383-684820f8a816 exp=2026-05-13T10:26:29.278608+00:00
+DEBUG    app.auth.tokens:tokens.py:270 tokens.decode.start
+DEBUG    app.auth.tokens:tokens.py:287 tokens.decode.ok sub=8419cb80-244d-4782-b383-684820f8a816
+DEBUG    app.auth.tokens:tokens.py:127 tokens.jwt_key.cache_cleared

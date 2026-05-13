@@ -1,0 +1,8 @@
+============================= test session starts ==============================
+collecting ... collected 3 items
+
+tests/integration/test_users_me.py::TestGetMeSecurityShape::test_get_me_response_excludes_password_hash PASSED [ 33%]
+tests/integration/test_users_me.py::TestGetMeSecurityShape::test_get_me_response_excludes_extra_metadata PASSED [ 66%]
+tests/integration/test_users_me.py::TestGetMeSecurityShape::test_get_me_uses_real_seeded_data PASSED [100%]
+
+============================== 3 passed in 0.81s ===============================

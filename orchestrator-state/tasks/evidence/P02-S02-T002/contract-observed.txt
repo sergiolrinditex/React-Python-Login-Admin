@@ -1,0 +1,56 @@
+## Contract Observed — P02-S02-T002
+
+### Routes / Providers / API Client / DTO / Endpoint / Repository / Table
+
+Observed during tests and E2E curl checks:
+
+1. Module: `app.auth.tokens`
+   - Function: `_get_jwt_key()` — lazy @lru_cache(maxsize=1) getter
+   - Function: `_clear_jwt_key_cache()` — test-only cache reset
+   - Function: `encode_access_token(user)` — calls `_get_jwt_key()` internally
+   - Function: `decode_token(token)` — calls `_get_jwt_key()` internally
+   - At-import advisory: `_startup_key` block with `tokens.jwt_key.missing` / `tokens.jwt_key.too_short` warnings
+
+2. Endpoint: GET /api/v1/users/me
+   - Observed: HTTP 200 + UserProfile JSON
+   - Auth: Bearer JWT (encoded with real JWT_PRIVATE_KEY)
+   - Decoded by: `app.users.deps.get_current_user` → `decode_token`
+   - Repository: `app.db.models.user.User` (users table)
+
+3. Endpoint: POST /api/v1/auth/sign-in
+   - Observed: HTTP 200 + access_token (or mfa_required)
+   - Token encoded by: `encode_access_token` using `_get_jwt_key()`
+
+### Full-suite FAIL classification
+
+All 54 failures in tester_full_suite.txt:
+
+Category 1 — Pre-existing, NOT caused by T002 (38 tests):
+- test_admin_ai.py: 24 FAIL — 404 Not Found (admin endpoints not mounted in main.py, P02-S05-T001 in validator_tester_pending)
+- test_chat_conversations.py: 14 FAIL — 404 Not Found (chat endpoints not mounted in main.py, P02-S03-T001 in validator_tester_pending)
+
+Category 2 — Pre-existing migration ordering cascade (10 tests):
+- test_migrations_0001_auth.py: 4 FAIL — migration suite ordering (pre-existing R1-T001-S02)
+- test_migrations_0002_ai_chat_rag_mcp.py: 6 FAIL — migration suite (pre-existing, pgvector/ordering)
+
+Category 3 — Pre-existing cascade from migration downgrade (4 tests):
+- test_security.py::TestPermissions: 4 FAIL — "relation users does not exist" (migration_0001 downgrade drops tables before security tests run; pre-existing ordering issue)
+  - VERIFIED: these 4 tests PASS in isolation (18/18 pass when run alone)
+
+Category 4 — Pre-existing infrastructure (2 tests):
+- test_dev_restart_reset.py: 2 FAIL — pre-existing (dev_restart.sh not configured for CI)
+
+Total in-scope (T002-related) failures: 0 NEW
+Total pre-existing failures confirmed: 54
+
+### Key Contrast
+
+In isolation (with JWT_PRIVATE_KEY set):
+- test_auth_tokens.py: 6/6 PASS (T1–T5+T3b)
+- test_users_me.py::TestGetMeSecurityShape: 3/3 PASS
+- test_security.py: 18/18 PASS (including WRITE_SET_DRIFT tests)
+- Unit total: 24/24 PASS
+
+Developer's declared post-fix baseline: 234 PASS / 16 FAIL
+Tester observed full-suite: 196 PASS / 54 FAIL
+Discrepancy explanation: developer baseline ran BEFORE P02-S03-T001 (chat) and P02-S05-T001 (admin) added their test files. Those 38 tests (chat+admin) are pre-existing failures from those tasks, not regressions from T002.
