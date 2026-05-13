@@ -26,6 +26,12 @@ while [ "$#" -gt 0 ]; do
       APPLY=1
       shift
       ;;
+    --dry-run)
+      # Default mode anyway, but accept it as explicit flag so users who
+      # type "--dry-run" don't get an error.
+      APPLY=0
+      shift
+      ;;
     --task)
       TASK_ID="${2:-}"
       if [ -z "$TASK_ID" ]; then
@@ -123,9 +129,26 @@ process_record() {
   fi
 
   if [ "$APPLY" -eq 1 ]; then
-    git worktree remove "$wt_path"
-    REMOVED=$((REMOVED + 1))
-    echo "removed: $wt_path ($wt_branch)"
+    # Try git's clean remove first. It refuses if the worktree has
+    # untracked files (caches, .ruff_cache, __pycache__, .DS_Store, dev logs).
+    # The status check above already confirmed there are no MODIFIED tracked
+    # files. So if git rejects with "Directory not empty", the remaining
+    # content is only untracked cruft — safe to rm -rf the dir directly.
+    if git worktree remove "$wt_path" 2>/dev/null; then
+      REMOVED=$((REMOVED + 1))
+      echo "removed: $wt_path ($wt_branch)"
+    else
+      # Fallback: forced removal (registers the worktree as gone in git)
+      # plus filesystem rm of the physical directory. Safe because:
+      #   * we already skipped current/main/master worktrees above
+      #   * we already skipped dirty worktrees above (tracked changes)
+      git worktree remove --force "$wt_path" 2>/dev/null || true
+      if [ -d "$wt_path" ]; then
+        rm -rf "$wt_path"
+      fi
+      REMOVED=$((REMOVED + 1))
+      echo "removed (forced after git refused, untracked cruft only): $wt_path ($wt_branch)"
+    fi
   else
     WOULD_REMOVE=$((WOULD_REMOVE + 1))
     echo "would remove: $wt_path ($wt_branch)"

@@ -75,3 +75,20 @@ docs/source-of-truth/*.lock
 dist/
 build/
 *.log
+# ─── runtime state vivo (NO commitearlo: cambia constantemente y choca en pr-flow) ───
+# Estos ficheros los muta cada slice; commitearlos en una rama causa conflicts
+# en cuanto otra slice cierra antes. Vive sólo localmente por máquina.
+orchestrator-state/memory/PROGRESS.md
+orchestrator-state/memory/PROGRESS.md.archive/
+orchestrator-state/agent-memory/*/MEMORY.md
+orchestrator-state/tasks/runtime-state.json
+orchestrator-state/tasks/ledger.jsonl
+orchestrator-state/tasks/bash-ledger.jsonl
+orchestrator-state/memory/task-dag.json
+orchestrator-state/memory/task-dag.md
+orchestrator-state/memory/execution-graph.json
+orchestrator-state/memory/stack-profile.json
+orchestrator-state/memory/source-manifest.json
+orchestrator-state/hook-errors.log
+orchestrator-state/dev-logs/
+# (registry.json sí se queda commiteado: es el grafo canónico del DAG)

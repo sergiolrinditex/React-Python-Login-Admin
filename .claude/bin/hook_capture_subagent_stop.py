@@ -207,6 +207,16 @@ def trailer_value_errors(trailer: dict[str, str], agent_type: str | None) -> lis
     return errors
 
 
+# Sentinel values agents emit for "no journey applies" — must NEVER be
+# treated as a real Journey ID. Real JIDs look like J101, J203, J104A, etc.
+# Without this filter, a closer emitting `JOURNEY_PENDING_VERIFY: none`
+# would add the literal string to runtime-state.pending_journey_verifications,
+# blocking /next-wave on a non-existent journey.
+_INVALID_JID_VALUES = {
+    "", "none", "null", "n/a", "na", "-", "—", "(none)",
+    "<jid>", "<jid or none>", "tbd", "todo",
+}
+
 # Journey-related trailer patterns.
 # JOURNEY_PENDING_VERIFY can appear MULTIPLE times in the same trailer if a
 # single slice closes more than one journey (rare but legal). The other keys
@@ -336,7 +346,10 @@ def parse_journey_trailer(text: str) -> dict[str, object]:
     text = text or ""
     def _dedup_matches(regex: re.Pattern[str]) -> list[str]:
         values = [m.group(1).strip() for m in regex.finditer(text)]
-        values = [v for v in values if v]
+        # Filter out sentinel "no journey" markers (none, null, "", -, etc.).
+        # Real Journey IDs use the JNNN pattern; literals like "none" are
+        # closer mistakes and pollute runtime-state if accepted.
+        values = [v for v in values if v and v.lower() not in _INVALID_JID_VALUES]
         seen: set[str] = set()
         out: list[str] = []
         for value in values:
