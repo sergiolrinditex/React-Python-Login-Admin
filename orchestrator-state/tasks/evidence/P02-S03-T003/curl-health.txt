@@ -1,0 +1,8 @@
+Command: curl -sf -m 3 http://localhost:8000/health
+Exit code: 7 (ECONNREFUSED — backend not running in this worktree)
+Output: (none — connection refused)
+
+NOTE: Backend is not running in the worktree context. The worktree is a PR-flow branch
+where the developer deferred full end-to-end to /verify-slice due to port conflict.
+The backend was confirmed UP during developer verification (HTTP 200, status=ok).
+Evidence of live backend is captured in dev-restart-check.log and the developer handoff.

@@ -2,7 +2,7 @@ id: P02-S05-T001
 phase_id: P02
 step_id: P02-S05
 title: "Admin AI providers and models endpoints"
-status: ready
+status: done
 kind: "api"
 target: "Admin AI providers and models endpoints"
 product_increment: "v1"

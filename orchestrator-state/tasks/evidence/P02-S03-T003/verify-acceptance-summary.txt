@@ -1,0 +1,16 @@
+Acceptance criterion        Command/Check                                       Verdict
+--------------------------- --------------------------------------------------- ----------
+#1 --reset exit 0           bash scripts/dev-restart.sh --reset (first run)     PASS (exit=0, 24s)
+#2 /health=200              curl -sf http://localhost:8000/health               PASS ({"data":{"status":"ok","version":"0.1.0","uptime":22}})
+#3 /ready db=ok             curl -sf http://localhost:8000/ready                PASS ({"data":{"db":{"status":"ok"},...}})
+#4 frontend :5173 200       curl -sI http://localhost:5173/                     PASS (HTTP/1.1 200 OK)
+#5 back.log seed line       grep verification_data.auth.users.ok back.log       PASS (inserted=2 skipped=0 updated=0)
+#6 psql counts              users>=2, conversations>=0, messages>=0             PASS (2 / 0 / 0)
+#7 --soft idempotent        bash scripts/dev-restart.sh --soft                  PASS (exit=0, <1s, "everything healthy")
+#8 T012 two-back-to-back    bash scripts/dev-restart.sh --reset (2nd run)       PASS (exit=0, 20s)
+extras
+- migration head                                                                 PASS (alembic_version=0002)
+- log no secrets                                                                 PASS (no JWT/password/db-url leaked)
+- contract surface (8 fns)                                                       PASS (verified by tester + redo via dispatcher)
+- T008 absolute --source                                                         PASS (line 389)
+- T012 _host_pg_ready                                                            PASS (lines 170, 319, 327)

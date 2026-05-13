@@ -1,0 +1,2 @@
+{"data":null,"meta":{"request_id":"postcloser-RBAC-GET"},"errors":[{"code":"AUTH_SESSION_EXPIRED","message":"Session expired or invalid credentials. Please sign in again.","field":null,"details":null}]}
+HTTP 401

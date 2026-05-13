@@ -1,0 +1,7 @@
+  users: 2
+  conversations: 0
+  messages: 0
+  ai_providers: 1
+  mcp_servers: 1
+  agents: 1
+  rag_collections: 1

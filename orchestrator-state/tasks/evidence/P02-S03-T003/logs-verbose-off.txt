@@ -1,0 +1,16 @@
+Command: ENABLE_VERBOSE_LOGGING=false bash scripts/dev-restart.sh --check
+Exit code: 1
+
+Output:
+  Service   URL                        Status
+  --------- -------------------------- -------
+  backend   http://localhost:8000      DOWN
+  frontend  http://localhost:5173      UP
+  database  (via /ready)               DOWN
+
+  Logs: (paths omitted for brevity — identical to dispatch-check.txt)
+
+==> One or more services DOWN.
+
+VERDICT: verbose=false shows only status table + final warning. No verbose debug lines.
+No tokens, passwords, or PII visible.

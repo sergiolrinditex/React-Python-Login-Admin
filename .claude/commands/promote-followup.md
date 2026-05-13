@@ -32,7 +32,10 @@ claude --agent main-orchestrator --permission-mode bypassPermissions "/promote-f
 - No promociones desde un terminal worker con `CLAUDE_ACTIVE_TASK_ID` activo salvo decisión explícita del usuario. Si detectas ese env var, PARA y recomienda:
 
 ```bash
-unset CLAUDE_ACTIVE_TASK_ID CLAUDE_TASK_PACK
+unset CLAUDE_ACTIVE_TASK_ID
+unset CLAUDE_TASK_PACK
+unset CLAUDE_WORKTREE_ROOT
+unset CLAUDE_ORCHESTRATOR_ROOT
 ```
 
 - No edites a mano `registry.json`, `runtime-state.json`, `task-dag.json`, `task-dag.md` ni work-items. La mutación la hace el script bajo locks.

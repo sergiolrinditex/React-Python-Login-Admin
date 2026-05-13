@@ -1,0 +1,40 @@
+## Bash syntax check
+Command: bash -n scripts/dev-restart.profile.sh
+Exit code: 0
+Output: (none — exit 0 means syntax OK)
+
+## Contract functions (declare -F)
+Command: bash -c "source scripts/dev-restart.profile.sh && declare -F back_health back_start back_url front_health front_start front_url db_health db_reset"
+Exit code: 0
+Output:
+  back_health
+  back_start
+  back_url
+  front_health
+  front_start
+  front_url
+  db_health
+  db_reset
+
+All 8 required functions defined. PASS.
+
+## T012 invariant (_host_pg_ready)
+Command: grep -n "_host_pg_ready" scripts/dev-restart.profile.sh
+Output:
+  32:#   P01-S02-T012: host-TCP probe (_host_pg_ready) to close Rancher Desktop race;
+  170:_host_pg_ready() {
+  319:  if _resolve_compose >/dev/null 2>&1 && _compose_pg_ready && _host_pg_ready; then
+  327:    if _host_pg_ready; then
+
+VERDICT: _host_pg_ready defined at line 170; used in two-probe AND at line 319 (compose path)
+and as fallback at line 327 (no-compose path). T012 invariant PRESERVED.
+
+## T008 invariant (absolute --source path)
+Command: grep -n -- "--source.*data/verification" scripts/dev-restart.profile.sh
+Output:
+  20:#       db.seed_cmd            → python -m app.verification_data.bootstrap --source data/verification
+  389:        --source "${ROOT_DIR}/data/verification" >>"${BACK_LOG}" 2>&1; then
+
+Line 389 shows absolute `${ROOT_DIR}/data/verification` (not relative `data/verification`).
+Line 20 in the comment shows the STACK_PROFILE.yaml seed_cmd for reference only.
+T008 invariant PRESERVED.

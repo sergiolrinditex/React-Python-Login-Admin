@@ -1,0 +1,2 @@
+{"data":[{"id":"38d030c6-7eb7-4800-b70c-1e1d7c82889b","name":"litellm_verification_sandbox","provider_type":"litellm","base_url":"http://localhost:4000","status":"active","created_by":null,"has_credentials":false,"credential_auth_type":null,"expires_at":null}],"meta":{"request_id":"postcloser-T-B"}}
+HTTP 200

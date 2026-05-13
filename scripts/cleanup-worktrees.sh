@@ -150,4 +150,14 @@ process_record "$current_path" "$current_branch"
 
 git worktree prune
 
+# Remove the empty <repo>-worktrees/ container directory when no
+# slice worktrees remain inside it. This keeps the parent tidy after
+# all slices in a wave have closed. Only removes if completely empty
+# and only with --apply. ensure-task-worktree.sh re-creates it for
+# the next TASK_ID, so no behaviour change for active slices.
+CONTAINER="$(dirname "$ROOT")/$(basename "$ROOT")-worktrees"
+if [ "$APPLY" -eq 1 ] && [ -d "$CONTAINER" ] && [ -z "$(ls -A "$CONTAINER" 2>/dev/null)" ]; then
+  rmdir "$CONTAINER" 2>/dev/null && echo "removed empty container: $CONTAINER" || true
+fi
+
 echo "cleanup-worktrees: matched=$MATCHED would_remove=$WOULD_REMOVE removed=$REMOVED skipped=$SKIPPED mode=$([ "$APPLY" -eq 1 ] && echo apply || echo dry-run) task=${TASK_ID:-all}"

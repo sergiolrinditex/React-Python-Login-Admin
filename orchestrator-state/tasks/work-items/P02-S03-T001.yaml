@@ -2,7 +2,7 @@ id: P02-S03-T001
 phase_id: P02
 step_id: P02-S03
 title: "Chat conversation CRUD endpoints"
-status: claimed
+status: done
 kind: "api"
 target: "Chat conversation CRUD endpoints"
 product_increment: "v1"

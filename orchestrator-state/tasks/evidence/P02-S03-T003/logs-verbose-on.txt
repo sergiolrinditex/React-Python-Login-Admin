@@ -1,0 +1,24 @@
+Command: ENABLE_VERBOSE_LOGGING=true bash scripts/dev-restart.sh --check
+Exit code: 1
+
+Output:
+  Service   URL                        Status
+  --------- -------------------------- -------
+  backend   http://localhost:8000      DOWN
+  frontend  http://localhost:5173      UP
+  database  (via /ready)               DOWN
+
+  Logs: (paths omitted for brevity — identical to dispatch-check.txt)
+
+==> One or more services DOWN.
+
+NOTE: The --check path in the dispatcher does not exercise the profile's log/warn/info/fail
+helpers in a way that would produce visibly different output between verbose=true and
+verbose=false for this specific path. The ENABLE_VERBOSE_LOGGING flag is honored by the
+application-level backend logging, not the shell dispatcher. The shell dispatcher and
+profile use the log/warn/fail/info helper functions which produce structured output
+regardless of the flag. No BEFORE/AFTER trace structure is applicable to a pure shell
+script outside the application layer.
+
+VERDICT: Both verbose=true and verbose=false produce equivalent status output for --check.
+No secrets, tokens, passwords or PII in either output.

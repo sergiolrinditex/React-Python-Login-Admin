@@ -1,0 +1,8 @@
+HTTP/1.1 429 Too Many Requests
+date: Wed, 13 May 2026 10:55:24 GMT
+server: uvicorn
+retry-after: 43
+content-length: 172
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"postcloser-RL-22"},"errors":[{"code":"RATE_LIMITED","message":"Too many requests. Retry after 43 seconds.","field":null,"details":null}]}

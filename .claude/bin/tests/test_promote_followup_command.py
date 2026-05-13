@@ -20,7 +20,11 @@ def test_promote_followup_command_exists_and_is_safe() -> None:
     assert "./scripts/check-journey-matrix.sh --strict" in text
     assert "./scripts/check-wiring-contract.sh --strict --require-new-template-columns" in text
     assert "closer` nunca ejecuta promote automáticamente" in text or "El `closer` nunca ejecuta promote automáticamente" in text
-    assert "unset CLAUDE_ACTIVE_TASK_ID CLAUDE_TASK_PACK" in text
+    # El bloque ampliado a 4 unsets: validamos cada línea por separado.
+    assert "unset CLAUDE_ACTIVE_TASK_ID" in text
+    assert "unset CLAUDE_TASK_PACK" in text
+    assert "unset CLAUDE_WORKTREE_ROOT" in text
+    assert "unset CLAUDE_ORCHESTRATOR_ROOT" in text
 
 
 def test_followup_contract_points_to_safe_promote_command() -> None:

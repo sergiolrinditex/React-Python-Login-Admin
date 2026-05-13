@@ -2,7 +2,7 @@ id: P02-S04-T001
 phase_id: P02
 step_id: P02-S04
 title: "RAG retriever + citation smoke"
-status: blocked
+status: ready
 kind: "ai"
 target: "RAG retriever + citation smoke"
 product_increment: "v1"

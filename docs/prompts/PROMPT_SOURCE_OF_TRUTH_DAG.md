@@ -64,7 +64,7 @@ No elijas comandos, paths o enforcers por costumbre. Usa siempre `STACK_PROFILE.
 - El valor público recomendado para tokens visuales es `design_tokens_enforcer: design_tokens_v1`.
 - No uses nombres públicos por framework para el enforcer visual; `design_tokens_v1` lee `frontend.framework` y aplica el scanner adecuado internamente.
 - Para stacks sin control visual todavía, usa `design_tokens_enforcer: none` de forma explícita.
-- `git_workflow` decide si el closer empuja a main (`push-to-main`/`direct-main`), abre PR (`pr-flow`) o usa otro workflow; no hardcodees `git push origin main` en documentos genéricos.
+- `git_workflow` es `pr-flow` por defecto (cada TASK_ID en su worktree+rama+PR con auto-merge --admin squash; safe para terminales paralelos). Usa `push-to-main`/`direct-main` SOLO si el proyecto es single-developer single-slice sin PRs. No hardcodees `git push origin main` en documentos genéricos.
 
 ## 3. Áreas funcionales que debes evaluar
 

@@ -1,0 +1,23 @@
+Command: docker ps --format '{{.Names}}\t{{.Status}}'
+Exit code: 0
+
+Output:
+react-python-login-admin-postgres-1     Up 3 hours (healthy)  [port 5432]
+react-python-login-admin-litellm-1      Up 3 hours (healthy)  [port 4000]
+react-python-login-admin-minio-1        Up 3 hours (healthy)  [ports 9000-9001]
+react-python-login-admin-redis-1        Up 3 hours (healthy)  [port 6379]
+k8s_traefik_*                           Up 46 hours (k8s/Rancher Desktop system)
+k8s_coredns_*                           Up 46 hours (k8s/Rancher Desktop system)
+k8s_metrics-server_*                    Up 46 hours (k8s/Rancher Desktop system)
+... (additional k8s system containers)
+
+PORT CONFLICT ANALYSIS:
+  Port 5432 (postgres): held by react-python-login-admin-postgres-1 (MAIN PROJECT)
+  Port 4000 (litellm):  held by react-python-login-admin-litellm-1 (MAIN PROJECT)
+  Port 6379 (redis):    held by react-python-login-admin-redis-1 (MAIN PROJECT)
+  Port 9000 (minio):    held by react-python-login-admin-minio-1 (MAIN PROJECT)
+
+CONCLUSION: All 4 required ports are occupied by the main project's containers.
+Running `docker compose down -v --remove-orphans` from this worktree would destroy
+the main project volumes. The developer's deferral of --reset to /verify-slice is
+JUSTIFIED and required to prevent data loss.

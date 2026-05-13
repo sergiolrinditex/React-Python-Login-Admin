@@ -1,0 +1,29 @@
+Command: cd backend && python3 -m pytest tests/integration/test_dev_restart_reset.py -v
+Exit code: 0
+
+Output:
+============================= test session starts ==============================
+platform darwin -- Python 3.11.5, pytest-9.0.2, pluggy-1.6.0 -- /usr/local/bin/python3
+cachedir: .pytest_cache
+rootdir: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P02-S03-T003/backend
+configfile: pyproject.toml
+plugins: httpx-0.36.0, asyncio-1.3.0, anyio-4.13.0
+asyncio: mode=Mode.AUTO, debug=False
+collecting ... collected 2 items
+
+tests/integration/test_dev_restart_reset.py::test_db_reset_cycle_exits_zero PASSED [ 50%]
+tests/integration/test_dev_restart_reset.py::test_reset_exits_zero_and_is_idempotent PASSED [100%]
+
+============================== 2 passed in 6.69s ===============================
+TEST_EXIT: 0
+
+TESTS RUN WITH REAL DB:
+  - test_db_reset_cycle_exits_zero: AC7 — alembic downgrade base → upgrade head → bootstrap seed
+  - test_reset_exits_zero_and_is_idempotent: AC13 — two consecutive resets both exit 0
+  - Both tests use subprocess with real Postgres at localhost:5432
+  - Real alembic migrations run end-to-end
+  - Real bootstrap seed via python -m app.verification_data.bootstrap --source <abs_path>
+  - T008 absolute path verified: _REPO_ROOT / "data" / "verification" (absolute Path)
+  - T012 idempotency verified: second reset also exits 0
+
+VERDICT: 2/2 PASS with real DB (postgres: react-python-login-admin-postgres-1, healthy)

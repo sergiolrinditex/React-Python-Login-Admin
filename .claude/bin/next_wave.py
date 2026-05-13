@@ -148,11 +148,13 @@ def _terminal_command(task_id: str) -> str:
     workflow = _git_workflow()
     if workflow == "push-to-main":
         return (
+            "unset CLAUDE_ACTIVE_TASK_ID CLAUDE_TASK_PACK CLAUDE_WORKTREE_ROOT CLAUDE_ORCHESTRATOR_ROOT && "
             f"export CLAUDE_ACTIVE_TASK_ID={task_id} "
             f"CLAUDE_TASK_PACK={pack} && "
             f"echo 'Ahora ejecuta en Claude Code: {claude_cmd}'"
         )
     return (
+        'unset CLAUDE_ACTIVE_TASK_ID CLAUDE_TASK_PACK CLAUDE_WORKTREE_ROOT CLAUDE_ORCHESTRATOR_ROOT && '
         'BOOTSTRAP_ROOT="${CLAUDE_ORCHESTRATOR_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd -P)}" && '
         'ROOT="$($BOOTSTRAP_ROOT/scripts/ensure-task-worktree.sh --print-root)" && '
         f'WT="$($ROOT/scripts/ensure-task-worktree.sh {task_id})" && '
@@ -165,6 +167,16 @@ def _terminal_command(task_id: str) -> str:
 
 def print_markdown(result: dict[str, Any]) -> None:
     print("# DAG wave propuesta")
+    print()
+    print("> **Antes de reclamar una task en este terminal**, limpia las 4")
+    print("> variables de scope para no mezclar contextos entre slices:")
+    print(">")
+    print("> ```bash")
+    print("> unset CLAUDE_ACTIVE_TASK_ID")
+    print("> unset CLAUDE_TASK_PACK")
+    print("> unset CLAUDE_WORKTREE_ROOT")
+    print("> unset CLAUDE_ORCHESTRATOR_ROOT")
+    print("> ```")
     print()
     print(f"- DAG mode: `{result.get('dag_mode')}`")
     print(f"- Phase: `{result.get('phase') or '—'}`")

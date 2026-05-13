@@ -1,6 +1,6 @@
 id: P00
 title: "Bootstrap / foundation propia"
-status: complete
+status: done
 depends_on:
 task_ids:
   - P00-S01-T001

@@ -1,0 +1,2 @@
+{"data":{"id":"27f3f675-4596-4d0f-bac0-20f81373abe3","name":"OpenAI PostCloser ReVerify","provider_type":"openai","base_url":null,"status":"draft","created_by":"1a155000-ad85-42d0-b2f4-664c1c35d944","has_credentials":true,"credential_auth_type":"api_key","expires_at":null},"meta":{"request_id":"postcloser-T-C"}}
+HTTP 201
