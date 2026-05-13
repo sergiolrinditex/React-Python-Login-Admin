@@ -1,0 +1,1 @@
+60:| MCP client | `<SDK MCP Python candidato>` | modelcontextprotocol.io | Backend | conectar servidores MCP externos | JSON-RPC artesanal | pendiente — official-docs-researcher confirmará al implementar | P00-S01-T003 |

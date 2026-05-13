@@ -1,0 +1,5 @@
+=== TEST 4: git diff --stat (expect 1 file, 1 insertion, 1 deletion) ===
+ docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+EXIT_CODE:0
+RESULT: PASS — 1 file changed, 1 insertion(+), 1 deletion(-)

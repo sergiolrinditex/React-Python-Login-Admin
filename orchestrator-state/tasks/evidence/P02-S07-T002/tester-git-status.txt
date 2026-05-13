@@ -1,0 +1,7 @@
+=== TEST 6: git status --porcelain (expect only TECHNICAL_GUIDE + runtime files) ===
+ M docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md
+?? orchestrator-state/tasks/evidence/P02-S07-T002/
+?? orchestrator-state/tasks/handoffs/P02-S07-T002.md
+?? orchestrator-state/tasks/task-packs/P02-S07-T002.md
+EXIT_CODE:0
+RESULT: PASS — M docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md only; untracked = expected runtime (evidence/, handoffs/, task-packs/). Nothing under backend/app/mcp/** or backend/tests/**
