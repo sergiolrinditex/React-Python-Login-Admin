@@ -1,0 +1,13 @@
+=== PATCH /api/v1/admin/ai/agents/{id}/tools ===
+Command: curl -s -D - -X PATCH -H 'Authorization: Bearer [ADMIN_JWT_REDACTED]' -H 'Content-Type: application/json' -d '{"tool_ids":["TOOL_UUID"]}' http://localhost:8001/api/v1/admin/ai/agents/AGENT_UUID/tools
+JWT: Bearer [ADMIN_JWT_REDACTED]
+Agent ID: 0f799460-0b3e-4926-913e-fdbbe2e2eb3d
+Tool ID: 27c3768d-8ff0-40ae-a01c-0fbf8ba6993c
+
+HTTP/1.1 200 OK
+date: Wed, 13 May 2026 17:14:15 GMT
+server: uvicorn
+content-length: 486
+content-type: application/json
+
+{"data":{"id":"0f799460-0b3e-4926-913e-fdbbe2e2eb3d","name":"people_helper","description":"Agente de ayuda para consultas de políticas de RRHH","enabled":true,"config":{"model":"gpt-4o","max_tokens":1024,"mcp_server_ref":"sandbox_readonly"},"bound_tools":[{"id":"27c3768d-8ff0-40ae-a01c-0fbf8ba6993c","name":"list_vacation_policies_e32a04db","server_name":"smoke_server_e32a04db","enabled":true,"requires_approval":false,"risk_level":"low"}]},"meta":{"request_id":"evidence-curl-002"}}

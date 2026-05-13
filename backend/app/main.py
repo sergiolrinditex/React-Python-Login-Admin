@@ -44,6 +44,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 from app.admin import admin_router  # P02-S05-T001 WRITE_SET_DRIFT §D-AAM
+from app.agents import agents_runs_router  # P02-S08-T001 WRITE_SET_DRIFT §D-AGWIRE-MAIN
 from app.api.router import api_router
 from app.auth import auth_router
 from app.auth.schemas import ErrorItem, ErrorResponse, ResponseMeta
@@ -83,6 +84,7 @@ app.include_router(auth_router, prefix="/api/v1")
 app.include_router(users_router, prefix="/api/v1")  # P01-S02-T007 WRITE_SET_DRIFT §G.14
 app.include_router(chat_router, prefix="/api/v1")  # P02-S03-T001 WRITE_SET_DRIFT
 app.include_router(admin_router, prefix="/api/v1/admin/ai", tags=["admin-ai"])  # P02-S05-T001 WRITE_SET_DRIFT §D-AAM
+app.include_router(agents_runs_router, prefix="/api/v1", tags=["agents"])  # P02-S08-T001 WRITE_SET_DRIFT §D-AGWIRE-MAIN
 
 
 # ---------------------------------------------------------------------------

@@ -1,0 +1,7 @@
+HTTP/1.1 200 OK
+date: Wed, 13 May 2026 17:44:10 GMT
+server: uvicorn
+content-length: 302
+content-type: application/json
+
+{"data":[{"id":"0b23017a-fa01-42ca-bddc-5a7dc61cb87a","name":"people_helper","description":"Agente de ayuda para consultas de políticas de RRHH","enabled":true,"config":{"model":"gpt-4o","max_tokens":1024,"mcp_server_ref":"sandbox_readonly"},"bound_tools":[]}],"meta":{"request_id":"verify-T001-V01"}}

@@ -1,0 +1,96 @@
+# DB Inspection — P02-S08-T001
+# Command: PGPASSWORD=hilo psql -h localhost -p 5432 -U hilo -d hilo_dev -c "\d <table>"
+# Date: 2026-05-13
+
+## Table: agents
+                        Tabla «public.agents»
+   Columna   |  Tipo   | Ordenamiento | Nulable  |    Por omisión    
+-------------+---------+--------------+----------+-------------------
+ id          | uuid    |              | not null | gen_random_uuid()
+ name        | text    |              | not null | 
+ description | text    |              |          | 
+ enabled     | boolean |              | not null | false
+ config      | jsonb   |              | not null | '{}'::jsonb
+Índices:
+    "pk_agents" PRIMARY KEY, btree (id)
+Referenciada por:
+    TABLE "agent_runs" CONSTRAINT "agent_runs_agent_id_fkey" FOREIGN KEY (agent_id) REFERENCES agents(id) ON DELETE SET NULL
+    TABLE "mcp_agent_bindings" CONSTRAINT "mcp_agent_bindings_agent_id_fkey" FOREIGN KEY (agent_id) REFERENCES agents(id) ON DELETE CASCADE
+
+SELECT count(*) FROM agents;
+ count 
+-------
+     1
+
+## Table: mcp_agent_bindings
+             Tabla «public.mcp_agent_bindings»
+ Columna  |  Tipo   | Ordenamiento | Nulable  | Por omisión 
+----------+---------+--------------+----------+-------------
+ agent_id | uuid    |              | not null | 
+ tool_id  | uuid    |              | not null | 
+ enabled  | boolean |              | not null | true
+Índices:
+    "pk_mcp_agent_bindings" PRIMARY KEY, btree (agent_id, tool_id)
+Restricciones de llave foránea:
+    "mcp_agent_bindings_agent_id_fkey" FOREIGN KEY (agent_id) REFERENCES agents(id) ON DELETE CASCADE
+    "mcp_agent_bindings_tool_id_fkey" FOREIGN KEY (tool_id) REFERENCES mcp_tools(id) ON DELETE CASCADE
+
+SELECT count(*) FROM mcp_agent_bindings;
+ count 
+-------
+     0
+
+## Table: agent_runs
+                              Tabla «public.agent_runs»
+   Columna   |           Tipo           | Ordenamiento | Nulable  |    Por omisión    
+-------------+--------------------------+--------------+----------+-------------------
+ id          | uuid                     |              | not null | gen_random_uuid()
+ agent_id    | uuid                     |              |          | 
+ user_id     | uuid                     |              |          | 
+ input       | text                     |              | not null | 
+ status      | text                     |              | not null | 
+ output      | text                     |              |          | 
+ created_at  | timestamp with time zone |              | not null | now()
+ finished_at | timestamp with time zone |              |          | 
+Índices:
+    "pk_agent_runs" PRIMARY KEY, btree (id)
+Restricciones de llave foránea:
+    "agent_runs_agent_id_fkey" FOREIGN KEY (agent_id) REFERENCES agents(id) ON DELETE SET NULL
+    "agent_runs_user_id_fkey" FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+Referenciada por:
+    TABLE "mcp_tool_invocations" CONSTRAINT "mcp_tool_invocations_agent_run_id_fkey" FOREIGN KEY (agent_run_id) REFERENCES agent_runs(id) ON DELETE CASCADE
+
+SELECT count(*) FROM agent_runs;
+ count 
+-------
+     0
+
+## Table: mcp_tool_invocations
+                           Tabla «public.mcp_tool_invocations»
+    Columna     |           Tipo           | Ordenamiento | Nulable  |    Por omisión    
+----------------+--------------------------+--------------+----------+-------------------
+ id             | uuid                     |              | not null | gen_random_uuid()
+ tool_id        | uuid                     |              |          | 
+ agent_run_id   | uuid                     |              | not null | 
+ arguments_json | jsonb                    |              | not null | '{}'::jsonb
+ result_json    | jsonb                    |              |          | 
+ status         | text                     |              | not null | 
+ latency_ms     | integer                  |              |          | 
+ error          | text                     |              |          | 
+ created_at     | timestamp with time zone |              | not null | now()
+Índices:
+    "pk_mcp_tool_invocations" PRIMARY KEY, btree (id)
+Restricciones de llave foránea:
+    "mcp_tool_invocations_agent_run_id_fkey" FOREIGN KEY (agent_run_id) REFERENCES agent_runs(id) ON DELETE CASCADE
+    "mcp_tool_invocations_tool_id_fkey" FOREIGN KEY (tool_id) REFERENCES mcp_tools(id) ON DELETE SET NULL
+Referenciada por:
+    TABLE "mcp_approvals" CONSTRAINT "mcp_approvals_invocation_id_fkey" FOREIGN KEY (invocation_id) REFERENCES mcp_tool_invocations(id) ON DELETE CASCADE
+
+SELECT count(*) FROM mcp_tool_invocations;
+ count 
+-------
+     0
+
+## Conclusion
+All four tables exist with correct columns and FK constraints.
+No "relation does not exist" errors. Schema is sound.

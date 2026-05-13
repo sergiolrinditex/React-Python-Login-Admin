@@ -1,0 +1,42 @@
+2026-05-13 19:14:05,378 app.agents.router_agents DEBUG agents.router.list_agents.start user_id=840db9b7-4703-496e-a84e-ba0ef9e6b144 request_id=evidence-curl-001
+2026-05-13 19:14:05,379 app.agents.service_list DEBUG agents.service.list_agents.start request_id=evidence-curl-001
+2026-05-13 19:14:05,379 app.agents.repository_agents DEBUG agents.repository.list_agents.start
+2026-05-13 19:14:05,392 app.agents.repository_agents DEBUG agents.repository.list_agents.ok count=1
+2026-05-13 19:14:05,392 app.agents.service_list DEBUG agents.service.list_agents.ok count=1 request_id=evidence-curl-001
+2026-05-13 19:14:05,392 app.agents.router_agents DEBUG agents.router.list_agents.ok user_id=840db9b7-4703-496e-a84e-ba0ef9e6b144 count=1 request_id=evidence-curl-001
+2026-05-13 19:14:15,258 app.agents.router_agents DEBUG agents.router.list_agents.start user_id=840db9b7-4703-496e-a84e-ba0ef9e6b144 request_id=ev-000
+2026-05-13 19:14:15,258 app.agents.service_list DEBUG agents.service.list_agents.start request_id=ev-000
+2026-05-13 19:14:15,258 app.agents.repository_agents DEBUG agents.repository.list_agents.start
+2026-05-13 19:14:15,261 app.agents.repository_agents DEBUG agents.repository.list_agents.ok count=1
+2026-05-13 19:14:15,261 app.agents.service_list DEBUG agents.service.list_agents.ok count=1 request_id=ev-000
+2026-05-13 19:14:15,261 app.agents.router_agents DEBUG agents.router.list_agents.ok user_id=840db9b7-4703-496e-a84e-ba0ef9e6b144 count=1 request_id=ev-000
+2026-05-13 19:14:15,921 app.agents.router_agents DEBUG agents.router.patch_tools.start user_id=840db9b7-4703-496e-a84e-ba0ef9e6b144 agent_id=0f799460-0b3e-4926-913e-fdbbe2e2eb3d tool_count=1 request_id=evidence-curl-002
+2026-05-13 19:14:15,921 app.agents.service_bind_tools DEBUG agents.service.bind_tools.start agent_id=0f799460-0b3e-4926-913e-fdbbe2e2eb3d tool_count=1 request_id=evidence-curl-002
+2026-05-13 19:14:15,921 app.agents.repository_agents DEBUG agents.repository.get_agent.start agent_id=0f799460-0b3e-4926-913e-fdbbe2e2eb3d
+2026-05-13 19:14:15,923 app.agents.repository_agents DEBUG agents.repository.get_agent.ok agent_id=0f799460-0b3e-4926-913e-fdbbe2e2eb3d bound_tools=0
+2026-05-13 19:14:15,923 app.agents.repository_agents DEBUG agents.repository.validate_tools.start count=1
+2026-05-13 19:14:15,924 app.agents.repository_agents DEBUG agents.repository.validate_tools.ok count=1
+2026-05-13 19:14:15,924 app.agents.repository_agents DEBUG agents.repository.bind_tools.start agent_id=0f799460-0b3e-4926-913e-fdbbe2e2eb3d tool_count=1
+2026-05-13 19:14:15,928 app.agents.repository_agents DEBUG agents.repository.bind_tools.ok agent_id=0f799460-0b3e-4926-913e-fdbbe2e2eb3d added=1 removed=0
+2026-05-13 19:14:15,932 app.agents.repository_agents DEBUG agents.repository.get_agent.start agent_id=0f799460-0b3e-4926-913e-fdbbe2e2eb3d
+2026-05-13 19:14:15,935 app.agents.repository_agents DEBUG agents.repository.get_agent.ok agent_id=0f799460-0b3e-4926-913e-fdbbe2e2eb3d bound_tools=1
+2026-05-13 19:14:15,935 app.agents.service_bind_tools DEBUG agents.service.bind_tools.ok agent_id=0f799460-0b3e-4926-913e-fdbbe2e2eb3d added=1 removed=0 request_id=evidence-curl-002
+2026-05-13 19:14:15,937 app.agents.router_agents DEBUG agents.router.patch_tools.ok user_id=840db9b7-4703-496e-a84e-ba0ef9e6b144 agent_id=0f799460-0b3e-4926-913e-fdbbe2e2eb3d request_id=evidence-curl-002
+2026-05-13 19:14:28,284 app.agents.router_runs DEBUG agents.router.start_run.start user_id=840db9b7-4703-496e-a84e-ba0ef9e6b144 agent_id=0f799460-0b3e-4926-913e-fdbbe2e2eb3d input_len=5 request_id=evidence-curl-003
+2026-05-13 19:14:28,284 app.agents.service_start_run DEBUG agents.service.start_run.start agent_id=0f799460-0b3e-4926-913e-fdbbe2e2eb3d input_len=5 request_id=evidence-curl-003
+2026-05-13 19:14:28,284 app.agents.repository_agents DEBUG agents.repository.get_agent.start agent_id=0f799460-0b3e-4926-913e-fdbbe2e2eb3d
+2026-05-13 19:14:28,288 app.agents.repository_agents DEBUG agents.repository.get_agent.ok agent_id=0f799460-0b3e-4926-913e-fdbbe2e2eb3d bound_tools=1
+2026-05-13 19:14:28,288 app.agents.repository_runs DEBUG agents.repository.create_run.start agent_id=0f799460-0b3e-4926-913e-fdbbe2e2eb3d user_id=840db9b7-4703-496e-a84e-ba0ef9e6b144
+2026-05-13 19:14:28,292 app.agents.repository_runs DEBUG agents.repository.create_run.ok run_id=4dbd6f98-86f8-4d04-9e6b-90f5981a9373
+2026-05-13 19:14:28,315 app.agents.service_start_run_tools DEBUG agents.service.start_run.approved_tools count=1 run_id=4dbd6f98-86f8-4d04-9e6b-90f5981a9373
+2026-05-13 19:14:29,446 app.agents.deepagents_runtime DEBUG agents.deepagents_runtime.build_agent.start run_id=4dbd6f98-86f8-4d04-9e6b-90f5981a9373 tool_count=1 request_id=evidence-curl-003
+2026-05-13 19:14:29,504 deepagents.profiles.harness.harness_profiles DEBUG No harness profile matched pre-built model ChatAnthropic (identifier='gpt-4o', provider='anthropic'); using defaults. If you registered a profile for this model, ensure the key matches the model's resolved provider and identifier.
+2026-05-13 19:14:29,516 app.agents.deepagents_runtime DEBUG agents.deepagents_runtime.build_agent.ok run_id=4dbd6f98-86f8-4d04-9e6b-90f5981a9373 tools=3 request_id=evidence-curl-003
+2026-05-13 19:14:29,516 app.agents.repository_runs DEBUG agents.repository.update_run_status.start run_id=4dbd6f98-86f8-4d04-9e6b-90f5981a9373 status=running
+2026-05-13 19:14:29,520 app.agents.repository_runs DEBUG agents.repository.update_run_status.ok run_id=4dbd6f98-86f8-4d04-9e6b-90f5981a9373 status=running
+2026-05-13 19:14:29,526 app.agents.deepagents_runtime DEBUG agents.deepagents_runtime.invoke_agent.start run_id=4dbd6f98-86f8-4d04-9e6b-90f5981a9373 input_len=5 request_id=evidence-curl-003
+2026-05-13 19:14:30,268 app.agents.service_start_run ERROR agents.service.start_run.error run_id=4dbd6f98-86f8-4d04-9e6b-90f5981a9373 error=AuthenticationError request_id=evidence-curl-003
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/deepagents/middleware/subagents.py", line 612, in wrap_model_call
+2026-05-13 19:14:30,281 app.agents.repository_runs DEBUG agents.repository.update_run_status.start run_id=4dbd6f98-86f8-4d04-9e6b-90f5981a9373 status=failed
+2026-05-13 19:14:30,286 app.agents.repository_runs DEBUG agents.repository.update_run_status.ok run_id=4dbd6f98-86f8-4d04-9e6b-90f5981a9373 status=failed
+2026-05-13 19:14:30,301 app.agents.router_runs ERROR agents.router.start_run.failed user_id=840db9b7-4703-496e-a84e-ba0ef9e6b144 agent_id=0f799460-0b3e-4926-913e-fdbbe2e2eb3d request_id=evidence-curl-003 error=Agent run failed: AuthenticationError

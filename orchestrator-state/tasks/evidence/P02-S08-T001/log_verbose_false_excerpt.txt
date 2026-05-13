@@ -1,0 +1,3 @@
+2026-05-13 19:15:36,526 app.agents.service_start_run ERROR agents.service.start_run.error run_id=b34ff6a7-01df-4919-b73d-2661ae5cd7c2 error=AuthenticationError request_id=nv-003
+  File "/Users/sergiolr/Library/Python/3.11/lib/python/site-packages/deepagents/middleware/subagents.py", line 612, in wrap_model_call
+2026-05-13 19:15:36,596 app.agents.router_runs ERROR agents.router.start_run.failed user_id=840db9b7-4703-496e-a84e-ba0ef9e6b144 agent_id=0f799460-0b3e-4926-913e-fdbbe2e2eb3d request_id=nv-003 error=Agent run failed: AuthenticationError

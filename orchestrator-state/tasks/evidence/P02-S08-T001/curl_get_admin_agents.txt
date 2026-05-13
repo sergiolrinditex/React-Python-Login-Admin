@@ -1,0 +1,11 @@
+=== GET /api/v1/admin/ai/agents ===
+Command: curl -s -D - -H 'Authorization: Bearer [ADMIN_JWT_REDACTED]' -H 'X-Request-ID: evidence-curl-001' http://localhost:8001/api/v1/admin/ai/agents
+JWT: Bearer [ADMIN_JWT_REDACTED — minted via sign-in with admin.peopletech@inditex-sandbox.com (people_admin role)]
+
+HTTP/1.1 200 OK
+date: Wed, 13 May 2026 17:14:04 GMT
+server: uvicorn
+content-length: 304
+content-type: application/json
+
+{"data":[{"id":"0f799460-0b3e-4926-913e-fdbbe2e2eb3d","name":"people_helper","description":"Agente de ayuda para consultas de políticas de RRHH","enabled":true,"config":{"model":"gpt-4o","max_tokens":1024,"mcp_server_ref":"sandbox_readonly"},"bound_tools":[]}],"meta":{"request_id":"evidence-curl-001"}}
