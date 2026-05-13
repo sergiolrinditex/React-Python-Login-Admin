@@ -1,0 +1,34 @@
+# Verification Data Contract rows used — P02-S05-T002
+
+## Contract row from TECHNICAL_GUIDE §6.5 (J103 admin-ai row)
+
+| Journey/Slice | User | Provider data | Bootstrap cmd | Teardown |
+|---|---|---|---|---|
+| J103 admin-ai | admin.peopletech@inditex-sandbox.com (roles: people_admin) | litellm_verification.json | python -m app.verification_data.bootstrap --source data/verification --only admin_ai | delete ai_provider test rows |
+
+## Data used in tester run
+
+### Users
+- admin.peopletech@inditex-sandbox.com — active, role=people_admin (from data/verification/users/admin_peopletech.json)
+- ai_provider and ai_model rows created per-test by _create_test_model() helper (inline fixture, committed and cleaned up)
+
+### Verification data gaps
+- credential_plain: null in data/verification/admin_ai/providers/litellm_verification.json
+  - Impact: curl smoke POST /test returns 502 AI_PROVIDER_TEST_FAILED (documented in §F.1 R-CREDS)
+  - This is NOT a test failure; it is an expected result per R-CREDS documentation
+  - Tests themselves use monkeypatched LiteLLM (legitimate boundary mock per 01-non-negotiables.md)
+
+## Persisted data observed (DB inspection post-tests)
+
+### ai_model_tests (from curl smoke)
+- 1 row with status='failure' (expected: credential_plain=null → LiteLLM call fails → failure row written)
+- audit_logs: 33 total rows for action='admin.ai.model.test' (32 from integration tests + 1 from curl smoke)
+
+### llm_usage_logs  
+- 0 rows (test teardown cleaned up test rows; curl smoke failure path doesn't insert usage log)
+
+### Contract compliance
+- ai_model_tests.status values: 'success', 'failure', 'timeout' — all 3 types produced in tests
+- llm_usage_logs: tokens_in=5, tokens_out=3 inserted on T01 success path (verified in-test)
+- audit_logs: action='admin.ai.model.test' with outcome=success and outcome=failure both produced
+

@@ -1,0 +1,26 @@
+--- ai_model_tests post-retry ---
+                  id                  | status  | latency_ms | prompt_chars | output |          created_at           
+--------------------------------------+---------+------------+--------------+--------+-------------------------------
+ 1539df62-07d4-46de-9672-805a8f50ff90 | failure |            |           40 |        | 2026-05-13 20:33:06.522363+00
+(1 fila)
+
+--- llm_usage_logs ---
+ id | tokens_in | tokens_out | estimated_cost | latency_ms 
+----+-----------+------------+----------------+------------
+(0 filas)
+
+--- audit_logs admin.ai.model.test ---
+                  id                  |       action        |            actor_user_id             |  entity_type  |              entity_id               |          created_at           |                         metadata                          
+--------------------------------------+---------------------+--------------------------------------+---------------+--------------------------------------+-------------------------------+-----------------------------------------------------------
+ e6d5d052-e8a5-4948-a536-ac4abf497872 | admin.ai.model.test | a3e3b1e3-422d-4905-bc7c-e4b0ab3f3d87 | ai_model_test | 1539df62-07d4-46de-9672-805a8f50ff90 | 2026-05-13 20:33:06.557548+00 | {                                                        +
+                                      |                     |                                      |               |                                      |                               |     "ip": "127.0.0.1",                                   +
+                                      |                     |                                      |               |                                      |                               |     "status": "failure",                                 +
+                                      |                     |                                      |               |                                      |                               |     "outcome": "failure",                                +
+                                      |                     |                                      |               |                                      |                               |     "test_id": "1539df62-07d4-46de-9672-805a8f50ff90",   +
+                                      |                     |                                      |               |                                      |                               |     "model_id": "79ec1690-e86e-4d04-9381-69ca7ed9fc19",  +
+                                      |                     |                                      |               |                                      |                               |     "request_id": "646E9486-368B-4D46-96D9-CB8B094148CC",+
+                                      |                     |                                      |               |                                      |                               |     "user_agent": "curl/8.7.1",                          +
+                                      |                     |                                      |               |                                      |                               |     "failure_reason": "litellm_error"                    +
+                                      |                     |                                      |               |                                      |                               | }
+(1 fila)
+

@@ -1,0 +1,26 @@
+2026-05-13 22:15:57,507 app.admin.model_test.router DEBUG admin.model_test.router.test.start user_id=a3e3b1e3-422d-4905-bc7c-e4b0ab3f3d87 model_id=79ec1690-e86e-4d04-9381-69ca7ed9fc19 prompt_len=23 request_id=4508E184-C7B5-4639-9ED4-243B75A6FD53
+2026-05-13 22:15:57,519 app.admin.model_test.service DEBUG admin.model_test.service.run.start actor=a3e3b1e3-422d-4905-bc7c-e4b0ab3f3d87 model_id=79ec1690-e86e-4d04-9381-69ca7ed9fc19 prompt_len=23 request_id=4508E184-C7B5-4639-9ED4-243B75A6FD53
+2026-05-13 22:15:57,519 app.admin.model_test.repository DEBUG admin.model_test.repository.get_model.start model_id=79ec1690-e86e-4d04-9381-69ca7ed9fc19
+2026-05-13 22:15:57,523 app.admin.model_test.repository DEBUG admin.model_test.repository.get_model.ok model_id=79ec1690-e86e-4d04-9381-69ca7ed9fc19 found=True
+2026-05-13 22:15:57,523 app.admin.model_test.repository DEBUG admin.model_test.repository.get_provider.start provider_id=cea7a65c-d490-4389-ac7d-77b1e8a21d06
+2026-05-13 22:15:57,526 app.admin.model_test.repository DEBUG admin.model_test.repository.get_provider.ok provider_id=cea7a65c-d490-4389-ac7d-77b1e8a21d06 found=True
+2026-05-13 22:15:57,526 app.admin.model_test.repository DEBUG admin.model_test.repository.get_credential.start provider_id=cea7a65c-d490-4389-ac7d-77b1e8a21d06
+2026-05-13 22:15:57,528 app.admin.model_test.repository DEBUG admin.model_test.repository.get_credential.ok provider_id=cea7a65c-d490-4389-ac7d-77b1e8a21d06 found=True
+2026-05-13 22:15:57,558 app.admin.model_test.service ERROR admin.model_test.service.litellm_error actor=a3e3b1e3-422d-4905-bc7c-e4b0ab3f3d87 model_id=79ec1690-e86e-4d04-9381-69ca7ed9fc19 request_id=4508E184-C7B5-4639-9ED4-243B75A6FD53 error=BadRequestError
+2026-05-13 22:15:57,558 app.admin.model_test.service DEBUG admin.model_test.service._persist_failure.start model_id=79ec1690-e86e-4d04-9381-69ca7ed9fc19 status=failure request_id=4508E184-C7B5-4639-9ED4-243B75A6FD53
+2026-05-13 22:15:57,558 app.admin.model_test.repository DEBUG admin.model_test.repository.insert_test.start model_id=79ec1690-e86e-4d04-9381-69ca7ed9fc19 status=failure prompt_len=23
+2026-05-13 22:15:57,564 app.admin.model_test.repository DEBUG admin.model_test.repository.insert_test.ok test_id=74f0b11d-40cc-4fff-bd03-c82bf3ecdc19 model_id=79ec1690-e86e-4d04-9381-69ca7ed9fc19 status=failure
+2026-05-13 22:15:57,569 app.admin.model_test.service DEBUG admin.model_test.service._persist_failure.ok test_id=74f0b11d-40cc-4fff-bd03-c82bf3ecdc19 request_id=4508E184-C7B5-4639-9ED4-243B75A6FD53
+2026-05-13 22:15:57,569 app.admin._audit DEBUG admin._audit.write.start actor=a3e3b1e3-422d-4905-bc7c-e4b0ab3f3d87 action=admin.ai.model.test entity_id=74f0b11d-40cc-4fff-bd03-c82bf3ecdc19
+2026-05-13 22:15:57,583 app.admin._audit DEBUG admin._audit.write.ok actor=a3e3b1e3-422d-4905-bc7c-e4b0ab3f3d87 action=admin.ai.model.test entity_id=74f0b11d-40cc-4fff-bd03-c82bf3ecdc19
+2026-05-13 22:15:57,586 app.admin.model_test.router ERROR admin.model_test.router.test.failed user_id=a3e3b1e3-422d-4905-bc7c-e4b0ab3f3d87 model_id=79ec1690-e86e-4d04-9381-69ca7ed9fc19 request_id=4508E184-C7B5-4639-9ED4-243B75A6FD53
+2026-05-13 22:15:57,685 app.admin.model_test.router DEBUG admin.model_test.router.test.start user_id=a3e3b1e3-422d-4905-bc7c-e4b0ab3f3d87 model_id=00000000-0000-0000-0000-000000000000 prompt_len=2 request_id=CD7D26D2-28F3-444C-9CF2-AF4ADFB7B2FD
+2026-05-13 22:15:57,686 app.admin.model_test.service DEBUG admin.model_test.service.run.start actor=a3e3b1e3-422d-4905-bc7c-e4b0ab3f3d87 model_id=00000000-0000-0000-0000-000000000000 prompt_len=2 request_id=CD7D26D2-28F3-444C-9CF2-AF4ADFB7B2FD
+2026-05-13 22:15:57,686 app.admin.model_test.repository DEBUG admin.model_test.repository.get_model.start model_id=00000000-0000-0000-0000-000000000000
+2026-05-13 22:15:57,687 app.admin.model_test.repository DEBUG admin.model_test.repository.get_model.ok model_id=00000000-0000-0000-0000-000000000000 found=False
+2026-05-13 22:15:57,687 app.admin.model_test.service WARNING admin.model_test.service.model_not_found actor=a3e3b1e3-422d-4905-bc7c-e4b0ab3f3d87 model_id=00000000-0000-0000-0000-000000000000 request_id=CD7D26D2-28F3-444C-9CF2-AF4ADFB7B2FD
+2026-05-13 22:15:57,687 app.admin.model_test.router WARNING admin.model_test.router.test.not_found_model user_id=a3e3b1e3-422d-4905-bc7c-e4b0ab3f3d87 model_id=00000000-0000-0000-0000-000000000000 request_id=CD7D26D2-28F3-444C-9CF2-AF4ADFB7B2FD
+2026-05-13 22:15:57,723 app.admin.usage DEBUG admin.usage.list.start user_id=a3e3b1e3-422d-4905-bc7c-e4b0ab3f3d87 from=2026-05-01T00:00:00+00:00 to=2026-05-13T23:59:59+00:00 group_by=model request_id=BCAB494A-35CB-48F5-940E-3E56C05C8101
+2026-05-13 22:15:57,728 app.admin.usage DEBUG admin.usage.list.ok user_id=a3e3b1e3-422d-4905-bc7c-e4b0ab3f3d87 rows=0 invocations=0 request_id=BCAB494A-35CB-48F5-940E-3E56C05C8101
+2026-05-13 22:15:57,769 app.admin.usage DEBUG admin.usage.list.start user_id=a3e3b1e3-422d-4905-bc7c-e4b0ab3f3d87 from=2025-01-01T00:00:00+00:00 to=2026-05-13T23:59:59+00:00 group_by=model request_id=F6D3F081-9F98-43DE-BF64-8C4CF1D4038C
+2026-05-13 22:15:57,809 app.admin.usage DEBUG admin.usage.list.start user_id=a3e3b1e3-422d-4905-bc7c-e4b0ab3f3d87 from=2026-06-01T00:00:00+00:00 to=2026-05-01T00:00:00+00:00 group_by=model request_id=FB301FF1-6617-489D-A968-70B953B7D038

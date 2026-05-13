@@ -1,0 +1,132 @@
+--- ai_model_tests (failure rows from T01) ---
+                  id                  |               model_id               | status  | latency_ms | prompt_chars | output |          created_at           
+--------------------------------------+--------------------------------------+---------+------------+--------------+--------+-------------------------------
+ 74f0b11d-40cc-4fff-bd03-c82bf3ecdc19 | 79ec1690-e86e-4d04-9381-69ca7ed9fc19 | failure |            |           23 |        | 2026-05-13 20:15:57.401006+00
+(1 fila)
+
+--- llm_usage_logs ---
+ id | model_id | tokens_in | tokens_out | estimated_cost | latency_ms | created_at 
+----+----------+-----------+------------+----------------+------------+------------
+(0 filas)
+
+--- audit_logs admin.ai.model.test ---
+ERROR:  column "resource_type" does not exist
+LÍNEA 1: SELECT id, action, actor_user_id, resource_type, resource_id...
+                                           ^
+                               Tabla «public.audit_logs»
+    Columna    |           Tipo           | Ordenamiento | Nulable  |    Por omisión    
+---------------+--------------------------+--------------+----------+-------------------
+ id            | uuid                     |              | not null | gen_random_uuid()
+ actor_user_id | uuid                     |              |          | 
+ action        | text                     |              | not null | 
+ entity_type   | text                     |              |          | 
+ entity_id     | uuid                     |              |          | 
+ metadata      | jsonb                    |              | not null | '{}'::jsonb
+ created_at    | timestamp with time zone |              | not null | now()
+Índices:
+    "pk_audit_logs" PRIMARY KEY, btree (id)
+    "audit_logs_actor_created_idx" btree (actor_user_id, created_at)
+    "audit_logs_created_at_idx" btree (created_at)
+    "audit_logs_entity_idx" btree (entity_type, entity_id)
+Restricciones de llave foránea:
+    "audit_logs_actor_user_id_fkey" FOREIGN KEY (actor_user_id) REFERENCES users(id) ON DELETE SET NULL
+
+--- audit_logs admin.ai.model.test ---
+ERROR:  column "target_type" does not exist
+LÍNEA 1: SELECT id, action, actor_user_id, target_type, target_id, cr...
+                                           ^
+--- audit_logs admin.ai.model.test ---
+                  id                  |       action        |            actor_user_id             |  entity_type  |              entity_id               |          created_at           |                         metadata                          
+--------------------------------------+---------------------+--------------------------------------+---------------+--------------------------------------+-------------------------------+-----------------------------------------------------------
+ 2a61d827-3f29-4c0c-9aaa-18e1029050ac | admin.ai.model.test | a3e3b1e3-422d-4905-bc7c-e4b0ab3f3d87 | ai_model_test | 74f0b11d-40cc-4fff-bd03-c82bf3ecdc19 | 2026-05-13 20:15:57.486306+00 | {                                                        +
+                                      |                     |                                      |               |                                      |                               |     "ip": "127.0.0.1",                                   +
+                                      |                     |                                      |               |                                      |                               |     "status": "failure",                                 +
+                                      |                     |                                      |               |                                      |                               |     "outcome": "failure",                                +
+                                      |                     |                                      |               |                                      |                               |     "test_id": "74f0b11d-40cc-4fff-bd03-c82bf3ecdc19",   +
+                                      |                     |                                      |               |                                      |                               |     "model_id": "79ec1690-e86e-4d04-9381-69ca7ed9fc19",  +
+                                      |                     |                                      |               |                                      |                               |     "request_id": "4508E184-C7B5-4639-9ED4-243B75A6FD53",+
+                                      |                     |                                      |               |                                      |                               |     "user_agent": "curl/8.7.1",                          +
+                                      |                     |                                      |               |                                      |                               |     "failure_reason": "litellm_error"                    +
+                                      |                     |                                      |               |                                      |                               | }
+(1 fila)
+
+--- recent audit_logs (any action) ---
+          action           |            actor_user_id             |          created_at           
+---------------------------+--------------------------------------+-------------------------------
+ auth.sign_in              | cb6f8548-c4c5-4455-bdb8-45fb51c20f39 | 2026-05-13 20:13:26.706718+00
+ auth.sign_in              | dc2cd838-ec3a-4f02-87bd-ba8c1dc75644 | 2026-05-13 20:13:26.881803+00
+ admin.rag.document.create | cb6f8548-c4c5-4455-bdb8-45fb51c20f39 | 2026-05-13 20:13:26.960906+00
+ admin.rag.document.create | cb6f8548-c4c5-4455-bdb8-45fb51c20f39 | 2026-05-13 20:13:26.979741+00
+ admin.rag.document.create | cb6f8548-c4c5-4455-bdb8-45fb51c20f39 | 2026-05-13 20:13:26.994267+00
+ admin.rag.document.create | cb6f8548-c4c5-4455-bdb8-45fb51c20f39 | 2026-05-13 20:13:27.133901+00
+ admin.rag.document.create | cb6f8548-c4c5-4455-bdb8-45fb51c20f39 | 2026-05-13 20:13:27.203021+00
+ auth.sign_in              |                                      | 2026-05-13 20:13:27.258201+00
+ auth.sign_in              |                                      | 2026-05-13 20:13:27.341105+00
+ auth.sign_in              |                                      | 2026-05-13 20:13:27.491556+00
+ auth.sign_in              |                                      | 2026-05-13 20:13:27.587994+00
+ admin.rag.document.index  |                                      | 2026-05-13 20:13:27.665916+00
+ admin.rag.document.index  |                                      | 2026-05-13 20:13:27.724756+00
+ admin.rag.document.index  |                                      | 2026-05-13 20:13:27.767441+00
+ auth.sign_in              | 57ae8afb-34ea-4f9b-ac43-5ca8a18c6b9e | 2026-05-13 20:13:37.993222+00
+ auth.sign_in              | 64abafa6-3ed1-45b6-9b70-8c2b54f74bb3 | 2026-05-13 20:13:38.152581+00
+ admin.rag.document.create | 57ae8afb-34ea-4f9b-ac43-5ca8a18c6b9e | 2026-05-13 20:13:38.240346+00
+ admin.rag.document.create | 57ae8afb-34ea-4f9b-ac43-5ca8a18c6b9e | 2026-05-13 20:13:38.269324+00
+ admin.rag.document.create | 57ae8afb-34ea-4f9b-ac43-5ca8a18c6b9e | 2026-05-13 20:13:38.285714+00
+ admin.rag.document.create | 57ae8afb-34ea-4f9b-ac43-5ca8a18c6b9e | 2026-05-13 20:13:38.406502+00
+ admin.rag.document.create | 57ae8afb-34ea-4f9b-ac43-5ca8a18c6b9e | 2026-05-13 20:13:38.486294+00
+ auth.sign_in              |                                      | 2026-05-13 20:13:38.544663+00
+ auth.sign_in              |                                      | 2026-05-13 20:13:38.62763+00
+ auth.sign_in              |                                      | 2026-05-13 20:13:38.774728+00
+ auth.sign_in              |                                      | 2026-05-13 20:13:38.85674+00
+ admin.rag.document.index  |                                      | 2026-05-13 20:13:38.946977+00
+ admin.rag.document.index  |                                      | 2026-05-13 20:13:39.005279+00
+ admin.rag.document.index  |                                      | 2026-05-13 20:13:39.045757+00
+ auth.sign_in              |                                      | 2026-05-13 20:14:08.592067+00
+ auth.sign_in              |                                      | 2026-05-13 20:14:08.747015+00
+ admin.rag.document.create |                                      | 2026-05-13 20:14:08.812844+00
+ auth.sign_in              |                                      | 2026-05-13 20:14:19.52025+00
+ auth.sign_in              |                                      | 2026-05-13 20:14:19.619237+00
+ admin.rag.document.create |                                      | 2026-05-13 20:14:19.762113+00
+ auth.sign_in              |                                      | 2026-05-13 20:14:19.822972+00
+ auth.sign_in              |                                      | 2026-05-13 20:14:19.907682+00
+ auth.sign_in              |                                      | 2026-05-13 20:14:20.015161+00
+ auth.sign_in              |                                      | 2026-05-13 20:14:20.105874+00
+ admin.rag.document.index  |                                      | 2026-05-13 20:14:20.194727+00
+ auth.sign_in              |                                      | 2026-05-13 20:14:28.930089+00
+ auth.sign_in              |                                      | 2026-05-13 20:14:29.107127+00
+ admin.rag.document.create |                                      | 2026-05-13 20:14:29.188958+00
+ auth.sign_in              |                                      | 2026-05-13 20:14:29.245643+00
+ auth.sign_in              |                                      | 2026-05-13 20:14:29.34041+00
+ auth.sign_in              |                                      | 2026-05-13 20:14:29.445617+00
+ auth.sign_in              |                                      | 2026-05-13 20:14:29.532023+00
+ admin.rag.document.index  |                                      | 2026-05-13 20:14:29.612674+00
+ auth.sign_in              |                                      | 2026-05-13 20:14:40.402063+00
+ auth.sign_in              |                                      | 2026-05-13 20:14:40.566798+00
+ admin.rag.document.create |                                      | 2026-05-13 20:14:40.639918+00
+ auth.sign_in              |                                      | 2026-05-13 20:14:40.694389+00
+ auth.sign_in              |                                      | 2026-05-13 20:14:40.783545+00
+ auth.sign_in              |                                      | 2026-05-13 20:14:40.897735+00
+ auth.sign_in              |                                      | 2026-05-13 20:14:40.988376+00
+ admin.rag.document.index  |                                      | 2026-05-13 20:14:41.069379+00
+ auth.sign_in              |                                      | 2026-05-13 20:15:07.425753+00
+ auth.sign_in              |                                      | 2026-05-13 20:15:07.593145+00
+ admin.rag.document.create |                                      | 2026-05-13 20:15:07.673289+00
+ auth.sign_in              |                                      | 2026-05-13 20:15:07.727902+00
+ auth.sign_in              |                                      | 2026-05-13 20:15:07.810859+00
+ auth.sign_in              |                                      | 2026-05-13 20:15:07.922383+00
+ auth.sign_in              |                                      | 2026-05-13 20:15:08.02207+00
+ admin.rag.document.index  |                                      | 2026-05-13 20:15:08.108922+00
+ auth.sign_in              | a3e3b1e3-422d-4905-bc7c-e4b0ab3f3d87 | 2026-05-13 20:15:10.484277+00
+ auth.sign_in              | a3e3b1e3-422d-4905-bc7c-e4b0ab3f3d87 | 2026-05-13 20:15:19.292788+00
+ auth.sign_in              |                                      | 2026-05-13 20:15:19.968636+00
+ auth.sign_in              |                                      | 2026-05-13 20:15:20.159198+00
+ admin.rag.document.create |                                      | 2026-05-13 20:15:20.240413+00
+ auth.sign_in              |                                      | 2026-05-13 20:15:20.296731+00
+ auth.sign_in              |                                      | 2026-05-13 20:15:20.382877+00
+ auth.sign_in              |                                      | 2026-05-13 20:15:20.48116+00
+ auth.sign_in              |                                      | 2026-05-13 20:15:20.56863+00
+ admin.rag.document.index  |                                      | 2026-05-13 20:15:20.651444+00
+ auth.sign_in              | a3e3b1e3-422d-4905-bc7c-e4b0ab3f3d87 | 2026-05-13 20:15:40.809332+00
+ admin.ai.model.test       | a3e3b1e3-422d-4905-bc7c-e4b0ab3f3d87 | 2026-05-13 20:15:57.486306+00
+(75 filas)
+

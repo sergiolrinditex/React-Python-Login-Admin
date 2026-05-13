@@ -1,0 +1,24 @@
+                  id                  |               model_id               | status  | latency_ms | estimated_cost |          created_at           
+--------------------------------------+--------------------------------------+---------+------------+----------------+-------------------------------
+ d0375d98-efb6-4b21-8774-8f7aa690263d | c08a48ec-06ab-415a-a824-8d45a8d87949 | failure |            |                | 2026-05-13 19:59:24.024601+00
+(1 fila)
+
+ id | model_id | user_id | tokens_in | tokens_out | estimated_cost | latency_ms | created_at 
+----+----------+---------+-----------+------------+----------------+------------+------------
+(0 filas)
+
+       action        | count 
+---------------------+-------
+ admin.ai.model.test |     1
+(1 fila)
+
+ ai_model_tests_rows 
+---------------------
+                   1
+(1 fila)
+
+ llm_usage_logs_rows 
+---------------------
+                   0
+(1 fila)
+
