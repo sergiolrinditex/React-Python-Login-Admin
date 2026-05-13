@@ -1,0 +1,55 @@
+verify-slice test runs (P02-S05-T003)
+=====================================
+Run at: 2026-05-13T17:22:00+02:00
+DB: postgresql+psycopg://hilo@localhost:5432/hilo_dev (head=0003 after round-trip)
+pytest: pytest 9.0.2, Python 3.11.5
+
+──────────────────────────────────────────────────────────────────
+Run #1 — ENABLE_VERBOSE_LOGGING=true, all 26 tests
+──────────────────────────────────────────────────────────────────
+Command: ENABLE_VERBOSE_LOGGING=true pytest tests/integration/test_admin_ai.py -v
+Result : 26 passed, 3 warnings in 3.83s
+        T01..T25 PASS
+        T26 (concurrent PATCH) PASS
+
+──────────────────────────────────────────────────────────────────
+Run #2 — ENABLE_VERBOSE_LOGGING=false, all 26 tests
+──────────────────────────────────────────────────────────────────
+Command: ENABLE_VERBOSE_LOGGING=false pytest tests/integration/test_admin_ai.py -v
+Result : 26 passed, 3 warnings in 4.04s
+        T01..T25 PASS
+        T26 (concurrent PATCH) PASS
+
+──────────────────────────────────────────────────────────────────
+Run #3 — Focused T26 with log capture, ENABLE_VERBOSE_LOGGING=true
+──────────────────────────────────────────────────────────────────
+Command: ENABLE_VERBOSE_LOGGING=true pytest …::test_T26_concurrent_patch_default_conflict --log-cli-level=DEBUG
+Race observation (full log in verify-T26-verbose-true.log):
+  • Both PATCHes pass `admin.models.repository.patch.ok` (in-tx assign succeeded for both)
+  • One transaction wins at session.commit(); the other gets DB UniqueViolation
+  • Service layer translates to ModelDefaultConflictError
+  • Router maps to HTTP 409 AI_MODEL_DEFAULT_CONFLICT
+  • httpx confirms: PATCH … → 200 OK  and  PATCH … → 409 Conflict (exactly one of each)
+Conflict log lines emitted (clean — no PII / no SQL fragments):
+  WARNING app.admin.model_catalog.service:152 admin.models.service.patch.conflict \
+    actor=<uuid> model_id=<uuid> model_type=chat request_id=<uuid> \
+    constraint=ai_models_default_per_type_uidx
+  WARNING app.admin.model_catalog.router:195 admin.models.patch.conflict_409 \
+    user_id=<uuid> model_id=<uuid> model_type=chat request_id=<uuid>
+PII / secrets scan: 0 hits (no `secret_plain`, no `api_key=`, no `password=`, no `sk-`,
+no `x-api-key`, no `bearer` token leakage on the conflict path).
+
+──────────────────────────────────────────────────────────────────
+Run #4 — Focused T26 with log capture, ENABLE_VERBOSE_LOGGING=false
+──────────────────────────────────────────────────────────────────
+Command: ENABLE_VERBOSE_LOGGING=false pytest …::test_T26_concurrent_patch_default_conflict --log-cli-level=DEBUG
+verbose-gating verification (full log in verify-T26-verbose-false.log):
+  • DEBUG lines from `app.admin.model_catalog.*` → 0 (correctly suppressed)
+  • WARNING lines from conflict path           → 2 (still visible — correct)
+  • PASS
+
+Conclusion:
+  • Acceptance A.3 (T01..T25 PASS both modes): ✅
+  • Acceptance A.4 (T26 concurrent PATCH proves DB-level enforcement): ✅
+  • Acceptance A.5 (409 AI_MODEL_DEFAULT_CONFLICT envelope): ✅ (asserted by T26 + httpx response observed)
+  • Acceptance A.6 (logging hygiene + verbose gating): ✅

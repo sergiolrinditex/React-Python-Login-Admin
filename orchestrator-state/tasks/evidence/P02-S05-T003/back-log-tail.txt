@@ -1,0 +1,60 @@
+2026-05-13 12:22:58,345 app.admin._audit DEBUG admin._audit.write.ok actor=103c5542-8e87-48d2-a51c-1d3bc7d4e011 action=admin.ai.provider.create entity_id=2801a02e-e335-4719-bb53-84ffc481ea8e
+2026-05-13 12:22:58,345 app.admin.providers.service DEBUG admin.providers.service.create.ok provider_id=2801a02e-e335-4719-bb53-84ffc481ea8e request_id=v3-H-19
+2026-05-13 12:22:58,347 app.admin.providers.router DEBUG admin.providers.create.ok user_id=103c5542-8e87-48d2-a51c-1d3bc7d4e011 provider_id=2801a02e-e335-4719-bb53-84ffc481ea8e request_id=v3-H-19
+INFO:     127.0.0.1:63411 - "POST /api/v1/admin/ai/providers HTTP/1.1" 201 Created
+2026-05-13 12:22:58,348 app.db.session DEBUG db.session.closed
+2026-05-13 12:22:58,372 app.db.session DEBUG db.session.open
+2026-05-13 12:22:58,372 app.users.deps DEBUG users.deps.get_current_user.start request_id=v3-H-20 ip=127.0.0.1
+2026-05-13 12:22:58,373 app.auth.tokens DEBUG tokens.decode.start
+2026-05-13 12:22:58,373 app.auth.tokens DEBUG tokens.decode.ok sub=103c5542-8e87-48d2-a51c-1d3bc7d4e011
+2026-05-13 12:22:58,373 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.start user_id=103c5542-8e87-48d2-a51c-1d3bc7d4e011
+2026-05-13 12:22:58,375 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.done user_id=103c5542-8e87-48d2-a51c-1d3bc7d4e011 found=True
+2026-05-13 12:22:58,375 app.users.deps DEBUG users.deps.get_current_user.done user_id=103c5542-8e87-48d2-a51c-1d3bc7d4e011 request_id=v3-H-20
+2026-05-13 12:22:58,375 app.security.permissions DEBUG security.permissions.require_role.start role=people_admin user_id=103c5542-8e87-48d2-a51c-1d3bc7d4e011 request_id=v3-H-20
+2026-05-13 12:22:58,375 app.security.permissions DEBUG security.permissions.require_role.ok role=people_admin user_id=103c5542-8e87-48d2-a51c-1d3bc7d4e011 request_id=v3-H-20
+2026-05-13 12:22:58,375 app.security.rate_limit DEBUG security.rate_limit.check.start prefix=ADMIN_AI ip=127.0.0.1 per_minute=20 window=60s request_id=v3-H-20
+2026-05-13 12:22:58,377 app.security.rate_limit WARNING security.rate_limit.exceeded prefix=ADMIN_AI ip=127.0.0.1 count=21 burst=20 retry_after=59s request_id=v3-H-20
+INFO:     127.0.0.1:63413 - "POST /api/v1/admin/ai/providers HTTP/1.1" 429 Too Many Requests
+2026-05-13 12:22:58,378 app.db.session DEBUG db.session.closed
+2026-05-13 12:22:58,402 app.db.session DEBUG db.session.open
+2026-05-13 12:22:58,402 app.users.deps DEBUG users.deps.get_current_user.start request_id=v3-H-21 ip=127.0.0.1
+2026-05-13 12:22:58,402 app.auth.tokens DEBUG tokens.decode.start
+2026-05-13 12:22:58,402 app.auth.tokens DEBUG tokens.decode.ok sub=103c5542-8e87-48d2-a51c-1d3bc7d4e011
+2026-05-13 12:22:58,402 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.start user_id=103c5542-8e87-48d2-a51c-1d3bc7d4e011
+2026-05-13 12:22:58,405 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.done user_id=103c5542-8e87-48d2-a51c-1d3bc7d4e011 found=True
+2026-05-13 12:22:58,405 app.users.deps DEBUG users.deps.get_current_user.done user_id=103c5542-8e87-48d2-a51c-1d3bc7d4e011 request_id=v3-H-21
+2026-05-13 12:22:58,406 app.security.permissions DEBUG security.permissions.require_role.start role=people_admin user_id=103c5542-8e87-48d2-a51c-1d3bc7d4e011 request_id=v3-H-21
+2026-05-13 12:22:58,406 app.security.permissions DEBUG security.permissions.require_role.ok role=people_admin user_id=103c5542-8e87-48d2-a51c-1d3bc7d4e011 request_id=v3-H-21
+2026-05-13 12:22:58,406 app.security.rate_limit DEBUG security.rate_limit.check.start prefix=ADMIN_AI ip=127.0.0.1 per_minute=20 window=60s request_id=v3-H-21
+2026-05-13 12:22:58,407 app.security.rate_limit WARNING security.rate_limit.exceeded prefix=ADMIN_AI ip=127.0.0.1 count=22 burst=20 retry_after=59s request_id=v3-H-21
+INFO:     127.0.0.1:63415 - "POST /api/v1/admin/ai/providers HTTP/1.1" 429 Too Many Requests
+2026-05-13 12:22:58,408 app.db.session DEBUG db.session.closed
+2026-05-13 12:24:21,722 app.db.session DEBUG db.session.open
+2026-05-13 12:24:21,723 app.users.deps DEBUG users.deps.get_current_user.start request_id=d16219db-be8c-4e02-b5b0-66873287ed05 ip=127.0.0.1
+2026-05-13 12:24:21,723 app.auth.tokens DEBUG tokens.decode.start
+2026-05-13 12:24:21,724 app.auth.tokens DEBUG tokens.decode.ok sub=103c5542-8e87-48d2-a51c-1d3bc7d4e011
+2026-05-13 12:24:21,724 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.start user_id=103c5542-8e87-48d2-a51c-1d3bc7d4e011
+2026-05-13 12:24:21,748 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.done user_id=103c5542-8e87-48d2-a51c-1d3bc7d4e011 found=True
+2026-05-13 12:24:21,748 app.users.deps DEBUG users.deps.get_current_user.done user_id=103c5542-8e87-48d2-a51c-1d3bc7d4e011 request_id=d16219db-be8c-4e02-b5b0-66873287ed05
+2026-05-13 12:24:21,748 app.security.permissions DEBUG security.permissions.require_role.start role=people_admin user_id=103c5542-8e87-48d2-a51c-1d3bc7d4e011 request_id=8eb41460-5e30-403e-abc4-18c81bee72c0
+2026-05-13 12:24:21,748 app.security.permissions DEBUG security.permissions.require_role.ok role=people_admin user_id=103c5542-8e87-48d2-a51c-1d3bc7d4e011 request_id=8eb41460-5e30-403e-abc4-18c81bee72c0
+2026-05-13 12:24:21,749 app.security.rate_limit DEBUG security.rate_limit.check.start prefix=ADMIN_AI ip=127.0.0.1 per_minute=20 window=60s request_id=cd7e6641-a0c4-474c-9726-625e09675b1d
+2026-05-13 12:24:21,751 app.security.rate_limit DEBUG security.rate_limit.check.ok prefix=ADMIN_AI ip=127.0.0.1 count=1 remaining=19 request_id=cd7e6641-a0c4-474c-9726-625e09675b1d
+2026-05-13 12:24:21,751 app.admin.providers.router DEBUG admin.providers.create.start user_id=103c5542-8e87-48d2-a51c-1d3bc7d4e011 provider_type=openai name_len=8 request_id=3ec64ccc-ba6b-4066-9043-e17c19183f24
+2026-05-13 12:24:21,751 app.admin.providers.service DEBUG admin.providers.service.create.start provider_type=openai name_len=8 request_id=3ec64ccc-ba6b-4066-9043-e17c19183f24
+2026-05-13 12:24:21,751 app.admin.providers.repository DEBUG admin.providers.repository.create.start provider_type=openai name_len=8
+2026-05-13 12:24:21,751 app.security.encryption DEBUG security.encryption.encrypt.start length=4
+2026-05-13 12:24:21,752 app.security.encryption DEBUG security.encryption.encrypt.ok
+2026-05-13 12:24:21,756 app.admin.providers.repository DEBUG admin.providers.repository.create.ok provider_id=df8d64c3-982b-476a-8c33-5738baa72a2d
+2026-05-13 12:24:21,761 app.admin._audit DEBUG admin._audit.write.start actor=103c5542-8e87-48d2-a51c-1d3bc7d4e011 action=admin.ai.provider.create entity_id=df8d64c3-982b-476a-8c33-5738baa72a2d
+2026-05-13 12:24:21,761 app.db.session DEBUG db.session.audit_scope.open
+2026-05-13 12:24:21,765 app.db.session DEBUG db.session.audit_scope.closed
+2026-05-13 12:24:21,765 app.admin._audit DEBUG admin._audit.write.ok actor=103c5542-8e87-48d2-a51c-1d3bc7d4e011 action=admin.ai.provider.create entity_id=df8d64c3-982b-476a-8c33-5738baa72a2d
+2026-05-13 12:24:21,765 app.admin.providers.service DEBUG admin.providers.service.create.ok provider_id=df8d64c3-982b-476a-8c33-5738baa72a2d request_id=3ec64ccc-ba6b-4066-9043-e17c19183f24
+2026-05-13 12:24:21,767 app.admin.providers.router DEBUG admin.providers.create.ok user_id=103c5542-8e87-48d2-a51c-1d3bc7d4e011 provider_id=df8d64c3-982b-476a-8c33-5738baa72a2d request_id=3ec64ccc-ba6b-4066-9043-e17c19183f24
+INFO:     127.0.0.1:63496 - "POST /api/v1/admin/ai/providers HTTP/1.1" 201 Created
+2026-05-13 12:24:21,767 app.db.session DEBUG db.session.closed
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [33829]

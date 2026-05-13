@@ -1,0 +1,11 @@
+# Alembic Upgrade Head — P02-S05-T003
+# Executed by tester 2026-05-13
+# 
+# Command: DATABASE_URL=postgresql+psycopg://hilo:hilo@localhost:5432/hilo_dev alembic upgrade head
+# 
+# Result: No output (already at head=0003)
+# alembic current: 0003 (head)
+# 
+# Migration 0003 was applied by the developer prior to handoff.
+# The tester-run upgrade confirmed idempotency: running "upgrade head" when already at head = no-op, exit 0.
+# The round-trip (down -1 → up head) in alembic-down-up.txt confirms the actual migration mechanics.

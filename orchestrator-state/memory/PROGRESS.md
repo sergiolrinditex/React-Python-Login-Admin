@@ -6,7 +6,7 @@
 
 ## Current State
 
-- **Phase**: Phase 2 — Core Features (P02-S05-T001 developer done 2026-05-13)
+- **Phase**: Phase 2 — Core Features (P02-S05-T003 developer done 2026-05-13)
 - **Last completed slices**:
   - P00-S01-T001 — Repo scaffold + scripts + env (done)
   - P00-S01-T002 — Frontend dependency pack (done)
@@ -33,8 +33,9 @@
   - **P01-S03-T002 — Cross-origin infra: vite proxy /api → uvicorn (Strategy A, ADR-002) — DONE 2026-05-13**
   - **P02-S03-T001 — Chat conversation CRUD endpoints (developer done, 2026-05-13)**
   - **P02-S05-T001 — Admin AI providers and models endpoints — debugger cycle 1 done, 2026-05-13. Architecture split (§D-AASPLIT) applied: `app/admin/providers/{__init__,router,service,repository,schemas,audit}.py` + `app/admin/model_catalog/{__init__,router,service,repository,schemas,audit}.py` + shared `app/admin/_audit.py`. Max file 230 LoC (was 590). Test fixture self-seeds roles. 25/25 tests PASS both verbose=true and verbose=false.**
+  - **P02-S05-T003 — DB-level D-DEF1 invariant (partial unique index on ai_models) — developer done 2026-05-13. Migration 0003 applied (head=0003). ModelDefaultConflictError domain error + HTTP 409 AI_MODEL_DEFAULT_CONFLICT. T26 concurrent PATCH test proves DB-level enforcement. 26/26 tests PASS both verbose=true and verbose=false.**
 - **P02-S03-T003 — restore stack-specific dev-restart.profile.sh (developer done 2026-05-13)**: Restored canonical 395-LOC profile from commit aa840ca, preserving T008 (absolute --source path for verification_data bootstrap) and T012 (host-TCP probe + 60s timeout). All 8 contract functions defined; syntax OK; dispatcher --check passes without "did not define required function" errors. End-to-end --reset verification deferred to /verify-slice (worktree port conflict with main project containers; normal pr-flow constraint).
-- **Next pending slice**: validator_tester_pending for P02-S03-T003; validator_tester_pending for P02-S05-T001; P03-S01-T001 (SignInPage) also ready
+- **Next pending slice**: validator_tester_pending for P02-S03-T003; validator_tester_pending for P02-S05-T001; validator_tester_pending for P02-S05-T003; P03-S01-T001 (SignInPage) also ready
 - **Blockers**: none
 - **Generated at**: 2026-05-13T12:55:00+02:00 (updated by developer P02-S03-T003)
 
@@ -96,14 +97,14 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 | Auth endpoints | 7 implemented | POST /api/v1/auth/sign-up (T001), POST /api/v1/auth/sign-in (T002), POST /api/v1/auth/refresh (T003), POST /api/v1/auth/logout (T004) — cookie Path fixed to /api/v1/auth (T011). POST /api/v1/auth/forgot-password (T005), POST /api/v1/auth/reset-password (T005), POST /api/v1/auth/2fa/verify (T006) |
 | Users endpoints | 2 implemented (T007) | GET /api/v1/users/me (returns UserProfile + employee_profile), PATCH /api/v1/users/me/language (returns 200 + full body; whitelist es/en/fr; audit log) |
 | Chat endpoints | 3 implemented (P02-S03-T001) | GET /api/v1/chat/conversations (list, cursor pagination D-PAG1), POST /api/v1/chat/conversations (create, atomic D-TX1), GET /api/v1/chat/conversations/{id} (detail with messages+citations, ownership 403/404) |
-| Admin AI endpoints | 4 implemented (P02-S05-T001) | GET /api/v1/admin/ai/providers (list, masked creds), POST /api/v1/admin/ai/providers (create+encrypt, rate-limit, audit), GET /api/v1/admin/ai/models (list, provider_id filter), PATCH /api/v1/admin/ai/models/{id} (partial update, D-DEF1 default invariant, audit) |
+| Admin AI endpoints | 4 implemented (P02-S05-T001 + T003) | GET /api/v1/admin/ai/providers (list, masked creds), POST /api/v1/admin/ai/providers (create+encrypt, rate-limit, audit), GET /api/v1/admin/ai/models (list, provider_id filter), PATCH /api/v1/admin/ai/models/{id} (partial update, D-DEF1 default invariant at DB level, 409 AI_MODEL_DEFAULT_CONFLICT, audit) |
 | Endpoints implemented | 19 | GET /health, GET /live, GET /ready, POST /api/v1/auth/sign-up, POST /api/v1/auth/sign-in, POST /api/v1/auth/refresh, POST /api/v1/auth/logout, POST /api/v1/auth/forgot-password, POST /api/v1/auth/reset-password, POST /api/v1/auth/2fa/verify, GET /api/v1/users/me, PATCH /api/v1/users/me/language, GET /api/v1/chat/conversations, POST /api/v1/chat/conversations, GET /api/v1/chat/conversations/{id}, GET /api/v1/admin/ai/providers, POST /api/v1/admin/ai/providers, GET /api/v1/admin/ai/models, PATCH /api/v1/admin/ai/models/{id} |
-| Migrations applied | 2 (head=0002) | 0001: 9 auth tables. 0002: 25 tables (conversations, messages, message_citations, documents, document_chunks, document_embeddings, rag_collections, vectorization_jobs, ai_providers, ai_provider_credentials, ai_models, ai_model_tests, llm_usage_logs, mcp_servers, mcp_tools, mcp_resources, mcp_prompts, mcp_credentials, mcp_approvals, mcp_tool_invocations, agents, agent_runs, mcp_agent_bindings) |
+| Migrations applied | 3 (head=0003) | 0001: 9 auth tables. 0002: 25 tables (conversations, messages, message_citations, documents, document_chunks, document_embeddings, rag_collections, vectorization_jobs, ai_providers, ai_provider_credentials, ai_models, ai_model_tests, llm_usage_logs, mcp_servers, mcp_tools, mcp_resources, mcp_prompts, mcp_credentials, mcp_approvals, mcp_tool_invocations, agents, agent_runs, mcp_agent_bindings). 0003: ai_models_default_per_type_uidx partial unique index (P02-S05-T003). |
 | Seed data | loader.py fixed (P00-S02-T004); bootstrap ready; dev-restart --reset self-contained (T008) | FU-20260511145446 resolved — CAST(:meta AS JSONB) + json.dumps(). T008 fix: absolute --source path + hard-fail. data/verification/users/admin_peopletech.json: roles updated "admin"→"people_admin" (WRITE_SET_DRIFT §D-AAVD). |
-| Backend tests | 174 passing (25 new admin AI) | +25 from test_admin_ai.py (T01–T25 all PASS); 25/25 in isolation. Pre-existing: test_auth_signin + test_auth_logout have JWT-key ordering failures when run first (pre-existing, unrelated to this slice). |
+| Backend tests | 175 passing (26 admin AI) | +1 from test_admin_ai.py T26 concurrent PATCH (26/26 in isolation). P02-S05-T003 26/26 PASS verbose=true and verbose=false. Pre-existing: test_auth_signin + test_auth_logout have JWT-key ordering failures when run first (pre-existing, unrelated). |
 | Backend dependencies | declared + installed | pyproject.toml: 29 packages pinned (no new deps added — P02-S05-T001 uses only existing cryptography+redis) |
 | Lint (ruff) | clean | 0 issues |
-| Fernet usage (P02-S05-T001) | encrypt_secret on POST /providers; decrypt not exposed to API | Audit actions: admin.ai.provider.create, admin.ai.model.update. D-DEF1: at-most-one is_default=true per model_type enforced at app layer. FU-20260513085435: DB-level partial unique index proposed (medium, non-blocking). |
+| Fernet usage (P02-S05-T001) | encrypt_secret on POST /providers; decrypt not exposed to API | Audit actions: admin.ai.provider.create, admin.ai.model.update (outcome=success|failure+reason=default_conflict). D-DEF1: at-most-one is_default=true per model_type enforced at DB level (migration 0003, P02-S05-T003). Error code AI_MODEL_DEFAULT_CONFLICT (HTTP 409). |
 
 ## TOTP / MFA verify endpoint details (P01-S02-T006)
 
@@ -197,7 +198,7 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 | Level | Count | Status |
 |-------|-------|--------|
 | Backend unit | 0 | — |
-| Backend integration | 153 | PASS in isolation (health 11 + dep smoke 20 + migrations 6 + dev restart 2 + bootstrap 9 + auth signup 9 + auth signin 16 + auth refresh 14 + auth logout 15 + password reset 21 — T005 + MFA 16 — T006 + chat conversations 14 — P02-S03-T001) — NOTE: full-suite (all at once) = 117/22 due to migration downgrade ordering; chat isolation = 14/14 PASS |
+| Backend integration | 154 | PASS in isolation (health 11 + dep smoke 20 + migrations 6 + dev restart 2 + bootstrap 9 + auth signup 9 + auth signin 16 + auth refresh 14 + auth logout 15 + password reset 21 — T005 + MFA 16 — T006 + chat conversations 14 — P02-S03-T001 + admin AI 26 — P02-S05-T001+T003) — NOTE: full-suite (all at once) = 117/22 due to migration downgrade ordering; admin AI isolation = 26/26 PASS |
 | Compose orchestration smoke | 11 | PASS (T1–T8 tester + verify cycle 1+2 + minio-init bucket) |
 | Frontend unit | 0 | — |
 | Frontend component | 91 | PASS (providers 4 + design-system 34 + showcase 4 + i18n 16 + auth 33) |
@@ -283,11 +284,18 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 - **2026-05-12 (P01-S02-T004)**: `_clear_refresh_cookie(response)` added to `routers/_helpers.py` (shared helper). Uses `Max-Age=0` with same attrs as `_set_refresh_cookie` to ensure browser deletes cookie on both 204 and 401 paths. WRITE_SET_DRIFT §D-LO1 — declared in task pack.
 - **2026-05-12 (P01-S02-T004)**: All 401 failures raise `SessionExpiredError` → `AUTH_SESSION_EXPIRED` body. The reason (no_bearer, expired_bearer, invalid_bearer, no_cookie, unknown_hash, revoked, expired, user_mismatch) is captured only in `audit_logs.metadata->>'reason'` for security. T10 verifies byte-equality of 401 bodies stripping per-request meta fields.
 - **2026-05-12 (P01-S02-T004)**: hook_write_scope_guard.py resolves worktree path relative to repo root → sees `.claude/worktrees/...` → falsely triggers static config guard. Workaround: all new file creation via Bash heredoc `cat > file << 'PYEOF'`. Documented in MEMORY.md.
+- **2026-05-13 (P02-S05-T003)**: D-DEF1 promoted from app-layer to DB-level via partial unique index `ai_models_default_per_type_uidx ON ai_models(model_type) WHERE is_default = true` (migration 0003). Concurrent PATCH races where both transactions pass the SELECT-before-UPDATE window are now caught at commit-time by the partial unique index → IntegrityError → ModelDefaultConflictError → HTTP 409 AI_MODEL_DEFAULT_CONFLICT.
+- **2026-05-13 (P02-S05-T003)**: `_is_default_conflict()` helper in service.py inspects psycopg2 `exc.orig.diag.constraint_name` (primary) and str(orig) fallback (psycopg3 compat) to distinguish the specific D-DEF1 constraint from other IntegrityErrors. Only the named constraint is translated to domain error — foreign key / null violations re-raise unchanged.
+- **2026-05-13 (P02-S05-T003)**: ORM parity for migration 0003: `AiModel.__table_args__` now declares `Index("ai_models_default_per_type_uidx", ...)` with `postgresql_where`. This prevents future `alembic --autogenerate` passes from proposing DROP INDEX (R5 from task pack §I.5).
+- **2026-05-13 (P02-S05-T003)**: `audit.write_model_audit` extended with `failure_reason: str | None` kwarg. On conflict path, audit row has `metadata.reason='default_conflict'` + `outcome='failure'` (D-S2 pattern, separate session).
+- **2026-05-13 (P02-S05-T003)**: TECHNICAL_GUIDE §10.3 and §6.2 need amendment to document the new index and the 409 error code. Per `05-runtime-write-contract.md`, source-of-truth edits are not done during an active TASK_ID. ADR candidate registered as §M.4 FU (out-of-scope doc-sync).
 - **2026-05-13 (P01-S03-T002)**: Strategy A confirmed: vite `server.proxy["/api"]` → `http://localhost:8000` is the canonical cross-origin bridge for dev. Browser sees `:5173` for all requests. Mirrors prod nginx topology. `backend/app/main.py` intentionally untouched — no CORSMiddleware needed. ADR-002 appended to TECHNICAL_GUIDE §15.
 - **2026-05-13 (P01-S03-T002)**: `VITE_API_BASE_URL=""` contract pinned in `frontend/.env.example`. Empty string (not absent) ensures `"" ?? fallback` resolves to `""` (relative paths) without nullish coalescing kicking in. httpClient.ts and authRepository.ts unchanged.
 - **2026-05-13 (P01-S03-T002)**: ADR-002 §Contexto precise terminology: `localhost:5173` and `localhost:8000` are **same-site** (port ignored in eTLD+1 determination); `SameSite=Lax` was never the cookie blocker. The real blocker was the CORS preflight (OPTIONS → 405, independent mechanism). Strategy A collapses to same-origin and removes the preflight entirely.
 - **2026-05-13 (P01-S03-T002)**: K.4 (SSE streaming) noted: vite proxy preserves chunked transfer by default but P02-S04 `POST /api/v1/chat/conversations/{id}/stream` should verify SSE through proxy explicitly. Deferred to P02 planner.
 
+> Last updated: 2026-05-13T16:00:00+02:00
+> Updated by: developer — P02-S05-T003 DB-level D-DEF1 invariant: migration 0003, ModelDefaultConflictError, HTTP 409 AI_MODEL_DEFAULT_CONFLICT, T26 concurrent PATCH test. 26/26 admin AI tests PASS.
 > Last updated: 2026-05-13T12:00:00+02:00
 > Updated by: closer — P01-S03-T002 cross-origin infra (vite proxy /api → uvicorn, Strategy A, ADR-002) — verified + committed. J100-J105 unblocked. Next: P03-S01-T001 SignInPage.
 > Last updated: 2026-05-12T20:35:00+02:00

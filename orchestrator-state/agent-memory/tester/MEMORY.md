@@ -137,3 +137,16 @@
 - cross_slice_contamination: backend/app/auth/tokens.py + test_users_me.py + test_security.py + admin_peopletech.json belong to parallel P02-S02-T002 worker. Closer MUST path-scope git add to T001 write_set only.
 - Evidence: orchestrator-state/tasks/evidence/P02-S03-T001/tester_cycle_3/
 - Handoff: orchestrator-state/tasks/handoffs/P02-S03-T001.md
+
+### P02-S05-T003 — DB-level D-DEF1 invariant (partial unique index on ai_models) (2026-05-13) — PASS
+- OUTCOME: pass (first run)
+- TESTS: 26/26 test_admin_ai.py PASS (verbose=true); 26/26 PASS (verbose=false); 202/202 regression PASS (migration suites excluded)
+- MIGRATION: alembic at head=0003; round-trip down -1 → up head clean; pg_indexes confirms ai_models_default_per_type_uidx with WHERE (is_default = true)
+- T26: ThreadPoolExecutor 2-worker race proves DB-level enforcement; exactly 1×200 + 1×409 AI_MODEL_DEFAULT_CONFLICT; DB has exactly 1 is_default=true row after race
+- LOGGING: verbose=true shows full BEFORE/AFTER chain (.start/.ok naming); conflict path logs constraint_name + pgcode (no PII, no SQL fragments); T12 PASS asserts secret_plain never in logs; verbose=false suppresses DEBUG, WARN visible on conflict path
+- KEY LEARNING: Migration test files inside tests/integration/ (not tests/ root). Correct --ignore path: `--ignore=tests/integration/test_migrations_0001_auth.py` NOT `--ignore=tests/test_migrations_0001_auth.py`. Getting this wrong causes DB contamination: test_downgrade_removes_all_tables drops all tables → subsequent integration tests fail with "relation does not exist". Recovery: alembic downgrade base → upgrade head → re-seed.
+- KEY LEARNING: Re-seeding after DB restore requires correct --source path: `python3 -m app.verification_data.bootstrap --source /path/to/main/data/verification` (worktree has no data/ dir; source from main repo).
+- KEY LEARNING: curl smoke tests against live uvicorn server may fail if the live server was started with different env vars (e.g., sign-in returns 500 if JWT key doesn't match). This is ACCEPTABLE when tests use TestClient (ASGI) which injects env via subprocess; the live server is a separate process. Document as pre-existing env mismatch, not a new failure. The primary evidence for 409 response comes from TestClient (T26), not curl.
+- KEY LEARNING: Alembic idempotency: `alembic upgrade head` when already at head produces no stdout output (empty file). This is expected/correct. Record the round-trip test (down -1 → up head) as the canonical reversibility evidence — that shows actual migration mechanics.
+- Evidence: orchestrator-state/tasks/evidence/P02-S05-T003/
+- Handoff: orchestrator-state/tasks/handoffs/P02-S05-T003.md

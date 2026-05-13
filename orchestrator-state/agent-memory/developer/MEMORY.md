@@ -763,3 +763,46 @@
 | Slice | Outcome | Key files touched |
 |-------|---------|-------------------|
 | P02-S03-T003 | developer done (pending validator+tester+verify-slice) | scripts/dev-restart.profile.sh (restored 39-LOC stub → 395-LOC canonical profile) |
+
+## P02-S05-T003 — DB-level partial unique index + IntegrityError translation (2026-05-13)
+
+### Alembic partial unique index pattern
+- `op.create_index('name', 'table', ['col'], unique=True, postgresql_where=sa.text('condition'))` — correct syntax.
+- `op.drop_index('name', table_name='table')` for downgrade.
+- ORM parity: `__table_args__ = (Index('name', 'col', unique=True, postgresql_where=sa.text('cond')),)` prevents future `alembic --autogenerate` from proposing DROP INDEX.
+- `Index` is imported from `sqlalchemy` directly (`from sqlalchemy import Index`), not from dialects.
+
+### IntegrityError translation (Clean Architecture pattern)
+- Service layer catches `sqlalchemy.exc.IntegrityError`, NOT the HTTP layer.
+- Check `exc.orig.diag.constraint_name` (psycopg2) with `str(orig)` fallback for psycopg3.
+- Check `exc.orig.pgcode` or `exc.orig.sqlstate` for `'23505'` (UNIQUE_VIOLATION) first.
+- ONLY translate the specific named constraint — re-raise all others unchanged.
+- Pattern `_is_default_conflict(exc: IntegrityError) -> bool` is reusable for other constraints.
+- Router catches typed domain error BEFORE the generic `except Exception` catch-all (otherwise gets swallowed as 500).
+
+### Concurrent test pattern with threading.Barrier
+- `threading.Barrier(2)` synchronizes 2 threads before both issue PATCH simultaneously.
+- `barrier.wait(timeout=10)` inside each thread function; executor raises if thread raises.
+- `concurrent.futures.wait([f1, f2], timeout=30)` + `f1.result(); f2.result()` to propagate exceptions.
+- TestClient is thread-safe for concurrent reads/writes (ASGI transport is process-local).
+- Results collected into a shared dict keyed by label ('A', 'B') — simpler than shared list.
+
+### Partial unique index and single-tx behavior
+- Postgres evaluates partial unique constraints at COMMIT time, not at each DML statement.
+- A single transaction can temporarily have two rows satisfying the WHERE clause (e.g., during a transfer), as long as only one remains at commit time.
+- The app-layer `UPDATE … SET is_default=false WHERE id != target` + `target.is_default = True` in the same tx is fine: at commit, only target has `is_default=true`.
+- The race condition only manifests under TRUE concurrency (two different transactions).
+
+### psycopg2 vs psycopg3 constraint detection
+- psycopg2: `exc.orig.diag.constraint_name` (via PGDiagnostics object), `exc.orig.pgcode`.
+- psycopg3: `exc.orig.sqlstate` (not `.pgcode`), constraint in `str(exc.orig)`.
+- Always check both `pgcode` and `sqlstate` with `or`; use `str(orig)` as fallback for constraint name.
+
+### `audit.write_model_audit` extension pattern
+- Adding optional kwargs with `= None` default is backward-compatible.
+- Existing callers that don't pass the new param continue to work.
+- Document the new param in the docstring's Args section.
+
+| Slice | Outcome | Key files touched |
+|-------|---------|-------------------|
+| P02-S05-T003 | developer done (pending validator+tester+verify-slice) | backend/alembic/versions/0003_ai_models_default_per_type_uidx.py (NEW) + backend/app/admin/model_catalog/errors.py (NEW) + service.py + router.py + audit.py (MODIFY) + backend/app/db/models/admin_ai.py (MODIFY, §D-ORM-INDEX) + backend/tests/integration/test_admin_ai.py (+T26) |

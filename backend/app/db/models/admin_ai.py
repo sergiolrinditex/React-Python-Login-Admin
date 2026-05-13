@@ -2,6 +2,7 @@
 Hilo People — SQLAlchemy 2.x ORM models: Admin AI and LLM gateway.
 
 Slice:  P02-S01-T001 — 0002_ai_chat_rag_mcp_agents migration
+        P02-S05-T003 — Added partial unique Index declaration on AiModel (§D-ORM-INDEX)
 Phase:  P02 Core Features (the motor)
 Purpose: Defines ORM models for the Admin AI / LiteLLM Gateway feature:
          AiProvider, AiProviderCredential, AiModel, AiModelTest, LlmUsageLog.
@@ -14,12 +15,13 @@ Mapped tables (all created by migration 0002_ai_chat_rag_mcp_agents.py):
   - ai_providers            (FK -> users ON DELETE no-action for created_by)
   - ai_provider_credentials (FK -> ai_providers ON DELETE CASCADE)
   - ai_models               (FK -> ai_providers ON DELETE CASCADE)
+                              P02-S05-T003: + partial unique index (§D-ORM-INDEX)
   - ai_model_tests          (FK -> ai_models + users ON DELETE CASCADE / SET NULL)
   - llm_usage_logs          (FK -> users + ai_models + conversations ON DELETE SET NULL)
 
 Key deps:
   - app.db.base           — Base (DeclarativeBase with naming_convention)
-  - sqlalchemy==2.0.49    (Mapped, mapped_column, JSONB)
+  - sqlalchemy==2.0.49    (Mapped, mapped_column, JSONB, Index)
   - sqlalchemy.dialects.postgresql — UUID, JSONB
 
 Source refs:
@@ -27,6 +29,7 @@ Source refs:
   - docs/source-of-truth/instrucciones.md §3.1#admin-ai
   - 01-non-negotiables.md §Security (Fernet encryption, no API key in logs or frontend)
   - P02-S01-T001 task pack §C.2, §I.1
+  - P02-S05-T003 task pack §I.2 §D-ORM-INDEX
 
 Decisions implemented:
   - encrypted_secret / encrypted_refresh_token columns: NEVER log values (§10.5).
@@ -34,6 +37,10 @@ Decisions implemented:
     the canonical enum — YAGNI (task pack §I.3 decision: TEXT open).
   - ai_model_tests.created_by ON DELETE SET NULL (audit trace preserved if admin
     account is deleted; differs from CASCADE pattern for identity-attached entities).
+  - AiModel.__table_args__ declares ai_models_default_per_type_uidx (§D-ORM-INDEX):
+    partial unique index mirrors migration 0003 DDL so alembic --autogenerate
+    future passes do not propose DROP INDEX. The index is managed by migration
+    0003_ai_models_default_per_type_uidx.py, not by autogenerate.
 """
 
 from __future__ import annotations
@@ -42,6 +49,7 @@ import uuid
 from typing import Any
 
 import sqlalchemy as sa
+from sqlalchemy import Index
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -176,6 +184,18 @@ class AiModel(Base):
     """
 
     __tablename__ = "ai_models"
+    __table_args__ = (
+        # §D-ORM-INDEX (P02-S05-T003): ORM parity for migration 0003 partial unique index.
+        # Declaring the index here prevents alembic --autogenerate from proposing
+        # DROP INDEX ai_models_default_per_type_uidx in future migration passes.
+        # The index is created by migration 0003; this declaration is metadata only.
+        Index(
+            "ai_models_default_per_type_uidx",
+            "model_type",
+            unique=True,
+            postgresql_where=sa.text("is_default = true"),
+        ),
+    )
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),

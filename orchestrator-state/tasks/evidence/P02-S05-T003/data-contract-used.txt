@@ -1,0 +1,23 @@
+# Verification Data Contract Used — P02-S05-T003
+
+## Contract rows used (from TECHNICAL_GUIDE §6.5, row J103)
+
+| Row | Used in tests | How |
+|-----|--------------|-----|
+| `data/verification/users/admin_peopletech.json` (admin.peopletech@inditex-sandbox.com, roles=["people_admin"]) | ALL 26 tests | Auth: _sign_in() helper uses this credential for Bearer token |
+| `data/verification/admin_ai/providers/litellm_verification.json` | T04, T13, T14, T26 | Provider FK: _create_test_model() requires a valid provider_id FK |
+
+## Synthetic / in-test data (allowed per orchestrator-contract.json rule[2] — "edge cases")
+- Two `chat` model rows created in-test by _create_test_model() helper
+- Tracked in _created_model_ids list, cleaned up in teardown
+- Justification: concurrent race scenario cannot be a real production state; must be reproduced synthetically
+
+## Data loaded by bootstrap before tests
+- admin_peopletech user: loaded (inserted=2, updated=0, skipped=0 per bootstrap output)
+- litellm provider: loaded (inserted=1, updated=0, skipped=0)
+- Re-seeded after DB contamination from migration test run
+
+## Persisted data observed during tests
+- T26 post-condition: exactly 1 `ai_models` row with `is_default=true WHERE model_type='chat'` (DB invariant verified)
+- T18 post-condition: is_default transferred correctly (previous=false, new=true)
+- audit_log rows: success + failure(reason=default_conflict) confirmed by T26 assertions

@@ -1129,3 +1129,124 @@ def test_T25_no_test_residue():
     # The _cleanup_test_data fixture (autouse) will delete it after this test.
     # We verify the tracking lists are populated correctly for the fixture.
     assert pid in _created_provider_ids
+
+
+# ===========================================================================
+# T26: Concurrent PATCH is_default=true on same model_type → DB rejects loser
+# ===========================================================================
+def test_T26_concurrent_patch_default_conflict():
+    """T26: two concurrent PATCH is_default=true on same model_type → exactly one 200 + one 409.
+
+    Slice:  P02-S05-T003 — Add partial unique index for is_default=true per model_type
+    Phase:  P02 Core Features
+
+    Pre-condition:
+        Two chat models exist (both is_default=false). A third chat model with
+        is_default=true is inserted first to ensure the test provider is set up
+        correctly, then cleared so both test models start from is_default=false.
+
+    Mechanism:
+        ThreadPoolExecutor with 2 workers, each issuing a PATCH on a DIFFERENT
+        model_id with {"is_default": true}. The partial unique index
+        ai_models_default_per_type_uidx prevents two rows from having
+        is_default=true for the same model_type simultaneously. The loser's
+        session.commit() raises IntegrityError → service translates to
+        ModelDefaultConflictError → router returns 409 AI_MODEL_DEFAULT_CONFLICT.
+
+    Why this proves DB-level enforcement (not just app-layer):
+        The apply_patch() function clears the PREVIOUS default within the same
+        transaction (a single UPDATE + attribute assignment). Under true
+        concurrency, both transactions may have already passed the
+        "find_previous_default_id" SELECT before either commits. The app-layer
+        clearing UPDATE in transaction A removes rows where is_default=true AND
+        id != model_A; it does NOT see model_B because transaction B hasn't
+        committed yet. When transaction B commits and tries to set model_B to
+        is_default=true, the partial unique index detects a conflict with
+        model_A's row (which transaction A already committed) and raises
+        UniqueViolation (pgcode=23505, constraint=ai_models_default_per_type_uidx).
+        This is the race that the DB-level index prevents.
+
+    Post-condition:
+        - Exactly one response is 200; the other is 409 AI_MODEL_DEFAULT_CONFLICT.
+        - DB has exactly one is_default=true row for model_type='chat' (the winner).
+        - Exactly one audit log with outcome=success and one with outcome=failure
+          and reason=default_conflict for the patched models.
+    """
+    import concurrent.futures
+    import threading
+
+    email = _admin_email()
+    _create_user_with_role(email, "people_admin")
+    token = _sign_in(email)
+
+    provider = _create_test_provider(token)
+    provider_id = provider["id"]
+
+    # Create two 'chat' models, both is_default=false
+    model_a_id = _create_test_model(provider_id, model_type="chat")
+    model_b_id = _create_test_model(provider_id, model_type="chat")
+
+    # Synchronisation barrier: both threads start their PATCH at the same time.
+    # Using n_parties=3 (2 workers + 1 controller) — controller waits then releases.
+    barrier = threading.Barrier(2)
+
+    results: dict[str, object] = {}
+
+    def _patch_model(model_id: str, label: str) -> None:
+        """Issue PATCH is_default=true; record status code and body."""
+        barrier.wait(timeout=10)  # sync both threads before sending request
+        resp = client.patch(
+            f"/api/v1/admin/ai/models/{model_id}",
+            json={"is_default": True},
+            headers={"Authorization": f"Bearer {token}"},
+        )
+        results[label] = {
+            "status": resp.status_code,
+            "body": resp.json(),
+        }
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
+        f1 = executor.submit(_patch_model, model_a_id, "A")
+        f2 = executor.submit(_patch_model, model_b_id, "B")
+        # Wait for both to complete (raises if threads raise)
+        concurrent.futures.wait([f1, f2], timeout=30)
+        # Re-raise any thread exceptions
+        f1.result()
+        f2.result()
+
+    result_a = results["A"]
+    result_b = results["B"]
+
+    statuses = {result_a["status"], result_b["status"]}  # type: ignore[arg-type]
+
+    # Post-condition 1: exactly one 200 and one 409
+    assert 200 in statuses, (
+        f"Expected one 200 response; got A={result_a['status']}, B={result_b['status']}"
+    )
+    assert 409 in statuses, (
+        f"Expected one 409 response; got A={result_a['status']}, B={result_b['status']}"
+    )
+
+    # Post-condition 2: the 409 response carries the correct error code
+    losing_result = result_a if result_a["status"] == 409 else result_b
+    assert any(
+        e["code"] == "AI_MODEL_DEFAULT_CONFLICT"
+        for e in losing_result["body"].get("errors", [])
+    ), f"Expected AI_MODEL_DEFAULT_CONFLICT in 409 body; got {losing_result['body']}"
+
+    # Post-condition 3: DB has exactly one is_default=true row for model_type='chat'
+    sess = _SetupSession()
+    try:
+        count = sess.execute(
+            text(
+                "SELECT count(*) FROM ai_models"
+                " WHERE provider_id = :pid AND model_type = 'chat' AND is_default = true"
+            ),
+            {"pid": provider_id},
+        ).scalar()
+        assert count == 1, (
+            f"DB invariant violated: expected 1 default chat model, got {count}. "
+            f"Response A={result_a['status']}, B={result_b['status']}"
+        )
+    finally:
+        sess.close()
