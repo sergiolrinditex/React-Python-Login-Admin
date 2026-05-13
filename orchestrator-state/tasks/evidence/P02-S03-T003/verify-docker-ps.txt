@@ -1,0 +1,6 @@
+=== docker ps after verify ===
+NAMES                     STATUS                    PORTS
+p02-s03-t003-litellm-1    Up 47 seconds (healthy)   0.0.0.0:4000->4000/tcp, [::]:4000->4000/tcp
+p02-s03-t003-postgres-1   Up 47 seconds (healthy)   0.0.0.0:5432->5432/tcp, [::]:5432->5432/tcp
+p02-s03-t003-minio-1      Up 47 seconds (healthy)   0.0.0.0:9000-9001->9000-9001/tcp, [::]:9000-9001->9000-9001/tcp
+p02-s03-t003-redis-1      Up 47 seconds (healthy)   0.0.0.0:6379->6379/tcp, [::]:6379->6379/tcp
