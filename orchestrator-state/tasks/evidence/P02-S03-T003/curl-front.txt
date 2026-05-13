@@ -1,0 +1,14 @@
+Command: curl -sI -m 3 http://localhost:5173/
+Exit code: 0 (PASS)
+
+Output:
+HTTP/1.1 200 OK
+Vary: Origin
+Content-Type: text/html
+Cache-Control: no-cache
+Etag: W/"4a1-j8NLMQp11JXVfqymTqx6IKyDPY8"
+Date: Wed, 13 May 2026 10:58:25 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+VERDICT: Frontend :5173 is UP and responding HTTP 200.

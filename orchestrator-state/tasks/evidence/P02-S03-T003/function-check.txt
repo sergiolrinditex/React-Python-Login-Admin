@@ -1,0 +1,34 @@
+=== Contract functions (from dispatcher --check) ===
+  [DEFINED] back_health
+  [DEFINED] back_start
+  [DEFINED] back_url
+  [DEFINED] front_health
+  [DEFINED] front_start
+  [DEFINED] front_url
+  [DEFINED] db_health
+  [DEFINED] db_reset
+=== Syntax check ===
+SYNTAX: OK
+=== File size ===
+     395 scripts/dev-restart.profile.sh
+=== Diff vs aa840ca canonical ===
+4a5,6
+> # Slice: P02-S03-T003 — restore stack-specific dev-restart.profile.sh broken
+> #        by framework refactor c4c91ae (FU-20260513094006).
+5a8,11
+> # File size: ~378 LOC justified by four documented edge-case helpers
+> # (compose/python/alembic resolution + host-TCP probe) and inline rationale
+> # comments. No business logic.
+> #
+22a29,33
+> #
+> # Prior fixes preserved:
+> #   P01-S02-T008: absolute --source path for python -m app.verification_data.bootstrap
+> #   P01-S02-T012: host-TCP probe (_host_pg_ready) to close Rancher Desktop race;
+> #                 _ensure_infra_essential timeout raised 30→60s.
+35a47,51
+> # Helpers exported by scripts/dev-restart.sh (available here):
+> #   log, warn, fail, info, pid_alive, stop_pidfile, stop_orphan_on_port, wait_for
+> # Vars exported by scripts/dev-restart.sh:
+> #   ROOT_DIR, LOG_DIR, BACK_LOG, FRONT_LOG, BACK_PID_FILE, FRONT_PID_FILE
+> #

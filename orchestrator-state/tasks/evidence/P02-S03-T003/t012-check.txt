@@ -1,0 +1,19 @@
+=== T012 invariants ===
+32:#   P01-S02-T012: host-TCP probe (_host_pg_ready) to close Rancher Desktop race;
+170:_host_pg_ready() {
+174:  # ready before the host port-forward is usable by alembic. (P01-S02-T012)
+202:  if ! wait_for db_health 60 "Postgres"; then  # raised 30→60s: host TCP probe (P01-S02-T012)
+308:  #   0 = postgres reachable: BOTH container-internal pg_isready AND host TCP pass
+312:  # P01-S02-T012: the two-probe AND is the core race fix. Rancher Desktop /
+316:  log "[db_health] probing postgres: container-internal pg_isready AND host TCP ${HILO_POSTGRES_HOST}:${HILO_POSTGRES_PORT}"
+319:  if _resolve_compose >/dev/null 2>&1 && _compose_pg_ready && _host_pg_ready; then
+327:    if _host_pg_ready; then
+369:  if ! wait_for db_health 60 "Postgres"; then
+=== T008 invariants ===
+385:  # --source uses an absolute path derived from ROOT_DIR so that cwd=backend/
+389:        --source "${ROOT_DIR}/data/verification" >>"${BACK_LOG}" 2>&1; then
+=== Alembic CLI (not python -m alembic) invariant ===
+124:_resolve_alembic() {
+340:  local compose py alembic_cli
+347:  if ! alembic_cli="$(_resolve_alembic)"; then
+375:  if ! "${alembic_cli}" upgrade head >>"${BACK_LOG}" 2>&1; then

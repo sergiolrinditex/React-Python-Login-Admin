@@ -1,0 +1,39 @@
+## --reset deferral explanation
+
+WHY --reset was NOT executed from this worktree:
+
+The worktree is a PR-flow DAG worker terminal running in a separate git worktree.
+The main project containers (react-python-login-admin-*) are running and hold all 4
+ports that the worktree's compose project would need:
+
+  Port 5432 (postgres): react-python-login-admin-postgres-1 — BLOCKED
+  Port 4000 (litellm):  react-python-login-admin-litellm-1  — BLOCKED
+  Port 6379 (redis):    react-python-login-admin-redis-1    — BLOCKED
+  Port 9000 (minio):    react-python-login-admin-minio-1    — BLOCKED
+
+Running `docker compose down -v --remove-orphans` from the worktree would:
+  1. Tear down the main project's infra containers.
+  2. Delete the main project's postgres and minio volumes (irreversible data loss).
+  3. Break the running backend of the main project.
+
+This is the documented pr-flow DAG constraint. The task pack (§State del proyecto,
+§Riesgos) explicitly acknowledges this and delegates --reset acceptance criteria
+(#1, #5, #6, #8) to /verify-slice, which runs in the merged main environment.
+
+WHAT WAS VERIFIED INSTEAD:
+  - Profile syntax: PASS (bash -n exit 0)
+  - All 8 contract functions defined: PASS
+  - T008 absolute --source path: PASS (line 389: ${ROOT_DIR}/data/verification)
+  - T012 _host_pg_ready helper: PASS (defined at line 170, used at lines 319+327)
+  - T012 two-probe AND logic: PASS (line 319: _compose_pg_ready && _host_pg_ready)
+  - T012 60s timeout: PASS (line 202: wait_for db_health 60 "Postgres")
+  - Dispatcher --check: PASS (no "did not define required function" error)
+  - Frontend :5173 HTTP 200: PASS
+  - Alembic CLI binary (not python -m alembic): PASS (_resolve_alembic at line 124)
+  - Diff vs canonical aa840ca: PASS (only 17 additive header lines differ)
+
+DEFERRED (to /verify-slice human gate):
+  - Acceptance #1: --reset exits 0 end-to-end
+  - Acceptance #5: back.log verification_data.auth.users.ok inserted=N
+  - Acceptance #6: psql row counts (users>=2, conversations>=0, messages>=0)
+  - Acceptance #8: two consecutive --reset both exit 0 (T012 no-race)

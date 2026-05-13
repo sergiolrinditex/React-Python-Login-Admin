@@ -1,0 +1,40 @@
+## Contract observed during tester run (P02-S03-T003)
+
+### Profile → Dispatcher contract
+  All 8 required functions defined and callable:
+    back_health, back_start, back_url
+    front_health, front_start, front_url
+    db_health, db_reset
+  Source: bash -c "source scripts/dev-restart.profile.sh && declare -F ..."
+  Exit: 0 (PASS)
+
+### Dispatcher exports used by profile
+  log, warn, fail, info — shell helper functions (no raw echo to stdout)
+  ROOT_DIR, LOG_DIR, BACK_LOG, FRONT_LOG, BACK_PID_FILE, FRONT_PID_FILE — vars
+  pid_alive, stop_pidfile, stop_orphan_on_port, wait_for — utility helpers
+  Source: Read scripts/dev-restart.sh dispatcher contract; confirmed used in profile
+
+### T008 invariant
+  python -m app.verification_data.bootstrap --source "${ROOT_DIR}/data/verification"
+  Line 389 of scripts/dev-restart.profile.sh
+  Absolute path preserved (not relative data/verification from backend/ cwd)
+
+### T012 invariant
+  _host_pg_ready() defined at line 170
+  Two-probe AND: _compose_pg_ready && _host_pg_ready at line 319
+  Fallback: _host_pg_ready standalone at line 327
+  60s timeout: wait_for db_health 60 "Postgres" at line 202
+
+### Alembic CLI binary invariant
+  _resolve_alembic() at line 124
+  Uses resolved alembic_cli variable (not python -m alembic)
+  Reason: backend/alembic/ directory shadows installed package on sys.path[0]
+
+### File size
+  395 LOC (vs 378 in aa840ca)
+  Delta: 17 additive header comment lines only
+  Implementation code byte-for-byte identical to aa840ca
+
+### Frontend probe
+  curl -sI http://localhost:5173/ → HTTP 200 (PASS)
+  Vite dev server running with proxy /api → :8000 (ADR-002)

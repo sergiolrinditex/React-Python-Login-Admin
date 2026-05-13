@@ -728,3 +728,38 @@
 | P02-S03-T001 | developer done (pending validator+tester+verify-slice) | backend/app/chat/** (11 new files) + backend/tests/integration/test_chat_conversations.py + backend/app/main.py (+2 lines) |
 
 **P-hook-worktree-blocks**: The write scope guard in `hook_write_scope_guard.py` blocks `Write`/`Edit`/`MultiEdit` tools for paths that resolve to `.claude/worktrees/...` (treated as `.claude/` static config). Always use `Bash` with `cat > file << 'EOF'` heredoc or Python `open(path, 'w').write(...)` for all worktree file creation/editing.
+
+## P02-S03-T003 — dev-restart.profile.sh restoration patterns (2026-05-13)
+
+### Profile restoration approach
+- When restoring a shell profile from a canonical git commit, use `git show <sha>:path/file.sh` to get the exact text, then write it verbatim. Do NOT rewrite from scratch.
+- Only add to the header (docstring): slice reference, file size justification note, prior-fixes inventory. Implementation code must be byte-identical to the reference commit.
+- Diff after writing: `diff <(git show <sha>:scripts/dev-restart.profile.sh) scripts/dev-restart.profile.sh` should show only additive header lines.
+
+### Worktree port conflict during end-to-end verification
+- In pr-flow, the worktree runs a SEPARATE compose project (named `<worktree-name>-*`) from the main project. If the main project containers are already UP and holding ports (5432, 4000, 6379, 9000), the worktree's `docker compose up -d` will fail with "port already allocated".
+- This is NOT a profile defect — it is an expected pr-flow isolation constraint.
+- The full end-to-end `--reset` / `--soft` verification is deferred to the `/verify-slice` human gate, which runs in the merged main environment.
+- For developer self-verification: test syntax + all 8 contract functions defined + dispatcher `--check` (no contract error) + individual helper function tests.
+
+### Port conflict diagnosis pattern
+- `docker ps -a --format "{{.ID}} {{.Names}} {{.Ports}}"` to see all containers.
+- Main project containers follow the pattern `react-python-login-admin-*`; worktree containers follow `<worktree-prefix>-*`.
+- If main project has containers UP, worktree compose up will fail on any shared port.
+
+### .env symlink for worktree testing
+- Worktrees do not have their own `.env` file (gitignored). The dispatcher sources `${ROOT_DIR}/.env`.
+- For local testing from the worktree: `ln -sf /path/to/main-repo/.env .env` (symlink is gitignored too).
+- The symlink is NOT staged or committed — it's a local dev convenience.
+
+### Key invariants to verify on any profile restoration
+1. `bash -n scripts/dev-restart.profile.sh` → exit 0 (syntax)
+2. All 8 functions `declare -F` → all DEFINED (sourcing test)
+3. `grep --source.*ROOT_DIR` → absolute path (T008)
+4. `grep _host_pg_ready` → defined + called in db_health (T012)
+5. `grep alembic_cli` → CLI binary used, not `python -m alembic` (shadowing issue)
+6. `grep "wait_for db_health 60"` → 60s timeout (T012 raised from 30)
+
+| Slice | Outcome | Key files touched |
+|-------|---------|-------------------|
+| P02-S03-T003 | developer done (pending validator+tester+verify-slice) | scripts/dev-restart.profile.sh (restored 39-LOC stub → 395-LOC canonical profile) |

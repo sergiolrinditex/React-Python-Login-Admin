@@ -1,0 +1,111 @@
+2026-05-13 13:15:27 [info     ] verification_data.bootstrap.start dry_run=False only=None source=/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P02-S03-T003/data/verification
+2026-05-13 13:15:27 [info     ] verification_data.group.auth.start
+2026-05-13 13:15:27 [info     ] verification_data.group.auth.start
+2026-05-13 13:15:27 [info     ] verification_data.auth.users.start count=1
+2026-05-13 13:15:27 [info     ] verification_data.auth.users.upsert email=e***@inditex-sandbox.com status=active
+2026-05-13 13:15:27 [info     ] verification_data.auth.users.ok inserted=2 skipped=0 updated=0
+2026-05-13 13:15:27 [info     ] verification_data.mfa.loaded   email_domain=inditex-sandbox.com enabled=True
+2026-05-13 13:15:27 [info     ] verification_data.group.auth.done
+2026-05-13 13:15:27 [info     ] verification_data.group.rag_chat.start
+2026-05-13 13:15:27 [info     ] verification_data.group.rag_chat.start
+2026-05-13 13:15:27 [info     ] verification_data.rag_chat.rag_collections.start count=1
+2026-05-13 13:15:27 [info     ] verification_data.rag_chat.rag_collections.upsert name=politicas_tienda
+2026-05-13 13:15:27 [info     ] verification_data.rag_chat.rag_collections.ok inserted=1 updated=0
+2026-05-13 13:15:27 [info     ] verification_data.group.history.start
+2026-05-13 13:15:27 [info     ] verification_data.group.history.start
+2026-05-13 13:15:27 [info     ] verification_data.history.users.start count=1
+2026-05-13 13:15:27 [info     ] verification_data.history.users.upsert email=e***@inditex-sandbox.com status=active
+2026-05-13 13:15:27 [info     ] verification_data.history.users.ok inserted=0 skipped=0 updated=2
+2026-05-13 13:15:27 [info     ] verification_data.group.admin_ai.start
+2026-05-13 13:15:27 [info     ] verification_data.group.admin_ai.start
+2026-05-13 13:15:27 [info     ] verification_data.admin_ai.admin_users.start count=1
+2026-05-13 13:15:27 [info     ] verification_data.admin_ai.admin_users.upsert email=a***@inditex-sandbox.com
+2026-05-13 13:15:27 [info     ] verification_data.admin_ai.admin_users.ok inserted=1 skipped=0 updated=0
+2026-05-13 13:15:27 [info     ] verification_data.admin_ai.ai_providers.start count=1
+2026-05-13 13:15:27 [info     ] verification_data.admin_ai.ai_providers.upsert name=litellm_verification_sandbox
+2026-05-13 13:15:27 [info     ] verification_data.admin_ai.ai_providers.ok inserted=1 updated=0
+2026-05-13 13:15:27 [info     ] verification_data.group.rag_docs.start
+2026-05-13 13:15:27 [info     ] verification_data.group.rag_docs.start
+2026-05-13 13:15:27 [info     ] verification_data.group.mcp_agents.start
+2026-05-13 13:15:27 [info     ] verification_data.group.mcp_agents.start
+2026-05-13 13:15:27 [info     ] verification_data.mcp_agents.mcp_servers.start count=1
+2026-05-13 13:15:27 [info     ] verification_data.mcp_agents.mcp_servers.upsert name=sandbox_readonly
+2026-05-13 13:15:27 [info     ] verification_data.mcp_agents.mcp_servers.ok inserted=1 updated=0
+2026-05-13 13:15:27 [info     ] verification_data.mcp_agents.agents.start count=1
+2026-05-13 13:15:27 [info     ] verification_data.mcp_agents.agents.upsert name=people_helper
+2026-05-13 13:15:27 [info     ] verification_data.mcp_agents.agents.ok inserted=1 updated=0
+2026-05-13 13:15:27 [info     ] verification_data.bootstrap.done groups_run=6
+2026-05-13 13:16:26 [info     ] verification_data.bootstrap.start dry_run=False only=None source=/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P02-S03-T003/data/verification
+2026-05-13 13:16:26 [info     ] verification_data.group.auth.start
+2026-05-13 13:16:26 [info     ] verification_data.group.auth.start
+2026-05-13 13:16:26 [info     ] verification_data.auth.users.start count=1
+2026-05-13 13:16:26 [info     ] verification_data.auth.users.upsert email=e***@inditex-sandbox.com status=active
+2026-05-13 13:16:26 [info     ] verification_data.auth.users.ok inserted=2 skipped=0 updated=0
+2026-05-13 13:16:26 [info     ] verification_data.mfa.loaded   email_domain=inditex-sandbox.com enabled=True
+2026-05-13 13:16:26 [info     ] verification_data.group.auth.done
+2026-05-13 13:16:26 [info     ] verification_data.group.rag_chat.start
+2026-05-13 13:16:26 [info     ] verification_data.group.rag_chat.start
+2026-05-13 13:16:26 [info     ] verification_data.rag_chat.rag_collections.start count=1
+2026-05-13 13:16:26 [info     ] verification_data.rag_chat.rag_collections.upsert name=politicas_tienda
+2026-05-13 13:16:26 [info     ] verification_data.rag_chat.rag_collections.ok inserted=1 updated=0
+2026-05-13 13:16:26 [info     ] verification_data.group.history.start
+2026-05-13 13:16:26 [info     ] verification_data.group.history.start
+2026-05-13 13:16:26 [info     ] verification_data.history.users.start count=1
+2026-05-13 13:16:26 [info     ] verification_data.history.users.upsert email=e***@inditex-sandbox.com status=active
+2026-05-13 13:16:26 [info     ] verification_data.history.users.ok inserted=0 skipped=0 updated=2
+2026-05-13 13:16:26 [info     ] verification_data.group.admin_ai.start
+2026-05-13 13:16:26 [info     ] verification_data.group.admin_ai.start
+2026-05-13 13:16:26 [info     ] verification_data.admin_ai.admin_users.start count=1
+2026-05-13 13:16:26 [info     ] verification_data.admin_ai.admin_users.upsert email=a***@inditex-sandbox.com
+2026-05-13 13:16:26 [info     ] verification_data.admin_ai.admin_users.ok inserted=1 skipped=0 updated=0
+2026-05-13 13:16:26 [info     ] verification_data.admin_ai.ai_providers.start count=1
+2026-05-13 13:16:26 [info     ] verification_data.admin_ai.ai_providers.upsert name=litellm_verification_sandbox
+2026-05-13 13:16:26 [info     ] verification_data.admin_ai.ai_providers.ok inserted=1 updated=0
+2026-05-13 13:16:26 [info     ] verification_data.group.rag_docs.start
+2026-05-13 13:16:26 [info     ] verification_data.group.rag_docs.start
+2026-05-13 13:16:26 [info     ] verification_data.group.mcp_agents.start
+2026-05-13 13:16:26 [info     ] verification_data.group.mcp_agents.start
+2026-05-13 13:16:26 [info     ] verification_data.mcp_agents.mcp_servers.start count=1
+2026-05-13 13:16:26 [info     ] verification_data.mcp_agents.mcp_servers.upsert name=sandbox_readonly
+2026-05-13 13:16:26 [info     ] verification_data.mcp_agents.mcp_servers.ok inserted=1 updated=0
+2026-05-13 13:16:26 [info     ] verification_data.mcp_agents.agents.start count=1
+2026-05-13 13:16:26 [info     ] verification_data.mcp_agents.agents.upsert name=people_helper
+2026-05-13 13:16:26 [info     ] verification_data.mcp_agents.agents.ok inserted=1 updated=0
+2026-05-13 13:16:26 [info     ] verification_data.bootstrap.done groups_run=6
+2026-05-13 13:16:56 [info     ] verification_data.bootstrap.start dry_run=False only=None source=/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P02-S03-T003/data/verification
+2026-05-13 13:16:57 [info     ] verification_data.group.auth.start
+2026-05-13 13:16:57 [info     ] verification_data.group.auth.start
+2026-05-13 13:16:57 [info     ] verification_data.auth.users.start count=1
+2026-05-13 13:16:57 [info     ] verification_data.auth.users.upsert email=e***@inditex-sandbox.com status=active
+2026-05-13 13:16:57 [info     ] verification_data.auth.users.ok inserted=2 skipped=0 updated=0
+2026-05-13 13:16:57 [info     ] verification_data.mfa.loaded   email_domain=inditex-sandbox.com enabled=True
+2026-05-13 13:16:57 [info     ] verification_data.group.auth.done
+2026-05-13 13:16:57 [info     ] verification_data.group.rag_chat.start
+2026-05-13 13:16:57 [info     ] verification_data.group.rag_chat.start
+2026-05-13 13:16:57 [info     ] verification_data.rag_chat.rag_collections.start count=1
+2026-05-13 13:16:57 [info     ] verification_data.rag_chat.rag_collections.upsert name=politicas_tienda
+2026-05-13 13:16:57 [info     ] verification_data.rag_chat.rag_collections.ok inserted=1 updated=0
+2026-05-13 13:16:57 [info     ] verification_data.group.history.start
+2026-05-13 13:16:57 [info     ] verification_data.group.history.start
+2026-05-13 13:16:57 [info     ] verification_data.history.users.start count=1
+2026-05-13 13:16:57 [info     ] verification_data.history.users.upsert email=e***@inditex-sandbox.com status=active
+2026-05-13 13:16:57 [info     ] verification_data.history.users.ok inserted=0 skipped=0 updated=2
+2026-05-13 13:16:57 [info     ] verification_data.group.admin_ai.start
+2026-05-13 13:16:57 [info     ] verification_data.group.admin_ai.start
+2026-05-13 13:16:57 [info     ] verification_data.admin_ai.admin_users.start count=1
+2026-05-13 13:16:57 [info     ] verification_data.admin_ai.admin_users.upsert email=a***@inditex-sandbox.com
+2026-05-13 13:16:57 [info     ] verification_data.admin_ai.admin_users.ok inserted=1 skipped=0 updated=0
+2026-05-13 13:16:57 [info     ] verification_data.admin_ai.ai_providers.start count=1
+2026-05-13 13:16:57 [info     ] verification_data.admin_ai.ai_providers.upsert name=litellm_verification_sandbox
+2026-05-13 13:16:57 [info     ] verification_data.admin_ai.ai_providers.ok inserted=1 updated=0
+2026-05-13 13:16:57 [info     ] verification_data.group.rag_docs.start
+2026-05-13 13:16:57 [info     ] verification_data.group.rag_docs.start
+2026-05-13 13:16:57 [info     ] verification_data.group.mcp_agents.start
+2026-05-13 13:16:57 [info     ] verification_data.group.mcp_agents.start
+2026-05-13 13:16:57 [info     ] verification_data.mcp_agents.mcp_servers.start count=1
+2026-05-13 13:16:57 [info     ] verification_data.mcp_agents.mcp_servers.upsert name=sandbox_readonly
+2026-05-13 13:16:57 [info     ] verification_data.mcp_agents.mcp_servers.ok inserted=1 updated=0
+2026-05-13 13:16:57 [info     ] verification_data.mcp_agents.agents.start count=1
+2026-05-13 13:16:57 [info     ] verification_data.mcp_agents.agents.upsert name=people_helper
+2026-05-13 13:16:57 [info     ] verification_data.mcp_agents.agents.ok inserted=1 updated=0
+2026-05-13 13:16:57 [info     ] verification_data.bootstrap.done groups_run=6

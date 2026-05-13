@@ -1,0 +1,7 @@
+Command: curl -sf -m 3 http://localhost:8000/ready
+Exit code: 7 (ECONNREFUSED — backend not running in this worktree)
+Output: (none — connection refused)
+
+NOTE: Same as curl-health.txt. Backend is not running in this worktree context.
+Developer verified HTTP 200 with {"data":{"db":{"status":"ok"},...}} when backend was up.
+This is expected in pr-flow DAG where each worktree runs isolated tests.

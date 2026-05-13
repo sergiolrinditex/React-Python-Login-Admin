@@ -33,9 +33,10 @@
   - **P01-S03-T002 — Cross-origin infra: vite proxy /api → uvicorn (Strategy A, ADR-002) — DONE 2026-05-13**
   - **P02-S03-T001 — Chat conversation CRUD endpoints (developer done, 2026-05-13)**
   - **P02-S05-T001 — Admin AI providers and models endpoints — debugger cycle 1 done, 2026-05-13. Architecture split (§D-AASPLIT) applied: `app/admin/providers/{__init__,router,service,repository,schemas,audit}.py` + `app/admin/model_catalog/{__init__,router,service,repository,schemas,audit}.py` + shared `app/admin/_audit.py`. Max file 230 LoC (was 590). Test fixture self-seeds roles. 25/25 tests PASS both verbose=true and verbose=false.**
-- **Next pending slice**: validator_tester_pending for P02-S05-T001 (re-validation after debugger cycle 1); P03-S01-T001 (SignInPage) also ready
+- **P02-S03-T003 — restore stack-specific dev-restart.profile.sh (developer done 2026-05-13)**: Restored canonical 395-LOC profile from commit aa840ca, preserving T008 (absolute --source path for verification_data bootstrap) and T012 (host-TCP probe + 60s timeout). All 8 contract functions defined; syntax OK; dispatcher --check passes without "did not define required function" errors. End-to-end --reset verification deferred to /verify-slice (worktree port conflict with main project containers; normal pr-flow constraint).
+- **Next pending slice**: validator_tester_pending for P02-S03-T003; validator_tester_pending for P02-S05-T001; P03-S01-T001 (SignInPage) also ready
 - **Blockers**: none
-- **Generated at**: 2026-05-13T11:30:00+02:00 (updated by developer P02-S05-T001)
+- **Generated at**: 2026-05-13T12:55:00+02:00 (updated by developer P02-S03-T003)
 
 ## Infrastructure Status (P00-S02-T001)
 
@@ -78,12 +79,13 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 | Idempotency | verified | Second run produces `changed=0`, no rotation |
 | Tests | 73/73 PASS | No regression |
 
-## Tooling Status (P01-S02-T012)
+## Tooling Status (P01-S02-T012 + P02-S03-T003)
 
 | Tool | Status | Details |
 |------|--------|---------|
 | `scripts/dev-restart.sh --reset` | hard-fail + host-TCP probe (P01-S02-T012) | Two back-to-back `--reset` both exit 0. `db_health` now requires BOTH container-internal `pg_isready` AND host TCP probe to pass before declaring UP. Race between Rancher Desktop port-forward and alembic host-side connection is closed. |
 | `scripts/dev-restart.profile.sh:db_health` | fixed — two-probe AND (P01-S02-T012) | `_host_pg_ready()` helper added; `_ensure_infra_essential` timeout raised 30→60s. |
+| `scripts/dev-restart.profile.sh` (overall) | **RESTORED (P02-S03-T003, 2026-05-13)** | 39-LOC neutral stub replaced with canonical 395-LOC Hilo People profile from aa840ca. All 8 contract functions defined. T008 + T012 invariants preserved. `./scripts/dev-restart.sh --check` no longer errors on missing functions. End-to-end `--reset` verified in `/verify-slice` gate. |
 
 ## Backend Status
 

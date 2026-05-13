@@ -1,0 +1,6 @@
+This is a tooling-only slice (wiring). No frontend code was modified.
+Frontend tests (91 passing) are unchanged and were verified in prior slices.
+Frontend health probe (curl-front.txt) confirms frontend is UP at :5173.
+
+No frontend-specific tests for dev-restart.profile.sh (shell script, not frontend code).
+Frontend test suite is run under /verify-slice for changed code only (per task pack §write_set).
