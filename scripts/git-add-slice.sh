@@ -79,11 +79,6 @@ DOC_NOTES_GLOB="orchestrator-state/memory/official-doc-notes/${TASK_ID}-*.md"
 # Baseline (lo añade el sync, pero por si quedó algo del orquestador-meta)
 BASELINE="docs/product-baseline"
 
-cmd_prefix=""
-if [ "$DRY_RUN" -eq 1 ]; then
-  cmd_prefix="echo would: "
-fi
-
 ADDED=0
 add_if_exists() {
   local p="$1"
