@@ -1,0 +1,27 @@
+=== TESTER curl smoke: no-auth check ===
+
+NOTE: The live server on port 8000 runs the main repo (without the streaming endpoint),
+so a raw curl to the live server returns {"detail":"Not Found"} — expected.
+
+The streaming endpoint lives in the worktree code. The developer verified it on
+port 8002 (curl_worktree_verification.txt). The TestClient integration test T04
+(test_stream_no_auth_401) PASSED using the worktree app with real DB.
+
+T04 assertion (from TestClient run, PASSED):
+  POST /api/v1/chat/conversations/{conv_id}/stream (no Authorization header)
+  -> HTTP 401
+  -> {"errors":[{"code":"AUTH_SESSION_EXPIRED",...}]}
+
+LIVE SERVER STATUS (port 8000 — main repo):
+  curl -s -X POST "http://localhost:8000/api/v1/chat/conversations/00000000-0000-0000-0000-000000000099/stream"
+  Response: {"detail":"Not Found"}
+  Reason: main repo server does not have streaming endpoint mounted (worktree only)
+
+CURL DEFERRED: Full live SSE stream curl deferred to /verify-slice per documented
+ENCRYPTION_KEY blocker (FU-20260513171333). Auth sign-in returns AUTH_SIGNIN_INTERNAL_ERROR
+on live server — consistent with placeholder ENCRYPTION_KEY in .env.
+
+WORKTREE ENDPOINT REGISTRATION (from developer's curl_worktree_verification.txt):
+  Chat paths include: /api/v1/chat/conversations/{conversation_id}/stream
+  POST methods: ['post']
+  401 confirmed: AUTH_SESSION_EXPIRED code returned

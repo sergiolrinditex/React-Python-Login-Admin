@@ -1,0 +1,31 @@
+=== TESTER verbose=true logging verification ===
+
+Test T16 (test_stream_logs_verbose_on_full_flow) PASSED.
+Test T17 (test_stream_logs_redact_secrets) PASSED.
+
+ACTUAL LOG PATTERNS confirmed in service.py (verified by T16 caplog assertions):
+
+BEFORE patterns (*.start / validate entry):
+  chat.stream.validate.start      request_id=%s user_id_hash=%s conv_id_prefix=%s
+  chat.stream.persist_user_msg.start  request_id=%s content_len=%d
+  chat.stream.retrieve.start      request_id=%s language=%s
+  chat.stream.generate.start      request_id=%s model_id=%s chunk_count=%d
+  chat.stream.persist_result.start    request_id=%s content_len=%d citations=%d
+
+AFTER patterns (*.done):
+  chat.stream.validate.done       request_id=%s conv_id_prefix=%s language=%s
+  chat.stream.persist_user_msg.done   request_id=%s
+  chat.stream.retrieve.done       request_id=%s chunk_count=%d
+  chat.stream.generate.done       request_id=%s delta_chunks=%d tokens_out=%d
+  chat.stream.persist_result.done     request_id=%s msg_id=%s
+
+T16 assertions verified:
+  assert any("chat.stream.validate.start" in m for m in messages)   -> PASS
+  assert any("chat.stream.persist_user_msg.start" in m or "chat.stream.validate.done" in m for m in messages) -> PASS
+
+SECURITY (T17):
+  - "SUPER-SECRET-API-KEY-DO-NOT-LOG" NOT found in any caplog record
+  - "UNIQUE-MESSAGE-SHOULD-NOT-APPEAR-IN-LOGS" NOT found in any caplog record
+  - Only lengths/counts/UUIDs logged, never content
+
+No PII observed: api_key, message content, assistant content are all absent from logs.

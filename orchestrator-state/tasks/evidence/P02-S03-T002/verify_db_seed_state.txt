@@ -1,0 +1,6 @@
+providers = [(UUID('8cd11653-37d6-46c1-994c-8ce1ffb727e2'), 'litellm_verification_sandbox', 'litellm', 'active')]
+models = []
+credentials = (0,)
+rag_collections = (1,)
+document_chunks = (0,)
+users = [('admin.peopletech@inditex-sandbox.com', 'active'), ('employee.verification@inditex-sandbox.com', 'active')]

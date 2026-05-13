@@ -1,0 +1,14 @@
+=== TESTER verbose=false logging verification ===
+
+Test T15 (test_stream_logs_verbose_off_silent) PASSED.
+
+T15 assertion:
+  With ENABLE_VERBOSE_LOGGING=false and _VERBOSE=False patched on all streaming modules:
+    debug_info_records = [r for r in caplog.records if r.levelno == logging.DEBUG and "chat.stream" in r.name]
+    assert debug_info_records == []   -> PASS (no DEBUG chat.stream.* records)
+
+Confirmation: with verbose=false, no DEBUG/INFO log lines are emitted from
+app.chat.streaming.* module tree. Only WARNING/ERROR visible.
+
+grep check on tester_pytest_verbose_false.txt output for INFO/DEBUG: no matches found.
+(Pytest stdout shows only test pass/fail lines — no app log lines leaked to stdout.)

@@ -1,0 +1,40 @@
+=== OpenAPI schema for POST /api/v1/chat/conversations/{conversation_id}/stream ===
+{
+  "post": {
+    "tags": [
+      "chat"
+    ],
+    "summary": "Stream a chat response (SSE)",
+    "description": "POST a user message to start SSE streaming. Emits: meta \u2192 citation* \u2192 chunk* \u2192 usage \u2192 done. Auth required (Bearer). Rate limit deferred (D-CHATSTREAM-RL).",
+    "operationId": "stream_conversation_api_v1_chat_conversations__conversation_id__stream_post",
+    "parameters": [
+      {
+        "name": "conversation_id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid",
+          "title": "Conversation Id"
+        }
+      }
+    ],
+    "responses": {
+      "200": {
+        "description": "Successful Response"
+      },
+      "422": {
+        "description": "Validation Error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/HTTPValidationError"
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+--- StreamRequest schema ---

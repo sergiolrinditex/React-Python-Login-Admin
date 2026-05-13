@@ -1,0 +1,8 @@
+=== Endpoint registration check ===
+Chat paths: ['/api/v1/chat/conversations', '/api/v1/chat/conversations/{conversation_id}', '/api/v1/chat/conversations/{conversation_id}/stream']
+Stream POST methods: ['post']
+
+=== 401 (no auth) ===
+{"data":null,"meta":{"request_id":"curl-test-401"},"errors":[{"code":"AUTH_SESSION_EXPIRED","message":"Session expired or invalid credentials. Please sign in again.","field":null,"details":null}]}
+=== 400 (empty message) ===
+Token: NO_TOKEN...

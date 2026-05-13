@@ -1,0 +1,42 @@
+=== TESTER Contract Observed ===
+
+Front -> Back -> DB contract verification:
+
+ROUTE: POST /api/v1/chat/conversations/{conversation_id}/stream
+  - Registered in worktree app (confirmed by developer curl_worktree_verification.txt)
+  - Paths: /api/v1/chat/conversations/{conversation_id}/stream (POST)
+  - T19 PASSED: Content-Type: text/event-stream; charset=utf-8
+
+ROUTER: backend/app/chat/streaming/router.py
+  - Mounted via chat/routers/__init__.py aggregator (D-CHATSTREAM-WIRE pattern)
+  - T04 PASSED: 401 AUTH_SESSION_EXPIRED without auth
+  - T02 PASSED: 404 CHAT_CONVERSATION_NOT_FOUND
+  - T03 PASSED: 403 CHAT_CONVERSATION_FORBIDDEN
+
+SERVICE: backend/app/chat/streaming/service.py::run_stream
+  - T01 PASSED: 5-step pipeline completes (validate→retrieve→generate→persist)
+  - T20 PASSED: first byte < 200ms
+
+SSE FRAMING: backend/app/chat/streaming/sse.py
+  - All 21 SSE unit tests PASSED (test_chat_stream_unit_sse.py)
+  - Event names: meta, chunk, citation, usage, error, done verified
+  - \n\n separator, bytes output, UTF-8 encoding verified
+
+LLM GATEWAY: backend/app/llm_gateway/litellm_client.py
+  - All 10 LiteLLM unit tests PASSED (test_llm_gateway_litellm_client.py)
+  - stream_chat: StreamEvent delta+usage yielded, error handling verified
+  - embed_query: 1536-dim list verified, wrong dimension raises EmbeddingError
+
+PERSISTENCE: backend/app/chat/streaming/persistence.py
+  - T06 AC-6: user message persisted BEFORE streaming (real DB write)
+  - T07 AC-7: partial persist on disconnect
+  - T12 AC-9: conversations.updated_at bumped
+  - T13 AC-5: llm_usage_logs columns
+  - T14 AC-4: citations linked to assistant message
+
+TABLES (observed via TestClient + real Postgres):
+  WRITTEN: messages, message_citations, llm_usage_logs, conversations.updated_at
+  READ: ai_models, ai_providers, ai_provider_credentials (via model_selector)
+  READ: document_chunks (via rag.retrieve — 0 chunks in tests without rag_chat seed)
+
+MIGRATION: head=0002 (all required tables exist, no new migration needed)

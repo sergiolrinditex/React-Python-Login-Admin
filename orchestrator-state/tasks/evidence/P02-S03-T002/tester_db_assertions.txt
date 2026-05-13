@@ -1,0 +1,27 @@
+=== TESTER DB assertions ===
+
+DEFERRED to /verify-slice — reason: ENCRYPTION_KEY blocker.
+
+The live server cannot sign in (AUTH_SIGNIN_INTERNAL_ERROR) due to placeholder
+ENCRYPTION_KEY in .env. No live stream run was possible, so no real conversation_id
+or message_id was available for DB assertion queries.
+
+COVERED BY TESTS (real DB assertions, all PASSED):
+  T01 (test_stream_happy_path_es):
+    - asserts messages.role='assistant' count = 1 for conv_id
+    - asserts message_citations rows linked to assistant message_id
+    - asserts llm_usage_logs row with tokens_in, tokens_out, estimated_cost
+  T07 (test_stream_user_msg_persisted_before_llm):
+    - queries messages WHERE conv_id AND role='user' — asserts count >= 1
+  T11 (test_stream_client_disconnect_persists_partial):
+    - queries messages for partial content + latency_ms persisted
+  T12 (test_stream_conversation_updated_at_bumped):
+    - queries conversations.updated_at BEFORE vs AFTER stream
+  T13 (test_stream_usage_log_columns):
+    - queries llm_usage_logs with user_id, model_id, conversation_id,
+      tokens_in > 0, tokens_out > 0, estimated_cost >= 0
+  T14 (test_stream_citations_link_to_assistant_msg):
+    - queries message_citations.message_id vs assistant_message.id
+
+All DB assertions via TestClient + real Postgres (not mocked): 51/51 PASS.
+Live cursor queries deferred to /verify-slice after ENCRYPTION_KEY is resolved.
