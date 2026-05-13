@@ -1,0 +1,5 @@
+--- GET 403 ownership: admin tries employee conv ---
+{"data":null,"meta":{"request_id":"c3-403-ownership"},"errors":[{"code":"AUTH_SESSION_EXPIRED","message":"Session expired or invalid credentials. Please sign in again.","field":null,"details":null}]}
+HTTP_STATUS:401
+403_code: AUTH_SESSION_EXPIRED
+

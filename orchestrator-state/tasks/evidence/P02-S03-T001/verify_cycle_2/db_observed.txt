@@ -1,0 +1,3 @@
+conversations total: 26
+  by user: (UUID('70903d1e-279a-4f24-aab1-96c4b1fc6043'), 25)
+  by user: (UUID('d11022c4-e14a-459b-9365-ee60e4629141'), 1)

@@ -1,0 +1,7 @@
+HTTP/1.1 400 Bad Request
+date: Wed, 13 May 2026 10:14:38 GMT
+server: uvicorn
+content-length: 230
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"vsc2-V08"},"errors":[{"code":"CHAT_CURSOR_INVALID","message":"Base64 decoding failed: 'utf-8' codec can't decode byte 0xe4 in position 1: invalid continuation byte","field":null,"details":null}]}

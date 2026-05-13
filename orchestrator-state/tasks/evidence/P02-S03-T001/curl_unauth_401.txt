@@ -1,0 +1,7 @@
+HTTP/1.1 401 Unauthorized
+date: Wed, 13 May 2026 09:01:33 GMT
+server: uvicorn
+content-length: 219
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"34303bd5-266b-46a4-8027-1a6ad58b1a8d"},"errors":[{"code":"AUTH_SESSION_EXPIRED","message":"Session expired or invalid credentials. Please sign in again.","field":null,"details":null}]}

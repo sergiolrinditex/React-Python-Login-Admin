@@ -1,0 +1,7 @@
+HTTP/1.1 400 Bad Request
+date: Wed, 13 May 2026 09:01:33 GMT
+server: uvicorn
+content-length: 251
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"378985f9-ce9a-463b-b8e0-a801a42ba1dd"},"errors":[{"code":"CHAT_CURSOR_INVALID","message":"Base64 decoding failed: 'utf-8' codec can't decode byte 0x9e in position 0: invalid start byte","field":null,"details":null}]}

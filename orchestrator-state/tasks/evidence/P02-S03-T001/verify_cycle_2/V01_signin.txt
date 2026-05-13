@@ -1,0 +1,3 @@
+=== V01 sign-in admin ===
+{"data":{"mfa_required":false,"access_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3MDkwM2QxZS0yNzlhLTRmMjQtYWFiMS05NmM0YjFmYzYwNDMiLCJlbWFpbCI6ImFkbWluLnBlb3BsZXRlY2hAaW5kaXRleC1zYW5kYm94LmNvbSIsInJvbGVzIjpbImVtcGxveWVlIl0sInByZWZlcnJlZF9sYW5ndWFnZSI6ImVzIiwiZW1wbG95ZWVfcHJvZmlsZV9pZCI6bnVsbCwianRpIjoiOWNmOTliNjU0NzhmNDVlZjk2ZjJlMDFhY2I0Yjg4MTciLCJpYXQiOjE3Nzg2NjcyMzksImV4cCI6MTc3ODY2OTAzOX0.kURmGZ6b_UkdYDz_vlvJPf3gbYNflp3gnheoGQBGjsc","token_type":"Bearer","expires_in":1800},"meta":{"request_id":"vsc2-V01"},"errors":[]}
+access_token len: 404

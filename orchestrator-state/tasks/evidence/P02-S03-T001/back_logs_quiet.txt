@@ -1,0 +1,20 @@
+# ENABLE_VERBOSE_LOGGING=false verification
+# Method: code-grep + subprocess test (cannot restart live server for a single test)
+# 
+# When ENABLE_VERBOSE_LOGGING=false:
+#   app/main.py L65-70: _LOG_LEVEL = logging.WARNING
+#   logging.basicConfig(level=logging.WARNING) sets root logger to WARNING
+#
+# Subprocess test verified:
+#   Root logger level: WARNING
+#   App logger level: NOTSET (inherits WARNING from root)
+#
+# Result: All DEBUG/INFO log lines from app.chat.* are suppressed.
+#         Only WARNING and ERROR logs would appear (none triggered in happy path).
+#
+# The live dev server runs with ENABLE_VERBOSE_LOGGING=true (default dev config from P01-S02-T009).
+# To test verbose=off in production the env var is toggled — documented behavior per non-negotiables §Logging.
+#
+# Contract satisfied:
+#   verbose=on: BEFORE/AFTER logs visible (confirmed via back.log grep above)
+#   verbose=off: only WARNING+ visible (confirmed via subprocess level test)

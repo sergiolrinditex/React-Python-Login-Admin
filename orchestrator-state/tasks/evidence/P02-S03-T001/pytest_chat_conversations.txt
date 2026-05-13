@@ -1,0 +1,118 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.5, pytest-9.0.2, pluggy-1.6.0 -- /usr/local/bin/python3
+cachedir: .pytest_cache
+rootdir: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend
+configfile: pyproject.toml
+plugins: httpx-0.36.0, asyncio-1.3.0, langsmith-0.8.3, anyio-4.13.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 14 items
+
+backend/tests/integration/test_chat_conversations.py::test_post_creates_conversation_success FAILED [  7%]
+backend/tests/integration/test_chat_conversations.py::test_post_without_initial_message_creates_empty_conversation FAILED [ 14%]
+backend/tests/integration/test_chat_conversations.py::test_post_uses_user_preferred_language_when_omitted FAILED [ 21%]
+backend/tests/integration/test_chat_conversations.py::test_post_uses_explicit_language_override FAILED [ 28%]
+backend/tests/integration/test_chat_conversations.py::test_post_rejects_invalid_language FAILED [ 35%]
+backend/tests/integration/test_chat_conversations.py::test_post_unauthenticated_returns_401_anti_enum PASSED [ 42%]
+backend/tests/integration/test_chat_conversations.py::test_get_list_returns_only_own_conversations FAILED [ 50%]
+backend/tests/integration/test_chat_conversations.py::test_get_list_pagination_roundtrip FAILED [ 57%]
+backend/tests/integration/test_chat_conversations.py::test_get_list_pagination_orders_by_updated_at_desc FAILED [ 64%]
+backend/tests/integration/test_chat_conversations.py::test_get_list_empty_returns_empty_envelope FAILED [ 71%]
+backend/tests/integration/test_chat_conversations.py::test_get_list_invalid_cursor_returns_400 FAILED [ 78%]
+backend/tests/integration/test_chat_conversations.py::test_get_detail_returns_full_conversation_with_messages FAILED [ 85%]
+backend/tests/integration/test_chat_conversations.py::test_get_detail_404_when_uuid_not_exists FAILED [ 92%]
+backend/tests/integration/test_chat_conversations.py::test_get_detail_403_when_not_owner FAILED [100%]
+
+=================================== FAILURES ===================================
+____________________ test_post_creates_conversation_success ____________________
+backend/tests/integration/test_chat_conversations.py:256: in test_post_creates_conversation_success
+    assert resp.status_code == 201, resp.text
+E   AssertionError: Internal Server Error
+E   assert 500 == 201
+E    +  where 500 = <Response [500 Internal Server Error]>.status_code
+_________ test_post_without_initial_message_creates_empty_conversation _________
+backend/tests/integration/test_chat_conversations.py:297: in test_post_without_initial_message_creates_empty_conversation
+    assert resp.status_code == 201, resp.text
+E   AssertionError: Internal Server Error
+E   assert 500 == 201
+E    +  where 500 = <Response [500 Internal Server Error]>.status_code
+_____________ test_post_uses_user_preferred_language_when_omitted ______________
+backend/tests/integration/test_chat_conversations.py:327: in test_post_uses_user_preferred_language_when_omitted
+    assert resp.status_code == 201, resp.text
+E   AssertionError: Internal Server Error
+E   assert 500 == 201
+E    +  where 500 = <Response [500 Internal Server Error]>.status_code
+__________________ test_post_uses_explicit_language_override ___________________
+backend/tests/integration/test_chat_conversations.py:352: in test_post_uses_explicit_language_override
+    assert resp.status_code == 201, resp.text
+E   AssertionError: Internal Server Error
+E   assert 500 == 201
+E    +  where 500 = <Response [500 Internal Server Error]>.status_code
+______________________ test_post_rejects_invalid_language ______________________
+backend/tests/integration/test_chat_conversations.py:378: in test_post_rejects_invalid_language
+    assert resp.status_code == 422, resp.text
+E   AssertionError: Internal Server Error
+E   assert 500 == 422
+E    +  where 500 = <Response [500 Internal Server Error]>.status_code
+_________________ test_get_list_returns_only_own_conversations _________________
+backend/tests/integration/test_chat_conversations.py:408: in test_get_list_returns_only_own_conversations
+    assert resp.status_code == 200, resp.text
+E   AssertionError: Internal Server Error
+E   assert 500 == 200
+E    +  where 500 = <Response [500 Internal Server Error]>.status_code
+______________________ test_get_list_pagination_roundtrip ______________________
+backend/tests/integration/test_chat_conversations.py:438: in test_get_list_pagination_roundtrip
+    assert resp1.status_code == 200, resp1.text
+E   AssertionError: Internal Server Error
+E   assert 500 == 200
+E    +  where 500 = <Response [500 Internal Server Error]>.status_code
+______________ test_get_list_pagination_orders_by_updated_at_desc ______________
+backend/tests/integration/test_chat_conversations.py:488: in test_get_list_pagination_orders_by_updated_at_desc
+    assert resp.status_code == 200, resp.text
+E   AssertionError: Internal Server Error
+E   assert 500 == 200
+E    +  where 500 = <Response [500 Internal Server Error]>.status_code
+__________________ test_get_list_empty_returns_empty_envelope __________________
+backend/tests/integration/test_chat_conversations.py:510: in test_get_list_empty_returns_empty_envelope
+    assert resp.status_code == 200, resp.text
+E   AssertionError: Internal Server Error
+E   assert 500 == 200
+E    +  where 500 = <Response [500 Internal Server Error]>.status_code
+___________________ test_get_list_invalid_cursor_returns_400 ___________________
+backend/tests/integration/test_chat_conversations.py:529: in test_get_list_invalid_cursor_returns_400
+    assert resp.status_code == 400, resp.text
+E   AssertionError: Internal Server Error
+E   assert 500 == 400
+E    +  where 500 = <Response [500 Internal Server Error]>.status_code
+___________ test_get_detail_returns_full_conversation_with_messages ____________
+backend/tests/integration/test_chat_conversations.py:577: in test_get_detail_returns_full_conversation_with_messages
+    assert resp.status_code == 200, resp.text
+E   AssertionError: Internal Server Error
+E   assert 500 == 200
+E    +  where 500 = <Response [500 Internal Server Error]>.status_code
+___________________ test_get_detail_404_when_uuid_not_exists ___________________
+backend/tests/integration/test_chat_conversations.py:607: in test_get_detail_404_when_uuid_not_exists
+    assert resp.status_code == 404, resp.text
+E   AssertionError: Internal Server Error
+E   assert 500 == 404
+E    +  where 500 = <Response [500 Internal Server Error]>.status_code
+______________________ test_get_detail_403_when_not_owner ______________________
+backend/tests/integration/test_chat_conversations.py:628: in test_get_detail_403_when_not_owner
+    assert resp.status_code == 403, resp.text
+E   AssertionError: Internal Server Error
+E   assert 500 == 403
+E    +  where 500 = <Response [500 Internal Server Error]>.status_code
+=========================== short test summary info ============================
+FAILED backend/tests/integration/test_chat_conversations.py::test_post_creates_conversation_success
+FAILED backend/tests/integration/test_chat_conversations.py::test_post_without_initial_message_creates_empty_conversation
+FAILED backend/tests/integration/test_chat_conversations.py::test_post_uses_user_preferred_language_when_omitted
+FAILED backend/tests/integration/test_chat_conversations.py::test_post_uses_explicit_language_override
+FAILED backend/tests/integration/test_chat_conversations.py::test_post_rejects_invalid_language
+FAILED backend/tests/integration/test_chat_conversations.py::test_get_list_returns_only_own_conversations
+FAILED backend/tests/integration/test_chat_conversations.py::test_get_list_pagination_roundtrip
+FAILED backend/tests/integration/test_chat_conversations.py::test_get_list_pagination_orders_by_updated_at_desc
+FAILED backend/tests/integration/test_chat_conversations.py::test_get_list_empty_returns_empty_envelope
+FAILED backend/tests/integration/test_chat_conversations.py::test_get_list_invalid_cursor_returns_400
+FAILED backend/tests/integration/test_chat_conversations.py::test_get_detail_returns_full_conversation_with_messages
+FAILED backend/tests/integration/test_chat_conversations.py::test_get_detail_404_when_uuid_not_exists
+FAILED backend/tests/integration/test_chat_conversations.py::test_get_detail_403_when_not_owner
+========================= 13 failed, 1 passed in 1.87s =========================

@@ -1,0 +1,30 @@
+2026-05-13 11:02:01,134 app.chat.routers.conversations DEBUG chat.routers.create_conversation.start request_id=ca590136-ea8f-46b8-a2e2-fc7b6086d7b4 uid_hash=ac504a87932eb7a6 has_msg=True lang=es
+2026-05-13 11:02:01,134 app.chat.services.create_conversation DEBUG chat.service.create_conversation.start request_id=ca590136-ea8f-46b8-a2e2-fc7b6086d7b4 user_id_hash=ac504a87932eb7a6 language=es has_message=True title_len=26
+2026-05-13 11:02:01,134 app.chat.repositories.conversations DEBUG chat.repo.create_conversation.start user_id_prefix=8239064a language=es has_message=True title_len=26
+2026-05-13 11:02:01,136 app.chat.repositories.conversations DEBUG chat.repo.create_conversation.done conv_id_prefix=f9dcff39 has_message=True
+2026-05-13 11:02:01,136 app.chat.services.create_conversation DEBUG chat.service.create_conversation.done request_id=ca590136-ea8f-46b8-a2e2-fc7b6086d7b4 user_id_hash=ac504a87932eb7a6 conv_id_prefix=f9dcff39 latency_ms=2.4
+2026-05-13 11:02:01,139 app.chat.routers.conversations DEBUG chat.routers.create_conversation.done request_id=ca590136-ea8f-46b8-a2e2-fc7b6086d7b4 uid_hash=ac504a87932eb7a6 conv_prefix=f9dcff39 status=201 ms=3.7
+2026-05-13 11:02:01,163 app.chat.routers.conversations DEBUG chat.routers.create_conversation.start request_id=a54ffa30-5f3e-4f17-8f50-dac79c09e035 uid_hash=ac504a87932eb7a6 has_msg=True lang=es
+2026-05-13 11:02:01,163 app.chat.services.create_conversation DEBUG chat.service.create_conversation.start request_id=a54ffa30-5f3e-4f17-8f50-dac79c09e035 user_id_hash=ac504a87932eb7a6 language=es has_message=True title_len=26
+2026-05-13 11:02:01,163 app.chat.repositories.conversations DEBUG chat.repo.create_conversation.start user_id_prefix=8239064a language=es has_message=True title_len=26
+2026-05-13 11:02:01,166 app.chat.repositories.conversations DEBUG chat.repo.create_conversation.done conv_id_prefix=26f5e45d has_message=True
+2026-05-13 11:02:01,166 app.chat.services.create_conversation DEBUG chat.service.create_conversation.done request_id=a54ffa30-5f3e-4f17-8f50-dac79c09e035 user_id_hash=ac504a87932eb7a6 conv_id_prefix=26f5e45d latency_ms=2.6
+2026-05-13 11:02:01,169 app.chat.routers.conversations DEBUG chat.routers.create_conversation.done request_id=a54ffa30-5f3e-4f17-8f50-dac79c09e035 uid_hash=ac504a87932eb7a6 conv_prefix=26f5e45d status=201 ms=4.2
+2026-05-13 11:02:01,192 app.chat.routers.conversations DEBUG chat.routers.list_conversations.start request_id=d77c9453-3d25-462c-a304-8cbbc1459b84 uid_hash=ac504a87932eb7a6 limit=10 cursor=False
+2026-05-13 11:02:01,192 app.chat.services.list_conversations DEBUG chat.service.list_conversations.start request_id=d77c9453-3d25-462c-a304-8cbbc1459b84 user_id_hash=ac504a87932eb7a6 limit=10 has_cursor=False
+2026-05-13 11:02:01,192 app.chat.repositories.conversations DEBUG chat.repo.find_conversations_paginated.start user_id_prefix=8239064a limit=10 has_cursor=False
+2026-05-13 11:02:01,193 app.chat.repositories.conversations DEBUG chat.repo.find_conversations_paginated.done user_id_prefix=8239064a count=10 has_more=True
+2026-05-13 11:02:01,193 app.chat.services.list_conversations DEBUG chat.service.list_conversations.done request_id=d77c9453-3d25-462c-a304-8cbbc1459b84 user_id_hash=ac504a87932eb7a6 count=10 has_more=True latency_ms=1.1
+2026-05-13 11:02:01,193 app.chat.routers.conversations DEBUG chat.routers.list_conversations.done request_id=d77c9453-3d25-462c-a304-8cbbc1459b84 uid_hash=ac504a87932eb7a6 count=10 has_more=True status=200 ms=1.2
+2026-05-13 11:02:01,294 app.chat.routers.conversations DEBUG chat.routers.list_conversations.start request_id=37e3da85-a991-411e-a126-94e0d79f4e7b uid_hash=ac504a87932eb7a6 limit=10 cursor=True
+2026-05-13 11:02:01,294 app.chat.services.list_conversations DEBUG chat.service.list_conversations.start request_id=37e3da85-a991-411e-a126-94e0d79f4e7b user_id_hash=ac504a87932eb7a6 limit=10 has_cursor=True
+2026-05-13 11:02:01,294 app.chat.repositories.conversations DEBUG chat.repo.find_conversations_paginated.start user_id_prefix=8239064a limit=10 has_cursor=True
+2026-05-13 11:02:01,299 app.chat.repositories.conversations DEBUG chat.repo.find_conversations_paginated.done user_id_prefix=8239064a count=10 has_more=True
+2026-05-13 11:02:01,299 app.chat.services.list_conversations DEBUG chat.service.list_conversations.done request_id=37e3da85-a991-411e-a126-94e0d79f4e7b user_id_hash=ac504a87932eb7a6 count=10 has_more=True latency_ms=4.5
+2026-05-13 11:02:01,299 app.chat.routers.conversations DEBUG chat.routers.list_conversations.done request_id=37e3da85-a991-411e-a126-94e0d79f4e7b uid_hash=ac504a87932eb7a6 count=10 has_more=True status=200 ms=4.6
+2026-05-13 11:02:01,401 app.chat.routers.conversations DEBUG chat.routers.list_conversations.start request_id=362a07e8-f87f-4243-b413-a6bf7ddc4d1a uid_hash=ac504a87932eb7a6 limit=10 cursor=True
+2026-05-13 11:02:01,401 app.chat.services.list_conversations DEBUG chat.service.list_conversations.start request_id=362a07e8-f87f-4243-b413-a6bf7ddc4d1a user_id_hash=ac504a87932eb7a6 limit=10 has_cursor=True
+2026-05-13 11:02:01,401 app.chat.repositories.conversations DEBUG chat.repo.find_conversations_paginated.start user_id_prefix=8239064a limit=10 has_cursor=True
+2026-05-13 11:02:01,402 app.chat.repositories.conversations DEBUG chat.repo.find_conversations_paginated.done user_id_prefix=8239064a count=5 has_more=False
+2026-05-13 11:02:01,402 app.chat.services.list_conversations DEBUG chat.service.list_conversations.done request_id=362a07e8-f87f-4243-b413-a6bf7ddc4d1a user_id_hash=ac504a87932eb7a6 count=5 has_more=False latency_ms=1.8
+2026-05-13 11:02:01,403 app.chat.routers.conversations DEBUG chat.routers.list_conversations.done request_id=362a07e8-f87f-4243-b413-a6bf7ddc4d1a uid_hash=ac504a87932eb7a6 count=5 has_more=False status=200 ms=1.9

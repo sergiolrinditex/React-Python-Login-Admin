@@ -1,0 +1,7 @@
+HTTP/1.1 200 OK
+date: Wed, 13 May 2026 10:13:59 GMT
+server: uvicorn
+content-length: 603
+content-type: application/json
+
+{"data":{"id":"a4558495-d1ca-496d-8e83-1e144fc37a83","user_id":"70903d1e-279a-4f24-aab1-96c4b1fc6043","title":"¿Cuántos días de vacaciones tengo en mi convenio?","language":"es","created_at":"2026-05-13T10:13:58.708083Z","updated_at":"2026-05-13T10:13:58.708083Z","messages":[{"id":"ee5c2527-75e5-4580-a534-462980805940","conversation_id":"a4558495-d1ca-496d-8e83-1e144fc37a83","role":"user","content":"¿Cuántos días de vacaciones tengo en mi convenio?","token_count":null,"created_at":"2026-05-13T10:13:58.708083Z"}],"citations":[]},"meta":{"request_id":"vsc2-V05","pagination":null},"errors":[]}

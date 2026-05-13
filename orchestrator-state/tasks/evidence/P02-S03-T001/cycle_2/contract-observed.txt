@@ -1,0 +1,36 @@
+## Contract Observed — P02-S03-T001 Tester Cycle 2
+
+### Routes / Endpoints verified
+- POST /api/v1/chat/conversations
+- GET  /api/v1/chat/conversations?limit=20
+- GET  /api/v1/chat/conversations/{id}
+
+### Providers / Services verified
+- app.chat.routers.conversations (FastAPI router)
+- app.chat.services.create_conversation (CreateConversationForUser use case)
+- app.chat.services.list_conversations (ListConversationsForUser use case)
+- app.chat.services.get_conversation_detail (GetConversationDetailForUser use case)
+- app.chat.repositories.conversations (SQLAlchemy repository)
+- app.chat.cursor (encode_cursor / decode_cursor)
+- app.users.deps.get_current_user (auth dependency)
+
+### DTOs / Schemas
+- CreateConversationRequest (Pydantic v2 Literal['es','en','fr'] validation)
+- ConversationDTO, ConversationDetailDTO, MessageDTO, MessageCitationDTO
+- ChatResponseMeta with PaginationMeta
+
+### Tables observed
+- conversations (user_id, title, language, created_at, updated_at)
+- messages (conversation_id, role, content, token_count, created_at)
+- message_citations (empty in smoke, seeded in T12)
+
+### Error codes verified
+- CHAT_INVALID_PAYLOAD (400) — F-1 fix; language='de' → proper envelope
+- CHAT_CURSOR_INVALID (400) — cursor='garbage'
+- CHAT_CONVERSATION_NOT_FOUND (404) — nonexistent UUID
+- CHAT_CONVERSATION_FORBIDDEN (403) — cross-user ownership
+- AUTH_SESSION_EXPIRED (401) — unauthenticated request
+
+### Auth regression
+- AUTH_INVALID_PAYLOAD still emitted by auth/users paths (test_auth_signin + test_users_me: 47/47 PASS)
+- test_signin_missing_field_returns_422 still emits 422 (FastAPI unmapped path behavior preserved)

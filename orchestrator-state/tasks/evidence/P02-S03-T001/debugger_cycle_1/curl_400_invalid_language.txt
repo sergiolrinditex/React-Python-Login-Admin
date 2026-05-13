@@ -1,0 +1,7 @@
+HTTP/1.1 400 Bad Request
+date: Wed, 13 May 2026 09:08:05 GMT
+server: uvicorn
+content-length: 176
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"dbg-cycle1-T05"},"errors":[{"code":"CHAT_INVALID_PAYLOAD","message":"Input should be 'es', 'en' or 'fr'","field":"language","details":null}]}

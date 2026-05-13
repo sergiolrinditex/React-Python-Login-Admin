@@ -1,0 +1,8 @@
+---POST /chat/conversations with valid token ---
+HTTP/1.1 404 Not Found
+date: Wed, 13 May 2026 09:47:24 GMT
+server: uvicorn
+content-length: 22
+content-type: application/json
+
+{"detail":"Not Found"}

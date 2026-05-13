@@ -1,0 +1,45 @@
+=== curl_smoke_after_fix.txt ===
+Cycle: 2 (after debugger fix F-1)
+Timestamp: 2026-05-13T09:14:54Z
+
+--- SMOKE 1: POST valid conversation (expect 201) ---
+HTTP/1.1 201 Created
+date: Wed, 13 May 2026 09:14:53 GMT
+server: uvicorn
+content-length: 133
+content-type: application/json
+
+{"data":{"conversation_id":"8df304d8-cb3a-4fbe-9102-8fe0130e819a"},"meta":{"request_id":"cy2-smoke-1","pagination":null},"errors":[]}
+
+--- SMOKE 2: GET list limit=20 (expect 200 with conversation in data) ---
+HTTP/1.1 200 OK
+date: Wed, 13 May 2026 09:14:53 GMT
+server: uvicorn
+content-length: 792
+content-type: application/json
+
+{"data":[{"id":"8df304d8-cb3a-4fbe-9102-8fe0130e819a","user_id":"25c1cd5e-ddaf-4f26-b787-588095d06241","title":"smoke test cycle 2","language":"es","created_at":"2026-05-13T09:14:53.120614Z","updated_at":"2026-05-13T09:14:53.120614Z"},{"id":"1bffc387-8ef3-49c8-8abf-1a75aee068a0","user_id":"25c1cd5e-ddaf-4f26-b787-588095d06241","title":"smoke test cycle 2 pass","language":"es","created_at":"2026-05-13T09:14:53.074395Z","updated_at":"2026-05-13T09:14:53.074395Z"},{"id":"57b96bdd-6f62-486d-9e14-d80b9e0cb346","user_id":"25c1cd5e-ddaf-4f26-b787-588095d06241","title":"smoke test cycle 2","language":"es","created_at":"2026-05-13T09:14:38.564180Z","updated_at":"2026-05-13T09:14:38.564180Z"}],"meta":{"request_id":"cy2-smoke-2","pagination":{"next_cursor":null,"has_more":false}},"errors":[]}
+
+--- SMOKE 3: GET detail newly created conv (expect 200 with messages) ---
+HTTP/1.1 200 OK
+date: Wed, 13 May 2026 09:14:53 GMT
+server: uvicorn
+content-length: 548
+content-type: application/json
+
+{"data":{"id":"1bffc387-8ef3-49c8-8abf-1a75aee068a0","user_id":"25c1cd5e-ddaf-4f26-b787-588095d06241","title":"smoke test cycle 2 pass","language":"es","created_at":"2026-05-13T09:14:53.074395Z","updated_at":"2026-05-13T09:14:53.074395Z","messages":[{"id":"5898f21c-b8e0-4169-acb7-b74b2fc184f0","conversation_id":"1bffc387-8ef3-49c8-8abf-1a75aee068a0","role":"user","content":"smoke test cycle 2 pass","token_count":null,"created_at":"2026-05-13T09:14:53.074395Z"}],"citations":[]},"meta":{"request_id":"cy2-smoke-3","pagination":null},"errors":[]}
+
+--- SMOKE 4: GET detail nonexistent UUID (expect 404 + CHAT_CONVERSATION_NOT_FOUND) ---
+HTTP/1.1 404 Not Found
+date: Wed, 13 May 2026 09:14:53 GMT
+server: uvicorn
+content-length: 163
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"cy2-smoke-4"},"errors":[{"code":"CHAT_CONVERSATION_NOT_FOUND","message":"Conversation not found.","field":null,"details":null}]}
+
+=== SUMMARY ===
+SMOKE 1 (POST valid): 201 Created + conversation_id in data
+SMOKE 2 (GET list):   200 OK + data array + pagination meta
+SMOKE 3 (GET detail): 200 OK + messages array + citations array
+SMOKE 4 (GET 404):    404 Not Found + CHAT_CONVERSATION_NOT_FOUND code

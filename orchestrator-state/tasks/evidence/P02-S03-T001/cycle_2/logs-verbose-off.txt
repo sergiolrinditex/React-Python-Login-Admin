@@ -1,0 +1,6 @@
+Root logger level: 30 WARNING
+chat.routers.conversations effective level: 30 WARNING
+Verbose OFF check: PASS — all app.chat.* loggers at WARNING (30), DEBUG/INFO suppressed
+
+tokens.jwt_key.missing JWT_PRIVATE_KEY env var is not set; JWT encoding will raise at runtime
+

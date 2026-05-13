@@ -43,9 +43,11 @@ from fastapi import FastAPI, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
+from app.admin import admin_router  # P02-S05-T001 WRITE_SET_DRIFT §D-AAM
 from app.api.router import api_router
 from app.auth import auth_router
 from app.auth.schemas import ErrorItem, ErrorResponse, ResponseMeta
+from app.chat.routers import router as chat_router  # P02-S03-T001 WRITE_SET_DRIFT
 from app.users import users_router  # P01-S02-T007 WRITE_SET_DRIFT §G.14
 
 # ---------------------------------------------------------------------------
@@ -79,6 +81,8 @@ app = FastAPI(
 app.include_router(api_router)
 app.include_router(auth_router, prefix="/api/v1")
 app.include_router(users_router, prefix="/api/v1")  # P01-S02-T007 WRITE_SET_DRIFT §G.14
+app.include_router(chat_router, prefix="/api/v1")  # P02-S03-T001 WRITE_SET_DRIFT
+app.include_router(admin_router, prefix="/api/v1/admin/ai", tags=["admin-ai"])  # P02-S05-T001 WRITE_SET_DRIFT §D-AAM
 
 
 # ---------------------------------------------------------------------------
@@ -109,6 +113,32 @@ _AUTH_INVALID_PAYLOAD_PATHS: frozenset[str] = frozenset({
     "/api/v1/users/me/language",        # P01-S02-T007: PATCH body 422 → 400 (G.7)
 })
 
+# P02-S03-T001 debugger cycle 1 (F-1): chat endpoints normalize Pydantic 422 to
+# 400 with the feature-scoped code CHAT_INVALID_PAYLOAD per task pack §J.3.
+# Set-membership only (no startswith/regex) — keeps dispatch deterministic and
+# avoids accidental contract drift across feature modules.
+_CHAT_INVALID_PAYLOAD_PATHS: frozenset[str] = frozenset({
+    "/api/v1/chat/conversations",
+})
+
+# Union used by the path filter inside the global handler so the body stays
+# unique (DRY/KISS — single handler, single body, per-path error code).
+_INVALID_PAYLOAD_PATHS: frozenset[str] = (
+    _AUTH_INVALID_PAYLOAD_PATHS | _CHAT_INVALID_PAYLOAD_PATHS
+)
+
+
+def _invalid_payload_code_for_path(path: str) -> str:
+    """Return the feature-scoped error code for the given path.
+
+    Set-membership only: chat paths → ``CHAT_INVALID_PAYLOAD``; everything else
+    in ``_INVALID_PAYLOAD_PATHS`` keeps emitting ``AUTH_INVALID_PAYLOAD`` so the
+    existing auth/users contracts (and their tests) remain byte-for-byte stable.
+    """
+    if path in _CHAT_INVALID_PAYLOAD_PATHS:
+        return "CHAT_INVALID_PAYLOAD"
+    return "AUTH_INVALID_PAYLOAD"
+
 
 def _resolve_request_id(request: Request) -> str:
     """Reuse the request id from the inbound header or generate a deterministic placeholder.
@@ -131,7 +161,7 @@ async def _forgot_reset_validation_handler(
     delegate to FastAPI's default 422 RequestValidationError envelope.
     """
     path = request.url.path
-    if path not in _AUTH_INVALID_PAYLOAD_PATHS:
+    if path not in _INVALID_PAYLOAD_PATHS:
         # Re-emit FastAPI's default 422 envelope: this matches the framework's
         # documented default behaviour for unchanged consumers (T001 / T002 tests).
         logger.debug(
@@ -142,6 +172,10 @@ async def _forgot_reset_validation_handler(
             content={"detail": exc.errors()},
         )
 
+    # P02-S03-T001 F-1: derive the feature-scoped error code ONCE per request
+    # so every ErrorItem in the envelope carries the same code (no per-error
+    # branching, no string interpolation surprises).
+    error_code = _invalid_payload_code_for_path(path)
     request_id = _resolve_request_id(request)
     error_items: list[ErrorItem] = []
     for raw in exc.errors():
@@ -155,7 +189,7 @@ async def _forgot_reset_validation_handler(
             field_name = tail[-1] if tail else None
         error_items.append(
             ErrorItem(
-                code="AUTH_INVALID_PAYLOAD",
+                code=error_code,
                 message=str(raw.get("msg", "Invalid payload")),
                 field=field_name,
                 details=None,

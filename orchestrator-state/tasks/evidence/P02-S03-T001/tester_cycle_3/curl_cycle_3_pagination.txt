@@ -1,0 +1,15 @@
+=== 10. Pagination roundtrip: 25 admin convs, 3 pages (10+10+5) ===
+Page1: count=10 has_more=True cursor=MjAyNi0wNS0xM1QxMDow... ids=['e6debd46', '206fd960', '3bb6433f', 'd05b9a1c', '19e03c2c', 'b60bab31', '6cb5a2d8', '45854184', '4d542824', '2d8ba0f1']
+Page2: count=10 has_more=True cursor=MjAyNi0wNS0xM1QxMDow... ids=['306b3992', 'a28c06ef', 'd691c97f', 'fa7a5a81', 'f64784a1', '543949dc', 'a4d46a7a', 'a4bb7bb9', '971c33fc', 'b5124727']
+Page3: count=5 has_more=False next_cursor=None ids=['0a786d36', '7ab205ad', '75655961', 'f2f2cab3', '2372fb7d']
+Disjoint check via python3 not inline-friendly
+
+PAGINATION SUMMARY:
+  Page1: 10 items, has_more=True ✓ (expected 10, True)
+  Page2: 10 items, has_more=True ✓ (expected 10, True)
+  Page3: 5 items, has_more=False ✓ (expected 5, False)
+  Total: 25 (expected 25)
+  Cursor P1≠null: PASS
+  Cursor P2≠null: PASS
+  Cursor P3=null: PASS
+

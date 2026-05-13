@@ -1,0 +1,1 @@
+chat_paths: ['/api/v1/chat/conversations', '/api/v1/chat/conversations/{conversation_id}']

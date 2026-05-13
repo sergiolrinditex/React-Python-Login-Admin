@@ -1,0 +1,37 @@
+# Verification Data Contract — P02-S03-T001 Tester Run
+
+## Verification data rows used (from TECHNICAL_GUIDE §6.5)
+
+1. **admin.peopletech@inditex-sandbox.com** (admin_peopletech.json)
+   - Loaded via: `PYTHONPATH=backend python3 -m app.verification_data.bootstrap --source data/verification --only admin_ai`
+   - Used for: curl smoke tests (sign-in → access_token → chat endpoint calls)
+   - No MFA — used admin user since employee_primary has MFA enabled (data/verification/auth/mfa_primary.json enabled=true)
+
+2. **employee.verification@inditex-sandbox.com** (employee_primary.json)
+   - Loaded via: `PYTHONPATH=backend python3 -m app.verification_data.bootstrap --source data/verification --only auth`
+   - Has MFA enabled → sign-in returns mfa_challenge_token; NOT used for direct curl smoke (MFA challenge would block the flow)
+   - Status: active, preferred_language=es
+
+## Synthetic data (edge cases)
+
+- Second user for 403 test: signed up on-the-fly as `tester-b-chatcheck@inditex-sandbox.com` (inditex-sandbox.com corporate domain)
+- 25 conversations for pagination: created via curl in loop (synthetic test data, labeled)
+- UUID 00000000-0000-0000-0000-000000000000 for 404 test (synthetic — known non-existent)
+- cursor=not-valid-base64 for 400 test (synthetic — invalid base64 string)
+
+## Persisted data observed
+
+- conversations table: 25 rows for admin user, user_id=8239064a-3e8e-479f-b1be-1d383546b766
+  - D-TIT1: title = first 60 chars of initial_message (e.g., "Cuánto tengo de vacaciones?")
+  - D-TIT1: empty string when no initial_message
+  - D-LANG1: language = "es" (from user preferred_language or explicit override)
+- messages table: 24 rows (one per conversation with initial_message), role='user'
+  - Content NOT logged (only clen=content_length in logs)
+  - FK conversation_id: correctly links to parent conversation
+
+## Bootstrap note
+
+The `--only auth` bootstrap only seeds the employee_primary user.
+The admin user requires `--only admin_ai` (loaded as part of the admin group).
+The employee_primary MFA being enabled required using the admin user for direct curl tests.
+This is expected behavior per verification data contract design.

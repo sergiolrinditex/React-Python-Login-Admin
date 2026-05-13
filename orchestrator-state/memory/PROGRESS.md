@@ -6,7 +6,7 @@
 
 ## Current State
 
-- **Phase**: Phase 1 — Auth + Data Foundation
+- **Phase**: Phase 2 — Core Features (P02-S05-T001 developer done 2026-05-13)
 - **Last completed slices**:
   - P00-S01-T001 — Repo scaffold + scripts + env (done)
   - P00-S01-T002 — Frontend dependency pack (done)
@@ -31,9 +31,11 @@
   - **P01-S02-T007 — GET /api/v1/users/me + PATCH /api/v1/users/me/language (developer done, 2026-05-12)**
   - **P01-S03-T001 — Auth state provider and protected route guards (developer done, 2026-05-12)**
   - **P01-S03-T002 — Cross-origin infra: vite proxy /api → uvicorn (Strategy A, ADR-002) — DONE 2026-05-13**
-- **Next pending slice**: P03-S01-T001 (SignInPage) — unblocked by T002
+  - **P02-S03-T001 — Chat conversation CRUD endpoints (developer done, 2026-05-13)**
+  - **P02-S05-T001 — Admin AI providers and models endpoints — debugger cycle 1 done, 2026-05-13. Architecture split (§D-AASPLIT) applied: `app/admin/providers/{__init__,router,service,repository,schemas,audit}.py` + `app/admin/model_catalog/{__init__,router,service,repository,schemas,audit}.py` + shared `app/admin/_audit.py`. Max file 230 LoC (was 590). Test fixture self-seeds roles. 25/25 tests PASS both verbose=true and verbose=false.**
+- **Next pending slice**: validator_tester_pending for P02-S05-T001 (re-validation after debugger cycle 1); P03-S01-T001 (SignInPage) also ready
 - **Blockers**: none
-- **Generated at**: 2026-05-12T23:30:00+02:00 (updated by developer P01-S03-T001)
+- **Generated at**: 2026-05-13T11:30:00+02:00 (updated by developer P02-S05-T001)
 
 ## Infrastructure Status (P00-S02-T001)
 
@@ -91,12 +93,15 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 | Health check | 3 endpoints implemented | GET /health (backward compat), GET /live (liveness), GET /ready (readiness with DB+Redis ping) |
 | Auth endpoints | 7 implemented | POST /api/v1/auth/sign-up (T001), POST /api/v1/auth/sign-in (T002), POST /api/v1/auth/refresh (T003), POST /api/v1/auth/logout (T004) — cookie Path fixed to /api/v1/auth (T011). POST /api/v1/auth/forgot-password (T005), POST /api/v1/auth/reset-password (T005), POST /api/v1/auth/2fa/verify (T006) |
 | Users endpoints | 2 implemented (T007) | GET /api/v1/users/me (returns UserProfile + employee_profile), PATCH /api/v1/users/me/language (returns 200 + full body; whitelist es/en/fr; audit log) |
-| Endpoints implemented | 12 | GET /health, GET /live, GET /ready, POST /api/v1/auth/sign-up, POST /api/v1/auth/sign-in, POST /api/v1/auth/refresh, POST /api/v1/auth/logout, POST /api/v1/auth/forgot-password, POST /api/v1/auth/reset-password, POST /api/v1/auth/2fa/verify, GET /api/v1/users/me, PATCH /api/v1/users/me/language |
-| Migrations applied | 1 (head=0001) | 9 auth tables: users, employee_profiles, roles, permissions, user_roles, refresh_tokens, mfa_totp_secrets, password_reset_tokens, audit_logs |
-| Seed data | loader.py fixed (P00-S02-T004); bootstrap ready; dev-restart --reset self-contained (T008) | FU-20260511145446 resolved — CAST(:meta AS JSONB) + json.dumps(). T008 fix: absolute --source path + hard-fail. |
-| Backend tests | 149 passing (isolation count) | test_health.py (11) + test_dependency_smoke.py (20) + test_migrations_0001_auth.py (6) + test_dev_restart_reset.py (2) + test_verification_data_bootstrap.py (9) + test_auth_signup.py (9) + test_auth_signin.py (16) + test_auth_refresh.py (14) + test_auth_logout.py (15 — T15 NEW cookie-jar roundtrip T011) + test_password_reset.py (21) + test_mfa.py (16 — T006) + test_users_me.py (31 — T007) — NOTE: full-suite with env exported = 130/1 (1 pre-existing test_mfa T06 failure, unrelated to T007); 31/31 users_me in isolation |
-| Backend dependencies | declared + installed | pyproject.toml: 29 packages pinned (28 + pyotp==2.9.0 added P01-S02-T006) |
+| Chat endpoints | 3 implemented (P02-S03-T001) | GET /api/v1/chat/conversations (list, cursor pagination D-PAG1), POST /api/v1/chat/conversations (create, atomic D-TX1), GET /api/v1/chat/conversations/{id} (detail with messages+citations, ownership 403/404) |
+| Admin AI endpoints | 4 implemented (P02-S05-T001) | GET /api/v1/admin/ai/providers (list, masked creds), POST /api/v1/admin/ai/providers (create+encrypt, rate-limit, audit), GET /api/v1/admin/ai/models (list, provider_id filter), PATCH /api/v1/admin/ai/models/{id} (partial update, D-DEF1 default invariant, audit) |
+| Endpoints implemented | 19 | GET /health, GET /live, GET /ready, POST /api/v1/auth/sign-up, POST /api/v1/auth/sign-in, POST /api/v1/auth/refresh, POST /api/v1/auth/logout, POST /api/v1/auth/forgot-password, POST /api/v1/auth/reset-password, POST /api/v1/auth/2fa/verify, GET /api/v1/users/me, PATCH /api/v1/users/me/language, GET /api/v1/chat/conversations, POST /api/v1/chat/conversations, GET /api/v1/chat/conversations/{id}, GET /api/v1/admin/ai/providers, POST /api/v1/admin/ai/providers, GET /api/v1/admin/ai/models, PATCH /api/v1/admin/ai/models/{id} |
+| Migrations applied | 2 (head=0002) | 0001: 9 auth tables. 0002: 25 tables (conversations, messages, message_citations, documents, document_chunks, document_embeddings, rag_collections, vectorization_jobs, ai_providers, ai_provider_credentials, ai_models, ai_model_tests, llm_usage_logs, mcp_servers, mcp_tools, mcp_resources, mcp_prompts, mcp_credentials, mcp_approvals, mcp_tool_invocations, agents, agent_runs, mcp_agent_bindings) |
+| Seed data | loader.py fixed (P00-S02-T004); bootstrap ready; dev-restart --reset self-contained (T008) | FU-20260511145446 resolved — CAST(:meta AS JSONB) + json.dumps(). T008 fix: absolute --source path + hard-fail. data/verification/users/admin_peopletech.json: roles updated "admin"→"people_admin" (WRITE_SET_DRIFT §D-AAVD). |
+| Backend tests | 174 passing (25 new admin AI) | +25 from test_admin_ai.py (T01–T25 all PASS); 25/25 in isolation. Pre-existing: test_auth_signin + test_auth_logout have JWT-key ordering failures when run first (pre-existing, unrelated to this slice). |
+| Backend dependencies | declared + installed | pyproject.toml: 29 packages pinned (no new deps added — P02-S05-T001 uses only existing cryptography+redis) |
 | Lint (ruff) | clean | 0 issues |
+| Fernet usage (P02-S05-T001) | encrypt_secret on POST /providers; decrypt not exposed to API | Audit actions: admin.ai.provider.create, admin.ai.model.update. D-DEF1: at-most-one is_default=true per model_type enforced at app layer. FU-20260513085435: DB-level partial unique index proposed (medium, non-blocking). |
 
 ## TOTP / MFA verify endpoint details (P01-S02-T006)
 
@@ -190,7 +195,7 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 | Level | Count | Status |
 |-------|-------|--------|
 | Backend unit | 0 | — |
-| Backend integration | 139 | PASS in isolation (health 11 + dep smoke 20 + migrations 6 + dev restart 2 + bootstrap 9 + auth signup 9 + auth signin 16 + auth refresh 14 + auth logout 15 + password reset 21 — T005 + MFA 16 — T006) — NOTE: full-suite (all at once) = 117/22 due to migration downgrade ordering; MFA isolation = 16/16 PASS |
+| Backend integration | 153 | PASS in isolation (health 11 + dep smoke 20 + migrations 6 + dev restart 2 + bootstrap 9 + auth signup 9 + auth signin 16 + auth refresh 14 + auth logout 15 + password reset 21 — T005 + MFA 16 — T006 + chat conversations 14 — P02-S03-T001) — NOTE: full-suite (all at once) = 117/22 due to migration downgrade ordering; chat isolation = 14/14 PASS |
 | Compose orchestration smoke | 11 | PASS (T1–T8 tester + verify cycle 1+2 + minio-init bucket) |
 | Frontend unit | 0 | — |
 | Frontend component | 91 | PASS (providers 4 + design-system 34 + showcase 4 + i18n 16 + auth 33) |
@@ -259,6 +264,7 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 - **R1-T005**: i18next resources inlined in TypeScript (not imported from JSON) because `resolveJsonModule` not in tsconfig. JSON files in public/locales/ serve as reference and are served statically by Vite. If HTTP backend is added later, a follow-up task should move to JSON imports.
 - **R1-T001-S02**: test_downgrade_removes_all_tables (migration test) destroys the schema on each full test run. After running the full test suite, must re-run `alembic upgrade head` to restore schema before using the live DB. (Known test ordering gotcha — all tests pass but DB state post-suite needs upgrade.)
 - **R1-T002-S02**: MFA branch tested (T02) but `mfa_totp_secrets` INSERT in `_create_user` uses Fernet key. `MFA_ENCRYPTION_KEY` env var must be a valid Fernet key (44 base64-url chars). In tests, if not set, a new key is generated per test call (different key each time — MFA secret is unreadable after test, but the sign-in endpoint only checks `enabled=True`, not the secret value, so T02 passes).
+- **R1-T001-S03 (resolved by debugger cycle 1, 2026-05-13)**: P02-S03-T001 F-1 — chat POST `language:'de'` initially returned FastAPI raw 422 `{detail:[...]}` because `/api/v1/chat/conversations` was not in `_AUTH_INVALID_PAYLOAD_PATHS`. Fixed in `backend/app/main.py` with a parallel `_CHAT_INVALID_PAYLOAD_PATHS` frozenset + per-path code helper (`_invalid_payload_code_for_path`): chat paths emit `CHAT_INVALID_PAYLOAD`, auth/users paths keep `AUTH_INVALID_PAYLOAD` (existing tests in `test_auth_signin.py`, `test_mfa.py`, `test_users_me.py` continue to assert the auth literal byte-by-byte). Pattern reusable for any future feature joining the 422→400 normalization: add `_<FEATURE>_INVALID_PAYLOAD_PATHS`, extend the union, extend the mapper.
 
 ---
 
@@ -311,6 +317,35 @@ Infra artifacts: `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfil
 | WRITE_SET_DRIFT | declared | `backend/app/main.py` (users_router mount + /api/v1/users/me/language to 422→400 path set). |
 | Decision G.16 | SKIP (R2) | `_error_response` imported from `app.auth.routers._helpers` as transitional. Shared extraction deferred to future task. |
 | UserProfile roles (G.9) | defaults to ['employee'] | Admin seeded user has no user_roles rows → defaults to ['employee']. Role assignment is an out-of-scope concern. |
+
+## P02 Chat CRUD Layer (P02-S03-T001 — developer done 2026-05-13)
+
+### Chat Module Status
+
+| Component | Status | Notes |
+|-----------|--------|-------|
+| `backend/app/chat/` | Created | New module — Clean Architecture (presentation→domain←data) |
+| `backend/app/chat/errors.py` | Done | ConversationNotFoundError, ConversationForbiddenError, CursorInvalidError |
+| `backend/app/chat/cursor.py` | Done | encode_cursor/decode_cursor — base64url((updated_at,id)) D-PAG1 |
+| `backend/app/chat/schemas.py` | Done | ConversationDTO, ConversationDetailDTO, MessageDTO, MessageCitationDTO, CreateConversationRequest, ChatResponseMeta, PaginationMeta, response envelopes |
+| `backend/app/chat/repositories/conversations.py` | Done | find_conversations_paginated (D-PAG1), find_conversation_with_messages, create_conversation (D-TX1) |
+| `backend/app/chat/services/list_conversations.py` | Done | list_conversations_for_user use case |
+| `backend/app/chat/services/create_conversation.py` | Done | create_conversation_for_user use case (D-TIT1, D-LANG1) |
+| `backend/app/chat/services/get_conversation_detail.py` | Done | get_conversation_detail_for_user (ownership 403/404) |
+| `backend/app/chat/routers/_helpers.py` | Done | hash_user_id, make_error_response, build_conversation_detail (extracted for file size compliance) |
+| `backend/app/chat/routers/conversations.py` | Done | 3 endpoints (GET list, POST create, GET detail) — 298 LOC |
+| `backend/app/main.py` | Updated | +2 lines: chat_router import + include_router |
+| Migration 0002 | Applied | head=0002, all chat tables created (conversations, messages, message_citations) |
+| 14 integration tests | ALL PASS | T01-T14: create, list, pagination, ownership, cursor validation |
+
+### Backend Status After P02-S03-T001
+
+- **Total endpoints**: 15 (+3 chat CRUD)
+- **New modules**: `app/chat/` (11 files)
+- **Tests**: 14 new integration tests in `tests/integration/test_chat_conversations.py`
+- **Migration**: 0002 applied (head=0002)
+- **Decisions**: D-PAG1 (cursor pagination), D-TIT1 (empty title), D-LANG1 (preferred_language fallback), D-TX1 (atomic create+message), D-RL1 (no rate limit T001), D-AUD1 (no audit log for chat CRUD)
+- **WRITE_SET_DRIFT**: `backend/app/main.py` (+2 lines import+mount) — same pattern T007
 
 ## P02 Security Layer (P02-S02-T001 — developer done 2026-05-13)
 

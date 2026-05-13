@@ -1,0 +1,51 @@
+{
+  "id": "FU-20260513094006-restore-stack-specific-dev-restart-profile-sh-br",
+  "schema_version": 1,
+  "status": "proposed",
+  "created_at": "2026-05-13T09:40:06+00:00",
+  "created_by": "sergiolr",
+  "origin_task_id": "P02-S03-T001",
+  "origin_phase_id": "P02",
+  "origin_step_id": "P02-S03",
+  "kind": "wiring",
+  "product_increment": "current",
+  "build_state": "planned",
+  "severity": "high",
+  "title": "restore stack-specific dev-restart.profile.sh broken by framework refactor c4c91ae",
+  "description": "El refactor framework c4c91ae aplastó scripts/dev-restart.profile.sh a la versión neutral stub (fail() en back_start/front_start/db_reset). ./scripts/dev-restart.sh --reset y --soft no funcionan. Detectado durante /verify-slice P02-S03-T001 (hard reset bloqueado). T001 verificado con hard reset manual con waiver explícito. Tareas posteriores que dependan de --reset o --soft fallarán.",
+  "journey_refs": [],
+  "screen_route": "—",
+  "endpoint": "—",
+  "tables": [],
+  "depends_on": [
+    "P02-S03-T001"
+  ],
+  "conflict_groups": [
+    "api:chat"
+  ],
+  "write_set": [
+    "scripts/dev-restart.profile.sh"
+  ],
+  "acceptance": [
+    "./scripts/dev-restart.sh --reset arranca backend en :8000",
+    "frontend en :5173",
+    "/health=200",
+    "/ready db=ok",
+    "datos reales/proporcionados base cargados sin error. ./scripts/dev-restart.sh --soft también funciona."
+  ],
+  "verify": [
+    "Ejecutar ./scripts/dev-restart.sh --reset desde checkout limpio + comprobar /health",
+    "/ready",
+    "conteo de filas en users/conversations/messages tras bootstrap",
+    "y dispatch correcto de --soft."
+  ],
+  "notes": [],
+  "triage": {
+    "scope_classification": "out_of_scope",
+    "why_not_debugger": "El commit framework-refactor c4c91ae redujo scripts/dev-restart.profile.sh de 390 LOC funcionales a 41 LOC de stubs neutrales (back_start/front_start/db_reset todos llaman fail()). El bug NO está en el write_set de P02-S03-T001 (backend/app/chat/** + main.py + tests). Fix correcto: slice dedicada que reintroduzca el profile stack-specific desde commit ec801a4 (P01-S02-T008) y lo armonice con el nuevo STACK_PROFILE.yaml refactorizado. Esto excede write_set y conflict_group de cualquier slice activa.",
+    "decision": "followup_only_when_outside_current_slice",
+    "debugger_path": "in_scope_defects_use_validator_tester_debugger_retest",
+    "warnings": []
+  },
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260513094006-restore-stack-specific-dev-restart-profile-sh-br.yaml"
+}

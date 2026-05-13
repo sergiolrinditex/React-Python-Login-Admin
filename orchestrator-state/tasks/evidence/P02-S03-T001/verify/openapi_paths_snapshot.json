@@ -1,0 +1,801 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "Hilo People API",
+        "description": "Internal HR platform \u2014 Hilo People",
+        "version": "0.1.0"
+    },
+    "paths": {
+        "/health": {
+            "get": {
+                "tags": [
+                    "observability"
+                ],
+                "summary": "Health",
+                "description": "GET /health \u2014 platform health stub (backward compatible with T001 shape).\n\nReturns:\n    dict: {\"data\": {\"status\": \"ok\", \"version\": \"0.1.0\", \"uptime\": float}}\n\nErrors:\n    500: unexpected exception; logged with full context, no PII.",
+                "operationId": "health_health_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/live": {
+            "get": {
+                "tags": [
+                    "observability"
+                ],
+                "summary": "Live",
+                "description": "GET /live \u2014 liveness probe. Always returns 200 while the process is running.\n\nNo dependency checks. Indicates only that the Python process is alive.\nConsumed by K8s livenessProbe / load balancer TCP checks.\n\nReturns:\n    dict: {\"data\": {\"status\": \"ok\"}}",
+                "operationId": "live_live_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ready": {
+            "get": {
+                "tags": [
+                    "observability"
+                ],
+                "summary": "Ready",
+                "description": "GET /ready \u2014 readiness probe. Pings DB and Redis; 503 if either is degraded.\n\nLiteLLM status is informational (\"unknown\") \u2014 no HTTP ping is performed\n(httpx is not a runtime dep in this slice; TECHNICAL_GUIDE \u00a76.2 side-effect\nlists only \"DB/Redis ping\"). Per source-of-truth \u00a7U2 resolution.\n\nArgs:\n    engine: injected SQLAlchemy Engine (overridable in tests via dependency_overrides).\n    redis_client: injected redis.Redis client.\n\nReturns:\n    JSONResponse 200: all critical dependencies reachable.\n    JSONResponse 503: at least one critical dependency degraded.\n\nErrors:\n    500: unexpected/unhandled exception; logged with full context, no PII.",
+                "operationId": "ready_ready_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/sign-up": {
+            "post": {
+                "tags": [
+                    "auth",
+                    "auth"
+                ],
+                "summary": "Register a new employee account",
+                "description": "Creates a new user account for a corporate employee. Validates corporate email domain, password policy and legal acceptance. No JWT is issued \u2014 the client must sign in after registration.",
+                "operationId": "sign_up_api_v1_auth_sign_up_post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SignUpRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SignUpResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/sign-in": {
+            "post": {
+                "tags": [
+                    "auth",
+                    "auth"
+                ],
+                "summary": "Authenticate an employee and issue tokens",
+                "description": "Verifies Argon2id password for a registered employee. Returns a short-lived JWT access token + HttpOnly refresh token cookie on success (no MFA), or an mfa_challenge_token when TOTP is enabled. Implements aggregate-401 (unknown email and wrong password return the same response body) to prevent user enumeration.",
+                "operationId": "sign_in_api_v1_auth_sign_in_post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SignInRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/refresh": {
+            "post": {
+                "tags": [
+                    "auth",
+                    "auth"
+                ],
+                "summary": "Rotate a refresh token and issue a new access JWT",
+                "description": "Accepts the HttpOnly refresh cookie; validates it against the DB; atomically revokes the old token and issues a new opaque refresh cookie (rotation). Returns a new short-lived JWT access token in the body. All 401 responses are byte-identical to prevent token-state enumeration. Requires no request body.",
+                "operationId": "refresh_api_v1_auth_refresh_post",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/logout": {
+            "post": {
+                "tags": [
+                    "auth",
+                    "auth"
+                ],
+                "summary": "Revoke current session and clear the refresh cookie",
+                "description": "Requires both a valid Bearer access token (Authorization header) and the HttpOnly refresh cookie. Revokes the matching refresh_tokens row and clears the cookie. Returns 204 No Content on success. All 401 responses are byte-identical (aggregate anti-enumeration). Cookie is cleared on BOTH 204 and 401 paths.",
+                "operationId": "logout_api_v1_auth_logout_post",
+                "responses": {
+                    "204": {
+                        "description": "Successful Response"
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/forgot-password": {
+            "post": {
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Request a password reset email",
+                "description": "Sends a reset link to the email if it exists (always returns 200 to prevent user enumeration). Rate-limited per IP.",
+                "operationId": "forgot_password_endpoint_api_v1_auth_forgot_password_post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ForgotPasswordRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/reset-password": {
+            "post": {
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Reset password using a one-time token",
+                "description": "Validates the token, updates the password, and revokes all sessions. Token is one-use; concurrent requests serialise via DB FOR UPDATE.",
+                "operationId": "reset_password_endpoint_api_v1_auth_reset_password_post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ResetPasswordRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/2fa/verify": {
+            "post": {
+                "tags": [
+                    "auth",
+                    "auth"
+                ],
+                "summary": "Verify TOTP code for MFA challenge",
+                "description": "Accepts a signed mfa_challenge_token (issued by /sign-in when MFA is required) and a 6-digit TOTP code. On success returns access_token + user DTO in the body and sets the HttpOnly refresh cookie (byte-identical attrs to /sign-in). All 401 paths return an identical body to prevent enumeration.",
+                "operationId": "verify_mfa_api_v1_auth_2fa_verify_post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MfaVerifyRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/users/me": {
+            "get": {
+                "tags": [
+                    "users",
+                    "users"
+                ],
+                "summary": "Get Me",
+                "description": "Return the current authenticated user's full profile.\n\nHigh-frequency endpoint (called on every page navigation in the frontend).\nBEFORE/AFTER logs are DEBUG-level (verbose mode only) to avoid INFO spam.\n\nArgs:\n    request: Incoming HTTP request (for request_id extraction).\n    current_user: User ORM (authenticated) or JSONResponse (401 anti-enum).\n    session: SQLAlchemy sync session (unused for GET; already loaded via dep).\n\nReturns:\n    UserProfileResponse (HTTP 200) on success.\n    JSONResponse (HTTP 401) if authentication failed.",
+                "operationId": "get_me_api_v1_users_me_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserProfileResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/users/me/language": {
+            "patch": {
+                "tags": [
+                    "users",
+                    "users"
+                ],
+                "summary": "Patch Me Language",
+                "description": "Update the current user's preferred language.\n\nReturns HTTP 200 with the full updated UserProfile (NOT 204 \u2014 DISCREPANCY-1\nresolved: \u00a76.2 row 263 says {data: UserProfile}).\n\n400 AUTH_INVALID_PAYLOAD is produced by the global RequestValidationError\nhandler in main.py (G.7) for Pydantic validation failures \u2014 this handler\nreceives the /api/v1/users/me/language path explicitly.\n\nArgs:\n    request: Incoming HTTP request (for request_id, client_ip, user_agent).\n    body: Validated language patch request (Pydantic strict \u2014 extra fields rejected).\n    current_user: User ORM (authenticated) or JSONResponse (401 anti-enum).\n    session: SQLAlchemy sync session for DB write.\n\nReturns:\n    UserProfileResponse (HTTP 200) with updated profile on success.\n    JSONResponse (HTTP 401) if authentication failed.",
+                "operationId": "patch_me_language_api_v1_users_me_language_patch",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LanguagePatchRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserProfileResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "ForgotPasswordRequest": {
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "title": "Email",
+                        "description": "Email address to send the reset link to.",
+                        "example": "employee@inditex-sandbox.com"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "email"
+                ],
+                "title": "ForgotPasswordRequest",
+                "description": "Request body for POST /api/v1/auth/forgot-password.\n\nAnti-enumeration: if the email does not exist, the endpoint returns\nthe same 200 body as if it did. The Pydantic layer only validates syntax.\n\nAttributes:\n    email: User's email address (RFC 5322 syntax, no domain restriction)."
+            },
+            "HTTPValidationError": {
+                "properties": {
+                    "detail": {
+                        "items": {
+                            "$ref": "#/components/schemas/ValidationError"
+                        },
+                        "type": "array",
+                        "title": "Detail"
+                    }
+                },
+                "type": "object",
+                "title": "HTTPValidationError"
+            },
+            "LanguagePatchRequest": {
+                "properties": {
+                    "language": {
+                        "type": "string",
+                        "enum": [
+                            "es",
+                            "en",
+                            "fr"
+                        ],
+                        "title": "Language",
+                        "description": "New language preference. Whitelist: 'es' | 'en' | 'fr'. Case-sensitive (no auto-lowercase). null/empty/uppercase rejected.",
+                        "example": "en"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                    "language"
+                ],
+                "title": "LanguagePatchRequest",
+                "description": "Request body for PATCH /api/v1/users/me/language.\n\nStrict mode (ConfigDict strict=True) rejects non-string types for language.\nExtra fields are forbidden (ConfigDict extra='forbid') per T19 (task pack \u00a7J).\nThe whitelist {es, en, fr} is enforced by Pydantic Literal at parse time;\nthe global RequestValidationError handler in main.py maps the resulting 422\nto 400 AUTH_INVALID_PAYLOAD + field='language' (G.7 / DISCREPANCY-1).\n\nAttributes:\n    language: New language preference. Must be one of 'es', 'en', or 'fr'.\n              Case-sensitive: 'EN' is rejected (T20)."
+            },
+            "MfaVerifyRequest": {
+                "properties": {
+                    "challenge_id": {
+                        "type": "string",
+                        "maxLength": 2048,
+                        "minLength": 30,
+                        "title": "Challenge Id",
+                        "description": "JWT mfa_challenge_token from sign-in MFA branch. Despite the name 'challenge_id', the value IS the JWT string. Min 30 is a payload guard; real JWTs are ~180 chars."
+                    },
+                    "code": {
+                        "type": "string",
+                        "maxLength": 6,
+                        "minLength": 6,
+                        "title": "Code",
+                        "description": "6-digit TOTP code from the user's authenticator app.",
+                        "example": "123456"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "challenge_id",
+                    "code"
+                ],
+                "title": "MfaVerifyRequest",
+                "description": "Request body for POST /api/v1/auth/2fa/verify.\n\nThe field `challenge_id` carries the full JWT mfa_challenge_token string\nissued by sign-in when MFA is required. Despite the name `challenge_id`,\nthe VALUE is the JWT string itself \u2014 not a DB identifier. This naming\nmatches \u00a76.2 row 261 of the TECHNICAL_GUIDE exactly so the frontend\nTwoFactorPage (P03-S01-T005) sends the correct field name.\n\nAttributes:\n    challenge_id: The mfa_challenge_token JWT from the sign-in response.\n                  Min 30 chars (guard); real JWTs are ~180 chars.\n    code: 6-digit TOTP code from the user's authenticator app.\n          Must be all digits (field_validator enforces)."
+            },
+            "ResetPasswordRequest": {
+                "properties": {
+                    "token": {
+                        "type": "string",
+                        "minLength": 30,
+                        "title": "Token",
+                        "description": "Reset token from the email link (URL-safe base64, ~43 chars)."
+                    },
+                    "password": {
+                        "type": "string",
+                        "maxLength": 512,
+                        "minLength": 1,
+                        "title": "Password",
+                        "description": "New password. Min 12 chars, must contain upper, digit, and symbol."
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "token",
+                    "password"
+                ],
+                "title": "ResetPasswordRequest",
+                "description": "Request body for POST /api/v1/auth/reset-password.\n\nAttributes:\n    token: The URL-safe opaque token extracted from the reset link.\n           Min 30 chars (token_urlsafe(32) produces ~43 chars).\n    password: New plaintext password (policy enforced by service layer)."
+            },
+            "ResponseMeta": {
+                "properties": {
+                    "request_id": {
+                        "type": "string",
+                        "title": "Request Id",
+                        "description": "X-Request-ID correlation header value."
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "request_id"
+                ],
+                "title": "ResponseMeta",
+                "description": "Standard response metadata wrapper."
+            },
+            "SignInRequest": {
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "title": "Email",
+                        "description": "Email address. RFC 5322 syntax; domain not restricted at sign-in.",
+                        "example": "employee@inditex-sandbox.com"
+                    },
+                    "password": {
+                        "type": "string",
+                        "maxLength": 512,
+                        "minLength": 1,
+                        "title": "Password",
+                        "description": "Password. Minimum 1 char; maximum 512 char payload guard."
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "email",
+                    "password"
+                ],
+                "title": "SignInRequest",
+                "description": "Request body for POST /api/v1/auth/sign-in.\n\nBoth fields are required. Sign-in DOES NOT validate corporate email domain\n(that would create an enumeration oracle \u2014 see task pack \u00a7K Decision D-T002-1).\n\nPydantic only provides syntactic RFC 5322 validation (EmailStr) and length\nguards. Business rejection (wrong password, unknown email) uses the service\nlayer with aggregate-401 to prevent user enumeration.\n\nAttributes:\n    email: Email address (RFC 5322; no domain restriction at sign-in).\n    password: Raw password (min 1 char, max 512 char payload guard)."
+            },
+            "SignUpData": {
+                "properties": {
+                    "user_id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "title": "User Id",
+                        "description": "UUID of the newly created user."
+                    },
+                    "mfa_required": {
+                        "type": "boolean",
+                        "title": "Mfa Required",
+                        "description": "Whether 2FA setup is required before first sign-in.",
+                        "default": false
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "user_id"
+                ],
+                "title": "SignUpData",
+                "description": "Data payload returned in the success envelope for sign-up.\n\nAttributes:\n    user_id: UUID of the newly created user account.\n    mfa_required: Always False for new employees at sign-up (forward-compat\n                  field for future admin onboarding flows)."
+            },
+            "SignUpRequest": {
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "title": "Email",
+                        "description": "Corporate email address. Domain must be in the allowed corporate set.",
+                        "example": "employee@inditex-sandbox.com"
+                    },
+                    "password": {
+                        "type": "string",
+                        "maxLength": 512,
+                        "minLength": 1,
+                        "title": "Password",
+                        "description": "Password. Min 12 chars, must contain at least 1 letter and 1 digit.",
+                        "example": "VerifyPass2024!"
+                    },
+                    "full_name": {
+                        "type": "string",
+                        "maxLength": 200,
+                        "minLength": 1,
+                        "title": "Full Name",
+                        "description": "Employee display name.",
+                        "example": "Ana Garc\u00eda"
+                    },
+                    "legal_acceptance": {
+                        "type": "boolean",
+                        "title": "Legal Acceptance",
+                        "description": "Must be true to complete registration. False is rejected by the service layer with HTTP 400 + envelope code AUTH_SIGNUP_LEGAL_NOT_ACCEPTED + audit row (BR5)."
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "email",
+                    "password",
+                    "full_name",
+                    "legal_acceptance"
+                ],
+                "title": "SignUpRequest",
+                "description": "Request body for POST /api/v1/auth/sign-up.\n\nAll fields are required. Legal acceptance must be the boolean True\n(not a truthy value) \u2014 validated server-side per BR2.\n\nAttributes:\n    email: Corporate email address (RFC 5322 syntax; domain checked by service).\n    password: Raw password (12-256 chars with letter+digit; policy in service).\n    full_name: Employee display name (1-200 chars, stripped).\n    legal_acceptance: Must be literal True; 400 if False or missing."
+            },
+            "SignUpResponse": {
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/SignUpData"
+                    },
+                    "meta": {
+                        "$ref": "#/components/schemas/ResponseMeta"
+                    },
+                    "errors": {
+                        "items": {},
+                        "type": "array",
+                        "title": "Errors"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "data",
+                    "meta"
+                ],
+                "title": "SignUpResponse",
+                "description": "Envelope response for POST /api/v1/auth/sign-up (HTTP 201).\n\nShape: {data: SignUpData, meta: ResponseMeta, errors: []}.\nPer TECHNICAL_GUIDE \u00a76.2 envelope contract: {data, meta, errors}."
+            },
+            "UserProfile": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "title": "Id",
+                        "description": "User UUID."
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "title": "Email",
+                        "description": "Corporate email address."
+                    },
+                    "full_name": {
+                        "type": "string",
+                        "title": "Full Name",
+                        "description": "Employee display name."
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "active",
+                            "inactive",
+                            "pending",
+                            "locked"
+                        ],
+                        "title": "Status",
+                        "description": "Account lifecycle status."
+                    },
+                    "preferred_language": {
+                        "type": "string",
+                        "enum": [
+                            "es",
+                            "en",
+                            "fr"
+                        ],
+                        "title": "Preferred Language",
+                        "description": "UI language preference."
+                    },
+                    "roles": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array",
+                        "title": "Roles",
+                        "description": "List of assigned role names. Defaults to ['employee'] if empty."
+                    },
+                    "employee_profile": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/components/schemas/UserProfileEmployeeFields"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "description": "Organisation profile fields. Null for admin users who have no employee_profile row (DISCREPANCY-3)."
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "title": "Created At",
+                        "description": "Account creation timestamp (UTC)."
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "title": "Updated At",
+                        "description": "Last update timestamp (UTC)."
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "id",
+                    "email",
+                    "full_name",
+                    "status",
+                    "preferred_language",
+                    "created_at",
+                    "updated_at"
+                ],
+                "title": "UserProfile",
+                "description": "Merged user + employee profile shape returned by both /me endpoints.\n\nThis schema is the pinned contract (task pack \u00a7F.3 / DISCREPANCY-2).\nBoth ChatHomePage and AccountPage consume this exact shape. Any future\nfield additions must go through a source-of-truth amendment.\n\nAttributes:\n    id: User UUID.\n    email: Corporate email address (EmailStr for format validation).\n    full_name: Employee display name.\n    status: Account status: one of active|inactive|pending|locked.\n    preferred_language: Language preference: one of es|en|fr.\n    roles: List of role names. Defaults to ['employee'] if no DB rows.\n    employee_profile: Organisation fields; null for users without a profile row\n                      (e.g. admin users \u2014 see DISCREPANCY-3).\n    created_at: Account creation timestamp (ISO-8601 UTC).\n    updated_at: Last update timestamp (ISO-8601 UTC). Updated by PATCH /me/language."
+            },
+            "UserProfileEmployeeFields": {
+                "properties": {
+                    "employee_id": {
+                        "type": "string",
+                        "title": "Employee Id",
+                        "description": "Internal HR employee identifier, globally unique."
+                    },
+                    "brand": {
+                        "type": "string",
+                        "title": "Brand",
+                        "description": "Brand assignment (e.g. Zara, Massimo Dutti)."
+                    },
+                    "society": {
+                        "type": "string",
+                        "title": "Society",
+                        "description": "Legal entity code (e.g. ITX-ES)."
+                    },
+                    "center": {
+                        "type": "string",
+                        "title": "Center",
+                        "description": "Office or center name (e.g. Madrid-HQ)."
+                    },
+                    "country": {
+                        "type": "string",
+                        "title": "Country",
+                        "description": "ISO 3166-1 alpha-2 country code (e.g. ES)."
+                    },
+                    "department": {
+                        "type": "string",
+                        "title": "Department",
+                        "description": "Department name (e.g. People & Talent)."
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "employee_id",
+                    "brand",
+                    "society",
+                    "center",
+                    "country",
+                    "department"
+                ],
+                "title": "UserProfileEmployeeFields",
+                "description": "Employee organisation fields nested in UserProfile.\n\nIntentionally omits extra_metadata (DB column 'metadata') \u2014 see module docstring.\nThe 6 declared fields are exactly what UX needs: employee_id, brand, society,\ncenter, country, department.\n\nAttributes:\n    employee_id: Internal HR identifier (globally unique).\n    brand: Brand assignment (e.g. 'Zara', 'Massimo Dutti').\n    society: Legal entity code (e.g. 'ITX-ES').\n    center: Physical office/center (e.g. 'Madrid-HQ').\n    country: ISO 3166-1 alpha-2 country code (e.g. 'ES').\n    department: Department name (e.g. 'People & Talent')."
+            },
+            "UserProfileResponse": {
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/UserProfile"
+                    },
+                    "meta": {
+                        "$ref": "#/components/schemas/ResponseMeta"
+                    },
+                    "errors": {
+                        "items": {},
+                        "type": "array",
+                        "title": "Errors"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "data",
+                    "meta"
+                ],
+                "title": "UserProfileResponse",
+                "description": "Envelope response for GET /api/v1/users/me and PATCH /api/v1/users/me/language.\n\nShape: {data: UserProfile, meta: ResponseMeta, errors: []}.\nBoth endpoints return HTTP 200 with this envelope (DISCREPANCY-1 resolved:\nPATCH returns 200 with body, NOT 204).\n\nAttributes:\n    data: Full user profile including employee fields.\n    meta: Standard request correlation metadata.\n    errors: Always empty list on success."
+            },
+            "ValidationError": {
+                "properties": {
+                    "loc": {
+                        "items": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "integer"
+                                }
+                            ]
+                        },
+                        "type": "array",
+                        "title": "Location"
+                    },
+                    "msg": {
+                        "type": "string",
+                        "title": "Message"
+                    },
+                    "type": {
+                        "type": "string",
+                        "title": "Error Type"
+                    },
+                    "input": {
+                        "title": "Input"
+                    },
+                    "ctx": {
+                        "type": "object",
+                        "title": "Context"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "loc",
+                    "msg",
+                    "type"
+                ],
+                "title": "ValidationError"
+            }
+        }
+    }
+}

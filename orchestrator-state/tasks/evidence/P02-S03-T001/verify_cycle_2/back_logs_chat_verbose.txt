@@ -1,0 +1,25 @@
+2026-05-13 12:13:59,656 app.chat.routers.conversations DEBUG chat.routers.create_conversation.start request_id=vsc2-V02 uid_hash=e8bdf2f1a7c77b6a has_msg=True lang=es
+2026-05-13 12:13:59,656 app.chat.services.create_conversation DEBUG chat.service.create_conversation.start request_id=vsc2-V02 user_id_hash=e8bdf2f1a7c77b6a language=es has_message=True title_len=49
+2026-05-13 12:13:59,656 app.chat.repositories.conversations DEBUG chat.repo.create_conversation.start user_id_prefix=70903d1e language=es has_message=True title_len=49
+2026-05-13 12:13:59,665 app.chat.repositories.conversations DEBUG chat.repo.create_conversation.done conv_id_prefix=a4558495 has_message=True
+2026-05-13 12:13:59,665 app.chat.services.create_conversation DEBUG chat.service.create_conversation.done request_id=vsc2-V02 user_id_hash=e8bdf2f1a7c77b6a conv_id_prefix=a4558495 latency_ms=9.0
+2026-05-13 12:13:59,674 app.chat.routers.conversations DEBUG chat.routers.create_conversation.done request_id=vsc2-V02 uid_hash=e8bdf2f1a7c77b6a conv_prefix=a4558495 status=201 ms=15.0
+2026-05-13 12:13:59,749 app.chat.routers.conversations DEBUG chat.routers.create_conversation.start request_id=vsc2-V03 uid_hash=e8bdf2f1a7c77b6a has_msg=False lang=None
+2026-05-13 12:13:59,749 app.chat.services.create_conversation DEBUG chat.service.create_conversation.start request_id=vsc2-V03 user_id_hash=e8bdf2f1a7c77b6a language=es has_message=False title_len=0
+2026-05-13 12:13:59,749 app.chat.repositories.conversations DEBUG chat.repo.create_conversation.start user_id_prefix=70903d1e language=es has_message=False title_len=0
+2026-05-13 12:13:59,753 app.chat.repositories.conversations DEBUG chat.repo.create_conversation.done conv_id_prefix=35f50964 has_message=False
+2026-05-13 12:13:59,753 app.chat.services.create_conversation DEBUG chat.service.create_conversation.done request_id=vsc2-V03 user_id_hash=e8bdf2f1a7c77b6a conv_id_prefix=35f50964 latency_ms=3.5
+2026-05-13 12:13:59,758 app.chat.routers.conversations DEBUG chat.routers.create_conversation.done request_id=vsc2-V03 uid_hash=e8bdf2f1a7c77b6a conv_prefix=35f50964 status=201 ms=5.7
+2026-05-13 12:13:59,838 app.chat.routers.conversations DEBUG chat.routers.list_conversations.start request_id=vsc2-V04 uid_hash=e8bdf2f1a7c77b6a limit=20 cursor=False
+2026-05-13 12:13:59,838 app.chat.services.list_conversations DEBUG chat.service.list_conversations.start request_id=vsc2-V04 user_id_hash=e8bdf2f1a7c77b6a limit=20 has_cursor=False
+2026-05-13 12:13:59,838 app.chat.repositories.conversations DEBUG chat.repo.find_conversations_paginated.start user_id_prefix=70903d1e limit=20 has_cursor=False
+2026-05-13 12:13:59,841 app.chat.repositories.conversations DEBUG chat.repo.find_conversations_paginated.done user_id_prefix=70903d1e count=2 has_more=False
+2026-05-13 12:13:59,841 app.chat.services.list_conversations DEBUG chat.service.list_conversations.done request_id=vsc2-V04 user_id_hash=e8bdf2f1a7c77b6a count=2 has_more=False latency_ms=3.6
+2026-05-13 12:13:59,842 app.chat.routers.conversations DEBUG chat.routers.list_conversations.done request_id=vsc2-V04 uid_hash=e8bdf2f1a7c77b6a count=2 has_more=False status=200 ms=3.7
+2026-05-13 12:13:59,927 app.chat.routers.conversations DEBUG chat.routers.get_conversation.start request_id=vsc2-V05 uid_hash=e8bdf2f1a7c77b6a conv_prefix=a4558495
+2026-05-13 12:13:59,927 app.chat.services.get_conversation_detail DEBUG chat.service.get_conversation_detail.start request_id=vsc2-V05 user_id_hash=e8bdf2f1a7c77b6a conv_id_prefix=a4558495
+2026-05-13 12:13:59,927 app.chat.repositories.conversations DEBUG chat.repo.find_conversation_with_messages.start conv_id_prefix=a4558495
+2026-05-13 12:13:59,934 app.chat.repositories.conversations DEBUG chat.repo.find_conversation_with_messages.done conv_id_prefix=a4558495 msg_count=1 citation_count=0
+2026-05-13 12:13:59,934 app.chat.services.get_conversation_detail DEBUG chat.service.get_conversation_detail.done request_id=vsc2-V05 user_id_hash=e8bdf2f1a7c77b6a conv_id_prefix=a4558495 msg_count=1 citation_count=0 latency_ms=6.7
+2026-05-13 12:13:59,934 app.chat.routers.conversations DEBUG chat.routers.get_conversation.done request_id=vsc2-V05 uid_hash=e8bdf2f1a7c77b6a conv_prefix=a4558495 msgs=1 citations=0 status=200 ms=6.8
+2026-05-13 12:14:38,880 app.chat.routers.conversations DEBUG chat.routers.get_conversation.start request_id=vsc2-V07 uid_hash=e8bdf2f1a7c77b6a conv_prefix=00000000

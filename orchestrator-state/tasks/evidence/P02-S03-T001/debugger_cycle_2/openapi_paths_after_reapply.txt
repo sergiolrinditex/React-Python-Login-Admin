@@ -1,0 +1,2 @@
+TOTAL_ROUTES= 19
+CHAT_ROUTES= ['/api/v1/chat/conversations', '/api/v1/chat/conversations', '/api/v1/chat/conversations/{conversation_id}']

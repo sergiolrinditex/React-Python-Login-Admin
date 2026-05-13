@@ -1,0 +1,30 @@
+## Data Contract Used — P02-S03-T001 Tester Cycle 2
+
+### Verification Data Contract rows (TECHNICAL_GUIDE §6.5 + task pack §I)
+
+| Row | Usage | Data source |
+|-----|-------|-------------|
+| admin_ai group | admin.peopletech@inditex-sandbox.com loaded in DB; used for curl sign-in (no MFA) | data/verification/users/admin_peopletech.json |
+| Synthetic conversations | 25 conversations created by T08 fixture (seeded directly in DB); not inserted via endpoint under test | pytest fixtures in test_chat_conversations.py |
+| Synthetic users A/B | Two users created by fixtures for ownership isolation (T07/T14) | pytest fixtures in test_chat_conversations.py |
+
+### Real/provided data loaded
+- admin.peopletech@inditex-sandbox.com — pre-existing in DB (loaded by dev seed or prior tester cycle)
+- JWT tokens minted in tests using real JWT_PRIVATE_KEY from .env (HS256 signing)
+- Real Postgres used for all integration tests (no mocks of DB layer)
+
+### Persisted data observed (cycle 2 curl checks)
+- POST /api/v1/chat/conversations: conversations row with title="smoke test cycle 2 pass", language="es", messages row role="user"
+- Conversation IDs observed: 57b96bdd-6f62-486d-9e14-d80b9e0cb346, 1bffc387-8ef3-49c8-8abf-1a75aee068a0 (smoke tests)
+
+### Debugger fix (F-1) verification
+- POST {"language":"de"} → HTTP 400 + CHAT_INVALID_PAYLOAD (not 422, not AUTH_INVALID_PAYLOAD)
+- Code: CHAT_INVALID_PAYLOAD, field: language, message: "Input should be 'es', 'en' or 'fr'"
+- data: null, meta: {request_id}, errors: [{...}] — full project envelope
+- No "detail" key in body (FastAPI raw 422 format confirmed absent)
+
+### Synthetic/edge-case data (acceptable per contract)
+- 403 test: user B token + user A conversation ID
+- 404 test: UUID 00000000-0000-0000-0000-000000000099 (clearly nonexistent sentinel)
+- 400 cursor: "garbage" string (not valid base64)
+- 400 language: {"language":"de"} (out-of-enum value)

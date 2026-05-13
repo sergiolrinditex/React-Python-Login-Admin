@@ -1,0 +1,3 @@
+total_paths: 12
+chat_paths: []
+users_paths: ['/api/v1/users/me', '/api/v1/users/me/language']

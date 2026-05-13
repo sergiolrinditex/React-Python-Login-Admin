@@ -1,0 +1,24 @@
+# Contract Observed — P02-S03-T001 Tester Run
+
+## Front → Back → DB Contract
+
+| Layer | Artifact | Observed |
+|-------|---------|---------|
+| Route | GET /api/v1/chat/conversations | 200 list + pagination meta |
+| Route | POST /api/v1/chat/conversations | 201 + conversation_id |
+| Route | GET /api/v1/chat/conversations/{id} | 200 + messages + citations |
+| Auth guard | app.users.deps.get_current_user | 401 AUTH_SESSION_EXPIRED without token |
+| Error codes | CHAT_CONVERSATION_NOT_FOUND (404) | confirmed via curl |
+| Error codes | CHAT_CONVERSATION_FORBIDDEN (403) | confirmed via curl (user B vs user A's conv) |
+| Error codes | CHAT_CURSOR_INVALID (400) | confirmed via curl |
+| Repository | find_conversations_paginated | cursor pagination D-PAG1: 10+10+5 for 25 rows |
+| Repository | create_conversation | atomic D-TX1: conversation + message in single flush |
+| Repository | find_conversation_with_messages | returns messages + citations FK |
+| Table | conversations | user_id, title (D-TIT1), language (D-LANG1), created_at, updated_at |
+| Table | messages | conversation_id FK, role='user', content (not logged), token_count=NULL |
+| Table | message_citations | empty for T01 (citations are added by stream in T002) |
+| Logging | app.chat.routers.conversations | BEFORE/AFTER with request_id, uid_hash, latency_ms, status_code |
+| Logging | app.chat.services.* | BEFORE/AFTER with user_id_hash, language, has_message, title_len |
+| Logging | app.chat.repositories.conversations | BEFORE/AFTER with user_id_prefix (not full UUID), count, has_more |
+| Security | No PII in logs | content, initial_message, title text NOT logged — only lengths/presence |
+| Security | user_id_hash | SHA-256[:16] of UUID in all log lines (never plain UUID) |

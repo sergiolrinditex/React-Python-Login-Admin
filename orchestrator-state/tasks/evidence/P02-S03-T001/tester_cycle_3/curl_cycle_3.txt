@@ -1,0 +1,83 @@
+=== CURL SMOKE TESTS CYCLE 3 — FINAL ===
+timestamp: 2026-05-13T12:03:50+02:00
+
+=== 1. POST create with initial_message ===
+HTTP/1.1 201 Created
+date: Wed, 13 May 2026 10:03:50 GMT
+server: uvicorn
+content-length: 135
+content-type: application/json
+
+{"data":{"conversation_id":"a4bb7bb9-ec50-4569-a795-bb578a0abf43"},"meta":{"request_id":"c3-create-msg","pagination":null},"errors":[]}
+CONV_ID_1=a4bb7bb9-ec50-4569-a795-bb578a0abf43
+
+=== 2. POST create empty {} ===
+HTTP/1.1 201 Created
+date: Wed, 13 May 2026 10:03:50 GMT
+server: uvicorn
+content-length: 137
+content-type: application/json
+
+{"data":{"conversation_id":"a4d46a7a-bb49-4ddb-af3e-55895dba9515"},"meta":{"request_id":"c3-create-empty","pagination":null},"errors":[]}
+CONV_ID_2=a4d46a7a-bb49-4ddb-af3e-55895dba9515
+
+=== 3. POST invalid language de -> 400 CHAT_INVALID_PAYLOAD ===
+HTTP/1.1 400 Bad Request
+date: Wed, 13 May 2026 10:03:50 GMT
+server: uvicorn
+content-length: 177
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"c3-invalid-lang"},"errors":[{"code":"CHAT_INVALID_PAYLOAD","message":"Input should be 'es', 'en' or 'fr'","field":"language","details":null}]}
+code: CHAT_INVALID_PAYLOAD | detail_check: PASS_NO_DETAIL
+
+=== 4. GET list limit=20 ===
+HTTP/1.1 200 OK
+date: Wed, 13 May 2026 10:03:50 GMT
+server: uvicorn
+content-length: 539
+content-type: application/json
+
+{"data":[{"id":"a4d46a7a-bb49-4ddb-af3e-55895dba9515","user_id":"5e014b90-4f6b-4133-94ac-28338a58fad1","title":"","language":"es","created_at":"2026-05-13T10:03:49.639645Z","updated_at":"2026-05-13T10:03:49.639645Z"},{"id":"a4bb7bb9-ec50-4569-a795-bb578a0abf43","user_id":"5e014b90-4f6b-4133-94ac-28338a58fad1","title":"smoke test cycle 3","language":"es","created_at":"2026-05-13T10:03:49.533202Z","updated_at":"2026-05-13T10:03:49.533202Z"}],"meta":{"request_id":"c3-list","pagination":{"next_cursor":null,"has_more":false}},"errors":[]}
+LIST: items: 2 has_more: False
+
+=== 5. GET detail a4bb7bb9-ec50-4569-a795-bb578a0abf43 ===
+HTTP/1.1 200 OK
+date: Wed, 13 May 2026 10:03:50 GMT
+server: uvicorn
+content-length: 536
+content-type: application/json
+
+{"data":{"id":"a4bb7bb9-ec50-4569-a795-bb578a0abf43","user_id":"5e014b90-4f6b-4133-94ac-28338a58fad1","title":"smoke test cycle 3","language":"es","created_at":"2026-05-13T10:03:49.533202Z","updated_at":"2026-05-13T10:03:49.533202Z","messages":[{"id":"902c33d8-e6ce-417f-9ae4-bfe2dc21a9ef","conversation_id":"a4bb7bb9-ec50-4569-a795-bb578a0abf43","role":"user","content":"smoke test cycle 3","token_count":null,"created_at":"2026-05-13T10:03:49.533202Z"}],"citations":[]},"meta":{"request_id":"c3-detail","pagination":null},"errors":[]}
+DETAIL: messages: 1 citations: 0
+
+=== 6. GET list unauthenticated -> 401 ===
+HTTP/1.1 401 Unauthorized
+date: Wed, 13 May 2026 10:03:50 GMT
+server: uvicorn
+content-length: 192
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"c3-unauth"},"errors":[{"code":"AUTH_SESSION_EXPIRED","message":"Session expired or invalid credentials. Please sign in again.","field":null,"details":null}]}
+401_code: AUTH_SESSION_EXPIRED
+
+=== 7. GET nonexistent UUID -> 404 ===
+HTTP/1.1 404 Not Found
+date: Wed, 13 May 2026 10:03:50 GMT
+server: uvicorn
+content-length: 158
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"c3-404"},"errors":[{"code":"CHAT_CONVERSATION_NOT_FOUND","message":"Conversation not found.","field":null,"details":null}]}
+404_code: CHAT_CONVERSATION_NOT_FOUND
+
+=== 8. GET invalid cursor -> 400 ===
+HTTP/1.1 400 Bad Request
+date: Wed, 13 May 2026 10:03:50 GMT
+server: uvicorn
+content-length: 228
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"c3-bad-cursor"},"errors":[{"code":"CHAT_CURSOR_INVALID","message":"Base64 decoding failed: 'utf-8' codec can't decode byte 0x81 in position 0: invalid start byte","field":null,"details":null}]}
+cursor_400_code: CHAT_CURSOR_INVALID
+

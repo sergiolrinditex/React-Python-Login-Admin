@@ -1,0 +1,25 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.5, pytest-9.0.2, pluggy-1.6.0 -- /usr/local/bin/python3
+cachedir: .pytest_cache
+rootdir: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend
+configfile: pyproject.toml
+plugins: httpx-0.36.0, asyncio-1.3.0, langsmith-0.8.3, anyio-4.13.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 14 items
+
+tests/integration/test_chat_conversations.py::test_post_creates_conversation_success PASSED [  7%]
+tests/integration/test_chat_conversations.py::test_post_without_initial_message_creates_empty_conversation PASSED [ 14%]
+tests/integration/test_chat_conversations.py::test_post_uses_user_preferred_language_when_omitted PASSED [ 21%]
+tests/integration/test_chat_conversations.py::test_post_uses_explicit_language_override PASSED [ 28%]
+tests/integration/test_chat_conversations.py::test_post_rejects_invalid_language PASSED [ 35%]
+tests/integration/test_chat_conversations.py::test_post_unauthenticated_returns_401_anti_enum PASSED [ 42%]
+tests/integration/test_chat_conversations.py::test_get_list_returns_only_own_conversations PASSED [ 50%]
+tests/integration/test_chat_conversations.py::test_get_list_pagination_roundtrip PASSED [ 57%]
+tests/integration/test_chat_conversations.py::test_get_list_pagination_orders_by_updated_at_desc PASSED [ 64%]
+tests/integration/test_chat_conversations.py::test_get_list_empty_returns_empty_envelope PASSED [ 71%]
+tests/integration/test_chat_conversations.py::test_get_list_invalid_cursor_returns_400 PASSED [ 78%]
+tests/integration/test_chat_conversations.py::test_get_detail_returns_full_conversation_with_messages PASSED [ 85%]
+tests/integration/test_chat_conversations.py::test_get_detail_404_when_uuid_not_exists PASSED [ 92%]
+tests/integration/test_chat_conversations.py::test_get_detail_403_when_not_owner PASSED [100%]
+
+============================== 14 passed in 1.95s ==============================

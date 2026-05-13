@@ -1,0 +1,24 @@
+--- GET list limit=20 ---
+{"data":[{"id":"32cbc1da-1ac5-44f3-9fc8-a5b58828aa33","user_id":"6df2fe19-535e-4104-b6f8-309c985e3300","title":"","language":"es","created_at":"2026-05-13T09:58:46.714776Z","updated_at":"2026-05-13T09:58:46.714776Z"},{"id":"f43b7bee-9fa7-432f-9b51-735c2a4539ed","user_id":"6df2fe19-535e-4104-b6f8-309c985e3300","title":"smoke test cycle 3","language":"es","created_at":"2026-05-13T09:58:46.610929Z","updated_at":"2026-05-13T09:58:46.610929Z"}],"meta":{"request_id":"c3-list","pagination":{"next_cursor":null,"has_more":false}},"errors":[]}
+HTTP_STATUS:200
+LIST CHECK: items: 2 has_more: False
+
+--- GET detail f43b7bee-9fa7-432f-9b51-735c2a4539ed ---
+{"data":{"id":"f43b7bee-9fa7-432f-9b51-735c2a4539ed","user_id":"6df2fe19-535e-4104-b6f8-309c985e3300","title":"smoke test cycle 3","language":"es","created_at":"2026-05-13T09:58:46.610929Z","updated_at":"2026-05-13T09:58:46.610929Z","messages":[{"id":"912fe31d-e99f-4e8d-bbe7-c49cadfcd6e7","conversation_id":"f43b7bee-9fa7-432f-9b51-735c2a4539ed","role":"user","content":"smoke test cycle 3","token_count":null,"created_at":"2026-05-13T09:58:46.610929Z"}],"citations":[]},"meta":{"request_id":"c3-detail","pagination":null},"errors":[]}
+HTTP_STATUS:200
+
+--- GET list without Authorization -> 401 ---
+{"data":null,"meta":{"request_id":"1dc3a64d-0a9e-4bb3-bfab-26615e8fb8e1"},"errors":[{"code":"AUTH_SESSION_EXPIRED","message":"Session expired or invalid credentials. Please sign in again.","field":null,"details":null}]}
+HTTP_STATUS:401
+401_code: AUTH_SESSION_EXPIRED
+
+--- GET nonexistent UUID -> 404 ---
+{"data":null,"meta":{"request_id":"d0a7ecfc-16d6-4325-8899-c3c16c8e2d2b"},"errors":[{"code":"CHAT_CONVERSATION_NOT_FOUND","message":"Conversation not found.","field":null,"details":null}]}
+HTTP_STATUS:404
+404_code: CHAT_CONVERSATION_NOT_FOUND
+
+--- GET invalid cursor ?cursor=garbage -> 400 ---
+{"data":null,"meta":{"request_id":"f4b9f94c-e39b-4e16-9ee7-1237bcf6fa88"},"errors":[{"code":"CHAT_CURSOR_INVALID","message":"Base64 decoding failed: 'utf-8' codec can't decode byte 0x81 in position 0: invalid start byte","field":null,"details":null}]}
+HTTP_STATUS:400
+400_cursor_code: CHAT_CURSOR_INVALID
+

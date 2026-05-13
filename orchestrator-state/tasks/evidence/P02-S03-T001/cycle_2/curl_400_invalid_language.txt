@@ -1,0 +1,14 @@
+=== curl_400_invalid_language.txt ===
+TEST: POST /api/v1/chat/conversations with language:'de' -> expect HTTP 400 + CHAT_INVALID_PAYLOAD
+Timestamp: 2026-05-13T09:14:30Z
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   179  100   162  100    17  12660   1328 --:--:-- --:--:-- --:--:-- 14916
+HTTP/1.1 400 Bad Request
+date: Wed, 13 May 2026 09:14:29 GMT
+server: uvicorn
+content-length: 162
+content-type: application/json
+
+{"data":null,"meta":{"request_id":""},"errors":[{"code":"CHAT_INVALID_PAYLOAD","message":"Input should be 'es', 'en' or 'fr'","field":"language","details":null}]}

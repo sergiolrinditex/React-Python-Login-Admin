@@ -1,0 +1,7 @@
+HTTP/1.1 403 Forbidden
+date: Wed, 13 May 2026 09:01:42 GMT
+server: uvicorn
+content-length: 208
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"268f072e-8bd7-4de0-adcc-d618859b2127"},"errors":[{"code":"CHAT_CONVERSATION_FORBIDDEN","message":"Access to this conversation is not allowed.","field":null,"details":null}]}

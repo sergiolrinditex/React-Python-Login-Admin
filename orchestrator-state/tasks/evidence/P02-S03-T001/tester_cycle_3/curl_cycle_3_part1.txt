@@ -1,0 +1,19 @@
+=== CURL SMOKE TESTS CYCLE 3 ===
+
+--- POST create with initial_message ---
+{"data":{"conversation_id":"f43b7bee-9fa7-432f-9b51-735c2a4539ed"},"meta":{"request_id":"c3-create-msg","pagination":null},"errors":[]}
+HTTP_STATUS:201
+CONV_ID_1: f43b7bee-9fa7-432f-9b51-735c2a4539ed
+
+--- POST create empty {} ---
+{"data":{"conversation_id":"32cbc1da-1ac5-44f3-9fc8-a5b58828aa33"},"meta":{"request_id":"c3-create-empty","pagination":null},"errors":[]}
+HTTP_STATUS:201
+CONV_ID_2: 32cbc1da-1ac5-44f3-9fc8-a5b58828aa33
+
+--- POST invalid language de (F-1 fix check) ---
+{"data":null,"meta":{"request_id":"c3-invalid-lang"},"errors":[{"code":"CHAT_INVALID_PAYLOAD","message":"Input should be 'es', 'en' or 'fr'","field":"language","details":null}]}
+HTTP_STATUS:400
+F-1 check: no_detail_key_PASS
+error_code: CHAT_INVALID_PAYLOAD
+
+CONV_ID_1=f43b7bee-9fa7-432f-9b51-735c2a4539ed CONV_ID_2=32cbc1da-1ac5-44f3-9fc8-a5b58828aa33

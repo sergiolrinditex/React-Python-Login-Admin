@@ -1,0 +1,2 @@
+{"data":{"mfa_required":false,"access_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2ZGYyZmUxOS01MzVlLTQxMDQtYjZmOC0zMDljOTg1ZTMzMDAiLCJlbWFpbCI6ImFkbWluLnBlb3BsZXRlY2hAaW5kaXRleC1zYW5kYm94LmNvbSIsInJvbGVzIjpbImVtcGxveWVlIl0sInByZWZlcnJlZF9sYW5ndWFnZSI6ImVzIiwiZW1wbG95ZWVfcHJvZmlsZV9pZCI6bnVsbCwianRpIjoiOWZhZjY2MzY0OGMwNGIzYmJmODJlMDZmNDBhNTA4ZGUiLCJpYXQiOjE3Nzg2NjYzMTMsImV4cCI6MTc3ODY2ODExM30.JM3kC68dGuMulbtxCNyQz-6-M3tFofYxTySAhUtv_5c","token_type":"Bearer","expires_in":1800},"meta":{"request_id":"tester-cycle3-signin"},"errors":[]}
+HTTP_STATUS:200

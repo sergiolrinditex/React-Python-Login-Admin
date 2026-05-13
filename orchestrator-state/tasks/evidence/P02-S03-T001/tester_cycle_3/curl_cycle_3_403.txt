@@ -1,0 +1,10 @@
+=== 9. GET 403 ownership (admin tries employee conv) ===
+HTTP/1.1 403 Forbidden
+date: Wed, 13 May 2026 10:04:10 GMT
+server: uvicorn
+content-length: 183
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"c3-403-test"},"errors":[{"code":"CHAT_CONVERSATION_FORBIDDEN","message":"Access to this conversation is not allowed.","field":null,"details":null}]}
+403_code: CHAT_CONVERSATION_FORBIDDEN
+

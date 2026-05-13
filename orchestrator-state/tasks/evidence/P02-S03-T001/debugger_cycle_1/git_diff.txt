@@ -1,0 +1,122 @@
+diff --git a/backend/app/main.py b/backend/app/main.py
+index 7b18f4d..759de4a 100644
+--- a/backend/app/main.py
++++ b/backend/app/main.py
+@@ -7,10 +7,12 @@ Purpose: Creates the FastAPI application instance and mounts routers:
+          - api_router: /health, /live, /ready probes (root-level).
+          - auth_router: /api/v1/auth/* — sign-up and future auth endpoints.
+          - users_router: /api/v1/users/* — P01-S02-T007 user profile endpoints.
++         - admin_router: /api/v1/admin/ai/* — P02-S05-T001 admin AI endpoints.
+ 
+ WRITE_SET_DRIFT from P01-S02-T001 (auth router), P01-S02-T005
+ (forgot/reset Pydantic-422 → 400 envelope normalization), and P01-S02-T007
+-(users router + /api/v1/users/me/language added to _AUTH_INVALID_PAYLOAD_PATHS):
++(users router + /api/v1/users/me/language added to _AUTH_INVALID_PAYLOAD_PATHS),
++and P02-S05-T001 (admin AI router — WRITE_SET_DRIFT §D-AAM):
+   - T001 added auth_router mounting (2 lines).
+   - T005 cycle-2: path-scoped RequestValidationError handler for forgot-password
+     and reset-password endpoints. Pinned by task pack §H-forgot-2 / §H-reset-5
+@@ -20,6 +22,9 @@ WRITE_SET_DRIFT from P01-S02-T001 (auth router), P01-S02-T005
+   - T007: mounted users_router under /api/v1; added /api/v1/users/me/language to
+     the 422→400 path set (G.7 — PATCH body validation returns 400 AUTH_INVALID_PAYLOAD
+     with field='language' per task pack §F.2).
++  - P02-S05-T001 §D-AAM: mounted admin_router under /api/v1/admin/ai. 1 line of
++    wiring; no business logic. Alternatives rejected: sub-router in __init__.py
++    still requires this line in main.py. KISS: mounting here is the canonical pattern.
+ 
+ Key deps:
+   - fastapi: ASGI web framework (uvicorn transport, port 8000 per STACK_PROFILE).
+@@ -27,6 +32,7 @@ Key deps:
+   - app.api.router: api_router with /health, /live, /ready.
+   - app.auth: auth_router with /api/v1/auth/sign-up and other auth endpoints.
+   - app.users: users_router with /api/v1/users/me and /api/v1/users/me/language.
++  - app.admin: admin_router with /api/v1/admin/ai/providers and /models.
+ 
+ Source refs:
+   - TECHNICAL_GUIDE §6.2 health endpoints contract.
+@@ -34,6 +40,7 @@ Source refs:
+   - 01-non-negotiables.md §Logging (BEFORE/AFTER/ERROR pattern, no PII/secrets).
+   - task pack P01-S02-T007 §G.7 (PATCH /me/language 422→400 mapping).
+   - task pack P01-S02-T007 §G.14 (router mounting, WRITE_SET_DRIFT).
++  - task pack P02-S05-T001 §D-AAM (admin AI router mount).
+ """
+ 
+ import logging
+@@ -43,9 +50,11 @@ from fastapi import FastAPI, Request, status
+ from fastapi.exceptions import RequestValidationError
+ from fastapi.responses import JSONResponse
+ 
++from app.admin import admin_router  # P02-S05-T001 WRITE_SET_DRIFT §D-AAM
+ from app.api.router import api_router
+ from app.auth import auth_router
+ from app.auth.schemas import ErrorItem, ErrorResponse, ResponseMeta
++from app.chat import chat_router  # P02-S03-T001 WRITE_SET_DRIFT §D (chat router mount)
+ from app.users import users_router  # P01-S02-T007 WRITE_SET_DRIFT §G.14
+ 
+ # ---------------------------------------------------------------------------
+@@ -79,6 +88,8 @@ app = FastAPI(
+ app.include_router(api_router)
+ app.include_router(auth_router, prefix="/api/v1")
+ app.include_router(users_router, prefix="/api/v1")  # P01-S02-T007 WRITE_SET_DRIFT §G.14
++app.include_router(chat_router, prefix="/api/v1")  # P02-S03-T001 WRITE_SET_DRIFT §D
++app.include_router(admin_router, prefix="/api/v1/admin/ai")  # P02-S05-T001 WRITE_SET_DRIFT §D-AAM
+ 
+ 
+ # ---------------------------------------------------------------------------
+@@ -109,6 +120,30 @@ _AUTH_INVALID_PAYLOAD_PATHS: frozenset[str] = frozenset({
+     "/api/v1/users/me/language",        # P01-S02-T007: PATCH body 422 → 400 (G.7)
+ })
+ 
++# P02-S03-T001 (debugger cycle 1, F-1): chat conversation create rejects invalid
++# payloads (e.g. language not in Literal['es','en','fr']) with the same 400 +
++# project-envelope contract, but emits the feature-scoped error code
++# CHAT_INVALID_PAYLOAD per task pack §J.3. Code mapping happens at emit time so
++# the auth/users paths above keep their historical AUTH_INVALID_PAYLOAD literal
++# (existing tests in test_auth_signin.py, test_mfa.py, test_users_me.py depend
++# on that literal byte-by-byte — no regression).
++_CHAT_INVALID_PAYLOAD_PATHS: frozenset[str] = frozenset({
++    "/api/v1/chat/conversations",
++})
++
++_INVALID_PAYLOAD_PATHS: frozenset[str] = _AUTH_INVALID_PAYLOAD_PATHS | _CHAT_INVALID_PAYLOAD_PATHS
++
++
++def _invalid_payload_code_for_path(path: str) -> str:
++    """Pick the feature-scoped error code for a normalized 422→400 envelope.
++
++    Chat paths emit CHAT_INVALID_PAYLOAD (task pack P02-S03-T001 §J.3);
++    every other in-scope path keeps the historical AUTH_INVALID_PAYLOAD.
++    """
++    if path in _CHAT_INVALID_PAYLOAD_PATHS:
++        return "CHAT_INVALID_PAYLOAD"
++    return "AUTH_INVALID_PAYLOAD"
++
+ 
+ def _resolve_request_id(request: Request) -> str:
+     """Reuse the request id from the inbound header or generate a deterministic placeholder.
+@@ -131,7 +166,7 @@ async def _forgot_reset_validation_handler(
+     delegate to FastAPI's default 422 RequestValidationError envelope.
+     """
+     path = request.url.path
+-    if path not in _AUTH_INVALID_PAYLOAD_PATHS:
++    if path not in _INVALID_PAYLOAD_PATHS:
+         # Re-emit FastAPI's default 422 envelope: this matches the framework's
+         # documented default behaviour for unchanged consumers (T001 / T002 tests).
+         logger.debug(
+@@ -143,6 +178,7 @@ async def _forgot_reset_validation_handler(
+         )
+ 
+     request_id = _resolve_request_id(request)
++    error_code = _invalid_payload_code_for_path(path)
+     error_items: list[ErrorItem] = []
+     for raw in exc.errors():
+         loc = raw.get("loc", ())
+@@ -155,7 +191,7 @@ async def _forgot_reset_validation_handler(
+             field_name = tail[-1] if tail else None
+         error_items.append(
+             ErrorItem(
+-                code="AUTH_INVALID_PAYLOAD",
++                code=error_code,
+                 message=str(raw.get("msg", "Invalid payload")),
+                 field=field_name,
+                 details=None,

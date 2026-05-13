@@ -1,0 +1,80 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.5, pytest-9.0.2, pluggy-1.6.0 -- /usr/local/bin/python3.11
+cachedir: .pytest_cache
+rootdir: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend
+configfile: pyproject.toml
+plugins: httpx-0.36.0, asyncio-1.3.0, langsmith-0.8.3, anyio-4.13.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 63 items
+
+tests/integration/test_auth_signin.py::test_signin_success_no_mfa PASSED [  1%]
+tests/integration/test_auth_signin.py::test_signin_mfa_required_branch PASSED [  3%]
+tests/integration/test_auth_signin.py::test_signin_wrong_password_401_indistinguishable PASSED [  4%]
+tests/integration/test_auth_signin.py::test_signin_unknown_email_401_indistinguishable PASSED [  6%]
+tests/integration/test_auth_signin.py::test_signin_unknown_and_wrong_have_same_response_body PASSED [  7%]
+tests/integration/test_auth_signin.py::test_signin_user_inactive_returns_401 PASSED [  9%]
+tests/integration/test_auth_signin.py::test_signin_lockout_returns_423_after_threshold PASSED [ 11%]
+tests/integration/test_auth_signin.py::test_signin_invalid_payload_empty_email_400 PASSED [ 12%]
+tests/integration/test_auth_signin.py::test_signin_missing_field_returns_422 PASSED [ 14%]
+tests/integration/test_auth_signin.py::test_signin_rate_limit_429 PASSED [ 15%]
+tests/integration/test_auth_signin.py::test_signin_response_includes_request_id_meta PASSED [ 17%]
+tests/integration/test_auth_signin.py::test_signin_no_pii_in_logs PASSED [ 19%]
+tests/integration/test_auth_signin.py::test_signin_refresh_cookie_attributes PASSED [ 20%]
+tests/integration/test_auth_signin.py::test_signin_refresh_token_hashed_in_db PASSED [ 22%]
+tests/integration/test_auth_signin.py::test_signin_access_token_not_in_cookie PASSED [ 23%]
+tests/integration/test_auth_signin.py::test_signin_response_timing_envelope PASSED [ 25%]
+tests/integration/test_users_me.py::TestGetMeHappyPath::test_get_me_happy_path_returns_full_profile PASSED [ 26%]
+tests/integration/test_users_me.py::TestGetMeAdmin::test_get_me_admin_user_has_null_employee_profile PASSED [ 28%]
+tests/integration/test_users_me.py::TestGetMeAuthFailures::test_get_me_without_authorization_returns_401_aggregate PASSED [ 30%]
+tests/integration/test_users_me.py::TestGetMeAuthFailures::test_get_me_with_expired_access_token_returns_401_aggregate PASSED [ 31%]
+tests/integration/test_users_me.py::TestGetMeAuthFailures::test_get_me_with_invalid_signature_returns_401_aggregate PASSED [ 33%]
+tests/integration/test_users_me.py::TestGetMeAuthFailures::test_get_me_with_mfa_challenge_token_returns_401_aggregate PASSED [ 34%]
+tests/integration/test_users_me.py::TestGetMeAuthFailures::test_get_me_with_unknown_sub_returns_401_aggregate PASSED [ 36%]
+tests/integration/test_users_me.py::TestGetMeAuthFailures::test_get_me_with_inactive_user_returns_401_aggregate PASSED [ 38%]
+tests/integration/test_users_me.py::TestGetMeByteEqualAntiEnum::test_get_me_byte_equal_401_across_5_failure_modes PASSED [ 39%]
+tests/integration/test_users_me.py::TestGetMeNoAudit::test_get_me_does_not_write_audit_log_row PASSED [ 41%]
+tests/integration/test_users_me.py::TestPatchLanguagePersists::test_patch_me_language_to_en_persists PASSED [ 42%]
+tests/integration/test_users_me.py::TestPatchLanguagePersists::test_patch_me_language_to_fr_persists PASSED [ 44%]
+tests/integration/test_users_me.py::TestPatchLanguagePersists::test_patch_me_language_to_es_persists PASSED [ 46%]
+tests/integration/test_users_me.py::TestPatchLanguageAudit::test_patch_me_language_writes_audit_log PASSED [ 47%]
+tests/integration/test_users_me.py::TestPatchLanguageIdempotent::test_patch_me_language_idempotent_no_op PASSED [ 49%]
+tests/integration/test_users_me.py::TestPatchLanguageValidation::test_patch_me_language_invalid_value_returns_400_field_error PASSED [ 50%]
+tests/integration/test_users_me.py::TestPatchLanguageValidation::test_patch_me_language_empty_string_returns_400 PASSED [ 52%]
+tests/integration/test_users_me.py::TestPatchLanguageValidation::test_patch_me_language_null_returns_400 PASSED [ 53%]
+tests/integration/test_users_me.py::TestPatchLanguageValidation::test_patch_me_language_missing_field_returns_400 PASSED [ 55%]
+tests/integration/test_users_me.py::TestPatchLanguageValidation::test_patch_me_language_extra_field_returns_400 PASSED [ 57%]
+tests/integration/test_users_me.py::TestPatchLanguageValidation::test_patch_me_language_uppercase_returns_400 PASSED [ 58%]
+tests/integration/test_users_me.py::TestPatchLanguageAuthFailures::test_patch_me_language_without_authorization_returns_401 PASSED [ 60%]
+tests/integration/test_users_me.py::TestPatchLanguageAuthFailures::test_patch_me_language_with_inactive_user_returns_401 PASSED [ 61%]
+tests/integration/test_users_me.py::TestPatchLanguageNoPII::test_patch_me_language_audit_no_pii PASSED [ 63%]
+tests/integration/test_users_me.py::TestPatchLanguageUpdatedAt::test_patch_me_language_updates_updated_at PASSED [ 65%]
+tests/integration/test_users_me.py::TestLoggingSilent::test_get_me_silent_when_verbose_disabled PASSED [ 66%]
+tests/integration/test_users_me.py::TestLoggingSilent::test_patch_me_language_silent_when_verbose_disabled PASSED [ 68%]
+tests/integration/test_users_me.py::TestGetMeSecurityShape::test_get_me_response_excludes_password_hash PASSED [ 69%]
+tests/integration/test_users_me.py::TestGetMeSecurityShape::test_get_me_response_excludes_extra_metadata PASSED [ 71%]
+tests/integration/test_users_me.py::TestGetMeSecurityShape::test_get_me_uses_real_seeded_data PASSED [ 73%]
+tests/integration/test_users_me.py::TestPatchLanguageAuditCount::test_patch_me_language_audit_count_doubles_on_repeat PASSED [ 74%]
+tests/integration/test_mfa.py::test_mfa_verify_happy_path_returns_200_with_access_token_and_cookie PASSED [ 76%]
+tests/integration/test_mfa.py::test_mfa_verify_includes_user_dto_in_data PASSED [ 77%]
+tests/integration/test_mfa.py::test_mfa_verify_writes_refresh_token_row PASSED [ 79%]
+tests/integration/test_mfa.py::test_mfa_verify_writes_success_audit PASSED [ 80%]
+tests/integration/test_mfa.py::test_mfa_verify_expired_challenge_returns_410 PASSED [ 82%]
+tests/integration/test_mfa.py::test_mfa_verify_invalid_signature_returns_401_aggregate PASSED [ 84%]
+tests/integration/test_mfa.py::test_mfa_verify_purpose_mismatch_returns_401_aggregate PASSED [ 85%]
+tests/integration/test_mfa.py::test_mfa_verify_wrong_code_returns_401_aggregate PASSED [ 87%]
+tests/integration/test_mfa.py::test_mfa_verify_user_without_mfa_returns_401_aggregate_with_dummy_verify PASSED [ 88%]
+tests/integration/test_mfa.py::test_mfa_verify_replay_returns_401_aggregate PASSED [ 90%]
+tests/integration/test_mfa.py::test_mfa_verify_invalid_payload_returns_400 PASSED [ 92%]
+tests/integration/test_mfa.py::test_mfa_verify_rate_limit_returns_429_with_retry_after PASSED [ 93%]
+tests/integration/test_mfa.py::test_mfa_verify_user_inactive_returns_401_aggregate PASSED [ 95%]
+tests/integration/test_mfa.py::test_mfa_verify_verbose_logging_silent_when_disabled PASSED [ 96%]
+tests/integration/test_mfa.py::test_mfa_verify_set_cookie_attrs_byte_equal_to_sign_in PASSED [ 98%]
+tests/integration/test_mfa.py::test_mfa_verify_valid_window_accepts_previous_step_code PASSED [100%]
+
+=============================== warnings summary ===============================
+tests/integration/test_auth_signin.py::test_signin_missing_field_returns_422
+  /Users/sergiolr/Library/Python/3.11/lib/python/site-packages/starlette/_exception_handler.py:59: DeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
+    response = await handler(conn, exc)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================== 63 passed, 1 warning in 4.87s =========================
