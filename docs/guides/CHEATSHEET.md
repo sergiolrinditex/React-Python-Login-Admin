@@ -351,3 +351,7 @@ python3 -B -S scripts/audit-agent-trailer-vocabulary.py
 - El closer debe crear el commit atómico antes de ejecutarlo.
 - `hook_update_ledger.py` escribe eventos Bash en `orchestrator-state/tasks/bash-ledger.jsonl`, runtime-only e ignorado por Git, para que los Bash PostToolUse no re-ensucien el repo después del commit/push.
 - `orchestrator-state/tasks/ledger.jsonl` queda como ledger canónico para eventos lifecycle no-Bash.
+
+## Stack Docker compartido entre worktrees paralelos
+
+`./scripts/next-wave.sh` exporta `COMPOSE_PROJECT_NAME` derivado del basename del root canónico. Todos los worktrees paralelos comparten el mismo stack Docker. Si quieres uno aislado, exporta `COMPOSE_PROJECT_NAME=otro` ANTES de pegar el bloque.

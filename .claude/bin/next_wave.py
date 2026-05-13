@@ -154,12 +154,18 @@ def _terminal_command(task_id: str) -> str:
             f"echo 'Ahora ejecuta en Claude Code: {claude_cmd}'"
         )
     return (
-        'unset CLAUDE_ACTIVE_TASK_ID CLAUDE_TASK_PACK CLAUDE_WORKTREE_ROOT CLAUDE_ORCHESTRATOR_ROOT && '
+        'unset CLAUDE_ACTIVE_TASK_ID CLAUDE_TASK_PACK CLAUDE_WORKTREE_ROOT CLAUDE_ORCHESTRATOR_ROOT COMPOSE_PROJECT_NAME && '
         'BOOTSTRAP_ROOT="${CLAUDE_ORCHESTRATOR_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd -P)}" && '
         'ROOT="$($BOOTSTRAP_ROOT/scripts/ensure-task-worktree.sh --print-root)" && '
         f'WT="$($ROOT/scripts/ensure-task-worktree.sh {task_id})" && '
         'cd "$WT" && '
-        f'export CLAUDE_ORCHESTRATOR_ROOT="$ROOT" CLAUDE_WORKTREE_ROOT="$WT" '
+        # COMPOSE_PROJECT_NAME: pin docker-compose project to canonical root
+        # so parallel terminals SHARE the same stack (postgres, redis, ...)
+        # instead of each worktree spinning up its own (port collisions).
+        # Honour any value the user pre-exported; otherwise derive from
+        # the canonical root basename.
+        'COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME:-$(basename "$ROOT" | tr "[:upper:]" "[:lower:]" | tr -c "a-z0-9-" "-")}" && '
+        f'export COMPOSE_PROJECT_NAME CLAUDE_ORCHESTRATOR_ROOT="$ROOT" CLAUDE_WORKTREE_ROOT="$WT" '
         f'CLAUDE_ACTIVE_TASK_ID={task_id} CLAUDE_TASK_PACK="$ROOT/{pack}" && '
         f"echo 'Ahora ejecuta en Claude Code: {claude_cmd}'"
     )
@@ -168,14 +174,16 @@ def _terminal_command(task_id: str) -> str:
 def print_markdown(result: dict[str, Any]) -> None:
     print("# DAG wave propuesta")
     print()
-    print("> **Antes de reclamar una task en este terminal**, limpia las 4")
-    print("> variables de scope para no mezclar contextos entre slices:")
+    print("> **Antes de reclamar una task en este terminal**, limpia las 5")
+    print("> variables de scope para no mezclar contextos entre slices ni")
+    print("> arrancar un docker-stack paralelo:")
     print(">")
     print("> ```bash")
     print("> unset CLAUDE_ACTIVE_TASK_ID")
     print("> unset CLAUDE_TASK_PACK")
     print("> unset CLAUDE_WORKTREE_ROOT")
     print("> unset CLAUDE_ORCHESTRATOR_ROOT")
+    print("> unset COMPOSE_PROJECT_NAME  # se re-deriva del basename del repo")
     print("> ```")
     print()
     print(f"- DAG mode: `{result.get('dag_mode')}`")

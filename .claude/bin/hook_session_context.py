@@ -289,7 +289,7 @@ def build_context() -> str:
         pack_status = "exists" if pack.exists() else "missing — planner must create/enrich before developer"
         lines.append(f"- DAG task pack: `orchestrator-state/tasks/task-packs/{worker_override}.md` ({pack_status})")
     else:
-        lines.append("- DAG mode: no worker task pinned. Export `CLAUDE_ACTIVE_TASK_ID` + `CLAUDE_TASK_PACK` or run `claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice <TASK_ID>"` from a task terminal.")
+        lines.append("- DAG mode: no worker task pinned. Export `CLAUDE_ACTIVE_TASK_ID` + `CLAUDE_TASK_PACK` or run `claude --agent main-orchestrator --permission-mode bypassPermissions \"/next-slice <TASK_ID>\"` from a task terminal.")
     if handoff_note:
         lines.append(handoff_note)
 
