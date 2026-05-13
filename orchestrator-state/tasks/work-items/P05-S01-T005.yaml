@@ -36,3 +36,4 @@ write_set:
 handoff_path: orchestrator-state/tasks/handoffs/P05-S01-T005.md
 evidence_dir: orchestrator-state/tasks/evidence/P05-S01-T005
 source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 5.1 — Journey integration"
+source_fingerprint: "301aa240a7897ababdb8b9e79495407ea174cb836940bbc09074ba8e14ce384f"

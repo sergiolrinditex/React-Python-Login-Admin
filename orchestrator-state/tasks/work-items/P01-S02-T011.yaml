@@ -2,7 +2,7 @@ id: P01-S02-T011
 phase_id: P01
 step_id: P01-S02
 title: "fix refresh cookie Path mismatch (/auth vs /api/v1/auth) across sign-in setter + refresh/logout consumers"
-status: ready
+status: done
 kind: "wiring"
 target: "fix refresh cookie Path mismatch (/auth vs /api/v1/auth) across sign-in setter + refresh/logout consumers"
 product_increment: "current"
@@ -40,3 +40,4 @@ write_set:
 handoff_path: orchestrator-state/tasks/handoffs/P01-S02-T011.md
 evidence_dir: orchestrator-state/tasks/evidence/P01-S02-T011
 source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime follow-up P01-S02-T004"
+source_fingerprint: "563fc325aaee1fd5e4d1770b3f7798f596af07dc0c523603dc063e13bf704c78"

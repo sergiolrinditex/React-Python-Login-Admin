@@ -1,7 +1,7 @@
 {
   "id": "FU-20260513094006-restore-stack-specific-dev-restart-profile-sh-br",
   "schema_version": 1,
-  "status": "proposed",
+  "status": "promoted",
   "created_at": "2026-05-13T09:40:06+00:00",
   "created_by": "sergiolr",
   "origin_task_id": "P02-S03-T001",
@@ -47,5 +47,8 @@
     "debugger_path": "in_scope_defects_use_validator_tester_debugger_retest",
     "warnings": []
   },
-  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260513094006-restore-stack-specific-dev-restart-profile-sh-br.yaml"
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260513094006-restore-stack-specific-dev-restart-profile-sh-br.yaml",
+  "promoted_at": "2026-05-13T10:27:40+00:00",
+  "promoted_task_id": "P02-S03-T003",
+  "source_doc_updated": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md"
 }

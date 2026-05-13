@@ -2,7 +2,7 @@ id: P01-S02-T005
 phase_id: P01
 step_id: P01-S02
 title: "Forgot and reset password endpoints"
-status: ready
+status: done
 kind: "api"
 target: "Forgot and reset password endpoints"
 product_increment: "v1"
@@ -37,3 +37,4 @@ write_set:
 handoff_path: orchestrator-state/tasks/handoffs/P01-S02-T005.md
 evidence_dir: orchestrator-state/tasks/evidence/P01-S02-T005
 source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 1.2 — Auth APIs"
+source_fingerprint: "2cb06443b863c297682c8d657d7df9bb24fedbfbc191d7587fb155257a1ad6ad"

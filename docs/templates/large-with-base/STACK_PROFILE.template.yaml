@@ -27,5 +27,9 @@ db:
   engine: {{db_engine}}                        # e.g. postgres | sqlite | mysql | none
   migrate_cmd: {{db_migrate_cmd}}              # real migration command, or none
   seed_cmd: {{db_seed_cmd}}                    # compatibility hook; only load real/provided data, or none
+# Recommended: pr-flow when several terminals work different TASK_IDs in parallel.
+# push-to-main is safe ONLY for one-slice-at-a-time execution; with parallel
+# terminals in the same checkout, one terminal's git/Bash can clobber another's
+# active write_set (see write_scope_guard for the dev-profile guard).
 git_workflow: {{git_workflow}}                 # push-to-main/direct-main | pr-flow | gitflow
 design_tokens_enforcer: {{design_tokens_enforcer}} # design_tokens_v1 | none | <project_plugin>

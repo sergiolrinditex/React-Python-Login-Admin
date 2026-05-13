@@ -30,3 +30,4 @@ write_set:
 handoff_path: orchestrator-state/tasks/handoffs/P06-S01-T002.md
 evidence_dir: orchestrator-state/tasks/evidence/P06-S01-T002
 source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 6.1 — Build and release readiness"
+source_fingerprint: "e2f14952af53d3d04180a01e196ae37fb2c08b47f5bd14fc250dcfd4fc97ce4e"

@@ -43,3 +43,4 @@ write_set:
 handoff_path: orchestrator-state/tasks/handoffs/P00-S02-T003.md
 evidence_dir: orchestrator-state/tasks/evidence/P00-S02-T003
 source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 0.2 — Infra, health and verification data"
+source_fingerprint: "e16e196647af58343b42da870369ef6d5b535c63beb2a92f11a6f2eedbe84139"

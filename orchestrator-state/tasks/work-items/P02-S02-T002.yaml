@@ -2,7 +2,7 @@ id: P02-S02-T002
 phase_id: P02
 step_id: P02-S02
 title: "Fix module-level _JWT_KEY in app.auth.tokens causing JWT decode failures in full-suite ordering"
-status: blocked
+status: ready
 kind: "bug"
 target: "Fix module-level _JWT_KEY in app.auth.tokens causing JWT decode failures in full-suite ordering"
 product_increment: "current"
@@ -20,13 +20,16 @@ acceptance:
 verification_commands:
   - "Run pytest backend/tests/integration/test_users_me.py::TestGetMeSecurityShape -v in both isolation and full-suite ordering — all 3 should pass. Run pytest backend/tests -v and confirm no regression vs pre-fix baseline."
 allowed_paths:
-  - "backend/app/security/**"
-  - "backend/tests/unit/test_security.py"
+  - "backend/app/auth/tokens.py"
+  - "backend/tests/integration/test_users_me.py"
+  - "backend/tests/unit/test_auth_tokens.py"
 conflict_groups:
-  - "security:core"
+  - "auth:tokens"
 write_set:
-  - "backend/app/security/**"
-  - "backend/tests/unit/test_security.py"
+  - "backend/app/auth/tokens.py"
+  - "backend/tests/integration/test_users_me.py"
+  - "backend/tests/unit/test_auth_tokens.py"
 handoff_path: orchestrator-state/tasks/handoffs/P02-S02-T002.md
 evidence_dir: orchestrator-state/tasks/evidence/P02-S02-T002
-source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry"
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime follow-up P02-S02-T001"
+source_fingerprint: "5887a8da657c3dff191e80d8749801a65dd6f5242d0368660d1c71cdbf8bb5e0"

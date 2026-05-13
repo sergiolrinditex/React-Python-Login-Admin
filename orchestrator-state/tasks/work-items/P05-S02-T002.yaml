@@ -37,3 +37,4 @@ write_set:
 handoff_path: orchestrator-state/tasks/handoffs/P05-S02-T002.md
 evidence_dir: orchestrator-state/tasks/evidence/P05-S02-T002
 source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 5.2 — Security, observability and visual gate"
+source_fingerprint: "ec6212f612a385aed962aef7182546aad71351a3f359e741bb62222a009886e8"

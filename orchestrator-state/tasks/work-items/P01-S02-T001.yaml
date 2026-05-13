@@ -35,3 +35,4 @@ write_set:
 handoff_path: orchestrator-state/tasks/handoffs/P01-S02-T001.md
 evidence_dir: orchestrator-state/tasks/evidence/P01-S02-T001
 source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 1.2 — Auth APIs"
+source_fingerprint: "4e1ee33a90f078c4bd8b83944417ed32c205d60ef4335cd3e2b79c20390e91a8"

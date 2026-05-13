@@ -34,3 +34,4 @@ write_set:
 handoff_path: orchestrator-state/tasks/handoffs/P04-S01-T004.md
 evidence_dir: orchestrator-state/tasks/evidence/P04-S01-T004
 source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 4.1 — Admin AI pages"
+source_fingerprint: "995cf34106a87d5baf95f5a85302fd17c406e8e4ca8d0ee2d946dab0e958696f"

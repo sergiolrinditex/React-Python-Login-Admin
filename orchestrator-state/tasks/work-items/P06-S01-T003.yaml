@@ -36,3 +36,4 @@ write_set:
 handoff_path: orchestrator-state/tasks/handoffs/P06-S01-T003.md
 evidence_dir: orchestrator-state/tasks/evidence/P06-S01-T003
 source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 6.2 — Final acceptance"
+source_fingerprint: "77239adfd3e4519b5088431ffbe824f063b8cdf266efcfc237f3b25f7801021c"

@@ -33,3 +33,4 @@ write_set:
 handoff_path: orchestrator-state/tasks/handoffs/P03-S01-T005.md
 evidence_dir: orchestrator-state/tasks/evidence/P03-S01-T005
 source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 3.1 — Login pages"
+source_fingerprint: "a1e3904c2fa88e9b0c8e54fb55594f5bfa9b4b65870b08c5900520df3c8dbb12"

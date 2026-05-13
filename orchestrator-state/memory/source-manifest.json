@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-12T09:25:58+00:00",
+  "generated_at": "2026-05-13T08:36:42+00:00",
   "project_root": ".",
   "project_prefix": "HILO_PEOPLE",
   "source_of_truth": {
@@ -14,11 +14,11 @@
     },
     "checklist": {
       "path": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md",
-      "sha256": "c22fd447e6eb19a57d7cbf304bc03c65729f5ff3492f2c19e4511a2d86e0206e"
+      "sha256": "5ba0eb7d89c2493c2e0c6cb869850e7f3f707dc333b4291fdc7718f99ed64b18"
     },
     "guide": {
       "path": "docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md",
-      "sha256": "90394b110cb0c96c64126173ae770b2e87dfa4cee8f8991d7a5002f0c338aef4"
+      "sha256": "12dad4af147929c7cc2b8a095f67c509bdcc9c39129e23ccc902fbdf519955b4"
     },
     "ux_contract": {
       "path": "docs/source-of-truth/UX_CONTRACT.md",

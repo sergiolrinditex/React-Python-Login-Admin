@@ -33,3 +33,4 @@ write_set:
 handoff_path: orchestrator-state/tasks/handoffs/P02-S06-T002.md
 evidence_dir: orchestrator-state/tasks/evidence/P02-S06-T002
 source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 2.6 — RAG Admin APIs"
+source_fingerprint: "3de56a7fff4fb2a81fb486a5e259c1cf05294dfe9c1c827a9fe5851722f12c0d"

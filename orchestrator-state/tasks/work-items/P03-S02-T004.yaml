@@ -37,3 +37,4 @@ write_set:
 handoff_path: orchestrator-state/tasks/handoffs/P03-S02-T004.md
 evidence_dir: orchestrator-state/tasks/evidence/P03-S02-T004
 source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 3.2 — Chat pages"
+source_fingerprint: "fd8ae3a8cc2e45f10aa04f00cd02d3f8633c15cdf92b5c7dcb803e2679d856de"

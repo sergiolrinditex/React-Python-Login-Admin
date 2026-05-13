@@ -35,3 +35,4 @@ write_set:
 handoff_path: orchestrator-state/tasks/handoffs/P02-S05-T002.md
 evidence_dir: orchestrator-state/tasks/evidence/P02-S05-T002
 source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 2.5 — Admin AI APIs"
+source_fingerprint: "6294bd42307d8b96abd081c718253eb403276e9b15e72aac32194cbfcb2a34b6"

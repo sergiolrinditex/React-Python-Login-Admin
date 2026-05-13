@@ -39,3 +39,4 @@ write_set:
 handoff_path: orchestrator-state/tasks/handoffs/P02-S08-T001.md
 evidence_dir: orchestrator-state/tasks/evidence/P02-S08-T001
 source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 2.8 — Agents and graphs"
+source_fingerprint: "ef38063ff967d71857dddd55ea59721918c6a6f713117cd4dc73379123a9fc6b"

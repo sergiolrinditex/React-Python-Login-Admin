@@ -243,6 +243,87 @@ def parse_trailer(text: str) -> dict[str, str]:
     return result
 
 
+# Optional AGENT: line inside a handoff CLAUDE_TRAILER block. Agents that
+# write a defensive recovery trailer to disk should include this marker so the
+# fallback can verify that the recovered trailer belongs to the current
+# subagent and not to an older one further up in the cumulative handoff.
+_HANDOFF_AGENT_RE = re.compile(r"^AGENT:\s*(.+?)\s*$", re.MULTILINE)
+
+
+def recover_trailer_from_handoff(
+    task_id: str | None,
+    agent_type: str | None,
+) -> dict[str, str]:
+    """Best-effort recovery: parse a ``CLAUDE_TRAILER`` block from the handoff
+    file when the stdin trailer is empty or unusable.
+
+    Rationale: the agent's chat message can be truncated (token cap, network
+    drop, model stop) AFTER it has already written the handoff file to disk.
+    "Disk > context" applies to the trailer itself — the handoff is the
+    canonical record and a recovery source.
+
+    Safeguards against picking up a stale trailer from the cumulative handoff:
+      - Optional ``AGENT:`` line inside the last ``CLAUDE_TRAILER`` block must
+        match ``agent_type`` when both are present.
+      - ``TASK_ID`` inside the recovered trailer must match the requested
+        ``task_id`` when both are present.
+
+    Returns ``{}`` on any failure — never raises.
+    """
+    if not task_id:
+        return {}
+    try:
+        from common import tasks_dir  # local import to avoid circular at module load
+        handoff_path = tasks_dir() / "handoffs" / f"{task_id}.md"
+        if not handoff_path.exists():
+            return {}
+        text = handoff_path.read_text(encoding="utf-8", errors="replace")
+        if "CLAUDE_TRAILER:" not in text:
+            return {}
+
+        trailer = parse_trailer(text)
+        if not trailer:
+            trailer = parse_json_trailer(text)
+        if not trailer:
+            return {}
+
+        # Freshness guard: optional AGENT marker on the LAST trailer block
+        # must agree with the agent that just stopped. The handoff is
+        # cumulative — without this guard, a missing-message validator could
+        # incorrectly pick up developer's earlier trailer.
+        marker = "CLAUDE_TRAILER:"
+        last_block = text.rsplit(marker, 1)[-1] if marker in text else text
+        agent_match = _HANDOFF_AGENT_RE.search(last_block)
+        agent_in_handoff = agent_match.group(1).strip() if agent_match else None
+        if agent_in_handoff and agent_type and agent_in_handoff.lower() != agent_type.lower():
+            log_hook_error(
+                "hook_capture_subagent_stop.handoff_recovery_mismatch",
+                RuntimeError(
+                    f"handoff trailer reports AGENT={agent_in_handoff!r} but current "
+                    f"agent={agent_type!r}; refusing recovery for task={task_id}"
+                ),
+            )
+            return {}
+
+        recovered_tid = trailer.get("task_id")
+        if recovered_tid and recovered_tid != task_id:
+            log_hook_error(
+                "hook_capture_subagent_stop.handoff_recovery_mismatch",
+                RuntimeError(
+                    f"handoff trailer task_id={recovered_tid!r} != expected {task_id!r}"
+                ),
+            )
+            return {}
+
+        return trailer
+    except Exception as exc:
+        try:
+            log_hook_error("hook_capture_subagent_stop.handoff_recovery", exc)
+        except Exception:
+            pass
+        return {}
+
+
 def parse_journey_trailer(text: str) -> dict[str, object]:
     """Parse journey-related trailer lines.
 
@@ -395,6 +476,29 @@ def main() -> int:
             json_fallback = parse_json_trailer(last_message)
             if json_fallback:
                 merged = dict(json_fallback)
+                merged.update(trailer)
+                trailer = merged
+        # Third fallback: handoff recovery. If both stdin parses still came up
+        # essentially empty, the agent's chat message was likely truncated
+        # AFTER it wrote the handoff file. Read the trailer from disk. This
+        # is "disco > contexto" applied at the mutation point: the message is
+        # ephemeral, the handoff is canonical.
+        if not trailer or len(trailer) < 2:
+            recovery_tid = dag_worker_task_id() or trailer.get("task_id")
+            handoff_recovered = recover_trailer_from_handoff(recovery_tid, agent_type)
+            if handoff_recovered:
+                log_hook_error(
+                    "hook_capture_subagent_stop.recovered_from_handoff",
+                    RuntimeError(
+                        f"trailer recovered from handoff for task={recovery_tid} "
+                        f"agent={agent_type} keys={sorted(handoff_recovered.keys())}; "
+                        f"stdin trailer was empty (message likely truncated)"
+                    ),
+                )
+                # Merge order: anything stdin DID emit takes precedence over
+                # the disk copy. The recovery only fills in the gaps so a
+                # partial-but-valid stdin trailer is never overruled.
+                merged = dict(handoff_recovered)
                 merged.update(trailer)
                 trailer = merged
         # Normalize placeholders agents may emit during bootstrap or docs checks.

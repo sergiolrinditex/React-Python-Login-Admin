@@ -43,3 +43,4 @@ write_set:
 handoff_path: orchestrator-state/tasks/handoffs/P01-S01-T001.md
 evidence_dir: orchestrator-state/tasks/evidence/P01-S01-T001
 source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 1.1 — DB auth baseline"
+source_fingerprint: "03fc614361d6520ba7216a0315d3cc16f84dd37d1188890afcb4711d2a9d972d"

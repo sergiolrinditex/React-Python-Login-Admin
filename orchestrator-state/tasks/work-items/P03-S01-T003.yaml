@@ -2,7 +2,7 @@ id: P03-S01-T003
 phase_id: P03
 step_id: P03-S01
 title: "ForgotPasswordPage"
-status: blocked
+status: ready
 kind: "frontend"
 target: "ForgotPasswordPage"
 product_increment: "v1"
@@ -33,3 +33,4 @@ write_set:
 handoff_path: orchestrator-state/tasks/handoffs/P03-S01-T003.md
 evidence_dir: orchestrator-state/tasks/evidence/P03-S01-T003
 source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 3.1 — Login pages"
+source_fingerprint: "d484203e18d6367224dbc72dd6fdae7ba092247a1a1deebb7a1bd0f2a2b5e416"

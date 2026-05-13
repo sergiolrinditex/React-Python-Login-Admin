@@ -13,10 +13,10 @@ task_ids:
   - P01-S02-T006
   - P01-S02-T007
   - P01-S03-T001
-  - P01-S03-T002
   - P01-S02-T008
   - P01-S02-T009
   - P01-S02-T010
   - P01-S02-T011
   - P01-S02-T012
+  - P01-S03-T002
 source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Phase 1 — Auth / base capabilities"

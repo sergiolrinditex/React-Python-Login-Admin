@@ -37,3 +37,4 @@ write_set:
 handoff_path: orchestrator-state/tasks/handoffs/P02-S03-T002.md
 evidence_dir: orchestrator-state/tasks/evidence/P02-S03-T002
 source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 2.3 — Chat APIs"
+source_fingerprint: "e5ada674dfe8dbeb9f89f4686b2d0b4a1d0d4354b6d6906066d68e7a7d6f0f89"

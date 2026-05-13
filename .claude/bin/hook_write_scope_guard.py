@@ -182,6 +182,28 @@ def main() -> int:
             )
             return 0
 
+        # Stack-specific dev profile is owned by the generated app, not by any
+        # individual slice. Editing it during a slice (especially in
+        # push-to-main with parallel terminals) lets one closer/developer
+        # squash the concrete profile to the neutral stub from the
+        # meta-orchestrator template, breaking dev-restart for every parallel
+        # terminal at once. Setup/teardown of the profile happens outside the
+        # DAG pipeline (app generation + STACK_PROFILE.yaml), not from inside
+        # a slice -- override only for intentional maintenance.
+        DEV_PROFILE_PROTECTED = (
+            "scripts/dev-restart.profile.sh",
+            "scripts/dev-restart.sh",
+        )
+        if task_id and rel in DEV_PROFILE_PROTECTED and os.environ.get("CLAUDE_ALLOW_DEV_PROFILE_WRITES") != "1":
+            _deny(
+                f"Blocked stack-specific dev profile edit while TASK_ID {task_id} is active: {rel}. "
+                "This file is shared across all parallel terminals; editing it during a slice can "
+                "silently overwrite the working profile when another terminal commits. "
+                "Adjust the profile outside any active slice, or set "
+                "CLAUDE_ALLOW_DEV_PROFILE_WRITES=1 for intentional maintenance."
+            )
+            return 0
+
         # Generated core state is written by scripts/hooks under locks, not by
         # model text editing.
         if rel in CORE_STATE_FILES and os.environ.get("CLAUDE_ALLOW_CORE_STATE_WRITES") != "1":

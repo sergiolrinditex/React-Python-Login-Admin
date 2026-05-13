@@ -38,3 +38,4 @@ write_set:
 handoff_path: orchestrator-state/tasks/handoffs/P02-S04-T002.md
 evidence_dir: orchestrator-state/tasks/evidence/P02-S04-T002
 source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 2.4 — RAG and workers"
+source_fingerprint: "f72eddb1a4bf80ea49d4675a54c212a3d7314c373e37949ba9dee6c9c880dcc3"

@@ -32,3 +32,4 @@ write_set:
 handoff_path: orchestrator-state/tasks/handoffs/P04-S02-T002.md
 evidence_dir: orchestrator-state/tasks/evidence/P04-S02-T002
 source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 4.2 — RAG, MCP and agents pages"
+source_fingerprint: "feea75b3c1399404002cc1f921341e90f506d42e6aae57f8e16cb198e92b3ca5"

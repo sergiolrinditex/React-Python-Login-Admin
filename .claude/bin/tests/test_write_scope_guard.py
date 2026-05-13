@@ -95,3 +95,43 @@ def test_blocks_direct_followup_yaml_write_while_task_active(tmp_project, monkey
     monkeypatch.setenv("CLAUDE_ACTIVE_TASK_ID", "P00-S01-T001")
     reason = _denied(_run_hook(_payload("Write", "orchestrator-state/tasks/follow-ups/FU-123.yaml")))
     assert "direct follow-up" in reason
+
+
+# ---------------------------------------------------------------------------
+# Stack-specific dev profile protection (regression: c4c91ae-style squash)
+# ---------------------------------------------------------------------------
+# Real incident: a closer running in push-to-main with parallel terminals
+# rewrote scripts/dev-restart.profile.sh from a concrete app profile back to
+# the neutral AnyStack stub, breaking dev-restart for every parallel terminal
+# at once. The write_scope_guard now treats the profile as stack-specific
+# config owned by the generated app, not by any single slice.
+
+
+def test_blocks_dev_restart_profile_edit_while_task_active(tmp_project, monkeypatch):
+    monkeypatch.setenv("CLAUDE_ACTIVE_TASK_ID", "P00-S01-T001")
+    reason = _denied(_run_hook(_payload("Write", "scripts/dev-restart.profile.sh")))
+    assert "stack-specific dev profile" in reason
+    assert "CLAUDE_ALLOW_DEV_PROFILE_WRITES" in reason
+
+
+def test_blocks_dev_restart_dispatcher_edit_while_task_active(tmp_project, monkeypatch):
+    """El dispatcher dev-restart.sh es código estático del orquestador. Tampoco
+    se toca durante slice salvo override explícito."""
+    monkeypatch.setenv("CLAUDE_ACTIVE_TASK_ID", "P00-S01-T001")
+    reason = _denied(_run_hook(_payload("Edit", "scripts/dev-restart.sh")))
+    assert "stack-specific dev profile" in reason
+
+
+def test_allows_dev_profile_edit_with_explicit_override(tmp_project, monkeypatch):
+    """Mantenimiento intencional: generar/actualizar la app desde templates
+    fuera del DAG → permitido con flag explícito."""
+    monkeypatch.setenv("CLAUDE_ACTIVE_TASK_ID", "P00-S01-T001")
+    monkeypatch.setenv("CLAUDE_ALLOW_DEV_PROFILE_WRITES", "1")
+    assert _run_hook(_payload("Write", "scripts/dev-restart.profile.sh")) == ""
+
+
+def test_allows_dev_profile_edit_when_no_active_task(tmp_project, monkeypatch):
+    """Sin TASK_ID activo el repo está en modo mantenimiento — el profile se
+    puede editar libremente. El bloqueo aplica sólo durante slices."""
+    monkeypatch.delenv("CLAUDE_ACTIVE_TASK_ID", raising=False)
+    assert _run_hook(_payload("Write", "scripts/dev-restart.profile.sh")) == ""

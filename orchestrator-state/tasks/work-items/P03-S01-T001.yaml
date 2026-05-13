@@ -2,7 +2,7 @@ id: P03-S01-T001
 phase_id: P03
 step_id: P03-S01
 title: "SignInPage"
-status: blocked
+status: ready
 kind: "frontend"
 target: "SignInPage"
 product_increment: "v1"
@@ -36,3 +36,4 @@ write_set:
 handoff_path: orchestrator-state/tasks/handoffs/P03-S01-T001.md
 evidence_dir: orchestrator-state/tasks/evidence/P03-S01-T001
 source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 3.1 — Login pages"
+source_fingerprint: "828e0974e41533f95f9768da79fadb0e660c0e28556a1b6c5e016027872a252c"

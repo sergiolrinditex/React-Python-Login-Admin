@@ -36,3 +36,4 @@ scope_inferred_from_acceptance:
 handoff_path: orchestrator-state/tasks/handoffs/P01-S02-T009.md
 evidence_dir: orchestrator-state/tasks/evidence/P01-S02-T009
 source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime follow-up P01-S02-T002"
+source_fingerprint: "2ac3e6eb0b7b312fbbfc43b2343213a5ced30f3c1200fa03cc79c3eb66afa98a"

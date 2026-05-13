@@ -2,7 +2,7 @@ id: P01-S02-T012
 phase_id: P01
 step_id: P01-S02
 title: "fix dev-restart db_health race: wait for host TCP, not container-internal pg_isready"
-status: claimed
+status: done
 kind: "bug"
 target: "fix dev-restart db_health race: wait for host TCP, not container-internal pg_isready"
 product_increment: "current"
@@ -28,3 +28,4 @@ write_set:
 handoff_path: orchestrator-state/tasks/handoffs/P01-S02-T012.md
 evidence_dir: orchestrator-state/tasks/evidence/P01-S02-T012
 source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime follow-up P01-S02-T008"
+source_fingerprint: "8f6cbf437d4f8456653c1da13f4668a21839e854de4fc9d902274427b75e4fbb"

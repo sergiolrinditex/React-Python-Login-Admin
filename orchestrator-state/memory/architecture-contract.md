@@ -1,6 +1,6 @@
 # Architecture contract
 
-- Generated at: 2026-05-12T09:25:58+00:00
+- Generated at: 2026-05-13T08:36:42+00:00
 - Source: `docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md`
 
 ## Structural headings
@@ -42,14 +42,15 @@
 - H3: 11.1 Variables de entorno adicionales
 - H3: 11.2 Build targets
 - H3: 11.3 Rollback strategy
+- H3: 11.4 Cross-origin / reverse-proxy topology
 - H2: 12. Constraints & Invariants
-- H2: 12.1 Slice Traceability Contract
 
 ## Constraint and invariant signals
 - | LangGraph | obligatorio en chat | disponible para workflows/approvals | chat simple no necesita complejidad de graph en V1 |
 - Toda pantalla frontend debe:
 - El handoff de cada slice frontend debe incluir:
 - CONSTRAINT users_language_chk CHECK (preferred_language IN ('es','en','fr'))
+- - SSE / streaming (P02-S04 `POST /api/v1/chat/conversations/{id}/stream`) debe verificarse explícitamente a través del proxy cuando aterrice; vite preserva chunked transfer por defecto.
 
 ## Operating note
 This file is derived. Use it as an execution contract, but reconcile against the raw guide when ambiguity matters.

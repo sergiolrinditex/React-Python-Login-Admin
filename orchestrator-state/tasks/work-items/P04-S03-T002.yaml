@@ -32,3 +32,4 @@ write_set:
 handoff_path: orchestrator-state/tasks/handoffs/P04-S03-T002.md
 evidence_dir: orchestrator-state/tasks/evidence/P04-S03-T002
 source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 4.3 — Audit and usage"
+source_fingerprint: "57bf0f879ab1baa1bf57bdba11326c32619a77efd0bc6617517a6b61b9626495"

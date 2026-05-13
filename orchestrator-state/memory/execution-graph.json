@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-13T08:25:40+00:00",
+  "generated_at": "2026-05-13T10:27:40+00:00",
   "phase_order": [
     "P00",
     "P01",
@@ -48,12 +48,12 @@
         "P01-S02-T006",
         "P01-S02-T007",
         "P01-S03-T001",
-        "P01-S03-T002",
         "P01-S02-T008",
         "P01-S02-T009",
         "P01-S02-T010",
         "P01-S02-T011",
-        "P01-S02-T012"
+        "P01-S02-T012",
+        "P01-S03-T002"
       ]
     },
     {
@@ -68,8 +68,8 @@
       "task_ids": [
         "P02-S01-T001",
         "P02-S02-T001",
-        "P02-S02-T002",
         "P02-S03-T001",
+        "P02-S03-T003",
         "P02-S03-T002",
         "P02-S04-T001",
         "P02-S04-T002",
@@ -78,7 +78,8 @@
         "P02-S06-T001",
         "P02-S06-T002",
         "P02-S07-T001",
-        "P02-S08-T001"
+        "P02-S08-T001",
+        "P02-S02-T002"
       ]
     },
     {
@@ -230,18 +231,19 @@
       "tables_raw": "—",
       "origin_instr_raw": "§1.3#stack",
       "origin_techguide_raw": "§3#commands",
+      "source_fingerprint": "22f88417e95a1b95a592355532c6fbf3babbbddf35abb47da045db4e5b24740c",
+      "last_stop_at": "2026-05-11T09:29:32+00:00",
+      "validator_next_status": "ready_for_close",
+      "claimed_at": "2026-05-11T08:51:03+00:00",
+      "claimed_by": "sergiolr",
+      "last_updated_by": "closer",
+      "validator_outcome": "approved",
+      "last_outcome": "committed",
       "last_blocker": {
         "reason": "blocked",
         "agent": "closer",
         "at": "2026-05-11T09:25:39+00:00"
-      },
-      "last_updated_by": "closer",
-      "claimed_at": "2026-05-11T08:51:03+00:00",
-      "last_stop_at": "2026-05-11T09:29:32+00:00",
-      "validator_outcome": "approved",
-      "last_outcome": "committed",
-      "validator_next_status": "ready_for_close",
-      "claimed_by": "sergiolr"
+      }
     },
     {
       "id": "P00-S01-T002",
@@ -304,18 +306,19 @@
       "tables_raw": "—",
       "origin_instr_raw": "§11.0#frontend-libs",
       "origin_techguide_raw": "§2.0#frontend-libs",
+      "source_fingerprint": "49cdb5957572cb5e189bad9a71717c8faacd0529e94c333992681ba81ca50a19",
+      "last_stop_at": "2026-05-11T10:15:15+00:00",
+      "validator_next_status": "ready_for_close",
+      "claimed_at": "2026-05-11T09:32:44+00:00",
+      "claimed_by": "sergiolr",
+      "last_updated_by": "closer",
+      "validator_outcome": "approved",
+      "last_outcome": "committed",
       "last_blocker": {
         "reason": "blocked_false_done",
         "agent": "closer",
         "at": "2026-05-11T10:12:34+00:00"
-      },
-      "last_updated_by": "closer",
-      "claimed_at": "2026-05-11T09:32:44+00:00",
-      "last_stop_at": "2026-05-11T10:15:15+00:00",
-      "validator_outcome": "approved",
-      "last_outcome": "committed",
-      "validator_next_status": "ready_for_close",
-      "claimed_by": "sergiolr"
+      }
     },
     {
       "id": "P00-S01-T003",
@@ -377,13 +380,14 @@
       "tables_raw": "—",
       "origin_instr_raw": "§11.0#backend-libs",
       "origin_techguide_raw": "§2.0#backend-libs",
-      "last_updated_by": "main-orchestrator-merge-fix",
-      "claimed_at": "2026-05-11T09:33:23+00:00",
+      "source_fingerprint": "e0b09a513d29d1a92d88b8c7c0cd9e84bb855f1076724d4b22aa045a5265e9a8",
       "last_stop_at": "2026-05-11T12:31:19+00:00",
-      "validator_outcome": "approved",
-      "last_outcome": "committed",
       "validator_next_status": "ready_for_close",
-      "claimed_by": "sergiolr"
+      "claimed_at": "2026-05-11T09:33:23+00:00",
+      "claimed_by": "sergiolr",
+      "last_updated_by": "main-orchestrator-merge-fix",
+      "validator_outcome": "approved",
+      "last_outcome": "committed"
     },
     {
       "id": "P00-S01-T004",
@@ -454,8 +458,9 @@
       "tables_raw": "—",
       "origin_instr_raw": "§7#theme",
       "origin_techguide_raw": "§7#design-system",
-      "last_updated_by": "main-orchestrator-merge-fix",
+      "source_fingerprint": "cecf2be4f7dd78f49639c22f293a4210dcd7f8a54109180af5b707dbbd7ec02f",
       "last_stop_at": "2026-05-11T12:31:19+00:00",
+      "last_updated_by": "main-orchestrator-merge-fix",
       "validator_outcome": "approved",
       "last_outcome": "committed"
     },
@@ -524,18 +529,19 @@
       "tables_raw": "users",
       "origin_instr_raw": "§6#i18n",
       "origin_techguide_raw": "§6.5#verification-data",
+      "source_fingerprint": "e8ffe71a17ceee3092dfd96d363d6d65da79ac83bb503d54a02f6c695868b24e",
+      "last_stop_at": "2026-05-11T13:52:40+00:00",
+      "validator_next_status": "ready_for_close",
+      "claimed_at": "2026-05-11T13:03:21+00:00",
+      "claimed_by": "sergiolr",
+      "last_updated_by": "closer",
+      "validator_outcome": "approved",
+      "last_outcome": "committed",
       "last_blocker": {
         "reason": "blocked_false_done",
         "agent": "closer",
         "at": "2026-05-11T13:51:48+00:00"
-      },
-      "last_updated_by": "closer",
-      "claimed_at": "2026-05-11T13:03:21+00:00",
-      "last_stop_at": "2026-05-11T13:52:40+00:00",
-      "validator_outcome": "approved",
-      "last_outcome": "committed",
-      "validator_next_status": "ready_for_close",
-      "claimed_by": "sergiolr"
+      }
     },
     {
       "id": "P00-S02-T001",
@@ -597,14 +603,15 @@
       "tables_raw": "—",
       "origin_instr_raw": "§3.3#infra",
       "origin_techguide_raw": "§11#deploy",
-      "last_updated_by": "closer-manual-recovery",
-      "last_note": "manual recovery after closer git-workflow stash conflict; commit fec3aed pushed to origin/feat/P00-S02-T001-docker-compose-services",
-      "claimed_at": "2026-05-11T09:44:56+00:00",
+      "source_fingerprint": "b7fb4f9a491d190a2dafd0cfd01993fbc702b9cbdd365030448ec6251ad6aa60",
       "last_stop_at": "2026-05-11T10:06:36+00:00",
-      "validator_outcome": "approved",
-      "last_outcome": "pass",
       "validator_next_status": "ready_for_close",
-      "claimed_by": "sergiolr"
+      "claimed_at": "2026-05-11T09:44:56+00:00",
+      "claimed_by": "sergiolr",
+      "last_updated_by": "closer-manual-recovery",
+      "validator_outcome": "approved",
+      "last_note": "manual recovery after closer git-workflow stash conflict; commit fec3aed pushed to origin/feat/P00-S02-T001-docker-compose-services",
+      "last_outcome": "pass"
     },
     {
       "id": "P00-S02-T002",
@@ -666,8 +673,9 @@
       "tables_raw": "—",
       "origin_instr_raw": "§3.3#observability",
       "origin_techguide_raw": "§6.2#health",
-      "last_updated_by": "main-orchestrator-merge-fix",
+      "source_fingerprint": "b942021870106990ecfe422861c0adcfabb88578fb126cf4523c715fda436b5b",
       "last_stop_at": "2026-05-11T12:31:19+00:00",
+      "last_updated_by": "main-orchestrator-merge-fix",
       "validator_outcome": "approved",
       "last_outcome": "committed"
     },
@@ -744,13 +752,14 @@
       "tables_raw": "users, employee_profiles, rag_collections, documents, ai_providers, mcp_servers, agents",
       "origin_instr_raw": "§15#verification-data",
       "origin_techguide_raw": "§6.5#verification-data",
-      "last_updated_by": "closer",
-      "claimed_at": "2026-05-11T13:03:01+00:00",
+      "source_fingerprint": "e16e196647af58343b42da870369ef6d5b535c63beb2a92f11a6f2eedbe84139",
       "last_stop_at": "2026-05-11T14:09:14+00:00",
-      "validator_outcome": "approved",
-      "last_outcome": "committed",
       "validator_next_status": "ready_for_close",
-      "claimed_by": "sergiolr"
+      "claimed_at": "2026-05-11T13:03:01+00:00",
+      "claimed_by": "sergiolr",
+      "last_updated_by": "closer",
+      "validator_outcome": "approved",
+      "last_outcome": "committed"
     },
     {
       "id": "P00-S02-T004",
@@ -812,18 +821,19 @@
       "tables_raw": "—",
       "origin_instr_raw": "runtime-followup#FU-20260511145446-fix-verification-data-loader-meta-jsonb-sql-cast",
       "origin_techguide_raw": "runtime-followup#FU-20260511145446-fix-verification-data-loader-meta-jsonb-sql-cast",
+      "source_fingerprint": "49e4b395bc7f35d7310415436c600ba7a0e26b13451f0ca2000ba3de6bd16d22",
+      "last_stop_at": "2026-05-11T16:27:17+00:00",
+      "validator_next_status": "ready_for_close",
+      "claimed_at": "2026-05-11T15:44:30+00:00",
+      "claimed_by": "sergiolr",
+      "last_updated_by": "closer",
+      "validator_outcome": "approved",
+      "last_outcome": "committed",
       "last_blocker": {
         "reason": "blocked_false_done",
         "agent": "closer",
         "at": "2026-05-11T16:25:37+00:00"
-      },
-      "last_updated_by": "closer",
-      "claimed_at": "2026-05-11T15:44:30+00:00",
-      "last_stop_at": "2026-05-11T16:27:17+00:00",
-      "validator_outcome": "approved",
-      "last_outcome": "committed",
-      "validator_next_status": "ready_for_close",
-      "claimed_by": "sergiolr"
+      }
     },
     {
       "id": "P01-S01-T001",
@@ -898,18 +908,19 @@
       "tables_raw": "users, employee_profiles, roles, permissions, user_roles, refresh_tokens, mfa_totp_secrets, password_reset_tokens, audit_logs",
       "origin_instr_raw": "§3.1#auth-perfiles",
       "origin_techguide_raw": "§10.3#users",
+      "source_fingerprint": "03fc614361d6520ba7216a0315d3cc16f84dd37d1188890afcb4711d2a9d972d",
+      "last_stop_at": "2026-05-11T15:19:30+00:00",
+      "validator_next_status": "ready_for_close",
+      "claimed_at": "2026-05-11T14:15:18+00:00",
+      "claimed_by": "sergiolr",
+      "last_updated_by": "closer",
+      "validator_outcome": "approved",
+      "last_outcome": "committed",
       "last_blocker": {
         "reason": "blocked_false_done",
         "agent": "closer",
         "at": "2026-05-11T15:14:55+00:00"
-      },
-      "last_updated_by": "closer",
-      "claimed_at": "2026-05-11T14:15:18+00:00",
-      "last_stop_at": "2026-05-11T15:19:30+00:00",
-      "validator_outcome": "approved",
-      "last_outcome": "committed",
-      "validator_next_status": "ready_for_close",
-      "claimed_by": "sergiolr"
+      }
     },
     {
       "id": "P01-S02-T001",
@@ -976,13 +987,14 @@
       "tables_raw": "users, employee_profiles, audit_logs",
       "origin_instr_raw": "§3.1#auth-perfiles",
       "origin_techguide_raw": "§6.2#POST-/api/v1/auth/sign-up",
-      "last_updated_by": "closer",
-      "claimed_at": "2026-05-11T16:33:10+00:00",
+      "source_fingerprint": "4e1ee33a90f078c4bd8b83944417ed32c205d60ef4335cd3e2b79c20390e91a8",
       "last_stop_at": "2026-05-11T17:40:28+00:00",
-      "validator_outcome": "approved",
-      "last_outcome": "committed",
       "validator_next_status": "ready_for_close",
-      "claimed_by": "sergiolr"
+      "claimed_at": "2026-05-11T16:33:10+00:00",
+      "claimed_by": "sergiolr",
+      "last_updated_by": "closer",
+      "validator_outcome": "approved",
+      "last_outcome": "committed"
     },
     {
       "id": "P01-S02-T002",
@@ -1048,13 +1060,14 @@
       "tables_raw": "users, refresh_tokens, audit_logs",
       "origin_instr_raw": "§3.1#auth-perfiles",
       "origin_techguide_raw": "§6.2#POST-/api/v1/auth/sign-in",
-      "last_updated_by": "closer",
-      "claimed_at": "2026-05-11T17:49:45+00:00",
+      "source_fingerprint": "d757bed2cd28506790f891ba20560d3ca9980bfd4b24805eaa79d483cb3e046d",
       "last_stop_at": "2026-05-12T04:34:19.504170+00:00",
-      "validator_outcome": "approved",
-      "last_outcome": "committed",
       "validator_next_status": "ready_for_close",
-      "claimed_by": "sergiolr"
+      "claimed_at": "2026-05-11T17:49:45+00:00",
+      "claimed_by": "sergiolr",
+      "last_updated_by": "closer",
+      "validator_outcome": "approved",
+      "last_outcome": "committed"
     },
     {
       "id": "P01-S02-T003",
@@ -1118,13 +1131,14 @@
       "tables_raw": "refresh_tokens",
       "origin_instr_raw": "§3.1#auth-perfiles",
       "origin_techguide_raw": "§6.2#POST-/api/v1/auth/refresh",
-      "last_updated_by": "closer",
-      "claimed_at": "2026-05-12T06:05:28+00:00",
+      "source_fingerprint": "044fadfd75108afd5546a17a777cfbcaa999069d2cc7a90efebccabb19cbffaa",
       "last_stop_at": "2026-05-12T07:23:32+00:00",
-      "validator_outcome": "approved",
-      "last_outcome": "committed",
       "validator_next_status": "ready_for_close",
-      "claimed_by": "sergiolr"
+      "claimed_at": "2026-05-12T06:05:28+00:00",
+      "claimed_by": "sergiolr",
+      "last_updated_by": "closer",
+      "validator_outcome": "approved",
+      "last_outcome": "committed"
     },
     {
       "id": "P01-S02-T004",
@@ -1189,13 +1203,14 @@
       "tables_raw": "refresh_tokens, audit_logs",
       "origin_instr_raw": "§3.1#auth-perfiles",
       "origin_techguide_raw": "§6.2#POST-/api/v1/auth/logout",
-      "last_updated_by": "closer",
-      "claimed_at": "2026-05-12T07:33:44+00:00",
+      "source_fingerprint": "f3e13af9ccdb6965a7ba7122636d87aaed6218225545c09c060d1ed662f56cd0",
       "last_stop_at": "2026-05-12T08:40:19+00:00",
-      "validator_outcome": "approved",
-      "last_outcome": "committed",
       "validator_next_status": "ready_for_close",
-      "claimed_by": "sergiolr"
+      "claimed_at": "2026-05-12T07:33:44+00:00",
+      "claimed_by": "sergiolr",
+      "last_updated_by": "closer",
+      "validator_outcome": "approved",
+      "last_outcome": "committed"
     },
     {
       "id": "P01-S02-T005",
@@ -1246,7 +1261,7 @@
         "backend/tests/integration/test_password_reset.py"
       ],
       "handoff_path": "orchestrator-state/tasks/handoffs/P01-S02-T005.md",
-      "evidence_dir": "orchestrator-state/tasks/evidence/P01-S02-T005/",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P01-S02-T005",
       "notes": [],
       "dependency_mode": "explicit_dag",
       "depends_on_raw": "P01-S02-T001",
@@ -1264,16 +1279,14 @@
       "tables_raw": "users, password_reset_tokens, audit_logs",
       "origin_instr_raw": "§3.1#auth-perfiles",
       "origin_techguide_raw": "§6.2#POST-/api/v1/auth/forgot-password",
+      "source_fingerprint": "2cb06443b863c297682c8d657d7df9bb24fedbfbc191d7587fb155257a1ad6ad",
+      "last_stop_at": "2026-05-12T17:17:29+00:00",
+      "validator_next_status": "ready_for_close",
       "claimed_at": "2026-05-12T14:51:19+00:00",
       "claimed_by": "sergiolr",
-      "claim_terminal_task_env": "P01-S02-T005",
-      "task_pack_path": "orchestrator-state/tasks/task-packs/P01-S02-T005.md",
-      "last_outcome": "committed",
       "last_updated_by": "closer",
-      "last_stop_at": "2026-05-12T17:17:29+00:00",
       "validator_outcome": "approved",
-      "validator_next_status": "ready_for_close",
-      "report_path": "orchestrator-state/tasks/reports/P01-S02-T005.md"
+      "last_outcome": "committed"
     },
     {
       "id": "P01-S02-T006",
@@ -1321,7 +1334,7 @@
         "backend/tests/integration/test_mfa.py"
       ],
       "handoff_path": "orchestrator-state/tasks/handoffs/P01-S02-T006.md",
-      "evidence_dir": "orchestrator-state/tasks/evidence/P01-S02-T006/",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P01-S02-T006",
       "notes": [],
       "dependency_mode": "explicit_dag",
       "depends_on_raw": "P01-S02-T002",
@@ -1339,16 +1352,14 @@
       "tables_raw": "mfa_totp_secrets, refresh_tokens, audit_logs",
       "origin_instr_raw": "§3.1#auth-perfiles",
       "origin_techguide_raw": "§6.2#POST-/api/v1/auth/2fa/verify",
+      "source_fingerprint": "222961ffb2cb1834ddaa512e5e918f25b50d5fc676c3caef8d7e59a7de5d94f6",
+      "last_stop_at": "2026-05-12T19:53:24+00:00",
+      "validator_next_status": "ready_for_close",
       "claimed_at": "2026-05-12T17:20:49+00:00",
       "claimed_by": "sergiolr",
-      "claim_terminal_task_env": "P01-S02-T006",
-      "task_pack_path": "orchestrator-state/tasks/task-packs/P01-S02-T006.md",
-      "last_outcome": "committed",
       "last_updated_by": "closer",
-      "last_stop_at": "2026-05-12T19:53:24+00:00",
       "validator_outcome": "approved",
-      "validator_next_status": "ready_for_close",
-      "report_path": "orchestrator-state/tasks/reports/P01-S02-T006.md"
+      "last_outcome": "committed"
     },
     {
       "id": "P01-S02-T007",
@@ -1396,7 +1407,7 @@
         "backend/tests/integration/test_users_me.py"
       ],
       "handoff_path": "orchestrator-state/tasks/handoffs/P01-S02-T007.md",
-      "evidence_dir": "orchestrator-state/tasks/evidence/P01-S02-T007/",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P01-S02-T007",
       "notes": [],
       "dependency_mode": "explicit_dag",
       "depends_on_raw": "P01-S02-T006",
@@ -1414,16 +1425,14 @@
       "tables_raw": "users, employee_profiles",
       "origin_instr_raw": "§3.1#auth-perfiles",
       "origin_techguide_raw": "§6.2#GET-/api/v1/users/me",
+      "source_fingerprint": "217a477739793cd5f601bc7b23ca1f6a80dd4d8cba1fb063fa337dc6a7499297",
+      "last_stop_at": "2026-05-12T21:04:09+00:00",
+      "validator_next_status": "ready_for_close",
       "claimed_at": "2026-05-12T20:00:49+00:00",
       "claimed_by": "sergiolr",
-      "claim_terminal_task_env": "P01-S02-T007",
-      "task_pack_path": "orchestrator-state/tasks/task-packs/P01-S02-T007.md",
-      "last_outcome": "committed",
       "last_updated_by": "closer",
-      "last_stop_at": "2026-05-12T21:04:09+00:00",
       "validator_outcome": "approved",
-      "validator_next_status": "ready_for_close",
-      "report_path": "orchestrator-state/tasks/reports/P01-S02-T007.md"
+      "last_outcome": "committed"
     },
     {
       "id": "P01-S03-T001",
@@ -1475,7 +1484,7 @@
         "frontend/src/app/router.tsx"
       ],
       "handoff_path": "orchestrator-state/tasks/handoffs/P01-S03-T001.md",
-      "evidence_dir": "orchestrator-state/tasks/evidence/P01-S03-T001/",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P01-S03-T001",
       "notes": [],
       "dependency_mode": "explicit_dag",
       "depends_on_raw": "P01-S02-T002,P01-S02-T006,P01-S02-T007,P00-S01-T002",
@@ -1493,102 +1502,14 @@
       "tables_raw": "users, refresh_tokens",
       "origin_instr_raw": "§3.2#login-propio",
       "origin_techguide_raw": "§6.1#auth-routes",
+      "source_fingerprint": "27ad7b5ea7057c149129c69e0752eaa62796f70aa5f13e47a8844c43d8d5174c",
+      "last_stop_at": "2026-05-13T04:48:58+00:00",
+      "validator_next_status": "ready_for_close",
       "claimed_at": "2026-05-12T21:07:00+00:00",
       "claimed_by": "sergiolr",
-      "claim_terminal_task_env": null,
-      "task_pack_path": "orchestrator-state/tasks/task-packs/P01-S03-T001.md",
-      "last_outcome": "committed",
       "last_updated_by": "closer",
-      "last_stop_at": "2026-05-13T04:48:58+00:00",
       "validator_outcome": "approved",
-      "validator_next_status": "ready_for_close",
-      "report_path": "orchestrator-state/tasks/reports/P01-S03-T001.md"
-    },
-    {
-      "id": "P01-S03-T002",
-      "phase_id": "P01",
-      "step_id": "P01-S03",
-      "title": "Backend/infra: configure cross-origin between frontend (:5173) and backend (:8000) — vite proxy or CORSMiddleware",
-      "status": "done",
-      "kind": "wiring",
-      "target": "Backend/infra: configure cross-origin between frontend (:5173) and backend (:8000) — vite proxy or CORSMiddleware",
-      "build_state": "planned",
-      "product_increment": "current",
-      "risk_level": "critical",
-      "verify_mode": "human",
-      "depends_on": [
-        "P01-S03-T001"
-      ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry",
-      "acceptance": [
-        "From a real browser at http://localhost:5173",
-        "a fetch with credentials:'include' to http://localhost:8000/api/v1/auth/refresh (or to /api/v1/auth/refresh same-origin if the chosen fix is vite proxy) succeeds preflight and reaches the backend handler",
-        "returning the documented 200 (with refresh cookie) or 401 AUTH_SESSION_EXPIRED envelope. Same for POST /api/v1/auth/sign-in",
-        "POST /api/v1/auth/2fa/verify",
-        "GET /api/v1/users/me",
-        "POST /api/v1/auth/logout. TECHNICAL_GUIDE updated to document the chosen cross-origin strategy (vite proxy vs backend CORS) and STACK_PROFILE/Coverage Registry reflect any new write_set."
-      ],
-      "verification_commands": [
-        "Re-run /verify-slice P01-S03-T001 F3-F5 in browser end-to-end with the J100 verification user (employee.verification@inditex-sandbox.com + TOTP from data/verification/auth/mfa_primary.json): sign-in → 2fa/verify → cookie set → reload protected route → AuthProvider.hydrate /refresh + /me → status authenticated → renders children → logout → cookie cleared → reload → redirect to /auth/sign-in?next=… . All without net::ERR_FAILED in DevTools network tab. Confirm OPTIONS preflight succeeds: curl -i -X OPTIONS http://localhost:8000/api/v1/auth/refresh -H 'Origin: http://localhost:5173' -H 'Access-Control-Request-Method: POST' returns 200/204 with Access-Control-Allow-Credentials:true and Access-Control-Allow-Origin echoed back (or proxy-mode: same-origin path returns the actual handler response)."
-      ],
-      "allowed_paths": [
-        "backend/app/main.py",
-        "frontend/vite.config.ts",
-        "frontend/.env.example",
-        "docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md"
-      ],
-      "conflict_groups": [
-        "back:infra",
-        "front:infra"
-      ],
-      "write_set": [
-        "backend/app/main.py",
-        "frontend/vite.config.ts",
-        "frontend/.env.example",
-        "docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md"
-      ],
-      "journey_refs": [
-        "J100",
-        "J101",
-        "J102",
-        "J103",
-        "J104",
-        "J105"
-      ],
-      "route": "",
-      "endpoint": "",
-      "tables": [],
-      "handoff_path": "orchestrator-state/tasks/handoffs/P01-S03-T002.md",
-      "evidence_dir": "orchestrator-state/tasks/evidence/P01-S03-T002/",
-      "origin": {
-        "type": "runtime_followup",
-        "followup_id": "FU-20260513043500-backend-infra-configure-cross-origin-between-fro",
-        "origin_task_id": "P01-S03-T001",
-        "severity": "critical",
-        "kind": "wiring",
-        "triage": {
-          "scope_classification": "missing_coverage",
-          "why_not_debugger": "CORS configuration is outside T001's Write set (frontend/src/features/auth/** + frontend/src/app/router.tsx). The two clean fixes both live elsewhere: (a) frontend/vite.config.ts server.proxy reverse-proxying /api → http://localhost:8000 (recommended; same pattern as nginx/cloudfront in prod, BFF-style same-origin); (b) backend/app/main.py registering CORSMiddleware(allow_origins=['http://localhost:5173'], allow_credentials=true, allow_headers=['authorization','content-type','x-request-id'], allow_methods=['GET','POST','PATCH','PUT','DELETE','OPTIONS']). Either path requires Write set expansion outside T001 plus a TECHNICAL_GUIDE amendment to spec the cross-origin / reverse-proxy strategy. Debugger inside T001 cannot legitimately touch any of these paths without violating Write set discipline. T001 is the slice that EXPOSES the gap (first frontend slice making cross-origin XHR from a real browser); it does not introduce the gap.",
-          "decision": "followup_only_when_outside_current_slice",
-          "debugger_path": "in_scope_defects_use_validator_tester_debugger_retest",
-          "warnings": []
-        }
-      },
-      "notes": [
-        "Runtime follow-up promoted from FU-20260513043500-backend-infra-configure-cross-origin-between-fro",
-        "Description: From the browser, every cross-origin XHR from http://localhost:5173 to http://localhost:8000 fails the CORS preflight: OPTIONS /api/v1/auth/refresh → 405 Method Not Allowed (no OPTIONS handler, no CORSMiddleware registered). frontend/vite.config.ts has no server.proxy block. As a result, AuthProvider.hydrate's POST /api/v1/auth/refresh on every protected-route mount is rejected by the browser with net::ERR_FAILED (caught by the auth code as a session-expired fallback, which is correct defensive behavior, but blocks all positive end-to-end auth flows from a real browser). All three contractually consumed endpoints by T001 (POST /auth/refresh, GET /users/me, POST /auth/logout) are equally blocked. This will block P03-S01-T001 SignInPage immediately when its form submits POST /api/v1/auth/sign-in. TECHNICAL_GUIDE has no spec for cross-origin or reverse proxy. STACK_PROFILE declares :5173 frontend and :8000 backend on different origins without a documented bridge.\\n\\nObserved during /verify-slice P01-S03-T001:\\n  - F1, F2 (redirect-to-sign-in flows) PASS — they happen client-side without backend.\\n  - F6 (token-storage invariant) PASS — code never touches storage.\\n  - F7 (open-redirect smoke on stub) PASS — stub is read-only.\\n  - F3, F4, F5 (sign-in → /me → logout) BLOCKED — cannot reproduce in browser without same-origin or CORS.",
-        "Triage: missing_coverage; why_not_debugger=CORS configuration is outside T001's Write set (frontend/src/features/auth/** + frontend/src/app/router.tsx). The two clean fixes both live elsewhere: (a) frontend/vite.config.ts server.proxy reverse-proxying /api → http://localhost:8000 (recommended; same pattern as nginx/cloudfront in prod, BFF-style same-origin); (b) backend/app/main.py registering CORSMiddleware(allow_origins=['http://localhost:5173'], allow_credentials=true, allow_headers=['authorization','content-type','x-request-id'], allow_methods=['GET','POST','PATCH','PUT','DELETE','OPTIONS']). Either path requires Write set expansion outside T001 plus a TECHNICAL_GUIDE amendment to spec the cross-origin / reverse-proxy strategy. Debugger inside T001 cannot legitimately touch any of these paths without violating Write set discipline. T001 is the slice that EXPOSES the gap (first frontend slice making cross-origin XHR from a real browser); it does not introduce the gap."
-      ],
-      "claimed_at": "2026-05-13T04:53:19+00:00",
-      "claimed_by": "sergiolr",
-      "claim_terminal_task_env": "P01-S03-T002",
-      "task_pack_path": "orchestrator-state/tasks/task-packs/P01-S03-T002.md",
-      "last_outcome": "committed",
-      "last_updated_by": "closer",
-      "last_stop_at": "2026-05-13T06:05:23+00:00",
-      "validator_outcome": "approved",
-      "validator_next_status": "ready_for_close",
-      "report_path": "orchestrator-state/tasks/reports/P01-S03-T002.md"
+      "last_outcome": "committed"
     },
     {
       "id": "P01-S02-T008",
@@ -1646,13 +1567,14 @@
       "tables_raw": "—",
       "origin_instr_raw": "runtime-followup#FU-20260512044241-fix-dev-restart-profile-sh-verification-data-boo",
       "origin_techguide_raw": "runtime-followup#FU-20260512044241-fix-dev-restart-profile-sh-verification-data-boo",
-      "last_updated_by": "closer",
-      "claimed_at": "2026-05-12T05:00:25+00:00",
+      "source_fingerprint": "52e82118b3214b53a3b2b9b81f031a3cefef90e61a54e35816604dec2baf41df",
       "last_stop_at": "2026-05-12T05:32:56+00:00",
-      "validator_outcome": "approved",
-      "last_outcome": "committed",
       "validator_next_status": "ready_for_close",
-      "claimed_by": "sergiolr"
+      "claimed_at": "2026-05-12T05:00:25+00:00",
+      "claimed_by": "sergiolr",
+      "last_updated_by": "closer",
+      "validator_outcome": "approved",
+      "last_outcome": "committed"
     },
     {
       "id": "P01-S02-T009",
@@ -1719,13 +1641,14 @@
         ".env.example",
         "infra:env"
       ],
-      "last_updated_by": "closer",
-      "claimed_at": "2026-05-12T05:00:36+00:00",
+      "source_fingerprint": "2ac3e6eb0b7b312fbbfc43b2343213a5ced30f3c1200fa03cc79c3eb66afa98a",
       "last_stop_at": "2026-05-12T05:46:16+00:00",
-      "validator_outcome": "approved",
-      "last_outcome": "committed",
       "validator_next_status": "ready_for_close",
-      "claimed_by": "sergiolr"
+      "claimed_at": "2026-05-12T05:00:36+00:00",
+      "claimed_by": "sergiolr",
+      "last_updated_by": "closer",
+      "validator_outcome": "approved",
+      "last_outcome": "committed"
     },
     {
       "id": "P01-S02-T010",
@@ -1787,13 +1710,14 @@
       "tables_raw": "—",
       "origin_instr_raw": "runtime-followup#FU-20260512044309-make-bootstrap-three-docs-py-refresh-preserve-cl",
       "origin_techguide_raw": "runtime-followup#FU-20260512044309-make-bootstrap-three-docs-py-refresh-preserve-cl",
-      "last_updated_by": "closer",
-      "claimed_at": "2026-05-12T05:03:03+00:00",
+      "source_fingerprint": "22f46d06b1a2ce440e77bb95410aa6168ca8de731ea5d72c1c99f87791cd686c",
       "last_stop_at": "2026-05-12T05:40:20+00:00",
-      "validator_outcome": "approved",
-      "last_outcome": "committed",
       "validator_next_status": "ready_for_close",
-      "claimed_by": "sergiolr"
+      "claimed_at": "2026-05-12T05:03:03+00:00",
+      "claimed_by": "sergiolr",
+      "last_updated_by": "closer",
+      "validator_outcome": "approved",
+      "last_outcome": "committed"
     },
     {
       "id": "P01-S02-T011",
@@ -1846,7 +1770,7 @@
         "docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md"
       ],
       "handoff_path": "orchestrator-state/tasks/handoffs/P01-S02-T011.md",
-      "evidence_dir": "orchestrator-state/tasks/evidence/P01-S02-T011/",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P01-S02-T011",
       "notes": [],
       "dependency_mode": "explicit_dag",
       "depends_on_raw": "P01-S02-T004",
@@ -1864,21 +1788,19 @@
       "tables_raw": "—",
       "origin_instr_raw": "runtime-followup#FU-20260512082956-fix-refresh-cookie-path-mismatch-auth-vs-api-v1-",
       "origin_techguide_raw": "runtime-followup#FU-20260512082956-fix-refresh-cookie-path-mismatch-auth-vs-api-v1-",
+      "source_fingerprint": "563fc325aaee1fd5e4d1770b3f7798f596af07dc0c523603dc063e13bf704c78",
+      "last_stop_at": "2026-05-12T13:56:59+00:00",
+      "validator_next_status": "ready_for_close",
       "claimed_at": "2026-05-12T09:26:10+00:00",
       "claimed_by": "sergiolr",
-      "claim_terminal_task_env": "P01-S02-T011",
-      "task_pack_path": "orchestrator-state/tasks/task-packs/P01-S02-T011.md",
-      "last_outcome": "committed",
       "last_updated_by": "closer",
-      "last_stop_at": "2026-05-12T13:56:59+00:00",
       "validator_outcome": "approved",
-      "validator_next_status": "ready_for_close",
+      "last_outcome": "committed",
       "last_blocker": {
         "reason": "blocked_false_done",
         "agent": "closer",
         "at": "2026-05-12T13:55:38+00:00"
-      },
-      "report_path": "orchestrator-state/tasks/reports/P01-S02-T011.md"
+      }
     },
     {
       "id": "P01-S02-T012",
@@ -1918,7 +1840,7 @@
         "scripts/dev-restart.profile.sh"
       ],
       "handoff_path": "orchestrator-state/tasks/handoffs/P01-S02-T012.md",
-      "evidence_dir": "orchestrator-state/tasks/evidence/P01-S02-T012/",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P01-S02-T012",
       "notes": [],
       "dependency_mode": "explicit_dag",
       "depends_on_raw": "P01-S02-T008",
@@ -1936,14 +1858,93 @@
       "tables_raw": "—",
       "origin_instr_raw": "runtime-followup#FU-20260512052820-fix-dev-restart-db-health-race-wait-for-host-tcp",
       "origin_techguide_raw": "runtime-followup#FU-20260512052820-fix-dev-restart-db-health-race-wait-for-host-tcp",
+      "source_fingerprint": "8f6cbf437d4f8456653c1da13f4668a21839e854de4fc9d902274427b75e4fbb",
+      "last_stop_at": "2026-05-12T10:09:30+00:00",
+      "validator_next_status": "ready_for_close",
       "claimed_at": "2026-05-12T09:16:14+00:00",
       "claimed_by": "sergiolr",
-      "last_outcome": "committed",
       "last_updated_by": "closer",
-      "last_stop_at": "2026-05-12T10:09:30+00:00",
       "validator_outcome": "approved",
+      "last_outcome": "committed"
+    },
+    {
+      "id": "P01-S03-T002",
+      "phase_id": "P01",
+      "step_id": "P01-S03",
+      "title": "Backend/infra: configure cross-origin between frontend (:5173) and backend (:8000) — vite proxy or CORSMiddleware",
+      "status": "done",
+      "build_state": "planned",
+      "product_increment": "current",
+      "risk_level": "critical",
+      "verify_mode": "human",
+      "depends_on": [
+        "P01-S03-T001"
+      ],
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime follow-up P01-S03-T001",
+      "acceptance": [
+        "From a real browser at http://localhost:5173, a fetch with credentials:'include' to http://localhost:8000/api/v1/auth/refresh (or to /api/v1/auth/refresh same-origin if the chosen fix is vite proxy) succeeds preflight and reaches the backend handler, returning the documented 200 (with refresh cookie) or 401 AUTH_SESSION_EXPIRED envelope. Same for POST /api/v1/auth/sign-in, POST /api/v1/auth/2fa/verify, GET /api/v1/users/me, POST /api/v1/auth/logout. TECHNICAL_GUIDE updated to document the chosen cross-origin strategy (vite proxy vs backend CORS) and STACK_PROFILE/Coverage Registry reflect any new write_set."
+      ],
+      "verification_commands": [
+        "Re-run /verify-slice P01-S03-T001 F3-F5 in browser end-to-end with the J100 verification user (employee.verification@inditex-sandbox.com + TOTP from data/verification/auth/mfa_primary.json): sign-in → 2fa/verify → cookie set → reload protected route → AuthProvider.hydrate /refresh + /me → status authenticated → renders children → logout → cookie cleared → reload → redirect to /auth/sign-in?next=… . All without net::ERR_FAILED in DevTools network tab. Confirm OPTIONS preflight succeeds: curl -i -X OPTIONS http://localhost:8000/api/v1/auth/refresh -H 'Origin: http://localhost:5173' -H 'Access-Control-Request-Method: POST' returns 200/204 with Access-Control-Allow-Credentials:true and Access-Control-Allow-Origin echoed back (or proxy-mode: same-origin path returns the actual handler response)."
+      ],
+      "kind": "wiring",
+      "target": "Backend/infra: configure cross-origin between frontend (:5173) and backend (:8000) — vite proxy or CORSMiddleware",
+      "journey_refs": [
+        "J100",
+        "J101",
+        "J102",
+        "J103",
+        "J104",
+        "J105"
+      ],
+      "route": "",
+      "endpoint": "",
+      "tables": [],
+      "origin_instr": "runtime-followup#FU-20260513043500-backend-infra-configure-cross-origin-between-fro",
+      "origin_techguide": "runtime-followup#FU-20260513043500-backend-infra-configure-cross-origin-between-fro",
+      "allowed_paths": [
+        "backend/app/main.py",
+        "frontend/vite.config.ts",
+        "frontend/.env.example",
+        "docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md"
+      ],
+      "conflict_groups": [
+        "back:infra",
+        "front:infra"
+      ],
+      "write_set": [
+        "backend/app/main.py",
+        "frontend/vite.config.ts",
+        "frontend/.env.example",
+        "docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md"
+      ],
+      "handoff_path": "orchestrator-state/tasks/handoffs/P01-S03-T002.md",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P01-S03-T002",
+      "notes": [],
+      "dependency_mode": "explicit_dag",
+      "depends_on_raw": "P01-S03-T001",
+      "conflict_groups_raw": "back:infra, front:infra",
+      "write_set_raw": "backend/app/main.py, frontend/vite.config.ts, frontend/.env.example, docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md",
+      "product_increment_raw": "current",
+      "build_state_raw": "planned",
+      "risk_level_raw": "critical",
+      "verify_mode_raw": "human",
+      "kind_raw": "wiring",
+      "target_raw": "Backend/infra: configure cross-origin between frontend (:5173) and backend (:8000) — vite proxy or CORSMiddleware",
+      "journey_refs_raw": "J100, J101, J102, J103, J104, J105",
+      "screen_route_raw": "—",
+      "endpoint_raw": "—",
+      "tables_raw": "—",
+      "origin_instr_raw": "runtime-followup#FU-20260513043500-backend-infra-configure-cross-origin-between-fro",
+      "origin_techguide_raw": "runtime-followup#FU-20260513043500-backend-infra-configure-cross-origin-between-fro",
+      "source_fingerprint": "5a869aa9da11e1bb4de71e862284874fb06f489fbae086a913c0f02bf389afef",
+      "last_stop_at": "2026-05-13T06:05:23+00:00",
       "validator_next_status": "ready_for_close",
-      "report_path": "orchestrator-state/tasks/reports/P01-S02-T012.md"
+      "claimed_at": "2026-05-13T04:53:19+00:00",
+      "claimed_by": "sergiolr",
+      "last_updated_by": "closer",
+      "validator_outcome": "approved",
+      "last_outcome": "committed"
     },
     {
       "id": "P02-S01-T001",
@@ -2015,7 +2016,7 @@
         "backend/app/db/models/**"
       ],
       "handoff_path": "orchestrator-state/tasks/handoffs/P02-S01-T001.md",
-      "evidence_dir": "orchestrator-state/tasks/evidence/P02-S01-T001/",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P02-S01-T001",
       "notes": [],
       "dependency_mode": "explicit_dag",
       "depends_on_raw": "P01-S01-T001",
@@ -2033,23 +2034,21 @@
       "tables_raw": "conversations, messages, message_citations, ai_providers, ai_provider_credentials, ai_models, ai_model_tests, llm_usage_logs, rag_collections, documents, document_versions, document_chunks, document_embeddings, vectorization_jobs, mcp_servers, mcp_credentials, mcp_tools, mcp_resources, mcp_prompts, agents, mcp_agent_bindings, agent_runs, mcp_tool_invocations, mcp_approvals",
       "origin_instr_raw": "§3.1#chat-admin-rag-mcp",
       "origin_techguide_raw": "§10.3#ai-chat-rag-mcp",
+      "source_fingerprint": "be66ac7dbace08999c385814a95eea25f0247e2293ae6211f5bfd40404eef3ea",
+      "last_stop_at": "2026-05-13T08:15:06+00:00",
+      "validator_next_status": "ready_for_close",
       "claimed_at": "2026-05-13T07:02:04+00:00",
       "claimed_by": "sergiolr",
-      "claim_terminal_task_env": "P02-S01-T001",
-      "task_pack_path": "orchestrator-state/tasks/task-packs/P02-S01-T001.md",
-      "last_outcome": "committed",
       "last_updated_by": "closer",
-      "last_stop_at": "2026-05-13T08:15:06+00:00",
       "validator_outcome": "approved",
-      "validator_next_status": "ready_for_close",
-      "report_path": "orchestrator-state/tasks/reports/P02-S01-T001.md"
+      "last_outcome": "committed"
     },
     {
       "id": "P02-S02-T001",
       "phase_id": "P02",
       "step_id": "P02-S02",
       "title": "Security encryption permissions rate limit",
-      "status": "ready_for_close",
+      "status": "done",
       "build_state": "planned",
       "product_increment": "v1",
       "risk_level": "medium",
@@ -2092,7 +2091,7 @@
         "backend/tests/unit/test_security.py"
       ],
       "handoff_path": "orchestrator-state/tasks/handoffs/P02-S02-T001.md",
-      "evidence_dir": "orchestrator-state/tasks/evidence/P02-S02-T001/cycle-2",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P02-S02-T001",
       "notes": [],
       "dependency_mode": "explicit_dag",
       "depends_on_raw": "P01-S01-T001,P00-S01-T003",
@@ -2110,81 +2109,21 @@
       "tables_raw": "ai_provider_credentials, mcp_credentials, audit_logs",
       "origin_instr_raw": "§3.3#foundation",
       "origin_techguide_raw": "§10.2#auth-strategy",
+      "source_fingerprint": "228effafed55a5e7bd74c5a0690434c717eb7daca16df8af1fb8d9b2bfc20b9e",
+      "last_stop_at": "2026-05-13T08:25:41+00:00",
+      "validator_next_status": "ready_for_close",
       "claimed_at": "2026-05-13T07:02:37+00:00",
       "claimed_by": "sergiolr",
-      "claim_terminal_task_env": "P02-S02-T001",
-      "task_pack_path": "orchestrator-state/tasks/task-packs/P02-S02-T001.md",
-      "last_outcome": "pass",
-      "last_updated_by": "tester",
-      "last_stop_at": "2026-05-13T08:09:34+00:00",
+      "last_updated_by": "closer",
       "validator_outcome": "approved",
-      "validator_next_status": "ready_for_close"
-    },
-    {
-      "id": "P02-S02-T002",
-      "phase_id": "P02",
-      "step_id": "P02-S02",
-      "title": "Fix module-level _JWT_KEY in app.auth.tokens causing JWT decode failures in full-suite ordering",
-      "status": "blocked",
-      "kind": "bug",
-      "target": "Fix module-level _JWT_KEY in app.auth.tokens causing JWT decode failures in full-suite ordering",
-      "build_state": "planned",
-      "product_increment": "current",
-      "risk_level": "medium",
-      "verify_mode": "human",
-      "depends_on": [
-        "P02-S02-T001"
-      ],
-      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry",
-      "acceptance": [
-        "pytest backend/tests -k security runs with 0 FAIL for TestGetMeSecurityShape. Full suite failure count does not regress. app.auth.tokens.decode_token works correctly regardless of import order in the test runner."
-      ],
-      "verification_commands": [
-        "Run pytest backend/tests/integration/test_users_me.py::TestGetMeSecurityShape -v in both isolation and full-suite ordering — all 3 should pass. Run pytest backend/tests -v and confirm no regression vs pre-fix baseline."
-      ],
-      "allowed_paths": [
-        "backend/app/security/**",
-        "backend/tests/unit/test_security.py"
-      ],
-      "conflict_groups": [
-        "security:core"
-      ],
-      "write_set": [
-        "backend/app/security/**",
-        "backend/tests/unit/test_security.py"
-      ],
-      "journey_refs": [],
-      "route": "",
-      "endpoint": "",
-      "tables": [],
-      "handoff_path": "orchestrator-state/tasks/handoffs/P02-S02-T002.md",
-      "evidence_dir": "orchestrator-state/tasks/evidence/P02-S02-T002",
-      "origin": {
-        "type": "runtime_followup",
-        "followup_id": "FU-20260513080801-fix-module-level-jwt-key-in-app-auth-tokens-caus",
-        "origin_task_id": "P02-S02-T001",
-        "severity": "medium",
-        "kind": "bug",
-        "triage": {
-          "scope_classification": "out_of_scope",
-          "why_not_debugger": "The root cause lives in backend/app/auth/tokens.py (module-level _JWT_KEY constant evaluated at import time). Fixing it inside P02-S02-T001 write_set (backend/app/security/** + backend/tests/unit/test_security.py) is impossible — tokens.py is outside this write_set and any change to it risks regression across all 6+ auth endpoint test suites (signup, signin, refresh, logout, password_reset, mfa) that share this module.",
-          "decision": "followup_only_when_outside_current_slice",
-          "debugger_path": "in_scope_defects_use_validator_tester_debugger_retest",
-          "warnings": []
-        }
-      },
-      "notes": [
-        "Runtime follow-up promoted from FU-20260513080801-fix-module-level-jwt-key-in-app-auth-tokens-caus",
-        "Description: backend/app/auth/tokens.py captures JWT_PRIVATE_KEY as a module-level constant at import time. When pytest collects the full test suite, import order causes _JWT_KEY to be empty for some test modules that run after it was first cached as empty. TestGetMeSecurityShape T27/T28/T29 fail when run under full-suite or acceptance gate ordering (they pass in isolation). The fix is to make _JWT_KEY a lazy getter (lru_cache or property) in app/auth/tokens.py, exactly as the P02-S02-T001 debugger did for test_security.py but applied to the production code.",
-        "Triage: out_of_scope; why_not_debugger=The root cause lives in backend/app/auth/tokens.py (module-level _JWT_KEY constant evaluated at import time). Fixing it inside P02-S02-T001 write_set (backend/app/security/** + backend/tests/unit/test_security.py) is impossible — tokens.py is outside this write_set and any change to it risks regression across all 6+ auth endpoint test suites (signup, signin, refresh, logout, password_reset, mfa) that share this module."
-      ]
+      "last_outcome": "committed"
     },
     {
       "id": "P02-S03-T001",
       "phase_id": "P02",
       "step_id": "P02-S03",
       "title": "Chat conversation CRUD endpoints",
-      "status": "ready",
+      "status": "blocked",
       "build_state": "planned",
       "product_increment": "v1",
       "risk_level": "medium",
@@ -2227,7 +2166,7 @@
         "backend/tests/integration/test_chat_conversations.py"
       ],
       "handoff_path": "orchestrator-state/tasks/handoffs/P02-S03-T001.md",
-      "evidence_dir": "orchestrator-state/tasks/evidence/P02-S03-T001",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P02-S03-T001/",
       "notes": [],
       "dependency_mode": "explicit_dag",
       "depends_on_raw": "P02-S01-T001,P01-S02-T007",
@@ -2244,7 +2183,86 @@
       "endpoint_raw": "GET /api/v1/chat/conversations, POST /api/v1/chat/conversations, GET /api/v1/chat/conversations/{id}",
       "tables_raw": "conversations, messages, message_citations",
       "origin_instr_raw": "§3.1#chat-rag",
-      "origin_techguide_raw": "§6.2#chat-conversations"
+      "origin_techguide_raw": "§6.2#chat-conversations",
+      "source_fingerprint": "b6cd974ce108c40dac8eb70bc087bdf2055b10d94278500a38c767a8e89c3539",
+      "claimed_at": "2026-05-13T08:36:32+00:00",
+      "claimed_by": "sergiolr",
+      "planner_outcome": "ready",
+      "last_updated_by": "closer",
+      "last_stop_at": "2026-05-13T10:23:41+00:00",
+      "last_outcome": "blocked",
+      "validator_outcome": "approved",
+      "validator_next_status": "ready_for_close",
+      "last_blocker": {
+        "reason": "blocked_false_done",
+        "agent": "closer",
+        "at": "2026-05-13T10:23:41+00:00"
+      },
+      "report_path": "orchestrator-state/tasks/reports/P02-S03-T001.md"
+    },
+    {
+      "id": "P02-S03-T003",
+      "phase_id": "P02",
+      "step_id": "P02-S03",
+      "title": "restore stack-specific dev-restart.profile.sh broken by framework refactor c4c91ae",
+      "status": "blocked",
+      "kind": "wiring",
+      "target": "restore stack-specific dev-restart.profile.sh broken by framework refactor c4c91ae",
+      "build_state": "planned",
+      "product_increment": "current",
+      "risk_level": "high",
+      "verify_mode": "human",
+      "depends_on": [
+        "P02-S03-T001"
+      ],
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry",
+      "acceptance": [
+        "./scripts/dev-restart.sh --reset arranca backend en :8000",
+        "frontend en :5173",
+        "/health=200",
+        "/ready db=ok",
+        "datos reales/proporcionados base cargados sin error. ./scripts/dev-restart.sh --soft también funciona."
+      ],
+      "verification_commands": [
+        "Ejecutar ./scripts/dev-restart.sh --reset desde checkout limpio + comprobar /health",
+        "/ready",
+        "conteo de filas en users/conversations/messages tras bootstrap",
+        "y dispatch correcto de --soft."
+      ],
+      "allowed_paths": [
+        "scripts/dev-restart.profile.sh"
+      ],
+      "conflict_groups": [
+        "api:chat"
+      ],
+      "write_set": [
+        "scripts/dev-restart.profile.sh"
+      ],
+      "journey_refs": [],
+      "route": "",
+      "endpoint": "",
+      "tables": [],
+      "handoff_path": "orchestrator-state/tasks/handoffs/P02-S03-T003.md",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P02-S03-T003",
+      "origin": {
+        "type": "runtime_followup",
+        "followup_id": "FU-20260513094006-restore-stack-specific-dev-restart-profile-sh-br",
+        "origin_task_id": "P02-S03-T001",
+        "severity": "high",
+        "kind": "wiring",
+        "triage": {
+          "scope_classification": "out_of_scope",
+          "why_not_debugger": "El commit framework-refactor c4c91ae redujo scripts/dev-restart.profile.sh de 390 LOC funcionales a 41 LOC de stubs neutrales (back_start/front_start/db_reset todos llaman fail()). El bug NO está en el write_set de P02-S03-T001 (backend/app/chat/** + main.py + tests). Fix correcto: slice dedicada que reintroduzca el profile stack-specific desde commit ec801a4 (P01-S02-T008) y lo armonice con el nuevo STACK_PROFILE.yaml refactorizado. Esto excede write_set y conflict_group de cualquier slice activa.",
+          "decision": "followup_only_when_outside_current_slice",
+          "debugger_path": "in_scope_defects_use_validator_tester_debugger_retest",
+          "warnings": []
+        }
+      },
+      "notes": [
+        "Runtime follow-up promoted from FU-20260513094006-restore-stack-specific-dev-restart-profile-sh-br",
+        "Description: El refactor framework c4c91ae aplastó scripts/dev-restart.profile.sh a la versión neutral stub (fail() en back_start/front_start/db_reset). ./scripts/dev-restart.sh --reset y --soft no funcionan. Detectado durante /verify-slice P02-S03-T001 (hard reset bloqueado). T001 verificado con hard reset manual con waiver explícito. Tareas posteriores que dependan de --reset o --soft fallarán.",
+        "Triage: out_of_scope; why_not_debugger=El commit framework-refactor c4c91ae redujo scripts/dev-restart.profile.sh de 390 LOC funcionales a 41 LOC de stubs neutrales (back_start/front_start/db_reset todos llaman fail()). El bug NO está en el write_set de P02-S03-T001 (backend/app/chat/** + main.py + tests). Fix correcto: slice dedicada que reintroduzca el profile stack-specific desde commit ec801a4 (P01-S02-T008) y lo armonice con el nuevo STACK_PROFILE.yaml refactorizado. Esto excede write_set y conflict_group de cualquier slice activa."
+      ]
     },
     {
       "id": "P02-S03-T002",
@@ -2312,7 +2330,8 @@
       "endpoint_raw": "POST /api/v1/chat/conversations/{id}/stream",
       "tables_raw": "messages, message_citations, llm_usage_logs, document_chunks",
       "origin_instr_raw": "§3.1#chat-rag",
-      "origin_techguide_raw": "§6.2#POST-/api/v1/chat/conversations/{id}/stream"
+      "origin_techguide_raw": "§6.2#POST-/api/v1/chat/conversations/{id}/stream",
+      "source_fingerprint": "e5ada674dfe8dbeb9f89f4686b2d0b4a1d0d4354b6d6906066d68e7a7d6f0f89"
     },
     {
       "id": "P02-S04-T001",
@@ -2381,7 +2400,8 @@
       "endpoint_raw": "internal/no-front",
       "tables_raw": "rag_collections, documents, document_chunks, document_embeddings, message_citations",
       "origin_instr_raw": "§3.1#rag-admin",
-      "origin_techguide_raw": "§10.4#rag"
+      "origin_techguide_raw": "§10.4#rag",
+      "source_fingerprint": "37fce694bc5c6b7675cf12d011b3a8ea489c591af9b05f6f095388512a87cc25"
     },
     {
       "id": "P02-S04-T002",
@@ -2450,14 +2470,15 @@
       "endpoint_raw": "internal/no-front",
       "tables_raw": "documents, document_versions, document_chunks, document_embeddings, vectorization_jobs",
       "origin_instr_raw": "§3.1#rag-admin",
-      "origin_techguide_raw": "§10.4#rag-ingestion"
+      "origin_techguide_raw": "§10.4#rag-ingestion",
+      "source_fingerprint": "f72eddb1a4bf80ea49d4675a54c212a3d7314c373e37949ba9dee6c9c880dcc3"
     },
     {
       "id": "P02-S05-T001",
       "phase_id": "P02",
       "step_id": "P02-S05",
       "title": "Admin AI providers and models endpoints",
-      "status": "blocked",
+      "status": "ready_for_close",
       "build_state": "planned",
       "product_increment": "v1",
       "risk_level": "high",
@@ -2502,7 +2523,7 @@
         "backend/tests/integration/test_admin_ai.py"
       ],
       "handoff_path": "orchestrator-state/tasks/handoffs/P02-S05-T001.md",
-      "evidence_dir": "orchestrator-state/tasks/evidence/P02-S05-T001",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P02-S05-T001/",
       "notes": [],
       "dependency_mode": "explicit_dag",
       "depends_on_raw": "P02-S01-T001,P02-S02-T001",
@@ -2519,7 +2540,18 @@
       "endpoint_raw": "GET /api/v1/admin/ai/providers, POST /api/v1/admin/ai/providers, GET /api/v1/admin/ai/models, PATCH /api/v1/admin/ai/models/{id}",
       "tables_raw": "ai_providers, ai_provider_credentials, ai_models, audit_logs",
       "origin_instr_raw": "§3.1#admin-ai",
-      "origin_techguide_raw": "§6.2#admin-ai"
+      "origin_techguide_raw": "§6.2#admin-ai",
+      "source_fingerprint": "927002efafcc8db233abbe6972d41413968f4667f9450f2f7e150d7cd7f4832c",
+      "claimed_at": "2026-05-13T08:36:58+00:00",
+      "claimed_by": "sergiolr",
+      "claim_terminal_task_env": "P02-S05-T001",
+      "task_pack_path": "orchestrator-state/tasks/task-packs/P02-S05-T001.md",
+      "planner_outcome": "ready",
+      "last_updated_by": "tester",
+      "last_stop_at": "2026-05-13T10:20:04+00:00",
+      "validator_outcome": "approved",
+      "validator_next_status": "ready_for_close",
+      "last_outcome": "pass"
     },
     {
       "id": "P02-S05-T002",
@@ -2585,7 +2617,8 @@
       "endpoint_raw": "POST /api/v1/admin/ai/models/{id}/test, GET /api/v1/admin/usage",
       "tables_raw": "ai_model_tests, llm_usage_logs",
       "origin_instr_raw": "§3.1#admin-ai",
-      "origin_techguide_raw": "§6.2#POST-/api/v1/admin/ai/models/{id}/test"
+      "origin_techguide_raw": "§6.2#POST-/api/v1/admin/ai/models/{id}/test",
+      "source_fingerprint": "6294bd42307d8b96abd081c718253eb403276e9b15e72aac32194cbfcb2a34b6"
     },
     {
       "id": "P02-S06-T001",
@@ -2650,7 +2683,8 @@
       "endpoint_raw": "POST /api/v1/admin/rag/documents, GET /api/v1/admin/rag/documents, POST /api/v1/admin/rag/documents/{id}/index",
       "tables_raw": "documents, document_versions, vectorization_jobs",
       "origin_instr_raw": "§3.1#rag-admin",
-      "origin_techguide_raw": "§6.2#rag-documents"
+      "origin_techguide_raw": "§6.2#rag-documents",
+      "source_fingerprint": "05422746403b0820bec4215bebd624849aeec012de60407fb4424d8d953f9771"
     },
     {
       "id": "P02-S06-T002",
@@ -2714,14 +2748,15 @@
       "endpoint_raw": "GET /api/v1/admin/rag/collections, PATCH /api/v1/admin/rag/collections/{id}",
       "tables_raw": "rag_collections, audit_logs",
       "origin_instr_raw": "§3.1#rag-admin",
-      "origin_techguide_raw": "§6.2#rag-collections"
+      "origin_techguide_raw": "§6.2#rag-collections",
+      "source_fingerprint": "3de56a7fff4fb2a81fb486a5e259c1cf05294dfe9c1c827a9fe5851722f12c0d"
     },
     {
       "id": "P02-S07-T001",
       "phase_id": "P02",
       "step_id": "P02-S07",
       "title": "MCP server and tool endpoints",
-      "status": "blocked",
+      "status": "ready",
       "build_state": "planned",
       "product_increment": "v1",
       "risk_level": "high",
@@ -2783,7 +2818,8 @@
       "endpoint_raw": "GET /api/v1/admin/ai/mcp/servers, POST /api/v1/admin/ai/mcp/servers, POST /api/v1/admin/ai/mcp/servers/{id}/sync, PATCH /api/v1/admin/ai/mcp/tools/{id}",
       "tables_raw": "mcp_servers, mcp_credentials, mcp_tools, mcp_resources, mcp_prompts, audit_logs",
       "origin_instr_raw": "§3.1#mcp-agents",
-      "origin_techguide_raw": "§6.2#mcp"
+      "origin_techguide_raw": "§6.2#mcp",
+      "source_fingerprint": "9681131c9e5219a21316a907ce6fd9aac3c09cc6209d050629fd75ba656c3564"
     },
     {
       "id": "P02-S08-T001",
@@ -2853,7 +2889,81 @@
       "endpoint_raw": "GET /api/v1/admin/ai/agents, PATCH /api/v1/admin/ai/agents/{id}/tools, POST /api/v1/agents/runs",
       "tables_raw": "agents, mcp_agent_bindings, agent_runs, mcp_tool_invocations",
       "origin_instr_raw": "§3.1#mcp-agents",
-      "origin_techguide_raw": "§10.4#deepagents"
+      "origin_techguide_raw": "§10.4#deepagents",
+      "source_fingerprint": "ef38063ff967d71857dddd55ea59721918c6a6f713117cd4dc73379123a9fc6b"
+    },
+    {
+      "id": "P02-S02-T002",
+      "phase_id": "P02",
+      "step_id": "P02-S02",
+      "title": "Fix module-level _JWT_KEY in app.auth.tokens causing JWT decode failures in full-suite ordering",
+      "status": "done",
+      "build_state": "planned",
+      "product_increment": "current",
+      "risk_level": "medium",
+      "verify_mode": "human",
+      "depends_on": [
+        "P02-S02-T001"
+      ],
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime follow-up P02-S02-T001",
+      "acceptance": [
+        "pytest backend/tests -k security runs with 0 FAIL for TestGetMeSecurityShape. Full suite failure count does not regress. app.auth.tokens.decode_token works correctly regardless of import order in the test runner."
+      ],
+      "verification_commands": [
+        "Run pytest backend/tests/integration/test_users_me.py::TestGetMeSecurityShape -v in both isolation and full-suite ordering — all 3 should pass. Run pytest backend/tests -v and confirm no regression vs pre-fix baseline."
+      ],
+      "kind": "bug",
+      "target": "Fix module-level _JWT_KEY in app.auth.tokens causing JWT decode failures in full-suite ordering",
+      "journey_refs": [],
+      "route": "",
+      "endpoint": "",
+      "tables": [],
+      "origin_instr": "runtime-followup#FU-20260513080801-fix-module-level-jwt-key-in-app-auth-tokens-caus",
+      "origin_techguide": "runtime-followup#FU-20260513080801-fix-module-level-jwt-key-in-app-auth-tokens-caus",
+      "allowed_paths": [
+        "backend/app/auth/tokens.py",
+        "backend/tests/integration/test_users_me.py",
+        "backend/tests/unit/test_auth_tokens.py"
+      ],
+      "conflict_groups": [
+        "auth:tokens"
+      ],
+      "write_set": [
+        "backend/app/auth/tokens.py",
+        "backend/tests/integration/test_users_me.py",
+        "backend/tests/unit/test_auth_tokens.py"
+      ],
+      "handoff_path": "orchestrator-state/tasks/handoffs/P02-S02-T002.md",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P02-S02-T002/",
+      "notes": [],
+      "dependency_mode": "explicit_dag",
+      "depends_on_raw": "P02-S02-T001",
+      "conflict_groups_raw": "auth:tokens",
+      "write_set_raw": "backend/app/auth/tokens.py, backend/tests/integration/test_users_me.py, backend/tests/unit/test_auth_tokens.py",
+      "product_increment_raw": "current",
+      "build_state_raw": "planned",
+      "risk_level_raw": "medium",
+      "verify_mode_raw": "human",
+      "kind_raw": "bug",
+      "target_raw": "Fix module-level _JWT_KEY in app.auth.tokens causing JWT decode failures in full-suite ordering",
+      "journey_refs_raw": "—",
+      "screen_route_raw": "—",
+      "endpoint_raw": "—",
+      "tables_raw": "—",
+      "origin_instr_raw": "runtime-followup#FU-20260513080801-fix-module-level-jwt-key-in-app-auth-tokens-caus",
+      "origin_techguide_raw": "runtime-followup#FU-20260513080801-fix-module-level-jwt-key-in-app-auth-tokens-caus",
+      "source_fingerprint": "5887a8da657c3dff191e80d8749801a65dd6f5242d0368660d1c71cdbf8bb5e0",
+      "claimed_at": "2026-05-13T08:49:10+00:00",
+      "claimed_by": "sergiolr",
+      "claim_terminal_task_env": "P02-S02-T002",
+      "task_pack_path": "orchestrator-state/tasks/task-packs/P02-S02-T002.md",
+      "planner_outcome": "ready",
+      "last_updated_by": "closer",
+      "last_stop_at": "2026-05-13T10:09:32+00:00",
+      "last_outcome": "committed",
+      "validator_outcome": "approved",
+      "validator_next_status": "ready_for_close",
+      "report_path": "orchestrator-state/tasks/reports/P02-S02-T002.md"
     },
     {
       "id": "P03-S01-T001",
@@ -2920,7 +3030,8 @@
       "endpoint_raw": "POST /api/v1/auth/sign-in",
       "tables_raw": "users, refresh_tokens",
       "origin_instr_raw": "§3.2#login-propio",
-      "origin_techguide_raw": "§6.1#/auth/sign-in"
+      "origin_techguide_raw": "§6.1#/auth/sign-in",
+      "source_fingerprint": "828e0974e41533f95f9768da79fadb0e660c0e28556a1b6c5e016027872a252c"
     },
     {
       "id": "P03-S01-T002",
@@ -2985,7 +3096,8 @@
       "endpoint_raw": "POST /api/v1/auth/sign-up",
       "tables_raw": "users, employee_profiles",
       "origin_instr_raw": "§3.2#login-propio",
-      "origin_techguide_raw": "§6.1#/auth/sign-up"
+      "origin_techguide_raw": "§6.1#/auth/sign-up",
+      "source_fingerprint": "4b127fdaddf626c711e7c06ee5c4c035c1734fbae519235b9dab17a73266da4f"
     },
     {
       "id": "P03-S01-T003",
@@ -3049,7 +3161,8 @@
       "endpoint_raw": "POST /api/v1/auth/forgot-password",
       "tables_raw": "password_reset_tokens",
       "origin_instr_raw": "§3.2#login-propio",
-      "origin_techguide_raw": "§6.1#/auth/forgot-password"
+      "origin_techguide_raw": "§6.1#/auth/forgot-password",
+      "source_fingerprint": "d484203e18d6367224dbc72dd6fdae7ba092247a1a1deebb7a1bd0f2a2b5e416"
     },
     {
       "id": "P03-S01-T004",
@@ -3111,7 +3224,8 @@
       "endpoint_raw": "—",
       "tables_raw": "password_reset_tokens",
       "origin_instr_raw": "§3.2#login-propio",
-      "origin_techguide_raw": "§6.1#/auth/reset-sent"
+      "origin_techguide_raw": "§6.1#/auth/reset-sent",
+      "source_fingerprint": "6ad14832738fce5a8413a5c09bca99bc2c651f38782524f15123efbfc1e1c915"
     },
     {
       "id": "P03-S01-T005",
@@ -3175,7 +3289,8 @@
       "endpoint_raw": "POST /api/v1/auth/2fa/verify",
       "tables_raw": "mfa_totp_secrets, refresh_tokens",
       "origin_instr_raw": "§3.2#login-propio",
-      "origin_techguide_raw": "§6.1#/auth/2fa"
+      "origin_techguide_raw": "§6.1#/auth/2fa",
+      "source_fingerprint": "a1e3904c2fa88e9b0c8e54fb55594f5bfa9b4b65870b08c5900520df3c8dbb12"
     },
     {
       "id": "P03-S02-T001",
@@ -3245,7 +3360,8 @@
       "endpoint_raw": "GET /api/v1/users/me, POST /api/v1/chat/conversations",
       "tables_raw": "users, conversations",
       "origin_instr_raw": "§3.2#chat-home",
-      "origin_techguide_raw": "§6.1#/chat"
+      "origin_techguide_raw": "§6.1#/chat",
+      "source_fingerprint": "878a4500bda6087b9765cdfb33e79d580bd0fc13d1b30666942dbb2a9c3e1218"
     },
     {
       "id": "P03-S02-T002",
@@ -3314,7 +3430,8 @@
       "endpoint_raw": "GET /api/v1/chat/conversations/{id}, POST /api/v1/chat/conversations/{id}/stream",
       "tables_raw": "conversations, messages, message_citations, llm_usage_logs",
       "origin_instr_raw": "§3.2#chat-home",
-      "origin_techguide_raw": "§6.1#/chat/:conversationId"
+      "origin_techguide_raw": "§6.1#/chat/:conversationId",
+      "source_fingerprint": "7c864d584bac040ae84a45463e8e9c433b07632f6329d9198e9aa880d9e3ca12"
     },
     {
       "id": "P03-S02-T003",
@@ -3377,7 +3494,8 @@
       "endpoint_raw": "GET /api/v1/chat/conversations",
       "tables_raw": "conversations",
       "origin_instr_raw": "§3.2#chat-home",
-      "origin_techguide_raw": "§6.1#/history"
+      "origin_techguide_raw": "§6.1#/history",
+      "source_fingerprint": "281180b1a189cf54429999c2b2b16e4d4392aa56cff3416030a4ad281427ce8d"
     },
     {
       "id": "P03-S02-T004",
@@ -3445,7 +3563,8 @@
       "endpoint_raw": "GET /api/v1/users/me, PATCH /api/v1/users/me/language, POST /api/v1/auth/logout",
       "tables_raw": "users, employee_profiles, refresh_tokens",
       "origin_instr_raw": "§3.2#chat-home",
-      "origin_techguide_raw": "§6.1#/account"
+      "origin_techguide_raw": "§6.1#/account",
+      "source_fingerprint": "fd8ae3a8cc2e45f10aa04f00cd02d3f8633c15cdf92b5c7dcb803e2679d856de"
     },
     {
       "id": "P04-S01-T001",
@@ -3508,7 +3627,8 @@
       "endpoint_raw": "GET /api/v1/admin/usage",
       "tables_raw": "llm_usage_logs",
       "origin_instr_raw": "§3.2#admin-ai",
-      "origin_techguide_raw": "§6.1#/admin"
+      "origin_techguide_raw": "§6.1#/admin",
+      "source_fingerprint": "97c63f2ace5bda9ba10086712944a1dfc05c5e85e20d4aa799a1fc0fe1e44a6a"
     },
     {
       "id": "P04-S01-T002",
@@ -3572,7 +3692,8 @@
       "endpoint_raw": "GET /api/v1/admin/ai/providers, GET /api/v1/admin/ai/models",
       "tables_raw": "ai_providers, ai_models",
       "origin_instr_raw": "§3.2#admin-ai",
-      "origin_techguide_raw": "§6.1#/admin/ai/models"
+      "origin_techguide_raw": "§6.1#/admin/ai/models",
+      "source_fingerprint": "37414cecb1959ac1ffe979325a2b55ad99f0d6b3c22ae60757f54dabaf0280eb"
     },
     {
       "id": "P04-S01-T003",
@@ -3637,7 +3758,8 @@
       "endpoint_raw": "POST /api/v1/admin/ai/providers, GET /api/v1/admin/ai/models",
       "tables_raw": "ai_providers, ai_provider_credentials, ai_models",
       "origin_instr_raw": "§3.2#admin-ai",
-      "origin_techguide_raw": "§6.1#/admin/ai/models/new"
+      "origin_techguide_raw": "§6.1#/admin/ai/models/new",
+      "source_fingerprint": "afc5389a3967beea38361543dfdb3729ab3906c8daf7ab0df59db1588edf9399"
     },
     {
       "id": "P04-S01-T004",
@@ -3702,7 +3824,8 @@
       "endpoint_raw": "POST /api/v1/admin/ai/models/{id}/test, PATCH /api/v1/admin/ai/models/{id}",
       "tables_raw": "ai_model_tests, ai_models, llm_usage_logs",
       "origin_instr_raw": "§3.2#admin-ai",
-      "origin_techguide_raw": "§6.1#/admin/ai/models/:modelId/test"
+      "origin_techguide_raw": "§6.1#/admin/ai/models/:modelId/test",
+      "source_fingerprint": "995cf34106a87d5baf95f5a85302fd17c406e8e4ca8d0ee2d946dab0e958696f"
     },
     {
       "id": "P04-S02-T001",
@@ -3767,7 +3890,8 @@
       "endpoint_raw": "POST /api/v1/admin/rag/documents, GET /api/v1/admin/rag/documents, POST /api/v1/admin/rag/documents/{id}/index",
       "tables_raw": "documents, document_versions, vectorization_jobs",
       "origin_instr_raw": "§3.2#admin-rag",
-      "origin_techguide_raw": "§6.1#/admin/rag/documents"
+      "origin_techguide_raw": "§6.1#/admin/rag/documents",
+      "source_fingerprint": "f38075385ad0ce3dd2016027bbded76f0f06428b901c81bdbea06783f8e91533"
     },
     {
       "id": "P04-S02-T002",
@@ -3830,7 +3954,8 @@
       "endpoint_raw": "GET /api/v1/admin/rag/collections, PATCH /api/v1/admin/rag/collections/{id}",
       "tables_raw": "rag_collections",
       "origin_instr_raw": "§3.2#admin-rag",
-      "origin_techguide_raw": "§6.1#/admin/rag/collections"
+      "origin_techguide_raw": "§6.1#/admin/rag/collections",
+      "source_fingerprint": "feea75b3c1399404002cc1f921341e90f506d42e6aae57f8e16cb198e92b3ca5"
     },
     {
       "id": "P04-S02-T003",
@@ -3894,7 +4019,8 @@
       "endpoint_raw": "GET /api/v1/admin/ai/mcp/servers, POST /api/v1/admin/ai/mcp/servers/{id}/sync",
       "tables_raw": "mcp_servers, mcp_tools",
       "origin_instr_raw": "§3.2#admin-mcp",
-      "origin_techguide_raw": "§6.1#/admin/ai/mcp"
+      "origin_techguide_raw": "§6.1#/admin/ai/mcp",
+      "source_fingerprint": "4745fb62fdaae47d2f76bc1b685282fdcc2b357bfd4274e712509a7890d5f2d5"
     },
     {
       "id": "P04-S02-T004",
@@ -3958,7 +4084,8 @@
       "endpoint_raw": "POST /api/v1/admin/ai/mcp/servers",
       "tables_raw": "mcp_servers, mcp_credentials",
       "origin_instr_raw": "§3.2#admin-mcp",
-      "origin_techguide_raw": "§6.1#/admin/ai/mcp/new"
+      "origin_techguide_raw": "§6.1#/admin/ai/mcp/new",
+      "source_fingerprint": "4b3cc68ceb6eee0bb133f9484da5a82578cfdd1c75a3fb60e2248f96ff333952"
     },
     {
       "id": "P04-S02-T005",
@@ -4023,7 +4150,8 @@
       "endpoint_raw": "GET /api/v1/admin/ai/agents, PATCH /api/v1/admin/ai/agents/{id}/tools, POST /api/v1/agents/runs",
       "tables_raw": "agents, mcp_agent_bindings, agent_runs",
       "origin_instr_raw": "§3.2#admin-mcp",
-      "origin_techguide_raw": "§6.1#/admin/ai/agents"
+      "origin_techguide_raw": "§6.1#/admin/ai/agents",
+      "source_fingerprint": "68f7ee3428886dee5b35a0a15ae4c6e0d831e26a569e4b8b67f3c0af763453e9"
     },
     {
       "id": "P04-S03-T001",
@@ -4088,7 +4216,8 @@
       "endpoint_raw": "GET /api/v1/admin/audit",
       "tables_raw": "audit_logs",
       "origin_instr_raw": "§3.2#auditoria-uso",
-      "origin_techguide_raw": "§6.1#/admin/audit"
+      "origin_techguide_raw": "§6.1#/admin/audit",
+      "source_fingerprint": "a71eec54a8b810e2bef984e4974658498830e419ac4b3e58ce35e31c269410e8"
     },
     {
       "id": "P04-S03-T002",
@@ -4151,7 +4280,8 @@
       "endpoint_raw": "GET /api/v1/admin/usage",
       "tables_raw": "llm_usage_logs",
       "origin_instr_raw": "§3.2#auditoria-uso",
-      "origin_techguide_raw": "§6.1#/admin/usage"
+      "origin_techguide_raw": "§6.1#/admin/usage",
+      "source_fingerprint": "57bf0f879ab1baa1bf57bdba11326c32619a77efd0bc6617517a6b61b9626495"
     },
     {
       "id": "P05-S01-T001",
@@ -4218,7 +4348,8 @@
       "endpoint_raw": "POST /api/v1/auth/sign-in, POST /api/v1/auth/2fa/verify, GET /api/v1/users/me",
       "tables_raw": "users, employee_profiles, refresh_tokens, mfa_totp_secrets, audit_logs",
       "origin_instr_raw": "§3.6#J100 + §3.7#J100",
-      "origin_techguide_raw": "§6.1 + §6.2"
+      "origin_techguide_raw": "§6.1 + §6.2",
+      "source_fingerprint": "c60c52501c4958621026e8712d0d47761b656c7d1a27f99511d2583ca90c6e49"
     },
     {
       "id": "P05-S01-T002",
@@ -4285,7 +4416,8 @@
       "endpoint_raw": "POST /api/v1/chat/conversations, POST /api/v1/chat/conversations/{id}/stream, GET /api/v1/chat/conversations/{id}",
       "tables_raw": "conversations, messages, message_citations, llm_usage_logs, document_chunks",
       "origin_instr_raw": "§3.6#J101 + §3.7#J101",
-      "origin_techguide_raw": "§6.1 + §6.2"
+      "origin_techguide_raw": "§6.1 + §6.2",
+      "source_fingerprint": "9fe6e78866ceeb992d0693d647330d5c4901211037cd7bbcc637ea76737ac542"
     },
     {
       "id": "P05-S01-T003",
@@ -4350,7 +4482,8 @@
       "endpoint_raw": "GET /api/v1/chat/conversations, GET /api/v1/chat/conversations/{id}, PATCH /api/v1/users/me/language",
       "tables_raw": "users, conversations, messages",
       "origin_instr_raw": "§3.6#J102 + §3.7#J102",
-      "origin_techguide_raw": "§6.1 + §6.2"
+      "origin_techguide_raw": "§6.1 + §6.2",
+      "source_fingerprint": "40346a73bb99e082ab4f0fd2cc65fc9e27bfe60541b06baba0754f9300a87e63"
     },
     {
       "id": "P05-S01-T004",
@@ -4418,7 +4551,8 @@
       "endpoint_raw": "GET /api/v1/admin/ai/providers, POST /api/v1/admin/ai/providers, GET /api/v1/admin/ai/models, PATCH /api/v1/admin/ai/models/{id}, POST /api/v1/admin/ai/models/{id}/test",
       "tables_raw": "ai_providers, ai_provider_credentials, ai_models, ai_model_tests, llm_usage_logs, audit_logs",
       "origin_instr_raw": "§3.6#J103 + §3.7#J103",
-      "origin_techguide_raw": "§6.1 + §6.2"
+      "origin_techguide_raw": "§6.1 + §6.2",
+      "source_fingerprint": "3216ab2f391c4ee6b5599a3b6ad5090cb98c83ed58af2bbea41257561d2334c6"
     },
     {
       "id": "P05-S01-T005",
@@ -4485,7 +4619,8 @@
       "endpoint_raw": "POST /api/v1/admin/rag/documents, GET /api/v1/admin/rag/documents, POST /api/v1/admin/rag/documents/{id}/index, GET /api/v1/admin/rag/collections, PATCH /api/v1/admin/rag/collections/{id}",
       "tables_raw": "rag_collections, documents, document_versions, document_chunks, document_embeddings, vectorization_jobs",
       "origin_instr_raw": "§3.6#J104 + §3.7#J104",
-      "origin_techguide_raw": "§6.1 + §6.2"
+      "origin_techguide_raw": "§6.1 + §6.2",
+      "source_fingerprint": "301aa240a7897ababdb8b9e79495407ea174cb836940bbc09074ba8e14ce384f"
     },
     {
       "id": "P05-S01-T006",
@@ -4554,7 +4689,8 @@
       "endpoint_raw": "GET /api/v1/admin/ai/mcp/servers, POST /api/v1/admin/ai/mcp/servers, POST /api/v1/admin/ai/mcp/servers/{id}/sync, PATCH /api/v1/admin/ai/mcp/tools/{id}, GET /api/v1/admin/ai/agents, PATCH /api/v1/admin/ai/agents/{id}/tools",
       "tables_raw": "mcp_servers, mcp_credentials, mcp_tools, mcp_agent_bindings, agents, agent_runs, audit_logs",
       "origin_instr_raw": "§3.6#J105 + §3.7#J105",
-      "origin_techguide_raw": "§6.1 + §6.2"
+      "origin_techguide_raw": "§6.1 + §6.2",
+      "source_fingerprint": "4752ebf73c84eadc32cbff3924eb3cbdb75280cd13cc2af6a9e8d78e425c40b9"
     },
     {
       "id": "P05-S02-T001",
@@ -4625,7 +4761,8 @@
       "endpoint_raw": "GET /api/v1/admin/audit",
       "tables_raw": "audit_logs",
       "origin_instr_raw": "§14#observability",
-      "origin_techguide_raw": "§6.2#GET-/api/v1/admin/audit"
+      "origin_techguide_raw": "§6.2#GET-/api/v1/admin/audit",
+      "source_fingerprint": "77f93e550d4e793d1e1811edffab9d03a3c47ec5ec565e77f457662cedd56169"
     },
     {
       "id": "P05-S02-T002",
@@ -4693,7 +4830,8 @@
       "endpoint_raw": "internal/no-front",
       "tables_raw": "llm_usage_logs, vectorization_jobs, mcp_tool_invocations",
       "origin_instr_raw": "§14#logging",
-      "origin_techguide_raw": "§8#logging-observability"
+      "origin_techguide_raw": "§8#logging-observability",
+      "source_fingerprint": "ec6212f612a385aed962aef7182546aad71351a3f359e741bb62222a009886e8"
     },
     {
       "id": "P05-S02-T003",
@@ -4765,7 +4903,8 @@
       "endpoint_raw": "—",
       "tables_raw": "—",
       "origin_instr_raw": "§7#theme",
-      "origin_techguide_raw": "§7#design-system"
+      "origin_techguide_raw": "§7#design-system",
+      "source_fingerprint": "32d4fcb527d0dcc7ede806c5f7eaf65d1ab4929fb8d564979f8b57620cb75492"
     },
     {
       "id": "P06-S01-T001",
@@ -4835,7 +4974,8 @@
       "endpoint_raw": "—",
       "tables_raw": "—",
       "origin_instr_raw": "§16#delivery",
-      "origin_techguide_raw": "§11#deploy"
+      "origin_techguide_raw": "§11#deploy",
+      "source_fingerprint": "ca0137d0d6b42471ac86b3c6e3b842d1ac13883ba76c01da45aecbbade62b59f"
     },
     {
       "id": "P06-S01-T002",
@@ -4894,7 +5034,8 @@
       "endpoint_raw": "—",
       "tables_raw": "—",
       "origin_instr_raw": "§16#delivery",
-      "origin_techguide_raw": "§11#deploy"
+      "origin_techguide_raw": "§11#deploy",
+      "source_fingerprint": "e2f14952af53d3d04180a01e196ae37fb2c08b47f5bd14fc250dcfd4fc97ce4e"
     },
     {
       "id": "P06-S01-T003",
@@ -4961,7 +5102,8 @@
       "endpoint_raw": "all endpoints",
       "tables_raw": "all tables",
       "origin_instr_raw": "§10#acceptance",
-      "origin_techguide_raw": "§13#milestones"
+      "origin_techguide_raw": "§13#milestones",
+      "source_fingerprint": "77239adfd3e4519b5088431ffbe824f063b8cdf266efcfc237f3b25f7801021c"
     }
   ],
   "journeys": [
@@ -5004,7 +5146,6 @@
         "P01-S02-T005",
         "P01-S02-T006",
         "P01-S02-T007",
-        "P01-S03-T002",
         "P01-S02-T008",
         "P01-S02-T009",
         "P01-S02-T010",
@@ -5022,7 +5163,6 @@
         "P01-S02-T005",
         "P01-S02-T006",
         "P01-S02-T007",
-        "P01-S03-T002",
         "P01-S02-T008",
         "P01-S02-T009",
         "P01-S02-T010",
@@ -5043,7 +5183,6 @@
       "terminal_task_ids": [
         "P01-S02-T005",
         "P01-S02-T007",
-        "P01-S03-T002",
         "P01-S02-T009",
         "P01-S02-T010",
         "P01-S02-T011",
@@ -5082,7 +5221,6 @@
         "citationStore"
       ],
       "task_ids": [
-        "P01-S03-T002",
         "P02-S03-T001",
         "P02-S03-T002",
         "P02-S04-T001",
@@ -5092,7 +5230,6 @@
         "P05-S01-T002"
       ],
       "task_ids_source_order": [
-        "P01-S03-T002",
         "P02-S03-T001",
         "P02-S03-T002",
         "P02-S04-T001",
@@ -5110,7 +5247,6 @@
       "completion_policy": "all_task_ids_done",
       "task_order_policy": "dag_topological_order",
       "terminal_task_ids": [
-        "P01-S03-T002",
         "P02-S04-T002",
         "P05-S01-T002"
       ]
@@ -5146,7 +5282,6 @@
       ],
       "task_ids": [
         "P01-S02-T007",
-        "P01-S03-T002",
         "P02-S03-T001",
         "P03-S02-T002",
         "P03-S02-T003",
@@ -5155,7 +5290,6 @@
       ],
       "task_ids_source_order": [
         "P01-S02-T007",
-        "P01-S03-T002",
         "P02-S03-T001",
         "P03-S02-T002",
         "P03-S02-T003",
@@ -5171,7 +5305,6 @@
       "completion_policy": "all_task_ids_done",
       "task_order_policy": "dag_topological_order",
       "terminal_task_ids": [
-        "P01-S03-T002",
         "P05-S01-T003"
       ]
     },
@@ -5211,7 +5344,6 @@
         "testDrawerStore"
       ],
       "task_ids": [
-        "P01-S03-T002",
         "P02-S05-T001",
         "P02-S05-T002",
         "P04-S01-T002",
@@ -5220,7 +5352,6 @@
         "P05-S01-T004"
       ],
       "task_ids_source_order": [
-        "P01-S03-T002",
         "P02-S05-T001",
         "P02-S05-T002",
         "P04-S01-T002",
@@ -5237,7 +5368,6 @@
       "completion_policy": "all_task_ids_done",
       "task_order_policy": "dag_topological_order",
       "terminal_task_ids": [
-        "P01-S03-T002",
         "P05-S01-T004"
       ]
     },
@@ -5275,7 +5405,6 @@
         "vectorizationStatus"
       ],
       "task_ids": [
-        "P01-S03-T002",
         "P02-S06-T001",
         "P02-S06-T002",
         "P04-S02-T001",
@@ -5283,7 +5412,6 @@
         "P05-S01-T005"
       ],
       "task_ids_source_order": [
-        "P01-S03-T002",
         "P02-S06-T001",
         "P02-S06-T002",
         "P04-S02-T001",
@@ -5299,7 +5427,6 @@
       "completion_policy": "all_task_ids_done",
       "task_order_policy": "dag_topological_order",
       "terminal_task_ids": [
-        "P01-S03-T002",
         "P05-S01-T005"
       ]
     },
@@ -5341,7 +5468,6 @@
         "agentsQuery"
       ],
       "task_ids": [
-        "P01-S03-T002",
         "P02-S07-T001",
         "P02-S08-T001",
         "P04-S02-T003",
@@ -5350,7 +5476,6 @@
         "P05-S01-T006"
       ],
       "task_ids_source_order": [
-        "P01-S03-T002",
         "P02-S07-T001",
         "P02-S08-T001",
         "P04-S02-T003",
@@ -5367,7 +5492,6 @@
       "completion_policy": "all_task_ids_done",
       "task_order_policy": "dag_topological_order",
       "terminal_task_ids": [
-        "P01-S03-T002",
         "P05-S01-T006"
       ]
     }
@@ -5393,16 +5517,16 @@
       "P01-S02-T006",
       "P01-S02-T007",
       "P01-S03-T001",
-      "P01-S03-T002",
       "P01-S02-T008",
       "P01-S02-T009",
       "P01-S02-T010",
       "P01-S02-T011",
       "P01-S02-T012",
+      "P01-S03-T002",
       "P02-S01-T001",
       "P02-S02-T001",
-      "P02-S02-T002",
       "P02-S03-T001",
+      "P02-S03-T003",
       "P02-S03-T002",
       "P02-S04-T001",
       "P02-S04-T002",
@@ -5412,6 +5536,7 @@
       "P02-S06-T002",
       "P02-S07-T001",
       "P02-S08-T001",
+      "P02-S02-T002",
       "P03-S01-T001",
       "P03-S01-T002",
       "P03-S01-T003",
@@ -5535,10 +5660,6 @@
         "P01-S03-T001"
       ],
       [
-        "P01-S03-T001",
-        "P01-S03-T002"
-      ],
-      [
         "P01-S02-T002",
         "P01-S02-T008"
       ],
@@ -5559,6 +5680,10 @@
         "P01-S02-T012"
       ],
       [
+        "P01-S03-T001",
+        "P01-S03-T002"
+      ],
+      [
         "P01-S01-T001",
         "P02-S01-T001"
       ],
@@ -5571,16 +5696,16 @@
         "P02-S02-T001"
       ],
       [
-        "P02-S02-T001",
-        "P02-S02-T002"
-      ],
-      [
         "P02-S01-T001",
         "P02-S03-T001"
       ],
       [
         "P01-S02-T007",
         "P02-S03-T001"
+      ],
+      [
+        "P02-S03-T001",
+        "P02-S03-T003"
       ],
       [
         "P02-S03-T001",
@@ -5641,6 +5766,10 @@
       [
         "P02-S04-T001",
         "P02-S08-T001"
+      ],
+      [
+        "P02-S02-T001",
+        "P02-S02-T002"
       ],
       [
         "P01-S03-T001",
@@ -5978,16 +6107,16 @@
       "P01-S02-T006": 15,
       "P01-S02-T007": 16,
       "P01-S03-T001": 17,
-      "P01-S03-T002": 18,
-      "P01-S02-T008": 19,
-      "P01-S02-T009": 20,
-      "P01-S02-T010": 21,
-      "P01-S02-T011": 22,
-      "P01-S02-T012": 23,
+      "P01-S02-T008": 18,
+      "P01-S02-T009": 19,
+      "P01-S02-T010": 20,
+      "P01-S02-T011": 21,
+      "P01-S02-T012": 22,
+      "P01-S03-T002": 23,
       "P02-S01-T001": 24,
       "P02-S02-T001": 25,
-      "P02-S02-T002": 26,
-      "P02-S03-T001": 27,
+      "P02-S03-T001": 26,
+      "P02-S03-T003": 27,
       "P02-S03-T002": 28,
       "P02-S04-T001": 29,
       "P02-S04-T002": 30,
@@ -5997,38 +6126,39 @@
       "P02-S06-T002": 34,
       "P02-S07-T001": 35,
       "P02-S08-T001": 36,
-      "P03-S01-T001": 37,
-      "P03-S01-T002": 38,
-      "P03-S01-T003": 39,
-      "P03-S01-T004": 40,
-      "P03-S01-T005": 41,
-      "P03-S02-T001": 42,
-      "P03-S02-T002": 43,
-      "P03-S02-T003": 44,
-      "P03-S02-T004": 45,
-      "P04-S01-T001": 46,
-      "P04-S01-T002": 47,
-      "P04-S01-T003": 48,
-      "P04-S01-T004": 49,
-      "P04-S02-T001": 50,
-      "P04-S02-T002": 51,
-      "P04-S02-T003": 52,
-      "P04-S02-T004": 53,
-      "P04-S02-T005": 54,
-      "P04-S03-T001": 55,
-      "P04-S03-T002": 56,
-      "P05-S01-T001": 57,
-      "P05-S01-T002": 58,
-      "P05-S01-T003": 59,
-      "P05-S01-T004": 60,
-      "P05-S01-T005": 61,
-      "P05-S01-T006": 62,
-      "P05-S02-T001": 63,
-      "P05-S02-T002": 64,
-      "P05-S02-T003": 65,
-      "P06-S01-T001": 66,
-      "P06-S01-T002": 67,
-      "P06-S01-T003": 68
+      "P02-S02-T002": 37,
+      "P03-S01-T001": 38,
+      "P03-S01-T002": 39,
+      "P03-S01-T003": 40,
+      "P03-S01-T004": 41,
+      "P03-S01-T005": 42,
+      "P03-S02-T001": 43,
+      "P03-S02-T002": 44,
+      "P03-S02-T003": 45,
+      "P03-S02-T004": 46,
+      "P04-S01-T001": 47,
+      "P04-S01-T002": 48,
+      "P04-S01-T003": 49,
+      "P04-S01-T004": 50,
+      "P04-S02-T001": 51,
+      "P04-S02-T002": 52,
+      "P04-S02-T003": 53,
+      "P04-S02-T004": 54,
+      "P04-S02-T005": 55,
+      "P04-S03-T001": 56,
+      "P04-S03-T002": 57,
+      "P05-S01-T001": 58,
+      "P05-S01-T002": 59,
+      "P05-S01-T003": 60,
+      "P05-S01-T004": 61,
+      "P05-S01-T005": 62,
+      "P05-S01-T006": 63,
+      "P05-S02-T001": 64,
+      "P05-S02-T002": 65,
+      "P05-S02-T003": 66,
+      "P06-S01-T001": 67,
+      "P06-S01-T002": 68,
+      "P06-S01-T003": 69
     },
     "adjacency_matrix": [
       [
@@ -6100,6 +6230,7 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
@@ -6121,6 +6252,7 @@
         0,
         0,
         1,
+        0,
         0,
         0,
         0,
@@ -6242,6 +6374,7 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
@@ -6282,6 +6415,7 @@
         0,
         0,
         0,
+        0,
         1,
         1,
         1,
@@ -6316,6 +6450,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -6455,6 +6590,7 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
@@ -6468,6 +6604,7 @@
         1,
         0,
         1,
+        0,
         0,
         0,
         0,
@@ -6597,6 +6734,7 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
@@ -6668,6 +6806,7 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
@@ -6697,6 +6836,7 @@
         0,
         1,
         1,
+        0,
         0,
         0,
         0,
@@ -6780,6 +6920,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -6831,7 +6972,6 @@
         1,
         0,
         1,
-        0,
         1,
         1,
         1,
@@ -6881,6 +7021,8 @@
         0,
         0,
         0,
+        0,
+        0,
         0
       ],
       [
@@ -6898,6 +7040,7 @@
         0,
         0,
         1,
+        0,
         0,
         0,
         0,
@@ -6976,8 +7119,8 @@
         0,
         0,
         0,
-        0,
         1,
+        0,
         0,
         0,
         0,
@@ -7000,6 +7143,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -7065,6 +7209,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -7115,6 +7260,7 @@
         0,
         1,
         1,
+        0,
         0,
         0,
         0,
@@ -7194,8 +7340,8 @@
         0,
         0,
         0,
-        0,
         1,
+        0,
         0,
         0,
         0,
@@ -7210,6 +7356,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -7257,11 +7404,12 @@
         0,
         0,
         0,
-        1,
+        0,
         0,
         0,
         0,
         0,
+        1,
         0,
         0,
         0,
@@ -7332,6 +7480,7 @@
         0,
         0,
         0,
+        1,
         0,
         0,
         0,
@@ -7404,7 +7553,8 @@
         0,
         0,
         0,
-        1,
+        0,
+        0,
         0,
         0,
         0,
@@ -7520,9 +7670,11 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -7662,6 +7814,7 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
@@ -7733,10 +7886,10 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
-        0,
         0,
         0,
         0,
@@ -7765,6 +7918,7 @@
         0,
         1,
         0,
+        0,
         1,
         0,
         1,
@@ -7804,6 +7958,7 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
@@ -7833,17 +7988,18 @@
         0,
         0,
         0,
-        1,
         0,
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
         0,
         1,
         0,
+        1,
         0,
         0,
         0,
@@ -7878,7 +8034,6 @@
         0
       ],
       [
-        0,
         0,
         0,
         0,
@@ -7906,8 +8061,8 @@
         0,
         0,
         0,
-        0,
-        0,
+        1,
+        1,
         0,
         0,
         0,
@@ -7922,7 +8077,9 @@
         0,
         0,
         0,
+        1,
         0,
+        1,
         0,
         0,
         0,
@@ -7977,7 +8134,6 @@
         0,
         0,
         0,
-        1,
         0,
         0,
         0,
@@ -7991,9 +8147,8 @@
         0,
         0,
         0,
-        1,
         0,
-        1,
+        0,
         0,
         0,
         0,
@@ -8017,6 +8172,9 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
         0
       ],
       [
@@ -8063,6 +8221,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -8128,6 +8287,7 @@
         0,
         0,
         1,
+        0,
         0,
         0,
         0,
@@ -8230,6 +8390,7 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
@@ -8266,6 +8427,7 @@
         0,
         0,
         1,
+        0,
         0,
         0,
         0,
@@ -8350,6 +8512,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -8425,6 +8588,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -8446,6 +8610,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -8569,6 +8734,7 @@
         0,
         0,
         0,
+        0,
         1,
         1,
         0,
@@ -8588,6 +8754,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -8643,6 +8810,25 @@
         0,
         0,
         1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -8656,6 +8842,59 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
         0
       ],
       [
@@ -8700,6 +8939,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -8798,9 +9038,11 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -8940,6 +9182,7 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
@@ -9000,6 +9243,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -9014,6 +9258,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -9129,6 +9374,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -9215,6 +9461,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -9227,6 +9474,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -9345,6 +9593,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -9369,6 +9618,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -9489,6 +9739,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -9571,6 +9822,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -9582,6 +9834,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -9714,6 +9967,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -9724,6 +9978,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -9857,6 +10112,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -9928,6 +10184,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -9937,6 +10194,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -10076,9 +10334,11 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -10214,6 +10474,7 @@
         0,
         0,
         0,
+        0,
         1,
         1,
         0,
@@ -10286,12 +10547,14 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -10426,6 +10689,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         1,
@@ -10497,6 +10761,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         1,
@@ -10505,6 +10770,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -10642,6 +10908,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0
@@ -10713,11 +10980,13 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -10857,9 +11126,11 @@
         0,
         0,
         0,
+        0,
         1
       ],
       [
+        0,
         0,
         0,
         0,
@@ -11019,7 +11290,6 @@
         "P01-S03-T002",
         "P03-S01-T001"
       ],
-      "P01-S03-T002": [],
       "P01-S02-T008": [
         "P01-S02-T012"
       ],
@@ -11027,6 +11297,7 @@
       "P01-S02-T010": [],
       "P01-S02-T011": [],
       "P01-S02-T012": [],
+      "P01-S03-T002": [],
       "P02-S01-T001": [
         "P02-S03-T001",
         "P02-S04-T001",
@@ -11034,16 +11305,17 @@
         "P02-S07-T001"
       ],
       "P02-S02-T001": [
-        "P02-S02-T002",
         "P02-S05-T001",
-        "P02-S07-T001"
+        "P02-S07-T001",
+        "P02-S02-T002"
       ],
-      "P02-S02-T002": [],
       "P02-S03-T001": [
+        "P02-S03-T003",
         "P02-S03-T002",
         "P03-S02-T001",
         "P03-S02-T003"
       ],
+      "P02-S03-T003": [],
       "P02-S03-T002": [
         "P03-S02-T002"
       ],
@@ -11083,6 +11355,7 @@
       "P02-S08-T001": [
         "P04-S02-T005"
       ],
+      "P02-S02-T002": [],
       "P03-S01-T001": [
         "P03-S01-T005",
         "P05-S01-T001"
@@ -11245,9 +11518,6 @@
         "P01-S02-T007",
         "P00-S01-T002"
       ],
-      "P01-S03-T002": [
-        "P01-S03-T001"
-      ],
       "P01-S02-T008": [
         "P01-S02-T002"
       ],
@@ -11263,6 +11533,9 @@
       "P01-S02-T012": [
         "P01-S02-T008"
       ],
+      "P01-S03-T002": [
+        "P01-S03-T001"
+      ],
       "P02-S01-T001": [
         "P01-S01-T001"
       ],
@@ -11270,12 +11543,12 @@
         "P01-S01-T001",
         "P00-S01-T003"
       ],
-      "P02-S02-T002": [
-        "P02-S02-T001"
-      ],
       "P02-S03-T001": [
         "P02-S01-T001",
         "P01-S02-T007"
+      ],
+      "P02-S03-T003": [
+        "P02-S03-T001"
       ],
       "P02-S03-T002": [
         "P02-S03-T001",
@@ -11309,6 +11582,9 @@
       "P02-S08-T001": [
         "P02-S07-T001",
         "P02-S04-T001"
+      ],
+      "P02-S02-T002": [
+        "P02-S02-T001"
       ],
       "P03-S01-T001": [
         "P01-S03-T001",
@@ -11481,9 +11757,9 @@
       [
         "P01-S02-T002",
         "P01-S02-T005",
-        "P02-S02-T002",
         "P02-S05-T001",
         "P02-S07-T001",
+        "P02-S02-T002",
         "P03-S01-T002"
       ],
       [
@@ -11519,6 +11795,7 @@
       ],
       [
         "P01-S03-T002",
+        "P02-S03-T003",
         "P02-S03-T002",
         "P02-S06-T002",
         "P03-S01-T001",
@@ -11616,10 +11893,6 @@
         "front:auth",
         "router"
       ],
-      "P01-S03-T002": [
-        "back:infra",
-        "front:infra"
-      ],
       "P01-S02-T008": [
         "tooling:dev-restart"
       ],
@@ -11636,16 +11909,20 @@
       "P01-S02-T012": [
         "tooling:dev-restart"
       ],
+      "P01-S03-T002": [
+        "back:infra",
+        "front:infra"
+      ],
       "P02-S01-T001": [
         "db:migrations"
       ],
       "P02-S02-T001": [
         "security:core"
       ],
-      "P02-S02-T002": [
-        "security:core"
-      ],
       "P02-S03-T001": [
+        "api:chat"
+      ],
+      "P02-S03-T003": [
         "api:chat"
       ],
       "P02-S03-T002": [
@@ -11675,6 +11952,9 @@
       "P02-S08-T001": [
         "api:agents",
         "ai:agents"
+      ],
+      "P02-S02-T002": [
+        "auth:tokens"
       ],
       "P03-S01-T001": [
         "front:auth"
@@ -11863,12 +12143,6 @@
         "frontend/src/features/auth/**",
         "frontend/src/app/router.tsx"
       ],
-      "P01-S03-T002": [
-        "backend/app/main.py",
-        "frontend/vite.config.ts",
-        "frontend/.env.example",
-        "docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md"
-      ],
       "P01-S02-T008": [
         "scripts/dev-restart.profile.sh"
       ],
@@ -11893,6 +12167,12 @@
       "P01-S02-T012": [
         "scripts/dev-restart.profile.sh"
       ],
+      "P01-S03-T002": [
+        "backend/app/main.py",
+        "frontend/vite.config.ts",
+        "frontend/.env.example",
+        "docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md"
+      ],
       "P02-S01-T001": [
         "backend/alembic/versions/0002_ai_chat_rag_mcp_agents.py",
         "backend/app/db/models/**"
@@ -11901,13 +12181,12 @@
         "backend/app/security/**",
         "backend/tests/unit/test_security.py"
       ],
-      "P02-S02-T002": [
-        "backend/app/security/**",
-        "backend/tests/unit/test_security.py"
-      ],
       "P02-S03-T001": [
         "backend/app/chat/**",
         "backend/tests/integration/test_chat_conversations.py"
+      ],
+      "P02-S03-T003": [
+        "scripts/dev-restart.profile.sh"
       ],
       "P02-S03-T002": [
         "backend/app/chat/streaming.py",
@@ -11948,6 +12227,11 @@
         "backend/app/agents/**",
         "backend/app/graphs/**",
         "backend/tests/ai/test_agents_smoke.py"
+      ],
+      "P02-S02-T002": [
+        "backend/app/auth/tokens.py",
+        "backend/tests/integration/test_users_me.py",
+        "backend/tests/unit/test_auth_tokens.py"
       ],
       "P03-S01-T001": [
         "frontend/src/pages/auth/SignInPage.tsx",
@@ -12076,16 +12360,16 @@
       "P01-S02-T006": "medium",
       "P01-S02-T007": "medium",
       "P01-S03-T001": "medium",
-      "P01-S03-T002": "critical",
       "P01-S02-T008": "medium",
       "P01-S02-T009": "low",
       "P01-S02-T010": "medium",
       "P01-S02-T011": "high",
       "P01-S02-T012": "medium",
+      "P01-S03-T002": "critical",
       "P02-S01-T001": "medium",
       "P02-S02-T001": "medium",
-      "P02-S02-T002": "medium",
       "P02-S03-T001": "medium",
+      "P02-S03-T003": "high",
       "P02-S03-T002": "high",
       "P02-S04-T001": "medium",
       "P02-S04-T002": "medium",
@@ -12095,6 +12379,7 @@
       "P02-S06-T002": "medium",
       "P02-S07-T001": "high",
       "P02-S08-T001": "high",
+      "P02-S02-T002": "medium",
       "P03-S01-T001": "medium",
       "P03-S01-T002": "medium",
       "P03-S01-T003": "medium",
@@ -12147,16 +12432,16 @@
       "P01-S02-T006": "human",
       "P01-S02-T007": "human",
       "P01-S03-T001": "human",
-      "P01-S03-T002": "human",
       "P01-S02-T008": "human",
       "P01-S02-T009": "human",
       "P01-S02-T010": "human",
       "P01-S02-T011": "human",
       "P01-S02-T012": "human",
+      "P01-S03-T002": "human",
       "P02-S01-T001": "human",
       "P02-S02-T001": "human",
-      "P02-S02-T002": "human",
       "P02-S03-T001": "human",
+      "P02-S03-T003": "human",
       "P02-S03-T002": "human",
       "P02-S04-T001": "human",
       "P02-S04-T002": "human",
@@ -12166,6 +12451,7 @@
       "P02-S06-T002": "human",
       "P02-S07-T001": "human",
       "P02-S08-T001": "human",
+      "P02-S02-T002": "human",
       "P03-S01-T001": "human",
       "P03-S01-T002": "human",
       "P03-S01-T003": "human",
@@ -12200,7 +12486,7 @@
       "P06-S01-T003": "human"
     },
     "canonical_source": "registry.tasks",
-    "source_digest": "291e37b46a4d6368ad978ed0636c25235fd770df54d268c7b4112f5950b6881a",
+    "source_digest": "0a946e5f980de9116ce9eabd3a46a8e773048c0e750e5f262cd3eb7606f0b736",
     "errors": []
   }
 }

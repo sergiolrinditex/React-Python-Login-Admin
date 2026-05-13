@@ -2,7 +2,7 @@ id: P01-S02-T007
 phase_id: P01
 step_id: P01-S02
 title: "Current user and language endpoints"
-status: blocked
+status: done
 kind: "api"
 target: "Current user and language endpoints"
 product_increment: "v1"
@@ -34,3 +34,4 @@ write_set:
 handoff_path: orchestrator-state/tasks/handoffs/P01-S02-T007.md
 evidence_dir: orchestrator-state/tasks/evidence/P01-S02-T007
 source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 1.2 — Auth APIs"
+source_fingerprint: "217a477739793cd5f601bc7b23ca1f6a80dd4d8cba1fb063fa337dc6a7499297"

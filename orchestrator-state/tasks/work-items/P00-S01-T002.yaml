@@ -33,3 +33,4 @@ write_set:
 handoff_path: orchestrator-state/tasks/handoffs/P00-S01-T002.md
 evidence_dir: orchestrator-state/tasks/evidence/P00-S01-T002
 source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 0.1 — Project bootstrap"
+source_fingerprint: "49cdb5957572cb5e189bad9a71717c8faacd0529e94c333992681ba81ca50a19"
