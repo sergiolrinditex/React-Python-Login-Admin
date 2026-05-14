@@ -3364,7 +3364,7 @@
       "phase_id": "P02",
       "step_id": "P02-S03",
       "title": "complete_chat.py uses non-existent SDK provider 'litellm/<model>' (same as P02-S03-T006)",
-      "status": "ready",
+      "status": "done",
       "kind": "bug",
       "target": "complete_chat.py uses non-existent SDK provider 'litellm/<model>' (same as P02-S03-T006)",
       "build_state": "planned",
@@ -3420,7 +3420,19 @@
         "Runtime follow-up promoted from FU-20260514053554-complete-chat-py-uses-non-existent-sdk-provider-",
         "Description: After P02-S03-T006 lands the _compose_sdk_model_args helper in litellm_client.py, complete_chat.py:122 still composes model_str inline with the same bug. Non-streaming model-test endpoint (/admin/ai/models/{id}/test) will fail when provider_type='litellm'. Migrate complete_chat.py to use the helper.",
         "Triage: missing_coverage; why_not_debugger=complete_chat.py:122 has the identical model_str composition bug but is OUTSIDE this slice write_set (allowed_paths=litellm_client.py + streaming/service.py + test file). Fixing it would expand write_set during an active DAG task, which violates the runtime write contract. The helper introduced here is the natural reuse target; the FU is a one-line edit + test in a separate slice."
-      ]
+      ],
+      "last_outcome": "committed",
+      "last_updated_by": "closer",
+      "last_stop_at": "2026-05-14T10:41:46+00:00",
+      "report_path": "orchestrator-state/tasks/reports/P02-S03-T008.md",
+      "validator_outcome": "approved",
+      "validator_next_status": "ready_for_close",
+      "claimed_at": "2026-05-14T08:07:11+00:00",
+      "claimed_by": "sergiolr",
+      "task_pack_path": "orchestrator-state/tasks/task-packs/P02-S03-T008.md",
+      "planner_outcome": "ready",
+      "merged_pr": "#25",
+      "merged_commit_sha": "4531ae6"
     },
     {
       "id": "P02-S03-T007",
