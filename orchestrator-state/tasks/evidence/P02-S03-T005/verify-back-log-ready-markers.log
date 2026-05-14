@@ -1,0 +1,18 @@
+2026-05-14 07:52:47,416 app.api.router INFO health.ready.start route=/ready
+2026-05-14 07:52:47,416 app.api.router INFO health.ready.db.ping.start engine=Engine
+2026-05-14 07:52:47,481 app.api.router INFO health.ready.db.ping.ok
+2026-05-14 07:52:47,481 app.api.router INFO health.ready.redis.ping.start
+2026-05-14 07:52:47,485 app.api.router INFO health.ready.redis.ping.ok
+2026-05-14 07:52:47,485 app.api.router INFO health.ready.ok db=ok redis=ok
+2026-05-14 07:53:28,603 app.api.router INFO health.ready.start route=/ready
+2026-05-14 07:53:28,604 app.api.router INFO health.ready.db.ping.start engine=Engine
+2026-05-14 07:53:28,618 app.api.router INFO health.ready.db.ping.ok
+2026-05-14 07:53:28,619 app.api.router INFO health.ready.redis.ping.start
+2026-05-14 07:53:28,621 app.api.router INFO health.ready.redis.ping.ok
+2026-05-14 07:53:28,621 app.api.router INFO health.ready.ok db=ok redis=ok
+2026-05-14 07:53:40,138 app.api.router INFO health.ready.start route=/ready
+2026-05-14 07:53:40,141 app.api.router INFO health.ready.db.ping.start engine=Engine
+2026-05-14 07:53:40,157 app.api.router INFO health.ready.db.ping.ok
+2026-05-14 07:53:40,157 app.api.router INFO health.ready.redis.ping.start
+2026-05-14 07:53:40,159 app.api.router INFO health.ready.redis.ping.ok
+2026-05-14 07:53:40,159 app.api.router INFO health.ready.ok db=ok redis=ok

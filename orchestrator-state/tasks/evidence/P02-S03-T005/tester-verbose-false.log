@@ -1,0 +1,29 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.5, pytest-9.0.2, pluggy-1.6.0 -- /usr/local/bin/python3
+cachedir: .pytest_cache
+rootdir: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P02-S03-T005/backend
+configfile: pyproject.toml
+plugins: httpx-0.36.0, asyncio-1.3.0, langsmith-0.8.3, anyio-4.13.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 18 items
+
+tests/integration/test_health_ready.py::TestReadyRealDbHappyPath::test_returns_200_ok PASSED [  5%]
+tests/integration/test_health_ready.py::TestReadyRealDbHappyPath::test_envelope_has_data_key PASSED [ 11%]
+tests/integration/test_health_ready.py::TestReadyRealDbHappyPath::test_envelope_data_has_required_keys PASSED [ 16%]
+tests/integration/test_health_ready.py::TestReadyRealDbHappyPath::test_db_status_ok_with_real_postgres PASSED [ 22%]
+tests/integration/test_health_ready.py::TestReadyRealDbHappyPath::test_redis_status_ok_with_real_redis PASSED [ 27%]
+tests/integration/test_health_ready.py::TestReadyRealDbHappyPath::test_litellm_status_always_unknown PASSED [ 33%]
+tests/integration/test_health_ready.py::TestReadyRealDriverDbDown::test_returns_503_when_db_unreachable PASSED [ 38%]
+tests/integration/test_health_ready.py::TestReadyRealDriverDbDown::test_db_status_error_on_connection_failure PASSED [ 44%]
+tests/integration/test_health_ready.py::TestReadyRealDriverDbDown::test_redis_status_still_ok_when_only_db_down PASSED [ 50%]
+tests/integration/test_health_ready.py::TestReadyRealDriverDbDown::test_envelope_shape_preserved_on_503 PASSED [ 55%]
+tests/integration/test_health_ready.py::TestGetDbEngineSentinel::test_get_db_engine_returns_sync_engine PASSED [ 61%]
+tests/integration/test_health_ready.py::TestGetDbEngineSentinel::test_get_db_engine_is_not_async_engine PASSED [ 66%]
+tests/integration/test_health_ready.py::TestGetDbEngineSentinel::test_engine_uses_psycopg_dialect PASSED [ 72%]
+tests/integration/test_health_ready.py::TestReadyVerboseLoggingContract::test_verbose_mode_logs_ready_start_marker PASSED [ 77%]
+tests/integration/test_health_ready.py::TestReadyVerboseLoggingContract::test_verbose_mode_logs_db_ping_start_marker PASSED [ 83%]
+tests/integration/test_health_ready.py::TestReadyVerboseLoggingContract::test_verbose_mode_logs_db_ping_ok_marker PASSED [ 88%]
+tests/integration/test_health_ready.py::TestReadyVerboseLoggingContract::test_verbose_mode_logs_ready_ok_marker PASSED [ 94%]
+tests/integration/test_health_ready.py::TestReadyVerboseLoggingContract::test_quiet_mode_suppresses_info_logs PASSED [100%]
+
+============================== 18 passed in 3.64s ==============================
