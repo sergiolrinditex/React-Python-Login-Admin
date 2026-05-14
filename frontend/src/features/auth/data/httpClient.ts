@@ -2,6 +2,7 @@
  * Hilo People — Auth-aware HTTP client with 401 single-flight refresh interceptor.
  *
  * Slice/Phase: P01-S03-T001 — Auth state provider and protected route guards / Phase 1.
+ * Fixed: P03-S01-T007 — API_BASE fallback set to "" per ADR-002 same-origin contract.
  *
  * Responsibility: fetch wrapper that:
  *   1. Injects credentials:'include' on every request (for HttpOnly refresh cookie).
@@ -9,6 +10,11 @@
  *   3. Injects Authorization: Bearer <token> on protected requests (not on /auth/*).
  *   4. Intercepts 401 responses: fires ONE /auth/refresh (single-flight), then retries.
  *   5. If refresh itself returns 401: clears token + notifies caller via onAuthFailure callback.
+ *
+ * ADR-002 (same-origin reverse proxy): API_BASE defaults to "" so ALL fetch calls use
+ * relative paths (e.g. "/api/v1/users/me"). In dev, Vite proxies /api → :8000; in prod,
+ * Nginx proxies /api → backend container. VITE_API_BASE_URL="" in .env.example is the
+ * contract pin — do NOT set it to "http://localhost:8000" (re-introduces CORS preflight).
  *
  * Security guardrails (task pack §P):
  *   - credentials:'include' on ALL fetches (defense in depth).
@@ -31,7 +37,7 @@ import { logVerbose, logWarn, logError } from "./logger";
 // Constants
 // ---------------------------------------------------------------------------
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000";
+const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "";
 const REFRESH_URL = `${API_BASE}/api/v1/auth/refresh`;
 
 /** Endpoints that must NOT receive an Authorization Bearer header. */

@@ -1,0 +1,3 @@
+ESLint not installed as dependency (pre-existing across all worktrees — not in package.json devDependencies).
+TypeScript check (tsc --noEmit) passed with exit 0 — see tsc.txt.
+Changes are minimal (1-line constant + docstring update); no new imports or complex logic.

@@ -1,0 +1,44 @@
+## Tester run — Vite Proxy Validation + Server Smoke
+## Executed: 2026-05-14 (tester agent, P03-S01-T007)
+
+## Backend health
+curl -sf http://localhost:8000/health
+RESPONSE: {"data":{"status":"ok","version":"0.1.0","uptime":16363.33}}
+STATUS: 200 OK — PASS
+
+## Backend ready (DB check)
+curl -sf http://localhost:8000/ready
+RESPONSE: {"data":{"db":{"status":"ok"},"redis":{"status":"ok"},"litellm":{"status":"unknown"}}}
+DB STATUS: ok — PASS
+
+## Frontend root
+curl -sI http://localhost:5173/
+HTTP/1.1 200 OK
+Vary: Origin
+Content-Type: text/html
+Cache-Control: no-cache
+STATUS: 200 OK — PASS
+
+## Vite proxy test — /api/v1/health
+curl -sI http://localhost:5173/api/v1/health
+HTTP/1.1 404 Not Found
+server: uvicorn  ← RESPONSE FROM BACKEND (server=uvicorn confirms proxy forwarding)
+STATUS: 404 from uvicorn — endpoint doesn't exist but proxy IS forwarding to backend. PASS.
+NOTE: The 404 is expected — /api/v1/health is not a registered backend endpoint. The critical
+observation is that the response comes from uvicorn (server: uvicorn header), not from Vite
+itself (which would return a different error without server:uvicorn). Proxy confirmed working.
+
+## Vite proxy test — /api/v1/auth/sign-in (POST-only endpoint)
+curl -sI http://localhost:5173/api/v1/auth/sign-in
+HTTP/1.1 405 Method Not Allowed
+server: uvicorn  ← RESPONSE FROM BACKEND
+allow: POST
+STATUS: 405 from uvicorn — GET method not allowed for POST endpoint, but proxy IS forwarding.
+The Allow: POST header confirms this is a real backend response. PASS.
+
+## Proxy verdict
+Both proxy checks return responses with "server: uvicorn" — confirming:
+1. The Vite proxy IS forwarding /api/* to the backend at :8000.
+2. Relative URL paths (e.g. /api/v1/users/me) will correctly reach the backend through Vite proxy.
+3. The ADR-002 same-origin contract is enforced at the infrastructure level.
+PROXY: PASS
