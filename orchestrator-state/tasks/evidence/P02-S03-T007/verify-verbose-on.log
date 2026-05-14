@@ -1,0 +1,4 @@
+[check_handoff_contract] BEFORE _resolve_handoff_path task_id='P02-S06-T003' candidate_A=/private/tmp/orchestrator-state/tasks/handoffs/P02-S06-T003.md
+[check_handoff_contract] candidate_A miss → trying canonical B=/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/orchestrator-state/tasks/handoffs/P02-S06-T003.md
+[check_handoff_contract] AFTER _resolve_handoff_path: resolved via canonical B=/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/orchestrator-state/tasks/handoffs/P02-S06-T003.md
+Handoff contract OK — P02-S06-T003

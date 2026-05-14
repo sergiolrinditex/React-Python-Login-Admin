@@ -1,0 +1,10 @@
+=== ruff check (via python3 -m ruff) ===
+All checks passed!
+EXIT_RUFF_CHECK=0
+
+=== ruff format --check ===
+Would reformat: .claude/bin/tests/test_handoff_contract.py
+1 file would be reformatted, 2 files already formatted
+EXIT_RUFF_FORMAT=1
+
+NOTE: test_handoff_contract.py format issue is PRE-EXISTING (file not in write set; not modified in this slice)

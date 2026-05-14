@@ -1,0 +1,23 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.5, pytest-9.0.2, pluggy-1.6.0 -- /usr/local/bin/python3
+cachedir: .pytest_cache
+rootdir: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P02-S03-T007
+plugins: httpx-0.36.0, asyncio-1.3.0, langsmith-0.8.3, anyio-4.13.0
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 13 items
+
+.claude/bin/tests/test_handoff_contract.py::test_handoff_contract_accepts_canonical_sections PASSED [  7%]
+.claude/bin/tests/test_handoff_contract.py::test_handoff_contract_accepts_cycle_alias_sections PASSED [ 15%]
+.claude/bin/tests/test_handoff_contract.py::test_handoff_contract_uses_workspace_path_when_worktree_differs_from_canonical PASSED [ 23%]
+.claude/bin/tests/test_handoff_contract.py::test_handoff_contract_rejects_missing_validator_tester_outcomes PASSED [ 30%]
+.claude/bin/tests/test_handoff_contract.py::test_handoff_contract_rejects_verify_task_id_mismatch PASSED [ 38%]
+.claude/bin/tests/test_handoff_contract.py::test_verify_slice_and_closer_reference_mechanical_handoff_check PASSED [ 46%]
+.claude/bin/tests/test_handoff_contract.py::test_validator_and_tester_prompts_require_handoff_outcome_lines PASSED [ 53%]
+.claude/bin/tests/test_handoff_contract.py::test_handoff_contract_rejects_unregistered_followup_candidate PASSED [ 61%]
+.claude/bin/tests/test_handoff_contract.py::test_handoff_contract_accepts_registered_followup_candidate PASSED [ 69%]
+.claude/bin/tests/test_handoff_contract_resolution.py::test_handoff_contract_falls_back_to_canonical_when_workspace_missing PASSED [ 76%]
+.claude/bin/tests/test_handoff_contract_resolution.py::test_handoff_contract_prefers_workspace_when_both_exist PASSED [ 84%]
+.claude/bin/tests/test_handoff_contract_resolution.py::test_handoff_contract_reports_missing_when_neither_workspace_nor_canonical_has_it PASSED [ 92%]
+.claude/bin/tests/test_handoff_contract_resolution.py::test_handoff_contract_returns_exit_2_on_unexpected_internal_error PASSED [100%]
+
+============================== 13 passed in 1.05s ==============================

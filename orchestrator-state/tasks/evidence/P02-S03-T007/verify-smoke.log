@@ -1,0 +1,68 @@
+===== S1: /tmp cwd, only CLAUDE_ORCHESTRATOR_ROOT, canonical-only handoff (P02-S06-T003) =====
+CWD: /tmp
+ENV: CLAUDE_ORCHESTRATOR_ROOT=/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin
+CMD: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P02-S03-T007/scripts/check-handoff-contract.sh P02-S06-T003 --require-ready-for-close --require-verify-slice
+EXPECTED EXIT: 0
+ACTUAL EXIT: 0
+--- output ---
+Handoff contract OK — P02-S06-T003
+
+RESULT: PASS
+
+===== S2: worktree cwd, no env, this slice's handoff =====
+CWD: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P02-S03-T007
+ENV: 
+CMD: ./scripts/check-handoff-contract.sh P02-S03-T007 --require-ready-for-close
+EXPECTED EXIT: 2
+ACTUAL EXIT: 0
+--- output ---
+Handoff contract OK — P02-S03-T007
+
+RESULT: FAIL
+
+===== S3: canonical cwd, no env, P02-S06-T003 done =====
+CWD: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin
+ENV: 
+CMD: ./scripts/check-handoff-contract.sh P02-S06-T003 --require-ready-for-close --require-verify-slice
+EXPECTED EXIT: 0
+ACTUAL EXIT: 0
+--- output ---
+Handoff contract OK — P02-S06-T003
+
+RESULT: PASS
+
+===== S4: negative — P99-S99-T999 (non-existent) =====
+CWD: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P02-S03-T007
+ENV: 
+CMD: ./scripts/check-handoff-contract.sh P99-S99-T999 --require-ready-for-close
+EXPECTED EXIT: 2
+ACTUAL EXIT: 2
+--- output ---
+Handoff contract FAILED — P99-S99-T999
+- missing handoff: orchestrator-state/tasks/handoffs/P99-S99-T999.md
+
+RESULT: PASS
+
+===== S5: /tmp cwd, no env at all, canonical-only handoff (P02-S03-T004) =====
+CWD: /tmp
+ENV: 
+CMD: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P02-S03-T007/scripts/check-handoff-contract.sh P02-S03-T004 --require-ready-for-close --require-verify-slice
+EXPECTED EXIT: 2
+ACTUAL EXIT: 0
+--- output ---
+Handoff contract OK — P02-S03-T004
+
+RESULT: FAIL
+
+===== S6: /tmp cwd, CLAUDE_ORCHESTRATOR_ROOT=canonical, this slice's handoff (lives in worktree only) =====
+CWD: /tmp
+ENV: CLAUDE_ORCHESTRATOR_ROOT=/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin
+CMD: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P02-S03-T007/scripts/check-handoff-contract.sh P02-S03-T007 --require-ready-for-close
+EXPECTED EXIT: 2
+ACTUAL EXIT: 2
+--- output ---
+Handoff contract FAILED — P02-S03-T007
+- missing handoff: orchestrator-state/tasks/handoffs/P02-S03-T007.md
+
+RESULT: PASS
+

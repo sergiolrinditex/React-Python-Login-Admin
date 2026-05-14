@@ -1,0 +1,5 @@
+=== LOGGING VERBOSE OFF: ENABLE_VERBOSE_LOGGING=false ===
+Handoff contract OK — P02-S06-T003
+EXIT=0
+
+=== Key check: no [check_handoff_contract] lines above ===
