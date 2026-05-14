@@ -1,0 +1,51 @@
+{
+  "id": "FU-20260514045116-fix-check-handoff-contract-py-handoff-path-norma",
+  "schema_version": 1,
+  "status": "proposed",
+  "created_at": "2026-05-14T04:51:16+00:00",
+  "created_by": "sergiolr",
+  "origin_task_id": "P02-S06-T003",
+  "origin_phase_id": "P02",
+  "origin_step_id": "P02-S06",
+  "kind": "bug",
+  "product_increment": "current",
+  "build_state": "planned",
+  "severity": "medium",
+  "title": "Fix check_handoff_contract.py: handoff path normalization fails from worktree cwd (wrapper masks exit code)",
+  "description": "scripts/check-handoff-contract.sh invokes .claude/bin/check_handoff_contract.py which calls Path(handoff_abs).relative_to(project_root()). project_root() resolves to the canonical main repo, but when the caller cwd is a git worktree, the handoff file path passed in is also from the worktree, causing ValueError 'is not in the subpath of'. The bash wrapper does not propagate exit code (or uses set -e on python3 but Python's SystemExit(traceback) returns 1 → wrapper's last command was tail or pipe which masks PIPESTATUS, end exit 0). Net effect: closer/verify-slice pre-checks 'pass' silently from worktree, defeating the gate. This was tracked as FU-20260513201402-fix-check-handoff-contract-py-worktree-path-bug- but the YAML was drift-removed by the reconciler (yaml_missing). Re-registering with full triage.",
+  "journey_refs": [],
+  "screen_route": "—",
+  "endpoint": "—",
+  "tables": [],
+  "depends_on": [
+    "P02-S06-T003"
+  ],
+  "conflict_groups": [
+    "framework:orchestrator"
+  ],
+  "write_set": [
+    ".claude/bin/check_handoff_contract.py scripts/check-handoff-contract.sh"
+  ],
+  "acceptance": [
+    "scripts/check-handoff-contract.sh <TASK_ID> --require-ready-for-close --require-verify-slice exits 0 from BOTH main repo cwd and any git worktree cwd",
+    "with handoff path resolved relative to canonical main repo. On contract failure",
+    "exits non-zero AND prints the failed assertions to stderr (no silent ValueError swallowed). Add a regression test in .claude/bin/tests/test_check_handoff_contract.py covering: (a) invocation from main repo",
+    "(b) invocation from a worktree-style cwd",
+    "(c) negative case missing ## verify-slice",
+    "(d) negative case verify-slice with VERIFY_OUTCOME: issues_found."
+  ],
+  "verify": [
+    "Run scripts/check-handoff-contract.sh P02-S06-T003 --require-ready-for-close --require-verify-slice from worktree path (e.g. simulate with cd /tmp/worktree && bash /path/to/main/scripts/check-handoff-contract.sh ...) and confirm exit 0 with stdout 'Handoff contract OK'. Then deliberately remove ## verify-slice from a copy of the handoff and confirm exit non-zero from both cwds. Then run the new pytest in .claude/bin/tests/."
+  ],
+  "notes": [
+    "Original drift: FU-20260513201402-fix-check-handoff-contract-py-worktree-path-bug- (yaml_missing). Re-registering after P02-S06-T003 closer exposed the bug again. Affects every /verify-slice and closer pre-check invoked from a worktree (which is the default pr-flow mode)."
+  ],
+  "triage": {
+    "scope_classification": "missing_coverage",
+    "why_not_debugger": "Bug lives in .claude/bin/check_handoff_contract.py (orchestrator tooling). Out of any product-feature TASK_ID write_set: validator/tester/debugger inside a product slice cannot touch .claude/. Symptom is that scripts/check-handoff-contract.sh raises ValueError on relative_to() when CWD is a git worktree (handoff path is absolute in main repo, project_root() returns main repo, but caller_cwd from worktree confuses path normalization), then the bash wrapper masks the exit code as 0 — so the verify-slice and closer pre-checks become silently no-op when run from a worktree.",
+    "decision": "followup_only_when_outside_current_slice",
+    "debugger_path": "in_scope_defects_use_validator_tester_debugger_retest",
+    "warnings": []
+  },
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260514045116-fix-check-handoff-contract-py-handoff-path-norma.yaml"
+}

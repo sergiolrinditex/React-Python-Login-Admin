@@ -2,6 +2,8 @@
 - DATE: 2026-05-11
 - TASK_ID: P00-S02-T002
 
+RESOLVED: 2026-05-11 — both items verified OK against official SQLAlchemy 2.0 docs with no discrepancy vs task pack: (a) sync engine ping pattern (engine.connect() + text("SELECT 1") + pool_pre_ping=True + catching OperationalError/DBAPIError) matches https://docs.sqlalchemy.org/en/20/core/connections.html and https://docs.sqlalchemy.org/en/20/core/pooling.html exactly, (b) psycopg3 dialect prefix postgresql+psycopg:// is the official choice for SQLAlchemy 2.0. Task pack pattern is idiomatic; no source-of-truth amendment needed.
+
 ---
 
 ## SQLAlchemy 2.0 sync engine ping pattern — VERIFIED OK

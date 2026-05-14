@@ -3082,7 +3082,7 @@
       "phase_id": "P02",
       "step_id": "P02-S03",
       "title": "Rotate ENCRYPTION_KEY in dev .env + seed active AI provider with encrypted credentials",
-      "status": "blocked",
+      "status": "done",
       "build_state": "planned",
       "product_increment": "current",
       "risk_level": "medium",
@@ -3155,8 +3155,9 @@
         "at": "2026-05-13T20:18:46+00:00"
       },
       "validator_next_status": "ready_for_close",
-      "last_outcome": "blocked",
-      "last_stop_at": "2026-05-13T20:18:46+00:00"
+      "last_outcome": "committed",
+      "last_stop_at": "2026-05-14T04:36:59+00:00",
+      "report_path": "orchestrator-state/tasks/reports/P02-S03-T004.md"
     },
     {
       "id": "P02-S07-T002",
@@ -3230,7 +3231,7 @@
       "phase_id": "P02",
       "step_id": "P02-S03",
       "title": "Fix /ready 500 — _ping_db uses sync engine.connect() on async asyncpg engine",
-      "status": "blocked",
+      "status": "ready",
       "build_state": "planned",
       "product_increment": "current",
       "risk_level": "medium",
@@ -3294,7 +3295,7 @@
       "phase_id": "P02",
       "step_id": "P02-S03",
       "title": "Fix chat stream chunks — llm_gateway uses non-existent SDK provider 'litellm/<model>'",
-      "status": "blocked",
+      "status": "ready",
       "build_state": "planned",
       "product_increment": "current",
       "risk_level": "high",
@@ -3358,7 +3359,7 @@
       "phase_id": "P02",
       "step_id": "P02-S03",
       "title": "Fix check_handoff_contract.py — worktree path bug in pr-flow",
-      "status": "blocked",
+      "status": "ready",
       "build_state": "planned",
       "product_increment": "current",
       "risk_level": "medium",
@@ -3420,7 +3421,7 @@
       "phase_id": "P02",
       "step_id": "P02-S06",
       "title": "Create scripts/minio-bootstrap.sh referenced by docker-compose minio-init",
-      "status": "ready_for_close",
+      "status": "done",
       "build_state": "planned",
       "product_increment": "current",
       "risk_level": "medium",
@@ -3453,7 +3454,7 @@
         "scripts/minio-bootstrap.sh"
       ],
       "handoff_path": "orchestrator-state/tasks/handoffs/P02-S06-T003.md",
-      "evidence_dir": "orchestrator-state/tasks/evidence/P02-S06-T003",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P02-S06-T003/",
       "notes": [],
       "dependency_mode": "explicit_dag",
       "depends_on_raw": "P02-S06-T001",
@@ -3475,10 +3476,11 @@
       "claimed_by": "sergiolr",
       "validator_outcome": "approved",
       "claimed_at": "2026-05-13T21:28:14+00:00",
-      "last_updated_by": "tester",
+      "last_updated_by": "closer",
       "validator_next_status": "ready_for_close",
-      "last_outcome": "pass",
-      "last_stop_at": "2026-05-13T21:45:45+00:00"
+      "last_outcome": "committed",
+      "last_stop_at": "2026-05-14T04:46:57+00:00",
+      "report_path": "orchestrator-state/tasks/reports/P02-S06-T003.md"
     },
     {
       "id": "P02-S05-T004",

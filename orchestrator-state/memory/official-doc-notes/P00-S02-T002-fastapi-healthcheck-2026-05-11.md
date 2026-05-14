@@ -2,6 +2,8 @@
 - DATE: 2026-05-11
 - TASK_ID: P00-S02-T002
 
+RESOLVED: 2026-05-11 — all 3 items verified OK against official FastAPI docs with no discrepancy vs task pack: (a) dependency_overrides pattern matches https://fastapi.tiangolo.com/advanced/testing-dependencies/, (b) module-level sync engine for health-ping is acceptable per FastAPI lifespan guidance (lifespan preferred for async resources but not required for a plain sync engine with pool_pre_ping), (c) HTTP 200 healthy / 503 degraded matches fastapi.status.HTTP_503_SERVICE_UNAVAILABLE. No source-of-truth amendment needed.
+
 ---
 
 ## FastAPI dependency_overrides pattern — VERIFIED OK
