@@ -155,6 +155,9 @@ const resources = {
       composer: {
         placeholder: "Escribe tu mensaje...",
         send: "Enviar",
+        errors: {
+          tooLong: "El mensaje no puede superar {{max}} caracteres.",
+        },
       },
     },
     account: {
@@ -294,6 +297,9 @@ const resources = {
       composer: {
         placeholder: "Type your message...",
         send: "Send",
+        errors: {
+          tooLong: "Messages cannot exceed {{max}} characters.",
+        },
       },
     },
     account: {
@@ -433,6 +439,9 @@ const resources = {
       composer: {
         placeholder: "Rédigez votre message...",
         send: "Envoyer",
+        errors: {
+          tooLong: "Le message ne peut pas dépasser {{max}} caractères.",
+        },
       },
     },
     account: {

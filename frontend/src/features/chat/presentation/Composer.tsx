@@ -2,10 +2,12 @@
  * Hilo People — Composer component.
  *
  * Slice/Phase: P03-S02-T001 — ChatHomePage / Phase 3.
+ *   Updated: P03-S02-T005 — dedicated i18n key for over-limit error message.
  *
  * Responsibility: Controlled text input + send CTA for ChatHomePage.
  *   Enforces D-T001-COMPOSER-MAX: max 4000 characters.
  *   Shows error_validation state when input is empty (trimmed) or over max.
+ *   Over-limit message uses dedicated key chat:composer.errors.tooLong (D-T005-I18N-KEY).
  *   aria-busy on the form during submission per §a11y.
  *   Accessible label on send button.
  *
@@ -164,7 +166,7 @@ export default function Composer({
         max: COMPOSER_MAX_LENGTH,
       });
       setValidationError(
-        `${t("chat:composer.placeholder")} (max ${COMPOSER_MAX_LENGTH})`,
+        t("chat:composer.errors.tooLong", { max: COMPOSER_MAX_LENGTH }),
       );
       return;
     }

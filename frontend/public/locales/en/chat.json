@@ -10,6 +10,9 @@
   },
   "composer": {
     "placeholder": "Type your message...",
-    "send": "Send"
+    "send": "Send",
+    "errors": {
+      "tooLong": "Messages cannot exceed {{max}} characters."
+    }
   }
 }
