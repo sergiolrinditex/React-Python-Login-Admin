@@ -1,0 +1,19 @@
+time="2026-05-14T06:39:55+02:00" level=warning msg="No services to build"
+ Container p02-s06-t003-minio-1 Running 
+Attaching to minio-init-1
+ Container p02-s06-t003-minio-1 Waiting 
+ Container p02-s06-t003-minio-1 Healthy 
+ Container p02-s06-t003-minio-init-1 Starting 
+minio-init-1  | ==> BEFORE minio-bootstrap — validating required environment variables
+minio-init-1  | ==> AFTER env validation — MINIO_ROOT_USER=hilo S3_BUCKET_DOCUMENTS=hilo-docs-dev
+minio-init-1  | ==> BEFORE mc alias set (attempt 1/5) — endpoint: http://minio:9000 user: hilo
+ Container p02-s06-t003-minio-init-1 Started 
+minio-init-1  | ==> AFTER mc alias set — alias 'local' configured successfully
+minio-init-1  | ==> BEFORE mc mb — creating bucket 'hilo-docs-dev' (--ignore-existing for idempotency)
+minio-init-1  | Bucket created successfully `local/hilo-docs-dev`.
+minio-init-1  | ==> AFTER mc mb — bucket 'local/hilo-docs-dev' ready (created or already existed)
+minio-init-1  | ==> minio-bootstrap complete — bucket 'hilo-docs-dev' is available at http://minio:9000
+[Kminio-init-1 exited with code 0
+ Compose Stopping Aborting on container exit...
+ Container p02-s06-t003-minio-init-1 Stopping 
+ Container p02-s06-t003-minio-init-1 Stopped 

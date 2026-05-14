@@ -1,0 +1,5 @@
+ Container p02-s06-t003-minio-1 Removed 
+ Volume p02-s06-t003_minio_data Removing 
+ Network p02-s06-t003_backend Removing 
+ Volume p02-s06-t003_minio_data Removed 
+ Network p02-s06-t003_backend Removed 
