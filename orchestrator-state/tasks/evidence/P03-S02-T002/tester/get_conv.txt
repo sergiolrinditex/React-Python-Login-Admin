@@ -1,0 +1,7 @@
+HTTP/1.1 200 OK
+date: Thu, 14 May 2026 15:29:19 GMT
+server: uvicorn
+content-length: 601
+content-type: application/json
+
+{"data":{"id":"283c9c1f-2f17-4f17-8a53-bf6c492fafc0","user_id":"f8f0923b-8535-4efa-b791-01068ef34fd0","title":"Hola, ¿cuál es el horario flexible?","language":"es","created_at":"2026-05-14T15:29:14.410130Z","updated_at":"2026-05-14T15:29:14.410130Z","messages":[{"id":"d8171909-e07b-4788-a7ac-8fdb8546e51a","conversation_id":"283c9c1f-2f17-4f17-8a53-bf6c492fafc0","role":"user","content":"Hola, ¿cuál es el horario flexible?","token_count":null,"created_at":"2026-05-14T15:29:14.410130Z"}],"citations":[]},"meta":{"request_id":"f36517f4-db00-4f73-bad2-612c04359103","pagination":null},"errors":[]}

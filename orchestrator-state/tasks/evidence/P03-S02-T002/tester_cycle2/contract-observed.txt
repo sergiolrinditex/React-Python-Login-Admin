@@ -1,0 +1,39 @@
+=== Front → Back → DB contract observed — tester cycle 2 (P03-S02-T002) ===
+
+Routes/pages confirmed:
+- /chat/:conversationId → ConversationPage (router.tsx ROUTE_CONVERSATION_PATTERN wired)
+- Router import of ConversationPage confirmed in build (218 modules, exit 0)
+
+API clients / HTTP:
+- authFetch (features/auth/data/httpClient.ts) — reused unchanged, inject Bearer + X-Request-ID
+- getConversation (features/chat/data/chatRepository.ts) — GET /api/v1/chat/conversations/{id}
+- streamConversation (features/chat/stream.ts) — POST /api/v1/chat/conversations/{id}/stream
+
+Endpoints observed:
+- GET /api/v1/chat/conversations/{id} → 200 (observed in smoke, messages_count=1)
+- POST /api/v1/chat/conversations/{id}/stream → 200 text/event-stream (SSE meta event received)
+- POST /api/v1/chat/conversations → 201 (creates conversation)
+- POST /api/v1/auth/sign-in → 200 (auth observed in smoke)
+- GET /health → 200 | GET /ready → 200 (db=ok, redis=ok)
+
+Domain/DTO:
+- ConversationDetail (features/chat/domain/types.ts) — data flows through TanStack Query
+- SseEvent discriminated union (meta|citation|chunk|usage|error|done) — parsed by stream.ts
+- Message, MessageCitation — populated from GET response
+
+Repository:
+- chatRepository.getConversation: confirmed in 12 chatRepository tests (T08-T12 for getConversation)
+
+DB tables (confirmed through GET response):
+- conversations — queried by GET /conversations/{id}
+- messages — returned (1 message in smoke)
+- message_citations — returned in GET response (0 citations in smoke conversation)
+
+Evidence files:
+- tester_cycle2/vitest-verbose-true.log (175 tests, full verbose flow)
+- tester_cycle2/vitest-verbose-false.log (175 tests, warn/error only)
+- tester_cycle2/backend_smoke.log (health/ready/signin/conv/stream)
+- tester_cycle2/tsc.log (exit 0)
+- tester_cycle2/build.log (218 modules, exit 0)
+- tester_cycle2/design-tokens.log (exit 0)
+- tester_cycle2/vitest-t12-only.log (1 test passed: error_validation)

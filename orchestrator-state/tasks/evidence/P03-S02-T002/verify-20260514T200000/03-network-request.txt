@@ -1,0 +1,33 @@
+=== Network Requests — P03-S02-T002 Cycle-3 Verification ===
+Date: 2026-05-14T20:30:00Z
+
+reqid=202 POST /api/v1/auth/sign-in [200]
+  - Sign-in successful with admin.peopletech@inditex-sandbox.com
+
+reqid=203 GET /api/v1/users/me [200]
+  - Auth profile loaded
+
+reqid=205 GET /api/v1/chat/conversations/dc7e212f-5a31-4799-8d80-4977111997ca [200]
+  - Conversation loaded (1st mount)
+
+reqid=207 POST /api/v1/chat/conversations/dc7e212f-5a31-4799-8d80-4977111997ca/stream [200]
+  - SSE stream opened (1st mount)
+  - Backend sends event: meta then closes (LiteLLM not configured)
+  - Component navigated away (in-page), stream aborted cleanly
+  - chat.stream.aborted_during_read → ok:true (T17 abort safety path)
+
+reqid=209 GET /api/v1/chat/conversations/dc7e212f-5a31-4799-8d80-4977111997ca [200]
+  - Conversation re-loaded (2nd mount after in-page back-navigation)
+
+reqid=210 POST /api/v1/chat/conversations/dc7e212f-5a31-4799-8d80-4977111997ca/stream [net::ERR_ABORTED]
+  - SSE stream attempted (2nd mount)
+  - Network error: ERR_ABORTED (abort race on rapid navigation)
+  - chat.stream.fetch_error → ok:false, ChatNetworkError
+  - chat.useChatStream.result.error → setPhase("error_network")
+  - *** UI: NetworkErrorView rendered with "Reintentar" CTA ***
+  - DEFECT-1 fix confirmed: error path correctly surfaces NetworkErrorView
+
+=== Summary ===
+DEFECT-1: stream.ts previously returned ok:true on premature close/abort → stuck in streaming
+FIX: stream.ts now correctly returns ok:false (ChatNetworkError) on fetch errors and close-without-done
+RESULT: useChatStream.result.error fired → error_network state → NetworkErrorView rendered

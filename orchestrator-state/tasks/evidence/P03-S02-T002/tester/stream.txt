@@ -1,0 +1,3 @@
+event: meta
+data: {"message_id":"a8f776fc-30a8-4fca-954a-f6c1fee567a0","model_id":"0e7e0eb8-1274-4f76-8962-9a300dda02e1","language":"es","request_id":"781b7a06-62d8-4e8b-9c4a-3bec0c952d8e"}
+

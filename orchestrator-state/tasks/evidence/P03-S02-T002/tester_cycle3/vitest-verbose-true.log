@@ -1,0 +1,3173 @@
+
+> hilo-people-frontend@0.1.0 test
+> vitest --run
+
+
+ RUN  v3.2.4 /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S02-T002/frontend
+
+stderr | src/features/chat/__tests__/stream.test.ts > _parseSseRecord > T07 — unknown event name → null
+[chat] chat.stream.parse.unknown_event { event: [32m'heartbeat'[39m }
+
+stderr | src/features/chat/__tests__/stream.test.ts > _parseSseRecord > T08 — malformed JSON in data: line → null
+[chat] chat.stream.parse.malformed_json { event: [32m'chunk'[39m }
+
+stdout | src/features/chat/__tests__/stream.test.ts > streamConversation > T12 — non-200 HTTP status 400 maps to ChatValidationError
+[chat] chat.stream.start { conversation_id: [32m'conv-1'[39m, message_len: [33m12[39m }
+
+stderr | src/features/chat/__tests__/stream.test.ts > streamConversation > T12 — non-200 HTTP status 400 maps to ChatValidationError
+[chat] chat.stream.http_error { conversation_id: [32m'conv-1'[39m, status: [33m400[39m, request_id: [32m'r1'[39m }
+
+stdout | src/features/chat/__tests__/stream.test.ts > streamConversation > T13 — AbortController abort returns Result.ok
+[chat] chat.stream.start { conversation_id: [32m'conv-1'[39m, message_len: [33m4[39m }
+
+stdout | src/features/chat/__tests__/stream.test.ts > streamConversation > T13 — AbortController abort returns Result.ok
+[chat] chat.stream.aborted { conversation_id: [32m'conv-1'[39m }
+
+stdout | src/features/chat/__tests__/stream.test.ts > streamConversation > T14 — full stream with chunked boundary (record split across reads)
+[chat] chat.stream.start { conversation_id: [32m'conv-1'[39m, message_len: [33m4[39m }
+
+stdout | src/features/chat/__tests__/stream.test.ts > streamConversation > T14 — full stream with chunked boundary (record split across reads)
+[chat] chat.stream.reading { conversation_id: [32m'conv-1'[39m, request_id: [32m'test-req-id'[39m }
+
+stdout | src/features/chat/__tests__/stream.test.ts > streamConversation > T14 — full stream with chunked boundary (record split across reads)
+[chat] chat.stream.event.meta { conversation_id: [32m'conv-1'[39m, message_id: [32m'm1'[39m }
+[chat] chat.stream.event.done { conversation_id: [32m'conv-1'[39m, message_id: [32m'm1'[39m, total_events: [33m3[39m }
+
+stdout | src/features/chat/__tests__/stream.test.ts > streamConversation > T15 — DEFECT-1: closed without event:done returns ChatNetworkError
+[chat] chat.stream.start { conversation_id: [32m'conv-1'[39m, message_len: [33m4[39m }
+
+stdout | src/features/chat/__tests__/stream.test.ts > streamConversation > T15 — DEFECT-1: closed without event:done returns ChatNetworkError
+[chat] chat.stream.reading { conversation_id: [32m'conv-1'[39m, request_id: [32m'test-req-id'[39m }
+
+stdout | src/features/chat/__tests__/stream.test.ts > streamConversation > T15 — DEFECT-1: closed without event:done returns ChatNetworkError
+[chat] chat.stream.event.meta { conversation_id: [32m'conv-1'[39m, message_id: [32m'm1'[39m }
+
+stderr | src/features/chat/__tests__/stream.test.ts > streamConversation > T15 — DEFECT-1: closed without event:done returns ChatNetworkError
+[chat] chat.stream.closed_without_done { conversation_id: [32m'conv-1'[39m, total_events: [33m1[39m }
+
+stdout | src/features/chat/__tests__/stream.test.ts > streamConversation > T16 — DEFECT-1 regression guard: stream that DID emit done returns ok:true
+[chat] chat.stream.start { conversation_id: [32m'conv-1'[39m, message_len: [33m4[39m }
+
+stdout | src/features/chat/__tests__/stream.test.ts > streamConversation > T16 — DEFECT-1 regression guard: stream that DID emit done returns ok:true
+[chat] chat.stream.reading { conversation_id: [32m'conv-1'[39m, request_id: [32m'test-req-id'[39m }
+
+stdout | src/features/chat/__tests__/stream.test.ts > streamConversation > T16 — DEFECT-1 regression guard: stream that DID emit done returns ok:true
+[chat] chat.stream.event.meta { conversation_id: [32m'conv-1'[39m, message_id: [32m'm1'[39m }
+[chat] chat.stream.event.done { conversation_id: [32m'conv-1'[39m, message_id: [32m'm1'[39m, total_events: [33m2[39m }
+
+stdout | src/features/chat/__tests__/stream.test.ts > streamConversation > T17 — DEFECT-1 abort safety: aborted mid-stream does not produce 'without done'
+[chat] chat.stream.start { conversation_id: [32m'conv-1'[39m, message_len: [33m4[39m }
+
+stdout | src/features/chat/__tests__/stream.test.ts > streamConversation > T17 — DEFECT-1 abort safety: aborted mid-stream does not produce 'without done'
+[chat] chat.stream.aborted { conversation_id: [32m'conv-1'[39m }
+
+ ✓ src/features/chat/__tests__/stream.test.ts (17 tests) 24ms
+stdout | src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T01: validates email format via zod — hook returns error on invalid email
+[auth] auth.signin.hook.submit.start { email_domain: [32m'test.com'[39m, password_len: [33m4[39m }
+
+stdout | src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T01: validates email format via zod — hook returns error on invalid email
+[auth] auth.signin.hook.submit.ok_no_mfa { token_len: [33m38[39m }
+
+stdout | src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T02: validates password required — hook calls repo with given password
+[auth] auth.signin.hook.submit.start { email_domain: [32m'b.com'[39m, password_len: [33m1[39m }
+
+stdout | src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T02: validates password required — hook calls repo with given password
+[auth] auth.signin.hook.submit.ok_no_mfa { token_len: [33m38[39m }
+
+stdout | src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T03: success no-MFA — returns outcome and calls onSuccess with token + user
+[auth] auth.signin.hook.submit.start { email_domain: [32m'b.com'[39m, password_len: [33m4[39m }
+
+stdout | src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T03: success no-MFA — returns outcome and calls onSuccess with token + user
+[auth] auth.signin.hook.submit.ok_no_mfa { token_len: [33m38[39m }
+
+stdout | src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T04: MFA branch — returns outcome with kind:mfa, does NOT call onSuccess
+[auth] auth.signin.hook.submit.start { email_domain: [32m'b.com'[39m, password_len: [33m4[39m }
+
+stdout | src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T04: MFA branch — returns outcome with kind:mfa, does NOT call onSuccess
+[auth] auth.signin.hook.submit.mfa_required { challenge_token_len: [33m19[39m, expires_in: [33m300[39m }
+
+stdout | src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T05: 401 invalid credentials — sets InvalidCredentialsError
+[auth] auth.signin.hook.submit.start { email_domain: [32m'b.com'[39m, password_len: [33m5[39m }
+
+stderr | src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T05: 401 invalid credentials — sets InvalidCredentialsError
+[auth] auth.signin.hook.submit.error { error_name: [32m'InvalidCredentialsError'[39m }
+
+stdout | src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T06: 423 account locked — sets AccountLockedError
+[auth] auth.signin.hook.submit.start { email_domain: [32m'b.com'[39m, password_len: [33m4[39m }
+
+stderr | src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T06: 423 account locked — sets AccountLockedError
+[auth] auth.signin.hook.submit.error { error_name: [32m'AccountLockedError'[39m }
+
+stdout | src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T07: 429 rate limited with Retry-After — sets RateLimitedError carrying retry_after
+[auth] auth.signin.hook.submit.start { email_domain: [32m'b.com'[39m, password_len: [33m4[39m }
+
+stderr | src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T07: 429 rate limited with Retry-After — sets RateLimitedError carrying retry_after
+[auth] auth.signin.hook.submit.error { error_name: [32m'RateLimitedError'[39m }
+
+stdout | src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T08: TypeError network error — sets NetworkError
+[auth] auth.signin.hook.submit.start { email_domain: [32m'b.com'[39m, password_len: [33m4[39m }
+
+stderr | src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T08: TypeError network error — sets NetworkError
+[auth] auth.signin.hook.submit.error { error_name: [32m'NetworkError'[39m }
+
+stdout | src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T09: 500 server error — sets SigninInternalError
+[auth] auth.signin.hook.submit.start { email_domain: [32m'b.com'[39m, password_len: [33m4[39m }
+
+stderr | src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T09: 500 server error — sets SigninInternalError
+[auth] auth.signin.hook.submit.error { error_name: [32m'SigninInternalError'[39m }
+
+stdout | src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T10: logs auth.signin.submit.start with email_domain only — never logs full email
+[auth] auth.signin.hook.submit.start { email_domain: [32m'inditex-sandbox.com'[39m, password_len: [33m15[39m }
+
+stdout | src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T10: logs auth.signin.submit.start with email_domain only — never logs full email
+[auth] auth.signin.hook.submit.ok_no_mfa { token_len: [33m38[39m }
+
+stdout | src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T11: never logs password in any log event
+[auth] auth.signin.hook.submit.start { email_domain: [32m'inditex-sandbox.com'[39m, password_len: [33m15[39m }
+
+stderr | src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T11: never logs password in any log event
+[auth] auth.signin.hook.submit.error { error_name: [32m'InvalidCredentialsError'[39m }
+
+ ✓ src/features/auth/__tests__/useSignIn.test.tsx (11 tests) 23ms
+stdout | src/features/chat/__tests__/useCreateConversation.test.tsx > useCreateConversation > T01 — idle → pending → success lifecycle
+[chat] chat.hook.useCreateConversation.mutate.start { prompt_len: [33m5[39m, language: [32m'es'[39m }
+
+stdout | src/features/chat/__tests__/useCreateConversation.test.tsx > useCreateConversation > T01 — idle → pending → success lifecycle
+[chat] chat.hook.useCreateConversation.mutate.ok { conversation_id: [32m'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee'[39m }
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx
+i18n.init.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T005'[39m,
+  lng: [32m'es'[39m,
+  fallbackLng: [32m'es'[39m,
+  ns: [
+    [32m'common'[39m,   [32m'auth'[39m,
+    [32m'chat'[39m,     [32m'account'[39m,
+    [32m'admin-ai'[39m, [32m'rag'[39m,
+    [32m'mcp'[39m,      [32m'errors'[39m
+  ],
+  defaultNS: [32m'common'[39m
+}
+i18n.init.ok {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T005'[39m,
+  isInitialized: [33mtrue[39m,
+  language: [32m'es'[39m,
+  namespaceCount: [33m8[39m,
+  localeCount: [33m3[39m
+}
+
+stdout | src/features/chat/__tests__/ChatHomePage.test.tsx
+i18n.init.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T005'[39m,
+  lng: [32m'es'[39m,
+  fallbackLng: [32m'es'[39m,
+  ns: [
+    [32m'common'[39m,   [32m'auth'[39m,
+    [32m'chat'[39m,     [32m'account'[39m,
+    [32m'admin-ai'[39m, [32m'rag'[39m,
+    [32m'mcp'[39m,      [32m'errors'[39m
+  ],
+  defaultNS: [32m'common'[39m
+}
+i18n.init.ok {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T005'[39m,
+  isInitialized: [33mtrue[39m,
+  language: [32m'es'[39m,
+  namespaceCount: [33m8[39m,
+  localeCount: [33m3[39m
+}
+
+stdout | src/features/chat/__tests__/useConversation.test.tsx > useConversation > T01 — happy path: returns ConversationDetail on 200
+[chat] chat.hook.useConversation.fetch.start { conversation_id: [32m'conv-aaa'[39m }
+[chat] chat.repo.getConversation.start { conversation_id: [32m'conv-aaa'[39m }
+
+stdout | src/features/chat/__tests__/useConversation.test.tsx > useConversation > T01 — happy path: returns ConversationDetail on 200
+[chat] chat.repo.getConversation.ok {
+  conversation_id: [32m'conv-aaa'[39m,
+  message_count: [33m1[39m,
+  citation_count: [33m0[39m,
+  request_id: [32m'test-r1'[39m
+}
+
+stdout | src/features/chat/__tests__/useConversation.test.tsx > useConversation > T01 — happy path: returns ConversationDetail on 200
+[chat] chat.hook.useConversation.fetch.ok { conversation_id: [32m'conv-aaa'[39m, message_count: [33m1[39m, citation_count: [33m0[39m }
+
+stdout | src/features/chat/__tests__/useChatStream.test.tsx > useChatStream > T01 — start sets phase=streaming immediately
+[chat] chat.useChatStream.start { conversation_id: [32m'conv-1'[39m, message_len: [33m23[39m }
+
+stdout | src/features/chat/__tests__/useChatStream.test.tsx > useChatStream > T01 — start sets phase=streaming immediately
+[chat] chat.useChatStream.result.ok { conversation_id: [32m'conv-1'[39m }
+
+stdout | src/features/chat/__tests__/useChatStream.test.tsx > useChatStream > T01 — start sets phase=streaming immediately
+[chat] chat.useChatStream.unmount_abort { conversation_id: [32m'conv-1'[39m }
+
+stdout | src/features/chat/__tests__/useChatStream.test.tsx > useChatStream > T02 — chunks accumulate in assistantText
+[chat] chat.useChatStream.start { conversation_id: [32m'conv-2'[39m, message_len: [33m4[39m }
+[chat] chat.useChatStream.meta { conversation_id: [32m'conv-2'[39m, message_id: [32m'm1'[39m }
+[chat] chat.useChatStream.done { conversation_id: [32m'conv-2'[39m, message_id: [32m'm1'[39m }
+
+stdout | src/features/chat/__tests__/useChatStream.test.tsx > useChatStream > T02 — chunks accumulate in assistantText
+[chat] chat.useChatStream.result.ok { conversation_id: [32m'conv-2'[39m }
+
+stdout | src/features/chat/__tests__/useChatStream.test.tsx > useChatStream > T02 — chunks accumulate in assistantText
+[chat] chat.useChatStream.unmount_abort { conversation_id: [32m'conv-2'[39m }
+
+stdout | src/features/chat/__tests__/useChatStream.test.tsx > useChatStream > T03 — citations accumulate
+[chat] chat.useChatStream.start { conversation_id: [32m'conv-3'[39m, message_len: [33m4[39m }
+[chat] chat.useChatStream.meta { conversation_id: [32m'conv-3'[39m, message_id: [32m'm1'[39m }
+[chat] chat.useChatStream.citation { conversation_id: [32m'conv-3'[39m, document_id: [32m'd1'[39m, score: [33m0.9[39m }
+[chat] chat.useChatStream.citation { conversation_id: [32m'conv-3'[39m, document_id: [32m'd2'[39m, score: [33m0.8[39m }
+[chat] chat.useChatStream.done { conversation_id: [32m'conv-3'[39m, message_id: [32m'm1'[39m }
+
+stdout | src/features/chat/__tests__/useChatStream.test.tsx > useChatStream > T03 — citations accumulate
+[chat] chat.useChatStream.result.ok { conversation_id: [32m'conv-3'[39m }
+
+stdout | src/features/chat/__tests__/useChatStream.test.tsx > useChatStream > T03 — citations accumulate
+[chat] chat.useChatStream.unmount_abort { conversation_id: [32m'conv-3'[39m }
+
+stdout | src/features/chat/__tests__/useChatStream.test.tsx > useChatStream > T04 — done event transitions to completed and updates TanStack cache
+[chat] chat.useChatStream.start { conversation_id: [32m'conv-4'[39m, message_len: [33m23[39m }
+[chat] chat.useChatStream.meta { conversation_id: [32m'conv-4'[39m, message_id: [32m'msg-asst'[39m }
+[chat] chat.useChatStream.done { conversation_id: [32m'conv-4'[39m, message_id: [32m'msg-asst'[39m }
+
+stdout | src/features/chat/__tests__/useChatStream.test.tsx > useChatStream > T04 — done event transitions to completed and updates TanStack cache
+[chat] chat.useChatStream.result.ok { conversation_id: [32m'conv-4'[39m }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T01 — accessTokenStore: set/get/clear in-memory only > starts null
+[auth] auth.store.clear.start { was_present: [33mfalse[39m }
+[auth] auth.store.clear.ok
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T01 — accessTokenStore: set/get/clear in-memory only > starts null
+[auth] auth.store.clear.start { was_present: [33mfalse[39m }
+[auth] auth.store.clear.ok
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T01 — accessTokenStore: set/get/clear in-memory only > set → get returns the token
+[auth] auth.store.clear.start { was_present: [33mfalse[39m }
+[auth] auth.store.clear.ok
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T01 — accessTokenStore: set/get/clear in-memory only > set → get returns the token
+[auth] auth.store.set.start { was_present: [33mfalse[39m, new_len: [33m7[39m }
+[auth] auth.store.set.ok { len: [33m7[39m }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T01 — accessTokenStore: set/get/clear in-memory only > set → get returns the token
+[auth] auth.store.clear.start { was_present: [33mtrue[39m }
+[auth] auth.store.clear.ok
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T01 — accessTokenStore: set/get/clear in-memory only > clear → get returns null
+[auth] auth.store.clear.start { was_present: [33mfalse[39m }
+[auth] auth.store.clear.ok
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T01 — accessTokenStore: set/get/clear in-memory only > clear → get returns null
+[auth] auth.store.set.start { was_present: [33mfalse[39m, new_len: [33m7[39m }
+[auth] auth.store.set.ok { len: [33m7[39m }
+[auth] auth.store.clear.start { was_present: [33mtrue[39m }
+[auth] auth.store.clear.ok
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T01 — accessTokenStore: set/get/clear in-memory only > clear → get returns null
+[auth] auth.store.clear.start { was_present: [33mfalse[39m }
+[auth] auth.store.clear.ok
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T01 — accessTokenStore: set/get/clear in-memory only > NEVER calls localStorage.setItem
+[auth] auth.store.clear.start { was_present: [33mfalse[39m }
+[auth] auth.store.clear.ok
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T01 — accessTokenStore: set/get/clear in-memory only > NEVER calls localStorage.setItem
+[auth] auth.store.set.start { was_present: [33mfalse[39m, new_len: [33m10[39m }
+[auth] auth.store.set.ok { len: [33m10[39m }
+[auth] auth.store.clear.start { was_present: [33mtrue[39m }
+[auth] auth.store.clear.ok
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T01 — accessTokenStore: set/get/clear in-memory only > NEVER calls localStorage.setItem
+[auth] auth.store.clear.start { was_present: [33mfalse[39m }
+[auth] auth.store.clear.ok
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T01 — accessTokenStore: set/get/clear in-memory only > NEVER calls localStorage.getItem
+[auth] auth.store.clear.start { was_present: [33mfalse[39m }
+[auth] auth.store.clear.ok
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T01 — accessTokenStore: set/get/clear in-memory only > NEVER calls localStorage.getItem
+[auth] auth.store.set.start { was_present: [33mfalse[39m, new_len: [33m10[39m }
+[auth] auth.store.set.ok { len: [33m10[39m }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T01 — accessTokenStore: set/get/clear in-memory only > NEVER calls localStorage.getItem
+[auth] auth.store.clear.start { was_present: [33mtrue[39m }
+[auth] auth.store.clear.ok
+
+stdout | src/features/chat/__tests__/useChatStream.test.tsx > useChatStream > T04 — done event transitions to completed and updates TanStack cache
+[chat] chat.useChatStream.unmount_abort { conversation_id: [32m'conv-4'[39m }
+
+stdout | src/features/chat/__tests__/useChatStream.test.tsx > useChatStream > T05 — error_network on network failure (ChatNetworkError)
+[chat] chat.useChatStream.start { conversation_id: [32m'conv-5'[39m, message_len: [33m4[39m }
+
+stderr | src/features/chat/__tests__/useChatStream.test.tsx > useChatStream > T05 — error_network on network failure (ChatNetworkError)
+[chat] chat.useChatStream.result.error { conversation_id: [32m'conv-5'[39m, error: [32m'CHAT_NETWORK_ERROR'[39m }
+
+stdout | src/features/chat/__tests__/useCreateConversation.test.tsx > useCreateConversation > T02 — onSuccess callback called with conversation data
+[chat] chat.hook.useCreateConversation.mutate.start { prompt_len: [33m5[39m, language: [32m'es'[39m }
+
+stdout | src/features/chat/__tests__/useCreateConversation.test.tsx > useCreateConversation > T02 — onSuccess callback called with conversation data
+[chat] chat.hook.useCreateConversation.mutate.ok { conversation_id: [32m'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee'[39m }
+
+stdout | src/pages/showcase/__tests__/ShowcasePage.test.tsx
+i18n.init.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T005'[39m,
+  lng: [32m'es'[39m,
+  fallbackLng: [32m'es'[39m,
+  ns: [
+    [32m'common'[39m,   [32m'auth'[39m,
+    [32m'chat'[39m,     [32m'account'[39m,
+    [32m'admin-ai'[39m, [32m'rag'[39m,
+    [32m'mcp'[39m,      [32m'errors'[39m
+  ],
+  defaultNS: [32m'common'[39m
+}
+i18n.init.ok {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T005'[39m,
+  isInitialized: [33mtrue[39m,
+  language: [32m'es'[39m,
+  namespaceCount: [33m8[39m,
+  localeCount: [33m3[39m
+}
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > EditorialInput > renders label and input
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_0_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [90mundefined[39m
+}
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > EditorialInput > shows error message with aria-invalid
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_1_'[39m,
+  hasError: [33mtrue[39m,
+  disabled: [90mundefined[39m
+}
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T02 — AuthProvider: cold mount → /refresh 200 → /me 200 → authenticated > status becomes 'authenticated' after refresh + me succeed
+[auth] auth.provider.hydrate.start
+[auth] auth.repo.refresh.start
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T02 — AuthProvider: cold mount → /refresh 200 → /me 200 → authenticated > status becomes 'authenticated' after refresh + me succeed
+[auth] auth.repo.refresh.ok { request_id: [32m'aaced3cb-96b0-480b-9a40-492a564e2d1a'[39m, token_len: [33m21[39m }
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > EditorialInput > disables input and renders muted label
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_2_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mtrue[39m
+}
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T02 — AuthProvider: cold mount → /refresh 200 → /me 200 → authenticated > status becomes 'authenticated' after refresh + me succeed
+[auth] auth.store.set.start { was_present: [33mfalse[39m, new_len: [33m21[39m }
+[auth] auth.store.set.ok { len: [33m21[39m }
+[auth] auth.repo.fetchMe.start { token_len: [33m21[39m }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T02 — AuthProvider: cold mount → /refresh 200 → /me 200 → authenticated > status becomes 'authenticated' after refresh + me succeed
+[auth] auth.repo.fetchMe.ok {
+  request_id: [32m'1a683aa5-d5c9-4b61-b175-2f717221d54e'[39m,
+  user_id: [32m'11111111-1111-1111-1111-111111111111'[39m
+}
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T02 — AuthProvider: cold mount → /refresh 200 → /me 200 → authenticated > status becomes 'authenticated' after refresh + me succeed
+[auth] auth.provider.hydrate.ok { user_id: [32m'11111111-1111-1111-1111-111111111111'[39m }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T02 — AuthProvider: cold mount → /refresh 200 → /me 200 → authenticated > status becomes 'authenticated' after refresh + me succeed
+[auth] auth.store.clear.start { was_present: [33mtrue[39m }
+[auth] auth.store.clear.ok
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > EditorialInput > calls onChange
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_3_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [90mundefined[39m
+}
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > SolidCTA > renders children
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [90mundefined[39m
+}
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T03 — AuthProvider: /refresh 401 → unauthenticated, no /me call > status becomes 'unauthenticated' on refresh 401
+[auth] auth.provider.hydrate.start
+[auth] auth.repo.refresh.start
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T03 — AuthProvider: /refresh 401 → unauthenticated, no /me call > status becomes 'unauthenticated' on refresh 401
+[auth] auth.repo.refresh.session_expired { request_id: [32m'fbbe3334-4b7f-4003-a914-34feac6e7a6e'[39m }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T03 — AuthProvider: /refresh 401 → unauthenticated, no /me call > status becomes 'unauthenticated' on refresh 401
+[auth] auth.provider.hydrate.unauthenticated { error: [32m'Session expired or invalid; please sign in again.'[39m }
+
+stdout | src/features/chat/__tests__/useConversation.test.tsx > useConversation > T02 — 401 final: throws ChatAuthExpiredError
+[chat] chat.hook.useConversation.fetch.start { conversation_id: [32m'conv-aaa'[39m }
+[chat] chat.repo.getConversation.start { conversation_id: [32m'conv-aaa'[39m }
+
+stderr | src/features/chat/__tests__/useConversation.test.tsx > useConversation > T02 — 401 final: throws ChatAuthExpiredError
+[chat] chat.repo.getConversation.auth_expired { status: [33m401[39m, request_id: [32m'test-r1'[39m }
+
+stderr | src/features/chat/__tests__/useConversation.test.tsx > useConversation > T02 — 401 final: throws ChatAuthExpiredError
+[chat] chat.hook.useConversation.fetch.error { error: [32m'CHAT_AUTH_EXPIRED'[39m, conversation_id: [32m'conv-aaa'[39m }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T03 — AuthProvider: /refresh 401 → unauthenticated, no /me call > status becomes 'unauthenticated' on refresh 401
+[auth] auth.store.clear.start { was_present: [33mfalse[39m }
+[auth] auth.store.clear.ok
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T04 — AuthProvider: /refresh network error → unauthenticated > status becomes 'unauthenticated' on network error
+[auth] auth.provider.hydrate.start
+[auth] auth.repo.refresh.start
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T04 — AuthProvider: /refresh network error → unauthenticated > status becomes 'unauthenticated' on network error
+[auth] auth.repo.refresh.error { error: [32m'Failed to fetch'[39m }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T04 — AuthProvider: /refresh network error → unauthenticated > status becomes 'unauthenticated' on network error
+[auth] auth.provider.hydrate.unauthenticated { error: [32m'Failed to fetch'[39m }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T04 — AuthProvider: /refresh network error → unauthenticated > status becomes 'unauthenticated' on network error
+[auth] auth.store.clear.start { was_present: [33mfalse[39m }
+[auth] auth.store.clear.ok
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T05 — signInAccepted → status=authenticated, /me not re-called > signInAccepted sets token and user without extra fetch
+[auth] auth.provider.hydrate.start
+[auth] auth.repo.refresh.start
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T05 — signInAccepted → status=authenticated, /me not re-called > signInAccepted sets token and user without extra fetch
+[auth] auth.repo.refresh.session_expired { request_id: [32m'34f172a0-47d0-4fca-8bc0-1e452ff415bd'[39m }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T05 — signInAccepted → status=authenticated, /me not re-called > signInAccepted sets token and user without extra fetch
+[auth] auth.provider.hydrate.unauthenticated { error: [32m'Session expired or invalid; please sign in again.'[39m }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T05 — signInAccepted → status=authenticated, /me not re-called > signInAccepted sets token and user without extra fetch
+[auth] auth.provider.signin_accepted { user_id: [32m'11111111-1111-1111-1111-111111111111'[39m, token_len: [33m21[39m }
+[auth] auth.store.set.start { was_present: [33mfalse[39m, new_len: [33m21[39m }
+[auth] auth.store.set.ok { len: [33m21[39m }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T05 — signInAccepted → status=authenticated, /me not re-called > signInAccepted sets token and user without extra fetch
+[auth] auth.store.clear.start { was_present: [33mtrue[39m }
+[auth] auth.store.clear.ok
+
+stdout | src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T01 — empty state: Wordmark, title, 2 prompt chips, composer
+[chat] chat.home.render.start
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mtrue[39m }
+[chat] chat.EmptyPrompts.render.start { disabled: [33mfalse[39m }
+[chat] chat.Composer.render.start { has_value: [33mfalse[39m, loading: [33mfalse[39m, disabled: [33mfalse[39m }
+SolidCTA.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, loading: [33mfalse[39m, disabled: [33mtrue[39m }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T06 — useLogout: /logout 204 → token cleared, queries cleared > logout clears token and calls onQueriesClear
+[auth] auth.provider.hydrate.start
+[auth] auth.repo.refresh.start
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T06 — useLogout: /logout 204 → token cleared, queries cleared > logout clears token and calls onQueriesClear
+[auth] auth.repo.refresh.ok { request_id: [32m'18a4089b-2d98-4958-aede-3747be621e68'[39m, token_len: [33m21[39m }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T06 — useLogout: /logout 204 → token cleared, queries cleared > logout clears token and calls onQueriesClear
+[auth] auth.store.set.start { was_present: [33mfalse[39m, new_len: [33m21[39m }
+[auth] auth.store.set.ok { len: [33m21[39m }
+[auth] auth.repo.fetchMe.start { token_len: [33m21[39m }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T06 — useLogout: /logout 204 → token cleared, queries cleared > logout clears token and calls onQueriesClear
+[auth] auth.repo.fetchMe.ok {
+  request_id: [32m'da9732c9-021a-4e63-b535-28938c882311'[39m,
+  user_id: [32m'11111111-1111-1111-1111-111111111111'[39m
+}
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T06 — useLogout: /logout 204 → token cleared, queries cleared > logout clears token and calls onQueriesClear
+[auth] auth.provider.hydrate.ok { user_id: [32m'11111111-1111-1111-1111-111111111111'[39m }
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T06 — useLogout: /logout 204 → token cleared, queries cleared > logout clears token and calls onQueriesClear
+[auth] auth.repo.logout.error { error: [32m'Response constructor: Invalid response status code 204'[39m }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T06 — useLogout: /logout 204 → token cleared, queries cleared > logout clears token and calls onQueriesClear
+[auth] auth.provider.logout.start
+[auth] auth.repo.logout.start { token_present: [33mtrue[39m }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T06 — useLogout: /logout 204 → token cleared, queries cleared > logout clears token and calls onQueriesClear
+[auth] auth.store.clear.start { was_present: [33mtrue[39m }
+[auth] auth.store.clear.ok
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T06 — useLogout: /logout 204 → token cleared, queries cleared > logout clears token and calls onQueriesClear
+[auth] auth.provider.logout.failure_local_cleared { error: [32m'Response constructor: Invalid response status code 204'[39m }
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > SolidCTA > is disabled when disabled prop is true
+SolidCTA.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, loading: [33mfalse[39m, disabled: [33mtrue[39m }
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > SolidCTA > shows loading label when loading=true
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mtrue[39m,
+  disabled: [90mundefined[39m
+}
+
+stdout | src/pages/chat/__tests__/ConversationPage.test.tsx
+i18n.init.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T005'[39m,
+  lng: [32m'es'[39m,
+  fallbackLng: [32m'es'[39m,
+  ns: [
+    [32m'common'[39m,   [32m'auth'[39m,
+    [32m'chat'[39m,     [32m'account'[39m,
+    [32m'admin-ai'[39m, [32m'rag'[39m,
+    [32m'mcp'[39m,      [32m'errors'[39m
+  ],
+  defaultNS: [32m'common'[39m
+}
+i18n.init.ok {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T005'[39m,
+  isInitialized: [33mtrue[39m,
+  language: [32m'es'[39m,
+  namespaceCount: [33m8[39m,
+  localeCount: [33m3[39m
+}
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T06 — useLogout: /logout 204 → token cleared, queries cleared > logout clears token and calls onQueriesClear
+[auth] auth.store.clear.start { was_present: [33mfalse[39m }
+[auth] auth.store.clear.ok
+
+stdout | src/features/chat/__tests__/useChatStream.test.tsx > useChatStream > T05 — error_network on network failure (ChatNetworkError)
+[chat] chat.useChatStream.unmount_abort { conversation_id: [32m'conv-5'[39m }
+
+stdout | src/features/chat/__tests__/useChatStream.test.tsx > useChatStream > T06 — retry resets phase and re-starts with same message
+[chat] chat.useChatStream.start { conversation_id: [32m'conv-6'[39m, message_len: [33m10[39m }
+
+stderr | src/features/chat/__tests__/useChatStream.test.tsx > useChatStream > T06 — retry resets phase and re-starts with same message
+[chat] chat.useChatStream.result.error { conversation_id: [32m'conv-6'[39m, error: [32m'CHAT_NETWORK_ERROR'[39m }
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > SolidCTA > has aria-busy when loading
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mtrue[39m,
+  disabled: [90mundefined[39m
+}
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T07 — useLogout: backend 401 → still clears local state (defensive logout) > logout clears token even when backend returns 401
+[auth] auth.provider.hydrate.start
+[auth] auth.repo.refresh.start
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T07 — useLogout: backend 401 → still clears local state (defensive logout) > logout clears token even when backend returns 401
+[auth] auth.repo.refresh.ok { request_id: [32m'93fadb91-a68f-48e8-b3ff-c20b04473859'[39m, token_len: [33m21[39m }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T07 — useLogout: backend 401 → still clears local state (defensive logout) > logout clears token even when backend returns 401
+[auth] auth.store.set.start { was_present: [33mfalse[39m, new_len: [33m21[39m }
+[auth] auth.store.set.ok { len: [33m21[39m }
+[auth] auth.repo.fetchMe.start { token_len: [33m21[39m }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T07 — useLogout: backend 401 → still clears local state (defensive logout) > logout clears token even when backend returns 401
+[auth] auth.repo.fetchMe.ok {
+  request_id: [32m'3c57b9b7-1e94-4c58-9997-46d02c1db405'[39m,
+  user_id: [32m'11111111-1111-1111-1111-111111111111'[39m
+}
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T07 — useLogout: backend 401 → still clears local state (defensive logout) > logout clears token even when backend returns 401
+[auth] auth.provider.hydrate.ok { user_id: [32m'11111111-1111-1111-1111-111111111111'[39m }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T07 — useLogout: backend 401 → still clears local state (defensive logout) > logout clears token even when backend returns 401
+[auth] auth.provider.logout.start
+[auth] auth.repo.logout.start { token_present: [33mtrue[39m }
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T07 — useLogout: backend 401 → still clears local state (defensive logout) > logout clears token even when backend returns 401
+[auth] auth.repo.logout.non_204 { status: [33m401[39m, request_id: [32m'66acb154-5a72-4597-b92a-3e63fa37af55'[39m }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T07 — useLogout: backend 401 → still clears local state (defensive logout) > logout clears token even when backend returns 401
+[auth] auth.store.clear.start { was_present: [33mtrue[39m }
+[auth] auth.store.clear.ok
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T07 — useLogout: backend 401 → still clears local state (defensive logout) > logout clears token even when backend returns 401
+[auth] auth.provider.logout.failure_local_cleared { error: [32m'Session expired or invalid; please sign in again.'[39m }
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > SolidCTA > calls onClick when not disabled
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [90mundefined[39m
+}
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T07 — useLogout: backend 401 → still clears local state (defensive logout) > logout clears token even when backend returns 401
+[auth] auth.store.clear.start { was_present: [33mfalse[39m }
+[auth] auth.store.clear.ok
+
+stdout | src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T02 — prompt click → mutation triggered → navigate called on success
+[chat] chat.home.render.start
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mtrue[39m }
+[chat] chat.EmptyPrompts.render.start { disabled: [33mfalse[39m }
+[chat] chat.Composer.render.start { has_value: [33mfalse[39m, loading: [33mfalse[39m, disabled: [33mfalse[39m }
+SolidCTA.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, loading: [33mfalse[39m, disabled: [33mtrue[39m }
+[chat] chat.EmptyPrompts.prompt_selected { key: [32m'promptVacation'[39m }
+[chat] chat.home.prompt_selected { prompt_len: [33m38[39m }
+[chat] chat.home.submit.start { prompt_len: [33m38[39m }
+[chat] chat.home.submit.success { conversation_id: [32m'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee'[39m }
+[chat] chat.home.render.start
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mtrue[39m }
+[chat] chat.EmptyPrompts.render.start { disabled: [33mfalse[39m }
+[chat] chat.Composer.render.start { has_value: [33mtrue[39m, loading: [33mfalse[39m, disabled: [33mfalse[39m }
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+
+stdout | src/features/chat/__tests__/useCreateConversation.test.tsx > useCreateConversation > T03 — onError callback called with typed ChatError
+[chat] chat.hook.useCreateConversation.mutate.start { prompt_len: [33m5[39m, language: [32m'es'[39m }
+
+stderr | src/features/chat/__tests__/useCreateConversation.test.tsx > useCreateConversation > T03 — onError callback called with typed ChatError
+[chat] chat.hook.useCreateConversation.mutate.error { error: [32m'CHAT_NETWORK_ERROR'[39m }
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > HairlineTable > renders populated rows
+HairlineTable.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  state: [32m'populated'[39m,
+  rowCount: [33m2[39m
+}
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > HairlineTable > renders empty message when rows is empty
+HairlineTable.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, state: [32m'empty'[39m, rowCount: [33m0[39m }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T08 — RequireAuth: unauthenticated → Navigate with ?next= > redirects to sign-in with ?next= when unauthenticated
+[auth] auth.guard.RequireAuth.render { status: [32m'hydrating'[39m }
+[auth] auth.provider.hydrate.start
+[auth] auth.repo.refresh.start
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T08 — RequireAuth: unauthenticated → Navigate with ?next= > redirects to sign-in with ?next= when unauthenticated
+[auth] auth.repo.refresh.session_expired { request_id: [32m'151d1d9f-77e5-4325-a30b-1b9513d31f1d'[39m }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T08 — RequireAuth: unauthenticated → Navigate with ?next= > redirects to sign-in with ?next= when unauthenticated
+[auth] auth.provider.hydrate.unauthenticated { error: [32m'Session expired or invalid; please sign in again.'[39m }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T08 — RequireAuth: unauthenticated → Navigate with ?next= > redirects to sign-in with ?next= when unauthenticated
+[auth] auth.guard.RequireAuth.render { status: [32m'unauthenticated'[39m }
+[auth] auth.guard.RequireAuth.redirecting { from: [32m'/chat'[39m, to: [32m'/auth/sign-in?next=%2Fchat'[39m }
+
+stdout | src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T03 — submit with empty composer input → send button disabled
+[chat] chat.home.render.start
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mtrue[39m }
+[chat] chat.EmptyPrompts.render.start { disabled: [33mfalse[39m }
+[chat] chat.Composer.render.start { has_value: [33mfalse[39m, loading: [33mfalse[39m, disabled: [33mfalse[39m }
+SolidCTA.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, loading: [33mfalse[39m, disabled: [33mtrue[39m }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T08 — RequireAuth: unauthenticated → Navigate with ?next= > redirects to sign-in with ?next= when unauthenticated
+[auth] auth.store.clear.start { was_present: [33mfalse[39m }
+[auth] auth.store.clear.ok
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > HairlineTable > renders error_network state with retry CTA
+HairlineTable.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  state: [32m'error_network'[39m,
+  rowCount: [33m0[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [90mundefined[39m
+}
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > HairlineTable > renders permission_denied state
+HairlineTable.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  state: [32m'permission_denied'[39m,
+  rowCount: [33m0[39m
+}
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > StatusDot > renders active state with label
+StatusDot.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, state: [32m'active'[39m }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T09 — RequireAuth: authenticated → renders children > renders children when authenticated
+[auth] auth.guard.RequireAuth.render { status: [32m'hydrating'[39m }
+[auth] auth.provider.hydrate.start
+[auth] auth.repo.refresh.start
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T09 — RequireAuth: authenticated → renders children > renders children when authenticated
+[auth] auth.repo.refresh.ok { request_id: [32m'772e3e63-3eb8-41df-8ff4-71a49a3bc50d'[39m, token_len: [33m21[39m }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T09 — RequireAuth: authenticated → renders children > renders children when authenticated
+[auth] auth.store.set.start { was_present: [33mfalse[39m, new_len: [33m21[39m }
+[auth] auth.store.set.ok { len: [33m21[39m }
+[auth] auth.repo.fetchMe.start { token_len: [33m21[39m }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T09 — RequireAuth: authenticated → renders children > renders children when authenticated
+[auth] auth.repo.fetchMe.ok {
+  request_id: [32m'693db3fb-575f-4e19-b7cc-c8dfdd250c95'[39m,
+  user_id: [32m'11111111-1111-1111-1111-111111111111'[39m
+}
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T09 — RequireAuth: authenticated → renders children > renders children when authenticated
+[auth] auth.provider.hydrate.ok { user_id: [32m'11111111-1111-1111-1111-111111111111'[39m }
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > StatusDot > renders error state with label
+StatusDot.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, state: [32m'error'[39m }
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > StatusDot > renders custom label
+StatusDot.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, state: [32m'active'[39m }
+
+stdout | src/features/chat/__tests__/useConversation.test.tsx > useConversation > T03 — 403: throws ChatForbiddenError
+[chat] chat.hook.useConversation.fetch.start { conversation_id: [32m'conv-aaa'[39m }
+[chat] chat.repo.getConversation.start { conversation_id: [32m'conv-aaa'[39m }
+
+stderr | src/features/chat/__tests__/useConversation.test.tsx > useConversation > T03 — 403: throws ChatForbiddenError
+[chat] chat.repo.getConversation.forbidden { status: [33m403[39m, request_id: [32m'test-r1'[39m }
+
+stderr | src/features/chat/__tests__/useConversation.test.tsx > useConversation > T03 — 403: throws ChatForbiddenError
+[chat] chat.hook.useConversation.fetch.error { error: [32m'CHAT_FORBIDDEN'[39m, conversation_id: [32m'conv-aaa'[39m }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T09 — RequireAuth: authenticated → renders children > renders children when authenticated
+[auth] auth.guard.RequireAuth.render { status: [32m'authenticated'[39m }
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > StatusDot > has aria-label with status
+StatusDot.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, state: [32m'syncing'[39m }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T09 — RequireAuth: authenticated → renders children > renders children when authenticated
+[auth] auth.store.clear.start { was_present: [33mtrue[39m }
+[auth] auth.store.clear.ok
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > MobileFrame > renders children
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mfalse[39m }
+
+stdout | src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T04 — submit > MAX chars → validation error shown
+[chat] chat.home.render.start
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mtrue[39m }
+[chat] chat.EmptyPrompts.render.start { disabled: [33mfalse[39m }
+[chat] chat.Composer.render.start { has_value: [33mfalse[39m, loading: [33mfalse[39m, disabled: [33mfalse[39m }
+SolidCTA.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, loading: [33mfalse[39m, disabled: [33mtrue[39m }
+[chat] chat.home.render.start
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mtrue[39m }
+[chat] chat.EmptyPrompts.render.start { disabled: [33mfalse[39m }
+[chat] chat.Composer.render.start { has_value: [33mtrue[39m, loading: [33mfalse[39m, disabled: [33mfalse[39m }
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+[chat] chat.Composer.submit.start { prompt_len: [33m4001[39m }
+[chat] chat.Composer.render.start { has_value: [33mtrue[39m, loading: [33mfalse[39m, disabled: [33mfalse[39m }
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+
+stderr | src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T04 — submit > MAX chars → validation error shown
+[chat] chat.Composer.submit.validation.too_long { len: [33m4001[39m, max: [33m4000[39m }
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > MobileFrame > renders as main when asMain=true
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mfalse[39m }
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > AdminShell > renders nav items
+AdminShell.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, navItemCount: [33m2[39m }
+
+stdout | src/pages/showcase/__tests__/ShowcasePage.test.tsx > ShowcasePage > renders the page title
+ShowcasePage.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, route: [32m'/showcase'[39m }
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_0_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [90mundefined[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_1_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [90mundefined[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_2_'[39m,
+  hasError: [33mtrue[39m,
+  disabled: [90mundefined[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_3_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mtrue[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_4_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [90mundefined[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [90mundefined[39m
+}
+SolidCTA.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, loading: [33mfalse[39m, disabled: [33mtrue[39m }
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [90mundefined[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [90mundefined[39m
+}
+HairlineTable.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  state: [32m'populated'[39m,
+  rowCount: [33m3[39m
+}
+HairlineTable.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, state: [32m'empty'[39m, rowCount: [33m0[39m }
+HairlineTable.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  state: [32m'error_network'[39m,
+  rowCount: [33m0[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [90mundefined[39m
+}
+HairlineTable.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  state: [32m'permission_denied'[39m,
+  rowCount: [33m0[39m
+}
+StatusDot.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, state: [32m'active'[39m }
+StatusDot.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, state: [32m'inactive'[39m }
+StatusDot.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, state: [32m'syncing'[39m }
+StatusDot.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, state: [32m'error'[39m }
+StatusDot.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, state: [32m'active'[39m }
+AdminShell.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, navItemCount: [33m5[39m }
+CitationInline.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  label: [32m'Fuente 1'[39m,
+  hasHref: [33mtrue[39m
+}
+CitationInline.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  label: [32m'Fuente 2'[39m,
+  hasHref: [33mtrue[39m
+}
+CitationInline.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  label: [32m'Fuente 1'[39m,
+  hasHref: [33mfalse[39m
+}
+CitationInline.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  label: [32m'Fuente 3'[39m,
+  hasHref: [33mtrue[39m
+}
+
+stdout | src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T05 — network failure → error_network state with retry CTA
+[chat] chat.home.render.start
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mtrue[39m }
+[chat] chat.EmptyPrompts.render.start { disabled: [33mfalse[39m }
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [90mundefined[39m
+}
+[chat] chat.Composer.render.start { has_value: [33mfalse[39m, loading: [33mfalse[39m, disabled: [33mfalse[39m }
+SolidCTA.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, loading: [33mfalse[39m, disabled: [33mtrue[39m }
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > AdminShell > renders children in main
+AdminShell.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, navItemCount: [33m2[39m }
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > AdminShell > marks active item with aria-current=page
+AdminShell.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, navItemCount: [33m2[39m }
+
+stdout | src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T06 — retry CTA triggers mutation again
+[chat] chat.home.render.start
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mtrue[39m }
+[chat] chat.EmptyPrompts.render.start { disabled: [33mfalse[39m }
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [90mundefined[39m
+}
+[chat] chat.Composer.render.start { has_value: [33mfalse[39m, loading: [33mfalse[39m, disabled: [33mfalse[39m }
+SolidCTA.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, loading: [33mfalse[39m, disabled: [33mtrue[39m }
+[chat] chat.home.render.start
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mtrue[39m }
+[chat] chat.EmptyPrompts.render.start { disabled: [33mfalse[39m }
+[chat] chat.Composer.render.start { has_value: [33mfalse[39m, loading: [33mfalse[39m, disabled: [33mfalse[39m }
+SolidCTA.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, loading: [33mfalse[39m, disabled: [33mtrue[39m }
+[chat] chat.EmptyPrompts.prompt_selected { key: [32m'promptVacation'[39m }
+[chat] chat.home.prompt_selected { prompt_len: [33m38[39m }
+[chat] chat.home.submit.start { prompt_len: [33m38[39m }
+[chat] chat.home.render.start
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mtrue[39m }
+[chat] chat.EmptyPrompts.render.start { disabled: [33mfalse[39m }
+[chat] chat.Composer.render.start { has_value: [33mtrue[39m, loading: [33mfalse[39m, disabled: [33mfalse[39m }
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > AdminShell > calls onClick when nav item is clicked
+AdminShell.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, navItemCount: [33m1[39m }
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > CitationInline > renders as anchor when href provided
+CitationInline.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  label: [32m'Fuente 1'[39m,
+  hasHref: [33mtrue[39m
+}
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > CitationInline > renders as button when no href
+CitationInline.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  label: [32m'Fuente 1'[39m,
+  hasHref: [33mfalse[39m
+}
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > CitationInline > displays [label] format
+CitationInline.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  label: [32m'Fuente 1'[39m,
+  hasHref: [33mtrue[39m
+}
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > CitationInline > has accessible aria-label
+CitationInline.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  label: [32m'Fuente 1'[39m,
+  hasHref: [33mtrue[39m
+}
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > CitationInline > adds rel=noopener noreferrer when external
+CitationInline.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  label: [32m'Fuente 1'[39m,
+  hasHref: [33mtrue[39m
+}
+
+stdout | src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T07 — 403 forbidden → permission_denied view shown (no composer)
+[chat] chat.home.render.start
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mtrue[39m }
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [90mundefined[39m
+}
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T10 — RequireAuth: hydrating → renders neither children nor redirect > shows loading placeholder while hydrating, not children or redirect
+[auth] auth.guard.RequireAuth.render { status: [32m'hydrating'[39m }
+[auth] auth.provider.hydrate.start
+[auth] auth.repo.refresh.start
+
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx (34 tests) 124ms
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T10 — RequireAuth: hydrating → renders neither children nor redirect > shows loading placeholder while hydrating, not children or redirect
+[auth] auth.store.clear.start { was_present: [33mfalse[39m }
+[auth] auth.store.clear.ok
+
+stdout | src/features/chat/__tests__/useChatStream.test.tsx > useChatStream > T06 — retry resets phase and re-starts with same message
+[chat] chat.useChatStream.retry { conversation_id: [32m'conv-6'[39m, message_len: [33m10[39m }
+[chat] chat.useChatStream.start { conversation_id: [32m'conv-6'[39m, message_len: [33m10[39m }
+[chat] chat.useChatStream.done { conversation_id: [32m'conv-6'[39m, message_id: [32m'm2'[39m }
+
+stdout | src/features/chat/__tests__/useChatStream.test.tsx > useChatStream > T06 — retry resets phase and re-starts with same message
+[chat] chat.useChatStream.result.ok { conversation_id: [32m'conv-6'[39m }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T11 — RequireRole: employee role denied from admin > redirects employee to /chat when they hit /admin
+[auth] auth.guard.RequireRole.render {
+  status: [32m'hydrating'[39m,
+  required_roles: [ [32m'people_admin'[39m, [32m'super_admin'[39m ]
+}
+[auth] auth.guard.RequireAuth.render { status: [32m'hydrating'[39m }
+[auth] auth.provider.hydrate.start
+[auth] auth.repo.refresh.start
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T11 — RequireRole: employee role denied from admin > redirects employee to /chat when they hit /admin
+[auth] auth.repo.refresh.ok { request_id: [32m'72c8de0b-1a9a-4b62-af7a-52881386a06e'[39m, token_len: [33m21[39m }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T11 — RequireRole: employee role denied from admin > redirects employee to /chat when they hit /admin
+[auth] auth.store.set.start { was_present: [33mfalse[39m, new_len: [33m21[39m }
+[auth] auth.store.set.ok { len: [33m21[39m }
+[auth] auth.repo.fetchMe.start { token_len: [33m21[39m }
+
+stdout | src/features/chat/__tests__/useChatStream.test.tsx > useChatStream > T06 — retry resets phase and re-starts with same message
+[chat] chat.useChatStream.unmount_abort { conversation_id: [32m'conv-6'[39m }
+
+stdout | src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T08 — a11y: network-error region has role=status + aria-live
+[chat] chat.home.render.start
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mtrue[39m }
+[chat] chat.EmptyPrompts.render.start { disabled: [33mfalse[39m }
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [90mundefined[39m
+}
+[chat] chat.Composer.render.start { has_value: [33mfalse[39m, loading: [33mfalse[39m, disabled: [33mfalse[39m }
+SolidCTA.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, loading: [33mfalse[39m, disabled: [33mtrue[39m }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T11 — RequireRole: employee role denied from admin > redirects employee to /chat when they hit /admin
+[auth] auth.repo.fetchMe.ok {
+  request_id: [32m'e5b9d240-964d-42ce-a93d-a5dbd503efab'[39m,
+  user_id: [32m'11111111-1111-1111-1111-111111111111'[39m
+}
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T11 — RequireRole: employee role denied from admin > redirects employee to /chat when they hit /admin
+[auth] auth.provider.hydrate.ok { user_id: [32m'11111111-1111-1111-1111-111111111111'[39m }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T11 — RequireRole: employee role denied from admin > redirects employee to /chat when they hit /admin
+[auth] auth.guard.RequireRole.render {
+  status: [32m'authenticated'[39m,
+  required_roles: [ [32m'people_admin'[39m, [32m'super_admin'[39m ]
+}
+[auth] auth.guard.RequireRole.denied {
+  user_id: [32m'11111111-1111-1111-1111-111111111111'[39m,
+  user_roles: [ [32m'employee'[39m ],
+  required_roles: [ [32m'people_admin'[39m, [32m'super_admin'[39m ]
+}
+
+stdout | src/features/chat/__tests__/useChatStream.test.tsx > useChatStream > T07 — unmount aborts: AbortController.abort is called on cleanup
+[chat] chat.useChatStream.start { conversation_id: [32m'conv-7'[39m, message_len: [33m4[39m }
+[chat] chat.useChatStream.unmount_abort { conversation_id: [32m'conv-7'[39m }
+
+ ✓ src/features/chat/__tests__/useChatStream.test.tsx (7 tests) 141ms
+ ✓ src/features/chat/__tests__/ChatHomePage.test.tsx (8 tests) 102ms
+stdout | src/features/chat/__tests__/useCreateConversation.test.tsx > useCreateConversation > T04 — error state set after failed mutation
+[chat] chat.hook.useCreateConversation.mutate.start { prompt_len: [33m5[39m, language: [32m'es'[39m }
+
+stderr | src/features/chat/__tests__/useCreateConversation.test.tsx > useCreateConversation > T04 — error state set after failed mutation
+[chat] chat.hook.useCreateConversation.mutate.error { error: [32m'CHAT_NETWORK_ERROR'[39m }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T11 — RequireRole: employee role denied from admin > redirects employee to /chat when they hit /admin
+[auth] auth.store.clear.start { was_present: [33mtrue[39m }
+[auth] auth.store.clear.ok
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T12 — RequireRole: people_admin allowed to admin route > renders admin content for people_admin role
+[auth] auth.guard.RequireRole.render {
+  status: [32m'hydrating'[39m,
+  required_roles: [ [32m'people_admin'[39m, [32m'super_admin'[39m ]
+}
+[auth] auth.guard.RequireAuth.render { status: [32m'hydrating'[39m }
+[auth] auth.provider.hydrate.start
+[auth] auth.repo.refresh.start
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T12 — RequireRole: people_admin allowed to admin route > renders admin content for people_admin role
+[auth] auth.repo.refresh.ok { request_id: [32m'bda31b71-7649-483a-a463-af27e2fcca2f'[39m, token_len: [33m21[39m }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T12 — RequireRole: people_admin allowed to admin route > renders admin content for people_admin role
+[auth] auth.store.set.start { was_present: [33mfalse[39m, new_len: [33m21[39m }
+[auth] auth.store.set.ok { len: [33m21[39m }
+[auth] auth.repo.fetchMe.start { token_len: [33m21[39m }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T12 — RequireRole: people_admin allowed to admin route > renders admin content for people_admin role
+[auth] auth.repo.fetchMe.ok {
+  request_id: [32m'03f3f7d4-1cd0-4609-b9a8-030197123cb0'[39m,
+  user_id: [32m'22222222-2222-2222-2222-222222222222'[39m
+}
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T12 — RequireRole: people_admin allowed to admin route > renders admin content for people_admin role
+[auth] auth.provider.hydrate.ok { user_id: [32m'22222222-2222-2222-2222-222222222222'[39m }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T12 — RequireRole: people_admin allowed to admin route > renders admin content for people_admin role
+[auth] auth.guard.RequireRole.render {
+  status: [32m'authenticated'[39m,
+  required_roles: [ [32m'people_admin'[39m, [32m'super_admin'[39m ]
+}
+[auth] auth.guard.RequireRole.allowed { user_id: [32m'22222222-2222-2222-2222-222222222222'[39m }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T12 — RequireRole: people_admin allowed to admin route > renders admin content for people_admin role
+[auth] auth.store.clear.start { was_present: [33mtrue[39m }
+[auth] auth.store.clear.ok
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T15 — httpClient: 401 → single-flight refresh → retry success > fires /refresh once, retries original request with new token
+[auth] auth.store.clear.start { was_present: [33mfalse[39m }
+[auth] auth.store.clear.ok
+[auth] auth.store.set.start { was_present: [33mfalse[39m, new_len: [33m9[39m }
+[auth] auth.store.set.ok { len: [33m9[39m }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T15 — httpClient: 401 → single-flight refresh → retry success > fires /refresh once, retries original request with new token
+[auth] auth.http.request.start {
+  url: [32m'/api/v1/users/me'[39m,
+  method: [32m'GET'[39m,
+  request_id: [32m'09cce6f8-a565-4c40-962e-2aec699fbe53'[39m,
+  has_bearer: [33mtrue[39m
+}
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T15 — httpClient: 401 → single-flight refresh → retry success > fires /refresh once, retries original request with new token
+[auth] auth.http.request.ok {
+  url: [32m'/api/v1/users/me'[39m,
+  status: [33m401[39m,
+  request_id: [32m'09cce6f8-a565-4c40-962e-2aec699fbe53'[39m
+}
+[auth] auth.http.401_intercepted {
+  url: [32m'/api/v1/users/me'[39m,
+  request_id: [32m'09cce6f8-a565-4c40-962e-2aec699fbe53'[39m
+}
+[auth] auth.http.refresh.start
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T15 — httpClient: 401 → single-flight refresh → retry success > fires /refresh once, retries original request with new token
+[auth] auth.store.set.start { was_present: [33mtrue[39m, new_len: [33m9[39m }
+[auth] auth.store.set.ok { len: [33m9[39m }
+[auth] auth.http.refresh.ok { request_id: [32m'c130ae9b-0d98-43de-85c6-054b43296073'[39m, token_len: [33m9[39m }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T15 — httpClient: 401 → single-flight refresh → retry success > fires /refresh once, retries original request with new token
+[auth] auth.http.retry_after_refresh { url: [32m'/api/v1/users/me'[39m }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T15 — httpClient: 401 → single-flight refresh → retry success > fires /refresh once, retries original request with new token
+[auth] auth.store.clear.start { was_present: [33mtrue[39m }
+[auth] auth.store.clear.ok
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T16 — httpClient: two concurrent 401s → ONE refresh call > fires exactly ONE refresh for two concurrent 401s
+[auth] auth.store.clear.start { was_present: [33mfalse[39m }
+[auth] auth.store.clear.ok
+[auth] auth.store.set.start { was_present: [33mfalse[39m, new_len: [33m9[39m }
+[auth] auth.store.set.ok { len: [33m9[39m }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T16 — httpClient: two concurrent 401s → ONE refresh call > fires exactly ONE refresh for two concurrent 401s
+[auth] auth.http.request.start {
+  url: [32m'/api/v1/users/me'[39m,
+  method: [32m'GET'[39m,
+  request_id: [32m'8b982fca-873f-42a5-a2b8-bf2b2f5c11be'[39m,
+  has_bearer: [33mtrue[39m
+}
+[auth] auth.http.request.start {
+  url: [32m'/api/v1/users/me'[39m,
+  method: [32m'GET'[39m,
+  request_id: [32m'730de4cc-9fb3-4b22-854e-21b6bee0c5ea'[39m,
+  has_bearer: [33mtrue[39m
+}
+[auth] auth.http.request.ok {
+  url: [32m'/api/v1/users/me'[39m,
+  status: [33m401[39m,
+  request_id: [32m'8b982fca-873f-42a5-a2b8-bf2b2f5c11be'[39m
+}
+[auth] auth.http.401_intercepted {
+  url: [32m'/api/v1/users/me'[39m,
+  request_id: [32m'8b982fca-873f-42a5-a2b8-bf2b2f5c11be'[39m
+}
+[auth] auth.http.refresh.start
+[auth] auth.http.request.ok {
+  url: [32m'/api/v1/users/me'[39m,
+  status: [33m401[39m,
+  request_id: [32m'730de4cc-9fb3-4b22-854e-21b6bee0c5ea'[39m
+}
+[auth] auth.http.401_intercepted {
+  url: [32m'/api/v1/users/me'[39m,
+  request_id: [32m'730de4cc-9fb3-4b22-854e-21b6bee0c5ea'[39m
+}
+[auth] auth.http.refresh_inflight
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T16 — httpClient: two concurrent 401s → ONE refresh call > fires exactly ONE refresh for two concurrent 401s
+[auth] auth.store.set.start { was_present: [33mtrue[39m, new_len: [33m9[39m }
+[auth] auth.store.set.ok { len: [33m9[39m }
+[auth] auth.http.refresh.ok { request_id: [32m'ae199896-605a-4498-9e76-5ee08fb35cf6'[39m, token_len: [33m9[39m }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T16 — httpClient: two concurrent 401s → ONE refresh call > fires exactly ONE refresh for two concurrent 401s
+[auth] auth.http.retry_after_refresh { url: [32m'/api/v1/users/me'[39m }
+[auth] auth.http.retry_after_refresh { url: [32m'/api/v1/users/me'[39m }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T16 — httpClient: two concurrent 401s → ONE refresh call > fires exactly ONE refresh for two concurrent 401s
+[auth] auth.store.clear.start { was_present: [33mtrue[39m }
+[auth] auth.store.clear.ok
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T17 — httpClient: refresh 401 → no loop, onAuthFailure called > throws AuthSessionExpiredError, calls onAuthFailure, clears token
+[auth] auth.store.clear.start { was_present: [33mfalse[39m }
+[auth] auth.store.clear.ok
+[auth] auth.store.set.start { was_present: [33mfalse[39m, new_len: [33m9[39m }
+[auth] auth.store.set.ok { len: [33m9[39m }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T17 — httpClient: refresh 401 → no loop, onAuthFailure called > throws AuthSessionExpiredError, calls onAuthFailure, clears token
+[auth] auth.http.request.start {
+  url: [32m'/api/v1/users/me'[39m,
+  method: [32m'GET'[39m,
+  request_id: [32m'f4c16b64-6a7f-42f1-b786-61cb67e9851b'[39m,
+  has_bearer: [33mtrue[39m
+}
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T17 — httpClient: refresh 401 → no loop, onAuthFailure called > throws AuthSessionExpiredError, calls onAuthFailure, clears token
+[auth] auth.http.request.ok {
+  url: [32m'/api/v1/users/me'[39m,
+  status: [33m401[39m,
+  request_id: [32m'f4c16b64-6a7f-42f1-b786-61cb67e9851b'[39m
+}
+[auth] auth.http.401_intercepted {
+  url: [32m'/api/v1/users/me'[39m,
+  request_id: [32m'f4c16b64-6a7f-42f1-b786-61cb67e9851b'[39m
+}
+[auth] auth.http.refresh.start
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T17 — httpClient: refresh 401 → no loop, onAuthFailure called > throws AuthSessionExpiredError, calls onAuthFailure, clears token
+[auth] auth.store.clear.start { was_present: [33mtrue[39m }
+[auth] auth.store.clear.ok
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T17 — httpClient: refresh 401 → no loop, onAuthFailure called > throws AuthSessionExpiredError, calls onAuthFailure, clears token
+[auth] auth.http.refresh.failed { status: [33m401[39m, request_id: [32m'c60e1d6d-f510-42ab-9aec-a4f21acfdd0b'[39m }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T17 — httpClient: refresh 401 → no loop, onAuthFailure called > throws AuthSessionExpiredError, calls onAuthFailure, clears token
+[auth] auth.store.clear.start { was_present: [33mfalse[39m }
+[auth] auth.store.clear.ok
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T18 — httpClient: Bearer injected on protected endpoints only > injects Authorization Bearer on /api/v1/users/me
+[auth] auth.store.clear.start { was_present: [33mfalse[39m }
+[auth] auth.store.clear.ok
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T18 — httpClient: Bearer injected on protected endpoints only > injects Authorization Bearer on /api/v1/users/me
+[auth] auth.store.set.start { was_present: [33mfalse[39m, new_len: [33m8[39m }
+[auth] auth.store.set.ok { len: [33m8[39m }
+[auth] auth.http.request.start {
+  url: [32m'/api/v1/users/me'[39m,
+  method: [32m'GET'[39m,
+  request_id: [32m'7ca9388a-f3ed-4446-8d77-49d6b964c649'[39m,
+  has_bearer: [33mtrue[39m
+}
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T18 — httpClient: Bearer injected on protected endpoints only > injects Authorization Bearer on /api/v1/users/me
+[auth] auth.http.request.ok {
+  url: [32m'/api/v1/users/me'[39m,
+  status: [33m200[39m,
+  request_id: [32m'7ca9388a-f3ed-4446-8d77-49d6b964c649'[39m
+}
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T18 — httpClient: Bearer injected on protected endpoints only > injects Authorization Bearer on /api/v1/users/me
+[auth] auth.store.clear.start { was_present: [33mtrue[39m }
+[auth] auth.store.clear.ok
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T18 — httpClient: Bearer injected on protected endpoints only > does NOT inject Authorization Bearer on /api/v1/auth/refresh
+[auth] auth.store.clear.start { was_present: [33mfalse[39m }
+[auth] auth.store.clear.ok
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T18 — httpClient: Bearer injected on protected endpoints only > does NOT inject Authorization Bearer on /api/v1/auth/refresh
+[auth] auth.store.set.start { was_present: [33mfalse[39m, new_len: [33m8[39m }
+[auth] auth.store.set.ok { len: [33m8[39m }
+[auth] auth.http.request.start {
+  url: [32m'/api/v1/auth/refresh'[39m,
+  method: [32m'POST'[39m,
+  request_id: [32m'41329a3d-41f6-4368-8f4f-efb9a891d20f'[39m,
+  has_bearer: [33mfalse[39m
+}
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T18 — httpClient: Bearer injected on protected endpoints only > does NOT inject Authorization Bearer on /api/v1/auth/refresh
+[auth] auth.http.request.ok {
+  url: [32m'/api/v1/auth/refresh'[39m,
+  status: [33m200[39m,
+  request_id: [32m'41329a3d-41f6-4368-8f4f-efb9a891d20f'[39m
+}
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T18 — httpClient: Bearer injected on protected endpoints only > does NOT inject Authorization Bearer on /api/v1/auth/refresh
+[auth] auth.store.clear.start { was_present: [33mtrue[39m }
+[auth] auth.store.clear.ok
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T19 — Logging: verbose=true fires logs, no token value leaked > setAccessToken logs present=true and len, never the token value
+[auth] auth.store.clear.start { was_present: [33mfalse[39m }
+[auth] auth.store.clear.ok
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T20 — Logging: verbose=false suppresses info logs > setAccessToken does NOT log when verbose=false
+[auth] auth.store.clear.start { was_present: [33mfalse[39m }
+[auth] auth.store.clear.ok
+
+stdout | src/features/chat/__tests__/useConversation.test.tsx > useConversation > T04 — 404: throws ChatNotFoundError
+[chat] chat.hook.useConversation.fetch.start { conversation_id: [32m'conv-aaa'[39m }
+[chat] chat.repo.getConversation.start { conversation_id: [32m'conv-aaa'[39m }
+
+stderr | src/features/chat/__tests__/useConversation.test.tsx > useConversation > T04 — 404: throws ChatNotFoundError
+[chat] chat.repo.getConversation.not_found { status: [33m404[39m, conversation_id: [32m'conv-aaa'[39m, request_id: [32m'test-r1'[39m }
+
+stderr | src/features/chat/__tests__/useConversation.test.tsx > useConversation > T04 — 404: throws ChatNotFoundError
+[chat] chat.hook.useConversation.fetch.error { error: [32m'CHAT_NOT_FOUND'[39m, conversation_id: [32m'conv-aaa'[39m }
+
+stdout | src/pages/showcase/__tests__/ShowcasePage.test.tsx > ShowcasePage > renders all 9 component sections
+ShowcasePage.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, route: [32m'/showcase'[39m }
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_5_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [90mundefined[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_6_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [90mundefined[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_7_'[39m,
+  hasError: [33mtrue[39m,
+  disabled: [90mundefined[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_8_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mtrue[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_9_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [90mundefined[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [90mundefined[39m
+}
+SolidCTA.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, loading: [33mfalse[39m, disabled: [33mtrue[39m }
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [90mundefined[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [90mundefined[39m
+}
+HairlineTable.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  state: [32m'populated'[39m,
+  rowCount: [33m3[39m
+}
+HairlineTable.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, state: [32m'empty'[39m, rowCount: [33m0[39m }
+HairlineTable.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  state: [32m'error_network'[39m,
+  rowCount: [33m0[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [90mundefined[39m
+}
+HairlineTable.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  state: [32m'permission_denied'[39m,
+  rowCount: [33m0[39m
+}
+StatusDot.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, state: [32m'active'[39m }
+StatusDot.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, state: [32m'inactive'[39m }
+StatusDot.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, state: [32m'syncing'[39m }
+StatusDot.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, state: [32m'error'[39m }
+StatusDot.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, state: [32m'active'[39m }
+AdminShell.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, navItemCount: [33m5[39m }
+CitationInline.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  label: [32m'Fuente 1'[39m,
+  hasHref: [33mtrue[39m
+}
+CitationInline.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  label: [32m'Fuente 2'[39m,
+  hasHref: [33mtrue[39m
+}
+CitationInline.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  label: [32m'Fuente 1'[39m,
+  hasHref: [33mfalse[39m
+}
+CitationInline.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  label: [32m'Fuente 3'[39m,
+  hasHref: [33mtrue[39m
+}
+
+ ✓ src/features/auth/__tests__/auth.test.tsx (33 tests) 136ms
+stdout | src/pages/showcase/__tests__/ShowcasePage.test.tsx > ShowcasePage > renders the Wordmark 'Hilo' brand text
+ShowcasePage.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, route: [32m'/showcase'[39m }
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_a_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [90mundefined[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_b_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [90mundefined[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_c_'[39m,
+  hasError: [33mtrue[39m,
+  disabled: [90mundefined[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_d_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mtrue[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_e_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [90mundefined[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [90mundefined[39m
+}
+SolidCTA.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, loading: [33mfalse[39m, disabled: [33mtrue[39m }
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [90mundefined[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [90mundefined[39m
+}
+HairlineTable.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  state: [32m'populated'[39m,
+  rowCount: [33m3[39m
+}
+HairlineTable.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, state: [32m'empty'[39m, rowCount: [33m0[39m }
+HairlineTable.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  state: [32m'error_network'[39m,
+  rowCount: [33m0[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [90mundefined[39m
+}
+HairlineTable.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  state: [32m'permission_denied'[39m,
+  rowCount: [33m0[39m
+}
+StatusDot.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, state: [32m'active'[39m }
+StatusDot.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, state: [32m'inactive'[39m }
+StatusDot.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, state: [32m'syncing'[39m }
+StatusDot.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, state: [32m'error'[39m }
+StatusDot.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, state: [32m'active'[39m }
+AdminShell.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, navItemCount: [33m5[39m }
+CitationInline.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  label: [32m'Fuente 1'[39m,
+  hasHref: [33mtrue[39m
+}
+CitationInline.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  label: [32m'Fuente 2'[39m,
+  hasHref: [33mtrue[39m
+}
+CitationInline.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  label: [32m'Fuente 1'[39m,
+  hasHref: [33mfalse[39m
+}
+CitationInline.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  label: [32m'Fuente 3'[39m,
+  hasHref: [33mtrue[39m
+}
+
+ ✓ src/features/chat/__tests__/useCreateConversation.test.tsx (4 tests) 227ms
+stdout | src/pages/showcase/__tests__/ShowcasePage.test.tsx > ShowcasePage > renders the design system footer
+ShowcasePage.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, route: [32m'/showcase'[39m }
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_f_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [90mundefined[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_g_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [90mundefined[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_h_'[39m,
+  hasError: [33mtrue[39m,
+  disabled: [90mundefined[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_i_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mtrue[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_j_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [90mundefined[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [90mundefined[39m
+}
+SolidCTA.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, loading: [33mfalse[39m, disabled: [33mtrue[39m }
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [90mundefined[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [90mundefined[39m
+}
+HairlineTable.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  state: [32m'populated'[39m,
+  rowCount: [33m3[39m
+}
+HairlineTable.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, state: [32m'empty'[39m, rowCount: [33m0[39m }
+HairlineTable.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  state: [32m'error_network'[39m,
+  rowCount: [33m0[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [90mundefined[39m
+}
+HairlineTable.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  state: [32m'permission_denied'[39m,
+  rowCount: [33m0[39m
+}
+StatusDot.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, state: [32m'active'[39m }
+StatusDot.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, state: [32m'inactive'[39m }
+StatusDot.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, state: [32m'syncing'[39m }
+StatusDot.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, state: [32m'error'[39m }
+StatusDot.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, state: [32m'active'[39m }
+AdminShell.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, navItemCount: [33m5[39m }
+CitationInline.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  label: [32m'Fuente 1'[39m,
+  hasHref: [33mtrue[39m
+}
+CitationInline.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  label: [32m'Fuente 2'[39m,
+  hasHref: [33mtrue[39m
+}
+CitationInline.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  label: [32m'Fuente 1'[39m,
+  hasHref: [33mfalse[39m
+}
+CitationInline.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  label: [32m'Fuente 3'[39m,
+  hasHref: [33mtrue[39m
+}
+
+ ✓ src/pages/showcase/__tests__/ShowcasePage.test.tsx (4 tests) 166ms
+stdout | src/features/chat/__tests__/useConversation.test.tsx > useConversation > T05 — network error: throws ChatNetworkError
+[chat] chat.hook.useConversation.fetch.start { conversation_id: [32m'conv-aaa'[39m }
+[chat] chat.repo.getConversation.start { conversation_id: [32m'conv-aaa'[39m }
+
+stderr | src/features/chat/__tests__/useConversation.test.tsx > useConversation > T05 — network error: throws ChatNetworkError
+[chat] chat.repo.getConversation.error { error: [32m'CHAT_NETWORK_ERROR'[39m, conversation_id: [32m'conv-aaa'[39m }
+
+stderr | src/features/chat/__tests__/useConversation.test.tsx > useConversation > T05 — network error: throws ChatNetworkError
+[chat] chat.hook.useConversation.fetch.error { error: [32m'CHAT_NETWORK_ERROR'[39m, conversation_id: [32m'conv-aaa'[39m }
+
+ ✓ src/features/chat/__tests__/useConversation.test.tsx (6 tests) 285ms
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T01: renders with i18n ES keys — email label, password label, submit button visible
+[auth] auth.store.clear.start { was_present: [33mfalse[39m }
+[auth] auth.store.clear.ok
+
+stdout | src/pages/chat/__tests__/ConversationPage.test.tsx > ConversationPage > T01 — loading state: aria-busy=true, loading label visible
+[chat] chat.conversation.render.start { conversation_id: [32m'conv-test'[39m }
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mtrue[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T01: renders with i18n ES keys — email label, password label, submit button visible
+[auth] auth.repo.refresh.session_expired { request_id: [32m'b9543863-d80e-4b45-a639-4e212e69d1e1'[39m }
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T01: renders with i18n ES keys — email label, password label, submit button visible
+[auth] auth.signin.page.render.start { isLoading: [33mfalse[39m, hasError: [33mfalse[39m }
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mfalse[39m }
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_0_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_1_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+[auth] auth.provider.hydrate.start
+[auth] auth.repo.refresh.start
+[auth] auth.signin.page.render.start { isLoading: [33mfalse[39m, hasError: [33mfalse[39m }
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mfalse[39m }
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_0_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_1_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T01: renders with i18n ES keys — email label, password label, submit button visible
+[auth] auth.provider.hydrate.unauthenticated { error: [32m'Session expired or invalid; please sign in again.'[39m }
+
+stdout | src/pages/chat/__tests__/ConversationPage.test.tsx > ConversationPage > T02 — empty state: 0 messages, CTA to new conversation
+[chat] chat.conversation.render.start { conversation_id: [32m'conv-test'[39m }
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mtrue[39m }
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [90mundefined[39m
+}
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T01: renders with i18n ES keys — email label, password label, submit button visible
+[auth] auth.signin.page.render.start { isLoading: [33mfalse[39m, hasError: [33mfalse[39m }
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mfalse[39m }
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_0_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_1_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T01: renders with i18n ES keys — email label, password label, submit button visible
+[auth] auth.store.clear.start { was_present: [33mfalse[39m }
+[auth] auth.store.clear.ok
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T02: invalid email triggers validation error with aria-invalid
+[auth] auth.store.clear.start { was_present: [33mfalse[39m }
+[auth] auth.store.clear.ok
+
+stdout | src/pages/chat/__tests__/ConversationPage.test.tsx > ConversationPage > T03 — success state: transcript rendered with messages
+[chat] chat.conversation.render.start { conversation_id: [32m'conv-test'[39m }
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mtrue[39m }
+CitationInline.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  label: [32m'HR Policy'[39m,
+  hasHref: [33mfalse[39m
+}
+[chat] chat.Composer.render.start { has_value: [33mfalse[39m, loading: [33mfalse[39m, disabled: [33mfalse[39m }
+SolidCTA.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, loading: [33mfalse[39m, disabled: [33mtrue[39m }
+
+stdout | src/pages/chat/__tests__/ConversationPage.test.tsx > ConversationPage > T04 — streaming state: streaming placeholder visible, composer shows loading
+[chat] chat.conversation.render.start { conversation_id: [32m'conv-test'[39m }
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mtrue[39m }
+CitationInline.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  label: [32m'HR Policy'[39m,
+  hasHref: [33mfalse[39m
+}
+[chat] chat.Composer.render.start { has_value: [33mfalse[39m, loading: [33mtrue[39m, disabled: [33mtrue[39m }
+SolidCTA.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, loading: [33mtrue[39m, disabled: [33mtrue[39m }
+
+stdout | src/pages/chat/__tests__/ConversationPage.test.tsx > ConversationPage > T05 — error_network state: retry CTA visible
+[chat] chat.conversation.render.start { conversation_id: [32m'conv-test'[39m }
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mtrue[39m }
+CitationInline.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  label: [32m'HR Policy'[39m,
+  hasHref: [33mfalse[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [90mundefined[39m
+}
+[chat] chat.Composer.render.start { has_value: [33mfalse[39m, loading: [33mfalse[39m, disabled: [33mfalse[39m }
+SolidCTA.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, loading: [33mfalse[39m, disabled: [33mtrue[39m }
+
+stdout | src/pages/chat/__tests__/ConversationPage.test.tsx > ConversationPage > T06 — permission_denied state: forbidden view visible (from query error)
+[chat] chat.conversation.render.start { conversation_id: [32m'conv-test'[39m }
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mtrue[39m }
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [90mundefined[39m
+}
+
+stderr | src/pages/chat/__tests__/ConversationPage.test.tsx > ConversationPage > T06 — permission_denied state: forbidden view visible (from query error)
+[chat] chat.conversation.render.forbidden { conversation_id: [32m'conv-test'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T02: invalid email triggers validation error with aria-invalid
+[auth] auth.repo.refresh.session_expired { request_id: [32m'61498834-44c9-45ea-aa45-cecbb051d95d'[39m }
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T02: invalid email triggers validation error with aria-invalid
+[auth] auth.signin.page.render.start { isLoading: [33mfalse[39m, hasError: [33mfalse[39m }
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mfalse[39m }
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_2_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_3_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+[auth] auth.provider.hydrate.start
+[auth] auth.repo.refresh.start
+[auth] auth.signin.page.render.start { isLoading: [33mfalse[39m, hasError: [33mfalse[39m }
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mfalse[39m }
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_2_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_3_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T02: invalid email triggers validation error with aria-invalid
+[auth] auth.provider.hydrate.unauthenticated { error: [32m'Session expired or invalid; please sign in again.'[39m }
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T02: invalid email triggers validation error with aria-invalid
+[auth] auth.signin.page.render.start { isLoading: [33mfalse[39m, hasError: [33mfalse[39m }
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mfalse[39m }
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_2_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_3_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+
+stdout | src/pages/chat/__tests__/ConversationPage.test.tsx > ConversationPage > T07 — not_found state: not-found view visible (from query error)
+[chat] chat.conversation.render.start { conversation_id: [32m'conv-test'[39m }
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mtrue[39m }
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [90mundefined[39m
+}
+
+stderr | src/pages/chat/__tests__/ConversationPage.test.tsx > ConversationPage > T07 — not_found state: not-found view visible (from query error)
+[chat] chat.conversation.render.not_found { conversation_id: [32m'conv-test'[39m }
+
+stdout | src/pages/chat/__tests__/ConversationPage.test.tsx > ConversationPage > T08 — transcript has role='log' and aria-live='polite'
+[chat] chat.conversation.render.start { conversation_id: [32m'conv-test'[39m }
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mtrue[39m }
+CitationInline.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  label: [32m'HR Policy'[39m,
+  hasHref: [33mfalse[39m
+}
+[chat] chat.Composer.render.start { has_value: [33mfalse[39m, loading: [33mfalse[39m, disabled: [33mfalse[39m }
+SolidCTA.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, loading: [33mfalse[39m, disabled: [33mtrue[39m }
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T02: invalid email triggers validation error with aria-invalid
+[auth] auth.signin.page.render.start { isLoading: [33mfalse[39m, hasError: [33mfalse[39m }
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mfalse[39m }
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_2_'[39m,
+  hasError: [33mtrue[39m,
+  disabled: [33mfalse[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_3_'[39m,
+  hasError: [33mtrue[39m,
+  disabled: [33mfalse[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T02: invalid email triggers validation error with aria-invalid
+[auth] auth.store.clear.start { was_present: [33mfalse[39m }
+[auth] auth.store.clear.ok
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T03: submit happy path no-MFA — navigates to /chat (default)
+[auth] auth.store.clear.start { was_present: [33mfalse[39m }
+[auth] auth.store.clear.ok
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T03: submit happy path no-MFA — navigates to /chat (default)
+[auth] auth.repo.refresh.session_expired { request_id: [32m'cd39b970-5fe0-4ef5-81c1-ce971bb7ef27'[39m }
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T03: submit happy path no-MFA — navigates to /chat (default)
+[auth] auth.signin.page.render.start { isLoading: [33mfalse[39m, hasError: [33mfalse[39m }
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mfalse[39m }
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_4_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_5_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+[auth] auth.provider.hydrate.start
+[auth] auth.repo.refresh.start
+[auth] auth.signin.page.render.start { isLoading: [33mfalse[39m, hasError: [33mfalse[39m }
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mfalse[39m }
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_4_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_5_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T03: submit happy path no-MFA — navigates to /chat (default)
+[auth] auth.provider.hydrate.unauthenticated { error: [32m'Session expired or invalid; please sign in again.'[39m }
+
+stdout | src/pages/chat/__tests__/ConversationPage.test.tsx > ConversationPage > T09 — no .bubble class on message blocks (editorial no-bubble layout)
+[chat] chat.conversation.render.start { conversation_id: [32m'conv-test'[39m }
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mtrue[39m }
+CitationInline.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  label: [32m'HR Policy'[39m,
+  hasHref: [33mfalse[39m
+}
+[chat] chat.Composer.render.start { has_value: [33mfalse[39m, loading: [33mfalse[39m, disabled: [33mfalse[39m }
+SolidCTA.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, loading: [33mfalse[39m, disabled: [33mtrue[39m }
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T03: submit happy path no-MFA — navigates to /chat (default)
+[auth] auth.signin.page.render.start { isLoading: [33mfalse[39m, hasError: [33mfalse[39m }
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mfalse[39m }
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_4_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_5_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T03: submit happy path no-MFA — navigates to /chat (default)
+[auth] auth.signin.page.submit.start { email_domain: [32m'inditex-sandbox.com'[39m }
+[auth] auth.signin.hook.submit.start { email_domain: [32m'inditex-sandbox.com'[39m, password_len: [33m15[39m }
+[auth] auth.signin.submit.start {
+  email_domain: [32m'inditex-sandbox.com'[39m,
+  password_len: [33m15[39m,
+  request_id: [32m'808018be-83a2-4718-87fe-45b460faabc5'[39m
+}
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T03: submit happy path no-MFA — navigates to /chat (default)
+[auth] auth.signin.submit.ok_no_mfa {
+  token_len: [33m28[39m,
+  expires_in: [33m1800[39m,
+  request_id: [32m'808018be-83a2-4718-87fe-45b460faabc5'[39m
+}
+[auth] auth.store.set.start { was_present: [33mfalse[39m, new_len: [33m28[39m }
+[auth] auth.store.set.ok { len: [33m28[39m }
+[auth] auth.repo.fetchMe.start { token_len: [33m28[39m }
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T03: submit happy path no-MFA — navigates to /chat (default)
+[auth] auth.repo.fetchMe.ok {
+  request_id: [32m'17450825-e4a9-4be4-9ffd-07a97a28cdf0'[39m,
+  user_id: [32m'11111111-1111-1111-1111-111111111111'[39m
+}
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T03: submit happy path no-MFA — navigates to /chat (default)
+[auth] auth.signin.hook.submit.ok_no_mfa { token_len: [33m28[39m }
+[auth] auth.provider.signin_accepted { user_id: [32m'11111111-1111-1111-1111-111111111111'[39m, token_len: [33m28[39m }
+[auth] auth.store.set.start { was_present: [33mtrue[39m, new_len: [33m28[39m }
+[auth] auth.store.set.ok { len: [33m28[39m }
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T03: submit happy path no-MFA — navigates to /chat (default)
+[auth] auth.signin.page.submit.success_navigate { destination: [32m'/chat'[39m }
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T03: submit happy path no-MFA — navigates to /chat (default)
+[auth] auth.signin.page.render.start { isLoading: [33mfalse[39m, hasError: [33mfalse[39m }
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mfalse[39m }
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_4_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_5_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+
+stdout | src/pages/chat/__tests__/ConversationPage.test.tsx > ConversationPage > T10 — citations render as CitationInline within assistant block
+[chat] chat.conversation.render.start { conversation_id: [32m'conv-test'[39m }
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mtrue[39m }
+CitationInline.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  label: [32m'HR Policy'[39m,
+  hasHref: [33mfalse[39m
+}
+[chat] chat.Composer.render.start { has_value: [33mfalse[39m, loading: [33mfalse[39m, disabled: [33mfalse[39m }
+SolidCTA.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, loading: [33mfalse[39m, disabled: [33mtrue[39m }
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T03: submit happy path no-MFA — navigates to /chat (default)
+[auth] auth.store.clear.start { was_present: [33mtrue[39m }
+[auth] auth.store.clear.ok
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T04: submit MFA branch — navigates to /auth/2fa
+[auth] auth.store.clear.start { was_present: [33mfalse[39m }
+[auth] auth.store.clear.ok
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T04: submit MFA branch — navigates to /auth/2fa
+[auth] auth.repo.refresh.session_expired { request_id: [32m'2983cf5f-e41d-4295-8b79-a426fbbe9883'[39m }
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T04: submit MFA branch — navigates to /auth/2fa
+[auth] auth.signin.page.render.start { isLoading: [33mfalse[39m, hasError: [33mfalse[39m }
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mfalse[39m }
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_6_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_7_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+[auth] auth.provider.hydrate.start
+[auth] auth.repo.refresh.start
+[auth] auth.signin.page.render.start { isLoading: [33mfalse[39m, hasError: [33mfalse[39m }
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mfalse[39m }
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_6_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_7_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T04: submit MFA branch — navigates to /auth/2fa
+[auth] auth.provider.hydrate.unauthenticated { error: [32m'Session expired or invalid; please sign in again.'[39m }
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T04: submit MFA branch — navigates to /auth/2fa
+[auth] auth.signin.page.render.start { isLoading: [33mfalse[39m, hasError: [33mfalse[39m }
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mfalse[39m }
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_6_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_7_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T04: submit MFA branch — navigates to /auth/2fa
+[auth] auth.signin.page.submit.start { email_domain: [32m'inditex-sandbox.com'[39m }
+[auth] auth.signin.hook.submit.start { email_domain: [32m'inditex-sandbox.com'[39m, password_len: [33m15[39m }
+[auth] auth.signin.submit.start {
+  email_domain: [32m'inditex-sandbox.com'[39m,
+  password_len: [33m15[39m,
+  request_id: [32m'8ec2c2fe-8ce5-44c9-ab19-a64d9d7470ce'[39m
+}
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T04: submit MFA branch — navigates to /auth/2fa
+[auth] auth.signin.submit.mfa_required {
+  challenge_token_len: [33m19[39m,
+  expires_in: [33m300[39m,
+  request_id: [32m'8ec2c2fe-8ce5-44c9-ab19-a64d9d7470ce'[39m
+}
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T04: submit MFA branch — navigates to /auth/2fa
+[auth] auth.signin.hook.submit.mfa_required { challenge_token_len: [33m19[39m, expires_in: [33m300[39m }
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T04: submit MFA branch — navigates to /auth/2fa
+[auth] auth.signin.page.submit.mfa_navigate { target: [32m'/auth/2fa'[39m }
+
+stdout | src/pages/chat/__tests__/ConversationPage.test.tsx > ConversationPage > T11 — deep-link auto-stream: last message is user role → start() called
+[chat] chat.conversation.render.start { conversation_id: [32m'conv-test'[39m }
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mtrue[39m }
+[chat] chat.Composer.render.start { has_value: [33mfalse[39m, loading: [33mfalse[39m, disabled: [33mfalse[39m }
+SolidCTA.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, loading: [33mfalse[39m, disabled: [33mtrue[39m }
+[chat] chat.conversation.auto_stream { conversation_id: [32m'conv-test'[39m, message_len: [33m23[39m }
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T04: submit MFA branch — navigates to /auth/2fa
+[auth] auth.signin.page.render.start { isLoading: [33mfalse[39m, hasError: [33mfalse[39m }
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mfalse[39m }
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_6_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_7_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T04: submit MFA branch — navigates to /auth/2fa
+[auth] auth.store.clear.start { was_present: [33mfalse[39m }
+[auth] auth.store.clear.ok
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T05: 401 — shows invalidCredentials copy (byte-identical for both failure modes — anti-enum)
+[auth] auth.store.clear.start { was_present: [33mfalse[39m }
+[auth] auth.store.clear.ok
+
+stdout | src/pages/chat/__tests__/ConversationPage.test.tsx > ConversationPage > T12 — error_validation state: ValidationErrorBanner visible (alert role)
+[chat] chat.conversation.render.start { conversation_id: [32m'conv-test'[39m }
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mtrue[39m }
+CitationInline.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  label: [32m'HR Policy'[39m,
+  hasHref: [33mfalse[39m
+}
+[chat] chat.Composer.render.start { has_value: [33mfalse[39m, loading: [33mfalse[39m, disabled: [33mfalse[39m }
+SolidCTA.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, loading: [33mfalse[39m, disabled: [33mtrue[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T05: 401 — shows invalidCredentials copy (byte-identical for both failure modes — anti-enum)
+[auth] auth.repo.refresh.session_expired { request_id: [32m'd689ab3f-cd56-43c2-9c49-9b4d15e95192'[39m }
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T05: 401 — shows invalidCredentials copy (byte-identical for both failure modes — anti-enum)
+[auth] auth.signin.page.render.start { isLoading: [33mfalse[39m, hasError: [33mfalse[39m }
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mfalse[39m }
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_8_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_9_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+[auth] auth.provider.hydrate.start
+[auth] auth.repo.refresh.start
+[auth] auth.signin.page.render.start { isLoading: [33mfalse[39m, hasError: [33mfalse[39m }
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mfalse[39m }
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_8_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_9_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T05: 401 — shows invalidCredentials copy (byte-identical for both failure modes — anti-enum)
+[auth] auth.provider.hydrate.unauthenticated { error: [32m'Session expired or invalid; please sign in again.'[39m }
+
+ ✓ src/pages/chat/__tests__/ConversationPage.test.tsx (12 tests) 115ms
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T05: 401 — shows invalidCredentials copy (byte-identical for both failure modes — anti-enum)
+[auth] auth.signin.page.render.start { isLoading: [33mfalse[39m, hasError: [33mfalse[39m }
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mfalse[39m }
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_8_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_9_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T05: 401 — shows invalidCredentials copy (byte-identical for both failure modes — anti-enum)
+[auth] auth.signin.page.submit.start { email_domain: [32m'inditex-sandbox.com'[39m }
+[auth] auth.signin.hook.submit.start { email_domain: [32m'inditex-sandbox.com'[39m, password_len: [33m13[39m }
+[auth] auth.signin.submit.start {
+  email_domain: [32m'inditex-sandbox.com'[39m,
+  password_len: [33m13[39m,
+  request_id: [32m'835cb40d-58bd-42c6-b199-2d118dcec72f'[39m
+}
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T05: 401 — shows invalidCredentials copy (byte-identical for both failure modes — anti-enum)
+[auth] auth.signin.submit.invalid_credentials { status: [33m401[39m, request_id: [32m'835cb40d-58bd-42c6-b199-2d118dcec72f'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T05: 401 — shows invalidCredentials copy (byte-identical for both failure modes — anti-enum)
+[auth] auth.signin.hook.submit.error { error_name: [32m'InvalidCredentialsError'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T05: 401 — shows invalidCredentials copy (byte-identical for both failure modes — anti-enum)
+[auth] auth.signin.page.submit.failed
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T05: 401 — shows invalidCredentials copy (byte-identical for both failure modes — anti-enum)
+[auth] auth.signin.page.render.start { isLoading: [33mfalse[39m, hasError: [33mtrue[39m }
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mfalse[39m }
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_8_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_9_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T05: 401 — shows invalidCredentials copy (byte-identical for both failure modes — anti-enum)
+[auth] auth.store.clear.start { was_present: [33mfalse[39m }
+[auth] auth.store.clear.ok
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T06: 423 account locked — shows accountLocked copy, submit re-enabled (not rate-limit disabled)
+[auth] auth.store.clear.start { was_present: [33mfalse[39m }
+[auth] auth.store.clear.ok
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T06: 423 account locked — shows accountLocked copy, submit re-enabled (not rate-limit disabled)
+[auth] auth.repo.refresh.session_expired { request_id: [32m'a59cf7cb-1092-4698-ac6b-5dbbe1b57052'[39m }
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T06: 423 account locked — shows accountLocked copy, submit re-enabled (not rate-limit disabled)
+[auth] auth.signin.page.render.start { isLoading: [33mfalse[39m, hasError: [33mfalse[39m }
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mfalse[39m }
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_a_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_b_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+[auth] auth.provider.hydrate.start
+[auth] auth.repo.refresh.start
+[auth] auth.signin.page.render.start { isLoading: [33mfalse[39m, hasError: [33mfalse[39m }
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mfalse[39m }
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_a_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_b_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T06: 423 account locked — shows accountLocked copy, submit re-enabled (not rate-limit disabled)
+[auth] auth.provider.hydrate.unauthenticated { error: [32m'Session expired or invalid; please sign in again.'[39m }
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T06: 423 account locked — shows accountLocked copy, submit re-enabled (not rate-limit disabled)
+[auth] auth.signin.page.render.start { isLoading: [33mfalse[39m, hasError: [33mfalse[39m }
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mfalse[39m }
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_a_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_b_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T06: 423 account locked — shows accountLocked copy, submit re-enabled (not rate-limit disabled)
+[auth] auth.signin.page.submit.start { email_domain: [32m'inditex-sandbox.com'[39m }
+[auth] auth.signin.hook.submit.start { email_domain: [32m'inditex-sandbox.com'[39m, password_len: [33m15[39m }
+[auth] auth.signin.submit.start {
+  email_domain: [32m'inditex-sandbox.com'[39m,
+  password_len: [33m15[39m,
+  request_id: [32m'82b43e35-4570-490e-a051-ce1afc51f99f'[39m
+}
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T06: 423 account locked — shows accountLocked copy, submit re-enabled (not rate-limit disabled)
+[auth] auth.signin.submit.locked { status: [33m423[39m, request_id: [32m'82b43e35-4570-490e-a051-ce1afc51f99f'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T06: 423 account locked — shows accountLocked copy, submit re-enabled (not rate-limit disabled)
+[auth] auth.signin.hook.submit.error { error_name: [32m'AccountLockedError'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T06: 423 account locked — shows accountLocked copy, submit re-enabled (not rate-limit disabled)
+[auth] auth.signin.page.submit.failed
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T06: 423 account locked — shows accountLocked copy, submit re-enabled (not rate-limit disabled)
+[auth] auth.signin.page.render.start { isLoading: [33mfalse[39m, hasError: [33mtrue[39m }
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mfalse[39m }
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_a_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_b_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T06: 423 account locked — shows accountLocked copy, submit re-enabled (not rate-limit disabled)
+[auth] auth.store.clear.start { was_present: [33mfalse[39m }
+[auth] auth.store.clear.ok
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T07: 429 rate-limited — submit disabled, copy shows seconds interpolated
+[auth] auth.store.clear.start { was_present: [33mfalse[39m }
+[auth] auth.store.clear.ok
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T07: 429 rate-limited — submit disabled, copy shows seconds interpolated
+[auth] auth.repo.refresh.session_expired { request_id: [32m'141890ba-22a6-4174-a428-d386a2d69413'[39m }
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T07: 429 rate-limited — submit disabled, copy shows seconds interpolated
+[auth] auth.signin.page.render.start { isLoading: [33mfalse[39m, hasError: [33mfalse[39m }
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mfalse[39m }
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_c_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_d_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+[auth] auth.provider.hydrate.start
+[auth] auth.repo.refresh.start
+[auth] auth.signin.page.render.start { isLoading: [33mfalse[39m, hasError: [33mfalse[39m }
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mfalse[39m }
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_c_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_d_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T07: 429 rate-limited — submit disabled, copy shows seconds interpolated
+[auth] auth.provider.hydrate.unauthenticated { error: [32m'Session expired or invalid; please sign in again.'[39m }
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T07: 429 rate-limited — submit disabled, copy shows seconds interpolated
+[auth] auth.signin.page.render.start { isLoading: [33mfalse[39m, hasError: [33mfalse[39m }
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mfalse[39m }
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_c_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_d_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T07: 429 rate-limited — submit disabled, copy shows seconds interpolated
+[auth] auth.signin.page.submit.start { email_domain: [32m'inditex-sandbox.com'[39m }
+[auth] auth.signin.hook.submit.start { email_domain: [32m'inditex-sandbox.com'[39m, password_len: [33m15[39m }
+[auth] auth.signin.submit.start {
+  email_domain: [32m'inditex-sandbox.com'[39m,
+  password_len: [33m15[39m,
+  request_id: [32m'6bfc8ac5-22c8-4a48-a542-c87df247573a'[39m
+}
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T07: 429 rate-limited — submit disabled, copy shows seconds interpolated
+[auth] auth.signin.submit.rate_limited {
+  status: [33m429[39m,
+  retry_after: [33m60[39m,
+  request_id: [32m'6bfc8ac5-22c8-4a48-a542-c87df247573a'[39m
+}
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T07: 429 rate-limited — submit disabled, copy shows seconds interpolated
+[auth] auth.signin.hook.submit.error { error_name: [32m'RateLimitedError'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T07: 429 rate-limited — submit disabled, copy shows seconds interpolated
+[auth] auth.signin.page.submit.failed
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T07: 429 rate-limited — submit disabled, copy shows seconds interpolated
+[auth] auth.signin.page.render.start { isLoading: [33mfalse[39m, hasError: [33mtrue[39m }
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mfalse[39m }
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_c_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_d_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+SolidCTA.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, loading: [33mfalse[39m, disabled: [33mtrue[39m }
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T07: 429 rate-limited — submit disabled, copy shows seconds interpolated
+[auth] auth.store.clear.start { was_present: [33mfalse[39m }
+[auth] auth.store.clear.ok
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T08: network error — shows error_network copy
+[auth] auth.store.clear.start { was_present: [33mfalse[39m }
+[auth] auth.store.clear.ok
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T08: network error — shows error_network copy
+[auth] auth.repo.refresh.session_expired { request_id: [32m'1dd16825-36ec-4274-bd6c-a9e1e545f7fd'[39m }
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T08: network error — shows error_network copy
+[auth] auth.signin.page.render.start { isLoading: [33mfalse[39m, hasError: [33mfalse[39m }
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mfalse[39m }
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_e_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_f_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+[auth] auth.provider.hydrate.start
+[auth] auth.repo.refresh.start
+[auth] auth.signin.page.render.start { isLoading: [33mfalse[39m, hasError: [33mfalse[39m }
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mfalse[39m }
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_e_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_f_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T08: network error — shows error_network copy
+[auth] auth.provider.hydrate.unauthenticated { error: [32m'Session expired or invalid; please sign in again.'[39m }
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T08: network error — shows error_network copy
+[auth] auth.signin.page.render.start { isLoading: [33mfalse[39m, hasError: [33mfalse[39m }
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mfalse[39m }
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_e_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_f_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T08: network error — shows error_network copy
+[auth] auth.signin.page.submit.start { email_domain: [32m'inditex-sandbox.com'[39m }
+[auth] auth.signin.hook.submit.start { email_domain: [32m'inditex-sandbox.com'[39m, password_len: [33m15[39m }
+[auth] auth.signin.submit.start {
+  email_domain: [32m'inditex-sandbox.com'[39m,
+  password_len: [33m15[39m,
+  request_id: [32m'b20e900b-3430-4f3b-b0f9-a9f4204dcced'[39m
+}
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T08: network error — shows error_network copy
+[auth] auth.signin.submit.network { error: [32m'Failed to fetch'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T08: network error — shows error_network copy
+[auth] auth.signin.hook.submit.error { error_name: [32m'NetworkError'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T08: network error — shows error_network copy
+[auth] auth.signin.page.submit.failed
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T08: network error — shows error_network copy
+[auth] auth.signin.page.render.start { isLoading: [33mfalse[39m, hasError: [33mtrue[39m }
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mfalse[39m }
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_e_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_f_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T08: network error — shows error_network copy
+[auth] auth.store.clear.start { was_present: [33mfalse[39m }
+[auth] auth.store.clear.ok
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T09: keyboard-only flow — Tab through inputs and submit button is reachable
+[auth] auth.store.clear.start { was_present: [33mfalse[39m }
+[auth] auth.store.clear.ok
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T09: keyboard-only flow — Tab through inputs and submit button is reachable
+[auth] auth.repo.refresh.session_expired { request_id: [32m'e21d2e95-cafa-40a1-806f-e8a8af2a39f7'[39m }
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T09: keyboard-only flow — Tab through inputs and submit button is reachable
+[auth] auth.signin.page.render.start { isLoading: [33mfalse[39m, hasError: [33mfalse[39m }
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mfalse[39m }
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_g_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_h_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+[auth] auth.provider.hydrate.start
+[auth] auth.repo.refresh.start
+[auth] auth.signin.page.render.start { isLoading: [33mfalse[39m, hasError: [33mfalse[39m }
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mfalse[39m }
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_g_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_h_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T09: keyboard-only flow — Tab through inputs and submit button is reachable
+[auth] auth.provider.hydrate.unauthenticated { error: [32m'Session expired or invalid; please sign in again.'[39m }
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T09: keyboard-only flow — Tab through inputs and submit button is reachable
+[auth] auth.signin.page.render.start { isLoading: [33mfalse[39m, hasError: [33mfalse[39m }
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mfalse[39m }
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_g_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_h_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T09: keyboard-only flow — Tab through inputs and submit button is reachable
+[auth] auth.store.clear.start { was_present: [33mfalse[39m }
+[auth] auth.store.clear.ok
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T10: open-redirect ?next=https://evil.com defaults to /chat
+[auth] auth.store.clear.start { was_present: [33mfalse[39m }
+[auth] auth.store.clear.ok
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T10: open-redirect ?next=https://evil.com defaults to /chat
+[auth] auth.repo.refresh.session_expired { request_id: [32m'b785b1ac-cb2c-419a-a940-2c0d926f6539'[39m }
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T10: open-redirect ?next=https://evil.com defaults to /chat
+[auth] auth.signin.page.render.start { isLoading: [33mfalse[39m, hasError: [33mfalse[39m }
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mfalse[39m }
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_i_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_j_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+[auth] auth.provider.hydrate.start
+[auth] auth.repo.refresh.start
+[auth] auth.signin.page.render.start { isLoading: [33mfalse[39m, hasError: [33mfalse[39m }
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mfalse[39m }
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_i_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_j_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T10: open-redirect ?next=https://evil.com defaults to /chat
+[auth] auth.provider.hydrate.unauthenticated { error: [32m'Session expired or invalid; please sign in again.'[39m }
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T10: open-redirect ?next=https://evil.com defaults to /chat
+[auth] auth.signin.page.render.start { isLoading: [33mfalse[39m, hasError: [33mfalse[39m }
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mfalse[39m }
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_i_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_j_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T10: open-redirect ?next=https://evil.com defaults to /chat
+[auth] auth.signin.page.submit.start { email_domain: [32m'inditex-sandbox.com'[39m }
+[auth] auth.signin.hook.submit.start { email_domain: [32m'inditex-sandbox.com'[39m, password_len: [33m15[39m }
+[auth] auth.signin.submit.start {
+  email_domain: [32m'inditex-sandbox.com'[39m,
+  password_len: [33m15[39m,
+  request_id: [32m'bec8f809-3245-4849-acb7-6c661ef3bfe1'[39m
+}
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T10: open-redirect ?next=https://evil.com defaults to /chat
+[auth] auth.signin.submit.ok_no_mfa {
+  token_len: [33m28[39m,
+  expires_in: [33m1800[39m,
+  request_id: [32m'bec8f809-3245-4849-acb7-6c661ef3bfe1'[39m
+}
+[auth] auth.store.set.start { was_present: [33mfalse[39m, new_len: [33m28[39m }
+[auth] auth.store.set.ok { len: [33m28[39m }
+[auth] auth.repo.fetchMe.start { token_len: [33m28[39m }
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T10: open-redirect ?next=https://evil.com defaults to /chat
+[auth] auth.repo.fetchMe.ok {
+  request_id: [32m'916f403c-c2aa-43e6-92fc-fc0c56ec6b6b'[39m,
+  user_id: [32m'11111111-1111-1111-1111-111111111111'[39m
+}
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T10: open-redirect ?next=https://evil.com defaults to /chat
+[auth] auth.signin.hook.submit.ok_no_mfa { token_len: [33m28[39m }
+[auth] auth.provider.signin_accepted { user_id: [32m'11111111-1111-1111-1111-111111111111'[39m, token_len: [33m28[39m }
+[auth] auth.store.set.start { was_present: [33mtrue[39m, new_len: [33m28[39m }
+[auth] auth.store.set.ok { len: [33m28[39m }
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T10: open-redirect ?next=https://evil.com defaults to /chat
+[auth] auth.signin.page.submit.success_navigate { destination: [32m'/chat'[39m }
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T10: open-redirect ?next=https://evil.com defaults to /chat
+[auth] auth.signin.page.render.start { isLoading: [33mfalse[39m, hasError: [33mfalse[39m }
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mfalse[39m }
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_i_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+EditorialInput.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  id: [32m'_r_j_'[39m,
+  hasError: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+
+stdout | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T10: open-redirect ?next=https://evil.com defaults to /chat
+[auth] auth.store.clear.start { was_present: [33mtrue[39m }
+[auth] auth.store.clear.ok
+
+ ✓ src/pages/auth/__tests__/SignInPage.test.tsx (10 tests) 187ms
+stdout | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T01 — happy path → Result.ok with conversation data
+[chat] chat.repo.createConversation.start { prompt_len: [33m12[39m, language: [32m'es'[39m }
+
+stdout | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T01 — happy path → Result.ok with conversation data
+[chat] chat.repo.createConversation.ok {
+  conversation_id: [32m'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee'[39m,
+  language: [32m'es'[39m,
+  request_id: [32m'test-request-id'[39m
+}
+
+stdout | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T02 — 400 → Result.err(ChatValidationError)
+[chat] chat.repo.createConversation.start { prompt_len: [33m0[39m, language: [32m'es'[39m }
+
+stderr | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T02 — 400 → Result.err(ChatValidationError)
+[chat] chat.repo.createConversation.validation_error { status: [33m400[39m, request_id: [32m'test-request-id'[39m }
+
+stdout | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T03 — 403 → Result.err(ChatForbiddenError)
+[chat] chat.repo.createConversation.start { prompt_len: [33m4[39m, language: [32m'es'[39m }
+
+stderr | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T03 — 403 → Result.err(ChatForbiddenError)
+[chat] chat.repo.createConversation.forbidden { status: [33m403[39m, request_id: [32m'test-request-id'[39m }
+
+stdout | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T04 — 5xx → Result.err(ChatServerError)
+[chat] chat.repo.createConversation.start { prompt_len: [33m4[39m, language: [32m'es'[39m }
+
+stderr | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T04 — 5xx → Result.err(ChatServerError)
+[chat] chat.repo.createConversation.server_error { status: [33m500[39m, request_id: [32m'test-request-id'[39m }
+
+stdout | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T05 — network throw → Result.err(ChatNetworkError)
+[chat] chat.repo.createConversation.start { prompt_len: [33m4[39m, language: [32m'es'[39m }
+
+stderr | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T05 — network throw → Result.err(ChatNetworkError)
+[chat] chat.repo.createConversation.error { error: [32m'CHAT_NETWORK_ERROR'[39m, message: [32m'Failed to fetch'[39m }
+
+stdout | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T06 — request shape: POST, Content-Type, JSON body
+[chat] chat.repo.createConversation.start { prompt_len: [33m10[39m, language: [32m'en'[39m }
+
+stdout | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T06 — request shape: POST, Content-Type, JSON body
+[chat] chat.repo.createConversation.ok {
+  conversation_id: [32m'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee'[39m,
+  language: [32m'es'[39m,
+  request_id: [32m'test-request-id'[39m
+}
+
+stdout | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T07 — AuthSessionExpiredError from authFetch → Result.err(ChatAuthExpiredError)
+[chat] chat.repo.createConversation.start { prompt_len: [33m4[39m, language: [32m'es'[39m }
+
+stderr | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T07 — AuthSessionExpiredError from authFetch → Result.err(ChatAuthExpiredError)
+[chat] chat.repo.createConversation.error {
+  error: [32m'CHAT_NETWORK_ERROR'[39m,
+  message: [32m'Session expired or invalid; please sign in again.'[39m
+}
+
+stdout | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.getConversation > T08 — happy path → Result.ok with ConversationDetail
+[chat] chat.repo.getConversation.start { conversation_id: [32m'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee'[39m }
+
+stdout | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.getConversation > T08 — happy path → Result.ok with ConversationDetail
+[chat] chat.repo.getConversation.ok {
+  conversation_id: [32m'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee'[39m,
+  message_count: [33m1[39m,
+  citation_count: [33m0[39m,
+  request_id: [32m'test-request-id'[39m
+}
+
+stdout | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.getConversation > T09 — 404 → Result.err(ChatNotFoundError)
+[chat] chat.repo.getConversation.start { conversation_id: [32m'missing-id'[39m }
+
+stderr | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.getConversation > T09 — 404 → Result.err(ChatNotFoundError)
+[chat] chat.repo.getConversation.not_found {
+  status: [33m404[39m,
+  conversation_id: [32m'missing-id'[39m,
+  request_id: [32m'test-request-id'[39m
+}
+
+stdout | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.getConversation > T10 — 403 → Result.err(ChatForbiddenError)
+[chat] chat.repo.getConversation.start { conversation_id: [32m'foreign-id'[39m }
+
+stderr | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.getConversation > T10 — 403 → Result.err(ChatForbiddenError)
+[chat] chat.repo.getConversation.forbidden { status: [33m403[39m, request_id: [32m'test-request-id'[39m }
+
+stdout | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.getConversation > T11 — 401 → Result.err(ChatAuthExpiredError)
+[chat] chat.repo.getConversation.start { conversation_id: [32m'conv-id'[39m }
+
+stderr | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.getConversation > T11 — 401 → Result.err(ChatAuthExpiredError)
+[chat] chat.repo.getConversation.auth_expired { status: [33m401[39m, request_id: [32m'test-request-id'[39m }
+
+stdout | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.getConversation > T12 — network error → Result.err(ChatNetworkError)
+[chat] chat.repo.getConversation.start { conversation_id: [32m'conv-id'[39m }
+
+stderr | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.getConversation > T12 — network error → Result.err(ChatNetworkError)
+[chat] chat.repo.getConversation.error { error: [32m'CHAT_NETWORK_ERROR'[39m, conversation_id: [32m'conv-id'[39m }
+
+ ✓ src/features/chat/__tests__/chatRepository.test.ts (12 tests) 10ms
+stdout | src/i18n/__tests__/i18n.test.ts
+i18n.init.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T005'[39m,
+  lng: [32m'es'[39m,
+  fallbackLng: [32m'es'[39m,
+  ns: [
+    [32m'common'[39m,   [32m'auth'[39m,
+    [32m'chat'[39m,     [32m'account'[39m,
+    [32m'admin-ai'[39m, [32m'rag'[39m,
+    [32m'mcp'[39m,      [32m'errors'[39m
+  ],
+  defaultNS: [32m'common'[39m
+}
+i18n.init.ok {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T005'[39m,
+  isInitialized: [33mtrue[39m,
+  language: [32m'es'[39m,
+  namespaceCount: [33m8[39m,
+  localeCount: [33m3[39m
+}
+
+ ✓ src/i18n/__tests__/i18n.test.ts (16 tests) 7ms
+stdout | src/app/__tests__/providers.test.tsx
+i18n.init.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T005'[39m,
+  lng: [32m'es'[39m,
+  fallbackLng: [32m'es'[39m,
+  ns: [
+    [32m'common'[39m,   [32m'auth'[39m,
+    [32m'chat'[39m,     [32m'account'[39m,
+    [32m'admin-ai'[39m, [32m'rag'[39m,
+    [32m'mcp'[39m,      [32m'errors'[39m
+  ],
+  defaultNS: [32m'common'[39m
+}
+i18n.init.ok {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T005'[39m,
+  isInitialized: [33mtrue[39m,
+  language: [32m'es'[39m,
+  namespaceCount: [33m8[39m,
+  localeCount: [33m3[39m
+}
+
+stdout | src/app/__tests__/providers.test.tsx > Providers > renders children without throwing (A7 — smoke render)
+providers.init.start phase=P00 slice=P00-S01-T002 queryClient=injected:true i18n=injected:false
+providers.init.ok queryClient=ready i18n=ready
+
+stdout | src/app/__tests__/providers.test.tsx > Providers > renders children when no queryClient or i18n is injected (defaults used)
+providers.init.start phase=P00 slice=P00-S01-T002 queryClient=injected:false i18n=injected:false
+providers.init.ok queryClient=ready i18n=ready
+
+ ✓ src/app/__tests__/providers.test.tsx (4 tests) 18ms
+
+ Test Files  14 passed (14)
+      Tests  178 passed (178)
+   Start at  18:54:19
+   Duration  3.20s (transform 1.54s, setup 2.87s, collect 4.58s, tests 1.56s, environment 11.75s, prepare 2.24s)
+

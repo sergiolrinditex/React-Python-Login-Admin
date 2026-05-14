@@ -1,0 +1,27 @@
+## Contract Observed — P03-S02-T002
+
+### Routes/Pages observed:
+- /chat/:conversationId → ConversationPage.tsx (new) — wired in router.tsx (ROUTE_CONVERSATION_PATTERN)
+
+### API clients/DTO observed:
+- chatRepository.getConversation() → GET /api/v1/chat/conversations/{id} → returns Result<ConversationDetail, ChatError>
+- streamConversation() in stream.ts → POST /api/v1/chat/conversations/{id}/stream → authFetch + ReadableStream + TextDecoder
+
+### Backend endpoints observed:
+- GET /api/v1/chat/conversations/{id}: 200 {data: {id, user_id, title, language, messages[], citations[]}}
+- POST /api/v1/chat/conversations/{id}/stream: SSE text/event-stream, event:meta received
+- GET with unknown UUID: 404 CHAT_CONVERSATION_NOT_FOUND
+
+### Repository observed:
+- chatRepository.ts: getConversation(id, onAuthFailure) → authFetch → parse JSON envelope → Result pattern
+- stream.ts: streamConversation → authFetch → response.body.getReader() → TextDecoder(utf-8, {stream:true}) → buffer on \n\n
+
+### DB tables observed:
+- conversations: new row created via POST /api/v1/chat/conversations (verified via GET response)
+- messages: user message persisted pre-stream (verified in GET response: messages=[1 user msg])
+- message_citations: empty for this conversation (citations=[] in GET response)
+
+### Domain/DTO shapes observed:
+- ConversationDetail.messages[]: [{id, conversation_id, role, content, token_count, created_at}]
+- ConversationDetail.citations[]: []
+- SseEvent discriminated union: meta|citation|chunk|usage|error|done (6 types from sse.py)

@@ -1,0 +1,29 @@
+=== Backend smoke — tester cycle 2 (P03-S02-T002) ===
+
+--- health ---
+GET /health → 200 {"data":{"status":"ok","version":"0.1.0","uptime":17588.43}}
+
+--- ready ---
+GET /ready → 200 {"data":{"db":{"status":"ok"},"redis":{"status":"ok"},"litellm":{"status":"unknown"}}}
+NOTE: litellm=unknown is expected per task pack §L risk 1 (LiteLLM proxy not configured in dev)
+
+--- sign-in ---
+POST /api/v1/auth/sign-in (admin.peopletech@inditex-sandbox.com / AdminVerify2024!) → 200
+access_token_len: 404
+
+--- create conversation ---
+POST /api/v1/chat/conversations {"initial_message":"How many vacation days do I have?","language":"es"} → 201
+conversation_id: d45a1e64-cc32-4917-ac86-bc68b103e1ae
+
+--- GET conversation ---
+GET /api/v1/chat/conversations/d45a1e64-cc32-4917-ac86-bc68b103e1ae → 200
+messages_count: 1
+
+--- POST stream ---
+POST /api/v1/chat/conversations/d45a1e64-cc32-4917-ac86-bc68b103e1ae/stream → 200 text/event-stream
+First event received:
+  event: meta
+  data: {"message_id":"9af20da3-c6b4-40cd-9156-8a294ade4ed1","model_id":"...","language":"es","request_id":"..."}
+
+NOTE: stream closes after meta event (LiteLLM not configured — expected per task pack §L risk 1)
+NOTE: curl: (18) transfer closed is normal when LiteLLM closes without full stream

@@ -1,0 +1,11 @@
+=== health ===
+{"data":{"status":"ok","version":"0.1.0","uptime":21506.75}}
+=== ready ===
+{"data":{"db":{"status":"ok"},"redis":{"status":"ok"},"litellm":{"status":"unknown"}}}
+=== sign-in ===
+status=200 token_len=404
+=== GET conversation 283c9c1f ===
+{"data":{"id":"283c9c1f-2f17-4f17-8a53-bf6c492fafc0","user_id":"f8f0923b-8535-4efa-b791-01068ef34fd0","title":"Hola, ¿cuál es el horario flexible?","language":"es","created_at":"2026-05-14T15:29:14.410130Z","updated_at":"2026-05-14T15:29:14.410130Z","messages":[{"id":"d8171909-e07b-4788-a7ac-8fdb8546e51a","conversation_id":"283c9c1f-2f17-4f17-8a53-bf6c492fafc0","role":"user","content":"Hola, ¿cuál es el horario flexible?","token_count":null,"created_at":"2026-05-14T15:29:14.410130Z"},{"id":"8e253b1e-97aa-46bd-bb49-677f22eabffb","conversation_id":"283c9c1f-2f17-4f17-8a53-bf6c492fafc0","role":"user","content":"Hola, ¿cuál es el horario flexible?","token_count":null,"created_at":"2026-05-14T15:29:23.785848Z"},{"id":"fe4961cd-ae08-47fe-a23c-1228c099379c","conversation_id":"283c9c1f-2f17-4f17-8a53-bf6c492fafc0","role":"assistant","content":"Tienes 22 días de vacaciones este año según tu contrato.","token_count":null,"created_at":"2026-05-14T16:15:51.967937Z"}],"citations":[]},"meta":{"request_id":"8cdca630-7ffd-478f-bf11-f249254a511e","pagination":null},"errors":[]}
+=== POST stream (meta only — LiteLLM unknown) ===
+(eval):21: command not found: timeout
+timeout/eof (expected)

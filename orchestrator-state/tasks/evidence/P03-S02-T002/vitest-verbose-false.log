@@ -1,0 +1,27 @@
+
+> hilo-people-frontend@0.1.0 test
+> vitest --run
+
+
+ RUN  v3.2.4 /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S02-T002/frontend
+
+ ✓ src/features/chat/__tests__/stream.test.ts (14 tests) 22ms
+ ✓ src/features/auth/__tests__/useSignIn.test.tsx (11 tests) 30ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx (34 tests) 109ms
+ ✓ src/features/chat/__tests__/ChatHomePage.test.tsx (8 tests) 90ms
+ ✓ src/features/auth/__tests__/auth.test.tsx (33 tests) 132ms
+ ✓ src/features/chat/__tests__/useChatStream.test.tsx (7 tests) 145ms
+ ✓ src/pages/showcase/__tests__/ShowcasePage.test.tsx (4 tests) 156ms
+ ✓ src/features/chat/__tests__/useCreateConversation.test.tsx (4 tests) 229ms
+ ✓ src/features/chat/__tests__/useConversation.test.tsx (6 tests) 299ms
+ ✓ src/pages/chat/__tests__/ConversationPage.test.tsx (11 tests) 85ms
+ ✓ src/pages/auth/__tests__/SignInPage.test.tsx (10 tests) 226ms
+ ✓ src/features/chat/__tests__/chatRepository.test.ts (12 tests) 11ms
+ ✓ src/i18n/__tests__/i18n.test.ts (16 tests) 6ms
+ ✓ src/app/__tests__/providers.test.tsx (4 tests) 17ms
+
+ Test Files  14 passed (14)
+      Tests  174 passed (174)
+   Start at  17:21:20
+   Duration  2.97s (transform 1.59s, setup 2.17s, collect 4.26s, tests 1.56s, environment 10.62s, prepare 1.79s)
+

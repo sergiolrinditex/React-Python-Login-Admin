@@ -1,0 +1,56 @@
+Debugger cycle 2 — DEFECT-1 fix summary
+TASK_ID: P03-S02-T002
+TIMESTAMP: 2026-05-14T18:45:00Z
+
+DEFECT-1 (from /verify-slice 2026-05-14T16:30:00Z, see ## verify-slice section in handoff):
+  When the SSE backend (LiteLLM proxy) closes the stream WITHOUT emitting `event: done`
+  (real-world: emits `event: meta` then drops connection), `streamConversation` in
+  frontend/src/features/chat/stream.ts returned `{ ok: true, value: undefined }` from
+  the EOS path at line 357. `useChatStream` interpreted `result.ok === true` as success
+  but `handlers.onDone` was never called → state machine stuck at `phase = "streaming"`
+  forever (composer disabled, ASISTENTE label + cursor blinking forever, no
+  NetworkErrorView, no recovery).
+
+Root cause: stream.ts did not track whether `event: done` was actually processed.
+
+Fix (anchor §D-T002-STREAM-DONE-GUARD):
+  - Added `let doneEmitted = false;` after `let eventCount = 0;` (line ~236).
+  - Set `doneEmitted = true;` inside `case "done":` of the per-record switch (line ~328).
+  - Set `doneEmitted = true;` inside the leftover-buffer done branch (line ~340).
+  - At end-of-stream (after the while loop and leftover-buffer block, BEFORE the
+    `finally`), added a guard: if `!doneEmitted`, return
+    `{ ok: false, error: new ChatNetworkError("Stream closed without done event") }`
+    plus a `logWarn("chat.stream.closed_without_done", { conversation_id, total_events })`.
+  - The successful path (`case "done":` returns from inside the loop) is unchanged.
+  - The abort path is unaffected — AbortError is caught BEFORE the doneEmitted check
+    inside the inner try (lines ~248-251), and abort-before-fetch is caught BEFORE the
+    reader is even created (lines ~190-193). Confirmed by T17.
+
+Files touched:
+  - frontend/src/features/chat/stream.ts (product code)
+      ~12 lines added: 1 declaration + 2 doneEmitted assignments + 1 guard block
+      + 5 lines of explanatory comment for §D-T002-STREAM-DONE-GUARD.
+  - frontend/src/features/chat/__tests__/stream.test.ts (tests)
+      +3 new tests (T15, T16, T17), +1 import (ChatNetworkError), header docstring updated.
+      Test count: 14 → 17 in this file. Suite total: 175 → 178.
+
+Files NOT touched:
+  - frontend/src/features/chat/presentation/useChatStream.ts (already handles result.ok===false correctly)
+  - frontend/src/pages/chat/ConversationPage.tsx
+  - frontend/src/pages/chat/_ConversationPage.error-views.tsx (NetworkErrorView already present)
+  - All other product code outside the Write Set.
+
+Verification commands (logs in this directory):
+  - npx tsc -b --pretty false → exit 0 (tsc.log)
+  - VITE_ENABLE_VERBOSE_LOGGING=true  npm run test -- --run → 178/178 PASS (vitest-verbose-true.log)
+  - VITE_ENABLE_VERBOSE_LOGGING=false npm run test -- --run → 178/178 PASS (vitest-verbose-false.log)
+  - npm run build → 218 modules, exit 0 (build.log)
+  - bash scripts/check-design-tokens.sh → exit 0 (design-tokens.log)
+
+PII / logging contract (§D-T002-NO-PII-IN-LOGS):
+  - New warn log `chat.stream.closed_without_done` payload: { conversation_id, total_events }
+    — no message content, no delta text, no citations, no email, no token. Verified via grep.
+  - Verbose=false log shows the warn line (always), zero verbose log lines (correctly gated).
+
+Test count delta: 175 → 178 (+3).
+Debug cycle: 2 of max 3.

@@ -1,0 +1,233 @@
+
+> hilo-people-frontend@0.1.0 test
+> vitest --run
+
+
+ RUN  v3.2.4 /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S02-T002/frontend
+
+stderr | src/features/chat/__tests__/stream.test.ts > _parseSseRecord > T07 — unknown event name → null
+[chat] chat.stream.parse.unknown_event { event: [32m'heartbeat'[39m }
+
+stderr | src/features/chat/__tests__/stream.test.ts > _parseSseRecord > T08 — malformed JSON in data: line → null
+[chat] chat.stream.parse.malformed_json { event: [32m'chunk'[39m }
+
+stderr | src/features/chat/__tests__/stream.test.ts > streamConversation > T12 — non-200 HTTP status 400 maps to ChatValidationError
+[chat] chat.stream.http_error { conversation_id: [32m'conv-1'[39m, status: [33m400[39m, request_id: [32m'r1'[39m }
+
+stderr | src/features/chat/__tests__/stream.test.ts > streamConversation > T15 — DEFECT-1: closed without event:done returns ChatNetworkError
+[chat] chat.stream.closed_without_done { conversation_id: [32m'conv-1'[39m, total_events: [33m1[39m }
+
+ ✓ src/features/chat/__tests__/stream.test.ts (17 tests) 37ms
+stderr | src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T05: 401 invalid credentials — sets InvalidCredentialsError
+[auth] auth.signin.hook.submit.error { error_name: [32m'InvalidCredentialsError'[39m }
+
+stderr | src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T06: 423 account locked — sets AccountLockedError
+[auth] auth.signin.hook.submit.error { error_name: [32m'AccountLockedError'[39m }
+
+stderr | src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T07: 429 rate limited with Retry-After — sets RateLimitedError carrying retry_after
+[auth] auth.signin.hook.submit.error { error_name: [32m'RateLimitedError'[39m }
+
+stderr | src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T08: TypeError network error — sets NetworkError
+[auth] auth.signin.hook.submit.error { error_name: [32m'NetworkError'[39m }
+
+stderr | src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T09: 500 server error — sets SigninInternalError
+[auth] auth.signin.hook.submit.error { error_name: [32m'SigninInternalError'[39m }
+
+stderr | src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T11: never logs password in any log event
+[auth] auth.signin.hook.submit.error { error_name: [32m'InvalidCredentialsError'[39m }
+
+ ✓ src/features/auth/__tests__/useSignIn.test.tsx (11 tests) 26ms
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T03 — AuthProvider: /refresh 401 → unauthenticated, no /me call > status becomes 'unauthenticated' on refresh 401
+[auth] auth.repo.refresh.session_expired { request_id: [32m'1bcb5723-91ee-4e52-b62a-c41044b0bab4'[39m }
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T04 — AuthProvider: /refresh network error → unauthenticated > status becomes 'unauthenticated' on network error
+[auth] auth.repo.refresh.error { error: [32m'Failed to fetch'[39m }
+
+stderr | src/features/chat/__tests__/useChatStream.test.tsx > useChatStream > T05 — error_network on network failure (ChatNetworkError)
+[chat] chat.useChatStream.result.error { conversation_id: [32m'conv-5'[39m, error: [32m'CHAT_NETWORK_ERROR'[39m }
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T05 — signInAccepted → status=authenticated, /me not re-called > signInAccepted sets token and user without extra fetch
+[auth] auth.repo.refresh.session_expired { request_id: [32m'70c4f90a-4736-40ac-a412-35ce59df07fe'[39m }
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T06 — useLogout: /logout 204 → token cleared, queries cleared > logout clears token and calls onQueriesClear
+[auth] auth.repo.logout.error { error: [32m'Response constructor: Invalid response status code 204'[39m }
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T06 — useLogout: /logout 204 → token cleared, queries cleared > logout clears token and calls onQueriesClear
+[auth] auth.provider.logout.failure_local_cleared { error: [32m'Response constructor: Invalid response status code 204'[39m }
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T07 — useLogout: backend 401 → still clears local state (defensive logout) > logout clears token even when backend returns 401
+[auth] auth.repo.logout.non_204 { status: [33m401[39m, request_id: [32m'5f9fdd1d-9705-4304-bdf8-9d56ec936c12'[39m }
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T07 — useLogout: backend 401 → still clears local state (defensive logout) > logout clears token even when backend returns 401
+[auth] auth.provider.logout.failure_local_cleared { error: [32m'Session expired or invalid; please sign in again.'[39m }
+
+stderr | src/features/chat/__tests__/useConversation.test.tsx > useConversation > T02 — 401 final: throws ChatAuthExpiredError
+[chat] chat.repo.getConversation.auth_expired { status: [33m401[39m, request_id: [32m'test-r1'[39m }
+
+stderr | src/features/chat/__tests__/useConversation.test.tsx > useConversation > T02 — 401 final: throws ChatAuthExpiredError
+[chat] chat.hook.useConversation.fetch.error { error: [32m'CHAT_AUTH_EXPIRED'[39m, conversation_id: [32m'conv-aaa'[39m }
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T08 — RequireAuth: unauthenticated → Navigate with ?next= > redirects to sign-in with ?next= when unauthenticated
+[auth] auth.repo.refresh.session_expired { request_id: [32m'70259b3e-4c0d-40f1-8eaa-2428a0763b02'[39m }
+
+stderr | src/features/chat/__tests__/useChatStream.test.tsx > useChatStream > T06 — retry resets phase and re-starts with same message
+[chat] chat.useChatStream.result.error { conversation_id: [32m'conv-6'[39m, error: [32m'CHAT_NETWORK_ERROR'[39m }
+
+stderr | src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T04 — submit > MAX chars → validation error shown
+[chat] chat.Composer.submit.validation.too_long { len: [33m4001[39m, max: [33m4000[39m }
+
+stderr | src/features/chat/__tests__/useCreateConversation.test.tsx > useCreateConversation > T03 — onError callback called with typed ChatError
+[chat] chat.hook.useCreateConversation.mutate.error { error: [32m'CHAT_NETWORK_ERROR'[39m }
+
+stderr | src/features/chat/__tests__/useConversation.test.tsx > useConversation > T03 — 403: throws ChatForbiddenError
+[chat] chat.repo.getConversation.forbidden { status: [33m403[39m, request_id: [32m'test-r1'[39m }
+
+stderr | src/features/chat/__tests__/useConversation.test.tsx > useConversation > T03 — 403: throws ChatForbiddenError
+[chat] chat.hook.useConversation.fetch.error { error: [32m'CHAT_FORBIDDEN'[39m, conversation_id: [32m'conv-aaa'[39m }
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T17 — httpClient: refresh 401 → no loop, onAuthFailure called > throws AuthSessionExpiredError, calls onAuthFailure, clears token
+[auth] auth.http.refresh.failed { status: [33m401[39m, request_id: [32m'd16e6658-2064-4b8a-8f13-4f687c95e252'[39m }
+
+ ✓ src/features/auth/__tests__/auth.test.tsx (33 tests) 118ms
+ ✓ src/features/chat/__tests__/ChatHomePage.test.tsx (8 tests) 96ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx (34 tests) 120ms
+ ✓ src/features/chat/__tests__/useChatStream.test.tsx (7 tests) 140ms
+stderr | src/features/chat/__tests__/useCreateConversation.test.tsx > useCreateConversation > T04 — error state set after failed mutation
+[chat] chat.hook.useCreateConversation.mutate.error { error: [32m'CHAT_NETWORK_ERROR'[39m }
+
+stderr | src/features/chat/__tests__/useConversation.test.tsx > useConversation > T04 — 404: throws ChatNotFoundError
+[chat] chat.repo.getConversation.not_found { status: [33m404[39m, conversation_id: [32m'conv-aaa'[39m, request_id: [32m'test-r1'[39m }
+
+stderr | src/features/chat/__tests__/useConversation.test.tsx > useConversation > T04 — 404: throws ChatNotFoundError
+[chat] chat.hook.useConversation.fetch.error { error: [32m'CHAT_NOT_FOUND'[39m, conversation_id: [32m'conv-aaa'[39m }
+
+ ✓ src/pages/showcase/__tests__/ShowcasePage.test.tsx (4 tests) 138ms
+ ✓ src/features/chat/__tests__/useCreateConversation.test.tsx (4 tests) 228ms
+stderr | src/features/chat/__tests__/useConversation.test.tsx > useConversation > T05 — network error: throws ChatNetworkError
+[chat] chat.repo.getConversation.error { error: [32m'CHAT_NETWORK_ERROR'[39m, conversation_id: [32m'conv-aaa'[39m }
+
+stderr | src/features/chat/__tests__/useConversation.test.tsx > useConversation > T05 — network error: throws ChatNetworkError
+[chat] chat.hook.useConversation.fetch.error { error: [32m'CHAT_NETWORK_ERROR'[39m, conversation_id: [32m'conv-aaa'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T01: renders with i18n ES keys — email label, password label, submit button visible
+[auth] auth.repo.refresh.session_expired { request_id: [32m'f3d056a7-eead-492a-819b-8091ca89e8ed'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T02: invalid email triggers validation error with aria-invalid
+[auth] auth.repo.refresh.session_expired { request_id: [32m'4dc6f1e2-f26d-47ee-b034-7753eb3eec28'[39m }
+
+stderr | src/pages/chat/__tests__/ConversationPage.test.tsx > ConversationPage > T06 — permission_denied state: forbidden view visible (from query error)
+[chat] chat.conversation.render.forbidden { conversation_id: [32m'conv-test'[39m }
+
+stderr | src/pages/chat/__tests__/ConversationPage.test.tsx > ConversationPage > T07 — not_found state: not-found view visible (from query error)
+[chat] chat.conversation.render.not_found { conversation_id: [32m'conv-test'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T03: submit happy path no-MFA — navigates to /chat (default)
+[auth] auth.repo.refresh.session_expired { request_id: [32m'6728f5f4-647a-42bb-b303-47a88069ad53'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T04: submit MFA branch — navigates to /auth/2fa
+[auth] auth.repo.refresh.session_expired { request_id: [32m'f779ee29-a5f1-4e6c-a909-695f9c564213'[39m }
+
+ ✓ src/features/chat/__tests__/useConversation.test.tsx (6 tests) 287ms
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T05: 401 — shows invalidCredentials copy (byte-identical for both failure modes — anti-enum)
+[auth] auth.repo.refresh.session_expired { request_id: [32m'04336d62-e3de-4093-8380-0a174519f964'[39m }
+
+ ✓ src/pages/chat/__tests__/ConversationPage.test.tsx (12 tests) 87ms
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T05: 401 — shows invalidCredentials copy (byte-identical for both failure modes — anti-enum)
+[auth] auth.signin.submit.invalid_credentials { status: [33m401[39m, request_id: [32m'074dcba1-f99a-482e-9be6-98e48479e14a'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T05: 401 — shows invalidCredentials copy (byte-identical for both failure modes — anti-enum)
+[auth] auth.signin.hook.submit.error { error_name: [32m'InvalidCredentialsError'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T05: 401 — shows invalidCredentials copy (byte-identical for both failure modes — anti-enum)
+[auth] auth.signin.page.submit.failed
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T06: 423 account locked — shows accountLocked copy, submit re-enabled (not rate-limit disabled)
+[auth] auth.repo.refresh.session_expired { request_id: [32m'7c001cd1-98fc-49b8-93d8-36cc754bdbfe'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T06: 423 account locked — shows accountLocked copy, submit re-enabled (not rate-limit disabled)
+[auth] auth.signin.submit.locked { status: [33m423[39m, request_id: [32m'90434515-1328-489e-8c17-cd8cfa607495'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T06: 423 account locked — shows accountLocked copy, submit re-enabled (not rate-limit disabled)
+[auth] auth.signin.hook.submit.error { error_name: [32m'AccountLockedError'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T06: 423 account locked — shows accountLocked copy, submit re-enabled (not rate-limit disabled)
+[auth] auth.signin.page.submit.failed
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T07: 429 rate-limited — submit disabled, copy shows seconds interpolated
+[auth] auth.repo.refresh.session_expired { request_id: [32m'9c555290-e827-4298-a6ac-7f289c340771'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T07: 429 rate-limited — submit disabled, copy shows seconds interpolated
+[auth] auth.signin.submit.rate_limited {
+  status: [33m429[39m,
+  retry_after: [33m60[39m,
+  request_id: [32m'dc9769b3-e80b-43d3-b2ad-a44cffda5ae1'[39m
+}
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T07: 429 rate-limited — submit disabled, copy shows seconds interpolated
+[auth] auth.signin.hook.submit.error { error_name: [32m'RateLimitedError'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T07: 429 rate-limited — submit disabled, copy shows seconds interpolated
+[auth] auth.signin.page.submit.failed
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T08: network error — shows error_network copy
+[auth] auth.repo.refresh.session_expired { request_id: [32m'77de00f4-0203-4d52-a807-90433d7d91de'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T08: network error — shows error_network copy
+[auth] auth.signin.submit.network { error: [32m'Failed to fetch'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T08: network error — shows error_network copy
+[auth] auth.signin.hook.submit.error { error_name: [32m'NetworkError'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T08: network error — shows error_network copy
+[auth] auth.signin.page.submit.failed
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T09: keyboard-only flow — Tab through inputs and submit button is reachable
+[auth] auth.repo.refresh.session_expired { request_id: [32m'17ef6b82-0356-4ff6-864e-33e409aa7153'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T10: open-redirect ?next=https://evil.com defaults to /chat
+[auth] auth.repo.refresh.session_expired { request_id: [32m'a7a6e076-14ce-492c-ad7f-e78cc0e6d4ff'[39m }
+
+ ✓ src/pages/auth/__tests__/SignInPage.test.tsx (10 tests) 186ms
+stderr | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T02 — 400 → Result.err(ChatValidationError)
+[chat] chat.repo.createConversation.validation_error { status: [33m400[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T03 — 403 → Result.err(ChatForbiddenError)
+[chat] chat.repo.createConversation.forbidden { status: [33m403[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T04 — 5xx → Result.err(ChatServerError)
+[chat] chat.repo.createConversation.server_error { status: [33m500[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T05 — network throw → Result.err(ChatNetworkError)
+[chat] chat.repo.createConversation.error { error: [32m'CHAT_NETWORK_ERROR'[39m, message: [32m'Failed to fetch'[39m }
+
+stderr | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T07 — AuthSessionExpiredError from authFetch → Result.err(ChatAuthExpiredError)
+[chat] chat.repo.createConversation.error {
+  error: [32m'CHAT_NETWORK_ERROR'[39m,
+  message: [32m'Session expired or invalid; please sign in again.'[39m
+}
+
+stderr | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.getConversation > T09 — 404 → Result.err(ChatNotFoundError)
+[chat] chat.repo.getConversation.not_found {
+  status: [33m404[39m,
+  conversation_id: [32m'missing-id'[39m,
+  request_id: [32m'test-request-id'[39m
+}
+
+stderr | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.getConversation > T10 — 403 → Result.err(ChatForbiddenError)
+[chat] chat.repo.getConversation.forbidden { status: [33m403[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.getConversation > T11 — 401 → Result.err(ChatAuthExpiredError)
+[chat] chat.repo.getConversation.auth_expired { status: [33m401[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.getConversation > T12 — network error → Result.err(ChatNetworkError)
+[chat] chat.repo.getConversation.error { error: [32m'CHAT_NETWORK_ERROR'[39m, conversation_id: [32m'conv-id'[39m }
+
+ ✓ src/features/chat/__tests__/chatRepository.test.ts (12 tests) 9ms
+ ✓ src/i18n/__tests__/i18n.test.ts (16 tests) 6ms
+ ✓ src/app/__tests__/providers.test.tsx (4 tests) 18ms
+
+ Test Files  14 passed (14)
+      Tests  178 passed (178)
+   Start at  18:54:30
+   Duration  2.66s (transform 1.25s, setup 1.59s, collect 4.74s, tests 1.50s, environment 8.93s, prepare 1.77s)
+

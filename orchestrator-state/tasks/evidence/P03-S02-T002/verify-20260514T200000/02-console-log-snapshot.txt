@@ -1,0 +1,39 @@
+=== Console Log Snapshot — P03-S02-T002 Cycle-3 Verification ===
+Date: 2026-05-14T20:30:00Z
+Page: http://localhost:5173/chat/dc7e212f-5a31-4799-8d80-4977111997ca
+
+Key sequence (chronological):
+msgid=299  [info]  chat.conversation.auto_stream    (1st mount - auto-stream triggered)
+msgid=300  [info]  chat.useChatStream.start         (stream hook started)
+msgid=301  [info]  chat.stream.start                (stream.ts started fetch)
+msgid=312  [info]  chat.stream.reading              (SSE reader loop started)
+msgid=313  [info]  chat.stream.event.meta           (event: meta received from backend)
+msgid=314  [info]  chat.useChatStream.meta          (hook processed meta, setPhase("streaming"))
+
+--- User navigated to /chat (in-page), component unmounted ---
+msgid=327  [info]  chat.useChatStream.unmount_abort (abort controller triggered on unmount)
+msgid=328  [info]  chat.stream.aborted_during_read  (abort correctly handled, no closed_without_done)
+msgid=329  [info]  chat.useChatStream.result.ok     (abort → ok:true — T17 behavior, expected)
+
+--- User navigated back to /chat/dc7e212f (in-page), component re-mounted ---
+msgid=343  [info]  chat.conversation.auto_stream    (2nd mount - auto-stream triggered)
+msgid=344  [info]  chat.useChatStream.start         (stream hook started)
+msgid=345  [info]  chat.stream.start                (stream.ts started fetch)
+msgid=347  [info]  chat.useChatStream.unmount_abort (abort before fetch completed)
+msgid=348  [error] auth.http.request.network_error  (fetch errored due to abort race)
+msgid=349  [error] chat.stream.fetch_error          (stream.ts returned ok:false, ChatNetworkError)
+msgid=350  [error] chat.useChatStream.result.error  (*** FIX CONFIRMED: hook received ok:false, 
+                                                      called setPhase("error_network") ***
+                                                      NetworkErrorView rendered with "Reintentar" CTA)
+
+=== DEFECT-1 FIX CONFIRMED ===
+chat.useChatStream.result.error triggered → setPhase("error_network") → NetworkErrorView rendered
+UI shows: "Error de conexión. Por favor, inténtalo de nuevo." + "Reintentar" button
+
+Note: Error came via chat.stream.fetch_error path (network error on fetch abort race)
+rather than chat.stream.closed_without_done (premature close without done).
+Both paths produce ok:false ChatNetworkError result → same correct UI outcome.
+The closed_without_done guard (T15/T16/T17 regression tests) remains valid.
+
+=== No PII in logs ===
+No email, password, token, prompt content, citation snippet, or user data in any log message.

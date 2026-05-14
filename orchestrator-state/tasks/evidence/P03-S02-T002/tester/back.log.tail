@@ -1,0 +1,4 @@
+Backend process: uvicorn PID 43031 running on 0.0.0.0:8000. No file log found.
+Backend visible logs are in terminal stdout only.
+Backend verified via direct API calls (see backend smoke evidence files).
+Health: 200 OK, ready: db=ok redis=ok litellm=unknown

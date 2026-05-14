@@ -1,0 +1,20 @@
+## Verification Data Contract Used — P03-S02-T002
+
+### Verification Data Contract rows used (from TECHNICAL_GUIDE §Verification Data Contract):
+- Employee user: employee.verification@inditex-sandbox.com (MFA required — not usable for automated smoke)
+- Admin user: admin.peopletech@inditex-sandbox.com (no MFA, used for backend smoke)
+
+### Real/provided data loaded:
+- admin.peopletech@inditex-sandbox.com signed in successfully (access_token obtained, 404 chars)
+- Conversation created: 283c9c1f-2f17-4f17-8a53-bf6c492fafc0
+- GET /chat/conversations/{id} returned 200 with 1 user message, 0 citations (correct)
+- POST /chat/conversations/{id}/stream returned SSE: event:meta received (LiteLLM closes after meta — proxy not configured; expected per task pack §L risk 1)
+- GET /chat/conversations/00000000-0000-0000-0000-000000000000 returned 404 CHAT_CONVERSATION_NOT_FOUND
+
+### Persisted data observed:
+- conversations table: new row with id=283c9c1f-2f17-4f17-8a53-bf6c492fafc0, user_id=f8f0923b-8535-4efa-b791-01068ef34fd0, title="Hola, ¿cuál es el horario flexible?"
+- messages table: 1 user message row (id=d8171909-e07b-4788-a7ac-8fdb8546e51a, role=user)
+
+### Notes:
+- Employee user has MFA; admin user was used as fallback (admin has 'employee' role per /me response)
+- LiteLLM proxy not configured → stream closes after meta event (acceptable per task pack §L risk 1; live streaming requires /verify-slice with LITELLM_PROXY_UP=1)

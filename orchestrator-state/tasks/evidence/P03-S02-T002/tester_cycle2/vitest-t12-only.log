@@ -1,0 +1,27 @@
+
+> hilo-people-frontend@0.1.0 test
+> vitest --run -t error_validation
+
+
+ RUN  v3.2.4 /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S02-T002/frontend
+
+ ↓ src/features/auth/__tests__/useSignIn.test.tsx (11 tests | 11 skipped)
+ ↓ src/features/chat/__tests__/useCreateConversation.test.tsx (4 tests | 4 skipped)
+ ↓ src/features/chat/__tests__/useConversation.test.tsx (6 tests | 6 skipped)
+ ↓ src/app/__tests__/providers.test.tsx (4 tests | 4 skipped)
+ ↓ src/features/chat/__tests__/useChatStream.test.tsx (7 tests | 7 skipped)
+ ↓ src/shared/design-system/__tests__/design-system.test.tsx (34 tests | 34 skipped)
+ ↓ src/features/auth/__tests__/auth.test.tsx (33 tests | 33 skipped)
+ ↓ src/features/chat/__tests__/ChatHomePage.test.tsx (8 tests | 8 skipped)
+ ↓ src/pages/showcase/__tests__/ShowcasePage.test.tsx (4 tests | 4 skipped)
+ ↓ src/pages/auth/__tests__/SignInPage.test.tsx (10 tests | 10 skipped)
+ ✓ src/pages/chat/__tests__/ConversationPage.test.tsx (12 tests | 11 skipped) 30ms
+ ↓ src/features/chat/__tests__/chatRepository.test.ts (12 tests | 12 skipped)
+ ↓ src/features/chat/__tests__/stream.test.ts (14 tests | 14 skipped)
+ ↓ src/i18n/__tests__/i18n.test.ts (16 tests | 16 skipped)
+
+ Test Files  1 passed | 13 skipped (14)
+      Tests  1 passed | 174 skipped (175)
+   Start at  17:38:48
+   Duration  2.86s (transform 1.87s, setup 2.15s, collect 4.65s, tests 30ms, environment 10.43s, prepare 2.05s)
+

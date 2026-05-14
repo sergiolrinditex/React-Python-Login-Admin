@@ -1,0 +1,25 @@
+=== Verification Data Contract used — tester cycle 2 (P03-S02-T002) ===
+
+Source: HILO_PEOPLE_TECHNICAL_GUIDE.md §Verification Data Contract + task pack §H
+
+Rows from Data Contract applied:
+1. admin.peopletech@inditex-sandbox.com / AdminVerify2024! (admin user with employee role)
+   — Used for: sign-in smoke, POST conversations, GET conversation, POST stream
+   — Source: data/verification/users/admin_peopletech.json
+   — Note: Employee account (employee.verification@inditex-sandbox.com) requires MFA; 
+     admin fallback has employee role per /me endpoint.
+
+Real data created during smoke:
+- Conversation ID: d45a1e64-cc32-4917-ac86-bc68b103e1ae
+  Created by POST /api/v1/chat/conversations
+  Contains 1 user message: "How many vacation days do I have?" (language: es)
+- SSE stream: meta event received with message_id 9af20da3-c6b4-40cd-9156-8a294ade4ed1
+  Full stream did not complete (LiteLLM not configured — expected per task pack §L risk 1)
+
+Persisted data observed:
+- GET /api/v1/chat/conversations/{id} → 200, messages_count: 1 (user message persisted)
+- Backend stream returned SSE event: meta (confirmed sse.py sse_meta function live)
+
+Data not loaded (out of scope for tester cycle 2):
+- Second employee conversation for permission_denied (403) test — /verify-slice gate
+- Full streaming with LiteLLM (requires LITELLM_PROXY_UP=1) — /verify-slice gate

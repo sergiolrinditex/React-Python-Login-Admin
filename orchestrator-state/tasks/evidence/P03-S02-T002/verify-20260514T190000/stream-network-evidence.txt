@@ -1,0 +1,42 @@
+=== Stream Network Evidence — P03-S02-T002 verify session 2026-05-14 ===
+
+--- Wire format (curl verbose) ---
+POST /api/v1/chat/conversations/dc7e212f-5a31-4799-8d80-4977111997ca/stream
+HTTP/1.1 200 OK
+content-type: text/event-stream; charset=utf-8
+transfer-encoding: chunked
+x-request-id: e64f72b6-9fc6-4236-ae68-be98116943fa
+
+event: meta
+data: {"message_id":"96220d31-bc16-4bef-b050-07552eb9e2ef","model_id":"0e7e0eb8-1274-4f76-8962-9a300dda02e1","language":"es","request_id":"e64f72b6-9fc6-4236-ae68-be98116943fa"}
+
+[connection closed with curl: (18) transfer closed with outstanding read data remaining]
+[NO event: chunk, NO event: done, NO event: error received]
+
+--- LiteLLM /ready status ---
+{"data":{"db":{"status":"ok"},"redis":{"status":"ok"},"litellm":{"status":"unknown"}}}
+
+--- Root cause (confirmed) ---
+LiteLLM proxy is NOT configured with an active model in this dev environment.
+Backend sends event: meta (message_id, model_id, language, request_id) then closes.
+No event: chunk, no event: done.
+
+--- Frontend behavior (BUG) ---
+stream.ts line 353-357: after read loop exits via reader.done=true without event: done,
+returns { ok: true, value: undefined } instead of { ok: false, error: ChatNetworkError }.
+useChatStream hook: result.ok === true → log only, no setPhase() call.
+onDone handler never called → setPhase("completed") never called.
+Result: page stuck in "streaming" phase indefinitely.
+UI: composer disabled, aria-busy=true, no NetworkErrorView shown.
+
+--- DEFECT ---
+stream.ts returns ok:true on premature close (no event:done). Should return:
+  { ok: false, error: new ChatNetworkError("Stream closed without done event") }
+This would cause useChatStream to call setPhase("error_network") and render NetworkErrorView.
+
+--- Distinction ---
+1. LiteLLM proxy not configured = ENVIRONMENT BLOCKER (not a code defect)
+   BLOCKER_REASON: litellm_proxy_not_configured — streaming success path cannot be end-to-end verified.
+2. stream.ts ok:true on premature close = IN-SCOPE CODE DEFECT
+   The error_network UX state (NetworkErrorView + Reintentar CTA) is NEVER shown because
+   stream.ts misclassifies premature close as success.

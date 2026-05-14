@@ -1,0 +1,4 @@
+event: meta
+data: {"message_id":"6837e753-7c55-42fb-92c4-8940b999fe03","model_id":"0e7e0eb8-1274-4f76-8962-9a300dda02e1","language":"es","request_id":"91af0184-5d5c-4d76-a731-f652624f99f7"}
+
+curl: (18) transfer closed with outstanding read data remaining
