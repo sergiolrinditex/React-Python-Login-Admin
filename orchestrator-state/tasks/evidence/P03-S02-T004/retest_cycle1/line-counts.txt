@@ -1,0 +1,4 @@
+     364 /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S02-T004/frontend/src/pages/chat/AccountPage.tsx
+     126 /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S02-T004/frontend/src/pages/chat/AccountPage.styles.ts
+      84 /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S02-T004/frontend/src/pages/chat/_AccountPage.error-views.tsx
+     574 total

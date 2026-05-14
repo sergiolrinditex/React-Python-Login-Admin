@@ -2,5 +2,22 @@
   "title": "My account",
   "language": "Language",
   "languageHint": "The selected language applies to the entire interface",
-  "logout": "Sign out"
+  "logout": "Sign out",
+  "profile": {
+    "heading": "Profile",
+    "name": "Name",
+    "email": "Email",
+    "employeeId": "Employee ID",
+    "brand": "Brand",
+    "society": "Society",
+    "center": "Center",
+    "country": "Country",
+    "department": "Department"
+  },
+  "errors": {
+    "network": "No connection. Check your network and try again.",
+    "languageUpdateFailed": "Failed to update language. Please try again.",
+    "forbidden": "You do not have permission to access this page.",
+    "retry": "Try again"
+  }
 }

@@ -7,6 +7,8 @@
  *   WRITE_SET_DRIFT §D-T001-ROUTE (P03-S02-T001): wired /chat to ChatHomePage;
  *     updated / and * redirects so authenticated users land on /chat.
  *   Updated in P03-S01-T002 — added /auth/sign-up route wired to SignUpPage (§D-T002-ROUTER).
+ *   WRITE_SET_DRIFT §D-T004-ROUTER (P03-S02-T004): added /account to AccountPage
+ *     inside RequireAuth Outlet block.
  *
  * Responsibility: single mount point for the application's route tree.
  *   Exports <AppRouter> which is consumed by main.tsx inside <Providers>.
@@ -18,6 +20,7 @@
  *   /auth/sign-up      → SignUpPage (real form, P03-S01-T002)
  *   /chat              → ChatHomePage (employee, RequireAuth) — P03-S02-T001
  *   /chat/:conversationId → placeholder (P03-S02-T002 adds real ConversationPage)
+ *   /account           → AccountPage (employee, RequireAuth) — P03-S02-T004
  *   /admin             → STUB placeholder (wrapped in RequireRole — test surface)
  *   /                  → RootRedirect: authenticated→/chat, unauthenticated→/auth/sign-in
  *   *                  → redirects to / (catch-all; uses RootRedirect logic)
@@ -25,6 +28,7 @@
  * P03-S01-T001 adds: real SignInPage form replacing the /auth/sign-in stub.
  * P03-S01-T002 adds: real SignUpPage form at /auth/sign-up.
  * P03-S02-T001 adds: /chat real page; updates / and * redirects for authed users.
+ * P03-S02-T004 adds: /account AccountPage inside RequireAuth. §D-T004-ROUTER.
  * P04-S01-T001 adds: real /admin dashboard replacing stub.
  *
  * AuthProvider composition (task pack §I):
@@ -44,6 +48,7 @@ import ShowcasePage from "../pages/showcase/ShowcasePage";
 import SignInPage from "../pages/auth/SignInPage";
 import SignUpPage from "../pages/auth/SignUpPage";
 import ChatHomePage from "../pages/chat/ChatHomePage";
+import AccountPage from "../pages/chat/AccountPage";
 import { AuthProvider } from "../features/auth/presentation/AuthProvider";
 import { useAuth } from "../features/auth/presentation/AuthProvider";
 import { RequireAuth } from "../features/auth/presentation/RequireAuth";
@@ -67,6 +72,9 @@ export const ROUTE_ADMIN = "/admin";
 
 /** Route path for employee chat home. Implemented in P03-S02-T001. */
 export const ROUTE_CHAT = "/chat";
+
+/** Route path for employee account / profile page. Implemented in P03-S02-T004. */
+export const ROUTE_ACCOUNT = "/account";
 
 // ---------------------------------------------------------------------------
 // RootRedirect — auth-aware redirect for "/" and "*" catch-all
@@ -131,8 +139,8 @@ export function AppRouter(): ReactNode {
   if (import.meta.env.VITE_ENABLE_VERBOSE_LOGGING === "true") {
     console.info("AppRouter.render.start", {
       phase: "P03",
-      slice: "P03-S01-T002",
-      routes: [ROUTE_SHOWCASE, ROUTE_AUTH_SIGN_IN, ROUTE_AUTH_SIGN_UP, ROUTE_CHAT, ROUTE_ADMIN],
+      slice: "P03-S02-T004",
+      routes: [ROUTE_SHOWCASE, ROUTE_AUTH_SIGN_IN, ROUTE_AUTH_SIGN_UP, ROUTE_CHAT, ROUTE_ACCOUNT, ROUTE_ADMIN],
     });
   }
 
@@ -160,6 +168,8 @@ export function AppRouter(): ReactNode {
               path={`${ROUTE_CHAT}/:conversationId`}
               element={<Navigate to={ROUTE_CHAT} replace />}
             />
+            {/* /account — AccountPage (employee profile + language selector + logout) — P03-S02-T004 §D-T004-ROUTER */}
+            <Route path={ROUTE_ACCOUNT} element={<AccountPage />} />
           </Route>
 
           {/* Admin routes — people_admin or super_admin only */}

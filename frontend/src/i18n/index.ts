@@ -9,7 +9,8 @@
  *
  * Design decisions (from task pack §8.3 and instrucciones.md §3.3):
  *   - Detector OFF: i18next-browser-languagedetector crashes jsdom (inherited T002 R1).
- *     Activation deferred to AccountPage (P03-S02-T004).
+ *     DECIDED (P03-S02-T004 §D-T004-I18N-DETECTOR-OFF): detector stays OFF permanently.
+ *     Runtime language swap is done via i18n.changeLanguage() owned by the user feature.
  *   - Inline static resources: no HTTP backend, no lazy-load. 8ns × 3 langs ≈ 5KB gzip.
  *   - Interpolation simple {{var}}: no ICU (not needed in P0).
  *   - saveMissing: false, missingKeyHandler: false (silence warnings; real keys added here).
@@ -165,6 +166,23 @@ const resources = {
       language: "Idioma",
       languageHint: "El idioma seleccionado se aplica a toda la interfaz",
       logout: "Cerrar sesión",
+      profile: {
+        heading: "Perfil",
+        name: "Nombre",
+        email: "Email",
+        employeeId: "ID Empleado",
+        brand: "Marca",
+        society: "Sociedad",
+        center: "Centro",
+        country: "País",
+        department: "Departamento",
+      },
+      errors: {
+        network: "Sin conexión. Comprueba tu red e inténtalo de nuevo.",
+        languageUpdateFailed: "No se pudo actualizar el idioma. Inténtalo de nuevo.",
+        forbidden: "No tienes permiso para acceder a esta página.",
+        retry: "Reintentar",
+      },
     },
     "admin-ai": {
       models: { title: "Modelos LiteLLM", empty: "No hay modelos configurados" },
@@ -307,6 +325,23 @@ const resources = {
       language: "Language",
       languageHint: "The selected language applies to the entire interface",
       logout: "Sign out",
+      profile: {
+        heading: "Profile",
+        name: "Name",
+        email: "Email",
+        employeeId: "Employee ID",
+        brand: "Brand",
+        society: "Society",
+        center: "Center",
+        country: "Country",
+        department: "Department",
+      },
+      errors: {
+        network: "No connection. Check your network and try again.",
+        languageUpdateFailed: "Failed to update language. Please try again.",
+        forbidden: "You do not have permission to access this page.",
+        retry: "Try again",
+      },
     },
     "admin-ai": {
       models: { title: "LiteLLM models", empty: "No models configured" },
@@ -449,6 +484,23 @@ const resources = {
       language: "Langue",
       languageHint: "La langue sélectionnée s'applique à toute l'interface",
       logout: "Se déconnecter",
+      profile: {
+        heading: "Profil",
+        name: "Nom",
+        email: "Email",
+        employeeId: "ID Employé",
+        brand: "Marque",
+        society: "Société",
+        center: "Centre",
+        country: "Pays",
+        department: "Département",
+      },
+      errors: {
+        network: "Pas de connexion. Vérifiez votre réseau et réessayez.",
+        languageUpdateFailed: "Impossible de mettre à jour la langue. Veuillez réessayer.",
+        forbidden: "Vous n'avez pas la permission d'accéder à cette page.",
+        retry: "Réessayer",
+      },
     },
     "admin-ai": {
       models: { title: "Modèles LiteLLM", empty: "Aucun modèle configuré" },
@@ -511,7 +563,8 @@ verboseLog("i18n.init.start", {
  */
 i18n.use(initReactI18next).init({
   // No languageDetector: browser-only plugin crashes in jsdom.
-  // Activation deferred to AccountPage (P03-S02-T004).
+  // DECIDED (P03-S02-T004 §D-T004-I18N-DETECTOR-OFF): detector stays OFF permanently.
+  // Runtime language swap via i18n.changeLanguage() owned by the user feature.
   lng: DEFAULT_LANGUAGE,
   fallbackLng: DEFAULT_LANGUAGE,
   ns: [...I18N_NAMESPACES],

@@ -1,0 +1,5 @@
+                   email                   | preferred_language |          updated_at           
+-------------------------------------------+--------------------+-------------------------------
+ employee.verification@inditex-sandbox.com | es                 | 2026-05-14 14:31:21.180604+00
+(1 row)
+

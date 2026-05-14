@@ -1,0 +1,371 @@
+
+ RUN  v3.2.4 /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S02-T004/frontend
+
+stderr | src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T05: 401 invalid credentials — sets InvalidCredentialsError
+[auth] auth.signin.hook.submit.error { error_name: [32m'InvalidCredentialsError'[39m }
+
+stderr | src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T06: 423 account locked — sets AccountLockedError
+[auth] auth.signin.hook.submit.error { error_name: [32m'AccountLockedError'[39m }
+
+stderr | src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T07: 429 rate limited with Retry-After — sets RateLimitedError carrying retry_after
+[auth] auth.signin.hook.submit.error { error_name: [32m'RateLimitedError'[39m }
+
+stderr | src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T08: TypeError network error — sets NetworkError
+[auth] auth.signin.hook.submit.error { error_name: [32m'NetworkError'[39m }
+
+stderr | src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T09: 500 server error — sets SigninInternalError
+[auth] auth.signin.hook.submit.error { error_name: [32m'SigninInternalError'[39m }
+
+stderr | src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T11: never logs password in any log event
+[auth] auth.signin.hook.submit.error { error_name: [32m'InvalidCredentialsError'[39m }
+
+ ✓ src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T01: validates email format via zod — hook returns error on invalid email 10ms
+ ✓ src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T02: validates password required — hook calls repo with given password 1ms
+ ✓ src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T03: success no-MFA — returns outcome and calls onSuccess with token + user 2ms
+ ✓ src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T04: MFA branch — returns outcome with kind:mfa, does NOT call onSuccess 1ms
+ ✓ src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T05: 401 invalid credentials — sets InvalidCredentialsError 2ms
+ ✓ src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T06: 423 account locked — sets AccountLockedError 1ms
+ ✓ src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T07: 429 rate limited with Retry-After — sets RateLimitedError carrying retry_after 1ms
+ ✓ src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T08: TypeError network error — sets NetworkError 1ms
+ ✓ src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T09: 500 server error — sets SigninInternalError 1ms
+ ✓ src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T10: logs auth.signin.submit.start with email_domain only — never logs full email 2ms
+ ✓ src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T11: never logs password in any log event 1ms
+ ✓ src/app/__tests__/providers.test.tsx > Providers > renders children without throwing (A7 — smoke render) 13ms
+ ✓ src/app/__tests__/providers.test.tsx > Providers > renders children when no queryClient or i18n is injected (defaults used) 1ms
+ ✓ src/app/__tests__/providers.test.tsx > Providers > emits BEFORE and AFTER console.info logs when VITE_ENABLE_VERBOSE_LOGGING=true (A8) 2ms
+ ✓ src/app/__tests__/providers.test.tsx > Providers > emits NO console.info logs when VITE_ENABLE_VERBOSE_LOGGING=false (A8 silent mode) 1ms
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T03 — AuthProvider: /refresh 401 → unauthenticated, no /me call > status becomes 'unauthenticated' on refresh 401
+[auth] auth.repo.refresh.session_expired { request_id: [32m'f1fd1583-0470-4195-9eef-d578e31f3d9c'[39m }
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T04 — AuthProvider: /refresh network error → unauthenticated > status becomes 'unauthenticated' on network error
+[auth] auth.repo.refresh.error { error: [32m'Failed to fetch'[39m }
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T05 — signInAccepted → status=authenticated, /me not re-called > signInAccepted sets token and user without extra fetch
+[auth] auth.repo.refresh.session_expired { request_id: [32m'eaae5033-604f-4ab1-9bb4-4c033e7ccc8f'[39m }
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T06 — useLogout: /logout 204 → token cleared, queries cleared > logout clears token and calls onQueriesClear
+[auth] auth.repo.logout.error { error: [32m'Response constructor: Invalid response status code 204'[39m }
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T06 — useLogout: /logout 204 → token cleared, queries cleared > logout clears token and calls onQueriesClear
+[auth] auth.provider.logout.failure_local_cleared { error: [32m'Response constructor: Invalid response status code 204'[39m }
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T07 — useLogout: backend 401 → still clears local state (defensive logout) > logout clears token even when backend returns 401
+[auth] auth.repo.logout.non_204 { status: [33m401[39m, request_id: [32m'3c85a71f-5a80-4327-9f0e-c2cb36e3cc56'[39m }
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T07 — useLogout: backend 401 → still clears local state (defensive logout) > logout clears token even when backend returns 401
+[auth] auth.provider.logout.failure_local_cleared { error: [32m'Session expired or invalid; please sign in again.'[39m }
+
+ ✓ src/features/chat/__tests__/useCreateConversation.test.tsx > useCreateConversation > T01 — idle → pending → success lifecycle 65ms
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T08 — RequireAuth: unauthenticated → Navigate with ?next= > redirects to sign-in with ?next= when unauthenticated
+[auth] auth.repo.refresh.session_expired { request_id: [32m'338ec916-a61b-404c-8ca4-57c5f4885072'[39m }
+
+stderr | src/features/user/__tests__/useMe.test.tsx > useMe > T03 — propagates UserAuthExpiredError to consumer via isError
+[user] user.hook.useMe.queryFn.error { error: [32m'USER_AUTH_EXPIRED'[39m }
+
+stderr | src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T04 — submit > MAX chars → validation error shown
+[chat] chat.Composer.submit.validation.too_long { len: [33m4001[39m, max: [33m4000[39m }
+
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > Wordmark > renders 'Hilo' text 16ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > Wordmark > has default aria-label 'Hilo' 2ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > Wordmark > renders custom element via 'as' prop 1ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > TrackedLabel > renders children 1ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > TrackedLabel > renders all variants without throwing 2ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > TrackedLabel > renders as label element 1ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > EditorialInput > renders label and input 5ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > EditorialInput > shows error message with aria-invalid 2ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > EditorialInput > disables input and renders muted label 1ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > EditorialInput > calls onChange 3ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > SolidCTA > renders children 1ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > SolidCTA > is disabled when disabled prop is true 25ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > SolidCTA > shows loading label when loading=true 1ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > SolidCTA > has aria-busy when loading 2ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > SolidCTA > calls onClick when not disabled 3ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > HairlineTable > renders populated rows 3ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > HairlineTable > renders empty message when rows is empty 1ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > HairlineTable > renders error_network state with retry CTA 5ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > HairlineTable > renders permission_denied state 1ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > StatusDot > renders active state with label 1ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > StatusDot > renders error state with label 1ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > StatusDot > renders custom label 1ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > StatusDot > has aria-label with status 1ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > MobileFrame > renders children 1ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > MobileFrame > renders as main when asMain=true 1ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > AdminShell > renders nav items 3ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > AdminShell > renders children in main 3ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > AdminShell > marks active item with aria-current=page 4ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > AdminShell > calls onClick when nav item is clicked 2ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > CitationInline > renders as anchor when href provided 1ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > CitationInline > renders as button when no href 3ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > CitationInline > displays [label] format 2ms
+stderr | src/features/chat/__tests__/useCreateConversation.test.tsx > useCreateConversation > T03 — onError callback called with typed ChatError
+[chat] chat.hook.useCreateConversation.mutate.error { error: [32m'CHAT_NETWORK_ERROR'[39m }
+
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > CitationInline > has accessible aria-label 2ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > CitationInline > adds rel=noopener noreferrer when external 1ms
+ ✓ src/features/user/__tests__/useMe.test.tsx > useMe > T01 — returns initialData from useAuth().user when authenticated 11ms
+ ✓ src/features/user/__tests__/useMe.test.tsx > useMe > T02 — refetches via repo on explicit refetch(); cache updates 55ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T01 — accessTokenStore: set/get/clear in-memory only > starts null 1ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T01 — accessTokenStore: set/get/clear in-memory only > set → get returns the token 0ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T01 — accessTokenStore: set/get/clear in-memory only > clear → get returns null 0ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T01 — accessTokenStore: set/get/clear in-memory only > NEVER calls localStorage.setItem 0ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T01 — accessTokenStore: set/get/clear in-memory only > NEVER calls localStorage.getItem 0ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T02 — AuthProvider: cold mount → /refresh 200 → /me 200 → authenticated > status becomes 'authenticated' after refresh + me succeed 21ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T03 — AuthProvider: /refresh 401 → unauthenticated, no /me call > status becomes 'unauthenticated' on refresh 401 5ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T04 — AuthProvider: /refresh network error → unauthenticated > status becomes 'unauthenticated' on network error 5ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T05 — signInAccepted → status=authenticated, /me not re-called > signInAccepted sets token and user without extra fetch 7ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T06 — useLogout: /logout 204 → token cleared, queries cleared > logout clears token and calls onQueriesClear 10ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T07 — useLogout: backend 401 → still clears local state (defensive logout) > logout clears token even when backend returns 401 7ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T08 — RequireAuth: unauthenticated → Navigate with ?next= > redirects to sign-in with ?next= when unauthenticated 9ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T09 — RequireAuth: authenticated → renders children > renders children when authenticated 6ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T10 — RequireAuth: hydrating → renders neither children nor redirect > shows loading placeholder while hydrating, not children or redirect 24ms
+ ✓ src/features/user/__tests__/useUpdateLanguage.test.tsx > useUpdateLanguage > T01 — success: cache updated + i18n language changed to fr 17ms
+ ✓ src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T01 — empty state: Wordmark, title, 2 prompt chips, composer 31ms
+ ✓ src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T02 — prompt click → mutation triggered → navigate called on success 14ms
+ ✓ src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T03 — submit with empty composer input → send button disabled 5ms
+ ✓ src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T04 — submit > MAX chars → validation error shown 7ms
+ ✓ src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T05 — network failure → error_network state with retry CTA 12ms
+ ✓ src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T06 — retry CTA triggers mutation again 12ms
+ ✓ src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T07 — 403 forbidden → permission_denied view shown (no composer) 3ms
+ ✓ src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T08 — a11y: network-error region has role=status + aria-live 5ms
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T17 — httpClient: refresh 401 → no loop, onAuthFailure called > throws AuthSessionExpiredError, calls onAuthFailure, clears token
+[auth] auth.http.refresh.failed { status: [33m401[39m, request_id: [32m'3c1ed6d3-d56b-4eb6-bea7-cfa895fbd99f'[39m }
+
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T11 — RequireRole: employee role denied from admin > redirects employee to /chat when they hit /admin 6ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T12 — RequireRole: people_admin allowed to admin route > renders admin content for people_admin role 5ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T13 — getSafeRedirect: rejects open-redirect attempts > rejects https://evil.com 0ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T13 — getSafeRedirect: rejects open-redirect attempts > rejects //evil.com 0ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T13 — getSafeRedirect: rejects open-redirect attempts > rejects javascript:alert(1) 0ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T13 — getSafeRedirect: rejects open-redirect attempts > rejects \\evil path 0ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T13 — getSafeRedirect: rejects open-redirect attempts > rejects data: pseudo-scheme 0ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T13 — getSafeRedirect: rejects open-redirect attempts > rejects empty string 0ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T13 — getSafeRedirect: rejects open-redirect attempts > rejects null 0ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T14 — getSafeRedirect: safe relative path passes > /chat/abc?x=1 passes through unchanged 0ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T14 — getSafeRedirect: safe relative path passes > /admin passes through 0ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T14 — getSafeRedirect: safe relative path passes > /chat passes through 0ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T15 — httpClient: 401 → single-flight refresh → retry success > fires /refresh once, retries original request with new token 1ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T16 — httpClient: two concurrent 401s → ONE refresh call > fires exactly ONE refresh for two concurrent 401s 1ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T17 — httpClient: refresh 401 → no loop, onAuthFailure called > throws AuthSessionExpiredError, calls onAuthFailure, clears token 1ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T18 — httpClient: Bearer injected on protected endpoints only > injects Authorization Bearer on /api/v1/users/me 0ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T18 — httpClient: Bearer injected on protected endpoints only > does NOT inject Authorization Bearer on /api/v1/auth/refresh 0ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T19 — Logging: verbose=true fires logs, no token value leaked > setAccessToken logs present=true and len, never the token value 0ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T20 — Logging: verbose=false suppresses info logs > setAccessToken does NOT log when verbose=false 0ms
+ ✓ src/features/user/__tests__/useMe.test.tsx > useMe > T03 — propagates UserAuthExpiredError to consumer via isError 55ms
+ ✓ src/features/user/__tests__/useMe.test.tsx > useMe > T04 — query is disabled when auth status !== authenticated 1ms
+ ✓ src/features/user/__tests__/useMe.test.tsx > useMe > T05 — query disabled during hydrating status 1ms
+ ✓ src/features/user/__tests__/AccountPage.test.tsx > AccountPage > T01 — loading skeleton renders with aria-busy when isPending=true 26ms
+ ✓ src/features/user/__tests__/AccountPage.test.tsx > AccountPage > T02 — success: renders employee profile fields from MOCK_PROFILE 22ms
+ ✓ src/features/user/__tests__/AccountPage.test.tsx > AccountPage > T03 — language picker: 3 radio buttons with aria-checked on current language (es) 9ms
+ ✓ src/features/user/__tests__/AccountPage.test.tsx > AccountPage > T04 — click EN button: calls updateLanguage('en') mutation 12ms
+ ✓ src/features/user/__tests__/AccountPage.test.tsx > AccountPage > T05 — after successful EN update: no error banner, EN button active 8ms
+ ✓ src/features/user/__tests__/AccountPage.test.tsx > AccountPage > T06 — PATCH 400 error → shows inline validation error 4ms
+ ✓ src/features/user/__tests__/AccountPage.test.tsx > AccountPage > T07 — PATCH 5xx → shows inline network error 9ms
+ ✓ src/features/user/__tests__/AccountPage.test.tsx > AccountPage > T08 — logout button calls useAuth().logout + navigates to /auth/sign-in with replace 10ms
+ ✓ src/pages/showcase/__tests__/ShowcasePage.test.tsx > ShowcasePage > renders the page title 53ms
+ ✓ src/pages/showcase/__tests__/ShowcasePage.test.tsx > ShowcasePage > renders all 9 component sections 38ms
+stderr | src/features/user/__tests__/useUpdateLanguage.test.tsx > useUpdateLanguage > T03 — 400 validation: reverts i18n and query cache to previous state
+[user] user.hook.useUpdateLanguage.mutate.error { error: [32m'USER_VALIDATION_ERROR'[39m, language: [32m'fr'[39m }
+
+stderr | src/features/user/__tests__/useUpdateLanguage.test.tsx > useUpdateLanguage > T03 — 400 validation: reverts i18n and query cache to previous state
+[user] user.hook.useUpdateLanguage.error.revert { error: [32m'USER_VALIDATION_ERROR'[39m, language: [32m'fr'[39m }
+
+stderr | src/features/chat/__tests__/useCreateConversation.test.tsx > useCreateConversation > T04 — error state set after failed mutation
+[chat] chat.hook.useCreateConversation.mutate.error { error: [32m'CHAT_NETWORK_ERROR'[39m }
+
+ ✓ src/features/user/__tests__/AccountPage.test.tsx > AccountPage > T09 — 403 from useMe → ForbiddenView rendered 2ms
+ ✓ src/features/user/__tests__/AccountPage.test.tsx > AccountPage > T10 — network error from useMe → retry CTA visible; click retry calls refetch 3ms
+ ✓ src/features/user/__tests__/AccountPage.test.tsx > AccountPage > T11 — i18n keys render in the active locale (ES default: 'Mi cuenta') 4ms
+ ✓ src/features/user/__tests__/AccountPage.test.tsx > AccountPage > T12 — a11y: logout button has aria-label 6ms
+ ✓ src/features/user/__tests__/AccountPage.test.tsx > AccountPage > T13 — empty state N/A: loading path with null data shows skeleton, not empty content 1ms
+ ✓ src/pages/showcase/__tests__/ShowcasePage.test.tsx > ShowcasePage > renders the Wordmark 'Hilo' brand text 24ms
+ ✓ src/pages/showcase/__tests__/ShowcasePage.test.tsx > ShowcasePage > renders the design system footer 18ms
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T01: renders with i18n ES keys — email label, password label, submit button visible
+[auth] auth.repo.refresh.session_expired { request_id: [32m'5917dffd-4a0b-44a0-a422-f13d55164cc2'[39m }
+
+ ✓ src/features/chat/__tests__/useCreateConversation.test.tsx > useCreateConversation > T02 — onSuccess callback called with conversation data 54ms
+ ✓ src/features/chat/__tests__/useCreateConversation.test.tsx > useCreateConversation > T03 — onError callback called with typed ChatError 58ms
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T02: invalid email triggers validation error with aria-invalid
+[auth] auth.repo.refresh.session_expired { request_id: [32m'18ae8345-ea83-4460-8de8-81377528b8cd'[39m }
+
+stderr | src/features/user/__tests__/useUpdateLanguage.test.tsx > useUpdateLanguage > T04 — 401 auth expired: calls onAuthFailure callback
+[user] user.hook.useUpdateLanguage.mutate.error { error: [32m'USER_AUTH_EXPIRED'[39m, language: [32m'en'[39m }
+
+stderr | src/features/user/__tests__/useUpdateLanguage.test.tsx > useUpdateLanguage > T04 — 401 auth expired: calls onAuthFailure callback
+[user] user.hook.useUpdateLanguage.error.revert { error: [32m'USER_AUTH_EXPIRED'[39m, language: [32m'en'[39m }
+[user] user.hook.useUpdateLanguage.auth_failure
+
+ ✓ src/features/chat/__tests__/useCreateConversation.test.tsx > useCreateConversation > T04 — error state set after failed mutation 53ms
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T03: submit happy path no-MFA — navigates to /chat (default)
+[auth] auth.repo.refresh.session_expired { request_id: [32m'8651fd34-5fbd-465d-a828-a8f51a22dd3e'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T04: submit MFA branch — navigates to /auth/2fa
+[auth] auth.repo.refresh.session_expired { request_id: [32m'3bf573c7-528a-490b-b745-1282d93f2764'[39m }
+
+ ✓ src/features/user/__tests__/useUpdateLanguage.test.tsx > useUpdateLanguage > T02 — optimistic: i18n.changeLanguage called before PATCH resolves 109ms
+ ✓ src/features/user/__tests__/useUpdateLanguage.test.tsx > useUpdateLanguage > T03 — 400 validation: reverts i18n and query cache to previous state 57ms
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T05: 401 — shows invalidCredentials copy (byte-identical for both failure modes — anti-enum)
+[auth] auth.repo.refresh.session_expired { request_id: [32m'd46c0587-760b-498f-aa47-5be793e2e2a8'[39m }
+
+ ✓ src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T01: renders with i18n ES keys — email label, password label, submit button visible 46ms
+ ✓ src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T02: invalid email triggers validation error with aria-invalid 21ms
+ ✓ src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T03: submit happy path no-MFA — navigates to /chat (default) 15ms
+ ✓ src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T04: submit MFA branch — navigates to /auth/2fa 15ms
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T05: 401 — shows invalidCredentials copy (byte-identical for both failure modes — anti-enum)
+[auth] auth.signin.submit.invalid_credentials { status: [33m401[39m, request_id: [32m'2f141ead-c1dc-45f4-9b0b-06740e73f27e'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T05: 401 — shows invalidCredentials copy (byte-identical for both failure modes — anti-enum)
+[auth] auth.signin.hook.submit.error { error_name: [32m'InvalidCredentialsError'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T05: 401 — shows invalidCredentials copy (byte-identical for both failure modes — anti-enum)
+[auth] auth.signin.page.submit.failed
+
+stderr | src/features/user/__tests__/useUpdateLanguage.test.tsx > useUpdateLanguage > T05 — 5xx server error: reverts i18n and shows error
+[user] user.hook.useUpdateLanguage.mutate.error { error: [32m'USER_SERVER_ERROR'[39m, language: [32m'fr'[39m }
+
+stderr | src/features/user/__tests__/useUpdateLanguage.test.tsx > useUpdateLanguage > T05 — 5xx server error: reverts i18n and shows error
+[user] user.hook.useUpdateLanguage.error.revert { error: [32m'USER_SERVER_ERROR'[39m, language: [32m'fr'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T06: 423 account locked — shows accountLocked copy, submit re-enabled (not rate-limit disabled)
+[auth] auth.repo.refresh.session_expired { request_id: [32m'84b278d8-45d3-4e13-b203-0425c8b0a2a1'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T06: 423 account locked — shows accountLocked copy, submit re-enabled (not rate-limit disabled)
+[auth] auth.signin.submit.locked { status: [33m423[39m, request_id: [32m'de4fface-124e-4d7e-a94a-6b19972bea6a'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T06: 423 account locked — shows accountLocked copy, submit re-enabled (not rate-limit disabled)
+[auth] auth.signin.hook.submit.error { error_name: [32m'AccountLockedError'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T06: 423 account locked — shows accountLocked copy, submit re-enabled (not rate-limit disabled)
+[auth] auth.signin.page.submit.failed
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T07: 429 rate-limited — submit disabled, copy shows seconds interpolated
+[auth] auth.repo.refresh.session_expired { request_id: [32m'4180128c-ac87-4534-9599-b5bfd9a20049'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T07: 429 rate-limited — submit disabled, copy shows seconds interpolated
+[auth] auth.signin.submit.rate_limited {
+  status: [33m429[39m,
+  retry_after: [33m60[39m,
+  request_id: [32m'd5bccc33-6c2c-42c4-8f34-faa34bbbfc92'[39m
+}
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T07: 429 rate-limited — submit disabled, copy shows seconds interpolated
+[auth] auth.signin.hook.submit.error { error_name: [32m'RateLimitedError'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T07: 429 rate-limited — submit disabled, copy shows seconds interpolated
+[auth] auth.signin.page.submit.failed
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T08: network error — shows error_network copy
+[auth] auth.repo.refresh.session_expired { request_id: [32m'62dc9829-ac16-497a-92f5-ca53f67f4cb8'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T08: network error — shows error_network copy
+[auth] auth.signin.submit.network { error: [32m'Failed to fetch'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T08: network error — shows error_network copy
+[auth] auth.signin.hook.submit.error { error_name: [32m'NetworkError'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T08: network error — shows error_network copy
+[auth] auth.signin.page.submit.failed
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T09: keyboard-only flow — Tab through inputs and submit button is reachable
+[auth] auth.repo.refresh.session_expired { request_id: [32m'e69f800c-f864-40f7-9d56-f49bd4714ba3'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T10: open-redirect ?next=https://evil.com defaults to /chat
+[auth] auth.repo.refresh.session_expired { request_id: [32m'81735762-fbea-4c46-be33-296749a64a12'[39m }
+
+ ✓ src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T05: 401 — shows invalidCredentials copy (byte-identical for both failure modes — anti-enum) 14ms
+ ✓ src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T06: 423 account locked — shows accountLocked copy, submit re-enabled (not rate-limit disabled) 12ms
+ ✓ src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T07: 429 rate-limited — submit disabled, copy shows seconds interpolated 10ms
+ ✓ src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T08: network error — shows error_network copy 11ms
+ ✓ src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T09: keyboard-only flow — Tab through inputs and submit button is reachable 7ms
+ ✓ src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T10: open-redirect ?next=https://evil.com defaults to /chat 14ms
+ ✓ src/features/user/__tests__/useUpdateLanguage.test.tsx > useUpdateLanguage > T04 — 401 auth expired: calls onAuthFailure callback 56ms
+ ✓ src/features/user/__tests__/useUpdateLanguage.test.tsx > useUpdateLanguage > T05 — 5xx server error: reverts i18n and shows error 56ms
+ ✓ src/features/user/__tests__/useUpdateLanguage.test.tsx > useUpdateLanguage > T06 — race guard: rapid ES→EN→FR, only final FR is committed 3ms
+ ✓ src/features/user/__tests__/useUpdateLanguage.test.tsx > useUpdateLanguage > T07 — onSettled always invalidates ['user','me'] query 3ms
+stderr | src/features/user/__tests__/userRepository.test.ts > UserRepository > T02 — getMe 401 → Result.err(UserAuthExpiredError)
+[user] user.repo.getMe.auth_expired { status: [33m401[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/user/__tests__/userRepository.test.ts > UserRepository > T03 — getMe 500 → Result.err(UserServerError)
+[user] user.repo.getMe.server_error { status: [33m500[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/user/__tests__/userRepository.test.ts > UserRepository > T04 — getMe network failure (fetch throws) → Result.err(UserNetworkError)
+[user] user.repo.getMe.error { error: [32m'USER_NETWORK_ERROR'[39m, message: [32m'Failed to fetch'[39m }
+
+stderr | src/features/user/__tests__/userRepository.test.ts > UserRepository > T06 — updateLanguage 400 → Result.err(UserValidationError)
+[user] user.repo.updateLanguage.validation_error { status: [33m400[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/user/__tests__/userRepository.test.ts > UserRepository > T07 — updateLanguage 401 → Result.err(UserAuthExpiredError)
+[user] user.repo.updateLanguage.auth_expired { status: [33m401[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/user/__tests__/userRepository.test.ts > UserRepository > T08 — updateLanguage 503 → Result.err(UserServerError)
+[user] user.repo.updateLanguage.server_error { status: [33m503[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/user/__tests__/userRepository.test.ts > UserRepository > T09 — updateLanguage 403 → Result.err(UserForbiddenError)
+[user] user.repo.updateLanguage.forbidden { status: [33m403[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/user/__tests__/userRepository.test.ts > UserRepository > T10 — getMe generic Error → Result.err(UserNetworkError)
+[user] user.repo.getMe.error { error: [32m'USER_NETWORK_ERROR'[39m, message: [32m'Connection refused'[39m }
+
+stderr | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T02 — 400 → Result.err(ChatValidationError)
+[chat] chat.repo.createConversation.validation_error { status: [33m400[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/user/__tests__/userRepository.test.ts > UserRepository > T11 — updateLanguage 422 treated as 400 validation error
+[user] user.repo.updateLanguage.validation_error { status: [33m422[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/user/__tests__/userRepository.test.ts > UserRepository > T12 — getMe 403 → Result.err(UserForbiddenError)
+[user] user.repo.getMe.forbidden { status: [33m403[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T03 — 403 → Result.err(ChatForbiddenError)
+[chat] chat.repo.createConversation.forbidden { status: [33m403[39m, request_id: [32m'test-request-id'[39m }
+
+ ✓ src/features/user/__tests__/userRepository.test.ts > UserRepository > T01 — getMe 200 → Result.ok(UserProfile) with full shape 1ms
+ ✓ src/features/user/__tests__/userRepository.test.ts > UserRepository > T02 — getMe 401 → Result.err(UserAuthExpiredError) 2ms
+ ✓ src/features/user/__tests__/userRepository.test.ts > UserRepository > T03 — getMe 500 → Result.err(UserServerError) 0ms
+ ✓ src/features/user/__tests__/userRepository.test.ts > UserRepository > T04 — getMe network failure (fetch throws) → Result.err(UserNetworkError) 0ms
+ ✓ src/features/user/__tests__/userRepository.test.ts > UserRepository > T05 — updateLanguage('en') 200 → Result.ok(profile with preferred_language=en) 0ms
+ ✓ src/features/user/__tests__/userRepository.test.ts > UserRepository > T06 — updateLanguage 400 → Result.err(UserValidationError) 0ms
+ ✓ src/features/user/__tests__/userRepository.test.ts > UserRepository > T07 — updateLanguage 401 → Result.err(UserAuthExpiredError) 0ms
+ ✓ src/features/user/__tests__/userRepository.test.ts > UserRepository > T08 — updateLanguage 503 → Result.err(UserServerError) 0ms
+ ✓ src/features/user/__tests__/userRepository.test.ts > UserRepository > T09 — updateLanguage 403 → Result.err(UserForbiddenError) 0ms
+ ✓ src/features/user/__tests__/userRepository.test.ts > UserRepository > T10 — getMe generic Error → Result.err(UserNetworkError) 0ms
+ ✓ src/features/user/__tests__/userRepository.test.ts > UserRepository > T11 — updateLanguage 422 treated as 400 validation error 0ms
+ ✓ src/features/user/__tests__/userRepository.test.ts > UserRepository > T12 — getMe 403 → Result.err(UserForbiddenError) 0ms
+stderr | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T04 — 5xx → Result.err(ChatServerError)
+[chat] chat.repo.createConversation.server_error { status: [33m500[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T05 — network throw → Result.err(ChatNetworkError)
+[chat] chat.repo.createConversation.error { error: [32m'CHAT_NETWORK_ERROR'[39m, message: [32m'Failed to fetch'[39m }
+
+stderr | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T07 — AuthSessionExpiredError from authFetch → Result.err(ChatAuthExpiredError)
+[chat] chat.repo.createConversation.error {
+  error: [32m'CHAT_NETWORK_ERROR'[39m,
+  message: [32m'Session expired or invalid; please sign in again.'[39m
+}
+
+ ✓ src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T01 — happy path → Result.ok with conversation data 3ms
+ ✓ src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T02 — 400 → Result.err(ChatValidationError) 2ms
+ ✓ src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T03 — 403 → Result.err(ChatForbiddenError) 0ms
+ ✓ src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T04 — 5xx → Result.err(ChatServerError) 0ms
+ ✓ src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T05 — network throw → Result.err(ChatNetworkError) 0ms
+ ✓ src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T06 — request shape: POST, Content-Type, JSON body 1ms
+ ✓ src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T07 — AuthSessionExpiredError from authFetch → Result.err(ChatAuthExpiredError) 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: configuration > i18n: registers all 8 namespaces 1ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: configuration > i18n: lng=es, fallbackLng=es, defaultNS=common 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: 24 bundles present > i18n: all 3 locales have all 8 namespaces loaded 1ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: fallback behaviour > i18n: falls back to es value for key absent in en and fr 1ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: key resolution across namespaces > i18n: resolves common:productName in es 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: key resolution across namespaces > i18n: resolves auth:signIn.title in es 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: key resolution across namespaces > i18n: resolves errors:AUTH_INVALID_CREDENTIALS in es 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: changeLanguage > i18n: changeLanguage updates auth:signIn.title to EN 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: changeLanguage > i18n: changeLanguage updates auth:signIn.title to FR 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: changeLanguage > i18n: reverts to es correctly 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: missing key handler > i18n: missing key in all languages returns key or empty string, never throws 1ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: errors namespace coverage > i18n: all error codes present in es 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: errors namespace coverage > i18n: all error codes present in en 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: errors namespace coverage > i18n: all error codes present in fr 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: no copy-paste across languages > i18n: errors:AUTH_INVALID_CREDENTIALS differs across es, en, fr 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: no copy-paste across languages > i18n: auth:signIn.title differs across es, en, fr 0ms
+
+ Test Files  14 passed (14)
+      Tests  168 passed (168)
+   Start at  15:01:45
+   Duration  2.60s (transform 1.31s, setup 2.47s, collect 4.18s, tests 1.44s, environment 9.08s, prepare 1.78s)
+

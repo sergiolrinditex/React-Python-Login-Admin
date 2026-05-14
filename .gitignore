@@ -29,6 +29,8 @@ venv/
 
 # ─── Node (por si CI/scripts lo usan) ────────────────────────────────────────
 node_modules/
+**/node_modules/
+frontend/node_modules
 npm-debug.log*
 
 # TypeScript auto-generated build artifacts (TS project references + vite typegen)

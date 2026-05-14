@@ -1,0 +1,40 @@
+2026-05-14 14:48:35,688 app.users.deps DEBUG users.deps.get_current_user.start request_id=tester-full-patch-en ip=127.0.0.1
+2026-05-14 14:48:35,700 app.users.deps DEBUG users.deps.get_current_user.done user_id=51c8d4f6-f105-461f-9ea3-97f3ae2cc702 request_id=tester-full-patch-en
+2026-05-14 14:48:35,700 app.users.routers.me DEBUG users.routers.me.language_patch_request received from=en to=en user_id=51c8d4f6-f105-461f-9ea3-97f3ae2cc702 request_id=tester-full-patch-en
+2026-05-14 14:48:35,700 app.users.services.update_user_language DEBUG users.service.update_user_language.start user_id=51c8d4f6-f105-461f-9ea3-97f3ae2cc702 new_language=en request_id=tester-full-patch-en
+2026-05-14 14:48:35,716 app.users.services.get_current_user_profile DEBUG users.service.get_current_user_profile.start user_id=51c8d4f6-f105-461f-9ea3-97f3ae2cc702
+2026-05-14 14:48:35,716 app.users.services.get_current_user_profile DEBUG users.service.get_current_user_profile.done user_id=51c8d4f6-f105-461f-9ea3-97f3ae2cc702 roles=['employee'] has_profile=True
+2026-05-14 14:48:35,716 app.users.services.update_user_language DEBUG users.service.update_user_language.done user_id=51c8d4f6-f105-461f-9ea3-97f3ae2cc702 from=en to=en request_id=tester-full-patch-en
+2026-05-14 14:48:35,716 app.users.routers.me DEBUG users.routers.me.language_patch_success user_id=51c8d4f6-f105-461f-9ea3-97f3ae2cc702 from=en to=en request_id=tester-full-patch-en
+2026-05-14 14:48:35,738 app.users.deps DEBUG users.deps.get_current_user.start request_id=tester-full-me-after ip=127.0.0.1
+2026-05-14 14:48:35,741 app.users.deps DEBUG users.deps.get_current_user.done user_id=51c8d4f6-f105-461f-9ea3-97f3ae2cc702 request_id=tester-full-me-after
+2026-05-14 14:48:35,741 app.users.routers.me DEBUG users.routers.me.request_received method=GET request_id=tester-full-me-after ip=127.0.0.1
+2026-05-14 14:48:35,741 app.users.services.get_current_user_profile DEBUG users.service.get_current_user_profile.start user_id=51c8d4f6-f105-461f-9ea3-97f3ae2cc702
+2026-05-14 14:48:35,741 app.users.services.get_current_user_profile DEBUG users.service.get_current_user_profile.done user_id=51c8d4f6-f105-461f-9ea3-97f3ae2cc702 roles=['employee'] has_profile=True
+2026-05-14 14:48:35,741 app.users.routers.me DEBUG users.routers.me.response_built user_id=51c8d4f6-f105-461f-9ea3-97f3ae2cc702 status=200 request_id=tester-full-me-after
+2026-05-14 14:49:41,257 app.auth.routers.sign_in INFO auth.sign_in.received email_domain=inditex-sandbox.com request_id=tester-logout-1a
+2026-05-14 14:49:41,258 app.auth.services.sign_in INFO auth.sign_in.starting request_id=tester-logout-1a email_domain=inditex-sandbox.com
+2026-05-14 14:49:41,271 app.auth.services.sign_in INFO auth.sign_in.user_found user_id=51c8d4f6-f105-461f-9ea3-97f3ae2cc702 request_id=tester-logout-1a
+2026-05-14 14:49:41,328 app.auth.services.sign_in INFO auth.sign_in.mfa_challenge_issued user_id=51c8d4f6-f105-461f-9ea3-97f3ae2cc702 request_id=tester-logout-1a
+2026-05-14 14:49:41,328 app.auth.routers.sign_in INFO auth.sign_in.mfa_challenge_issued user_id=51c8d4f6-f105-461f-9ea3-97f3ae2cc702 request_id=tester-logout-1a
+2026-05-14 14:49:41,415 app.auth.routers.mfa INFO auth.mfa.verify.router.received request_id=tester-logout-1b ip=127.0.0.1
+2026-05-14 14:49:41,415 app.auth.services.mfa INFO auth.mfa.verify.received request_id=tester-logout-1b ip=127.0.0.1
+2026-05-14 14:49:41,437 app.auth.services.mfa INFO auth.mfa.verify.success user_id=51c8d4f6-f105-461f-9ea3-97f3ae2cc702 request_id=tester-logout-1b
+2026-05-14 14:49:41,440 app.auth.routers.mfa INFO auth.mfa.verify.router.success user_id=51c8d4f6-f105-461f-9ea3-97f3ae2cc702 request_id=tester-logout-1b
+2026-05-14 14:49:41,462 app.users.deps DEBUG users.deps.get_current_user.start request_id=tester-revert-es ip=127.0.0.1
+2026-05-14 14:49:41,468 app.users.deps DEBUG users.deps.get_current_user.done user_id=51c8d4f6-f105-461f-9ea3-97f3ae2cc702 request_id=tester-revert-es
+2026-05-14 14:49:41,468 app.users.routers.me DEBUG users.routers.me.language_patch_request received from=en to=es user_id=51c8d4f6-f105-461f-9ea3-97f3ae2cc702 request_id=tester-revert-es
+2026-05-14 14:49:41,468 app.users.services.update_user_language DEBUG users.service.update_user_language.start user_id=51c8d4f6-f105-461f-9ea3-97f3ae2cc702 new_language=es request_id=tester-revert-es
+2026-05-14 14:49:41,483 app.users.services.get_current_user_profile DEBUG users.service.get_current_user_profile.start user_id=51c8d4f6-f105-461f-9ea3-97f3ae2cc702
+2026-05-14 14:49:41,483 app.users.services.get_current_user_profile DEBUG users.service.get_current_user_profile.done user_id=51c8d4f6-f105-461f-9ea3-97f3ae2cc702 roles=['employee'] has_profile=True
+2026-05-14 14:49:41,483 app.users.services.update_user_language DEBUG users.service.update_user_language.done user_id=51c8d4f6-f105-461f-9ea3-97f3ae2cc702 from=en to=es request_id=tester-revert-es
+2026-05-14 14:49:41,483 app.users.routers.me DEBUG users.routers.me.language_patch_success user_id=51c8d4f6-f105-461f-9ea3-97f3ae2cc702 from=es to=es request_id=tester-revert-es
+2026-05-14 14:49:41,583 app.auth.routers.logout DEBUG auth.logout.received request_id=tester-logout-main ip=127.0.0.1
+2026-05-14 14:49:41,583 app.auth.services.logout DEBUG auth.logout.execute.start request_id=tester-logout-main ip=127.0.0.1
+2026-05-14 14:49:41,588 app.auth.services.logout_audit DEBUG auth.logout.success_audit.start user_id=51c8d4f6-f105-461f-9ea3-97f3ae2cc702 request_id=tester-logout-main
+2026-05-14 14:49:41,588 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.logout actor_user_id=51c8d4f6-f105-461f-9ea3-97f3ae2cc702
+2026-05-14 14:49:41,589 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=ee68e232-feb7-46b9-8d08-18eb40e5abc5 action=auth.logout
+2026-05-14 14:49:41,589 app.auth.services.logout_audit DEBUG auth.logout.success_audit.done user_id=51c8d4f6-f105-461f-9ea3-97f3ae2cc702 request_id=tester-logout-main
+2026-05-14 14:49:41,589 app.auth.services.logout DEBUG auth.logout.execute.done user_id=51c8d4f6-f105-461f-9ea3-97f3ae2cc702 token_id=87641433-aab6-4eaf-b939-9808cc524f46 request_id=tester-logout-main
+2026-05-14 14:49:41,589 app.auth.routers.logout DEBUG auth.logout.success request_id=tester-logout-main
+INFO:     127.0.0.1:63004 - "POST /api/v1/auth/logout HTTP/1.1" 204 No Content

@@ -1,0 +1,31 @@
+# Verification Data Contract — P03-S02-T004
+# Used for: backend smoke tests (tester run)
+# 
+# Contract rows applied (from TECHNICAL_GUIDE §6.5 / task-pack §3.5):
+#
+# Row: J100 auth-login (used as prerequisite to access /me and /me/language)
+#   - Source: data/verification/users/employee_primary.json
+#   - email: employee.verification@inditex-sandbox.com
+#   - MFA enabled: YES (totp_secret from data/verification/auth/mfa_primary.json)
+#
+# Row: J102 history-language (primary contract row)
+#   - Verified fields:
+#     full_name: Elena Verificación
+#     employee_id: EMP-VERIFY-001
+#     brand: Zara
+#     society: ITX-ES
+#     center: Madrid-HQ
+#     country: ES
+#     department: People & Talent
+#     initial preferred_language: es
+#
+# Provided data loaded (observed from DB):
+#   - Initial: preferred_language='es' (baseline)
+#
+# Data persisted/observed during smoke:
+#   - After PATCH /me/language {"language":"en"}: preferred_language='en' in DB (users table)
+#   - After PATCH /me/language {"language":"es"} (revert): preferred_language='es' in DB (restored baseline)
+#   - audit_logs rows: action='users.language.update' present (3 rows from tester run)
+#     no PII (no email, no token), metadata has request_id and from/to language fields
+#
+# DB state after tester run: preferred_language='es' (baseline restored)

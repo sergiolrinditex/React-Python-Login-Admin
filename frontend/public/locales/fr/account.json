@@ -2,5 +2,22 @@
   "title": "Mon compte",
   "language": "Langue",
   "languageHint": "La langue sélectionnée s'applique à toute l'interface",
-  "logout": "Se déconnecter"
+  "logout": "Se déconnecter",
+  "profile": {
+    "heading": "Profil",
+    "name": "Nom",
+    "email": "Email",
+    "employeeId": "ID Employé",
+    "brand": "Marque",
+    "society": "Société",
+    "center": "Centre",
+    "country": "Pays",
+    "department": "Département"
+  },
+  "errors": {
+    "network": "Pas de connexion. Vérifiez votre réseau et réessayez.",
+    "languageUpdateFailed": "Impossible de mettre à jour la langue. Veuillez réessayer.",
+    "forbidden": "Vous n'avez pas la permission d'accéder à cette page.",
+    "retry": "Réessayer"
+  }
 }

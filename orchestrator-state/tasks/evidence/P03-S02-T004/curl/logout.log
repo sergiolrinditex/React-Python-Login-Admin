@@ -1,0 +1,16 @@
+# Logout Evidence — P03-S02-T004
+# Timestamp: 2026-05-14T14:49:xx UTC
+
+## POST /api/v1/auth/logout
+- HTTP Status: 204 (no body)
+- X-Request-ID: tester-logout-main
+
+## Set-Cookie response header (refresh cookie cleared)
+set-cookie: refresh_token=""; HttpOnly; Max-Age=0; Path=/api/v1/auth; SameSite=lax; Secure
+
+## Contract assertions
+- Status 204: YES
+- Refresh cookie cleared: YES (Max-Age=0)
+- Cookie path=/api/v1/auth: YES (matches ADR-001 / P01-S02-T011 contract)
+- HttpOnly flag: YES
+- Secure flag: YES

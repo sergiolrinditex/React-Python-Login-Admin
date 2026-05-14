@@ -1,0 +1,12 @@
+{
+  "data": {
+    "full_name": "Elena Verificación",
+    "preferred_language": "en",
+    "status": "active"
+  },
+  "meta": {
+    "request_id": "tester-full-me-after"
+  },
+  "errors": [],
+  "assertion": "preferred_language should be en after PATCH"
+}

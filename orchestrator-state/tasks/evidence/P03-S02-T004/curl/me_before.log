@@ -1,0 +1,18 @@
+{
+  "data": {
+    "user_id": "51c8d4f6...",
+    "full_name": "Elena Verificación",
+    "preferred_language": "es",
+    "status": "active",
+    "employee_id": "EMP-VERIFY-001",
+    "brand": "Zara",
+    "society": "ITX-ES",
+    "center": "Madrid-HQ",
+    "country": "ES",
+    "department": "People & Talent"
+  },
+  "meta": {
+    "request_id": "tester-me-before"
+  },
+  "errors": []
+}

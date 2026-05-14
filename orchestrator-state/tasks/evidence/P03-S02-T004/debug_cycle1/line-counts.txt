@@ -1,0 +1,14 @@
+=== Line counts after debugger cycle 1 ===
+
+     364 frontend/src/pages/chat/AccountPage.tsx
+     126 frontend/src/pages/chat/AccountPage.styles.ts
+      84 frontend/src/pages/chat/_AccountPage.error-views.tsx
+     574 total
+
+=== Substantive (non-blank, non-pure-comment) ===
+frontend/src/pages/chat/AccountPage.tsx → raw=     364  non-blank=328  substantive=261
+frontend/src/pages/chat/AccountPage.styles.ts → raw=     126  non-blank=112  substantive=97
+frontend/src/pages/chat/_AccountPage.error-views.tsx → raw=      84  non-blank=79  substantive=55
+
+=== Cap (~300 substantive LoC for self-contained UI components) ===
+AccountPage.tsx substantive: 261 — UNDER cap

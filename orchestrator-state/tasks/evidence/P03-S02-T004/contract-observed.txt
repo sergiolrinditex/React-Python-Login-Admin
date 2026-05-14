@@ -1,0 +1,38 @@
+# Contract Observed — P03-S02-T004
+# Front → Back → DB contract observed during tester run
+#
+# Route/Page:
+#   Route: /account (frontend dev server HTTP 200)
+#   Page: AccountPage.tsx (implemented in this slice)
+#   Auth gate: RequireAuth wrapper (predeclared router drift §D-T004-ROUTER)
+#
+# Endpoints observed (smoke + DB verification):
+#   GET /api/v1/users/me → 200 + {data: UserProfile} (full profile shape)
+#     - full_name: Elena Verificación ✓
+#     - preferred_language: es (initial) → en (after patch) → es (after revert) ✓
+#     - employee_profile present with employee_id, brand, society, center, country, department ✓
+#   PATCH /api/v1/users/me/language → 200 + full UserProfile body (NOT 204) ✓
+#     - Contract: "returns 200 + full UserProfile" (DISCREPANCY-1 resolved P01-S02-T007) ✓
+#   POST /api/v1/auth/logout → 204 ✓
+#     - Set-Cookie: refresh_token=""; Max-Age=0; Path=/api/v1/auth; HttpOnly; Secure ✓
+#
+# Provider/Client:
+#   authFetch (features/auth/data/httpClient.ts) — X-Request-ID injected ✓
+#   TanStack Query key ["user","me"] — useMe hook ✓
+#   useMutation — useUpdateLanguage hook ✓
+#
+# Repository:
+#   UserRepository.getMe() → GET /api/v1/users/me ✓
+#   UserRepository.updateLanguage(lang) → PATCH /api/v1/users/me/language ✓
+#
+# DTO:
+#   UserProfile (re-exported from features/auth/domain/types.ts) ✓ (no re-declaration)
+#
+# Tables observed via DB:
+#   users.preferred_language — updated on PATCH, persisted ✓
+#   audit_logs — action='users.language.update' rows present ✓ (no PII, has request_id)
+#   refresh_tokens — revoked on logout (logout.execute.done log shows token_id) ✓
+#   employee_profiles — read via /me JOIN ✓
+#
+# i18n:
+#   account namespace — inline (i18n/index.ts) + public/locales/{es,en,fr}/account.json ✓

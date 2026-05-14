@@ -1,0 +1,18 @@
+# DB Audit Evidence — P03-S02-T004
+# Queried at: 2026-05-14T14:48:xx UTC
+# No PII in audit metadata (no email/token)
+
+## users.preferred_language after PATCH /me/language (en)
+preferred_language: en
+updated_at: 2026-05-14 12:48:34.804798+00
+
+## audit_logs WHERE action='users.language.update' (last 3 rows)
+Row 1: action=users.language.update | created_at=2026-05-14 12:48:34 | request_id=tester-full-patch-en | from=en | to=en | outcome=success (idempotent)
+Row 2: action=users.language.update | created_at=2026-05-14 12:48:20 | request_id=tester-patch-lang-en | from=es | to=en | outcome=success
+Row 3: action=users.language.update | created_at=2026-05-14 12:40:12 | request_id=final-smoke-005 | from=fr | to=es | outcome=success
+
+## Contract assertions
+- audit_logs table exists: YES
+- action='users.language.update' rows present: YES (3+)
+- metadata contains no PII (no email, no access_token): YES
+- metadata contains request_id: YES (tester-full-patch-en, tester-patch-lang-en, etc.)

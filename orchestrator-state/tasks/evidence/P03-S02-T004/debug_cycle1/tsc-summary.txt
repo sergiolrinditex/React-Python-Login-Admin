@@ -1,0 +1,4 @@
+=== tsc --noEmit (cwd: frontend) ===
+Exit: 0
+stdout: (empty — no type errors)
+       0 orchestrator-state/tasks/evidence/P03-S02-T004/debug_cycle1/tsc.log

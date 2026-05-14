@@ -1,0 +1,13 @@
+{
+  "data": {
+    "full_name": "Elena Verificación",
+    "preferred_language": "en",
+    "status": "active",
+    "has_employee_profile": true
+  },
+  "meta": {
+    "request_id": "tester-patch-lang-en"
+  },
+  "errors": [],
+  "contract_note": "Response is 200 with full UserProfile body (NOT 204) - matches contract"
+}

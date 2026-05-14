@@ -1,0 +1,10 @@
+        action         |          created_at           |                                                                                                                             metadata                                                                                                                             
+-----------------------+-------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ users.language.update | 2026-05-14 14:31:21.192456+00 | {"ip": "127.0.0.1", "to": "es", "from": "en", "outcome": "success", "request_id": "c30a7680-e0a9-425c-bfd1-a2ebfe5e0ade", "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36"}
+ users.language.update | 2026-05-14 14:31:13.776575+00 | {"ip": "127.0.0.1", "to": "en", "from": "fr", "outcome": "success", "request_id": "4526e206-4981-44e4-a4a5-c8adfac19852", "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36"}
+ users.language.update | 2026-05-14 14:31:03.784979+00 | {"ip": "127.0.0.1", "to": "fr", "from": "es", "outcome": "success", "request_id": "0297afa1-6adb-4343-9c0c-e1e184e4d61f", "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36"}
+ users.language.update | 2026-05-14 12:49:40.591971+00 | {"ip": "127.0.0.1", "to": "es", "from": "en", "outcome": "success", "request_id": "tester-revert-es", "user_agent": "curl/8.7.1"}
+ users.language.update | 2026-05-14 12:48:34.823131+00 | {"ip": "127.0.0.1", "to": "en", "from": "en", "outcome": "success", "request_id": "tester-full-patch-en", "user_agent": "curl/8.7.1"}
+ users.language.update | 2026-05-14 12:48:20.709446+00 | {"ip": "127.0.0.1", "to": "en", "from": "es", "outcome": "success", "request_id": "tester-patch-lang-en", "user_agent": "curl/8.7.1"}
+(6 rows)
+
