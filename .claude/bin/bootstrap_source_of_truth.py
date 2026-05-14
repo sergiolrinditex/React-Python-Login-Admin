@@ -1473,7 +1473,7 @@ def build_phases_and_tasks(checklist_path: Path, checklist_text: str) -> tuple[l
         phase_tasks = [t for t in phase_tasks if t]
         if phase_tasks and all(t.get("status") == "done" for t in phase_tasks):
             phase["status"] = "done"
-        elif any(t.get("status") in {"ready", "claimed", "in_progress", "validator_tester_pending", "ready_for_close"} for t in phase_tasks):
+        elif any(t.get("status") in {"ready", "claimed", "in_progress", "validator_tester_pending", "ready_for_close", "verified_pending_close"} for t in phase_tasks):
             phase["status"] = "ready"
 
     if phases:
@@ -2019,7 +2019,7 @@ def _apply_preserved_runtime(tasks: list[dict[str, Any]], phases: list[dict[str,
         statuses = {str(t.get("status") or "") for t in phase_tasks}
         if phase_tasks and all(st == "done" for st in statuses):
             phase["status"] = "done"
-        elif statuses & {"ready", "claimed", "in_progress", "validator_tester_pending", "ready_for_close", "needs_debug", "test_pending", "qa_pending", "review_pending"}:
+        elif statuses & {"ready", "claimed", "in_progress", "validator_tester_pending", "ready_for_close", "verified_pending_close", "needs_debug", "test_pending", "qa_pending", "review_pending"}:
             phase["status"] = "ready"
         elif phase_tasks:
             phase["status"] = "blocked"

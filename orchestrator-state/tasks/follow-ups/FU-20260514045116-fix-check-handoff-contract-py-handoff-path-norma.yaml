@@ -1,7 +1,7 @@
 {
   "id": "FU-20260514045116-fix-check-handoff-contract-py-handoff-path-norma",
   "schema_version": 1,
-  "status": "proposed",
+  "status": "waived",
   "created_at": "2026-05-14T04:51:16+00:00",
   "created_by": "sergiolr",
   "origin_task_id": "P02-S06-T003",
@@ -47,5 +47,8 @@
     "debugger_path": "in_scope_defects_use_validator_tester_debugger_retest",
     "warnings": []
   },
-  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260514045116-fix-check-handoff-contract-py-handoff-path-norma.yaml"
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260514045116-fix-check-handoff-contract-py-handoff-path-norma.yaml",
+  "waived_at": "2026-05-14T07:28:57+00:00",
+  "waived_by": "sergiolr",
+  "waiver_reason": "Duplicate of P02-S03-T007 (PR #22, merged 2026-05-14); _resolve_handoff_path() with workspace->canonical fallback already landed and tests added (test_handoff_contract_resolution.py). Origin task P02-S06-T003 finding was correct at time of creation but T007 superseded it before this FU was reviewed."
 }

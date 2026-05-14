@@ -78,7 +78,7 @@ Cuando seleccionas una tarea NUEVA (no una continuación), el reseteo de spawn b
 
 ### 2. Selecciona la siguiente tarea
 
-- Si el comando padre trae `TASK_ID` o `CLAUDE_ACTIVE_TASK_ID` → usa esa task exacta; verifica que está `claimed|in_progress|ready_for_close` o que todas sus deps están `done`. No selecciones otra y no consultes `implicit selector`.
+- Si el comando padre trae `TASK_ID` o `CLAUDE_ACTIVE_TASK_ID` → usa esa task exacta; verifica que está `claimed|in_progress|ready_for_close|verified_pending_close` o que todas sus deps están `done`. No selecciones otra y no consultes `implicit selector`.
 - Si no hay `CLAUDE_ACTIVE_TASK_ID` ni `TASK_ID` explícito → no uses un singleton; pide `/next-wave` o un `/next-slice <TASK_ID>` explícito.
 - Si no hay → elige de `registry.json` la primera `ready` con **todas** las dependencias (`depends_on`) en `done`. No actives nunca una tarea con deps incompletas.
 - **No cambies a la siguiente fase hasta que la actual esté completa.** Solo actives tareas de fase N+1 cuando TODAS las tareas de fase N estén `done`.

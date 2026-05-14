@@ -114,7 +114,7 @@ no agotar el budget en cadenas seriales.
 
 ### Gate humano: `/verify-slice` (orquesta el cierre)
 
-El comando `/verify-slice` es un slash command que lanza el usuario (no tú).
+El comando `/verify-slice` es un slash command que lanza el usuario (no tú) y delega la reproducción real al subagente `slice-verifier`.
 Hace hard reset del entorno, reproduce la slice como usuario real en el navegador,
 vigila logs en vivo, y apendiza `## verify-slice` al handoff con
 `VERIFY_OUTCOME: verified | issues_found`. Después:
@@ -128,7 +128,7 @@ vigila logs en vivo, y apendiza `## verify-slice` al handoff con
     el hook lo mete en `pending_journey_verifications`; en DAG-only solo se
     difieren tasks que referencian ese journey hasta `/verify-journey <JID>`.
 - **`VERIFY_OUTCOME: verified`** + task frontend/ux/journey/gate o con `VISUAL_CONTRACT_CHECK` → /verify-slice spawnea primero `screen-journey-reviewer` info-only; si `approved`, continúa a journey/closer; si `changes_requested`, va a `debugger/retest`; si `blocked`, pide FU triageada o decisión humana.
-- **`VERIFY_OUTCOME: verified`** sin journey ni pantalla/UX → /verify-slice spawnea `closer` directo.
+- **`VERIFY_OUTCOME: verified`** sin journey ni pantalla/UX → /verify-slice spawnea `closer` directo. Si `closer` corrió antes de verify y quedó blocked, no reinicies debugger: relanza `/verify-slice <TASK_ID>`; el router mecánico invocará sólo closer si corresponde.
 - **`VERIFY_OUTCOME: issues_found`** → spawnea `debugger`, vuelve al paso 3.
 
 ### `closer` (invocado SIEMPRE por /verify-slice — NO por ti)
@@ -216,6 +216,7 @@ project-architect:        OUTCOME ready|blocked                                 
 task-planner:             OUTCOME ready|blocked                                  NEXT_STATUS <none>
 tester:                   OUTCOME pass|fail|blocked                              NEXT_STATUS ready_for_close|needs_debug|blocked
 validator:                OUTCOME approved|changes_requested|blocked             NEXT_STATUS ready_for_close|needs_debug|blocked
+slice-verifier:           OUTCOME verified|issues_found|blocked                  NEXT_STATUS verified_pending_close|needs_debug|blocked
 screen-journey-reviewer:  OUTCOME approved|changes_requested|blocked             NEXT_STATUS <none>
 main-orchestrator:        OUTCOME ready|blocked                                  NEXT_STATUS <none>
 ```

@@ -37,7 +37,7 @@ from stack_profile import load_stack_profile
 
 # `blocked` is a scheduler conflict blocker, but not claim-resumable.
 # promote_ready_tasks() converts dependency-unblocked tasks to `ready`; otherwise claim must deny.
-ACTIVE_STATUSES = {"in_progress", "validator_tester_pending", "review_pending", "test_pending", "qa_pending", "needs_debug", "ready_for_close"}
+ACTIVE_STATUSES = {"in_progress", "validator_tester_pending", "review_pending", "test_pending", "qa_pending", "needs_debug", "ready_for_close", "verified_pending_close"}
 
 
 def _ensure_minimal_task_pack(task: dict[str, Any]) -> str:

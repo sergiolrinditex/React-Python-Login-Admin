@@ -182,7 +182,7 @@ flowchart TD
 | Follow-ups bloqueantes (`high\|critical\|blocker`) bloquean nuevas waves | `register_followup_task.py` + hook |
 | `phase-gate` bloquea si quedan tasks sin `done`, journeys sin verificar o evidence ausente | `phase-gate.sh` + `check_phase_gate.py` |
 | El closer no puede marcar `done` sin commit + push + cleanup | `enforce_closer_done_guardrail` en hook |
-| `pending_journey_verifications` se evalúa por frontera | `frontier` difiere solo tasks con `Journey refs` pendientes; `strict` conserva el bloqueo global |
+| `pending_journey_verifications` se evalúa por frontera | DAG-only difiere solo tasks con `Journey refs` pendientes |
 
 ---
 

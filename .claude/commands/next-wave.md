@@ -1,5 +1,5 @@
 ---
-description: Lista la wave DAG actual: tasks ready independientes, deps, posibles conflictos y comandos para abrir terminales paralelos. No implementa ni spawnea agentes.
+description: "Lista la wave DAG actual: tasks ready independientes, deps, posibles conflictos y comandos para abrir terminales paralelos. No implementa ni spawnea agentes."
 argument-hint: "[opcional: phase id o límite N; sin argumento = earliest incomplete phase]"
 ---
 ### Root split obligatorio

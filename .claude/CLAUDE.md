@@ -54,8 +54,9 @@ Every phase produces a VISIBLE, FUNCTIONAL, VERIFIABLE deliverable. Never build 
 
 ── (opcional pero recomendado) /clear para liberar ~150k tokens del pipeline ──
 
-── /verify-slice (gate humano único + orquestación de cierre) ──
-5. /verify-slice                         hard reset + datos reales/proporcionados + reproducción humana + logs vivos
+── /verify-slice (gate humano mecanizado + orquestación de cierre) ──
+5. /verify-slice                         coordina subagentes; no cierra por chat ni por intuición
+   ├─ slice-verifier                     hard reset + datos reales/proporcionados + reproducción humana + logs vivos
    ├─ si task frontend/ux/journey/gate o VISUAL_CONTRACT_CHECK:
    │   screen-journey-reviewer info-only antes de closer
    │   ├─ approved → continúa
@@ -76,7 +77,7 @@ Every phase produces a VISIBLE, FUNCTIONAL, VERIFIABLE deliverable. Never build 
    └─ post-push: slice-clean + cleanup-worktrees (housekeeping silencioso y seguro)
 ```
 
-`closer` NUNCA commitea código sin `VERIFY_OUTCOME: verified` en el handoff (procedente de `/verify-slice` humano o de `/auto-verify-slice` solo para slices `low+auto` no journey) o sin waiver explícito `VERIFY_WAIVED: <motivo>` firmado por el usuario. Esto garantiza que no hay commits de código sin verificación real y trazable.
+`closer` NUNCA commitea código sin `VERIFY_OUTCOME: verified` en el handoff (procedente del subagente `slice-verifier` dentro de `/verify-slice` o de `/auto-verify-slice` solo para slices `low+auto` no journey) o sin waiver explícito `VERIFY_WAIVED: <motivo>` firmado por el usuario. Esto garantiza que no hay commits de código sin verificación real y trazable.
 
 `/verify-journey <JID>` sigue existiendo como **command de rescate manual** — para waivers, re-verificaciones aisladas, debug post-mortem, o casos donde el usuario eligió "aparte" en §5.bis. En el flujo normal, el journey se verifica inline en `/verify-slice` y este command queda dormido.
 
@@ -120,9 +121,9 @@ Use this to keep prompts shorter: agents do not need to rediscover write policy.
 
 ## Agents
 
-Total: 13 agents. Per slice max 20 spawns (steps above). Bootstrap-only: `document-analyzer`, `project-architect`, `task-planner`. Phase 5 only: `deployer`. Verify-slice-only info reviewer: `screen-journey-reviewer`.
+Total: 14 agents. Per slice max 20 spawns (steps above). Bootstrap-only: `document-analyzer`, `project-architect`, `task-planner`. Phase 5 only: `deployer`. Verify-slice agents: `slice-verifier` (lifecycle) and `screen-journey-reviewer` (info-only).
 
-Manual-memory agents: `planner`, `developer`, `validator`, `debugger`, `official-docs-researcher`, `project-architect`, `screen-journey-reviewer`, plus `task-planner` for bootstrap learnings. Memory is stored in `orchestrator-state/agent-memory/<agent>/MEMORY.md`; `.claude/` stays static.
+Manual-memory agents: `planner`, `developer`, `validator`, `debugger`, `slice-verifier`, `official-docs-researcher`, `project-architect`, `screen-journey-reviewer`, plus `task-planner` for bootstrap learnings. Memory is stored in `orchestrator-state/agent-memory/<agent>/MEMORY.md`; `.claude/` stays static.
 
 Task worktree isolation is session-level, not subagent-level: `/next-wave` moves pr-flow worker terminals into a per-TASK_ID worktree before `claude --agent main-orchestrator` starts. Do not add `isolation: worktree` to lifecycle subagents; validator/tester/debugger/closer must inspect the same checkout.
 
@@ -169,7 +170,7 @@ Do not create hidden runtime folders such as `.orchestrator/`. The only hidden c
 
 - `/next-wave` — lista la wave DAG actual y los TASK_ID ready paralelizables sin conflictos declarados; no implementa ni spawnea. Imprime exports copy/paste para `CLAUDE_ACTIVE_TASK_ID` + `CLAUDE_TASK_PACK`.
 - `/next-slice` — arranca la siguiente slice con gate de aprobación y pipeline completo. El pipeline termina en `tester pass` — NO invoca `closer` directamente; deja ese paso a `/verify-slice`.
-- `/verify-slice` — verificación humana-real con hard reset + datos reales/proporcionados + logs vivos. Si la slice queda verificada, orquesta al `closer` para commit atómico + configured Git workflow. Si encuentra issues, orquesta al `debugger`. Resiliente al `/clear`.
+- `/verify-slice` — verificación humana-real con hard reset + datos reales/proporcionados + logs vivos. Spawnea `slice-verifier`; si deja `verified_pending_close`, orquesta al `closer` para commit atómico + configured Git workflow. Si encuentra issues, orquesta al `debugger`. Resiliente al `/clear`.
 - `/revise-slice <TASK_ID> "motivo"` — reabre una slice canónica sin cambiar el DAG ni crear IDs temporales; corrige, revalida, verify y closer correctivo.
 - `/phase-gate <PHASE_ID>` — valida que la phase está realmente cerrada antes de abrir la siguiente: tasks done, reports/evidence/handoffs, journeys verified/waived y Git limpio opcional.
 - `/register-followup propose|waive|list` — registra/waivea hallazgos reales de validator/tester/verify como propuestas YAML.

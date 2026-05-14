@@ -96,8 +96,9 @@ def project_root() -> Path:
       2. ``CLAUDE_PROJECT_DIR`` — official Claude Code project root env var.
          We still pass it through ``_resolve_main_repo`` instead of returning
          it raw: a pr-flow worker terminal may set it to the
-         per-TASK_ID worktree root, and the orchestrator state must remain under the
-         main repo's ``orchestrator-state/``.
+         per-TASK_ID worktree root. Shared DAG state (registry/runtime/memory)
+         must remain under the main repo's ``orchestrator-state/``;
+         per-slice artifacts use ``workspace_root()`` below.
       3. Walk up from this file looking for a ``.git`` marker. A directory
          marker -> repo root. A file marker -> main repo (worktree-aware).
       4. Fallback: ``parents[2]`` of this file (zip-layout fallback for a zip not
@@ -166,7 +167,7 @@ DEFAULT_SPAWN_BUDGET = 20
 # Tasks in these statuses own their declared conflict groups/write-set.
 # Plain `blocked` is dependency-blocked by default and must NOT block unrelated waves;
 # active_conflict_blockers() treats `blocked` as a blocker only when its deps are already satisfied.
-SCHEDULER_ACTIVE_STATUSES = {"claimed", "in_progress", "validator_tester_pending", "needs_debug", "ready_for_close"}
+SCHEDULER_ACTIVE_STATUSES = {"claimed", "in_progress", "validator_tester_pending", "needs_debug", "ready_for_close", "verified_pending_close"}
 NEUTRAL_CONFLICT_VALUES = {"", "-", "—", "none", "n/a", "na", "null", "sin conflicto", "sin conflictos", "read-only", "readonly", "no-write", "no-write-set"}
 
 
@@ -1128,10 +1129,12 @@ def mark_task_blocked(task_id: str, reason: str, agent: str | None = None) -> No
 def has_unresolved_doc_discrepancies() -> tuple[bool, list[str]]:
     """Scan orchestrator-state/memory/official-doc-notes/ for unresolved notes.
 
-    A note is considered unresolved if its body does not contain a line
-    starting with `RESOLVED` (canonical form: `RESOLVED: <how>`; date-prefixed form `RESOLVED 2026-...` is accepted). The PreToolUse
-    docs-discrepancy hook uses this to warn on Write/Edit while there is an
-    open reconciliation pending.
+    A note is considered unresolved if its body does not contain a resolved
+    marker line. Canonical form is `RESOLVED: <how>`; date-prefixed
+    `RESOLVED 2026-...`, dash form `RESOLVED - ...`, and Markdown-prefixed
+    forms such as `- RESOLVED:` / `### RESOLVED ...` are accepted. The
+    PreToolUse docs-discrepancy hook uses this to warn on Write/Edit while
+    there is an open reconciliation pending.
     """
     notes_dir = memory_dir() / "official-doc-notes"
     if not notes_dir.is_dir():
@@ -1149,7 +1152,7 @@ def has_unresolved_doc_discrepancies() -> tuple[bool, list[str]]:
 
 
 
-DOC_DISCREPANCY_RESOLVED_RE = re.compile(r"(?im)^\s*RESOLVED(?:\s*:|\s+\d{4}-\d{2}-\d{2}\b|\s+[-–—])")
+DOC_DISCREPANCY_RESOLVED_RE = re.compile(r"(?im)^\s*(?:[-*+]\s+|#{1,6}\s+|>\s*)*RESOLVED(?:\s*:|\s+\d{4}-\d{2}-\d{2}\b|\s+[-–—])")
 
 
 def has_resolved_doc_discrepancy_marker(text: str) -> bool:

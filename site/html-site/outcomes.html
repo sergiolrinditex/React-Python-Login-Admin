@@ -34,9 +34,8 @@
   <h1>Vocabulario único de outcomes.</h1>
   <p class="lead">
     Los trailers de agentes usan
-    <code>.claude/orchestrator-contract.json → trailer_schema.roles</code>
-    como fuente única. El hook <code>capture_subagent_stop</code> carga ese schema en runtime;
-    los enums repetidos en código son solo mirrors documentales verificados por <code>test_contract_invariants.py</code>.
+    <code>.claude/orchestrator-contract.json → trailer_schema.roles</code>.
+    El hook <code>capture_subagent_stop</code> valida esta tabla; el hook no usa enums hardcoded como fuente de verdad.
   </p>
 
   <div class="table-wrap">

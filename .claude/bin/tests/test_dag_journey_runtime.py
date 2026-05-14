@@ -86,6 +86,18 @@ def _closer_trailer(task_id: str, *, extra: list[str] | None = None) -> str:
     return "\n".join(lines) + "\n"
 
 
+
+def _write_verified_handoff(common, task_id: str) -> None:
+    handoff = common.project_root() / "orchestrator-state" / "tasks" / "handoffs" / f"{task_id}.md"
+    handoff.parent.mkdir(parents=True, exist_ok=True)
+    handoff.write_text(
+        f"# Handoff {task_id}\n\n"
+        f"## Validator review\n- TASK_ID: {task_id}\n- OUTCOME: approved\n\n"
+        f"## Tester run\n- TASK_ID: {task_id}\n- OUTCOME: pass\n\n"
+        f"## verify-slice\n- TASK_ID: {task_id}\n- VERIFY_OUTCOME: verified\n",
+        encoding="utf-8",
+    )
+
 def test_journey_closure_is_status_based_not_source_order(tmp_project):
     import common
 
@@ -117,6 +129,7 @@ def test_closer_inline_journey_verification_marks_registry_verified(tmp_project)
     import common
 
     _seed_registry(common)
+    _write_verified_handoff(common, "P00-S01-T002")
 
     rc = _fire_hook("closer", _closer_trailer(
         "P00-S01-T002",
@@ -138,6 +151,7 @@ def test_closer_infers_pending_journey_when_trailer_omits_journey_line(tmp_proje
     import common
 
     _seed_registry(common)
+    _write_verified_handoff(common, "P00-S01-T002")
 
     rc = _fire_hook("closer", _closer_trailer("P00-S01-T002"))
 

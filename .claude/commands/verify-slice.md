@@ -1,401 +1,199 @@
 ---
-description: Verificación humana-real post-slice. Hard reset del entorno (back + front + bbdd con carga de datos reales/proporcionados del slice), reproduce como usuario en el navegador, vigila logs front+back+bbdd en vivo, devuelve tabla de validación con URL, qué probar, descripción y resultado esperado. Agnóstico del stack.
+description: Gate de verificación por slice DAG. Coordina slice-verifier, screen/journey-reviewer cuando aplica, debugger/retest si hay issues y closer para commit + PR/push + merge + cleanup.
 argument-hint: "<TASK_ID>|--task <TASK_ID>  (o terminal con CLAUDE_ACTIVE_TASK_ID exportado)"
 ---
-### Root split obligatorio
-
-- Lee `registry.json`, `runtime-state.json`, `PROGRESS.md`, `task-dag.*` desde `$CLAUDE_ORCHESTRATOR_ROOT/orchestrator-state/`.
-- Lee/escribe handoff, evidence, report y task-pack desde la worktree activa (`./orchestrator-state/tasks/...`) cuando la slice corre en worktree.
-- No registres follow-ups por errores mecánicos del orquestador (root stale, heading de handoff, checker/lint flake, cleanup omitido). Corrige, reintenta o bloquea; FU solo para trabajo de producto fuera de scope.
-
 
 # /verify-slice
+
 ## Rule loading
 
 Antes de ejecutar este comando, considera cargadas las reglas no-scoped de `.claude/rules/`. Si no ves esas reglas en contexto tras `/clear`, léelas explícitamente en este orden: `00-source-of-truth.md`, `01-non-negotiables.md`, `02-phase-execution.md`, `03-dev-loop.md`, `04-traceability.md`, `05-runtime-write-contract.md`.
 
-
 ## Production DAG mode — recordatorio obligatorio
 
-Antes de verificar, confirma el checkout correcto: ejecuta `./scripts/ensure-task-worktree.sh --check-current <TASK_ID>`. En `pr-flow`, `/verify-slice` debe correr desde el worktree/rama del TASK_ID; en `push-to-main`, desde `main`. Si estás en otro checkout, PARA: no verifiques una rama distinta a la que implementó el developer.
-
-
-Antes de reconstruir contexto, verificar, decidir `pre-closer`/`post-closer`, spawnear `debugger` o spawnear `closer`, repite internamente este invariante y respétalo durante todo el comando:
-
-```text
 MODO DAG ACTIVO: production = explicit_dag.
-Unidad verificable = TASK_ID canónico del registry.
-No existe modo DAG-disabled improvisado.
-No dependas de ningún singleton global para decidir qué verificar; en DAG-only se exige TASK_ID explícito.
-Usa siempre orchestrator-state/tasks/task-packs/<TASK_ID>.md como task pack en DAG.
-Todo Agent spawn desde verify-slice debe recibir TASK_ID, CLAUDE_TASK_PACK y el aviso production DAG mode. Esto incluye `screen-journey-reviewer`, `debugger` y `closer`.
-```
 
-Si dudas si estás en DAG, para y consulta `./scripts/check-task-dag.sh --strict`. En producción la ausencia de `Depends on` es error operativo, no fallback. `/verify-slice` es el gate humano de un `TASK_ID` DAG concreto; no verifica una flujo no habilitado para DAG ni cierra slices implícitas.
+Unidad verificable = TASK_ID canónico del registry. No existe modo DAG-disabled improvisado. La ausencia de `Depends on` es error operativo, no fallback. Usa TASK_ID explícito por argumento o `CLAUDE_ACTIVE_TASK_ID`; si falta, para.
 
-Te lanzas **después de que `tester` pasa limpio, antes de que `closer` haga commit** (modo pre-closer, el habitual). También puede lanzarse **tras `closer`** para re-verificar un slice ya commiteado (modo post-closer). Tu trabajo es convencerte a ti mismo (y al usuario) de que lo shipeado funciona de verdad, reproduciéndolo como un usuario humano en el navegador, con entorno fresco, datos reales/proporcionados cargados y logs en vivo. En modo pre-closer, si la slice queda verificada orquestas tú mismo al `closer` para commit atómico + workflow Git configurado; si encuentra issues, orquestas al `debugger`.
+Todo Agent spawn desde verify-slice debe recibir TASK_ID, CLAUDE_TASK_PACK y el aviso production DAG mode. Usa exactamente `CLAUDE_TASK_PACK=orchestrator-state/tasks/task-packs/<TASK_ID>.md`. Esto incluye `slice-verifier`, `screen-journey-reviewer`, `debugger`, `validator`, `tester` y `closer`.
 
-**Tras `/clear`**: este comando es 100% resiliente al `/clear`. No depende del contexto conversacional previo — reconstruye todo desde disco (PROGRESS.md, runtime-state.json, registry.json, handoff). Puedes y debes hacer `/clear` antes de `/verify-slice` para liberar los ~100-200k tokens del pipeline previo.
-
-**Comandos hermanos**: `/next-slice`, `/verify-journey <JID>` (gate end-to-end por journey, distinto de éste que es por slice), `/revise-slice <TASK_ID>` (corrección) y `/slice-maintain clean|compact`. Orden recomendado al cerrar una slice: tester pass → (opcional `/clear`) → `/verify-slice` (orquesta `closer` si verificado) → `/slice-maintain clean` → `/clear` → `/next-slice`.
-
-**Principios (no negociables)**:
-
-- **Hard reset SIEMPRE.** Parar servicios, resetear bbdd, reinyectar datos base reales/proporcionados, inyectar datos específicos para lo que shipeó el slice, reiniciar back y front. No confíes en el estado anterior.
-- **Reproduce como humano.** Abre la app, navega, rellena formularios, pulsa botones, lee respuestas. Tantas interacciones como flujos tenga el slice.
-- **Vigila los 3 logs a la vez.** Front, back y bbdd en paralelo.
-- **Solo lectura de código.** No modificas producción, no añades tests, no cambias carga de datos existente.
-- **Agnóstico del stack.** Todo lo específico (stack, comandos, puertos, health, carga de datos, migraciones) se lee del TECHNICAL_GUIDE en runtime.
-- **Tú eliges las herramientas.** Cada paso describe la acción, no la tool.
-
----
-
-## Paso 1 — Identificar qué reproducir
-
-En paralelo:
-
-1. `orchestrator-state/tasks/runtime-state.json` → `last_worker`, `last_event`, `pending_journey_verifications`; la identidad del verify viene sólo de `<TASK_ID>` o `CLAUDE_ACTIVE_TASK_ID`.
-2. `orchestrator-state/memory/PROGRESS.md` (bloque NOW + primer PREVIOUSLY).
-3. Usa `TASK_ID` sólo desde `--task <ID>`, argumento directo o `CLAUDE_ACTIVE_TASK_ID`. Si falta, PARA y pide un `TASK_ID` explícito.
-4. Evidence report del task si ya existe: `orchestrator-state/tasks/reports/<TASK_ID>.md` (solo existirá si `closer` ya corrió).
-5. Handoff: `orchestrator-state/tasks/handoffs/<TASK_ID>.md` (tiene las secciones developer/validator/tester — tiene que existir sí o sí).
-6. `orchestrator-state/tasks/task-packs/<TASK_ID>.md`. No dependas de implicit selector; está eliminado del modo DAG en DAG. Si el pack no existe o no menciona ese `TASK_ID`, aborta antes de verificar.
-6. `docs/source-of-truth/*_TECHNICAL_GUIDE.md` — extrae: comando de arranque back (+ puerto), frontend (+ puerto/plataforma), comando migrate, comando de carga de datos, endpoint de health, flag de verbose logging.
-7. `docs/source-of-truth/*_TECHNICAL_GUIDE.md` §`Verification Data Contract` — identifica las filas que aplican por `TASK_ID`, `Journey refs`, pantalla o endpoint. Estas filas son obligatorias para decidir datos reales/proporcionados, datos proporcionados permitidos solo si cargan datos proporcionados y reset/cleanup.
-8. `instrucciones.md` → reglas de negocio relevantes al slice (las usarás en la tabla final).
-
-**Del handoff (+ evidence si existe) identifica**:
-
-- Back: endpoints nuevos (verbo + ruta), servicios, reglas de negocio.
-- Front: pantallas, rutas, componentes, flujos de usuario.
-- BBDD: tablas, columnas, índices, datos esperados.
-- Datos reales/proporcionados necesarios para ejercer lo shipeado (más allá de los datos base reales/proporcionados).
-- Forward-carries de seguridad si los hay.
-
-Si NO hay handoff → aborta: *"La tarea no tiene handoff. Completa el pipeline hasta tester pass antes de verificar."*
-
-### 1.1 — Detecta el modo de verify
-
-- **Modo `pre-closer`** (lo habitual, y lo correcto semánticamente): handoff con developer + validator + tester, PERO **sin** evidence report en `orchestrator-state/tasks/reports/<TASK_ID>.md`, y la tarea en `registry.json` NO está `done`. Verify es el gate humano previo al `closer`. Si verificada, orquestas al closer en el Paso 6. Si hay issues, orquestas al debugger.
-- **Modo `post-closer`** (re-verify): evidence report ya existe y/o la tarea está `done` en registry. Verify solo reporta outcome — NO orquesta closer ni debugger. Si encuentra issues, el usuario decide si abre slice nueva o revert.
-
-En modo `pre-closer`, chequea en el handoff:
-
-- `validator` OUTCOME == `approved`.
-- `tester` OUTCOME == `pass` (o waive explícito con razón).
-
-Si falta algo → aborta: *"Pipeline no cerró limpio (validator/tester no pasaron). Pasa por debugger antes de verify."*
-
----
-
-## Paso 2 — HARD RESET del entorno
-
-Objetivo: partir de cero con datos base reales/proporcionados + datos específicos del slice, back + front arriba con logging verbose.
-
-### 2.1 Parar servicios
-
-- Localiza procesos en puertos back + front. Ofrece al usuario pararlos mostrando PID y comando de kill. **No mates procesos sin preguntar.**
-- Si usa contenedores, lista estado actual.
-
-### 2.2 Reset bbdd
-
-- Procedimiento del TECHNICAL_GUIDE (drop+create, volumen docker, truncate).
-- Migraciones hasta **head** con el comando oficial (Alembic, Prisma, Knex, Flyway, migrate...).
-- Si no está documentado → para y reporta: *"No encuentro comando de reset en TECHNICAL_GUIDE. Indícamelo."*
-
-### 2.3 Datos base reales/proporcionados
-
-- Comando de carga de datos del TECHNICAL_GUIDE, si existe, sólo para datos reales/proporcionados.
-- Verifica con SELECT COUNT por tabla principal que los números coinciden con el contrato/evidence de datos reales/proporcionados.
-
-### 2.4 Datos específicos reales/proporcionados del slice (paso clave — NO saltes)
-
-A partir de lo identificado en Paso 1, carga solo datos reales/proporcionados necesarios para ejercer todos los flujos del slice. La fuente autoritativa es el `Verification Data Contract` del TECHNICAL_GUIDE:
-
-- Usa datos reales/proporcionados por el usuario o el equipo: usuarios sandbox autorizados, catálogos reales de prueba, documentos representativos proporcionados, importes/fechas/estados coherentes y relaciones completas.
-- No uses `lorem ipsum`, IDs inventados sin persistencia, mocks de negocio, datos decorativos ni datos no proporcionados para cerrar una slice productiva.
-- Los datos sintéticos no deben usarse para cerrar una slice productiva. Para casos marginales (`empty`, `error_network`, permisos, payload inválido), usa datos proporcionados o bloquea/registra follow-up si faltan.
-- Si el slice añade "listar pedidos de un usuario" → usa pedidos reales/proporcionados persistidos con distinto estado y usuario real/sandbox autorizado; si faltan, bloquea o registra follow-up de datos.
-- Si añade "filtro por rango de precios" → asegura que el carga de datos cubre el rango; si no, inserta lo que falta.
-- Si añade "notificación al superar umbral" → inserta el registro que fuerza el umbral.
-
-Usa SQL directo (transacción parametrizada) o el script de carga de datos del proyecto si existe. **NO hagas inserts vía la propia API del slice** — eso contamina la verificación.
-
-Documenta en el reporte final qué filas del `Verification Data Contract` usaste, qué datos reales/proporcionados cargaste y qué filas persistidas observaste.
-
-### 2.5 Arrancar back + front con verbose on
-
-- `ENABLE_VERBOSE_LOGGING=true` (o la flag del TECHNICAL_GUIDE).
-- Arranca back; verifica health → 200.
-- Arranca front; verifica que sirve.
-
----
-
-## Paso 3 — Reproducción humana
-
-Abre el navegador en la URL del front. Reproduce TODOS los flujos identificados en Paso 1:
-
-- Navegar a la pantalla nueva.
-- Rellenar formularios con datos reales.
-- Pulsar botones, submits, navegación.
-- Casos felices + casos de error (submit vacío, payload inválido, sin permisos).
-- Cada interacción: observa UI + logs front + logs back + DB rows.
-
-Usa `ToolSearch` para descubrir qué MCPs tienes disponibles en esta sesión y elige el más adecuado para cada verificación. A día de hoy hay Chrome DevTools MCP, claude-in-chrome, MCP específico del framework declarado y computer-use — pero puede haber más, búscalos antes de asumir que no existen. Si uno falla o se desconecta, prueba con otro. Si ninguno sirve, describe los pasos al usuario y espera su feedback, o verifica los flujos directamente contra la API con `curl`/`httpx`.
-
----
-
-## Paso 4 — Observación de logs en vivo
-
-Durante la reproducción, mira en 3 paneles:
-
-- **Logs front**: consola browser + stdout del dev server. Busca errores, warnings, network failures, render issues.
-- **Logs back**: stdout del backend. Cada request debe dejar BEFORE/AFTER. Sin tokens/PII.
-- **Logs bbdd**: queries ejecutadas (ver flag del ORM, ej Alembic echo, Prisma log). Verifica que las queries coinciden con lo esperado y que los índices se usan.
-
-Guarda snippets relevantes en `orchestrator-state/tasks/evidence/<TASK_ID>/verify-*`.
-
----
-
-## Paso 5 — Tabla final de validación
-
-Presenta al usuario una tabla con:
-
-| URL | Qué probar | Descripción | Resultado esperado | Resultado observado | Pasa? |
-|-----|-----------|-------------|--------------------|---------------------|-------|
-| `http://localhost:<FRONT_PORT>/<ruta>` | Submit formulario X | Rellena Y, pulsa Z | Aparece pantalla W con dato K | <...> | ✅/❌ |
-| ... | ... | ... | ... | ... | ... |
-
-Incluye también:
-
-- Filas del `Verification Data Contract` usadas.
-- Datos reales/proporcionados cargados (lista).
-- Datos persistidos observados, con tabla/ID/estado cuando aplique.
-- Queries observadas en bbdd (las relevantes al slice).
-- Hallazgos: cualquier cosa que no cuadre con lo esperado.
-- Reglas de negocio verificadas vs pendientes.
-- Recomendación: `VERIFIED` / `ISSUES FOUND (volver a debugger)`.
-
-### 5.1 — Appendea sección al handoff (obligatorio)
-
-Añade al final de `orchestrator-state/tasks/handoffs/<TASK_ID>.md` una sección nueva (nunca sobreescribas). Esta sección es el contrato que lee `closer`; no basta con mencionarlo en el chat final. Usa campos `KEY: value` claros para evitar ambigüedad tras `/clear`:
-
-```markdown
-## verify-slice
-
-- TASK_ID: <TASK_ID>
-- TIMESTAMP: <ISO-8601>
-- MODE: pre-closer|post-closer
-- VERIFY_OUTCOME: verified|issues_found
-- DATA_CONTRACT_ROWS: <filas/IDs del Verification Data Contract usadas; required>
-- DATA_SETUP: <lista 1 línea por dato real/proporcionado cargado; o n/a con razón>
-- PERSISTED_DATA_OBSERVED: <tabla/id/estado o n/a con razón>
-- FLOWS_TESTED: <lista corta>
-- FINDINGS: <bullets si issues_found; none si verified>
-- EVIDENCE: orchestrator-state/tasks/evidence/<TASK_ID>/verify-*
-```
-
-El `closer` leerá esta sección en su pre-check. Sin ella, sin `TASK_ID` coincidente o sin `VERIFY_OUTCOME: verified`, el closer rechaza el cierre.
-
-Después de apendizarla, valida mecánicamente el handoff antes de invocar `closer`:
+Antes de verificar, confirma el checkout correcto:
 
 ```bash
-./scripts/check-handoff-contract.sh <TASK_ID> --require-ready-for-close --require-verify-slice
+./scripts/ensure-task-worktree.sh --check-current <TASK_ID>
 ```
 
-Si falla, no invoques `closer`; corrige el handoff o relanza el agente que escribió mal su sección.
+En `pr-flow`, `/verify-slice` debe correr desde el worktree/rama del TASK_ID; en `push-to-main`, desde `main`. Si estás en otro checkout, PARA: no verifiques una rama distinta a la que implementó el developer.
 
----
+## Root split obligatorio
 
-## Paso 5.2 — Screen/Journey review condicional antes de closer
+- Lee `registry.json`, `runtime-state.json`, `PROGRESS.md`, `task-dag.*` desde `$CLAUDE_ORCHESTRATOR_ROOT/orchestrator-state/`.
+- Lee/escribe handoff, evidence, report y task-pack desde la worktree activa (`./orchestrator-state/tasks/...`) cuando la slice corre en worktree.
+- No registres follow-ups por errores mecánicos del orquestador: root stale, heading de handoff, checker/lint flake, cleanup omitido, PR abierta/queued o CI pendiente. Corrige, reintenta o bloquea; FU solo para trabajo real de producto fuera de scope.
 
-Este paso protege la nueva realidad del orquestador: pantallas y journeys se cierran por experiencia completa, no por capas aisladas ni por HTML estático.
+## Flujo mecánico
 
-Ejecuta este paso **solo si** la task cumple alguno de estos criterios, leyendo `registry.json`, task pack y handoff:
+```text
+tester pass / validator approved
+→ verify-slice-state router
+→ slice-verifier                 # hard reset + reproducción humana + ## verify-slice + trailer
+→ screen-journey-reviewer        # sólo si aplica UI/journey/visual contract
+→ closer                         # report + commit + workflow Git configurado + cleanup
+→ done sólo si closer prueba commit/push/merge/cleanup
+```
 
-- `kind`/`Tipo` es `frontend`, `ui`, `ux`, `journey`, `gate` o visual.
-- Tiene `Pantalla/Ruta`, `route`, `Journey refs` o `journey_refs`.
-- Acceptance, handoff o evidencia mencionan `VISUAL_CONTRACT_CHECK`.
-- La verificación humana reprodujo una pantalla, navegación, estado UX o evidencia visual.
+El estado intermedio correcto después del verify es `verified_pending_close`, no `done`. Sólo `closer` puede mover la task a `done`.
 
-Si no aplica, escribe en tu tabla final `screen_journey_review: not_applicable` y sigue a §5.bis.
+## Paso 1 — Reconstrucción de contexto
 
-Si aplica y `VERIFY_OUTCOME: verified`, spawnea **un único** subagente `screen-journey-reviewer` antes de `closer`, con este contexto literal:
+1. Resuelve `<TASK_ID>` desde argumento o `CLAUDE_ACTIVE_TASK_ID`.
+2. Lee task pack `orchestrator-state/tasks/task-packs/<TASK_ID>.md`.
+3. Lee handoff `orchestrator-state/tasks/handoffs/<TASK_ID>.md`.
+4. Lee registry/runtime/PROGRESS desde root canónico, no desde snapshot viejo de worktree.
+5. Si el pack no existe o no menciona el TASK_ID, bloquea antes de spawnear nada.
+
+## Paso 2.5 — Router mecánico de estado
+
+Ejecuta siempre antes de spawnear nada, y repítelo después de `slice-verifier`, `debugger`/retest o un `closer` blocked:
+
+```bash
+./scripts/verify-slice-state.sh <TASK_ID> --json
+```
+
+Acciones:
+
+- `invoke_slice_verifier` → sigue al Paso 4.
+- `invoke_closer` → salta al Paso 6. Cubre el rescue donde `closer` corrió antes de verify y quedó `blocked`; no reinicies debugger si validator/tester/verify están verdes.
+- `invoke_debugger_or_register_followup` → sigue al Paso 5.
+- `invoke_debugger` → spawnea `debugger`, luego `validator` y `tester` en paralelo, y relanza `/verify-slice <TASK_ID>`.
+- `wait_validator_tester` → no hagas verify todavía.
+- `post_closer_done` → no relances closer/debugger; resume estado.
+- `blocked` → corrige el blocker mecánico; no crees FU de producto por ruido.
+
+Regla dura: `closer` sólo se invoca cuando este helper devuelve `invoke_closer`; entonces spawnea `closer`. `slice-verifier` sólo se invoca cuando devuelve `invoke_slice_verifier`.
+
+## Paso 4 — Spawn de `slice-verifier`
+
+Sólo si `verify-slice-state` devuelve `invoke_slice_verifier`, spawnea **un único** subagente `slice-verifier` con este contexto literal:
 
 ```text
 TASK_ID: <TASK_ID>
 CLAUDE_TASK_PACK: orchestrator-state/tasks/task-packs/<TASK_ID>.md
 MODO DAG ACTIVO: production = explicit_dag.
-No uses global state; exige `TASK_ID` explícito.
-Revisa UX_CONTRACT.md, Technical Guide, Implementation Checklist, handoff, verify-slice y evidencia.
-HTML preview/docs visuales son referencia/evidencia, no source-of-truth.
-Si el problema cabe en TASK_ID/Write set: OUTCOME: changes_requested; needs_debugger=yes; NO FU.
-Si falta trabajo/datos/contrato fuera de scope: OUTCOME: blocked; followup_candidate=yes; why_not_debugger obligatorio.
-Apendiza `## Screen/Journey review` al handoff.
+Unidad verificable = TASK_ID canónico del registry.
+Hard reset obligatorio con datos reales/proporcionados del Verification Data Contract.
+Reproduce como usuario, vigila logs y escribe ## verify-slice en el handoff.
+No invoques closer; no hagas commit; no marques done.
 ```
 
-Después del subagente, ejecuta:
+Debe emitir:
+
+```text
+CLAUDE_TRAILER:
+TASK_ID: <TASK_ID>
+OUTCOME: verified|issues_found|blocked
+NEXT_STATUS: verified_pending_close|needs_debug|blocked
+HANDOFF: orchestrator-state/tasks/handoffs/<TASK_ID>.md
+EVIDENCE: orchestrator-state/tasks/evidence/<TASK_ID>/
+```
+
+Mapeo obligatorio:
+
+- `verified` → `verified_pending_close`.
+- `issues_found` → `needs_debug`.
+- `blocked` → `blocked`.
+
+Cuando vuelva, ejecuta otra vez `./scripts/verify-slice-state.sh <TASK_ID> --json`. Si devuelve `invoke_closer`, sigue al Paso 6. Si devuelve `invoke_debugger_or_register_followup`, sigue al Paso 5. Si el trailer se pierde, revisa el handoff: el agente debe haber escrito `## verify-slice`. Si está escrito y el checker pasa, puedes continuar por el helper; si no, relanza `slice-verifier`, no `closer`.
+
+## Paso 5 — Si `slice-verifier` reporta issues
+
+No preguntes al usuario para decidir el siguiente paso:
+
+- Defecto dentro del `TASK_ID`/Write set → spawnea `debugger` con findings exactos, `TASK_ID`, `CLAUDE_TASK_PACK` y root split. Después lanza `validator` y `tester` en paralelo. Si pasan, relanza `/verify-slice <TASK_ID>` desde hard reset.
+- Trabajo real fuera de scope pero aceptación actual verificada → registra FU formal `proposed` con `origin_task_id=<TASK_ID>`, `triage.scope_classification` y `triage.why_not_debugger`; después relanza `slice-verifier` o corrige el handoff para que `VERIFY_OUTCOME: verified` refleje que la aceptación actual sí pasa.
+  Usa `/register-followup propose ... --scope-classification <out_of_scope|missing_coverage|...> --why-not-debugger <razón>`; sin esos campos no cierres la PR con deuda ambigua.
+- Problema mecánico del orquestador/ambiente → corrige/reintenta o bloquea. No crees follow-up de producto.
+
+Nunca uses el reset completo `debugger → validator+tester → verify-slice` cuando el diagnóstico dice “sólo falta closer” y validator/tester/verify ya están correctos. En ese caso ve al Paso 6.
+
+## Paso 5.2 — Screen/Journey review condicional antes de closer
+
+HTML preview/docs visuales son referencia/evidencia, no source-of-truth.
+
+Si la task toca UI, UX, journey, rutas, pantallas, VISUAL_CONTRACT_CHECK/visual contract, auth visible, navegación o `journey_refs`, spawnea **un único** `screen-journey-reviewer` después de `slice-verifier` y antes de `closer`.
+
+Contexto obligatorio:
+
+```text
+TASK_ID: <TASK_ID>
+CLAUDE_TASK_PACK: orchestrator-state/tasks/task-packs/<TASK_ID>.md
+MODO DAG ACTIVO: production = explicit_dag.
+Revisa UX_CONTRACT, Technical Guide, Checklist, handoff, verify-slice y evidencia.
+Si el problema cabe en TASK_ID/Write set: OUTCOME=changes_requested; needs_debugger=yes; NO FU.
+Si falta trabajo/datos/contrato fuera de scope: OUTCOME=blocked; followup_candidate=yes; why_not_debugger obligatorio.
+```
+
+Luego valida:
 
 ```bash
 ./scripts/check-handoff-contract.sh <TASK_ID> --require-ready-for-close --require-verify-slice --require-screen-journey-review
 ```
 
-Decisión:
+Si `OUTCOME: changes_requested`, va a debugger/retest. Si `blocked` por FU real fuera de scope y la aceptación actual sigue verificada, registra FU `proposed` y continúa; si no puedes decidir, bloquea.
 
-- `OUTCOME: approved` en `## Screen/Journey review` → continúa a §5.bis / closer.
-- `OUTCOME: changes_requested` → trata los hallazgos como `issues_found` aunque tu reproducción inicial pareciera bien: salta a §6.2, invoca `debugger`, repite `validator ‖ tester` y relanza `/verify-slice`. No crees FU para defectos reparables dentro del `TASK_ID`.
-- `OUTCOME: blocked` → distingue causa. Si es defecto in-scope, no invoques `closer`: va a `debugger/retest`. Si `followup_candidate=yes` y el problema es trabajo real fuera de scope, registra FU formal con `--scope-classification` y `--why-not-debugger`; si la aceptación actual sigue verificada, continúa hacia closer sin preguntar. Si falta información para saberlo, bloquea con razón explícita.
+## Paso 5.bis — Journey-closing
 
-Si el reviewer no escribe `## Screen/Journey review`, no cierres. Corrige/repite el reviewer o bloquea.
+Si esta slice cierra journeys, usa `python3 -B -S .claude/bin/list_journey_closures.py <TASK_ID> --json` antes de closer para que el cierre sepa qué journeys debe clasificar.
 
----
+- Si el journey se verificó inline y el handoff contiene `## verify-journey` con `JOURNEY_VERIFY_OUTCOME: verified`, el closer debe emitir `JOURNEY_VERIFIED_INLINE: <JID>`.
+- Si no puede verificarse inline automáticamente, el closer debe emitir `JOURNEY_PENDING_VERIFY: <JID>`.
+- En DAG-only, pending journey bloquea sólo tasks que referencian ese journey, no todo el grafo.
 
-## Paso 5.bis — Journey-closing inline (solo si VERIFY_OUTCOME: verified)
+## Paso 6 — Orquestación de cierre
 
-**Solo se ejecuta si**: la verificación de slice salió `verified` Y la slice cierra al menos un journey de la Journey Coverage Matrix. Si `issues_found` → salta este paso y ve directo al Paso 6.
+Cuando el handoff tiene validator approved + tester pass + `## verify-slice` con `VERIFY_OUTCOME: verified`, ejecuta:
 
-### 5.bis.1 — Detectar journey-closing
-
-Lee `orchestrator-state/tasks/registry.json:journeys[]`. Para cada journey J:
-
-- Ejecuta `python3 -B -S .claude/bin/list_journey_closures.py <TASK_ID> --json`.
-- Usa `closing_journeys[]` del script como fuente autoritativa. El script simula este TASK_ID como `done` y solo marca cierre cuando todos los demás slices del journey ya están `done`.
-- No uses `task_ids[-1]`: en DAG la columna `Slices` puede venir de rangos, step refs o listas humanas desordenadas.
-
-Si `closing_journeys` está vacía → salta al Paso 6 directamente. No hay journey que verificar.
-
-### 5.bis.2 — Pregunta al usuario (gate humano único)
-
-```
-✅ Slice <TASK_ID> verificada. Esta slice cierra el/los journey(s):
-   <lista: J5 — login flow, J7 — password change, ...>
-
-El entorno ya está hard-reset y los datos reales/proporcionados cargados. Tienes dos opciones:
-
-  a) ahora     — verifico el journey end-to-end inline (multi-pantalla, estados
-                 marginales, deep links, next action). Aprovecho el entorno y
-                 cierro slice + journey en un solo gate humano. RECOMENDADO.
-
-  b) aparte    — solo verifico la slice. Dejo el journey en pending y el
-                 usuario lanzará `/verify-journey <JID>` después en una
-                 sesión limpia. Útil si tienes prisa o quieres tomarte el
-                 journey con más calma.
-
-¿Cómo procedemos? (ahora / aparte)
+```bash
+./scripts/check-handoff-contract.sh <TASK_ID> --require-ready-for-close --require-verify-slice
 ```
 
-Interpreta la respuesta:
-
-- **`ahora` | `inline` | `sí` | `go`** → ejecuta §5.bis.3 inline.
-- **`aparte` | `luego` | `después` | `no`** → salta §5.bis.3, ve al Paso 6 con la rama "luego" (el closer emitirá `JOURNEY_PENDING_VERIFY` para cada journey).
-
-### 5.bis.3 — Verificación journey inline
-
-Mismo procedimiento que `/verify-journey` pero aprovechando el entorno actual:
-
-1. **Datos reales/proporcionados consolidados**: añade encima de los datos actuales los necesarios para reproducir el journey COMPLETO (no solo esta última slice). Lista mínima: estados intermedios entre pantallas, datos para deep links, datos que dispararían rama de error.
-2. **Reproducción end-to-end**: navega el journey en orden de pantallas. Para cada paso: rellena, pulsa, observa logs (front + back + bbdd) y UI.
-3. **Estados marginales obligatorios** (mínimo, según la sección **Recorridos del usuario** y la **Journey Coverage Matrix** de `instrucciones.md`):
-   - `loading` (durante transiciones de pantalla)
-   - `empty` (datos no presentes)
-   - `error_network` (offline / 500)
-   - `permission_denied` (si aplica al journey)
-   - `back_navigation` (botón atrás del SO/navegador)
-   - `deep_link` (entrada por URL directa al medio del journey)
-   - `next_action` (lo que sugiere la pantalla final como siguiente paso)
-4. **Evidencia**: snippets en `orchestrator-state/tasks/evidence/<TASK_ID>/verify-journey-*`.
-
-Apendiza al handoff (después de `## verify-slice`) con `TASK_ID` coincidente:
-
-```markdown
-## verify-journey
-
-- TASK_ID: <TASK_ID>
-- TIMESTAMP: <ISO-8601>
-- MODE: inline
-- JOURNEYS: <lista de JIDs verificados juntos en este bloque>
-- JOURNEY_VERIFY_OUTCOME: verified|issues_found
-- FLOWS_TESTED: <pantallas en orden>
-- MARGINAL_STATES_TESTED: loading, empty, error_network, permission_denied, back_navigation, deep_link, next_action
-- NEXT_ACTION_VERIFIED: yes|no|n/a
-- FINDINGS: <bullets si issues_found>
-- EVIDENCE: orchestrator-state/tasks/evidence/<TASK_ID>/verify-journey-*
-```
-
-Si `issues_found` → cancela el cierre, salta al Paso 6 con rama issues (debugger). El journey NO queda verificado; el usuario tendrá que arreglar y volver a verificar.
-
----
-
-## Paso 6 — Orquestación de cierre (solo en modo `pre-closer`)
-
-En modo `post-closer` este paso se salta — el commit ya existe; solo entrégale al usuario la tabla del Paso 5.
-
-### 6.1 — Si `VERIFY_OUTCOME: verified`
-
-Recapitula al usuario el estado real (con la información de §5.bis si aplica) y cierra automáticamente; no preguntes si debe invocarse `closer`. El closer ejecutará el workflow Git configurado mediante `./scripts/git-workflow.sh`.
+Si pasa, spawnea **un único** `closer` con este contexto:
 
 ```text
-✅ Slice <TASK_ID> verificada.
-<si hubo journey inline:>
-   ✅ Journey(s) <lista JIDs> verificada(s) inline en el mismo gate.
-<si quedó "aparte":>
-   ⏸ Journey(s) <lista JIDs> queda(n) pendiente(s) — el closer emitirá
-     JOURNEY_PENDING_VERIFY. En modo frontier solo se diferirán tasks que
-     referencien esos JIDs. No existe otro modo de journey gate.
-<si hay FU propuestas:>
-   🧭 Follow-ups propuestos: <FU_IDs>. Se incluyen en el PR como `proposed`;
-      no se promueven desde closer y bloquearán nuevas waves/claims hasta
-      `/promote-followup` o waiver.
-<si la slice no cierra journey:>
-   (esta slice no cierra ningún journey — flujo normal)
+TASK_ID: <TASK_ID>
+CLAUDE_TASK_PACK: orchestrator-state/tasks/task-packs/<TASK_ID>.md
+MODO DAG ACTIVO: production = explicit_dag.
+cierra sólo el TASK_ID explícito.
+El estado verificado previo es verified_pending_close; sólo closer puede pasar a done.
+Las FU formales proposed del origin_task_id se meten en la PR, no bloquean este close.
+Ejecuta report + sync baseline + git-add-slice + commit + workflow Git configurado mediante ./scripts/git-workflow.sh + slice-clean + cleanup-worktrees.
+En pr-flow, done exige PR merged y root canónico sincronizado; PR abierta/queued = blocked mecánico, no FU.
 ```
 
-Primero ejecuta `./scripts/check-handoff-contract.sh <TASK_ID> --require-ready-for-close --require-verify-slice`. Solo si pasa —y, cuando aplique pantalla/journey, también pasa con `--require-screen-journey-review`— spawnea `closer` (un solo Agent call) con el `TASK_ID`, `CLAUDE_TASK_PACK=orchestrator-state/tasks/task-packs/<TASK_ID>.md` y el recordatorio literal `MODO DAG ACTIVO: production = explicit_dag; cierra sólo el TASK_ID explícito y su CLAUDE_TASK_PACK; las FU formales proposed del origin_task_id se meten en el PR, no bloquean el close`. Espera el trailer `OUTCOME: committed` + `NEXT_STATUS: done` + `PUSH_READY: yes`. Si vuelve `blocked`, reporta qué le falta al usuario.
-
-### 6.1.bis - Housekeeping post-closer
-
-No ejecutes un segundo cleanup desde `/verify-slice`. El `closer` es el unico dueno del post-push housekeeping: `slice-clean.sh --apply` y despues `cleanup-worktrees.sh --apply --task <TASK_ID>` desde el root canonico. Esto evita correr comandos desde una worktree que el propio closer acaba de borrar.
-
-Acepta el cierre solo si el trailer del closer trae:
+Acepta cierre sólo si el trailer de `closer` trae exactamente:
 
 ```text
 OUTCOME: committed
 NEXT_STATUS: done
+REPORT_READY: yes
+BASELINE_SYNC_READY: yes
 GIT_READY: yes
 PUSH_READY: yes
 WORKTREES_CLEANED: yes
 ```
 
-Si `WORKTREES_CLEANED: no`, no crees un follow-up de producto. Es un fallo mecanico del orquestador/worktree: reporta la razon, deja la slice bloqueada y corrige/reintenta cleanup desde el root canonico.
+Si `closer` devuelve `blocked` por PR pendiente, CI rojo, auto-merge no habilitado, cleanup dirty o root canónico dirty, no lances debugger salvo que el bloqueo sea un defecto de producto. Corrige el bloqueo mecánico y relanza `closer` o `/verify-slice <TASK_ID>`; la verificación existente en handoff sigue siendo válida si el código no cambió.
 
-Si el SessionStart hook detecto presion de tamano (sugerencia sobre PROGRESS.md grande, MEMORY.md de algun agente >200 lineas, etc.), repitela ahora junto al recordatorio: `/clear` + `/next-slice` (o `/slice-maintain compact` antes si la sugerencia lo aconseja).
+## Trailer final del comando
 
-### 6.2 — Si `VERIFY_OUTCOME: issues_found`
+Como comando, resume lo ocurrido al usuario. Los trailers de estado los emiten los subagentes (`slice-verifier`, `screen-journey-reviewer`, `debugger`, `validator`, `tester`, `closer`) y los consume el hook bajo lock.
 
-No preguntes al usuario para decidir el siguiente paso: clasifica y actúa.
+Incluye en la respuesta final:
 
-- **Defecto menor dentro del TASK_ID/Write set**: bug reparable sin cambiar contratos source-of-truth, sin añadir endpoint/ruta/tabla nueva, sin ampliar journey ni tocar conflicto compartido no declarado. spawnea `debugger` con TASK_ID + findings + `CLAUDE_TASK_PACK=orchestrator-state/tasks/task-packs/<TASK_ID>.md` + recordatorio `MODO DAG ACTIVO: production = explicit_dag`. Al volver → `validator ‖ tester` en paralelo. Si pasan → relanza este mismo `/verify-slice <TASK_ID>` con hard reset completo. No invoques `closer` hasta un verify posterior `verified`.
-- **Trabajo real fuera de scope pero la aceptación de esta slice está verificada**: crea propuesta formal con `./scripts/register-followup-task.sh propose --origin-task <TASK_ID> --severity high|medium|low --kind bug|ux|wiring|data|test --scope-classification out_of_scope|missing_coverage|missing_real_data|scope_expansion --why-not-debugger "<por qué debugger/retest no basta>" --title "..." --description "..." --acceptance "..." --verify "..."`. Después cambia tu decisión operacional a `VERIFY_OUTCOME: verified` para esta slice con follow-ups propuestos y continúa por §6.1. Las FU `proposed` bloquearán nuevas waves/claims, no este PR.
-- **Problema que impide verificar la aceptación actual y no cabe en debugger**: no invoques closer. Deja `VERIFY_OUTCOME: issues_found`, registra FU si corresponde y bloquea con razón explícita.
-
-No crees FU para defectos reparables dentro del `TASK_ID`; eso va por debugger/retest. No dejes hallazgos fuera de scope solo como texto en el handoff; deben quedar como YAML `proposed` antes del closer.
-
----
-
-## Trailer final (obligatorio)
-
+```text
+TASK_ID: <TASK_ID>
+VERIFY_ACTION: <acción del router>
+CLOSER_ACTION: invoked|not_invoked|relaunch_needed
+FOLLOWUPS_PROPOSED: <FU IDs o none>
+NEXT_ACTION: /next-slice | relaunch closer | debugger/retest | fix mechanical blocker
 ```
-CLAUDE_TRAILER:
-TASK_ID: <ID>
-VERIFY_OUTCOME: verified|issues_found
-MODE: pre-closer|post-closer
-CLOSER_INVOKED: yes|no|n/a
-DATA_CONTRACT_ROWS: <filas/flows usados o "n/a">
-PERSISTED_DATA_OBSERVED: <tabla/id/estado o "n/a">
-JOURNEY_INLINE_VERIFIED: <lista JIDs o "none">
-JOURNEY_PENDING: <lista JIDs o "none">
-EVIDENCE: orchestrator-state/tasks/evidence/<TASK_ID>/verify-*
-```
-
-> `JOURNEY_INLINE_VERIFIED` y `JOURNEY_PENDING` aquí son informativos para el comando. El `closer` debe traducirlo a líneas `JOURNEY_VERIFIED_INLINE: <JID>`; el SubagentStop hook las consume y marca el journey `verified` bajo lock.
-

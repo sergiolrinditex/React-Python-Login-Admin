@@ -106,7 +106,7 @@
   if (document.getElementById('node-a')) applyDagState();
 
   // -----------------------------------------------------------------
-  // 5. Toggle helper (kept for legacy)
+  // 5. Toggle helper (kept for compatibility)
   // -----------------------------------------------------------------
   window.toggle = function (id) {
     const el = document.getElementById(id);

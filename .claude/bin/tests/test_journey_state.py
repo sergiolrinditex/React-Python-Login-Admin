@@ -37,6 +37,18 @@ def _seed_journey(jid: str = "J101", *, task_id: str = "P00-S01-T001", task_stat
     common.save_registry(registry)
 
 
+
+def _write_verified_handoff(task_id: str = "P00-S01-T001") -> None:
+    handoff = common.project_root() / "orchestrator-state" / "tasks" / "handoffs" / f"{task_id}.md"
+    handoff.parent.mkdir(parents=True, exist_ok=True)
+    handoff.write_text(
+        f"# Handoff {task_id}\n\n"
+        f"## Validator review\n- TASK_ID: {task_id}\n- OUTCOME: approved\n\n"
+        f"## Tester run\n- TASK_ID: {task_id}\n- OUTCOME: pass\n\n"
+        f"## verify-slice\n- TASK_ID: {task_id}\n- VERIFY_OUTCOME: verified\n",
+        encoding="utf-8",
+    )
+
 def test_add_pending_is_idempotent(seeded_registry):
     _seed_journey("J101")
     common.add_pending_journey_verification("J101")
@@ -101,11 +113,13 @@ def test_hook_integration_closer_emits_pending(seeded_registry, monkeypatch):
     """Simula el cierre de la ÚLTIMA slice de un journey: closer emite
     JOURNEY_PENDING_VERIFY → hook lo añade a runtime-state."""
     _seed_journey("J101")
+    _write_verified_handoff("P00-S01-T001")
 
     payload = make_subagent_stop_payload("closer", [
         "TASK_ID: P00-S01-T001",
         "OUTCOME: committed",
         "NEXT_STATUS: done",
+        "HANDOFF: orchestrator-state/tasks/handoffs/P00-S01-T001.md",
         "REPORT_READY: yes",
         "BASELINE_SYNC_READY: yes",
         "GIT_READY: yes",

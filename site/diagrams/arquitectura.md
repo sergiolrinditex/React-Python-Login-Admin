@@ -10,7 +10,7 @@
 
 ## 1. Vista de alto nivel
 
-A diferencia del orquestador legacy de tres documentos, **AnyStack añade `STACK_PROFILE.yaml` y `UX_CONTRACT.md`** para desacoplar el motor del stack concreto y de la experiencia de usuario.
+A diferencia del orquestador histórico de tres documentos, **AnyStack añade `STACK_PROFILE.yaml` y `UX_CONTRACT.md`** para desacoplar el motor del stack concreto y de la experiencia de usuario.
 
 ```mermaid
 flowchart TB
@@ -117,7 +117,7 @@ flowchart LR
 | `docs_discrepancy` | Antes de `Write/Edit` | Warn si hay `orchestrator-state/memory/official-doc-notes/*.md` sin `RESOLVED:`. **Nunca bloquea.** |
 | `update_ledger` | Después de `Bash/Write/Edit/MultiEdit/NotebookEdit` | Append append-only a `ledger.jsonl` con scope `CLAUDE_ACTIVE_TASK_ID`. |
 | `capture_subagent_stop` | Al cerrar un subagente | Parsea trailer, valida `OUTCOME/NEXT_STATUS`, muta `registry.json` + `runtime-state.json` bajo lock POSIX. |
-| `session_context` | Al arrancar sesión Claude Code | Inyecta el estado canónico (active task, phase, pending journeys, hook errors) al primer turn. |
+| `session_context` | Al arrancar sesión Claude Code | Inyecta el estado canónico (DAG task, phase, pending journeys, hook errors) al primer turn. |
 
 ---
 
@@ -134,7 +134,7 @@ flowchart TD
 
     subgraph SESSION[🔄 Sesión · puede repoblar]
         TP[task-packs/*.md<br><sub>contexto por TASK_ID</sub>]
-        AT[active-task.md<br><sub>singleton legacy advisory</sub>]
+        TP[task-packs/&lt;TASK_ID&gt;.md<br><sub>per-task DAG pack</sub>]
     end
 
     subgraph EPHEMERAL[💨 Efímero · regenerable]
@@ -157,7 +157,7 @@ flowchart TD
 ```
 
 > [!TIP]
-> En modo DAG explícito, `CLAUDE_ACTIVE_TASK_ID` + `CLAUDE_TASK_PACK=orchestrator-state/tasks/task-packs/<TASK_ID>.md` son la fuente autoritativa. `active-task.md` queda como espejo legacy advisory: puede pertenecer a otro terminal y nunca debe ser la única referencia pasada a un subagente.
+> En modo DAG explícito, `CLAUDE_ACTIVE_TASK_ID` + `CLAUDE_TASK_PACK=orchestrator-state/tasks/task-packs/<TASK_ID>.md` son la fuente autoritativa. cada terminal usa su task pack por `TASK_ID`.
 
 ---
 
@@ -200,18 +200,18 @@ flowchart LR
     AGENT[🤖 Agente emite trailer]
     HOOK[🪝 capture_subagent_stop]
     SCHEMA[📜 trailer_schema.roles<br><sub>orchestrator-contract.json</sub>]
-    FALLBACK[⚠️ ALLOWED_OUTCOMES hardcoded<br><sub>solo fallback defensivo</sub>]
+    SCHEMA_ERR[⚠️ schema missing<br><sub>log visible + no lifecycle mutation</sub>]
     REG[🗂 registry.json]
 
     AGENT --> HOOK
     HOOK --> SCHEMA
-    SCHEMA -.no responde.-> FALLBACK
+    SCHEMA -.no responde.-> SCHEMA_ERR
     HOOK -- valida y muta --> REG
 
     style AGENT fill:#1f2740,stroke:#ec4899,color:#e8ecf5
     style HOOK fill:#1f2740,stroke:#10b981,color:#e8ecf5
     style SCHEMA fill:#1f2740,stroke:#8b5cf6,color:#c4b5fd
-    style FALLBACK fill:#1f2740,stroke:#6b7591,color:#6b7591
+    style SCHEMA_ERR fill:#1f2740,stroke:#6b7591,color:#6b7591
     style REG fill:#1f2740,stroke:#06b6d4,color:#e8ecf5
 ```
 
@@ -337,7 +337,7 @@ sequenceDiagram
 ```
 
 > [!NOTE]
-> **El validator no toca `task.status`**. Su `NEXT_STATUS` se guarda como `validator_next_status` (metadata informativa). Esto elimina la race condition cuando ambos cierran a la vez en el par paralelo. El **closer** lee el `OUTCOME` del validator desde el handoff antes de cerrar y rechaza el commit si no es `approved`. La clasificación lifecycle vs info-only vive en `.claude/orchestrator-contract.json → trailer_schema.roles.<agent>.info_only` (más `mutates_registry_lifecycle`); el hook `hook_capture_subagent_stop.py` deriva el comportamiento del schema en runtime.
+> **El validator no toca `task.status`**. Su `NEXT_STATUS` se guarda como `validator_next_status` (metadata informativa). Esto elimina la race condition cuando ambos cierran a la vez en el par paralelo. El **closer** lee el `OUTCOME` del validator desde el handoff antes de cerrar y rechaza el commit si no es `approved`. La clasificación info-only/lifecycle vive sólo en `.claude/orchestrator-contract.json -> trailer_schema.roles` y el hook la deriva de ese schema; no hay whitelist hardcodeada.
 
 ---
 

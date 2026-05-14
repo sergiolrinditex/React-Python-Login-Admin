@@ -78,7 +78,7 @@ Transformar el source-of-truth pack moderno (`instrucciones.md`, `*_IMPLEMENTATI
       "phase_id": "P00",
       "step_id": "P00-S01",
       "title": "Bootstrap backend skeleton with /health endpoint",
-      "status": "ready|claimed|in_progress|validator_tester_pending|ready_for_close|needs_debug|done|blocked",
+      "status": "ready|claimed|in_progress|validator_tester_pending|ready_for_close|verified_pending_close|needs_debug|done|blocked",
       "build_state": "planned|ready|done|blocked",
       "depends_on": [],
       "acceptance": [

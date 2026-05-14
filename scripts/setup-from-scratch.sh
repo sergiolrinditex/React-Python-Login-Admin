@@ -42,20 +42,6 @@ else
   warn ".env no existe. Continúo porque el stack profile puede apuntar a servicios externos o comandos no locales."
 fi
 
-# P02-S03-T004: rotate ENCRYPTION_KEY (+ JWT keys) if still placeholder.
-# Must run BEFORE DB migrations + seed so ENCRYPTION_KEY is valid when
-# load_ai_provider_credentials() calls encrypt_secret() during bootstrap.
-# Re-sources .env after rotation so subsequent commands see the fresh key.
-if [ -f "$PROJECT_ROOT/scripts/gen-dev-secrets.sh" ] && [ -f "$PROJECT_ROOT/.env" ]; then
-  log "Rotating dev secrets (gen-dev-secrets.sh) ..."
-  bash "$PROJECT_ROOT/scripts/gen-dev-secrets.sh" --env "$PROJECT_ROOT/.env" >&2 || true
-  # Re-source so this shell session picks up the rotated keys immediately.
-  set -a
-  # shellcheck disable=SC1091
-  source "$PROJECT_ROOT/.env"
-  set +a
-fi
-
 BACKEND_EXISTS=1
 if [ "$BACKEND_ROOT" != "none" ] && [ ! -d "$PROJECT_ROOT/$BACKEND_ROOT" ]; then
   BACKEND_EXISTS=0

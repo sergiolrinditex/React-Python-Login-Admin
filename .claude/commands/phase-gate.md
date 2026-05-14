@@ -1,5 +1,5 @@
 ---
-description: Verifica mecánicamente que una phase está cerrada antes de avanzar: tasks done, journeys verificados, reports/evidence y git opcional.
+description: "Verifica mecánicamente que una phase está cerrada antes de avanzar: tasks done, journeys verificados, reports/evidence y git opcional."
 argument-hint: "[PHASE_ID] [--require-git-clean]"
 ---
 

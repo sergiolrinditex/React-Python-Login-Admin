@@ -128,7 +128,7 @@ sequenceDiagram
 
     <div class="card">
       <h3>Saltarse el journey gate</h3>
-      <p>Si <code>runtime-state.pending_journey_verifications</code> no está vacío, el <code>planner</code> rechaza <code>/next-slice</code> con <code>CONTEXT_READY: no</code>. Hay que verificar el journey (inline en §5.bis o aparte) antes de la siguiente slice.</p>
+      <p>Si <code>runtime-state.pending_journey_verifications</code> no está vacío, DAG-only difiere sólo las tasks que referencian esos journeys. Las ramas independientes pueden seguir; las tasks afectadas deben verificar el journey inline en §5.bis o aparte con <code>/verify-journey</code>.</p>
     </div>
 
     <div class="card">

@@ -32,6 +32,7 @@ from common import (
     file_lock,
     find_task,
     get_spawn_budget,
+    handoff_path,
     ledger_path,
     journeys_closing_at_task,
     load_registry,
@@ -48,19 +49,12 @@ from common import (
     waive_journey_verification,
 )
 
-KEY_RE = {
-    "task_id": re.compile(r"^TASK_ID:\s*(.+?)\s*$", re.MULTILINE),
-    "outcome": re.compile(r"^OUTCOME:\s*(.+?)\s*$", re.MULTILINE),
-    "next_status": re.compile(r"^NEXT_STATUS:\s*(.+?)\s*$", re.MULTILINE),
-    "handoff": re.compile(r"^HANDOFF:\s*(.+?)\s*$", re.MULTILINE),
-    "evidence": re.compile(r"^EVIDENCE:\s*(.+?)\s*$", re.MULTILINE),
-    "report": re.compile(r"^REPORT:\s*(.+?)\s*$", re.MULTILINE),
-    "report_ready": re.compile(r"^REPORT_READY:\s*(.+?)\s*$", re.MULTILINE),
-    "baseline_sync_ready": re.compile(r"^BASELINE_SYNC_READY:\s*(.+?)\s*$", re.MULTILINE),
-    "git_ready": re.compile(r"^GIT_READY:\s*(.+?)\s*$", re.MULTILINE),
-    "push_ready": re.compile(r"^PUSH_READY:\s*(.+?)\s*$", re.MULTILINE),
-    "worktrees_cleaned": re.compile(r"^WORKTREES_CLEANED:\s*(.+?)\s*$", re.MULTILINE),
-}
+# Generic trailer key parser. Keep the parser schema-flexible: the schema
+# controls which keys are required per role, while this parser accepts any
+# UPPER_SNAKE_CASE key in the explicit CLAUDE_TRAILER block. This prevents
+# new info-only fields such as VERIFY_OUTCOME, NEXT_ACTION or CONTEXT_READY
+# from being silently dropped and then reported as missing by the hook.
+TRAILER_LINE_RE = re.compile(r"^(?P<key>[A-Z][A-Z0-9_]*):\s*(?P<value>.*?)\s*$", re.MULTILINE)
 
 def load_enum_contracts() -> tuple[dict[str, set[str]], dict[str, set[str]]]:
     """Load role enums from `.claude/orchestrator-contract.json`.
@@ -137,12 +131,13 @@ def parse_json_trailer(text: str) -> dict[str, str]:
             obj = obj["claude_trailer"]
         if not isinstance(obj, dict):
             continue
-        # Normalize keys to lowercase, only keep recognised ones.
-        recognised = {"task_id", "outcome", "next_status", "handoff", "evidence", "report", "report_ready", "baseline_sync_ready", "git_ready", "push_ready", "worktrees_cleaned"}
+        # Normalize all explicit trailer keys to lowercase. Required/allowed
+        # validation happens later from .claude/orchestrator-contract.json;
+        # parsing must not have a stale allowlist.
         normalised: dict[str, str] = {}
         for k, v in obj.items():
             kk = str(k).strip().lower()
-            if kk in recognised and v is not None:
+            if kk and v is not None:
                 normalised[kk] = str(v).strip()
         if normalised:
             return normalised
@@ -246,10 +241,13 @@ def parse_trailer(text: str) -> dict[str, str]:
     else:
         text = "\n".join(text.splitlines()[-80:])
     result: dict[str, str] = {}
-    for key, regex in KEY_RE.items():
-        matches = list(regex.finditer(text))
-        if matches:
-            result[key] = matches[-1].group(1).strip()
+    for match in TRAILER_LINE_RE.finditer(text):
+        key = match.group("key").strip().lower()
+        value = match.group("value").strip()
+        if key:
+            # Last occurrence wins: the final trailer block is authoritative
+            # when an agent includes examples above the real result.
+            result[key] = value
     return result
 
 
@@ -442,17 +440,11 @@ def apply_journey_mutations(journey_data: dict[str, object]) -> dict[str, object
 
 
 def enforce_closer_done_guardrail(trailer: dict[str, str], agent_type: str | None) -> dict[str, str]:
-    """Never let a closer mark a task done without commit/push/cleanup proof.
+    """Never let a closer mark a task done without verify, commit/push/cleanup proof.
 
-    The closer instructions require REPORT_READY/BASELINE_SYNC_READY/
-    GIT_READY/PUSH_READY/WORKTREES_CLEANED. This hook is the mechanical safety net: if the model
-    accidentally emits NEXT_STATUS: done while any of those fields is missing or
-    not yes, the hook rewrites the lifecycle result to blocked and records a
-    visible hook error. Formal proposed follow-ups are allowed at close time:
-    the PR/branch must carry the proposal YAML, while /next-wave and claim_task
-    remain responsible for blocking later DAG work until those follow-ups are
-    promoted or waived. The hook still never blocks Claude Code; it just avoids
-    corrupting registry.json with a false done.
+    Proposed follow-ups may travel in the PR, but close-time mechanics must be
+    true on disk: report, baseline sync, Git workflow, worktree cleanup and a
+    verified handoff section (or explicit human waiver).
     """
     if agent_type != "closer":
         return trailer
@@ -474,6 +466,110 @@ def enforce_closer_done_guardrail(trailer: dict[str, str], agent_type: str | Non
         trailer["next_status"] = "blocked"
         trailer["outcome"] = "blocked"
         trailer["closer_guardrail"] = "blocked_false_done"
+        return trailer
+
+    task_id = str(trailer.get("task_id", "")).strip()
+    if task_id:
+        try:
+            from check_handoff_contract import validate as validate_handoff
+
+            ok, errors, _details = validate_handoff(
+                task_id,
+                require_ready_for_close=True,
+                require_verify_slice=True,
+            )
+            if not ok:
+                waiver_ok = False
+                try:
+                    hp = handoff_path(task_id)
+                    if hp.exists():
+                        waiver_ok = bool(re.search(
+                            r"(?im)^\s*-?\s*VERIFY_WAIVED\s*:\s*\S+",
+                            hp.read_text(encoding="utf-8", errors="replace"),
+                        ))
+                except Exception:
+                    waiver_ok = False
+                if not waiver_ok:
+                    log_hook_error(
+                        "hook_capture_subagent_stop.closer_guardrail",
+                        RuntimeError(
+                            "closer attempted NEXT_STATUS=done without valid verify-slice handoff: "
+                            + "; ".join(errors)
+                        ),
+                    )
+                    trailer = dict(trailer)
+                    trailer["next_status"] = "blocked"
+                    trailer["outcome"] = "blocked"
+                    trailer["blocker_reason"] = "closer_handoff_contract_failed"
+                    trailer["closer_guardrail"] = "blocked_missing_verify_slice"
+        except Exception as exc:
+            log_hook_error("hook_capture_subagent_stop.closer_handoff_check", exc)
+            trailer = dict(trailer)
+            trailer["next_status"] = "blocked"
+            trailer["outcome"] = "blocked"
+            trailer["blocker_reason"] = "closer_handoff_check_error"
+            trailer["closer_guardrail"] = "blocked_handoff_check_error"
+    return trailer
+
+
+
+def enforce_slice_verifier_guardrail(trailer: dict[str, str], agent_type: str | None) -> dict[str, str]:
+    """Keep the verify-slice gate deterministic and mechanically safe."""
+    if agent_type != "slice-verifier":
+        return trailer
+
+    outcome = str(trailer.get("outcome", "")).strip().lower()
+    expected = {
+        "verified": "verified_pending_close",
+        "issues_found": "needs_debug",
+        "blocked": "blocked",
+    }
+    if outcome in expected:
+        wanted = expected[outcome]
+        current = str(trailer.get("next_status", "")).strip().lower()
+        if current != wanted:
+            log_hook_error(
+                "hook_capture_subagent_stop.slice_verifier_guardrail",
+                RuntimeError(
+                    f"slice-verifier OUTCOME={outcome!r} requires NEXT_STATUS={wanted!r}; "
+                    f"got {current!r}. Rewriting to contract state."
+                ),
+            )
+            trailer = dict(trailer)
+            trailer["next_status"] = wanted
+            trailer["slice_verifier_guardrail"] = "rewrote_status"
+
+    if outcome == "verified":
+        task_id = str(trailer.get("task_id", "")).strip()
+        if task_id:
+            try:
+                from check_handoff_contract import validate as validate_handoff
+
+                ok, errors, _details = validate_handoff(
+                    task_id,
+                    require_ready_for_close=True,
+                    require_verify_slice=True,
+                )
+                if not ok:
+                    log_hook_error(
+                        "hook_capture_subagent_stop.slice_verifier_guardrail",
+                        RuntimeError(
+                            "slice-verifier attempted verified without valid handoff contract: "
+                            + "; ".join(errors)
+                        ),
+                    )
+                    trailer = dict(trailer)
+                    trailer["outcome"] = "blocked"
+                    trailer["next_status"] = "blocked"
+                    trailer["blocker_reason"] = "slice_verifier_handoff_contract_failed"
+                    trailer["slice_verifier_guardrail"] = "blocked_invalid_handoff"
+            except Exception as exc:
+                log_hook_error("hook_capture_subagent_stop.slice_verifier_handoff_check", exc)
+                trailer = dict(trailer)
+                trailer["outcome"] = "blocked"
+                trailer["next_status"] = "blocked"
+                trailer["blocker_reason"] = "slice_verifier_handoff_check_error"
+                trailer["slice_verifier_guardrail"] = "blocked_handoff_check_error"
     return trailer
 
 
@@ -545,6 +641,7 @@ def main() -> int:
             trailer["task_id"] = override_task_id
 
         trailer = enforce_closer_done_guardrail(trailer, agent_type)
+        trailer = enforce_slice_verifier_guardrail(trailer, agent_type)
 
         # Noisy trailer check: if a lifecycle/reporting agent forgot required
         # keys, surface it via orchestrator-state/hook-errors.log so SessionStart shows the
@@ -646,7 +743,7 @@ def main() -> int:
                             task["debug_cycles"] = int(task.get("debug_cycles") or 0) + 1
                         if trailer.get("next_status") == "blocked":
                             task["last_blocker"] = {
-                                "reason": trailer.get("closer_guardrail") or trailer.get("outcome") or "blocked_by_agent",
+                                "reason": trailer.get("blocker_reason") or trailer.get("closer_guardrail") or trailer.get("outcome") or "blocked_by_agent",
                                 "agent": agent_type,
                                 "at": now_iso(),
                             }

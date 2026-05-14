@@ -162,6 +162,15 @@ def test_promoted_followup_blocks_when_it_conflicts_with_worker_task(seeded_regi
 
 def test_closer_done_allows_formal_proposed_blocker_followup_for_pr(seeded_registry, monkeypatch):
     result = fut.propose(_args(severity="blocker"))
+    handoff = common.project_root() / "orchestrator-state" / "tasks" / "handoffs" / "P00-S01-T001.md"
+    handoff.parent.mkdir(parents=True, exist_ok=True)
+    handoff.write_text(
+        "# Handoff P00-S01-T001\n\n"
+        "## Validator review\n- TASK_ID: P00-S01-T001\n- OUTCOME: approved\n\n"
+        "## Tester run\n- TASK_ID: P00-S01-T001\n- OUTCOME: pass\n\n"
+        "## verify-slice\n- TASK_ID: P00-S01-T001\n- VERIFY_OUTCOME: verified\n",
+        encoding="utf-8",
+    )
     monkeypatch.setenv("CLAUDE_ACTIVE_TASK_ID", "P00-S01-T001")
     payload = make_subagent_stop_payload("closer", [
         "TASK_ID: P00-S01-T001",

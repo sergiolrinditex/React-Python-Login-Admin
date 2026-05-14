@@ -47,7 +47,7 @@ except Exception:
     dag_worker_task_id = lambda: None  # type: ignore[assignment]
     now_iso = lambda: ""  # type: ignore[assignment]
     project_root = lambda: Path(".")  # type: ignore[assignment]
-    has_resolved_doc_discrepancy_marker = lambda text: __import__("re").search(r"(?im)^\s*RESOLVED(?:\s*:|\s+\d{4}-\d{2}-\d{2}\b|\s+[-–—])", text or "") is not None  # type: ignore[assignment]
+    has_resolved_doc_discrepancy_marker = lambda text: __import__("re").search(r"(?im)^\s*(?:[-*+]\s+|#{1,6}\s+|>\s*)*RESOLVED(?:\s*:|\s+\d{4}-\d{2}-\d{2}\b|\s+[-–—])", text or "") is not None  # type: ignore[assignment]
     claude_dir = lambda: Path(".claude")  # type: ignore[assignment]
     hook_error_log_path = lambda: Path("orchestrator-state/hook-errors.log")  # type: ignore[assignment]
     def log_hook_error(name, exc):  # type: ignore[no-redef]

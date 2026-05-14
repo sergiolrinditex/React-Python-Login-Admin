@@ -58,7 +58,7 @@
         <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
       </div>
       <h3>Memoria runtime</h3>
-      <p><code>CLAUDE_TASK_PACK</code>, handoffs, evidence y reports por <code>TASK_ID</code>. El singleton legacy <code>active-task.md</code> es advisory en modo DAG. Cada terminal lleva su propio scope.</p>
+      <p><code>CLAUDE_TASK_PACK</code>, handoffs, evidence y reports por <code>TASK_ID</code>. La identidad de ejecución se toma sólo del entorno de ese terminal. Cada terminal lleva su propio scope mediante <code>CLAUDE_ACTIVE_TASK_ID</code> y task pack.</p>
     </div>
 
     <div class="card">
@@ -98,7 +98,7 @@
         <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
       </div>
       <h3>Vocabulario centralizado</h3>
-      <p>Vocabulario centralizado en <code>orchestrator-contract.json → trailer_schema.roles</code>. Hook valida outcomes y next_status; hardcoded sólo como fallback.</p>
+      <p>Vocabulario centralizado en <code>orchestrator-contract.json → trailer_schema.roles</code>. Hook valida outcomes y next_status contra el schema; si el contrato falta, registra error y no muta lifecycle.</p>
     </div>
 
     <div class="card">
@@ -221,7 +221,7 @@ flowchart TD
   </pre>
 
   <div class="notice">
-    <strong>El DAG solo agenda.</strong> No rebaja quality gates. Cada slice pasa por las mismas validaciones — lo único que cambia entre modo legacy y modo DAG es el scheduler y la posibilidad de usar varios terminales en paralelo.
+    <strong>El DAG solo agenda.</strong> No rebaja quality gates. Cada slice pasa por las mismas validaciones — lo único que cambia entre modo histórico y modo DAG es el scheduler y la posibilidad de usar varios terminales en paralelo.
   </div>
 
   <section id="profundiza">

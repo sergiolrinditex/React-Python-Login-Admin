@@ -86,6 +86,7 @@
         "P02-S07-T002",
         "P02-S03-T005",
         "P02-S03-T006",
+        "P02-S03-T008",
         "P02-S03-T007",
         "P02-S06-T003",
         "P02-S05-T004",
@@ -3231,7 +3232,7 @@
       "phase_id": "P02",
       "step_id": "P02-S03",
       "title": "Fix /ready 500 — _ping_db uses sync engine.connect() on async asyncpg engine",
-      "status": "ready",
+      "status": "done",
       "build_state": "planned",
       "product_increment": "current",
       "risk_level": "medium",
@@ -3288,14 +3289,16 @@
       "tables_raw": "—",
       "origin_instr_raw": "runtime-followup#FU-20260513201144-fix-ready-500-ping-db-uses-sync-engine-connect-o",
       "origin_techguide_raw": "runtime-followup#FU-20260513201144-fix-ready-500-ping-db-uses-sync-engine-connect-o",
-      "source_fingerprint": "03e856087a667bb5390b72ce1d7bb9243dff66103544085eb7752be6cd022f71"
+      "source_fingerprint": "03e856087a667bb5390b72ce1d7bb9243dff66103544085eb7752be6cd022f71",
+      "last_updated_by": "main-orchestrator",
+      "last_note": "reconciled after pr-flow hook-state loss; PR merged on origin/main but canonical registry retained ready state because closer SubagentStop hook wrote to worktree-local orchestrator-state/ before worktree cleanup"
     },
     {
       "id": "P02-S03-T006",
       "phase_id": "P02",
       "step_id": "P02-S03",
       "title": "Fix chat stream chunks — llm_gateway uses non-existent SDK provider 'litellm/<model>'",
-      "status": "ready",
+      "status": "done",
       "build_state": "planned",
       "product_increment": "current",
       "risk_level": "high",
@@ -3352,14 +3355,79 @@
       "tables_raw": "—",
       "origin_instr_raw": "runtime-followup#FU-20260513201155-fix-chat-stream-chunks-llm-gateway-uses-non-exis",
       "origin_techguide_raw": "runtime-followup#FU-20260513201155-fix-chat-stream-chunks-llm-gateway-uses-non-exis",
-      "source_fingerprint": "de8ee589f8327ad375fb5fc000cf5192128a73084291710c64b1bae37c4cedeb"
+      "source_fingerprint": "de8ee589f8327ad375fb5fc000cf5192128a73084291710c64b1bae37c4cedeb",
+      "last_updated_by": "main-orchestrator",
+      "last_note": "reconciled after pr-flow hook-state loss; PR merged on origin/main but canonical registry retained ready state because closer SubagentStop hook wrote to worktree-local orchestrator-state/ before worktree cleanup"
+    },
+    {
+      "id": "P02-S03-T008",
+      "phase_id": "P02",
+      "step_id": "P02-S03",
+      "title": "complete_chat.py uses non-existent SDK provider 'litellm/<model>' (same as P02-S03-T006)",
+      "status": "ready",
+      "kind": "bug",
+      "target": "complete_chat.py uses non-existent SDK provider 'litellm/<model>' (same as P02-S03-T006)",
+      "build_state": "planned",
+      "product_increment": "current",
+      "risk_level": "high",
+      "verify_mode": "human",
+      "depends_on": [
+        "P02-S03-T006"
+      ],
+      "source_ref": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry",
+      "acceptance": [
+        "complete_chat.py imports and uses _compose_sdk_model_args from litellm_client (or relocated to a shared module)",
+        "unit test verifies provider_type='litellm' produces model='openai/<model_id>' + api_base=provider.base_url"
+      ],
+      "verification_commands": [
+        "POST /api/v1/admin/ai/models/{id}/test against seeded litellm provider returns 200 with usage",
+        "no BadRequestError in back.log"
+      ],
+      "allowed_paths": [
+        "backend/app/llm_gateway/complete_chat.py",
+        "backend/tests/unit/test_llm_gateway_complete_chat.py"
+      ],
+      "conflict_groups": [
+        "ai:streaming"
+      ],
+      "write_set": [
+        "backend/app/llm_gateway/complete_chat.py",
+        "backend/tests/unit/test_llm_gateway_complete_chat.py"
+      ],
+      "journey_refs": [
+        "J103"
+      ],
+      "route": "",
+      "endpoint": "",
+      "tables": [],
+      "handoff_path": "orchestrator-state/tasks/handoffs/P02-S03-T008.md",
+      "evidence_dir": "orchestrator-state/tasks/evidence/P02-S03-T008",
+      "origin": {
+        "type": "runtime_followup",
+        "followup_id": "FU-20260514053554-complete-chat-py-uses-non-existent-sdk-provider-",
+        "origin_task_id": "P02-S03-T006",
+        "severity": "high",
+        "kind": "bug",
+        "triage": {
+          "scope_classification": "missing_coverage",
+          "why_not_debugger": "complete_chat.py:122 has the identical model_str composition bug but is OUTSIDE this slice write_set (allowed_paths=litellm_client.py + streaming/service.py + test file). Fixing it would expand write_set during an active DAG task, which violates the runtime write contract. The helper introduced here is the natural reuse target; the FU is a one-line edit + test in a separate slice.",
+          "decision": "followup_only_when_outside_current_slice",
+          "debugger_path": "in_scope_defects_use_validator_tester_debugger_retest",
+          "warnings": []
+        }
+      },
+      "notes": [
+        "Runtime follow-up promoted from FU-20260514053554-complete-chat-py-uses-non-existent-sdk-provider-",
+        "Description: After P02-S03-T006 lands the _compose_sdk_model_args helper in litellm_client.py, complete_chat.py:122 still composes model_str inline with the same bug. Non-streaming model-test endpoint (/admin/ai/models/{id}/test) will fail when provider_type='litellm'. Migrate complete_chat.py to use the helper.",
+        "Triage: missing_coverage; why_not_debugger=complete_chat.py:122 has the identical model_str composition bug but is OUTSIDE this slice write_set (allowed_paths=litellm_client.py + streaming/service.py + test file). Fixing it would expand write_set during an active DAG task, which violates the runtime write contract. The helper introduced here is the natural reuse target; the FU is a one-line edit + test in a separate slice."
+      ]
     },
     {
       "id": "P02-S03-T007",
       "phase_id": "P02",
       "step_id": "P02-S03",
       "title": "Fix check_handoff_contract.py — worktree path bug in pr-flow",
-      "status": "ready",
+      "status": "done",
       "build_state": "planned",
       "product_increment": "current",
       "risk_level": "medium",
@@ -3414,7 +3482,9 @@
       "tables_raw": "—",
       "origin_instr_raw": "runtime-followup#FU-20260513201402-fix-check-handoff-contract-py-worktree-path-bug-",
       "origin_techguide_raw": "runtime-followup#FU-20260513201402-fix-check-handoff-contract-py-worktree-path-bug-",
-      "source_fingerprint": "97e64deb7058454d0e9f845a7d95fa24904a9084209bb6ab28b88319b19c933a"
+      "source_fingerprint": "97e64deb7058454d0e9f845a7d95fa24904a9084209bb6ab28b88319b19c933a",
+      "last_updated_by": "main-orchestrator",
+      "last_note": "reconciled after pr-flow hook-state loss; PR merged on origin/main but canonical registry retained ready state because closer SubagentStop hook wrote to worktree-local orchestrator-state/ before worktree cleanup"
     },
     {
       "id": "P02-S06-T003",
@@ -5914,13 +5984,13 @@
       "task_ids_source_order": [
         "P02-S03-T001",
         "P02-S03-T002",
+        "P02-S04-T001",
+        "P02-S04-T002",
         "P02-S03-T003",
         "P02-S03-T004",
         "P02-S03-T005",
         "P02-S03-T006",
         "P02-S03-T007",
-        "P02-S04-T001",
-        "P02-S04-T002",
         "P03-S02-T001",
         "P03-S02-T002",
         "P05-S01-T002"
@@ -6038,6 +6108,7 @@
         "P02-S05-T001",
         "P02-S05-T002",
         "P02-S05-T003",
+        "P02-S03-T008",
         "P02-S05-T004",
         "P04-S01-T002",
         "P04-S01-T003",
@@ -6052,7 +6123,8 @@
         "P04-S01-T002",
         "P04-S01-T003",
         "P04-S01-T004",
-        "P05-S01-T004"
+        "P05-S01-T004",
+        "P02-S03-T008"
       ],
       "slices_raw": "P02-S05, P04-S01-T002..T004, P05-S01-T004",
       "verification": "/verify-journey J103",
@@ -6064,6 +6136,7 @@
       "task_order_policy": "dag_topological_order",
       "terminal_task_ids": [
         "P02-S05-T003",
+        "P02-S03-T008",
         "P02-S05-T004",
         "P05-S01-T004"
       ]
@@ -6181,8 +6254,8 @@
       ],
       "task_ids_source_order": [
         "P02-S07-T001",
-        "P02-S07-T002",
         "P02-S08-T001",
+        "P02-S07-T002",
         "P04-S02-T003",
         "P04-S02-T004",
         "P04-S02-T005",
@@ -6248,6 +6321,7 @@
       "P02-S07-T002",
       "P02-S03-T005",
       "P02-S03-T006",
+      "P02-S03-T008",
       "P02-S03-T007",
       "P02-S06-T003",
       "P02-S05-T004",
@@ -6505,6 +6579,10 @@
       [
         "P02-S03-T004",
         "P02-S03-T006"
+      ],
+      [
+        "P02-S03-T006",
+        "P02-S03-T008"
       ],
       [
         "P02-S03-T004",
@@ -6883,42 +6961,43 @@
       "P02-S07-T002": 40,
       "P02-S03-T005": 41,
       "P02-S03-T006": 42,
-      "P02-S03-T007": 43,
-      "P02-S06-T003": 44,
-      "P02-S05-T004": 45,
-      "P02-S06-T004": 46,
-      "P03-S01-T001": 47,
-      "P03-S01-T002": 48,
-      "P03-S01-T003": 49,
-      "P03-S01-T004": 50,
-      "P03-S01-T005": 51,
-      "P03-S02-T001": 52,
-      "P03-S02-T002": 53,
-      "P03-S02-T003": 54,
-      "P03-S02-T004": 55,
-      "P04-S01-T001": 56,
-      "P04-S01-T002": 57,
-      "P04-S01-T003": 58,
-      "P04-S01-T004": 59,
-      "P04-S02-T001": 60,
-      "P04-S02-T002": 61,
-      "P04-S02-T003": 62,
-      "P04-S02-T004": 63,
-      "P04-S02-T005": 64,
-      "P04-S03-T001": 65,
-      "P04-S03-T002": 66,
-      "P05-S01-T001": 67,
-      "P05-S01-T002": 68,
-      "P05-S01-T003": 69,
-      "P05-S01-T004": 70,
-      "P05-S01-T005": 71,
-      "P05-S01-T006": 72,
-      "P05-S02-T001": 73,
-      "P05-S02-T002": 74,
-      "P05-S02-T003": 75,
-      "P06-S01-T001": 76,
-      "P06-S01-T002": 77,
-      "P06-S01-T003": 78
+      "P02-S03-T008": 43,
+      "P02-S03-T007": 44,
+      "P02-S06-T003": 45,
+      "P02-S05-T004": 46,
+      "P02-S06-T004": 47,
+      "P03-S01-T001": 48,
+      "P03-S01-T002": 49,
+      "P03-S01-T003": 50,
+      "P03-S01-T004": 51,
+      "P03-S01-T005": 52,
+      "P03-S02-T001": 53,
+      "P03-S02-T002": 54,
+      "P03-S02-T003": 55,
+      "P03-S02-T004": 56,
+      "P04-S01-T001": 57,
+      "P04-S01-T002": 58,
+      "P04-S01-T003": 59,
+      "P04-S01-T004": 60,
+      "P04-S02-T001": 61,
+      "P04-S02-T002": 62,
+      "P04-S02-T003": 63,
+      "P04-S02-T004": 64,
+      "P04-S02-T005": 65,
+      "P04-S03-T001": 66,
+      "P04-S03-T002": 67,
+      "P05-S01-T001": 68,
+      "P05-S01-T002": 69,
+      "P05-S01-T003": 70,
+      "P05-S01-T004": 71,
+      "P05-S01-T005": 72,
+      "P05-S01-T006": 73,
+      "P05-S02-T001": 74,
+      "P05-S02-T002": 75,
+      "P05-S02-T003": 76,
+      "P06-S01-T001": 77,
+      "P06-S01-T002": 78,
+      "P06-S01-T003": 79
     },
     "adjacency_matrix": [
       [
@@ -7000,6 +7079,7 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
@@ -7021,6 +7101,7 @@
         0,
         0,
         1,
+        0,
         0,
         0,
         0,
@@ -7162,6 +7243,7 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
@@ -7170,6 +7252,7 @@
         0,
         0,
         1,
+        0,
         0,
         0,
         0,
@@ -7293,6 +7376,7 @@
         0,
         0,
         0,
+        0,
         1,
         1,
         1,
@@ -7334,6 +7418,7 @@
         0,
         0,
         1,
+        0,
         0,
         0,
         0,
@@ -7486,6 +7571,7 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
@@ -7567,9 +7653,11 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -7729,6 +7817,7 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
@@ -7747,6 +7836,7 @@
         0,
         0,
         1,
+        0,
         0,
         0,
         0,
@@ -7891,6 +7981,7 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
@@ -7972,6 +8063,7 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
@@ -7997,6 +8089,7 @@
         0,
         0,
         1,
+        0,
         0,
         0,
         0,
@@ -8105,6 +8198,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -8155,6 +8249,7 @@
         0,
         1,
         1,
+        0,
         0,
         0,
         0,
@@ -8270,6 +8365,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -8346,6 +8442,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -8403,6 +8500,7 @@
         0,
         0,
         1,
+        0,
         0,
         0,
         0,
@@ -8539,9 +8637,11 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -8701,6 +8801,7 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
@@ -8782,9 +8883,11 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -8944,6 +9047,7 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
@@ -8984,6 +9088,7 @@
         1,
         0,
         1,
+        0,
         0,
         0,
         0,
@@ -9080,6 +9185,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         1,
@@ -9162,6 +9268,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -9226,6 +9333,7 @@
         0,
         0,
         1,
+        0,
         0,
         0,
         0,
@@ -9349,6 +9457,7 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
@@ -9391,6 +9500,7 @@
         0,
         0,
         1,
+        0,
         0,
         0,
         0,
@@ -9478,6 +9588,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -9558,6 +9669,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         1,
@@ -9595,6 +9707,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -9738,6 +9851,7 @@
         0,
         0,
         0,
+        0,
         1,
         1,
         0,
@@ -9757,6 +9871,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -9916,6 +10031,7 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
@@ -9997,9 +10113,11 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -10124,7 +10242,47 @@
         0,
         1,
         1,
+        0,
         1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
         0,
         0,
         0,
@@ -10159,6 +10317,49 @@
         0,
         0,
         0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
         0
       ],
       [
@@ -10240,6 +10441,7 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
@@ -10286,6 +10488,7 @@
         0,
         0,
         0,
+        1,
         0,
         0,
         0,
@@ -10402,9 +10605,11 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -10564,6 +10769,7 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
@@ -10645,9 +10851,11 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -10780,6 +10988,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -10810,6 +11019,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -10941,6 +11151,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -11050,9 +11261,11 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -11187,6 +11400,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         1,
@@ -11215,6 +11429,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -11365,6 +11580,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -11446,6 +11662,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -11458,6 +11675,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -11597,6 +11815,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -11620,6 +11839,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -11771,6 +11991,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -11843,6 +12064,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -11863,6 +12085,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -12007,6 +12230,7 @@
         0,
         0,
         0,
+        0,
         1,
         1,
         0,
@@ -12025,6 +12249,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -12178,6 +12403,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -12265,9 +12491,11 @@
         0,
         0,
         0,
+        0,
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -12424,12 +12652,14 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -12586,6 +12816,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0,
@@ -12665,6 +12896,7 @@
         0,
         0,
         0,
+        0,
         1,
         1,
         1,
@@ -12673,6 +12905,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -12827,6 +13060,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         1,
@@ -12835,6 +13069,7 @@
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -12992,6 +13227,7 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0
@@ -13073,11 +13309,13 @@
         0,
         0,
         0,
+        0,
         1,
         0,
         0
       ],
       [
+        0,
         0,
         0,
         0,
@@ -13237,9 +13475,11 @@
         0,
         0,
         0,
+        0,
         1
       ],
       [
+        0,
         0,
         0,
         0,
@@ -13489,7 +13729,10 @@
       ],
       "P02-S07-T002": [],
       "P02-S03-T005": [],
-      "P02-S03-T006": [],
+      "P02-S03-T006": [
+        "P02-S03-T008"
+      ],
+      "P02-S03-T008": [],
       "P02-S03-T007": [],
       "P02-S06-T003": [],
       "P02-S05-T004": [],
@@ -13738,6 +13981,9 @@
       ],
       "P02-S03-T006": [
         "P02-S03-T004"
+      ],
+      "P02-S03-T008": [
+        "P02-S03-T006"
       ],
       "P02-S03-T007": [
         "P02-S03-T004"
@@ -13993,6 +14239,7 @@
         "P05-S01-T005"
       ],
       [
+        "P02-S03-T008",
         "P05-S01-T003",
         "P05-S02-T001",
         "P05-S02-T002"
@@ -14143,6 +14390,9 @@
         "infra:health-router"
       ],
       "P02-S03-T006": [
+        "ai:streaming"
+      ],
+      "P02-S03-T008": [
         "ai:streaming"
       ],
       "P02-S03-T007": [
@@ -14460,6 +14710,10 @@
         "backend/app/chat/streaming/service.py",
         "backend/tests/integration/test_chat_streaming_live.py"
       ],
+      "P02-S03-T008": [
+        "backend/app/llm_gateway/complete_chat.py",
+        "backend/tests/unit/test_llm_gateway_complete_chat.py"
+      ],
       "P02-S03-T007": [
         ".claude/bin/check_handoff_contract.py",
         ".claude/bin/tests/test_handoff_contract.py"
@@ -14632,6 +14886,7 @@
       "P02-S07-T002": "low",
       "P02-S03-T005": "medium",
       "P02-S03-T006": "high",
+      "P02-S03-T008": "high",
       "P02-S03-T007": "medium",
       "P02-S06-T003": "medium",
       "P02-S05-T004": "high",
@@ -14713,6 +14968,7 @@
       "P02-S07-T002": "human",
       "P02-S03-T005": "human",
       "P02-S03-T006": "human",
+      "P02-S03-T008": "human",
       "P02-S03-T007": "human",
       "P02-S06-T003": "human",
       "P02-S05-T004": "human",
@@ -14751,7 +15007,7 @@
       "P06-S01-T003": "human"
     },
     "canonical_source": "registry.tasks",
-    "source_digest": "eb45976541cbe3ad3f662e24bc142758ef42cc20042c70705d3ed56dbab01187",
+    "source_digest": "afdbffd63884f520f9c6653c42d792bf3b8f00e0d82be0ab289474d0abe5329e",
     "errors": []
   }
 }

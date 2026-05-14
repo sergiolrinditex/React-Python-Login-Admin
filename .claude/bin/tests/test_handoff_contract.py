@@ -281,3 +281,102 @@ def test_handoff_contract_accepts_registered_followup_candidate(tmp_path: Path) 
         task_id,
     )
     assert result.returncode == 0, result.stdout + result.stderr
+
+
+def test_handoff_contract_rejects_stale_verify_after_debugger_cycle(tmp_path: Path) -> None:
+    task_id = "P00-S01-T001"
+    result = _run(
+        tmp_path,
+        f"""
+# Task Handoff — {task_id}
+
+## Validator review
+- TASK_ID: {task_id}
+- OUTCOME: approved
+
+## Tester run
+- TASK_ID: {task_id}
+- OUTCOME: pass
+
+## verify-slice
+- TASK_ID: {task_id}
+- VERIFY_OUTCOME: verified
+
+## Debugger fix
+- TASK_ID: {task_id}
+- OUTCOME: fixed
+- NEXT_STATUS: validator_tester_pending
+
+## validator (cycle 2)
+- TASK_ID: {task_id}
+- OUTCOME: approved
+
+## tester (cycle 2)
+- TASK_ID: {task_id}
+- OUTCOME: pass
+""",
+        task_id,
+    )
+    assert result.returncode == 2
+    assert "stale verify-slice" in result.stdout
+
+
+def test_handoff_contract_accepts_verify_after_debugger_retest(tmp_path: Path) -> None:
+    task_id = "P00-S01-T001"
+    result = _run(
+        tmp_path,
+        f"""
+# Task Handoff — {task_id}
+
+## Validator review
+- TASK_ID: {task_id}
+- OUTCOME: changes_requested
+
+## Tester run
+- TASK_ID: {task_id}
+- OUTCOME: fail
+
+## Debugger fix
+- TASK_ID: {task_id}
+- OUTCOME: fixed
+- NEXT_STATUS: validator_tester_pending
+
+## validator (cycle 2)
+- TASK_ID: {task_id}
+- OUTCOME: approved
+
+## tester (cycle 2)
+- TASK_ID: {task_id}
+- OUTCOME: pass
+
+## verify-slice
+- TASK_ID: {task_id}
+- VERIFY_OUTCOME: verified
+""",
+        task_id,
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
+
+
+def test_handoff_contract_accepts_slice_verifier_heading_alias(tmp_path: Path) -> None:
+    task_id = "P00-S01-T001"
+    result = _run(
+        tmp_path,
+        f"""
+# Task Handoff — {task_id}
+
+## Validator review
+- TASK_ID: {task_id}
+- OUTCOME: approved
+
+## Tester run
+- TASK_ID: {task_id}
+- OUTCOME: pass
+
+## slice-verifier (cycle 2)
+- TASK_ID: {task_id}
+- VERIFY_OUTCOME: verified
+""",
+        task_id,
+    )
+    assert result.returncode == 0, result.stdout + result.stderr

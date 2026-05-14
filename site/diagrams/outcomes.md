@@ -9,7 +9,7 @@
 ---
 
 > [!IMPORTANT]
-> Esta tabla refleja `orchestrator-contract.json → trailer_schema.roles`. El hook `capture_subagent_stop` carga el schema como fuente única. Los enums repetidos en `.claude/bin/*.py` son solo mirrors documentales: el test `test_contract_invariants.py` verifica que no diverjan del schema.
+> Esta tabla refleja `orchestrator-contract.json → trailer_schema.roles`. El hook `capture_subagent_stop` carga el schema y no muta lifecycle si el contrato falta o el rol no existe. El test `test_contract_invariants.py` verifica que los enums no diverjan.
 
 ---
 
@@ -140,7 +140,7 @@ flowchart TD
 
 ## 5 documentos SOT — quién edita cada uno
 
-AnyStack añade dos documentos al contrato canónico (vs los 3 del legacy). Cada uno tiene un owner semántico claro:
+AnyStack añade dos documentos al contrato canónico (vs el contrato histórico de 3 documentos). Cada uno tiene un owner semántico claro:
 
 ```mermaid
 flowchart TB
@@ -197,15 +197,15 @@ Líneas reservadas que el hook reconoce además de `OUTCOME` / `NEXT_STATUS`:
 ```mermaid
 flowchart LR
     SRC[trailer_schema.roles<br>orchestrator-contract.json]
-    MIRROR[outcome_enums<br>next_status_enums<br><i>solo mirror</i>]
-    HOOK[hook_capture_subagent_stop.py<br>loads trailer_schema.roles<br><i>schema mirror</i>]
+    SCHEMA[trailer_schema.roles<br><i>única fuente</i>]
+    HOOK[hook_capture_subagent_stop.py<br>schema-only validation<br><i>no lifecycle mutation if schema missing</i>]
     TEST[test_contract_invariants.py<br>verifica que no diverjan]
 
-    SRC -.legacy mirror.-> MIRROR
+    SRC -.archived snapshot.-> MIRROR
     SRC == fuente real ==> HOOK
     TEST -.valida invariante.-> SRC
     TEST -.valida invariante.-> MIRROR
-    TEST -.valida invariante.-> HOOK
+    TEST -.valida carga de schema.-> HOOK
 
     style SRC fill:#1f2740,stroke:#10b981,color:#10b981
     style MIRROR fill:#1f2740,stroke:#6b7591,color:#6b7591

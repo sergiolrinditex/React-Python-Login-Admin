@@ -240,6 +240,26 @@
         "register_followup_task.py propose; only the main-orchestrator or /verify-slice registers FU after reading followup_candidate=yes",
         "no follow-up promotion or proposal; report followup_candidate in handoff only"
       ]
+    },
+    "slice-verifier": {
+      "may_write": [
+        "orchestrator-state/tasks/handoffs/<TASK_ID>.md",
+        "orchestrator-state/tasks/evidence/<TASK_ID>/**",
+        "orchestrator-state/agent-memory/slice-verifier/MEMORY.md",
+        "orchestrator-state/agent-memory/slice-verifier/archive/**"
+      ],
+      "must_not_write": [
+        ".claude/**",
+        "orchestrator-state/tasks/registry.json",
+        "orchestrator-state/tasks/runtime-state.json",
+        "orchestrator-state/memory/task-dag.json",
+        "orchestrator-state/memory/task-dag.md",
+        "registry/runtime JSON directly",
+        "generated DAG files directly",
+        "commit/push/PR/merge; closer owns Git workflow",
+        "promote follow-ups directly"
+      ],
+      "notes": "Human-real verify gate. Writes handoff/evidence only; SubagentStop hook moves lifecycle to verified_pending_close/needs_debug/blocked."
     }
   },
   "trailers": {
@@ -361,11 +381,13 @@
       "auto",
       "human"
     ],
-    "auto_verify_requires": "low risk, deterministic commands, no closing journey, real/provided data evidence"
+    "auto_verify_requires": "low risk, deterministic commands, no closing journey, real/provided data evidence",
+    "slice_verifier_agent": "slice-verifier",
+    "state_machine": "tester pass -> ready_for_close; slice-verifier verified -> verified_pending_close; closer committed -> done; issues_found -> needs_debug; blocked stays blocked until the responsible lifecycle agent reruns."
   },
   "trailer_schema": {
     "source_of_truth": ".claude/orchestrator-contract.json",
-    "policy": "All agents must emit trailers using the role-specific enums below. Hooks validate against this schema only; if the schema is unavailable or a role is missing, hooks log a visible error and refuse lifecycle mutation.",
+    "policy": "All agents and command emitters must emit trailers using the role-specific enums below. Hooks validate against this schema only; if the schema is unavailable or a role is missing, hooks log a visible error and refuse lifecycle mutation. The slice-verifier role may move a task only to verified_pending_close/needs_debug/blocked; closer is the only actor allowed to move a task to done. Command-only roles such as verify-journey may emit JOURNEY_* state without a .claude/agents prompt file.",
     "global_keys": [
       "TASK_ID",
       "OUTCOME",
@@ -382,7 +404,9 @@
       "JOURNEY_VERIFIED_INLINE",
       "JOURNEY_ID",
       "JOURNEY_VERIFY_OUTCOME",
-      "JOURNEY_VERIFY_WAIVED"
+      "JOURNEY_VERIFY_WAIVED",
+      "VERIFY_OUTCOME",
+      "NEXT_ACTION"
     ],
     "roles": {
       "closer": {
@@ -606,6 +630,29 @@
         "next_status_values": [],
         "mutates_registry_lifecycle": false,
         "info_only": true,
+        "allowed_to_close_task": false
+      },
+      "slice-verifier": {
+        "description": "Human-real verification gate before closer. Writes ## verify-slice evidence and moves the task to verified_pending_close/needs_debug/blocked; closer remains the only actor that can mark done.",
+        "required_keys": [
+          "TASK_ID",
+          "OUTCOME",
+          "NEXT_STATUS",
+          "HANDOFF",
+          "EVIDENCE"
+        ],
+        "outcome_values": [
+          "verified",
+          "issues_found",
+          "blocked"
+        ],
+        "next_status_values": [
+          "verified_pending_close",
+          "needs_debug",
+          "blocked"
+        ],
+        "mutates_registry_lifecycle": true,
+        "info_only": false,
         "allowed_to_close_task": false
       }
     },

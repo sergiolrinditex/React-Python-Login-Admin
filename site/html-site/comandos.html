@@ -55,7 +55,7 @@
         <span class="badge cyan">Pipeline</span>
       </div>
       <h3>Claim atómico + pipeline</h3>
-      <p>Ejecuta planner → developer ‖ docs-researcher → validator ‖ tester → debugger si falla. Pausa en tester pass; deja la verificación al humano. El planner inyecta <code>STACK_PROFILE</code> en el task pack para que el developer use los comandos correctos.</p>
+      <p>Ejecuta planner → developer + docs-researcher opcional → validator ‖ tester → debugger si falla. Pausa en tester pass; deja la verificación al humano. El planner inyecta <code>STACK_PROFILE</code> en el task pack para que el developer use los comandos correctos.</p>
     </a>
 
     <div class="card">
@@ -141,7 +141,7 @@ flowchart TB
   <p>Claim atómico + pipeline completo hasta tester pass. <b>No invoca closer</b> directamente — pausa en tester pass para que tú lances <code>/verify-slice</code>.</p>
   <pre class="mermaid">
 flowchart LR
-    A[planner<br/>blocking] --&gt; B[developer ‖ docs-researcher]
+    A[planner<br/>blocking] --&gt; B[developer + docs-researcher opcional]
     B --&gt; C[validator ‖ tester]
     C -- pass --&gt; D[pause<br/>→ /verify-slice]
     C -- fail --&gt; E[debugger<br/>max 3 ciclos]
@@ -185,7 +185,7 @@ flowchart LR
 3. /clear                              ← libera ~150k tokens (opcional)
 4. /verify-slice TASK_ID               ← gate humano con datos reales/proporcionados
    │
-   ├─ verified  → spawnea closer       ← commit + push origin main
+   ├─ verified  → spawnea closer       ← commit + git workflow
    └─ issues    → spawnea debugger     ← vuelve a paso 2
 5. /slice-maintain clean               ← housekeeping
 6. /clear                              ← prepara siguiente slice</code></pre>

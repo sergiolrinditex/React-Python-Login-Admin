@@ -154,3 +154,5 @@ Only the main orchestrator promotes or waives it after explicit human decision:
 Promotion appends a `Runtime Follow-up Coverage Registry` row to the implementation checklist, updates `registry.json`, regenerates the DAG adjacency, writes `work-items/<TASK_ID>.yaml`, and updates runtime-state/ledger under locks. High/critical/blocker proposals block `/next-wave` and `claim_task.py` until promoted or waived; they do not block closer `done` for the origin slice when the FU YAML is formal, referenced in the report and staged into the PR.
 
 Git close note: `hook_update_ledger.py` writes Bash PostToolUse events to `orchestrator-state/tasks/bash-ledger.jsonl`, which is runtime-only and ignored by Git. This prevents Bash hooks from re-dirtying the working tree after the atomic commit/push in DAG close. Do not use `git stash` as the normal closer flow; stage required changes into the slice commit before running `./scripts/git-workflow.sh`.
+
+`/verify-slice` delegates real verification to `slice-verifier`; the hook records `verified_pending_close|needs_debug|blocked` and only `closer` may mark `done`.
