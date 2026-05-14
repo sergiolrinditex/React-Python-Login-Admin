@@ -1,0 +1,18 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.5, pytest-9.0.2, pluggy-1.6.0 -- /usr/local/bin/python3
+cachedir: .pytest_cache
+rootdir: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P02-S03-T008/backend
+configfile: pyproject.toml
+plugins: httpx-0.36.0, asyncio-1.3.0, langsmith-0.8.3, anyio-4.13.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 7 items
+
+tests/unit/test_llm_gateway_complete_chat.py::TestCompleteChatUsesComposeHelper::test_complete_chat_uses_compose_helper_for_litellm_provider PASSED [ 14%]
+tests/unit/test_llm_gateway_complete_chat.py::TestCompleteChatUsesComposeHelper::test_complete_chat_openai_provider_no_base_url PASSED [ 28%]
+tests/unit/test_llm_gateway_complete_chat.py::TestCompleteChatHappyPath::test_complete_chat_returns_completion_result_with_tokens_and_cost PASSED [ 42%]
+tests/unit/test_llm_gateway_complete_chat.py::TestCompleteChatHappyPath::test_complete_chat_cost_falls_back_to_pricing_jsonb PASSED [ 57%]
+tests/unit/test_llm_gateway_complete_chat.py::TestCompleteChatErrorTranslation::test_litellm_timeout_raises_litellm_timeout_error PASSED [ 71%]
+tests/unit/test_llm_gateway_complete_chat.py::TestCompleteChatErrorTranslation::test_generic_exception_raises_model_test_failed_error PASSED [ 85%]
+tests/unit/test_llm_gateway_complete_chat.py::TestCompleteChatUnsupportedProviderRaises::test_unsupported_provider_type_raises_litellm_error_via_helper PASSED [100%]
+
+============================== 7 passed in 2.05s ===============================

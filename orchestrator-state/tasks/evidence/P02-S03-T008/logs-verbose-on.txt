@@ -1,0 +1,18 @@
+## Verbose Logging ON — ENABLE_VERBOSE_LOGGING=true
+## TASK_ID: P02-S03-T008
+## Captured from: pytest --log-cli-level=DEBUG for TestCompleteChatUsesComposeHelper
+
+Live log lines captured during test run (from caplog):
+---
+DEBUG    app.llm_gateway.litellm_client:litellm_client.py:142 llm_gateway.compose.start request_id=req-t008-t01 provider_type=litellm model_id=gpt-4o-mini base_url_present=True
+DEBUG    app.llm_gateway.litellm_client:litellm_client.py:187 llm_gateway.compose.done request_id=req-t008-t01 sdk_provider=openai model_str=openai/gpt-4o-mini api_base_present=True
+DEBUG    app.llm_gateway.complete_chat:complete_chat.py:141 llm_gateway.complete_chat.start request_id=req-t008-t01 model_str=openai/gpt-4o-mini prompt_len=20 max_tokens=256
+DEBUG    app.llm_gateway.complete_chat:complete_chat.py:232 llm_gateway.complete_chat.ok request_id=req-t008-t01 model_str=openai/gpt-4o-mini tokens_in=10 tokens_out=5 cost_usd=0.000123 latency_ms=0 finish=stop
+---
+
+Key observations:
+1. model_str=openai/gpt-4o-mini (NOT litellm/gpt-4o-mini — fix confirmed)
+2. BEFORE log (compose.start + complete_chat.start) present ✓
+3. AFTER log (compose.done + complete_chat.ok) present ✓
+4. No api_key, no prompt content in logs ✓ (security rule respected)
+5. All 4 standard log events fire (compose.start, compose.done, complete_chat.start, complete_chat.ok)

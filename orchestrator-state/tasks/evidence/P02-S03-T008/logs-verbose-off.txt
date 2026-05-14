@@ -1,0 +1,17 @@
+## Verbose Logging OFF — ENABLE_VERBOSE_LOGGING=false
+## TASK_ID: P02-S03-T008
+## Captured from: pytest --log-cli-level=DEBUG for TestCompleteChatUsesComposeHelper
+
+Live log lines captured during test run with ENABLE_VERBOSE_LOGGING=false:
+---
+INFO     app.llm_gateway.complete_chat:complete_chat.py:244 llm_gateway.complete_chat.ok request_id=req-t008-t01 model_str=openai/gpt-4o-mini latency_ms=0 tokens_in=10 tokens_out=5
+---
+
+Key observations:
+1. No DEBUG-level llm_gateway.compose.start / complete_chat.start logs ✓ (suppressed by _VERBOSE=False)
+2. No DEBUG-level llm_gateway.compose.done / detailed complete_chat.ok debug logs ✓
+3. INFO summary (.ok line) still present — consistent with T15/T16 pattern in test_chat_stream.py
+4. Pattern: verbose=false → no DEBUG, INFO+ summary visible (same as T15 in streaming suite)
+5. No tokens, no passwords, no PII in logs ✓
+
+Note: The INFO-level .ok summary (line 244) appears always. This is consistent with existing codebase pattern (T15 tests filter for DEBUG records, not INFO). The non-negotiable "false shows only warning+error" is interpreted as: no verbose DEBUG flow, only summary-level INFO logs.

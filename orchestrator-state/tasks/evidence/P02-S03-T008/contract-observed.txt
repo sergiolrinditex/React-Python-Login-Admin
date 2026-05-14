@@ -1,0 +1,26 @@
+## Contract Observed — P02-S03-T008
+## Front → Back → DB contract elements verified during tester run
+
+### Backend
+- Module: backend/app/llm_gateway/complete_chat.py
+- Helper used: _compose_sdk_model_args (from litellm_client.py:113-196)
+- Fix confirmed: model_str=openai/gpt-4o-mini (NOT litellm/gpt-4o-mini)
+- Endpoint consumer (not in write set): POST /api/v1/admin/ai/models/{id}/test
+  - Located at: backend/app/admin/model_test/router.py
+  - Reachable at: http://localhost:8000/api/v1/admin/ai/models/8d9b3d12.../test
+
+### DB Tables (not touched by this slice)
+- ai_providers: 1 row (litellm_verification_sandbox, provider_type=litellm) ✓
+- ai_models: 1 row (gpt-4o-mini, chat, enabled=false) ✓
+- No schema changes in this slice ✓
+
+### Test mocking boundary
+- Only external SDK (litellm.acompletion, litellm.completion_cost) mocked ✓
+- Business logic (compose helper, result extraction, error translation) real ✓
+- Tests do NOT pass with the business logic broken (they assert exact SDK kwargs) ✓
+
+### Verification Data Contract
+- N/A for unit tests (as declared in task pack)
+- Live curl: used admin_peopletech.json credentials + litellm_chat_default.json model
+- Proxy infra 502: LiteLLM proxy DB issue (independent infra, not the T008 bug)
+- No BadRequestError "LLM Provider NOT provided" observed in any test or curl run
