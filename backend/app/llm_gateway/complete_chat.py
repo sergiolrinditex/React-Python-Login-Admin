@@ -5,6 +5,8 @@ WRITE_SET_DRIFT §D-LLMG-COMPLETE (P02-S05-T002): Non-streaming completion
 helper for the admin model-test endpoint. In write_set (`llm_gateway/**`).
 
 Slice:  P02-S05-T002 — Model test and usage endpoints
+        P02-S03-T008 — Bug fix: complete_chat used non-existent SDK provider
+                       'litellm/<model>' (same root cause as P02-S03-T006)
 Phase:  P02 Core Features (the motor)
 Purpose: Thin async wrapper around litellm.acompletion(stream=False) that:
   - Accepts model/provider ORM instances + a plain-text api_key (never logged).
@@ -38,8 +40,12 @@ Key deps:
 Source refs:
   - task pack P02-S05-T002 §D.4 §D-LLMG-COMPLETE
   - task pack P02-S05-T002 §G Q1–Q5 (researcher confirmed)
+  - task pack P02-S03-T008 §D-T008-COMPOSE-HELPER (bug fix: use _compose_sdk_model_args)
   - 01-non-negotiables.md §AI/ML libraries (volatile — researcher confirmed)
   - 01-non-negotiables.md §Security (NEVER log api_key or prompt content)
+  - D-LITELLM-PROVIDER-MAP: single source of truth for provider_type → SDK prefix
+    lives in _compose_sdk_model_args + _PROVIDER_TYPE_TO_SDK_PREFIX in litellm_client.py.
+    See also: P02-S03-T006 (where same bug was fixed in stream_chat + embed_query).
 """
 
 from __future__ import annotations
@@ -54,7 +60,10 @@ import litellm
 
 from app.db.models.admin_ai import AiModel, AiProvider
 from app.llm_gateway.errors import LiteLLMTimeoutError, ModelTestFailedError
-from app.llm_gateway.litellm_client import _estimate_cost_from_pricing  # D-COST1 fallback
+from app.llm_gateway.litellm_client import (  # D-COST1 fallback + D-T008-COMPOSE-HELPER
+    _compose_sdk_model_args,
+    _estimate_cost_from_pricing,
+)
 
 logger = logging.getLogger(__name__)
 _VERBOSE: bool = os.getenv("ENABLE_VERBOSE_LOGGING", "false").lower() == "true"
@@ -119,7 +128,12 @@ async def complete_chat(
         LiteLLMTimeoutError:  Provider connection or inference timed out.
         ModelTestFailedError: Any other litellm / provider failure.
     """
-    model_str = f"{provider.provider_type}/{model.model_id}"
+    # D-T008-COMPOSE-HELPER: use the shared helper instead of inline composition.
+    # Old (BUGGY): model_str = f"{provider.provider_type}/{model.model_id}"
+    #   → sent "litellm/gpt-4o-mini" → SDK BadRequestError("LLM Provider NOT provided")
+    # New (FIXED): helper maps provider_type='litellm' → prefix='openai' + api_base.
+    # Same fix as stream_chat (P02-S03-T006, D-LITELLM-PROVIDER-MAP).
+    model_str, sdk_extra = _compose_sdk_model_args(provider, model, request_id)
     prompt_len = len(prompt)
     t0 = time.perf_counter()
 
@@ -138,13 +152,12 @@ async def complete_chat(
         "model": model_str,
         "messages": messages,
         "stream": False,
-        "api_key": api_key,        # NEVER in logs
+        "api_key": api_key,  # NEVER in logs
         "timeout": timeout,
         "max_tokens": max_tokens,
         # stream_options is ONLY for stream=True (Q1 researcher confirmed)
+        **sdk_extra,  # may include api_base; never api_key (D-T006-COMPOSE-HELPER)
     }
-    if provider.base_url:
-        kwargs["api_base"] = provider.base_url
 
     try:
         response = await litellm.acompletion(**kwargs)

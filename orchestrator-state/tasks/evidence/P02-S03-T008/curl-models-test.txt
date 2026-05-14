@@ -1,0 +1,40 @@
+## Curl Smoke: POST /api/v1/admin/ai/models/{id}/test
+## TASK_ID: P02-S03-T008
+## Timestamp: 2026-05-14T08:22:00Z
+
+### Sign-in (using verification data admin_peopletech.json)
+curl -s -X POST http://localhost:8000/api/v1/auth/sign-in \
+  -H 'Content-Type: application/json' \
+  -d '{"email":"admin.peopletech@inditex-sandbox.com","password":"AdminVerify2024!"}'
+→ 200 OK, access_token obtained
+
+### List AI Models
+curl -s http://localhost:8000/api/v1/admin/ai/models \
+  -H 'Authorization: Bearer <token>'
+→ 200 OK
+→ Model ID: 8d9b3d12-fa3a-46e1-b1f9-c555653e3db0 (gpt-4o-mini, provider_type=litellm, base_url=http://localhost:4000)
+
+### List Providers
+curl -s http://localhost:8000/api/v1/admin/ai/providers
+→ Provider: litellm_verification_sandbox, provider_type=litellm, base_url=http://localhost:4000, status=active
+
+### Model Test Endpoint
+curl -s -X POST http://localhost:8000/api/v1/admin/ai/models/8d9b3d12-fa3a-46e1-b1f9-c555653e3db0/test \
+  -H 'Content-Type: application/json' \
+  -d '{"prompt":"hello from P02-S03-T008 tester verify"}'
+→ HTTP 502 AI_PROVIDER_TEST_FAILED
+→ REASON: LiteLLM proxy at localhost:4000 returns "No connected db." — proxy infrastructure issue, NOT the old BadRequestError.
+→ Direct proxy check: curl -X POST http://localhost:4000/chat/completions → {"error":{"message":"No connected db.",...}}
+→ The 502 is from the PROXY'S own DB, not from "LLM Provider NOT provided" (the original bug).
+
+### Alternative Fix Verification (Python direct call)
+python3 check: complete_chat with litellm provider →
+  MODEL_STR SENT TO SDK: openai/gpt-4o-mini   (NOT litellm/gpt-4o-mini — fix confirmed)
+  API_BASE SENT TO SDK: http://localhost:4000
+  FIX VERIFIED: True
+
+### Classification
+CURL_SMOKE: PARTIAL — endpoint reaches backend correctly, 502 from proxy infra (no DB for LiteLLM proxy).
+NOT the original BadRequestError bug. Fix is verified via direct Python call + unit tests.
+Unit test TestCompleteChatUsesComposeHelper::test_complete_chat_uses_compose_helper_for_litellm_provider
+pins this with: assert call_kwargs["model"] == "openai/gpt-4o-mini" PASS.
