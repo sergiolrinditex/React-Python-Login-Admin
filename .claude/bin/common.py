@@ -318,6 +318,15 @@ def hook_error_log_path() -> Path:
     return state_dir() / "hook-errors.log"
 
 
+def hook_info_log_path() -> Path:
+    """Companion log for routine, non-error events (successful housekeeping).
+
+    NOT surfaced by SessionStart. Use for events that are auditable but are
+    not failures — e.g. successful runtime-state drift reconciliations.
+    """
+    return state_dir() / "hook-info.log"
+
+
 def log_hook_error(hook_name: str, exc: BaseException) -> None:
     """Append a hook exception to orchestrator-state/hook-errors.log.
 
@@ -334,6 +343,21 @@ def log_hook_error(hook_name: str, exc: BaseException) -> None:
             )
             fh.write("".join(traceback.format_exception(exc)))
             fh.write("\n---\n")
+    except Exception:
+        pass
+
+
+def log_hook_info(hook_name: str, message: str) -> None:
+    """Append a routine, non-error housekeeping event to hook-info.log.
+
+    Separate from hook-errors.log so SessionStart's `Recent hook errors`
+    section stays clean of expected drift cleanups. Never raises.
+    """
+    try:
+        path = hook_info_log_path()
+        ensure_parent(path)
+        with path.open("a", encoding="utf-8") as fh:
+            fh.write(f"[{now_iso()}] {hook_name}: {message}\n")
     except Exception:
         pass
 
@@ -1333,8 +1357,10 @@ def reconcile_runtime_state(
 
     if repairs:
         try:
-            log_hook_error("common.reconcile_runtime_state",
-                           RuntimeError(f"reconciled {len(repairs)} drift entr{'y' if len(repairs)==1 else 'ies'}: {repairs[:5]}"))
+            log_hook_info(
+                "common.reconcile_runtime_state",
+                f"reconciled {len(repairs)} drift entr{'y' if len(repairs)==1 else 'ies'}: {repairs[:5]}",
+            )
         except Exception:
             pass
 
