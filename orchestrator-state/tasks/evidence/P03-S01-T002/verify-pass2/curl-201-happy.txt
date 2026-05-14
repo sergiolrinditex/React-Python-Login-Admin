@@ -1,0 +1,8 @@
+HTTP/1.1 201 Created
+date: Thu, 14 May 2026 12:37:09 GMT
+server: uvicorn
+x-request-id: verifier-pass2-happy-1778762229
+content-length: 148
+content-type: application/json
+
+{"data":{"user_id":"88cad7eb-1a0c-4bcc-b46b-3b9c13d501d5","mfa_required":false},"meta":{"request_id":"verifier-pass2-happy-1778762229"},"errors":[]}

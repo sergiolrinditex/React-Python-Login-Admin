@@ -1,0 +1,13 @@
+                  id                  |                     email                     | status |          created_at           
+--------------------------------------+-----------------------------------------------+--------+-------------------------------
+ c27bd783-6dfa-4034-a31d-fcaeed03c3c1 | signup.verify+v1778761874@inditex-sandbox.com | active | 2026-05-14 12:31:13.247198+00
+(1 fila)
+
+ERROR:  column "user_id" does not exist
+LÍNEA 1: SELECT user_id, action, created_at FROM audit_logs WHERE use...
+                ^
+            actor_user_id             |    action    |          created_at           
+--------------------------------------+--------------+-------------------------------
+ c27bd783-6dfa-4034-a31d-fcaeed03c3c1 | auth.sign_up | 2026-05-14 12:31:13.247198+00
+(1 fila)
+

@@ -1,0 +1,12 @@
+## Tester run — POST /api/v1/auth/sign-up — 422 password too short
+## Email: tester.pw@inditex-sandbox.com, password: "abc" (3 chars, policy requires min 12)
+
+HTTP/1.1 422 Unprocessable Entity
+date: Thu, 14 May 2026 11:49:52 GMT
+server: uvicorn
+content-length: 237
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"ea991d17-366d-49c3-bb34-91fa014686a2"},"errors":[{"code":"AUTH_SIGNUP_INVALID_PAYLOAD","message":"Password policy violation: Password must be at least 12 characters","field":"password","details":null}]}
+
+RESULT: PASS — 422, code=AUTH_SIGNUP_INVALID_PAYLOAD, field="password"

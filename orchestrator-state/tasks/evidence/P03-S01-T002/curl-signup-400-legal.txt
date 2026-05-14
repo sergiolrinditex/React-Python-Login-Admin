@@ -1,0 +1,12 @@
+## Tester run — POST /api/v1/auth/sign-up — 400 legal not accepted
+## Email: tester.legal@inditex-sandbox.com, legal_acceptance: false
+
+HTTP/1.1 400 Bad Request
+date: Thu, 14 May 2026 11:49:54 GMT
+server: uvicorn
+content-length: 235
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"914778e9-9c9b-47b1-a54f-cbbaf490b2f7"},"errors":[{"code":"AUTH_SIGNUP_LEGAL_NOT_ACCEPTED","message":"Legal acceptance is required to complete registration","field":"legal_acceptance","details":null}]}
+
+RESULT: PASS — 400, code=AUTH_SIGNUP_LEGAL_NOT_ACCEPTED, field="legal_acceptance"

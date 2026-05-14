@@ -1,0 +1,7 @@
+HTTP/1.1 400 Bad Request
+date: Thu, 14 May 2026 12:37:15 GMT
+server: uvicorn
+content-length: 219
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"verifier-pass2-legal"},"errors":[{"code":"AUTH_SIGNUP_LEGAL_NOT_ACCEPTED","message":"Legal acceptance is required to complete registration","field":"legal_acceptance","details":null}]}

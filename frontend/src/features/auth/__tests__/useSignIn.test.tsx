@@ -69,6 +69,7 @@ const SUCCESS_MFA: SignInOutcome = {
 function makeRepo(signInResult: { ok: true; value: SignInOutcome } | { ok: false; error: Error }): IAuthRepository {
   return {
     signIn: vi.fn(async (_req: SignInRequest) => signInResult),
+    signUp: vi.fn(async () => ({ ok: true as const, value: { user_id: "stub", mfa_required: false as const } })),
     refresh: vi.fn(async () => ({ ok: true as const, value: MOCK_TOKEN })),
     fetchMe: vi.fn(async () => ({ ok: true as const, value: MOCK_USER })),
     logout: vi.fn(async () => ({ ok: true as const, value: undefined })),

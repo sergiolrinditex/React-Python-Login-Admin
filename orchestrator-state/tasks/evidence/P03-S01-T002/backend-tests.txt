@@ -1,0 +1,42 @@
+## Backend integration tests — ENABLE_VERBOSE_LOGGING=true
+## Ran: 2026-05-14T11:51:xx (tester run)
+## Command: cd /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin && ENABLE_VERBOSE_LOGGING=true python3 -m pytest backend/tests/integration/test_auth_signup.py -v
+
+============================= test session starts ==============================
+platform darwin -- Python 3.11.5, pytest-9.0.2, pluggy-1.6.0
+asyncio: mode=Mode.AUTO
+collected 9 items
+
+backend/tests/integration/test_auth_signup.py::test_signup_happy_path_201 PASSED [ 11%]
+backend/tests/integration/test_auth_signup.py::test_signup_non_corporate_email_400 PASSED [ 22%]
+backend/tests/integration/test_auth_signup.py::test_signup_legal_not_accepted_400 PASSED [ 33%]
+backend/tests/integration/test_auth_signup.py::test_signup_missing_full_name_422 PASSED [ 44%]
+backend/tests/integration/test_auth_signup.py::test_signup_duplicate_email_409 PASSED [ 55%]
+backend/tests/integration/test_auth_signup.py::test_signup_password_too_short_400 PASSED [ 66%]
+backend/tests/integration/test_auth_signup.py::test_signup_password_hashed_argon2id PASSED [ 77%]
+backend/tests/integration/test_auth_signup.py::test_signup_logs_no_pii PASSED [ 88%]
+backend/tests/integration/test_auth_signup.py::test_signup_rate_limit_429 PASSED [100%]
+
+========================= 9 passed, 1 warning in 3.43s =========================
+
+## Backend integration tests — ENABLE_VERBOSE_LOGGING=false
+## Command: cd /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin && ENABLE_VERBOSE_LOGGING=false python3 -m pytest backend/tests/integration/test_auth_signup.py -v
+
+============================= test session starts ==============================
+platform darwin -- Python 3.11.5, pytest-9.0.2, pluggy-1.6.0
+asyncio: mode=Mode.AUTO
+collected 9 items
+
+backend/tests/integration/test_auth_signup.py::test_signup_happy_path_201 PASSED [ 11%]
+backend/tests/integration/test_auth_signup.py::test_signup_non_corporate_email_400 PASSED [ 22%]
+backend/tests/integration/test_auth_signup.py::test_signup_legal_not_accepted_400 PASSED [ 33%]
+backend/tests/integration/test_auth_signup.py::test_signup_missing_full_name_422 PASSED [ 44%]
+backend/tests/integration/test_auth_signup.py::test_signup_duplicate_email_409 PASSED [ 55%]
+backend/tests/integration/test_auth_signup.py::test_signup_password_too_short_400 PASSED [ 66%]
+backend/tests/integration/test_auth_signup.py::test_signup_password_hashed_argon2id PASSED [ 77%]
+backend/tests/integration/test_auth_signup.py::test_signup_logs_no_pii PASSED [ 88%]
+backend/tests/integration/test_auth_signup.py::test_signup_rate_limit_429 PASSED [100%]
+
+========================= 9 passed, 1 warning in 3.20s =========================
+
+NOTE: Backend tests use real DB (PostgreSQL at localhost:5432). Confirmed by test_signup_happy_path_201 creating a real user row and test_signup_duplicate_email_409 detecting it.

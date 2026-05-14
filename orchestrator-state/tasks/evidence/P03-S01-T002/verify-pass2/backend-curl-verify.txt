@@ -1,0 +1,46 @@
+=== VERIFY PASS 2 - P03-S01-T002 ===
+Timestamp: 2026-05-14T12:31:14Z
+Unix TS: 1778761874
+
+=== TEST 1: Happy path (fresh corporate email) ===
+HTTP/1.1 201 Created
+date: Thu, 14 May 2026 12:31:13 GMT
+server: uvicorn
+x-request-id: verify-pass2-happy-1778761874
+content-length: 146
+content-type: application/json
+
+{"data":{"user_id":"c27bd783-6dfa-4034-a31d-fcaeed03c3c1","mfa_required":false},"meta":{"request_id":"verify-pass2-happy-1778761874"},"errors":[]}
+
+=== TEST 2: Non-corporate email (gmail.com) → expect 400 AUTH_SIGNUP_NON_CORPORATE_EMAIL ===
+HTTP/1.1 400 Bad Request
+date: Thu, 14 May 2026 12:31:27 GMT
+server: uvicorn
+content-length: 217
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"verify-pass2-noncorp-1778761874"},"errors":[{"code":"AUTH_SIGNUP_NON_CORPORATE_EMAIL","message":"Email domain not in corporate allowlist: gmail.com","field":"email","details":null}]}
+=== TEST 3: Legal not accepted → expect 400 AUTH_SIGNUP_LEGAL_NOT_ACCEPTED ===
+HTTP/1.1 400 Bad Request
+date: Thu, 14 May 2026 12:31:27 GMT
+server: uvicorn
+content-length: 228
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"verify-pass2-legal-1778761874"},"errors":[{"code":"AUTH_SIGNUP_LEGAL_NOT_ACCEPTED","message":"Legal acceptance is required to complete registration","field":"legal_acceptance","details":null}]}
+=== TEST 4: Email taken → expect 409 AUTH_SIGNUP_EMAIL_TAKEN (no field, anti-enum) ===
+HTTP/1.1 409 Conflict
+date: Thu, 14 May 2026 12:31:27 GMT
+server: uvicorn
+content-length: 208
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"verify-pass2-taken-1778761874"},"errors":[{"code":"AUTH_SIGNUP_EMAIL_TAKEN","message":"An account with that email exists or cannot be created","field":null,"details":null}]}
+=== TEST 5: Password too short → expect 422 AUTH_SIGNUP_INVALID_PAYLOAD field=password ===
+HTTP/1.1 422 Unprocessable Entity
+date: Thu, 14 May 2026 12:31:27 GMT
+server: uvicorn
+content-length: 227
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"verify-pass2-pw-1778761874"},"errors":[{"code":"AUTH_SIGNUP_INVALID_PAYLOAD","message":"Password policy violation: Password must be at least 12 characters","field":"password","details":null}]}

@@ -1,0 +1,35 @@
+## Contract observed — Front → Back → DB — tester run P03-S01-T002
+
+=== Route / Page ===
+- Frontend route: /auth/sign-up → SignUpPage component
+- Verified: curl -sI http://localhost:5173/auth/sign-up → HTTP 200 (SPA serves index.html)
+
+=== Endpoint ===
+- POST /api/v1/auth/sign-up
+- Backend handler: app.auth.routers.sign_up
+- Service: app.auth.services.sign_up
+- Repository: app.auth.repository
+
+=== DTO / Schema ===
+- Request: {"email": str, "password": str, "full_name": str, "legal_acceptance": bool}
+- Response 201: {"data": {"user_id": UUID, "mfa_required": false}, "meta": {"request_id": str}, "errors": []}
+- Errors: consistent envelope {"data": null, "meta": {...}, "errors": [{"code", "message", "field", "details"}]}
+
+=== DB Tables affected ===
+- users: INSERT on 201 (id, email, status=active, preferred_language=es)
+- audit_logs: INSERT on every attempt (actor_user_id=user_id on success, NULL on rejection)
+- employee_profiles: NOT inserted at sign-up (BR7 confirmed by grep + DB query)
+
+=== Client State ===
+- No access_token / refresh cookie issued on sign-up (confirmed: no Set-Cookie in 201 response)
+- Local useState in useSignUp hook (loading, error)
+- No AuthProvider mutation (sign-up creates account only; session requires sign-in)
+
+=== PII Logging ===
+- Backend logs: email_domain only (never full email), no password in logs
+- Frontend logs: email_domain, password_len, has_full_name, legal_accepted (never raw values)
+- Test T14 in useSignUp.test.tsx actively asserts PII safety and PASSES
+
+=== Request Correlation ===
+- X-Request-ID header sent and echoed in response meta.request_id
+- Backend log entries contain request_id for every operation

@@ -1,0 +1,7 @@
+HTTP/1.1 422 Unprocessable Entity
+date: Thu, 14 May 2026 12:28:34 GMT
+server: uvicorn
+content-length: 237
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"3f6c0cf4-2d19-42c1-92a6-2e0a52697a51"},"errors":[{"code":"AUTH_SIGNUP_INVALID_PAYLOAD","message":"Password policy violation: Password must be at least 12 characters","field":"password","details":null}]}

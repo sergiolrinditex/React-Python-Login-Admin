@@ -1,0 +1,12 @@
+## Tester run — POST /api/v1/auth/sign-up — 400 non-corporate email
+## Email: tester.bad@gmail.com
+
+HTTP/1.1 400 Bad Request
+date: Thu, 14 May 2026 11:49:50 GMT
+server: uvicorn
+content-length: 222
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"bd3d233e-af5b-4d0f-a5c6-055ff5c332ec"},"errors":[{"code":"AUTH_SIGNUP_NON_CORPORATE_EMAIL","message":"Email domain not in corporate allowlist: gmail.com","field":"email","details":null}]}
+
+RESULT: PASS — 400, code=AUTH_SIGNUP_NON_CORPORATE_EMAIL, field="email"

@@ -1,0 +1,47 @@
+## DB verification — tester run
+## Database: hilo_dev @ localhost:5432 (PostgreSQL)
+## Timestamp: 2026-05-14T11:51:xx
+
+=== users table — sign-up rows ===
+Query: SELECT id, email, status, preferred_language, created_at FROM users
+       WHERE email LIKE 'tester.t002%' OR email LIKE 'signup.test+t002%'
+       ORDER BY created_at DESC LIMIT 5;
+
+                  id                  |                   email                    | status | preferred_language |          created_at
+--------------------------------------+--------------------------------------------+--------+--------------------+-------------------------------
+ d43d5eab-5952-4394-9a63-e608e19e8032 | tester.t002+1778759384@inditex-sandbox.com | active | es                 | 2026-05-14 11:49:43.264796+00
+ 1787fec1-e373-4c64-abbf-3b3f74ee7943 | signup.test+t002b@inditex-sandbox.com      | active | es                 | 2026-05-14 11:41:13.419134+00
+ e647c301-6592-400b-9b8d-8a9e412c3969 | signup.test+t002@inditex-sandbox.com       | active | es                 | 2026-05-14 11:31:56.948529+00
+(3 rows)
+
+=== audit_logs — sign-up events ===
+Query: SELECT actor_user_id, action, created_at FROM audit_logs
+       WHERE action LIKE 'auth.sign_up%' ORDER BY created_at DESC LIMIT 10;
+
+            actor_user_id             |    action    |          created_at
+--------------------------------------+--------------+-------------------------------
+                                      | auth.sign_up | 2026-05-14 11:49:53.398302+00  ← 400 legal (actor=NULL, rejected before user creation)
+                                      | auth.sign_up | 2026-05-14 11:49:51.257272+00  ← 409 taken (actor=NULL, no user created)
+                                      | auth.sign_up | 2026-05-14 11:49:50.019704+00  ← 400 non-corporate (actor=NULL)
+ d43d5eab-5952-4394-9a63-e608e19e8032 | auth.sign_up | 2026-05-14 11:49:43.264796+00  ← 201 success (tester fresh user)
+                                      | auth.sign_up | 2026-05-14 11:41:22.670799+00  ← developer rejections
+                                      | auth.sign_up | 2026-05-14 11:41:22.552998+00
+                                      | auth.sign_up | 2026-05-14 11:41:22.524798+00
+ 1787fec1-e373-4c64-abbf-3b3f74ee7943 | auth.sign_up | 2026-05-14 11:41:13.419134+00  ← developer 201 success
+(10 rows)
+
+NOTE: actor_user_id is NULL for rejected attempts (NON_CORPORATE, LEGAL_NOT_ACCEPTED, EMAIL_TAKEN)
+because no user was created. The audit_log entry records the rejection event with actor=NULL.
+This is correct behavior per GDPR audit requirements.
+
+=== employee_profiles — EXPECTED EMPTY for sign-up users ===
+Query: SELECT ep.user_id, ep.employee_id, ep.department FROM employee_profiles ep
+       JOIN users u ON ep.user_id = u.id
+       WHERE u.email LIKE 'tester.t002%' OR u.email LIKE 'signup.test+t002%';
+(0 rows)
+
+NOTE: This is CORRECT per backend rule BR7 (no employee_profiles row created at sign-up).
+The handoff note "INSERT employee_profiles (auto-created)" is inaccurate documentation
+from the developer. The actual backend does NOT create employee_profiles on sign-up
+(confirmed in backend/app/auth/services/sign_up.py: "BR7: No employee_profiles row created at sign-up").
+This is an in-spec behavior — no defect.

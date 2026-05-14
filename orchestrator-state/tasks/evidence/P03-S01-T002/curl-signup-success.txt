@@ -1,0 +1,14 @@
+## Tester run — POST /api/v1/auth/sign-up — happy path
+## Timestamp: 2026-05-14T11:49:43Z (epoch 1778759384)
+## Email: tester.t002+1778759384@inditex-sandbox.com (fresh, never used before)
+
+HTTP/1.1 201 Created
+date: Thu, 14 May 2026 11:49:43 GMT
+server: uvicorn
+x-request-id: tester-t002-ts1778759384
+content-length: 141
+content-type: application/json
+
+{"data":{"user_id":"d43d5eab-5952-4394-9a63-e608e19e8032","mfa_required":false},"meta":{"request_id":"tester-t002-ts1778759384"},"errors":[]}
+
+RESULT: PASS — 201 Created, user_id UUID returned, mfa_required=false, X-Request-ID echoed

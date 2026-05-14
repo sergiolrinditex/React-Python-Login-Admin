@@ -1,0 +1,7 @@
+HTTP/1.1 400 Bad Request
+date: Thu, 14 May 2026 12:28:34 GMT
+server: uvicorn
+content-length: 222
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"e165cd2e-a2e1-4854-bda7-ca931429e281"},"errors":[{"code":"AUTH_SIGNUP_NON_CORPORATE_EMAIL","message":"Email domain not in corporate allowlist: gmail.com","field":"email","details":null}]}

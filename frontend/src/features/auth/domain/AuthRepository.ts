@@ -3,6 +3,7 @@
  *
  * Slice/Phase: P01-S03-T001 — Auth state provider and protected route guards / Phase 1.
  *   Extended in P03-S01-T001 — SignInPage: added signIn() + SignIn* types.
+ *   Extended in P03-S01-T002 — SignUpPage: added signUp() + SignUp* types (§D-T002-AUTH-PORT).
  *
  * Responsibility: Port (interface) for the auth data layer.
  *   Defines what operations the domain needs; the data layer implements them.
@@ -13,6 +14,7 @@
  *
  * Non-obvious deps: SignInOutcome is a discriminated union consumed by
  *   useSignIn (presentation/) and by tests without touching fetch internals.
+ *   SignUpOutcome is consumed by useSignUp (presentation/).
  */
 
 import type { UserProfile } from "./types";
@@ -29,6 +31,7 @@ export type Result<T, E = Error> =
 // ---------------------------------------------------------------------------
 // Sign-in domain types (P03-S01-T001)
 // ---------------------------------------------------------------------------
+
 
 /**
  * Input to the sign-in operation.
@@ -50,6 +53,42 @@ export interface SignInRequest {
 export type SignInOutcome =
   | { kind: "success"; accessToken: string; user: UserProfile }
   | { kind: "mfa"; challengeToken: string; expiresIn: number };
+
+// ---------------------------------------------------------------------------
+// Sign-up domain types (P03-S01-T002 — §D-T002-AUTH-PORT)
+// ---------------------------------------------------------------------------
+
+/**
+ * Input to the sign-up operation.
+ *
+ * Policy:
+ *   - email: RFC 5322 syntax (zod validates); server checks corporate domain allowlist.
+ *   - password: min 12, max 256, ≥1 letter, ≥1 digit (mirrored client-side via zod for UX).
+ *   - full_name: 1-200 chars; server strips whitespace.
+ *   - legal_acceptance: must be literal true (service-layer enforced, not just Pydantic).
+ *
+ * Source: TECHNICAL_GUIDE §6.2 POST /api/v1/auth/sign-up + D-T002-EMAIL-CORP +
+ *   D-T002-PASSWORD-PRE-VALIDATE + D-T002-LEGAL-LITERAL-TRUE.
+ */
+export interface SignUpRequest {
+  email: string;
+  password: string;
+  full_name: string;
+  legal_acceptance: true;
+}
+
+/**
+ * Outcome of a successful sign-up operation.
+ *
+ * Note: sign-up does NOT return an access_token or set a refresh cookie.
+ * User must sign in afterwards to bootstrap a session (D-T002-SUCCESS-REDIRECT).
+ *
+ * Source: TECHNICAL_GUIDE §6.2 — 201 response body.
+ */
+export interface SignUpOutcome {
+  user_id: string;
+  mfa_required: false;
+}
 
 // ---------------------------------------------------------------------------
 // Auth repository port
@@ -81,6 +120,21 @@ export interface IAuthRepository {
    * @returns Result<SignInOutcome, Error>
    */
   signIn(req: SignInRequest): Promise<Result<SignInOutcome>>;
+
+  /**
+   * Calls POST /api/v1/auth/sign-up with email, password, full_name, legal_acceptance.
+   * Returns SignUpOutcome on 201 (user_id + mfa_required:false).
+   * Does NOT create a session — user must sign in afterwards (D-T002-SUCCESS-REDIRECT).
+   *
+   * Typed errors: NonCorporateEmailError (400), LegalNotAcceptedError (400),
+   *   EmailTakenError (409), PasswordPolicyError (422), SignupRateLimitedError (429),
+   *   SignupValidationError (400/422 payload), SignupInternalError (5xx),
+   *   NetworkError (fetch fail).
+   *
+   * @param req - { email, password, full_name, legal_acceptance: true }
+   * @returns Result<SignUpOutcome, Error>
+   */
+  signUp(req: SignUpRequest): Promise<Result<SignUpOutcome>>;
 
   /**
    * Calls POST /api/v1/auth/refresh. Browser auto-sends HttpOnly refresh cookie.

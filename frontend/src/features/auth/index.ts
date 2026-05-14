@@ -3,6 +3,7 @@
  *
  * Slice/Phase: P01-S03-T001 — Auth state provider and protected route guards / Phase 1.
  *   Extended in P03-S01-T001 — SignInPage: added useSignIn, sign-in errors, route constants.
+ *   Extended in P03-S01-T002 — SignUpPage: added useSignUp, sign-up errors, SignUp* types (§D-T002-AUTH-INDEX).
  *
  * Responsibility: Single import surface for downstream slices.
  *   Only export what downstream consumers genuinely need.
@@ -13,7 +14,14 @@
 
 // Domain types
 export type { UserProfile, AuthSession, AuthStatus, Role, EmployeeProfile } from "./domain/types";
-export type { IAuthRepository, Result, SignInRequest, SignInOutcome } from "./domain/AuthRepository";
+export type {
+  IAuthRepository,
+  Result,
+  SignInRequest,
+  SignInOutcome,
+  SignUpRequest,
+  SignUpOutcome,
+} from "./domain/AuthRepository";
 
 // Data layer — only what pages need to call authFetch directly
 export { authFetch } from "./data/httpClient";
@@ -26,6 +34,14 @@ export {
   RateLimitedError,
   SigninValidationError,
   SigninInternalError,
+  // P03-S01-T002: sign-up errors (§D-T002-AUTH-INDEX)
+  NonCorporateEmailError,
+  LegalNotAcceptedError,
+  EmailTakenError,
+  PasswordPolicyError,
+  SignupRateLimitedError,
+  SignupValidationError,
+  SignupInternalError,
 } from "./data/errors";
 
 // Presentation layer — public components and hooks
@@ -37,3 +53,6 @@ export { getSafeRedirect, DEFAULT_SAFE_REDIRECT } from "./presentation/redirectA
 // P03-S01-T001: sign-in hook (§D-T001-AUTH-INDEX)
 export { useSignIn } from "./presentation/useSignIn";
 export type { UseSignInReturn, SignInError } from "./presentation/useSignIn";
+// P03-S01-T002: sign-up hook (§D-T002-AUTH-INDEX)
+export { useSignUp } from "./presentation/useSignUp";
+export type { UseSignUpReturn, SignUpError } from "./presentation/useSignUp";
