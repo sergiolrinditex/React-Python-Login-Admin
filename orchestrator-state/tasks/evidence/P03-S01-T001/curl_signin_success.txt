@@ -1,0 +1,8 @@
+HTTP/1.1 200 OK
+date: Thu, 14 May 2026 09:33:46 GMT
+server: uvicorn
+x-request-id: test-evidence-001
+content-length: 403
+content-type: application/json
+
+{"data":{"mfa_required":true,"mfa_challenge_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3YjM0ZTJjYS1hOWNjLTQxNTItOWJlMC01NTJkMjAwNDY0Y2UiLCJwdXJwb3NlIjoibWZhX2NoYWxsZW5nZSIsImp0aSI6IjBlZGI2MjgzYjI3MTQwNTBiNmU3YWY0ZTk3YzM3ZGQxIiwiaWF0IjoxNzc4NzUxMjI3LCJleHAiOjE3Nzg3NTE1Mjd9.Sy-hB7iAa-oUhozmDKIfOxpbqc-1m08oO6lKZHR0lik","expires_in":300},"meta":{"request_id":"test-evidence-001"},"errors":[]}

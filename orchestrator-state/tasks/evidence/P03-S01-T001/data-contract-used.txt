@@ -1,0 +1,39 @@
+# Verification Data Contract — Tester Evidence
+# Task: P03-S01-T001
+# Timestamp: 2026-05-14T09:39:39Z
+
+## Contract rows used (from TECHNICAL_GUIDE §6.5 / task pack §8)
+
+| Item                    | Value                                     | File on disk                              |
+|-------------------------|-------------------------------------------|-------------------------------------------|
+| Verification email      | employee.verification@inditex-sandbox.com | data/verification/users/employee_primary.json |
+| Verification password   | VerifyPass2024!                           | same                                      |
+| MFA enabled             | true                                      | data/verification/auth/mfa_primary.json   |
+| TOTP secret             | JBSWY3DPEHPK3PXP (Base32)                | same                                      |
+
+## Verification data loaded
+
+- User row: id=7b34e2ca-a9cc-4152-9be0-552d200464ce, email=employee.verification@inditex-sandbox.com, status=active
+- MFA enabled: true (confirmed via sign-in response: mfa_required:true)
+- Data was pre-loaded from prior P01 verification run; not reloaded for this tester run (backend was verified up with /ready showing db.ok).
+
+## Persisted data observed (from psql + audit_logs)
+
+1. Audit log entry `auth.sign_in` with `outcome: mfa_challenge_issued` for request_id tester-p03s01t001-happy
+   -> Confirms sign-in with valid credentials + MFA enabled produces mfa_challenge_token, no refresh_token.
+
+2. Audit log entry `auth.sign_in` with `outcome: failure, reason: wrong_password` for request_id tester-p03s01t001-bad
+   -> Confirms 401 is returned for wrong password.
+
+3. Audit log entries `auth.sign_in` with `outcome: blocked, reason: account_locked` (6 entries) for rate-limit smoke test
+   -> Confirms 423 after consecutive failures (5/900s window).
+
+4. One existing refresh_token in DB (user_id=7b34e2ca...): created by `auth.mfa.verify` at 09:34 during developer's verification run.
+   -> Confirms: MFA challenge step does NOT create refresh_token. Only /2fa/verify does.
+
+## MFA-required happy path confirmed
+
+- POST /api/v1/auth/sign-in with verification user -> HTTP 200
+  Body: {data: {mfa_required: true, mfa_challenge_token: "eyJ...", expires_in: 300}, meta: {...}, errors: []}
+  No Set-Cookie header (correct — refresh token only set after /2fa/verify)
+  X-Request-ID echoed back: tester-p03s01t001-happy

@@ -1,0 +1,10 @@
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   260  100   177  100    83   2543   1192 --:--:-- --:--:-- --:--:--  3768
+HTTP/1.1 401 Unauthorized
+date: Thu, 14 May 2026 09:39:41 GMT
+server: uvicorn
+content-length: 177
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"tester-p03s01t001-bad"},"errors":[{"code":"AUTH_INVALID_CREDENTIALS","message":"Email or password is incorrect","field":null,"details":null}]}
