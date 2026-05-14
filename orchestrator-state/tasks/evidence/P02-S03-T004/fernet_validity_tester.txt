@@ -1,0 +1,2 @@
+ENCRYPTION_KEY: OK
+MFA_ENCRYPTION_KEY: FAIL ValueError: Fernet key must be 32 url-safe base64-encoded bytes.

@@ -2,7 +2,8 @@
 Hilo People — Verification data loader (core UPSERT logic).
 
 Slice:  P00-S02-T003 — Verification data loader and reset
-Phase:  P00 Scaffold + Design System
+        P02-S03-T004 — Added load_ai_provider_credentials() + load_ai_models()
+Phase:  P00 Scaffold + Design System / P02 Core Features
 Purpose: Contains one load_<group> function per fixture category. Each function:
            1. Inspects the Postgres schema at runtime to check if the target
               table exists (sqlalchemy.inspect().has_table()). If not → returns
@@ -17,27 +18,39 @@ Purpose: Contains one load_<group> function per fixture category. Each function:
              If verify OK → keep existing hash (no re-hash). If verify FAILS
              (plain changed) → re-hash and update. This ensures AC1 passes.
 
+         P02-S03-T004 additions:
+           - load_ai_provider_credentials(): encrypts credential_plain at LOAD TIME
+             via app.security.encryption.encrypt_secret() (Fernet AEAD). The plain
+             credential is NEVER stored in the DB. Idempotency key: (provider_id, auth_type).
+           - load_ai_models(): upserts ai_models rows. Idempotency key: (provider_id, model_id).
+             Both functions use _table_exists() deferred-skip pattern.
+
 Key deps:
   - sqlalchemy==2.0.49 (create_engine, inspect, dialects.postgresql.insert)
   - argon2-cffi==25.1.0 (via crypto.py)
+  - cryptography==48.0.0 (via app.security.encryption — for load_ai_provider_credentials)
   - structlog==25.5.0 (structured BEFORE/AFTER/ERROR logging)
 
 Source refs:
   - docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md §6.5, §10.3
   - 01-non-negotiables.md §Logging, §Security, §Database
   - 01-non-negotiables.md §Tests are REAL — hits real Postgres, no SQLite.
+  - P02-S03-T004 D-T004-A4 (loader split SRP), D-T004-A5 (FK-safe order),
+    D-T004-A6 (encrypt at load time)
 """
 
 import json
-import os
-from dataclasses import dataclass
-from typing import Any
 
 import structlog
-from sqlalchemy import Engine, inspect, text
+from sqlalchemy import Engine, text
 from sqlalchemy.orm import Session
 
 from app.verification_data.crypto import hash_password, verify_password
+from app.verification_data.loader_base import LoadResult, _info, _table_exists  # noqa: F401
+from app.verification_data.loader_ai_tables import (  # noqa: F401
+    load_ai_models,
+    load_ai_provider_credentials,
+)
 from app.verification_data.redaction import mask_email
 from app.verification_data.schemas import (
     AdminUserFixture,
@@ -52,60 +65,6 @@ from app.verification_data.schemas import (
 # Logger — structlog; falls back to stdlib if structlog not configured yet.
 # ---------------------------------------------------------------------------
 log = structlog.get_logger(__name__)
-
-# ---------------------------------------------------------------------------
-# Logging verbosity gate
-# ---------------------------------------------------------------------------
-_VERBOSE: bool = os.getenv("ENABLE_VERBOSE_LOGGING", "false").lower() == "true"
-
-
-def _info(event: str, **kw: Any) -> None:
-    """Emit INFO only when ENABLE_VERBOSE_LOGGING=true (per non-negotiables)."""
-    if _VERBOSE:
-        log.info(event, **kw)
-
-
-# ---------------------------------------------------------------------------
-# LoadResult value object
-# ---------------------------------------------------------------------------
-@dataclass
-class LoadResult:
-    """Summary of a single group load operation.
-
-    Attributes:
-        group:    Name of the group (e.g. 'auth', 'rag_chat').
-        status:   'ok', 'deferred', 'dry_run', or 'error'.
-        inserted: Rows newly inserted (0 if deferred/dry-run).
-        updated:  Rows updated on conflict (0 if deferred/dry-run).
-        skipped:  Rows unchanged because the stored data was identical.
-        reason:   Human-readable reason for deferred/error status.
-    """
-
-    group: str
-    status: str
-    inserted: int = 0
-    updated: int = 0
-    skipped: int = 0
-    reason: str = ""
-
-
-# ---------------------------------------------------------------------------
-# Table existence check (runtime, not compile-time)
-# ---------------------------------------------------------------------------
-def _table_exists(engine: Engine, table_name: str) -> bool:
-    """Return True if table_name exists in the public schema at runtime.
-
-    Uses sqlalchemy.inspect() which queries information_schema — no cache.
-
-    Args:
-        engine:     Active SQLAlchemy Engine.
-        table_name: Unqualified table name (e.g. 'users').
-
-    Returns:
-        True if the table exists in the connected database.
-    """
-    insp = inspect(engine)
-    return insp.has_table(table_name)
 
 
 # ---------------------------------------------------------------------------

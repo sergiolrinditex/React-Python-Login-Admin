@@ -2,11 +2,20 @@
 Hilo People — Pydantic v2 schemas for verification fixture validation.
 
 Slice:  P00-S02-T003 — Verification data loader and reset
-Phase:  P00 Scaffold + Design System
+        P02-S03-T004 — Added AiProviderCredentialFixture + AiModelFixture
+Phase:  P00 Scaffold + Design System / P02 Core Features
 Purpose: Defines strict Pydantic models for each fixture category. These models
          validate incoming JSON before any DB insert. A ValidationError here
          causes exit-code 2 with a human-readable error message listing the
          missing/invalid field.
+
+         P02-S03-T004 additions:
+           - AiProviderCredentialFixture: credential for ai_provider_credentials table.
+             credential_plain is plain text in the fixture; encrypted at LOAD TIME by
+             load_ai_provider_credentials() via app.security.encryption.encrypt_secret().
+             NEVER stored plain in DB.
+           - AiModelFixture: model configuration for ai_models table.
+             Validates that model_type is a known value and enabled/is_default are booleans.
 
 Key deps:
   - pydantic==2.12.5 (BaseModel, field_validator, model_config, ConfigDict)
@@ -15,6 +24,7 @@ Source refs:
   - docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md §10.3 DB Schema
   - docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md §6.5 Verification Data Contract
   - 01-non-negotiables.md §Production quality (real validations from day 1)
+  - 01-non-negotiables.md §Security (credentials encrypted at load time, never author time)
 """
 
 from typing import Any, Literal, Optional
@@ -197,3 +207,93 @@ class ConversationFixture(BaseModel):
     language: Literal["es", "en", "fr"] = "es"
     title: str
     messages: list[dict[str, Any]] = []
+
+
+class AiProviderCredentialFixture(BaseModel):
+    """AI provider credential fixture — loaded into ai_provider_credentials table.
+
+    credential_plain is plain text in the fixture and MUST be a clearly non-secret
+    marker value (e.g. 'hilo-dev-litellm-master-key-2026') since data/verification/
+    is committed to the repo. It is encrypted at LOAD TIME by
+    load_ai_provider_credentials() via app.security.encryption.encrypt_secret().
+    NEVER stored in plain text in the DB.
+
+    provider_ref: name of the ai_providers row to associate (resolved to provider_id
+    at load time via SELECT id FROM ai_providers WHERE name = :provider_ref).
+
+    Idempotency key: (provider_id, auth_type) — upsert on conflict.
+
+    Ref:
+      - P02-S03-T004 D-T004-A4, D-T004-A6
+      - TECHNICAL_GUIDE §10.3 ai_provider_credentials schema
+      - 01-non-negotiables.md §Security (Fernet AEAD at load time)
+    """
+
+    model_config = ConfigDict(strict=False, extra="ignore")
+
+    provider_ref: str  # references AiProviderFixture.name
+    auth_type: Literal["bearer", "api_key", "basic"] = "bearer"
+    credential_plain: str  # encrypted at load time; must be a non-secret dev marker
+    expires_at: Optional[str] = None  # ISO-8601 or null
+
+    @field_validator("credential_plain")
+    @classmethod
+    def credential_not_empty(cls, v: str) -> str:
+        """Ensure credential_plain is not blank (would encrypt an empty string)."""
+        if not v.strip():
+            raise ValueError("credential_plain must not be blank")
+        return v
+
+    @field_validator("provider_ref")
+    @classmethod
+    def provider_ref_not_empty(cls, v: str) -> str:
+        """Ensure provider_ref is a non-empty string."""
+        if not v.strip():
+            raise ValueError("provider_ref must not be blank")
+        return v.strip()
+
+
+class AiModelFixture(BaseModel):
+    """AI model fixture — loaded into ai_models table.
+
+    provider_ref: name of the ai_providers row to associate (resolved to provider_id
+    at load time via SELECT id FROM ai_providers WHERE name = :provider_ref).
+
+    Idempotency key: (provider_id, model_id) — upsert on conflict.
+
+    An AI model is 'active for chat' when:
+      model_type='chat' AND enabled=True AND is_default=True
+    The loader enforces this at the fixture level (both flags can be set together).
+    The at-most-one-default invariant is enforced at the DB level (FU-20260513085435);
+    for dev bootstrap a single fixture row is sufficient.
+
+    Ref:
+      - P02-S03-T004 D-T004-A4
+      - TECHNICAL_GUIDE §10.3 ai_models schema
+    """
+
+    model_config = ConfigDict(strict=False, extra="ignore")
+
+    provider_ref: str  # references AiProviderFixture.name
+    model_id: str  # e.g. 'gpt-4o-mini', 'text-embedding-3-small'
+    model_type: Literal["chat", "embedding", "reranker", "vision"] = "chat"
+    enabled: bool = True
+    is_default: bool = False
+    capabilities: list[str] = []
+    pricing: dict[str, Any] = {}
+
+    @field_validator("model_id")
+    @classmethod
+    def model_id_not_empty(cls, v: str) -> str:
+        """Ensure model_id is a non-empty string."""
+        if not v.strip():
+            raise ValueError("model_id must not be blank")
+        return v.strip()
+
+    @field_validator("provider_ref")
+    @classmethod
+    def provider_ref_not_empty(cls, v: str) -> str:
+        """Ensure provider_ref is a non-empty string."""
+        if not v.strip():
+            raise ValueError("provider_ref must not be blank")
+        return v.strip()

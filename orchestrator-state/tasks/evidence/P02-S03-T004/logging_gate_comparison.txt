@@ -1,0 +1,3 @@
+verbose_true_log_lines=20
+verbose_false_log_lines=3
+gate_pass=yes

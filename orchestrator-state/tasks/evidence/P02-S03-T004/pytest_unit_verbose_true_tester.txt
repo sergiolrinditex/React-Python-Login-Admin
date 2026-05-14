@@ -1,0 +1,20 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.5, pytest-9.0.2, pluggy-1.6.0 -- /usr/local/bin/python3
+cachedir: .pytest_cache
+rootdir: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P02-S03-T004/backend
+configfile: pyproject.toml
+plugins: httpx-0.36.0, asyncio-1.3.0, langsmith-0.8.3, anyio-4.13.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 9 items
+
+tests/unit/test_gen_dev_secrets.py::test_placeholder_encryption_key_is_rotated PASSED [ 11%]
+tests/unit/test_gen_dev_secrets.py::test_valid_fernet_key_is_preserved PASSED [ 22%]
+tests/unit/test_gen_dev_secrets.py::test_script_never_prints_key_value PASSED [ 33%]
+tests/unit/test_gen_dev_secrets.py::test_env_file_has_secure_permissions PASSED [ 44%]
+tests/unit/test_gen_dev_secrets.py::test_missing_env_file_exits_nonzero PASSED [ 55%]
+tests/unit/test_verification_data_admin_ai_loaders.py::test_load_credentials_encrypts_and_round_trips PASSED [ 66%]
+tests/unit/test_verification_data_admin_ai_loaders.py::test_load_credentials_idempotent_upsert PASSED [ 77%]
+tests/unit/test_verification_data_admin_ai_loaders.py::test_load_models_upsert_and_flags PASSED [ 88%]
+tests/unit/test_verification_data_admin_ai_loaders.py::test_loaders_deferred_when_tables_missing PASSED [100%]
+
+============================== 9 passed in 2.61s ===============================

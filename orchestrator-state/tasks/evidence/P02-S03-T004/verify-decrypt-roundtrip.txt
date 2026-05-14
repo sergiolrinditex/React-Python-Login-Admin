@@ -1,0 +1,7 @@
+tokens.jwt_key.missing JWT_PRIVATE_KEY env var is not set; JWT encoding will raise at runtime
+env_key_set=True env_key_len=44
+auth_type=bearer enc_len=140 enc_prefix=gAAAAABqBNmj...
+decrypt_ok=True
+plain_starts_with_hilo_dev=True
+plain_equals_marker=True
+plain_len=32

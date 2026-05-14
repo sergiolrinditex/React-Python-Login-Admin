@@ -1,0 +1,43 @@
+P02-S03-T004 — /verify-slice (pre-closer) — contract observed
+TIMESTAMP: 2026-05-13T22:09:00+02:00
+
+# Verification Data Contract row used (TECHNICAL_GUIDE §6.5)
+J103 admin-ai
+  setup_cmd:   python -m app.verification_data.bootstrap --source data/verification --only admin_ai
+  fixtures:    data/verification/users/admin_peopletech.json (admin user)
+               data/verification/admin_ai/providers/litellm_verification.json
+               data/verification/admin_ai/credentials/litellm_sandbox_bearer.json  [NEW T004]
+               data/verification/admin_ai/models/litellm_chat_default.json         [NEW T004]
+  cleanup:     dev-restart.sh --reset (drops compose volume p02-s03-t004_pg_data)
+
+# DB state after bootstrap
+ai_providers            count=1   name=litellm_verification_sandbox status=active
+ai_provider_credentials count=1   auth_type=bearer  enc_len=140  prefix=gAAAAABqBNmj... (Fernet ciphertext)
+ai_models               count=1   model_id=gpt-4o-mini model_type=chat enabled=t is_default=t
+default_chat_invariant  count=1   (model_type='chat' AND enabled=true AND is_default=true)
+
+# .env state after gen-dev-secrets.sh rotation
+ENCRYPTION_KEY    len=44  placeholder=False  Fernet round_trip=OK
+JWT_PRIVATE_KEY   len=64  placeholder=False
+JWT_PUBLIC_KEY    len=64  placeholder=False
+MFA_ENCRYPTION_KEY len=41 placeholder=True   (intentional: out of scope per D-T004-A8)
+
+# App-level decrypt round-trip via app.security.encryption.decrypt_secret
+decrypt_ok=True  plain_equals_marker=True  plain_len=32
+
+# Flows tested (live curl, real backend, real DB)
+/health                           200 OK
+/live                             200 OK
+/ready                            500 (PRE-EXISTING bug: sync engine.connect on asyncpg; NOT in T004 scope)
+POST /api/v1/auth/sign-in         200 OK + JWT (PRE-SLICE: AUTH_SIGNIN_INTERNAL_ERROR)
+POST /api/v1/chat/conversations   201 Created
+POST /chat/conversations/{id}/stream  HTTP 200 text/event-stream
+                                  event: meta emitted with seeded model_id=79ec1690 provider_id=cea7a65c
+                                  chunk/usage/done NOT emitted: downstream LiteLLM SDK bug
+                                  (model_str='litellm/gpt-4o-mini' parsed as <provider>/<model>; NOT T004 scope)
+
+# Leak audit
+ENCRYPTION_KEY bytes in back.log:            NO_LEAK
+ENCRYPTION_KEY bytes in evidence/:           NO_LEAK
+40+ char base64 candidates in evidence:      NO_LEAK
+Plain credential bytes in back.log:          searched 'hilo-dev-litellm-master-key' → NO_LEAK

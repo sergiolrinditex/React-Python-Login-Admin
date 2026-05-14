@@ -1,0 +1,46 @@
+## Contract Observed — P02-S03-T004
+
+### Files / Modules Observed During Tests and Curl Checks
+
+backend/app/verification_data/loader_base.py
+  - LoadResult dataclass
+  - _table_exists(engine, table_name) → bool
+  - _info(event, **kw) → None (verbose-gated INFO logging)
+
+backend/app/verification_data/loader_ai_tables.py
+  - load_ai_provider_credentials(session, engine, fixtures) → LoadResult
+  - load_ai_models(session, engine, fixtures) → LoadResult
+
+backend/app/verification_data/loader.py
+  - Re-exports: load_ai_provider_credentials, load_ai_models
+  - Existing: load_ai_providers (unchanged)
+
+backend/app/verification_data/schemas.py
+  - AiProviderCredentialFixture (provider_ref, auth_type, credential_plain, expires_at)
+  - AiModelFixture (provider_ref, model_id, model_type, enabled, is_default, capabilities, pricing)
+
+backend/app/verification_data/bootstrap.py
+  - _run_admin_ai_group() — wires providers → credentials → models in FK-safe order
+
+backend/app/security/encryption.py
+  - encrypt_secret(plain) → ciphertext (Fernet AEAD)
+  - decrypt_secret(ciphertext) → plain
+  - reset_fernet_cache() → None
+
+scripts/gen-dev-secrets.sh
+  - Rotates ENCRYPTION_KEY (Fernet.generate_key) when placeholder
+  - Idempotent: changed=0 on second run
+  - Never prints key values
+
+### DB Tables Observed (integration tests with real Postgres)
+- ai_providers (SELECT, INSERT)
+- ai_provider_credentials (SELECT, INSERT, UPDATE — upsert on provider_id+auth_type)
+- ai_models (SELECT, INSERT, UPDATE — upsert on provider_id+model_id)
+
+### Fixture Files
+- data/verification/admin_ai/credentials/litellm_sandbox_bearer.json
+- data/verification/admin_ai/models/litellm_chat_default.json
+
+### Endpoints (not tested in tester scope — live curl deferred to /verify-slice)
+- POST /api/v1/chat/conversations/{id}/stream — blocked by ENCRYPTION_KEY placeholder (now unblocked)
+- POST /api/v1/admin/ai/providers — uses encrypt_secret (now functional)
