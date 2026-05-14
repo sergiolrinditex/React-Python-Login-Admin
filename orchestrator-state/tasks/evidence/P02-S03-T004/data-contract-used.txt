@@ -1,0 +1,24 @@
+## Data Contract Used — P02-S03-T004
+
+### Verification Data Contract Row (TECHNICAL_GUIDE §6.5)
+
+J103 admin-ai row:
+- Principal: data/verification/users/admin_peopletech.json.email admin
+- Data needed: proveedor de verificación, credencial reales/proporcionados cifrable desde data/verification, modelos desde data/verification
+- Command: python -m app.verification_data.bootstrap --source data/verification --only admin_ai
+- Cleanup: delete ai_provider test rows
+- Journey refs: J103, P02-S05, P04-S01
+
+### Provided Verification Data Loaded (non-secret marker values)
+- ai_providers: litellm_verification_sandbox (status=active) — pre-existing from T002
+- ai_provider_credentials: provider_ref=litellm_verification_sandbox, auth_type=bearer, credential_plain=hilo-dev-litellm-master-key-2026 (dev-only marker string, not a real secret)
+- ai_models: provider_ref=litellm_verification_sandbox, model_id=gpt-4o-mini, model_type=chat, enabled=true, is_default=true
+
+### Persisted Data Observed (integration test T10-T12)
+- ai_providers: ≥1 row with status=active
+- ai_provider_credentials: ≥1 row with encrypted_secret ≠ plain; decrypt_secret(encrypted_secret) == credential_plain
+- ai_models: exactly 1 row with model_type=chat AND enabled=true AND is_default=true
+
+### Idempotency confirmed
+- bootstrap --only admin_ai run 1: inserted rows
+- bootstrap --only admin_ai run 2: updated rows (no duplicates)

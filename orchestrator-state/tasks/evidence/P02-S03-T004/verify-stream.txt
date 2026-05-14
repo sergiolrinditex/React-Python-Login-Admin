@@ -1,0 +1,13 @@
+HTTP/1.1 200 OK
+date: Wed, 13 May 2026 20:07:44 GMT
+server: uvicorn
+x-request-id: d2918a99-93fd-4944-9c53-2f9f355979d4
+cache-control: no-cache
+connection: keep-alive
+content-type: text/event-stream; charset=utf-8
+transfer-encoding: chunked
+
+event: meta
+data: {"message_id":"4c7ec1a3-f835-49ad-bd4c-d036371755dc","model_id":"79ec1690-e86e-4d04-9381-69ca7ed9fc19","language":"es","request_id":"d2918a99-93fd-4944-9c53-2f9f355979d4"}
+
+curl: (18) transfer closed with outstanding read data remaining

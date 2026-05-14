@@ -1,0 +1,22 @@
+==> Hard reset requested.
+==> Hard reset: destroying compose volumes (pg_data, minio_data)...
+==> Booting full infra: postgres redis litellm minio
+==> Applying alembic migrations (alembic upgrade head)...
+==> Loading verification_data (real/provided fixtures)...
+==> verification_data bootstrap complete.
+==> Ensuring infra up: postgres redis
+==> Starting backend (uvicorn) on :8000...
+     backend ready at http://localhost:8000 (pid 30576)
+==> frontend/node_modules missing — running npm install...
+==> Starting frontend (vite) on :5173...
+     frontend ready at http://localhost:5173 (pid 30625)
+
+  Service   URL                        Status
+  --------- -------------------------- -------
+  backend   http://localhost:8000      UP
+  frontend  http://localhost:5173      UP
+  database  (via /ready)               UP
+
+  Logs: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P02-S03-T004/orchestrator-state/dev-logs/back.log  /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P02-S03-T004/orchestrator-state/dev-logs/front.log
+
+==> Reset complete.

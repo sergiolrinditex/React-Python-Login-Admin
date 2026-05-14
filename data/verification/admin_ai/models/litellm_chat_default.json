@@ -1,0 +1,10 @@
+{
+  "_comment": "Default chat model for litellm_verification_sandbox provider — gpt-4o-mini via LiteLLM proxy.",
+  "provider_ref": "litellm_verification_sandbox",
+  "model_id": "gpt-4o-mini",
+  "model_type": "chat",
+  "enabled": true,
+  "is_default": true,
+  "capabilities": ["chat", "streaming"],
+  "pricing": {}
+}

@@ -56,6 +56,8 @@ from app.verification_data.loader import (
     LoadResult,
     load_admin_users,
     load_agents,
+    load_ai_models,
+    load_ai_provider_credentials,
     load_ai_providers,
     load_mcp_servers,
     load_rag_collections,
@@ -64,13 +66,15 @@ from app.verification_data.loader import (
 from app.verification_data.schemas import (
     AdminUserFixture,
     AgentFixture,
+    AiModelFixture,
+    AiProviderCredentialFixture,
     AiProviderFixture,
     ConversationFixture,
+    DocumentFixture,
     EmployeeUserFixture,
     McpServerFixture,
     MfaSecretFixture,
     RagCollectionFixture,
-    DocumentFixture,
 )
 
 # ---------------------------------------------------------------------------
@@ -312,7 +316,20 @@ def _run_history_group(source_dir: Path, session: Any, engine: Any, dry_run: boo
 
 
 def _run_admin_ai_group(source_dir: Path, session: Any, engine: Any, dry_run: bool) -> list[LoadResult]:
-    """Load admin_ai group: admin users + AI providers.
+    """Load admin_ai group: admin users + AI providers + credentials + models.
+
+    FK-safe load order (D-T004-A5):
+      1. admin users  (users table — no FK to ai_providers)
+      2. ai providers (ai_providers table)
+      3. ai provider credentials (ai_provider_credentials FK→ ai_providers)
+      4. ai models    (ai_models FK → ai_providers)
+
+    Credentials and models are loaded from:
+      - data/verification/admin_ai/credentials/*.json → AiProviderCredentialFixture
+      - data/verification/admin_ai/models/*.json      → AiModelFixture
+
+    credential_plain in fixtures is encrypted at load time by load_ai_provider_credentials()
+    via app.security.encryption.encrypt_secret() (D-T004-A6). NEVER stored plain in DB.
 
     Args:
         source_dir: Root verification data directory.
@@ -336,16 +353,41 @@ def _run_admin_ai_group(source_dir: Path, session: Any, engine: Any, dry_run: bo
     provider_raws = _load_fixtures_from_dir(source_dir, "admin_ai", "providers")
     provider_fixtures = [AiProviderFixture.model_validate(r) for r in provider_raws]
 
+    # P02-S03-T004: credential and model fixtures (new subdirs)
+    credential_raws = _load_fixtures_from_dir(source_dir, "admin_ai", "credentials")
+    credential_fixtures = [AiProviderCredentialFixture.model_validate(r) for r in credential_raws]
+
+    model_raws = _load_fixtures_from_dir(source_dir, "admin_ai", "models")
+    model_fixtures = [AiModelFixture.model_validate(r) for r in model_raws]
+
     if dry_run:
         if _VERBOSE:
-            log.info("verification_data.group.admin_ai.dry_run")
+            log.info(
+                "verification_data.group.admin_ai.dry_run",
+                admin_count=len(admin_fixtures),
+                provider_count=len(provider_fixtures),
+                credential_count=len(credential_fixtures),
+                model_count=len(model_fixtures),
+            )
         return [LoadResult(group="admin_ai", status="dry_run", reason="--dry-run flag")]
 
     results: list[LoadResult] = []
+
+    # Step 1: admin users
     if admin_fixtures:
         results.append(load_admin_users(session, engine, admin_fixtures))
+
+    # Step 2: AI providers (FK parent for credentials + models)
     if provider_fixtures:
         results.append(load_ai_providers(session, engine, provider_fixtures))
+
+    # Step 3: AI provider credentials (FK → ai_providers; encrypts at load time)
+    if credential_fixtures:
+        results.append(load_ai_provider_credentials(session, engine, credential_fixtures))
+
+    # Step 4: AI models (FK → ai_providers)
+    if model_fixtures:
+        results.append(load_ai_models(session, engine, model_fixtures))
 
     if not results:
         results.append(LoadResult(group="admin_ai", status="ok", reason="no admin_ai fixtures found"))

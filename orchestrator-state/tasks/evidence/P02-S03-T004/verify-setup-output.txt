@@ -1,0 +1,13 @@
+==> Rotating dev secrets (gen-dev-secrets.sh) ...
+gen-dev-secrets.start event=provisioner_start env=/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P02-S03-T004/.env
+gen-dev-secrets.ENCRYPTION_KEY.before event=placeholder_detected key_len=20
+gen-dev-secrets.ENCRYPTION_KEY.rotated event=key_rotated key_len=44 placeholder_detected=true
+gen-dev-secrets.JWT_PRIVATE_KEY.before event=placeholder_detected key_len=20
+gen-dev-secrets.JWT_PRIVATE_KEY.rotated event=key_rotated key_len=64 placeholder_detected=true
+gen-dev-secrets.JWT_PUBLIC_KEY.before event=placeholder_detected key_len=20
+gen-dev-secrets.JWT_PUBLIC_KEY.rotated event=key_rotated key_len=64 placeholder_detected=true
+gen-dev-secrets.ENABLE_VERBOSE_LOGGING.set event=set_true
+gen-dev-secrets.done event=provisioner_done changed=4
+gen-dev-secrets.summary changed=4
+==> DB migrations: alembic upgrade head
+bash: alembic: command not found
