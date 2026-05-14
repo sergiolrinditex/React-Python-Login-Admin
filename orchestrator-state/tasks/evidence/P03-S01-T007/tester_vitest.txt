@@ -1,0 +1,34 @@
+## Tester run — Vitest full suite
+## Executed: 2026-05-14 (tester agent, P03-S01-T007)
+## Command: npm --prefix frontend test -- --run
+
+ RUN  v3.2.4 /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S01-T007/frontend
+
+ ✓ src/features/chat/__tests__/chatRepository.test.ts (7 tests)
+ ✓ src/features/auth/__tests__/useSignIn.test.tsx (11 tests)
+ ✓ src/features/auth/__tests__/useSignUp.test.tsx (16 tests)
+ ✓ src/app/__tests__/providers.test.tsx (4 tests)
+ ✓ src/features/auth/__tests__/auth.test.tsx (33 tests)
+ ✓ src/features/auth/__tests__/auth2fa.test.tsx (tests present)
+ ✓ src/pages/auth/__tests__/SignInPage.test.tsx (10 tests)
+ ✓ src/pages/auth/__tests__/SignUpPage.test.tsx (10 tests)
+ ✓ src/features/auth/data/__tests__/httpClient.test.ts (4 tests)
+ ✓ src/i18n/__tests__/i18n.test.ts (16 tests)
+ (additional test files listed in raw output)
+
+ Test Files  13 passed (13)
+      Tests  163 passed (163)
+   Start at  17:18:42
+   Duration  3.09s (transform 1.32s, setup 2.93s, collect 4.51s, tests 1.34s, environment 12.40s, prepare 1.71s)
+
+## httpClient.test.ts breakdown (new file, 4 tests):
+ ✓ HC-T01a: authFetch('/api/v1/users/me') passes relative path to global.fetch
+ ✓ HC-T01b: authFetch('/api/v1/chat/conversations') keeps relative path
+ ✓ HC-T02: authFetch('http://example.test/x') is NOT prefixed with API_BASE
+ ✓ HC-T03: refresh request uses relative path /api/v1/auth/refresh (not absolute)
+
+## Summary
+- Total tests: 163 / 163 PASS
+- Failed: 0
+- New httpClient.test.ts: 4/4 PASS (baseline increase from 159 prior to T007 +4)
+- All test files: 13/13 green

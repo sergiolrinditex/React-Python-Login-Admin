@@ -1,0 +1,18 @@
+ ✓ src/features/chat/__tests__/chatRepository.test.ts (7 tests) 15ms
+ ✓ src/features/auth/__tests__/useSignIn.test.tsx (11 tests) 23ms
+ ✓ src/features/auth/__tests__/useSignUp.test.tsx (16 tests) 26ms
+ ✓ src/app/__tests__/providers.test.tsx (4 tests) 20ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx (34 tests) 109ms
+ ✓ src/features/auth/__tests__/auth.test.tsx (33 tests) 128ms
+ ✓ src/features/chat/__tests__/ChatHomePage.test.tsx (10 tests) 118ms
+ ✓ src/pages/showcase/__tests__/ShowcasePage.test.tsx (4 tests) 136ms
+ ✓ src/features/chat/__tests__/useCreateConversation.test.tsx (4 tests) 233ms
+ ✓ src/pages/auth/__tests__/SignInPage.test.tsx (10 tests) 187ms
+ ✓ src/pages/auth/__tests__/SignUpPage.test.tsx (10 tests) 214ms
+ ✓ src/features/auth/data/__tests__/httpClient.test.ts (4 tests) 5ms
+ ✓ src/i18n/__tests__/i18n.test.ts (16 tests) 6ms
+ Test Files  13 passed (13)
+      Tests  163 passed (163)
+
+Full run: 163 tests across 13 test files, all PASS
+New tests: 4 (HC-T01×2 + HC-T02×1 + HC-T03×1) in src/features/auth/data/__tests__/httpClient.test.ts

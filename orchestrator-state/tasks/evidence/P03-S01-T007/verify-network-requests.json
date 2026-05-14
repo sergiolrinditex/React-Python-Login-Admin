@@ -1,0 +1,60 @@
+{
+  "verification_session": "P03-S01-T007 /verify-slice",
+  "timestamp": "2026-05-14T17:35:00Z",
+  "frontend_port": 5177,
+  "frontend_worktree": "P03-S01-T007",
+  "note": "Port 5173 was running P03-S02-T002 (different worktree). T007 frontend started on 5177.",
+  "fix_confirmed": "const API_BASE = import.meta.env.VITE_API_BASE_URL ?? \"\" (NOT http://localhost:8000)",
+  "network_requests": [
+    {
+      "reqid": 127,
+      "method": "POST",
+      "url": "http://localhost:5177/api/v1/auth/refresh",
+      "status": 401,
+      "note": "Stale refresh token on page load - expected"
+    },
+    {
+      "reqid": 128,
+      "method": "POST",
+      "url": "http://localhost:5177/api/v1/auth/refresh",
+      "status": 200,
+      "sec_fetch_site": "same-origin",
+      "set_cookie": "refresh_token=...; HttpOnly; Max-Age=2592000; Path=/api/v1/auth; SameSite=lax; Secure",
+      "note": "Refresh succeeded via same-origin proxy - token rotated with correct cookie attributes"
+    },
+    {
+      "reqid": 130,
+      "method": "GET",
+      "url": "http://localhost:5177/api/v1/users/me",
+      "status": 200,
+      "sec_fetch_site": "same-origin",
+      "response_preferred_language": "es",
+      "response_email": "employee.verification@inditex-sandbox.com",
+      "note": "users/me returned 200 with employee profile - relative path confirmed"
+    },
+    {
+      "reqid": 131,
+      "method": "POST",
+      "url": "http://localhost:5177/api/v1/auth/sign-in",
+      "status": 200,
+      "sec_fetch_site": "same-origin",
+      "mfa_required": true,
+      "note": "sign-in succeeded via same-origin - mfa_required=true, challenge token returned"
+    }
+  ],
+  "preflight_requests": [],
+  "console_errors": [],
+  "cors_warnings": [],
+  "key_verifications": {
+    "all_requests_same_origin": true,
+    "no_options_preflight": true,
+    "no_console_errors": true,
+    "refresh_cookie_httponly": true,
+    "refresh_cookie_path": "/api/v1/auth",
+    "refresh_cookie_samesite": "lax",
+    "refresh_cookie_secure": true,
+    "users_me_200": true,
+    "users_me_preferred_language_es": true,
+    "fix_active": "API_BASE = VITE_API_BASE_URL ?? empty_string"
+  }
+}
