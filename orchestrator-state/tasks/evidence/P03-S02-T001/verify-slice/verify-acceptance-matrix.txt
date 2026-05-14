@@ -1,0 +1,140 @@
+=== ACCEPTANCE MATRIX VERIFICATION — P03-S02-T001 ===
+DATE: 2026-05-14T10:24:00Z
+VERIFIER: slice-verifier
+
+A1 — /chat route mounts <ChatHomePage /> under <RequireAuth>
+  STATUS: VERIFIED
+  METHOD: code-inspection
+  EVIDENCE: router.tsx — Route path={ROUTE_CHAT} element={<ChatHomePage />}
+            wrapped in: <Route element={<RequireAuth><Outlet /></RequireAuth>}>
+  RESULT: pass
+
+A2 — Post-login default destination resolves to /chat
+  STATUS: VERIFIED
+  METHOD: code-inspection
+  EVIDENCE: RootRedirect() — status==='authenticated' → <Navigate to={ROUTE_CHAT} replace />
+            Catch-all * → <Navigate to="/" replace /> which triggers RootRedirect
+  RESULT: pass
+
+A3 — Empty state: Wordmark + chat.empty.title + chat.empty.subtitle + 2 prompt chips
+  STATUS: VERIFIED
+  METHOD: code-inspection (browser MCP unavailable — extension not connected)
+  EVIDENCE: EmptyPrompts.tsx renders <Wordmark>, t('chat:empty.title'), t('chat:empty.subtitle'),
+            two <button> chips: t('chat:empty.promptVacation'), t('chat:empty.promptMobility')
+            i18n keys confirmed in i18n/index.ts (tester evidence + component tests T01)
+  RESULT: pass (browser visual deferred to human — FRONT_BROWSER_CHECK: deferred_to_human)
+
+A4 — Composer POST /chat/conversations → navigate /chat/:id
+  STATUS: VERIFIED
+  METHOD: real backend curl
+  EVIDENCE: POST /api/v1/chat/conversations HTTP 201
+            response: {conversation_id: "0802885a-7ff5-4935-a317-de68e1379f2a"}
+            DB row confirmed: id=0802885a..., user_id=c9e496ed..., language=es
+            navigate called via onSuccess in useCreateConversation hook (code-inspection)
+  RESULT: pass
+
+A5 — Prompt chip direct-submit
+  STATUS: VERIFIED
+  METHOD: code-inspection
+  EVIDENCE: EmptyPrompts.tsx onPromptSelect called directly on chip onClick
+            → ChatHomePage.handleSubmit(prompt) → useMutation.mutate()
+            D-T001-PROMPT-CHIP-BEHAVIOR documented in handoff
+  RESULT: pass (browser visual deferred to human)
+
+A6 — useAuth().user consumed
+  STATUS: VERIFIED
+  METHOD: code-inspection
+  EVIDENCE: ChatHomePage.tsx imports useAuth, destructures {status, logout, user}
+            user used for onAuthFailure/logout; status drives render logic
+  RESULT: pass
+
+A7 — VISUAL_CONTRACT_CHECK block present in handoff with all fields
+  STATUS: VERIFIED
+  METHOD: handoff inspection
+  EVIDENCE: Developer section of handoff has complete VISUAL_CONTRACT_CHECK block
+            with all required fields: route, tokens_used, base_components_used,
+            required_states_covered, real_data_or_backend_used, i18n_checked,
+            evidence paths, deviations documented
+  RESULT: pass
+
+=== UX STATES MATRIX ===
+
+loading:
+  STATUS: VERIFIED (code-inspection)
+  RequireAuth renders loading placeholder during status==='hydrating'
+  Composer form gets aria-busy="true" during mutation isPending
+  result: pass
+
+empty:
+  STATUS: VERIFIED (code-inspection + component tests)
+  ChatHomePage renders EmptyPrompts + Composer when error===null && !isPending
+  Test T01 verifies Wordmark + title + 2 chips + composer
+  result: pass
+
+error_network:
+  STATUS: VERIFIED (code-inspection + tests)
+  NetworkErrorView shown when error !== null && !(error instanceof ChatForbiddenError)
+  Shows errors:NETWORK + common:actions.retry; aria-live="assertive" present
+  Test T05 verifies render; T08 verifies aria-live region
+  result: pass (browser simulation deferred to human)
+
+error_validation:
+  STATUS: VERIFIED (code-inspection + tests)
+  Composer validates: empty trimmed → send disabled; length > 4000 → inline error
+  Test T04 verifies over-MAX path
+  result: pass (browser visual deferred to human)
+
+permission_denied:
+  STATUS: VERIFIED (code-inspection + tests)
+  ForbiddenView shown for ChatForbiddenError (403 backend response)
+  RequireAuth handles 401 → redirects to /auth/sign-in?next=%2Fchat
+  Test T07 verifies ForbiddenView render
+  result: pass (browser simulation deferred to human)
+
+success:
+  STATUS: VERIFIED (real backend + DB)
+  POST /chat/conversations → 201 → navigate(/chat/0802885a-...)
+  DB row persisted: conversations.id = 0802885a-7ff5-4935-a317-de68e1379f2a
+  Route /chat/:conversationId → <Navigate to="/chat" replace /> (expected slice boundary)
+  result: pass
+
+=== LOGS CHECK ===
+X-Request-ID propagation: CONFIRMED
+  - Backend echoes request_id in meta.request_id on every response
+  - Backend log lines include request_id at every layer (router → service → repo)
+  - Tester evidence back-log-curl.txt confirms end-to-end propagation
+
+PII in logs: NONE FOUND
+  - user_id appears as uid_hash (hashed prefix only)
+  - No email, no full_name, no prompt content logged
+  - Only: prompt_len, conversation_id prefix, request_id, language, latency_ms
+
+VITE_ENABLE_VERBOSE_LOGGING:
+  - false: 0 stdout lines (BEFORE/AFTER suppressed) — tester evidence confirms
+  - true: 160 stdout lines (BEFORE/AFTER visible) — tester evidence confirms
+
+=== DB ROW OBSERVED ===
+Table: conversations
+Row: id=0802885a-7ff5-4935-a317-de68e1379f2a
+     user_id=c9e496ed-d735-4322-8979-bd6fff32b2a2
+     language=es
+     title=¿Cuántos días de vacaciones me quedan?
+     created_at=2026-05-14T10:23:07.815371+00
+
+Verification user total conversations: 6 (all language=es, persisted)
+
+=== DEVIATIONS (expected, not defects) ===
+1. Slice boundary: /chat/:conversationId bounces back to /chat — EXPECTED
+   (P03-S02-T002 placeholder not yet implemented)
+   Conversation IS persisted in DB (verified above). Documented as D-T001-OUTAGE-OF-CHAT-T002.
+2. Browser MCP: extension not connected — browser visual check deferred to human
+   Service layer fully verified via curl + psql + code inspection + 110 passing tests
+3. Backend response shape: POST /chat/conversations returns {conversation_id} only
+   (not {title, language, created_at} as some docs indicated)
+   types.ts updated to make extra fields optional — conversation_id (only nav target) present
+   Not a defect; backend decision from P02-S03-T001 (outside write set)
+
+=== TESTS (re-verified during verify-slice run) ===
+Frontend: 110 passed (8 test files) — run at 2026-05-14T10:23:17Z
+Design tokens: OK (scripts/check-design-tokens.sh)
+Backend health: HTTP 200, uptime=1990s

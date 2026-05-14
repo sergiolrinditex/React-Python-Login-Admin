@@ -1,0 +1,1481 @@
+
+> hilo-people-frontend@0.1.0 test
+> vitest --run
+
+
+ RUN  v3.2.4 /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S02-T001/frontend
+
+stdout | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T01 — happy path → Result.ok with conversation data
+[chat] chat.repo.createConversation.start { prompt_len: 12, language: 'es' }
+
+stdout | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T01 — happy path → Result.ok with conversation data
+[chat] chat.repo.createConversation.ok {
+  conversation_id: 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee',
+  language: 'es',
+  request_id: 'test-request-id'
+}
+
+stdout | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T02 — 400 → Result.err(ChatValidationError)
+[chat] chat.repo.createConversation.start { prompt_len: 0, language: 'es' }
+
+stderr | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T02 — 400 → Result.err(ChatValidationError)
+[chat] chat.repo.createConversation.validation_error { status: 400, request_id: 'test-request-id' }
+
+stdout | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T03 — 403 → Result.err(ChatForbiddenError)
+[chat] chat.repo.createConversation.start { prompt_len: 4, language: 'es' }
+
+stderr | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T03 — 403 → Result.err(ChatForbiddenError)
+[chat] chat.repo.createConversation.forbidden { status: 403, request_id: 'test-request-id' }
+
+stdout | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T04 — 5xx → Result.err(ChatServerError)
+[chat] chat.repo.createConversation.start { prompt_len: 4, language: 'es' }
+
+stderr | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T04 — 5xx → Result.err(ChatServerError)
+[chat] chat.repo.createConversation.server_error { status: 500, request_id: 'test-request-id' }
+
+stdout | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T05 — network throw → Result.err(ChatNetworkError)
+[chat] chat.repo.createConversation.start { prompt_len: 4, language: 'es' }
+
+stderr | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T05 — network throw → Result.err(ChatNetworkError)
+[chat] chat.repo.createConversation.error { error: 'CHAT_NETWORK_ERROR', message: 'Failed to fetch' }
+
+stdout | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T06 — request shape: POST, Content-Type, JSON body
+[chat] chat.repo.createConversation.start { prompt_len: 10, language: 'en' }
+
+stdout | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T06 — request shape: POST, Content-Type, JSON body
+[chat] chat.repo.createConversation.ok {
+  conversation_id: 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee',
+  language: 'es',
+  request_id: 'test-request-id'
+}
+
+stdout | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T07 — AuthSessionExpiredError from authFetch → Result.err(ChatAuthExpiredError)
+[chat] chat.repo.createConversation.start { prompt_len: 4, language: 'es' }
+
+stderr | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T07 — AuthSessionExpiredError from authFetch → Result.err(ChatAuthExpiredError)
+[chat] chat.repo.createConversation.error {
+  error: 'CHAT_NETWORK_ERROR',
+  message: 'Session expired or invalid; please sign in again.'
+}
+
+ ✓ src/features/chat/__tests__/chatRepository.test.ts (7 tests) 16ms
+stdout | src/i18n/__tests__/i18n.test.ts
+i18n.init.start {
+  phase: 'P00',
+  slice: 'P00-S01-T005',
+  lng: 'es',
+  fallbackLng: 'es',
+  ns: [
+    'common',   'auth',
+    'chat',     'account',
+    'admin-ai', 'rag',
+    'mcp',      'errors'
+  ],
+  defaultNS: 'common'
+}
+i18n.init.ok {
+  phase: 'P00',
+  slice: 'P00-S01-T005',
+  isInitialized: true,
+  language: 'es',
+  namespaceCount: 8,
+  localeCount: 3
+}
+
+ ✓ src/i18n/__tests__/i18n.test.ts (16 tests) 7ms
+stdout | src/app/__tests__/providers.test.tsx
+i18n.init.start {
+  phase: 'P00',
+  slice: 'P00-S01-T005',
+  lng: 'es',
+  fallbackLng: 'es',
+  ns: [
+    'common',   'auth',
+    'chat',     'account',
+    'admin-ai', 'rag',
+    'mcp',      'errors'
+  ],
+  defaultNS: 'common'
+}
+i18n.init.ok {
+  phase: 'P00',
+  slice: 'P00-S01-T005',
+  isInitialized: true,
+  language: 'es',
+  namespaceCount: 8,
+  localeCount: 3
+}
+
+stdout | src/features/chat/__tests__/ChatHomePage.test.tsx
+i18n.init.start {
+  phase: 'P00',
+  slice: 'P00-S01-T005',
+  lng: 'es',
+  fallbackLng: 'es',
+  ns: [
+    'common',   'auth',
+    'chat',     'account',
+    'admin-ai', 'rag',
+    'mcp',      'errors'
+  ],
+  defaultNS: 'common'
+}
+i18n.init.ok {
+  phase: 'P00',
+  slice: 'P00-S01-T005',
+  isInitialized: true,
+  language: 'es',
+  namespaceCount: 8,
+  localeCount: 3
+}
+
+stdout | src/features/chat/__tests__/useCreateConversation.test.tsx > useCreateConversation > T01 — idle → pending → success lifecycle
+[chat] chat.hook.useCreateConversation.mutate.start { prompt_len: 5, language: 'es' }
+
+stdout | src/features/chat/__tests__/useCreateConversation.test.tsx > useCreateConversation > T01 — idle → pending → success lifecycle
+[chat] chat.hook.useCreateConversation.mutate.ok { conversation_id: 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee' }
+
+stdout | src/app/__tests__/providers.test.tsx > Providers > renders children without throwing (A7 — smoke render)
+providers.init.start phase=P00 slice=P00-S01-T002 queryClient=injected:true i18n=injected:false
+providers.init.ok queryClient=ready i18n=ready
+
+stdout | src/app/__tests__/providers.test.tsx > Providers > renders children when no queryClient or i18n is injected (defaults used)
+providers.init.start phase=P00 slice=P00-S01-T002 queryClient=injected:false i18n=injected:false
+providers.init.ok queryClient=ready i18n=ready
+
+ ✓ src/app/__tests__/providers.test.tsx (4 tests) 20ms
+stdout | src/pages/showcase/__tests__/ShowcasePage.test.tsx
+i18n.init.start {
+  phase: 'P00',
+  slice: 'P00-S01-T005',
+  lng: 'es',
+  fallbackLng: 'es',
+  ns: [
+    'common',   'auth',
+    'chat',     'account',
+    'admin-ai', 'rag',
+    'mcp',      'errors'
+  ],
+  defaultNS: 'common'
+}
+i18n.init.ok {
+  phase: 'P00',
+  slice: 'P00-S01-T005',
+  isInitialized: true,
+  language: 'es',
+  namespaceCount: 8,
+  localeCount: 3
+}
+
+stdout | src/features/chat/__tests__/useCreateConversation.test.tsx > useCreateConversation > T02 — onSuccess callback called with conversation data
+[chat] chat.hook.useCreateConversation.mutate.start { prompt_len: 5, language: 'es' }
+
+stdout | src/features/chat/__tests__/useCreateConversation.test.tsx > useCreateConversation > T02 — onSuccess callback called with conversation data
+[chat] chat.hook.useCreateConversation.mutate.ok { conversation_id: 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee' }
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > EditorialInput > renders label and input
+EditorialInput.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  id: '_r_0_',
+  hasError: false,
+  disabled: undefined
+}
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > EditorialInput > shows error message with aria-invalid
+EditorialInput.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  id: '_r_1_',
+  hasError: true,
+  disabled: undefined
+}
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > EditorialInput > disables input and renders muted label
+EditorialInput.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  id: '_r_2_',
+  hasError: false,
+  disabled: true
+}
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > EditorialInput > calls onChange
+EditorialInput.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  id: '_r_3_',
+  hasError: false,
+  disabled: undefined
+}
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > SolidCTA > renders children
+SolidCTA.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  loading: false,
+  disabled: undefined
+}
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > SolidCTA > is disabled when disabled prop is true
+SolidCTA.render.start { phase: 'P00', slice: 'P00-S01-T004', loading: false, disabled: true }
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > SolidCTA > shows loading label when loading=true
+SolidCTA.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  loading: true,
+  disabled: undefined
+}
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T01 — accessTokenStore: set/get/clear in-memory only > starts null
+[auth] auth.store.clear.start { was_present: false }
+[auth] auth.store.clear.ok
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T01 — accessTokenStore: set/get/clear in-memory only > starts null
+[auth] auth.store.clear.start { was_present: false }
+[auth] auth.store.clear.ok
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T01 — accessTokenStore: set/get/clear in-memory only > set → get returns the token
+[auth] auth.store.clear.start { was_present: false }
+[auth] auth.store.clear.ok
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T01 — accessTokenStore: set/get/clear in-memory only > set → get returns the token
+[auth] auth.store.set.start { was_present: false, new_len: 7 }
+[auth] auth.store.set.ok { len: 7 }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T01 — accessTokenStore: set/get/clear in-memory only > set → get returns the token
+[auth] auth.store.clear.start { was_present: true }
+[auth] auth.store.clear.ok
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T01 — accessTokenStore: set/get/clear in-memory only > clear → get returns null
+[auth] auth.store.clear.start { was_present: false }
+[auth] auth.store.clear.ok
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T01 — accessTokenStore: set/get/clear in-memory only > clear → get returns null
+[auth] auth.store.set.start { was_present: false, new_len: 7 }
+[auth] auth.store.set.ok { len: 7 }
+[auth] auth.store.clear.start { was_present: true }
+[auth] auth.store.clear.ok
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T01 — accessTokenStore: set/get/clear in-memory only > clear → get returns null
+[auth] auth.store.clear.start { was_present: false }
+[auth] auth.store.clear.ok
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T01 — accessTokenStore: set/get/clear in-memory only > NEVER calls localStorage.setItem
+[auth] auth.store.clear.start { was_present: false }
+[auth] auth.store.clear.ok
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > SolidCTA > has aria-busy when loading
+SolidCTA.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  loading: true,
+  disabled: undefined
+}
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > SolidCTA > calls onClick when not disabled
+SolidCTA.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  loading: false,
+  disabled: undefined
+}
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T01 — accessTokenStore: set/get/clear in-memory only > NEVER calls localStorage.setItem
+[auth] auth.store.set.start { was_present: false, new_len: 10 }
+[auth] auth.store.set.ok { len: 10 }
+[auth] auth.store.clear.start { was_present: true }
+[auth] auth.store.clear.ok
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T01 — accessTokenStore: set/get/clear in-memory only > NEVER calls localStorage.setItem
+[auth] auth.store.clear.start { was_present: false }
+[auth] auth.store.clear.ok
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T01 — accessTokenStore: set/get/clear in-memory only > NEVER calls localStorage.getItem
+[auth] auth.store.clear.start { was_present: false }
+[auth] auth.store.clear.ok
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T01 — accessTokenStore: set/get/clear in-memory only > NEVER calls localStorage.getItem
+[auth] auth.store.set.start { was_present: false, new_len: 10 }
+[auth] auth.store.set.ok { len: 10 }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T01 — accessTokenStore: set/get/clear in-memory only > NEVER calls localStorage.getItem
+[auth] auth.store.clear.start { was_present: true }
+[auth] auth.store.clear.ok
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > HairlineTable > renders populated rows
+HairlineTable.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  state: 'populated',
+  rowCount: 2
+}
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > HairlineTable > renders empty message when rows is empty
+HairlineTable.render.start { phase: 'P00', slice: 'P00-S01-T004', state: 'empty', rowCount: 0 }
+
+stdout | src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T01 — empty state: Wordmark, title, 2 prompt chips, composer
+[chat] chat.home.render.start
+MobileFrame.render.start { phase: 'P00', slice: 'P00-S01-T004', fullHeight: true }
+[chat] chat.EmptyPrompts.render.start { disabled: false }
+[chat] chat.Composer.render.start { has_value: false, loading: false, disabled: false }
+SolidCTA.render.start { phase: 'P00', slice: 'P00-S01-T004', loading: false, disabled: true }
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > HairlineTable > renders error_network state with retry CTA
+HairlineTable.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  state: 'error_network',
+  rowCount: 0
+}
+SolidCTA.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  loading: false,
+  disabled: undefined
+}
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > HairlineTable > renders permission_denied state
+HairlineTable.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  state: 'permission_denied',
+  rowCount: 0
+}
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > StatusDot > renders active state with label
+StatusDot.render.start { phase: 'P00', slice: 'P00-S01-T004', state: 'active' }
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > StatusDot > renders error state with label
+StatusDot.render.start { phase: 'P00', slice: 'P00-S01-T004', state: 'error' }
+
+stdout | src/pages/showcase/__tests__/ShowcasePage.test.tsx > ShowcasePage > renders the page title
+ShowcasePage.render.start { phase: 'P00', slice: 'P00-S01-T004', route: '/showcase' }
+EditorialInput.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  id: '_r_0_',
+  hasError: false,
+  disabled: undefined
+}
+EditorialInput.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  id: '_r_1_',
+  hasError: false,
+  disabled: undefined
+}
+EditorialInput.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  id: '_r_2_',
+  hasError: true,
+  disabled: undefined
+}
+EditorialInput.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  id: '_r_3_',
+  hasError: false,
+  disabled: true
+}
+EditorialInput.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  id: '_r_4_',
+  hasError: false,
+  disabled: undefined
+}
+SolidCTA.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  loading: false,
+  disabled: undefined
+}
+SolidCTA.render.start { phase: 'P00', slice: 'P00-S01-T004', loading: false, disabled: true }
+SolidCTA.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  loading: false,
+  disabled: undefined
+}
+SolidCTA.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  loading: false,
+  disabled: undefined
+}
+HairlineTable.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  state: 'populated',
+  rowCount: 3
+}
+HairlineTable.render.start { phase: 'P00', slice: 'P00-S01-T004', state: 'empty', rowCount: 0 }
+HairlineTable.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  state: 'error_network',
+  rowCount: 0
+}
+SolidCTA.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  loading: false,
+  disabled: undefined
+}
+HairlineTable.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  state: 'permission_denied',
+  rowCount: 0
+}
+StatusDot.render.start { phase: 'P00', slice: 'P00-S01-T004', state: 'active' }
+StatusDot.render.start { phase: 'P00', slice: 'P00-S01-T004', state: 'inactive' }
+StatusDot.render.start { phase: 'P00', slice: 'P00-S01-T004', state: 'syncing' }
+StatusDot.render.start { phase: 'P00', slice: 'P00-S01-T004', state: 'error' }
+StatusDot.render.start { phase: 'P00', slice: 'P00-S01-T004', state: 'active' }
+AdminShell.render.start { phase: 'P00', slice: 'P00-S01-T004', navItemCount: 5 }
+CitationInline.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  label: 'Fuente 1',
+  hasHref: true
+}
+CitationInline.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  label: 'Fuente 2',
+  hasHref: true
+}
+CitationInline.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  label: 'Fuente 1',
+  hasHref: false
+}
+CitationInline.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  label: 'Fuente 3',
+  hasHref: true
+}
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > StatusDot > renders custom label
+StatusDot.render.start { phase: 'P00', slice: 'P00-S01-T004', state: 'active' }
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > StatusDot > has aria-label with status
+StatusDot.render.start { phase: 'P00', slice: 'P00-S01-T004', state: 'syncing' }
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > MobileFrame > renders children
+MobileFrame.render.start { phase: 'P00', slice: 'P00-S01-T004', fullHeight: false }
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > MobileFrame > renders as main when asMain=true
+MobileFrame.render.start { phase: 'P00', slice: 'P00-S01-T004', fullHeight: false }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T02 — AuthProvider: cold mount → /refresh 200 → /me 200 → authenticated > status becomes 'authenticated' after refresh + me succeed
+[auth] auth.provider.hydrate.start
+[auth] auth.repo.refresh.start
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > AdminShell > renders nav items
+AdminShell.render.start { phase: 'P00', slice: 'P00-S01-T004', navItemCount: 2 }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T02 — AuthProvider: cold mount → /refresh 200 → /me 200 → authenticated > status becomes 'authenticated' after refresh + me succeed
+[auth] auth.repo.refresh.ok { request_id: 'a6e565c2-2ff5-4028-a6d2-f5d05aea6538', token_len: 21 }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T02 — AuthProvider: cold mount → /refresh 200 → /me 200 → authenticated > status becomes 'authenticated' after refresh + me succeed
+[auth] auth.store.set.start { was_present: false, new_len: 21 }
+[auth] auth.store.set.ok { len: 21 }
+[auth] auth.repo.fetchMe.start { token_len: 21 }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T02 — AuthProvider: cold mount → /refresh 200 → /me 200 → authenticated > status becomes 'authenticated' after refresh + me succeed
+[auth] auth.repo.fetchMe.ok {
+  request_id: '1ed7a807-5529-43ee-8c00-fc3f03a19c54',
+  user_id: '11111111-1111-1111-1111-111111111111'
+}
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T02 — AuthProvider: cold mount → /refresh 200 → /me 200 → authenticated > status becomes 'authenticated' after refresh + me succeed
+[auth] auth.provider.hydrate.ok { user_id: '11111111-1111-1111-1111-111111111111' }
+
+stdout | src/features/chat/__tests__/useCreateConversation.test.tsx > useCreateConversation > T03 — onError callback called with typed ChatError
+[chat] chat.hook.useCreateConversation.mutate.start { prompt_len: 5, language: 'es' }
+
+stderr | src/features/chat/__tests__/useCreateConversation.test.tsx > useCreateConversation > T03 — onError callback called with typed ChatError
+[chat] chat.hook.useCreateConversation.mutate.error { error: 'CHAT_NETWORK_ERROR' }
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > AdminShell > renders children in main
+AdminShell.render.start { phase: 'P00', slice: 'P00-S01-T004', navItemCount: 2 }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T02 — AuthProvider: cold mount → /refresh 200 → /me 200 → authenticated > status becomes 'authenticated' after refresh + me succeed
+[auth] auth.store.clear.start { was_present: true }
+[auth] auth.store.clear.ok
+
+stdout | src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T02 — prompt click → mutation triggered → navigate called on success
+[chat] chat.home.render.start
+MobileFrame.render.start { phase: 'P00', slice: 'P00-S01-T004', fullHeight: true }
+[chat] chat.EmptyPrompts.render.start { disabled: false }
+[chat] chat.Composer.render.start { has_value: false, loading: false, disabled: false }
+SolidCTA.render.start { phase: 'P00', slice: 'P00-S01-T004', loading: false, disabled: true }
+[chat] chat.EmptyPrompts.prompt_selected { key: 'promptVacation' }
+[chat] chat.home.prompt_selected { prompt_len: 38 }
+[chat] chat.home.submit.start { prompt_len: 38 }
+[chat] chat.home.submit.success { conversation_id: 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee' }
+[chat] chat.home.render.start
+MobileFrame.render.start { phase: 'P00', slice: 'P00-S01-T004', fullHeight: true }
+[chat] chat.EmptyPrompts.render.start { disabled: false }
+[chat] chat.Composer.render.start { has_value: true, loading: false, disabled: false }
+SolidCTA.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  loading: false,
+  disabled: false
+}
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T03 — AuthProvider: /refresh 401 → unauthenticated, no /me call > status becomes 'unauthenticated' on refresh 401
+[auth] auth.provider.hydrate.start
+[auth] auth.repo.refresh.start
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T03 — AuthProvider: /refresh 401 → unauthenticated, no /me call > status becomes 'unauthenticated' on refresh 401
+[auth] auth.repo.refresh.session_expired { request_id: '1b9f83ad-54fa-4716-907d-c845438bad00' }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T03 — AuthProvider: /refresh 401 → unauthenticated, no /me call > status becomes 'unauthenticated' on refresh 401
+[auth] auth.provider.hydrate.unauthenticated { error: 'Session expired or invalid; please sign in again.' }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T03 — AuthProvider: /refresh 401 → unauthenticated, no /me call > status becomes 'unauthenticated' on refresh 401
+[auth] auth.store.clear.start { was_present: false }
+[auth] auth.store.clear.ok
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > AdminShell > marks active item with aria-current=page
+AdminShell.render.start { phase: 'P00', slice: 'P00-S01-T004', navItemCount: 2 }
+
+stdout | src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T03 — submit with empty composer input → send button disabled
+[chat] chat.home.render.start
+MobileFrame.render.start { phase: 'P00', slice: 'P00-S01-T004', fullHeight: true }
+[chat] chat.EmptyPrompts.render.start { disabled: false }
+[chat] chat.Composer.render.start { has_value: false, loading: false, disabled: false }
+SolidCTA.render.start { phase: 'P00', slice: 'P00-S01-T004', loading: false, disabled: true }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T04 — AuthProvider: /refresh network error → unauthenticated > status becomes 'unauthenticated' on network error
+[auth] auth.provider.hydrate.start
+[auth] auth.repo.refresh.start
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T04 — AuthProvider: /refresh network error → unauthenticated > status becomes 'unauthenticated' on network error
+[auth] auth.repo.refresh.error { error: 'Failed to fetch' }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T04 — AuthProvider: /refresh network error → unauthenticated > status becomes 'unauthenticated' on network error
+[auth] auth.provider.hydrate.unauthenticated { error: 'Failed to fetch' }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T04 — AuthProvider: /refresh network error → unauthenticated > status becomes 'unauthenticated' on network error
+[auth] auth.store.clear.start { was_present: false }
+[auth] auth.store.clear.ok
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > AdminShell > calls onClick when nav item is clicked
+AdminShell.render.start { phase: 'P00', slice: 'P00-S01-T004', navItemCount: 1 }
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > CitationInline > renders as anchor when href provided
+CitationInline.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  label: 'Fuente 1',
+  hasHref: true
+}
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T05 — signInAccepted → status=authenticated, /me not re-called > signInAccepted sets token and user without extra fetch
+[auth] auth.provider.hydrate.start
+[auth] auth.repo.refresh.start
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T05 — signInAccepted → status=authenticated, /me not re-called > signInAccepted sets token and user without extra fetch
+[auth] auth.repo.refresh.session_expired { request_id: 'eff82151-6ef4-4e09-8595-3b482e5808d0' }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T05 — signInAccepted → status=authenticated, /me not re-called > signInAccepted sets token and user without extra fetch
+[auth] auth.provider.hydrate.unauthenticated { error: 'Session expired or invalid; please sign in again.' }
+
+stdout | src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T04 — submit > MAX chars → validation error shown
+[chat] chat.home.render.start
+MobileFrame.render.start { phase: 'P00', slice: 'P00-S01-T004', fullHeight: true }
+[chat] chat.EmptyPrompts.render.start { disabled: false }
+[chat] chat.Composer.render.start { has_value: false, loading: false, disabled: false }
+SolidCTA.render.start { phase: 'P00', slice: 'P00-S01-T004', loading: false, disabled: true }
+[chat] chat.home.render.start
+MobileFrame.render.start { phase: 'P00', slice: 'P00-S01-T004', fullHeight: true }
+[chat] chat.EmptyPrompts.render.start { disabled: false }
+[chat] chat.Composer.render.start { has_value: true, loading: false, disabled: false }
+SolidCTA.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  loading: false,
+  disabled: false
+}
+[chat] chat.Composer.submit.start { prompt_len: 4001 }
+[chat] chat.Composer.render.start { has_value: true, loading: false, disabled: false }
+SolidCTA.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  loading: false,
+  disabled: false
+}
+
+stderr | src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T04 — submit > MAX chars → validation error shown
+[chat] chat.Composer.submit.validation.too_long { len: 4001, max: 4000 }
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > CitationInline > renders as button when no href
+CitationInline.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  label: 'Fuente 1',
+  hasHref: false
+}
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > CitationInline > displays [label] format
+CitationInline.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  label: 'Fuente 1',
+  hasHref: true
+}
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > CitationInline > has accessible aria-label
+CitationInline.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  label: 'Fuente 1',
+  hasHref: true
+}
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T05 — signInAccepted → status=authenticated, /me not re-called > signInAccepted sets token and user without extra fetch
+[auth] auth.provider.signin_accepted { user_id: '11111111-1111-1111-1111-111111111111', token_len: 21 }
+[auth] auth.store.set.start { was_present: false, new_len: 21 }
+[auth] auth.store.set.ok { len: 21 }
+
+stdout | src/shared/design-system/__tests__/design-system.test.tsx > CitationInline > adds rel=noopener noreferrer when external
+CitationInline.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  label: 'Fuente 1',
+  hasHref: true
+}
+
+stdout | src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T05 — network failure → error_network state with retry CTA
+[chat] chat.home.render.start
+MobileFrame.render.start { phase: 'P00', slice: 'P00-S01-T004', fullHeight: true }
+[chat] chat.EmptyPrompts.render.start { disabled: false }
+SolidCTA.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  loading: false,
+  disabled: undefined
+}
+[chat] chat.Composer.render.start { has_value: false, loading: false, disabled: false }
+SolidCTA.render.start { phase: 'P00', slice: 'P00-S01-T004', loading: false, disabled: true }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T05 — signInAccepted → status=authenticated, /me not re-called > signInAccepted sets token and user without extra fetch
+[auth] auth.store.clear.start { was_present: true }
+[auth] auth.store.clear.ok
+
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx (34 tests) 116ms
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T06 — useLogout: /logout 204 → token cleared, queries cleared > logout clears token and calls onQueriesClear
+[auth] auth.provider.hydrate.start
+[auth] auth.repo.refresh.start
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T06 — useLogout: /logout 204 → token cleared, queries cleared > logout clears token and calls onQueriesClear
+[auth] auth.repo.refresh.ok { request_id: 'd8586e0e-c94d-4275-a604-7cf59daea4c1', token_len: 21 }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T06 — useLogout: /logout 204 → token cleared, queries cleared > logout clears token and calls onQueriesClear
+[auth] auth.store.set.start { was_present: false, new_len: 21 }
+[auth] auth.store.set.ok { len: 21 }
+[auth] auth.repo.fetchMe.start { token_len: 21 }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T06 — useLogout: /logout 204 → token cleared, queries cleared > logout clears token and calls onQueriesClear
+[auth] auth.repo.fetchMe.ok {
+  request_id: '75f51f68-d788-4486-a60f-f8f4a1c4cb17',
+  user_id: '11111111-1111-1111-1111-111111111111'
+}
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T06 — useLogout: /logout 204 → token cleared, queries cleared > logout clears token and calls onQueriesClear
+[auth] auth.provider.hydrate.ok { user_id: '11111111-1111-1111-1111-111111111111' }
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T06 — useLogout: /logout 204 → token cleared, queries cleared > logout clears token and calls onQueriesClear
+[auth] auth.repo.logout.error { error: 'Response constructor: Invalid response status code 204' }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T06 — useLogout: /logout 204 → token cleared, queries cleared > logout clears token and calls onQueriesClear
+[auth] auth.provider.logout.start
+[auth] auth.repo.logout.start { token_present: true }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T06 — useLogout: /logout 204 → token cleared, queries cleared > logout clears token and calls onQueriesClear
+[auth] auth.store.clear.start { was_present: true }
+[auth] auth.store.clear.ok
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T06 — useLogout: /logout 204 → token cleared, queries cleared > logout clears token and calls onQueriesClear
+[auth] auth.provider.logout.failure_local_cleared { error: 'Response constructor: Invalid response status code 204' }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T06 — useLogout: /logout 204 → token cleared, queries cleared > logout clears token and calls onQueriesClear
+[auth] auth.store.clear.start { was_present: false }
+[auth] auth.store.clear.ok
+
+stdout | src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T06 — retry CTA triggers mutation again
+[chat] chat.home.render.start
+MobileFrame.render.start { phase: 'P00', slice: 'P00-S01-T004', fullHeight: true }
+[chat] chat.EmptyPrompts.render.start { disabled: false }
+SolidCTA.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  loading: false,
+  disabled: undefined
+}
+[chat] chat.Composer.render.start { has_value: false, loading: false, disabled: false }
+SolidCTA.render.start { phase: 'P00', slice: 'P00-S01-T004', loading: false, disabled: true }
+[chat] chat.home.render.start
+MobileFrame.render.start { phase: 'P00', slice: 'P00-S01-T004', fullHeight: true }
+[chat] chat.EmptyPrompts.render.start { disabled: false }
+[chat] chat.Composer.render.start { has_value: false, loading: false, disabled: false }
+SolidCTA.render.start { phase: 'P00', slice: 'P00-S01-T004', loading: false, disabled: true }
+[chat] chat.EmptyPrompts.prompt_selected { key: 'promptVacation' }
+[chat] chat.home.prompt_selected { prompt_len: 38 }
+[chat] chat.home.submit.start { prompt_len: 38 }
+[chat] chat.home.render.start
+MobileFrame.render.start { phase: 'P00', slice: 'P00-S01-T004', fullHeight: true }
+[chat] chat.EmptyPrompts.render.start { disabled: false }
+[chat] chat.Composer.render.start { has_value: true, loading: false, disabled: false }
+SolidCTA.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  loading: false,
+  disabled: false
+}
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T07 — useLogout: backend 401 → still clears local state (defensive logout) > logout clears token even when backend returns 401
+[auth] auth.provider.hydrate.start
+[auth] auth.repo.refresh.start
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T07 — useLogout: backend 401 → still clears local state (defensive logout) > logout clears token even when backend returns 401
+[auth] auth.repo.refresh.ok { request_id: '718727b3-49e3-45e5-87bc-da6163a81ccc', token_len: 21 }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T07 — useLogout: backend 401 → still clears local state (defensive logout) > logout clears token even when backend returns 401
+[auth] auth.store.set.start { was_present: false, new_len: 21 }
+[auth] auth.store.set.ok { len: 21 }
+[auth] auth.repo.fetchMe.start { token_len: 21 }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T07 — useLogout: backend 401 → still clears local state (defensive logout) > logout clears token even when backend returns 401
+[auth] auth.repo.fetchMe.ok {
+  request_id: '1a2af9ca-89c7-4134-b7ca-36094195b7a2',
+  user_id: '11111111-1111-1111-1111-111111111111'
+}
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T07 — useLogout: backend 401 → still clears local state (defensive logout) > logout clears token even when backend returns 401
+[auth] auth.provider.hydrate.ok { user_id: '11111111-1111-1111-1111-111111111111' }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T07 — useLogout: backend 401 → still clears local state (defensive logout) > logout clears token even when backend returns 401
+[auth] auth.provider.logout.start
+[auth] auth.repo.logout.start { token_present: true }
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T07 — useLogout: backend 401 → still clears local state (defensive logout) > logout clears token even when backend returns 401
+[auth] auth.repo.logout.non_204 { status: 401, request_id: '1fcc8f66-99f2-4ed3-bbf3-cce6fc2d9a8b' }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T07 — useLogout: backend 401 → still clears local state (defensive logout) > logout clears token even when backend returns 401
+[auth] auth.store.clear.start { was_present: true }
+[auth] auth.store.clear.ok
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T07 — useLogout: backend 401 → still clears local state (defensive logout) > logout clears token even when backend returns 401
+[auth] auth.provider.logout.failure_local_cleared { error: 'Session expired or invalid; please sign in again.' }
+
+stdout | src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T07 — 403 forbidden → permission_denied view shown (no composer)
+[chat] chat.home.render.start
+MobileFrame.render.start { phase: 'P00', slice: 'P00-S01-T004', fullHeight: true }
+SolidCTA.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  loading: false,
+  disabled: undefined
+}
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T07 — useLogout: backend 401 → still clears local state (defensive logout) > logout clears token even when backend returns 401
+[auth] auth.store.clear.start { was_present: false }
+[auth] auth.store.clear.ok
+
+stdout | src/pages/showcase/__tests__/ShowcasePage.test.tsx > ShowcasePage > renders all 9 component sections
+ShowcasePage.render.start { phase: 'P00', slice: 'P00-S01-T004', route: '/showcase' }
+EditorialInput.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  id: '_r_5_',
+  hasError: false,
+  disabled: undefined
+}
+EditorialInput.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  id: '_r_6_',
+  hasError: false,
+  disabled: undefined
+}
+EditorialInput.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  id: '_r_7_',
+  hasError: true,
+  disabled: undefined
+}
+EditorialInput.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  id: '_r_8_',
+  hasError: false,
+  disabled: true
+}
+EditorialInput.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  id: '_r_9_',
+  hasError: false,
+  disabled: undefined
+}
+SolidCTA.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  loading: false,
+  disabled: undefined
+}
+SolidCTA.render.start { phase: 'P00', slice: 'P00-S01-T004', loading: false, disabled: true }
+SolidCTA.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  loading: false,
+  disabled: undefined
+}
+SolidCTA.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  loading: false,
+  disabled: undefined
+}
+HairlineTable.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  state: 'populated',
+  rowCount: 3
+}
+HairlineTable.render.start { phase: 'P00', slice: 'P00-S01-T004', state: 'empty', rowCount: 0 }
+HairlineTable.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  state: 'error_network',
+  rowCount: 0
+}
+SolidCTA.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  loading: false,
+  disabled: undefined
+}
+HairlineTable.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  state: 'permission_denied',
+  rowCount: 0
+}
+StatusDot.render.start { phase: 'P00', slice: 'P00-S01-T004', state: 'active' }
+StatusDot.render.start { phase: 'P00', slice: 'P00-S01-T004', state: 'inactive' }
+StatusDot.render.start { phase: 'P00', slice: 'P00-S01-T004', state: 'syncing' }
+StatusDot.render.start { phase: 'P00', slice: 'P00-S01-T004', state: 'error' }
+StatusDot.render.start { phase: 'P00', slice: 'P00-S01-T004', state: 'active' }
+AdminShell.render.start { phase: 'P00', slice: 'P00-S01-T004', navItemCount: 5 }
+CitationInline.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  label: 'Fuente 1',
+  hasHref: true
+}
+CitationInline.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  label: 'Fuente 2',
+  hasHref: true
+}
+CitationInline.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  label: 'Fuente 1',
+  hasHref: false
+}
+CitationInline.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  label: 'Fuente 3',
+  hasHref: true
+}
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T08 — RequireAuth: unauthenticated → Navigate with ?next= > redirects to sign-in with ?next= when unauthenticated
+[auth] auth.guard.RequireAuth.render { status: 'hydrating' }
+[auth] auth.provider.hydrate.start
+[auth] auth.repo.refresh.start
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T08 — RequireAuth: unauthenticated → Navigate with ?next= > redirects to sign-in with ?next= when unauthenticated
+[auth] auth.repo.refresh.session_expired { request_id: '3cdbc30a-7193-4043-baf5-b5c553a05281' }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T08 — RequireAuth: unauthenticated → Navigate with ?next= > redirects to sign-in with ?next= when unauthenticated
+[auth] auth.provider.hydrate.unauthenticated { error: 'Session expired or invalid; please sign in again.' }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T08 — RequireAuth: unauthenticated → Navigate with ?next= > redirects to sign-in with ?next= when unauthenticated
+[auth] auth.guard.RequireAuth.render { status: 'unauthenticated' }
+[auth] auth.guard.RequireAuth.redirecting { from: '/chat', to: '/auth/sign-in?next=%2Fchat' }
+
+stdout | src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T08 — a11y: network-error region has role=status + aria-live
+[chat] chat.home.render.start
+MobileFrame.render.start { phase: 'P00', slice: 'P00-S01-T004', fullHeight: true }
+[chat] chat.EmptyPrompts.render.start { disabled: false }
+SolidCTA.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  loading: false,
+  disabled: undefined
+}
+[chat] chat.Composer.render.start { has_value: false, loading: false, disabled: false }
+SolidCTA.render.start { phase: 'P00', slice: 'P00-S01-T004', loading: false, disabled: true }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T08 — RequireAuth: unauthenticated → Navigate with ?next= > redirects to sign-in with ?next= when unauthenticated
+[auth] auth.store.clear.start { was_present: false }
+[auth] auth.store.clear.ok
+
+ ✓ src/features/chat/__tests__/ChatHomePage.test.tsx (8 tests) 89ms
+stdout | src/features/chat/__tests__/useCreateConversation.test.tsx > useCreateConversation > T04 — error state set after failed mutation
+[chat] chat.hook.useCreateConversation.mutate.start { prompt_len: 5, language: 'es' }
+
+stderr | src/features/chat/__tests__/useCreateConversation.test.tsx > useCreateConversation > T04 — error state set after failed mutation
+[chat] chat.hook.useCreateConversation.mutate.error { error: 'CHAT_NETWORK_ERROR' }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T09 — RequireAuth: authenticated → renders children > renders children when authenticated
+[auth] auth.guard.RequireAuth.render { status: 'hydrating' }
+[auth] auth.provider.hydrate.start
+[auth] auth.repo.refresh.start
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T09 — RequireAuth: authenticated → renders children > renders children when authenticated
+[auth] auth.repo.refresh.ok { request_id: '6631611d-091d-49dd-9340-ffbbc525fcaa', token_len: 21 }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T09 — RequireAuth: authenticated → renders children > renders children when authenticated
+[auth] auth.store.set.start { was_present: false, new_len: 21 }
+[auth] auth.store.set.ok { len: 21 }
+[auth] auth.repo.fetchMe.start { token_len: 21 }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T09 — RequireAuth: authenticated → renders children > renders children when authenticated
+[auth] auth.repo.fetchMe.ok {
+  request_id: '9a5a33c4-14dd-4fdc-b840-e99c11c2f207',
+  user_id: '11111111-1111-1111-1111-111111111111'
+}
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T09 — RequireAuth: authenticated → renders children > renders children when authenticated
+[auth] auth.provider.hydrate.ok { user_id: '11111111-1111-1111-1111-111111111111' }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T09 — RequireAuth: authenticated → renders children > renders children when authenticated
+[auth] auth.guard.RequireAuth.render { status: 'authenticated' }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T09 — RequireAuth: authenticated → renders children > renders children when authenticated
+[auth] auth.store.clear.start { was_present: true }
+[auth] auth.store.clear.ok
+
+stdout | src/pages/showcase/__tests__/ShowcasePage.test.tsx > ShowcasePage > renders the Wordmark 'Hilo' brand text
+ShowcasePage.render.start { phase: 'P00', slice: 'P00-S01-T004', route: '/showcase' }
+EditorialInput.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  id: '_r_a_',
+  hasError: false,
+  disabled: undefined
+}
+EditorialInput.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  id: '_r_b_',
+  hasError: false,
+  disabled: undefined
+}
+EditorialInput.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  id: '_r_c_',
+  hasError: true,
+  disabled: undefined
+}
+EditorialInput.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  id: '_r_d_',
+  hasError: false,
+  disabled: true
+}
+EditorialInput.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  id: '_r_e_',
+  hasError: false,
+  disabled: undefined
+}
+SolidCTA.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  loading: false,
+  disabled: undefined
+}
+SolidCTA.render.start { phase: 'P00', slice: 'P00-S01-T004', loading: false, disabled: true }
+SolidCTA.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  loading: false,
+  disabled: undefined
+}
+SolidCTA.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  loading: false,
+  disabled: undefined
+}
+HairlineTable.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  state: 'populated',
+  rowCount: 3
+}
+HairlineTable.render.start { phase: 'P00', slice: 'P00-S01-T004', state: 'empty', rowCount: 0 }
+HairlineTable.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  state: 'error_network',
+  rowCount: 0
+}
+SolidCTA.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  loading: false,
+  disabled: undefined
+}
+HairlineTable.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  state: 'permission_denied',
+  rowCount: 0
+}
+StatusDot.render.start { phase: 'P00', slice: 'P00-S01-T004', state: 'active' }
+StatusDot.render.start { phase: 'P00', slice: 'P00-S01-T004', state: 'inactive' }
+StatusDot.render.start { phase: 'P00', slice: 'P00-S01-T004', state: 'syncing' }
+StatusDot.render.start { phase: 'P00', slice: 'P00-S01-T004', state: 'error' }
+StatusDot.render.start { phase: 'P00', slice: 'P00-S01-T004', state: 'active' }
+AdminShell.render.start { phase: 'P00', slice: 'P00-S01-T004', navItemCount: 5 }
+CitationInline.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  label: 'Fuente 1',
+  hasHref: true
+}
+CitationInline.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  label: 'Fuente 2',
+  hasHref: true
+}
+CitationInline.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  label: 'Fuente 1',
+  hasHref: false
+}
+CitationInline.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  label: 'Fuente 3',
+  hasHref: true
+}
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T10 — RequireAuth: hydrating → renders neither children nor redirect > shows loading placeholder while hydrating, not children or redirect
+[auth] auth.guard.RequireAuth.render { status: 'hydrating' }
+[auth] auth.provider.hydrate.start
+[auth] auth.repo.refresh.start
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T10 — RequireAuth: hydrating → renders neither children nor redirect > shows loading placeholder while hydrating, not children or redirect
+[auth] auth.store.clear.start { was_present: false }
+[auth] auth.store.clear.ok
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T11 — RequireRole: employee role denied from admin > redirects employee to /chat when they hit /admin
+[auth] auth.guard.RequireRole.render {
+  status: 'hydrating',
+  required_roles: [ 'people_admin', 'super_admin' ]
+}
+[auth] auth.guard.RequireAuth.render { status: 'hydrating' }
+[auth] auth.provider.hydrate.start
+[auth] auth.repo.refresh.start
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T11 — RequireRole: employee role denied from admin > redirects employee to /chat when they hit /admin
+[auth] auth.repo.refresh.ok { request_id: 'de07a745-5829-4e9c-a67a-fb57ddf4076b', token_len: 21 }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T11 — RequireRole: employee role denied from admin > redirects employee to /chat when they hit /admin
+[auth] auth.store.set.start { was_present: false, new_len: 21 }
+[auth] auth.store.set.ok { len: 21 }
+[auth] auth.repo.fetchMe.start { token_len: 21 }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T11 — RequireRole: employee role denied from admin > redirects employee to /chat when they hit /admin
+[auth] auth.repo.fetchMe.ok {
+  request_id: 'b285018d-90d9-4597-a9d7-ffd15f0e0b2c',
+  user_id: '11111111-1111-1111-1111-111111111111'
+}
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T11 — RequireRole: employee role denied from admin > redirects employee to /chat when they hit /admin
+[auth] auth.provider.hydrate.ok { user_id: '11111111-1111-1111-1111-111111111111' }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T11 — RequireRole: employee role denied from admin > redirects employee to /chat when they hit /admin
+[auth] auth.guard.RequireRole.render {
+  status: 'authenticated',
+  required_roles: [ 'people_admin', 'super_admin' ]
+}
+[auth] auth.guard.RequireRole.denied {
+  user_id: '11111111-1111-1111-1111-111111111111',
+  user_roles: [ 'employee' ],
+  required_roles: [ 'people_admin', 'super_admin' ]
+}
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T11 — RequireRole: employee role denied from admin > redirects employee to /chat when they hit /admin
+[auth] auth.store.clear.start { was_present: true }
+[auth] auth.store.clear.ok
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T12 — RequireRole: people_admin allowed to admin route > renders admin content for people_admin role
+[auth] auth.guard.RequireRole.render {
+  status: 'hydrating',
+  required_roles: [ 'people_admin', 'super_admin' ]
+}
+[auth] auth.guard.RequireAuth.render { status: 'hydrating' }
+[auth] auth.provider.hydrate.start
+[auth] auth.repo.refresh.start
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T12 — RequireRole: people_admin allowed to admin route > renders admin content for people_admin role
+[auth] auth.repo.refresh.ok { request_id: '0778b356-dd14-4304-ab6c-d0ac2a3c8bf5', token_len: 21 }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T12 — RequireRole: people_admin allowed to admin route > renders admin content for people_admin role
+[auth] auth.store.set.start { was_present: false, new_len: 21 }
+[auth] auth.store.set.ok { len: 21 }
+[auth] auth.repo.fetchMe.start { token_len: 21 }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T12 — RequireRole: people_admin allowed to admin route > renders admin content for people_admin role
+[auth] auth.repo.fetchMe.ok {
+  request_id: '47c922d4-c001-4dda-a167-18d854203316',
+  user_id: '22222222-2222-2222-2222-222222222222'
+}
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T12 — RequireRole: people_admin allowed to admin route > renders admin content for people_admin role
+[auth] auth.provider.hydrate.ok { user_id: '22222222-2222-2222-2222-222222222222' }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T12 — RequireRole: people_admin allowed to admin route > renders admin content for people_admin role
+[auth] auth.guard.RequireRole.render {
+  status: 'authenticated',
+  required_roles: [ 'people_admin', 'super_admin' ]
+}
+[auth] auth.guard.RequireRole.allowed { user_id: '22222222-2222-2222-2222-222222222222' }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T12 — RequireRole: people_admin allowed to admin route > renders admin content for people_admin role
+[auth] auth.store.clear.start { was_present: true }
+[auth] auth.store.clear.ok
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T15 — httpClient: 401 → single-flight refresh → retry success > fires /refresh once, retries original request with new token
+[auth] auth.store.clear.start { was_present: false }
+[auth] auth.store.clear.ok
+[auth] auth.store.set.start { was_present: false, new_len: 9 }
+[auth] auth.store.set.ok { len: 9 }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T15 — httpClient: 401 → single-flight refresh → retry success > fires /refresh once, retries original request with new token
+[auth] auth.http.request.start {
+  url: 'http://localhost:8000/api/v1/users/me',
+  method: 'GET',
+  request_id: 'a56b6c5d-e995-4201-b727-13de5b3089be',
+  has_bearer: true
+}
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T15 — httpClient: 401 → single-flight refresh → retry success > fires /refresh once, retries original request with new token
+[auth] auth.http.request.ok {
+  url: 'http://localhost:8000/api/v1/users/me',
+  status: 401,
+  request_id: 'a56b6c5d-e995-4201-b727-13de5b3089be'
+}
+[auth] auth.http.401_intercepted {
+  url: 'http://localhost:8000/api/v1/users/me',
+  request_id: 'a56b6c5d-e995-4201-b727-13de5b3089be'
+}
+[auth] auth.http.refresh.start
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T15 — httpClient: 401 → single-flight refresh → retry success > fires /refresh once, retries original request with new token
+[auth] auth.store.set.start { was_present: true, new_len: 9 }
+[auth] auth.store.set.ok { len: 9 }
+[auth] auth.http.refresh.ok { request_id: 'dd89c253-cac7-4d2c-9ac6-455a36d961aa', token_len: 9 }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T15 — httpClient: 401 → single-flight refresh → retry success > fires /refresh once, retries original request with new token
+[auth] auth.http.retry_after_refresh { url: 'http://localhost:8000/api/v1/users/me' }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T15 — httpClient: 401 → single-flight refresh → retry success > fires /refresh once, retries original request with new token
+[auth] auth.store.clear.start { was_present: true }
+[auth] auth.store.clear.ok
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T16 — httpClient: two concurrent 401s → ONE refresh call > fires exactly ONE refresh for two concurrent 401s
+[auth] auth.store.clear.start { was_present: false }
+[auth] auth.store.clear.ok
+[auth] auth.store.set.start { was_present: false, new_len: 9 }
+[auth] auth.store.set.ok { len: 9 }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T16 — httpClient: two concurrent 401s → ONE refresh call > fires exactly ONE refresh for two concurrent 401s
+[auth] auth.http.request.start {
+  url: 'http://localhost:8000/api/v1/users/me',
+  method: 'GET',
+  request_id: '72eec190-5452-4eea-8889-9fba15d3712c',
+  has_bearer: true
+}
+[auth] auth.http.request.start {
+  url: 'http://localhost:8000/api/v1/users/me',
+  method: 'GET',
+  request_id: 'a7801907-473e-48e2-bd95-133857cf631a',
+  has_bearer: true
+}
+[auth] auth.http.request.ok {
+  url: 'http://localhost:8000/api/v1/users/me',
+  status: 401,
+  request_id: '72eec190-5452-4eea-8889-9fba15d3712c'
+}
+[auth] auth.http.401_intercepted {
+  url: 'http://localhost:8000/api/v1/users/me',
+  request_id: '72eec190-5452-4eea-8889-9fba15d3712c'
+}
+[auth] auth.http.refresh.start
+[auth] auth.http.request.ok {
+  url: 'http://localhost:8000/api/v1/users/me',
+  status: 401,
+  request_id: 'a7801907-473e-48e2-bd95-133857cf631a'
+}
+[auth] auth.http.401_intercepted {
+  url: 'http://localhost:8000/api/v1/users/me',
+  request_id: 'a7801907-473e-48e2-bd95-133857cf631a'
+}
+[auth] auth.http.refresh_inflight
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T16 — httpClient: two concurrent 401s → ONE refresh call > fires exactly ONE refresh for two concurrent 401s
+[auth] auth.store.set.start { was_present: true, new_len: 9 }
+[auth] auth.store.set.ok { len: 9 }
+[auth] auth.http.refresh.ok { request_id: '3f33e4e0-37d0-46cf-805b-8763de6b3b99', token_len: 9 }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T16 — httpClient: two concurrent 401s → ONE refresh call > fires exactly ONE refresh for two concurrent 401s
+[auth] auth.http.retry_after_refresh { url: 'http://localhost:8000/api/v1/users/me' }
+[auth] auth.http.retry_after_refresh { url: 'http://localhost:8000/api/v1/users/me' }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T16 — httpClient: two concurrent 401s → ONE refresh call > fires exactly ONE refresh for two concurrent 401s
+[auth] auth.store.clear.start { was_present: true }
+[auth] auth.store.clear.ok
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T17 — httpClient: refresh 401 → no loop, onAuthFailure called > throws AuthSessionExpiredError, calls onAuthFailure, clears token
+[auth] auth.store.clear.start { was_present: false }
+[auth] auth.store.clear.ok
+[auth] auth.store.set.start { was_present: false, new_len: 9 }
+[auth] auth.store.set.ok { len: 9 }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T17 — httpClient: refresh 401 → no loop, onAuthFailure called > throws AuthSessionExpiredError, calls onAuthFailure, clears token
+[auth] auth.http.request.start {
+  url: 'http://localhost:8000/api/v1/users/me',
+  method: 'GET',
+  request_id: '8ccc41f0-1a5e-42f4-9b85-d3e2d72b770f',
+  has_bearer: true
+}
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T17 — httpClient: refresh 401 → no loop, onAuthFailure called > throws AuthSessionExpiredError, calls onAuthFailure, clears token
+[auth] auth.http.request.ok {
+  url: 'http://localhost:8000/api/v1/users/me',
+  status: 401,
+  request_id: '8ccc41f0-1a5e-42f4-9b85-d3e2d72b770f'
+}
+[auth] auth.http.401_intercepted {
+  url: 'http://localhost:8000/api/v1/users/me',
+  request_id: '8ccc41f0-1a5e-42f4-9b85-d3e2d72b770f'
+}
+[auth] auth.http.refresh.start
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T17 — httpClient: refresh 401 → no loop, onAuthFailure called > throws AuthSessionExpiredError, calls onAuthFailure, clears token
+[auth] auth.http.refresh.failed { status: 401, request_id: '851a9461-9bae-4d94-bda6-f893a253eac4' }
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T17 — httpClient: refresh 401 → no loop, onAuthFailure called > throws AuthSessionExpiredError, calls onAuthFailure, clears token
+[auth] auth.store.clear.start { was_present: true }
+[auth] auth.store.clear.ok
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T17 — httpClient: refresh 401 → no loop, onAuthFailure called > throws AuthSessionExpiredError, calls onAuthFailure, clears token
+[auth] auth.store.clear.start { was_present: false }
+[auth] auth.store.clear.ok
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T18 — httpClient: Bearer injected on protected endpoints only > injects Authorization Bearer on /api/v1/users/me
+[auth] auth.store.clear.start { was_present: false }
+[auth] auth.store.clear.ok
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T18 — httpClient: Bearer injected on protected endpoints only > injects Authorization Bearer on /api/v1/users/me
+[auth] auth.store.set.start { was_present: false, new_len: 8 }
+[auth] auth.store.set.ok { len: 8 }
+[auth] auth.http.request.start {
+  url: 'http://localhost:8000/api/v1/users/me',
+  method: 'GET',
+  request_id: '3db8a289-ea33-4aa7-a397-b91525dd6b19',
+  has_bearer: true
+}
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T18 — httpClient: Bearer injected on protected endpoints only > injects Authorization Bearer on /api/v1/users/me
+[auth] auth.http.request.ok {
+  url: 'http://localhost:8000/api/v1/users/me',
+  status: 200,
+  request_id: '3db8a289-ea33-4aa7-a397-b91525dd6b19'
+}
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T18 — httpClient: Bearer injected on protected endpoints only > injects Authorization Bearer on /api/v1/users/me
+[auth] auth.store.clear.start { was_present: true }
+[auth] auth.store.clear.ok
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T18 — httpClient: Bearer injected on protected endpoints only > does NOT inject Authorization Bearer on /api/v1/auth/refresh
+[auth] auth.store.clear.start { was_present: false }
+[auth] auth.store.clear.ok
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T18 — httpClient: Bearer injected on protected endpoints only > does NOT inject Authorization Bearer on /api/v1/auth/refresh
+[auth] auth.store.set.start { was_present: false, new_len: 8 }
+[auth] auth.store.set.ok { len: 8 }
+[auth] auth.http.request.start {
+  url: 'http://localhost:8000/api/v1/auth/refresh',
+  method: 'POST',
+  request_id: 'e14b0eac-d863-4ffa-b490-4290f391a3b7',
+  has_bearer: false
+}
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T18 — httpClient: Bearer injected on protected endpoints only > does NOT inject Authorization Bearer on /api/v1/auth/refresh
+[auth] auth.http.request.ok {
+  url: 'http://localhost:8000/api/v1/auth/refresh',
+  status: 200,
+  request_id: 'e14b0eac-d863-4ffa-b490-4290f391a3b7'
+}
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T18 — httpClient: Bearer injected on protected endpoints only > does NOT inject Authorization Bearer on /api/v1/auth/refresh
+[auth] auth.store.clear.start { was_present: true }
+[auth] auth.store.clear.ok
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T19 — Logging: verbose=true fires logs, no token value leaked > setAccessToken logs present=true and len, never the token value
+[auth] auth.store.clear.start { was_present: false }
+[auth] auth.store.clear.ok
+
+stdout | src/features/auth/__tests__/auth.test.tsx > auth T20 — Logging: verbose=false suppresses info logs > setAccessToken does NOT log when verbose=false
+[auth] auth.store.clear.start { was_present: false }
+[auth] auth.store.clear.ok
+
+ ✓ src/features/auth/__tests__/auth.test.tsx (33 tests) 132ms
+ ✓ src/features/chat/__tests__/useCreateConversation.test.tsx (4 tests) 230ms
+stdout | src/pages/showcase/__tests__/ShowcasePage.test.tsx > ShowcasePage > renders the design system footer
+ShowcasePage.render.start { phase: 'P00', slice: 'P00-S01-T004', route: '/showcase' }
+EditorialInput.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  id: '_r_f_',
+  hasError: false,
+  disabled: undefined
+}
+EditorialInput.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  id: '_r_g_',
+  hasError: false,
+  disabled: undefined
+}
+EditorialInput.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  id: '_r_h_',
+  hasError: true,
+  disabled: undefined
+}
+EditorialInput.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  id: '_r_i_',
+  hasError: false,
+  disabled: true
+}
+EditorialInput.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  id: '_r_j_',
+  hasError: false,
+  disabled: undefined
+}
+SolidCTA.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  loading: false,
+  disabled: undefined
+}
+SolidCTA.render.start { phase: 'P00', slice: 'P00-S01-T004', loading: false, disabled: true }
+SolidCTA.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  loading: false,
+  disabled: undefined
+}
+SolidCTA.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  loading: false,
+  disabled: undefined
+}
+HairlineTable.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  state: 'populated',
+  rowCount: 3
+}
+HairlineTable.render.start { phase: 'P00', slice: 'P00-S01-T004', state: 'empty', rowCount: 0 }
+HairlineTable.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  state: 'error_network',
+  rowCount: 0
+}
+SolidCTA.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  loading: false,
+  disabled: undefined
+}
+HairlineTable.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  state: 'permission_denied',
+  rowCount: 0
+}
+StatusDot.render.start { phase: 'P00', slice: 'P00-S01-T004', state: 'active' }
+StatusDot.render.start { phase: 'P00', slice: 'P00-S01-T004', state: 'inactive' }
+StatusDot.render.start { phase: 'P00', slice: 'P00-S01-T004', state: 'syncing' }
+StatusDot.render.start { phase: 'P00', slice: 'P00-S01-T004', state: 'error' }
+StatusDot.render.start { phase: 'P00', slice: 'P00-S01-T004', state: 'active' }
+AdminShell.render.start { phase: 'P00', slice: 'P00-S01-T004', navItemCount: 5 }
+CitationInline.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  label: 'Fuente 1',
+  hasHref: true
+}
+CitationInline.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  label: 'Fuente 2',
+  hasHref: true
+}
+CitationInline.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  label: 'Fuente 1',
+  hasHref: false
+}
+CitationInline.render.start {
+  phase: 'P00',
+  slice: 'P00-S01-T004',
+  label: 'Fuente 3',
+  hasHref: true
+}
+
+ ✓ src/pages/showcase/__tests__/ShowcasePage.test.tsx (4 tests) 182ms
+
+ Test Files  8 passed (8)
+      Tests  110 passed (110)
+   Start at  11:55:42
+   Duration  2.33s (transform 846ms, setup 1.74s, collect 2.09s, tests 792ms, environment 8.08s, prepare 1.28s)
+

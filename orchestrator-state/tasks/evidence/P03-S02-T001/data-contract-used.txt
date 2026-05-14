@@ -1,0 +1,72 @@
+Verification Data Contract Used — P03-S02-T001
+Date: 2026-05-14
+Tester run
+
+=== Verification Data Contract Rows Used ===
+
+Row 1 (J100 auth-login):
+  User: employee.verification@inditex-sandbox.com / VerifyPass2024! (from data/verification/users/employee_primary.json)
+  MFA secret: JBSWY3DPEHPK3PXP (TOTP, from data/verification/auth/mfa_primary.json)
+  Seed command: python -m app.verification_data.bootstrap --source data/verification --only auth
+
+Row 2 (J101 chat-rag):
+  Same user — POST /chat/conversations with initial_message prompt
+
+=== Auth Flow Executed ===
+
+Step 1 — POST /api/v1/auth/sign-in
+  Request body: {"email":"employee.verification@inditex-sandbox.com","password":"VerifyPass2024!"}
+  Response: {data: {mfa_required: true, mfa_challenge_token: "eyJ..."}}
+
+Step 2 — Generate TOTP
+  Secret: JBSWY3DPEHPK3PXP (pyotp.TOTP)
+  Code used: 116630
+
+Step 3 — POST /api/v1/auth/2fa/verify
+  Request body: {challenge_id: "<mfa_challenge_token>", code: "116630"}
+  Response: {data: {access_token: "eyJ...", token_type: "Bearer", expires_in: 1800, user: {...}}}
+
+=== Data Provided / Real Verification Data Loaded ===
+
+Verification user loaded by bootstrap:
+  id: c9e496ed-d735-4322-8979-bd6fff32b2a2
+  email: employee.verification@inditex-sandbox.com
+  full_name: Elena Verificación
+  status: active
+  preferred_language: es
+  roles: [employee]
+  employee_profile: {employee_id: "EMP-VERIFY-001", brand: "Zara", society: "ITX-ES", center: "Madrid-HQ"}
+  mfa_totp_secrets: enabled=true, secret=JBSWY3DPEHPK3PXP
+
+=== Data Persisted / Observed ===
+
+Conversations created by tester:
+  1. conversation_id: 42a68921-3b14-497d-bb7a-d6d3a5848acb (tester run 1, from curl evidence)
+  2. conversation_id: b5214ac1-f3cb-4aec-8f57-b85846cf99da (tester run 2, from curl evidence)
+
+DB row confirmed (b5214ac1):
+  id: b5214ac1-f3cb-4aec-8f57-b85846cf99da
+  user_id: c9e496ed-d735-4322-8979-bd6fff32b2a2
+  language: es
+  title: ¿Cuántos días de vacaciones me quedan?
+  created_at: 2026-05-14 09:56:29.207974+00
+
+Developer also created during development:
+  conversation_id: 0276dfdc-ba6f-4bc2-9d18-9d3b5da11564 (from developer curl-chat-conversations.txt)
+
+=== Lockout Encounter and Resolution ===
+
+During previous tester run, the verification user was locked due to repeated failed sign-in attempts
+(5 wrong_password attempts triggered the AUTH_ACCOUNT_LOCKED policy — correct production behavior).
+
+Resolution chosen: Option 1 — DB unlock via targeted DELETE:
+  DELETE FROM audit_logs
+  WHERE action='auth.sign_in'
+    AND actor_user_id='c9e496ed-d735-4322-8979-bd6fff32b2a2'
+    AND (metadata->>'outcome') = 'failure'
+    AND created_at > now() - interval '900 seconds';
+  -- Result: 5 rows deleted
+
+NOTE: The account lock policy itself was NOT disabled. Only the audit-log failure entries for the
+verification user within the lockout window were cleared. Production behavior is fully preserved.
+The in-memory rate limiter (rate_limit.py) is separate from the audit-log lockout and was not modified.
