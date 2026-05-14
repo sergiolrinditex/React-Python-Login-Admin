@@ -1,0 +1,38 @@
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S01-T001/frontend/src/features/auth/data/authRepository.ts:37:import { logVerbose, logWarn, logError } from "./logger";
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S01-T001/frontend/src/features/auth/data/authRepository.ts:98:    logVerbose("auth.signin.submit.start", {
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S01-T001/frontend/src/features/auth/data/authRepository.ts:116:        logWarn("auth.signin.submit.invalid_credentials", {
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S01-T001/frontend/src/features/auth/data/authRepository.ts:124:        logWarn("auth.signin.submit.locked", {
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S01-T001/frontend/src/features/auth/data/authRepository.ts:134:        logWarn("auth.signin.submit.rate_limited", {
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S01-T001/frontend/src/features/auth/data/authRepository.ts:143:        logWarn("auth.signin.submit.validation", {
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S01-T001/frontend/src/features/auth/data/authRepository.ts:151:        logError("auth.signin.submit.unexpected", {
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S01-T001/frontend/src/features/auth/data/authRepository.ts:171:        logVerbose("auth.signin.submit.mfa_required", {
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S01-T001/frontend/src/features/auth/data/authRepository.ts:186:      logVerbose("auth.signin.submit.ok_no_mfa", {
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S01-T001/frontend/src/features/auth/data/authRepository.ts:196:        logError("auth.signin.submit.fetchme_failed", {
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S01-T001/frontend/src/features/auth/data/authRepository.ts:218:      logError("auth.signin.submit.network", { error: domainErr.message });
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S01-T001/frontend/src/features/auth/data/authRepository.ts:228:    logVerbose("auth.repo.refresh.start");
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S01-T001/frontend/src/features/auth/data/authRepository.ts:238:        logWarn("auth.repo.refresh.session_expired", { request_id: requestId });
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S01-T001/frontend/src/features/auth/data/authRepository.ts:243:        logError("auth.repo.refresh.unexpected_status", {
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S01-T001/frontend/src/features/auth/data/authRepository.ts:252:      logVerbose("auth.repo.refresh.ok", {
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S01-T001/frontend/src/features/auth/data/authRepository.ts:259:      logError("auth.repo.refresh.error", { error: domainErr.message });
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S01-T001/frontend/src/features/auth/data/authRepository.ts:269:    logVerbose("auth.repo.fetchMe.start", { token_len: accessToken.length });
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S01-T001/frontend/src/features/auth/data/authRepository.ts:282:        logWarn("auth.repo.fetchMe.unauthorized", { request_id: requestId });
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S01-T001/frontend/src/features/auth/data/authRepository.ts:287:        logError("auth.repo.fetchMe.unexpected_status", {
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S01-T001/frontend/src/features/auth/data/authRepository.ts:295:      logVerbose("auth.repo.fetchMe.ok", {
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S01-T001/frontend/src/features/auth/data/authRepository.ts:302:      logError("auth.repo.fetchMe.error", { error: domainErr.message });
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S01-T001/frontend/src/features/auth/data/authRepository.ts:313:    logVerbose("auth.repo.logout.start", { token_present: true });
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S01-T001/frontend/src/features/auth/data/authRepository.ts:326:        logVerbose("auth.repo.logout.ok", { request_id: requestId });
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S01-T001/frontend/src/features/auth/data/authRepository.ts:331:      logWarn("auth.repo.logout.non_204", {
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S01-T001/frontend/src/features/auth/data/authRepository.ts:341:      logError("auth.repo.logout.error", { error: domainErr.message });
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S01-T001/frontend/src/features/auth/presentation/useSignIn.ts:19: * Non-negotiables §logging: BEFORE + AFTER + ERROR via logger.ts.
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S01-T001/frontend/src/features/auth/presentation/useSignIn.ts:34:import { logVerbose, logWarn, logError } from "../data/logger";
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S01-T001/frontend/src/features/auth/presentation/useSignIn.ts:87:      logVerbose("auth.signin.hook.submit.start", {
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S01-T001/frontend/src/features/auth/presentation/useSignIn.ts:99:          logWarn("auth.signin.hook.submit.error", { error_name: result.error.name });
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S01-T001/frontend/src/features/auth/presentation/useSignIn.ts:107:          logVerbose("auth.signin.hook.submit.ok_no_mfa", {
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S01-T001/frontend/src/features/auth/presentation/useSignIn.ts:112:          logVerbose("auth.signin.hook.submit.mfa_required", {
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S01-T001/frontend/src/features/auth/presentation/useSignIn.ts:121:        logError("auth.signin.hook.submit.unexpected", { error: domainErr.message });
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S01-T001/frontend/src/pages/auth/SignInPage.tsx:52:import { logVerbose, logWarn } from "@/features/auth/data/logger";
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S01-T001/frontend/src/pages/auth/SignInPage.tsx:156:      logVerbose("auth.signin.page.submit.start", {
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S01-T001/frontend/src/pages/auth/SignInPage.tsx:163:        logWarn("auth.signin.page.submit.failed");
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S01-T001/frontend/src/pages/auth/SignInPage.tsx:173:        logVerbose("auth.signin.page.submit.mfa_navigate", { target });
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S01-T001/frontend/src/pages/auth/SignInPage.tsx:184:      logVerbose("auth.signin.page.submit.success_navigate", { destination: safeNext });
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S01-T001/frontend/src/pages/auth/SignInPage.tsx:209:  logVerbose("auth.signin.page.render.start", { isLoading, hasError: Boolean(signInError) });

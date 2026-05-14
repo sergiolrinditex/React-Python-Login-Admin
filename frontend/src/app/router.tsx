@@ -3,19 +3,19 @@
  *
  * Slice/Phase: P01-S03-T001 — Auth state provider + route guards / Phase 1.
  *   Updated from P00-S01-T004 (original: /showcase only).
+ *   Updated in P03-S01-T001 — replaced SignInStub with real SignInPage (§D-T001-ROUTER).
  *
  * Responsibility: single mount point for the application's route tree.
  *   Exports <AppRouter> which is consumed by main.tsx inside <Providers>.
  *   <AuthProvider> is mounted INSIDE the router tree (not in providers.tsx — P-7).
  *
- * Route inventory (this slice):
+ * Route inventory:
  *   /showcase          → ShowcasePage (public — design-system demo, dev-only)
- *   /auth/sign-in      → STUB placeholder (form lives in P03-S01-T001)
+ *   /auth/sign-in      → SignInPage (real form, P03-S01-T001)
  *   /admin             → STUB placeholder (wrapped in RequireRole — test surface)
- *   /                  → redirects to /showcase (temp; P03 replaces with /auth/sign-in)
- *   *                  → redirects to /showcase (catch-all; P03 adds 404)
+ *   /                  → redirects to /auth/sign-in (P03 default — employees land on login)
+ *   *                  → redirects to /auth/sign-in (catch-all; P03 adds 404)
  *
- * P03-S01-T001 adds: real SignInPage form replacing the /auth/sign-in stub.
  * P03-S02-T001 adds: /chat, /chat/:conversationId under RequireAuth.
  * P04-S01-T001 adds: real /admin dashboard replacing stub.
  *
@@ -26,7 +26,6 @@
  * React Router: package name is "react-router" (v7 — canonical import).
  *   Version: ^7.15.0. Pattern used: <BrowserRouter> + <Routes> (legacy router).
  *   Component-wrapper guard pattern: <RequireAuth><Outlet/></RequireAuth> inside Route element.
- *   Loader-based redirect requires createBrowserRouter (data-router API), deferred to P03.
  *
  * Journey refs: upstream foundation for J100/J101/J102/J103/J104/J105.
  */
@@ -34,6 +33,7 @@
 import { BrowserRouter, Routes, Route, Navigate, Outlet } from "react-router";
 import type { ReactNode } from "react";
 import ShowcasePage from "../pages/showcase/ShowcasePage";
+import SignInPage from "../pages/auth/SignInPage";
 import { AuthProvider } from "../features/auth/presentation/AuthProvider";
 import { RequireAuth } from "../features/auth/presentation/RequireAuth";
 import { RequireRole } from "../features/auth/presentation/RequireRole";
@@ -55,34 +55,8 @@ export const ROUTE_ADMIN = "/admin";
 export const ROUTE_CHAT = "/chat";
 
 // ---------------------------------------------------------------------------
-// Stub page components (placeholders until P03/P04 slices land)
+// Stub page components (placeholders until P04 slices land)
 // ---------------------------------------------------------------------------
-
-/**
- * Sign-in page STUB. The real form (email + password inputs, layout, copy) lives in P03-S01-T001.
- * This stub exists solely to make RequireAuth redirects browser-verifiable.
- * Removable (non-breaking) when P03-S01-T001 replaces it via the same route path.
- */
-function SignInStub(): ReactNode {
-  if (import.meta.env.VITE_ENABLE_VERBOSE_LOGGING === "true") {
-    console.info("[auth] route.sign-in-stub.render", {
-      note: "Real form in P03-S01-T001",
-    });
-  }
-  return (
-    <div
-      style={{ padding: "2rem", fontFamily: "var(--font-sans)" }}
-      data-testid="sign-in-stub"
-    >
-      <h1>Sign in — stub</h1>
-      <p>Real sign-in form implemented in P03-S01-T001.</p>
-      <small>
-        Check <code>?next=</code> in URL for return-to-destination:{" "}
-        <code>{new URLSearchParams(window.location.search).get("next") ?? "(none)"}</code>
-      </small>
-    </div>
-  );
-}
 
 /**
  * Admin area STUB. Real dashboard in P04-S01-T001.
@@ -115,9 +89,9 @@ function AdminStub(): ReactNode {
 export function AppRouter(): ReactNode {
   if (import.meta.env.VITE_ENABLE_VERBOSE_LOGGING === "true") {
     console.info("AppRouter.render.start", {
-      phase: "P01",
-      slice: "P01-S03-T001",
-      routes: [ROUTE_SHOWCASE, ROUTE_AUTH_SIGN_IN, ROUTE_ADMIN],
+      phase: "P03",
+      slice: "P03-S01-T001",
+      routes: [ROUTE_SHOWCASE, ROUTE_AUTH_SIGN_IN, ROUTE_ADMIN, ROUTE_CHAT],
     });
   }
 
@@ -127,7 +101,8 @@ export function AppRouter(): ReactNode {
         <Routes>
           {/* Public routes — no auth required */}
           <Route path={ROUTE_SHOWCASE} element={<ShowcasePage />} />
-          <Route path={ROUTE_AUTH_SIGN_IN} element={<SignInStub />} />
+          {/* P03-S01-T001: real SignInPage replaces stub (§D-T001-ROUTER) */}
+          <Route path={ROUTE_AUTH_SIGN_IN} element={<SignInPage />} />
 
           {/* Protected employee routes (P03-S02-T001 adds /chat, /history, /account) */}
           <Route element={<RequireAuth><Outlet /></RequireAuth>}>
@@ -153,11 +128,11 @@ export function AppRouter(): ReactNode {
             <Route path={ROUTE_ADMIN} element={<AdminStub />} />
           </Route>
 
-          {/* Default redirect — P03 replaces with /auth/sign-in redirect */}
-          <Route path="/" element={<Navigate to={ROUTE_SHOWCASE} replace />} />
+          {/* Default redirect — employees land on sign-in (P03-S01-T001, §D-T001-ROUTER) */}
+          <Route path="/" element={<Navigate to={ROUTE_AUTH_SIGN_IN} replace />} />
 
-          {/* Catch-all — P03 adds a proper 404 page */}
-          <Route path="*" element={<Navigate to={ROUTE_SHOWCASE} replace />} />
+          {/* Catch-all — redirects to sign-in; P04 adds proper 404 */}
+          <Route path="*" element={<Navigate to={ROUTE_AUTH_SIGN_IN} replace />} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>

@@ -1,0 +1,14 @@
+    action    | entity_type |                                                                        metadata                                                                         |          created_at           
+--------------+-------------+---------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------
+ auth.sign_in | user        | {"ip": "127.0.0.1", "reason": "account_locked", "outcome": "blocked", "request_id": "da6c5e6e-21fa-4259-a4ee-f70c27c42523", "user_agent": "curl/8.7.1"} | 2026-05-14 09:39:44.790377+00
+ auth.sign_in | user        | {"ip": "127.0.0.1", "reason": "account_locked", "outcome": "blocked", "request_id": "6c8d5851-a84b-4a6a-874b-3de68df1080a", "user_agent": "curl/8.7.1"} | 2026-05-14 09:39:44.755995+00
+ auth.sign_in | user        | {"ip": "127.0.0.1", "reason": "account_locked", "outcome": "blocked", "request_id": "2c0906e0-768c-467f-871d-c5933c6cdf0c", "user_agent": "curl/8.7.1"} | 2026-05-14 09:39:44.72007+00
+ auth.sign_in | user        | {"ip": "127.0.0.1", "reason": "account_locked", "outcome": "blocked", "request_id": "74907ade-f0d5-4ae2-aa80-3b3398d1fab9", "user_agent": "curl/8.7.1"} | 2026-05-14 09:39:44.693145+00
+ auth.sign_in | user        | {"ip": "127.0.0.1", "reason": "account_locked", "outcome": "blocked", "request_id": "27588b2f-ca4a-4960-a840-9dd9e8991dae", "user_agent": "curl/8.7.1"} | 2026-05-14 09:39:44.665175+00
+ auth.sign_in | user        | {"ip": "127.0.0.1", "reason": "account_locked", "outcome": "blocked", "request_id": "01bd928a-1ea6-4fbe-b103-1c085c9635c2", "user_agent": "curl/8.7.1"} | 2026-05-14 09:39:44.641181+00
+ auth.sign_in | user        | {"ip": "127.0.0.1", "reason": "wrong_password", "outcome": "failure", "request_id": "2cfe91a3-e028-4f4a-829f-0e21975d2d95", "user_agent": "curl/8.7.1"} | 2026-05-14 09:39:44.566513+00
+ auth.sign_in | user        | {"ip": "127.0.0.1", "reason": "wrong_password", "outcome": "failure", "request_id": "b1d9661b-4edb-41f9-b450-56a2f8d36ffd", "user_agent": "curl/8.7.1"} | 2026-05-14 09:39:44.461927+00
+ auth.sign_in | user        | {"ip": "127.0.0.1", "reason": "wrong_password", "outcome": "failure", "request_id": "tester-p03s01t001-bad", "user_agent": "curl/8.7.1"}                | 2026-05-14 09:39:40.59112+00
+ auth.sign_in | user        | {"ip": "127.0.0.1", "outcome": "mfa_challenge_issued", "request_id": "tester-p03s01t001-happy", "user_agent": "curl/8.7.1"}                             | 2026-05-14 09:39:39.368894+00
+(10 filas)
+

@@ -1,0 +1,5 @@
+                  id                  |                   email                   | status 
+--------------------------------------+-------------------------------------------+--------
+ 7b34e2ca-a9cc-4152-9be0-552d200464ce | employee.verification@inditex-sandbox.com | active
+(1 fila)
+

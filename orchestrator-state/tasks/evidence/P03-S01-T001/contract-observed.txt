@@ -1,0 +1,44 @@
+# Contract Observed — Front → Back → DB
+# Task: P03-S01-T001
+# Timestamp: 2026-05-14T09:39:39Z
+
+## Route / Provider
+
+- Route: /auth/sign-in → frontend/src/pages/auth/SignInPage.tsx (OBSERVED: file exists, router.tsx updated)
+- Provider: authStore via AuthProvider.signInAccepted (OBSERVED in tests T03)
+- Client state: loginForm (react-hook-form), i18nStore (i18next), authStore (AuthProvider)
+
+## API Client / DTO
+
+- API client: frontend/src/features/auth/data/authRepository.ts :: signIn()
+- Request DTO: { email: string, password: string } (sent to /api/v1/auth/sign-in)
+- Response DTO: { data: { mfa_required: bool, mfa_challenge_token?: string, access_token?: string, expires_in: number }, meta, errors }
+- Observed response shape (from curl_signin_happy.txt):
+    {"data":{"mfa_required":true,"mfa_challenge_token":"eyJ...","expires_in":300},"meta":{"request_id":"tester-p03s01t001-happy"},"errors":[]}
+  -> Matches TECHNICAL_GUIDE §6.2 "SignInResponseMfaChallenge" shape exactly
+
+## Endpoint
+
+- POST /api/v1/auth/sign-in
+  - 200 MFA: {data: {mfa_required: true, mfa_challenge_token: "..."}, errors: []}  [OBSERVED]
+  - 401: {data: null, errors: [{code: "AUTH_INVALID_CREDENTIALS", ...}]}  [OBSERVED]
+  - 423: HTTP 423 after 5 consecutive wrong-password attempts  [OBSERVED via rate-limit smoke]
+  - No Set-Cookie on MFA challenge  [OBSERVED — no set-cookie header in curl response]
+  - X-Request-ID echoed in response header  [OBSERVED]
+
+## Repository / DB Tables
+
+- DB tables touched: users (SELECT — auth validation), audit_logs (INSERT — every auth event)
+- refresh_tokens: NOT touched by /sign-in MFA challenge path (CONFIRMED — psql shows token only from /2fa/verify)
+- mfa_totp_secrets: READ by backend to determine MFA enabled (confirmed by mfa_required:true in response)
+
+## IAuthRepository port
+
+- IAuthRepository.signIn(req: SignInRequest): Promise<Result<SignInOutcome>> — OBSERVED in domain/AuthRepository.ts
+- SignInOutcome: discriminated union { kind:'mfa', challengeToken, expiresIn } | { kind:'success', accessToken, user } — OBSERVED
+
+## Logging contract (observed)
+
+- VERBOSE=true: auth.signin.submit.start, auth.signin.submit.mfa_required, auth.signin.submit.ok_no_mfa, auth.signin.submit.invalid_credentials, auth.signin.submit.locked, auth.signin.submit.rate_limited, auth.signin.submit.network — ALL present
+- VERBOSE=false: only warn/error events visible (auth.signin.hook.submit.error, auth.repo.refresh.session_expired, etc.)
+- PII check: password and access_token are never logged as values (only .length is logged)
