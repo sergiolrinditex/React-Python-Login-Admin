@@ -133,6 +133,8 @@ def _git_workflow() -> str:
     safe = "".join(ch for ch in raw if ch.isalnum() or ch in {"-", "_"})
     if safe in {"direct-main", "direct-main-push", "push-main"}:
         return "push-to-main"
+    if safe == "gitflow":
+        return "git-flow"
     return safe or "push-to-main"
 
 
@@ -156,9 +158,11 @@ def _terminal_command(task_id: str) -> str:
     return (
         'unset CLAUDE_ACTIVE_TASK_ID CLAUDE_TASK_PACK CLAUDE_WORKTREE_ROOT CLAUDE_ORCHESTRATOR_ROOT COMPOSE_PROJECT_NAME && '
         'BOOTSTRAP_ROOT="${CLAUDE_ORCHESTRATOR_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd -P)}" && '
-        'ROOT="$($BOOTSTRAP_ROOT/scripts/ensure-task-worktree.sh --print-root)" && '
-        f'WT="$($ROOT/scripts/ensure-task-worktree.sh {task_id})" && '
+        'ROOT="$(bash "$BOOTSTRAP_ROOT/scripts/ensure-task-worktree.sh" --print-root)" && '
+        f'WT="$(bash "$ROOT/scripts/ensure-task-worktree.sh" {task_id})" && '
         'cd "$WT" && '
+        f'PACK="$WT/{pack}" && '
+        f'if [ ! -f "$PACK" ]; then PACK="$ROOT/{pack}"; fi && '
         # COMPOSE_PROJECT_NAME: pin docker-compose project to canonical root
         # so parallel terminals SHARE the same stack (postgres, redis, ...)
         # instead of each worktree spinning up its own (port collisions).
@@ -166,9 +170,13 @@ def _terminal_command(task_id: str) -> str:
         # the canonical root basename.
         'COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME:-$(basename "$ROOT" | tr "[:upper:]" "[:lower:]" | tr -c "a-z0-9-" "-")}" && '
         f'export COMPOSE_PROJECT_NAME CLAUDE_ORCHESTRATOR_ROOT="$ROOT" CLAUDE_WORKTREE_ROOT="$WT" '
-        f'CLAUDE_ACTIVE_TASK_ID={task_id} CLAUDE_TASK_PACK="$ROOT/{pack}" && '
+        f'CLAUDE_ACTIVE_TASK_ID={task_id} CLAUDE_TASK_PACK="$PACK" && '
         f"echo 'Ahora ejecuta en Claude Code: {claude_cmd}'"
     )
+
+
+def _md_cell(value: object) -> str:
+    return str(value if value is not None else "").replace("\n", "<br>").replace("|", "\\|")
 
 
 def print_markdown(result: dict[str, Any]) -> None:
@@ -233,11 +241,11 @@ def print_markdown(result: dict[str, Any]) -> None:
         print("|---|---|---|---|---|---|")
         for task in ready:
             tid = task.get("id")
-            title = str(task.get("title") or "").replace("|", "\\|")
-            deps = ", ".join(task.get("depends_on") or []) or "—"
-            groups = ", ".join(task.get("conflict_groups") or []) or "—"
-            writes = ", ".join(task.get("write_set") or []) or "—"
-            cmd = _terminal_command(tid)
+            title = _md_cell(task.get("title") or "")
+            deps = _md_cell(", ".join(task.get("depends_on") or []) or "—")
+            groups = _md_cell(", ".join(task.get("conflict_groups") or []) or "—")
+            writes = _md_cell(", ".join(task.get("write_set") or []) or "—")
+            cmd = _md_cell(_terminal_command(tid))
             print(f"| `{tid}` | {title} | {deps} | {groups} | {writes} | `{cmd}` |")
         print()
         print("## Copia y pega por terminal")

@@ -11,7 +11,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 -B -S \"${CLAUDE_PROJECT_DIR:-$PWD}\"/.claude/bin/hook_spawn_budget.py",
+            "command": "python3 -B -S \"${CLAUDE_ORCHESTRATOR_ROOT:-${CLAUDE_PROJECT_DIR:-$PWD}}\"/.claude/bin/hook_spawn_budget.py",
             "timeout": 15
           }
         ]
@@ -21,12 +21,12 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 -B -S \"${CLAUDE_PROJECT_DIR:-$PWD}\"/.claude/bin/hook_write_scope_guard.py",
+            "command": "python3 -B -S \"${CLAUDE_ORCHESTRATOR_ROOT:-${CLAUDE_PROJECT_DIR:-$PWD}}\"/.claude/bin/hook_write_scope_guard.py",
             "timeout": 15
           },
           {
             "type": "command",
-            "command": "python3 -B -S \"${CLAUDE_PROJECT_DIR:-$PWD}\"/.claude/bin/hook_docs_discrepancy_check.py",
+            "command": "python3 -B -S \"${CLAUDE_ORCHESTRATOR_ROOT:-${CLAUDE_PROJECT_DIR:-$PWD}}\"/.claude/bin/hook_docs_discrepancy_check.py",
             "timeout": 15
           }
         ]
@@ -38,7 +38,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 -B -S \"${CLAUDE_PROJECT_DIR:-$PWD}\"/.claude/bin/hook_update_ledger.py",
+            "command": "python3 -B -S \"${CLAUDE_ORCHESTRATOR_ROOT:-${CLAUDE_PROJECT_DIR:-$PWD}}\"/.claude/bin/hook_update_ledger.py",
             "timeout": 15
           }
         ]
@@ -49,7 +49,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 -B -S \"${CLAUDE_PROJECT_DIR:-$PWD}\"/.claude/bin/hook_capture_subagent_stop.py",
+            "command": "python3 -B -S \"${CLAUDE_ORCHESTRATOR_ROOT:-${CLAUDE_PROJECT_DIR:-$PWD}}\"/.claude/bin/hook_capture_subagent_stop.py",
             "timeout": 45
           }
         ]
@@ -60,7 +60,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 -B -S \"${CLAUDE_PROJECT_DIR:-$PWD}\"/.claude/bin/hook_session_context.py",
+            "command": "python3 -B -S \"${CLAUDE_ORCHESTRATOR_ROOT:-${CLAUDE_PROJECT_DIR:-$PWD}}\"/.claude/bin/hook_session_context.py",
             "timeout": 20
           }
         ]

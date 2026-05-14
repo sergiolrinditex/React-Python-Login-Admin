@@ -52,7 +52,7 @@ Presenta:
 1. debugger corrige solo el issue descrito.
 2. validator ‖ tester vuelven a correr.
 3. /verify-slice verifica como usuario.
-4. closer genera report de revisión si aplica, commit correctivo en main, `configured Git workflow (`./scripts/git-workflow.sh`)`, y cleanup de worktrees.
+4. closer genera report de revisión si aplica, commit correctivo en el checkout correcto del TASK_ID, workflow Git configurado (`./scripts/git-workflow.sh`) y cleanup de worktrees.
 
 ## Riesgos
 - <archivos o journeys que pueden verse afectados>

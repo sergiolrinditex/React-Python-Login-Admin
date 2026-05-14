@@ -102,6 +102,14 @@ Parallel execution uses separate terminals, not extra agent types. Run `/next-wa
 
 All existing gates still apply in each node: planner writes/enriches `orchestrator-state/tasks/task-packs/<TASK_ID>.md`, developer + official-docs-researcher run with that pack, validator + tester read that same pack, debugger loops on the same `TASK_ID`, then `/verify-slice`, closer, journey verification. A task is promotable only when every `depends_on` predecessor is `done`; a task is claimable only when no DAG task conflicts via `Conflict group`/`Write set`; the planner still respects phase order, phase gates and pending journey blocks.
 
+## Canonical root vs task worktree
+
+In `pr-flow` and `git-flow`, every slice runs in its own task worktree, but shared DAG truth remains in the canonical repo root. Use this split consistently:
+
+- Shared scheduler/state truth: `$CLAUDE_ORCHESTRATOR_ROOT/orchestrator-state/tasks/registry.json`, `runtime-state.json`, `memory/PROGRESS.md`, `memory/task-dag.*`, `memory/execution-graph.json`. Do not infer operational truth from `./orchestrator-state` inside a task worktree; it can be partial or stale.
+- Slice artifacts to commit: `./orchestrator-state/tasks/handoffs/<TASK_ID>.md`, `evidence/<TASK_ID>/`, `reports/<TASK_ID>.md`, `task-packs/<TASK_ID>.md`. These live in the active worktree for PR/Gitflow and are staged by `./scripts/git-add-slice.sh <TASK_ID>`.
+- False follow-ups are worse than a blocked close. Do not create or promote follow-ups for mechanical noise: stale root reads, handoff heading variants, checker mismatch, CI/tooling flake, or missed cleanup. Fix/retry/block; follow-ups are only for real product work outside the current slice scope.
+
 ## Central runtime contract
 
 `.claude/orchestrator-contract.json` is the compact machine-readable index for what each agent may write, which files are generated core state, what trailer fields are required, and which UX fields must reach every UI task pack. Human guidance lives in `.claude/rules/05-runtime-write-contract.md`, but it is not a runtime policy source. Hooks enforce code + `orchestrator-contract.json`; they do not parse `.claude/rules/*.md` as runtime policy. If you edit rules/agents/contract during a live Claude session, restart or `/clear` before relying on the new instructions so agents and hooks do not reason from different context snapshots.
@@ -174,7 +182,7 @@ Recommended order when closing a slice: tester pass → (optional `/clear` to fr
 
 ## Follow-ups formales
 
-Si aparece trabajo real fuera del TASK_ID actual, no se deja en el handoff como nota suelta. Validator/tester/debugger/verify crean propuesta con `register-followup-task.sh propose`; el main-orchestrator promueve o waivea con decisión humana. Las propuestas `high|critical|blocker` bloquean nuevas waves, claims y cierre por closer hasta resolverse.
+Si aparece trabajo real fuera del TASK_ID actual, no se deja en el handoff como nota suelta. Validator/tester/debugger/verify crean propuesta con `register-followup-task.sh propose`; el closer incluye esas propuestas en el report/commit/PR y no pregunta al usuario para cerrar. El main-orchestrator promueve o waivea después con decisión humana. Las propuestas `high|critical|blocker` bloquean nuevas waves y claims hasta resolverse, no el PR de la slice que las originó.
 
 ## PROGRESS.md
 

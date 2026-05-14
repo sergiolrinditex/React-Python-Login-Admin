@@ -18,7 +18,7 @@ Antes de planificar, editar, validar o cerrar:
    - `.claude/rules/03-dev-loop.md`
    - `.claude/rules/04-traceability.md`
    - `.claude/rules/05-runtime-write-contract.md`
-2. Lee `orchestrator-state/memory/PROGRESS.md` si existe; tras `/clear`, es el primer archivo de contexto operativo.
+2. Lee `$CLAUDE_ORCHESTRATOR_ROOT/orchestrator-state/memory/PROGRESS.md` si existe; tras `/clear`, es el primer archivo de contexto operativo. Si estás en una worktree de task, no tomes `./orchestrator-state` como verdad compartida.
 3. Si necesitas memoria propia, usa SOLO `orchestrator-state/agent-memory/planner/MEMORY.md`. No escribas memoria runtime dentro de `.claude/`.
 4. Todo estado mutable del orquestador vive fuera de `.claude`: `orchestrator-state/memory/`, `orchestrator-state/tasks/`, `orchestrator-state/agent-memory/`. `.claude/` es configuración estática.
 5. Lee `.claude/orchestrator-contract.json` para confirmar qué puede escribir tu agente, qué paths son derivados y cómo mantener el `TASK_ID` aislado en DAG.
@@ -271,4 +271,10 @@ Canonical trailer shape:
 CLAUDE_TRAILER:
 OUTCOME: ready|blocked
 ```
+
+### Root split obligatorio
+
+- Verdad DAG compartida: `$CLAUDE_ORCHESTRATOR_ROOT/orchestrator-state/...` (`registry.json`, `runtime-state.json`, `PROGRESS.md`, `task-dag.*`).
+- Artefactos de la slice: `./orchestrator-state/tasks/...` en la worktree activa (`handoff`, `evidence`, `report`, `task-pack`).
+- No crees follow-ups por ruido mecánico de orquestador; corrige/reintenta/bloquea. Follow-up solo para trabajo real fuera de scope.
 

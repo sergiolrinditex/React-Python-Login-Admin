@@ -131,7 +131,7 @@
       "must_not_write": [
         "product code",
         "mark done without push + cleanup proof",
-        "mark done while high/blocker follow-up proposals from this TASK_ID remain unpromoted/unwaived",
+        "mark done with unrecorded out-of-scope findings; formal proposed follow-ups from this TASK_ID must be included in the PR, not used to block close",
         "Co-authored-by trailers or Claude coauthor metadata in commits"
       ]
     },
@@ -317,9 +317,9 @@
       "Coverage Registry Product increment column",
       "Coverage Registry Build state column"
     ],
-    "policy": "Agents may propose follow-ups. Only the main orchestrator promotes/waives after human approval. Promotion persists the task into source-of-truth so future bootstrap runs do not lose it.",
+    "policy": "Agents may propose follow-ups. The origin closer must include formal proposed follow-up YAMLs in the slice PR and continue the close automatically; only later waves/claims are blocked until main-orchestrator promotes or waives them. Promotion persists the task into source-of-truth so future bootstrap runs do not lose it.",
     "promotion_script": "./scripts/register-followup-task.sh promote <FOLLOWUP_ID>",
-    "promotion_policy": "Use /promote-followup as the safe main-orchestrator command. The script is the low-level implementation and must not be called by closer automatically. Main-orchestrator must reject/waive FU spam that should have gone through debugger/retest.",
+    "promotion_policy": "Use /promote-followup as the safe main-orchestrator command. The script is the low-level implementation and must not be called by closer automatically. The closer may carry proposed FU YAMLs in its PR, but must not convert them into DAG tasks. Main-orchestrator must reject/waive FU spam that should have gone through debugger/retest.",
     "triage_policy": "Do not create FU for in_scope_defect. Use debugger/retest inside the current slice. Every FU must explain why debugger cannot fix it inside TASK_ID; blocking severities require --why-not-debugger.",
     "scope_classifications": [
       "out_of_scope",
@@ -330,7 +330,8 @@
       "scope_expansion",
       "blocked_by_human_decision"
     ],
-    "rejected_scope_classification": "in_scope_defect"
+    "rejected_scope_classification": "in_scope_defect",
+    "closer_policy": "Formal proposed follow-ups from the same origin_task_id do not block closer/PR. They must be referenced in the report and staged by scripts/git-add-slice.sh; /next-wave and claim_task.py remain blocked until promote or waiver."
   },
   "product_baseline": {
     "purpose": "docs/product-baseline/ stores the built cumulative baseline snapshot passed to ChatGPT before planning the next increment.",
@@ -565,7 +566,8 @@
       "planner": {
         "description": "Planning/context assembly agent. It may report informational readiness but must not mutate lifecycle directly.",
         "required_keys": [
-          "OUTCOME"
+          "OUTCOME",
+          "CONTEXT_READY"
         ],
         "outcome_values": [
           "ready",

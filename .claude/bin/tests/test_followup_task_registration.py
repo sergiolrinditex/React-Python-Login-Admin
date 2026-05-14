@@ -160,8 +160,8 @@ def test_promoted_followup_blocks_when_it_conflicts_with_worker_task(seeded_regi
     assert "last_blocker" not in task
 
 
-def test_closer_done_is_blocked_by_unpromoted_blocker_followup(seeded_registry, monkeypatch):
-    fut.propose(_args(severity="blocker"))
+def test_closer_done_allows_formal_proposed_blocker_followup_for_pr(seeded_registry, monkeypatch):
+    result = fut.propose(_args(severity="blocker"))
     monkeypatch.setenv("CLAUDE_ACTIVE_TASK_ID", "P00-S01-T001")
     payload = make_subagent_stop_payload("closer", [
         "TASK_ID: P00-S01-T001",
@@ -170,7 +170,7 @@ def test_closer_done_is_blocked_by_unpromoted_blocker_followup(seeded_registry, 
         "HANDOFF: orchestrator-state/tasks/handoffs/P00-S01-T001.md",
         "REPORT: orchestrator-state/tasks/reports/P00-S01-T001.md",
         "REPORT_READY: yes",
-                        "BASELINE_SYNC_READY: yes",
+        "BASELINE_SYNC_READY: yes",
         "GIT_READY: yes",
         "PUSH_READY: yes",
         "WORKTREES_CLEANED: yes",
@@ -178,10 +178,11 @@ def test_closer_done_is_blocked_by_unpromoted_blocker_followup(seeded_registry, 
     monkeypatch.setattr("sys.stdin", type("In", (), {"read": lambda self: payload})())
     assert hook_capture_subagent_stop.main() == 0
     task = common.find_task(common.load_registry(), "P00-S01-T001")
-    assert task["status"] == "blocked"
+    assert task["status"] == "done"
     runtime = common.load_runtime_state()
-    assert runtime["last_trailer"]["closer_guardrail"] == "blocked_false_done"
-    assert "blocking_followups" in runtime["last_trailer"]
+    assert runtime["last_trailer"]["next_status"] == "done"
+    assert runtime["open_followups"][0]["id"] == result["followup_id"]
+    assert runtime["open_followups"][0]["status"] == "proposed"
 
 
 def test_rejects_in_scope_defect_followup_spam(seeded_registry):

@@ -1,14 +1,24 @@
 #!/usr/bin/env bash
 set -euo pipefail
-ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-WORKFLOW="$(python3 "$ROOT_DIR/.claude/bin/stack_profile.py" --root "$ROOT_DIR" --get git_workflow --default push-to-main)"
-WORKFLOW="${WORKFLOW//[^A-Za-z0-9_-]/}"
+SCRIPT_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+WORKSPACE_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || printf '%s\n' "$SCRIPT_ROOT")"
+CONFIG_ROOT="${CLAUDE_ORCHESTRATOR_ROOT:-}"
+if [ -z "$CONFIG_ROOT" ] && [ -x "$SCRIPT_ROOT/scripts/ensure-task-worktree.sh" ]; then
+  CONFIG_ROOT="$(bash "$SCRIPT_ROOT/scripts/ensure-task-worktree.sh" --print-root 2>/dev/null || printf '%s\n' "$SCRIPT_ROOT")"
+fi
+CONFIG_ROOT="${CONFIG_ROOT:-$SCRIPT_ROOT}"
+cd "$WORKSPACE_ROOT"
+WORKFLOW="$(python3 -B -S "$CONFIG_ROOT/.claude/bin/stack_profile.py" --root "$CONFIG_ROOT" --get git_workflow --default push-to-main)"
+WORKFLOW="$(printf '%s' "$WORKFLOW" | tr -cd 'A-Za-z0-9_-')"
 case "$WORKFLOW" in
   direct-main|direct-main-push|push-main)
     WORKFLOW="push-to-main"
     ;;
+  gitflow)
+    WORKFLOW="git-flow"
+    ;;
 esac
-PLUGIN="$ROOT_DIR/.claude/git-workflows/${WORKFLOW}.sh"
+PLUGIN="$CONFIG_ROOT/.claude/git-workflows/${WORKFLOW}.sh"
 if ! git rev-parse --git-dir >/dev/null 2>&1; then
   echo "GIT_WORKFLOW_READY: no"
   echo "Reason: not inside a git repository"
@@ -33,7 +43,10 @@ fi
 # product changes cannot be hidden behind push/PR automation.
 amend_late_trace_files() {
   local late_paths=()
-  for path in     orchestrator-state/tasks/ledger.jsonl     orchestrator-state/tasks/bash-ledger.jsonl     orchestrator-state/tasks/runtime-state.json
+  for path in \
+    orchestrator-state/tasks/ledger.jsonl \
+    orchestrator-state/tasks/bash-ledger.jsonl \
+    orchestrator-state/tasks/runtime-state.json
   do
     if ! git diff --quiet -- "$path" 2>/dev/null || ! git diff --cached --quiet -- "$path" 2>/dev/null; then
       late_paths+=("$path")

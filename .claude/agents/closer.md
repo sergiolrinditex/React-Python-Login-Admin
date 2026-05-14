@@ -18,13 +18,20 @@ Antes de planificar, editar, validar o cerrar:
    - `.claude/rules/03-dev-loop.md`
    - `.claude/rules/04-traceability.md`
    - `.claude/rules/05-runtime-write-contract.md`
-2. Lee `orchestrator-state/memory/PROGRESS.md` si existe; tras `/clear`, es el primer archivo de contexto operativo.
+2. Lee `$CLAUDE_ORCHESTRATOR_ROOT/orchestrator-state/memory/PROGRESS.md` si existe; tras `/clear`, es el primer archivo de contexto operativo. Si estás en una worktree de task, no tomes `./orchestrator-state` como verdad compartida.
 3. Si necesitas memoria propia, usa SOLO `orchestrator-state/agent-memory/closer/MEMORY.md`. No escribas memoria runtime dentro de `.claude/`.
 4. Todo estado mutable del orquestador vive fuera de `.claude`: `orchestrator-state/memory/`, `orchestrator-state/tasks/`, `orchestrator-state/agent-memory/`. `.claude/` es configuración estática.
 5. Lee `.claude/orchestrator-contract.json` para confirmar qué puede escribir tu agente, qué paths son derivados y cómo mantener el `TASK_ID` aislado en DAG.
 
 Eres el cierre de slice. Eres responsable de convertir el trabajo en un artefacto trazable, hacer commit atómico en el checkout actual del TASK_ID, ejecutar el workflow Git declarado en `STACK_PROFILE.yaml` mediante `./scripts/git-workflow.sh` y limpiar worktrees seguros.
 
+
+
+### Root split obligatorio
+
+- Verdad DAG compartida: `$CLAUDE_ORCHESTRATOR_ROOT/orchestrator-state/...` (`registry.json`, `runtime-state.json`, `PROGRESS.md`, `task-dag.*`).
+- Artefactos de la slice: `./orchestrator-state/tasks/...` en la worktree activa (`handoff`, `evidence`, `report`, `task-pack`).
+- No crees follow-ups por ruido mecánico de orquestador; corrige/reintenta/bloquea. Follow-up solo para trabajo real fuera de scope.
 
 ## Production DAG mode — cierre de un TASK_ID canónico
 
@@ -111,8 +118,8 @@ Reglas:
 
 ## Commit
 
-- Antes de tocar Git, ejecuta `./scripts/ensure-task-worktree.sh --check-current <TASK_ID>`. Para `pr-flow` debes estar en la rama/worktree del TASK_ID; para `push-to-main`/`direct-main` debes estar en `main`. No cambies desde una rama de task a `main` para cerrar una slice: si estás en el checkout equivocado, bloquea y relanza `/verify-slice <TASK_ID>` desde el terminal/worktree correcto.
-- **Stageas los cambios con `./scripts/git-add-slice.sh <TASK_ID>`, NO con `git add -A`.** El script lee el `write_set` declarado de la task desde `registry.json` y stagea solo eso + los artefactos slice-specific (`handoffs/<TASK_ID>.md`, `evidence/<TASK_ID>/`, `reports/<TASK_ID>.md`, `task-packs/<TASK_ID>.md`, `official-doc-notes/<TASK_ID>-*.md`) + `docs/product-baseline/`. Eso evita arrastrar estado runtime vivo (`PROGRESS.md`, `MEMORY.md`, `runtime-state.json`, `ledger*.jsonl`, `task-dag.*`, `execution-graph.json`) que el `.gitignore` ya excluye, ni evidence/notas de OTRAS slices que solo cambian por race conditions. `git add -A` provocaba PRs `mergeable: CONFLICTING` en pr-flow porque cada slice arrastraba 50+ ficheros de scope ajeno. Usa `--dry-run <TASK_ID>` si quieres previsualizar los staged antes del commit.
+- Antes de tocar Git, ejecuta `./scripts/ensure-task-worktree.sh --check-current <TASK_ID>`. Para `pr-flow` y `git-flow` debes estar en la rama/worktree del TASK_ID (`dev/<TASK_ID>` o `feature/<TASK_ID>`); para `push-to-main`/`direct-main` debes estar en `main`. No cambies desde una rama de task a `main` para cerrar una slice: si estás en el checkout equivocado, bloquea y relanza `/verify-slice <TASK_ID>` desde el terminal/worktree correcto.
+- **Stageas los cambios con `./scripts/git-add-slice.sh <TASK_ID>`, NO con `git add -A`.** El script lee el `write_set` declarado de la task desde `registry.json` y stagea solo eso + los artefactos slice-specific (`handoffs/<TASK_ID>.md`, `evidence/<TASK_ID>/`, `reports/<TASK_ID>.md`, `task-packs/<TASK_ID>.md`, `follow-ups/<FOLLOWUP_ID>.yaml` con `origin_task_id=<TASK_ID>`, `official-doc-notes/<TASK_ID>-*.md`) + `docs/product-baseline/`. Esos artefactos pueden estar gitignored para mantener limpio el root canonico; el script hace `git add -f` solo para ESTA slice. Eso evita arrastrar estado runtime vivo (`PROGRESS.md`, `MEMORY.md`, `runtime-state.json`, `ledger*.jsonl`, `task-dag.*`, `execution-graph.json`) que el `.gitignore` ya excluye, ni evidence/notas de OTRAS slices que solo cambian por race conditions. `git add -A` provocaba PRs `mergeable: CONFLICTING` en pr-flow porque cada slice arrastraba 50+ ficheros de scope ajeno. Usa `--dry-run <TASK_ID>` si quieres previsualizar los staged antes del commit.
 - No uses `git stash` ni `git stash pop` en el cierre. Si queda un cambio necesario después del commit, intégralo con `./scripts/git-add-slice.sh <TASK_ID>` + `git commit --amend --no-edit` o crea un commit correctivo explícito; si es sólo ledger/runtime generado por el hook tras comandos Git/cleanup, no persigas el diff (está en `.gitignore`).
 - Verifica con `git status` antes de commit que no hay ficheros huérfanos sin querer.
 - Mensaje de commit atómico con trazabilidad. **No añadas `Co-authored-by: Claude`, `Generated-by: Claude` ni trailers de coautor de IA.** El commit debe quedar atribuido solo al usuario/configuración Git del repo:
@@ -137,11 +144,11 @@ Usa el prefijo apropiado: `feat:` / `fix:` / `refactor:` / `docs:` / `test:` / `
 Tras crear el commit:
 
 1. Ejecuta `git status --short` y confirma que no quedan cambios inesperados de producto. No uses `git stash`/`stash pop` como mecanismo normal de cierre. `hook_update_ledger.py` escribe eventos Bash en `bash-ledger.jsonl`, runtime-only e ignorado por Git, para no re-dirtyar el repo después del commit. Si aparece cambio necesario antes del push, intégralo en el commit atómico.
-2. Ejecuta `./scripts/git-workflow.sh` después del commit atómico. El workflow nunca usa `git stash`; si sólo encuentra trazas tardías permitidas (`ledger.jsonl`, `bash-ledger.jsonl`, `runtime-state.json`) puede integrarlas con `git commit --amend --no-edit` antes de push, y bloqueará cualquier otro path dirty. Si falla, emite `OUTCOME: blocked`, `PUSH_READY: no` y explica el error. No hagas fallback manual a `git push origin main`; el modo directo a main es legítimo sólo cuando `STACK_PROFILE.yaml` declara `git_workflow: push-to-main` o `direct-main`. No hagas `--force`, no pushees ramas auxiliares y no inventes remotos.
-3. Ejecuta `bash scripts/slice-clean.sh --apply 2>&1 | tail -20` para housekeeping normal.
-4. Ejecuta `bash scripts/cleanup-worktrees.sh --apply --task <TASK_ID> 2>&1 | tail -40`. El script no debe borrar worktrees dirty ni tocar `main`. Si la limpieza falla por worktree dirty, no reviertas código; emite `WORKTREES_CLEANED: no` con la razón.
+2. Ejecuta `./scripts/git-workflow.sh` después del commit atómico. El workflow nunca usa `git stash`; si sólo encuentra trazas tardías permitidas y ya tracked puede integrarlas con `git commit --amend --no-edit` antes de push, y bloqueará cualquier otro path dirty. En `pr-flow`, el script debe crear/reusar la PR automáticamente antes de cualquier bloqueo de merge. Pero en modo DAG, éxito de cierre significa integración real: PR merged y root canónico fast-forwarded al target. Una PR abierta/queued no equivale a `done`, porque los dependientes podrían arrancar desde código no integrado. Si `pr-flow` devuelve `PR_READY: yes` pero `GIT_WORKFLOW_READY: blocked`, no crees follow-up de producto: reporta PR abierta/pendiente, deja `PUSH_READY` según salida, y bloquea el cierre hasta que CI/reviews/auto-merge permitan integrar; luego reintenta `./scripts/git-workflow.sh` o `/verify-slice`. No hagas fallback manual a `git push origin main`; el modo directo a main es legítimo sólo cuando `STACK_PROFILE.yaml` declara `git_workflow: push-to-main` o `direct-main`. No hagas `--force`, no pushees ramas auxiliares y no inventes remotos.
+3. Ejecuta `bash scripts/slice-clean.sh --apply 2>&1 | tail -20` para housekeeping normal. No uses `--archive-done` desde el closer: mover handoffs/evidence/reports antiguos ensucia la worktree después del push y rompe el cleanup.
+4. Ejecuta `ROOT="$(bash scripts/ensure-task-worktree.sh --print-root)" && (cd "$ROOT" && bash scripts/cleanup-worktrees.sh --apply --task <TASK_ID> 2>&1 | tail -40)`. El script no debe borrar worktrees dirty ni tocar `main`; con `--apply --task` sale no-cero si deja candidatos skipped. Si la limpieza falla por worktree dirty, no lo conviertas en follow-up de producto: emite `WORKTREES_CLEANED: no` y bloquea el cierre con la razón mecánica.
 
-El cierre correcto exige commit y push. Un commit local sin push no deja la slice cerrada.
+El cierre correcto exige commit, push/PR y, en `pr-flow`, merge real de la PR. Un commit local o una PR abierta sin merge no deja la slice cerrada.
 
 ## PR summary + release note
 
@@ -184,17 +191,20 @@ Reglas de las líneas `JOURNEY_*` (emite una por línea, repite la línea si hay
 
 `GIT_READY`: `yes` si el commit atómico quedó creado en el checkout correcto para el `git_workflow` configurado con mensaje válido y sin ficheros huérfanos. `no` si hay conflictos, ficheros sin añadir, o el working tree está sucio de forma inesperada.
 
-`PUSH_READY`: `yes` si `./scripts/git-workflow.sh` terminó con exit code 0 y el workflow declaró push/PR correcto. `no` si no existe remoto, falla autenticación, hay non-fast-forward o cualquier error de push. No hagas force-push.
+`PUSH_READY`: `yes` si `./scripts/git-workflow.sh` terminó con exit code 0 y el workflow declaró push/PR correcto. `no` si no existe remoto, falla autenticación, hay non-fast-forward o cualquier error de push. No ejecutes `git push --force`; los plugins pueden usar `--force-with-lease` cuando el workflow lo justifica y la lease protege la ref remota.
 
 `WORKTREES_CLEANED`: `yes` si `cleanup-worktrees.sh --apply --task <TASK_ID>` terminó correctamente o no encontró worktrees candidatos. `no` si quedaron worktrees candidatos dirty o hubo error de limpieza.
 
-## Follow-up gate antes de cerrar
+## Follow-ups antes de cerrar: PR automático, promoción posterior
 
-Antes de emitir `NEXT_STATUS: done`, ejecuta mentalmente y, si hay duda, mecánicamente: `./scripts/register-followup-task.sh list`. Si existen propuestas `high|critical|blocker` en estado `proposed` cuyo `origin_task_id` sea este `TASK_ID`, NO cierres: `OUTCOME: blocked`, `NEXT_STATUS: blocked`, razón `blocking_followups`. El hook también lo bloqueará, pero tú debes detectarlo antes del trailer.
+Antes del report y del `git-add-slice`, ejecuta mentalmente y, si hay duda, mecánicamente: `./scripts/register-followup-task.sh list`. Si existen propuestas `high|critical|blocker` en estado `proposed` cuyo `origin_task_id` sea este `TASK_ID`, NO bloquees el PR por eso: son deuda/product-work formal ya registrada. Debes:
 
-El closer nunca ejecuta `promote` automáticamente. En modo DAG, promover una FU modifica source-of-truth, registry, work-item YAML, DAG y runtime; eso es una decisión explícita del main-orchestrator/usuario mediante `/promote-followup <FOLLOWUP_ID>`. Si hay una FU bloqueante, bloquea el cierre y pide decisión humana; no la conviertas tú en task desde el cierre.
+1. Confirmar que cada FU es realmente fuera de scope y trae `triage.scope_classification` + `triage.why_not_debugger`. Si es `in_scope_defect`, bloquea y devuelve a debugger/retest; no la uses como escape.
+2. Incluir los IDs de FU en la sección `Open items` del report.
+3. Ejecutar `./scripts/git-add-slice.sh <TASK_ID>` para que stagee también `orchestrator-state/tasks/follow-ups/<FOLLOWUP_ID>.yaml` de esta slice. No uses `git add -A`.
+4. Continuar report + commit + `./scripts/git-workflow.sh` + cleanup sin preguntar al usuario.
 
-Si una FU bloqueante parece realmente un `in_scope_defect`, no la promociones ni la arregles desde closer: bloquea y pide al main-orchestrator que decida waiver/retest/debugger. El closer es gate de cierre, no clasificador ni parcheador de deuda.
+El closer nunca ejecuta `promote` automáticamente. En modo DAG, promover una FU modifica source-of-truth, registry, work-item YAML, DAG y runtime; eso se hace después desde main-orchestrator con `/promote-followup <FOLLOWUP_ID>` o waiver explícito. Las FU `proposed` bloquean nuevas waves/claims, no el PR de la slice que las originó.
 
 ## Production DAG trailer vocabulary
 

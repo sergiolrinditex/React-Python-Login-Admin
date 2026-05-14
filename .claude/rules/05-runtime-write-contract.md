@@ -17,6 +17,15 @@ CLAUDE_TASK_PACK=orchestrator-state/tasks/task-packs/<TASK_ID>.md
 
 The `TASK_ID` in the environment, the task pack name, handoff path, evidence dir and report path must all match. If they do not match, stop before writing. There is no implicit selector in DAG-only mode; never infer work without explicit `TASK_ID`.
 
+## Canonical vs workspace state
+
+Worktree execution has two roots. Keep them separate:
+
+- **Canonical root** (`$CLAUDE_ORCHESTRATOR_ROOT`): shared DAG state and generated memory (`registry.json`, `runtime-state.json`, `PROGRESS.md`, `task-dag.*`, `execution-graph.json`). Agents read this for scheduling truth; scripts/hooks mutate it under locks.
+- **Workspace/worktree root** (`$PWD`, `CLAUDE_WORKTREE_ROOT`, or `CLAUDE_PROJECT_DIR`): per-slice artifacts that must be committed with the task branch (`handoffs/<TASK_ID>.md`, `evidence/<TASK_ID>/`, `reports/<TASK_ID>.md`, `task-packs/<TASK_ID>.md`).
+
+Never copy scheduler truth from a task worktree back into the canonical root. Never stage shared runtime files to "fix" a dirty worktree. Use the scripts that know the split.
+
 ## Generated core state
 
 Do not edit these files with Write/Edit/MultiEdit during a slice:
@@ -142,6 +151,6 @@ Only the main orchestrator promotes or waives it after explicit human decision:
 ./scripts/register-followup-task.sh waive <FOLLOWUP_ID> --reason "<human decision>"
 ```
 
-Promotion appends a `Runtime Follow-up Coverage Registry` row to the implementation checklist, updates `registry.json`, regenerates the DAG adjacency, writes `work-items/<TASK_ID>.yaml`, and updates runtime-state/ledger under locks. High/critical/blocker proposals block `/next-wave`, `claim_task.py`, and closer `done` until promoted or waived.
+Promotion appends a `Runtime Follow-up Coverage Registry` row to the implementation checklist, updates `registry.json`, regenerates the DAG adjacency, writes `work-items/<TASK_ID>.yaml`, and updates runtime-state/ledger under locks. High/critical/blocker proposals block `/next-wave` and `claim_task.py` until promoted or waived; they do not block closer `done` for the origin slice when the FU YAML is formal, referenced in the report and staged into the PR.
 
 Git close note: `hook_update_ledger.py` writes Bash PostToolUse events to `orchestrator-state/tasks/bash-ledger.jsonl`, which is runtime-only and ignored by Git. This prevents Bash hooks from re-dirtying the working tree after the atomic commit/push in DAG close. Do not use `git stash` as the normal closer flow; stage required changes into the slice commit before running `./scripts/git-workflow.sh`.

@@ -86,7 +86,7 @@ if [[ -z "$WORKTREE" && "$AUTO" == "1" ]]; then
     #   branch refs/heads/<branch>
     # Buscamos el worktree path que contenga el TASK_ID.
     WORKTREE=$(git worktree list --porcelain 2>/dev/null \
-      | awk -v tid="$TASK_ID" '/^worktree / { p=$2 } p && (p ~ tid) { print p; exit }')
+      | awk -v tid="$TASK_ID" '/^worktree / { p=substr($0, 10) } p && (p ~ tid) { print p; exit }')
   fi
 
   if [[ -z "$WORKTREE" ]]; then

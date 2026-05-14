@@ -27,7 +27,6 @@ from common import (
     dag_worker_task_id,
     add_pending_journey_verification,
     reconcile_runtime_state,
-    blocking_followups_for_task,
     append_jsonl,
     bump_spawn_count,
     file_lock,
@@ -405,8 +404,11 @@ def apply_journey_mutations(journey_data: dict[str, object]) -> dict[str, object
             if str(jid) in inline_verified:
                 continue
             try:
-                add_pending_journey_verification(str(jid))
-                summary["pending_added"].append(jid)
+                result = add_pending_journey_verification(str(jid))
+                if isinstance(result, dict) and result.get("ok"):
+                    summary["pending_added"].append(jid)
+                else:
+                    summary.setdefault("pending_rejected", []).append(result)
             except Exception:
                 pass
 
@@ -446,7 +448,10 @@ def enforce_closer_done_guardrail(trailer: dict[str, str], agent_type: str | Non
     GIT_READY/PUSH_READY/WORKTREES_CLEANED. This hook is the mechanical safety net: if the model
     accidentally emits NEXT_STATUS: done while any of those fields is missing or
     not yes, the hook rewrites the lifecycle result to blocked and records a
-    visible hook error. The hook still never blocks Claude Code; it just avoids
+    visible hook error. Formal proposed follow-ups are allowed at close time:
+    the PR/branch must carry the proposal YAML, while /next-wave and claim_task
+    remain responsible for blocking later DAG work until those follow-ups are
+    promoted or waived. The hook still never blocks Claude Code; it just avoids
     corrupting registry.json with a false done.
     """
     if agent_type != "closer":
@@ -457,14 +462,11 @@ def enforce_closer_done_guardrail(trailer: dict[str, str], agent_type: str | Non
     bad = [k for k in required_yes if str(trailer.get(k, "")).strip().lower() != "yes"]
     if str(trailer.get("outcome", "")).strip().lower() != "committed":
         bad.append("outcome")
-    blocking = blocking_followups_for_task(trailer.get("task_id"))
-    if blocking:
-        bad.append("blocking_followups")
     if bad:
         log_hook_error(
             "hook_capture_subagent_stop.closer_guardrail",
             RuntimeError(
-                "closer attempted NEXT_STATUS=done without closure proof or unresolved blocker follow-ups: "
+                "closer attempted NEXT_STATUS=done without closure proof: "
                 + ", ".join(bad)
             ),
         )
@@ -472,8 +474,6 @@ def enforce_closer_done_guardrail(trailer: dict[str, str], agent_type: str | Non
         trailer["next_status"] = "blocked"
         trailer["outcome"] = "blocked"
         trailer["closer_guardrail"] = "blocked_false_done"
-        if blocking:
-            trailer["blocking_followups"] = ",".join(str(x.get("id")) for x in blocking)
     return trailer
 
 

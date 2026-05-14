@@ -14,10 +14,11 @@ import sys
 from pathlib import Path
 from typing import Dict, List, Tuple
 
-from common import handoff_path as _handoff_path_resolver, project_root
+from common import handoff_path as _handoff_path_resolver, workspace_relpath
 
 SECTION_RE = re.compile(r"^##\s+(.+?)\s*$")
 KEY_RE = re.compile(r"^\s*-?\s*(?P<key>[A-Za-z][A-Za-z0-9_]*):\s*(?P<value>.*?)\s*$")
+CYCLE_SUFFIX_RE = re.compile(r"\s*\((?:cycle|ciclo)\s+\d+\)\s*$", re.IGNORECASE)
 
 VALIDATOR_OUTCOMES = {"approved", "changes_requested", "blocked"}
 TESTER_OUTCOMES = {"pass", "fail", "blocked"}
@@ -49,6 +50,34 @@ def _handoff_path(task_id: str) -> Path:
     return _handoff_path_resolver(task_id)
 
 
+def _canonical_section_name(raw: str) -> str:
+    """Normalize agent-written handoff headings to the contract keys.
+
+    Claude agents sometimes append cycle labels or use short headings, e.g.
+    ``## validator`` and ``## validator (cycle 2)``. The contract should read
+    the latest logical section, not fail on harmless heading decoration.
+    """
+    value = CYCLE_SUFFIX_RE.sub("", raw.strip().lower()).replace("_", " ")
+    value = re.sub(r"\s+", " ", value).strip()
+    compact = re.sub(r"[\s/_-]+", " ", value).strip()
+
+    if compact.startswith("validator") or compact.startswith("validation"):
+        return "validator review"
+    if compact.startswith("tester") or compact.startswith("test run") or compact in {"tests", "test"}:
+        return "tester run"
+    if compact.startswith("verify slice"):
+        return "verify-slice"
+    if compact.startswith("verify journey"):
+        return "verify-journey"
+    if "screen" in compact and "journey" in compact and "review" in compact:
+        return "screen/journey review"
+    return value
+
+
+def _display_path(path: Path) -> str:
+    return workspace_relpath(path)
+
+
 def _parse_sections(text: str) -> Dict[str, List[Tuple[str, str]]]:
     sections: Dict[str, List[Tuple[str, str]]] = {}
     current = "__preamble__"
@@ -56,7 +85,7 @@ def _parse_sections(text: str) -> Dict[str, List[Tuple[str, str]]]:
     for line in text.splitlines():
         sec = SECTION_RE.match(line)
         if sec:
-            current = sec.group(1).strip().lower()
+            current = _canonical_section_name(sec.group(1))
             sections.setdefault(current, [])
             continue
         key = KEY_RE.match(line)
@@ -85,9 +114,9 @@ def _all_task_ids(sections: Dict[str, List[Tuple[str, str]]]) -> list[tuple[str,
 def validate(task_id: str, *, require_ready_for_close: bool, require_verify_slice: bool, require_screen_journey_review: bool = False) -> tuple[bool, list[str], dict[str, object]]:
     path = _handoff_path(task_id)
     errors: list[str] = []
-    details: dict[str, object] = {"task_id": task_id, "handoff": str(path.relative_to(project_root()))}
+    details: dict[str, object] = {"task_id": task_id, "handoff": _display_path(path)}
     if not path.exists():
-        return False, [f"missing handoff: {path.relative_to(project_root())}"], details
+        return False, [f"missing handoff: {_display_path(path)}"], details
     text = path.read_text(encoding="utf-8", errors="replace")
     sections = _parse_sections(text)
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 import argparse, json, os, subprocess, sys
-from common import ensure_parent, find_task, journeys_closing_at_task, load_registry, now_iso, project_root, workspace_root, relpath, tasks_dir
+from common import ensure_parent, find_task, journeys_closing_at_task, load_registry, now_iso, workspace_root, workspace_relpath, handoff_path, evidence_dir
 
 ALLOWED_STATUS = {"ready_for_close", "done"}
 
@@ -10,7 +10,7 @@ def run_command(command: str, timeout: int) -> dict[str, object]:
     return {"command": command, "returncode": proc.returncode, "stdout_tail": proc.stdout[-4000:], "stderr_tail": proc.stderr[-4000:]}
 
 def append_handoff(task_id: str, section: str):
-    path = tasks_dir() / "handoffs" / f"{task_id}.md"
+    path = handoff_path(task_id)
     ensure_parent(path)
     old = path.read_text(encoding="utf-8", errors="replace") if path.exists() else f"# Handoff {task_id}\n"
     if not old.endswith("\n"): old += "\n"
@@ -51,9 +51,9 @@ def main() -> int:
             if result["returncode"] != 0: ok = False; break
     except subprocess.TimeoutExpired as exc:
         ok = False; results.append({"command": exc.cmd, "timeout": args.timeout, "returncode": "timeout"})
-    evidence_dir = tasks_dir() / "evidence" / task_id; evidence_dir.mkdir(parents=True, exist_ok=True)
+    evidence_root = evidence_dir(task_id); evidence_root.mkdir(parents=True, exist_ok=True)
     stamp = now_iso().replace(":", "").replace("+00:00", "Z")
-    evidence_path = evidence_dir / f"auto-verify-{stamp}.json"
+    evidence_path = evidence_root / f"auto-verify-{stamp}.json"
     evidence_path.write_text(json.dumps({"generated_at": now_iso(), "task_id": task_id, "results": results, "verified": ok}, ensure_ascii=False, indent=2)+"\n", encoding="utf-8")
     outcome = "verified" if ok else "issues_found"
     section = f"""
@@ -64,13 +64,13 @@ def main() -> int:
 - RISK_LEVEL: {risk}
 - VERIFY_OUTCOME: {outcome}
 - DATA_CONTRACT_ROWS: real/provided sandbox data from TECHNICAL_GUIDE Verification Data Contract; no decorative data-only closure
-- PERSISTED_DATA_OBSERVED: command evidence in `{relpath(evidence_path)}`
+- PERSISTED_DATA_OBSERVED: command evidence in `{workspace_relpath(evidence_path)}`
 - DATA_SETUP: command-driven only; no endpoint-under-test self-seeding
 - FLOWS_TESTED: {', '.join(commands)}
-- EVIDENCE: {relpath(evidence_path)}
+- EVIDENCE: {workspace_relpath(evidence_path)}
 - GENERATED_AT: {now_iso()}
 """
     handoff = append_handoff(task_id, section)
-    print(json.dumps({"ok": ok, "task_id": task_id, "outcome": outcome, "handoff": relpath(handoff), "evidence": relpath(evidence_path)}, ensure_ascii=False, indent=2))
+    print(json.dumps({"ok": ok, "task_id": task_id, "outcome": outcome, "handoff": workspace_relpath(handoff), "evidence": workspace_relpath(evidence_path)}, ensure_ascii=False, indent=2))
     return 0 if ok else 2
 if __name__ == "__main__": raise SystemExit(main())

@@ -116,4 +116,4 @@ Solo si el usuario decide no convertirlo en trabajo:
 
 ## Regla de bloqueo
 
-Las propuestas `high`, `critical` o `blocker` bloquean `/next-wave`, `claim_task.py` y el `closer` del `origin_task_id` hasta estar `promoted` o `waived`.
+Las propuestas `high`, `critical` o `blocker` bloquean `/next-wave` y `claim_task.py` hasta estar `promoted` o `waived`. No bloquean al `closer` del `origin_task_id` cuando ya existen como YAML `proposed`: el cierre debe meterlas en el PR automáticamente y dejar la decisión de promoción/waiver para después.

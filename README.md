@@ -12,7 +12,7 @@ Para operación diaria rápida, ver [`CHEATSHEET.md`](CHEATSHEET.md). La misma g
 ChatGPT Pro rellena templates
   -> 5 docs source-of-truth acumulativos
   -> bootstrap_source_of_truth.py
-  -> registry.json canonical + derived views (work-items/*.yaml, task-dag.json/md, execution-graph.json)
+  -> registry.json local runtime scheduler state + derived views (work-items/*.yaml, task-dag.json/md, execution-graph.json)
   -> /next-wave propone nodos DAG seguros
   -> claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice <TASK_ID>" ejecuta agentes en un terminal aislado
   -> /verify-slice valida con datos reales/proporcionados
@@ -66,9 +66,9 @@ unset CLAUDE_ORCHESTRATOR_ROOT
 claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice <NEXT_TASK_ID>"
 ```
 
-Si el cierre genera `JOURNEY_PENDING_VERIFY`, `/next-wave` en DAG-only difiere solo tasks que referencian ese journey pendiente. Los follow-ups bloqueantes y conflictos activos sí impiden abrir terminales inseguras.
+Si el cierre genera `JOURNEY_PENDING_VERIFY`, `/next-wave` en DAG-only difiere solo tasks que referencian ese journey pendiente. Los follow-ups bloqueantes impiden abrir nuevas waves/claims hasta promoverlos o waivearlos; no impiden que el PR de la slice se cree si la FU ya está registrada como propuesta formal y entra en el commit. Los conflictos activos sí impiden abrir terminales inseguras.
 
-Los follow-ups productivos no los promueve el closer automáticamente. El closer sólo bloquea si hay FU `high|critical|blocker` propuestas para la slice; la decisión explícita de promoción es `/promote-followup <FU_ID>`; el waiver sigue siendo `/register-followup waive <FU_ID>`. Si un promote crea una task que pisa `Conflict group`/`Write set` de una task activa, queda `blocked` hasta que el DAG sea seguro.
+Los follow-ups productivos no los promueve el closer automáticamente. Si el verify/validator/tester detecta trabajo real fuera de scope, debe quedar como FU `proposed`; el closer la incluye en el report/commit/PR y continúa el cierre sin pedir decisión humana. La decisión posterior de promoción es `/promote-followup <FU_ID>`; el waiver sigue siendo `/register-followup waive <FU_ID>`. Si un promote crea una task que pisa `Conflict group`/`Write set` de una task activa, queda `blocked` hasta que el DAG sea seguro.
 
 **Comando de promoción seguro**: usa `/promote-followup` desde el main-orchestrator, no desde el closer ni desde un worker activo. Si tienes `CLAUDE_ACTIVE_TASK_ID` exportado en ese terminal, primero limpia el entorno o usa una terminal de control:
 
@@ -221,7 +221,7 @@ El smoke crea dos apps temporales por perfil (`minimal`, `large-without-base`, `
 El script imprime bloques copiables:
 
 ```bash
-BOOTSTRAP_ROOT="${CLAUDE_ORCHESTRATOR_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd -P)}" && ROOT="$($BOOTSTRAP_ROOT/scripts/ensure-task-worktree.sh --print-root)" && WT="$($ROOT/scripts/ensure-task-worktree.sh P02-S03-T001)" && cd "$WT" && export CLAUDE_ORCHESTRATOR_ROOT="$ROOT" CLAUDE_WORKTREE_ROOT="$WT" CLAUDE_ACTIVE_TASK_ID=P02-S03-T001 CLAUDE_TASK_PACK="$ROOT/orchestrator-state/tasks/task-packs/P02-S03-T001.md" && echo 'Ahora ejecuta en Claude Code: claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice P02-S03-T001"'
+BOOTSTRAP_ROOT="${CLAUDE_ORCHESTRATOR_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd -P)}" && ROOT="$(bash "$BOOTSTRAP_ROOT/scripts/ensure-task-worktree.sh" --print-root)" && WT="$(bash "$ROOT/scripts/ensure-task-worktree.sh" P02-S03-T001)" && cd "$WT" && PACK="$WT/orchestrator-state/tasks/task-packs/P02-S03-T001.md" && if [ ! -f "$PACK" ]; then PACK="$ROOT/orchestrator-state/tasks/task-packs/P02-S03-T001.md"; fi && export CLAUDE_ORCHESTRATOR_ROOT="$ROOT" CLAUDE_WORKTREE_ROOT="$WT" CLAUDE_ACTIVE_TASK_ID=P02-S03-T001 CLAUDE_TASK_PACK="$PACK" && echo 'Ahora ejecuta en Claude Code: claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice P02-S03-T001"'
 ```
 
 En ese terminal worker, lanza Claude Code con el orquestador explícito:
@@ -356,7 +356,7 @@ claude --agent main-orchestrator --permission-mode bypassPermissions "/promote-f
 ./scripts/register-followup-task.sh list --json
 ```
 
-Las propuestas `high|critical|blocker` bloquean `/next-wave`, claims y cierre hasta resolverse. El closer nunca hace `promote` automático: si hay FU bloqueante, debe cerrar con `OUTCOME: blocked` / `NEXT_STATUS: blocked` y pedir decisión humana. Al promover con `/promote-followup`, se actualiza source-of-truth, registry, DAG, work-item YAML, runtime y ledger bajo locks. Los Bash PostToolUse van a `orchestrator-state/tasks/bash-ledger.jsonl`, runtime-only e ignorado por Git, para no re-ensuciar el repo tras commit/push. Si la nueva task ya tiene dependencias cumplidas pero su `conflict_group` o `write_set` choca con una task activa/claimed/in_progress, queda `blocked` con `blocked_reason: conflict_with_worker_task`; `promote_ready_tasks` la desbloquea cuando desaparece el conflicto.
+Las propuestas `high|critical|blocker` bloquean `/next-wave` y claims hasta resolverse, pero no bloquean el cierre/PR de la slice que las originó si ya existen como YAML `proposed` y están staged por `git-add-slice.sh`. El closer nunca hace `promote` automático: registra/incluye las FU propuestas y sigue el PR; la promoción o waiver ocurre después desde main-orchestrator. Al promover con `/promote-followup`, se actualiza source-of-truth, registry, DAG, work-item YAML, runtime y ledger bajo locks. Los Bash PostToolUse van a `orchestrator-state/tasks/bash-ledger.jsonl`, runtime-only e ignorado por Git, para no re-ensuciar el repo tras commit/push. Si la nueva task ya tiene dependencias cumplidas pero su `conflict_group` o `write_set` choca con una task activa/claimed/in_progress, queda `blocked` con `blocked_reason: conflict_with_worker_task`; `promote_ready_tasks` la desbloquea cuando desaparece el conflicto.
 
 ## Git workflow
 

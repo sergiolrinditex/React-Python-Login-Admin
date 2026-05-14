@@ -470,6 +470,21 @@ def relpath(path: Path) -> str:
         return path.as_posix()
 
 
+def workspace_relpath(path: Path) -> str:
+    """Return a path relative to the active checkout/worktree when possible.
+
+    Shared orchestrator state uses project_root(), which resolves a git worktree
+    back to the canonical main repo. Per-slice artifacts are different: in
+    pr-flow/git-flow they must be committed from the task worktree, so registry
+    metadata should keep their checkout-relative path instead of leaking an
+    absolute sibling worktree path.
+    """
+    try:
+        return path.resolve().relative_to(workspace_root()).as_posix()
+    except Exception:
+        return relpath(path)
+
+
 def sha256_file(path: Path) -> str:
     h = hashlib.sha256()
     with path.open("rb") as f:
@@ -702,7 +717,8 @@ def blocking_open_followups(runtime: dict[str, Any] | None = None) -> list[dict[
     current slice. Such findings are first written as proposal YAML under
     ``orchestrator-state/tasks/follow-ups/`` and recorded in runtime-state.
     Critical/high/blocker proposals must be promoted into a real DAG task or
-    waived before a closer can mark the origin done or a new wave can start.
+    waived before new DAG work can be claimed. They do not block the origin
+    closer once the proposal YAML exists; the PR must carry that proposal.
     """
     runtime = runtime or load_runtime_state()
     blocking = []

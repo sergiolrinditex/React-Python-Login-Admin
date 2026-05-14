@@ -16,6 +16,8 @@ from common import (
     workspace_root,
     run_commands,
     tasks_dir,
+    evidence_dir as resolve_evidence_dir,
+    workspace_relpath,
 )
 
 
@@ -43,9 +45,9 @@ def main() -> int:
     lock_file.write_text(now_iso(), encoding="utf-8")
     try:
         results = run_commands(commands, cwd=workspace_root(), timeout=900)
-        evidence_dir = tasks_dir() / "evidence" / task_id
-        evidence_dir.mkdir(parents=True, exist_ok=True)
-        log_file = evidence_dir / "async-check.log"
+        evidence_path = resolve_evidence_dir(task_id)
+        evidence_path.mkdir(parents=True, exist_ok=True)
+        log_file = evidence_path / "async-check.log"
         chunks = []
         for item in results:
             chunks.append(f"$ {item['command']}\n[returncode] {item['returncode']}\n")
@@ -61,7 +63,7 @@ def main() -> int:
             "event": "async_test_run",
             "task_id": task_id,
             "commands": commands,
-            "log_file": str(log_file),
+            "log_file": workspace_relpath(log_file),
             "success": all(item["returncode"] == 0 for item in results),
         })
     finally:

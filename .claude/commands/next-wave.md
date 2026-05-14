@@ -2,6 +2,12 @@
 description: Lista la wave DAG actual: tasks ready independientes, deps, posibles conflictos y comandos para abrir terminales paralelos. No implementa ni spawnea agentes.
 argument-hint: "[opcional: phase id o límite N; sin argumento = earliest incomplete phase]"
 ---
+### Root split obligatorio
+
+- Lee `registry.json`, `runtime-state.json`, `PROGRESS.md`, `task-dag.*` desde `$CLAUDE_ORCHESTRATOR_ROOT/orchestrator-state/`.
+- Lee/escribe handoff, evidence, report y task-pack desde la worktree activa (`./orchestrator-state/tasks/...`) cuando la slice corre en worktree.
+- No registres follow-ups por errores mecánicos del orquestador (root stale, heading de handoff, checker/lint flake, cleanup omitido). Corrige, reintenta o bloquea; FU solo para trabajo de producto fuera de scope.
+
 
 # /next-wave
 

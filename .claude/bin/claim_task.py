@@ -30,7 +30,7 @@ from common import (
     task_is_ready,
     task_pack_path,
     write_text,
-    relpath,
+    workspace_relpath,
     project_root,
 )
 from stack_profile import load_stack_profile
@@ -110,7 +110,7 @@ def _ensure_minimal_task_pack(task: dict[str, Any]) -> str:
             lines.append("- TODO: planner must add verification commands from source-of-truth docs.")
         lines.extend(["", "## Guardrail", "", "If this file still contains this minimal-pack notice when developer starts, STOP and rerun planner.", ""])
         write_text(path, "\n".join(lines))
-    return relpath(path)
+    return workspace_relpath(path)
 
 
 def _identity() -> str:

@@ -2,6 +2,12 @@
 description: Arranca la siguiente slice. Lee PROGRESS.md + registry, levanta entorno con dev-restart --soft (sin reiniciar lo sano), propone plan para TU aprobación ANTES de tocar nada, y ejecuta el pipeline de 20 spawns máximo con paralelismo (validator ‖ tester). Verifica FRONT → BACK → DB.
 argument-hint: "<TASK_ID>  (o terminal con CLAUDE_ACTIVE_TASK_ID ya exportado)"
 ---
+### Root split obligatorio
+
+- Lee `registry.json`, `runtime-state.json`, `PROGRESS.md`, `task-dag.*` desde `$CLAUDE_ORCHESTRATOR_ROOT/orchestrator-state/`.
+- Lee/escribe handoff, evidence, report y task-pack desde la worktree activa (`./orchestrator-state/tasks/...`) cuando la slice corre en worktree.
+- No registres follow-ups por errores mecánicos del orquestador (root stale, heading de handoff, checker/lint flake, cleanup omitido). Corrige, reintenta o bloquea; FU solo para trabajo de producto fuera de scope.
+
 
 # /next-slice
 ## Rule loading
@@ -193,8 +199,16 @@ Si `$ARGUMENTS` contiene un `TASK_ID` concreto o el entorno tiene `CLAUDE_ACTIVE
 ```bash
 export CLAUDE_ACTIVE_TASK_ID=<TASK_ID>
 python3 -B -S .claude/bin/claim_task.py <TASK_ID>
-ROOT="${CLAUDE_ORCHESTRATOR_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd -P)}"
-export CLAUDE_TASK_PACK="${CLAUDE_TASK_PACK:-$ROOT/orchestrator-state/tasks/task-packs/<TASK_ID>.md}"
+BOOTSTRAP_ROOT="${CLAUDE_ORCHESTRATOR_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd -P)}"
+if [ -x "$BOOTSTRAP_ROOT/scripts/ensure-task-worktree.sh" ]; then
+  ROOT="$("$BOOTSTRAP_ROOT/scripts/ensure-task-worktree.sh" --print-root)"
+else
+  ROOT="$BOOTSTRAP_ROOT"
+fi
+WORKSPACE_ROOT="${CLAUDE_WORKTREE_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd -P)}"
+PACK="${CLAUDE_TASK_PACK:-$WORKSPACE_ROOT/orchestrator-state/tasks/task-packs/<TASK_ID>.md}"
+if [ ! -f "$PACK" ]; then PACK="$ROOT/orchestrator-state/tasks/task-packs/<TASK_ID>.md"; fi
+export CLAUDE_TASK_PACK="$PACK"
 ```
 
 Si `claim_task.py` devuelve `CLAIM_DENIED`, no ejecutes la slice: informa la causa (deps incompletas, ya claimed o conflicto activo por `Conflict group`/`Write set`) y vuelve al planner. `/next-wave` solo imprime el `export` y el `/next-slice`; el claim atómico ocurre aquí, una sola vez, después de la aprobación humana. El claim crea un pack mínimo por task; el `planner` debe enriquecer `CLAUDE_TASK_PACK` con los extractos de los documentos source-of-truth antes de arrancar `developer`.

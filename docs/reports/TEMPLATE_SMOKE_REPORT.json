@@ -1,16 +1,10 @@
 {
-  "ok": false,
-  "temp_root": "/var/folders/kq/5bd5xyhn5pxdfh5_jbjpgw7c0000gr/T/orq-template-smoke-scps6mun",
-  "layout_errors": [
-    "docs/templates has loose files: ['.DS_Store']"
-  ],
+  "ok": true,
+  "temp_root": "(removed)",
+  "layout_errors": [],
   "selected": [
     "PocketPantry",
-    "TrailLog",
-    "CivicPulse",
-    "ClinicFlow",
-    "InvoicePilot",
-    "EventOps"
+    "TrailLog"
   ],
   "apps": [
     {
@@ -18,7 +12,7 @@
       "app": "PocketPantry",
       "prefix": "POCKETPANTRY",
       "ok": true,
-      "project": "/var/folders/kq/5bd5xyhn5pxdfh5_jbjpgw7c0000gr/T/orq-template-smoke-scps6mun/minimal-PocketPantry",
+      "project": "(removed)",
       "tasks": 4,
       "journeys": 1,
       "dag_mode": "explicit_dag",
@@ -27,50 +21,50 @@
         {
           "cmd": "./scripts/reset-for-new-project.sh",
           "returncode": 0,
-          "seconds": 0.289,
+          "seconds": 0.046,
           "tail": "==> Cleaning derived orchestrator state. Source-of-truth docs are preserved.\n==> Reset complete.\nNext:\n  python3 -B -S .claude/bin/bootstrap_source_of_truth.py --refresh\n  ./scripts/check-task-dag.sh --strict\n  ./scripts/check-journey-matrix.sh --strict\n  ./scripts/check-wiring-contract.sh --strict --require-new-template-columns\n"
         },
         {
           "cmd": "python3 -B -S .claude/bin/bootstrap_source_of_truth.py --validate-only",
           "returncode": 0,
-          "seconds": 0.069,
+          "seconds": 0.047,
           "tail": "Source-of-truth contract is valid.\n{\n  \"instructions\": [\n    \"docs/source-of-truth/instrucciones.md\"\n  ],\n  \"checklist\": [\n    \"docs/source-of-truth/POCKETPANTRY_IMPLEMENTATION_CHECKLIST.md\"\n  ],\n  \"guide\": [\n    \"docs/source-of-truth/POCKETPANTRY_TECHNICAL_GUIDE.md\"\n  ],\n  \"ux\": [\n    \"docs/source-of-truth/UX_CONTRACT.md\"\n  ],\n  \"stack_profile\": [\n    \"docs/source-of-truth/STACK_PROFILE.yaml\"\n  ]\n}\n"
         },
         {
           "cmd": "python3 -B -S .claude/bin/bootstrap_source_of_truth.py --refresh --reset-runtime-state",
           "returncode": 0,
-          "seconds": 0.119,
+          "seconds": 0.074,
           "tail": "Bootstrapped project prefix: POCKETPANTRY\nDetected phases: 2\nGenerated tasks: 4\nDetected journeys: 1\nArtifacts written under orchestrator-state/memory and orchestrator-state/tasks\n"
         },
         {
           "cmd": "./scripts/check-task-dag.sh --strict",
           "returncode": 0,
-          "seconds": 0.215,
+          "seconds": 0.045,
           "tail": "Task DAG: OK mode=explicit_dag nodes=4 edges=3 waves=4\n"
         },
         {
           "cmd": "./scripts/check-journey-matrix.sh --strict",
           "returncode": 0,
-          "seconds": 0.179,
+          "seconds": 0.032,
           "tail": "==> Detectadas 1 journeys en la matriz.\n\n==> Validando referencias cruzadas...\n\n==> ✓ Journey matrix coherent — 1 journeys validadas, 0 drifts\n"
         },
         {
           "cmd": "./scripts/check-wiring-contract.sh --strict --require-new-template-columns",
           "returncode": 0,
-          "seconds": 0.191,
+          "seconds": 0.041,
           "tail": "Wiring contract coherent — 1 routes, 1 endpoints, 4 registry rows, 1 journeys, data_contract=1\n"
         },
         {
           "cmd": "./scripts/generate-api-contracts.sh --validate-only",
           "returncode": 0,
-          "seconds": 0.197,
+          "seconds": 0.032,
           "tail": "API contracts up to date — endpoints=1\n"
         },
         {
           "cmd": "python3 -B -S .claude/bin/next_wave.py --json",
           "returncode": 0,
-          "seconds": 0.074,
-          "tail": "\": \"planned\",\n      \"product_increment\": \"v1\",\n      \"risk_level\": \"low\",\n      \"verify_mode\": \"auto\",\n      \"depends_on\": [],\n      \"source_ref\": \"docs/source-of-truth/POCKETPANTRY_IMPLEMENTATION_CHECKLIST.md#Step 0.1\",\n      \"acceptance\": [\n        \"schema created\"\n      ],\n      \"verification_commands\": [\n        \"python3 -B -S -c \\\"print('db-ok')\\\"\"\n      ],\n      \"kind\": \"db\",\n      \"target\": \"pantry_items schema\",\n      \"journey_refs\": [],\n      \"route\": \"\",\n      \"endpoint\": \"\",\n      \"tables\": [\n        \"pantry_items\"\n      ],\n      \"origin_instr\": \"§2#F1\",\n      \"origin_techguide\": \"§2.3#schema\",\n      \"allowed_paths\": [\n        \"server/src/db/**\"\n      ],\n      \"conflict_groups\": [\n        \"db:migrations\"\n      ],\n      \"write_set\": [\n        \"server/src/db/**\"\n      ],\n      \"handoff_path\": \"orchestrator-state/tasks/handoffs/P00-S01-T001.md\",\n      \"evidence_dir\": \"orchestrator-state/tasks/evidence/P00-S01-T001\",\n      \"notes\": [],\n      \"dependency_mode\": \"explicit_dag\",\n      \"depends_on_raw\": \"—\",\n      \"conflict_groups_raw\": \"db:migrations\",\n      \"write_set_raw\": \"server/src/db/**\",\n      \"product_increment_raw\": \"v1\",\n      \"build_state_raw\": \"planned\",\n      \"risk_level_raw\": \"low\",\n      \"verify_mode_raw\": \"auto\",\n      \"kind_raw\": \"db\",\n      \"target_raw\": \"pantry_items schema\",\n      \"journey_refs_raw\": \"—\",\n      \"screen_route_raw\": \"—\",\n      \"endpoint_raw\": \"—\",\n      \"tables_raw\": \"pantry_items\",\n      \"origin_instr_raw\": \"§2#F1\",\n      \"origin_techguide_raw\": \"§2.3#schema\",\n      \"conflict_risk\": \"bajo\",\n      \"conflict_reason\": \"—\"\n    }\n  ],\n  \"deferred_due_conflicts\": [],\n  \"deferred_due_journey_gate\": [],\n  \"warnings\": [],\n  \"errors\": [],\n  \"pending_journey_verifications\": [],\n  \"journey_gate_mode\": \"frontier\",\n  \"blocking_followups\": []\n}\n"
+          "seconds": 0.044,
+          "tail": "vel\": \"low\",\n      \"verify_mode\": \"auto\",\n      \"depends_on\": [],\n      \"source_ref\": \"docs/source-of-truth/POCKETPANTRY_IMPLEMENTATION_CHECKLIST.md#Step 0.1\",\n      \"acceptance\": [\n        \"schema created\"\n      ],\n      \"verification_commands\": [\n        \"python3 -B -S -c \\\"print('db-ok')\\\"\"\n      ],\n      \"kind\": \"db\",\n      \"target\": \"pantry_items schema\",\n      \"journey_refs\": [],\n      \"route\": \"\",\n      \"endpoint\": \"\",\n      \"tables\": [\n        \"pantry_items\"\n      ],\n      \"origin_instr\": \"§2#F1\",\n      \"origin_techguide\": \"§2.3#schema\",\n      \"allowed_paths\": [\n        \"server/src/db/**\"\n      ],\n      \"conflict_groups\": [\n        \"db:migrations\"\n      ],\n      \"write_set\": [\n        \"server/src/db/**\"\n      ],\n      \"handoff_path\": \"orchestrator-state/tasks/handoffs/P00-S01-T001.md\",\n      \"evidence_dir\": \"orchestrator-state/tasks/evidence/P00-S01-T001\",\n      \"notes\": [],\n      \"dependency_mode\": \"explicit_dag\",\n      \"depends_on_raw\": \"—\",\n      \"conflict_groups_raw\": \"db:migrations\",\n      \"write_set_raw\": \"server/src/db/**\",\n      \"product_increment_raw\": \"v1\",\n      \"build_state_raw\": \"planned\",\n      \"risk_level_raw\": \"low\",\n      \"verify_mode_raw\": \"auto\",\n      \"kind_raw\": \"db\",\n      \"target_raw\": \"pantry_items schema\",\n      \"journey_refs_raw\": \"—\",\n      \"screen_route_raw\": \"—\",\n      \"endpoint_raw\": \"—\",\n      \"tables_raw\": \"pantry_items\",\n      \"origin_instr_raw\": \"§2#F1\",\n      \"origin_techguide_raw\": \"§2.3#schema\",\n      \"source_fingerprint\": \"b8a255aaf4bbbac650cbff64382023daa307d0707d67cb86da13c0d39fc72ee9\",\n      \"conflict_risk\": \"bajo\",\n      \"conflict_reason\": \"—\"\n    }\n  ],\n  \"deferred_due_conflicts\": [],\n  \"deferred_due_journey_gate\": [],\n  \"warnings\": [],\n  \"errors\": [],\n  \"pending_journey_verifications\": [],\n  \"blocking_followups\": []\n}\n"
         }
       ]
     },
@@ -79,7 +73,7 @@
       "app": "TrailLog",
       "prefix": "TRAILLOG",
       "ok": true,
-      "project": "/var/folders/kq/5bd5xyhn5pxdfh5_jbjpgw7c0000gr/T/orq-template-smoke-scps6mun/minimal-TrailLog",
+      "project": "(removed)",
       "tasks": 4,
       "journeys": 1,
       "dag_mode": "explicit_dag",
@@ -88,297 +82,53 @@
         {
           "cmd": "./scripts/reset-for-new-project.sh",
           "returncode": 0,
-          "seconds": 0.261,
+          "seconds": 0.032,
           "tail": "==> Cleaning derived orchestrator state. Source-of-truth docs are preserved.\n==> Reset complete.\nNext:\n  python3 -B -S .claude/bin/bootstrap_source_of_truth.py --refresh\n  ./scripts/check-task-dag.sh --strict\n  ./scripts/check-journey-matrix.sh --strict\n  ./scripts/check-wiring-contract.sh --strict --require-new-template-columns\n"
         },
         {
           "cmd": "python3 -B -S .claude/bin/bootstrap_source_of_truth.py --validate-only",
           "returncode": 0,
-          "seconds": 0.07,
+          "seconds": 0.042,
           "tail": "Source-of-truth contract is valid.\n{\n  \"instructions\": [\n    \"docs/source-of-truth/instrucciones.md\"\n  ],\n  \"checklist\": [\n    \"docs/source-of-truth/TRAILLOG_IMPLEMENTATION_CHECKLIST.md\"\n  ],\n  \"guide\": [\n    \"docs/source-of-truth/TRAILLOG_TECHNICAL_GUIDE.md\"\n  ],\n  \"ux\": [\n    \"docs/source-of-truth/UX_CONTRACT.md\"\n  ],\n  \"stack_profile\": [\n    \"docs/source-of-truth/STACK_PROFILE.yaml\"\n  ]\n}\n"
         },
         {
           "cmd": "python3 -B -S .claude/bin/bootstrap_source_of_truth.py --refresh --reset-runtime-state",
           "returncode": 0,
-          "seconds": 0.146,
+          "seconds": 0.06,
           "tail": "Bootstrapped project prefix: TRAILLOG\nDetected phases: 2\nGenerated tasks: 4\nDetected journeys: 1\nArtifacts written under orchestrator-state/memory and orchestrator-state/tasks\n"
         },
         {
           "cmd": "./scripts/check-task-dag.sh --strict",
           "returncode": 0,
-          "seconds": 0.213,
+          "seconds": 0.043,
           "tail": "Task DAG: OK mode=explicit_dag nodes=4 edges=3 waves=4\n"
         },
         {
           "cmd": "./scripts/check-journey-matrix.sh --strict",
           "returncode": 0,
-          "seconds": 0.178,
+          "seconds": 0.031,
           "tail": "==> Detectadas 1 journeys en la matriz.\n\n==> Validando referencias cruzadas...\n\n==> ✓ Journey matrix coherent — 1 journeys validadas, 0 drifts\n"
         },
         {
           "cmd": "./scripts/check-wiring-contract.sh --strict --require-new-template-columns",
           "returncode": 0,
-          "seconds": 0.19,
+          "seconds": 0.035,
           "tail": "Wiring contract coherent — 1 routes, 1 endpoints, 4 registry rows, 1 journeys, data_contract=1\n"
         },
         {
           "cmd": "./scripts/generate-api-contracts.sh --validate-only",
           "returncode": 0,
-          "seconds": 0.191,
+          "seconds": 0.032,
           "tail": "API contracts up to date — endpoints=1\n"
         },
         {
           "cmd": "python3 -B -S .claude/bin/next_wave.py --json",
           "returncode": 0,
-          "seconds": 0.08,
-          "tail": "\": \"planned\",\n      \"product_increment\": \"v1\",\n      \"risk_level\": \"low\",\n      \"verify_mode\": \"auto\",\n      \"depends_on\": [],\n      \"source_ref\": \"docs/source-of-truth/TRAILLOG_IMPLEMENTATION_CHECKLIST.md#Step 0.1\",\n      \"acceptance\": [\n        \"schema created\"\n      ],\n      \"verification_commands\": [\n        \"python3 -B -S -c \\\"print('db-ok')\\\"\"\n      ],\n      \"kind\": \"db\",\n      \"target\": \"trail_entries schema\",\n      \"journey_refs\": [],\n      \"route\": \"\",\n      \"endpoint\": \"\",\n      \"tables\": [\n        \"trail_entries\"\n      ],\n      \"origin_instr\": \"§2#F1\",\n      \"origin_techguide\": \"§2.3#schema\",\n      \"allowed_paths\": [\n        \"server/src/db/**\"\n      ],\n      \"conflict_groups\": [\n        \"db:migrations\"\n      ],\n      \"write_set\": [\n        \"server/src/db/**\"\n      ],\n      \"handoff_path\": \"orchestrator-state/tasks/handoffs/P00-S01-T001.md\",\n      \"evidence_dir\": \"orchestrator-state/tasks/evidence/P00-S01-T001\",\n      \"notes\": [],\n      \"dependency_mode\": \"explicit_dag\",\n      \"depends_on_raw\": \"—\",\n      \"conflict_groups_raw\": \"db:migrations\",\n      \"write_set_raw\": \"server/src/db/**\",\n      \"product_increment_raw\": \"v1\",\n      \"build_state_raw\": \"planned\",\n      \"risk_level_raw\": \"low\",\n      \"verify_mode_raw\": \"auto\",\n      \"kind_raw\": \"db\",\n      \"target_raw\": \"trail_entries schema\",\n      \"journey_refs_raw\": \"—\",\n      \"screen_route_raw\": \"—\",\n      \"endpoint_raw\": \"—\",\n      \"tables_raw\": \"trail_entries\",\n      \"origin_instr_raw\": \"§2#F1\",\n      \"origin_techguide_raw\": \"§2.3#schema\",\n      \"conflict_risk\": \"bajo\",\n      \"conflict_reason\": \"—\"\n    }\n  ],\n  \"deferred_due_conflicts\": [],\n  \"deferred_due_journey_gate\": [],\n  \"warnings\": [],\n  \"errors\": [],\n  \"pending_journey_verifications\": [],\n  \"journey_gate_mode\": \"frontier\",\n  \"blocking_followups\": []\n}\n"
-        }
-      ]
-    },
-    {
-      "profile": "large-without-base",
-      "app": "CivicPulse",
-      "prefix": "CIVICPULSE",
-      "ok": true,
-      "project": "/var/folders/kq/5bd5xyhn5pxdfh5_jbjpgw7c0000gr/T/orq-template-smoke-scps6mun/large-without-base-CivicPulse",
-      "tasks": 8,
-      "journeys": 2,
-      "dag_mode": "explicit_dag",
-      "waves": 5,
-      "checks": [
-        {
-          "cmd": "./scripts/reset-for-new-project.sh",
-          "returncode": 0,
-          "seconds": 0.278,
-          "tail": "==> Cleaning derived orchestrator state. Source-of-truth docs are preserved.\n==> Reset complete.\nNext:\n  python3 -B -S .claude/bin/bootstrap_source_of_truth.py --refresh\n  ./scripts/check-task-dag.sh --strict\n  ./scripts/check-journey-matrix.sh --strict\n  ./scripts/check-wiring-contract.sh --strict --require-new-template-columns\n"
-        },
-        {
-          "cmd": "python3 -B -S .claude/bin/bootstrap_source_of_truth.py --validate-only",
-          "returncode": 0,
-          "seconds": 0.069,
-          "tail": "Source-of-truth contract is valid.\n{\n  \"instructions\": [\n    \"docs/source-of-truth/instrucciones.md\"\n  ],\n  \"checklist\": [\n    \"docs/source-of-truth/CIVICPULSE_IMPLEMENTATION_CHECKLIST.md\"\n  ],\n  \"guide\": [\n    \"docs/source-of-truth/CIVICPULSE_TECHNICAL_GUIDE.md\"\n  ],\n  \"ux\": [\n    \"docs/source-of-truth/UX_CONTRACT.md\"\n  ],\n  \"stack_profile\": [\n    \"docs/source-of-truth/STACK_PROFILE.yaml\"\n  ]\n}\n"
-        },
-        {
-          "cmd": "python3 -B -S .claude/bin/bootstrap_source_of_truth.py --refresh --reset-runtime-state",
-          "returncode": 0,
-          "seconds": 0.143,
-          "tail": "Bootstrapped project prefix: CIVICPULSE\nDetected phases: 4\nGenerated tasks: 8\nDetected journeys: 2\nArtifacts written under orchestrator-state/memory and orchestrator-state/tasks\n"
-        },
-        {
-          "cmd": "./scripts/check-task-dag.sh --strict",
-          "returncode": 0,
-          "seconds": 0.209,
-          "tail": "Task DAG: OK mode=explicit_dag nodes=8 edges=9 waves=5\n"
-        },
-        {
-          "cmd": "./scripts/check-journey-matrix.sh --strict",
-          "returncode": 0,
-          "seconds": 0.186,
-          "tail": "==> Detectadas 2 journeys en la matriz.\n\n==> Validando referencias cruzadas...\n\n==> ✓ Journey matrix coherent — 2 journeys validadas, 0 drifts\n"
-        },
-        {
-          "cmd": "./scripts/check-wiring-contract.sh --strict --require-new-template-columns",
-          "returncode": 0,
-          "seconds": 0.192,
-          "tail": "Wiring contract coherent — 2 routes, 2 endpoints, 8 registry rows, 2 journeys, data_contract=1\n"
-        },
-        {
-          "cmd": "./scripts/generate-api-contracts.sh --validate-only",
-          "returncode": 0,
-          "seconds": 0.207,
-          "tail": "API contracts up to date — endpoints=2\n"
-        },
-        {
-          "cmd": "python3 -B -S .claude/bin/next_wave.py --json",
-          "returncode": 0,
-          "seconds": 0.072,
-          "tail": "  \"build_state\": \"planned\",\n      \"product_increment\": \"v1\",\n      \"risk_level\": \"low\",\n      \"verify_mode\": \"auto\",\n      \"depends_on\": [],\n      \"source_ref\": \"docs/source-of-truth/CIVICPULSE_IMPLEMENTATION_CHECKLIST.md#Step 0.1\",\n      \"acceptance\": [\n        \"schema created\"\n      ],\n      \"verification_commands\": [\n        \"python3 -B -S -c \\\"print('db-ok')\\\"\"\n      ],\n      \"kind\": \"db\",\n      \"target\": \"proposals schema\",\n      \"journey_refs\": [],\n      \"route\": \"\",\n      \"endpoint\": \"\",\n      \"tables\": [\n        \"proposals\"\n      ],\n      \"origin_instr\": \"§2#F1\",\n      \"origin_techguide\": \"§2.3#schema\",\n      \"allowed_paths\": [\n        \"server/src/db/**\"\n      ],\n      \"conflict_groups\": [\n        \"db:migrations\"\n      ],\n      \"write_set\": [\n        \"server/src/db/**\"\n      ],\n      \"handoff_path\": \"orchestrator-state/tasks/handoffs/P00-S01-T001.md\",\n      \"evidence_dir\": \"orchestrator-state/tasks/evidence/P00-S01-T001\",\n      \"notes\": [],\n      \"dependency_mode\": \"explicit_dag\",\n      \"depends_on_raw\": \"—\",\n      \"conflict_groups_raw\": \"db:migrations\",\n      \"write_set_raw\": \"server/src/db/**\",\n      \"product_increment_raw\": \"v1\",\n      \"build_state_raw\": \"planned\",\n      \"risk_level_raw\": \"low\",\n      \"verify_mode_raw\": \"auto\",\n      \"kind_raw\": \"db\",\n      \"target_raw\": \"proposals schema\",\n      \"journey_refs_raw\": \"—\",\n      \"screen_route_raw\": \"—\",\n      \"endpoint_raw\": \"—\",\n      \"tables_raw\": \"proposals\",\n      \"origin_instr_raw\": \"§2#F1\",\n      \"origin_techguide_raw\": \"§2.3#schema\",\n      \"conflict_risk\": \"bajo\",\n      \"conflict_reason\": \"—\"\n    }\n  ],\n  \"deferred_due_conflicts\": [],\n  \"deferred_due_journey_gate\": [],\n  \"warnings\": [],\n  \"errors\": [],\n  \"pending_journey_verifications\": [],\n  \"journey_gate_mode\": \"frontier\",\n  \"blocking_followups\": []\n}\n"
-        }
-      ]
-    },
-    {
-      "profile": "large-without-base",
-      "app": "ClinicFlow",
-      "prefix": "CLINICFLOW",
-      "ok": true,
-      "project": "/var/folders/kq/5bd5xyhn5pxdfh5_jbjpgw7c0000gr/T/orq-template-smoke-scps6mun/large-without-base-ClinicFlow",
-      "tasks": 8,
-      "journeys": 2,
-      "dag_mode": "explicit_dag",
-      "waves": 5,
-      "checks": [
-        {
-          "cmd": "./scripts/reset-for-new-project.sh",
-          "returncode": 0,
-          "seconds": 0.267,
-          "tail": "==> Cleaning derived orchestrator state. Source-of-truth docs are preserved.\n==> Reset complete.\nNext:\n  python3 -B -S .claude/bin/bootstrap_source_of_truth.py --refresh\n  ./scripts/check-task-dag.sh --strict\n  ./scripts/check-journey-matrix.sh --strict\n  ./scripts/check-wiring-contract.sh --strict --require-new-template-columns\n"
-        },
-        {
-          "cmd": "python3 -B -S .claude/bin/bootstrap_source_of_truth.py --validate-only",
-          "returncode": 0,
-          "seconds": 0.068,
-          "tail": "Source-of-truth contract is valid.\n{\n  \"instructions\": [\n    \"docs/source-of-truth/instrucciones.md\"\n  ],\n  \"checklist\": [\n    \"docs/source-of-truth/CLINICFLOW_IMPLEMENTATION_CHECKLIST.md\"\n  ],\n  \"guide\": [\n    \"docs/source-of-truth/CLINICFLOW_TECHNICAL_GUIDE.md\"\n  ],\n  \"ux\": [\n    \"docs/source-of-truth/UX_CONTRACT.md\"\n  ],\n  \"stack_profile\": [\n    \"docs/source-of-truth/STACK_PROFILE.yaml\"\n  ]\n}\n"
-        },
-        {
-          "cmd": "python3 -B -S .claude/bin/bootstrap_source_of_truth.py --refresh --reset-runtime-state",
-          "returncode": 0,
-          "seconds": 0.153,
-          "tail": "Bootstrapped project prefix: CLINICFLOW\nDetected phases: 4\nGenerated tasks: 8\nDetected journeys: 2\nArtifacts written under orchestrator-state/memory and orchestrator-state/tasks\n"
-        },
-        {
-          "cmd": "./scripts/check-task-dag.sh --strict",
-          "returncode": 0,
-          "seconds": 0.206,
-          "tail": "Task DAG: OK mode=explicit_dag nodes=8 edges=9 waves=5\n"
-        },
-        {
-          "cmd": "./scripts/check-journey-matrix.sh --strict",
-          "returncode": 0,
-          "seconds": 0.18,
-          "tail": "==> Detectadas 2 journeys en la matriz.\n\n==> Validando referencias cruzadas...\n\n==> ✓ Journey matrix coherent — 2 journeys validadas, 0 drifts\n"
-        },
-        {
-          "cmd": "./scripts/check-wiring-contract.sh --strict --require-new-template-columns",
-          "returncode": 0,
-          "seconds": 0.185,
-          "tail": "Wiring contract coherent — 2 routes, 2 endpoints, 8 registry rows, 2 journeys, data_contract=1\n"
-        },
-        {
-          "cmd": "./scripts/generate-api-contracts.sh --validate-only",
-          "returncode": 0,
-          "seconds": 0.199,
-          "tail": "API contracts up to date — endpoints=2\n"
-        },
-        {
-          "cmd": "python3 -B -S .claude/bin/next_wave.py --json",
-          "returncode": 0,
-          "seconds": 0.079,
-          "tail": "te\": \"planned\",\n      \"product_increment\": \"v1\",\n      \"risk_level\": \"low\",\n      \"verify_mode\": \"auto\",\n      \"depends_on\": [],\n      \"source_ref\": \"docs/source-of-truth/CLINICFLOW_IMPLEMENTATION_CHECKLIST.md#Step 0.1\",\n      \"acceptance\": [\n        \"schema created\"\n      ],\n      \"verification_commands\": [\n        \"python3 -B -S -c \\\"print('db-ok')\\\"\"\n      ],\n      \"kind\": \"db\",\n      \"target\": \"appointments schema\",\n      \"journey_refs\": [],\n      \"route\": \"\",\n      \"endpoint\": \"\",\n      \"tables\": [\n        \"appointments\"\n      ],\n      \"origin_instr\": \"§2#F1\",\n      \"origin_techguide\": \"§2.3#schema\",\n      \"allowed_paths\": [\n        \"server/src/db/**\"\n      ],\n      \"conflict_groups\": [\n        \"db:migrations\"\n      ],\n      \"write_set\": [\n        \"server/src/db/**\"\n      ],\n      \"handoff_path\": \"orchestrator-state/tasks/handoffs/P00-S01-T001.md\",\n      \"evidence_dir\": \"orchestrator-state/tasks/evidence/P00-S01-T001\",\n      \"notes\": [],\n      \"dependency_mode\": \"explicit_dag\",\n      \"depends_on_raw\": \"—\",\n      \"conflict_groups_raw\": \"db:migrations\",\n      \"write_set_raw\": \"server/src/db/**\",\n      \"product_increment_raw\": \"v1\",\n      \"build_state_raw\": \"planned\",\n      \"risk_level_raw\": \"low\",\n      \"verify_mode_raw\": \"auto\",\n      \"kind_raw\": \"db\",\n      \"target_raw\": \"appointments schema\",\n      \"journey_refs_raw\": \"—\",\n      \"screen_route_raw\": \"—\",\n      \"endpoint_raw\": \"—\",\n      \"tables_raw\": \"appointments\",\n      \"origin_instr_raw\": \"§2#F1\",\n      \"origin_techguide_raw\": \"§2.3#schema\",\n      \"conflict_risk\": \"bajo\",\n      \"conflict_reason\": \"—\"\n    }\n  ],\n  \"deferred_due_conflicts\": [],\n  \"deferred_due_journey_gate\": [],\n  \"warnings\": [],\n  \"errors\": [],\n  \"pending_journey_verifications\": [],\n  \"journey_gate_mode\": \"frontier\",\n  \"blocking_followups\": []\n}\n"
-        }
-      ]
-    },
-    {
-      "profile": "large-with-base",
-      "app": "InvoicePilot",
-      "prefix": "INVOICEPILOT",
-      "ok": true,
-      "project": "/var/folders/kq/5bd5xyhn5pxdfh5_jbjpgw7c0000gr/T/orq-template-smoke-scps6mun/large-with-base-InvoicePilot",
-      "tasks": 7,
-      "journeys": 2,
-      "dag_mode": "explicit_dag",
-      "waves": 6,
-      "checks": [
-        {
-          "cmd": "./scripts/reset-for-new-project.sh",
-          "returncode": 0,
-          "seconds": 0.281,
-          "tail": "==> Cleaning derived orchestrator state. Source-of-truth docs are preserved.\n==> Reset complete.\nNext:\n  python3 -B -S .claude/bin/bootstrap_source_of_truth.py --refresh\n  ./scripts/check-task-dag.sh --strict\n  ./scripts/check-journey-matrix.sh --strict\n  ./scripts/check-wiring-contract.sh --strict --require-new-template-columns\n"
-        },
-        {
-          "cmd": "python3 -B -S .claude/bin/bootstrap_source_of_truth.py --validate-only",
-          "returncode": 0,
-          "seconds": 0.078,
-          "tail": "Source-of-truth contract is valid.\n{\n  \"instructions\": [\n    \"docs/source-of-truth/instrucciones.md\"\n  ],\n  \"checklist\": [\n    \"docs/source-of-truth/INVOICEPILOT_IMPLEMENTATION_CHECKLIST.md\"\n  ],\n  \"guide\": [\n    \"docs/source-of-truth/INVOICEPILOT_TECHNICAL_GUIDE.md\"\n  ],\n  \"ux\": [\n    \"docs/source-of-truth/UX_CONTRACT.md\"\n  ],\n  \"stack_profile\": [\n    \"docs/source-of-truth/STACK_PROFILE.yaml\"\n  ]\n}\n"
-        },
-        {
-          "cmd": "python3 -B -S .claude/bin/bootstrap_source_of_truth.py --refresh --reset-runtime-state",
-          "returncode": 0,
-          "seconds": 0.144,
-          "tail": "Bootstrapped project prefix: INVOICEPILOT\nDetected phases: 3\nGenerated tasks: 7\nDetected journeys: 2\nArtifacts written under orchestrator-state/memory and orchestrator-state/tasks\n"
-        },
-        {
-          "cmd": "./scripts/check-task-dag.sh --strict",
-          "returncode": 0,
-          "seconds": 0.217,
-          "tail": "Task DAG: OK mode=explicit_dag nodes=7 edges=7 waves=6\n"
-        },
-        {
-          "cmd": "./scripts/check-journey-matrix.sh --strict",
-          "returncode": 0,
-          "seconds": 0.193,
-          "tail": "==> Detectadas 2 journeys en la matriz.\n\n==> Validando referencias cruzadas...\n\n==> ✓ Journey matrix coherent — 2 journeys validadas, 0 drifts\n"
-        },
-        {
-          "cmd": "./scripts/check-wiring-contract.sh --strict --require-new-template-columns",
-          "returncode": 0,
-          "seconds": 0.199,
-          "tail": "Wiring contract coherent — 2 routes, 2 endpoints, 7 registry rows, 2 journeys, data_contract=1\n"
-        },
-        {
-          "cmd": "./scripts/generate-api-contracts.sh --validate-only",
-          "returncode": 0,
-          "seconds": 0.216,
-          "tail": "API contracts up to date — endpoints=3\n"
-        },
-        {
-          "cmd": "python3 -B -S .claude/bin/next_wave.py --json",
-          "returncode": 0,
-          "seconds": 0.082,
-          "tail": "     \"source_ref\": \"docs/source-of-truth/INVOICEPILOT_IMPLEMENTATION_CHECKLIST.md#Step 15.1\",\n      \"acceptance\": [\n        \"schema supports create/edit screens\"\n      ],\n      \"verification_commands\": [\n        \"python3 -B -S -c \\\"print('db-ok')\\\"\"\n      ],\n      \"kind\": \"db\",\n      \"target\": \"invoices schema\",\n      \"journey_refs\": [\n        \"J901\"\n      ],\n      \"route\": \"/invoices\",\n      \"endpoint\": \"\",\n      \"tables\": [\n        \"invoices\"\n      ],\n      \"origin_instr\": \"§2#F1\",\n      \"origin_techguide\": \"§2.3#schema\",\n      \"allowed_paths\": [\n        \"server/src/db/migrations/**\"\n      ],\n      \"conflict_groups\": [\n        \"screen-journey:invoice\",\n        \"db\"\n      ],\n      \"write_set\": [\n        \"server/src/db/migrations/**\"\n      ],\n      \"handoff_path\": \"orchestrator-state/tasks/handoffs/P15-S01-T001.md\",\n      \"evidence_dir\": \"orchestrator-state/tasks/evidence/P15-S01-T001\",\n      \"notes\": [],\n      \"dependency_mode\": \"explicit_dag\",\n      \"depends_on_raw\": \"P01-S01-T001\",\n      \"conflict_groups_raw\": \"screen-journey:invoice; db\",\n      \"write_set_raw\": \"server/src/db/migrations/**\",\n      \"product_increment_raw\": \"v1\",\n      \"build_state_raw\": \"planned\",\n      \"risk_level_raw\": \"low\",\n      \"verify_mode_raw\": \"auto\",\n      \"kind_raw\": \"db\",\n      \"target_raw\": \"invoices schema\",\n      \"journey_refs_raw\": \"J901\",\n      \"screen_route_raw\": \"/invoices\",\n      \"endpoint_raw\": \"—\",\n      \"tables_raw\": \"invoices\",\n      \"origin_instr_raw\": \"§2#F1\",\n      \"origin_techguide_raw\": \"§2.3#schema\",\n      \"conflict_risk\": \"bajo\",\n      \"conflict_reason\": \"—\"\n    }\n  ],\n  \"deferred_due_conflicts\": [],\n  \"deferred_due_journey_gate\": [],\n  \"warnings\": [],\n  \"errors\": [],\n  \"pending_journey_verifications\": [],\n  \"journey_gate_mode\": \"frontier\",\n  \"blocking_followups\": []\n}\n"
-        }
-      ]
-    },
-    {
-      "profile": "large-with-base",
-      "app": "EventOps",
-      "prefix": "EVENTOPS",
-      "ok": true,
-      "project": "/var/folders/kq/5bd5xyhn5pxdfh5_jbjpgw7c0000gr/T/orq-template-smoke-scps6mun/large-with-base-EventOps",
-      "tasks": 7,
-      "journeys": 2,
-      "dag_mode": "explicit_dag",
-      "waves": 6,
-      "checks": [
-        {
-          "cmd": "./scripts/reset-for-new-project.sh",
-          "returncode": 0,
-          "seconds": 0.263,
-          "tail": "==> Cleaning derived orchestrator state. Source-of-truth docs are preserved.\n==> Reset complete.\nNext:\n  python3 -B -S .claude/bin/bootstrap_source_of_truth.py --refresh\n  ./scripts/check-task-dag.sh --strict\n  ./scripts/check-journey-matrix.sh --strict\n  ./scripts/check-wiring-contract.sh --strict --require-new-template-columns\n"
-        },
-        {
-          "cmd": "python3 -B -S .claude/bin/bootstrap_source_of_truth.py --validate-only",
-          "returncode": 0,
-          "seconds": 0.071,
-          "tail": "Source-of-truth contract is valid.\n{\n  \"instructions\": [\n    \"docs/source-of-truth/instrucciones.md\"\n  ],\n  \"checklist\": [\n    \"docs/source-of-truth/EVENTOPS_IMPLEMENTATION_CHECKLIST.md\"\n  ],\n  \"guide\": [\n    \"docs/source-of-truth/EVENTOPS_TECHNICAL_GUIDE.md\"\n  ],\n  \"ux\": [\n    \"docs/source-of-truth/UX_CONTRACT.md\"\n  ],\n  \"stack_profile\": [\n    \"docs/source-of-truth/STACK_PROFILE.yaml\"\n  ]\n}\n"
-        },
-        {
-          "cmd": "python3 -B -S .claude/bin/bootstrap_source_of_truth.py --refresh --reset-runtime-state",
-          "returncode": 0,
-          "seconds": 0.146,
-          "tail": "Bootstrapped project prefix: EVENTOPS\nDetected phases: 3\nGenerated tasks: 7\nDetected journeys: 2\nArtifacts written under orchestrator-state/memory and orchestrator-state/tasks\n"
-        },
-        {
-          "cmd": "./scripts/check-task-dag.sh --strict",
-          "returncode": 0,
-          "seconds": 0.202,
-          "tail": "Task DAG: OK mode=explicit_dag nodes=7 edges=7 waves=6\n"
-        },
-        {
-          "cmd": "./scripts/check-journey-matrix.sh --strict",
-          "returncode": 0,
-          "seconds": 0.187,
-          "tail": "==> Detectadas 2 journeys en la matriz.\n\n==> Validando referencias cruzadas...\n\n==> ✓ Journey matrix coherent — 2 journeys validadas, 0 drifts\n"
-        },
-        {
-          "cmd": "./scripts/check-wiring-contract.sh --strict --require-new-template-columns",
-          "returncode": 0,
-          "seconds": 0.186,
-          "tail": "Wiring contract coherent — 2 routes, 2 endpoints, 7 registry rows, 2 journeys, data_contract=1\n"
-        },
-        {
-          "cmd": "./scripts/generate-api-contracts.sh --validate-only",
-          "returncode": 0,
-          "seconds": 0.213,
-          "tail": "API contracts up to date — endpoints=3\n"
-        },
-        {
-          "cmd": "python3 -B -S .claude/bin/next_wave.py --json",
-          "returncode": 0,
-          "seconds": 0.08,
-          "tail": "S01-T001\"\n      ],\n      \"source_ref\": \"docs/source-of-truth/EVENTOPS_IMPLEMENTATION_CHECKLIST.md#Step 15.1\",\n      \"acceptance\": [\n        \"schema supports create/edit screens\"\n      ],\n      \"verification_commands\": [\n        \"python3 -B -S -c \\\"print('db-ok')\\\"\"\n      ],\n      \"kind\": \"db\",\n      \"target\": \"events schema\",\n      \"journey_refs\": [\n        \"J901\"\n      ],\n      \"route\": \"/events\",\n      \"endpoint\": \"\",\n      \"tables\": [\n        \"events\"\n      ],\n      \"origin_instr\": \"§2#F1\",\n      \"origin_techguide\": \"§2.3#schema\",\n      \"allowed_paths\": [\n        \"server/src/db/migrations/**\"\n      ],\n      \"conflict_groups\": [\n        \"screen-journey:event\",\n        \"db\"\n      ],\n      \"write_set\": [\n        \"server/src/db/migrations/**\"\n      ],\n      \"handoff_path\": \"orchestrator-state/tasks/handoffs/P15-S01-T001.md\",\n      \"evidence_dir\": \"orchestrator-state/tasks/evidence/P15-S01-T001\",\n      \"notes\": [],\n      \"dependency_mode\": \"explicit_dag\",\n      \"depends_on_raw\": \"P01-S01-T001\",\n      \"conflict_groups_raw\": \"screen-journey:event; db\",\n      \"write_set_raw\": \"server/src/db/migrations/**\",\n      \"product_increment_raw\": \"v1\",\n      \"build_state_raw\": \"planned\",\n      \"risk_level_raw\": \"low\",\n      \"verify_mode_raw\": \"auto\",\n      \"kind_raw\": \"db\",\n      \"target_raw\": \"events schema\",\n      \"journey_refs_raw\": \"J901\",\n      \"screen_route_raw\": \"/events\",\n      \"endpoint_raw\": \"—\",\n      \"tables_raw\": \"events\",\n      \"origin_instr_raw\": \"§2#F1\",\n      \"origin_techguide_raw\": \"§2.3#schema\",\n      \"conflict_risk\": \"bajo\",\n      \"conflict_reason\": \"—\"\n    }\n  ],\n  \"deferred_due_conflicts\": [],\n  \"deferred_due_journey_gate\": [],\n  \"warnings\": [],\n  \"errors\": [],\n  \"pending_journey_verifications\": [],\n  \"journey_gate_mode\": \"frontier\",\n  \"blocking_followups\": []\n}\n"
+          "seconds": 0.041,
+          "tail": "vel\": \"low\",\n      \"verify_mode\": \"auto\",\n      \"depends_on\": [],\n      \"source_ref\": \"docs/source-of-truth/TRAILLOG_IMPLEMENTATION_CHECKLIST.md#Step 0.1\",\n      \"acceptance\": [\n        \"schema created\"\n      ],\n      \"verification_commands\": [\n        \"python3 -B -S -c \\\"print('db-ok')\\\"\"\n      ],\n      \"kind\": \"db\",\n      \"target\": \"trail_entries schema\",\n      \"journey_refs\": [],\n      \"route\": \"\",\n      \"endpoint\": \"\",\n      \"tables\": [\n        \"trail_entries\"\n      ],\n      \"origin_instr\": \"§2#F1\",\n      \"origin_techguide\": \"§2.3#schema\",\n      \"allowed_paths\": [\n        \"server/src/db/**\"\n      ],\n      \"conflict_groups\": [\n        \"db:migrations\"\n      ],\n      \"write_set\": [\n        \"server/src/db/**\"\n      ],\n      \"handoff_path\": \"orchestrator-state/tasks/handoffs/P00-S01-T001.md\",\n      \"evidence_dir\": \"orchestrator-state/tasks/evidence/P00-S01-T001\",\n      \"notes\": [],\n      \"dependency_mode\": \"explicit_dag\",\n      \"depends_on_raw\": \"—\",\n      \"conflict_groups_raw\": \"db:migrations\",\n      \"write_set_raw\": \"server/src/db/**\",\n      \"product_increment_raw\": \"v1\",\n      \"build_state_raw\": \"planned\",\n      \"risk_level_raw\": \"low\",\n      \"verify_mode_raw\": \"auto\",\n      \"kind_raw\": \"db\",\n      \"target_raw\": \"trail_entries schema\",\n      \"journey_refs_raw\": \"—\",\n      \"screen_route_raw\": \"—\",\n      \"endpoint_raw\": \"—\",\n      \"tables_raw\": \"trail_entries\",\n      \"origin_instr_raw\": \"§2#F1\",\n      \"origin_techguide_raw\": \"§2.3#schema\",\n      \"source_fingerprint\": \"5d405068730d77fa089f49deb1222e7ed282dc74bb50a67a1ad1e6061035c0e3\",\n      \"conflict_risk\": \"bajo\",\n      \"conflict_reason\": \"—\"\n    }\n  ],\n  \"deferred_due_conflicts\": [],\n  \"deferred_due_journey_gate\": [],\n  \"warnings\": [],\n  \"errors\": [],\n  \"pending_journey_verifications\": [],\n  \"blocking_followups\": []\n}\n"
         }
       ]
     }
   ],
-  "report_path": "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/docs/reports/TEMPLATE_SMOKE_REPORT.json"
+  "report_path": "/sessions/confident-exciting-albattani/mnt/OrquestadorDAG-AnyStack/docs/reports/TEMPLATE_SMOKE_REPORT.json"
 }

@@ -6,6 +6,7 @@ read-only implementation that can be copied into multiple terminals safely.
 from __future__ import annotations
 
 import os
+import subprocess
 import sys
 from pathlib import Path
 
@@ -177,5 +178,9 @@ def test_next_wave_pr_flow_terminal_command_enters_task_worktree(tmp_project):
     assert "cd \"$WT\"" in cmd
     assert "CLAUDE_ORCHESTRATOR_ROOT=\"$ROOT\"" in cmd
     assert "CLAUDE_WORKTREE_ROOT=\"$WT\"" in cmd
-    assert "CLAUDE_TASK_PACK=\"$ROOT/orchestrator-state/tasks/task-packs/P00-S01-T001.md\"" in cmd
+    assert "PACK=\"$WT/orchestrator-state/tasks/task-packs/P00-S01-T001.md\"" in cmd
+    assert "PACK=\"$ROOT/orchestrator-state/tasks/task-packs/P00-S01-T001.md\"" in cmd
+    assert "CLAUDE_TASK_PACK=\"$PACK\"" in cmd
+    parsed = subprocess.run(["bash", "-n", "-c", cmd], text=True, capture_output=True, timeout=10)
+    assert parsed.returncode == 0, parsed.stderr
     assert 'claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice P00-S01-T001"' in cmd

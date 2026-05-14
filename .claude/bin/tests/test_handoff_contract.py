@@ -70,6 +70,91 @@ def test_handoff_contract_accepts_canonical_sections(tmp_path: Path) -> None:
     assert '"ok": true' in result.stdout
 
 
+def test_handoff_contract_accepts_cycle_alias_sections(tmp_path: Path) -> None:
+    task_id = "P00-S01-T001"
+    result = _run(
+        tmp_path,
+        f"""
+# Task Handoff — {task_id}
+
+## validator
+- AGENT: validator
+- TASK_ID: {task_id}
+- OUTCOME: changes_requested
+
+## validator (cycle 2)
+- AGENT: validator
+- TASK_ID: {task_id}
+- OUTCOME: approved
+
+## tester
+- AGENT: tester
+- TASK_ID: {task_id}
+- OUTCOME: fail
+
+## tester (cycle 2)
+- AGENT: tester
+- TASK_ID: {task_id}
+- OUTCOME: pass
+
+## verify slice
+- TASK_ID: {task_id}
+- VERIFY_OUTCOME: verified
+""",
+        task_id,
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
+
+
+def test_handoff_contract_uses_workspace_path_when_worktree_differs_from_canonical(tmp_path: Path) -> None:
+    task_id = "P00-S01-T001"
+    canonical = tmp_path / "main"
+    workspace = tmp_path / "wt"
+    handoffs = workspace / "orchestrator-state" / "tasks" / "handoffs"
+    handoffs.mkdir(parents=True)
+    (handoffs / f"{task_id}.md").write_text(
+        f"""
+# Task Handoff — {task_id}
+
+## Validator review
+- TASK_ID: {task_id}
+- OUTCOME: approved
+
+## Tester run
+- TASK_ID: {task_id}
+- OUTCOME: pass
+
+## verify-slice
+- TASK_ID: {task_id}
+- VERIFY_OUTCOME: verified
+""",
+        encoding="utf-8",
+    )
+    env = os.environ.copy()
+    env["CLAUDE_ORCHESTRATOR_ROOT"] = str(canonical)
+    env["CLAUDE_PROJECT_DIR"] = str(workspace)
+    env["CLAUDE_WORKTREE_ROOT"] = str(workspace)
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-B",
+            "-S",
+            str(ROOT / ".claude/bin/check_handoff_contract.py"),
+            task_id,
+            "--require-ready-for-close",
+            "--require-verify-slice",
+            "--json",
+        ],
+        cwd=ROOT,
+        env=env,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert '"handoff": "orchestrator-state/tasks/handoffs/P00-S01-T001.md"' in result.stdout
+
+
 def test_handoff_contract_rejects_missing_validator_tester_outcomes(tmp_path: Path) -> None:
     task_id = "P00-S01-T001"
     result = _run(

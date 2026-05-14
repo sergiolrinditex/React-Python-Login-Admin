@@ -95,3 +95,62 @@ def test_cleanup_worktrees_keeps_container_when_not_empty(tmp_path):
     assert wt_b.exists()
     assert container.exists(), "container must remain while other worktrees live in it"
     assert "removed empty container" not in applied.stdout
+
+
+def test_cleanup_worktrees_can_remove_current_task_worktree(tmp_path):
+    repo = tmp_path / "repo"
+    container = tmp_path / "repo-worktrees"
+    wt = container / "P00-S01-T001"
+
+    repo.mkdir()
+    run(["git", "init", "-b", "main"], repo)
+    run(["git", "config", "user.email", "test@example.com"], repo)
+    run(["git", "config", "user.name", "Test User"], repo)
+    (repo / "README.md").write_text("hello\n", encoding="utf-8")
+    run(["git", "add", "README.md"], repo)
+    run(["git", "commit", "-m", "init"], repo)
+    run(["git", "branch", "dev/P00-S01-T001"], repo)
+    run(["git", "worktree", "add", str(wt), "dev/P00-S01-T001"], repo)
+
+    applied = run(["bash", str(SCRIPT), "--apply", "--task", "P00-S01-T001"], wt)
+
+    assert "removed:" in applied.stdout
+    assert "removed=1" in applied.stdout
+    assert not wt.exists()
+    assert not container.exists()
+
+
+def test_cleanup_worktrees_deletes_task_branch_after_squash_merge_shape(tmp_path):
+    """PR squash merges do not make feature tip an ancestor of main.
+    A scoped cleanup after successful pr-flow should still remove the local task branch.
+    """
+    repo = tmp_path / "repo"
+    wt = tmp_path / "wt-P00-S01-T003"
+    repo.mkdir()
+    run(["git", "init", "-b", "main"], repo)
+    run(["git", "config", "user.email", "test@example.com"], repo)
+    run(["git", "config", "user.name", "Test User"], repo)
+    (repo / "README.md").write_text("hello\n", encoding="utf-8")
+    run(["git", "add", "README.md"], repo)
+    run(["git", "commit", "-m", "init"], repo)
+    run(["git", "branch", "feature/P00-S01-T003"], repo)
+    run(["git", "worktree", "add", str(wt), "feature/P00-S01-T003"], repo)
+    (wt / "feature.txt").write_text("feature\n", encoding="utf-8")
+    run(["git", "add", "feature.txt"], wt)
+    run(["git", "commit", "-m", "feat: task"], wt)
+
+    # Simulate GitHub squash merge on main: same content, different commit SHA,
+    # so feature/P00-S01-T003 is not an ancestor of main.
+    run(["git", "checkout", "main"], repo)
+    (repo / "feature.txt").write_text("feature\n", encoding="utf-8")
+    run(["git", "add", "feature.txt"], repo)
+    run(["git", "commit", "-m", "squash merge PR"], repo)
+    anc = subprocess.run(["git", "merge-base", "--is-ancestor", "feature/P00-S01-T003", "main"], cwd=repo)
+    assert anc.returncode != 0
+
+    applied = run(["bash", str(SCRIPT), "--apply", "--task", "P00-S01-T003"], repo)
+
+    assert "removed:" in applied.stdout
+    assert "deleted local branch: feature/P00-S01-T003" in applied.stdout
+    show = subprocess.run(["git", "show-ref", "--verify", "refs/heads/feature/P00-S01-T003"], cwd=repo)
+    assert show.returncode != 0

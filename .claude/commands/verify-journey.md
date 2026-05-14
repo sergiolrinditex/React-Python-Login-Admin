@@ -2,6 +2,12 @@
 description: Gate humano end-to-end por journey (no por slice). Se lanza cuando todos los slices de un journey están cerrados y antes de arrancar la siguiente unidad bloqueada. Hard reset + datos reales/proporcionados globales del journey + reproducción del flujo completo como usuario real (multi-pantalla). Resiliente a /clear.
 argument-hint: "<JOURNEY_ID>  (ej: J101). Sin argumento = lee runtime-state.pending_journey_verifications[0]"
 ---
+### Root split obligatorio
+
+- Lee `registry.json`, `runtime-state.json`, `PROGRESS.md`, `task-dag.*` desde `$CLAUDE_ORCHESTRATOR_ROOT/orchestrator-state/`.
+- Lee/escribe handoff, evidence, report y task-pack desde la worktree activa (`./orchestrator-state/tasks/...`) cuando la slice corre en worktree.
+- No registres follow-ups por errores mecánicos del orquestador (root stale, heading de handoff, checker/lint flake, cleanup omitido). Corrige, reintenta o bloquea; FU solo para trabajo de producto fuera de scope.
+
 
 # /verify-journey
 ## Rule loading

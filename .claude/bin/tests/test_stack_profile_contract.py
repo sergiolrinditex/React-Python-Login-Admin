@@ -15,6 +15,24 @@ sys.path.insert(0, str(BIN))
 from stack_profile import parse_simple_yaml, load_stack_profile
 
 
+def _copy_repo_fixture(src: Path, dst: Path) -> None:
+    shutil.copytree(
+        src,
+        dst,
+        ignore=shutil.ignore_patterns(
+            ".git",
+            ".pytest_cache",
+            "__pycache__",
+            ".DS_Store",
+            "worktrees",
+            ".mypy_cache",
+            ".ruff_cache",
+            ".venv",
+            "venv",
+        ),
+    )
+
+
 def test_stack_profile_parser_reads_nested_values():
     data = parse_simple_yaml("""
 frontend:
@@ -32,7 +50,7 @@ backend:
 
 def test_check_design_tokens_dispatcher_uses_none_enforcer(tmp_path):
     repo = tmp_path / "repo"
-    shutil.copytree(ROOT, repo)
+    _copy_repo_fixture(ROOT, repo)
     sot = repo / "docs" / "source-of-truth"
     (sot / "STACK_PROFILE.yaml").write_text("""
 frontend:
@@ -56,7 +74,7 @@ design_tokens_enforcer: design_tokens_v1
 
 def test_minireact_source_docs_bootstrap_without_flutter_tables(tmp_path):
     repo = tmp_path / "repo"
-    shutil.copytree(ROOT, repo)
+    _copy_repo_fixture(ROOT, repo)
     sot = repo / "docs" / "source-of-truth"
     for p in sot.glob("*"):
         if p.name != ".gitkeep":
@@ -178,11 +196,12 @@ def _make_minimal_git_workflow_repo(tmp_path, workflow: str):
     (repo / ".claude" / "bin").mkdir(parents=True)
     (repo / ".claude" / "git-workflows").mkdir(parents=True)
     (repo / "docs" / "source-of-truth").mkdir(parents=True)
-    shutil.copy2(ROOT / "scripts" / "git-workflow.sh", repo / "scripts" / "git-workflow.sh")
+    for script_name in ["git-workflow.sh", "ensure-task-worktree.sh"]:
+        shutil.copy2(ROOT / "scripts" / script_name, repo / "scripts" / script_name)
     shutil.copy2(ROOT / ".claude" / "bin" / "stack_profile.py", repo / ".claude" / "bin" / "stack_profile.py")
     for plugin in (ROOT / ".claude" / "git-workflows").glob("*.sh"):
         shutil.copy2(plugin, repo / ".claude" / "git-workflows" / plugin.name)
-    for script in [repo / "scripts" / "git-workflow.sh", *(repo / ".claude" / "git-workflows").glob("*.sh")]:
+    for script in [repo / "scripts" / "git-workflow.sh", repo / "scripts" / "ensure-task-worktree.sh", *(repo / ".claude" / "git-workflows").glob("*.sh")]:
         script.chmod(0o755)
     (repo / "docs" / "source-of-truth" / "STACK_PROFILE.yaml").write_text(
         f"profile_version: stack-profile-v1\ngit_workflow: {workflow}\n",
@@ -204,10 +223,6 @@ def test_git_workflow_direct_main_alias_pushes_to_main(tmp_path):
     remote = tmp_path / "origin.git"
     subprocess.run(["git", "init", "-q", "--bare", str(remote)], check=True)
     subprocess.run(["git", "remote", "add", "origin", str(remote)], cwd=repo, check=True)
-    # Seed origin/main so git-workflow.sh's fetch-up-to-date check passes
-    # (real production scenarios always have origin/main; the bare-empty
-    # case here is an artifact of the test sandbox).
-    subprocess.run(["git", "push", "-q", "origin", "main"], cwd=repo, check=True)
     result = subprocess.run(["bash", "scripts/git-workflow.sh"], cwd=repo, text=True, capture_output=True, timeout=30)
     assert result.returncode == 0, result.stdout + result.stderr
     assert "GIT_WORKFLOW_READY: yes" in result.stdout
@@ -215,6 +230,122 @@ def test_git_workflow_direct_main_alias_pushes_to_main(tmp_path):
     heads = subprocess.run(["git", "--git-dir", str(remote), "show-ref", "refs/heads/main"], cwd=repo, text=True, capture_output=True, timeout=30)
     assert heads.returncode == 0, heads.stdout + heads.stderr
 
+
+
+def test_git_workflow_gitflow_alias_dispatches_to_git_flow_plugin(tmp_path):
+    repo = _make_minimal_git_workflow_repo(tmp_path, "gitflow")
+    if repo is None:
+        return
+    remote = tmp_path / "origin-gitflow.git"
+    subprocess.run(["git", "init", "-q", "--bare", str(remote)], check=True)
+    subprocess.run(["git", "remote", "add", "origin", str(remote)], cwd=repo, check=True)
+    result = subprocess.run(["bash", "scripts/git-workflow.sh"], cwd=repo, text=True, capture_output=True, timeout=30)
+    assert result.returncode == 2
+    assert "direct push to 'main' is not allowed in git-flow" in result.stdout
+
+
+def test_ensure_task_worktree_uses_feature_branch_for_gitflow(tmp_path):
+    repo = _make_minimal_git_workflow_repo(tmp_path, "gitflow")
+    if repo is None:
+        return
+    subprocess.run(["git", "checkout", "-q", "-b", "develop"], cwd=repo, check=True)
+    subprocess.run(["git", "checkout", "-q", "main"], cwd=repo, check=True)
+
+    result = subprocess.run(["bash", "scripts/ensure-task-worktree.sh", "P00-S01-T001"], cwd=repo, text=True, capture_output=True, timeout=30)
+
+    assert result.returncode == 0, result.stdout + result.stderr
+    wt = Path(result.stdout.strip())
+    assert wt.exists()
+    branch = subprocess.run(["git", "branch", "--show-current"], cwd=wt, text=True, capture_output=True, timeout=30)
+    assert branch.returncode == 0, branch.stdout + branch.stderr
+    assert branch.stdout.strip() == "feature/P00-S01-T001"
+    base = subprocess.run(["git", "merge-base", "feature/P00-S01-T001", "develop"], cwd=repo, text=True, capture_output=True, timeout=30)
+    develop = subprocess.run(["git", "rev-parse", "develop"], cwd=repo, text=True, capture_output=True, timeout=30)
+    assert base.stdout.strip() == develop.stdout.strip()
+
+
+def test_ensure_task_worktree_gitflow_requires_develop(tmp_path):
+    repo = _make_minimal_git_workflow_repo(tmp_path, "gitflow")
+    if repo is None:
+        return
+    result = subprocess.run(["bash", "scripts/ensure-task-worktree.sh", "P00-S01-T001"], cwd=repo, text=True, capture_output=True, timeout=30)
+    assert result.returncode == 2
+    assert "requires branch 'develop'" in result.stderr
+
+
+def test_git_flow_feature_worktree_merges_via_detached_integration_worktree(tmp_path):
+    repo = _make_minimal_git_workflow_repo(tmp_path, "gitflow")
+    if repo is None:
+        return
+    remote = tmp_path / "origin-gitflow.git"
+    subprocess.run(["git", "init", "-q", "--bare", str(remote)], check=True)
+    subprocess.run(["git", "remote", "add", "origin", str(remote)], cwd=repo, check=True)
+    subprocess.run(["git", "checkout", "-q", "-b", "develop"], cwd=repo, check=True)
+    (repo / "develop.txt").write_text("develop base\n", encoding="utf-8")
+    subprocess.run(["git", "add", "develop.txt"], cwd=repo, check=True)
+    subprocess.run(["git", "commit", "-q", "-m", "develop base"], cwd=repo, check=True)
+    subprocess.run(["git", "push", "-q", "-u", "origin", "main", "develop"], cwd=repo, check=True)
+    subprocess.run(["git", "checkout", "-q", "main"], cwd=repo, check=True)
+
+    wt_result = subprocess.run(["bash", "scripts/ensure-task-worktree.sh", "P00-S01-T001"], cwd=repo, text=True, capture_output=True, timeout=30)
+    assert wt_result.returncode == 0, wt_result.stdout + wt_result.stderr
+    wt = Path(wt_result.stdout.strip())
+    (wt / "feature.txt").write_text("feature payload\n", encoding="utf-8")
+    subprocess.run(["git", "add", "feature.txt"], cwd=wt, check=True)
+    subprocess.run(["git", "commit", "-q", "-m", "feat: task payload"], cwd=wt, check=True)
+
+    result = subprocess.run(["bash", "scripts/git-workflow.sh"], cwd=wt, text=True, capture_output=True, timeout=60)
+
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert "GIT_WORKFLOW_READY: yes" in result.stdout
+    assert "PUSH_READY: yes" in result.stdout
+    assert "MERGED_TO_DEVELOP: yes" in result.stdout
+    assert "MERGED_TO_MAIN: no" in result.stdout
+    assert "BRANCH_DELETED: yes" in result.stdout
+    current = subprocess.run(["git", "branch", "--show-current"], cwd=wt, text=True, capture_output=True, timeout=30)
+    assert current.stdout.strip() == ""
+    show = subprocess.run(["git", "--git-dir", str(remote), "show", "develop:feature.txt"], text=True, capture_output=True, timeout=30)
+    assert show.returncode == 0, show.stdout + show.stderr
+    assert "feature payload" in show.stdout
+    deleted = subprocess.run(["git", "--git-dir", str(remote), "show-ref", "refs/heads/feature/P00-S01-T001"], text=True, capture_output=True, timeout=30)
+    assert deleted.returncode != 0
+
+
+
+def test_git_workflow_uses_orchestrator_root_stack_profile_from_task_worktree(tmp_path):
+    repo = _make_minimal_git_workflow_repo(tmp_path, "gitflow")
+    if repo is None:
+        return
+    remote = tmp_path / "origin-gitflow-config-root.git"
+    subprocess.run(["git", "init", "-q", "--bare", str(remote)], check=True)
+    subprocess.run(["git", "remote", "add", "origin", str(remote)], cwd=repo, check=True)
+    subprocess.run(["git", "checkout", "-q", "-b", "develop"], cwd=repo, check=True)
+    (repo / "develop.txt").write_text("develop base\n", encoding="utf-8")
+    subprocess.run(["git", "add", "develop.txt"], cwd=repo, check=True)
+    subprocess.run(["git", "commit", "-q", "-m", "develop base"], cwd=repo, check=True)
+    subprocess.run(["git", "push", "-q", "-u", "origin", "main", "develop"], cwd=repo, check=True)
+    subprocess.run(["git", "checkout", "-q", "main"], cwd=repo, check=True)
+
+    wt_result = subprocess.run(["bash", "scripts/ensure-task-worktree.sh", "P00-S01-T001"], cwd=repo, text=True, capture_output=True, timeout=30)
+    assert wt_result.returncode == 0, wt_result.stdout + wt_result.stderr
+    wt = Path(wt_result.stdout.strip())
+
+    # Simulate a task worktree whose checkout-local STACK_PROFILE is stale or
+    # divergent. The wrapper must still read git_workflow from the canonical
+    # CLAUDE_ORCHESTRATOR_ROOT exported by /next-wave.
+    (wt / "docs" / "source-of-truth" / "STACK_PROFILE.yaml").write_text(
+        "profile_version: stack-profile-v1\ngit_workflow: direct-main\n",
+        encoding="utf-8",
+    )
+    subprocess.run(["git", "add", "docs/source-of-truth/STACK_PROFILE.yaml"], cwd=wt, check=True)
+    subprocess.run(["git", "commit", "-q", "-m", "test: divergent task stack profile"], cwd=wt, check=True)
+
+    env = {**os.environ, "CLAUDE_ORCHESTRATOR_ROOT": str(repo)}
+    result = subprocess.run(["bash", "scripts/git-workflow.sh"], cwd=wt, env=env, text=True, capture_output=True, timeout=60)
+
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert "BRANCH_TYPE: feature" in result.stdout
+    assert "MERGED_TO_DEVELOP: yes" in result.stdout
 
 def test_git_workflow_pr_flow_rejects_main_without_fallback(tmp_path):
     repo = _make_minimal_git_workflow_repo(tmp_path, "pr-flow")
@@ -226,6 +357,156 @@ def test_git_workflow_pr_flow_rejects_main_without_fallback(tmp_path):
     assert "push-to-main/direct-main" in result.stdout
 
 
+def _install_fake_gh_auto_merge_unavailable(tmp_path: Path) -> tuple[Path, Path]:
+    fakebin = tmp_path / "fake-gh-bin"
+    fakebin.mkdir()
+    state = tmp_path / "fake-gh-pr-created"
+    gh = fakebin / "gh"
+    gh.write_text(
+        textwrap.dedent(
+            """
+            #!/usr/bin/env bash
+            set -euo pipefail
+            state="${FAKE_GH_STATE:?missing FAKE_GH_STATE}"
+            if [ "${1:-}" = "pr" ] && [ "${2:-}" = "view" ]; then
+              if [ -f "$state" ]; then
+                case " $* " in
+                  *" --json number "*) echo "14" ;;
+                  *" --json url "*) echo "https://example.test/org/repo/pull/14" ;;
+                  *" --json state "*) echo "OPEN" ;;
+                  *) echo "https://example.test/org/repo/pull/14" ;;
+                esac
+                exit 0
+              fi
+              exit 1
+            fi
+            if [ "${1:-}" = "pr" ] && [ "${2:-}" = "create" ]; then
+              printf '%s\n' "$*" >"$state.args"
+              touch "$state"
+              echo "https://example.test/org/repo/pull/14"
+              exit 0
+            fi
+            if [ "${1:-}" = "pr" ] && [ "${2:-}" = "merge" ]; then
+              echo "Auto-merge is not enabled for this repository" >&2
+              exit 1
+            fi
+            echo "unexpected gh invocation: $*" >&2
+            exit 9
+            """
+        ).lstrip(),
+        encoding="utf-8",
+    )
+    gh.chmod(0o755)
+    return fakebin, state
+
+
+def _install_fake_gh_auto_merge_success(tmp_path: Path) -> tuple[Path, Path]:
+    fakebin = tmp_path / "fake-gh-merge-bin"
+    fakebin.mkdir()
+    state = tmp_path / "fake-gh-pr-created"
+    merged = tmp_path / "fake-gh-pr-merged"
+    gh = fakebin / "gh"
+    gh.write_text(
+        textwrap.dedent(
+            """
+            #!/usr/bin/env bash
+            set -euo pipefail
+            state="${FAKE_GH_STATE:?missing FAKE_GH_STATE}"
+            merged="${FAKE_GH_MERGED:?missing FAKE_GH_MERGED}"
+            if [ "${1:-}" = "pr" ] && [ "${2:-}" = "view" ]; then
+              if [ -f "$state" ]; then
+                case " $* " in
+                  *" --json number "*) echo "14" ;;
+                  *" --json url "*) echo "https://example.test/org/repo/pull/14" ;;
+                  *" --json state "*)
+                    if [ -f "$merged" ]; then echo "MERGED"; else echo "OPEN"; fi
+                    ;;
+                  *) echo "https://example.test/org/repo/pull/14" ;;
+                esac
+                exit 0
+              fi
+              exit 1
+            fi
+            if [ "${1:-}" = "pr" ] && [ "${2:-}" = "create" ]; then
+              printf '%s\n' "$*" >"$state.args"
+              touch "$state"
+              echo "https://example.test/org/repo/pull/14"
+              exit 0
+            fi
+            if [ "${1:-}" = "pr" ] && [ "${2:-}" = "merge" ]; then
+              touch "$merged"
+              echo "Auto-merge enabled"
+              exit 0
+            fi
+            echo "unexpected gh invocation: $*" >&2
+            exit 9
+            """
+        ).lstrip(),
+        encoding="utf-8",
+    )
+    gh.chmod(0o755)
+    return fakebin, state
+
+
+def _prepare_pr_flow_feature_repo(tmp_path: Path) -> Path | None:
+    repo = _make_minimal_git_workflow_repo(tmp_path, "pr-flow")
+    if repo is None:
+        return None
+    remote = tmp_path / "origin-pr-flow.git"
+    subprocess.run(["git", "init", "-q", "--bare", str(remote)], check=True)
+    subprocess.run(["git", "remote", "add", "origin", str(remote)], cwd=repo, check=True)
+    subprocess.run(["git", "push", "-q", "-u", "origin", "main"], cwd=repo, check=True)
+    subprocess.run(["git", "checkout", "-q", "-b", "feature/P00-S01-T001"], cwd=repo, check=True)
+    (repo / "feature.txt").write_text("feature payload\n", encoding="utf-8")
+    subprocess.run(["git", "add", "feature.txt"], cwd=repo, check=True)
+    subprocess.run(["git", "commit", "-q", "-m", "feat: task payload"], cwd=repo, check=True)
+    return repo
+
+
+def test_pr_flow_blocks_when_automerge_unavailable(tmp_path):
+    repo = _prepare_pr_flow_feature_repo(tmp_path)
+    if repo is None:
+        return
+    fakebin, state = _install_fake_gh_auto_merge_unavailable(tmp_path)
+    env = {**os.environ, "PATH": f"{fakebin}{os.pathsep}{os.environ.get('PATH', '')}", "FAKE_GH_STATE": str(state)}
+
+    result = subprocess.run(["bash", "scripts/git-workflow.sh"], cwd=repo, env=env, text=True, capture_output=True, timeout=30)
+
+    assert result.returncode == 3, result.stdout + result.stderr
+    assert "GIT_WORKFLOW_READY: blocked" in result.stdout
+    assert "PUSH_READY: yes" in result.stdout
+    assert "PR_READY: yes" in result.stdout
+    assert "MERGED: no" in result.stdout
+    assert "auto-merge could not be enabled" in result.stdout
+    args = Path(str(state) + ".args").read_text(encoding="utf-8")
+    assert "--base main" in args
+    assert "--head feature/P00-S01-T001" in args
+
+
+def test_pr_flow_waits_for_actual_merge_before_done(tmp_path):
+    repo = _prepare_pr_flow_feature_repo(tmp_path)
+    if repo is None:
+        return
+    fakebin, state = _install_fake_gh_auto_merge_success(tmp_path)
+    env = {
+        **os.environ,
+        "PATH": f"{fakebin}{os.pathsep}{os.environ.get('PATH', '')}",
+        "FAKE_GH_STATE": str(state),
+        "FAKE_GH_MERGED": str(tmp_path / "fake-gh-pr-merged"),
+        "CLAUDE_PR_FLOW_WAIT_SECONDS": "5",
+        "CLAUDE_PR_FLOW_POLL_SECONDS": "1",
+    }
+
+    result = subprocess.run(["bash", "scripts/git-workflow.sh"], cwd=repo, env=env, text=True, capture_output=True, timeout=30)
+
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert "GIT_WORKFLOW_READY: yes" in result.stdout
+    assert "PUSH_READY: yes" in result.stdout
+    assert "PR_READY: yes" in result.stdout
+    assert "MERGE_MODE: auto-squash" in result.stdout
+    assert "MERGED: yes" in result.stdout
+
+
 def test_git_workflow_amends_late_ledger_before_push(tmp_path):
     repo = _make_minimal_git_workflow_repo(tmp_path, "direct-main")
     if repo is None:
@@ -233,11 +514,6 @@ def test_git_workflow_amends_late_ledger_before_push(tmp_path):
     remote = tmp_path / "origin-ledger.git"
     subprocess.run(["git", "init", "-q", "--bare", str(remote)], check=True)
     subprocess.run(["git", "remote", "add", "origin", str(remote)], cwd=repo, check=True)
-    # Seed origin/main BEFORE the "track ledger" commit so that after the
-    # workflow's amend, local main is cleanly 1 commit ahead of origin/main
-    # (not diverged). Real production scenarios always have origin/main as
-    # the baseline before a slice commit.
-    subprocess.run(["git", "push", "-q", "origin", "main"], cwd=repo, check=True)
     ledger = repo / "orchestrator-state" / "tasks" / "ledger.jsonl"
     ledger.parent.mkdir(parents=True, exist_ok=True)
     ledger.write_text('{"event":"before_close"}\n', encoding="utf-8")

@@ -228,12 +228,14 @@ J104, J201           <span style="color:var(--text-faint)"># dos journeys</span>
 ```bash
 unset CLAUDE_ACTIVE_TASK_ID CLAUDE_TASK_PACK CLAUDE_WORKTREE_ROOT CLAUDE_ORCHESTRATOR_ROOT \
   &amp;&amp; BOOTSTRAP_ROOT="..." \
-  &amp;&amp; ROOT="$($BOOTSTRAP_ROOT/scripts/ensure-task-worktree.sh --print-root)" \
-  &amp;&amp; WT="$($ROOT/scripts/ensure-task-worktree.sh P02-S01-T001)" \
+  &amp;&amp; ROOT="$(bash "$BOOTSTRAP_ROOT/scripts/ensure-task-worktree.sh" --print-root)" \
+  &amp;&amp; WT="$(bash "$ROOT/scripts/ensure-task-worktree.sh" P02-S01-T001)" \
   &amp;&amp; cd "$WT" \
+  &amp;&amp; PACK="$WT/orchestrator-state/tasks/task-packs/P02-S01-T001.md" \
+  &amp;&amp; if [ ! -f "$PACK" ]; then PACK="$ROOT/orchestrator-state/tasks/task-packs/P02-S01-T001.md"; fi \
   &amp;&amp; export CLAUDE_ORCHESTRATOR_ROOT="$ROOT" CLAUDE_WORKTREE_ROOT="$WT" \
             CLAUDE_ACTIVE_TASK_ID=P02-S01-T001 \
-            CLAUDE_TASK_PACK="$ROOT/orchestrator-state/tasks/task-packs/P02-S01-T001.md" \
+            CLAUDE_TASK_PACK="$PACK" \
   &amp;&amp; echo 'Ahora ejecuta: claude --agent main-orchestrator ... "/next-slice P02-S01-T001"'
 ```
 

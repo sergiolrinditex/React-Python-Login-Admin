@@ -9,7 +9,7 @@
 - Tamaño recomendado: pantalla crítica 3-6 slices; módulo/journey lane 8-15 slices. No hagas una slice por botón/componente pequeño; tampoco cierres una pantalla sólo porque compila.
 - Defectos dentro de la pantalla actual van por `validator/tester -> debugger -> retest`. Sólo crea FU si falta trabajo nuevo fuera de scope: pantalla, endpoint, tabla, journey, contrato de datos reales o decisión humana no declarada.
 
-> Perfil: **minimal**. El `Canonical Coverage Registry` es la fuente del DAG. Mantén 3-8 tasks, phases pequeñas y dependencias reales. El bootstrap debe terminar en `mode=explicit_dag`, nunca `legacy_linear`.
+> Perfil: **minimal**. El `Canonical Coverage Registry` es la fuente del DAG. Mantén 3-8 tasks, phases pequeñas y dependencias reales. El bootstrap debe terminar en `mode=explicit_dag`, siempre `explicit_dag`.
 
 
 ## Modelo Phase / Step / Slice para generar una app completa

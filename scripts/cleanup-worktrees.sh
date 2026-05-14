@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Safely remove per-slice git worktrees after the closer has committed and
-# pushed to main. Dry-run by default. Never touches main/current worktree and
-# never removes dirty worktrees.
+# Safely remove per-slice git worktrees after a closer has committed and run
+# the configured Git workflow. Dry-run by default. The script is worktree-aware:
+# when invoked from inside the task worktree, it first resolves and cd's to the
+# canonical root so the task worktree itself can be removed safely.
 
 APPLY=0
 TASK_ID=""
@@ -15,8 +16,8 @@ Usage: scripts/cleanup-worktrees.sh [--apply] [--task TASK_ID] [--verbose]
 
 Default is dry-run. A worktree is a candidate when its path or branch name
 contains TASK_ID. Without --task, candidates are paths/branches that look like
-per-slice worktrees (contain Pxx-Sxx-Txxx or dev/...). Dirty worktrees are
-reported and skipped.
+per-slice worktrees (contain Pxx-Sxx-Txxx or dev/ or feature/). Dirty worktrees
+are reported and skipped.
 USAGE
 }
 
@@ -27,8 +28,6 @@ while [ "$#" -gt 0 ]; do
       shift
       ;;
     --dry-run)
-      # Default mode anyway, but accept it as explicit flag so users who
-      # type "--dry-run" don't get an error.
       APPLY=0
       shift
       ;;
@@ -61,17 +60,85 @@ if ! git rev-parse --git-dir >/dev/null 2>&1; then
   exit 0
 fi
 
-ROOT="$(git rev-parse --show-toplevel)"
-CURRENT="$(cd "$ROOT" && pwd -P)"
+ORIGINAL_ROOT="$(git rev-parse --show-toplevel)"
+resolve_canonical_root() {
+  local common_dir
+  common_dir="$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null || true)"
+  if [ -n "$common_dir" ] && [ "$(basename "$common_dir")" = ".git" ] && [ -d "$(dirname "$common_dir")" ]; then
+    (cd "$(dirname "$common_dir")" && pwd -P)
+  else
+    printf '%s\n' "$ORIGINAL_ROOT"
+  fi
+}
+ROOT="$(resolve_canonical_root)"
+ROOT_REAL="$(cd "$ROOT" && pwd -P)"
+cd "$ROOT_REAL"
 
 MATCHED=0
 WOULD_REMOVE=0
 REMOVED=0
 SKIPPED=0
+BRANCHES_DELETED=0
+BRANCHES_SKIPPED=0
 
 records="$(git worktree list --porcelain)"
 current_path=""
 current_branch=""
+
+branch_short_name() {
+  local branch="$1"
+  case "$branch" in
+    refs/heads/*) printf '%s\n' "${branch#refs/heads/}" ;;
+    *) printf '%s\n' "$branch" ;;
+  esac
+}
+
+maybe_delete_local_branch() {
+  local wt_branch="$1"
+  local short
+  short="$(branch_short_name "$wt_branch")"
+  case "$short" in
+    ""|main|master|HEAD|detached) return 0 ;;
+  esac
+  if ! git show-ref --verify --quiet "refs/heads/$short"; then
+    return 0
+  fi
+
+  local develop="${GIT_FLOW_DEVELOP:-develop}"
+  local main="${GIT_FLOW_MAIN:-main}"
+  local safe_to_delete=0
+  # After pr-flow GitHub usually squash-merges the PR and deletes the remote
+  # branch. A squash merge means the feature tip is not an ancestor of main,
+  # so merge-base alone would keep stale local feature/Pxx-Sxx-Txxx branches
+  # forever. When cleanup is scoped to a TASK_ID and the branch belongs to that
+  # TASK_ID, the closer already proved integration before calling this script;
+  # deleting the local task branch is safe.
+  if [ -n "$TASK_ID" ]; then
+    case "$short" in
+      *"$TASK_ID"*) safe_to_delete=1 ;;
+    esac
+  fi
+  if [ "$safe_to_delete" -ne 1 ] && git merge-base --is-ancestor "$short" HEAD >/dev/null 2>&1; then
+    safe_to_delete=1
+  elif [ "$safe_to_delete" -ne 1 ] && git show-ref --verify --quiet "refs/heads/$develop" && git merge-base --is-ancestor "$short" "$develop" >/dev/null 2>&1; then
+    safe_to_delete=1
+  elif [ "$safe_to_delete" -ne 1 ] && git show-ref --verify --quiet "refs/heads/$main" && git merge-base --is-ancestor "$short" "$main" >/dev/null 2>&1; then
+    safe_to_delete=1
+  fi
+
+  if [ "$safe_to_delete" -eq 1 ]; then
+    if git branch -d "$short" >/dev/null 2>&1 || git branch -D "$short" >/dev/null 2>&1; then
+      BRANCHES_DELETED=$((BRANCHES_DELETED + 1))
+      echo "deleted local branch: $short"
+    else
+      BRANCHES_SKIPPED=$((BRANCHES_SKIPPED + 1))
+      echo "skip branch delete: $short"
+    fi
+  else
+    BRANCHES_SKIPPED=$((BRANCHES_SKIPPED + 1))
+    [ "$VERBOSE" -eq 1 ] && echo "skip branch delete not merged: $short"
+  fi
+}
 
 process_record() {
   local wt_path="$1"
@@ -81,13 +148,11 @@ process_record() {
   local wt_real
   wt_real="$(cd "$wt_path" 2>/dev/null && pwd -P || printf '%s' "$wt_path")"
 
-  # Never touch the primary/current worktree.
-  if [ "$wt_real" = "$CURRENT" ]; then
-    [ "$VERBOSE" -eq 1 ] && echo "skip current: $wt_path"
+  # Never touch the canonical root or main/master checkouts.
+  if [ "$wt_real" = "$ROOT_REAL" ]; then
+    [ "$VERBOSE" -eq 1 ] && echo "skip canonical root: $wt_path"
     return 0
   fi
-
-  # Never touch a worktree checked out on main/master.
   case "$wt_branch" in
     refs/heads/main|refs/heads/master|main|master)
       [ "$VERBOSE" -eq 1 ] && echo "skip main/master: $wt_path ($wt_branch)"
@@ -102,7 +167,7 @@ process_record() {
       *"$TASK_ID"*) candidate=1 ;;
     esac
   else
-    if printf '%s\n' "$haystack" | grep -Eq 'P[0-9]+-S[0-9]+-T[0-9]+|dev/'; then
+    if printf '%s\n' "$haystack" | grep -Eq 'P[0-9]+-S[0-9]+-T[0-9]+|dev/|feature/'; then
       candidate=1
     fi
   fi
@@ -129,19 +194,10 @@ process_record() {
   fi
 
   if [ "$APPLY" -eq 1 ]; then
-    # Try git's clean remove first. It refuses if the worktree has
-    # untracked files (caches, .ruff_cache, __pycache__, .DS_Store, dev logs).
-    # The status check above already confirmed there are no MODIFIED tracked
-    # files. So if git rejects with "Directory not empty", the remaining
-    # content is only untracked cruft — safe to rm -rf the dir directly.
     if git worktree remove "$wt_path" 2>/dev/null; then
       REMOVED=$((REMOVED + 1))
       echo "removed: $wt_path ($wt_branch)"
     else
-      # Fallback: forced removal (registers the worktree as gone in git)
-      # plus filesystem rm of the physical directory. Safe because:
-      #   * we already skipped current/main/master worktrees above
-      #   * we already skipped dirty worktrees above (tracked changes)
       git worktree remove --force "$wt_path" 2>/dev/null || true
       if [ -d "$wt_path" ]; then
         rm -rf "$wt_path"
@@ -149,6 +205,7 @@ process_record() {
       REMOVED=$((REMOVED + 1))
       echo "removed (forced after git refused, untracked cruft only): $wt_path ($wt_branch)"
     fi
+    maybe_delete_local_branch "$wt_branch"
   else
     WOULD_REMOVE=$((WOULD_REMOVE + 1))
     echo "would remove: $wt_path ($wt_branch)"
@@ -173,14 +230,14 @@ process_record "$current_path" "$current_branch"
 
 git worktree prune
 
-# Remove the empty <repo>-worktrees/ container directory when no
-# slice worktrees remain inside it. This keeps the parent tidy after
-# all slices in a wave have closed. Only removes if completely empty
-# and only with --apply. ensure-task-worktree.sh re-creates it for
-# the next TASK_ID, so no behaviour change for active slices.
-CONTAINER="$(dirname "$ROOT")/$(basename "$ROOT")-worktrees"
+CONTAINER="${CLAUDE_TASK_WORKTREES_DIR:-$(dirname "$ROOT_REAL")/$(basename "$ROOT_REAL")-worktrees}"
 if [ "$APPLY" -eq 1 ] && [ -d "$CONTAINER" ] && [ -z "$(ls -A "$CONTAINER" 2>/dev/null)" ]; then
   rmdir "$CONTAINER" 2>/dev/null && echo "removed empty container: $CONTAINER" || true
 fi
 
-echo "cleanup-worktrees: matched=$MATCHED would_remove=$WOULD_REMOVE removed=$REMOVED skipped=$SKIPPED mode=$([ "$APPLY" -eq 1 ] && echo apply || echo dry-run) task=${TASK_ID:-all}"
+echo "cleanup-worktrees: matched=$MATCHED would_remove=$WOULD_REMOVE removed=$REMOVED skipped=$SKIPPED branches_deleted=$BRANCHES_DELETED branches_skipped=$BRANCHES_SKIPPED mode=$([ "$APPLY" -eq 1 ] && echo apply || echo dry-run) task=${TASK_ID:-all}"
+
+if [ "$APPLY" -eq 1 ] && [ -n "$TASK_ID" ] && [ "$SKIPPED" -gt 0 ]; then
+  echo "cleanup-worktrees: incomplete task cleanup; dirty/missing candidate(s) were skipped" >&2
+  exit 3
+fi

@@ -1,25 +1,29 @@
 #!/usr/bin/env bash
 # Housekeeping silencioso post-closer. NO interactivo. Operaciones SEGURAS:
-#   - Rota ledger.jsonl y bash-ledger.jsonl si >200KB (los comprime y deja vacío).
+#   - Rota ledger.jsonl y bash-ledger.jsonl si >200KB (los comprime y deja vacio).
 #   - Borra caches regenerables (__pycache__, .pytest_cache, htmlcov, .DS_Store).
-#   - Archiva handoffs/evidence/reports de slices con status "done" en registry
-#     y >2 días desde su mtime, en orchestrator-state/memory/archive/<fecha>/.
+#   - NO archiva/mueve handoffs/evidence/reports por defecto. Eso ensuciaba
+#     worktrees justo despues del push y hacia fallar cleanup-worktrees.
+#     El archivado historico queda disponible solo con --archive-done.
 # NO toca PROGRESS.md (eso es /slice-maintain compact, gate humano).
-# NO toca código de la app, configs, source-of-truth, registry, runtime-state.
-# Si algo falla, sigue (best-effort). Pensado para invocar desde /verify-slice
-# tras el closer.
+# NO toca codigo de la app, configs, source-of-truth, registry, runtime-state.
+# Si algo falla, sigue (best-effort). Pensado para invocar desde el closer
+# antes de cleanup-worktrees.
 #
-# Uso: bash scripts/slice-clean.sh [--apply] [--keep N]
-#   --apply  ejecuta de verdad (default: dry-run, solo reporta).
-#   --keep N preserva las últimas N slices "done" sin archivar (default: 5).
+# Uso: bash scripts/slice-clean.sh [--apply] [--keep N] [--archive-done]
+#   --apply         ejecuta de verdad (default: dry-run, solo reporta).
+#   --keep N        preserva las ultimas N slices "done" si --archive-done (default: 5).
+#   --archive-done  mueve handoffs/evidence/reports antiguos; NO usar en closer.
 set -uo pipefail
 APPLY=0
 KEEP=5
+ARCHIVE_DONE=0
 while [ $# -gt 0 ]; do
   case "$1" in
     --apply) APPLY=1 ;;
     --keep)  shift; KEEP="$1" ;;
-    *)       echo "uso: $0 [--apply] [--keep N]"; exit 2 ;;
+    --archive-done) ARCHIVE_DONE=1 ;;
+    *)       echo "uso: $0 [--apply] [--keep N] [--archive-done]"; exit 2 ;;
   esac
   shift
 done
@@ -38,8 +42,6 @@ ar_count=0
 rotated=0
 
 size_bytes() {
-  # GNU: du -sb. macOS/BSD: du -sk. Used only for reporting, so approximate
-  # KB->bytes fallback is fine.
   if du -sb "$1" >/dev/null 2>&1; then
     du -sb "$1" 2>/dev/null | awk '{print $1}'
   else
@@ -48,19 +50,13 @@ size_bytes() {
 }
 
 mtime_epoch() {
-  # macOS/BSD stat uses -f %m; GNU stat uses -c %Y.
   stat -f %m "$1" 2>/dev/null || stat -c %Y "$1" 2>/dev/null || echo 0
 }
 
 reverse_lines() {
-  if command -v tac >/dev/null 2>&1; then
-    tac
-  else
-    tail -r
-  fi
+  if command -v tac >/dev/null 2>&1; then tac; else tail -r; fi
 }
 
-# 1. Rotación de ledgers si >200KB
 rotate_ledger_file() {
   file="$1"
   prefix="$2"
@@ -68,13 +64,11 @@ rotate_ledger_file() {
     size=$(wc -c < "$file" 2>/dev/null || echo 0)
     if [ "$size" -gt $((200 * 1024)) ]; then
       target="orchestrator-state/tasks/${prefix}-$(date +%Y-%m-%d-%H%M%S).jsonl.gz"
-      log "$(basename "$file") = ${size} bytes — rota a $target"
+      log "$(basename "$file") = ${size} bytes - rota a $target"
       if [ "$APPLY" -eq 1 ]; then
         gzip -c "$file" > "$target" && : > "$file" && rotated=1
         old_ledgers=$(ls -1t orchestrator-state/tasks/${prefix}-*.jsonl.gz 2>/dev/null | tail -n +6 || true)
-        if [ -n "$old_ledgers" ]; then
-          printf '%s\n' "$old_ledgers" | xargs rm -f
-        fi
+        if [ -n "$old_ledgers" ]; then printf '%s\n' "$old_ledgers" | xargs rm -f; fi
       fi
     fi
   fi
@@ -82,12 +76,10 @@ rotate_ledger_file() {
 rotate_ledger_file "$LEDGER" "ledger"
 rotate_ledger_file "$BASH_LEDGER" "bash-ledger"
 
-# 2. Caches regenerables — find safe directories
 prune_paths=(.git .claude orchestrator-state/tasks orchestrator-state/memory docs flutter_template .venv venv node_modules)
 prune_args=()
 for p in "${prune_paths[@]}"; do prune_args+=( -path "./$p" -prune -o ); done
 
-# Caches concretos
 while IFS= read -r d; do
   [ -z "$d" ] && continue
   sz=$(size_bytes "$d"); sz=${sz:-0}
@@ -95,7 +87,6 @@ while IFS= read -r d; do
   maybe rm -rf "$d"
 done < <(find . "${prune_args[@]}" -type d \( -name __pycache__ -o -name .pytest_cache -o -name htmlcov -o -name .ruff_cache -o -name .mypy_cache \) -print 2>/dev/null)
 
-# Ficheros sueltos
 while IFS= read -r f; do
   [ -z "$f" ] && continue
   sz=$(wc -c < "$f" 2>/dev/null); sz=${sz:-0}
@@ -103,18 +94,12 @@ while IFS= read -r f; do
   maybe rm -f "$f"
 done < <(find . "${prune_args[@]}" -type f \( -name '.DS_Store' -o -name 'Thumbs.db' -o -name '*.tmp' -o -name '*.bak' -o -name '*.swp' \) -print 2>/dev/null)
 
-# 3. Archivar handoffs/evidence/reports de slices done con >2 días
-# (solo si jq existe — si no, omitir el archivado para no fallar)
-if command -v jq >/dev/null 2>&1 && [ -f orchestrator-state/tasks/registry.json ]; then
-  # IDs de tareas done, ordenados por orden en registry, descartando las últimas KEEP
+if [ "$ARCHIVE_DONE" -eq 1 ] && command -v jq >/dev/null 2>&1 && [ -f orchestrator-state/tasks/registry.json ]; then
   done_ids=$(jq -r '.tasks[] | select(.status == "done") | .id' orchestrator-state/tasks/registry.json 2>/dev/null | reverse_lines | tail -n "+$((KEEP+1))" | reverse_lines)
   if [ -n "$done_ids" ]; then
-    if [ "$APPLY" -eq 1 ]; then
-      mkdir -p "$ARCHIVE_DIR/handoffs" "$ARCHIVE_DIR/evidence" "$ARCHIVE_DIR/reports" 2>/dev/null
-    fi
+    if [ "$APPLY" -eq 1 ]; then mkdir -p "$ARCHIVE_DIR/handoffs" "$ARCHIVE_DIR/evidence" "$ARCHIVE_DIR/reports" 2>/dev/null; fi
     while IFS= read -r tid; do
       [ -z "$tid" ] && continue
-      # Solo archivar si el handoff existe y tiene >2 días
       hf="orchestrator-state/tasks/handoffs/$tid.md"
       if [ -f "$hf" ]; then
         age_days=$(( ( $(date +%s) - $(mtime_epoch "$hf") ) / 86400 ))
@@ -129,10 +114,9 @@ if command -v jq >/dev/null 2>&1 && [ -f orchestrator-state/tasks/registry.json 
   fi
 fi
 
-# Resumen
 log "Caches dirs:    $hr_count (${hr_size} bytes)"
 log "Ficheros sueltos: $sd_count (${sd_size} bytes)"
-log "Slices archivadas: $ar_count"
+if [ "$ARCHIVE_DONE" -eq 1 ]; then log "Slices archivadas: $ar_count"; else log "Slices archivadas: skipped (--archive-done no usado)"; fi
 [ "$rotated" -eq 1 ] && log "ledger(s) rotado(s)"
-[ "$APPLY" -eq 0 ] && log "DRY-RUN — relanza con --apply para ejecutar"
+[ "$APPLY" -eq 0 ] && log "DRY-RUN - relanza con --apply para ejecutar"
 exit 0

@@ -2,7 +2,7 @@
 
 - `templates/`: tres perfiles (`minimal`, `large-without-base`, `large-with-base`), cada uno con cinco templates.
 - `prompts/`: prompt maestro para generar los cinco source-of-truth acumulativos en modo DAG explícito.
-- `guides/`: guía de generación con ChatGPT y runbook legacy/DAG.
+- `guides/`: guía de generación con ChatGPT y cheat sheet operativa.
 - `product-baseline/`: baseline construido opcional (`docs/product-baseline/`) + `BASELINE_MANIFEST.json`. Solo se usa cuando eliges `large-with-base`.
 - `source-of-truth/`: los cinco documentos vivos de la app actual. En un checkout nuevo puede estar vacío hasta que generes la app desde templates. Cuando existe, es acumulativo: baseline real + v1 + v2 + ... + vN.
 - `reports/`: auditorías, validaciones y reportes de fixes.
@@ -73,9 +73,9 @@ orchestrator-state/tasks/api-contracts/*
 
 No edites `registry.json`, `runtime-state.json`, `task-dag.json` ni `task-dag.md` a mano. Son derivados por bootstrap y scripts con locks.
 
-## Journeys y gate por referencias
+## Journeys y frontier gate
 
-En modo DAG-only, journeys pendientes en `runtime-state.pending_journey_verifications` solo difieren tasks que referencian esos journey IDs (`task.journey_refs`). Ramas independientes del DAG siguen avanzando. No existe modo de bloqueo alternativo.
+En DAG-only, los journeys pendientes solo difieren tasks que referencian esos journey IDs. No hay otro modo de journey gate.
 
 ## Follow-ups formales
 

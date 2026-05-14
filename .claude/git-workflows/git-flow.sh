@@ -1,76 +1,87 @@
 #!/usr/bin/env bash
 # git-flow.sh -- Closer's Git workflow for git_workflow: git-flow
 #
-# Implements the Vincent Driessen Gitflow model adapted for DAG orchestration.
-# /verify-slice is the human verification gate; this script is transport-only.
-#
-# Branch conventions (auto-detected from current branch name):
-#   feature/<TASK_ID>-*  →  merge into 'develop', delete feature branch
-#   release/<version>    →  merge into 'main' + 'develop', tag vX.Y.Z, delete release branch
-#   hotfix/<version>     →  merge into 'main' + 'develop', tag vX.Y.Z-hotfix.N, delete hotfix branch
-#   develop              →  push develop (manual / CI trigger, no merge)
-#
-# All merges use --no-ff to preserve branch topology in history.
-# Fast-forward is intentionally disabled so the graph always shows parallel work.
-#
-# Outputs (closer parses these from stdout):
-#   GIT_WORKFLOW_READY:  yes|no|blocked
-#   PUSH_READY:          yes|no
-#   BRANCH_TYPE:         feature|release|hotfix|develop|unknown
-#   MERGED_TO_DEVELOP:   yes|no
-#   MERGED_TO_MAIN:      yes|no
-#   TAGGED:              <tag> | no
-#   BRANCH_DELETED:      yes|no
-#   REBASE_CONFLICT:     yes  (only when blocked)
-#
-# Exit codes:
-#   0   success
-#   2   wrong branch for this workflow / not a git repo
-#   3   push / merge / tag failed
-#   4   rebase conflict; manual resolution required
+# /verify-slice is the verification gate. This script is transport-only.
+# It is designed for Claude task worktrees: the closer runs in feature/<TASK_ID>,
+# while develop/main may be checked out elsewhere. Integration merges therefore
+# happen in short-lived detached worktrees and are pushed as HEAD:<target>.
 
 set -euo pipefail
 
-# ── Helpers ───────────────────────────────────────────────────────────────────
-log()    { echo "$*"; }
-warn()   { echo "WARN: $*" >&2; }
-abort()  { echo "GIT_WORKFLOW_READY: blocked"; echo "PUSH_READY: no"; echo "$*"; exit "${2:-3}"; }
+log() { echo "$*"; }
+warn() { echo "WARN: $*" >&2; }
 
-# ── Config ────────────────────────────────────────────────────────────────────
-BRANCH="$(git branch --show-current)"
+LOG_DIR="${TMPDIR:-/tmp}/claude-git-workflows"
+mkdir -p "$LOG_DIR"
+RUN_ID="git-flow-$$-$(date +%s)"
+TMP_WT_DIR="$LOG_DIR/${RUN_ID}-worktrees"
+LOCK_DIR=""
+TMP_WTS=()
+NEW_DETACHED_WORKTREE=""
+MERGE_RESULT_WT=""
+
+cleanup_all() {
+  local wt
+  for wt in "${TMP_WTS[@]:-}"; do
+    [ -n "$wt" ] || continue
+    git worktree remove --force "$wt" >/dev/null 2>&1 || rm -rf "$wt" 2>/dev/null || true
+  done
+  rmdir "$TMP_WT_DIR" >/dev/null 2>&1 || true
+  if [ -n "${LOCK_DIR:-}" ] && [ -d "$LOCK_DIR" ]; then
+    rmdir "$LOCK_DIR" >/dev/null 2>&1 || true
+  fi
+}
+trap cleanup_all EXIT
+
+abort() {
+  local code=3
+  if [ "$#" -gt 0 ] && [[ "${1:-}" =~ ^[0-9]+$ ]]; then
+    code="$1"
+    shift || true
+  fi
+  echo "GIT_WORKFLOW_READY: blocked"
+  echo "PUSH_READY: no"
+  if [ "$#" -eq 0 ]; then
+    echo "Reason: git-flow workflow blocked."
+  else
+    printf '%s\n' "$@"
+  fi
+  exit "$code"
+}
+
+BRANCH="$(git branch --show-current 2>/dev/null || true)"
 DEVELOP_BRANCH="${GIT_FLOW_DEVELOP:-develop}"
 MAIN_BRANCH="${GIT_FLOW_MAIN:-main}"
 
-# Resolve remote: honour upstream tracking config, fall back to 'origin'.
-REMOTE="$(git config "branch.${BRANCH}.remote" 2>/dev/null || echo origin)"
-if ! git remote get-url "$REMOTE" >/dev/null 2>&1; then
-  REMOTE="origin"
-fi
-if ! git remote get-url "$REMOTE" >/dev/null 2>&1; then
-  abort "Reason: remote '$REMOTE' not found. Add it with: git remote add $REMOTE <url>"
+if [ -z "$BRANCH" ]; then
+  echo "GIT_WORKFLOW_READY: no"
+  echo "PUSH_READY: no"
+  echo "BRANCH_TYPE: unknown"
+  echo "Reason: git-flow requires a named branch; current checkout is detached."
+  exit 2
 fi
 
-# ── Branch type detection ─────────────────────────────────────────────────────
 detect_branch_type() {
   case "$BRANCH" in
-    feature/*)  echo "feature"  ;;
-    release/*)  echo "release"  ;;
-    hotfix/*)   echo "hotfix"   ;;
+    feature/*) echo "feature" ;;
+    release/*) echo "release" ;;
+    hotfix/*) echo "hotfix" ;;
     "$DEVELOP_BRANCH") echo "develop" ;;
-    "$MAIN_BRANCH")    echo "main"    ;;
-    *)          echo "unknown"  ;;
+    "$MAIN_BRANCH") echo "main" ;;
+    *) echo "unknown" ;;
   esac
 }
 
 BRANCH_TYPE="$(detect_branch_type)"
 log "BRANCH_TYPE: ${BRANCH_TYPE}"
 
+# Report workflow mismatch before remote checks, so diagnostics are stable in
+# freshly initialized repos with no origin yet.
 if [ "$BRANCH_TYPE" = "unknown" ]; then
   echo "GIT_WORKFLOW_READY: no"
   echo "PUSH_READY: no"
   echo "Reason: branch '$BRANCH' does not match git-flow conventions."
-  echo "  Expected: feature/<name>, release/<version>, hotfix/<version>, or '$DEVELOP_BRANCH'."
-  echo "  Rename with: git branch -m <new-name>"
+  echo "  Expected: feature/<TASK_ID>, release/<version>, hotfix/<version>, or '$DEVELOP_BRANCH'."
   exit 2
 fi
 
@@ -82,140 +93,269 @@ if [ "$BRANCH_TYPE" = "main" ]; then
   exit 2
 fi
 
-# ── Fetch all refs we'll need ─────────────────────────────────────────────────
-log "Fetching ${REMOTE}..."
-if ! git fetch "$REMOTE" --tags >/tmp/git-flow-fetch.log 2>&1; then
-  abort "Reason: git fetch $REMOTE failed. See /tmp/git-flow-fetch.log" 3
+REMOTE="$(git config "branch.${BRANCH}.remote" 2>/dev/null || true)"
+REMOTE="${REMOTE:-origin}"
+if ! git remote get-url "$REMOTE" >/dev/null 2>&1; then
+  REMOTE="origin"
+fi
+if ! git remote get-url "$REMOTE" >/dev/null 2>&1; then
+  abort 3 "Reason: remote '$REMOTE' not found. Add it with: git remote add $REMOTE <url>"
 fi
 
-# ── Ensure develop exists locally ─────────────────────────────────────────────
-if ! git rev-parse --verify "$DEVELOP_BRANCH" >/dev/null 2>&1; then
-  if git rev-parse --verify "${REMOTE}/${DEVELOP_BRANCH}" >/dev/null 2>&1; then
-    git checkout -b "$DEVELOP_BRANCH" "${REMOTE}/${DEVELOP_BRANCH}" >/dev/null
-    git checkout "$BRANCH" >/dev/null
-  else
-    abort "Reason: branch '$DEVELOP_BRANCH' not found locally or on '$REMOTE'." \
-      "Create it with: git checkout -b $DEVELOP_BRANCH $MAIN_BRANCH && git push -u $REMOTE $DEVELOP_BRANCH"
+acquire_lock() {
+  local common_dir pid_file owner_pid
+  common_dir="$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null || true)"
+  [ -n "$common_dir" ] || abort 3 "Reason: cannot resolve git common dir for git-flow lock."
+  LOCK_DIR="$common_dir/claude-git-flow.lock"
+  if ! mkdir "$LOCK_DIR" 2>/dev/null; then
+    pid_file="$LOCK_DIR/pid"
+    owner_pid=""
+    if [ -f "$pid_file" ]; then
+      owner_pid="$(cat "$pid_file" 2>/dev/null || true)"
+    fi
+    if [ -n "$owner_pid" ] && ! kill -0 "$owner_pid" 2>/dev/null; then
+      rm -rf "$LOCK_DIR" 2>/dev/null || true
+      if mkdir "$LOCK_DIR" 2>/dev/null; then
+        printf '%s\n' "$$" >"$LOCK_DIR/pid"
+        printf '%s\n' "$BRANCH" >"$LOCK_DIR/branch"
+        return 0
+      fi
+    fi
+    abort 3 \
+      "Reason: another git-flow integration is already running for this repository." \
+      "Lock: $LOCK_DIR" \
+      "Owner PID: ${owner_pid:-unknown}" \
+      "Retry after that closer finishes, or remove the lock only after verifying no git-flow process is running."
   fi
+  printf '%s\n' "$$" >"$LOCK_DIR/pid"
+  printf '%s\n' "$BRANCH" >"$LOCK_DIR/branch"
+}
+
+acquire_lock
+
+FETCH_LOG="$LOG_DIR/${RUN_ID}-fetch.log"
+log "Fetching ${REMOTE}..."
+if ! git fetch "$REMOTE" --prune --tags >"$FETCH_LOG" 2>&1; then
+  abort 3 "Reason: git fetch $REMOTE failed. See $FETCH_LOG"
 fi
 
-# ── Rebase feature branch onto latest develop (keeps history linear) ──────────
-rebase_onto_develop() {
-  local base
-  base="$(git merge-base "${REMOTE}/${DEVELOP_BRANCH}" HEAD 2>/dev/null || echo)"
-  local remote_sha
-  remote_sha="$(git rev-parse "${REMOTE}/${DEVELOP_BRANCH}" 2>/dev/null || echo)"
+local_branch_exists() { git show-ref --verify --quiet "refs/heads/$1"; }
+remote_branch_exists() { git show-ref --verify --quiet "refs/remotes/${REMOTE}/$1"; }
 
-  if [ -z "$base" ] || [ "$base" = "$remote_sha" ]; then
-    log "REBASED_ON_DEVELOP: no (already up to date)"
+ensure_branch_ref() {
+  local branch="$1"
+  local hint_base="${2:-}"
+  if local_branch_exists "$branch" || remote_branch_exists "$branch"; then
+    return 0
+  fi
+  if [ -n "$hint_base" ]; then
+    abort 3 \
+      "Reason: branch '$branch' not found locally or on '$REMOTE'." \
+      "Create it explicitly from '$hint_base' and push it before using git-flow:" \
+      "  git checkout -b $branch $hint_base" \
+      "  git push -u $REMOTE $branch"
+  fi
+  abort 3 "Reason: branch '$branch' not found locally or on '$REMOTE'."
+}
+
+best_ref() {
+  local branch="$1"
+  if remote_branch_exists "$branch"; then
+    printf '%s\n' "${REMOTE}/${branch}"
+  elif local_branch_exists "$branch"; then
+    printf '%s\n' "$branch"
+  else
+    return 1
+  fi
+}
+
+safe_name() { printf '%s' "$1" | tr -c 'A-Za-z0-9._-' '-'; }
+
+ensure_clean_repo() {
+  local repo_path="$1"
+  local label="$2"
+  local status
+  status="$(git -C "$repo_path" status --porcelain --untracked-files=all 2>/dev/null || true)"
+  if [ -n "$status" ]; then
+    echo "GIT_WORKFLOW_READY: blocked"
+    echo "PUSH_READY: no"
+    echo "Reason: $label worktree is dirty; git-flow refuses to hide changes."
+    printf '%s\n' "$status" | sed 's/^/DIRTY: /'
+    exit 3
+  fi
+}
+
+new_detached_worktree() {
+  local label="$1"
+  local ref="$2"
+  local sha wt
+  mkdir -p "$TMP_WT_DIR"
+  sha="$(git rev-parse "${ref}^{commit}")"
+  wt="$TMP_WT_DIR/$(safe_name "$label")"
+  if ! git worktree add --detach "$wt" "$sha" >/dev/null 2>&1; then
+    abort 3 "Reason: could not create detached integration worktree for '$label' at '$ref'." \
+      "Run: git worktree list"
+  fi
+  TMP_WTS+=("$wt")
+  NEW_DETACHED_WORKTREE="$wt"
+}
+
+rebase_onto_develop() {
+  ensure_branch_ref "$DEVELOP_BRANCH" "$MAIN_BRANCH"
+  local base_ref base base_sha rebase_log
+  base_ref="$(best_ref "$DEVELOP_BRANCH")"
+  base="$(git merge-base "$base_ref" HEAD 2>/dev/null || echo)"
+  base_sha="$(git rev-parse "$base_ref" 2>/dev/null || echo)"
+  if [ -n "$base" ] && [ -n "$base_sha" ] && [ "$base" = "$base_sha" ]; then
+    log "REBASED_ON_DEVELOP: no (already up to date with $base_ref)"
     return 0
   fi
 
-  if git rebase "${REMOTE}/${DEVELOP_BRANCH}" >/tmp/git-flow-rebase.log 2>&1; then
-    log "REBASED_ON_DEVELOP: yes"
+  rebase_log="$LOG_DIR/${RUN_ID}-rebase.log"
+  if git rebase "$base_ref" >"$rebase_log" 2>&1; then
+    log "REBASED_ON_DEVELOP: yes (rebased onto $base_ref)"
   else
-    git rebase --abort 2>/dev/null || true
+    git rebase --abort >/dev/null 2>&1 || true
     echo "GIT_WORKFLOW_READY: blocked"
     echo "PUSH_READY: no"
     echo "REBASE_CONFLICT: yes"
-    echo "Reason: rebase onto ${REMOTE}/${DEVELOP_BRANCH} had conflicts. Resolve manually:"
-    echo "  git rebase ${REMOTE}/${DEVELOP_BRANCH}"
+    echo "Reason: rebase onto $base_ref had conflicts. Resolve manually:"
+    printf '  cd %q\n' "$(pwd)"
+    echo "  git rebase $base_ref"
     echo "  # fix conflicts, git add <files>, git rebase --continue"
-    echo "  ./scripts/git-workflow.sh   # retry"
-    sed 's/^/  /' /tmp/git-flow-rebase.log >&2 || true
+    echo "  ./scripts/git-workflow.sh"
+    echo "Conflict log: $rebase_log"
+    sed 's/^/  /' "$rebase_log" >&2 || true
     exit 4
   fi
 }
 
-# ── Merge <branch> into <target> with --no-ff ─────────────────────────────────
-merge_into() {
+push_current_branch() {
+  local push_log="$LOG_DIR/${RUN_ID}-push-$(safe_name "$BRANCH").log"
+  if ! git push --force-with-lease -u "$REMOTE" "$BRANCH" >"$push_log" 2>&1; then
+    abort 3 "Reason: push of '$BRANCH' to '$REMOTE' failed. See $push_log"
+  fi
+}
+
+push_repo_head_to_branch() {
+  local repo_path="$1"
+  local branch="$2"
+  local push_log="$LOG_DIR/${RUN_ID}-push-$(safe_name "$branch").log"
+  if ! git -C "$repo_path" push "$REMOTE" "HEAD:refs/heads/${branch}" >"$push_log" 2>&1; then
+    abort 3 "Reason: push of '$branch' to '$REMOTE' failed. See $push_log"
+  fi
+}
+
+push_develop_only() {
+  ensure_clean_repo "." "develop"
+  if remote_branch_exists "$DEVELOP_BRANCH"; then
+    local remote_ahead
+    remote_ahead="$(git rev-list --count "HEAD..${REMOTE}/${DEVELOP_BRANCH}" 2>/dev/null || echo 0)"
+    if [ "$remote_ahead" -gt 0 ]; then
+      abort 3 \
+        "Reason: ${REMOTE}/${DEVELOP_BRANCH} is ${remote_ahead} commit(s) ahead of local. Rebase first:" \
+        "  git fetch ${REMOTE} ${DEVELOP_BRANCH}" \
+        "  git rebase ${REMOTE}/${DEVELOP_BRANCH}" \
+        "  ./scripts/git-workflow.sh"
+    fi
+  fi
+  local push_log="$LOG_DIR/${RUN_ID}-push-$(safe_name "$DEVELOP_BRANCH").log"
+  if ! git push "$REMOTE" "$DEVELOP_BRANCH" >"$push_log" 2>&1; then
+    abort 3 "Reason: push of '$DEVELOP_BRANCH' to '$REMOTE' failed. See $push_log"
+  fi
+}
+
+merge_into_detached_and_push() {
   local target="$1"
-  local source_branch="$2"
-
-  git checkout "$target" >/dev/null 2>&1
-  # Fast-forward target to remote state first.
-  git merge --ff-only "${REMOTE}/${target}" >/dev/null 2>&1 || true
-
-  if ! git merge --no-ff "$source_branch" \
-      -m "chore(git-flow): merge $source_branch into $target" \
-      >/tmp/git-flow-merge-"${target}".log 2>&1; then
-    git checkout "$source_branch" >/dev/null 2>&1 || true
-    abort "Reason: merge of '$source_branch' into '$target' failed. See /tmp/git-flow-merge-${target}.log"
+  local source="$2"
+  ensure_branch_ref "$target"
+  local target_ref wt merge_log
+  target_ref="$(best_ref "$target")"
+  new_detached_worktree "merge-$target" "$target_ref"
+  wt="$NEW_DETACHED_WORKTREE"
+  MERGE_RESULT_WT="$wt"
+  ensure_clean_repo "$wt" "target '$target'"
+  merge_log="$LOG_DIR/${RUN_ID}-merge-$(safe_name "$target").log"
+  if ! git -C "$wt" merge --no-ff "$source" \
+      -m "chore(git-flow): merge $source into $target" \
+      >"$merge_log" 2>&1; then
+    git -C "$wt" merge --abort >/dev/null 2>&1 || true
+    abort 3 "Reason: merge of '$source' into '$target' failed. See $merge_log"
   fi
-
-  git checkout "$source_branch" >/dev/null 2>&1
+  push_repo_head_to_branch "$wt" "$target"
 }
 
-# ── Push a branch to remote ───────────────────────────────────────────────────
-push_branch() {
-  local b="$1"
-  local flags="${2:---force-with-lease}"
-  if ! git push $flags "$REMOTE" "$b" >/tmp/git-flow-push-"${b//\//-}".log 2>&1; then
-    abort "Reason: push of '$b' to '$REMOTE' failed. See /tmp/git-flow-push-${b//\//-}.log"
-  fi
-}
-
-# ── Create and push a version tag ────────────────────────────────────────────
-create_tag() {
-  local tag="$1"
-  local message="$2"
+create_tag_from_worktree() {
+  local wt="$1"
+  local tag="$2"
+  local message="$3"
+  local head_sha tag_sha
+  head_sha="$(git -C "$wt" rev-parse HEAD)"
   if git rev-parse --verify "refs/tags/${tag}" >/dev/null 2>&1; then
-    warn "Tag '${tag}' already exists — skipping tag creation."
-    log "TAGGED: ${tag} (pre-existing)"
-    return 0
+    tag_sha="$(git rev-parse "refs/tags/${tag}^{commit}" 2>/dev/null || true)"
+    if [ "$tag_sha" = "$head_sha" ]; then
+      warn "Tag '${tag}' already exists at the intended commit; skipping tag creation."
+      log "TAGGED: ${tag} (pre-existing)"
+      return 0
+    fi
+    abort 3 \
+      "Reason: tag '$tag' already exists but does not point at the release merge commit." \
+      "Existing tag commit: ${tag_sha:-unknown}" \
+      "Expected commit: $head_sha" \
+      "Pick a new release/hotfix branch name or delete the incorrect tag manually."
   fi
-  git tag -a "$tag" -m "$message"
-  if ! git push "$REMOTE" "$tag" >/tmp/git-flow-tag.log 2>&1; then
-    abort "Reason: push of tag '$tag' failed. See /tmp/git-flow-tag.log"
+  git -C "$wt" tag -a "$tag" -m "$message"
+  local tag_log="$LOG_DIR/${RUN_ID}-tag.log"
+  if ! git -C "$wt" push "$REMOTE" "$tag" >"$tag_log" 2>&1; then
+    abort 3 "Reason: push of tag '$tag' failed. See $tag_log"
   fi
   log "TAGGED: ${tag}"
 }
 
-# ── Delete branch locally and remotely ───────────────────────────────────────
-delete_branch() {
-  local b="$1"
-  git branch -d "$b" 2>/dev/null || git branch -D "$b" 2>/dev/null || warn "Could not delete local branch '$b'."
-  git push "$REMOTE" --delete "$b" >/dev/null 2>&1 || warn "Could not delete remote branch '$REMOTE/$b' (may not exist)."
-  log "BRANCH_DELETED: yes"
+delete_source_branch() {
+  local branch="$1"
+  local remote_ok=0
+  if git ls-remote --exit-code --heads "$REMOTE" "$branch" >/dev/null 2>&1; then
+    if git push "$REMOTE" --delete "$branch" >/dev/null 2>&1; then
+      log "REMOTE_BRANCH_DELETED: yes"
+    else
+      remote_ok=1
+      warn "Could not delete remote branch '$REMOTE/$branch'."
+      log "REMOTE_BRANCH_DELETED: no"
+    fi
+  else
+    log "REMOTE_BRANCH_DELETED: yes (already absent)"
+  fi
+
+  if [ "$(git branch --show-current 2>/dev/null || true)" = "$branch" ]; then
+    git checkout --detach HEAD >/dev/null 2>&1 || true
+  fi
+  if local_branch_exists "$branch"; then
+    git branch -d "$branch" >/dev/null 2>&1 || git branch -D "$branch" >/dev/null 2>&1 || true
+  fi
+
+  if local_branch_exists "$branch" || [ "$remote_ok" -ne 0 ]; then
+    log "BRANCH_DELETED: no"
+  else
+    log "BRANCH_DELETED: yes"
+  fi
 }
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# Feature flow:  feature/* → develop
-# ═══════════════════════════════════════════════════════════════════════════════
 if [ "$BRANCH_TYPE" = "feature" ]; then
   rebase_onto_develop
-
-  # Push rebased feature branch (--force-with-lease because rebase rewrites SHAs).
-  push_branch "$BRANCH" "--force-with-lease -u"
+  push_current_branch
   log "PUSH_READY: yes"
-
-  merge_into "$DEVELOP_BRANCH" "$BRANCH"
+  merge_into_detached_and_push "$DEVELOP_BRANCH" "$BRANCH"
   log "MERGED_TO_DEVELOP: yes"
   log "MERGED_TO_MAIN: no"
-
-  push_branch "$DEVELOP_BRANCH"
-
-  delete_branch "$BRANCH"
-
-  log "GIT_WORKFLOW_READY: yes"
   log "TAGGED: no"
+  delete_source_branch "$BRANCH"
+  log "GIT_WORKFLOW_READY: yes"
   exit 0
 fi
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# Develop push (manual / no merge needed)
-# ═══════════════════════════════════════════════════════════════════════════════
 if [ "$BRANCH_TYPE" = "develop" ]; then
-  REMOTE_AHEAD="$(git rev-list --count "HEAD..${REMOTE}/${DEVELOP_BRANCH}" 2>/dev/null || echo 0)"
-  if [ "$REMOTE_AHEAD" -gt 0 ]; then
-    abort "Reason: ${REMOTE}/${DEVELOP_BRANCH} is ${REMOTE_AHEAD} commit(s) ahead of local. Rebase first:
-  git fetch ${REMOTE} ${DEVELOP_BRANCH}
-  git rebase ${REMOTE}/${DEVELOP_BRANCH}
-  ./scripts/git-workflow.sh"
-  fi
-
-  push_branch "$DEVELOP_BRANCH"
-
+  push_develop_only
   log "GIT_WORKFLOW_READY: yes"
   log "PUSH_READY: yes"
   log "MERGED_TO_DEVELOP: no"
@@ -225,11 +365,9 @@ if [ "$BRANCH_TYPE" = "develop" ]; then
   exit 0
 fi
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# Release / Hotfix flow:  release/* or hotfix/* → main + develop, tag, delete
-# ═══════════════════════════════════════════════════════════════════════════════
 if [ "$BRANCH_TYPE" = "release" ] || [ "$BRANCH_TYPE" = "hotfix" ]; then
-  # Extract version from branch name (release/1.2.3 → 1.2.3).
+  ensure_branch_ref "$MAIN_BRANCH"
+  ensure_branch_ref "$DEVELOP_BRANCH" "$MAIN_BRANCH"
   VERSION="${BRANCH#*/}"
   if [ "$BRANCH_TYPE" = "hotfix" ]; then
     TAG="v${VERSION}-hotfix"
@@ -237,33 +375,15 @@ if [ "$BRANCH_TYPE" = "release" ] || [ "$BRANCH_TYPE" = "hotfix" ]; then
     TAG="v${VERSION}"
   fi
 
-  # Push the release/hotfix branch to remote first.
-  push_branch "$BRANCH" "--force-with-lease -u"
+  push_current_branch
   log "PUSH_READY: yes"
-
-  # Ensure main exists locally.
-  if ! git rev-parse --verify "$MAIN_BRANCH" >/dev/null 2>&1; then
-    git checkout -b "$MAIN_BRANCH" "${REMOTE}/${MAIN_BRANCH}" >/dev/null
-    git checkout "$BRANCH" >/dev/null
-  fi
-
-  # Merge into main.
-  merge_into "$MAIN_BRANCH" "$BRANCH"
+  merge_into_detached_and_push "$MAIN_BRANCH" "$BRANCH"
+  main_wt="$MERGE_RESULT_WT"
   log "MERGED_TO_MAIN: yes"
-  push_branch "$MAIN_BRANCH"
-
-  # Tag on main.
-  git checkout "$MAIN_BRANCH" >/dev/null 2>&1
-  create_tag "$TAG" "Release ${TAG} — merged from ${BRANCH}"
-  git checkout "$BRANCH" >/dev/null 2>&1
-
-  # Merge into develop (carry release commits / fixes forward).
-  merge_into "$DEVELOP_BRANCH" "$BRANCH"
+  create_tag_from_worktree "$main_wt" "$TAG" "Release ${TAG} - merged from ${BRANCH}"
+  merge_into_detached_and_push "$DEVELOP_BRANCH" "$BRANCH"
   log "MERGED_TO_DEVELOP: yes"
-  push_branch "$DEVELOP_BRANCH"
-
-  delete_branch "$BRANCH"
-
+  delete_source_branch "$BRANCH"
   log "GIT_WORKFLOW_READY: yes"
   exit 0
 fi

@@ -18,7 +18,7 @@ Antes de planificar, editar, validar o cerrar:
    - `.claude/rules/03-dev-loop.md`
    - `.claude/rules/04-traceability.md`
    - `.claude/rules/05-runtime-write-contract.md`
-2. Lee `orchestrator-state/memory/PROGRESS.md` si existe; tras `/clear`, es el primer archivo de contexto operativo.
+2. Lee `$CLAUDE_ORCHESTRATOR_ROOT/orchestrator-state/memory/PROGRESS.md` si existe; tras `/clear`, es el primer archivo de contexto operativo. Si estás en una worktree de task, no tomes `./orchestrator-state` como verdad compartida.
 3. Si necesitas memoria propia, usa SOLO `orchestrator-state/agent-memory/main-orchestrator/MEMORY.md`. No escribas memoria runtime dentro de `.claude/`.
 4. Todo estado mutable del orquestador vive fuera de `.claude`: `orchestrator-state/memory/`, `orchestrator-state/tasks/`, `orchestrator-state/agent-memory/`. `.claude/` es configuración estática.
 5. Lee `.claude/orchestrator-contract.json` para confirmar qué puede escribir tu agente, qué paths son derivados y cómo mantener el `TASK_ID` aislado en DAG.
@@ -136,8 +136,8 @@ vigila logs en vivo, y apendiza `## verify-slice` al handoff con
 - Pre-check rechaza si no hay `## verify-slice` con `VERIFY_OUTCOME: verified` (o `VERIFY_WAIVED: <motivo>` firmado por humano) en el handoff. Para tareas frontend/ux/journey/gate exige también `## Screen/Journey review` aprobado por screen-journey-reviewer.
 - Si `## verify-journey` con `JOURNEY_VERIFY_OUTCOME: verified` está en el handoff → emite `JOURNEY_VERIFIED_INLINE: <JID>` (no `JOURNEY_PENDING_VERIFY`).
 - En cualquier otro caso de cierre de journey → emite `JOURNEY_PENDING_VERIFY: <JID>`.
-- Commit atómico en `main`, `configured Git workflow (`./scripts/git-workflow.sh`)`, y limpieza segura de worktrees.
-- Post-push: `bash scripts/slice-clean.sh --apply` + `bash scripts/cleanup-worktrees.sh --apply --task <TASK_ID>` (housekeeping silencioso).
+- Commit atómico en el checkout correcto del TASK_ID (`main` solo en `push-to-main`; worktree/rama de tarea en `pr-flow`/`git-flow`), workflow Git configurado (`./scripts/git-workflow.sh`) y limpieza segura de worktrees.
+- Post-push lo hace el `closer`, no el meta-agente: `slice-clean.sh --apply` + `cleanup-worktrees.sh --apply --task <TASK_ID>` desde root canónico. Si falla, es fallo mecánico; no lo conviertas en follow-up de producto.
 
 ### `/verify-journey <JID>` — gate de rescate manual
 
@@ -250,7 +250,7 @@ FU no es un escape para bugs de la slice. Antes de aceptar o promover una FU, ap
 - **Trabajo nuevo real fuera de scope**: falta Coverage Registry row, nuevo endpoint/ruta/tabla/journey, ampliación de `Write set`/`Conflict group`, datos reales/proporcionados no definidos, dependencia externa o decisión humana. Acción: FU formal y luego `/promote-followup <FOLLOWUP_ID>` si el usuario aprueba.
 - **Ambiguo**: pregunta al usuario; no bloquees el DAG con FU innecesaria.
 
-Toda FU propuesta debe traer `triage.scope_classification` y `triage.why_not_debugger`. Para crearla, los agentes deben usar `./scripts/register-followup-task.sh propose --scope-classification ... --why-not-debugger ...`. La promoción se hace con `/promote-followup <FOLLOWUP_ID>` desde el main-orchestrator, nunca desde closer ni desde un worker activo. Las propuestas `high|critical|blocker` bloquean nuevas waves y closer hasta decisión humana.
+Toda FU propuesta debe traer `triage.scope_classification` y `triage.why_not_debugger`. Para crearla, los agentes deben usar `./scripts/register-followup-task.sh propose --scope-classification ... --why-not-debugger ...`. La promoción se hace con `/promote-followup <FOLLOWUP_ID>` desde el main-orchestrator, nunca desde closer ni desde un worker activo. Las propuestas `high|critical|blocker` bloquean nuevas waves/claims hasta decisión humana, pero el closer debe crear el PR de la slice origen con esas FU en estado `proposed`.
 
 ## Cierre obligatorio
 
@@ -277,4 +277,10 @@ Canonical trailer shape:
 CLAUDE_TRAILER:
 OUTCOME: ready|blocked
 ```
+
+## Runtime root discipline
+
+- Shared DAG truth is canonical: `$CLAUDE_ORCHESTRATOR_ROOT/orchestrator-state/tasks/registry.json`, `runtime-state.json`, `memory/PROGRESS.md`, `memory/task-dag.*`. Never infer scheduler truth from `./orchestrator-state` inside a task worktree.
+- Slice artifacts are workspace-local: `./orchestrator-state/tasks/handoffs/<TASK_ID>.md`, `evidence/<TASK_ID>/`, `reports/<TASK_ID>.md`, `task-packs/<TASK_ID>.md`. The closer commits these from the active worktree.
+- Informational reviewers must not create/promote follow-ups for mechanical contract noise; fix the contract/run or block.
 

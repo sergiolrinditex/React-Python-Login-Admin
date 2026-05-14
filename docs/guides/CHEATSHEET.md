@@ -63,7 +63,7 @@ claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slic
 Ejemplo de salida/copy-paste esperado:
 
 ```bash
-BOOTSTRAP_ROOT="${CLAUDE_ORCHESTRATOR_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd -P)}" && ROOT="$($BOOTSTRAP_ROOT/scripts/ensure-task-worktree.sh --print-root)" && WT="$($ROOT/scripts/ensure-task-worktree.sh P02-S03-T001)" && cd "$WT" && export CLAUDE_ORCHESTRATOR_ROOT="$ROOT" CLAUDE_WORKTREE_ROOT="$WT" CLAUDE_ACTIVE_TASK_ID=P02-S03-T001 CLAUDE_TASK_PACK="$ROOT/orchestrator-state/tasks/task-packs/P02-S03-T001.md" && echo 'Ahora ejecuta en Claude Code: claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice P02-S03-T001"'
+BOOTSTRAP_ROOT="${CLAUDE_ORCHESTRATOR_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd -P)}" && ROOT="$(bash "$BOOTSTRAP_ROOT/scripts/ensure-task-worktree.sh" --print-root)" && WT="$(bash "$ROOT/scripts/ensure-task-worktree.sh" P02-S03-T001)" && cd "$WT" && PACK="$WT/orchestrator-state/tasks/task-packs/P02-S03-T001.md" && if [ ! -f "$PACK" ]; then PACK="$ROOT/orchestrator-state/tasks/task-packs/P02-S03-T001.md"; fi && export CLAUDE_ORCHESTRATOR_ROOT="$ROOT" CLAUDE_WORKTREE_ROOT="$WT" CLAUDE_ACTIVE_TASK_ID=P02-S03-T001 CLAUDE_TASK_PACK="$PACK" && echo 'Ahora ejecuta en Claude Code: claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice P02-S03-T001"'
 ```
 
 ### Uso correcto del terminal worker
@@ -273,7 +273,7 @@ claude --agent main-orchestrator --permission-mode bypassPermissions "/promote-f
 ./scripts/register-followup-task.sh waive FU-YYYYMMDDHHMMSS --reason "decision humana"
 ```
 
-`high`, `critical` y `blocker` bloquean waves/closer hasta promover o waivear. El closer nunca promueve automáticamente: bloquea y pide decisión humana. `/promote-followup` actualiza source-of-truth, registry, DAG, work-item YAML, runtime y ledger; Bash PostToolUse se registra en `bash-ledger.jsonl` runtime-only para no ensuciar Git; si la nueva task conflictúa con una task activa/claimed/in_progress por `conflict_group` o `write_set`, queda `blocked` con `blocked_reason: conflict_with_worker_task` hasta que `promote_ready_tasks` pueda desbloquearla.
+`high`, `critical` y `blocker` bloquean nuevas waves/claims hasta promover o waivear, pero no bloquean el PR de la slice origen cuando ya son FU YAML `proposed` e incluidas en el commit. El closer nunca promueve automáticamente: registra/incluye y sigue el cierre. `/promote-followup` actualiza source-of-truth, registry, DAG, work-item YAML, runtime y ledger; Bash PostToolUse se registra en `bash-ledger.jsonl` runtime-only para no ensuciar Git; si la nueva task conflictúa con una task activa/claimed/in_progress por `conflict_group` o `write_set`, queda `blocked` con `blocked_reason: conflict_with_worker_task` hasta que `promote_ready_tasks` pueda desbloquearla.
 
 No promuevas FU desde un terminal worker que está ejecutando otra slice si puede tocar los mismos ficheros. Primero mira `./scripts/next-wave.sh`; el promote respeta locks y conflictos, pero la decisión de convertir deuda en task DAG debe ser explícita.
 

@@ -85,7 +85,7 @@ Reglas prácticas:
 ## Canonical Coverage Registry — OBLIGATORIO
 
 > ChatGPT debe generar las filas reales. Mantén las columnas exactamente con estos nombres mínimos para DAG, paralelismo seguro y cableado: `Slice ID`, `Tipo`, `Target`, `Step`, `Product increment`, `Build state`, `Risk level`, `Verify mode`, `Depends on`, `Conflict group`, `Write set`, `Journey refs`, `Pantalla/Ruta`, `Endpoint`, `Tablas DB`, `Origen-Instr`, `Origen-TechGuide`, `Acceptance mínimo`, `Verify mínimo`.
-> Puedes añadir más columnas (`Path`, `Provider`, `Widget`, `Migración`, etc.). El bootstrap seguirá funcionando si la primera columna sigue siendo `Slice ID` (parser por header dict — columnas extra se ignoran sin romper). Si omites `Depends on`, el orquestador cae al modo lineal legacy.
+> Puedes añadir más columnas (`Path`, `Provider`, `Widget`, `Migración`, etc.). El bootstrap seguirá funcionando si la primera columna sigue siendo `Slice ID` (parser por header dict — columnas extra se ignoran sin romper). Si omites `Depends on`, el orquestador cae al modo sin dependencias explícitas.
 >
 > 🧭 **DAG / paralelismo**: `Depends on` es la source-of-truth de dependencias entre slices. Usa `—` para roots; usa `TASK_ID`, rangos (`P03-S02-T001..T004`), step refs (`P03-S02`), phase refs (`P03`) o `previous`. El bootstrap deriva la matriz en `orchestrator-state/memory/task-dag.json`; NO escribas una matriz manual aquí.
 >

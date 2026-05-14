@@ -128,7 +128,7 @@ class RequiredKeysTests(unittest.TestCase):
 
     def test_non_lifecycle_contract_roles_use_schema_required_keys(self):
         import hook_capture_subagent_stop as hook
-        self.assertEqual(hook.required_keys_for("planner"), {"outcome"})
+        self.assertEqual(hook.required_keys_for("planner"), {"outcome", "context_ready"})
         self.assertEqual(hook.required_keys_for("main-orchestrator"), {"outcome"})
         self.assertEqual(hook.required_keys_for(None), set())
 

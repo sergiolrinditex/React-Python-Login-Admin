@@ -2,6 +2,12 @@
 description: Verificación humana-real post-slice. Hard reset del entorno (back + front + bbdd con carga de datos reales/proporcionados del slice), reproduce como usuario en el navegador, vigila logs front+back+bbdd en vivo, devuelve tabla de validación con URL, qué probar, descripción y resultado esperado. Agnóstico del stack.
 argument-hint: "<TASK_ID>|--task <TASK_ID>  (o terminal con CLAUDE_ACTIVE_TASK_ID exportado)"
 ---
+### Root split obligatorio
+
+- Lee `registry.json`, `runtime-state.json`, `PROGRESS.md`, `task-dag.*` desde `$CLAUDE_ORCHESTRATOR_ROOT/orchestrator-state/`.
+- Lee/escribe handoff, evidence, report y task-pack desde la worktree activa (`./orchestrator-state/tasks/...`) cuando la slice corre en worktree.
+- No registres follow-ups por errores mecánicos del orquestador (root stale, heading de handoff, checker/lint flake, cleanup omitido). Corrige, reintenta o bloquea; FU solo para trabajo de producto fuera de scope.
+
 
 # /verify-slice
 ## Rule loading
@@ -238,7 +244,7 @@ Decisión:
 
 - `OUTCOME: approved` en `## Screen/Journey review` → continúa a §5.bis / closer.
 - `OUTCOME: changes_requested` → trata los hallazgos como `issues_found` aunque tu reproducción inicial pareciera bien: salta a §6.2, invoca `debugger`, repite `validator ‖ tester` y relanza `/verify-slice`. No crees FU para defectos reparables dentro del `TASK_ID`.
-- `OUTCOME: blocked` → no invoques `closer`. Si `followup_candidate=yes`, registra FU formal con `--scope-classification` y `--why-not-debugger`; si falta información, pide decisión humana.
+- `OUTCOME: blocked` → distingue causa. Si es defecto in-scope, no invoques `closer`: va a `debugger/retest`. Si `followup_candidate=yes` y el problema es trabajo real fuera de scope, registra FU formal con `--scope-classification` y `--why-not-debugger`; si la aceptación actual sigue verificada, continúa hacia closer sin preguntar. Si falta información para saberlo, bloquea con razón explícita.
 
 Si el reviewer no escribe `## Screen/Journey review`, no cierres. Corrige/repite el reviewer o bloquea.
 
@@ -326,9 +332,9 @@ En modo `post-closer` este paso se salta — el commit ya existe; solo entrégal
 
 ### 6.1 — Si `VERIFY_OUTCOME: verified`
 
-Recapitula al usuario el estado real (con la información de §5.bis si aplica):
+Recapitula al usuario el estado real (con la información de §5.bis si aplica) y cierra automáticamente; no preguntes si debe invocarse `closer`. El closer ejecutará el workflow Git configurado mediante `./scripts/git-workflow.sh`.
 
-```
+```text
 ✅ Slice <TASK_ID> verificada.
 <si hubo journey inline:>
    ✅ Journey(s) <lista JIDs> verificada(s) inline en el mismo gate.
@@ -336,52 +342,43 @@ Recapitula al usuario el estado real (con la información de §5.bis si aplica):
    ⏸ Journey(s) <lista JIDs> queda(n) pendiente(s) — el closer emitirá
      JOURNEY_PENDING_VERIFY. En modo frontier solo se diferirán tasks que
      referencien esos JIDs. No existe otro modo de journey gate.
+<si hay FU propuestas:>
+   🧭 Follow-ups propuestos: <FU_IDs>. Se incluyen en el PR como `proposed`;
+      no se promueven desde closer y bloquearán nuevas waves/claims hasta
+      `/promote-followup` o waiver.
 <si la slice no cierra journey:>
    (esta slice no cierra ningún journey — flujo normal)
-
-¿Invoco a `closer` para escribir evidence report + commit atómico + workflow Git configurado (`./scripts/git-workflow.sh`) + cleanup de worktrees? (sí/no)
 ```
 
-- Si "sí" / "adelante" / "ok" / "dale" / "go" → primero ejecuta `./scripts/check-handoff-contract.sh <TASK_ID> --require-ready-for-close --require-verify-slice`. Solo si pasa —y, cuando aplique pantalla/journey, también pasa con `--require-screen-journey-review`— spawnea `closer` (un solo Agent call) con el `TASK_ID`, `CLAUDE_TASK_PACK=orchestrator-state/tasks/task-packs/<TASK_ID>.md` y el recordatorio literal `MODO DAG ACTIVO: production = explicit_dag; cierra sólo el TASK_ID explícito y su CLAUDE_TASK_PACK`. Espera el trailer `OUTCOME: committed` + `NEXT_STATUS: done` + `PUSH_READY: yes`. Si vuelve `blocked`, reporta qué le falta al usuario.
-- Si "no" → informa al usuario:
-  > *"Slice verificada pero sin commit. La sección `## verify-slice` con `VERIFY_OUTCOME: verified` ya está en el handoff (más `## verify-journey` si fue inline) — cuando quieras cerrar, relanza `/verify-slice` o dime `cierra <TASK_ID>` directamente."*
+Primero ejecuta `./scripts/check-handoff-contract.sh <TASK_ID> --require-ready-for-close --require-verify-slice`. Solo si pasa —y, cuando aplique pantalla/journey, también pasa con `--require-screen-journey-review`— spawnea `closer` (un solo Agent call) con el `TASK_ID`, `CLAUDE_TASK_PACK=orchestrator-state/tasks/task-packs/<TASK_ID>.md` y el recordatorio literal `MODO DAG ACTIVO: production = explicit_dag; cierra sólo el TASK_ID explícito y su CLAUDE_TASK_PACK; las FU formales proposed del origin_task_id se meten en el PR, no bloquean el close`. Espera el trailer `OUTCOME: committed` + `NEXT_STATUS: done` + `PUSH_READY: yes`. Si vuelve `blocked`, reporta qué le falta al usuario.
 
-  Si el usuario responde inmediatamente "cierra" / "close" / "commit" → spawnea closer como en la rama "sí" sin volver a preguntar, manteniendo el mismo `TASK_ID` y `CLAUDE_TASK_PACK` DAG.
+### 6.1.bis - Housekeeping post-closer
 
-### 6.1.bis — Housekeeping post-closer (automático, silencioso)
+No ejecutes un segundo cleanup desde `/verify-slice`. El `closer` es el unico dueno del post-push housekeeping: `slice-clean.sh --apply` y despues `cleanup-worktrees.sh --apply --task <TASK_ID>` desde el root canonico. Esto evita correr comandos desde una worktree que el propio closer acaba de borrar.
 
-Tras `closer` cierre con `OUTCOME: committed` y `PUSH_READY: yes`:
+Acepta el cierre solo si el trailer del closer trae:
 
-```bash
-bash scripts/slice-clean.sh --apply 2>&1 | tail -20
-bash scripts/cleanup-worktrees.sh --apply --task <TASK_ID> 2>&1 | tail -40
+```text
+OUTCOME: committed
+NEXT_STATUS: done
+GIT_READY: yes
+PUSH_READY: yes
+WORKTREES_CLEANED: yes
 ```
 
-Operación segura: `slice-clean` rota ledger y borra caches regenerables; `cleanup-worktrees` elimina solo worktrees limpios asociados al TASK_ID y jamás toca `main`. Si falla → log y sigue; si dejó worktrees dirty, repórtalos como follow-up.
+Si `WORKTREES_CLEANED: no`, no crees un follow-up de producto. Es un fallo mecanico del orquestador/worktree: reporta la razon, deja la slice bloqueada y corrige/reintenta cleanup desde el root canonico.
 
-Reporta una línea al usuario: `🧹 Housekeeping: <resumen del script>`.
-
-Si el SessionStart hook detectó presión de tamaño (sugerencia 💡 sobre PROGRESS.md grande, MEMORY.md de algún agente >200 líneas, etc.), repítela ahora junto al recordatorio: `/clear` + `/next-slice` (o `/slice-maintain compact` antes si la sugerencia lo aconseja).
+Si el SessionStart hook detecto presion de tamano (sugerencia sobre PROGRESS.md grande, MEMORY.md de algun agente >200 lineas, etc.), repitela ahora junto al recordatorio: `/clear` + `/next-slice` (o `/slice-maintain compact` antes si la sugerencia lo aconseja).
 
 ### 6.2 — Si `VERIFY_OUTCOME: issues_found`
 
-**NO invoques closer.** El código NO se committea sin verificar — ésta es la razón de existir de este paso. Presenta al usuario:
+No preguntes al usuario para decidir el siguiente paso: clasifica y actúa.
 
-```
-❌ Verify encontró problemas en <TASK_ID>. NO se ha commiteado nada (por diseño).
-Hallazgos:
-<bullets de findings, incluidos `Screen/Journey review` si fue el reviewer quien bloqueó>
+- **Defecto menor dentro del TASK_ID/Write set**: bug reparable sin cambiar contratos source-of-truth, sin añadir endpoint/ruta/tabla nueva, sin ampliar journey ni tocar conflicto compartido no declarado. spawnea `debugger` con TASK_ID + findings + `CLAUDE_TASK_PACK=orchestrator-state/tasks/task-packs/<TASK_ID>.md` + recordatorio `MODO DAG ACTIVO: production = explicit_dag`. Al volver → `validator ‖ tester` en paralelo. Si pasan → relanza este mismo `/verify-slice <TASK_ID>` con hard reset completo. No invoques `closer` hasta un verify posterior `verified`.
+- **Trabajo real fuera de scope pero la aceptación de esta slice está verificada**: crea propuesta formal con `./scripts/register-followup-task.sh propose --origin-task <TASK_ID> --severity high|medium|low --kind bug|ux|wiring|data|test --scope-classification out_of_scope|missing_coverage|missing_real_data|scope_expansion --why-not-debugger "<por qué debugger/retest no basta>" --title "..." --description "..." --acceptance "..." --verify "..."`. Después cambia tu decisión operacional a `VERIFY_OUTCOME: verified` para esta slice con follow-ups propuestos y continúa por §6.1. Las FU `proposed` bloquearán nuevas waves/claims, no este PR.
+- **Problema que impide verificar la aceptación actual y no cabe en debugger**: no invoques closer. Deja `VERIFY_OUTCOME: issues_found`, registra FU si corresponde y bloquea con razón explícita.
 
-¿Invoco a `debugger` para que los arregle? (sí/no)
-Si dices "sí", al volver re-lanzaré `validator ‖ tester` y si pasan, relanzaré `/verify-slice`.
-```
-
-- Clasifica cada hallazgo antes de actuar:
-  - **Menor y dentro del TASK_ID/Write set**: bug reparable sin cambiar contratos source-of-truth, sin añadir endpoint/ruta/tabla nueva, sin ampliar journey ni tocar conflicto compartido no declarado. Debes spawnear `debugger`, luego `validator ‖ tester`, y si ambos pasan relanzar este mismo `/verify-slice <TASK_ID>` hasta que el resultado sea `verified` o quede bloqueado con razón explícita.
-  - **Mayor o fuera de scope**: falta ruta/endpoint/tabla/journey, cambia contrato front→back→DB, requiere datos reales/proporcionados nuevos, amplía `Write set`/`Conflict group` o afecta otro TASK_ID. No lo arregles como parche invisible: crea propuesta formal con `./scripts/register-followup-task.sh propose --origin-task <TASK_ID> --severity high|medium|low --kind bug|ux|wiring|data|test --scope-classification out_of_scope|missing_coverage|missing_real_data|scope_expansion --why-not-debugger "<por qué debugger/retest no basta>" --title "..." --description "..." --acceptance "..." --verify "..."`.
-- Si "sí" y todos los hallazgos son menores → spawnea `debugger` con TASK_ID + findings + `CLAUDE_TASK_PACK=orchestrator-state/tasks/task-packs/<TASK_ID>.md` + recordatorio `MODO DAG ACTIVO: production = explicit_dag`. Al volver → `validator ‖ tester` en paralelo. Si pasan → relanza este mismo comando con hard reset completo. No invoques `closer` hasta un verify posterior `verified`.
-- Si hay al menos un hallazgo mayor/fuera de scope → registra follow-up formal con `--scope-classification` y `--why-not-debugger` antes de continuar. Si es `high|critical|blocker`, el closer y la siguiente wave quedarán bloqueados hasta promoverlo o hacer waiver humano. Si el hallazgo cabe en debugger/retest, no crees FU.
-- Si "no" → informa y espera instrucciones (puede querer parchear a mano, revertir, marcar blocked, etc), pero no dejes la slice como cerrada.
+No crees FU para defectos reparables dentro del `TASK_ID`; eso va por debugger/retest. No dejes hallazgos fuera de scope solo como texto en el handoff; deben quedar como YAML `proposed` antes del closer.
 
 ---
 
