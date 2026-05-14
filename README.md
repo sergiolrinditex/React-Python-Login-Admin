@@ -302,7 +302,7 @@ sync-product-baseline
 commit atómico y workflow Git configurado sin Co-authored-by de Claude
 configured Git workflow (`./scripts/git-workflow.sh`)
 slice-clean
-cleanup-worktrees --apply --task <TASK_ID>
+cleanup-worktrees --apply --task <TASK_ID> --schedule-active
 hook marca done solo si REPORT/GIT/PUSH/WORKTREES/BASELINE_SYNC son yes
 ```
 
@@ -491,3 +491,30 @@ El orquestador ya no debe asumir un stack concreto. Cada app declara su stack en
 - Los templates deben sustituir todos los ejemplos por el dominio real de la app y usar datos reales/proporcionados; si faltan datos, bloquea o registra follow-up.
 
 Git close note: `hook_update_ledger.py` writes Bash PostToolUse events to `orchestrator-state/tasks/bash-ledger.jsonl`, which is runtime-only and ignored by Git. This prevents Bash hooks from re-dirtying the working tree after the atomic commit/push in DAG close. Do not use `git stash` as the normal closer flow; stage required changes into the slice commit before running `./scripts/git-workflow.sh`.
+### Limpieza automática de worktrees e identidad Git
+
+En `pr-flow`, el closer no borra la worktree activa antes de que Claude ejecute `SubagentStop`; si lo hiciera, se puede perder el trailer del closer. `cleanup-worktrees.sh` la marca como `active_deferred=1`, registra la limpieza en `orchestrator-state/tasks/cleanup-requests/<TASK_ID>.json` y `scripts/cleanup-deferred-worktrees.sh` la elimina automáticamente desde el Stop hook, y también se reintenta en `scripts/next-wave.sh`/`scripts/ensure-task-worktree.sh` si ya no es la worktree activa. Si quieres forzar limpieza tras ver el prompt de vuelta, usa el `DEFERRED_CLEANUP_COMMAND` que imprime el cleanup.
+
+La identidad de commits no está hardcodeada. `scripts/check-git-identity.sh` usa `git config user.name` y `git config user.email`; si quieres exigir una identidad, configura `claude.expectedUserName`/`claude.expectedUserEmail` en Git o exporta `CLAUDE_GIT_EXPECTED_NAME`/`CLAUDE_GIT_EXPECTED_EMAIL`.
+
+
+
+### Limpieza diferida de worktrees
+
+Si el closer reporta `active_deferred=1`, no es fallo: protegió los hooks de Claude. La limpieza se reintenta automáticamente al ejecutar `/next-wave` o crear otra worktree. Comando manual seguro desde el root canónico: `bash scripts/cleanup-deferred-worktrees.sh --apply --task <TASK_ID>`.
+
+Para limpiar también ramas remotas de PR tras squash-merge, `pr-flow.sh` usa `gh pr merge --delete-branch` y, después de confirmar `MERGED`, intenta `git push <remote> --delete <branch>` como fallback idempotente. Recomendado una vez por repo si tienes permisos admin: `bash scripts/configure-github-pr-cleanup.sh` para activar delete-branch-on-merge en GitHub; si reglas/protecciones lo impiden, el closer imprime `REMOTE_BRANCH_CLEANUP_COMMAND`.
+
+
+### Identidad Git y PR squash
+
+El template no hardcodea usuarios. `scripts/check-git-identity.sh --strict` bloquea solo si configuras una expectativa explícita:
+
+```bash
+git config --global user.name "<git-user-name>"
+git config --global user.email "<email-verificado>"
+git config --global claude.expectedUserName "<git-user-name>"
+git config --global claude.expectedUserEmail "<email-verificado>"
+```
+
+Si los commits aparecen alternando entre cuentas, revisa `git config --show-origin --get-regexp 'user\.|includeIf|gpg|signing|claude\.'`, variables `GIT_AUTHOR_*`/`GIT_COMMITTER_*`, y la cuenta activa de `gh` (`gh auth status`). En `pr-flow`, el squash merge lo ejecuta GitHub vía `gh`; si quieres fijar el email de autor del merge, exporta `CLAUDE_PR_MERGE_AUTHOR_EMAIL=<email-verificado>`.

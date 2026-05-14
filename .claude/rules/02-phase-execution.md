@@ -34,7 +34,7 @@ Typical examples, not a contract:
    - Si el handoff tiene `## verify-journey` con `JOURNEY_VERIFY_OUTCOME: verified` para ese JID → emite `JOURNEY_VERIFIED_INLINE: <JID>`; el hook lo marca `verified` bajo lock.
    - Si el handoff tiene `## verify-journey` con `issues_found` → `OUTCOME: blocked` (lanza debugger).
    - En cualquier otro caso → emite `JOURNEY_PENDING_VERIFY: <JID>` (rama tradicional).
-   - Tras integración Git, el `closer` dispara `slice-clean.sh --apply` y `cleanup-worktrees.sh --apply --task <TASK_ID>` desde el root canónico. Si la limpieza falla, bloquea como fallo mecánico; no abras follow-up de producto.
+   - Tras integración Git, el `closer` dispara `slice-clean.sh --apply` y `cleanup-worktrees.sh --apply --task <TASK_ID> --schedule-active`. El cleanup resuelve el root canónico internamente y no debe borrar la worktree activa antes del `SubagentStop`; `active_deferred=1` es válido cuando va acompañado de limpieza diferida o comando manual. Si la limpieza falla por dirty/skipped, bloquea como fallo mecánico; no abras follow-up de producto.
 9. **Journey gate aparte** (solo si verify-slice eligió "aparte" o waiver) — `/verify-journey <JID>` resuelve los pending. En DAG-only, pending journeys difieren sólo las tasks que referencian ese `JID`; ramas independientes pueden seguir. Hard reset + datos reales/proporcionados consolidados + reproducción end-to-end multi-pantalla. Resilient to `/clear`. Waiver via `JOURNEY_VERIFY_WAIVED: <reason>` in the trailer (only with explicit human signature).
 
 Stop immediately if: `planner` returns `CONTEXT_READY: no`, official-doc discrepancy remains unresolved for files this slice needs to edit, or the current task depends on incomplete predecessors.

@@ -137,7 +137,7 @@ vigila logs en vivo, y apendiza `## verify-slice` al handoff con
 - Si `## verify-journey` con `JOURNEY_VERIFY_OUTCOME: verified` está en el handoff → emite `JOURNEY_VERIFIED_INLINE: <JID>` (no `JOURNEY_PENDING_VERIFY`).
 - En cualquier otro caso de cierre de journey → emite `JOURNEY_PENDING_VERIFY: <JID>`.
 - Commit atómico en el checkout correcto del TASK_ID (`main` solo en `push-to-main`; worktree/rama de tarea en `pr-flow`/`git-flow`), workflow Git configurado (`./scripts/git-workflow.sh`) y limpieza segura de worktrees.
-- Post-push lo hace el `closer`, no el meta-agente: `slice-clean.sh --apply` + `cleanup-worktrees.sh --apply --task <TASK_ID>` desde root canónico. Si falla, es fallo mecánico; no lo conviertas en follow-up de producto.
+- Post-push lo hace el `closer`, no el meta-agente: `slice-clean.sh --apply` + `cleanup-worktrees.sh --apply --task <TASK_ID> --schedule-active`. Ese cleanup resuelve el root canónico internamente y no debe borrar la worktree activa antes del `SubagentStop`; `active_deferred=1` es hook-safe; si aparece `active_deferred=1` queda una petición en `cleanup-requests/` que se limpia automáticamente desde el root y no es follow-up. Si falla por dirty/skipped, es fallo mecánico; no lo conviertas en follow-up de producto.
 
 ### `/verify-journey <JID>` — gate de rescate manual
 

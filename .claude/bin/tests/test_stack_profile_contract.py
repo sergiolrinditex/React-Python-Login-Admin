@@ -505,6 +505,9 @@ def test_pr_flow_waits_for_actual_merge_before_done(tmp_path):
     assert "PR_READY: yes" in result.stdout
     assert "MERGE_MODE: auto-squash" in result.stdout
     assert "MERGED: yes" in result.stdout
+    assert "REMOTE_BRANCH_CLEANED: yes" in result.stdout
+    remote_ref = subprocess.run(["git", "ls-remote", "--heads", "origin", "feature/P00-S01-T001"], cwd=repo, text=True, capture_output=True, timeout=30)
+    assert remote_ref.stdout.strip() == ""
 
 
 def test_git_workflow_amends_late_ledger_before_push(tmp_path):

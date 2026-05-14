@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import os
 import subprocess
+import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -97,7 +99,7 @@ def test_cleanup_worktrees_keeps_container_when_not_empty(tmp_path):
     assert "removed empty container" not in applied.stdout
 
 
-def test_cleanup_worktrees_can_remove_current_task_worktree(tmp_path):
+def test_cleanup_worktrees_defers_current_task_worktree_by_default(tmp_path):
     repo = tmp_path / "repo"
     container = tmp_path / "repo-worktrees"
     wt = container / "P00-S01-T001"
@@ -114,10 +116,80 @@ def test_cleanup_worktrees_can_remove_current_task_worktree(tmp_path):
 
     applied = run(["bash", str(SCRIPT), "--apply", "--task", "P00-S01-T001"], wt)
 
+    assert "defer active worktree removal" in applied.stdout
+    assert "active_deferred=1" in applied.stdout
+    assert "removed=0" in applied.stdout
+    assert wt.exists()
+    assert container.exists()
+
+
+def test_cleanup_worktrees_defers_active_worktree_even_when_invoked_from_root_with_claude_env(tmp_path, monkeypatch):
+    repo = tmp_path / "repo"
+    container = tmp_path / "repo-worktrees"
+    wt = container / "P00-S01-T010"
+
+    repo.mkdir()
+    run(["git", "init", "-b", "main"], repo)
+    run(["git", "config", "user.email", "test@example.com"], repo)
+    run(["git", "config", "user.name", "Test User"], repo)
+    (repo / "README.md").write_text("hello\n", encoding="utf-8")
+    run(["git", "add", "README.md"], repo)
+    run(["git", "commit", "-m", "init"], repo)
+    run(["git", "branch", "dev/P00-S01-T010"], repo)
+    run(["git", "worktree", "add", str(wt), "dev/P00-S01-T010"], repo)
+    monkeypatch.setenv("CLAUDE_PROJECT_DIR", str(wt))
+
+    applied = run(["bash", str(SCRIPT), "--apply", "--task", "P00-S01-T010"], repo)
+
+    assert "defer active worktree removal" in applied.stdout
+    assert "active_deferred=1" in applied.stdout
+    assert wt.exists()
+
+
+def test_cleanup_worktrees_can_remove_current_task_worktree_when_explicit(tmp_path):
+    repo = tmp_path / "repo"
+    container = tmp_path / "repo-worktrees"
+    wt = container / "P00-S01-T001"
+
+    repo.mkdir()
+    run(["git", "init", "-b", "main"], repo)
+    run(["git", "config", "user.email", "test@example.com"], repo)
+    run(["git", "config", "user.name", "Test User"], repo)
+    (repo / "README.md").write_text("hello\n", encoding="utf-8")
+    run(["git", "add", "README.md"], repo)
+    run(["git", "commit", "-m", "init"], repo)
+    run(["git", "branch", "dev/P00-S01-T001"], repo)
+    run(["git", "worktree", "add", str(wt), "dev/P00-S01-T001"], repo)
+
+    applied = run(["bash", str(SCRIPT), "--apply", "--remove-active", "--task", "P00-S01-T001"], wt)
+
     assert "removed:" in applied.stdout
     assert "removed=1" in applied.stdout
     assert not wt.exists()
     assert not container.exists()
+
+
+def test_cleanup_worktrees_prunes_missing_metadata_without_blocking(tmp_path):
+    repo = tmp_path / "repo"
+    wt = tmp_path / "wt-P00-S01-T009"
+
+    repo.mkdir()
+    run(["git", "init", "-b", "main"], repo)
+    run(["git", "config", "user.email", "test@example.com"], repo)
+    run(["git", "config", "user.name", "Test User"], repo)
+    (repo / "README.md").write_text("hello\n", encoding="utf-8")
+    run(["git", "add", "README.md"], repo)
+    run(["git", "commit", "-m", "init"], repo)
+    run(["git", "branch", "dev/P00-S01-T009"], repo)
+    run(["git", "worktree", "add", str(wt), "dev/P00-S01-T009"], repo)
+    # Simulate stale/prunable worktree metadata left by an external deletion.
+    subprocess.run(["rm", "-rf", str(wt)], check=True)
+
+    applied = run(["bash", str(SCRIPT), "--apply", "--task", "P00-S01-T009"], repo)
+
+    assert "prune missing worktree metadata" in applied.stdout
+    assert "missing_pruned=1" in applied.stdout
+    assert "skipped=0" in applied.stdout
 
 
 def test_cleanup_worktrees_deletes_task_branch_after_squash_merge_shape(tmp_path):
@@ -154,3 +226,46 @@ def test_cleanup_worktrees_deletes_task_branch_after_squash_merge_shape(tmp_path
     assert "deleted local branch: feature/P00-S01-T003" in applied.stdout
     show = subprocess.run(["git", "show-ref", "--verify", "refs/heads/feature/P00-S01-T003"], cwd=repo)
     assert show.returncode != 0
+
+
+def test_cleanup_worktrees_records_active_cleanup_request_and_deferred_helper_removes_it(tmp_path):
+    repo = tmp_path / "repo"
+    container = tmp_path / "repo-worktrees"
+    wt = container / "P00-S01-T777"
+
+    repo.mkdir()
+    run(["git", "init", "-b", "main"], repo)
+    run(["git", "config", "user.email", "test@example.com"], repo)
+    run(["git", "config", "user.name", "Test User"], repo)
+    (repo / "README.md").write_text("hello\n", encoding="utf-8")
+    run(["git", "add", "README.md"], repo)
+    run(["git", "commit", "-m", "init"], repo)
+    run(["git", "branch", "dev/P00-S01-T777"], repo)
+    run(["git", "worktree", "add", str(wt), "dev/P00-S01-T777"], repo)
+
+    applied = subprocess.run(
+        ["bash", str(SCRIPT), "--apply", "--task", "P00-S01-T777"],
+        cwd=wt,
+        text=True,
+        capture_output=True,
+        check=True,
+    )
+
+    assert "active_deferred=1" in applied.stdout
+    assert "DEFERRED_CLEANUP_COMMAND:" in applied.stdout
+    req = repo / "orchestrator-state" / "tasks" / "cleanup-requests" / "P00-S01-T777.json"
+    assert req.exists()
+
+    env = {**os.environ, "CLAUDE_DEFERRED_CLEANUP_ASSUME_INACTIVE": "1"}
+    flushed = subprocess.run(
+        ["bash", str(ROOT / "scripts" / "cleanup-deferred-worktrees.sh"), "--apply", "--task", "P00-S01-T777"],
+        cwd=repo,
+        env=env,
+        text=True,
+        capture_output=True,
+        check=True,
+    )
+
+    assert "removed=1" in flushed.stdout
+    assert not wt.exists()
+    assert not req.exists()

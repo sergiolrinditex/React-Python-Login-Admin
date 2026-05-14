@@ -16,6 +16,7 @@ PUSH_LOG="$LOG_DIR/pr-flow-${RUN_ID}-push.log"
 CREATE_LOG="$LOG_DIR/pr-flow-${RUN_ID}-create.log"
 MERGE_LOG="$LOG_DIR/pr-flow-${RUN_ID}-merge.log"
 SYNC_LOG="$LOG_DIR/pr-flow-${RUN_ID}-sync-main.log"
+REMOTE_BRANCH_DELETE_LOG="$LOG_DIR/pr-flow-${RUN_ID}-remote-branch-delete.log"
 
 blocked() {
   echo "GIT_WORKFLOW_READY: blocked"
@@ -31,6 +32,27 @@ wrong_workflow() {
   exit 2
 }
 
+
+cleanup_remote_head_branch() {
+  case "$BRANCH" in
+    ""|main|master|develop|"$TARGET_BRANCH")
+      echo "REMOTE_BRANCH_CLEANED: skipped"
+      return 0
+      ;;
+  esac
+  if git ls-remote --exit-code --heads "$TARGET_REMOTE" "$BRANCH" >/dev/null 2>&1; then
+    if git push "$TARGET_REMOTE" --delete "$BRANCH" >"$REMOTE_BRANCH_DELETE_LOG" 2>&1; then
+      echo "REMOTE_BRANCH_CLEANED: yes"
+    else
+      echo "REMOTE_BRANCH_CLEANED: no"
+      printf 'REMOTE_BRANCH_CLEANUP_COMMAND: git push %q --delete %q\n' "$TARGET_REMOTE" "$BRANCH"
+      echo "Reason: remote branch still exists after merge and automatic delete failed. See $REMOTE_BRANCH_DELETE_LOG"
+    fi
+  else
+    echo "REMOTE_BRANCH_CLEANED: not_found"
+  fi
+}
+
 resolve_canonical_root() {
   local current_root common_dir
   current_root="$(git rev-parse --show-toplevel 2>/dev/null || pwd -P)"
@@ -41,6 +63,11 @@ resolve_canonical_root() {
     printf '%s\n' "$current_root"
   fi
 }
+
+merge_author_args=()
+if [ -n "${CLAUDE_PR_MERGE_AUTHOR_EMAIL:-}" ]; then
+  merge_author_args=(--author-email "$CLAUDE_PR_MERGE_AUTHOR_EMAIL")
+fi
 
 if [ -z "$BRANCH" ] || [ "$BRANCH" = "$TARGET_BRANCH" ] || [ "$BRANCH" = "main" ] || [ "$BRANCH" = "master" ] || [ "$BRANCH" = "develop" ]; then
   wrong_workflow "Reason: pr-flow requires a feature branch for the TASK_ID, current=${BRANCH:-detached}. Use push-to-main/direct-main only when STACK_PROFILE.yaml declares it."
@@ -127,7 +154,7 @@ echo "PR_URL: ${PR_URL:-unknown}"
 STATE="$(gh pr view "$PR_NUMBER" --json state -q .state 2>/dev/null || echo '')"
 if [ "$STATE" != "MERGED" ]; then
   if [ "${CLAUDE_PR_FLOW_ADMIN_MERGE:-0}" = "1" ]; then
-    if gh pr merge "$PR_NUMBER" --squash --delete-branch --admin >"$MERGE_LOG" 2>&1; then
+    if gh pr merge "$PR_NUMBER" --squash --delete-branch --admin "${merge_author_args[@]}" >"$MERGE_LOG" 2>&1; then
       echo "MERGE_MODE: admin-squash-explicit"
     else
       echo "GIT_WORKFLOW_READY: blocked"
@@ -138,12 +165,16 @@ if [ "$STATE" != "MERGED" ]; then
       sed 's/^/  /' "$MERGE_LOG" >&2 || true
       exit 3
     fi
-  elif gh pr merge "$PR_NUMBER" --squash --delete-branch --auto >"$MERGE_LOG" 2>&1; then
+  elif gh pr merge "$PR_NUMBER" --squash --delete-branch --auto "${merge_author_args[@]}" >"$MERGE_LOG" 2>&1; then
     echo "MERGE_MODE: auto-squash"
     echo "MERGED: auto-queued"
   elif grep -Eiq '(already.*auto.?merge|auto.?merge.*already|already.*enabled)' "$MERGE_LOG" 2>/dev/null; then
     echo "MERGE_MODE: auto-squash-already-enabled"
     echo "MERGED: auto-queued"
+  elif grep -Eiq '(delete.*branch|branch.*delete|merge queue)' "$MERGE_LOG" 2>/dev/null && gh pr merge "$PR_NUMBER" --squash --auto >>"$MERGE_LOG" 2>&1; then
+    echo "MERGE_MODE: auto-squash"
+    echo "MERGED: auto-queued"
+    echo "REMOTE_DELETE_MODE: post-merge-fallback"
   else
     echo "GIT_WORKFLOW_READY: blocked"
     echo "PUSH_READY: yes"
@@ -184,6 +215,8 @@ if [ "${STATE:-}" != "MERGED" ]; then
   echo "Reason: PR not merged after ${WAIT_SECONDS}s. DAG close remains blocked until integration is real: ${PR_URL:-unknown}"
   exit 3
 fi
+
+cleanup_remote_head_branch
 
 ROOT="$(resolve_canonical_root)"
 ROOT_BRANCH="$(git -C "$ROOT" branch --show-current 2>/dev/null || true)"

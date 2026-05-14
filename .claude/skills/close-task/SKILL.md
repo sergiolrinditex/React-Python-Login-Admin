@@ -26,7 +26,7 @@ Before marking a task as `done`, verify ALL of the following:
     The `closer` regex this gate as a literal line match; anything else
     means the slice is not closeable yet, run `/verify-slice` first.
 
-If ANY condition is missing, `closer` fails with `OUTCOME: blocked` and lists what is missing. After the evidence report and atomic commit, closer must run `configured Git workflow (`./scripts/git-workflow.sh`)` and safe worktree cleanup; if push fails, the slice is not fully closed. The SubagentStop hook refuses to mark `done` unless the closer trailer has `REPORT_READY: yes`, `GIT_READY: yes`, `PUSH_READY: yes` and `WORKTREES_CLEANED: yes`.
+If ANY condition is missing, `closer` fails with `OUTCOME: blocked` and lists what is missing. After the evidence report and atomic commit, closer must run `configured Git workflow (`./scripts/git-workflow.sh`)` and safe worktree cleanup; if push fails, the slice is not fully closed. Cleanup must not remove the active worktree before Claude runs SubagentStop; `active_deferred=1` is acceptable when cleanup scheduled/printed the deferred removal command. The SubagentStop hook refuses to mark `done` unless the closer trailer has `REPORT_READY: yes`, `GIT_READY: yes`, `PUSH_READY: yes` and `WORKTREES_CLEANED: yes`.
 
 ## Journey-closing slices (read this even if no journey applies)
 

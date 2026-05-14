@@ -36,6 +36,14 @@ if grep -Ev '^[[:space:]]*#' "$PLUGIN" | grep -Eq '(^|[;&|[:space:]])git[[:space
   exit 2
 fi
 
+if [ -x "$CONFIG_ROOT/scripts/check-git-identity.sh" ]; then
+  if ! bash "$CONFIG_ROOT/scripts/check-git-identity.sh" --strict; then
+    echo "GIT_WORKFLOW_READY: no"
+    echo "Reason: Git identity guard failed before transport; fix user.name/user.email and amend/reset-author before pushing."
+    exit 3
+  fi
+fi
+
 # Transport-only Git workflow. The closer must create the atomic slice commit
 # before invoking this script. This script never stashes or pops. In production
 # DAG mode Claude hooks can write late trace files after the closer's commit;

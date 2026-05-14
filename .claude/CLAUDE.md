@@ -74,7 +74,7 @@ Every phase produces a VISIBLE, FUNCTIONAL, VERIFIABLE deliverable. Never build 
                                           para pantalla/journey exige Screen/Journey review aprobado
                                           si el handoff tiene ## verify-journey verified, NO emite
                                           JOURNEY_PENDING_VERIFY para esos JIDs (rama "ahora")
-   └─ post-push: slice-clean + cleanup-worktrees (housekeeping silencioso y seguro)
+   └─ post-push: slice-clean + cleanup-worktrees + cleanup diferido silencioso y seguro si la worktree sigue activa
 ```
 
 `closer` NUNCA commitea código sin `VERIFY_OUTCOME: verified` en el handoff (procedente del subagente `slice-verifier` dentro de `/verify-slice` o de `/auto-verify-slice` solo para slices `low+auto` no journey) o sin waiver explícito `VERIFY_WAIVED: <motivo>` firmado por el usuario. Esto garantiza que no hay commits de código sin verificación real y trazable.
@@ -153,7 +153,7 @@ Four hook groups are wired in `settings.json`. They are intentionally small and 
 - `SubagentStop` → `hook_capture_subagent_stop.py`. Parses the final `CLAUDE_TRAILER:` block (`TASK_ID` / `OUTCOME` / `NEXT_STATUS` / `HANDOFF` / `EVIDENCE` / `REPORT`), increments spawn counters, and syncs `registry.json` + `runtime-state.json` under ordered locks. If the trailer is missing or partial, it writes a visible error; it does not silently drop state. In DAG worker terminals, a trailer with a different `TASK_ID` is logged as a scope mismatch and cannot mutate another node.
 - `SessionStart` → `hook_session_context.py`. Emits `additionalContext` with the project state, unresolved docs discrepancies, spawn counts, and recent hook errors.
 
-Root resolution is split deliberately: orchestrator state writes resolve to the canonical main repo, while product verification commands resolve to the current task worktree via `CLAUDE_WORKTREE_ROOT`/cwd. Hook failures write a timestamped entry to `orchestrator-state/hook-errors.log`; the SessionStart hook surfaces recent entries at restart so corruption is visible instead of silent.
+Root resolution is split deliberately: orchestrator state writes resolve to the canonical main repo, while product verification commands resolve to the current task worktree via `CLAUDE_WORKTREE_ROOT`/cwd. Hook failures write a timestamped entry to `orchestrator-state/hook-errors.log`; the SessionStart hook surfaces recent entries at restart so corruption is visible instead of silent. Do not delete the active task worktree before SubagentStop runs; cleanup must report `active_deferred=1` rather than removing Claude's current cwd.
 
 ## Mutable state policy
 
@@ -225,3 +225,8 @@ During compaction preserve:
 - active risks, blockers, last test results.
 
 **`/slice-maintain compact` (compactación operativa de PROGRESS.md)** se ejecuta solo bajo gate humano y con verificación post-compact obligatoria: snapshot previo, promoción append-only de decisions+risks a sus ficheros canónicos, preservación de TODOS los commit SHAs, UUIDs seed, must-carry bullets, last N slices verbatim. Si la verificación post-compact detecta que algún elemento crítico falta en el resultado, restaura desde snapshot y aborta. **Nunca pierde información crítica.**
+
+
+## Deferred worktree cleanup
+
+`cleanup-worktrees.sh` never removes the active Claude task worktree before `SubagentStop`. It records active deferrals in `orchestrator-state/tasks/cleanup-requests/<TASK_ID>.json`; `hook_finalize_deferred_cleanup.py`, `scripts/next-wave.sh`, and the next `ensure-task-worktree.sh` flush safe, inactive deferrals automatically.

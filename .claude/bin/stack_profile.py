@@ -41,6 +41,11 @@ DEFAULT_PROFILE: dict[str, Any] = {
         "seed_cmd": "none",
     },
     "git_workflow": "push-to-main",
+    "git_identity": {
+        "user_name": "",
+        "user_email": "",
+        "github_login": "",
+    },
     "design_tokens_enforcer": "none",
 }
 

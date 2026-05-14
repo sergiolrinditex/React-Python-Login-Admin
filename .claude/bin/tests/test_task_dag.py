@@ -351,8 +351,8 @@ class DagRuntimeSafetyTests(unittest.TestCase):
                     "git status --short",
                     "git add -A && git commit -m close",
                     "./scripts/git-workflow.sh",
-                    "bash scripts/slice-clean.sh --apply 2>&1 | tail -20",
-                    "bash scripts/cleanup-worktrees.sh --apply --task P00-S01-T001",
+                    "bash scripts/slice-clean.sh --apply",
+                    "bash scripts/cleanup-worktrees.sh --apply --task P00-S01-T001 --schedule-active",
                 ]
                 for command in commands:
                     payload = json.dumps({"tool_name": "Bash", "tool_input": {"command": command}})

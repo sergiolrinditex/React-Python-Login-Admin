@@ -166,7 +166,7 @@ MODO DAG ACTIVO: production = explicit_dag.
 cierra sólo el TASK_ID explícito.
 El estado verificado previo es verified_pending_close; sólo closer puede pasar a done.
 Las FU formales proposed del origin_task_id se meten en la PR, no bloquean este close.
-Ejecuta report + sync baseline + git-add-slice + commit + workflow Git configurado mediante ./scripts/git-workflow.sh + slice-clean + cleanup-worktrees.
+Ejecuta report + sync baseline + git-add-slice + commit + workflow Git configurado mediante ./scripts/git-workflow.sh + slice-clean + cleanup-worktrees + deferred cleanup. El cleanup debe ser hook-safe: no debe borrar la worktree activa del closer antes del SubagentStop; `active_deferred=1` es aceptable si no hay dirty/skipped y el cleanup imprimió `DEFERRED_CLEANUP_COMMAND` y dejó una petición en `cleanup-requests/`.
 En pr-flow, done exige PR merged y root canónico sincronizado; PR abierta/queued = blocked mecánico, no FU.
 ```
 

@@ -49,9 +49,12 @@ resolve_canonical_root() {
 }
 CANONICAL_ROOT="$(resolve_canonical_root)"
 ROOT="$CANONICAL_ROOT"
-# Drop stale metadata from previously removed Claude task worktrees before reuse.
+# Drop stale metadata from previously removed Claude task worktrees before reuse,
+# and flush any hook-safe deferred cleanup requests from older closed slices.
 git -C "$ROOT" worktree prune >/dev/null 2>&1 || true
-
+if [ -x "$ROOT/scripts/cleanup-deferred-worktrees.sh" ] && [ "${CLAUDE_SKIP_DEFERRED_CLEANUP:-0}" != "1" ]; then
+  bash "$ROOT/scripts/cleanup-deferred-worktrees.sh" --apply --quiet >/dev/null 2>&1 || true
+fi
 if [ "$MODE" = "print-root" ]; then
   printf '%s\n' "$ROOT"
   exit 0

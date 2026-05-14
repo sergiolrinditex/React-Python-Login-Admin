@@ -355,3 +355,16 @@ python3 -B -S scripts/audit-agent-trailer-vocabulary.py
 ## Stack Docker compartido entre worktrees paralelos
 
 `./scripts/next-wave.sh` exporta `COMPOSE_PROJECT_NAME` derivado del basename del root canónico. Todos los worktrees paralelos comparten el mismo stack Docker. Si quieres uno aislado, exporta `COMPOSE_PROJECT_NAME=otro` ANTES de pegar el bloque.
+### Limpieza automática de worktrees e identidad Git
+
+En `pr-flow`, el closer no borra la worktree activa antes de que Claude ejecute `SubagentStop`; si lo hiciera, se puede perder el trailer del closer. `cleanup-worktrees.sh` la marca como `active_deferred=1`, registra la limpieza en `orchestrator-state/tasks/cleanup-requests/<TASK_ID>.json` y `scripts/cleanup-deferred-worktrees.sh` la elimina automáticamente desde el Stop hook, y también se reintenta en `scripts/next-wave.sh`/`scripts/ensure-task-worktree.sh` si ya no es la worktree activa. Si quieres forzar limpieza tras ver el prompt de vuelta, usa el `DEFERRED_CLEANUP_COMMAND` que imprime el cleanup.
+
+La identidad de commits no está hardcodeada. `scripts/check-git-identity.sh` usa `git config user.name` y `git config user.email`; si quieres exigir una identidad, configura `claude.expectedUserName`/`claude.expectedUserEmail` en Git o exporta `CLAUDE_GIT_EXPECTED_NAME`/`CLAUDE_GIT_EXPECTED_EMAIL`.
+
+
+
+### Limpieza diferida de worktrees
+
+Si el closer reporta `active_deferred=1`, no es fallo: protegió los hooks de Claude. La limpieza se reintenta automáticamente al ejecutar `/next-wave` o crear otra worktree. Comando manual seguro desde el root canónico: `bash scripts/cleanup-deferred-worktrees.sh --apply --task <TASK_ID>`.
+
+Para limpiar también ramas remotas de PR tras squash-merge, `pr-flow.sh` usa `gh pr merge --delete-branch` y, después de confirmar `MERGED`, intenta `git push <remote> --delete <branch>` como fallback idempotente. Recomendado una vez por repo si tienes permisos admin: `bash scripts/configure-github-pr-cleanup.sh` para activar delete-branch-on-merge en GitHub; si reglas/protecciones lo impiden, el closer imprime `REMOTE_BRANCH_CLEANUP_COMMAND`.

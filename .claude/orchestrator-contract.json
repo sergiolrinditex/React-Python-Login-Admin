@@ -406,7 +406,16 @@
       "JOURNEY_VERIFY_OUTCOME",
       "JOURNEY_VERIFY_WAIVED",
       "VERIFY_OUTCOME",
-      "NEXT_ACTION"
+      "NEXT_ACTION",
+      "ACTIVE_WORKTREE_DEFERRED",
+      "DEFERRED_CLEANUP_COMMAND",
+      "REMOTE_BRANCH_CLEANED",
+      "REMOTE_BRANCH_CLEANUP_COMMAND",
+      "GIT_IDENTITY_READY",
+      "PR_READY",
+      "PR_URL",
+      "MERGED",
+      "CANONICAL_MAIN_SYNCED"
     ],
     "roles": {
       "closer": {
