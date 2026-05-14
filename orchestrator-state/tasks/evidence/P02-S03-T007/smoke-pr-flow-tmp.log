@@ -1,0 +1,4 @@
+=== SMOKE: /tmp cwd with CLAUDE_ORCHESTRATOR_ROOT (original bug scenario) ===
+TASK: P02-S06-T003
+Handoff contract OK — P02-S06-T003
+EXIT=0

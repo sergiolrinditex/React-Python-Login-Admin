@@ -1,0 +1,4 @@
+=== SMOKE: neutral tmp cwd (no CLAUDE_WORKTREE_ROOT exported) ===
+TASK: P02-S03-T004
+Handoff contract OK — P02-S03-T004
+EXIT=0

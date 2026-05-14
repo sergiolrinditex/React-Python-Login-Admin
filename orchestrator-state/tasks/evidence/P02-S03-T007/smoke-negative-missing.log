@@ -1,0 +1,5 @@
+=== SMOKE: negative — nonexistent task ===
+TASK: P99-S99-T999
+Handoff contract FAILED — P99-S99-T999
+- missing handoff: orchestrator-state/tasks/handoffs/P99-S99-T999.md
+EXIT=2
