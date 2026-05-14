@@ -1,0 +1,22 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.5, pytest-9.0.2, pluggy-1.6.0 -- /usr/local/bin/python3
+cachedir: .pytest_cache
+rootdir: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P02-S03-T005/backend
+configfile: pyproject.toml
+plugins: httpx-0.36.0, asyncio-1.3.0, langsmith-0.8.3, anyio-4.13.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 11 items
+
+tests/test_health.py::test_legacy_health_still_returns_200 PASSED        [  9%]
+tests/test_health.py::test_health_envelope_shape PASSED                  [ 18%]
+tests/test_health.py::test_health_live_returns_200_ok PASSED             [ 27%]
+tests/test_health.py::test_health_ready_returns_200_when_all_ok PASSED   [ 36%]
+tests/test_health.py::test_health_ready_returns_503_when_db_degraded PASSED [ 45%]
+tests/test_health.py::test_health_ready_returns_503_when_redis_connection_error PASSED [ 54%]
+tests/test_health.py::test_health_ready_returns_503_when_redis_timeout PASSED [ 63%]
+tests/test_health.py::test_health_ready_returns_503_when_both_degraded PASSED [ 72%]
+tests/test_health.py::test_health_ready_body_includes_litellm_unknown PASSED [ 81%]
+tests/test_health.py::test_logging_verbose_mode_logs_before_after PASSED [ 90%]
+tests/test_health.py::test_logging_quiet_mode_suppresses_info PASSED     [100%]
+
+============================== 11 passed in 2.85s ==============================
