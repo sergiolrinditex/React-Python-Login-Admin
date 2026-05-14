@@ -1,0 +1,20 @@
+2026-05-14 08:13:11,995 app.users.deps DEBUG users.deps.get_current_user.start request_id=verify-t006-stream-1778739191 ip=127.0.0.1
+2026-05-14 08:13:12,007 app.users.deps DEBUG users.deps.get_current_user.done user_id=6da73437-7587-4a6b-aff8-2e39a8088f5a request_id=verify-t006-stream-1778739191
+2026-05-14 08:13:12,008 app.chat.streaming.router DEBUG chat.stream.router.start request_id=verify-t006-stream-1778739191 conv_id_prefix=9d9281e5
+2026-05-14 08:13:12,008 app.chat.streaming.router DEBUG chat.stream.router.body_ok request_id=verify-t006-stream-1778739191 msg_len=5
+2026-05-14 08:13:12,021 app.chat.streaming.router DEBUG chat.stream.router.preflight_ok request_id=verify-t006-stream-1778739191
+2026-05-14 08:13:12,021 app.chat.streaming.router DEBUG chat.stream.router.streaming_start request_id=verify-t006-stream-1778739191
+2026-05-14 08:13:12,021 app.chat.streaming.service DEBUG chat.stream.validate.start request_id=verify-t006-stream-1778739191 user_id_hash=5ca50de5e097b2ec conv_id_prefix=9d9281e5
+2026-05-14 08:13:12,023 app.chat.streaming.service DEBUG chat.stream.validate.done request_id=verify-t006-stream-1778739191 conv_id_prefix=9d9281e5 language=es
+2026-05-14 08:13:12,023 app.chat.streaming.service DEBUG chat.stream.persist_user_msg.start request_id=verify-t006-stream-1778739191 content_len=5
+2026-05-14 08:13:12,023 app.chat.streaming.persistence DEBUG chat.stream.persist.user_message.start request_id=verify-t006-stream-1778739191 conv_id_prefix=9d9281e5 content_len=5
+2026-05-14 08:13:12,031 app.chat.streaming.persistence DEBUG chat.stream.persist.user_message.done request_id=verify-t006-stream-1778739191 msg_id=44ab968c-c84a-42b2-a07b-4a1944c35d85
+2026-05-14 08:13:12,031 app.chat.streaming.service DEBUG chat.stream.persist_user_msg.done request_id=verify-t006-stream-1778739191
+2026-05-14 08:13:12,033 app.chat.streaming.service DEBUG chat.stream.retrieve.start request_id=verify-t006-stream-1778739191 language=es
+2026-05-14 08:13:12,035 app.chat.streaming.service WARNING chat.stream.retrieve.skip request_id=verify-t006-stream-1778739191 reason=NoActiveChatModelError
+2026-05-14 08:13:12,035 app.chat.streaming.service DEBUG chat.stream.retrieve.done request_id=verify-t006-stream-1778739191 chunk_count=0
+2026-05-14 08:13:12,039 app.chat.streaming.service DEBUG chat.stream.generate.start request_id=verify-t006-stream-1778739191 model_id=8d9b3d12-fa3a-46e1-b1f9-c555653e3db0 chunk_count=0
+2026-05-14 08:13:12,040 app.llm_gateway.litellm_client DEBUG llm_gateway.compose.start request_id=verify-t006-stream-1778739191 provider_type=litellm model_id=gpt-4o-mini base_url_present=True
+2026-05-14 08:13:12,040 app.llm_gateway.litellm_client DEBUG llm_gateway.compose.done request_id=verify-t006-stream-1778739191 sdk_provider=openai model_str=openai/gpt-4o-mini api_base_present=True
+2026-05-14 08:13:12,040 app.llm_gateway.litellm_client DEBUG llm_gateway.stream_chat.start request_id=verify-t006-stream-1778739191 model_str=openai/gpt-4o-mini msg_count=2
+2026-05-14 08:13:13,042 app.llm_gateway.litellm_client ERROR llm_gateway.stream_chat.connect_error request_id=verify-t006-stream-1778739191 model_str=openai/gpt-4o-mini error=BadRequestError

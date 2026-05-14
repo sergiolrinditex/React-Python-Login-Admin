@@ -1,0 +1,123 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.5, pytest-9.0.2, pluggy-1.6.0 -- /usr/local/bin/python3
+cachedir: .pytest_cache
+rootdir: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P02-S03-T006/backend
+configfile: pyproject.toml
+plugins: httpx-0.36.0, asyncio-1.3.0, langsmith-0.8.3, anyio-4.13.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 1 item
+
+tests/integration/test_chat_streaming_live.py::TestChatStreamingLive::test_stream_meta_chunk_usage_done_sequence FAILED
+
+=================================== FAILURES ===================================
+_______ TestChatStreamingLive.test_stream_meta_chunk_usage_done_sequence _______
+
+    def generate():
+        # Special case for urllib3.
+        if hasattr(self.raw, "stream"):
+            try:
+>               yield from self.raw.stream(chunk_size, decode_content=True)
+
+../../../../../Library/Python/3.11/lib/python/site-packages/requests/models.py:822: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../../../../Library/Python/3.11/lib/python/site-packages/urllib3/response.py:1260: in stream
+    yield from self.read_chunked(amt, decode_content=decode_content)
+../../../../../Library/Python/3.11/lib/python/site-packages/urllib3/response.py:1430: in read_chunked
+    self._update_chunk_length()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <urllib3.response.HTTPResponse object at 0x112967550>
+
+    def _update_chunk_length(self) -> None:
+        # First, we'll figure out length of a chunk and then
+        # we'll try to read it from socket.
+        if self.chunk_left is not None:
+            return None
+        line = self._fp.fp.readline()  # type: ignore[union-attr]
+        line = line.split(b";", 1)[0]
+        try:
+            self.chunk_left = int(line, 16)
+        except ValueError:
+            self.close()
+            if line:
+                # Invalid chunked protocol response, abort.
+                raise InvalidChunkLength(self, line) from None
+            else:
+                # Truncated at start of next chunk
+>               raise ProtocolError("Response ended prematurely") from None
+E               urllib3.exceptions.ProtocolError: Response ended prematurely
+
+../../../../../Library/Python/3.11/lib/python/site-packages/urllib3/response.py:1354: ProtocolError
+
+During handling of the above exception, another exception occurred:
+
+self = <tests.integration.test_chat_streaming_live.TestChatStreamingLive object at 0x1129ab8d0>
+
+    def test_stream_meta_chunk_usage_done_sequence(self):
+        """Live stream: response contains meta → chunk(s) → usage → done in order.
+    
+        Acceptance criterion #1 and #3 from task pack P02-S03-T006:
+          - HTTP 200
+          - Content-Type: text/event-stream
+          - Event sequence: meta → chunk(*) → usage → done
+          - No BadRequestError in back.log (visible via model_str assertion)
+    
+        This test passes ONLY if the model_str fix is in place:
+          Old (broken): model="litellm/gpt-4o-mini" → BadRequestError
+          New (fixed):  model="openai/gpt-4o-mini" + api_base=http://localhost:4000 → OK
+        """
+        # Step 1: Sign in.
+        token = _sign_in(_EMPLOYEE_EMAIL, _EMPLOYEE_PASSWORD, _EMPLOYEE_TOTP)
+        if not token:
+            # Try admin as fallback
+            token = _sign_in(_ADMIN_EMAIL, _ADMIN_PASSWORD)
+    
+        # Step 2: Create conversation.
+        conv_id = _create_conversation(token)
+    
+        # Step 3: Stream.
+        stream_url = f"{_CONV_URL}/{conv_id}/stream"
+        t0 = time.perf_counter()
+    
+        with requests.post(
+            stream_url,
+            json={"message": "hello"},
+            headers={
+                "Authorization": f"Bearer {token}",
+                "Content-Type": "application/json",
+                "Accept": "text/event-stream",
+            },
+            timeout=(_TIMEOUT_CONNECT, _TIMEOUT_STREAM),
+            stream=True,
+        ) as resp:
+            # Assertion: HTTP 200
+            assert resp.status_code == 200, (
+                f"Expected 200, got {resp.status_code}. Body: {resp.text[:500]}"
+            )
+    
+            # Assertion: Content-Type is text/event-stream
+            content_type = resp.headers.get("Content-Type", "")
+            assert "text/event-stream" in content_type, (
+                f"Expected text/event-stream, got '{content_type}'"
+            )
+    
+            # Collect full response body (up to 32 KB to avoid hanging forever).
+            chunks: list[bytes] = []
+>           for raw_chunk in resp.iter_content(chunk_size=1024):
+
+tests/integration/test_chat_streaming_live.py:230: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def generate():
+        # Special case for urllib3.
+        if hasattr(self.raw, "stream"):
+            try:
+                yield from self.raw.stream(chunk_size, decode_content=True)
+            except ProtocolError as e:
+>               raise ChunkedEncodingError(e)
+E               requests.exceptions.ChunkedEncodingError: Response ended prematurely
+
+../../../../../Library/Python/3.11/lib/python/site-packages/requests/models.py:824: ChunkedEncodingError
+=========================== short test summary info ============================
+FAILED tests/integration/test_chat_streaming_live.py::TestChatStreamingLive::test_stream_meta_chunk_usage_done_sequence
+============================== 1 failed in 0.22s ===============================

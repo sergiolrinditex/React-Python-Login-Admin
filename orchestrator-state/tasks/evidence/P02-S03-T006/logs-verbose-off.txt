@@ -1,0 +1,18 @@
+# Verbose OFF log evidence — P02-S03-T006
+# Source: streaming_suite_verbose_false.txt + unit_tests_verbose_false.txt
+# Captured with ENABLE_VERBOSE_LOGGING=false
+
+## Result: 0 DEBUG lines from app.llm_gateway.litellm_client in verbose=false mode
+
+grep 'DEBUG' unit_tests_verbose_false.txt → 0 matches
+grep 'compose.' unit_tests_verbose_false.txt → 0 matches
+grep 'stream_chat' unit_tests_verbose_false.txt → 0 matches
+
+## Test runner output (verbose=false):
+58 passed in 5.26s (no log lines, only test results)
+
+## Compliance
+- ENABLE_VERBOSE_LOGGING=false: compose.start, compose.done, stream_chat.start,
+  stream_chat.done — ALL suppressed. Only WARNING+ERROR would appear.
+- No api_key, no api_base URL, no PII in any output.
+- Logging contract per 01-non-negotiables.md: SATISFIED.

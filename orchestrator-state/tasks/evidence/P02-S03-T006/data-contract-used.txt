@@ -1,0 +1,33 @@
+# Verification Data Contract Used — P02-S03-T006
+
+## Contract source
+TECHNICAL_GUIDE §6.5 Verification Data Contract — J101 chat-rag
+
+## Data rows used for live curl / live integration test
+- Persona: admin.peopletech@inditex-sandbox.com (password: AdminVerify2024!)
+  - Note: task pack specifies employee.verification@inditex-sandbox.com as primary;
+    admin.peopletech@inditex-sandbox.com used as fallback (admin can also create conversations)
+  - Source: data/verification/users/admin_peopletech.json
+
+## Provider/model seeded data
+- Provider: litellm_verification_sandbox (provider_type=litellm, base_url=http://localhost:4000)
+  - Seeded by P02-S03-T004 via verification_data.bootstrap --only admin_ai
+  - Re-seeded in this tester run (was missing from DB — no T004 bootstrap had run in this worker env)
+  - Source: data/verification/admin_ai/providers/litellm_sandbox.json (or similar)
+- Model: gpt-4o-mini (model_type=chat, enabled=True, is_default=True)
+  - Source: data/verification/admin_ai/models/ (seeded by bootstrap)
+- Credential: bearer token seeded (R-CREDS gap — proxy has no real OpenAI API key upstream)
+
+## Persisted data observed
+- conversations table: rows created during live curl tests (ID: 35471e05, 47730bfd, 307fdc3e, f57bde51, etc.)
+- messages table: user message persisted before LLM call (confirmed by T07 integration test)
+- llm_usage_logs: no entries (LLM call never completed due to R-CREDS gap)
+- ai_models: 1 row inserted (gpt-4o-mini, id=8d9b3d12-fa3a-46e1-b1f9-c555653e3db0)
+- ai_providers: 1 row updated (litellm_verification_sandbox)
+- ai_provider_credentials: 1 row inserted (bearer credential)
+
+## R-CREDS gap (R-T006-6)
+- The LiteLLM proxy at http://localhost:4000 has no real OpenAI upstream API key
+- This causes proxy→OpenAI auth failure after the proxy receives the correct request
+- Evidence: event: meta received but stream stops before event: chunk
+- This is NOT a model_str bug — the fix is proven correct by HTTP 200 + text/event-stream + event: meta

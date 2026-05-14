@@ -1,0 +1,37 @@
+# Verbose ON log evidence — P02-S03-T006
+# Source: streaming_suite_verbose_true.txt + unit_tests_verbose_true.txt
+# Captured with ENABLE_VERBOSE_LOGGING=true
+
+## Key compose.* log lines (T11-T17 prove the mapping)
+
+# T11 — litellm provider_type → openai/gpt-4o-mini (THE BUG FIX)
+DEBUG app.llm_gateway.litellm_client llm_gateway.compose.start request_id=req-t11 provider_type=litellm model_id=gpt-4o-mini base_url_present=True
+DEBUG app.llm_gateway.litellm_client llm_gateway.compose.done request_id=req-t11 sdk_provider=openai model_str=openai/gpt-4o-mini api_base_present=True
+
+# T12 — openai provider_type → openai/gpt-4o no api_base
+DEBUG app.llm_gateway.litellm_client llm_gateway.compose.start request_id=req-t12 provider_type=openai model_id=gpt-4o base_url_present=False
+DEBUG app.llm_gateway.litellm_client llm_gateway.compose.done request_id=req-t12 sdk_provider=openai model_str=openai/gpt-4o api_base_present=False
+
+# T14 — anthropic provider_type
+DEBUG app.llm_gateway.litellm_client llm_gateway.compose.start request_id=req-t14 provider_type=anthropic model_id=claude-3-5-sonnet-20241022 base_url_present=False
+DEBUG app.llm_gateway.litellm_client llm_gateway.compose.done request_id=req-t14 sdk_provider=anthropic model_str=anthropic/claude-3-5-sonnet-20241022 api_base_present=False
+
+# T15 — ollama provider_type with base_url
+DEBUG app.llm_gateway.litellm_client llm_gateway.compose.start request_id=req-t15 provider_type=ollama model_id=llama3.2 base_url_present=True
+DEBUG app.llm_gateway.litellm_client llm_gateway.compose.done request_id=req-t15 sdk_provider=ollama model_str=ollama/llama3.2 api_base_present=True
+
+# T16 — unknown provider_type → ERROR level
+DEBUG app.llm_gateway.litellm_client llm_gateway.compose.start request_id=req-t16 provider_type=nonexistent_provider model_id=some-model base_url_present=False
+ERROR app.llm_gateway.litellm_client llm_gateway.compose.unsupported_provider_type request_id=req-t16 provider_type=nonexistent_provider
+
+# T17 — stream_chat uses compose helper for litellm provider
+DEBUG app.llm_gateway.litellm_client llm_gateway.compose.start request_id=req-t17 provider_type=litellm model_id=gpt-4o-mini base_url_present=True
+DEBUG app.llm_gateway.litellm_client llm_gateway.compose.done request_id=req-t17 sdk_provider=openai model_str=openai/gpt-4o-mini api_base_present=True
+DEBUG app.llm_gateway.litellm_client llm_gateway.stream_chat.start request_id=req-t17 model_str=openai/gpt-4o-mini msg_count=1
+DEBUG app.llm_gateway.litellm_client llm_gateway.stream_chat.done request_id=req-t17 model_str=openai/gpt-4o-mini tokens_in=5 tokens_out=2 latency_ms=0
+
+## Security check — no api_key in logs
+grep 'api_key' value: NOT PRESENT in any log line
+grep 'Bearer' value: NOT PRESENT in any log line
+grep 'sk-' value: NOT PRESENT in any log line
+api_base_present=True/False only (no URL value logged)
