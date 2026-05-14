@@ -24,7 +24,7 @@ Worktree execution has two roots. Keep them separate:
 - **Canonical root** (`$CLAUDE_ORCHESTRATOR_ROOT`): shared DAG state and generated memory (`registry.json`, `runtime-state.json`, `PROGRESS.md`, `task-dag.*`, `execution-graph.json`). Agents read this for scheduling truth; scripts/hooks mutate it under locks.
 - **Workspace/worktree root** (`$PWD`, `CLAUDE_WORKTREE_ROOT`, or `CLAUDE_PROJECT_DIR`): per-slice artifacts that must be committed with the task branch (`handoffs/<TASK_ID>.md`, `evidence/<TASK_ID>/`, `reports/<TASK_ID>.md`, `task-packs/<TASK_ID>.md`).
 
-Never copy scheduler truth from a task worktree back into the canonical root. Never stage shared runtime files to "fix" a dirty worktree. Use the scripts that know the split.
+Never copy scheduler truth from a task worktree back into the canonical root. Never stage shared runtime files to "fix" a dirty worktree. Use the scripts that know the split. The only close-state artifact that travels in a PR is `orchestrator-state/tasks/lifecycle-events/<TASK_ID>.json`; after merge, `sync-lifecycle-events.sh --apply` replays it into local `registry.json` under locks.
 
 ## Generated core state
 
@@ -41,6 +41,8 @@ orchestrator-state/memory/execution-graph.json
 ```
 
 These are generated/derived files and only scripts/hooks may update them under locks.
+
+`registry.json`/`runtime-state.json` are local scheduler state. They may be generated or repaired by hooks/scripts, but they are not slice PR payload. If a root sync/reset shows them dirty, do not create a manual `sync post-close state` commit; run `bash scripts/sync-lifecycle-events.sh --apply` or let `/next-wave`/SessionStart do it.
 
 Removed removed singleton files:
 

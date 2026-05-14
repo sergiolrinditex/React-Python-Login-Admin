@@ -97,7 +97,7 @@ ROOT_REAL="$(cd "$ROOT" && pwd -P)"
 ACTIVE_ROOT_REAL="$(resolve_active_root)"
 REQ_DIR="$ROOT_REAL/orchestrator-state/tasks/cleanup-requests"
 DEFERRED_CLEANUP_SCRIPT="$ROOT_REAL/scripts/cleanup-deferred-worktrees.sh"
-if [ ! -x "$DEFERRED_CLEANUP_SCRIPT" ]; then
+if [ ! -f "$DEFERRED_CLEANUP_SCRIPT" ]; then
   DEFERRED_CLEANUP_SCRIPT="$SCRIPT_DIR/cleanup-deferred-worktrees.sh"
 fi
 cd "$ROOT_REAL"

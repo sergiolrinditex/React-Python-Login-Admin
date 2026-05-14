@@ -10,4 +10,9 @@ if [ -x "$ROOT/scripts/cleanup-deferred-worktrees.sh" ]; then
     echo "WARN: deferred worktree cleanup incomplete; run: bash scripts/cleanup-deferred-worktrees.sh --apply" >&2
   fi
 fi
+# Replay committed close events before computing the next wave. This repairs
+# local registry state after PR squash-merge/reset without committing runtime files.
+if [ -x "$ROOT/scripts/sync-lifecycle-events.sh" ]; then
+  bash "$ROOT/scripts/sync-lifecycle-events.sh" --apply >/dev/null 2>&1 || true
+fi
 python3 -B -S "$ROOT/.claude/bin/next_wave.py" "$@"

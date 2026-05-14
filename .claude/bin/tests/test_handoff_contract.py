@@ -380,3 +380,31 @@ def test_handoff_contract_accepts_slice_verifier_heading_alias(tmp_path: Path) -
         task_id,
     )
     assert result.returncode == 0, result.stdout + result.stderr
+
+
+def test_handoff_contract_treats_blocked_verify_as_valid_but_not_closeable(tmp_path: Path) -> None:
+    task_id = "P00-S01-T001"
+    result = _run(
+        tmp_path,
+        f"""
+# Task Handoff — {task_id}
+
+## Validator review
+- TASK_ID: {task_id}
+- OUTCOME: approved
+
+## Tester run
+- TASK_ID: {task_id}
+- OUTCOME: pass
+
+## verify-slice
+- TASK_ID: {task_id}
+- VERIFY_OUTCOME: blocked
+- BLOCKER_REASON: browser_mcp_unavailable
+""",
+        task_id,
+    )
+    assert result.returncode != 0
+    output = result.stdout + result.stderr
+    assert "verify-slice not verified" in output
+    assert "invalid verify-slice VERIFY_OUTCOME" not in output

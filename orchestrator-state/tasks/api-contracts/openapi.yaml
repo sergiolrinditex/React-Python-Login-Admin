@@ -1464,7 +1464,8 @@
         ],
         "x-slice-ids": [
           "P01-S02-T003",
-          "P01-S03-T001"
+          "P01-S03-T001",
+          "P03-S01-T006"
         ],
         "x-journey-refs": [
           "J100",
@@ -2789,7 +2790,8 @@
         ],
         "x-generated-from": [
           "P01-S02-T003",
-          "P01-S03-T001"
+          "P01-S03-T001",
+          "P03-S01-T006"
         ]
       },
       "PostApiV1AuthRefreshResponse": {
@@ -2800,7 +2802,8 @@
         ],
         "x-generated-from": [
           "P01-S02-T003",
-          "P01-S03-T001"
+          "P01-S03-T001",
+          "P03-S01-T006"
         ]
       },
       "PostApiV1AuthResetPasswordRequest": {

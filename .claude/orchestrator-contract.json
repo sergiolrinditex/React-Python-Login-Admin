@@ -642,13 +642,14 @@
         "allowed_to_close_task": false
       },
       "slice-verifier": {
-        "description": "Human-real verification gate before closer. Writes ## verify-slice evidence and moves the task to verified_pending_close/needs_debug/blocked; closer remains the only actor that can mark done.",
+        "description": "Human-real browser MCP verification gate before closer. Writes ## verify-slice evidence/table and moves the task to verified_pending_close/needs_debug/blocked; closer remains the only actor that can mark done.",
         "required_keys": [
           "TASK_ID",
           "OUTCOME",
           "NEXT_STATUS",
           "HANDOFF",
-          "EVIDENCE"
+          "EVIDENCE",
+          "VERIFY_OUTCOME"
         ],
         "outcome_values": [
           "verified",

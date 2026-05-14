@@ -125,3 +125,34 @@ def test_router_blocks_when_task_pack_is_missing(tmp_project):
     result = verify_slice_state.classify(TASK_ID)
     assert result["action"] == "blocked"
     assert result["reason"] == "precondition_failed"
+
+
+def test_router_blocks_when_verify_slice_blocked_by_mcp(tmp_project):
+    import verify_slice_state
+
+    _seed(tmp_project, status="blocked", last_updated_by="slice-verifier")
+    _write_handoff(tmp_project, _ready_handoff(f"""
+## verify-slice
+- TASK_ID: {TASK_ID}
+- VERIFY_OUTCOME: blocked
+- BLOCKER_KIND: browser_mcp_unavailable
+"""))
+
+    result = verify_slice_state.classify(TASK_ID)
+    assert result["action"] == "blocked"
+    assert "blocked" in result["reason"]
+
+
+def test_router_relaunches_slice_verifier_for_pending_skeleton(tmp_project):
+    import verify_slice_state
+
+    _seed(tmp_project)
+    _write_handoff(tmp_project, _ready_handoff(f"""
+## verify-slice
+- TASK_ID: {TASK_ID}
+- VERIFY_OUTCOME: pending
+"""))
+
+    result = verify_slice_state.classify(TASK_ID)
+    assert result["action"] == "invoke_slice_verifier"
+    assert "pending" in result["reason"]

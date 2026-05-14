@@ -54,4 +54,13 @@ def test_git_add_slice_stages_only_origin_followup_from_canonical_root(tmp_path:
         timeout=30,
         check=True,
     ).stdout.splitlines()
-    assert staged == ["app/foo.txt", "orchestrator-state/tasks/follow-ups/FU-own.yaml"]
+    assert staged == [
+        "app/foo.txt",
+        "orchestrator-state/tasks/follow-ups/FU-own.yaml",
+        "orchestrator-state/tasks/lifecycle-events/P00-S01-T001.json",
+    ]
+    event = json.loads((workspace / "orchestrator-state/tasks/lifecycle-events/P00-S01-T001.json").read_text(encoding="utf-8"))
+    assert event["schema"] == "orquestador.lifecycle-event.v1"
+    assert event["task_id"] == "P00-S01-T001"
+    assert event["next_status"] == "done"
+    assert event["outcome"] == "committed"

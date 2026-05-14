@@ -127,6 +127,12 @@ def classify(task_id: str) -> dict[str, Any]:
     elif verify_outcome == "issues_found":
         action = "invoke_debugger_or_register_followup"
         reason = "verify-slice reported issues_found"
+    elif verify_outcome == "blocked":
+        action = "blocked"
+        reason = "verify-slice blocked; inspect blocker in handoff and fix mechanical/MCP environment before relaunch"
+    elif verify_outcome in {"pending", "partial"}:
+        action = "invoke_slice_verifier"
+        reason = "verify-slice has only a pending/partial skeleton; relaunch slice-verifier"
     elif ready_ok:
         action = "invoke_slice_verifier"
         reason = "validator/tester ready but no verified verify-slice handoff yet"

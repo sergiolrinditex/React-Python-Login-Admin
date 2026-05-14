@@ -8,7 +8,7 @@
   -> registry.json + task-packs + DAG derivado
   -> next-wave / claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice <TASK_ID>"
   -> verify-slice
-  -> closer: report + product-baseline sync de 5 ficheros verificados + git workflow + cleanup
+  -> closer: report + product-baseline sync + lifecycle-event + git workflow + cleanup
 ```
 
 Los cinco documentos vivos son:
@@ -39,6 +39,8 @@ python3 -B -S .claude/bin/bootstrap_source_of_truth.py --refresh
 `bootstrap_source_of_truth.py --refresh` preserva runtime por defecto: estados de tasks existentes, `runtime-state.json`, blockers y follow-ups abiertos. Para un reset destructivo explícito usa `--reset-runtime-state`; no lo uses a mitad de una app/slice.
 
 Production DAG-only: `./scripts/check-task-dag.sh --strict` debe reportar `mode=explicit_dag`. Si sale `missing dependency column`, corrige `Depends on` en el Coverage Registry antes de abrir workers.
+
+Nota PR/worktree: no persigas ni commitees `registry.json`/`runtime-state.json` como "sync post-close state". El closer stagea `orchestrator-state/tasks/lifecycle-events/<TASK_ID>.json`; tras merge/reset se repara con `bash scripts/sync-lifecycle-events.sh --apply` o automáticamente en SessionStart/`next-wave`.
 
 Main thread obligatorio: el proyecto debe arrancar con `main-orchestrator` como agente principal. `.claude/settings.json` declara `agent: main-orchestrator`, y el arranque explícito es:
 

@@ -9,7 +9,4 @@ else
   ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 fi
 
-if [ -x "$ROOT/scripts/sync-lifecycle-events.sh" ]; then
-  bash "$ROOT/scripts/sync-lifecycle-events.sh" --apply >/dev/null 2>&1 || true
-fi
-exec python3 -B -S "$ROOT/.claude/bin/verify_slice_state.py" "$@"
+exec python3 -B -S "$ROOT/.claude/bin/init_verify_slice_handoff.py" "$@"

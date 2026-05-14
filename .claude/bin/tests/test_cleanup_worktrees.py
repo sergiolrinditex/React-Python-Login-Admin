@@ -269,3 +269,11 @@ def test_cleanup_worktrees_records_active_cleanup_request_and_deferred_helper_re
     assert "removed=1" in flushed.stdout
     assert not wt.exists()
     assert not req.exists()
+
+
+def test_cleanup_deferred_helper_is_bash32_compatible():
+    script = ROOT / "scripts" / "cleanup-deferred-worktrees.sh"
+    text = script.read_text(encoding="utf-8")
+    assert "mapfile" not in text
+    result = subprocess.run(["bash", str(script), "--help"], text=True, capture_output=True, check=True)
+    assert "cleanup-deferred-worktrees" in result.stdout

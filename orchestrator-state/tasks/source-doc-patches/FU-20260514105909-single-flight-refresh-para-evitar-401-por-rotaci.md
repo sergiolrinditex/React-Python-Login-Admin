@@ -1,0 +1,7 @@
+# Source-of-truth amendment — FU-20260514105909-single-flight-refresh-para-evitar-401-por-rotaci
+
+Appended to `docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md`:
+
+```md
+| P03-S01-T006 | bug | Single-flight refresh para evitar 401 por rotación bajo StrictMode/concurrencia | Runtime follow-up P03-S02-T001 | current | planned | medium | human | P03-S01-T001 | front:auth | frontend/src/features/auth/data/authRepository.ts, frontend/src/features/auth/presentation/AuthProvider.tsx | J100 | /auth/sign-in,/chat | POST /api/v1/auth/refresh | refresh_tokens | runtime-followup#FU-20260514105909-single-flight-refresh-para-evitar-401-por-rotaci | runtime-followup#FU-20260514105909-single-flight-refresh-para-evitar-401-por-rotaci | Two consecutive AuthProvider mounts under StrictMode (or any two concurrent callers of authRepository.refresh) produce exactly ONE network POST /api/v1/auth/refresh (single-flight/inflight-dedupe). No 401 from /auth/refresh on a valid session. Multi-tab opening /chat in a second tab does not invalidate the first. | Hard reset + login con MFA real (employee.verification@inditex-sandbox.com). En DevTools Network: recargar /chat 5 veces seguidas — exactamente 1 POST /api/v1/auth/refresh por recarga, todas 200. Abrir 2ª pestaña a /chat: ambas siguen autenticadas. Repetir con StrictMode activo (vite dev) y con prod build. Cubre J100 al confirmar que el bootstrap aguanta carreras. |
+```

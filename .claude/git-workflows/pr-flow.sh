@@ -221,10 +221,23 @@ cleanup_remote_head_branch
 ROOT="$(resolve_canonical_root)"
 ROOT_BRANCH="$(git -C "$ROOT" branch --show-current 2>/dev/null || true)"
 if [ "$ROOT_BRANCH" = "$TARGET_BRANCH" ]; then
+  RUNTIME_BACKUP_DIR=""
+  if [ -x "$ROOT/scripts/runtime-git-guard.sh" ]; then
+    RUNTIME_GUARD_OUTPUT="$(bash "$ROOT/scripts/runtime-git-guard.sh" backup --root "$ROOT" 2>&1)" || {
+      echo "CANONICAL_MAIN_SYNCED: no"
+      echo "Reason: canonical root has non-runtime dirty files; refusing to fast-forward blindly."
+      printf '%s\n' "$RUNTIME_GUARD_OUTPUT"
+      echo "GIT_WORKFLOW_READY: blocked"
+      exit 3
+    }
+    printf '%s\n' "$RUNTIME_GUARD_OUTPUT" | grep -E '^(RUNTIME_PATHS_BACKED_UP|RUNTIME_PATHS_PROTECTED):' || true
+    RUNTIME_BACKUP_DIR="$(printf '%s\n' "$RUNTIME_GUARD_OUTPUT" | awk -F': ' '/^RUNTIME_BACKUP_DIR: / {print $2; exit}')"
+  fi
+
   ROOT_STATUS="$(git -C "$ROOT" status --porcelain=v1 --untracked-files=all 2>/dev/null || true)"
   if [ -n "$ROOT_STATUS" ]; then
     echo "CANONICAL_MAIN_SYNCED: no"
-    echo "Reason: canonical root has real dirty files; refusing to fast-forward blindly."
+    echo "Reason: canonical root has real dirty files after runtime guard; refusing to fast-forward blindly."
     printf '%s\n' "$ROOT_STATUS" | sed 's/^/DIRTY_ROOT: /'
     echo "GIT_WORKFLOW_READY: blocked"
     exit 3
@@ -240,6 +253,12 @@ if [ "$ROOT_BRANCH" = "$TARGET_BRANCH" ]; then
     echo "Reason: canonical main could not fast-forward to $TARGET_REF. See $SYNC_LOG"
     echo "GIT_WORKFLOW_READY: blocked"
     exit 3
+  fi
+  if [ -n "$RUNTIME_BACKUP_DIR" ] && [ -d "$RUNTIME_BACKUP_DIR" ] && [ -x "$ROOT/scripts/runtime-git-guard.sh" ]; then
+    bash "$ROOT/scripts/runtime-git-guard.sh" restore --root "$ROOT" --backup-dir "$RUNTIME_BACKUP_DIR" 2>&1 | grep -E '^(RUNTIME_PATHS_RESTORED|RUNTIME_PATHS_PROTECTED):' || true
+  fi
+  if [ -x "$ROOT/scripts/sync-lifecycle-events.sh" ]; then
+    bash "$ROOT/scripts/sync-lifecycle-events.sh" --apply 2>&1 | grep -E '^(LIFECYCLE_EVENTS_APPLIED|RUNTIME_GIT_PROTECTED):' || true
   fi
   echo "CANONICAL_MAIN_SYNCED: yes"
 else

@@ -59,7 +59,7 @@ ROOT="$(resolve_canonical_root)"
 ROOT_REAL="$(cd "$ROOT" && pwd -P)"
 CURRENT_REAL="$(cd "$CURRENT_ROOT" && pwd -P)"
 CLEANUP_WORKTREES_SCRIPT="$ROOT_REAL/scripts/cleanup-worktrees.sh"
-if [ ! -x "$CLEANUP_WORKTREES_SCRIPT" ] && [ -x "$SCRIPT_DIR/cleanup-worktrees.sh" ]; then
+if [ ! -f "$CLEANUP_WORKTREES_SCRIPT" ] && [ -f "$SCRIPT_DIR/cleanup-worktrees.sh" ]; then
   CLEANUP_WORKTREES_SCRIPT="$SCRIPT_DIR/cleanup-worktrees.sh"
 fi
 REQ_DIR="$ROOT_REAL/orchestrator-state/tasks/cleanup-requests"
@@ -73,7 +73,12 @@ REQUESTS=()
 if [ -n "$TASK_ID" ]; then
   [ -f "$REQ_DIR/$TASK_ID.json" ] && REQUESTS+=("$REQ_DIR/$TASK_ID.json")
 else
-  while IFS= read -r -d '' f; do REQUESTS+=("$f"); done < <(find "$REQ_DIR" -maxdepth 1 -type f -name '*.json' -print0 | sort -z)
+  # Bash 3/macOS compatible: cleanup request filenames are generated as
+  # <TASK_ID>.json by cleanup-worktrees.sh, so newline-safe sorting is enough
+  # and avoids GNU-only sort -z plus Bash-4-only array-read builtin.
+  while IFS= read -r f; do
+    [ -n "$f" ] && REQUESTS+=("$f")
+  done < <(find "$REQ_DIR" -maxdepth 1 -type f -name '*.json' -print | LC_ALL=C sort)
 fi
 
 
@@ -121,7 +126,7 @@ STALE=0
 for req in "${REQUESTS[@]}"; do
   [ -f "$req" ] || continue
   TOTAL=$((TOTAL + 1))
-  mapfile -t fields < <(python3 - "$req" <<'PY'
+  fields_out="$(python3 - "$req" <<'PY' || true
 import json, sys
 from pathlib import Path
 try:
@@ -131,10 +136,10 @@ except Exception:
 for key in ('task_id','worktree','branch'):
     print(str(data.get(key) or ''))
 PY
-)
-  tid="${fields[0]:-}"
-  wt="${fields[1]:-}"
-  branch="${fields[2]:-}"
+)"
+  tid="$(printf '%s\n' "$fields_out" | sed -n '1p')"
+  wt="$(printf '%s\n' "$fields_out" | sed -n '2p')"
+  branch="$(printf '%s\n' "$fields_out" | sed -n '3p')"
   if [ -z "$tid" ] || [ -z "$wt" ]; then
     SKIPPED=$((SKIPPED + 1))
     say "skip malformed cleanup request: $req"

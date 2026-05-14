@@ -26,7 +26,7 @@ export const API_ENDPOINTS: ApiEndpointMeta[] = [
   {"operationId": "postApiV1Auth2faVerify", "method": "POST", "path": "/api/v1/auth/2fa/verify", "sliceIds": ["P01-S02-T006", "P03-S01-T005", "P05-S01-T001"], "journeyRefs": ["J100"], "pathParams": []},
   {"operationId": "postApiV1AuthForgotPassword", "method": "POST", "path": "/api/v1/auth/forgot-password", "sliceIds": ["P01-S02-T005", "P03-S01-T003"], "journeyRefs": ["J100"], "pathParams": []},
   {"operationId": "postApiV1AuthLogout", "method": "POST", "path": "/api/v1/auth/logout", "sliceIds": ["P01-S02-T004", "P03-S02-T004"], "journeyRefs": ["J102"], "pathParams": []},
-  {"operationId": "postApiV1AuthRefresh", "method": "POST", "path": "/api/v1/auth/refresh", "sliceIds": ["P01-S02-T003", "P01-S03-T001"], "journeyRefs": ["J100", "J102"], "pathParams": []},
+  {"operationId": "postApiV1AuthRefresh", "method": "POST", "path": "/api/v1/auth/refresh", "sliceIds": ["P01-S02-T003", "P01-S03-T001", "P03-S01-T006"], "journeyRefs": ["J100", "J102"], "pathParams": []},
   {"operationId": "postApiV1AuthResetPassword", "method": "POST", "path": "/api/v1/auth/reset-password", "sliceIds": ["P01-S02-T005"], "journeyRefs": ["J100"], "pathParams": []},
   {"operationId": "postApiV1AuthSignIn", "method": "POST", "path": "/api/v1/auth/sign-in", "sliceIds": ["P01-S02-T002", "P03-S01-T001", "P05-S01-T001"], "journeyRefs": ["J100"], "pathParams": []},
   {"operationId": "postApiV1AuthSignUp", "method": "POST", "path": "/api/v1/auth/sign-up", "sliceIds": ["P01-S02-T001", "P03-S01-T002"], "journeyRefs": ["J100"], "pathParams": []},

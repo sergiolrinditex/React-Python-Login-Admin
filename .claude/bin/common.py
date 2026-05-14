@@ -319,10 +319,11 @@ def hook_error_log_path() -> Path:
 
 
 def hook_info_log_path() -> Path:
-    """Companion log for routine, non-error events (successful housekeeping).
+    """Single place where hooks record non-error housekeeping.
 
-    NOT surfaced by SessionStart. Use for events that are auditable but are
-    not failures — e.g. successful runtime-state drift reconciliations.
+    Successful reconciliations, lifecycle-event replays and other benign
+    repairs belong here, not in hook-errors.log. SessionStart only surfaces
+    hook-errors.log so this separation avoids false alarm loops.
     """
     return state_dir() / "hook-info.log"
 
@@ -348,11 +349,7 @@ def log_hook_error(hook_name: str, exc: BaseException) -> None:
 
 
 def log_hook_info(hook_name: str, message: str) -> None:
-    """Append a routine, non-error housekeeping event to hook-info.log.
-
-    Separate from hook-errors.log so SessionStart's `Recent hook errors`
-    section stays clean of expected drift cleanups. Never raises.
-    """
+    """Append benign hook housekeeping to orchestrator-state/hook-info.log."""
     try:
         path = hook_info_log_path()
         ensure_parent(path)
@@ -1357,10 +1354,8 @@ def reconcile_runtime_state(
 
     if repairs:
         try:
-            log_hook_info(
-                "common.reconcile_runtime_state",
-                f"reconciled {len(repairs)} drift entr{'y' if len(repairs)==1 else 'ies'}: {repairs[:5]}",
-            )
+            log_hook_info("common.reconcile_runtime_state",
+                          f"reconciled {len(repairs)} drift entr{'y' if len(repairs)==1 else 'ies'}: {repairs[:5]}")
         except Exception:
             pass
 

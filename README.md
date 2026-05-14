@@ -16,11 +16,11 @@ ChatGPT Pro rellena templates
   -> /next-wave propone nodos DAG seguros
   -> claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slice <TASK_ID>" ejecuta agentes en un terminal aislado
   -> /verify-slice valida con datos reales/proporcionados
-  -> closer genera report + sync baseline + commit + configured Git workflow + limpia worktrees
+  -> closer genera report + sync baseline + lifecycle-event + commit + configured Git workflow + limpia worktrees
   -> /phase-gate valida phase completa
 ```
 
-La matriz de adyacencia no se escribe a mano. Se deriva del `Canonical Coverage Registry` del checklist, concretamente de `Depends on`. La fuente runtime canónica del DAG es `orchestrator-state/tasks/registry.json` (`tasks[]` + `task_dag.source_digest`); `task-dag.json`, `task-dag.md` y `execution-graph.json` son vistas derivadas que `./scripts/check-task-dag.sh --strict` compara contra el registry antes de paralelizar. `Conflict group` y `Write set` evitan paralelizar slices que pisan los mismos ficheros o recursos.
+La matriz de adyacencia no se escribe a mano. Se deriva del `Canonical Coverage Registry` del checklist, concretamente de `Depends on`. La fuente runtime canónica del DAG es `orchestrator-state/tasks/registry.json` (`tasks[]` + `task_dag.source_digest`); `task-dag.json`, `task-dag.md` y `execution-graph.json` son vistas derivadas que `./scripts/check-task-dag.sh --strict` compara contra el registry antes de paralelizar. `Conflict group` y `Write set` evitan paralelizar slices que pisan los mismos ficheros o recursos. En workflows PR/worktree, `registry.json` es estado local y no viaja como payload de la slice: el commit incluye `orchestrator-state/tasks/lifecycle-events/<TASK_ID>.json`, y `sync-lifecycle-events.sh --apply` lo rehidrata tras merge/reset.
 
 **Production DAG-only**: en operación normal `task_dag.mode` debe ser `explicit_dag`. Si falta `Depends on`, el bootstrap/checker debe bloquear: faltan dependencias reales o el Coverage Registry está incompleto. Corrige los source-of-truth docs y vuelve a ejecutar `bootstrap_source_of_truth.py --refresh`.
 
@@ -41,6 +41,7 @@ Terminal A cierra TASK_A
   -> closer emite trailer machine-readable
   -> hook_capture_subagent_stop.py valida OUTCOME/NEXT_STATUS
   -> registry.json TASK_A pasa a done bajo lock
+  -> el PR ya trae lifecycle-events/TASK_A.json para reparar ese done tras squash/reset
   -> runtime-state.json se actualiza y ledger.jsonl se mantiene como traza local
   -> promote_ready_tasks desbloquea successors si todas sus deps están done
   -> cualquier terminal vuelve a ejecutar ./scripts/next-wave.sh y ve el nuevo frontier
@@ -518,3 +519,8 @@ git config --global claude.expectedUserEmail "<email-verificado>"
 ```
 
 Si los commits aparecen alternando entre cuentas, revisa `git config --show-origin --get-regexp 'user\.|includeIf|gpg|signing|claude\.'`, variables `GIT_AUTHOR_*`/`GIT_COMMITTER_*`, y la cuenta activa de `gh` (`gh auth status`). En `pr-flow`, el squash merge lo ejecuta GitHub vía `gh`; si quieres fijar el email de autor del merge, exporta `CLAUDE_PR_MERGE_AUTHOR_EMAIL=<email-verificado>`.
+
+
+### Verify-slice human browser MCP gate
+
+`/verify-slice` delegates to `slice-verifier`, which must perform hard reset, load real/provided verification data, exercise the app through Chrome DevTools MCP or Claude-in-Chrome MCP, observe front/back/DB logs, write evidence, and append `## verify-slice`. If no browser MCP is connected it blocks with `browser_mcp_unavailable`; it must not close via API-only fallback.

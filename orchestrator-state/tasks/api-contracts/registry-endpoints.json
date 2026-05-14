@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-14T07:29:01+00:00",
+  "generated_at": "2026-05-14T11:01:20+00:00",
   "endpoints": [
     {
       "method": "GET",
@@ -657,7 +657,8 @@
       "path_params": [],
       "slice_ids": [
         "P01-S02-T003",
-        "P01-S03-T001"
+        "P01-S03-T001",
+        "P03-S01-T006"
       ],
       "journey_refs": [
         "J100",
@@ -667,7 +668,9 @@
         "refresh_tokens",
         "users"
       ],
-      "routes": [],
+      "routes": [
+        "/auth/sign-in,/chat"
+      ],
       "first_task_kind": "api"
     },
     {

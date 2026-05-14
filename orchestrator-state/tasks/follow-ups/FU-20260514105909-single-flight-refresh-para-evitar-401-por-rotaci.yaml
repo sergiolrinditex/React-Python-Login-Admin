@@ -1,0 +1,55 @@
+{
+  "id": "FU-20260514105909-single-flight-refresh-para-evitar-401-por-rotaci",
+  "schema_version": 1,
+  "status": "promoted",
+  "created_at": "2026-05-14T10:59:09+00:00",
+  "created_by": "sergiolr",
+  "origin_task_id": "P03-S02-T001",
+  "origin_phase_id": "P03",
+  "origin_step_id": "P03-S01",
+  "kind": "bug",
+  "product_increment": "current",
+  "build_state": "planned",
+  "severity": "medium",
+  "title": "Single-flight refresh para evitar 401 por rotación bajo StrictMode/concurrencia",
+  "description": "Bajo React StrictMode (dev) o cualquier escenario que produzca dos POST /api/v1/auth/refresh en paralelo (multi-tab, focus-revalidation de TanStack Query, retry de fetch, recarga durante jitter), la primera llamada rota la refresh cookie y devuelve 200, y la segunda usa el token ya consumido y devuelve 401. AuthProvider transiciona a unauthenticated y bota a /auth/sign-in incluso con sesión válida. Repetible 100% en dev recargando /chat con la cookie activa. En prod tail risk real: multi-tab y refetchOnWindowFocus de TanStack Query pueden disparar la misma race.",
+  "journey_refs": [
+    "J100"
+  ],
+  "screen_route": "/auth/sign-in,/chat",
+  "endpoint": "POST /api/v1/auth/refresh",
+  "tables": [
+    "refresh_tokens"
+  ],
+  "depends_on": [
+    "P03-S01-T001"
+  ],
+  "conflict_groups": [
+    "front:auth"
+  ],
+  "write_set": [
+    "frontend/src/features/auth/data/authRepository.ts",
+    "frontend/src/features/auth/presentation/AuthProvider.tsx"
+  ],
+  "acceptance": [
+    "Two consecutive AuthProvider mounts under StrictMode (or any two concurrent callers of authRepository.refresh) produce exactly ONE network POST /api/v1/auth/refresh (single-flight/inflight-dedupe). No 401 from /auth/refresh on a valid session. Multi-tab opening /chat in a second tab does not invalidate the first."
+  ],
+  "verify": [
+    "Hard reset + login con MFA real (employee.verification@inditex-sandbox.com). En DevTools Network: recargar /chat 5 veces seguidas — exactamente 1 POST /api/v1/auth/refresh por recarga",
+    "todas 200. Abrir 2ª pestaña a /chat: ambas siguen autenticadas. Repetir con StrictMode activo (vite dev) y con prod build. Cubre J100 al confirmar que el bootstrap aguanta carreras."
+  ],
+  "notes": [
+    "Detectado en verificación post-merge P03-S01-T001 + P03-S02-T001 (2026-05-14). Evidence: orchestrator-state/verify-post-merge-P03/screens + back.log muestra reqid=177 refresh [200] seguido inmediatamente de reqid=178 refresh [401]."
+  ],
+  "triage": {
+    "scope_classification": "out_of_scope",
+    "why_not_debugger": "El bug vive en AuthProvider.useEffect y authRepository.refresh() (slices P01-S02-T003 y P01-S02-T007, ya cerradas). El write_set de P03-S02-T001 no incluye esos paths y su acceptance está cumplida. Debugger/retest dentro de P03-S02-T001 no puede tocar la capa de auth bootstrap sin expandir write_set fuera de scope.",
+    "decision": "followup_only_when_outside_current_slice",
+    "debugger_path": "in_scope_defects_use_validator_tester_debugger_retest",
+    "warnings": []
+  },
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260514105909-single-flight-refresh-para-evitar-401-por-rotaci.yaml",
+  "promoted_at": "2026-05-14T11:01:17+00:00",
+  "promoted_task_id": "P03-S01-T006",
+  "source_doc_updated": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md"
+}

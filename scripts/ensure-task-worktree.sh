@@ -55,6 +55,9 @@ git -C "$ROOT" worktree prune >/dev/null 2>&1 || true
 if [ -x "$ROOT/scripts/cleanup-deferred-worktrees.sh" ] && [ "${CLAUDE_SKIP_DEFERRED_CLEANUP:-0}" != "1" ]; then
   bash "$ROOT/scripts/cleanup-deferred-worktrees.sh" --apply --quiet >/dev/null 2>&1 || true
 fi
+if [ -x "$ROOT/scripts/sync-lifecycle-events.sh" ]; then
+  bash "$ROOT/scripts/sync-lifecycle-events.sh" --apply >/dev/null 2>&1 || true
+fi
 if [ "$MODE" = "print-root" ]; then
   printf '%s\n' "$ROOT"
   exit 0

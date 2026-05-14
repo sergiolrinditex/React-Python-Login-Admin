@@ -14,6 +14,7 @@
 #       orchestrator-state/tasks/reports/<TASK_ID>.md
 #       orchestrator-state/tasks/task-packs/<TASK_ID>.md
 #       orchestrator-state/tasks/work-items/<TASK_ID>.yaml
+#       orchestrator-state/tasks/lifecycle-events/<TASK_ID>.json
 #       orchestrator-state/tasks/follow-ups/<FOLLOWUP_ID>.yaml cuyo origin_task_id sea <TASK_ID>
 #       orchestrator-state/memory/official-doc-notes/<TASK_ID>-*.md
 #   - docs/product-baseline/ (lo sincroniza el closer aparte)
@@ -31,6 +32,7 @@
 #      scripts/git-add-slice.sh --dry-run <TASK_ID>
 
 set -euo pipefail
+SCRIPT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 DRY_RUN=0
 if [ "${1:-}" = "--dry-run" ]; then
@@ -89,6 +91,7 @@ SLICE_PATHS=(
   "orchestrator-state/tasks/reports/${TASK_ID}.md"
   "orchestrator-state/tasks/task-packs/${TASK_ID}.md"
   "orchestrator-state/tasks/work-items/${TASK_ID}.yaml"
+  "orchestrator-state/tasks/lifecycle-events/${TASK_ID}.json"
 )
 # official-doc-notes son por TASK_ID con sufijo de tema
 DOC_NOTES_GLOB="orchestrator-state/memory/official-doc-notes/${TASK_ID}-*.md"
@@ -151,6 +154,20 @@ for root in (canonical_root, workspace_root):
             consider(item)
 PY_FOLLOWUPS
 )
+
+# Close lifecycle event: this is the durable, conflict-free state signal that
+# travels with the PR. registry.json itself is local runtime and is not staged.
+if [ "$DRY_RUN" -eq 0 ]; then
+  EVENT_SCRIPT="$CANONICAL_ROOT/.claude/bin/write_lifecycle_event.py"
+  if [ ! -f "$EVENT_SCRIPT" ]; then
+    EVENT_SCRIPT="$SCRIPT_ROOT/.claude/bin/write_lifecycle_event.py"
+  fi
+  CLAUDE_ORCHESTRATOR_ROOT="$CANONICAL_ROOT" \
+  CLAUDE_WORKSPACE_ROOT="$WORKSPACE_ROOT" \
+  python3 -B -S "$EVENT_SCRIPT" "$TASK_ID" >/dev/null
+else
+  echo "  would: write orchestrator-state/tasks/lifecycle-events/${TASK_ID}.json"
+fi
 
 # Baseline (lo añade el sync, pero por si quedó algo del orquestador-meta)
 BASELINE="docs/product-baseline"

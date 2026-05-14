@@ -33,6 +33,7 @@ try:
         claude_dir,
         dag_worker_task_id,
         hook_error_log_path,
+        hook_info_log_path,
         load_registry,
         load_runtime_state,
         log_hook_error,
@@ -50,6 +51,7 @@ except Exception:
     has_resolved_doc_discrepancy_marker = lambda text: __import__("re").search(r"(?im)^\s*(?:[-*+]\s+|#{1,6}\s+|>\s*)*RESOLVED(?:\s*:|\s+\d{4}-\d{2}-\d{2}\b|\s+[-–—])", text or "") is not None  # type: ignore[assignment]
     claude_dir = lambda: Path(".claude")  # type: ignore[assignment]
     hook_error_log_path = lambda: Path("orchestrator-state/hook-errors.log")  # type: ignore[assignment]
+    hook_info_log_path = lambda: Path("orchestrator-state/hook-info.log")  # type: ignore[assignment]
     def log_hook_error(name, exc):  # type: ignore[no-redef]
         return None
 
@@ -172,6 +174,17 @@ def _detect_pressure(root: Path) -> list[str]:
 
 
 def build_context() -> str:
+    # Best-effort post-reset repair: committed lifecycle-events are the durable
+    # PR signal; replay them before SessionStart displays scheduler state.
+    try:
+        from sync_lifecycle_events import apply_events
+        apply_events(dry_run=False)
+    except Exception as exc:
+        try:
+            log_hook_error("hook_session_context.lifecycle_events", exc)
+        except Exception:
+            pass
+
     runtime = load_runtime_state() or {}
     registry = load_registry() or {}
 

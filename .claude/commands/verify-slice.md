@@ -1,5 +1,5 @@
 ---
-description: Gate de verificación por slice DAG. Coordina slice-verifier, screen/journey-reviewer cuando aplica, debugger/retest si hay issues y closer para commit + PR/push + merge + cleanup.
+description: Verificación humana-real post-slice en modo DAG. Hard reset, navegador MCP, datos reales/proporcionados, logs front/back/DB, tabla de validación, y cierre automático vía closer si queda verified.
 argument-hint: "<TASK_ID>|--task <TASK_ID>  (o terminal con CLAUDE_ACTIVE_TASK_ID exportado)"
 ---
 
@@ -72,9 +72,31 @@ Acciones:
 
 Regla dura: `closer` sólo se invoca cuando este helper devuelve `invoke_closer`; entonces spawnea `closer`. `slice-verifier` sólo se invoca cuando devuelve `invoke_slice_verifier`.
 
+
+## Verificación humana-real obligatoria
+
+`/verify-slice` no es sólo un router de estados. El router decide CUÁNDO lanzar `slice-verifier`, pero `slice-verifier` debe ejecutar el contrato humano-real antiguo:
+
+- Hard reset del entorno: parar servicios propios, reset DB, migraciones, datos base reales/proporcionados y datos específicos del slice desde `Verification Data Contract`.
+- Navegación real como usuario en navegador mediante Chrome DevTools MCP o Claude-in-Chrome MCP.
+- Observación de logs front + back + DB en vivo.
+- Evidencia en `orchestrator-state/tasks/evidence/<TASK_ID>/verify-*`.
+- Tabla visible para el usuario con URL, qué probar, descripción, resultado esperado, observado y pasa/no pasa.
+- Bloque `## verify-slice` en handoff con `VERIFY_OUTCOME: verified|issues_found|blocked`.
+
+MCP de navegador es obligatorio para el gate humano. Si Chrome DevTools MCP y Claude-in-Chrome MCP no están disponibles/conectados, no hagas fallback a `curl` como cierre humano: bloquea con `BLOCKER_REASON: browser_mcp_unavailable` y dile al usuario que conecte uno de esos MCP y relance `/verify-slice <TASK_ID>`.
+
+Antes de spawnear `slice-verifier`, escribe skeleton persistente para evitar estados parciales por interrupción:
+
+```bash
+./scripts/init-verify-slice-handoff.sh <TASK_ID>
+```
+
+Ese skeleton debe quedar sobrescrito lógicamente por un bloque final append-only del subagente. Si el subagente se interrumpe y no hay bloque final ni trailer, vuelve a lanzar `slice-verifier` con prompt focalizado `write-first skeleton already exists; finish MCP browser verification or write blocked`.
+
 ## Paso 4 — Spawn de `slice-verifier`
 
-Sólo si `verify-slice-state` devuelve `invoke_slice_verifier`, spawnea **un único** subagente `slice-verifier` con este contexto literal:
+Sólo si `verify-slice-state` devuelve `invoke_slice_verifier`, primero ejecuta `./scripts/init-verify-slice-handoff.sh <TASK_ID>` y luego spawnea **un único** subagente `slice-verifier` con este contexto literal:
 
 ```text
 TASK_ID: <TASK_ID>
@@ -82,7 +104,9 @@ CLAUDE_TASK_PACK: orchestrator-state/tasks/task-packs/<TASK_ID>.md
 MODO DAG ACTIVO: production = explicit_dag.
 Unidad verificable = TASK_ID canónico del registry.
 Hard reset obligatorio con datos reales/proporcionados del Verification Data Contract.
-Reproduce como usuario, vigila logs y escribe ## verify-slice en el handoff.
+Primero confirma disponibilidad/conexión de Chrome DevTools MCP o Claude-in-Chrome MCP; si ninguno está disponible, escribe ## verify-slice con VERIFY_OUTCOME: blocked, BLOCKER_REASON: browser_mcp_unavailable y USER_ACTION_REQUIRED.
+Reproduce como usuario con navegador MCP, vigila logs front/back/DB, guarda evidencia verify-* y devuelve una tabla: URL | Qué probar | Descripción | Resultado esperado | Resultado observado | Pasa?.
+Escribe ## verify-slice final en el handoff.
 No invoques closer; no hagas commit; no marques done.
 ```
 
@@ -95,6 +119,7 @@ OUTCOME: verified|issues_found|blocked
 NEXT_STATUS: verified_pending_close|needs_debug|blocked
 HANDOFF: orchestrator-state/tasks/handoffs/<TASK_ID>.md
 EVIDENCE: orchestrator-state/tasks/evidence/<TASK_ID>/
+VERIFY_OUTCOME: verified|issues_found|blocked
 ```
 
 Mapeo obligatorio:
@@ -103,7 +128,7 @@ Mapeo obligatorio:
 - `issues_found` → `needs_debug`.
 - `blocked` → `blocked`.
 
-Cuando vuelva, ejecuta otra vez `./scripts/verify-slice-state.sh <TASK_ID> --json`. Si devuelve `invoke_closer`, sigue al Paso 6. Si devuelve `invoke_debugger_or_register_followup`, sigue al Paso 5. Si el trailer se pierde, revisa el handoff: el agente debe haber escrito `## verify-slice`. Si está escrito y el checker pasa, puedes continuar por el helper; si no, relanza `slice-verifier`, no `closer`.
+Cuando vuelva, ejecuta otra vez `./scripts/verify-slice-state.sh <TASK_ID> --json`. Si devuelve `invoke_closer`, sigue al Paso 6. Si devuelve `invoke_debugger_or_register_followup`, sigue al Paso 5. Si devuelve `blocked` con `VERIFY_OUTCOME: blocked` por MCP/entorno, PARA y muestra al usuario el `USER_ACTION_REQUIRED`; no spawnees closer ni debugger. Si el trailer se pierde, revisa el handoff: el agente debe haber escrito al menos el skeleton `## verify-slice` con `VERIFY_OUTCOME: pending`. Si hay sección final verified y el checker pasa, puedes continuar por el helper; si sólo hay skeleton pending o no hay evidencia, relanza `slice-verifier` una sola vez con prompt enfocado en `write-first skeleton already exists; finish MCP browser verification or write blocked`. Si vuelve a no escribir handoff, bloquea como fallo mecánico.
 
 ## Paso 5 — Si `slice-verifier` reporta issues
 
@@ -166,7 +191,7 @@ MODO DAG ACTIVO: production = explicit_dag.
 cierra sólo el TASK_ID explícito.
 El estado verificado previo es verified_pending_close; sólo closer puede pasar a done.
 Las FU formales proposed del origin_task_id se meten en la PR, no bloquean este close.
-Ejecuta report + sync baseline + git-add-slice + commit + workflow Git configurado mediante ./scripts/git-workflow.sh + slice-clean + cleanup-worktrees + deferred cleanup. El cleanup debe ser hook-safe: no debe borrar la worktree activa del closer antes del SubagentStop; `active_deferred=1` es aceptable si no hay dirty/skipped y el cleanup imprimió `DEFERRED_CLEANUP_COMMAND` y dejó una petición en `cleanup-requests/`.
+Ejecuta report + sync baseline + git-add-slice + commit + workflow Git configurado mediante ./scripts/git-workflow.sh + slice-clean + cleanup-worktrees + deferred cleanup. `git-add-slice` debe crear/stagear `orchestrator-state/tasks/lifecycle-events/<TASK_ID>.json`; no stagees `registry.json` ni crees commits manuales de sync post-close state. El cleanup debe ser hook-safe: no debe borrar la worktree activa del closer antes del SubagentStop; `active_deferred=1` es aceptable si no hay dirty/skipped y el cleanup imprimió `DEFERRED_CLEANUP_COMMAND` y dejó una petición en `cleanup-requests/`.
 En pr-flow, done exige PR merged y root canónico sincronizado; PR abierta/queued = blocked mecánico, no FU.
 ```
 
@@ -188,7 +213,20 @@ Si `closer` devuelve `blocked` por PR pendiente, CI rojo, auto-merge no habilita
 
 Como comando, resume lo ocurrido al usuario. Los trailers de estado los emiten los subagentes (`slice-verifier`, `screen-journey-reviewer`, `debugger`, `validator`, `tester`, `closer`) y los consume el hook bajo lock.
 
-Incluye en la respuesta final:
+Incluye en la respuesta final la tabla producida por `slice-verifier` o un resumen fiel de ella:
+
+| URL | Qué probar | Descripción | Resultado esperado | Resultado observado | Pasa? |
+|-----|------------|-------------|--------------------|---------------------|-------|
+
+Y debajo:
+
+- MCP usado: Chrome DevTools MCP | Claude-in-Chrome MCP | blocked.
+- Filas del Verification Data Contract usadas.
+- Datos reales/proporcionados cargados.
+- Datos persistidos observados.
+- Logs front/back/DB revisados.
+
+Luego añade:
 
 ```text
 TASK_ID: <TASK_ID>

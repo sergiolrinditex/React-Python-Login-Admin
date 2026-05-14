@@ -1,0 +1,59 @@
+{
+  "id": "FU-20260514105923-composer-over-limit-usar-copy-i18n-dedicado-en-v",
+  "schema_version": 1,
+  "status": "promoted",
+  "created_at": "2026-05-14T10:59:23+00:00",
+  "created_by": "sergiolr",
+  "origin_task_id": "P03-S02-T001",
+  "origin_phase_id": "P03",
+  "origin_step_id": "P03-S02",
+  "kind": "ux",
+  "product_increment": "current",
+  "build_state": "planned",
+  "severity": "low",
+  "title": "Composer over-limit: usar copy i18n dedicado en vez de reusar placeholder",
+  "description": "Al superar 4000 caracteres en el composer de /chat, el inline alert muestra 'Escribe tu mensaje... (max 4000)' — texto que reusa el placeholder del textarea. UX confusa: el mensaje de error no comunica el problema con claridad. Debería ser un i18n key dedicado tipo chat.errors.tooLong con copy 'El mensaje no puede superar 4000 caracteres' en ES/EN/FR.",
+  "journey_refs": [
+    "J101"
+  ],
+  "screen_route": "/chat",
+  "endpoint": "—",
+  "tables": [],
+  "depends_on": [
+    "P03-S02-T001"
+  ],
+  "conflict_groups": [
+    "front:chat"
+  ],
+  "write_set": [
+    "frontend/src/features/chat/presentation/Composer.tsx",
+    "frontend/public/locales/es/chat.json",
+    "frontend/public/locales/en/chat.json",
+    "frontend/public/locales/fr/chat.json",
+    "frontend/src/i18n/index.ts"
+  ],
+  "acceptance": [
+    "Escribir >4000 chars en Composer dispara inline alert (role=alert",
+    "aria-live=assertive) cuyo texto proviene de una i18n key dedicada (e.g. chat.errors.tooLong) y NO reusa el placeholder. Tres locales (es",
+    "en",
+    "fr) traducen la key. Composer.tsx referencia la nueva key en vez del placeholder."
+  ],
+  "verify": [
+    "En Chrome /chat",
+    "escribir 4001 chars en composer + click Enviar → alert text es el i18n dedicado (no el placeholder). Cambiar locale a en y fr y reproducir → texto traducido. Tests vitest de Composer cubren el nuevo copy. Design tokens enforcer sigue verde."
+  ],
+  "notes": [
+    "Detectado en verificación post-merge P03-S01-T001 + P03-S02-T001 (2026-05-14). Evidence: orchestrator-state/verify-post-merge-P03/screens/08-chat-validation-overlimit.png."
+  ],
+  "triage": {
+    "scope_classification": "future_enhancement",
+    "why_not_debugger": "P03-S02-T001 acceptance A4 'inline alert when >4000 chars' está cumplido: el alert renderiza con role=alert + aria-live=assertive. Mejorar el texto del mensaje es polish de copy más allá del spec original — más apropiado en un pase de copy/i18n o piggy-back en P03-S02-T002 (ConversationPage) que también monta Composer.",
+    "decision": "followup_only_when_outside_current_slice",
+    "debugger_path": "in_scope_defects_use_validator_tester_debugger_retest",
+    "warnings": []
+  },
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260514105923-composer-over-limit-usar-copy-i18n-dedicado-en-v.yaml",
+  "promoted_at": "2026-05-14T11:01:20+00:00",
+  "promoted_task_id": "P03-S02-T005",
+  "source_doc_updated": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md"
+}

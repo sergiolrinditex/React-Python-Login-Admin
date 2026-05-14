@@ -22,7 +22,7 @@ CYCLE_SUFFIX_RE = re.compile(r"\s*\((?:cycle|ciclo)\s+\d+\)\s*$", re.IGNORECASE)
 
 VALIDATOR_OUTCOMES = {"approved", "changes_requested", "blocked"}
 TESTER_OUTCOMES = {"pass", "fail", "blocked"}
-VERIFY_OUTCOMES = {"verified", "issues_found"}
+VERIFY_OUTCOMES = {"verified", "issues_found", "blocked"}
 SCREEN_JOURNEY_OUTCOMES = {"approved", "changes_requested", "blocked"}
 FOLLOWUP_ID_RE = re.compile(r"\bFU-[A-Za-z0-9_.:-]+\b")
 FOLLOWUP_CANDIDATE_RE = re.compile(r"(?im)^\s*-?\s*(followup_candidate|FOLLOWUP_REQUIRED)\s*:\s*(yes|true|si|sí)\s*$")
