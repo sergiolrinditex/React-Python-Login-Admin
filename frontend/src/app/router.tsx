@@ -4,6 +4,8 @@
  * Slice/Phase: P01-S03-T001 — Auth state provider + route guards / Phase 1.
  *   Updated from P00-S01-T004 (original: /showcase only).
  *   Updated in P03-S01-T001 — replaced SignInStub with real SignInPage (§D-T001-ROUTER).
+ *   WRITE_SET_DRIFT §D-T001-ROUTE (P03-S02-T001): wired /chat to ChatHomePage;
+ *     updated / and * redirects so authenticated users land on /chat.
  *
  * Responsibility: single mount point for the application's route tree.
  *   Exports <AppRouter> which is consumed by main.tsx inside <Providers>.
@@ -12,11 +14,14 @@
  * Route inventory:
  *   /showcase          → ShowcasePage (public — design-system demo, dev-only)
  *   /auth/sign-in      → SignInPage (real form, P03-S01-T001)
+ *   /chat              → ChatHomePage (employee, RequireAuth) — P03-S02-T001
+ *   /chat/:conversationId → placeholder (P03-S02-T002 adds real ConversationPage)
  *   /admin             → STUB placeholder (wrapped in RequireRole — test surface)
- *   /                  → redirects to /auth/sign-in (P03 default — employees land on login)
- *   *                  → redirects to /auth/sign-in (catch-all; P03 adds 404)
+ *   /                  → RootRedirect: authenticated→/chat, unauthenticated→/auth/sign-in
+ *   *                  → redirects to / (catch-all; uses RootRedirect logic)
  *
- * P03-S02-T001 adds: /chat, /chat/:conversationId under RequireAuth.
+ * P03-S01-T001 adds: real SignInPage form replacing the /auth/sign-in stub.
+ * P03-S02-T001 adds: /chat real page; updates / and * redirects for authed users.
  * P04-S01-T001 adds: real /admin dashboard replacing stub.
  *
  * AuthProvider composition (task pack §I):
@@ -34,7 +39,9 @@ import { BrowserRouter, Routes, Route, Navigate, Outlet } from "react-router";
 import type { ReactNode } from "react";
 import ShowcasePage from "../pages/showcase/ShowcasePage";
 import SignInPage from "../pages/auth/SignInPage";
+import ChatHomePage from "../pages/chat/ChatHomePage";
 import { AuthProvider } from "../features/auth/presentation/AuthProvider";
+import { useAuth } from "../features/auth/presentation/AuthProvider";
 import { RequireAuth } from "../features/auth/presentation/RequireAuth";
 import { RequireRole } from "../features/auth/presentation/RequireRole";
 
@@ -53,6 +60,33 @@ export const ROUTE_ADMIN = "/admin";
 
 /** Route path for employee chat home. Implemented in P03-S02-T001. */
 export const ROUTE_CHAT = "/chat";
+
+// ---------------------------------------------------------------------------
+// RootRedirect — auth-aware redirect for "/" and "*" catch-all
+// D-T001-ROUTE: authenticated → /chat; unauthenticated → /auth/sign-in;
+//   hydrating → null (RequireAuth handles the loading state for guarded routes).
+// D-T001-DEEPLINK-AUTHED-DEFAULT: direct navigation to "/" always lands on /chat.
+// ---------------------------------------------------------------------------
+
+/**
+ * Root redirect component. Checks auth status and redirects accordingly.
+ * status='hydrating' → renders nothing (avoids flash to sign-in).
+ * status='authenticated' → /chat (employee home per D-T001-ROUTE).
+ * status='unauthenticated' → /auth/sign-in.
+ */
+function RootRedirect(): ReactNode {
+  const { status } = useAuth();
+
+  if (status === "hydrating") {
+    return null;
+  }
+
+  if (status === "authenticated") {
+    return <Navigate to={ROUTE_CHAT} replace />;
+  }
+
+  return <Navigate to={ROUTE_AUTH_SIGN_IN} replace />;
+}
 
 // ---------------------------------------------------------------------------
 // Stub page components (placeholders until P04 slices land)
@@ -90,8 +124,8 @@ export function AppRouter(): ReactNode {
   if (import.meta.env.VITE_ENABLE_VERBOSE_LOGGING === "true") {
     console.info("AppRouter.render.start", {
       phase: "P03",
-      slice: "P03-S01-T001",
-      routes: [ROUTE_SHOWCASE, ROUTE_AUTH_SIGN_IN, ROUTE_ADMIN, ROUTE_CHAT],
+      slice: "P03-S02-T001",
+      routes: [ROUTE_SHOWCASE, ROUTE_AUTH_SIGN_IN, ROUTE_CHAT, ROUTE_ADMIN],
     });
   }
 
@@ -104,16 +138,18 @@ export function AppRouter(): ReactNode {
           {/* P03-S01-T001: real SignInPage replaces stub (§D-T001-ROUTER) */}
           <Route path={ROUTE_AUTH_SIGN_IN} element={<SignInPage />} />
 
-          {/* Protected employee routes (P03-S02-T001 adds /chat, /history, /account) */}
+          {/* Protected employee routes */}
           <Route element={<RequireAuth><Outlet /></RequireAuth>}>
-            {/* /chat placeholder — real page in P03-S02-T001 */}
+            {/* /chat — real ChatHomePage (P03-S02-T001) */}
+            <Route path={ROUTE_CHAT} element={<ChatHomePage />} />
+            {/*
+             * /chat/:conversationId — placeholder for P03-S02-T002 (ConversationPage).
+             * D-T001-OUTAGE-OF-CHAT-T002: navigate succeeds; unknown path bounces to /chat.
+             * This route must exist to prevent the catch-all intercepting /chat/:id navigations.
+             */}
             <Route
-              path={ROUTE_CHAT}
-              element={
-                <div data-testid="chat-placeholder" style={{ padding: "2rem" }}>
-                  Chat home — implemented in P03-S02-T001
-                </div>
-              }
+              path={`${ROUTE_CHAT}/:conversationId`}
+              element={<Navigate to={ROUTE_CHAT} replace />}
             />
           </Route>
 
@@ -128,11 +164,14 @@ export function AppRouter(): ReactNode {
             <Route path={ROUTE_ADMIN} element={<AdminStub />} />
           </Route>
 
-          {/* Default redirect — employees land on sign-in (P03-S01-T001, §D-T001-ROUTER) */}
-          <Route path="/" element={<Navigate to={ROUTE_AUTH_SIGN_IN} replace />} />
+          {/*
+           * Root redirect — D-T001-ROUTE + D-T001-DEEPLINK-AUTHED-DEFAULT.
+           * authenticated → /chat; unauthenticated → /auth/sign-in; hydrating → null.
+           */}
+          <Route path="/" element={<RootRedirect />} />
 
-          {/* Catch-all — redirects to sign-in; P04 adds proper 404 */}
-          <Route path="*" element={<Navigate to={ROUTE_AUTH_SIGN_IN} replace />} />
+          {/* Catch-all — redirect to root which applies RootRedirect logic. */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>

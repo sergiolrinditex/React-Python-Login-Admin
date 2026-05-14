@@ -1,0 +1,27 @@
+* Host localhost:8000 was resolved.
+* IPv6: ::1
+* IPv4: 127.0.0.1
+*   Trying [::1]:8000...
+* connect to ::1 port 8000 from ::1 port 51834 failed: Connection refused
+*   Trying 127.0.0.1:8000...
+* Connected to localhost (127.0.0.1) port 8000
+> POST /api/v1/chat/conversations HTTP/1.1
+> Host: localhost:8000
+> User-Agent: curl/8.7.1
+> Accept: */*
+> Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjOWU0OTZlZC1kNzM1LTQzMjItODk3OS1iZDZmZmYzMmIyYTIiLCJlbWFpbCI6ImVtcGxveWVlLnZlcmlmaWNhdGlvbkBpbmRpdGV4LXNhbmRib3guY29tIiwicm9sZXMiOlsiZW1wbG95ZWUiXSwicHJlZmVycmVkX2xhbmd1YWdlIjoiZXMiLCJlbXBsb3llZV9wcm9maWxlX2lkIjpudWxsLCJqdGkiOiI5NzkwZWY1Zjk5NDE0ODE5YTg2NmYzNDdmMDRlYzA2NCIsImlhdCI6MTc3ODc1MjUxNSwiZXhwIjoxNzc4NzU0MzE1fQ.yAWzL2clNqxxrzHXtUBbXXiG7UzTTkTZawqy33SH0eU
+> Content-Type: application/json
+> X-Request-ID: 4DF46527-B034-43C3-BCDD-FA45640C2140
+> Content-Length: 79
+> 
+} [79 bytes data]
+* upload completely sent off: 79 bytes
+< HTTP/1.1 201 Created
+< date: Thu, 14 May 2026 09:56:29 GMT
+< server: uvicorn
+< content-length: 158
+< content-type: application/json
+< 
+{ [158 bytes data]
+* Connection #0 to host localhost left intact
+{"data":{"conversation_id":"b5214ac1-f3cb-4aec-8f57-b85846cf99da"},"meta":{"request_id":"4DF46527-B034-43C3-BCDD-FA45640C2140","pagination":null},"errors":[]}

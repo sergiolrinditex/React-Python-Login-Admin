@@ -1,0 +1,16 @@
+DB Row Check — conversations table (P03-S02-T001)
+Date: 2026-05-14
+Command: SELECT id, user_id, language, title, created_at FROM conversations WHERE id='b5214ac1-f3cb-4aec-8f57-b85846cf99da';
+Database: postgresql://hilo@localhost:5432/hilo_dev (real Postgres)
+
+                  id                  |               user_id                | language |                 title                  |          created_at           
+--------------------------------------+--------------------------------------+----------+----------------------------------------+-------------------------------
+ b5214ac1-f3cb-4aec-8f57-b85846cf99da | c9e496ed-d735-4322-8979-bd6fff32b2a2 | es       | ¿Cuántos días de vacaciones me quedan? | 2026-05-14 09:56:29.207974+00
+(1 fila)
+
+Verification:
+- Row exists: YES
+- user_id matches verification user c9e496ed-d735-4322-8979-bd6fff32b2a2: YES
+- language = 'es' (matches user.preferred_language): YES
+- title derived from initial_message: YES ('¿Cuántos días de vacaciones me quedan?')
+- conversation_id matches POST response: YES

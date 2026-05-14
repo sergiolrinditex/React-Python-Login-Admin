@@ -1,0 +1,24 @@
+* Host localhost:8000 was resolved.
+* IPv6: ::1
+* IPv4: 127.0.0.1
+*   Trying [::1]:8000...
+* connect to ::1 port 8000 from ::1 port 51822 failed: Connection refused
+*   Trying 127.0.0.1:8000...
+* Connected to localhost (127.0.0.1) port 8000
+> GET /api/v1/users/me HTTP/1.1
+> Host: localhost:8000
+> User-Agent: curl/8.7.1
+> Accept: */*
+> Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjOWU0OTZlZC1kNzM1LTQzMjItODk3OS1iZDZmZmYzMmIyYTIiLCJlbWFpbCI6ImVtcGxveWVlLnZlcmlmaWNhdGlvbkBpbmRpdGV4LXNhbmRib3guY29tIiwicm9sZXMiOlsiZW1wbG95ZWUiXSwicHJlZmVycmVkX2xhbmd1YWdlIjoiZXMiLCJlbXBsb3llZV9wcm9maWxlX2lkIjpudWxsLCJqdGkiOiI5NzkwZWY1Zjk5NDE0ODE5YTg2NmYzNDdmMDRlYzA2NCIsImlhdCI6MTc3ODc1MjUxNSwiZXhwIjoxNzc4NzU0MzE1fQ.yAWzL2clNqxxrzHXtUBbXXiG7UzTTkTZawqy33SH0eU
+> X-Request-ID: F02E1F7F-0866-4BC8-B388-363EEF9ED13D
+> 
+* Request completely sent off
+< HTTP/1.1 200 OK
+< date: Thu, 14 May 2026 09:56:21 GMT
+< server: uvicorn
+< content-length: 517
+< content-type: application/json
+< 
+{ [517 bytes data]
+* Connection #0 to host localhost left intact
+{"data":{"id":"c9e496ed-d735-4322-8979-bd6fff32b2a2","email":"employee.verification@inditex-sandbox.com","full_name":"Elena Verificación","status":"active","preferred_language":"es","roles":["employee"],"employee_profile":{"employee_id":"EMP-VERIFY-001","brand":"Zara","society":"ITX-ES","center":"Madrid-HQ","country":"ES","department":"People & Talent"},"created_at":"2026-05-14T09:51:16.116368Z","updated_at":"2026-05-14T09:51:16.116368Z"},"meta":{"request_id":"F02E1F7F-0866-4BC8-B388-363EEF9ED13D"},"errors":[]}

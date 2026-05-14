@@ -1,0 +1,25 @@
+Evidence: TypeScript type check + production build (P03-S02-T001)
+Date: 2026-05-14
+
+npx tsc --noEmit: PASS (zero errors)
+npm run build: PASS
+  - 128 modules transformed
+  - dist/assets/index-DuiHIcN1.js: 351.00 kB (gzip: 109.49 kB)
+  - Built in ~162ms
+
+Design tokens enforcer (bash scripts/check-design-tokens.sh): PASS
+  "OK Design tokens - web literals are outside app code or inside token/theme modules."
+
+ESLint note: eslint is not in package.json devDependencies (existing baseline limitation).
+  TypeScript strict type check used as equivalent quality gate — zero type errors.
+
+Tests: 110 passed / 110 total
+  Test Files: 8 (7 pre-existing + 3 new chat tests)
+  - chatRepository.test.ts: 7 tests PASS
+  - useCreateConversation.test.tsx: 4 tests PASS
+  - ChatHomePage.test.tsx: 8 tests PASS
+  All 33 pre-existing auth tests PASS
+  All 34 design-system tests PASS
+  All 16 i18n tests PASS
+  All 4 showcase tests PASS
+  All 4 providers tests PASS

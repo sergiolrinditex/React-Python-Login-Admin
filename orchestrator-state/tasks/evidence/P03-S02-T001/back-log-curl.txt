@@ -1,0 +1,62 @@
+539:2026-05-14 11:55:15,068 app.auth.routers.mfa INFO auth.mfa.verify.router.received request_id=931FE347-FB39-4EBB-94E2-6534D8034644 ip=127.0.0.1
+542:2026-05-14 11:55:15,068 app.auth.services.mfa INFO auth.mfa.verify.received request_id=931FE347-FB39-4EBB-94E2-6534D8034644 ip=127.0.0.1
+554:2026-05-14 11:55:15,118 app.auth.services.mfa INFO auth.mfa.verify.success user_id=c9e496ed-d735-4322-8979-bd6fff32b2a2 request_id=931FE347-FB39-4EBB-94E2-6534D8034644
+555:2026-05-14 11:55:15,120 app.auth.routers.mfa INFO auth.mfa.verify.router.success user_id=c9e496ed-d735-4322-8979-bd6fff32b2a2 request_id=931FE347-FB39-4EBB-94E2-6534D8034644
+559:2026-05-14 11:55:20,374 app.users.deps DEBUG users.deps.get_current_user.start request_id=FFAE10A0-F2A8-444F-858C-6823F7A01407 ip=127.0.0.1
+564:2026-05-14 11:55:20,392 app.users.deps DEBUG users.deps.get_current_user.done user_id=c9e496ed-d735-4322-8979-bd6fff32b2a2 request_id=FFAE10A0-F2A8-444F-858C-6823F7A01407
+565:2026-05-14 11:55:20,392 app.users.routers.me DEBUG users.routers.me.request_received method=GET request_id=FFAE10A0-F2A8-444F-858C-6823F7A01407 ip=127.0.0.1
+568:2026-05-14 11:55:20,392 app.users.routers.me DEBUG users.routers.me.response_built user_id=c9e496ed-d735-4322-8979-bd6fff32b2a2 status=200 request_id=FFAE10A0-F2A8-444F-858C-6823F7A01407
+572:2026-05-14 11:55:26,776 app.users.deps DEBUG users.deps.get_current_user.start request_id=51D83E67-BAF7-4CB8-A1C1-E02AEE620468 ip=127.0.0.1
+577:2026-05-14 11:55:26,813 app.users.deps DEBUG users.deps.get_current_user.done user_id=c9e496ed-d735-4322-8979-bd6fff32b2a2 request_id=51D83E67-BAF7-4CB8-A1C1-E02AEE620468
+578:2026-05-14 11:55:26,814 app.chat.routers.conversations DEBUG chat.routers.create_conversation.start request_id=51D83E67-BAF7-4CB8-A1C1-E02AEE620468 uid_hash=97b9c16cfa79de01 has_msg=True lang=es
+579:2026-05-14 11:55:26,814 app.chat.services.create_conversation DEBUG chat.service.create_conversation.start request_id=51D83E67-BAF7-4CB8-A1C1-E02AEE620468 user_id_hash=97b9c16cfa79de01 language=es has_message=True title_len=38
+580:2026-05-14 11:55:26,814 app.chat.repositories.conversations DEBUG chat.repo.create_conversation.start user_id_prefix=c9e496ed language=es has_message=True title_len=38
+581:2026-05-14 11:55:26,849 app.chat.repositories.conversations DEBUG chat.repo.create_conversation.done conv_id_prefix=42a68921 has_message=True
+582:2026-05-14 11:55:26,850 app.chat.services.create_conversation DEBUG chat.service.create_conversation.done request_id=51D83E67-BAF7-4CB8-A1C1-E02AEE620468 user_id_hash=97b9c16cfa79de01 conv_id_prefix=42a68921 latency_ms=35.4
+583:2026-05-14 11:55:26,863 app.chat.routers.conversations DEBUG chat.routers.create_conversation.done request_id=51D83E67-BAF7-4CB8-A1C1-E02AEE620468 uid_hash=97b9c16cfa79de01 conv_prefix=42a68921 status=201 ms=44.5
+587:2026-05-14 11:56:22,581 app.users.deps DEBUG users.deps.get_current_user.start request_id=F02E1F7F-0866-4BC8-B388-363EEF9ED13D ip=127.0.0.1
+592:2026-05-14 11:56:22,600 app.users.deps DEBUG users.deps.get_current_user.done user_id=c9e496ed-d735-4322-8979-bd6fff32b2a2 request_id=F02E1F7F-0866-4BC8-B388-363EEF9ED13D
+593:2026-05-14 11:56:22,601 app.users.routers.me DEBUG users.routers.me.request_received method=GET request_id=F02E1F7F-0866-4BC8-B388-363EEF9ED13D ip=127.0.0.1
+596:2026-05-14 11:56:22,603 app.users.routers.me DEBUG users.routers.me.response_built user_id=c9e496ed-d735-4322-8979-bd6fff32b2a2 status=200 request_id=F02E1F7F-0866-4BC8-B388-363EEF9ED13D
+600:2026-05-14 11:56:30,058 app.users.deps DEBUG users.deps.get_current_user.start request_id=4DF46527-B034-43C3-BCDD-FA45640C2140 ip=127.0.0.1
+605:2026-05-14 11:56:30,075 app.users.deps DEBUG users.deps.get_current_user.done user_id=c9e496ed-d735-4322-8979-bd6fff32b2a2 request_id=4DF46527-B034-43C3-BCDD-FA45640C2140
+606:2026-05-14 11:56:30,075 app.chat.routers.conversations DEBUG chat.routers.create_conversation.start request_id=4DF46527-B034-43C3-BCDD-FA45640C2140 uid_hash=97b9c16cfa79de01 has_msg=True lang=es
+607:2026-05-14 11:56:30,076 app.chat.services.create_conversation DEBUG chat.service.create_conversation.start request_id=4DF46527-B034-43C3-BCDD-FA45640C2140 user_id_hash=97b9c16cfa79de01 language=es has_message=True title_len=38
+608:2026-05-14 11:56:30,076 app.chat.repositories.conversations DEBUG chat.repo.create_conversation.start user_id_prefix=c9e496ed language=es has_message=True title_len=38
+609:2026-05-14 11:56:30,084 app.chat.repositories.conversations DEBUG chat.repo.create_conversation.done conv_id_prefix=b5214ac1 has_message=True
+610:2026-05-14 11:56:30,084 app.chat.services.create_conversation DEBUG chat.service.create_conversation.done request_id=4DF46527-B034-43C3-BCDD-FA45640C2140 user_id_hash=97b9c16cfa79de01 conv_id_prefix=b5214ac1 latency_ms=8.1
+611:2026-05-14 11:56:30,091 app.chat.routers.conversations DEBUG chat.routers.create_conversation.done request_id=4DF46527-B034-43C3-BCDD-FA45640C2140 uid_hash=97b9c16cfa79de01 conv_prefix=b5214ac1 status=201 ms=12.8
+
+=== Log Analysis (P03-S02-T001 Tester Run) ===
+
+Request IDs used:
+  2FA verify: 931FE347-FB39-4EBB-94E2-6534D8034644
+  GET /users/me (tester): FFAE10A0-F2A8-444F-858C-6823F7A01407
+  POST /chat/conversations (tester run 1): 51D83E67-BAF7-4CB8-A1C1-E02AEE620468
+  POST /chat/conversations (tester run 2): 4DF46527-B034-43C3-BCDD-FA45640C2140
+
+Logging verification:
+  BEFORE patterns observed:
+    - users.deps.get_current_user.start (BEFORE auth check)
+    - users.service.get_current_user_profile.start (BEFORE DB fetch)
+    - chat.routers.create_conversation.start (BEFORE conversation create)
+    - chat.service.create_conversation.start (BEFORE service layer)
+    - chat.repo.create_conversation.start (BEFORE DB write)
+
+  AFTER patterns observed:
+    - users.deps.get_current_user.done (AFTER auth check)
+    - users.service.get_current_user_profile.done (AFTER DB fetch)
+    - chat.routers.create_conversation.done (AFTER conversation create, includes status=201 + ms=)
+    - chat.service.create_conversation.done (AFTER service, includes latency_ms)
+    - chat.repo.create_conversation.done (AFTER DB write)
+
+  No PII observed:
+    - user_id logged as uid_hash=97b9c16cfa79de01 (hash, not full UUID)
+    - No email, full_name, password_hash, access_token in logs
+    - conversation content NOT logged (only title_len=38)
+    - X-Request-ID propagated in all relevant log lines
+
+  ENABLE_VERBOSE_LOGGING note:
+    - Backend runs uvicorn with default log level; all DEBUG lines visible
+    - These DEBUG/INFO lines correspond to ENABLE_VERBOSE_LOGGING=true behavior
+    - On false, only WARNING+ would be visible (e.g. auth.sign_in.locked)

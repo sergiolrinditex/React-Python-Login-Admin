@@ -1,0 +1,45 @@
+=== VERIFY-SLICE EVIDENCE ===
+
+DATE: 2026-05-14T10:23:08Z
+
+=== 1. Backend health ===
+{"data":{"status":"ok","version":"0.1.0","uptime":1990.74}}
+
+=== 2. Auth flow (sign-in + 2FA) ===
+MFA_CHALLENGE_TOKEN: obtained (JWT prefix elided for security)
+2FA_VERIFY: HTTP 200 OK
+ACCESS_TOKEN: obtained (JWT prefix elided)
+USER_ID: c9e496ed-d735-4322-8979-bd6fff32b2a2
+
+=== 3. GET /api/v1/users/me ===
+{
+  "id": "c9e496ed-d735-4322-8979-bd6fff32b2a2",
+  "email": "employee.verification@inditex-sandbox.com",
+  "preferred_language": "es",
+  "roles": [
+    "employee"
+  ],
+  "status": "active",
+  "has_employee_profile": true
+}
+
+=== 4. POST /api/v1/chat/conversations (success flow) ===
+HTTP_STATUS: 201
+{
+  "conversation_id": "0802885a-7ff5-4935-a317-de68e1379f2a"
+}
+
+=== 5. GET /api/v1/chat/conversations (list count) ===
+COUNT: 6
+  id: 0802885a-7ff5-4935-a317-de68e1379f2a language: es title_len: 38
+  id: 93effb91-f208-40c6-8c12-63baafd00102 language: es title_len: 29
+  id: 949283fc-6ad1-4cea-bbcd-78013c995d9e language: es title_len: 38
+  id: 753ccda8-c00d-4fbe-b999-dcf7dbf322b6 language: es title_len: 38
+  id: b5214ac1-f3cb-4aec-8f57-b85846cf99da language: es title_len: 38
+
+=== 6. DB direct query (conversation row) ===
+                  id                  |               user_id                | language |                 title                  |          created_at           
+--------------------------------------+--------------------------------------+----------+----------------------------------------+-------------------------------
+ 0802885a-7ff5-4935-a317-de68e1379f2a | c9e496ed-d735-4322-8979-bd6fff32b2a2 | es       | ¿Cuántos días de vacaciones me quedan? | 2026-05-14 10:23:07.815371+00
+(1 fila)
+

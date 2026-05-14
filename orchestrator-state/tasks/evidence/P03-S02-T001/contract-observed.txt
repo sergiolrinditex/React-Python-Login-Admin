@@ -1,0 +1,74 @@
+Contract Observed — P03-S02-T001
+Date: 2026-05-14
+Tester run
+
+=== Front → Back → DB Contract Observed ===
+
+Route/Page:
+  /chat → ChatHomePage (RequireAuth guard, authenticated employee)
+
+API Client (frontend):
+  chatRepository.createConversation via authFetch
+  Endpoint: POST /api/v1/chat/conversations
+  Request: {initial_message: string, language: "es"|"en"|"fr"}
+  Auth: Bearer <access_token> injected by authFetch
+  X-Request-ID: injected by authFetch (UUID v4)
+  Same-origin proxy: /api/v1/... (relative, vite proxy → localhost:8000)
+
+API Client (frontend):
+  AuthProvider.fetchMe via authFetch
+  Endpoint: GET /api/v1/users/me
+  Request: none (Bearer token in header)
+
+DTO observed (POST /chat/conversations):
+  Request: {"initial_message":"¿Cuántos días de vacaciones me quedan?","language":"es"}
+  Response: {"data":{"conversation_id":"42a68921-..."},"meta":{...},"errors":[]}
+  Envelope: {data, meta:{request_id, pagination}, errors} — matches TECHNICAL_GUIDE §6.2
+
+DTO observed (GET /users/me):
+  Response: {"data":{"id":"c9e496ed-...","email":"...","full_name":"Elena Verificación",
+             "status":"active","preferred_language":"es","roles":["employee"],
+             "employee_profile":{...},"created_at":"...","updated_at":"..."}}
+
+Backend endpoint:
+  POST /api/v1/chat/conversations (app/chat/routers/conversations.py)
+  GET /api/v1/users/me (app/users/routers/me.py)
+
+Service layer:
+  chat.services.create_conversation (observed in backend logs: chat.service.create_conversation.start/done)
+  users.services.get_current_user_profile (observed: users.service.get_current_user_profile.start/done)
+
+Repository layer:
+  chat.repositories.conversations (observed: chat.repo.create_conversation.start/done)
+  users.repositories.user_profile (observed: user_profile.repository.find_by_id.start/done)
+
+Tables written (observed via DB query):
+  conversations: row created (id, user_id, language, title confirmed)
+  messages: row created atomically with conversation (D-TX1 pattern)
+  audit_logs: auth.mfa.verify row written (auth/sign-in audit trail)
+
+Tables read:
+  users: employee user fetched by auth guard
+  user_roles: roles=["employee"] confirmed
+  employee_profiles: employee_profile joined in GET /users/me response
+  mfa_totp_secrets: enabled=true for MFA flow
+
+Logging contract verified:
+  BEFORE: chat.routers.create_conversation.start, chat.service.create_conversation.start,
+          chat.repo.create_conversation.start, users.service.get_current_user_profile.start
+  AFTER:  chat.routers.create_conversation.done (status=201), chat.service.create_conversation.done
+          (latency_ms), chat.repo.create_conversation.done, users.service.get_current_user_profile.done
+  No PII: uid logged as uid_hash (partial hash), title_len logged (not title content),
+          no email/full_name/access_token observed in any log line
+  X-Request-ID: propagated in all request-scoped log lines
+
+Frontend logging (with VITE_ENABLE_VERBOSE_LOGGING=true):
+  BEFORE: chat.repo.createConversation.start {prompt_len, language} — NO prompt content
+  AFTER:  chat.repo.createConversation.ok {conversation_id, language, request_id}
+  ERROR:  chat.repo.createConversation.validation_error, .forbidden, .server_error, .error
+          — all verified in tests-frontend-verbose-true.txt
+
+Frontend logging (with VITE_ENABLE_VERBOSE_LOGGING=false):
+  Only warning+error level visible: chat.repo.createConversation.validation_error (stderr),
+  chat.repo.createConversation.forbidden (stderr), chat.repo.createConversation.server_error (stderr)
+  — verified in tests-frontend-verbose-false.txt
