@@ -2,7 +2,11 @@ id: P02-S06-T004
 phase_id: P02
 step_id: P02-S06
 title: "Create scripts/minio-bootstrap.sh referenced by docker-compose minio-init"
-status: blocked
+status: done
+waived: true
+waiver_reason: "Duplicate of P02-S06-T003 — same FU (create scripts/minio-bootstrap.sh) was promoted twice; waived to unblock DAG."
+waived_at: "2026-05-14T05:30:00+00:00"
+waived_by: "main-orchestrator-maintenance"
 kind: "wiring"
 target: "Create scripts/minio-bootstrap.sh referenced by docker-compose minio-init"
 product_increment: "current"

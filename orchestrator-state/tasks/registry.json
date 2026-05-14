@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-14T04:03:33+00:00",
+  "generated_at": "2026-05-14T04:26:01+00:00",
   "project_prefix": "HILO_PEOPLE",
   "phase_order": [
     "P00",
@@ -3561,7 +3561,7 @@
       "phase_id": "P02",
       "step_id": "P02-S06",
       "title": "Create scripts/minio-bootstrap.sh referenced by docker-compose minio-init",
-      "status": "blocked",
+      "status": "done",
       "build_state": "planned",
       "product_increment": "current",
       "risk_level": "medium",
@@ -3632,21 +3632,13 @@
       "blocked_by": [
         "P02-S06-T003"
       ],
-      "blocked_reason": "conflict_with_worker_task",
-      "last_blocker": {
-        "type": "conflict_with_worker_task",
-        "blockers": [
-          {
-            "task_id": "P02-S06-T003",
-            "status": "ready_for_close",
-            "reasons": [
-              "conflict_groups=api:rag-docs",
-              "write_set=scripts/minio-bootstrap.sh"
-            ]
-          }
-        ],
-        "ts": "2026-05-14T04:06:23+00:00"
-      }
+      "blocked_reason": "",
+      "last_outcome": "waived",
+      "last_note": "Duplicate of P02-S06-T003 — same FU (create scripts/minio-bootstrap.sh) was promoted twice; waived to unblock DAG.",
+      "last_stop_at": "2026-05-14T04:26:01+00:00",
+      "last_updated_by": "main-orchestrator-maintenance",
+      "validator_outcome": "waived",
+      "validator_next_status": "done"
     },
     {
       "id": "P03-S01-T001",
