@@ -1,0 +1,32 @@
+## Verification Data Contract rows used — tester run P03-S01-T002
+## Source: TECHNICAL_GUIDE §6.5 J100 row + task pack §6
+
+=== Rows used ===
+
+1. Happy path (fresh corporate email):
+   - Provided by tester: tester.t002+1778759384@inditex-sandbox.com / TesterRealPass!2024 / Tester Real / legal_acceptance=true
+   - Domain: inditex-sandbox.com (in CORPORATE_EMAIL_DOMAINS allowlist)
+   - Result: 201 Created, user_id=d43d5eab-5952-4394-9a63-e608e19e8032
+   - Persisted: users row active + audit_log entry
+
+2. Non-corporate email rejection:
+   - Payload: email=tester.bad@gmail.com
+   - Domain: gmail.com (NOT in allowlist)
+   - Result: 400 AUTH_SIGNUP_NON_CORPORATE_EMAIL, field="email"
+
+3. Email already taken (409):
+   - Reused developer email: signup.test+t002b@inditex-sandbox.com (id=1787fec1-...)
+   - Result: 409 AUTH_SIGNUP_EMAIL_TAKEN, field=null (anti-enumeration verified)
+
+4. Password too short (422):
+   - Payload: password="abc" (3 chars, min policy = 12)
+   - Result: 422 AUTH_SIGNUP_INVALID_PAYLOAD, field="password"
+
+5. Legal not accepted (400):
+   - Payload: legal_acceptance=false
+   - Result: 400 AUTH_SIGNUP_LEGAL_NOT_ACCEPTED, field="legal_acceptance"
+
+=== Persisted data observed ===
+- users: 3 rows (tester + 2 from developer run)
+- audit_logs: 8 auth.sign_up entries (successful + rejections with actor=NULL)
+- employee_profiles: 0 rows for sign-up users (correct per BR7)

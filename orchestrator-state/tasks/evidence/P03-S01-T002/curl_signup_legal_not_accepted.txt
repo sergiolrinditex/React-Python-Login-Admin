@@ -1,0 +1,1 @@
+{"data":null,"meta":{"request_id":"22a94298-0d7e-4703-aa86-d9025169c633"},"errors":[{"code":"AUTH_SIGNUP_LEGAL_NOT_ACCEPTED","message":"Legal acceptance is required to complete registration","field":"legal_acceptance","details":null}]}

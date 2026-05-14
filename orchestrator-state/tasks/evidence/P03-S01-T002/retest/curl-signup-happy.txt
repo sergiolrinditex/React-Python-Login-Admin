@@ -1,0 +1,8 @@
+HTTP/1.1 201 Created
+date: Thu, 14 May 2026 12:28:34 GMT
+server: uvicorn
+x-request-id: retest-happy-1778761714
+content-length: 140
+content-type: application/json
+
+{"data":{"user_id":"68cbf6c5-56b2-454b-a13e-28efec15e98a","mfa_required":false},"meta":{"request_id":"retest-happy-1778761714"},"errors":[]}

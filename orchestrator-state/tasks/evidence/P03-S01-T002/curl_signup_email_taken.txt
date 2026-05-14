@@ -1,0 +1,1 @@
+{"data":null,"meta":{"request_id":"92233fee-87f0-4f0e-803f-f61994af9df3"},"errors":[{"code":"AUTH_SIGNUP_EMAIL_TAKEN","message":"An account with that email exists or cannot be created","field":null,"details":null}]}

@@ -1,0 +1,43 @@
+## Frontend tests — tester run
+## Command: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/frontend/node_modules/.bin/vitest run --root /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S01-T002/frontend --reporter=verbose
+
+ RUN  v3.2.4 /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S01-T002/frontend
+
+=== useSignUp.test.tsx (17 tests) ===
+ ✓ useSignUp > T01: zod schema rejects invalid email — form validation layer (hook passes through)
+ ✓ useSignUp > T02: zod schema rejects password < 12 — zod layer; hook passes length to repo
+ ✓ useSignUp > T03: zod schema requires letter + digit — zod layer; hook passes through
+ ✓ useSignUp > T04: zod schema requires legal_acceptance true — zod layer; hook passes through
+ ✓ useSignUp > T05: zod schema strips full_name — confirmed by hook passing trimmed value
+ ✓ useSignUp > T06: happy path — repo returns 201 → onSuccess called with outcome
+ ✓ useSignUp > T07: 400 AUTH_SIGNUP_NON_CORPORATE_EMAIL → NonCorporateEmailError surfaced
+ ✓ useSignUp > T08: 400 AUTH_SIGNUP_LEGAL_NOT_ACCEPTED → LegalNotAcceptedError surfaced
+ ✓ useSignUp > T09: 409 AUTH_SIGNUP_EMAIL_TAKEN → EmailTakenError surfaced
+ ✓ useSignUp > T10: 422 AUTH_SIGNUP_INVALID_PAYLOAD (password) → PasswordPolicyError surfaced
+ ✓ useSignUp > T11: 429 AUTH_SIGNUP_RATE_LIMITED → SignupRateLimitedError with retryAfter
+ ✓ useSignUp > T12: TypeError network error → NetworkError surfaced
+ ✓ useSignUp > T13: 500 server error → SignupInternalError surfaced
+ ✓ useSignUp > T14: logger NEVER logs full email, password, or full_name — PII safety
+ ✓ useSignUp > T14b: clearError resets error state
+ ✓ useSignUp > T14c: 422 generic payload error → SignupValidationError surfaced
+
+=== SignUpPage.test.tsx (10 tests) ===
+ ✓ SignUpPage > T01: renders with i18n ES keys — title, email, fullName, password, checkbox label, CTA
+ ✓ SignUpPage > T02: invalid email → aria-invalid + error message visible
+ ✓ SignUpPage > T03: legal acceptance required — uncheck shows error; check + submit succeeds
+ ✓ SignUpPage > T04: happy path → navigates to /auth/sign-in with flash state
+ ✓ SignUpPage > T05: 400 non-corporate email → form-level error shown in permission_denied state
+ ✓ SignUpPage > T06: 409 email taken → generic error copy, NO email field highlight (anti-enumeration)
+ ✓ SignUpPage > T07: 422 password policy → form-level error in error_validation state
+ ✓ SignUpPage > T08: 429 rate-limited → submit disabled + countdown copy with seconds interpolated
+ ✓ SignUpPage > T09: TypeError network error → error_network copy with 'Sin conexión'
+ ✓ SignUpPage > T10: keyboard-only flow — Tab through all inputs + checkbox + submit is reachable
+
+=== Regression (130 prior tests) ===
+All 130 prior tests PASS (useSignIn 11, auth 20+, ChatHomePage 8, design-system 21, providers 4, i18n 14, SignInPage 10, chatRepository 7, useCreateConversation 4, ShowcasePage 4)
+
+Test Files  12 passed (12)
+     Tests  157 passed (157)
+  Duration  2.56s
+
+TypeScript: tsc --noEmit → EXIT 0 (zero errors)

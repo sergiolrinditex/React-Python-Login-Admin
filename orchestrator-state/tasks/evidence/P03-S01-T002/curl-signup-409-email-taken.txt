@@ -1,0 +1,12 @@
+## Tester run — POST /api/v1/auth/sign-up — 409 email already taken
+## Email: signup.test+t002b@inditex-sandbox.com (developer-created, now duplicate)
+
+HTTP/1.1 409 Conflict
+date: Thu, 14 May 2026 11:49:51 GMT
+server: uvicorn
+content-length: 215
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"47f50123-4f2b-4634-adaa-d1e24d630eb8"},"errors":[{"code":"AUTH_SIGNUP_EMAIL_TAKEN","message":"An account with that email exists or cannot be created","field":null,"details":null}]}
+
+RESULT: PASS — 409, code=AUTH_SIGNUP_EMAIL_TAKEN, field=null (anti-enumeration confirmed)

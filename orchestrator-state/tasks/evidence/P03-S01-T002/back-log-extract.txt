@@ -1,0 +1,41 @@
+## Backend log extract — sign-up BEFORE/AFTER pattern verification
+## Source: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/orchestrator-state/dev-logs/back.log
+## Filter: grep "sign.up|signup|sign_up|tester.t002|1778759384|bd3d233e|47f50123|ea991d17|914778e9"
+
+=== TESTER HAPPY PATH (request_id=tester-t002-ts1778759384) ===
+2026-05-14 13:49:44,091 app.auth.routers.sign_up INFO  auth.sign_up.received email_domain=inditex-sandbox.com request_id=tester-t002-ts1778759384
+2026-05-14 13:49:44,091 app.auth.services.sign_up INFO  auth.sign_up.starting request_id=tester-t002-ts1778759384 email_domain=inditex-sandbox.com
+[... DB insert + argon2 hash ...]
+2026-05-14 13:49:44,147 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.sign_up actor_user_id=d43d5eab-5952-4394-9a63-e608e19e8032
+2026-05-14 13:49:44,150 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=ab1a5dea-ca9e-4fe2-884d-37e744d656ca action=auth.sign_up
+2026-05-14 13:49:44,157 app.auth.services.sign_up INFO  auth.sign_up.success user_id=d43d5eab-5952-4394-9a63-e608e19e8032 request_id=tester-t002-ts1778759384
+2026-05-14 13:49:44,158 app.auth.routers.sign_up INFO  auth.sign_up.response_sent user_id=d43d5eab-5952-4394-9a63-e608e19e8032 request_id=tester-t002-ts1778759384
+INFO: 127.0.0.1:58950 - "POST /api/v1/auth/sign-up HTTP/1.1" 201 Created
+
+=== TESTER 400 NON-CORPORATE (request_id=bd3d233e-af5b-4d0f-a5c6-055ff5c332ec) ===
+2026-05-14 13:49:50,891 app.auth.routers.sign_up INFO  auth.sign_up.received email_domain=gmail.com request_id=bd3d233e-af5b-4d0f-a5c6-055ff5c332ec
+2026-05-14 13:49:50,892 app.auth.services.sign_up INFO  auth.sign_up.starting request_id=bd3d233e-af5b-4d0f-a5c6-055ff5c332ec email_domain=gmail.com
+2026-05-14 13:49:50,892 app.auth.services.sign_up WARNING auth.sign_up.rejected reason=NON_CORPORATE_EMAIL email_domain=gmail.com request_id=bd3d233e-af5b-4d0f-a5c6-055ff5c332ec
+INFO: 127.0.0.1:58956 - "POST /api/v1/auth/sign-up HTTP/1.1" 400 Bad Request
+
+=== TESTER 409 EMAIL TAKEN (request_id=47f50123-4f2b-4634-adaa-d1e24d630eb8) ===
+2026-05-14 13:49:52,049 app.auth.routers.sign_up INFO  auth.sign_up.received email_domain=inditex-sandbox.com request_id=47f50123-4f2b-4634-adaa-d1e24d630eb8
+2026-05-14 13:49:52,049 app.auth.services.sign_up INFO  auth.sign_up.starting request_id=47f50123-4f2b-4634-adaa-d1e24d630eb8 email_domain=inditex-sandbox.com
+2026-05-14 13:49:52,132 app.auth.services.sign_up INFO  auth.sign_up.rejected reason=EMAIL_TAKEN email_domain=inditex-sandbox.com request_id=47f50123-4f2b-4634-adaa-d1e24d630eb8
+INFO: 127.0.0.1:58958 - "POST /api/v1/auth/sign-up HTTP/1.1" 409 Conflict
+
+=== TESTER 422 PASSWORD SHORT (request_id=ea991d17-366d-49c3-bb34-91fa014686a2) ===
+2026-05-14 13:49:53,189 app.auth.routers.sign_up INFO  auth.sign_up.received email_domain=inditex-sandbox.com request_id=ea991d17-366d-49c3-bb34-91fa014686a2
+2026-05-14 13:49:53,189 app.auth.services.sign_up INFO  auth.sign_up.starting request_id=ea991d17-366d-49c3-bb34-91fa014686a2 email_domain=inditex-sandbox.com
+INFO: 127.0.0.1:58960 - "POST /api/v1/auth/sign-up HTTP/1.1" 422 Unprocessable Entity
+
+=== TESTER 400 LEGAL NOT ACCEPTED (request_id=914778e9-9c9b-47b1-a54f-cbbaf490b2f7) ===
+2026-05-14 13:49:54,272 app.auth.routers.sign_up INFO  auth.sign_up.received email_domain=inditex-sandbox.com request_id=914778e9-9c9b-47b1-a54f-cbbaf490b2f7
+2026-05-14 13:49:54,272 app.auth.services.sign_up INFO  auth.sign_up.starting request_id=914778e9-9c9b-47b1-a54f-cbbaf490b2f7 email_domain=inditex-sandbox.com
+2026-05-14 13:49:54,272 app.auth.services.sign_up WARNING auth.sign_up.rejected reason=LEGAL_NOT_ACCEPTED request_id=914778e9-9c9b-47b1-a54f-cbbaf490b2f7
+INFO: 127.0.0.1:58965 - "POST /api/v1/auth/sign-up HTTP/1.1" 400 Bad Request
+
+=== PII VERIFICATION ===
+Grep for "password" in sign-up log lines: NONE FOUND
+Grep for "@inditex-sandbox.com" (full email) in log: NONE FOUND in sign-up handlers
+Only "email_domain=inditex-sandbox.com" appears, not the full email address

@@ -1,0 +1,18 @@
+=== NETWORK REQUEST EVIDENCE — RELATIVE PATH CONFIRMATION ===
+Timestamp: 2026-05-14T12:35:00Z
+Task: P03-S01-T002
+Fix verified: authRepository.ts:49 ?? "" (empty string fallback)
+
+== All fetch/XHR requests during permission_denied test ==
+reqid=320 POST http://localhost:5173/api/v1/auth/refresh [200]
+reqid=321 POST http://localhost:5173/api/v1/auth/refresh [401]
+reqid=323 POST http://localhost:5173/api/v1/auth/sign-up [400]
+
+== KEY FINDING ==
+ALL sign-up requests go to http://localhost:5173/api/v1/auth/sign-up
+(port 5173 = Vite dev server, NOT port 8000 = backend directly)
+This confirms relative path routing via Vite proxy per ADR-002.
+NO CORS errors. No http://localhost:8000/... in any request.
+
+Previously (before fix): requests went to http://localhost:8000/api/v1/auth/sign-up
+causing CORS preflight failures. Fixed by changing ?? "http://localhost:8000" to ?? ""

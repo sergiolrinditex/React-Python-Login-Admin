@@ -1,0 +1,7 @@
+HTTP/1.1 409 Conflict
+date: Thu, 14 May 2026 12:37:16 GMT
+server: uvicorn
+content-length: 199
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"verifier-pass2-taken"},"errors":[{"code":"AUTH_SIGNUP_EMAIL_TAKEN","message":"An account with that email exists or cannot be created","field":null,"details":null}]}

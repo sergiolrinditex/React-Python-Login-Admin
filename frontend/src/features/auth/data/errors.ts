@@ -3,6 +3,7 @@
  *
  * Slice/Phase: P01-S03-T001 — Auth state provider and protected route guards / Phase 1.
  *   Extended in P03-S01-T001 — SignInPage: added sign-in-specific error classes.
+ *   Extended in P03-S01-T002 — SignUpPage: added sign-up-specific error classes (§D-T002-AUTH-ERRORS).
  *
  * Responsibility: Typed error classes for auth operations.
  *   authRepository.ts throws these; presentation/ catches them via Result<T,E> patterns.
@@ -12,6 +13,9 @@
  *   Sign-in error codes (§3.4 task pack): AUTH_INVALID_CREDENTIALS (401),
  *   AUTH_ACCOUNT_LOCKED (423), AUTH_SIGNIN_RATE_LIMITED (429),
  *   AUTH_SIGNIN_VALIDATION (400), AUTH_SIGNIN_INTERNAL_ERROR (500).
+ *   Sign-up error codes (§5 task pack): AUTH_SIGNUP_NON_CORPORATE_EMAIL (400),
+ *   AUTH_SIGNUP_LEGAL_NOT_ACCEPTED (400), AUTH_SIGNUP_EMAIL_TAKEN (409),
+ *   AUTH_SIGNUP_INVALID_PAYLOAD (422), AUTH_SIGNUP_RATE_LIMITED (429).
  */
 
 // ---------------------------------------------------------------------------
@@ -131,6 +135,119 @@ export class SigninInternalError extends Error {
   constructor(status: number, message = "Error interno del servidor.") {
     super(message);
     this.name = "SigninInternalError";
+    this.status = status;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Sign-up specific errors (P03-S01-T002 — §D-T002-AUTH-ERRORS)
+// ---------------------------------------------------------------------------
+
+/**
+ * Non-corporate email domain — server returned 400 AUTH_SIGNUP_NON_CORPORATE_EMAIL.
+ * Email domain is not in the CORPORATE_EMAIL_DOMAINS allowlist (env-var controlled).
+ * UI state: permission_denied → field-level inline error on email.
+ * Anti-enumeration note: field "email" IS returned for this code (unlike 409).
+ */
+export class NonCorporateEmailError extends Error {
+  public readonly code = "AUTH_SIGNUP_NON_CORPORATE_EMAIL";
+
+  constructor(message = "Este email no es un email corporativo válido.") {
+    super(message);
+    this.name = "NonCorporateEmailError";
+  }
+}
+
+/**
+ * Legal terms not accepted — server returned 400 AUTH_SIGNUP_LEGAL_NOT_ACCEPTED.
+ * Triggered when legal_acceptance is false or missing in the request body.
+ * UI state: error_validation → checkbox-adjacent inline error.
+ */
+export class LegalNotAcceptedError extends Error {
+  public readonly code = "AUTH_SIGNUP_LEGAL_NOT_ACCEPTED";
+
+  constructor(message = "Debes aceptar los términos y condiciones para continuar.") {
+    super(message);
+    this.name = "LegalNotAcceptedError";
+  }
+}
+
+/**
+ * Email taken / account creation failed — server returned 409 AUTH_SIGNUP_EMAIL_TAKEN.
+ * Anti-enumeration: server returns NO field for 409 (does not reveal whether email exists).
+ * UI state: error_validation → generic copy (no email field highlight).
+ * D-T002-409-NO-FIELD: field intentionally absent, show generic message.
+ */
+export class EmailTakenError extends Error {
+  public readonly code = "AUTH_SIGNUP_EMAIL_TAKEN";
+
+  constructor(message = "No se pudo crear la cuenta con ese email.") {
+    super(message);
+    this.name = "EmailTakenError";
+  }
+}
+
+/**
+ * Password policy violation — server returned 422 AUTH_SIGNUP_INVALID_PAYLOAD (field: password).
+ * Policy: min 12 chars, max 256, ≥1 letter, ≥1 digit.
+ * The client-side zod schema mirrors this for UX, but server is authoritative.
+ * D-T002-PASSWORD-PRE-VALIDATE: pre-validated client-side; server is still authoritative.
+ */
+export class PasswordPolicyError extends Error {
+  public readonly code = "AUTH_SIGNUP_INVALID_PAYLOAD_PASSWORD";
+  /** The field where the error occurred, if provided by the server. */
+  public readonly field: string;
+
+  constructor(field = "password", message = "La contraseña no cumple la política de seguridad.") {
+    super(message);
+    this.name = "PasswordPolicyError";
+    this.field = field;
+  }
+}
+
+/**
+ * Rate limited — server returned 429 AUTH_SIGNUP_RATE_LIMITED.
+ * Carries retryAfter seconds from the Retry-After response header.
+ * UI state: permission_denied → disabled submit + countdown copy.
+ */
+export class SignupRateLimitedError extends Error {
+  public readonly code = "AUTH_SIGNUP_RATE_LIMITED";
+  /** Seconds to wait before retrying, from Retry-After header. 0 if header absent. */
+  public readonly retryAfter: number;
+
+  constructor(retryAfter = 0, message = "Demasiados intentos. Intenta de nuevo más tarde.") {
+    super(message);
+    this.name = "SignupRateLimitedError";
+    this.retryAfter = retryAfter;
+  }
+}
+
+/**
+ * Generic payload validation error — server returned 400/422 for email, full_name, or other fields.
+ * Carries optional field name and message from the backend envelope.
+ */
+export class SignupValidationError extends Error {
+  public readonly code = "AUTH_SIGNUP_VALIDATION";
+  /** Backend field name where the error occurred. */
+  public readonly field?: string;
+
+  constructor(field?: string, message = "Datos de registro no válidos.") {
+    super(message);
+    this.name = "SignupValidationError";
+    this.field = field;
+  }
+}
+
+/**
+ * Internal server error from sign-up — server returned 500 or unexpected status.
+ */
+export class SignupInternalError extends Error {
+  public readonly code = "AUTH_SIGNUP_INTERNAL_ERROR";
+  public readonly status: number;
+
+  constructor(status: number, message = "Error interno del servidor.") {
+    super(message);
+    this.name = "SignupInternalError";
     this.status = status;
   }
 }

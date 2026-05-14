@@ -1,0 +1,7 @@
+HTTP/1.1 400 Bad Request
+date: Thu, 14 May 2026 12:28:34 GMT
+server: uvicorn
+content-length: 235
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"65ca6a0a-0685-4063-b089-da4fa4b6abfd"},"errors":[{"code":"AUTH_SIGNUP_LEGAL_NOT_ACCEPTED","message":"Legal acceptance is required to complete registration","field":"legal_acceptance","details":null}]}

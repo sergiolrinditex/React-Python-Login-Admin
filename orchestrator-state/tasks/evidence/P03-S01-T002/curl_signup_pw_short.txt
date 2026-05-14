@@ -1,0 +1,1 @@
+{"data":null,"meta":{"request_id":"b1532a4d-1152-400e-a514-754e51142984"},"errors":[{"code":"AUTH_SIGNUP_INVALID_PAYLOAD","message":"Password policy violation: Password must be at least 12 characters","field":"password","details":null}]}

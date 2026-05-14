@@ -1,0 +1,425 @@
+
+ RUN  v3.2.4 /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S01-T002/frontend
+
+stderr | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T02 — 400 → Result.err(ChatValidationError)
+[chat] chat.repo.createConversation.validation_error { status: [33m400[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T03 — 403 → Result.err(ChatForbiddenError)
+[chat] chat.repo.createConversation.forbidden { status: [33m403[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T04 — 5xx → Result.err(ChatServerError)
+[chat] chat.repo.createConversation.server_error { status: [33m500[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T05 — network throw → Result.err(ChatNetworkError)
+[chat] chat.repo.createConversation.error { error: [32m'CHAT_NETWORK_ERROR'[39m, message: [32m'Failed to fetch'[39m }
+
+stderr | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T07 — AuthSessionExpiredError from authFetch → Result.err(ChatAuthExpiredError)
+[chat] chat.repo.createConversation.error {
+  error: [32m'CHAT_NETWORK_ERROR'[39m,
+  message: [32m'Session expired or invalid; please sign in again.'[39m
+}
+
+ ✓ src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T01 — happy path → Result.ok with conversation data 5ms
+ ✓ src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T02 — 400 → Result.err(ChatValidationError) 4ms
+ ✓ src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T03 — 403 → Result.err(ChatForbiddenError) 0ms
+ ✓ src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T04 — 5xx → Result.err(ChatServerError) 0ms
+ ✓ src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T05 — network throw → Result.err(ChatNetworkError) 0ms
+ ✓ src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T06 — request shape: POST, Content-Type, JSON body 3ms
+ ✓ src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T07 — AuthSessionExpiredError from authFetch → Result.err(ChatAuthExpiredError) 0ms
+stderr | src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T05: 401 invalid credentials — sets InvalidCredentialsError
+[auth] auth.signin.hook.submit.error { error_name: [32m'InvalidCredentialsError'[39m }
+
+stderr | src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T06: 423 account locked — sets AccountLockedError
+[auth] auth.signin.hook.submit.error { error_name: [32m'AccountLockedError'[39m }
+
+stderr | src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T07: 429 rate limited with Retry-After — sets RateLimitedError carrying retry_after
+[auth] auth.signin.hook.submit.error { error_name: [32m'RateLimitedError'[39m }
+
+stderr | src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T08: TypeError network error — sets NetworkError
+[auth] auth.signin.hook.submit.error { error_name: [32m'NetworkError'[39m }
+
+stderr | src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T07: 400 AUTH_SIGNUP_NON_CORPORATE_EMAIL → NonCorporateEmailError surfaced
+[auth] auth.signup.hook.submit.error { error_name: [32m'NonCorporateEmailError'[39m }
+
+stderr | src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T09: 500 server error — sets SigninInternalError
+[auth] auth.signin.hook.submit.error { error_name: [32m'SigninInternalError'[39m }
+
+stderr | src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T08: 400 AUTH_SIGNUP_LEGAL_NOT_ACCEPTED → LegalNotAcceptedError surfaced
+[auth] auth.signup.hook.submit.error { error_name: [32m'LegalNotAcceptedError'[39m }
+
+stderr | src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T09: 409 AUTH_SIGNUP_EMAIL_TAKEN → EmailTakenError surfaced
+[auth] auth.signup.hook.submit.error { error_name: [32m'EmailTakenError'[39m }
+
+stderr | src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T10: 422 AUTH_SIGNUP_INVALID_PAYLOAD (password) → PasswordPolicyError surfaced
+[auth] auth.signup.hook.submit.error { error_name: [32m'PasswordPolicyError'[39m }
+
+stderr | src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T11: 429 AUTH_SIGNUP_RATE_LIMITED → SignupRateLimitedError with retryAfter
+[auth] auth.signup.hook.submit.error { error_name: [32m'SignupRateLimitedError'[39m }
+
+stderr | src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T12: TypeError network error → NetworkError surfaced
+[auth] auth.signup.hook.submit.error { error_name: [32m'NetworkError'[39m }
+
+stderr | src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T13: 500 server error → SignupInternalError surfaced
+[auth] auth.signup.hook.submit.error { error_name: [32m'SignupInternalError'[39m }
+
+stderr | src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T14: logger NEVER logs full email, password, or full_name — PII safety
+[auth] auth.signup.hook.submit.error { error_name: [32m'NonCorporateEmailError'[39m }
+
+stderr | src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T14b: clearError resets error state
+[auth] auth.signup.hook.submit.error { error_name: [32m'NetworkError'[39m }
+
+stderr | src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T11: never logs password in any log event
+[auth] auth.signin.hook.submit.error { error_name: [32m'InvalidCredentialsError'[39m }
+
+stderr | src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T14c: 422 generic payload error → SignupValidationError surfaced
+[auth] auth.signup.hook.submit.error { error_name: [32m'SignupValidationError'[39m }
+
+ ✓ src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T01: validates email format via zod — hook returns error on invalid email 10ms
+ ✓ src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T02: validates password required — hook calls repo with given password 1ms
+ ✓ src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T03: success no-MFA — returns outcome and calls onSuccess with token + user 1ms
+ ✓ src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T04: MFA branch — returns outcome with kind:mfa, does NOT call onSuccess 1ms
+ ✓ src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T05: 401 invalid credentials — sets InvalidCredentialsError 3ms
+ ✓ src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T06: 423 account locked — sets AccountLockedError 1ms
+ ✓ src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T07: 429 rate limited with Retry-After — sets RateLimitedError carrying retry_after 1ms
+ ✓ src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T08: TypeError network error — sets NetworkError 1ms
+ ✓ src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T09: 500 server error — sets SigninInternalError 2ms
+ ✓ src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T10: logs auth.signin.submit.start with email_domain only — never logs full email 1ms
+ ✓ src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T11: never logs password in any log event 1ms
+ ✓ src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T01: zod schema rejects invalid email — form validation layer (hook passes through) 12ms
+ ✓ src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T02: zod schema rejects password < 12 — zod layer; hook passes length to repo 2ms
+ ✓ src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T03: zod schema requires letter + digit — zod layer; hook passes through 1ms
+ ✓ src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T04: zod schema requires legal_acceptance true — zod layer; hook passes through 1ms
+ ✓ src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T05: zod schema strips full_name — confirmed by hook passing trimmed value 1ms
+ ✓ src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T06: happy path — repo returns 201 → onSuccess called with outcome 1ms
+ ✓ src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T07: 400 AUTH_SIGNUP_NON_CORPORATE_EMAIL → NonCorporateEmailError surfaced 2ms
+ ✓ src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T08: 400 AUTH_SIGNUP_LEGAL_NOT_ACCEPTED → LegalNotAcceptedError surfaced 1ms
+ ✓ src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T09: 409 AUTH_SIGNUP_EMAIL_TAKEN → EmailTakenError surfaced 1ms
+ ✓ src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T10: 422 AUTH_SIGNUP_INVALID_PAYLOAD (password) → PasswordPolicyError surfaced 1ms
+ ✓ src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T11: 429 AUTH_SIGNUP_RATE_LIMITED → SignupRateLimitedError with retryAfter 1ms
+ ✓ src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T12: TypeError network error → NetworkError surfaced 1ms
+ ✓ src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T13: 500 server error → SignupInternalError surfaced 1ms
+ ✓ src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T14: logger NEVER logs full email, password, or full_name — PII safety 1ms
+ ✓ src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T14b: clearError resets error state 1ms
+ ✓ src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T14c: 422 generic payload error → SignupValidationError surfaced 1ms
+ ✓ src/app/__tests__/providers.test.tsx > Providers > renders children without throwing (A7 — smoke render) 13ms
+ ✓ src/app/__tests__/providers.test.tsx > Providers > renders children when no queryClient or i18n is injected (defaults used) 1ms
+ ✓ src/app/__tests__/providers.test.tsx > Providers > emits BEFORE and AFTER console.info logs when VITE_ENABLE_VERBOSE_LOGGING=true (A8) 2ms
+ ✓ src/app/__tests__/providers.test.tsx > Providers > emits NO console.info logs when VITE_ENABLE_VERBOSE_LOGGING=false (A8 silent mode) 1ms
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T03 — AuthProvider: /refresh 401 → unauthenticated, no /me call > status becomes 'unauthenticated' on refresh 401
+[auth] auth.repo.refresh.session_expired { request_id: [32m'12afdc09-329f-4d32-af3a-0bcc42c51a60'[39m }
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T04 — AuthProvider: /refresh network error → unauthenticated > status becomes 'unauthenticated' on network error
+[auth] auth.repo.refresh.error { error: [32m'Failed to fetch'[39m }
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T05 — signInAccepted → status=authenticated, /me not re-called > signInAccepted sets token and user without extra fetch
+[auth] auth.repo.refresh.session_expired { request_id: [32m'c3f972ac-ee43-408f-bac4-51fb4e3837e0'[39m }
+
+ ✓ src/features/chat/__tests__/useCreateConversation.test.tsx > useCreateConversation > T01 — idle → pending → success lifecycle 62ms
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T06 — useLogout: /logout 204 → token cleared, queries cleared > logout clears token and calls onQueriesClear
+[auth] auth.repo.logout.error { error: [32m'Response constructor: Invalid response status code 204'[39m }
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T06 — useLogout: /logout 204 → token cleared, queries cleared > logout clears token and calls onQueriesClear
+[auth] auth.provider.logout.failure_local_cleared { error: [32m'Response constructor: Invalid response status code 204'[39m }
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T07 — useLogout: backend 401 → still clears local state (defensive logout) > logout clears token even when backend returns 401
+[auth] auth.repo.logout.non_204 { status: [33m401[39m, request_id: [32m'dacd3da4-1dde-40bc-92b9-769f9b2607be'[39m }
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T07 — useLogout: backend 401 → still clears local state (defensive logout) > logout clears token even when backend returns 401
+[auth] auth.provider.logout.failure_local_cleared { error: [32m'Session expired or invalid; please sign in again.'[39m }
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T08 — RequireAuth: unauthenticated → Navigate with ?next= > redirects to sign-in with ?next= when unauthenticated
+[auth] auth.repo.refresh.session_expired { request_id: [32m'34e03c65-a454-46f3-ba74-bf58841eaf97'[39m }
+
+stderr | src/features/chat/__tests__/useCreateConversation.test.tsx > useCreateConversation > T03 — onError callback called with typed ChatError
+[chat] chat.hook.useCreateConversation.mutate.error { error: [32m'CHAT_NETWORK_ERROR'[39m }
+
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > Wordmark > renders 'Hilo' text 19ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > Wordmark > has default aria-label 'Hilo' 2ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > Wordmark > renders custom element via 'as' prop 1ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > TrackedLabel > renders children 1ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > TrackedLabel > renders all variants without throwing 2ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > TrackedLabel > renders as label element 1ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > EditorialInput > renders label and input 4ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > EditorialInput > shows error message with aria-invalid 2ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > EditorialInput > disables input and renders muted label 1ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > EditorialInput > calls onChange 3ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > SolidCTA > renders children 1ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > SolidCTA > is disabled when disabled prop is true 22ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > SolidCTA > shows loading label when loading=true 1ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > SolidCTA > has aria-busy when loading 2ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > SolidCTA > calls onClick when not disabled 4ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > HairlineTable > renders populated rows 3ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > HairlineTable > renders empty message when rows is empty 1ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > HairlineTable > renders error_network state with retry CTA 6ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > HairlineTable > renders permission_denied state 1ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > StatusDot > renders active state with label 1ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > StatusDot > renders error state with label 1ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > StatusDot > renders custom label 1ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > StatusDot > has aria-label with status 1ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > MobileFrame > renders children 1ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > MobileFrame > renders as main when asMain=true 1ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > AdminShell > renders nav items 2ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > AdminShell > renders children in main 3ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > AdminShell > marks active item with aria-current=page 4ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > AdminShell > calls onClick when nav item is clicked 2ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > CitationInline > renders as anchor when href provided 1ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > CitationInline > renders as button when no href 1ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > CitationInline > displays [label] format 1ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > CitationInline > has accessible aria-label 1ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > CitationInline > adds rel=noopener noreferrer when external 0ms
+stderr | src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T04 — submit > MAX chars → validation error shown
+[chat] chat.Composer.submit.validation.too_long { len: [33m4001[39m, max: [33m4000[39m }
+
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T01 — accessTokenStore: set/get/clear in-memory only > starts null 1ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T01 — accessTokenStore: set/get/clear in-memory only > set → get returns the token 0ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T01 — accessTokenStore: set/get/clear in-memory only > clear → get returns null 0ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T01 — accessTokenStore: set/get/clear in-memory only > NEVER calls localStorage.setItem 0ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T01 — accessTokenStore: set/get/clear in-memory only > NEVER calls localStorage.getItem 1ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T02 — AuthProvider: cold mount → /refresh 200 → /me 200 → authenticated > status becomes 'authenticated' after refresh + me succeed 21ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T03 — AuthProvider: /refresh 401 → unauthenticated, no /me call > status becomes 'unauthenticated' on refresh 401 6ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T04 — AuthProvider: /refresh network error → unauthenticated > status becomes 'unauthenticated' on network error 4ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T05 — signInAccepted → status=authenticated, /me not re-called > signInAccepted sets token and user without extra fetch 9ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T06 — useLogout: /logout 204 → token cleared, queries cleared > logout clears token and calls onQueriesClear 8ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T07 — useLogout: backend 401 → still clears local state (defensive logout) > logout clears token even when backend returns 401 7ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T08 — RequireAuth: unauthenticated → Navigate with ?next= > redirects to sign-in with ?next= when unauthenticated 11ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T09 — RequireAuth: authenticated → renders children > renders children when authenticated 9ms
+ ✓ src/pages/showcase/__tests__/ShowcasePage.test.tsx > ShowcasePage > renders the page title 52ms
+stderr | src/features/chat/__tests__/useCreateConversation.test.tsx > useCreateConversation > T04 — error state set after failed mutation
+[chat] chat.hook.useCreateConversation.mutate.error { error: [32m'CHAT_NETWORK_ERROR'[39m }
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T17 — httpClient: refresh 401 → no loop, onAuthFailure called > throws AuthSessionExpiredError, calls onAuthFailure, clears token
+[auth] auth.http.refresh.failed { status: [33m401[39m, request_id: [32m'c3ec4d38-f425-4855-9387-e27be192d2f0'[39m }
+
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T10 — RequireAuth: hydrating → renders neither children nor redirect > shows loading placeholder while hydrating, not children or redirect 31ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T11 — RequireRole: employee role denied from admin > redirects employee to /chat when they hit /admin 10ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T12 — RequireRole: people_admin allowed to admin route > renders admin content for people_admin role 3ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T13 — getSafeRedirect: rejects open-redirect attempts > rejects https://evil.com 0ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T13 — getSafeRedirect: rejects open-redirect attempts > rejects //evil.com 0ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T13 — getSafeRedirect: rejects open-redirect attempts > rejects javascript:alert(1) 0ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T13 — getSafeRedirect: rejects open-redirect attempts > rejects \\evil path 0ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T13 — getSafeRedirect: rejects open-redirect attempts > rejects data: pseudo-scheme 0ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T13 — getSafeRedirect: rejects open-redirect attempts > rejects empty string 0ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T13 — getSafeRedirect: rejects open-redirect attempts > rejects null 0ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T14 — getSafeRedirect: safe relative path passes > /chat/abc?x=1 passes through unchanged 0ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T14 — getSafeRedirect: safe relative path passes > /admin passes through 0ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T14 — getSafeRedirect: safe relative path passes > /chat passes through 0ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T15 — httpClient: 401 → single-flight refresh → retry success > fires /refresh once, retries original request with new token 1ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T16 — httpClient: two concurrent 401s → ONE refresh call > fires exactly ONE refresh for two concurrent 401s 1ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T17 — httpClient: refresh 401 → no loop, onAuthFailure called > throws AuthSessionExpiredError, calls onAuthFailure, clears token 1ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T18 — httpClient: Bearer injected on protected endpoints only > injects Authorization Bearer on /api/v1/users/me 0ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T18 — httpClient: Bearer injected on protected endpoints only > does NOT inject Authorization Bearer on /api/v1/auth/refresh 0ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T19 — Logging: verbose=true fires logs, no token value leaked > setAccessToken logs present=true and len, never the token value 0ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T20 — Logging: verbose=false suppresses info logs > setAccessToken does NOT log when verbose=false 0ms
+ ✓ src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T01 — empty state: Wordmark, title, 2 prompt chips, composer 35ms
+ ✓ src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T02 — prompt click → mutation triggered → navigate called on success 12ms
+ ✓ src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T03 — submit with empty composer input → send button disabled 6ms
+ ✓ src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T04 — submit > MAX chars → validation error shown 12ms
+ ✓ src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T05 — network failure → error_network state with retry CTA 6ms
+ ✓ src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T06 — retry CTA triggers mutation again 16ms
+ ✓ src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T07 — 403 forbidden → permission_denied view shown (no composer) 3ms
+ ✓ src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T08 — a11y: network-error region has role=status + aria-live 18ms
+ ✓ src/features/chat/__tests__/useCreateConversation.test.tsx > useCreateConversation > T02 — onSuccess callback called with conversation data 54ms
+ ✓ src/features/chat/__tests__/useCreateConversation.test.tsx > useCreateConversation > T03 — onError callback called with typed ChatError 55ms
+ ✓ src/features/chat/__tests__/useCreateConversation.test.tsx > useCreateConversation > T04 — error state set after failed mutation 52ms
+ ✓ src/pages/showcase/__tests__/ShowcasePage.test.tsx > ShowcasePage > renders all 9 component sections 50ms
+ ✓ src/pages/showcase/__tests__/ShowcasePage.test.tsx > ShowcasePage > renders the Wordmark 'Hilo' brand text 41ms
+ ✓ src/pages/showcase/__tests__/ShowcasePage.test.tsx > ShowcasePage > renders the design system footer 35ms
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T01: renders with i18n ES keys — email label, password label, submit button visible
+[auth] auth.repo.refresh.session_expired { request_id: [32m'a1f73f52-0494-4409-bcec-f9855d8d7fe1'[39m }
+
+stderr | src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T01: renders with i18n ES keys — title, email, fullName, password, checkbox label, CTA
+[auth] auth.repo.refresh.session_expired { request_id: [32m'a9a26694-bd56-4583-9978-7eecc94368ce'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T02: invalid email triggers validation error with aria-invalid
+[auth] auth.repo.refresh.session_expired { request_id: [32m'c5dfd6a0-9a84-44fb-a908-57114bcde1d9'[39m }
+
+stderr | src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T02: invalid email → aria-invalid + error message visible
+[auth] auth.repo.refresh.session_expired { request_id: [32m'31e81369-6e56-4bbc-8ddc-a5cda56712dd'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T03: submit happy path no-MFA — navigates to /chat (default)
+[auth] auth.repo.refresh.session_expired { request_id: [32m'ff45b1fc-77b3-49b0-a7a6-c6e1cae813bf'[39m }
+
+stderr | src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T03: legal acceptance required — uncheck shows error; check + submit succeeds
+[auth] auth.repo.refresh.session_expired { request_id: [32m'a0f72c9b-5506-400c-8725-cd4da4f910b1'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T04: submit MFA branch — navigates to /auth/2fa
+[auth] auth.repo.refresh.session_expired { request_id: [32m'fcaada76-7e41-47d0-a9fc-b0619bb4e122'[39m }
+
+stderr | src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T04: happy path → navigates to /auth/sign-in with flash state
+[auth] auth.repo.refresh.session_expired { request_id: [32m'5ee84413-f4df-4078-88f6-70711be60153'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T05: 401 — shows invalidCredentials copy (byte-identical for both failure modes — anti-enum)
+[auth] auth.repo.refresh.session_expired { request_id: [32m'46f9d8fe-f8d8-42e7-8986-d93783ad63d9'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T05: 401 — shows invalidCredentials copy (byte-identical for both failure modes — anti-enum)
+[auth] auth.signin.submit.invalid_credentials { status: [33m401[39m, request_id: [32m'87f6ac29-8f75-40fe-8c8b-7dd6bdde4d74'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T05: 401 — shows invalidCredentials copy (byte-identical for both failure modes — anti-enum)
+[auth] auth.signin.hook.submit.error { error_name: [32m'InvalidCredentialsError'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T05: 401 — shows invalidCredentials copy (byte-identical for both failure modes — anti-enum)
+[auth] auth.signin.page.submit.failed
+
+ ✓ src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T01: renders with i18n ES keys — email label, password label, submit button visible 40ms
+ ✓ src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T02: invalid email triggers validation error with aria-invalid 22ms
+ ✓ src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T03: submit happy path no-MFA — navigates to /chat (default) 18ms
+ ✓ src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T04: submit MFA branch — navigates to /auth/2fa 11ms
+stderr | src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T05: 400 non-corporate email → form-level error shown in permission_denied state
+[auth] auth.repo.refresh.session_expired { request_id: [32m'75922452-310e-4f38-9f38-84e1eb84d582'[39m }
+
+ ✓ src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T01: renders with i18n ES keys — title, email, fullName, password, checkbox label, CTA 44ms
+ ✓ src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T02: invalid email → aria-invalid + error message visible 22ms
+ ✓ src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T03: legal acceptance required — uncheck shows error; check + submit succeeds 14ms
+ ✓ src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T04: happy path → navigates to /auth/sign-in with flash state 13ms
+stderr | src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T05: 400 non-corporate email → form-level error shown in permission_denied state
+[auth] auth.signup.submit.non_corporate_email {
+  status: [33m400[39m,
+  field: [32m'email'[39m,
+  request_id: [32m'bf4f9322-0545-41f5-ab32-c89e1ecd0a9f'[39m
+}
+
+stderr | src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T05: 400 non-corporate email → form-level error shown in permission_denied state
+[auth] auth.signup.hook.submit.error { error_name: [32m'NonCorporateEmailError'[39m }
+
+stderr | src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T05: 400 non-corporate email → form-level error shown in permission_denied state
+[auth] auth.signup.page.submit.failed
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T06: 423 account locked — shows accountLocked copy, submit re-enabled (not rate-limit disabled)
+[auth] auth.repo.refresh.session_expired { request_id: [32m'64840a45-1e85-4720-8355-48626f267e89'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T06: 423 account locked — shows accountLocked copy, submit re-enabled (not rate-limit disabled)
+[auth] auth.signin.submit.locked { status: [33m423[39m, request_id: [32m'26737f0b-185e-489d-9182-4cd72c0382d4'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T06: 423 account locked — shows accountLocked copy, submit re-enabled (not rate-limit disabled)
+[auth] auth.signin.hook.submit.error { error_name: [32m'AccountLockedError'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T06: 423 account locked — shows accountLocked copy, submit re-enabled (not rate-limit disabled)
+[auth] auth.signin.page.submit.failed
+
+stderr | src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T06: 409 email taken → generic error copy, NO email field highlight (anti-enumeration)
+[auth] auth.repo.refresh.session_expired { request_id: [32m'7a87c600-ba74-4d83-98d7-32eb6c24c025'[39m }
+
+stderr | src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T06: 409 email taken → generic error copy, NO email field highlight (anti-enumeration)
+[auth] auth.signup.submit.email_taken { status: [33m409[39m, request_id: [32m'a5804711-4cac-48d4-95bd-ab7e7099c0f5'[39m }
+
+stderr | src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T06: 409 email taken → generic error copy, NO email field highlight (anti-enumeration)
+[auth] auth.signup.hook.submit.error { error_name: [32m'EmailTakenError'[39m }
+
+stderr | src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T06: 409 email taken → generic error copy, NO email field highlight (anti-enumeration)
+[auth] auth.signup.page.submit.failed
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T07: 429 rate-limited — submit disabled, copy shows seconds interpolated
+[auth] auth.repo.refresh.session_expired { request_id: [32m'e4d89e96-46b1-40c8-bf0d-db9fb1a5cdd3'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T07: 429 rate-limited — submit disabled, copy shows seconds interpolated
+[auth] auth.signin.submit.rate_limited {
+  status: [33m429[39m,
+  retry_after: [33m60[39m,
+  request_id: [32m'4f41990e-1021-450d-8b24-79e5e5ddbc72'[39m
+}
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T07: 429 rate-limited — submit disabled, copy shows seconds interpolated
+[auth] auth.signin.hook.submit.error { error_name: [32m'RateLimitedError'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T07: 429 rate-limited — submit disabled, copy shows seconds interpolated
+[auth] auth.signin.page.submit.failed
+
+stderr | src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T07: 422 password policy → form-level error in error_validation state
+[auth] auth.repo.refresh.session_expired { request_id: [32m'26f11739-b1ca-4456-9996-8b5e47ccf125'[39m }
+
+stderr | src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T07: 422 password policy → form-level error in error_validation state
+[auth] auth.signup.submit.password_policy {
+  status: [33m422[39m,
+  field: [32m'password'[39m,
+  request_id: [32m'11fbdfba-f248-4115-aab9-716c4fe31e8e'[39m
+}
+
+stderr | src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T07: 422 password policy → form-level error in error_validation state
+[auth] auth.signup.hook.submit.error { error_name: [32m'PasswordPolicyError'[39m }
+
+stderr | src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T07: 422 password policy → form-level error in error_validation state
+[auth] auth.signup.page.submit.failed
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T08: network error — shows error_network copy
+[auth] auth.repo.refresh.session_expired { request_id: [32m'0d4e1827-97df-4d16-b328-470bc27afb34'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T08: network error — shows error_network copy
+[auth] auth.signin.submit.network { error: [32m'Failed to fetch'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T08: network error — shows error_network copy
+[auth] auth.signin.hook.submit.error { error_name: [32m'NetworkError'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T08: network error — shows error_network copy
+[auth] auth.signin.page.submit.failed
+
+stderr | src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T08: 429 rate-limited → submit disabled + countdown copy with seconds interpolated
+[auth] auth.repo.refresh.session_expired { request_id: [32m'b091e5d4-77c2-46a8-a6fe-39101ba35b16'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T09: keyboard-only flow — Tab through inputs and submit button is reachable
+[auth] auth.repo.refresh.session_expired { request_id: [32m'172e3f2b-d2d6-4602-a36c-cea735d0d97a'[39m }
+
+stderr | src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T08: 429 rate-limited → submit disabled + countdown copy with seconds interpolated
+[auth] auth.signup.submit.rate_limited {
+  status: [33m429[39m,
+  retry_after: [33m60[39m,
+  request_id: [32m'b92c959a-a289-4aef-ab75-45d0c51f8a27'[39m
+}
+
+stderr | src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T08: 429 rate-limited → submit disabled + countdown copy with seconds interpolated
+[auth] auth.signup.hook.submit.error { error_name: [32m'SignupRateLimitedError'[39m }
+
+stderr | src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T08: 429 rate-limited → submit disabled + countdown copy with seconds interpolated
+[auth] auth.signup.page.submit.failed
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T10: open-redirect ?next=https://evil.com defaults to /chat
+[auth] auth.repo.refresh.session_expired { request_id: [32m'7f8e4481-357c-4823-86b6-c2a06851616c'[39m }
+
+stderr | src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T09: TypeError network error → error_network copy with 'Sin conexión'
+[auth] auth.repo.refresh.session_expired { request_id: [32m'37620df4-c8db-4c6b-8bc9-32e0209a2ab2'[39m }
+
+ ✓ src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T05: 401 — shows invalidCredentials copy (byte-identical for both failure modes — anti-enum) 11ms
+ ✓ src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T06: 423 account locked — shows accountLocked copy, submit re-enabled (not rate-limit disabled) 13ms
+ ✓ src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T07: 429 rate-limited — submit disabled, copy shows seconds interpolated 10ms
+ ✓ src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T08: network error — shows error_network copy 10ms
+ ✓ src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T09: keyboard-only flow — Tab through inputs and submit button is reachable 7ms
+ ✓ src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T10: open-redirect ?next=https://evil.com defaults to /chat 13ms
+stderr | src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T09: TypeError network error → error_network copy with 'Sin conexión'
+[auth] auth.signup.submit.network { error: [32m'Failed to fetch'[39m }
+
+stderr | src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T09: TypeError network error → error_network copy with 'Sin conexión'
+[auth] auth.signup.hook.submit.error { error_name: [32m'NetworkError'[39m }
+
+stderr | src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T09: TypeError network error → error_network copy with 'Sin conexión'
+[auth] auth.signup.page.submit.failed
+
+stderr | src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T10: keyboard-only flow — Tab through all inputs + checkbox + submit is reachable
+[auth] auth.repo.refresh.session_expired { request_id: [32m'e6ad2992-b527-4dae-b8c6-d04068b23152'[39m }
+
+ ✓ src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T05: 400 non-corporate email → form-level error shown in permission_denied state 15ms
+ ✓ src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T06: 409 email taken → generic error copy, NO email field highlight (anti-enumeration) 12ms
+ ✓ src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T07: 422 password policy → form-level error in error_validation state 11ms
+ ✓ src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T08: 429 rate-limited → submit disabled + countdown copy with seconds interpolated 16ms
+ ✓ src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T09: TypeError network error → error_network copy with 'Sin conexión' 12ms
+ ✓ src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T10: keyboard-only flow — Tab through all inputs + checkbox + submit is reachable 8ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: configuration > i18n: registers all 8 namespaces 1ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: configuration > i18n: lng=es, fallbackLng=es, defaultNS=common 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: 24 bundles present > i18n: all 3 locales have all 8 namespaces loaded 1ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: fallback behaviour > i18n: falls back to es value for key absent in en and fr 1ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: key resolution across namespaces > i18n: resolves common:productName in es 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: key resolution across namespaces > i18n: resolves auth:signIn.title in es 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: key resolution across namespaces > i18n: resolves errors:AUTH_INVALID_CREDENTIALS in es 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: changeLanguage > i18n: changeLanguage updates auth:signIn.title to EN 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: changeLanguage > i18n: changeLanguage updates auth:signIn.title to FR 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: changeLanguage > i18n: reverts to es correctly 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: missing key handler > i18n: missing key in all languages returns key or empty string, never throws 1ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: errors namespace coverage > i18n: all error codes present in es 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: errors namespace coverage > i18n: all error codes present in en 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: errors namespace coverage > i18n: all error codes present in fr 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: no copy-paste across languages > i18n: errors:AUTH_INVALID_CREDENTIALS differs across es, en, fr 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: no copy-paste across languages > i18n: auth:signIn.title differs across es, en, fr 0ms
+
+ Test Files  12 passed (12)
+      Tests  157 passed (157)
+   Start at  13:41:55
+   Duration  2.48s (transform 1.17s, setup 1.90s, collect 3.48s, tests 1.15s, environment 8.93s, prepare 1.77s)
+

@@ -3,6 +3,7 @@
  *
  * Slice/Phase: P01-S03-T001 — Auth state provider and protected route guards / Phase 1.
  *   Extended in P03-S01-T001 — SignInPage: added signIn() method.
+ *   Extended in P03-S01-T002 — SignUpPage: added signUp() method (§D-T002-AUTH-DATA).
  *
  * Responsibility: Concrete implementation of IAuthRepository (domain port).
  *   Calls the backend auth/user endpoints. All calls use authFetch (credentials:'include',
@@ -13,15 +14,17 @@
  *
  * Endpoints consumed (TECHNICAL_GUIDE §6.2):
  *   - POST /api/v1/auth/sign-in  → email+password; returns SignInOutcome (no-MFA or MFA).
+ *   - POST /api/v1/auth/sign-up  → email+password+full_name+legal_acceptance; returns SignUpOutcome.
  *   - POST /api/v1/auth/refresh  → cookie-only; returns new access_token.
  *   - GET  /api/v1/users/me      → Bearer required; returns UserProfile.
  *   - POST /api/v1/auth/logout   → Bearer required; 204 on success.
  *
  * Non-negotiables §logging: BEFORE + AFTER + ERROR on every public method.
- * Security: NEVER log password. NEVER log full token. Log metadata only.
+ * Security: NEVER log password. NEVER log full email. NEVER log full name (PII).
+ *   Log email_domain only. Log password_len (numeric) only.
  */
 
-import type { IAuthRepository, Result, SignInRequest, SignInOutcome } from "../domain/AuthRepository";
+import type { IAuthRepository, Result, SignInRequest, SignInOutcome, SignUpRequest, SignUpOutcome } from "../domain/AuthRepository";
 import type { UserProfile } from "../domain/types";
 import {
   AuthSessionExpiredError,
@@ -32,11 +35,18 @@ import {
   RateLimitedError,
   SigninValidationError,
   SigninInternalError,
+  NonCorporateEmailError,
+  LegalNotAcceptedError,
+  EmailTakenError,
+  PasswordPolicyError,
+  SignupRateLimitedError,
+  SignupValidationError,
+  SignupInternalError,
 } from "./errors";
 import { setAccessToken } from "./accessTokenStore";
 import { logVerbose, logWarn, logError } from "./logger";
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000";
+const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "";
 
 // ---------------------------------------------------------------------------
 // Helper: safely read response JSON
@@ -217,6 +227,191 @@ export class AuthRepository implements IAuthRepository {
       const domainErr = mapFetchError(err);
       logError("auth.signin.submit.network", { error: domainErr.message });
       return { ok: false, error: domainErr instanceof NetworkError ? domainErr : new NetworkError(domainErr.message) };
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // signUp — P03-S01-T002 (§D-T002-AUTH-DATA)
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Calls POST /api/v1/auth/sign-up with email, password, full_name, legal_acceptance.
+   * Returns SignUpOutcome on 201 {user_id, mfa_required:false}.
+   * Does NOT create a session — user must call signIn() afterwards.
+   *
+   * Security:
+   *   - Uses plain fetch (not authFetch) — public endpoint, no Bearer token needed.
+   *   - credentials:'include' for cookie continuity; X-Request-ID injected.
+   *   - NEVER log password, full email, or full_name (PII).
+   *   - Log email_domain only; password_len numeric metadata only.
+   *
+   * Error mapping (TECHNICAL_GUIDE §6.2, task pack §5):
+   *   400 AUTH_SIGNUP_NON_CORPORATE_EMAIL → NonCorporateEmailError
+   *   400 AUTH_SIGNUP_LEGAL_NOT_ACCEPTED  → LegalNotAcceptedError
+   *   409 AUTH_SIGNUP_EMAIL_TAKEN         → EmailTakenError (no field — anti-enum)
+   *   422 AUTH_SIGNUP_INVALID_PAYLOAD (password) → PasswordPolicyError
+   *   422 AUTH_SIGNUP_INVALID_PAYLOAD (other)    → SignupValidationError
+   *   429 AUTH_SIGNUP_RATE_LIMITED        → SignupRateLimitedError(retryAfter)
+   *   5xx                                 → SignupInternalError(status)
+   *   TypeError                           → NetworkError
+   *
+   * Logging contract (D-T002-PII-LOGGING):
+   *   BEFORE: email_domain, password_len, has_full_name, legal_accepted, request_id.
+   *   AFTER ok: user_id (UUID, not PII), mfa_required, request_id.
+   *   WARN on 400/409/429; ERROR on 422/5xx/network.
+   *
+   * @param req - SignUpRequest with email, password, full_name, legal_acceptance:true
+   * @returns Result<SignUpOutcome>
+   */
+  async signUp(req: SignUpRequest): Promise<Result<SignUpOutcome>> {
+    const requestId = crypto.randomUUID();
+    const emailDomain = req.email.includes("@") ? req.email.split("@")[1] : "unknown";
+
+    logVerbose("auth.signup.submit.start", {
+      email_domain: emailDomain,
+      password_len: req.password.length,
+      has_full_name: req.full_name.trim().length > 0,
+      legal_accepted: req.legal_acceptance,
+      request_id: requestId,
+    });
+
+    try {
+      const response = await fetch(`${API_BASE}/api/v1/auth/sign-up`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Request-ID": requestId,
+        },
+        body: JSON.stringify({
+          email: req.email,
+          password: req.password,
+          full_name: req.full_name,
+          legal_acceptance: req.legal_acceptance,
+        }),
+      });
+
+      if (response.status === 400) {
+        const body = await _safeJson<{
+          errors: Array<{ code: string; field?: string; message?: string }>;
+        }>(response);
+        const errCode = body.errors[0]?.code ?? "";
+        const errField = body.errors[0]?.field;
+
+        if (errCode === "AUTH_SIGNUP_NON_CORPORATE_EMAIL") {
+          logWarn("auth.signup.submit.non_corporate_email", {
+            status: 400,
+            field: errField,
+            request_id: requestId,
+          });
+          return { ok: false, error: new NonCorporateEmailError() };
+        }
+
+        if (errCode === "AUTH_SIGNUP_LEGAL_NOT_ACCEPTED") {
+          logWarn("auth.signup.submit.legal_not_accepted", {
+            status: 400,
+            field: errField,
+            request_id: requestId,
+          });
+          return { ok: false, error: new LegalNotAcceptedError() };
+        }
+
+        logWarn("auth.signup.submit.validation_400", {
+          status: 400,
+          code: errCode,
+          field: errField,
+          request_id: requestId,
+        });
+        return { ok: false, error: new SignupValidationError(errField) };
+      }
+
+      if (response.status === 409) {
+        logWarn("auth.signup.submit.email_taken", {
+          status: 409,
+          request_id: requestId,
+        });
+        // D-T002-409-NO-FIELD: no field in response (anti-enumeration)
+        return { ok: false, error: new EmailTakenError() };
+      }
+
+      if (response.status === 422) {
+        const body = await _safeJson<{
+          errors: Array<{ code: string; field?: string; message?: string }>;
+        }>(response);
+        const errField = body.errors[0]?.field;
+        const errCode = body.errors[0]?.code ?? "";
+
+        if (errField === "password" && errCode === "AUTH_SIGNUP_INVALID_PAYLOAD") {
+          logWarn("auth.signup.submit.password_policy", {
+            status: 422,
+            field: errField,
+            request_id: requestId,
+          });
+          return { ok: false, error: new PasswordPolicyError(errField) };
+        }
+
+        logWarn("auth.signup.submit.payload_invalid", {
+          status: 422,
+          field: errField,
+          code: errCode,
+          request_id: requestId,
+        });
+        return { ok: false, error: new SignupValidationError(errField) };
+      }
+
+      if (response.status === 429) {
+        const retryAfterHeader = response.headers.get("Retry-After");
+        const retryAfter = retryAfterHeader ? parseInt(retryAfterHeader, 10) : 0;
+        logWarn("auth.signup.submit.rate_limited", {
+          status: 429,
+          retry_after: retryAfter,
+          request_id: requestId,
+        });
+        return { ok: false, error: new SignupRateLimitedError(isNaN(retryAfter) ? 0 : retryAfter) };
+      }
+
+      if (response.status !== 201) {
+        logError("auth.signup.submit.unexpected", {
+          status: response.status,
+          request_id: requestId,
+        });
+        return { ok: false, error: new SignupInternalError(response.status) };
+      }
+
+      // 201 Created
+      const body = await _safeJson<{
+        data: { user_id: string; mfa_required: false };
+        meta: { request_id: string };
+      }>(response);
+
+      logVerbose("auth.signup.submit.ok", {
+        user_id: body.data.user_id,
+        mfa_required: body.data.mfa_required,
+        request_id: requestId,
+      });
+
+      return {
+        ok: true,
+        value: { user_id: body.data.user_id, mfa_required: false },
+      };
+    } catch (err: unknown) {
+      if (
+        err instanceof NonCorporateEmailError ||
+        err instanceof LegalNotAcceptedError ||
+        err instanceof EmailTakenError ||
+        err instanceof PasswordPolicyError ||
+        err instanceof SignupRateLimitedError ||
+        err instanceof SignupValidationError ||
+        err instanceof SignupInternalError
+      ) {
+        return { ok: false, error: err };
+      }
+      const domainErr = mapFetchError(err);
+      logError("auth.signup.submit.network", { error: domainErr.message });
+      return {
+        ok: false,
+        error: domainErr instanceof NetworkError ? domainErr : new NetworkError(domainErr.message),
+      };
     }
   }
 

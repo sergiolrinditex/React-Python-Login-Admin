@@ -1,0 +1,43 @@
+# P03-S01-T002 Tester Re-run Summary
+# Date: 2026-05-14T14:29:00Z
+# Trigger: Post-debugger fix (authRepository.ts:49 ?? "" instead of ?? "http://localhost:8000")
+
+## Servers
+- Backend :8000 /health → 200 OK
+- Frontend :5173 → 200 OK
+- PostgreSQL :5432 → responsive (integration tests confirm)
+
+## Fix verified
+- authRepository.ts:49: `const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "";`
+- Empty string restores same-origin / Vite-proxy contract (ADR-002)
+
+## Backend Integration Tests
+- ENABLE_VERBOSE_LOGGING=true:  9/9 PASS
+- ENABLE_VERBOSE_LOGGING=false: 9/9 PASS
+
+## Frontend Vitest
+- Test Files: 12 passed (12)
+- Tests: 157 passed (157)
+  - 17 useSignUp tests
+  - 10 SignUpPage tests
+  - 130 regression (signin, auth provider, chat, i18n)
+
+## TypeScript
+- tsc --noEmit: 0 errors
+
+## Design Tokens
+- check-design-tokens.sh: OK
+
+## Curl Smokes (POST /api/v1/auth/sign-up)
+- 201 Happy path (signup.retest+1778761714@inditex-sandbox.com): PASS
+- 400 AUTH_SIGNUP_NON_CORPORATE_EMAIL field=email: PASS
+- 400 AUTH_SIGNUP_LEGAL_NOT_ACCEPTED field=legal_acceptance: PASS
+- 409 AUTH_SIGNUP_EMAIL_TAKEN field=null (anti-enum): PASS
+- 422 AUTH_SIGNUP_INVALID_PAYLOAD field=password: PASS
+
+## PII Contract
+- No full email, no password, no full_name in any log line
+- email_domain only in BEFORE logs (test T14 asserts)
+- ENABLE_VERBOSE_LOGGING=false: only warning+ visible (9/9 pass confirm no info leakage)
+
+## Outcome: PASS

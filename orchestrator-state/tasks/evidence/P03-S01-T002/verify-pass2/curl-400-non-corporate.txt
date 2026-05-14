@@ -1,0 +1,7 @@
+HTTP/1.1 400 Bad Request
+date: Thu, 14 May 2026 12:37:13 GMT
+server: uvicorn
+content-length: 208
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"verifier-pass2-noncorp"},"errors":[{"code":"AUTH_SIGNUP_NON_CORPORATE_EMAIL","message":"Email domain not in corporate allowlist: gmail.com","field":"email","details":null}]}

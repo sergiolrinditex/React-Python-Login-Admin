@@ -1,0 +1,18 @@
+                  id                  |                 email                 | status | preferred_language |          created_at           
+--------------------------------------+---------------------------------------+--------+--------------------+-------------------------------
+ 1787fec1-e373-4c64-abbf-3b3f74ee7943 | signup.test+t002b@inditex-sandbox.com | active | es                 | 2026-05-14 11:41:13.419134+00
+ e647c301-6592-400b-9b8d-8a9e412c3969 | signup.test+t002@inditex-sandbox.com  | active | es                 | 2026-05-14 11:31:56.948529+00
+(2 filas)
+
+ERROR:  column "user_id" does not exist
+LÍNEA 1: SELECT id, user_id, action, created_at FROM audit_logs WHERE...
+                    ^
+                  id                  |            actor_user_id             |    action    |          created_at           
+--------------------------------------+--------------------------------------+--------------+-------------------------------
+ dcbb82cb-37a4-4886-93f7-fd483fcb5a23 |                                      | auth.sign_up | 2026-05-14 11:41:22.670799+00
+ 6d61406e-9a75-48fc-a9d7-17d46b9fb945 |                                      | auth.sign_up | 2026-05-14 11:41:22.552998+00
+ 7cc52397-139c-4094-8851-fd390ddd064a |                                      | auth.sign_up | 2026-05-14 11:41:22.524798+00
+ a349fc77-a3df-4f1f-8ca0-871eb5105fb4 | 1787fec1-e373-4c64-abbf-3b3f74ee7943 | auth.sign_up | 2026-05-14 11:41:13.419134+00
+ 14d9abc9-5525-4ef1-820f-1a91081dbe00 |                                      | auth.sign_up | 2026-05-14 11:32:05.361543+00
+(5 filas)
+

@@ -1,0 +1,7 @@
+HTTP/1.1 409 Conflict
+date: Thu, 14 May 2026 12:28:34 GMT
+server: uvicorn
+content-length: 215
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"1fe38fa4-bdaa-4e3c-a13d-6b98cac8ae6c"},"errors":[{"code":"AUTH_SIGNUP_EMAIL_TAKEN","message":"An account with that email exists or cannot be created","field":null,"details":null}]}

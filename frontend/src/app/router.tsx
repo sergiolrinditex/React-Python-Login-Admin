@@ -6,6 +6,7 @@
  *   Updated in P03-S01-T001 — replaced SignInStub with real SignInPage (§D-T001-ROUTER).
  *   WRITE_SET_DRIFT §D-T001-ROUTE (P03-S02-T001): wired /chat to ChatHomePage;
  *     updated / and * redirects so authenticated users land on /chat.
+ *   Updated in P03-S01-T002 — added /auth/sign-up route wired to SignUpPage (§D-T002-ROUTER).
  *
  * Responsibility: single mount point for the application's route tree.
  *   Exports <AppRouter> which is consumed by main.tsx inside <Providers>.
@@ -14,6 +15,7 @@
  * Route inventory:
  *   /showcase          → ShowcasePage (public — design-system demo, dev-only)
  *   /auth/sign-in      → SignInPage (real form, P03-S01-T001)
+ *   /auth/sign-up      → SignUpPage (real form, P03-S01-T002)
  *   /chat              → ChatHomePage (employee, RequireAuth) — P03-S02-T001
  *   /chat/:conversationId → placeholder (P03-S02-T002 adds real ConversationPage)
  *   /admin             → STUB placeholder (wrapped in RequireRole — test surface)
@@ -21,6 +23,7 @@
  *   *                  → redirects to / (catch-all; uses RootRedirect logic)
  *
  * P03-S01-T001 adds: real SignInPage form replacing the /auth/sign-in stub.
+ * P03-S01-T002 adds: real SignUpPage form at /auth/sign-up.
  * P03-S02-T001 adds: /chat real page; updates / and * redirects for authed users.
  * P04-S01-T001 adds: real /admin dashboard replacing stub.
  *
@@ -39,6 +42,7 @@ import { BrowserRouter, Routes, Route, Navigate, Outlet } from "react-router";
 import type { ReactNode } from "react";
 import ShowcasePage from "../pages/showcase/ShowcasePage";
 import SignInPage from "../pages/auth/SignInPage";
+import SignUpPage from "../pages/auth/SignUpPage";
 import ChatHomePage from "../pages/chat/ChatHomePage";
 import { AuthProvider } from "../features/auth/presentation/AuthProvider";
 import { useAuth } from "../features/auth/presentation/AuthProvider";
@@ -54,6 +58,9 @@ export const ROUTE_SHOWCASE = "/showcase";
 
 /** Route path for sign-in page. Form implemented in P03-S01-T001. */
 export const ROUTE_AUTH_SIGN_IN = "/auth/sign-in";
+
+/** Route path for sign-up page. Form implemented in P03-S01-T002. */
+export const ROUTE_AUTH_SIGN_UP = "/auth/sign-up";
 
 /** Route path for admin area. Dashboard implemented in P04-S01-T001. */
 export const ROUTE_ADMIN = "/admin";
@@ -124,8 +131,8 @@ export function AppRouter(): ReactNode {
   if (import.meta.env.VITE_ENABLE_VERBOSE_LOGGING === "true") {
     console.info("AppRouter.render.start", {
       phase: "P03",
-      slice: "P03-S02-T001",
-      routes: [ROUTE_SHOWCASE, ROUTE_AUTH_SIGN_IN, ROUTE_CHAT, ROUTE_ADMIN],
+      slice: "P03-S01-T002",
+      routes: [ROUTE_SHOWCASE, ROUTE_AUTH_SIGN_IN, ROUTE_AUTH_SIGN_UP, ROUTE_CHAT, ROUTE_ADMIN],
     });
   }
 
@@ -137,6 +144,8 @@ export function AppRouter(): ReactNode {
           <Route path={ROUTE_SHOWCASE} element={<ShowcasePage />} />
           {/* P03-S01-T001: real SignInPage replaces stub (§D-T001-ROUTER) */}
           <Route path={ROUTE_AUTH_SIGN_IN} element={<SignInPage />} />
+          {/* P03-S01-T002: real SignUpPage (§D-T002-ROUTER) */}
+          <Route path={ROUTE_AUTH_SIGN_UP} element={<SignUpPage />} />
 
           {/* Protected employee routes */}
           <Route element={<RequireAuth><Outlet /></RequireAuth>}>

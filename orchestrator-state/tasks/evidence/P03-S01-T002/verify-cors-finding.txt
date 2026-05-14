@@ -1,0 +1,44 @@
+## Verify-slice CORS Finding — P03-S01-T002
+
+### Defect
+File: frontend/src/features/auth/data/authRepository.ts (line 49)
+Code: const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000";
+
+When VITE_API_BASE_URL is unset (no frontend/.env file — only .env.example exists),
+the fallback is "http://localhost:8000". This causes all browser fetch calls to go
+directly to port 8000, bypassing Vite's /api proxy. The backend has NO CORS middleware
+(by design — ADR-002: same-origin via proxy), so all browser requests fail with:
+
+  "Access to fetch at 'http://localhost:8000/api/v1/auth/sign-up' from origin
+   'http://localhost:5173' has been blocked by CORS policy: Response to preflight
+   request doesn't pass access control check: No 'Access-Control-Allow-Origin'
+   header is present on the requested resource."
+
+### Evidence
+- Console message 31: CORS error for sign-up endpoint
+- Console message 33: [auth] auth.signup.submit.network NetworkError
+- Screenshot: verify-03-cors-error-network.png (shows "Sin conexión." for non-corporate email submit)
+
+### Root cause
+The correct fallback per .env.example and ADR-002 is VITE_API_BASE_URL="" (empty string),
+which produces relative URLs like "/api/v1/auth/sign-up" — these go through Vite's proxy.
+The fallback "http://localhost:8000" re-introduces cross-origin XHR.
+
+### Fix required
+authRepository.ts line 49:
+  BEFORE: const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000";
+  AFTER:  const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "";
+
+Same fix needed in httpClient.ts line 34 (same pattern, same fallback).
+
+### Scope classification
+IN-SCOPE DEFECT:
+- authRepository.ts is in T002 write set §D-T002-AUTH-DATA
+- httpClient.ts was already in T001's write set; T002 inherited it but did not re-fix
+- The fix is within the T002 write set paths (data layer files)
+- No new route/endpoint/table/journey needed; pure code fix
+
+### Affected UI states
+ALL UI states are broken in the browser because ALL requests to the backend
+fail with CORS errors (non-corporate email, legal not accepted, happy path,
+email taken, password policy, etc.).

@@ -1,0 +1,11 @@
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   273  100   140  100   133   1545   1467 --:--:-- --:--:-- --:--:--  3033
+HTTP/1.1 201 Created
+date: Thu, 14 May 2026 11:41:13 GMT
+server: uvicorn
+x-request-id: tester-p03s01t002-happy
+content-length: 140
+content-type: application/json
+
+{"data":{"user_id":"1787fec1-e373-4c64-abbf-3b3f74ee7943","mfa_required":false},"meta":{"request_id":"tester-p03s01t002-happy"},"errors":[]}
