@@ -2,6 +2,7 @@
  * Hilo People — ChatHomePage component tests.
  *
  * Slice/Phase: P03-S02-T001 — ChatHomePage / Phase 3.
+ *   Extended: P03-S02-T005 — over-limit i18n copy assertions (D-T005-TEST-EXTEND).
  *
  * Responsibility: Component tests covering all 6 required UX states.
  *   useCreateConversation hook is mocked (fetch layer boundary).
@@ -13,14 +14,16 @@
  *   T01 — empty state: Wordmark, title, 2 prompt chips, composer.
  *   T02 — prompt click → mutation triggered → navigate called.
  *   T03 — submit empty composer → send disabled (no fetch called).
- *   T04 — submit over-MAX chars → validation error shown.
+ *   T04 — submit over-MAX chars → validation error shown (ES copy, no placeholder reuse).
+ *   T04b — over-limit EN: alert text matches EN i18n copy.
+ *   T04c — over-limit FR: alert text matches FR i18n copy.
  *   T05 — network failure → error_network state + retry CTA.
  *   T06 — retry CTA click → mutation called again.
  *   T07 — 403 forbidden → permission_denied view shown.
  *   T08 — a11y: aria-live region for error.
  */
 
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, fireEvent, waitFor, act } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import React from "react";
@@ -137,6 +140,11 @@ describe("ChatHomePage", () => {
     mockNavigate.mockReset();
   });
 
+  afterEach(async () => {
+    // Reset locale to default (es) after locale-switching tests (T04b, T04c)
+    await i18n.changeLanguage("es");
+  });
+
   it("T01 — empty state: Wordmark, title, 2 prompt chips, composer", () => {
     setupDefaultMocks();
     renderChatHomePage();
@@ -193,7 +201,7 @@ describe("ChatHomePage", () => {
     expect(sendBtn).toBeDisabled();
   });
 
-  it("T04 — submit > MAX chars → validation error shown", () => {
+  it("T04 — submit > MAX chars → validation error shows ES i18n copy, NOT placeholder", () => {
     setupDefaultMocks();
     renderChatHomePage();
 
@@ -204,11 +212,70 @@ describe("ChatHomePage", () => {
     const form = screen.getByTestId("composer-form");
     fireEvent.submit(form);
 
-    // Validation error shown (textarea length check)
-    // The maxLength attribute is set to 4001 to allow the check
+    // Validation error shown with dedicated i18n key (D-T005-I18N-KEY)
+    const errorEl = screen.getByTestId("composer-validation-error");
+    expect(errorEl).toBeInTheDocument();
+    expect(errorEl).toHaveAttribute("role", "alert");
+    expect(errorEl).toHaveAttribute("aria-live", "assertive");
+    // Assert correct ES copy: interpolated max = 4000
+    expect(errorEl.textContent).toBe("El mensaje no puede superar 4000 caracteres.");
+    // Assert does NOT reuse the placeholder copy (§acceptance)
+    expect(errorEl.textContent).not.toContain("Escribe tu mensaje");
+    // Send button stays enabled (validation, not disabled)
     const sendBtn = screen.getByTestId("composer-send");
-    // With 4001 chars, send is enabled but submit fires validation
     expect(sendBtn).not.toBeDisabled();
+  });
+
+  it("T04b — submit > MAX chars in EN locale → validation error shows EN i18n copy", async () => {
+    // Switch to English for this test
+    await act(async () => {
+      await i18n.changeLanguage("en");
+    });
+
+    setupDefaultMocks();
+    renderChatHomePage();
+
+    const textarea = screen.getByTestId("composer-textarea");
+    const overMaxText = "a".repeat(4001);
+    fireEvent.change(textarea, { target: { value: overMaxText } });
+
+    const form = screen.getByTestId("composer-form");
+    fireEvent.submit(form);
+
+    const errorEl = screen.getByTestId("composer-validation-error");
+    expect(errorEl).toBeInTheDocument();
+    expect(errorEl).toHaveAttribute("role", "alert");
+    expect(errorEl).toHaveAttribute("aria-live", "assertive");
+    // Assert correct EN copy: interpolated max = 4000
+    expect(errorEl.textContent).toBe("Messages cannot exceed 4000 characters.");
+    // Assert does NOT reuse the EN placeholder
+    expect(errorEl.textContent).not.toContain("Type your message");
+  });
+
+  it("T04c — submit > MAX chars in FR locale → validation error shows FR i18n copy", async () => {
+    // Switch to French for this test
+    await act(async () => {
+      await i18n.changeLanguage("fr");
+    });
+
+    setupDefaultMocks();
+    renderChatHomePage();
+
+    const textarea = screen.getByTestId("composer-textarea");
+    const overMaxText = "a".repeat(4001);
+    fireEvent.change(textarea, { target: { value: overMaxText } });
+
+    const form = screen.getByTestId("composer-form");
+    fireEvent.submit(form);
+
+    const errorEl = screen.getByTestId("composer-validation-error");
+    expect(errorEl).toBeInTheDocument();
+    expect(errorEl).toHaveAttribute("role", "alert");
+    expect(errorEl).toHaveAttribute("aria-live", "assertive");
+    // Assert correct FR copy: interpolated max = 4000
+    expect(errorEl.textContent).toBe("Le message ne peut pas dépasser 4000 caractères.");
+    // Assert does NOT reuse the FR placeholder
+    expect(errorEl.textContent).not.toContain("Rédigez votre message");
   });
 
   it("T05 — network failure → error_network state with retry CTA", async () => {

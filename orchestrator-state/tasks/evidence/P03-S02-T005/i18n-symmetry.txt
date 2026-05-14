@@ -1,0 +1,47 @@
+# i18n symmetry check — P03-S02-T005
+# Key: chat.composer.errors.tooLong (with {{max}} interpolation)
+# Verified: inline bundle (i18n/index.ts) == reference JSON (public/locales/*/chat.json)
+
+## ES — i18n/index.ts (inline, runtime source, line ~124-126)
+  "errors": {
+    "tooLong": "El mensaje no puede superar {{max}} caracteres."
+  }
+
+## ES — public/locales/es/chat.json (reference)
+  "errors": {
+    "tooLong": "El mensaje no puede superar {{max}} caracteres."
+  }
+MATCH: YES
+
+## EN — i18n/index.ts (inline, runtime source, line ~232-234)
+  "errors": {
+    "tooLong": "Messages cannot exceed {{max}} characters."
+  }
+
+## EN — public/locales/en/chat.json (reference)
+  "errors": {
+    "tooLong": "Messages cannot exceed {{max}} characters."
+  }
+MATCH: YES
+
+## FR — i18n/index.ts (inline, runtime source, line ~340-342)
+  "errors": {
+    "tooLong": "Le message ne peut pas dépasser {{max}} caractères."
+  }
+
+## FR — public/locales/fr/chat.json (reference)
+  "errors": {
+    "tooLong": "Le message ne peut pas dépasser {{max}} caractères."
+  }
+MATCH: YES
+
+## Interpolation
+- {{max}} present in all 3 × 2 locations
+- Compositor.tsx uses: t("chat:composer.errors.tooLong", { max: COMPOSER_MAX_LENGTH })
+- COMPOSER_MAX_LENGTH = 4000 → resolved text at runtime: "El mensaje no puede superar 4000 caracteres." (ES)
+
+## Data contract note
+Per task pack §7 and TECHNICAL_GUIDE §9.1: N/A — error_validation edge case uses synthetic data (4001 chars).
+No DB seed consumed. Client-side validation only.
+
+## Symmetry conclusion: PASS — all 3 locales are in lockstep between inline bundle and reference JSON.
