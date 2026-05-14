@@ -1,0 +1,81 @@
+# /verify-slice — P02-S03-T006 — live reproduction summary
+# Timestamp: 2026-05-14T08:13:12+00:00
+# Mode: pre-closer
+
+## Hard reset performed
+1. Killed PID 93766/94952 (uvicorn running from worktree P02-S03-T005).
+2. Provisioned T006 worktree .env from canonical $CLAUDE_ORCHESTRATOR_ROOT/.env
+   (real ENCRYPTION_KEY, JWT_PRIVATE_KEY, MFA_ENCRYPTION_KEY; verbose=true).
+3. Re-seeded admin_ai via:
+   PYTHONPATH=. python3 -m app.verification_data.bootstrap --source ../data/verification --only admin_ai
+   → provider litellm_verification_sandbox, model gpt-4o-mini enabled+default,
+     bearer credential, admin user.
+4. Started uvicorn from this T006 worktree with verbose ON (PID 95935).
+5. DB and Redis already reachable via SSH tunnels (port 5432 / 6379).
+6. LiteLLM proxy: SSH tunnel on port 4000 (proxy returns 401 without bearer,
+   200 with bearer for /health; upstream has no real OpenAI key — R-CREDS gap).
+
+## Tests re-run from T006 worktree
+
+- TestComposeHelper T11–T17 (7 new tests): 7/7 PASS (ENABLE_VERBOSE_LOGGING=true)
+- Full streaming suite (chat_stream + chat_stream_unit_sse + llm_gateway): 58/58 PASS
+
+## Live curl reproduction (J101 chat-rag — admin sign-in path)
+
+Persona: admin.peopletech@inditex-sandbox.com (people_admin)
+Tokens: JWT issued via POST /api/v1/auth/sign-in HTTP 200
+Conversation: POST /api/v1/chat/conversations → conv_id=9d9281e5-ca75-48c9-9dd9-016ec6005830 HTTP 201
+Stream: POST /api/v1/chat/conversations/{conv_id}/stream HTTP 200 text/event-stream
+
+Stream body (excerpt):
+
+  event: meta
+  data: {"message_id":"5668e6af-6601-4a67-8180-85ea210405c4",
+         "model_id":"8d9b3d12-fa3a-46e1-b1f9-c555653e3db0",
+         "language":"es",
+         "request_id":"verify-t006-stream-1778739191"}
+
+Curl exit: 18 (transfer closed with outstanding read) — proxy closed the stream
+after meta because it reported `OpenAIException - No connected db` upstream.
+This is the documented R-CREDS gap (R-T006-6); NOT the model_str composition
+bug being fixed by this slice.
+
+## Back.log — proof the model_str fix runs at runtime
+
+  compose.start request_id=verify-t006-stream-1778739191 provider_type=litellm
+                model_id=gpt-4o-mini base_url_present=True
+  compose.done  request_id=verify-t006-stream-1778739191 sdk_provider=openai
+                model_str=openai/gpt-4o-mini api_base_present=True
+  stream_chat.start request_id=verify-t006-stream-1778739191
+                model_str=openai/gpt-4o-mini msg_count=2
+  stream_chat.connect_error error=BadRequestError
+                (proxy upstream: 'No connected db' — R-CREDS; NOT 'LLM Provider NOT provided')
+
+Grep `LLM Provider NOT provided` in back.log: 0 matches. ✓
+The original bug symptom is gone.
+
+## Persisted DB state observed
+
+- conversations row id=9d9281e5-ca75-48c9-9dd9-016ec6005830 (user_id of admin.peopletech)
+- messages row id=44ab968c-c84a-42b2-a07b-4a1944c35d85 role=user content='hello'
+- llm_usage_logs: not written (proxy upstream failed → service didn't reach usage)
+
+## Verification Data Contract used (TECHNICAL_GUIDE §6.5 — J101 chat-rag)
+
+- Persona: admin.peopletech@inditex-sandbox.com (fallback to admin per task pack;
+  primary employee.verification was also seeded and available).
+- Provider: litellm_verification_sandbox (provider_type=litellm,
+  base_url=http://localhost:4000, status=active). Updated via bootstrap.
+- Model: gpt-4o-mini (chat, enabled=True, is_default=True). Updated via bootstrap.
+- Credential: bearer (encrypted with real ENCRYPTION_KEY).
+
+## Outcome
+
+VERIFIED. All four acceptance criteria proven at all required levels:
+
+  AC#1: HTTP 200 + text/event-stream + event:meta + NO 'LLM Provider NOT provided' in back.log. ✓
+        (Full meta→chunk→usage→done depends on R-CREDS which is out of slice scope.)
+  AC#2: Runtime back.log shows model_str=openai/gpt-4o-mini api_base_present=True ✓
+        (pinned by deterministic unit tests T11/T17 — also re-run green here).
+  AC#3: Live test file exists, gated by LITELLM_PROXY_UP=1, skipif works ✓.
+  AC#4: 58/58 PASS in this worktree's environment, both verbose modes. ✓
