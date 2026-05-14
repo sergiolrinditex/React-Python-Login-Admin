@@ -1,0 +1,7 @@
+# Source-of-truth amendment — FU-20260513215359-create-scripts-minio-bootstrap-sh-referenced-by-
+
+Appended to `docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md`:
+
+```md
+| P02-S06-T004 | wiring | Create scripts/minio-bootstrap.sh referenced by docker-compose minio-init | Runtime follow-up P02-S06-T001 | current | planned | medium | human | P02-S06-T001 | api:rag-docs | scripts/minio-bootstrap.sh | — | — | — | — | runtime-followup#FU-20260513215359-create-scripts-minio-bootstrap-sh-referenced-by- | runtime-followup#FU-20260513215359-create-scripts-minio-bootstrap-sh-referenced-by- | scripts/minio-bootstrap.sh exists and creates bucket $S3_BUCKET_DOCUMENTS via 'mc alias set' + 'mc mb --ignore-existing'. dev-restart.sh --reset on a clean repo creates the bucket without manual boto3 intervention. Script is POSIX-sh (#!/bin/sh + set -eu), <=120 LOC, validates the 3 required env vars, retries the first mc call (3-5 attempts) for the warmup window, never echoes MINIO_ROOT_PASSWORD, follows project '==> ' BEFORE/AFTER log convention. | Clean: docker compose -f docker-compose.yml down -v --remove-orphans. Run: docker compose -f docker-compose.yml up minio-init -> expect 'exited (0)'. Verify bucket from host: python3 -c "import boto3, c=boto3.client('s3', endpoint_url='http://localhost:9000', aws_access_key_id='hilo', aws_secret_access_key='hilo-dev-only'), print([b['Name'] for b in c.list_buckets()['Buckets']])" -> expect ['hilo-docs-dev']. Idempotency: second 'docker compose up minio-init' also 'exited (0)'. |
+```

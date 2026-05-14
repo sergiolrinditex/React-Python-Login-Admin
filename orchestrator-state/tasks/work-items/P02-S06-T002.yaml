@@ -2,7 +2,7 @@ id: P02-S06-T002
 phase_id: P02
 step_id: P02-S06
 title: "RAG collection endpoints"
-status: blocked
+status: ready_for_close
 kind: "api"
 target: "RAG collection endpoints"
 product_increment: "v1"

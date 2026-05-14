@@ -1,0 +1,41 @@
+id: P02-S05-T004
+phase_id: P02
+step_id: P02-S05
+title: "Fix orchestrator CI: journey_state + stack_profile contract regressions"
+status: done
+kind: "test"
+target: "Fix orchestrator CI: journey_state + stack_profile contract regressions"
+product_increment: "current"
+build_state: "planned"
+risk_level: "high"
+verify_mode: "human"
+route: ""
+endpoint: ""
+journey_refs:
+tables:
+depends_on:
+  - P02-S05-T002
+acceptance:
+  - "All 3 jobs of Orchestrator tests workflow turn green on a PR against main: Lint (python + json + bash + shellcheck), Unit tests (python 3.11), Unit tests (python 3.12). PR #15 and any subsequent slice PRs do not regress this state."
+verification_commands:
+  - "CI on GitHub Actions Orchestrator tests workflow green, gh pr view <new-PR> --json statusCheckRollup shows all SUCCESS."
+allowed_paths:
+  - ".claude/bin/**"
+  - ".claude/hooks/**"
+  - "scripts/git-workflow.sh"
+  - ".github/workflows/**"
+conflict_groups:
+  - "orchestrator:tests"
+  - "ci:workflows"
+write_set:
+  - ".claude/bin/**"
+  - ".claude/hooks/**"
+  - "scripts/git-workflow.sh"
+  - ".github/workflows/**"
+scope_inferred_from_acceptance:
+  - ".github/workflows/**"
+  - "ci:workflows"
+handoff_path: orchestrator-state/tasks/handoffs/P02-S05-T004.md
+evidence_dir: orchestrator-state/tasks/evidence/P02-S05-T004
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime follow-up P02-S05-T002"
+source_fingerprint: "c616193543cf9482649ddc102a9d80e9ccdf9390ff192c5fdae4f62fc639458e"

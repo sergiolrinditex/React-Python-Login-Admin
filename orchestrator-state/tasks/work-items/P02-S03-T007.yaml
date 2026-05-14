@@ -1,0 +1,34 @@
+id: P02-S03-T007
+phase_id: P02
+step_id: P02-S03
+title: "Fix check_handoff_contract.py — worktree path bug in pr-flow"
+status: blocked
+kind: "wiring"
+target: "Fix check_handoff_contract.py — worktree path bug in pr-flow"
+product_increment: "current"
+build_state: "planned"
+risk_level: "medium"
+verify_mode: "human"
+route: ""
+endpoint: ""
+journey_refs:
+  - "J100"
+tables:
+depends_on:
+  - P02-S03-T004
+acceptance:
+  - "(1) check_handoff_contract.py works correctly when invoked from a pr-flow worktree (CLAUDE_WORKTREE_ROOT or cwd != main repo root), (2) new test asserts the worktree path case (mock workspace_root or use tmp_path)"
+verification_commands:
+  - "From a worktree: ./scripts/check-handoff-contract.sh <TASK_ID> --require-ready-for-close --require-verify-slice exits 0 when handoff is valid, the details.handoff string is a relative path under the worktree, not absolute"
+allowed_paths:
+  - ".claude/bin/check_handoff_contract.py"
+  - ".claude/bin/tests/test_handoff_contract.py"
+conflict_groups:
+  - "infra:orchestrator-scripts"
+write_set:
+  - ".claude/bin/check_handoff_contract.py"
+  - ".claude/bin/tests/test_handoff_contract.py"
+handoff_path: orchestrator-state/tasks/handoffs/P02-S03-T007.md
+evidence_dir: orchestrator-state/tasks/evidence/P02-S03-T007
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime follow-up P02-S03-T004"
+source_fingerprint: "97e64deb7058454d0e9f845a7d95fa24904a9084209bb6ab28b88319b19c933a"

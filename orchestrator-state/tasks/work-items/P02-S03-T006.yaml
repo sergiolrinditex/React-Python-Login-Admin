@@ -1,0 +1,36 @@
+id: P02-S03-T006
+phase_id: P02
+step_id: P02-S03
+title: "Fix chat stream chunks — llm_gateway uses non-existent SDK provider 'litellm/<model>'"
+status: blocked
+kind: "bug"
+target: "Fix chat stream chunks — llm_gateway uses non-existent SDK provider 'litellm/<model>'"
+product_increment: "current"
+build_state: "planned"
+risk_level: "high"
+verify_mode: "human"
+route: ""
+endpoint: ""
+journey_refs:
+  - "J101"
+tables:
+depends_on:
+  - P02-S03-T004
+acceptance:
+  - "(1) live curl POST /chat/conversations/{id}/stream returns text/event-stream with sequence meta → chunk(*) → usage → done, (2) model_str composition produces a SDK-valid provider prefix per provider.provider_type ('litellm' provider_type → 'openai/<model_id>' + api_base=provider.base_url), (3) live integration test (gated by env LITELLM_PROXY_UP=1) asserts the sequence, (4) existing 51 streaming tests still pass"
+verification_commands:
+  - "After admin sign-in: POST /chat/conversations then POST /chat/conversations/{id}/stream with {message:'hello'} → returns 200 text/event-stream containing all four event types, back.log shows no BadRequestError"
+allowed_paths:
+  - "backend/app/llm_gateway/litellm_client.py"
+  - "backend/app/chat/streaming/service.py"
+  - "backend/tests/integration/test_chat_streaming_live.py"
+conflict_groups:
+  - "ai:streaming"
+write_set:
+  - "backend/app/llm_gateway/litellm_client.py"
+  - "backend/app/chat/streaming/service.py"
+  - "backend/tests/integration/test_chat_streaming_live.py"
+handoff_path: orchestrator-state/tasks/handoffs/P02-S03-T006.md
+evidence_dir: orchestrator-state/tasks/evidence/P02-S03-T006
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime follow-up P02-S03-T004"
+source_fingerprint: "de8ee589f8327ad375fb5fc000cf5192128a73084291710c64b1bae37c4cedeb"

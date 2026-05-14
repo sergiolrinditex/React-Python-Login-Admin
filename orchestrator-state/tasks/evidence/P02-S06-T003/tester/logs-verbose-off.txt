@@ -1,0 +1,11 @@
+ENABLE_VERBOSE_LOGGING applicability for shell sidecar:
+
+The ENABLE_VERBOSE_LOGGING flag controls Python backend log level (01-non-negotiables §Logging).
+This script (minio-bootstrap.sh) is a POSIX sh one-shot sidecar — it has no Python runtime,
+no structlog, no logging framework. Its ==> log lines are unconditional stdout (project convention
+from dev-restart.profile.sh / setup-from-scratch.sh). This is correct and expected:
+- A one-shot bootstrap MUST always log what it does (to diagnose compose up failures).
+- Suppressing logs via ENABLE_VERBOSE_LOGGING would break the compose troubleshooting workflow.
+
+VERDICT: ENABLE_VERBOSE_LOGGING=false does not apply to this sidecar. N/A by design.
+The script's behavior is correct: always logs operation steps, never logs MINIO_ROOT_PASSWORD.

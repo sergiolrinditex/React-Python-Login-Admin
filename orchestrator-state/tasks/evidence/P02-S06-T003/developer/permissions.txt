@@ -1,0 +1,13 @@
+Developer permissions evidence — P02-S06-T003
+Generated: 2026-05-13
+
+Command: ls -l scripts/minio-bootstrap.sh
+Output:
+  -rwxr-xr-x  1 sergiolr  staff  4976 13 may 23:33 scripts/minio-bootstrap.sh
+
+Result: PASS — executable bit set (755 = rwxr-xr-x)
+
+Command: wc -l scripts/minio-bootstrap.sh
+Output: 106 scripts/minio-bootstrap.sh
+
+Result: PASS — 106 LOC, well under 120-LOC task-pack target and 200-LOC non-negotiables cap.

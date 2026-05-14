@@ -1,0 +1,1 @@
+{"data":null,"meta":{"request_id":"d0f9faf6-5952-484a-9595-d0968cae3e48"},"errors":[{"code":"RAG_DOCUMENT_INVALID","message":"Unsupported file type. Only PDF and DOCX are accepted.","field":"file","details":null}]}

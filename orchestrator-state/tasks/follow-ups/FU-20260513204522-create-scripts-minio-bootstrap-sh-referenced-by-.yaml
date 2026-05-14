@@ -1,0 +1,49 @@
+{
+  "id": "FU-20260513204522-create-scripts-minio-bootstrap-sh-referenced-by-",
+  "schema_version": 1,
+  "status": "promoted",
+  "created_at": "2026-05-13T20:45:22+00:00",
+  "created_by": "sergiolr",
+  "origin_task_id": "P02-S06-T001",
+  "origin_phase_id": "P02",
+  "origin_step_id": "P02-S06",
+  "kind": "wiring",
+  "product_increment": "current",
+  "build_state": "planned",
+  "severity": "medium",
+  "title": "Create scripts/minio-bootstrap.sh referenced by docker-compose minio-init",
+  "description": "docker-compose.yml service minio-init runs '/scripts/minio-bootstrap.sh' from a volume mount of './scripts/minio-bootstrap.sh:/scripts/minio-bootstrap.sh:ro'. The script does not exist in the canonical main repo nor in the worktree. Docker creates the path as an empty directory and minio-init exits with code 126. The S3 bucket hilo-docs-dev is not created automatically; verify-slice had to call boto3 create_bucket manually. This affects ANY future verify or fresh setup of the RAG documents stack.",
+  "journey_refs": [],
+  "screen_route": "—",
+  "endpoint": "—",
+  "tables": [],
+  "depends_on": [
+    "P02-S06-T001"
+  ],
+  "conflict_groups": [
+    "api:rag-docs"
+  ],
+  "write_set": [
+    "scripts/minio-bootstrap.sh"
+  ],
+  "acceptance": [
+    "scripts/minio-bootstrap.sh exists and creates bucket $S3_BUCKET_DOCUMENTS via mc alias set + mc mb --ignore-existing. dev-restart.sh --reset on a clean repo creates the bucket without manual boto3 intervention."
+  ],
+  "verify": [
+    "Clean docker volume rm p02-s06-t001_minio_data",
+    "run docker compose up minio-init",
+    "ensure exit 0 and bucket exists via boto3 list_buckets."
+  ],
+  "notes": [],
+  "triage": {
+    "scope_classification": "out_of_scope",
+    "why_not_debugger": "docker-compose.yml line 149 mounts ./scripts/minio-bootstrap.sh into the minio-init container, but the file does not exist on disk. Docker's bind-mount semantics silently auto-create an empty directory at that path, breaking the bootstrap. The slice's write_set is backend/app/rag/documents.py + tests; it does not include scripts/ or docker-compose.yml. Debugger cannot fix this without scope expansion.",
+    "decision": "followup_only_when_outside_current_slice",
+    "debugger_path": "in_scope_defects_use_validator_tester_debugger_retest",
+    "warnings": []
+  },
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260513204522-create-scripts-minio-bootstrap-sh-referenced-by-.yaml",
+  "promoted_at": "2026-05-13T21:00:45+00:00",
+  "promoted_task_id": "P02-S06-T003",
+  "source_doc_updated": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md"
+}

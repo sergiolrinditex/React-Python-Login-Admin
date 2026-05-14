@@ -1,0 +1,55 @@
+{
+  "id": "FU-20260513201155-fix-chat-stream-chunks-llm-gateway-uses-non-exis",
+  "schema_version": 1,
+  "status": "promoted",
+  "created_at": "2026-05-13T20:11:55+00:00",
+  "created_by": "sergiolr",
+  "origin_task_id": "P02-S03-T004",
+  "origin_phase_id": "P02",
+  "origin_step_id": "P02-S03",
+  "kind": "bug",
+  "product_increment": "current",
+  "build_state": "planned",
+  "severity": "high",
+  "title": "Fix chat stream chunks — llm_gateway uses non-existent SDK provider 'litellm/<model>'",
+  "description": "After /verify-slice for P02-S03-T004 unblocked sign-in, POST /api/v1/chat/conversations/{id}/stream emits 'event: meta' (with the T004-seeded model_id+provider_id, proving the new loaders are reachable) but then fails inside app/llm_gateway/litellm_client.py:142 with litellm.BadRequestError: 'LLM Provider NOT provided. You passed model=litellm/gpt-4o-mini'. Root cause: model_str is composed as f'{provider.provider_type}/{model.model_id}' where provider_type='litellm'. LiteLLM SDK does not know 'litellm' as a provider. To call the LiteLLM proxy on :4000 (OpenAI-compatible), model must be 'openai/gpt-4o-mini' with api_base=http://localhost:4000. This blocks J101 live-curl SSE chunk emission — the same journey FU-20260513171333 (T004) was promoted to unblock.",
+  "journey_refs": [
+    "J101"
+  ],
+  "screen_route": "—",
+  "endpoint": "—",
+  "tables": [],
+  "depends_on": [
+    "P02-S03-T004"
+  ],
+  "conflict_groups": [
+    "ai:streaming"
+  ],
+  "write_set": [
+    "backend/app/llm_gateway/litellm_client.py",
+    "backend/app/chat/streaming/service.py",
+    "backend/tests/integration/test_chat_streaming_live.py"
+  ],
+  "acceptance": [
+    "(1) live curl POST /chat/conversations/{id}/stream returns text/event-stream with sequence meta → chunk(*) → usage → done",
+    "(2) model_str composition produces a SDK-valid provider prefix per provider.provider_type ('litellm' provider_type → 'openai/<model_id>' + api_base=provider.base_url)",
+    "(3) live integration test (gated by env LITELLM_PROXY_UP=1) asserts the sequence",
+    "(4) existing 51 streaming tests still pass"
+  ],
+  "verify": [
+    "After admin sign-in: POST /chat/conversations then POST /chat/conversations/{id}/stream with {message:'hello'} → returns 200 text/event-stream containing all four event types",
+    "back.log shows no BadRequestError"
+  ],
+  "notes": [],
+  "triage": {
+    "scope_classification": "missing_coverage",
+    "why_not_debugger": "Bug lives in app/llm_gateway/litellm_client.py model-string composition. NOT in T004 write_set (scripts/gen-dev-secrets.sh, .env.example, data/verification/admin_ai/**). Fix requires changing how provider_type+model_id are combined into the LiteLLM SDK model parameter (currently 'litellm/<model_id>' which the SDK interprets as <provider>/<model> and rejects since 'litellm' is not a registered SDK provider). Correct format for talking to a LiteLLM proxy on http://localhost:4000 is 'openai/<model_id>' (or no prefix + api_base). This is an architecture decision (per-provider mapping table or convention), not a debugger patch inside T004.",
+    "decision": "followup_only_when_outside_current_slice",
+    "debugger_path": "in_scope_defects_use_validator_tester_debugger_retest",
+    "warnings": []
+  },
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260513201155-fix-chat-stream-chunks-llm-gateway-uses-non-exis.yaml",
+  "promoted_at": "2026-05-13T21:00:37+00:00",
+  "promoted_task_id": "P02-S03-T006",
+  "source_doc_updated": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md"
+}

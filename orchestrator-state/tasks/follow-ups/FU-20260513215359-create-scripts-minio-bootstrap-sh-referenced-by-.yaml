@@ -1,0 +1,61 @@
+{
+  "id": "FU-20260513215359-create-scripts-minio-bootstrap-sh-referenced-by-",
+  "schema_version": 1,
+  "status": "promoted",
+  "created_at": "2026-05-13T21:53:59+00:00",
+  "created_by": "sergiolr",
+  "origin_task_id": "P02-S06-T001",
+  "origin_phase_id": "P02",
+  "origin_step_id": "S06",
+  "kind": "wiring",
+  "product_increment": "current",
+  "build_state": "planned",
+  "severity": "medium",
+  "title": "Create scripts/minio-bootstrap.sh referenced by docker-compose minio-init",
+  "description": "docker-compose.yml declares a one-shot sidecar service 'minio-init' (image: minio/mc:latest, entrypoint /bin/sh /scripts/minio-bootstrap.sh, depends_on: minio service_healthy, restart: no) with a bind-mount of ./scripts/minio-bootstrap.sh:/scripts/minio-bootstrap.sh:ro. The script file does NOT exist in the repo. Consequence: on first boot of a clean repo (after dev-restart --reset which does docker compose down -v --remove-orphans destroying the minio_data volume), the bucket S3_BUCKET_DOCUMENTS=hilo-docs-dev is never created. P02-S06-T001 (RAG document upload endpoint) silently fails the boto3 put_object on first call because the bucket is missing; current tests only pass because someone created the bucket manually after first boot. This FU closes that gap by adding the POSIX-sh sidecar script. No source-of-truth changes to docker-compose or .env needed (compose contract is already correct). Single-file write set.",
+  "journey_refs": [],
+  "screen_route": "—",
+  "endpoint": "—",
+  "tables": [],
+  "depends_on": [
+    "P02-S06-T001"
+  ],
+  "conflict_groups": [
+    "api:rag-docs"
+  ],
+  "write_set": [
+    "scripts/minio-bootstrap.sh"
+  ],
+  "acceptance": [
+    "scripts/minio-bootstrap.sh exists and creates bucket $S3_BUCKET_DOCUMENTS via 'mc alias set' + 'mc mb --ignore-existing'. dev-restart.sh --reset on a clean repo creates the bucket without manual boto3 intervention. Script is POSIX-sh (#!/bin/sh + set -eu)",
+    "<=120 LOC",
+    "validates the 3 required env vars",
+    "retries the first mc call (3-5 attempts) for the warmup window",
+    "never echoes MINIO_ROOT_PASSWORD",
+    "follows project '==> ' BEFORE/AFTER log convention."
+  ],
+  "verify": [
+    "Clean: docker compose -f docker-compose.yml down -v --remove-orphans. Run: docker compose -f docker-compose.yml up minio-init -> expect 'exited (0)'. Verify bucket from host: python3 -c \"import boto3",
+    "c=boto3.client('s3'",
+    "endpoint_url='http://localhost:9000'",
+    "aws_access_key_id='hilo'",
+    "aws_secret_access_key='hilo-dev-only')",
+    "print([b['Name'] for b in c.list_buckets()['Buckets']])\" -> expect ['hilo-docs-dev']. Idempotency: second 'docker compose up minio-init' also 'exited (0)'."
+  ],
+  "notes": [
+    "Re-propose: an earlier FU YAML (FU-20260513204522-create-scripts-minio-bootstrap-sh-referenced-by-) was reconciled away as yaml_missing twice (hook-errors log 2026-05-13 20:57:29 + 21:22:52). The planner had already written orchestrator-state/tasks/task-packs/P02-S06-T003.md and an unpromoted developer left scripts/minio-bootstrap.sh untracked in worktree dev/P02-S06-T003. Recovery path: re-propose -> /promote-followup -> /next-slice P02-S06-T003 (planner re-validates existing pack",
+    "developer/validator/tester re-run against the untracked script",
+    "then /verify-slice)."
+  ],
+  "triage": {
+    "scope_classification": "missing_coverage",
+    "why_not_debugger": "P02-S06-T001 is already merged (PR #16, commit 5b99801). Creating the missing scripts/minio-bootstrap.sh is new infra wiring outside T001's write_set (backend/app/rag/documents/**) and conflict_group; debugger on T001 would expand its write_set retroactively. The shell sidecar contract (docker-compose minio-init bind-mount + POSIX-sh + idempotency) is a distinct slice with its own Verify mode (human / docker compose up + boto3 list_buckets).",
+    "decision": "followup_only_when_outside_current_slice",
+    "debugger_path": "in_scope_defects_use_validator_tester_debugger_retest",
+    "warnings": []
+  },
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260513215359-create-scripts-minio-bootstrap-sh-referenced-by-.yaml",
+  "promoted_at": "2026-05-14T04:01:29+00:00",
+  "promoted_task_id": "P02-S06-T004",
+  "source_doc_updated": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md"
+}

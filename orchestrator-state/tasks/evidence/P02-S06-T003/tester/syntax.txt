@@ -1,0 +1,5 @@
+=== sh -n syntax check ===
+EXIT: 0 (PASS)
+
+=== bash -n syntax check ===
+EXIT: 0 (PASS)

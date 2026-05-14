@@ -1,0 +1,31 @@
+id: P02-S06-T003
+phase_id: P02
+step_id: P02-S06
+title: "Create scripts/minio-bootstrap.sh referenced by docker-compose minio-init"
+status: ready_for_close
+kind: "wiring"
+target: "Create scripts/minio-bootstrap.sh referenced by docker-compose minio-init"
+product_increment: "current"
+build_state: "planned"
+risk_level: "medium"
+verify_mode: "human"
+route: ""
+endpoint: ""
+journey_refs:
+tables:
+depends_on:
+  - P02-S06-T001
+acceptance:
+  - "scripts/minio-bootstrap.sh exists and creates bucket $S3_BUCKET_DOCUMENTS via mc alias set + mc mb --ignore-existing. dev-restart.sh --reset on a clean repo creates the bucket without manual boto3 intervention."
+verification_commands:
+  - "Clean docker volume rm p02-s06-t001_minio_data, run docker compose up minio-init, ensure exit 0 and bucket exists via boto3 list_buckets."
+allowed_paths:
+  - "scripts/minio-bootstrap.sh"
+conflict_groups:
+  - "api:rag-docs"
+write_set:
+  - "scripts/minio-bootstrap.sh"
+handoff_path: orchestrator-state/tasks/handoffs/P02-S06-T003.md
+evidence_dir: orchestrator-state/tasks/evidence/P02-S06-T003
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime follow-up P02-S06-T001"
+source_fingerprint: "357ed8c8251d8b3cb5cfaa28830e0e161c41b9e1bd7a4bc11770e28332bdd4db"

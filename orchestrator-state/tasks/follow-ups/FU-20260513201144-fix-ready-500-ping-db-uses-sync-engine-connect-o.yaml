@@ -1,0 +1,55 @@
+{
+  "id": "FU-20260513201144-fix-ready-500-ping-db-uses-sync-engine-connect-o",
+  "schema_version": 1,
+  "status": "promoted",
+  "created_at": "2026-05-13T20:11:44+00:00",
+  "created_by": "sergiolr",
+  "origin_task_id": "P02-S03-T004",
+  "origin_phase_id": "P02",
+  "origin_step_id": "P02-S03",
+  "kind": "bug",
+  "product_increment": "current",
+  "build_state": "planned",
+  "severity": "medium",
+  "title": "Fix /ready 500 — _ping_db uses sync engine.connect() on async asyncpg engine",
+  "description": "GET /ready returns HTTP 500 because backend/app/api/router.py:131 _ping_db(engine) calls engine.connect() synchronously, but the engine is an asyncpg-backed AsyncEngine. sqlalchemy raises 'MissingGreenlet: greenlet_spawn has not been called'. /health and /live still return 200. Reproduce: GET /ready after dev-restart --reset. Discovered during P02-S03-T004 /verify-slice 2026-05-13 (back.log line ~683).",
+  "journey_refs": [
+    "J100"
+  ],
+  "screen_route": "—",
+  "endpoint": "—",
+  "tables": [],
+  "depends_on": [
+    "P02-S03-T004"
+  ],
+  "conflict_groups": [
+    "infra:health-router"
+  ],
+  "write_set": [
+    "backend/app/api/router.py",
+    "backend/app/db/engine.py",
+    "backend/tests/integration/test_health.py"
+  ],
+  "acceptance": [
+    "(1) GET /ready returns 200 under happy path",
+    "(2) integration test asserts /ready 200 with real Postgres up + 503 when DB down",
+    "(3) tests run with both ENABLE_VERBOSE_LOGGING=true and =false"
+  ],
+  "verify": [
+    "curl -i http://localhost:8000/ready returns 200 OK with JSON {db:ok",
+    "redis:ok} when stack is up",
+    "back.log shows no MissingGreenlet trace"
+  ],
+  "notes": [],
+  "triage": {
+    "scope_classification": "missing_coverage",
+    "why_not_debugger": "Bug lives in app/api/router.py _ping_db (sync engine.connect() on asyncpg AsyncEngine). NOT in T004 write_set (scripts/gen-dev-secrets.sh, .env.example, data/verification/admin_ai/**). Pre-existing since P00-S02-T002. Fix requires either making _ping_db async (async with engine.connect()) or maintaining a separate sync engine for health checks — architectural choice, not a debugger patch inside T004.",
+    "decision": "followup_only_when_outside_current_slice",
+    "debugger_path": "in_scope_defects_use_validator_tester_debugger_retest",
+    "warnings": []
+  },
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260513201144-fix-ready-500-ping-db-uses-sync-engine-connect-o.yaml",
+  "promoted_at": "2026-05-13T21:00:34+00:00",
+  "promoted_task_id": "P02-S03-T005",
+  "source_doc_updated": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md"
+}

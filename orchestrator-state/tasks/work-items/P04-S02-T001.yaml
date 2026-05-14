@@ -2,7 +2,7 @@ id: P04-S02-T001
 phase_id: P04
 step_id: P04-S02
 title: "RagDocumentsPage"
-status: blocked
+status: ready
 kind: "frontend"
 target: "RagDocumentsPage"
 product_increment: "v1"

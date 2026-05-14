@@ -2,7 +2,7 @@ id: P02-S03-T004
 phase_id: P02
 step_id: P02-S03
 title: "Rotate ENCRYPTION_KEY in dev .env + seed active AI provider with encrypted credentials"
-status: ready
+status: blocked
 kind: "data"
 target: "Rotate ENCRYPTION_KEY in dev .env + seed active AI provider with encrypted credentials"
 product_increment: "current"
@@ -21,12 +21,9 @@ tables:
 depends_on:
   - P02-S03-T002
 acceptance:
-  - "scripts/gen-dev-secrets.sh rotates ENCRYPTION_KEY if placeholder (Fernet.generate_key() pattern)"
-  - "data/verification loads at least one ai_providers row with encrypted credential for an active chat model"
-  - "ENCRYPTION_KEY is valid Fernet key (44 base64-url chars + =)"
+  - "scripts/gen-dev-secrets.sh rotates ENCRYPTION_KEY if placeholder (Fernet.generate_key() pattern), data/verification loads at least one ai_providers row with encrypted credential for an active chat model, ENCRYPTION_KEY is valid Fernet key (44 base64-url chars + =)"
 verification_commands:
-  - "After rotation: curl POST /api/v1/chat/conversations creates a conv (201)"
-  - "curl POST /api/v1/chat/conversations/{id}/stream returns text/event-stream with meta->chunk->usage->done SSE events"
+  - "After rotation: curl POST /api/v1/chat/conversations creates a conv (201), curl POST /api/v1/chat/conversations/{id}/stream returns text/event-stream with meta->chunk->usage->done SSE events"
 allowed_paths:
   - "scripts/gen-dev-secrets.sh"
   - ".env.example"
@@ -39,4 +36,5 @@ write_set:
   - "data/verification/admin_ai/**"
 handoff_path: orchestrator-state/tasks/handoffs/P02-S03-T004.md
 evidence_dir: orchestrator-state/tasks/evidence/P02-S03-T004
-source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry"
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime follow-up P02-S03-T002"
+source_fingerprint: "cef9d22bf6d09e32764f9b9fc3a71326e6318c5ad6246d8d57416ac3bb7879cf"

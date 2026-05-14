@@ -1,0 +1,52 @@
+{
+  "id": "FU-20260513204522-ensure-env-carries-minio-root-user-minio-root-pa",
+  "schema_version": 1,
+  "status": "waived",
+  "created_at": "2026-05-13T20:45:22+00:00",
+  "created_by": "sergiolr",
+  "origin_task_id": "P02-S06-T001",
+  "origin_phase_id": "P02",
+  "origin_step_id": "P02-S06",
+  "kind": "wiring",
+  "product_increment": "current",
+  "build_state": "planned",
+  "severity": "high",
+  "title": "Ensure .env carries MINIO_ROOT_USER/MINIO_ROOT_PASSWORD/S3_ENDPOINT_URL",
+  "description": "Real verify of P02-S06-T001 surfaced that the canonical main repo's .env lacks MINIO_ROOT_USER, MINIO_ROOT_PASSWORD and S3_ENDPOINT_URL. Backend storage module hardcodes defaults hilo/hilo-dev-only/http://localhost:9000 but the docker-compose minio service reads MINIO_ROOT_USER/MINIO_ROOT_PASSWORD from .env (which were empty), so MinIO container fell back to its own defaults. Result: 500 RAG_STORAGE_FAILED on every upload until verify-slice manually added the three vars to .env and recreated the container with the proper volume reset.",
+  "journey_refs": [],
+  "screen_route": "—",
+  "endpoint": "—",
+  "tables": [],
+  "depends_on": [
+    "P02-S06-T001"
+  ],
+  "conflict_groups": [
+    "api:rag-docs"
+  ],
+  "write_set": [
+    ".env.example",
+    "scripts/gen-dev-secrets.sh",
+    "scripts/setup-from-scratch.sh",
+    "docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md"
+  ],
+  "acceptance": [
+    ".env.example documents these three keys with the canonical values (hilo / hilo-dev-only / http://localhost:9000)",
+    "scripts/gen-dev-secrets.sh (or equivalent .env bootstrap script) writes them when missing",
+    "and dev-restart.sh --reset on a clean repo produces a MinIO container that accepts the backend's signed PutObject without any manual intervention."
+  ],
+  "verify": [
+    "Fresh repo clone → cp .env.example .env → ./scripts/dev-restart.sh --reset → upload a PDF to /api/v1/admin/rag/documents → 201 (not 500 RAG_STORAGE_FAILED)."
+  ],
+  "notes": [],
+  "triage": {
+    "scope_classification": "missing_real_data",
+    "why_not_debugger": "The slice's write_set does not include .env.example, .env, scripts/gen-dev-secrets.sh or scripts/setup-from-scratch.sh. The .env file emitted by dev-restart bootstrap lacks MINIO_ROOT_USER, MINIO_ROOT_PASSWORD and S3_ENDPOINT_URL; MinIO container starts with empty root credentials (falls back to MinIO default minioadmin/minioadmin), backend signs with hilo/hilo-dev-only → InvalidAccessKeyId on every upload. Debugger inside TASK_ID cannot edit .env templates without scope expansion.",
+    "decision": "followup_only_when_outside_current_slice",
+    "debugger_path": "in_scope_defects_use_validator_tester_debugger_retest",
+    "warnings": []
+  },
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260513204522-ensure-env-carries-minio-root-user-minio-root-pa.yaml",
+  "waived_at": "2026-05-13T20:51:31+00:00",
+  "waived_by": "sergiolr",
+  "waiver_reason": "Workaround applied + documented in P02-S06-T001 handoff verify-slice section (.env patch + MinIO container recreate). Promoted to a future env-bootstrap hardening slice after closer. Slice itself verified clean."
+}

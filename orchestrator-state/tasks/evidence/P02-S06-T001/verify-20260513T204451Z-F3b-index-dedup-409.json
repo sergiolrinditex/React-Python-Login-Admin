@@ -1,0 +1,1 @@
+{"errors":[{"code":"RAG_INDEX_IN_PROGRESS","message":"A vectorization job is already pending."}],"data":{"job_id":"5d11e13f-e1d1-4fcc-bdf4-2238b23701fd","status":"pending"}}

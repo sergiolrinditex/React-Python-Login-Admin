@@ -1,0 +1,53 @@
+{
+  "id": "FU-20260513201402-fix-check-handoff-contract-py-worktree-path-bug-",
+  "schema_version": 1,
+  "status": "promoted",
+  "created_at": "2026-05-13T20:14:02+00:00",
+  "created_by": "sergiolr",
+  "origin_task_id": "P02-S03-T004",
+  "origin_phase_id": "P02",
+  "origin_step_id": "P02-S03",
+  "kind": "wiring",
+  "product_increment": "current",
+  "build_state": "planned",
+  "severity": "medium",
+  "title": "Fix check_handoff_contract.py — worktree path bug in pr-flow",
+  "description": "When a /verify-slice or closer runs from a pr-flow worktree (CLAUDE_WORKTREE_ROOT set), .claude/bin/check_handoff_contract.py crashes with ValueError 'is not in the subpath of <main-repo>'. The validation logic itself is fine; only the cosmetic details['handoff']=str(path.relative_to(project_root())) call breaks. Fix: replace project_root() with workspace_root() (already imported via common). Reproduce: from any worktree under .../worktrees/<TASK_ID>/, run ./scripts/check-handoff-contract.sh <TASK_ID> --require-ready-for-close --require-verify-slice. Discovered during P02-S03-T004 /verify-slice 2026-05-13. Blocks closer in pr-flow worktrees.",
+  "journey_refs": [
+    "J100"
+  ],
+  "screen_route": "—",
+  "endpoint": "—",
+  "tables": [],
+  "depends_on": [
+    "P02-S03-T004"
+  ],
+  "conflict_groups": [
+    "infra:orchestrator-scripts"
+  ],
+  "write_set": [
+    ".claude/bin/check_handoff_contract.py",
+    ".claude/bin/tests/test_handoff_contract.py"
+  ],
+  "acceptance": [
+    "(1) check_handoff_contract.py works correctly when invoked from a pr-flow worktree (CLAUDE_WORKTREE_ROOT or cwd != main repo root)",
+    "(2) new test asserts the worktree path case (mock workspace_root or use tmp_path)"
+  ],
+  "verify": [
+    "From a worktree: ./scripts/check-handoff-contract.sh <TASK_ID> --require-ready-for-close --require-verify-slice exits 0 when handoff is valid",
+    "the details.handoff string is a relative path under the worktree",
+    "not absolute"
+  ],
+  "notes": [],
+  "triage": {
+    "scope_classification": "out_of_scope",
+    "why_not_debugger": "Bug lives in .claude/bin/check_handoff_contract.py:88 (orchestrator infra), NOT in T004 write_set. Fix is one-line: replace path.relative_to(project_root()) with path.relative_to(workspace_root()) so the cosmetic 'details.handoff' string works when handoff lives in a worktree. Pre-existing since commit 1724b2c (per-slice worktree paths). Affects ALL closer pre-checks in pr-flow worktrees. Needs separate orchestrator-maintenance commit, not a T004 drift.",
+    "decision": "followup_only_when_outside_current_slice",
+    "debugger_path": "in_scope_defects_use_validator_tester_debugger_retest",
+    "warnings": []
+  },
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260513201402-fix-check-handoff-contract-py-worktree-path-bug-.yaml",
+  "promoted_at": "2026-05-13T21:00:41+00:00",
+  "promoted_task_id": "P02-S03-T007",
+  "source_doc_updated": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md"
+}

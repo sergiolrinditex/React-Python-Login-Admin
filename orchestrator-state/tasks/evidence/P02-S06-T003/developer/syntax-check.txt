@@ -1,0 +1,20 @@
+Developer syntax-check evidence — P02-S06-T003
+Generated: 2026-05-13
+
+Command 1: sh -n scripts/minio-bootstrap.sh
+Output: (none — exit 0)
+Result: PASS
+
+Command 2: bash -n scripts/minio-bootstrap.sh
+Output: (none — exit 0)
+Result: PASS
+
+Command 3: shellcheck -s sh scripts/minio-bootstrap.sh
+Output: command not found: shellcheck (not installed on this machine)
+Result: N/A (not available; sh -n + bash -n are the fallback per task pack §9.3)
+
+Notes:
+- Script is POSIX sh-compatible: shebang #!/bin/sh, set -eu (no pipefail), no [[, no local keyword.
+- eval-based require_env() avoids bashisms while still being a portable variable validator.
+- No arrays, no ${var,,}, no process substitution.
+- All conditionals use POSIX [ ] not [[ ]].

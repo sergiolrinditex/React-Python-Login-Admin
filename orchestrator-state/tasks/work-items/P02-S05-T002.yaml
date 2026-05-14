@@ -2,7 +2,7 @@ id: P02-S05-T002
 phase_id: P02
 step_id: P02-S05
 title: "Model test and usage endpoints"
-status: ready
+status: done
 kind: "api"
 target: "Model test and usage endpoints"
 product_increment: "v1"

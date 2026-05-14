@@ -1,0 +1,31 @@
+Front → Back → DB / Infra contract observed — P02-S06-T003
+
+Compose service → script wiring:
+  - docker-compose.yml: minio-init service entrypoint ["/bin/sh", "/scripts/minio-bootstrap.sh"] CONFIRMED
+  - docker-compose.yml: volume mount ./scripts/minio-bootstrap.sh:/scripts/minio-bootstrap.sh:ro CONFIRMED
+  - docker-compose.yml: env vars MINIO_ROOT_USER, MINIO_ROOT_PASSWORD, S3_BUCKET_DOCUMENTS passed CONFIRMED
+  - docker-compose.yml: depends_on minio: service_healthy CONFIRMED (minio-1 Healthy before minio-init-1 Started)
+  - docker-compose.yml: restart: "no" CONFIRMED (container exits and stays exited, not restarted)
+
+Script behavior:
+  - BEFORE env validation: logged
+  - AFTER env validation: logged with MINIO_ROOT_USER + S3_BUCKET_DOCUMENTS (not MINIO_ROOT_PASSWORD)
+  - BEFORE mc alias set attempt 1/5: logged
+  - AFTER mc alias set success: logged
+  - BEFORE mc mb --ignore-existing: logged
+  - mc output: "Bucket created successfully `local/hilo-docs-dev`."
+  - AFTER mc mb success: logged
+  - Completion log: logged
+  - minio-init-1 exited with code 0
+
+MinIO endpoint:
+  - http://minio:9000 (internal docker network) CONFIRMED working
+  - http://localhost:9000 (host port mapping) CONFIRMED reachable by boto3
+
+Bucket:
+  - hilo-docs-dev created on T01, idempotent on T03 (also exit 0)
+  - boto3 list_buckets confirms: ['hilo-docs-dev']
+
+Security:
+  - MINIO_ROOT_PASSWORD (hilo-dev-only) NOT present in any compose log output
+  - mc alias set credentials redirected to /dev/null (suppressed)

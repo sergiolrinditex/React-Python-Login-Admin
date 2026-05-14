@@ -1,0 +1,56 @@
+{
+  "id": "FU-20260513204522-seed-roles-user-roles-in-verification-data-boots",
+  "schema_version": 1,
+  "status": "waived",
+  "created_at": "2026-05-13T20:45:22+00:00",
+  "created_by": "sergiolr",
+  "origin_task_id": "P02-S06-T001",
+  "origin_phase_id": "P02",
+  "origin_step_id": "P02-S06",
+  "kind": "data",
+  "product_increment": "current",
+  "build_state": "planned",
+  "severity": "high",
+  "title": "Seed roles + user_roles in verification-data bootstrap",
+  "description": "verification-data bootstrap does not populate 'roles' or 'user_roles' tables. Admin user admin.peopletech@inditex-sandbox.com has the verification-data JSON role 'people_admin' but no row in user_roles after seed; JWT roles claim falls back to 'employee'. Every admin endpoint (P02-S05-T001 admin AI, P02-S06-T001 RAG docs, P02-S07-T001 MCP, future P03/P04 admin) returns 403 in real verify until manual SQL seed. Verify-slice P02-S06-T001 needed manual workaround (SQL INSERTs into roles + user_roles).",
+  "journey_refs": [],
+  "screen_route": "—",
+  "endpoint": "—",
+  "tables": [],
+  "depends_on": [
+    "P02-S06-T001"
+  ],
+  "conflict_groups": [
+    "api:rag-docs"
+  ],
+  "write_set": [
+    "backend/app/verification_data/",
+    "data/verification/roles/",
+    "data/verification/users/"
+  ],
+  "acceptance": [
+    "After 'python -m app.verification_data.bootstrap --source data/verification'",
+    "roles table contains canonical names (employee",
+    "people_admin",
+    "people_auditor",
+    "super_admin) and user_roles binds each verification user to its declared roles. JWT for admin.peopletech@inditex-sandbox.com contains roles=['people_admin']."
+  ],
+  "verify": [
+    "Run dev-restart.sh --reset",
+    "sign-in as admin.peopletech@inditex-sandbox.com",
+    "decode JWT",
+    "assert 'people_admin' in roles. Run e.g. POST /api/v1/admin/rag/documents and confirm 201 without manual SQL workaround."
+  ],
+  "notes": [],
+  "triage": {
+    "scope_classification": "missing_real_data",
+    "why_not_debugger": "Roles and user_roles seeding lives in app/verification_data/bootstrap.py and data/verification/roles/* (does not exist), outside the slice's write_set [backend/app/rag/documents.py, backend/tests/integration/test_rag_documents.py]. Debugger cannot fix verification-data infra without expanding scope.",
+    "decision": "followup_only_when_outside_current_slice",
+    "debugger_path": "in_scope_defects_use_validator_tester_debugger_retest",
+    "warnings": []
+  },
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260513204522-seed-roles-user-roles-in-verification-data-boots.yaml",
+  "waived_at": "2026-05-13T20:51:30+00:00",
+  "waived_by": "sergiolr",
+  "waiver_reason": "Workaround applied + documented in P02-S06-T001 handoff verify-slice section (SQL seed of roles + user_roles for admin.peopletech). Promoted to a future verification-data hardening slice after closer. Slice itself verified clean."
+}

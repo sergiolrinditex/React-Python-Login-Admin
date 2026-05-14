@@ -8,7 +8,6 @@ task_ids:
   - P02-S02-T001
   - P02-S03-T001
   - P02-S03-T002
-  - P02-S03-T004
   - P02-S04-T001
   - P02-S04-T002
   - P02-S05-T001
@@ -16,9 +15,16 @@ task_ids:
   - P02-S06-T001
   - P02-S06-T002
   - P02-S07-T001
-  - P02-S07-T002
   - P02-S08-T001
   - P02-S02-T002
   - P02-S03-T003
   - P02-S05-T003
+  - P02-S03-T004
+  - P02-S07-T002
+  - P02-S03-T005
+  - P02-S03-T006
+  - P02-S03-T007
+  - P02-S06-T003
+  - P02-S05-T004
+  - P02-S06-T004
 source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Phase 2 — MOTOR / domain backend / AI"

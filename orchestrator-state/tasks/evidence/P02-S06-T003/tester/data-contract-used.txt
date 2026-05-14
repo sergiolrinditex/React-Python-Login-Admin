@@ -1,0 +1,18 @@
+Verification Data Contract — P02-S06-T003
+
+Source: task pack §8 (no TECHNICAL_GUIDE §6.5 table row — infra slice).
+The "verification data" for this slice is the env vars contract from .env.example.
+
+Env vars used (from .env.example defaults):
+  MINIO_ROOT_USER=hilo           (dev default, non-secret)
+  MINIO_ROOT_PASSWORD=hilo-dev-only  (dev default, rotated in staging/prod)
+  S3_BUCKET_DOCUMENTS=hilo-docs-dev  (dev default bucket name)
+
+Provided verification data:
+  - No DB rows, no seed files, no PDF fixtures (those belong to J104/P02-S06-T002).
+  - The bucket created by this script is the prerequisite for J104 fixtures.
+
+Data observed/persisted:
+  - MinIO volume: p02-s06-t003_minio_data (docker volume)
+  - Bucket created: hilo-docs-dev (confirmed via boto3 list_buckets)
+  - No user data, no PII, no credentials persisted (dev defaults only).

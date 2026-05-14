@@ -6,7 +6,7 @@ status: done
 kind: "worker"
 target: "Celery vectorization worker"
 product_increment: "v1"
-build_state: "done"
+build_state: "planned"
 risk_level: "medium"
 verify_mode: "human"
 route: ""

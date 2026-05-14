@@ -6,7 +6,7 @@ status: done
 kind: "framework"
 target: "make bootstrap_source_of_truth.py --refresh preserve closer-set task status"
 product_increment: "current"
-build_state: "done"
+build_state: "planned"
 risk_level: "medium"
 verify_mode: "human"
 route: ""

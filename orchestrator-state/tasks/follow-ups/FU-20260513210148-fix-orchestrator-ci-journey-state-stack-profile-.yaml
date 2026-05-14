@@ -1,0 +1,52 @@
+{
+  "id": "FU-20260513210148-fix-orchestrator-ci-journey-state-stack-profile-",
+  "schema_version": 1,
+  "status": "promoted",
+  "created_at": "2026-05-13T21:01:48+00:00",
+  "created_by": "sergiolr",
+  "origin_task_id": "P02-S05-T002",
+  "origin_phase_id": "P02",
+  "origin_step_id": "P02-S05",
+  "kind": "test",
+  "product_increment": "current",
+  "build_state": "planned",
+  "severity": "high",
+  "title": "Fix orchestrator CI: journey_state + stack_profile contract regressions",
+  "description": "Three CI checks on the dedicated GitHub workflow \"Orchestrator tests\" are red since commits 6f58ddb (chore: sync registry + tail-log SessionStart hook) and 1724b2c (chore: defense-at-root reconciler + per-slice worktree paths + git workflow hardening).\n\n1. .claude/bin/tests/test_journey_state.py — 5 failures: test_add_pending_is_idempotent, test_add_pending_preserves_order_for_multiple, test_waive_records_reason, test_hook_integration_closer_emits_pending, test_hook_integration_issues_found_keeps_pending. Symptom: pending_journey_verifications ends up empty when it should contain the JID; journey.verification_status stays \"pending\" after waive. Likely the journey-state mutation path in hook_capture_subagent_stop.py (or journey_state.py) was changed without updating the tests, or vice versa.\n\n2. .claude/bin/tests/test_stack_profile_contract.py — 2 failures: test_git_workflow_direct_main_alias_pushes_to_main, test_git_workflow_amends_late_ledger_before_push. Both fail with result.returncode == 3 (not 0). Likely scripts/git-workflow.sh returncode contract changed during the pr-flow hardening in 1724b2c.\n\n3. Lint (python + json + bash + shellcheck) — failure pending root-cause; needs separate diagnosis.\n\nThese are PRE-EXISTING (same set was red on PR #14 which merged) but block merging PR #15 to main per the new policy. Fix on a dedicated chore/orchestrator-ci-fix branch, NOT inside a DAG product slice.",
+  "journey_refs": [],
+  "screen_route": "—",
+  "endpoint": "—",
+  "tables": [],
+  "depends_on": [
+    "P02-S05-T002"
+  ],
+  "conflict_groups": [
+    "orchestrator:tests"
+  ],
+  "write_set": [
+    ".claude/bin/**",
+    ".claude/hooks/**",
+    "scripts/git-workflow.sh"
+  ],
+  "acceptance": [
+    "All 3 jobs of Orchestrator tests workflow turn green on a PR against main: Lint (python + json + bash + shellcheck)",
+    "Unit tests (python 3.11)",
+    "Unit tests (python 3.12). PR #15 and any subsequent slice PRs do not regress this state."
+  ],
+  "verify": [
+    "CI on GitHub Actions Orchestrator tests workflow green",
+    "gh pr view <new-PR> --json statusCheckRollup shows all SUCCESS."
+  ],
+  "notes": [],
+  "triage": {
+    "scope_classification": "missing_coverage",
+    "why_not_debugger": "Failures live in .claude/bin/tests/ (orchestrator harness internals). The runtime-write-contract forbids editing .claude/ during a DAG slice; the bug is in static config + companion test files maintained by orchestrator/maintenance branches, not by debugger inside a product slice. Same 3 jobs were red on PR #14 (merged) and remain red on PR #15 — pre-existing regression introduced by orchestrator changes 6f58ddb / 1724b2c.",
+    "decision": "followup_only_when_outside_current_slice",
+    "debugger_path": "in_scope_defects_use_validator_tester_debugger_retest",
+    "warnings": []
+  },
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260513210148-fix-orchestrator-ci-journey-state-stack-profile-.yaml",
+  "promoted_at": "2026-05-13T21:13:42+00:00",
+  "promoted_task_id": "P02-S05-T004",
+  "source_doc_updated": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md"
+}
