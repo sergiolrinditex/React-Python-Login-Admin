@@ -1,0 +1,148 @@
+2026-05-13 23:58:28,369 asyncio DEBUG Using selector: KqueueSelector
+2026-05-13 23:58:28,371 app.db.session DEBUG db.session.open
+2026-05-13 23:58:28,374 app.auth.routers.sign_in INFO auth.sign_in.received email_domain=inditex-sandbox.com request_id=70b516b9-161f-4342-bc5c-cadcf94907aa
+2026-05-13 23:58:28,374 app.auth.rate_limit DEBUG rate_limit.check.start prefix=SIGNIN ip=SIGNIN:testclient rate_per_min=20 burst=20
+2026-05-13 23:58:28,374 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=SIGNIN ip=SIGNIN:testclient new_window remaining=19
+2026-05-13 23:58:28,374 app.auth.services.sign_in INFO auth.sign_in.starting request_id=70b516b9-161f-4342-bc5c-cadcf94907aa email_domain=inditex-sandbox.com
+2026-05-13 23:58:28,374 app.auth.repository DEBUG auth.repo.find_by_email.start email_domain=inditex-sandbox.com
+2026-05-13 23:58:28,417 app.auth.repository DEBUG auth.repo.find_by_email.done found=True
+2026-05-13 23:58:28,417 app.auth.services.sign_in INFO auth.sign_in.user_found user_id=c5d53ef8-26f0-4603-96db-25367431c18f request_id=70b516b9-161f-4342-bc5c-cadcf94907aa
+2026-05-13 23:58:28,417 app.auth.repository DEBUG auth.repo.count_signin_failures.start user_id=c5d53ef8-26f0-4603-96db-25367431c18f window=900s
+2026-05-13 23:58:28,419 app.auth.repository DEBUG auth.repo.count_signin_failures.done user_id=c5d53ef8-26f0-4603-96db-25367431c18f count=0
+2026-05-13 23:58:28,419 app.auth.password DEBUG password.verify_with_dummy.start has_real_hash=True
+2026-05-13 23:58:28,459 app.auth.password DEBUG password.verify_with_dummy.ok
+2026-05-13 23:58:28,467 app.auth.tokens DEBUG tokens.encode_access.start sub=c5d53ef8-26f0-4603-96db-25367431c18f ttl=1800s
+2026-05-13 23:58:28,467 app.auth.tokens DEBUG tokens.jwt_key.resolved bytes=64
+2026-05-13 23:58:28,467 app.auth.tokens DEBUG tokens.encode_access.done sub=c5d53ef8-26f0-4603-96db-25367431c18f exp=2026-05-13T22:28:28.462927+00:00
+2026-05-13 23:58:28,467 app.auth.repository DEBUG auth.repo.insert_refresh_token.start user_id=c5d53ef8-26f0-4603-96db-25367431c18f
+2026-05-13 23:58:28,473 app.auth.repository DEBUG auth.repo.insert_refresh_token.done user_id=c5d53ef8-26f0-4603-96db-25367431c18f rt_id=695f902d-d139-48cb-ac0c-402a58056c79
+2026-05-13 23:58:28,474 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.sign_in actor_user_id=c5d53ef8-26f0-4603-96db-25367431c18f
+2026-05-13 23:58:28,476 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=dae8023c-a3f7-4e82-b7e0-8226837da3fb action=auth.sign_in
+2026-05-13 23:58:28,481 app.auth.services.sign_in INFO auth.sign_in.success user_id=c5d53ef8-26f0-4603-96db-25367431c18f request_id=70b516b9-161f-4342-bc5c-cadcf94907aa
+2026-05-13 23:58:28,481 app.auth.routers.sign_in INFO auth.sign_in.success user_id=c5d53ef8-26f0-4603-96db-25367431c18f request_id=70b516b9-161f-4342-bc5c-cadcf94907aa
+2026-05-13 23:58:28,482 app.db.session DEBUG db.session.closed
+2026-05-13 23:58:28,483 asyncio DEBUG Using selector: KqueueSelector
+2026-05-13 23:58:28,485 app.db.session DEBUG db.session.open
+2026-05-13 23:58:28,485 app.users.deps DEBUG users.deps.get_current_user.start request_id=smoke-1 ip=testclient
+2026-05-13 23:58:28,485 app.auth.tokens DEBUG tokens.decode.start
+2026-05-13 23:58:28,485 app.auth.tokens DEBUG tokens.decode.ok sub=c5d53ef8-26f0-4603-96db-25367431c18f
+2026-05-13 23:58:28,485 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.start user_id=c5d53ef8-26f0-4603-96db-25367431c18f
+2026-05-13 23:58:28,491 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.done user_id=c5d53ef8-26f0-4603-96db-25367431c18f found=True
+2026-05-13 23:58:28,491 app.users.deps DEBUG users.deps.get_current_user.done user_id=c5d53ef8-26f0-4603-96db-25367431c18f request_id=smoke-1
+2026-05-13 23:58:28,491 app.security.permissions DEBUG security.permissions.require_role.start role=people_admin user_id=c5d53ef8-26f0-4603-96db-25367431c18f request_id=smoke-1
+2026-05-13 23:58:28,491 app.security.permissions DEBUG security.permissions.require_role.ok role=people_admin user_id=c5d53ef8-26f0-4603-96db-25367431c18f request_id=smoke-1
+2026-05-13 23:58:28,491 hilo.rag.collections.router DEBUG rag.collections.router.list.start admin_id=c5d53ef8-26f0-4603-96db-25367431c18f request_id=smoke-1
+2026-05-13 23:58:28,491 hilo.rag.collections.service DEBUG rag.collections.service.list.start request_id=smoke-1
+2026-05-13 23:58:28,491 hilo.rag.collections.repository DEBUG rag.collections.repository.list_all.start
+2026-05-13 23:58:28,492 hilo.rag.collections.repository DEBUG rag.collections.repository.list_all.ok count=1 latency_ms=1.5
+2026-05-13 23:58:28,492 hilo.rag.collections.service DEBUG rag.collections.service.list.ok count=1 latency_ms=1.5 request_id=smoke-1
+2026-05-13 23:58:28,492 hilo.rag.collections.router DEBUG rag.collections.router.list.ok count=1 latency_ms=1.7 request_id=smoke-1
+2026-05-13 23:58:28,493 app.db.session DEBUG db.session.closed
+2026-05-13 23:58:28,494 asyncio DEBUG Using selector: KqueueSelector
+2026-05-13 23:58:28,496 app.db.session DEBUG db.session.open
+2026-05-13 23:58:28,496 app.users.deps DEBUG users.deps.get_current_user.start request_id=smoke-2 ip=testclient
+2026-05-13 23:58:28,496 app.auth.tokens DEBUG tokens.decode.start
+2026-05-13 23:58:28,496 app.auth.tokens DEBUG tokens.decode.ok sub=c5d53ef8-26f0-4603-96db-25367431c18f
+2026-05-13 23:58:28,496 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.start user_id=c5d53ef8-26f0-4603-96db-25367431c18f
+2026-05-13 23:58:28,498 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.done user_id=c5d53ef8-26f0-4603-96db-25367431c18f found=True
+2026-05-13 23:58:28,498 app.users.deps DEBUG users.deps.get_current_user.done user_id=c5d53ef8-26f0-4603-96db-25367431c18f request_id=smoke-2
+2026-05-13 23:58:28,498 app.security.permissions DEBUG security.permissions.require_role.start role=people_admin user_id=c5d53ef8-26f0-4603-96db-25367431c18f request_id=smoke-2
+2026-05-13 23:58:28,498 app.security.permissions DEBUG security.permissions.require_role.ok role=people_admin user_id=c5d53ef8-26f0-4603-96db-25367431c18f request_id=smoke-2
+2026-05-13 23:58:28,498 hilo.rag.collections.router DEBUG rag.collections.router.update.start admin_id=c5d53ef8-26f0-4603-96db-25367431c18f collection_id=6c0a065d-01fb-4f4e-972a-3b0123cc9975 fields=['enabled'] request_id=smoke-2
+2026-05-13 23:58:28,498 hilo.rag.collections.service DEBUG rag.collections.service.update.start admin_id=c5d53ef8-26f0-4603-96db-25367431c18f collection_id=6c0a065d-01fb-4f4e-972a-3b0123cc9975 fields=['enabled'] request_id=smoke-2
+2026-05-13 23:58:28,498 hilo.rag.collections.repository DEBUG rag.collections.repository.find_by_id.start collection_id=6c0a065d-01fb-4f4e-972a-3b0123cc9975
+2026-05-13 23:58:28,500 hilo.rag.collections.repository DEBUG rag.collections.repository.find_by_id.ok found=True latency_ms=1.1
+2026-05-13 23:58:28,500 hilo.rag.collections.repository DEBUG rag.collections.repository.update_partial.start collection_id=6c0a065d-01fb-4f4e-972a-3b0123cc9975 changed_fields=['enabled']
+2026-05-13 23:58:28,501 hilo.rag.collections.repository DEBUG rag.collections.repository.update_partial.ok collection_id=6c0a065d-01fb-4f4e-972a-3b0123cc9975 changed_fields=['enabled'] latency_ms=1.4
+2026-05-13 23:58:28,502 app.admin._audit DEBUG admin._audit.write.start actor=c5d53ef8-26f0-4603-96db-25367431c18f action=admin.rag.collection.update entity_id=6c0a065d-01fb-4f4e-972a-3b0123cc9975
+2026-05-13 23:58:28,502 app.db.session DEBUG db.session.audit_scope.open
+2026-05-13 23:58:28,504 app.db.session DEBUG db.session.audit_scope.closed
+2026-05-13 23:58:28,504 app.admin._audit DEBUG admin._audit.write.ok actor=c5d53ef8-26f0-4603-96db-25367431c18f action=admin.rag.collection.update entity_id=6c0a065d-01fb-4f4e-972a-3b0123cc9975
+2026-05-13 23:58:28,504 hilo.rag.collections.service DEBUG rag.collections.service.update.ok admin_id=c5d53ef8-26f0-4603-96db-25367431c18f collection_id=6c0a065d-01fb-4f4e-972a-3b0123cc9975 changed_fields=['enabled'] latency_ms=5.8 request_id=smoke-2
+2026-05-13 23:58:28,508 hilo.rag.collections.router DEBUG rag.collections.router.update.ok admin_id=c5d53ef8-26f0-4603-96db-25367431c18f collection_id=6c0a065d-01fb-4f4e-972a-3b0123cc9975 latency_ms=7.5 request_id=smoke-2
+2026-05-13 23:58:28,509 app.db.session DEBUG db.session.closed
+2026-05-13 23:58:28,510 asyncio DEBUG Using selector: KqueueSelector
+2026-05-13 23:58:28,510 app.db.session DEBUG db.session.open
+2026-05-13 23:58:28,510 app.users.deps DEBUG users.deps.get_current_user.start request_id=smoke-3 ip=testclient
+2026-05-13 23:58:28,510 app.auth.tokens DEBUG tokens.decode.start
+2026-05-13 23:58:28,510 app.auth.tokens DEBUG tokens.decode.ok sub=c5d53ef8-26f0-4603-96db-25367431c18f
+2026-05-13 23:58:28,510 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.start user_id=c5d53ef8-26f0-4603-96db-25367431c18f
+2026-05-13 23:58:28,512 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.done user_id=c5d53ef8-26f0-4603-96db-25367431c18f found=True
+2026-05-13 23:58:28,512 app.users.deps DEBUG users.deps.get_current_user.done user_id=c5d53ef8-26f0-4603-96db-25367431c18f request_id=smoke-3
+2026-05-13 23:58:28,512 app.security.permissions DEBUG security.permissions.require_role.start role=people_admin user_id=c5d53ef8-26f0-4603-96db-25367431c18f request_id=smoke-3
+2026-05-13 23:58:28,512 app.security.permissions DEBUG security.permissions.require_role.ok role=people_admin user_id=c5d53ef8-26f0-4603-96db-25367431c18f request_id=smoke-3
+2026-05-13 23:58:28,512 hilo.rag.collections.router DEBUG rag.collections.router.update.start admin_id=c5d53ef8-26f0-4603-96db-25367431c18f collection_id=6c0a065d-01fb-4f4e-972a-3b0123cc9975 fields=['enabled'] request_id=smoke-3
+2026-05-13 23:58:28,512 hilo.rag.collections.service DEBUG rag.collections.service.update.start admin_id=c5d53ef8-26f0-4603-96db-25367431c18f collection_id=6c0a065d-01fb-4f4e-972a-3b0123cc9975 fields=['enabled'] request_id=smoke-3
+2026-05-13 23:58:28,512 hilo.rag.collections.repository DEBUG rag.collections.repository.find_by_id.start collection_id=6c0a065d-01fb-4f4e-972a-3b0123cc9975
+2026-05-13 23:58:28,513 hilo.rag.collections.repository DEBUG rag.collections.repository.find_by_id.ok found=True latency_ms=0.6
+2026-05-13 23:58:28,513 hilo.rag.collections.repository DEBUG rag.collections.repository.update_partial.start collection_id=6c0a065d-01fb-4f4e-972a-3b0123cc9975 changed_fields=['enabled']
+2026-05-13 23:58:28,513 hilo.rag.collections.repository DEBUG rag.collections.repository.update_partial.ok collection_id=6c0a065d-01fb-4f4e-972a-3b0123cc9975 changed_fields=['enabled'] latency_ms=0.6
+2026-05-13 23:58:28,514 app.admin._audit DEBUG admin._audit.write.start actor=c5d53ef8-26f0-4603-96db-25367431c18f action=admin.rag.collection.update entity_id=6c0a065d-01fb-4f4e-972a-3b0123cc9975
+2026-05-13 23:58:28,514 app.db.session DEBUG db.session.audit_scope.open
+2026-05-13 23:58:28,516 app.db.session DEBUG db.session.audit_scope.closed
+2026-05-13 23:58:28,516 app.admin._audit DEBUG admin._audit.write.ok actor=c5d53ef8-26f0-4603-96db-25367431c18f action=admin.rag.collection.update entity_id=6c0a065d-01fb-4f4e-972a-3b0123cc9975
+2026-05-13 23:58:28,516 hilo.rag.collections.service DEBUG rag.collections.service.update.ok admin_id=c5d53ef8-26f0-4603-96db-25367431c18f collection_id=6c0a065d-01fb-4f4e-972a-3b0123cc9975 changed_fields=['enabled'] latency_ms=3.7 request_id=smoke-3
+2026-05-13 23:58:28,519 hilo.rag.collections.router DEBUG rag.collections.router.update.ok admin_id=c5d53ef8-26f0-4603-96db-25367431c18f collection_id=6c0a065d-01fb-4f4e-972a-3b0123cc9975 latency_ms=5.1 request_id=smoke-3
+2026-05-13 23:58:28,519 app.db.session DEBUG db.session.closed
+2026-05-13 23:58:28,520 asyncio DEBUG Using selector: KqueueSelector
+2026-05-13 23:58:28,520 app.db.session DEBUG db.session.open
+2026-05-13 23:58:28,520 app.users.deps DEBUG users.deps.get_current_user.start request_id=772a8198-9bfc-4684-8dae-46751484d7c6 ip=testclient
+2026-05-13 23:58:28,520 app.users.deps WARNING users.deps.auth_failed reason=missing_bearer request_id=772a8198-9bfc-4684-8dae-46751484d7c6
+2026-05-13 23:58:28,520 app.security.permissions DEBUG security.permissions.require_role.auth_failed role=people_admin
+2026-05-13 23:58:28,521 app.db.session DEBUG db.session.closed
+2026-05-13 23:58:28,521 asyncio DEBUG Using selector: KqueueSelector
+2026-05-13 23:58:28,521 app.db.session DEBUG db.session.open
+2026-05-13 23:58:28,522 app.auth.routers.sign_in INFO auth.sign_in.received email_domain=inditex-sandbox.com request_id=7ee16b87-b926-4f44-b4c2-89b547a42e24
+2026-05-13 23:58:28,522 app.auth.rate_limit DEBUG rate_limit.check.start prefix=SIGNIN ip=SIGNIN:testclient rate_per_min=20 burst=20
+2026-05-13 23:58:28,522 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=SIGNIN ip=SIGNIN:testclient remaining=18
+2026-05-13 23:58:28,522 app.auth.services.sign_in INFO auth.sign_in.starting request_id=7ee16b87-b926-4f44-b4c2-89b547a42e24 email_domain=inditex-sandbox.com
+2026-05-13 23:58:28,522 app.auth.repository DEBUG auth.repo.find_by_email.start email_domain=inditex-sandbox.com
+2026-05-13 23:58:28,524 app.auth.repository DEBUG auth.repo.find_by_email.done found=True
+2026-05-13 23:58:28,524 app.auth.services.sign_in INFO auth.sign_in.user_found user_id=a0593af2-1850-40e3-96bd-45fe08b63b4c request_id=7ee16b87-b926-4f44-b4c2-89b547a42e24
+2026-05-13 23:58:28,524 app.auth.repository DEBUG auth.repo.count_signin_failures.start user_id=a0593af2-1850-40e3-96bd-45fe08b63b4c window=900s
+2026-05-13 23:58:28,525 app.auth.repository DEBUG auth.repo.count_signin_failures.done user_id=a0593af2-1850-40e3-96bd-45fe08b63b4c count=0
+2026-05-13 23:58:28,525 app.auth.password DEBUG password.verify_with_dummy.start has_real_hash=True
+2026-05-13 23:58:28,559 app.auth.password DEBUG password.verify_with_dummy.mismatch
+2026-05-13 23:58:28,559 app.auth.services.sign_in INFO auth.sign_in.wrong_password user_id=a0593af2-1850-40e3-96bd-45fe08b63b4c request_id=7ee16b87-b926-4f44-b4c2-89b547a42e24
+2026-05-13 23:58:28,559 app.auth.services.sign_in DEBUG auth.sign_in.rejection_audit.start outcome=failure reason=wrong_password request_id=7ee16b87-b926-4f44-b4c2-89b547a42e24
+2026-05-13 23:58:28,559 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.sign_in actor_user_id=a0593af2-1850-40e3-96bd-45fe08b63b4c
+2026-05-13 23:58:28,561 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=0819794c-0e2a-45b2-a7b2-e1eec9d12c55 action=auth.sign_in
+2026-05-13 23:58:28,562 app.db.session DEBUG db.session.closed
+Traceback (most recent call last):
+  File "<string>", line 56, in <module>
+AttributeError: 'NoneType' object has no attribute 'get'
+SIGN-IN STATUS: 200
+GET STATUS: 200
+GET RESPONSE: {
+  "data": [
+    {
+      "id": "6c0a065d-01fb-4f4e-972a-3b0123cc9975",
+      "name": "politicas_tienda",
+      "vertical": "hr_policies",
+      "language": "es",
+      "enabled": true,
+      "metadata": {
+        "source": "People Tech sandbox",
+        "description": "Colecci\u00f3n de pol\u00edticas de recursos humanos para verificaci\u00f3n"
+      }
+    }
+  ],
+  "meta": {
+    "request_id": "smoke-1"
+  }
+}
+X-Request-ID echoed: smoke-1
+FIRST COLLECTION ID: 6c0a065d-01fb-4f4e-972a-3b0123cc9975
+PATCH STATUS: 200
+PATCH RESPONSE: {
+  "data": {
+    "id": "6c0a065d-01fb-4f4e-972a-3b0123cc9975",
+    "name": "politicas_tienda",
+    "vertical": "hr_policies",
+    "language": "es",
+    "enabled": false,
+    "metadata": {
+      "source": "People Tech sandbox",
+      "description": "Colecci\u00f3n de pol\u00edticas de recursos human
+PATCH REVERT STATUS: 200
+NO-TOKEN STATUS: 401

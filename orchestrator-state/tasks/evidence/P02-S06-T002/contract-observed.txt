@@ -1,0 +1,22 @@
+Contract Observed — P02-S06-T002
+==================================
+
+Front → Back → DB contract from task pack §F:
+
+Layer                | Component                                      | Observed
+---------------------|------------------------------------------------|-------------------
+API routes           | GET /api/v1/admin/rag/collections              | 200 ✓
+                     | PATCH /api/v1/admin/rag/collections/{id}       | 200/400/404 ✓
+Pydantic schemas     | CollectionOut (in GET/PATCH response)          | fields: id,name,vertical,language,enabled,metadata ✓
+                     | CollectionPatchIn (PATCH body)                 | at_least_one_field validator fires ✓
+Response envelope    | {data, meta:{request_id}, errors?}             | ✓ present in all responses
+X-Request-ID         | Propagated from request → response header      | ✓ observed (smoke-1 echoed)
+RBAC                 | require_admin → people_admin/super_admin only  | 403 for employee ✓; 401 for no-token ✓
+Audit               | audit_logs action=admin.rag.collection.update  | 2 rows written in smoke (smoke-2, smoke-3) ✓
+                     | metadata includes: request_id, changed_fields  | ✓
+DB table             | rag_collections                               | 1 row (politicas_tienda) observed ✓
+Repository functions | list_all(), find_by_id(), update_partial()     | called via service layer ✓
+Service functions    | list_collections(), update_collection()        | invoked, logged BEFORE/AFTER ✓
+
+No mocks of own services. Real Postgres DB. TestClient used for in-process routing.
+Running uvicorn server serves T001 code (different worktree); T002 tested via TestClient.
