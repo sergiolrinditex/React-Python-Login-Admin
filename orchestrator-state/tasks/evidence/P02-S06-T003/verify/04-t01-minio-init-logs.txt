@@ -1,0 +1,8 @@
+==> BEFORE minio-bootstrap — validating required environment variables
+==> AFTER env validation — MINIO_ROOT_USER=hilo S3_BUCKET_DOCUMENTS=hilo-docs-dev
+==> BEFORE mc alias set (attempt 1/5) — endpoint: http://minio:9000 user: hilo
+==> AFTER mc alias set — alias 'local' configured successfully
+==> BEFORE mc mb — creating bucket 'hilo-docs-dev' (--ignore-existing for idempotency)
+Bucket created successfully `local/hilo-docs-dev`.
+==> AFTER mc mb — bucket 'local/hilo-docs-dev' ready (created or already existed)
+==> minio-bootstrap complete — bucket 'hilo-docs-dev' is available at http://minio:9000
