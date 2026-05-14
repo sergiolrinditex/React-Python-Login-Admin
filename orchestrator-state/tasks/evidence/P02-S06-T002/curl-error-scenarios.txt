@@ -1,0 +1,68 @@
+=== 404 NON-EXISTENT UUID ===
+STATUS: 404
+BODY: {
+  "data": null,
+  "meta": {
+    "request_id": "fa7f10de-8b61-4eb2-a657-aef4c8f34bcf"
+  },
+  "errors": [
+    {
+      "code": "RAG_COLLECTION_NOT_FOUND",
+      "message": "Collection not found.",
+      "field": null,
+      "details": null
+    }
+  ]
+}
+
+=== 400/422 EMPTY BODY ===
+STATUS: 422
+BODY: {
+  "detail": [
+    {
+      "type": "value_error",
+      "loc": [
+        "body"
+      ],
+      "msg": "Value error, at_least_one_field_required",
+      "input": {},
+      "ctx": {
+        "error": "at_least_one_field_required"
+      }
+    }
+  ]
+}
+
+=== 400 EMPTY NAME AFTER TRIM ===
+STATUS: 400
+BODY: {
+  "data": null,
+  "meta": {
+    "request_id": "ecef1359-279c-4be6-805f-798a09b4bba9"
+  },
+  "errors": [
+    {
+      "code": "RAG_INVALID_PAYLOAD",
+      "message": "Name cannot be empty after trimming.",
+      "field": "name",
+      "details": null
+    }
+  ]
+}
+
+=== 401 NO TOKEN ===
+STATUS: 401
+BODY: {
+  "data": null,
+  "meta": {
+    "request_id": "1f428c22-d9c2-4017-acaf-c73940406a69"
+  },
+  "errors": [
+    {
+      "code": "AUTH_SESSION_EXPIRED",
+      "message": "Session expired or invalid credentials. Please sign in again.",
+      "field": null,
+      "details": null
+    }
+  ]
+}

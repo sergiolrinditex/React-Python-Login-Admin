@@ -1,0 +1,17 @@
+Log verification — ENABLE_VERBOSE_LOGGING=false
+================================================
+
+Test T13 (caplog assertion): PASSED
+  - Asserts NO DEBUG lines from hilo.rag.collections logger namespace
+  - Filters records: levelno == DEBUG and name.startswith("hilo.rag.collections")
+  - Expected len(debug_lines) == 0: CONFIRMED PASS
+  - _VERBOSE forced to False in router/service/repository modules for T13 isolation
+
+Live verification (in-process, verbose=false):
+  - _VERBOSE router: False
+  - _VERBOSE service: False  
+  - _VERBOSE repository: False
+  - Captured hilo.rag.collections logs: '' (empty string)
+  - Result: PASS — no DEBUG lines emitted from rag.collections with verbose=false
+
+Both verbose modes tested: 13/13 PASS each run.

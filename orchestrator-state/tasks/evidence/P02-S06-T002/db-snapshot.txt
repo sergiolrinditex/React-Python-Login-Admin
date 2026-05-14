@@ -1,0 +1,14 @@
+                  id                  |       name       |  vertical   | language | enabled 
+--------------------------------------+------------------+-------------+----------+---------
+ 6c0a065d-01fb-4f4e-972a-3b0123cc9975 | politicas_tienda | hr_policies | es       | t
+(1 fila)
+
+           action            |            actor_user_id             |  entity_type   |              entity_id               |          created_at           |                                                                      metadata                                                                      
+-----------------------------+--------------------------------------+----------------+--------------------------------------+-------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------
+ admin.rag.collection.update | c5d53ef8-26f0-4603-96db-25367431c18f | rag_collection | 6c0a065d-01fb-4f4e-972a-3b0123cc9975 | 2026-05-13 21:58:28.402266+00 | {"ip": "testclient", "request_id": "smoke-3", "user_agent": "testclient", "changed_fields": ["enabled"]}
+ admin.rag.collection.update | c5d53ef8-26f0-4603-96db-25367431c18f | rag_collection | 6c0a065d-01fb-4f4e-972a-3b0123cc9975 | 2026-05-13 21:58:28.39028+00  | {"ip": "testclient", "request_id": "smoke-2", "user_agent": "testclient", "changed_fields": ["enabled"]}
+ admin.rag.collection.update |                                      | rag_collection | a0bad595-e420-4e35-9b57-99f39c9e9468 | 2026-05-13 21:55:19.421862+00 | {"ip": "testclient", "request_id": "2a06bdc5-16b3-4261-a5cf-f28bba904a59", "user_agent": "testclient", "changed_fields": ["enabled"]}
+ admin.rag.collection.update |                                      | rag_collection | 489caa6a-17d7-4297-8b5e-1154fa820b70 | 2026-05-13 21:55:19.403665+00 | {"ip": "testclient", "request_id": "04ed85b0-c3c3-44b7-a83b-5d729715fad4", "user_agent": "testclient", "changed_fields": ["enabled"]}
+ admin.rag.collection.update |                                      | rag_collection | bb0932cc-ae5a-411a-96ee-3d3db9cb1453 | 2026-05-13 21:55:19.253979+00 | {"ip": "testclient", "request_id": "071aaedc-f226-43f4-9350-5f1815517c16", "user_agent": "testclient", "changed_fields": ["language", "vertical"]}
+(5 filas)
+

@@ -1,0 +1,25 @@
+Log verification — ENABLE_VERBOSE_LOGGING=true
+===============================================
+
+Test T12 (caplog assertion): PASSED
+  - Asserts "rag.collections.router.update.start" present in caplog.text (DEBUG level)
+  - Asserts "rag.collections.router.update.ok" present in caplog.text (DEBUG level)
+  - _VERBOSE forced to True in all modules for T12 isolation
+
+Live smoke (in-process, verbose=true):
+  - hilo.rag.collections.router DEBUG rag.collections.router.list.start admin_id=... request_id=smoke-1
+  - hilo.rag.collections.service DEBUG rag.collections.service.list.start request_id=smoke-1
+  - hilo.rag.collections.repository DEBUG rag.collections.repository.list_all.start
+  - hilo.rag.collections.repository DEBUG rag.collections.repository.list_all.ok count=1 latency_ms=1.5
+  - hilo.rag.collections.service DEBUG rag.collections.service.list.ok count=1 latency_ms=1.5 request_id=smoke-1
+  - hilo.rag.collections.router DEBUG rag.collections.router.list.ok count=1 latency_ms=1.7 request_id=smoke-1
+  - hilo.rag.collections.router DEBUG rag.collections.router.update.start admin_id=... collection_id=... fields=['enabled'] request_id=smoke-2
+  - hilo.rag.collections.service DEBUG rag.collections.service.update.start ...
+  - hilo.rag.collections.repository DEBUG rag.collections.repository.find_by_id.start ...
+  - hilo.rag.collections.repository DEBUG rag.collections.repository.update_partial.ok ...
+  - hilo.rag.collections.router DEBUG rag.collections.router.update.ok ... latency_ms=7.5
+
+PII check:
+  - No emails, passwords, or tokens in logs
+  - Only UUID identifiers (admin_id, collection_id), field names list, and latency metrics
+  - PASS: no PII detected

@@ -1,0 +1,30 @@
+Verification Data Contract — P02-S06-T002
+==========================================
+
+Contract source: TECHNICAL_GUIDE §6.5 + task pack §G (Verification data contract)
+
+Row applied: J104 rag-admin — politicas_tienda collection
+
+Data seeded via bootstrap (--only rag_chat):
+  - Collection: politicas_tienda
+    id: 6c0a065d-01fb-4f4e-972a-3b0123cc9975
+    vertical: hr_policies
+    language: es
+    enabled: true
+    metadata: {"source": "People Tech sandbox", "description": "Colección de políticas..."}
+
+Smoke tests performed using this data:
+  1. GET /api/v1/admin/rag/collections → returned politicas_tienda row (1 item)
+  2. PATCH /api/v1/admin/rag/collections/6c0a065d... {enabled: false} → 200, enabled→false
+  3. PATCH revert {enabled: true} → 200, enabled→true (journey idempotency preserved)
+  4. 2 audit_log rows written for politicas_tienda (smoke-2, smoke-3 request_ids)
+
+Integration tests do NOT use the seeded data; they self-seed via _create_collection() helper
+and clean up in teardown_module. Isolation confirmed.
+
+Admin user used: admin.peopletech@inditex-sandbox.com (bootstrapped via --only auth)
+Role: people_admin (manually assigned — bootstrap role linking had MFA_ENCRYPTION_KEY issue)
+
+Data persisted observed:
+  - rag_collections: 1 row (politicas_tienda) after smoke
+  - audit_logs: 5 rows with action=admin.rag.collection.update (2 smoke + 3 integration test)
