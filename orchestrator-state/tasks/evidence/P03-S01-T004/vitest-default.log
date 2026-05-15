@@ -1,0 +1,23 @@
+
+ RUN  v3.2.4 /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S01-T004/frontend
+
+ ✓ src/features/auth/__tests__/useSignIn.test.tsx (11 tests) 27ms
+ ✓ src/features/auth/__tests__/useSignUp.test.tsx (16 tests) 33ms
+ ✓ src/app/__tests__/providers.test.tsx (4 tests) 18ms
+ ✓ src/pages/auth/__tests__/ResetSentPage.test.tsx (22 tests) 103ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx (34 tests) 130ms
+ ✓ src/features/chat/__tests__/ChatHomePage.test.tsx (10 tests) 112ms
+ ✓ src/features/auth/__tests__/auth.test.tsx (33 tests) 159ms
+ ✓ src/pages/showcase/__tests__/ShowcasePage.test.tsx (4 tests) 136ms
+ ✓ src/features/chat/__tests__/useCreateConversation.test.tsx (4 tests) 235ms
+ ✓ src/pages/auth/__tests__/SignInPage.test.tsx (10 tests) 152ms
+ ✓ src/pages/auth/__tests__/SignUpPage.test.tsx (10 tests) 181ms
+ ✓ src/features/auth/data/__tests__/httpClient.test.ts (4 tests) 5ms
+ ✓ src/features/chat/__tests__/chatRepository.test.ts (7 tests) 8ms
+ ✓ src/i18n/__tests__/i18n.test.ts (25 tests) 7ms
+
+ Test Files  14 passed (14)
+      Tests  194 passed (194)
+   Start at  10:53:17
+   Duration  2.49s (transform 1.31s, setup 1.83s, collect 4.57s, tests 1.31s, environment 8.50s, prepare 1.44s)
+

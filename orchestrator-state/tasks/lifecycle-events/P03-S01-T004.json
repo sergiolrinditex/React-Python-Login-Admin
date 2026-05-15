@@ -1,0 +1,27 @@
+{
+  "agent_type": "closer",
+  "created_at": "2026-05-15T09:27:18+00:00",
+  "git": {
+    "branch": "dev/P03-S01-T004",
+    "head": "06d3d23f34133eca540e2c4693bee585b7d062da"
+  },
+  "next_status": "done",
+  "outcome": "committed",
+  "paths": {
+    "evidence": "orchestrator-state/tasks/evidence/P03-S01-T004",
+    "handoff": "orchestrator-state/tasks/handoffs/P03-S01-T004.md",
+    "report": "orchestrator-state/tasks/reports/P03-S01-T004.md",
+    "task_pack": "orchestrator-state/tasks/task-packs/P03-S01-T004.md"
+  },
+  "phase_id": "P03",
+  "previous_last_updated_by": "screen-journey-reviewer",
+  "previous_status": "verified_pending_close",
+  "root_split": {
+    "canonical_root_hint": "React-Python-Login-Admin",
+    "workspace_root_hint": "P03-S01-T004"
+  },
+  "schema": "orquestador.lifecycle-event.v1",
+  "source": "git-add-slice",
+  "task_id": "P03-S01-T004",
+  "title": "ResetSentPage"
+}

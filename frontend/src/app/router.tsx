@@ -8,6 +8,7 @@
  *     updated / and * redirects so authenticated users land on /chat.
  *   Updated in P03-S01-T002 — added /auth/sign-up route wired to SignUpPage (§D-T002-ROUTER).
  *   Updated in P03-S02-T003 — added /history route wired to HistoryPage (§D-T003-ROUTER).
+ *   Updated in P03-S01-T004 — added /auth/reset-sent route wired to ResetSentPage (§D-T004-ROUTER).
  *
  * Responsibility: single mount point for the application's route tree.
  *   Exports <AppRouter> which is consumed by main.tsx inside <Providers>.
@@ -17,6 +18,7 @@
  *   /showcase          → ShowcasePage (public — design-system demo, dev-only)
  *   /auth/sign-in      → SignInPage (real form, P03-S01-T001)
  *   /auth/sign-up      → SignUpPage (real form, P03-S01-T002)
+ *   /auth/reset-sent   → ResetSentPage (P03-S01-T004)
  *   /chat              → ChatHomePage (employee, RequireAuth) — P03-S02-T001
  *   /chat/:conversationId → placeholder (P03-S02-T002 adds real ConversationPage)
  *   /history              → HistoryPage (employee history, RequireAuth) — P03-S02-T003
@@ -45,6 +47,7 @@ import type { ReactNode } from "react";
 import ShowcasePage from "../pages/showcase/ShowcasePage";
 import SignInPage from "../pages/auth/SignInPage";
 import SignUpPage from "../pages/auth/SignUpPage";
+import ResetSentPage from "../pages/auth/ResetSentPage";
 import ChatHomePage from "../pages/chat/ChatHomePage";
 import HistoryPage from "../pages/chat/HistoryPage";
 import { AuthProvider } from "../features/auth/presentation/AuthProvider";
@@ -67,6 +70,13 @@ export const ROUTE_AUTH_SIGN_UP = "/auth/sign-up";
 
 /** Route path for admin area. Dashboard implemented in P04-S01-T001. */
 export const ROUTE_ADMIN = "/admin";
+
+/**
+ * Route path for password-reset confirmation page. Implemented in P03-S01-T004.
+ * §D-T004-ROUTER: public route, outside RequireAuth, mirrors /auth/sign-in pattern.
+ * Source: TECHNICAL_GUIDE §6.4 Navigation Contract — explicit public route.
+ */
+export const ROUTE_AUTH_RESET_SENT = "/auth/reset-sent";
 
 /** Route path for employee chat home. Implemented in P03-S02-T001. */
 export const ROUTE_CHAT = "/chat";
@@ -135,10 +145,11 @@ function AdminStub(): ReactNode {
  */
 export function AppRouter(): ReactNode {
   if (import.meta.env.VITE_ENABLE_VERBOSE_LOGGING === "true") {
+    // §D-T004-ROUTER: ROUTE_AUTH_RESET_SENT added to verbose-log routes array
     console.info("AppRouter.render.start", {
       phase: "P03",
-      slice: "P03-S02-T003",
-      routes: [ROUTE_SHOWCASE, ROUTE_AUTH_SIGN_IN, ROUTE_AUTH_SIGN_UP, ROUTE_CHAT, ROUTE_HISTORY, ROUTE_ADMIN],
+      slice: "P03-S01-T004",
+      routes: [ROUTE_SHOWCASE, ROUTE_AUTH_SIGN_IN, ROUTE_AUTH_SIGN_UP, ROUTE_AUTH_RESET_SENT, ROUTE_CHAT, ROUTE_HISTORY, ROUTE_ADMIN],
     });
   }
 
@@ -152,6 +163,8 @@ export function AppRouter(): ReactNode {
           <Route path={ROUTE_AUTH_SIGN_IN} element={<SignInPage />} />
           {/* P03-S01-T002: real SignUpPage (§D-T002-ROUTER) */}
           <Route path={ROUTE_AUTH_SIGN_UP} element={<SignUpPage />} />
+          {/* P03-S01-T004: ResetSentPage — public route (§D-T004-ROUTER, §D-T004-PUBLIC-ROUTE) */}
+          <Route path={ROUTE_AUTH_RESET_SENT} element={<ResetSentPage />} />
 
           {/* Protected employee routes */}
           <Route element={<RequireAuth><Outlet /></RequireAuth>}>

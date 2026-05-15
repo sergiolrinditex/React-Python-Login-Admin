@@ -140,6 +140,18 @@ const resources = {
         title: "Recuperar acceso",
         cta: "Enviar enlace de recuperación",
       },
+      // §D-T004-I18N: reset_sent keys (ES) — anti-enumeration tone, {{maskedEmail}} only in body.with_email
+      // §D-T004-I18N-BUNDLE: resource bundle insertion ES
+      reset_sent: {
+        title: "Revisa tu correo",
+        body: {
+          with_email: "Si {{maskedEmail}} está registrado en Hilo, recibirás un correo con instrucciones en breve.",
+          fallback: "Si la dirección está registrada en Hilo, recibirás un correo con instrucciones en breve.",
+        },
+        actions: {
+          back_to_sign_in: "Volver al inicio de sesión",
+        },
+      },
       twoFactor: {
         title: "Verificación en dos pasos",
         codeLabel: "Código de verificación",
@@ -306,6 +318,17 @@ const resources = {
         title: "Reset access",
         cta: "Send recovery link",
       },
+      // §D-T004-I18N-BUNDLE: resource bundle insertion EN
+      reset_sent: {
+        title: "Check your email",
+        body: {
+          with_email: "If {{maskedEmail}} is registered in Hilo, you will receive an email with instructions shortly.",
+          fallback: "If the address is registered in Hilo, you will receive an email with instructions shortly.",
+        },
+        actions: {
+          back_to_sign_in: "Back to sign in",
+        },
+      },
       twoFactor: {
         title: "Two-step verification",
         codeLabel: "Verification code",
@@ -471,6 +494,17 @@ const resources = {
       forgot: {
         title: "Réinitialiser l'accès",
         cta: "Envoyer le lien de récupération",
+      },
+      // §D-T004-I18N-BUNDLE: resource bundle insertion FR
+      reset_sent: {
+        title: "Vérifiez votre email",
+        body: {
+          with_email: "Si {{maskedEmail}} est enregistré dans Hilo, vous recevrez un email contenant les instructions sous peu.",
+          fallback: "Si l'adresse est enregistrée dans Hilo, vous recevrez un email contenant les instructions sous peu.",
+        },
+        actions: {
+          back_to_sign_in: "Retour à la connexion",
+        },
       },
       twoFactor: {
         title: "Vérification en deux étapes",

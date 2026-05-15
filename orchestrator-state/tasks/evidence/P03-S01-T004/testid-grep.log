@@ -1,0 +1,5 @@
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S01-T004/frontend/src/pages/auth/ResetSentPage.tsx:        data-testid="reset-sent-title"
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S01-T004/frontend/src/pages/auth/ResetSentPage.tsx:        data-testid="reset-sent-status-region"
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S01-T004/frontend/src/pages/auth/ResetSentPage.tsx:          <p data-testid="reset-sent-body-with-email" style={{ margin: 0 }}>
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S01-T004/frontend/src/pages/auth/ResetSentPage.tsx:          <p data-testid="reset-sent-body-fallback" style={{ margin: 0 }}>
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S01-T004/frontend/src/pages/auth/ResetSentPage.tsx:        data-testid="reset-sent-cta"
