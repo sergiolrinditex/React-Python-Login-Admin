@@ -1,0 +1,24 @@
+{
+  "pageTitle": "CONVERSACIONES",
+  "groups": {
+    "today": "HOY",
+    "yesterday": "AYER",
+    "thisWeek": "ESTA SEMANA",
+    "thisMonth": "ESTE MES",
+    "earlier": "ANTERIORES"
+  },
+  "empty": {
+    "title": "SIN CONVERSACIONES",
+    "body": "Empieza una nueva conversación para ver el historial aquí.",
+    "cta": "Nueva conversación"
+  },
+  "errorNetwork": {
+    "title": "Error de conexión. Comprueba tu red.",
+    "retry": "Reintentar"
+  },
+  "permissionDenied": "No tienes permiso para ver el historial.",
+  "loading": "Cargando historial...",
+  "untitledConversation": "Conversación sin título",
+  "list": { "aria": "Historial de conversaciones" },
+  "row": { "openLabel": "Abrir conversación, {{title}}" }
+}

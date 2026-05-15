@@ -1,0 +1,4 @@
+  PID  PPID STARTED COMMAND
+79038 79019  4:57PM node /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S02-T002/node_modules/.bin/vite --host 0.0.0.0 --port 5173
+COMMAND   PID     USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME
+node    79038 sergiolr   14u  IPv4 0x3ffe7256ead94cf1      0t0  TCP *:5173 (LISTEN)

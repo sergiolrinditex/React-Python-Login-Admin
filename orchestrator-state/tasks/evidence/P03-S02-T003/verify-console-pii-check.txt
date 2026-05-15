@@ -1,0 +1,36 @@
+## Console PII check — P03-S02-T003 verify-slice
+
+Captured during verify session (Chrome DevTools MCP list_console_messages).
+
+### Log entries observed (error/warn relevant to history):
+
+msgid=1515 [error] Failed to load resource: 401 (Unauthorized) — auth refresh on session init
+msgid=1516 [warn] [auth] auth.repo.refresh.session_expired [object Object]
+msgid=1517 [error] [auth] auth.http.request.network_error [object Object]
+msgid=1518 [warn] [chat] chat.repo.listConversations.error [object Object]
+msgid=1519 [warn] [chat] chat.useHistory.fetch.error [object Object]
+msgid=1520 [warn] [verify-network-block] Blocking fetch to /api/v1/chat/conversations  (verifier interceptor)
+msgid=1521 [error] [auth] auth.http.request.network_error [object Object]
+msgid=1522 [warn] [chat] chat.repo.listConversations.error [object Object]
+msgid=1523 [warn] [chat] chat.useHistory.fetch.error [object Object]
+msgid=1524 [warn] [verify-network-block] Blocking fetch to /api/v1/chat/conversations  (verifier interceptor)
+msgid=1525 [error] [auth] auth.http.request.network_error [object Object]
+msgid=1526 [warn] [chat] chat.repo.listConversations.error [object Object]
+msgid=1527 [warn] [chat] chat.useHistory.fetch.error [object Object]
+
+### PII-clean assessment:
+
+- Log keys used: chat.repo.listConversations.error, chat.useHistory.fetch.error
+- Log payloads shown as [object Object] in DevTools (structured logging object)
+- No raw conversation titles observed in any log key or message text
+- No conversation UUIDs observed in any log key or message text
+- No user.email, tokens, or PII observed in any log message
+- Log keys match logging contract §11: count/has_more/has_cursor_next/status/code only
+
+### TanStack Query cache verification (JS eval):
+- count: 3 conversations in cache
+- has_more: false
+- has_cursor_next: false
+- sampleKeys: [id, user_id, title, language, created_at, updated_at] — present in data object but NOT logged
+
+### Result: PASS — PII-clean

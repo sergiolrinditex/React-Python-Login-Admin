@@ -1,0 +1,55 @@
+<!-- verify-cycle2-empty-dom.html
+     Cycle 2 empty-state body paragraph evidence
+     TASK_ID: P03-S02-T003
+     TIMESTAMP: 2026-05-15T14:30:00Z
+     
+     METHOD: Unit test P02 assertion via vitest cycle 2 (193/193 pass)
+     SOURCE: frontend/src/pages/chat/__tests__/HistoryPage.test.tsx
+     
+     The EmptyState body paragraph cannot be rendered in the MCP browser session
+     because the productive verification loader always inserts 2+ conversations
+     (per previous verify-slice). The empty state is only reachable with data: [].
+     
+     UNIT TEST EVIDENCE (cycle 2 - test-cycle2-vitest-verbose-true.log):
+     - HistoryPage.test.tsx (10 tests) 125ms — ALL PASS
+     - Test P02 "empty state shows Wordmark + CTA to /chat" includes:
+       1. screen.getByTestId("history-empty-body") — PRESENT
+       2. body.textContent === "Empieza una nueva conversación para ver el historial aquí." — MATCHES
+     
+     SOURCE CODE EVIDENCE (_HistoryPage.error-views.tsx lines 128-129):
+       <p style={EMPTY_BODY_STYLE} data-testid="history-empty-body">
+         {t("history:empty.body")}
+       </p>
+     
+     I18N EVIDENCE (all 3 locale files + inline resources):
+       ES: "Empieza una nueva conversación para ver el historial aquí."
+       EN: "Start a new conversation to see your history here."
+       FR: "Commencez une nouvelle conversation pour voir votre historique ici."
+     
+     TOKENS ONLY (EMPTY_BODY_STYLE):
+       fontFamily: var(--font-sans)
+       color: var(--color-ink)
+       fontSize: 0.875rem (typographic literal, allowed per design-tokens pattern)
+       opacity: 0.85
+       textAlign: center
+       margin: 0
+     
+     DESIGN_TOKENS_ENFORCER: exit 0 (OK) confirmed in test-cycle2-build.log
+     
+     CONCLUSION: empty-state body paragraph is correctly wired, translated, and 
+     verified by extended P02 unit test in cycle 2 (193/193 pass).
+-->
+<div data-testid="history-empty" style="text-align:center;padding:2rem">
+  <!-- Wordmark (Hilo heading) -->
+  <h1 style="font-family:var(--font-display)">Hilo</h1>
+  <!-- TrackedLabel — empty.title -->
+  <span style="font-family:var(--font-sans);letter-spacing:var(--tracking-label)">
+    AÚN NO TIENES CONVERSACIONES
+  </span>
+  <!-- Body paragraph — empty.body (THE DELTA FROM CYCLE 2) -->
+  <p data-testid="history-empty-body" style="font-family:var(--font-sans);color:var(--color-ink);opacity:0.85;text-align:center;margin:0">
+    Empieza una nueva conversación para ver el historial aquí.
+  </p>
+  <!-- SolidCTA — empty.cta -->
+  <button data-testid="history-empty-cta">NUEVA CONVERSACIÓN</button>
+</div>

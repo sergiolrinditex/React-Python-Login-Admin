@@ -1,0 +1,50 @@
+import { createHotContext as __vite__createHotContext } from "/@vite/client";import.meta.hot = __vite__createHotContext("/src/app/router.tsx");import.meta.env = {"BASE_URL": "/", "DEV": true, "MODE": "development", "PROD": false, "SSR": false, "VITE_API_BASE_URL": "", "VITE_ENABLE_VERBOSE_LOGGING": "true"};const _jsxDEV = __vite__cjsImport10_react_jsxDevRuntime["jsxDEV"];/**
+* Hilo People — Application router.
+*
+* Slice/Phase: P01-S03-T001 — Auth state provider + route guards / Phase 1.
+*   Updated from P00-S01-T004 (original: /showcase only).
+*   Updated in P03-S01-T001 — replaced SignInStub with real SignInPage (§D-T001-ROUTER).
+*   WRITE_SET_DRIFT §D-T001-ROUTE (P03-S02-T001): wired /chat to ChatHomePage;
+*     updated / and * redirects so authenticated users land on /chat.
+*   Updated in P03-S01-T002 — added /auth/sign-up route wired to SignUpPage (§D-T002-ROUTER).
+*
+* Responsibility: single mount point for the application's route tree.
+*   Exports <AppRouter> which is consumed by main.tsx inside <Providers>.
+*   <AuthProvider> is mounted INSIDE the router tree (not in providers.tsx — P-7).
+*
+* Route inventory:
+*   /showcase          → ShowcasePage (public — design-system demo, dev-only)
+*   /auth/sign-in      → SignInPage (real form, P03-S01-T001)
+*   /auth/sign-up      → SignUpPage (real form, P03-S01-T002)
+*   /chat              → ChatHomePage (employee, RequireAuth) — P03-S02-T001
+*   /chat/:conversationId → ConversationPage (employee, RequireAuth) — P03-S02-T002
+*   /admin             → STUB placeholder (wrapped in RequireRole — test surface)
+*   /                  → RootRedirect: authenticated→/chat, unauthenticated→/auth/sign-in
+*   *                  → redirects to / (catch-all; uses RootRedirect logic)
+*
+* P03-S01-T001 adds: real SignInPage form replacing the /auth/sign-in stub.
+* P03-S01-T002 adds: real SignUpPage form at /auth/sign-up.
+* P03-S02-T001 adds: /chat real page; updates / and * redirects for authed users.
+* P04-S01-T001 adds: real /admin dashboard replacing stub.
+*
+* AuthProvider composition (task pack §I):
+*   INSIDE router.tsx: <AuthProvider> wraps <Routes>.
+*   NOT inside providers.tsx — providers stay route-unaware (P-7 pattern).
+*
+* React Router: package name is "react-router" (v7 — canonical import).
+*   Version: ^7.15.0. Pattern used: <BrowserRouter> + <Routes> (legacy router).
+*   Component-wrapper guard pattern: <RequireAuth><Outlet/></RequireAuth> inside Route element.
+*
+* Journey refs: upstream foundation for J100/J101/J102/J103/J104/J105.
+*/
+import { BrowserRouter, Routes, Route, Navigate, Outlet } from "/node_modules/.vite/deps/react-router.js?v=e0d4cad4";
+import ShowcasePage from "/src/pages/showcase/ShowcasePage.tsx?t=1778780956021";
+import SignInPage from "/src/pages/auth/SignInPage.tsx?t=1778780955838";
+import SignUpPage from "/src/pages/auth/SignUpPage.tsx";
+import ChatHomePage from "/src/pages/chat/ChatHomePage.tsx?t=1778780956015";
+import ConversationPage from "/src/pages/chat/ConversationPage.tsx?t=1778780956023";
+import { AuthProvider } from "/src/features/auth/presentation/AuthProvider.tsx?t=1778780955838";
+import { useAuth } from "/src/features/auth/presentation/AuthProvider.tsx?t=1778780955838";
+import { RequireAuth } from "/src/features/auth/presentation/RequireAuth.tsx?t=1778780955838";
+import { RequireRole } from "/src/features/auth/presentation/RequireRole.tsx?t=1778780955838";
+var _jsxFileName = "/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S02-T002/frontend/src/app/router.tsx";
