@@ -1,0 +1,5 @@
+
+> hilo-people-frontend@0.1.0 lint
+> eslint src
+
+sh: eslint: command not found

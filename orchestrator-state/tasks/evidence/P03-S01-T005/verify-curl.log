@@ -1,0 +1,45 @@
+# Curl Evidence — P03-S01-T005 TwoFactorPage verify-slice
+# Generated: 2026-05-15T11:24:10Z
+
+## Step 1: Sign-in → get MFA challenge
+POST /api/v1/auth/sign-in
+Response: {"data":{"mfa_required":true,"mfa_challenge_token":"<JWT-277chars>"},...}
+mfa_required: True
+challenge_token_len: 277
+
+## Step 2: MFA verify — happy path (TOTP=020236, live)
+POST /api/v1/auth/2fa/verify
+HTTP/1.1 200 OK
+x-request-id: E936B130-1CD5-4FF0-9445-801BB04C81C1
+set-cookie: refresh_token=SSZd5cXAPcK5WLANDJRyivovMbjo6XiMESNwtFA4kuxIhmFPblsfHlCMBcWzFv9z; HttpOnly; Max-Age=2592000; Path=/api/v1/auth; SameSite=lax; Secure
+Body: {
+  "data": {
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.<JWT-411-chars>",
+    "token_type": "Bearer",
+    "expires_in": 1800,
+    "user": {
+      "id": "2a0f54f0-61cd-44a3-b4ca-0a0541f3f404",
+      "email": "employee.verification@inditex-sandbox.com",
+      "preferred_language": "es",
+      "roles": ["employee"]
+    }
+  },
+  "meta": {"request_id": "E936B130-1CD5-4FF0-9445-801BB04C81C1"},
+  "errors": []
+}
+
+## Step 3: MFA verify — 401 anti-enum (code=000000)
+POST /api/v1/auth/2fa/verify
+HTTP/1.1 401 Unauthorized
+(No Set-Cookie header)
+Body: {
+  "data": null,
+  "meta": {"request_id": "21CA49D5-2AF8-4BA1-AB22-47FCF3D2625D"},
+  "errors": [{"code": "AUTH_MFA_CODE_INVALID", "message": "Invalid 2FA code or challenge", "field": null, "details": null}]
+}
+
+## Verification notes:
+# - Set-Cookie on success: HttpOnly; Path=/api/v1/auth; SameSite=lax; Secure — CORRECT
+# - access_token: Bearer JWT ~411 chars — CORRECT
+# - 401 uses aggregate code AUTH_MFA_CODE_INVALID (no internal reason leaked) — CORRECT
+# - No Set-Cookie on 401 — CORRECT

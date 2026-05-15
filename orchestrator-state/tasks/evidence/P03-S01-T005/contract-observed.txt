@@ -1,0 +1,89 @@
+# Contract Observed — P03-S01-T005 (TwoFactorPage)
+# Timestamp: 2026-05-15T10:55:00Z
+
+## Route / Page
+- Route: /auth/2fa (public, no RequireAuth)
+- Constant: ROUTE_AUTH_2FA = "/auth/2fa"
+- File: frontend/src/app/router.tsx
+
+## Hook / Use Case
+- Hook: useVerifyMfa
+- File: frontend/src/features/auth/presentation/useVerifyMfa.ts
+- Inputs: {challengeToken: string, code: string}
+- Outputs: VerifyMfaOutcome | null, isLoading, error, clearError
+
+## Domain Port
+- Interface: IAuthRepository.verifyMfa(req: VerifyMfaRequest): Promise<Result<VerifyMfaOutcome>>
+- File: frontend/src/features/auth/domain/AuthRepository.ts
+
+## Data Repository (impl)
+- Class: AuthRepository.verifyMfa
+- File: frontend/src/features/auth/data/authRepository.ts
+- Wire field: challenge_id (value = full JWT mfa_challenge_token, per §D-T005-CHALLENGE-FIELD-NAME)
+- After 200: calls fetchMe(accessToken) to get UserProfile before signInAccepted
+
+## Error Taxonomy
+- File: frontend/src/features/auth/data/errors.ts
+- 5 new typed errors: MfaPayloadInvalidError (400), MfaCodeInvalidError (401 aggregate),
+  MfaChallengeExpiredError (410), MfaVerifyRateLimitedError (429), MfaVerifyInternalError (5xx)
+- MfaVerifyError union type
+
+## Endpoint (Backend — read-only)
+- POST /api/v1/auth/2fa/verify
+- File: backend/app/auth/mfa.py (P01-S02-T006, untouched in T005)
+- Request: {challenge_id: str, code: str(6 digits)}
+- Response 200: {data: {access_token, token_type, expires_in, user: MfaUserDto}, meta: {request_id}}
+- Response 401: {errors: [{code: AUTH_MFA_CODE_INVALID}]} (aggregate)
+- Anti-enum: 4 internal failure modes → 1 wire 401
+
+## DB Tables (observed via audit log in backend logs)
+- mfa_totp_secrets: read (find_enabled.start/done)
+- refresh_tokens: write (insert_new.start/done, rt_id=e9635120-a8fb-499a-bad6-b2b873a42c9a)
+- audit_log: write (action=auth.mfa.verify, success + failure)
+
+## i18n
+- Namespace: auth.twoFactor.* (14 keys per locale)
+- Locales: es/en/fr (lockstep, per §D-T005-I18N-LOCKSTEP)
+- Inline bundle: frontend/src/i18n/index.ts (authoritative)
+- JSON files: frontend/public/locales/{es,en,fr}/auth.json (reference)
+
+## Tests Observed
+- useVerifyMfa.test.tsx: 11 tests (H01-H11) — all pass
+  - H01: happy path
+  - H02: aggregate 401 → MfaCodeInvalidError
+  - H03: 410 challenge expired → MfaChallengeExpiredError
+  - H04: 429 rate limited → MfaVerifyRateLimitedError
+  - H05: 5xx → MfaVerifyInternalError
+  - H06: network TypeError → NetworkError
+  - H07: missing challengeToken → returns null without calling repo
+  - H08: clearError resets state
+  - H09: isLoading state management
+  - H10: PII safety (code value and challengeToken never logged)
+  - H11: 5xx status code preserved
+- TwoFactorPage.test.tsx: 12 tests (T01-T12) — all pass
+  - T01: deep-link guard (no challengeToken → redirect)
+  - T02: editorial UI rendering
+  - T03: zod validation (empty code)
+  - T04: loading state during submit
+  - T05: success path → navigate to /chat
+  - T06: 401 aggregate error display
+  - T07: network error display
+  - T08-T12: (additional coverage)
+
+## Verbose Logging Contract
+- logVerbose (VITE_ENABLE_VERBOSE_LOGGING=true): auth.mfa.verify.hook.submit.start, auth.mfa.verify.hook.submit.ok appear
+- logVerbose (VITE_ENABLE_VERBOSE_LOGGING=false): start/ok events suppressed
+- logWarn/logError: always visible (hook.submit.error, hook.submit.missing_challenge, etc.)
+- PII: NEVER logged (code value, challengeToken value, full email, access_token — H10 validates)
+
+## Backend Logging (BEFORE/AFTER)
+- BEFORE: auth.mfa.verify.router.received, auth.mfa.verify.received
+- rate_limit.check.start / rate_limit.check.ok (BEFORE)
+- tokens.decode.start / tokens.decode.ok
+- auth.repo.mfa.find_enabled.start / auth.repo.mfa.find_enabled.done
+- AFTER success: tokens.encode_access.start/done, auth.repo.refresh.insert_new.start/done,
+  auth.repo.write_audit.start/done (action=auth.mfa.verify), auth.mfa.verify.success,
+  auth.mfa.verify.router.success
+- AFTER failure: auth.mfa.verify.failure (reason=wrong_code), auth.mfa.verify.failure_audit.start/done,
+  auth.mfa.verify.router.failure (reason=401_aggregate)
+- NO tokens/passwords/PII in logs (email_domain only, never full email)

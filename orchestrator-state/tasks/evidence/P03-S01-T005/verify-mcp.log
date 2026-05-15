@@ -1,0 +1,10 @@
+# MCP Evidence — P03-S01-T005 TwoFactorPage verify-slice
+# Generated: 2026-05-15T11:24:30Z
+
+## MCP Selection
+- Primary: chrome-devtools (mcp__chrome-devtools__)
+- Preflight call: list_pages → returned ["about:blank", "chrome-error://chromewebdata/", "about:blank"]
+- Status: CONNECTED AND USABLE
+- Fallbacks attempted: none required (DevTools MCP responded immediately)
+- MCP_BROWSER: chrome-devtools
+- Isolation: using default Chrome DevTools MCP connection

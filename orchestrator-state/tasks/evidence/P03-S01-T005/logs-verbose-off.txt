@@ -1,0 +1,45 @@
+npm warn deprecated whatwg-encoding@3.1.1: Use @exodus/bytes instead for a more spec-conformant and faster implementation
+
+added 166 packages, and audited 168 packages in 3s
+
+38 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+
+> hilo-people-frontend@0.1.0 dev
+> vite --host 0.0.0.0 --port 5173
+
+
+  VITE v8.0.12  ready in 538 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: http://10.101.72.25:5173/
+  ➜  Network: http://10.101.214.196:5173/
+  ➜  Network: http://192.168.64.1:5173/
+12:12:47 PM [vite] (client) hmr update /src/app/router.tsx
+12:12:47 PM [vite] (client) hmr update /src/pages/chat/ChatHomePage.tsx
+12:12:47 PM [vite] (client) hmr update /src/app/providers.tsx, /src/pages/showcase/I18nDemoSection.tsx
+12:12:47 PM [vite] (client) hmr update /src/app/providers.tsx, /src/pages/showcase/I18nDemoSection.tsx
+12:17:36 PM [vite] (client) hmr update /src/pages/auth/SignInPage.tsx, /src/pages/auth/SignUpPage.tsx, /src/features/auth/presentation/AuthProvider.tsx, /src/pages/chat/ChatHomePage.tsx, /src/pages/chat/HistoryPage.tsx
+12:17:59 PM [vite] (client) hmr update /src/pages/auth/SignInPage.tsx, /src/pages/auth/SignUpPage.tsx, /src/features/auth/presentation/AuthProvider.tsx, /src/pages/chat/ChatHomePage.tsx, /src/pages/chat/HistoryPage.tsx
+12:19:14 PM [vite] (client) hmr update /src/features/auth/presentation/AuthProvider.tsx, /src/pages/auth/SignInPage.tsx, /src/pages/auth/SignUpPage.tsx
+12:19:49 PM [vite] (client) hmr update /src/features/auth/presentation/AuthProvider.tsx, /src/pages/auth/SignInPage.tsx, /src/pages/auth/SignUpPage.tsx
+12:21:28 PM [vite] (client) hmr update /src/app/router.tsx
+12:21:32 PM [vite] (client) hmr update /src/app/router.tsx
+12:21:39 PM [vite] (client) hmr update /src/app/router.tsx
+12:21:45 PM [vite] (client) hmr update /src/app/router.tsx
+12:21:52 PM [vite] (client) hmr update /src/app/router.tsx
+12:22:01 PM [vite] (client) hmr update /src/app/providers.tsx, /src/pages/showcase/I18nDemoSection.tsx
+12:22:06 PM [vite] (client) hmr update /src/app/providers.tsx, /src/pages/showcase/I18nDemoSection.tsx
+12:22:12 PM [vite] (client) hmr update /src/app/providers.tsx, /src/pages/showcase/I18nDemoSection.tsx
+12:37:19 PM [vite] (client) hmr update /src/app/providers.tsx, /src/pages/showcase/I18nDemoSection.tsx
+12:37:25 PM [vite] (client) hmr update /src/app/providers.tsx, /src/pages/showcase/I18nDemoSection.tsx
+12:37:31 PM [vite] (client) hmr update /src/app/providers.tsx, /src/pages/showcase/I18nDemoSection.tsx
+12:39:46 PM [vite] (client) hmr update /src/app/providers.tsx, /src/pages/showcase/I18nDemoSection.tsx
+12:39:52 PM [vite] (client) hmr update /src/app/providers.tsx, /src/pages/showcase/I18nDemoSection.tsx
+12:39:58 PM [vite] (client) hmr update /src/app/providers.tsx, /src/pages/showcase/I18nDemoSection.tsx
+12:47:11 PM [vite] (client) hmr update /src/pages/auth/TwoFactorPage.tsx
+12:47:23 PM [vite] (client) hmr update /src/pages/auth/TwoFactorPage.tsx
+12:48:46 PM [vite] (client) hmr update /src/pages/auth/TwoFactorPage.tsx
+12:48:55 PM [vite] (client) hmr update /src/pages/auth/TwoFactorPage.tsx

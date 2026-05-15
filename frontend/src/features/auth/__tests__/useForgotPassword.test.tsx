@@ -75,6 +75,11 @@ function makeRepo(
 ): IAuthRepository {
   return {
     forgotPassword: vi.fn(async (_req: ForgotPasswordRequest) => forgotResult),
+    // §D-T005-TEST-STUB-EXTEND: verifyMfa stub — IAuthRepository interface extended P03-S01-T005
+    verifyMfa: vi.fn(async () => ({
+      ok: true as const,
+      value: { accessToken: MOCK_TOKEN, expiresIn: 1800, user: MOCK_USER },
+    })),
     signIn: vi.fn(async (_req: SignInRequest) => ({
       ok: true as const,
       value: {

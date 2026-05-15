@@ -1,0 +1,53 @@
+# Verification Data Contract — P03-S01-T005 (TwoFactorPage)
+# Timestamp: 2026-05-15T10:55:00Z
+
+## Rows Used (from TECHNICAL_GUIDE §6.5 / task-pack §3)
+
+| Path | Used for | Status |
+|------|----------|--------|
+| data/verification/auth/mfa_primary.json | TOTP secret JBSWY3DPEHPK3PXP + user_email_ref | LOADED (by dev-restart bootstrap) |
+| data/verification/users/employee_primary.json | Email + password for verification employee | LOADED (by dev-restart bootstrap) |
+
+## Provided Verification Data Loaded
+
+- email: employee.verification@inditex-sandbox.com
+- totp_secret: JBSWY3DPEHPK3PXP (base32)
+- user_id: 2a0f54f0-61cd-44a3-b4ca-0a0541f3f404
+- enabled: true
+- password_plain: VerifyPass2024!
+
+## Smoke Test Results (real backend + DB)
+
+### Step 1 — Sign In (mfa_required branch)
+- POST /api/v1/auth/sign-in
+- email: employee.verification@inditex-sandbox.com / VerifyPass2024!
+- Response: 200, mfa_required=true, mfa_challenge_token (len=277), expires_in=300
+- request_id: fbf052e3-ebe0-4a62-bb49-cd2e4a970c1a
+
+### Step 2 — MFA Verify (correct TOTP)
+- POST /api/v1/auth/2fa/verify
+- challenge_id: JWT (len=277), code: 473495 (live TOTP from JBSWY3DPEHPK3PXP)
+- Response: 200, access_token (len=411), token_type=Bearer, expires_in=1800
+- user: {id: 2a0f54f0-61cd-44a3-b4ca-0a0541f3f404, email: employee.verification@inditex-sandbox.com, preferred_language: es, roles: ["employee"]}
+- Set-Cookie: refresh_token=... HttpOnly; Max-Age=2592000; Path=/api/v1/auth; SameSite=lax; Secure
+- meta.request_id: e40954ad-d27c-4186-bd6e-67212def2760
+
+### Step 3 — MFA Verify (wrong code — anti-enum)
+- POST /api/v1/auth/2fa/verify
+- challenge_id: JWT (fresh challenge from new sign-in), code: 000000
+- Response: 401, errors=[{code: "AUTH_MFA_CODE_INVALID"}] (aggregate confirmed)
+- NO Set-Cookie header (correct)
+
+## Persisted Data Observed
+
+- refresh_tokens: row inserted (user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404, revoked=false)
+  - Confirmed via audit log: audit_id=c5fb7fa3-ee78-4b98-9331-f370c13ebdee, action=auth.mfa.verify
+- audit_logs: auth.mfa.verify (success) + auth.mfa.verify (failure, wrong_code)
+  - audit_id for failure: 61938f12-2465-490c-8fbe-03881e98dd66
+- Cookie: HttpOnly, SameSite=lax, Secure, Path=/api/v1/auth (confirmed)
+
+## Notes
+
+- TOTP generated via: python3 -c "import pyotp; print(pyotp.TOTP('JBSWY3DPEHPK3PXP').now())"
+- Tests do NOT hardcode TOTP codes — they mock the repo boundary, not the TOTP generation
+- Rate limit bucket: MFA_VERIFY:127.0.0.1 — 2 requests used (remaining=3 after smoke tests)

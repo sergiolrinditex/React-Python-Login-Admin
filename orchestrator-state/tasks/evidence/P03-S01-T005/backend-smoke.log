@@ -1,0 +1,44 @@
+=== BACKEND SMOKE TEST — P03-S01-T005 ===
+=== Timestamp: 2026-05-15T10:53:49Z ===
+
+--- Health check ---
+{"data":{"status":"ok","version":"0.1.0","uptime":3196.52}}
+--- Step 1: Sign in (expect mfa_required=true) ---
+{
+    "data": {
+        "mfa_required": true,
+        "mfa_challenge_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyYTBmNTRmMC02MWNkLTQ0YTMtYjRjYS0wYTA1NDFmM2Y0MDQiLCJwdXJwb3NlIjoibWZhX2NoYWxsZW5nZSIsImp0aSI6IjkzYzQyODllYTVlNTQ1ZmFiODgyN2Q5MmUyNzA3ZDM4IiwiaWF0IjoxNzc4ODQyNDMwLCJleHAiOjE3Nzg4NDI3MzB9.g4MiwjjuLq-6yrBJ8xMvYJEmXxgUvVcxTImox-0cqHU",
+        "expires_in": 300
+    },
+    "meta": {
+        "request_id": "fbf052e3-ebe0-4a62-bb49-cd2e4a970c1a"
+    },
+    "errors": []
+}
+Challenge token length: 277
+TOTP code: 473495 (length: 6)
+
+--- Step 2: Verify MFA with correct TOTP (expect 200) ---
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100  1016  100   704  100   312  21759   9643 --:--:-- --:--:-- --:--:-- 31750
+HTTP/1.1 200 OK
+date: Fri, 15 May 2026 10:53:49 GMT
+server: uvicorn
+x-request-id: e40954ad-d27c-4186-bd6e-67212def2760
+content-length: 704
+content-type: application/json
+set-cookie: refresh_token=cU-TUWn-TVZyepV658lIfYL9eFqW2vTRCrpmPRFRSfDdv14-PvqWrGNAQqjYXvyF; HttpOnly; Max-Age=2592000; Path=/api/v1/auth; SameSite=lax; Secure
+
+{"data":{"access_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyYTBmNTRmMC02MWNkLTQ0YTMtYjRjYS0wYTA1NDFmM2Y0MDQiLCJlbWFpbCI6ImVtcGxveWVlLnZlcmlmaWNhdGlvbkBpbmRpdGV4LXNhbmRib3guY29tIiwicm9sZXMiOlsiZW1wbG95ZWUiXSwicHJlZmVycmVkX2xhbmd1YWdlIjoiZXMiLCJlbXBsb3llZV9wcm9maWxlX2lkIjpudWxsLCJqdGkiOiJlMThhYzMyNGZiZjE0N2E0YjYyZDFmNTdkMjM3ODE0ZiIsImlhdCI6MTc3ODg0MjQzMCwiZXhwIjoxNzc4ODQ0MjMwfQ.zeLwvcjvnRJ9B51TXmLcFUiGy3QrO_vNH-0xHki2zZI","token_type":"Bearer","expires_in":1800,"user":{"id":"2a0f54f0-61cd-44a3-b4ca-0a0541f3f404","email":"employee.verification@inditex-sandbox.com","preferred_language":"es","roles":["employee"]}},"meta":{"request_id":"e40954ad-d27c-4186-bd6e-67212def2760"},"errors":[]}
+--- Step 3: Verify MFA with wrong code (expect 401 AUTH_MFA_CODE_INVALID) ---
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   500  100   188  100   312  13399  22238 --:--:-- --:--:-- --:--:-- 35714
+HTTP/1.1 401 Unauthorized
+date: Fri, 15 May 2026 10:54:00 GMT
+server: uvicorn
+content-length: 188
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"b8209bd2-a69a-4f3d-9329-935abad2003d"},"errors":[{"code":"AUTH_MFA_CODE_INVALID","message":"Invalid 2FA code or challenge","field":null,"details":null}]}
