@@ -58,7 +58,7 @@ Antes de escribir nada:
 - Existe `orchestrator-state/tasks/handoffs/<TASK_ID>.md` con secciones de developer + validator + tester.
 - `validator` OUTCOME = `approved` en el handoff.
 - `tester` OUTCOME = `pass` en el handoff (o waive explícito con razón).
-- **Sección `## verify-slice` del handoff con `VERIFY_OUTCOME: verified`.** Puede venir de `/verify-slice` humano o de `/auto-verify-slice` solo cuando el registry marque `Risk level=low`, `Verify mode=auto`, no cierre journey y el helper haya escrito evidencia determinista. No commiteamos código productivo sin una de esas verificaciones. Para tasks de pantalla/journey/visual contract, exige también `## Screen/Journey review` aprobado por screen-journey-reviewer; si falta o sale `changes_requested|blocked`, bloquea y devuelve al main-orchestrator para debugger/retest o FU triageada. Únicos waivers aceptados (ambos requieren línea explícita `VERIFY_WAIVED: <motivo>` en el handoff, firmada por el usuario):
+- **Sección `## verify-slice` completa del handoff con `VERIFY_OUTCOME: verified`.** Debe venir de `slice-verifier` dentro de `/verify-slice` e incluir `MCP_BROWSER: chrome-devtools|claude-in-chrome|agent360-browser-mcp|browser-mcp`, `DATA_CONTRACT_ROWS`, `DATA_SETUP`, `PERSISTED_DATA_OBSERVED`, `FLOWS_TESTED` y `EVIDENCE`; `/auto-verify-slice` sólo aplica cuando el registry marque `Risk level=low`, `Verify mode=auto`, no cierre journey y el helper haya escrito evidencia determinista. No commiteamos código productivo sin una de esas verificaciones. Para tasks de pantalla/journey/visual contract, exige también `## Screen/Journey review` aprobado por screen-journey-reviewer; si falta o sale `changes_requested|blocked`, bloquea y devuelve al main-orchestrator para debugger/retest o FU triageada. Únicos waivers aceptados (ambos requieren línea explícita `VERIFY_WAIVED: <motivo>` en el handoff, firmada por el usuario):
   - Slice puramente interna sin UI (refactor, migración DB sin endpoint expuesto, script de build) — pero igualmente `tester` debe haber pasado real.
   - Aprobación manual del usuario registrada en el handoff con timestamp + razón.
   Sin sección verify-slice ni waiver → `OUTCOME: blocked`, razón: *"Falta verificación. Lanza `/verify-slice` o, si el registry lo permite, `/auto-verify-slice` antes de cerrar."*
@@ -113,7 +113,7 @@ Reglas:
 - `docs/source-of-truth/` sigue siendo la fuente viva acumulativa.
 - `docs/product-baseline/` es el snapshot construido que se pasa a ChatGPT para generar el siguiente incremento (`v0 + v1 + v2 + ...`).
 - El sync exige el pack moderno completo de 5 ficheros (`instrucciones.md`, `*_TECHNICAL_GUIDE.md`, `*_IMPLEMENTATION_CHECKLIST.md`, `UX_CONTRACT.md`, `STACK_PROFILE.yaml`), copia sólo esos documentos a `docs/product-baseline/` y actualiza `docs/product-baseline/BASELINE_MANIFEST.json`.
-- El script rechaza sincronizar si el handoff no tiene `Validator review OUTCOME=approved`, `Tester run OUTCOME=pass` y `## verify-slice` con `VERIFY_OUTCOME: verified`; si falla, no cierres: `OUTCOME: blocked`, `BASELINE_SYNC_READY: no`.
+- El script rechaza sincronizar si el handoff no tiene `Validator review OUTCOME=approved`, `Tester run OUTCOME=pass` y `## verify-slice` completo con `VERIFY_OUTCOME: verified` + MCP/datos/evidencia; si falla, no cierres: `OUTCOME: blocked`, `BASELINE_SYNC_READY: no`.
 - Incluye el baseline/manifest en el mismo commit atómico de la slice para que no se pierda contexto tras `/clear` ni entre versiones.
 
 ## Commit

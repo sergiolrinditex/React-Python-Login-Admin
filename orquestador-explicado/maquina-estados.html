@@ -191,17 +191,22 @@
     <path class="edge err" d="M 410 242 L 410 440" marker-end="url(#arr-err)" />
     <text class="edge-label err" x="418" y="345">max debug cycles</text>
 
-    <!-- ready_for_close → done -->
-    <path class="edge ok" d="M 820 242 Q 820 320, 840 360" marker-end="url(#arr-ok)" />
-    <text class="edge-label ok" x="848" y="310">closer + 5 readys</text>
+    <!-- ready_for_close → verified_pending_close → done -->
+    <rect class="st" x="650" y="310" width="220" height="42" rx="6" />
+    <text class="st-text" x="760" y="328" text-anchor="middle">verified_pending_close</text>
+    <text class="st-sub" x="760" y="342" text-anchor="middle">slice-verifier verified</text>
+    <path class="edge ok" d="M 820 242 Q 810 275, 780 310" marker-end="url(#arr-ok)" />
+    <text class="edge-label ok" x="845" y="286">MCP verified</text>
+    <path class="edge ok" d="M 800 352 Q 830 356, 840 360" marker-end="url(#arr-ok)" />
+    <text class="edge-label ok" x="872" y="358">closer + 5 readys</text>
 
-    <!-- ready_for_close → blocked (closer fail) -->
-    <path class="edge err" d="M 700 242 Q 550 350, 470 440" marker-end="url(#arr-err)" />
-    <text class="edge-label err" x="555" y="380">closer missing readys</text>
+    <!-- verified_pending_close → blocked (closer fail) -->
+    <path class="edge err" d="M 650 342 Q 540 380, 470 440" marker-end="url(#arr-err)" />
+    <text class="edge-label err" x="555" y="390">closer missing readys</text>
 
-    <!-- ready_for_close → needs_debug (verify-slice issues) -->
+    <!-- ready_for_close → needs_debug (slice-verifier issues) -->
     <path class="edge err" d="M 700 220 L 540 220" marker-end="url(#arr-err)" />
-    <text class="edge-label err" x="620" y="214">verify-slice issues_found</text>
+    <text class="edge-label err" x="620" y="214">slice-verifier issues_found</text>
 
     <!-- Legend rect -->
     <rect class="st init" x="40" y="510" width="20" height="14" rx="3" />
@@ -217,7 +222,7 @@
   </svg>
   </div>
 
-  <h3>Los 9 estados explicados</h3>
+  <h3>Los 10 estados explicados</h3>
   <div class="state-grid">
     <div class="state-cell initial"><div class="sname">pending</div><div class="sdesc">Estado inicial tras bootstrap. Las deps no están todas <code>done</code> aún. No es reclamable.</div></div>
     <div class="state-cell"><div class="sname">ready</div><div class="sdesc">Todas las deps <code>done</code>. <code>promote_ready_tasks</code> la promovió. Reclamable.</div></div>
@@ -225,7 +230,8 @@
     <div class="state-cell"><div class="sname">in_progress</div><div class="sdesc">El <code>planner</code> emitió <code>OUTCOME: ready · CONTEXT_READY: yes</code>. El developer empieza a editar.</div></div>
     <div class="state-cell"><div class="sname">validator_tester_pending</div><div class="sdesc">El <code>developer</code> terminó con éxito. validator‖tester van a correr en paralelo.</div></div>
     <div class="state-cell"><div class="sname">needs_debug</div><div class="sdesc">El <code>tester</code> falló o el validator pidió cambios → el debugger debe arreglar.</div></div>
-    <div class="state-cell"><div class="sname">ready_for_close</div><div class="sdesc">Validator <code>approved</code> + tester <code>pass</code>. Listo para <code>/verify-slice</code> humano y <code>closer</code>.</div></div>
+    <div class="state-cell"><div class="sname">ready_for_close</div><div class="sdesc">Validator <code>approved</code> + tester <code>pass</code>. Listo para <code>/verify-slice</code> humano con MCP browser.</div></div>
+    <div class="state-cell"><div class="sname">verified_pending_close</div><div class="sdesc"><code>slice-verifier</code> verificó con MCP, datos reales/proporcionados, logs y evidencia. Todavía no está <code>done</code>; falta closer/Git.</div></div>
     <div class="state-cell terminal"><div class="sname">done</div><div class="sdesc">Closer commiteó, pusheó, baseline sincronizado, worktrees limpios. <strong>Las 5 pruebas <code>*_READY</code> emitidas</strong>.</div></div>
     <div class="state-cell error"><div class="sname">blocked</div><div class="sdesc">Algo bloqueó terminalmente: 3 ciclos debugger fallidos, push falló, schema mismatch, conflicto con otra task activa. Requiere decisión humana.</div></div>
   </div>
@@ -248,9 +254,11 @@
       <tr><td class="from">validator_tester_pending</td><td class="to needs_debug">needs_debug</td><td>tester</td><td><code>OUTCOME: fail · NEXT_STATUS: needs_debug</code></td><td>SubagentStop</td><td>file_lock(registry)</td></tr>
       <tr><td class="from">needs_debug</td><td class="to">validator_tester_pending</td><td>debugger</td><td><code>OUTCOME: fixed · NEXT_STATUS: validator_tester_pending</code></td><td>SubagentStop</td><td>file_lock(registry)</td></tr>
       <tr><td class="from">needs_debug</td><td class="to blocked">blocked</td><td>debugger (4º intento)</td><td><code>OUTCOME: blocked · reason: max_debug_cycles_reached</code></td><td>SubagentStop</td><td>file_lock(registry)</td></tr>
-      <tr><td class="from">ready_for_close</td><td class="to needs_debug">needs_debug</td><td>debugger (post /verify-slice issues)</td><td><code>OUTCOME: fixed → validator_tester_pending</code> (efectivo)</td><td>SubagentStop</td><td>file_lock(registry)</td></tr>
-      <tr><td class="from">ready_for_close</td><td class="to done">done</td><td>closer</td><td><code>committed/done + 5×*_READY=yes</code></td><td>SubagentStop (valida 5 pruebas)</td><td>file_lock(registry) + file_lock(runtime-state)</td></tr>
-      <tr><td class="from">ready_for_close</td><td class="to blocked">blocked</td><td>closer (cierre incompleto)</td><td><code>committed</code> pero falta algún <code>*_READY</code></td><td>SubagentStop <strong>reescribe a blocked</strong></td><td>file_lock(registry)</td></tr>
+      <tr><td class="from">ready_for_close</td><td class="to">verified_pending_close</td><td>slice-verifier</td><td><code>OUTCOME: verified · NEXT_STATUS: verified_pending_close</code> + handoff MCP/evidence completo</td><td>SubagentStop (valida handoff)</td><td>file_lock(registry)</td></tr>
+      <tr><td class="from">ready_for_close</td><td class="to needs_debug">needs_debug</td><td>slice-verifier</td><td><code>OUTCOME: issues_found · NEXT_STATUS: needs_debug</code></td><td>SubagentStop</td><td>file_lock(registry)</td></tr>
+      <tr><td class="from">ready_for_close</td><td class="to blocked">blocked</td><td>slice-verifier</td><td><code>OUTCOME: blocked · browser_mcp_unavailable</code> o entorno no verificable</td><td>SubagentStop</td><td>file_lock(registry)</td></tr>
+      <tr><td class="from">verified_pending_close</td><td class="to done">done</td><td>closer</td><td><code>committed/done + 5×*_READY=yes</code></td><td>SubagentStop (valida handoff + 5 pruebas)</td><td>file_lock(registry) + file_lock(runtime-state)</td></tr>
+      <tr><td class="from">verified_pending_close</td><td class="to blocked">blocked</td><td>closer (cierre incompleto)</td><td><code>committed</code> pero falta algún <code>*_READY</code></td><td>SubagentStop <strong>reescribe a blocked</strong></td><td>file_lock(registry)</td></tr>
       <tr><td class="from">any</td><td class="to blocked">blocked</td><td>cualquier agente con OUTCOME=blocked</td><td><code>OUTCOME: blocked · reason: &lt;motivo&gt;</code></td><td>SubagentStop</td><td>file_lock(registry)</td></tr>
     </tbody>
   </table>

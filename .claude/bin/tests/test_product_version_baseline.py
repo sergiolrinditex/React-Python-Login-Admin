@@ -58,7 +58,15 @@ def _write_verified_handoff(root, task_id="P00-S01-T001"):
         "- OUTCOME: pass\n"
         "## verify-slice\n"
         f"- TASK_ID: {task_id}\n"
-        "- VERIFY_OUTCOME: verified\n",
+        "- AGENT: slice-verifier\n"
+        "- MODE: pre-closer\n"
+        "- MCP_BROWSER: chrome-devtools\n"
+        "- VERIFY_OUTCOME: verified\n"
+        "- DATA_CONTRACT_ROWS: VDC-001\n"
+        "- DATA_SETUP: sandbox-user-1 + seeded record A\n"
+        "- PERSISTED_DATA_OBSERVED: users/sandbox-user-1 active\n"
+        "- FLOWS_TESTED: login happy path\n"
+        f"- EVIDENCE: orchestrator-state/tasks/evidence/{task_id}/verify-*\n",
         encoding="utf-8",
     )
     return handoff
@@ -191,7 +199,17 @@ def test_sync_product_baseline_manifest_records_writer_and_written_paths(tmp_pro
     handoff.write_text(
         "## Validator review\n- TASK_ID: P00-S01-T001\n- OUTCOME: approved\n"
         "## Tester run\n- TASK_ID: P00-S01-T001\n- OUTCOME: pass\n"
-        "## verify-slice\n- TASK_ID: P00-S01-T001\n- VERIFY_OUTCOME: verified\n",
+        "## verify-slice\n"
+        "- TASK_ID: P00-S01-T001\n"
+        "- AGENT: slice-verifier\n"
+        "- MODE: pre-closer\n"
+        "- MCP_BROWSER: chrome-devtools\n"
+        "- VERIFY_OUTCOME: verified\n"
+        "- DATA_CONTRACT_ROWS: VDC-001\n"
+        "- DATA_SETUP: sandbox-user-1 + seeded record A\n"
+        "- PERSISTED_DATA_OBSERVED: users/sandbox-user-1 active\n"
+        "- FLOWS_TESTED: login happy path\n"
+        "- EVIDENCE: orchestrator-state/tasks/evidence/P00-S01-T001/verify-*\n",
         encoding="utf-8",
     )
 

@@ -16,16 +16,109 @@ from typing import Dict, List, Tuple
 
 from common import handoff_path as _handoff_path_resolver, workspace_relpath
 
-SECTION_RE = re.compile(r"^#{2,6}\s+(.+?)\s*$")
+SECTION_RE = re.compile(r"^(?P<hashes>#{2,6})\s+(?P<title>.+?)\s*$")
 KEY_RE = re.compile(r"^\s*-?\s*(?P<key>[A-Za-z][A-Za-z0-9_]*):\s*(?P<value>.*?)\s*$")
+HEADING_KEY_RE = re.compile(r"^\s*-?\s*#{1,6}\s+(?P<key>[A-Za-z][A-Za-z0-9_]*):\s*(?P<value>.*?)\s*$")
 CYCLE_SUFFIX_RE = re.compile(r"\s*\((?:cycle|ciclo)\s+\d+\)\s*$", re.IGNORECASE)
+
+# Agents occasionally write machine-readable lines as markdown subheadings,
+# e.g. ``### AGENT: validator`` under ``## Validator review``.  Treat
+# those as fields in the current logical section, not as new sections.
+# This keeps the checker robust without accepting arbitrary prose headings as
+# contract fields.
+MACHINE_HEADING_KEYS = {
+    "AGENT",
+    "TASK_ID",
+    "TIMESTAMP",
+    "MODE",
+    "OUTCOME",
+    "NEXT_STATUS",
+    "HANDOFF",
+    "EVIDENCE",
+    "VERIFY_OUTCOME",
+    "VERIFY_MODE",
+    "RISK_LEVEL",
+    "MCP_BROWSER",
+    "DATA_CONTRACT_ROWS",
+    "DATA_SETUP",
+    "PERSISTED_DATA_OBSERVED",
+    "FLOWS_TESTED",
+    "VALIDATION_TABLE",
+    "FINDINGS",
+    "BLOCKER_REASON",
+    "BLOCKER_KIND",
+    "USER_ACTION_REQUIRED",
+    "JOURNEYS",
+    "JOURNEY_VERIFY_OUTCOME",
+    "MARGINAL_STATES_TESTED",
+    "NEXT_ACTION_VERIFIED",
+    "FOLLOWUP_ID",
+    "FOLLOWUP_REQUIRED",
+}
+
 
 VALIDATOR_OUTCOMES = {"approved", "changes_requested", "blocked"}
 TESTER_OUTCOMES = {"pass", "fail", "blocked"}
 VERIFY_OUTCOMES = {"verified", "issues_found", "blocked"}
 SCREEN_JOURNEY_OUTCOMES = {"approved", "changes_requested", "blocked"}
+
+CONTRACT_SECTION_NAMES = {
+    "validator review",
+    "tester run",
+    "verify-slice",
+    "verify-journey",
+    "revision-debugger",
+    "debugger fix",
+    "screen/journey review",
+}
 FOLLOWUP_ID_RE = re.compile(r"\bFU-[A-Za-z0-9_.:-]+\b")
 FOLLOWUP_CANDIDATE_RE = re.compile(r"(?im)^\s*-?\s*(followup_candidate|FOLLOWUP_REQUIRED)\s*:\s*(yes|true|si|sí)\s*$")
+VERIFY_BROWSER_ACCEPTED = {"chrome-devtools", "claude-in-chrome", "agent360-browser-mcp"}
+_VERIFY_REQUIRED_WHEN_VERIFIED = (
+    "MCP_BROWSER",
+    "DATA_CONTRACT_ROWS",
+    "DATA_SETUP",
+    "PERSISTED_DATA_OBSERVED",
+    "FLOWS_TESTED",
+    "EVIDENCE",
+)
+
+
+
+
+def _heading_key_value(line: str) -> tuple[str, str] | None:
+    match = HEADING_KEY_RE.match(line)
+    if not match:
+        return None
+    key = match.group("key").strip()
+    canonical = key.upper()
+    if canonical not in MACHINE_HEADING_KEYS:
+        return None
+    return canonical, match.group("value").strip()
+
+def _normalise_mcp_browser(value: str | None) -> str:
+    raw = (value or "").strip().lower()
+    raw = raw.replace("_", "-").replace(" ", "-")
+    compact = raw.replace("-", "")
+    if "agent360" in compact or raw in {"browser-mcp", "browsermcp", "browser-mcp-server"}:
+        return "agent360-browser-mcp"
+    # Agent360 is usually displayed by Claude Code as the MCP server name
+    # `browser-mcp`; keep accepting that canonical runtime name.
+    without_suffix = raw.replace("-mcp", "")
+    if without_suffix == "browser":
+        return "agent360-browser-mcp"
+    if "chrome" in raw and "devtools" in raw:
+        return "chrome-devtools"
+    if "claude" in raw and "chrome" in raw:
+        return "claude-in-chrome"
+    return without_suffix
+
+
+def _missing_verified_field(value: str | None) -> bool:
+    raw = (value or "").strip()
+    if not raw:
+        return True
+    return raw.lower() in {"pending", "partial", "todo", "tbd", "unknown", "unavailable", "none", "n/a", "na", "-", "—"}
 
 
 def _has_unregistered_followup_candidate(text: str) -> bool:
@@ -78,6 +171,18 @@ def _canonical_section_name(raw: str) -> str:
     return value
 
 
+
+
+def _section_from_match(sec: re.Match[str]) -> str | None:
+    name = _canonical_section_name(sec.group("title"))
+    level = len(sec.group("hashes"))
+    # H2 starts a new logical section even if this checker does not consume it
+    # (e.g. Developer run). H3-H6 are often prose subheadings inside a section;
+    # only promote them when they are known contract aliases.
+    if level == 2 or name in CONTRACT_SECTION_NAMES:
+        return name
+    return None
+
 def _display_path(path: Path) -> str:
     return workspace_relpath(path)
 
@@ -87,9 +192,16 @@ def _parse_sections(text: str) -> Dict[str, List[Tuple[str, str]]]:
     current = "__preamble__"
     sections[current] = []
     for line in text.splitlines():
+        heading_key = _heading_key_value(line)
+        if heading_key:
+            sections.setdefault(current, []).append(heading_key)
+            continue
         sec = SECTION_RE.match(line)
         if sec:
-            current = _canonical_section_name(sec.group(1))
+            section_name = _section_from_match(sec)
+            if section_name is None:
+                continue
+            current = section_name
             sections.setdefault(current, [])
             continue
         key = KEY_RE.match(line)
@@ -107,9 +219,13 @@ def _section_order(text: str) -> List[Tuple[str, int]]:
     """
     order: List[Tuple[str, int]] = []
     for idx, line in enumerate(text.splitlines(), start=1):
+        if _heading_key_value(line):
+            continue
         sec = SECTION_RE.match(line)
         if sec:
-            order.append((_canonical_section_name(sec.group(1)), idx))
+            section_name = _section_from_match(sec)
+            if section_name is not None:
+                order.append((section_name, idx))
     return order
 
 
@@ -198,6 +314,25 @@ def validate(task_id: str, *, require_ready_for_close: bool, require_verify_slic
                 errors.append(f"invalid verify-slice VERIFY_OUTCOME={verify_outcome!r}")
             elif verify_outcome != "verified":
                 errors.append(f"verify-slice not verified: VERIFY_OUTCOME={verify_outcome}")
+            else:
+                verify_mode = str(verify.get("VERIFY_MODE") or "human").strip().lower()
+                if verify_mode == "auto":
+                    risk = str(verify.get("RISK_LEVEL") or "low").strip().lower()
+                    if risk != "low":
+                        errors.append("auto verify-slice verified requires RISK_LEVEL: low")
+                    for key in ("DATA_CONTRACT_ROWS", "PERSISTED_DATA_OBSERVED", "FLOWS_TESTED", "EVIDENCE"):
+                        if _missing_verified_field(verify.get(key)):
+                            errors.append(f"missing auto verified verify-slice {key} line in handoff")
+                else:
+                    browser = _normalise_mcp_browser(verify.get("MCP_BROWSER"))
+                    if browser not in VERIFY_BROWSER_ACCEPTED:
+                        errors.append(
+                            "verify-slice verified without accepted browser MCP: "
+                            "MCP_BROWSER must be chrome-devtools, claude-in-chrome, or agent360-browser-mcp/browser-mcp"
+                        )
+                    for key in _VERIFY_REQUIRED_WHEN_VERIFIED:
+                        if _missing_verified_field(verify.get(key)):
+                            errors.append(f"missing verified verify-slice {key} line in handoff")
 
             verify_line = _latest_section_line(order, "verify-slice")
             if verify_line is not None:

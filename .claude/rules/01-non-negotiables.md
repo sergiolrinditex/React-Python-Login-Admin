@@ -158,7 +158,7 @@ Allowed max chain = 20 spawns, with aggressive parallelism:
 4. `debugger` (if tester fails OR validator requests changes; then re-run step 3). Max 3 cycles; on the 4th failure the debugger emits `OUTCOME: blocked` with reason `max_debug_cycles_reached` and escalates to the human.
 5. `closer` (evidence + atomic commit via configured Git workflow (`./scripts/git-workflow.sh`) + safe worktree cleanup)
 
-Between steps 4 and 5 the human gate is mandatory: `/verify-slice` (hard reset + datos reales/proporcionados + human reproduction in the browser). `/verify-slice` is resilient to `/clear` — it rebuilds state from disk (PROGRESS.md, runtime-state, registry, handoff, TECHNICAL_GUIDE). The `closer`'s pre-check refuses to commit unless `## verify-slice` with `VERIFY_OUTCOME: verified` (or explicit `VERIFY_WAIVED: <reason>`) is in the handoff.
+Between steps 4 and 5 the human gate is mandatory: `/verify-slice` delegates to `slice-verifier` for hard reset + datos reales/proporcionados + human reproduction through Chrome DevTools MCP, claude-in-chrome or Agent360 Browser MCP (`browser-mcp`). `/verify-slice` is resilient to `/clear` — it rebuilds state from disk (PROGRESS.md, runtime-state, registry, handoff, TECHNICAL_GUIDE). The `closer`'s pre-check refuses to commit unless `## verify-slice` has `VERIFY_OUTCOME: verified` plus MCP/data/evidence fields (or explicit `VERIFY_WAIVED: <reason>`). The state sequence is `ready_for_close -> verified_pending_close -> done`.
 
 Never skip mandatory steps. Parallelize where possible.
 

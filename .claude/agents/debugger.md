@@ -64,6 +64,9 @@ Antes de empezar: cuenta cuántas secciones "Debugger fix" existen ya en el hand
 
 Apendiza al handoff sección **"Debugger fix"** con campos en formato `clave: valor` (uno por línea):
 
+
+**Higiene handoff:** las líneas machine-readable van como bullets o texto plano (`- AGENT` and `- OUTCOME` key lines). No uses subheadings tipo `### AGENT` or `### OUTCOME` field-headings dentro de una sección; si ves ese formato en un handoff existente, corrígelo a línea `- KEY: value` antes de cerrar. El checker lo tolera para recuperación, pero los agentes deben escribir el formato limpio.
+
 ```markdown
 ## Debugger fix
 - AGENT: debugger

@@ -26,6 +26,19 @@ Worktree execution has two roots. Keep them separate:
 
 Never copy scheduler truth from a task worktree back into the canonical root. Never stage shared runtime files to "fix" a dirty worktree. Use the scripts that know the split. The only close-state artifact that travels in a PR is `orchestrator-state/tasks/lifecycle-events/<TASK_ID>.json`; after merge, `sync-lifecycle-events.sh --apply` replays it into local `registry.json` under locks.
 
+
+## Machine-readable handoff hygiene
+
+Each agent-owned handoff section must use exactly one markdown heading for the logical section (`## Developer run`, `## Validator review`, `## Tester run`, `## Debugger fix`, `## verify-slice`, `## Screen/Journey review`). Inside that section, machine-readable fields must be plain key lines, preferably bullets:
+
+```markdown
+- AGENT: validator
+- TASK_ID: P00-S01-T001
+- OUTCOME: approved
+```
+
+Do not write field lines as markdown subheadings such as `### AGENT: validator` or `### OUTCOME: approved`; those can split sections in simple parsers. The checker tolerates this mistake for recovery, but agents must write the clean format. A heading hygiene defect is mechanical orchestration noise, not a product bug and not a follow-up candidate.
+
 ## Generated core state
 
 Do not edit these files with Write/Edit/MultiEdit during a slice:

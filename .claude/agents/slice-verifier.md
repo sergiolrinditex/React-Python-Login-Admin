@@ -3,7 +3,7 @@ name: slice-verifier
 description: Human-real MCP browser verification gate for one DAG slice before closer. Use only from /verify-slice after validator+tester are green.
 model: sonnet
 permissionMode: bypassPermissions
-maxTurns: 100
+maxTurns: 130
 skills: [write-handoff]
 effort: high
 ---
@@ -69,23 +69,77 @@ Si el agente se corta por tokens, timeout o interrupción, el router verá `VERI
 
 La verificación humana-real requiere navegador vía MCP. No sustituyas este gate por `curl`, tests unitarios, lectura de código ni intuición.
 
-Preflight obligatorio, máximo 2 intentos cortos:
+### MCPs aceptados y prioridad
 
-1. Usa ToolSearch/listado de herramientas disponible en la sesión de Claude para encontrar un browser MCP conectado.
-2. Acepta únicamente uno de estos tipos:
-   - Chrome DevTools MCP (`chrome-devtools`, `devtools`, herramientas `mcp__chrome-devtools__...`).
-   - claude-in-chrome MCP (`claude-in-chrome`, herramientas `mcp__claude-in-chrome__...`).
-3. Si ninguno está disponible o conectado, PARA. No hagas verificación parcial, no simules navegador y no llames a closer.
-4. En ese caso apendiza una sección final `## verify-slice` con:
+Acepta únicamente un MCP **usable**, no sólo listado. La prioridad operativa es deliberada:
+
+1. `chrome-devtools` — **primario** para `/verify-slice`. Úsalo primero para React/Flutter web local, flujos con logs/network/console, y también para auth/MFA cuando puedas trabajar con un Chrome visible aislado o un perfil por `TASK_ID`. Debe estar aislado: MCP configurado con `--isolated`, o Chrome por `TASK_ID` iniciado con `scripts/chrome-devtools-isolated-session.sh` y MCP conectado con `--browser-url=<url>`. Para MFA/2FA/CAPTCHA, pausa y pide intervención humana en ese Chrome visible si hace falta; luego continúa la verificación con DevTools.
+2. `claude-in-chrome` — **segundo fallback** si Chrome DevTools MCP está bloqueado/no usable o no puede manejar la sesión humana necesaria. Úsalo sólo tras preflight real.
+3. `agent360-browser-mcp` / `browser-mcp` — **tercer fallback**. Útil cuando necesitas Chrome real con cookies/sesión/MFA/2FA/CAPTCHA y los dos anteriores no están usables. Su aislamiento es por sesión/tab group del MCP; no intentes forzar perfiles Chrome por `TASK_ID` desde este repo.
+
+No uses Playwright, browser-use ni frameworks pesados como gate humano por defecto. Si el proyecto declara uno expresamente en el TECHNICAL_GUIDE puedes usarlo como apoyo, pero el cierre humano productivo sigue requiriendo uno de los MCPs aceptados arriba o waiver explícito del usuario.
+
+### Selección inteligente
+
+1. Prueba **siempre primero Chrome DevTools MCP** con una llamada mínima de salud. Si el flujo requiere login persistente, MFA, 2FA, CAPTCHA, sesión real, permisos de usuario o intervención humana visible, intenta Chrome DevTools en modo visible/aislado por `TASK_ID` antes de cambiar de MCP:
+
+```bash
+bash scripts/chrome-devtools-isolated-session.sh --task <TASK_ID>
+```
+
+   El comando imprime profile, puerto y `--browser-url` recomendado para aislar por `TASK_ID`. No mata procesos ni edita configuración MCP.
+2. Si Chrome DevTools MCP está bloqueado por profile lock o no responde, diagnostica una vez:
+
+```bash
+bash scripts/chrome-mcp-doctor.sh || true
+bash scripts/chrome-devtools-isolated-session.sh --task <TASK_ID>
+```
+
+   No mates procesos desde el agente salvo instrucción explícita del usuario o del TECHNICAL_GUIDE. Si el diagnóstico permite al usuario reconectar DevTools rápidamente, bloquea limpio con acción requerida en vez de degradar a una verificación pobre.
+3. Si Chrome DevTools no queda usable, prueba `claude-in-chrome`. Si responde y permite completar la reproducción humana, registra `MCP_BROWSER: claude-in-chrome` y continúa.
+4. Si `claude-in-chrome` tampoco está usable, prueba Agent360/`browser-mcp`. Si responde y permite completar la reproducción humana, registra `MCP_BROWSER: agent360-browser-mcp` o `MCP_BROWSER: browser-mcp` y continúa.
+5. Si un MCP usable ya completó la comprobación humana de la slice, no reintentes otro MCP sólo porque otro esté roto. Registra el MCP que realmente verificó.
+
+### Preflight obligatorio
+
+Máximo 2 intentos cortos con Chrome DevTools MCP y máximo 1 intento corto por fallback:
+
+1. Usa ToolSearch/listado de herramientas disponible en la sesión de Claude para encontrar MCPs de navegador (`chrome-devtools`, `claude-in-chrome`, `browser-mcp`/Agent360).
+2. Haz una llamada mínima de salud al MCP elegido antes del hard reset: abrir/leer `about:blank`, snapshot/screenshot/título/URL o equivalente.
+3. Si las tools aparecen listadas pero la llamada falla, ese MCP cuenta como `listed_but_unusable`, no como conectado.
+4. Si Chrome DevTools MCP falla por lock del profile (`chrome-profile`, `SingletonLock`, `process still running`, `profile is in use`, PID que mantiene lock), ejecuta:
+
+```bash
+bash scripts/chrome-mcp-doctor.sh || true
+```
+
+   Copia `LOCK_STATUS`, `LOCK_PID`/`LOCK_PROCESS` si aparecen. No mates procesos desde el agente salvo instrucción explícita del usuario o del TECHNICAL_GUIDE.
+5. Si ninguno está disponible y usable, PARA. No hagas verificación parcial, no simules navegador y no llames a closer.
+6. En ese caso apendiza una sección final `## verify-slice` con:
    - `MODE: blocked`
    - `MCP_BROWSER: unavailable`
    - `VERIFY_OUTCOME: blocked`
    - `BLOCKER_REASON: browser_mcp_unavailable`
-   - `USER_ACTION_REQUIRED: connect Chrome DevTools MCP or claude-in-chrome MCP and rerun /verify-slice <TASK_ID>`
+   - `USER_ACTION_REQUIRED: connect/restart Chrome DevTools MCP first; if it is locked, use scripts/chrome-mcp-doctor.sh and scripts/chrome-devtools-isolated-session.sh --task <TASK_ID>; if DevTools cannot be used, connect claude-in-chrome; if that cannot be used, connect Agent360 Browser MCP (browser-mcp); then rerun /verify-slice <TASK_ID>`
+   - `MCP_DIAGNOSTIC: <listed_but_unusable/stale_profile_lock/not_listed/etc.>`
    - trailer `OUTCOME: blocked`, `NEXT_STATUS: blocked`, `VERIFY_OUTCOME: blocked`
-5. La respuesta al usuario debe decir claramente qué MCP falta y que no se ha verificado nada.
+7. La respuesta al usuario debe decir claramente qué MCP falta o está bloqueado y que no se ha verificado nada.
 
-No gastes decenas de tool calls intentando navegar con un MCP roto. Si el MCP no está conectado en el preflight, bloquea limpio y recuperable.
+### Budget MCP específico
+
+Este agente tiene `maxTurns: 130` porque Chrome DevTools MCP puede consumir más tool-uses que una verificación por CLI: conectar, abrir página, snapshots, consola, network, clicks, formularios, MFA/2FA human-in-the-loop y capturas de evidencia. El aumento es acotado y sólo aplica a `slice-verifier`; no cambia el `spawn_budget` global de 20 subagentes, porque ese contador mide subagentes y no llamadas MCP.
+
+Usa ese margen para verificación humana real, no para reintentos ciegos:
+
+- Chrome DevTools MCP es el camino principal; no pruebes fallbacks por curiosidad si DevTools ya verificó.
+- Si hay MFA/2FA/CAPTCHA o sesión real, intenta primero Chrome DevTools con Chrome visible aislado/per-`TASK_ID` y pausa para intervención humana si hace falta.
+- Si Chrome DevTools está listado pero bloqueado por profile lock, diagnostica una vez con `scripts/chrome-mcp-doctor.sh`, muestra `scripts/chrome-devtools-isolated-session.sh --task <TASK_ID>` para aislamiento, y sólo entonces prueba `claude-in-chrome`; Agent360/`browser-mcp` queda como tercer fallback.
+- Reserva aproximadamente 20 tool-uses para escribir evidencia, tabla, `## verify-slice` final y `CLAUDE_TRAILER`.
+- Si un MCP usable ya completó la reproducción humana, no gastes tool-uses revalidando con otro MCP.
+
+Si te acercas al límite sin poder concluir, deja de explorar y persiste una sección final `## verify-slice` con `VERIFY_OUTCOME: blocked`, `BLOCKER_REASON: mcp_budget_exhausted_or_scope_too_large`, evidencia parcial y `USER_ACTION_REQUIRED`. Es bloqueo mecánico recuperable, no follow-up de producto. Nunca termines sin handoff final ni en `MODE: partial`.
+
+No gastes decenas de tool calls intentando navegar con un MCP roto. Si los MCPs están listados pero no responden, bloquea limpio y recuperable con el diagnóstico; no dejes `MODE: partial`.
 
 ## Paso 1 — Identificar qué reproducir
 
@@ -166,7 +220,7 @@ La respuesta final del agente al usuario debe incluir una tabla clara:
 
 Incluye también:
 
-- MCP usado: `chrome-devtools` o `claude-in-chrome`; si bloqueado, `unavailable`.
+- MCP usado: `chrome-devtools`, `claude-in-chrome` o `agent360-browser-mcp`/`browser-mcp`; si bloqueado, `unavailable`.
 - Filas del `Verification Data Contract` usadas.
 - Datos reales/proporcionados cargados.
 - Datos persistidos observados, con tabla/ID/estado cuando aplique.
@@ -178,6 +232,9 @@ Incluye también:
 
 Apendiza al handoff una sección final nueva, nunca sobreescribas secciones anteriores:
 
+
+**Higiene handoff:** las líneas machine-readable van como bullets o texto plano (`- AGENT` and `- OUTCOME` key lines). No uses subheadings tipo `### AGENT` or `### OUTCOME` field-headings dentro de una sección; si ves ese formato en un handoff existente, corrígelo a línea `- KEY: value` antes de cerrar. El checker lo tolera para recuperación, pero los agentes deben escribir el formato limpio.
+
 ```markdown
 ## verify-slice
 
@@ -185,7 +242,7 @@ Apendiza al handoff una sección final nueva, nunca sobreescribas secciones ante
 - TASK_ID: <TASK_ID>
 - TIMESTAMP: <ISO-8601>
 - MODE: pre-closer|post-closer|blocked
-- MCP_BROWSER: chrome-devtools|claude-in-chrome|unavailable
+- MCP_BROWSER: chrome-devtools|claude-in-chrome|agent360-browser-mcp|browser-mcp|unavailable
 - VERIFY_OUTCOME: verified|issues_found|blocked
 - DATA_CONTRACT_ROWS: <filas/IDs usados; required si verified>
 - DATA_SETUP: <lista 1 línea por dato real/proporcionado cargado; o n/a con razón>

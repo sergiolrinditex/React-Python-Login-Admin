@@ -106,10 +106,11 @@ Si tester falla o validator pide cambios, vuelve a debugger. Máximo 3 ciclos. A
 
 Si validator y tester pasan:
 
-1. Ejecuta `/verify-slice --task <TASK_ID>` o reproduce su contrato completo en esta sesión.
+1. Ejecuta `/verify-slice --task <TASK_ID>`; no saltes el `slice-verifier` MCP ni el router.
 2. Si `VERIFY_OUTCOME: issues_found`, vuelve al debugger.
-3. Si `VERIFY_OUTCOME: verified`, spawnea `closer`.
-4. El closer debe devolver:
+3. Si `VERIFY_OUTCOME: blocked`, muestra el blocker mecánico/humano y para.
+4. Si el router devuelve `invoke_closer` (`verified_pending_close` + handoff completo), spawnea `closer`.
+5. El closer debe devolver:
 
 ```text
 OUTCOME: committed

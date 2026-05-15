@@ -190,6 +190,8 @@ La fuente normativa es:
 | `developer` | `success`, `blocked`, `failed` | `validator_tester_pending`, `blocked` |
 | `validator` | `approved`, `changes_requested`, `blocked` | `ready_for_close`, `needs_debug`, `blocked` *(info-only; no muta `task.status`)* |
 | `tester` | `pass`, `fail`, `blocked` | `ready_for_close`, `needs_debug`, `blocked` |
+| `slice-verifier` | `verified`, `issues_found`, `blocked` | `verified_pending_close`, `needs_debug`, `blocked` |
+| `screen-journey-reviewer` | `approved`, `changes_requested`, `blocked` | ninguno *(info-only; no muta `task.status`)* |
 | `debugger` | `fixed`, `blocked`, `failed` | `validator_tester_pending`, `blocked` |
 | `closer` | `committed`, `blocked` | `done`, `blocked` |
 | `deployer` | `deployed`, `planned`, `blocked`, `failed` | `done`, `blocked` |
@@ -217,7 +219,25 @@ NEXT_STATUS: ready_for_close
 HANDOFF: orchestrator-state/tasks/handoffs/P00-S01-T001.md
 ```
 
+Ejemplo slice-verifier correcto:
+
+```text
+CLAUDE_TRAILER:
+AGENT: slice-verifier
+TASK_ID: P00-S01-T001
+OUTCOME: verified
+NEXT_STATUS: verified_pending_close
+MODE: pre-closer
+MCP_BROWSER: chrome-devtools
+EVIDENCE: orchestrator-state/tasks/evidence/P00-S01-T001/verify-*
+HANDOFF: orchestrator-state/tasks/handoffs/P00-S01-T001.md
+```
+
 Nota validator: `NEXT_STATUS` se emite sin comentarios inline, pero el hook lo guarda como `validator_next_status`; no sobrescribe `task.status`. `tester` decide el lifecycle real (`ready_for_close`/`needs_debug`).
+
+Nota verify: `slice-verifier` es lifecycle. `verified` mueve a `verified_pending_close`, no a `done`; el `closer` es el único que puede cerrar. Para que un verify humano sea válido, el handoff debe incluir `MCP_BROWSER: chrome-devtools|claude-in-chrome|agent360-browser-mcp|browser-mcp`, datos/evidencia (`DATA_CONTRACT_ROWS`, `DATA_SETUP`, `PERSISTED_DATA_OBSERVED`, `FLOWS_TESTED`, `EVIDENCE`) y `VERIFY_OUTCOME: verified`. El MCP debe estar usable, no sólo listado; la prioridad es Chrome DevTools primero, claude-in-chrome segundo fallback y Agent360/browser-mcp tercer fallback. Si Chrome DevTools MCP falla por lock de profile, diagnostica con `bash scripts/chrome-mcp-doctor.sh || true` y muestra `scripts/chrome-devtools-isolated-session.sh --task <TASK_ID>` antes de probar fallbacks. La única excepción sin MCP es `VERIFY_MODE: auto` + `RISK_LEVEL: low` con evidencia determinista. Campos de handoff: usa `- AGENT: ...`, no `### AGENT: ...`; el checker tolera H3 sólo para recovery.
+
+Budget: `slice-verifier` tiene `maxTurns: 130` para Chrome DevTools MCP; no cambia el límite global de 20 spawns. Si se acerca al límite, debe cerrar con handoff `blocked` + `BLOCKER_REASON: mcp_budget_exhausted_or_scope_too_large`, no partial.
 
 No uses sinónimos naturales como estados del trailer. El hook los rechazará y los registrará en `orchestrator-state/hook-errors.log`.
 
@@ -370,3 +390,4 @@ La identidad de commits no está hardcodeada. `scripts/check-git-identity.sh` us
 Si el closer reporta `active_deferred=1`, no es fallo: protegió los hooks de Claude. La limpieza se reintenta automáticamente al ejecutar `/next-wave` o crear otra worktree. Comando manual seguro desde el root canónico: `bash scripts/cleanup-deferred-worktrees.sh --apply --task <TASK_ID>`.
 
 Para limpiar también ramas remotas de PR tras squash-merge, `pr-flow.sh` usa `gh pr merge --delete-branch` y, después de confirmar `MERGED`, intenta `git push <remote> --delete <branch>` como fallback idempotente. Recomendado una vez por repo si tienes permisos admin: `bash scripts/configure-github-pr-cleanup.sh` para activar delete-branch-on-merge en GitHub; si reglas/protecciones lo impiden, el closer imprime `REMOTE_BRANCH_CLEANUP_COMMAND`.
+

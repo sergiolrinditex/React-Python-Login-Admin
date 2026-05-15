@@ -168,7 +168,17 @@ def test_closer_done_allows_formal_proposed_blocker_followup_for_pr(seeded_regis
         "# Handoff P00-S01-T001\n\n"
         "## Validator review\n- TASK_ID: P00-S01-T001\n- OUTCOME: approved\n\n"
         "## Tester run\n- TASK_ID: P00-S01-T001\n- OUTCOME: pass\n\n"
-        "## verify-slice\n- TASK_ID: P00-S01-T001\n- VERIFY_OUTCOME: verified\n",
+        "## verify-slice\n"
+        "- TASK_ID: P00-S01-T001\n"
+        "- AGENT: slice-verifier\n"
+        "- MODE: pre-closer\n"
+        "- MCP_BROWSER: chrome-devtools\n"
+        "- VERIFY_OUTCOME: verified\n"
+        "- DATA_CONTRACT_ROWS: VDC-001\n"
+        "- DATA_SETUP: sandbox-user-1 + seeded record A\n"
+        "- PERSISTED_DATA_OBSERVED: users/sandbox-user-1 active\n"
+        "- FLOWS_TESTED: login happy path\n"
+        "- EVIDENCE: orchestrator-state/tasks/evidence/P00-S01-T001/verify-*\n",
         encoding="utf-8",
     )
     monkeypatch.setenv("CLAUDE_ACTIVE_TASK_ID", "P00-S01-T001")

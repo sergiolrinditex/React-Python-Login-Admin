@@ -156,7 +156,14 @@ def _write_valid_verified_handoff(root: Path, task_id: str) -> None:
 
 ## verify-slice
 - TASK_ID: {task_id}
+- AGENT: slice-verifier
+- MODE: pre-closer
+- MCP_BROWSER: chrome-devtools
 - VERIFY_OUTCOME: verified
+- DATA_CONTRACT_ROWS: VDC-001
+- DATA_SETUP: sandbox-user-1 + seeded record A
+- PERSISTED_DATA_OBSERVED: users/sandbox-user-1 active
+- FLOWS_TESTED: login happy path
 - EVIDENCE: orchestrator-state/tasks/evidence/{task_id}/verify-proof.md
 """, encoding="utf-8")
 

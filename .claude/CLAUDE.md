@@ -62,12 +62,13 @@ Every phase produces a VISIBLE, FUNCTIONAL, VERIFIABLE deliverable. Never build 
    │   ├─ approved → continúa
    │   ├─ changes_requested → debugger/retest, NO FU
    │   └─ blocked → FU triageada solo si falta trabajo/dato/contrato fuera de scope
-   ├─ VERIFY_OUTCOME: verified
+   ├─ VERIFY_OUTCOME: verified + MCP/datos/evidencia completos
+   │   ├─ task.status = verified_pending_close
    │   └─ §5.bis si la slice cierra journey(s) → pregunta al usuario:
    │       ├─ "ahora"  → verify-journey INLINE con entorno ya cargado (un solo gate)
    │       │            apendiza ## verify-journey al handoff
    │       └─ "aparte" → JOURNEY_PENDING_VERIFY → frontier difiere solo tasks de ese journey
-   │   → spawnea closer (paso 6)
+   │   → si check-handoff-contract pasa, spawnea closer (paso 6)
    └─ VERIFY_OUTCOME: issues_found → spawnea debugger → vuelve a paso 3
 6. closer                                evidence/report + commit + configured Git workflow
                                           pre-check rechaza si no hay sección verify-slice en el handoff
@@ -77,7 +78,7 @@ Every phase produces a VISIBLE, FUNCTIONAL, VERIFIABLE deliverable. Never build 
    └─ post-push: slice-clean + cleanup-worktrees + cleanup diferido silencioso y seguro si la worktree sigue activa
 ```
 
-`closer` NUNCA commitea código sin `VERIFY_OUTCOME: verified` en el handoff (procedente del subagente `slice-verifier` dentro de `/verify-slice` o de `/auto-verify-slice` solo para slices `low+auto` no journey) o sin waiver explícito `VERIFY_WAIVED: <motivo>` firmado por el usuario. Esto garantiza que no hay commits de código sin verificación real y trazable.
+`closer` NUNCA commitea código sin un bloque `## verify-slice` completo con `VERIFY_OUTCOME: verified`, `MCP_BROWSER`, datos/evidencia y flujos probados (procedente del subagente `slice-verifier` dentro de `/verify-slice`; `/auto-verify-slice` sólo aplica a slices `low+auto` no journey) o sin waiver explícito `VERIFY_WAIVED: <motivo>` firmado por el usuario. Esto garantiza que no hay commits de código sin verificación real y trazable. El estado intermedio correcto es `verified_pending_close`; sólo `closer` puede mover a `done`.
 
 `/verify-journey <JID>` sigue existiendo como **command de rescate manual** — para waivers, re-verificaciones aisladas, debug post-mortem, o casos donde el usuario eligió "aparte" en §5.bis. En el flujo normal, el journey se verifica inline en `/verify-slice` y este command queda dormido.
 
@@ -121,7 +122,7 @@ Use this to keep prompts shorter: agents do not need to rediscover write policy.
 
 ## Agents
 
-Total: 14 agents. Per slice max 20 spawns (steps above). Bootstrap-only: `document-analyzer`, `project-architect`, `task-planner`. Phase 5 only: `deployer`. Verify-slice agents: `slice-verifier` (lifecycle) and `screen-journey-reviewer` (info-only).
+Total: 14 agents. Per slice max 20 spawns (steps above). Bootstrap-only: `document-analyzer`, `project-architect`, `task-planner`. Phase 5 only: `deployer`. Verify-slice agents: `slice-verifier` (lifecycle, `maxTurns: 130` because Chrome DevTools MCP can be tool-use heavy) and `screen-journey-reviewer` (info-only).
 
 Manual-memory agents: `planner`, `developer`, `validator`, `debugger`, `slice-verifier`, `official-docs-researcher`, `project-architect`, `screen-journey-reviewer`, plus `task-planner` for bootstrap learnings. Memory is stored in `orchestrator-state/agent-memory/<agent>/MEMORY.md`; `.claude/` stays static.
 
@@ -208,7 +209,7 @@ Si aparece trabajo real fuera del TASK_ID actual, no se deja en el handoff como 
 3. Consult official frontend AND backend framework docs before implementation.
 4. Execute only dependency-ready tasks.
 5. After each slice: verify backend health + verify in browser + run ALL tests.
-6. Require handoff, validator approval, tester pass, `VERIFY_OUTCOME: verified` from `/verify-slice`, closer baseline sync + commit + push before `done`, and (when the slice closes a journey) `JOURNEY_VERIFY_OUTCOME: verified` from `/verify-journey` before the next `/next-slice`.
+6. Require handoff, validator approval, tester pass, full `VERIFY_OUTCOME: verified` from `slice-verifier` (`verified_pending_close`), closer baseline sync + commit + push before `done`, and (when the slice closes a journey) `JOURNEY_VERIFY_OUTCOME: verified` from inline `/verify-slice` or `/verify-journey` before dependent journey tasks continue.
 7. Keep context small. Daily read = `PROGRESS.md` + per-task pack (`orchestrator-state/tasks/task-packs/<TASK_ID>.md`). Use only the per-task pack for the current `TASK_ID`.
 
 ## Compact instructions

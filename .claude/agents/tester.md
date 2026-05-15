@@ -84,6 +84,9 @@ Guarda en `orchestrator-state/tasks/evidence/<TASK_ID>/`:
 
 Apendiza al handoff una sección **"Tester run"** con campos en formato `clave: valor` (uno por línea). El `closer` lee estas líneas, no el chat trailer, así que el resultado del tester debe quedar duplicado explícitamente en el handoff:
 
+
+**Higiene handoff:** las líneas machine-readable van como bullets o texto plano (`- AGENT` and `- OUTCOME` key lines). No uses subheadings tipo `### AGENT` or `### OUTCOME` field-headings dentro de una sección; si ves ese formato en un handoff existente, corrígelo a línea `- KEY: value` antes de cerrar. El checker lo tolera para recuperación, pero los agentes deben escribir el formato limpio.
+
 ```markdown
 ## Tester run
 - AGENT: tester

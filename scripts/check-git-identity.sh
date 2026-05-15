@@ -109,11 +109,20 @@ else
 fi
 
 actual_login=""
-if command -v gh >/dev/null 2>&1; then
-  actual_login="$(gh api user --jq .login 2>/dev/null || true)"
-  printf 'GH_AUTH_USER: %s\n' "${actual_login:-unavailable}"
+if [ -n "$expected_login" ] || [ "${CLAUDE_GIT_CHECK_GH:-0}" = "1" ]; then
+  if command -v gh >/dev/null 2>&1; then
+    if command -v timeout >/dev/null 2>&1; then
+      actual_login="$(GH_PROMPT_DISABLED=1 timeout 5 gh api user --jq .login 2>/dev/null || true)"
+    else
+      actual_login="$(GH_PROMPT_DISABLED=1 gh api user --jq .login 2>/dev/null || true)"
+    fi
+    printf 'GH_AUTH_USER: %s
+' "${actual_login:-unavailable}"
+  else
+    echo "GH_AUTH_USER: gh_not_installed"
+  fi
 else
-  echo "GH_AUTH_USER: gh_not_installed"
+  echo "GH_AUTH_USER: not_checked"
 fi
 
 errors=0

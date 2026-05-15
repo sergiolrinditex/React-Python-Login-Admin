@@ -69,18 +69,22 @@ if [ ! -d "$REQ_DIR" ]; then
   exit 0
 fi
 
-REQUESTS=()
-if [ -n "$TASK_ID" ]; then
-  [ -f "$REQ_DIR/$TASK_ID.json" ] && REQUESTS+=("$REQ_DIR/$TASK_ID.json")
-else
-  # Bash 3/macOS compatible: cleanup request filenames are generated as
-  # <TASK_ID>.json by cleanup-worktrees.sh, so newline-safe sorting is enough
-  # and avoids GNU-only sort -z plus Bash-4-only array-read builtin.
-  while IFS= read -r f; do
-    [ -n "$f" ] && REQUESTS+=("$f")
-  done < <(find "$REQ_DIR" -maxdepth 1 -type f -name '*.json' -print | LC_ALL=C sort)
-fi
+# Bash 3/macOS compatible: cleanup request filenames are generated as
+# <TASK_ID>.json by cleanup-worktrees.sh, so newline-safe sorting is enough.
+# Do not use an array here: Bash 3.2 + set -u can raise "unbound variable" for
+# empty array expansion, which would make /next-wave warn even when there is
+# simply nothing to clean. A temp file is boring but portable.
+REQUESTS_FILE="$(mktemp "${TMPDIR:-/tmp}/cleanup-deferred-requests.XXXXXX")"
+cleanup_tmp_files() {
+  rm -f "$REQUESTS_FILE" "/tmp/cleanup-deferred-$$.log"
+}
+trap cleanup_tmp_files EXIT HUP INT TERM
 
+if [ -n "$TASK_ID" ]; then
+  [ -f "$REQ_DIR/$TASK_ID.json" ] && printf '%s\n' "$REQ_DIR/$TASK_ID.json" >"$REQUESTS_FILE"
+else
+  find "$REQ_DIR" -maxdepth 1 -type f -name '*.json' -print | LC_ALL=C sort >"$REQUESTS_FILE"
+fi
 
 path_has_live_usage() {
   if [ "${CLAUDE_DEFERRED_CLEANUP_ASSUME_INACTIVE:-0}" = "1" ]; then
@@ -123,7 +127,8 @@ REMOVED=0
 SKIPPED=0
 STALE=0
 
-for req in "${REQUESTS[@]}"; do
+while IFS= read -r req; do
+  [ -n "$req" ] || continue
   [ -f "$req" ] || continue
   TOTAL=$((TOTAL + 1))
   fields_out="$(python3 - "$req" <<'PY' || true
@@ -191,7 +196,7 @@ PY
     SKIPPED=$((SKIPPED + 1))
     say "deferred cleanup failed for $tid with status $rc"
   fi
-done
+done <"$REQUESTS_FILE"
 
 say "cleanup-deferred-worktrees: requests=$TOTAL removed=$REMOVED skipped=$SKIPPED stale=$STALE mode=$([ "$APPLY" -eq 1 ] && echo apply || echo dry-run) task=${TASK_ID:-all}"
 

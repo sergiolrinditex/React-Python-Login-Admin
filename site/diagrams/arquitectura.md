@@ -264,7 +264,7 @@ flowchart TD
 ```
 
 > [!CAUTION]
-> El guardrail está en `enforce_closer_done_guardrail()` en `hook_capture_subagent_stop.py`. Si el closer intenta marcar `done` sin las pruebas, el hook reescribe el trailer a `blocked`. Es **mecánico**, no basado en el prompt del agente. Además, el closer rechaza el commit si en el handoff falta `## verify-slice` con `VERIFY_OUTCOME: verified` (o `VERIFY_WAIVED: <motivo>`).
+> El guardrail está en `enforce_closer_done_guardrail()` en `hook_capture_subagent_stop.py`. Si el closer intenta marcar `done` sin las pruebas, el hook reescribe el trailer a `blocked`. Es **mecánico**, no basado en el prompt del agente. Además, el closer rechaza el commit si en el handoff falta `## verify-slice` completo con `VERIFY_OUTCOME: verified` + MCP/datos/evidencia (o `VERIFY_WAIVED: <motivo>`).
 
 ---
 

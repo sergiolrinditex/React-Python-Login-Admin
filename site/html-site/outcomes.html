@@ -128,6 +128,20 @@
           <td>—</td>
         </tr>
         <tr>
+          <td><strong>slice-verifier</strong></td>
+          <td><span class="badge ok">verified</span><span class="badge warn">issues_found</span><span class="badge bad">blocked</span></td>
+          <td><span class="badge ok">verified_pending_close</span><span class="badge warn">needs_debug</span><span class="badge bad">blocked</span></td>
+          <td><span class="badge accent">muta</span></td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td><strong>screen-journey-reviewer</strong></td>
+          <td><span class="badge ok">approved</span><span class="badge warn">changes_requested</span><span class="badge bad">blocked</span></td>
+          <td><span class="badge muted">—</span></td>
+          <td>—</td>
+          <td><span class="badge info">sí</span></td>
+        </tr>
+        <tr>
           <td><strong>validator</strong></td>
           <td><span class="badge ok">approved</span><span class="badge warn">changes_requested</span><span class="badge bad">blocked</span></td>
           <td><span class="badge ok">ready_for_close</span><span class="badge warn">needs_debug</span><span class="badge bad">blocked</span></td>
@@ -143,18 +157,21 @@
 flowchart LR
     DEV[developer<br/>success → validator_tester_pending]
     TST[tester<br/>pass → ready_for_close<br/>fail → needs_debug]
+    SV[slice-verifier<br/>verified → verified_pending_close<br/>issues_found → needs_debug]
     DBG[debugger<br/>fixed → validator_tester_pending]
     CLO[closer<br/>committed → done]
     DEP[deployer<br/>deployed → done]
     DEV --&gt; TST
     DEV --&gt; DBG
     DBG --&gt; TST
-    TST --&gt; CLO
+    TST --&gt; SV
+    SV --&gt; CLO
+    SV --&gt; DBG
     CLO --&gt; DEP
   </pre>
 
   <h2>Info-only — NO mutan task.status</h2>
-  <p>El validator es info-only intencionalmente; su <code>NEXT_STATUS</code> se guarda como <code>validator_next_status</code> (metadata). El closer lee el OUTCOME del validator desde el handoff y rechaza el commit si no es <code>approved</code>.</p>
+  <p>El validator es info-only intencionalmente; su <code>NEXT_STATUS</code> se guarda como <code>validator_next_status</code> (metadata). El <code>slice-verifier</code> sí es lifecycle: <code>verified</code> mueve a <code>verified_pending_close</code>. El closer lee el OUTCOME del validator y el bloque <code>## verify-slice</code> desde el handoff, y rechaza el commit si no hay verificación MCP/evidencia completa.</p>
   <pre class="mermaid">
 flowchart LR
     VAL[validator<br/>approved · changes_requested · blocked]
@@ -205,8 +222,8 @@ flowchart TD
     </div>
 
     <div class="card">
-      <h3>Tester decide lifecycle</h3>
-      <p><code>pass</code> → <code>ready_for_close</code>. <code>fail</code> → <code>needs_debug</code>. El validator opina pero no decide. Cierra el flujo de validación en un único punto canónico.</p>
+      <h3>Tester y slice-verifier deciden gates distintos</h3>
+      <p><code>tester pass</code> → <code>ready_for_close</code>. <code>slice-verifier verified</code> → <code>verified_pending_close</code>. Sólo <code>closer</code> puede pasar a <code>done</code>.</p>
     </div>
 
     <div class="card">

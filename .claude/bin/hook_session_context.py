@@ -34,6 +34,9 @@ try:
         dag_worker_task_id,
         hook_error_log_path,
         hook_info_log_path,
+        handoff_path,
+        task_pack_path,
+        workspace_relpath,
         load_registry,
         load_runtime_state,
         log_hook_error,
@@ -52,6 +55,9 @@ except Exception:
     claude_dir = lambda: Path(".claude")  # type: ignore[assignment]
     hook_error_log_path = lambda: Path("orchestrator-state/hook-errors.log")  # type: ignore[assignment]
     hook_info_log_path = lambda: Path("orchestrator-state/hook-info.log")  # type: ignore[assignment]
+    handoff_path = lambda task_id: Path(f"orchestrator-state/tasks/handoffs/{task_id}.md")  # type: ignore[assignment]
+    task_pack_path = lambda task_id: Path(f"orchestrator-state/tasks/task-packs/{task_id}.md")  # type: ignore[assignment]
+    workspace_relpath = lambda path: str(path)  # type: ignore[assignment]
     def log_hook_error(name, exc):  # type: ignore[no-redef]
         return None
 
@@ -236,9 +242,14 @@ def build_context() -> str:
 
     handoff_note = ""
     if worker_task and worker_task != "—":
-        handoff = Path(root) / f"orchestrator-state/tasks/handoffs/{worker_task}.md"
-        if handoff.exists():
-            handoff_note = f"- Handoff activo: `orchestrator-state/tasks/handoffs/{worker_task}.md`"
+        try:
+            handoff = handoff_path(worker_task)
+            if handoff.exists():
+                handoff_note = f"- Handoff activo: `{workspace_relpath(handoff)}`"
+        except Exception:
+            handoff = Path(root) / f"orchestrator-state/tasks/handoffs/{worker_task}.md"
+            if handoff.exists():
+                handoff_note = f"- Handoff activo: `orchestrator-state/tasks/handoffs/{worker_task}.md`"
 
     # Pending journey verifications — block /next-slice from planner until cleared.
     pending_journeys: list[str] = []
@@ -298,9 +309,14 @@ def build_context() -> str:
     ]
     if worker_override:
         lines.append(f"- Worker task override: `{worker_override}` (DAG terminal scope)")
-        pack = Path(root) / f"orchestrator-state/tasks/task-packs/{worker_override}.md"
+        try:
+            pack = task_pack_path(worker_override)
+            pack_display = workspace_relpath(pack)
+        except Exception:
+            pack = Path(root) / f"orchestrator-state/tasks/task-packs/{worker_override}.md"
+            pack_display = f"orchestrator-state/tasks/task-packs/{worker_override}.md"
         pack_status = "exists" if pack.exists() else "missing — planner must create/enrich before developer"
-        lines.append(f"- DAG task pack: `orchestrator-state/tasks/task-packs/{worker_override}.md` ({pack_status})")
+        lines.append(f"- DAG task pack: `{pack_display}` ({pack_status})")
     else:
         lines.append("- DAG mode: no worker task pinned. Export `CLAUDE_ACTIVE_TASK_ID` + `CLAUDE_TASK_PACK` or run `claude --agent main-orchestrator --permission-mode bypassPermissions \"/next-slice <TASK_ID>\"` from a task terminal.")
     if handoff_note:

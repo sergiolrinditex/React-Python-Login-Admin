@@ -72,6 +72,9 @@ Este fichero es lo PRIMERO que lee cualquier agente tras `/clear`. Si está obso
 
 Inicializa `orchestrator-state/tasks/handoffs/<TASK_ID>.md` con:
 
+
+**Higiene handoff:** las líneas machine-readable van como bullets o texto plano (`- AGENT` and `- OUTCOME` key lines). No uses subheadings tipo `### AGENT` or `### OUTCOME` field-headings dentro de una sección; si ves ese formato en un handoff existente, corrígelo a línea `- KEY: value` antes de cerrar. El checker lo tolera para recuperación, pero los agentes deben escribir el formato limpio.
+
 - Metadata machine-readable para el handoff (no sustituye el trailer de chat):
 
   ```markdown

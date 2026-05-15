@@ -224,8 +224,11 @@ EVIDENCE: orchestrator-state/tasks/evidence/P02-S03-T001/</code></pre>
         <li>Validación de la tabla del task pack: ¿cada celda acceptance se cumple?</li>
       </ul>
 
+      <h4>Subagente lifecycle: slice-verifier</h4>
+      <p><code>/verify-slice</code> no verifica por narrativa del main thread: primero escribe un skeleton con <code>init-verify-slice-handoff.sh</code> y después lanza <code>slice-verifier</code>. Este subagente debe usar Chrome DevTools MCP, claude-in-chrome o Agent360 Browser MCP (`browser-mcp`); si ninguno está conectado, bloquea con <code>browser_mcp_unavailable</code> y no cierra por API-only.</p>
+
       <h4>Reviewer especial: screen-journey-reviewer</h4>
-      <p>Si la slice toca pantalla, UX, journey o tiene <code>VISUAL_CONTRACT_CHECK</code>, <code>/verify-slice</code> invoca primero <code>screen-journey-reviewer</code> (info-only). Apendea <code>## Screen/Journey review</code> al handoff con los estados UI obligatorios y notas a11y. Si el review pide cambios, vuelve a debugger; no es FU.</p>
+      <p>Si la slice toca pantalla, UX, journey o tiene <code>VISUAL_CONTRACT_CHECK</code>, <code>/verify-slice</code> invoca <code>screen-journey-reviewer</code> (info-only) después del <code>slice-verifier</code> y antes del <code>closer</code>. Apendea <code>## Screen/Journey review</code> al handoff con los estados UI obligatorios y notas a11y. Si el review pide cambios, vuelve a debugger; no es FU.</p>
 
       <h4>§5.bis · Journey-closing inline</h4>
       <p>Si la slice cierra al menos un journey de la matriz, el comando te pregunta:</p>
@@ -242,15 +245,19 @@ EVIDENCE: orchestrator-state/tasks/evidence/P02-S03-T001/</code></pre>
 
       <h4>Qué emite verify-slice</h4>
 <pre><code>## verify-slice
-VERIFY_OUTCOME: verified         <span style="color:var(--text-faint)"># o issues_found</span>
-DATA_USED: cuenta_sandbox_42, dataset_v2
-HUMAN: yes
-SCREENSHOTS: evidence/P02-S03-T001/verify-*</code></pre>
+TASK_ID: P02-S03-T001
+MCP_BROWSER: chrome-devtools     <span style="color:var(--text-faint)"># o claude-in-chrome/agent360-browser-mcp/browser-mcp</span>
+VERIFY_OUTCOME: verified         <span style="color:var(--text-faint)"># issues_found | blocked</span>
+DATA_CONTRACT_ROWS: VDC-001,VDC-004
+DATA_SETUP: cuenta_sandbox_42, dataset_v2
+PERSISTED_DATA_OBSERVED: users/42 active
+FLOWS_TESTED: login happy path, error_network
+EVIDENCE: orchestrator-state/tasks/evidence/P02-S03-T001/verify-*</code></pre>
 
       <div class="branch-row">
         <div class="branch">
           <h5>verified</h5>
-          <p style="font-size:13px; margin:0; color:var(--text-dim)">spawnea closer (paso 6).</p>
+          <p style="font-size:13px; margin:0; color:var(--text-dim)">mueve a <code>verified_pending_close</code> y, si el checker pasa, spawnea closer (paso 6).</p>
         </div>
         <div class="branch bad">
           <h5>issues_found</h5>
@@ -264,7 +271,7 @@ SCREENSHOTS: evidence/P02-S03-T001/verify-*</code></pre>
     <h3><span class="stage-num">6</span>closer — commit atómico</h3>
     <div class="stage-meta">sonnet · maxTurns 50 · checkout de la sesión · lifecycle owner</div>
     <div class="step-detail">
-      <p>Lo invoca <code>/verify-slice</code> sólo si <code>VERIFY_OUTCOME: verified</code>. Hace 7 cosas en orden:</p>
+      <p>Lo invoca <code>/verify-slice</code> sólo si el router devuelve <code>invoke_closer</code>: handoff verified completo, estado <code>verified_pending_close</code> y checker mecánico verde. Hace 7 cosas en orden:</p>
 
       <ol>
         <li><strong>Pre-check del handoff</strong> con <code>check-handoff-contract.sh</code>. Exige las secciones machine-readable: validator approved, tester pass, verify-slice verified. Para slices UI/journey, también Screen/Journey review approved.</li>
@@ -272,7 +279,7 @@ SCREENSHOTS: evidence/P02-S03-T001/verify-*</code></pre>
         <li><strong>Escribe el report</strong> en <code>orchestrator-state/tasks/reports/&lt;TASK_ID&gt;.md</code> consolidando handoff + evidence.</li>
         <li><strong>Sincroniza el baseline</strong> con <code>./scripts/sync-product-baseline.sh sync --version &lt;vN&gt; --task &lt;TASK_ID&gt;</code>. Esto actualiza <code>docs/product-baseline/</code> como snapshot acumulativo para futuros increments.</li>
         <li><strong>Commit atómico</strong> en el <strong>checkout actual</strong> (<code>main</code> en push-to-main, <code>dev/&lt;TASK_ID&gt;</code> en pr-flow). Sin <code>Co-authored-by: Claude</code>, sin <code>git stash</code>. Si hay trazas tardías (ledger, runtime-state) se integran con <code>git commit --amend --no-edit</code> antes del push.</li>
-        <li><strong>Push + auto-merge</strong> con <code>./scripts/git-workflow.sh</code>, que delega al plugin declarado en STACK_PROFILE. En <code>pr-flow</code> (default desde la última versión), <code>pr-flow.sh</code> hace push + <code>gh pr create --fill</code> + <code>gh pr merge --squash --delete-branch --admin</code> (fallback a <code>--auto</code> si no eres admin) — el PR se mergea solo a main sin que apruebes nada. En <code>push-to-main</code>, push directo a main como antes.</li>
+        <li><strong>Push + auto-merge</strong> con <code>./scripts/git-workflow.sh</code>, que delega al plugin declarado en STACK_PROFILE. En <code>pr-flow</code>, <code>pr-flow.sh</code> hace push, crea/reusa PR y activa auto-merge squash con <code>--auto</code>; sólo usa admin merge si defines explícitamente <code>CLAUDE_PR_FLOW_ADMIN_MERGE=1</code>. En <code>push-to-main</code>, push directo a main como antes.</li>
         <li><strong>Housekeeping</strong>: <code>slice-clean.sh</code> + <code>cleanup-worktrees.sh --apply --task &lt;TASK_ID&gt;</code>.</li>
       </ol>
 

@@ -75,7 +75,7 @@ Cuando el usuario dice "continua" o reinicia sesión, SIEMPRE en este orden:
 6. Determina dónde quedó la cadena (leyendo handoff + runtime-state) y continúa desde el siguiente paso de la cadena:
    - último worker = `developer` y no hay validación → `validator` ‖ `tester` en paralelo.
    - último worker = `validator`|`tester` y están verdes, handoff SIN sección `## verify-slice` → instruye al usuario a lanzar `/verify-slice` (gate humano previo al commit). NO spawnees closer directamente.
-   - último worker = `validator`|`tester` en verde, handoff con `VERIFY_OUTCOME: verified` o `VERIFY_WAIVED: <motivo>` → `closer`.
+   - último worker = `slice-verifier` o task en `verified_pending_close`, handoff con `VERIFY_OUTCOME: verified` completo o `VERIFY_WAIVED: <motivo>` → `/verify-slice` router puede invocar sólo `closer`.
    - último worker = `tester` con fallo → `debugger` → volver a paralelo.
    - tarea `done` o no hay `TASK_ID` explícito → usa `/next-wave` para listar ready tasks y relanza `/next-slice <TASK_ID>`.
 
@@ -100,8 +100,11 @@ NUNCA al reiniciar:
 Paraleliza siempre que puedas. Un "spawn" = una invocación de subagente.
 El budget de 20 está aplicado mecánicamente por el `PreToolUse` hook
 `hook_spawn_budget.py`: el 21º spawn devuelve `permissionDecision: deny`.
-Tú NO lo cuentas a mano — pero diseña tus mensajes con paralelismo para
-no agotar el budget en cadenas seriales.
+Esto NO es el presupuesto de tool-calls MCP. Para el gate humano, `slice-verifier`
+tiene `maxTurns: 130` porque Chrome DevTools MCP consume más pasos; no subas el
+budget global de spawns para resolver navegación MCP lenta. Tú NO cuentas spawns
+a mano — pero diseña tus mensajes con paralelismo para no agotar el budget en
+cadenas seriales.
 
 ### Pipeline `/next-slice` (acaba en `tester pass`)
 
@@ -115,9 +118,7 @@ no agotar el budget en cadenas seriales.
 ### Gate humano: `/verify-slice` (orquesta el cierre)
 
 El comando `/verify-slice` es un slash command que lanza el usuario (no tú) y delega la reproducción real al subagente `slice-verifier`.
-Hace hard reset del entorno, reproduce la slice como usuario real en el navegador,
-vigila logs en vivo, y apendiza `## verify-slice` al handoff con
-`VERIFY_OUTCOME: verified | issues_found`. Después:
+Lanza `slice-verifier`: hard reset del entorno, datos reales/proporcionados, reproducción como usuario real con Chrome DevTools MCP, claude-in-chrome o Agent360 Browser MCP (`browser-mcp`), logs front/back/DB, evidencia y tabla. Este agente tiene `maxTurns: 130` sólo para dar margen a MCP browser; el presupuesto global sigue siendo 20 spawns por slice. Apendiza `## verify-slice` al handoff con `MCP_BROWSER`, datos/evidencia y `VERIFY_OUTCOME: verified | issues_found | blocked`. Después:
 
 - **`VERIFY_OUTCOME: verified`** + slice cierra journey(s) → §5.bis pregunta al
   usuario: ¿verificar journey ahora o aparte?
@@ -127,13 +128,13 @@ vigila logs en vivo, y apendiza `## verify-slice` al handoff con
   - **"aparte"** → flujo separado. El closer emitirá `JOURNEY_PENDING_VERIFY: <JID>`,
     el hook lo mete en `pending_journey_verifications`; en DAG-only solo se
     difieren tasks que referencian ese journey hasta `/verify-journey <JID>`.
-- **`VERIFY_OUTCOME: verified`** + task frontend/ux/journey/gate o con `VISUAL_CONTRACT_CHECK` → /verify-slice spawnea primero `screen-journey-reviewer` info-only; si `approved`, continúa a journey/closer; si `changes_requested`, va a `debugger/retest`; si `blocked`, pide FU triageada o decisión humana.
-- **`VERIFY_OUTCOME: verified`** sin journey ni pantalla/UX → /verify-slice spawnea `closer` directo. Si `closer` corrió antes de verify y quedó blocked, no reinicies debugger: relanza `/verify-slice <TASK_ID>`; el router mecánico invocará sólo closer si corresponde.
+- **`VERIFY_OUTCOME: verified`** + task frontend/ux/journey/gate o con `VISUAL_CONTRACT_CHECK` → /verify-slice mueve a `verified_pending_close` y spawnea `screen-journey-reviewer` info-only antes de closer; si `approved`, continúa a journey/closer; si `changes_requested`, va a `debugger/retest`; si `blocked`, pide FU triageada o decisión humana.
+- **`VERIFY_OUTCOME: verified`** sin journey ni pantalla/UX → /verify-slice deja `verified_pending_close` y spawnea `closer` si el checker pasa. Si `closer` corrió antes de verify y quedó blocked, no reinicies debugger: relanza `/verify-slice <TASK_ID>`; el router mecánico invocará sólo closer si corresponde.
 - **`VERIFY_OUTCOME: issues_found`** → spawnea `debugger`, vuelve al paso 3.
 
 ### `closer` (invocado SIEMPRE por /verify-slice — NO por ti)
 
-- Pre-check rechaza si no hay `## verify-slice` con `VERIFY_OUTCOME: verified` (o `VERIFY_WAIVED: <motivo>` firmado por humano) en el handoff. Para tareas frontend/ux/journey/gate exige también `## Screen/Journey review` aprobado por screen-journey-reviewer.
+- Pre-check rechaza si no hay `## verify-slice` completo con `VERIFY_OUTCOME: verified` + MCP/datos/evidencia (o `VERIFY_WAIVED: <motivo>` firmado por humano) en el handoff. Para tareas frontend/ux/journey/gate exige también `## Screen/Journey review` aprobado por screen-journey-reviewer.
 - Si `## verify-journey` con `JOURNEY_VERIFY_OUTCOME: verified` está en el handoff → emite `JOURNEY_VERIFIED_INLINE: <JID>` (no `JOURNEY_PENDING_VERIFY`).
 - En cualquier otro caso de cierre de journey → emite `JOURNEY_PENDING_VERIFY: <JID>`.
 - Commit atómico en el checkout correcto del TASK_ID (`main` solo en `push-to-main`; worktree/rama de tarea en `pr-flow`/`git-flow`), workflow Git configurado (`./scripts/git-workflow.sh`) y limpieza segura de worktrees.

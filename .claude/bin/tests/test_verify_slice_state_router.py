@@ -44,6 +44,20 @@ def _write_handoff(tmp_project: Path, body: str) -> None:
     path.write_text(body, encoding="utf-8")
 
 
+
+def _verified_block(heading: str = "## verify-slice") -> str:
+    return f"""{heading}
+- TASK_ID: {TASK_ID}
+- AGENT: slice-verifier
+- MCP_BROWSER: chrome-devtools
+- VERIFY_OUTCOME: verified
+- DATA_CONTRACT_ROWS: VDC-001
+- DATA_SETUP: sandbox-user-1 + seeded record A
+- PERSISTED_DATA_OBSERVED: users/sandbox-user-1 active
+- FLOWS_TESTED: login happy path
+- EVIDENCE: orchestrator-state/tasks/evidence/{TASK_ID}/verify-*
+"""
+
 def _ready_handoff(extra: str = "") -> str:
     return f"""# Handoff {TASK_ID}
 
@@ -75,11 +89,7 @@ def test_router_relaunches_closer_after_premature_closer_block_and_verified_hand
 
     _seed(tmp_project, status="blocked", last_updated_by="closer")
     _write_handoff(tmp_project, _ready_handoff(f"""
-## verify-slice
-- TASK_ID: {TASK_ID}
-- AGENT: slice-verifier
-- VERIFY_OUTCOME: verified
-"""))
+{_verified_block()}"""))
 
     result = verify_slice_state.classify(TASK_ID)
     assert result["action"] == "invoke_closer"
@@ -91,15 +101,78 @@ def test_router_accepts_slice_verifier_heading_alias(tmp_project):
 
     _seed(tmp_project, status="verified_pending_close", last_updated_by="slice-verifier")
     _write_handoff(tmp_project, _ready_handoff(f"""
-### slice-verifier (cycle 2)
-- TASK_ID: {TASK_ID}
-- VERIFY_OUTCOME: verified
+{_verified_block("### slice-verifier (cycle 2)")}"""))
+
+    result = verify_slice_state.classify(TASK_ID)
+    assert result["action"] == "invoke_closer"
+    assert result["verify_outcome"] == "verified"
+
+
+def test_router_reads_verify_outcome_after_h3_machine_keys(tmp_project):
+    import verify_slice_state
+
+    _seed(tmp_project, status="verified_pending_close", last_updated_by="slice-verifier")
+    _write_handoff(tmp_project, _ready_handoff(f"""
+## verify-slice
+### AGENT: slice-verifier
+### TASK_ID: {TASK_ID}
+### MCP_BROWSER: chrome-devtools
+### VERIFY_OUTCOME: verified
+### DATA_CONTRACT_ROWS: VDC-001
+### DATA_SETUP: sandbox-user-1 + seeded record A
+### PERSISTED_DATA_OBSERVED: users/sandbox-user-1 active
+### FLOWS_TESTED: login happy path
+### EVIDENCE: orchestrator-state/tasks/evidence/{TASK_ID}/verify-*
 """))
 
     result = verify_slice_state.classify(TASK_ID)
     assert result["action"] == "invoke_closer"
     assert result["verify_outcome"] == "verified"
 
+def test_router_keeps_verify_section_through_h3_prose_subheading(tmp_project):
+    import verify_slice_state
+
+    _seed(tmp_project, status="verified_pending_close", last_updated_by="slice-verifier")
+    _write_handoff(tmp_project, _ready_handoff(f"""
+## verify-slice
+### Evidence summary
+- TASK_ID: {TASK_ID}
+- AGENT: slice-verifier
+- MCP_BROWSER: chrome-devtools
+- VERIFY_OUTCOME: verified
+- DATA_CONTRACT_ROWS: VDC-001
+- DATA_SETUP: sandbox-user-1 + seeded record A
+- PERSISTED_DATA_OBSERVED: users/sandbox-user-1 active
+- FLOWS_TESTED: login happy path
+- EVIDENCE: orchestrator-state/tasks/evidence/{TASK_ID}/verify-*
+"""))
+
+    result = verify_slice_state.classify(TASK_ID)
+    assert result["action"] == "invoke_closer"
+    assert result["verify_outcome"] == "verified"
+
+
+
+def test_router_accepts_agent360_browser_mcp_alias(tmp_project):
+    import verify_slice_state
+
+    _seed(tmp_project, status="verified_pending_close", last_updated_by="slice-verifier")
+    _write_handoff(tmp_project, _ready_handoff(f"""
+## verify-slice
+- TASK_ID: {TASK_ID}
+- AGENT: slice-verifier
+- MCP_BROWSER: browser-mcp
+- VERIFY_OUTCOME: verified
+- DATA_CONTRACT_ROWS: VDC-001
+- DATA_SETUP: sandbox-user-1 + seeded record A
+- PERSISTED_DATA_OBSERVED: users/sandbox-user-1 active
+- FLOWS_TESTED: login happy path with MFA
+- EVIDENCE: orchestrator-state/tasks/evidence/{TASK_ID}/verify-*
+"""))
+
+    result = verify_slice_state.classify(TASK_ID)
+    assert result["action"] == "invoke_closer"
+    assert result["verify_outcome"] == "verified"
 
 def test_router_sends_verify_issues_to_debugger_or_followup_triage(tmp_project):
     import verify_slice_state

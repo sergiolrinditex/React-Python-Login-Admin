@@ -383,7 +383,14 @@
     ],
     "auto_verify_requires": "low risk, deterministic commands, no closing journey, real/provided data evidence",
     "slice_verifier_agent": "slice-verifier",
-    "state_machine": "tester pass -> ready_for_close; slice-verifier verified -> verified_pending_close; closer committed -> done; issues_found -> needs_debug; blocked stays blocked until the responsible lifecycle agent reruns."
+    "state_machine": "tester pass -> ready_for_close; slice-verifier verified -> verified_pending_close; closer committed -> done; issues_found -> needs_debug; blocked stays blocked until the responsible lifecycle agent reruns.",
+    "accepted_browser_mcps": [
+      "chrome-devtools",
+      "claude-in-chrome",
+      "agent360-browser-mcp",
+      "browser-mcp"
+    ],
+    "browser_mcp_isolation_policy": "chrome-devtools is primary for every /verify-slice and must use --isolated or per-TASK_ID --browser-url/profile. claude-in-chrome is second fallback if chrome-devtools is not usable or cannot complete the required human session. agent360/browser-mcp is third fallback and may be used when the first two are unusable or the user/project explicitly requires Agent360 for cookies/MFA/session handling."
   },
   "trailer_schema": {
     "source_of_truth": ".claude/orchestrator-contract.json",

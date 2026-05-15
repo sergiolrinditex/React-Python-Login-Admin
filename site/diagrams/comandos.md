@@ -65,7 +65,7 @@ export CLAUDE_ACTIVE_TASK_ID=P02-S03-T001 \
 ![Tipo](https://img.shields.io/badge/tipo-pipeline-8b5cf6?style=flat-square)
 ![Spawns](https://img.shields.io/badge/max_spawns-20-f59e0b?style=flat-square)
 
-Claim atómico + pipeline completo hasta tester pass. **No invoca closer directamente** — pausa en tester pass para que tú lances `/verify-slice`.
+Claim atómico + pipeline completo hasta tester pass. **No invoca closer directamente** — pausa en tester pass para que tú lances `/verify-slice`. `/verify-slice` delega la verificación humana en `slice-verifier`, que requiere Chrome DevTools MCP, claude-in-chrome o Agent360 Browser MCP (`browser-mcp`) para poder cerrar.
 
 ```mermaid
 flowchart LR
@@ -106,7 +106,7 @@ Verificación con datos reales del `Verification Data Contract` definido en el `
 | ❌ Hallazgos mayores fuera scope | Registra follow-up formal con `register-followup propose` |
 
 > [!IMPORTANT]
-> El closer **no commitea sin** `## verify-slice` con `VERIFY_OUTCOME: verified` en el handoff. Único waiver: `VERIFY_WAIVED: <motivo>` firmado por humano explícitamente. `/verify-slice` es resiliente al `/clear`: reconstruye el contexto desde disco (PROGRESS.md, runtime-state, registry, handoff, TECHNICAL_GUIDE).
+> El closer **no commitea sin** `## verify-slice` completo con `VERIFY_OUTCOME: verified` + MCP/datos/evidencia en el handoff. Único waiver: `VERIFY_WAIVED: <motivo>` firmado por humano explícitamente. `/verify-slice` es resiliente al `/clear`: reconstruye el contexto desde disco (PROGRESS.md, runtime-state, registry, handoff, TECHNICAL_GUIDE).
 
 ---
 
@@ -306,7 +306,7 @@ flowchart LR
 |---|---|---|---|
 | `/next-wave` | Antes de empezar slice | — | — |
 | `/next-slice` | Empezar pipeline | Si quedan pending journeys o blocking follow-ups | ✅ claim |
-| `/verify-slice` | Tras tester pass | — | ✅ via closer |
+| `/verify-slice` | Tras tester pass | Si falta MCP browser / datos / evidencia | ✅ via `slice-verifier` + closer |
 | `/auto-verify-slice` | Solo low+auto | Si cierra journey o riesgo > low | ✅ via closer |
 | `/verify-journey` | Manual / waiver | — | ✅ status journey |
 | `/phase-gate` | Cierre de phase | Si faltan tasks/journeys/evidence | — |

@@ -28,6 +28,8 @@
 | 🏛 **project-architect** | `ready` ✅ · `blocked` 🚫 | — | — | — | — |
 | 📋 **task-planner** | `ready` ✅ · `blocked` 🚫 | — | — | — | — |
 | 🧪 **tester** | `pass` ✅ · `fail` ❌ · `blocked` 🚫 | `ready_for_close` 🟢 · `needs_debug` ⚠️ · `blocked` 🚫 | ✅ muta | — | — |
+| 🧭 **slice-verifier** | `verified` ✅ · `issues_found` ⚠️ · `blocked` 🚫 | `verified_pending_close` 🟢 · `needs_debug` ⚠️ · `blocked` 🚫 | ✅ muta | — | — |
+| 👁️ **screen-journey-reviewer** | `approved` ✅ · `changes_requested` ⚠️ · `blocked` 🚫 | — | — | ℹ️ | — |
 | ✅ **validator** | `approved` ✅ · `changes_requested` ⚠️ · `blocked` 🚫 | `ready_for_close` 🟢 · `needs_debug` ⚠️ · `blocked` 🚫 | — | ℹ️ | — |
 
 ---
@@ -40,6 +42,7 @@
 flowchart LR
     DEV[🔧 developer<br>success → validator_tester_pending]
     TST[🧪 tester<br>pass → ready_for_close<br>fail → needs_debug]
+    SV[🧭 slice-verifier<br>verified → verified_pending_close<br>issues_found → needs_debug]
     DBG[🐛 debugger<br>fixed → validator_tester_pending]
     CLO[🔒 closer<br>committed → done]
     DEP[🚀 deployer<br>deployed → done]
@@ -47,7 +50,9 @@ flowchart LR
     DEV --> TST
     DEV --> DBG
     DBG --> TST
-    TST --> CLO
+    TST --> SV
+    SV --> CLO
+    SV --> DBG
     CLO --> DEP
 
     style DEV fill:#1f2740,stroke:#06b6d4,color:#e8ecf5
@@ -79,6 +84,8 @@ flowchart LR
 
 > [!NOTE]
 > **Validator es info-only** intencionalmente. Su `NEXT_STATUS` se guarda como `task.validator_next_status` (metadata) pero NO sobrescribe `task.status`. Esto resuelve la race condition con `tester` cuando ambos cierran a la vez en el par paralelo. El **closer** lee el `OUTCOME` del validator desde el handoff y rechaza el commit si no es `approved`.
+>
+> **slice-verifier es lifecycle**: `verified` mueve a `verified_pending_close`; `closer` sigue siendo el único rol que puede marcar `done`.
 
 ### 📦 Bootstrap — solo se ejecutan al inicio del proyecto
 
@@ -134,7 +141,7 @@ flowchart TD
 ```
 
 > [!CAUTION]
-> El guardrail es **mecánico** (`enforce_closer_done_guardrail` en `hook_capture_subagent_stop.py`). No depende de la disciplina del agente. Si el closer intenta `done` sin las 5 pruebas, el hook fuerza `blocked`. Además, el closer rechaza el commit upfront si en el handoff falta `## verify-slice` con `VERIFY_OUTCOME: verified` (o `VERIFY_WAIVED: <motivo>`).
+> El guardrail es **mecánico** (`enforce_closer_done_guardrail` en `hook_capture_subagent_stop.py`). No depende de la disciplina del agente. Si el closer intenta `done` sin las 5 pruebas, el hook fuerza `blocked`. Además, el closer rechaza el commit upfront si en el handoff falta `## verify-slice` completo con `VERIFY_OUTCOME: verified` + MCP/datos/evidencia (o `VERIFY_WAIVED: <motivo>`).
 
 ---
 

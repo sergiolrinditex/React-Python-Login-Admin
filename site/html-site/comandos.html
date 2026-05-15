@@ -64,7 +64,7 @@
         <span class="badge ok">Gate humano</span>
       </div>
       <h3>Verificación con datos reales/proporcionados</h3>
-      <p>Reset controlado, carga de datos reales/proporcionados y reproducción humana usando el método declarado en <code>STACK_PROFILE.frontend.visual_check</code> (browser, emulador, simulador, device), logs vivos. Si encuentra hallazgos menores dentro del scope, llama a <code>debugger</code> y re-verifica.</p>
+      <p>Router mecánico + <code>slice-verifier</code>: hard reset, datos reales/proporcionados y reproducción humana con Chrome DevTools MCP, claude-in-chrome o Agent360 Browser MCP (`browser-mcp`). Si no hay MCP browser conectado, bloquea con <code>browser_mcp_unavailable</code>. Si queda <code>verified</code>, pasa por <code>verified_pending_close</code> y entonces invoca <code>closer</code>.</p>
     </div>
 
     <div class="card">

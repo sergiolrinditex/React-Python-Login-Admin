@@ -78,13 +78,15 @@ Regla dura: `closer` sólo se invoca cuando este helper devuelve `invoke_closer`
 `/verify-slice` no es sólo un router de estados. El router decide CUÁNDO lanzar `slice-verifier`, pero `slice-verifier` debe ejecutar el contrato humano-real antiguo:
 
 - Hard reset del entorno: parar servicios propios, reset DB, migraciones, datos base reales/proporcionados y datos específicos del slice desde `Verification Data Contract`.
-- Navegación real como usuario en navegador mediante Chrome DevTools MCP o Claude-in-Chrome MCP.
+- Navegación real como usuario en navegador mediante Chrome DevTools MCP aislado como opción primaria; fallback 2: Claude-in-Chrome MCP; fallback 3: Agent360 Browser MCP (`browser-mcp`).
 - Observación de logs front + back + DB en vivo.
 - Evidencia en `orchestrator-state/tasks/evidence/<TASK_ID>/verify-*`.
 - Tabla visible para el usuario con URL, qué probar, descripción, resultado esperado, observado y pasa/no pasa.
 - Bloque `## verify-slice` en handoff con `VERIFY_OUTCOME: verified|issues_found|blocked`.
 
-MCP de navegador es obligatorio para el gate humano. Si Chrome DevTools MCP y Claude-in-Chrome MCP no están disponibles/conectados, no hagas fallback a `curl` como cierre humano: bloquea con `BLOCKER_REASON: browser_mcp_unavailable` y dile al usuario que conecte uno de esos MCP y relance `/verify-slice <TASK_ID>`.
+MCP de navegador es obligatorio para el gate humano. Debe ser **usable**, no sólo aparecer listado. MCPs aceptados: `chrome-devtools`, `claude-in-chrome` y `agent360-browser-mcp`/`browser-mcp`. Política de elección: intenta siempre primero Chrome DevTools aislado (`--isolated` o `scripts/chrome-devtools-isolated-session.sh --task <TASK_ID>` + `--browser-url`), también para login/MFA si puede abrir una sesión visible por `TASK_ID`; si Chrome DevTools no está usable o no puede completar la sesión humana requerida, prueba `claude-in-chrome`; si tampoco responde, prueba Agent360 Browser MCP (`browser-mcp`). Si Chrome DevTools MCP falla por lock del profile, diagnostica con `bash scripts/chrome-mcp-doctor.sh || true`, imprime instrucciones de aislamiento con `bash scripts/chrome-devtools-isolated-session.sh --task <TASK_ID>`, cambia a claude-in-chrome y después a Agent360 sólo si están realmente usables, o bloquea con `BLOCKER_REASON: browser_mcp_unavailable` + `MCP_DIAGNOSTIC`. Si los MCP están listados pero sus llamadas fallan, no hagas fallback a `curl` como cierre humano: dile al usuario que conecte/reinicie uno de esos MCP y relance `/verify-slice <TASK_ID>`. Si uno de los MCP ya completó la reproducción humana, no repitas con otro sólo porque otro esté roto.
+
+`slice-verifier` tiene `maxTurns: 130` para absorber navegación real con Chrome DevTools MCP. No amplíes el budget de spawns ni el `spawn_budget` global para esto: el límite de 20 subagentes por slice sigue igual. El agente debe hacer preflight corto, usar el MCP usable elegido y reservar margen para evidencia + tabla + handoff + trailer. Si el MCP está roto o el scope visual excede la slice, debe bloquear limpio con `VERIFY_OUTCOME: blocked` y `BLOCKER_REASON: mcp_budget_exhausted_or_scope_too_large` o el diagnóstico MCP correspondiente; no quedar `partial` ni relanzarse en bucle.
 
 Antes de spawnear `slice-verifier`, escribe skeleton persistente para evitar estados parciales por interrupción:
 
@@ -96,6 +98,8 @@ Ese skeleton debe quedar sobrescrito lógicamente por un bloque final append-onl
 
 ## Paso 4 — Spawn de `slice-verifier`
 
+`slice-verifier` tiene un budget de tool-uses algo mayor (`maxTurns: 130`) porque Chrome DevTools MCP consume más llamadas en una verificación humana real. No amplíes el budget de spawns ni lances varios verificadores para compensar MCP roto: el agente debe escribir primero el skeleton, hacer preflight corto de Chrome DevTools y sólo después probar fallbacks acotados (`claude-in-chrome`, luego `browser-mcp`/Agent360).
+
 Sólo si `verify-slice-state` devuelve `invoke_slice_verifier`, primero ejecuta `./scripts/init-verify-slice-handoff.sh <TASK_ID>` y luego spawnea **un único** subagente `slice-verifier` con este contexto literal:
 
 ```text
@@ -104,7 +108,8 @@ CLAUDE_TASK_PACK: orchestrator-state/tasks/task-packs/<TASK_ID>.md
 MODO DAG ACTIVO: production = explicit_dag.
 Unidad verificable = TASK_ID canónico del registry.
 Hard reset obligatorio con datos reales/proporcionados del Verification Data Contract.
-Primero confirma disponibilidad/conexión de Chrome DevTools MCP o Claude-in-Chrome MCP; si ninguno está disponible, escribe ## verify-slice con VERIFY_OUTCOME: blocked, BLOCKER_REASON: browser_mcp_unavailable y USER_ACTION_REQUIRED.
+Primero confirma que un MCP aceptado está usable con una llamada mínima. Orden obligatorio de preferencia: 1) Chrome DevTools MCP aislado, 2) Claude-in-Chrome MCP, 3) Agent360 Browser MCP (`browser-mcp`). Usa Chrome DevTools también para MFA/2FA/CAPTCHA/sesión real si puede abrir una sesión visible por `TASK_ID`; si no puede completar esa sesión humana, pasa a claude-in-chrome y después a Agent360. Si Chrome DevTools MCP falla por profile lock, ejecuta `bash scripts/chrome-mcp-doctor.sh || true`, imprime aislamiento con `bash scripts/chrome-devtools-isolated-session.sh --task <TASK_ID>` y prueba los fallbacks en ese orden sólo si están realmente conectados. Si ninguno está usable, escribe ## verify-slice con VERIFY_OUTCOME: blocked, BLOCKER_REASON: browser_mcp_unavailable, MCP_DIAGNOSTIC y USER_ACTION_REQUIRED.
+Presupuesto: `slice-verifier` tiene `maxTurns: 130` para acomodar Chrome DevTools MCP. Úsalo para hard reset + navegación real + logs/evidence, no para reintentos infinitos. Máximo 2 intentos cortos por MCP candidato; si el MCP sigue roto, el scope visual excede la slice o se agota el margen, escribe `VERIFY_OUTCOME: blocked` con `BLOCKER_REASON: mcp_budget_exhausted_or_scope_too_large` y acción requerida en vez de quedar partial.
 Reproduce como usuario con navegador MCP, vigila logs front/back/DB, guarda evidencia verify-* y devuelve una tabla: URL | Qué probar | Descripción | Resultado esperado | Resultado observado | Pasa?.
 Escribe ## verify-slice final en el handoff.
 No invoques closer; no hagas commit; no marques done.
@@ -220,7 +225,7 @@ Incluye en la respuesta final la tabla producida por `slice-verifier` o un resum
 
 Y debajo:
 
-- MCP usado: Chrome DevTools MCP | Claude-in-Chrome MCP | blocked.
+- MCP usado: Chrome DevTools MCP | Claude-in-Chrome MCP | Agent360 Browser MCP (`browser-mcp`) | blocked.
 - Filas del Verification Data Contract usadas.
 - Datos reales/proporcionados cargados.
 - Datos persistidos observados.

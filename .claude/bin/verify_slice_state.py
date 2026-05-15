@@ -20,7 +20,7 @@ from common import (
     workspace_relpath,
     workspace_root,
 )
-from check_handoff_contract import validate as validate_handoff
+from check_handoff_contract import SECTION_RE, _heading_key_value, _section_from_match, validate as validate_handoff
 
 
 def _read_text(path: Path) -> str:
@@ -35,20 +35,25 @@ def _latest_key_in_section(text: str, section_name: str, key: str) -> str | None
     section_norm = section_name.strip().lower()
     current: str | None = None
     found: str | None = None
+    wanted_key = key.upper()
     for line in text.splitlines():
-        if line.startswith("##"):
-            raw = line.lstrip("#").strip().lower().replace("_", " ")
-            raw = " ".join(raw.split())
-            raw = raw.split(" (cycle ", 1)[0].split(" (ciclo ", 1)[0]
+        heading_key = _heading_key_value(line)
+        if heading_key and (current == section_norm or (section_norm == "verify-slice" and current == "verify-slice")):
+            heading_name, heading_value = heading_key
+            if heading_name == wanted_key:
+                found = heading_value
+            continue
+        sec = SECTION_RE.match(line)
+        if sec and not heading_key:
+            section_name = _section_from_match(sec)
+            if section_name is None:
+                # H3/H4 prose subheading inside the current section; do not
+                # lose the section's machine-readable keys.
+                continue
             if section_norm == "verify-slice":
-                current = "verify-slice" if (
-                    raw.startswith("verify slice")
-                    or raw.startswith("verify-slice")
-                    or raw.startswith("slice verifier")
-                    or raw.startswith("slice-verifier")
-                ) else None
+                current = "verify-slice" if section_name == "verify-slice" else None
             else:
-                current = raw
+                current = section_name
             continue
         if current == section_norm or (section_norm == "verify-slice" and current == "verify-slice"):
             stripped = line.strip()

@@ -275,6 +275,30 @@ class DagRuntimeSafetyTests(unittest.TestCase):
         finally:
             td.cleanup()
 
+    def test_phase_status_treats_close_gate_states_as_active(self):
+        root, td = _setup_root()
+        try:
+            with _Sandbox(root):
+                import common
+                for state in ("ready_for_close", "verified_pending_close"):
+                    tasks = [
+                        {"id": "P00-S01-T001", "title": "A", "phase_id": "P00", "step_id": "P00-S01", "status": state, "depends_on": []},
+                        {"id": "P00-S01-T002", "title": "B", "phase_id": "P00", "step_id": "P00-S01", "status": "blocked", "depends_on": ["P00-S01-T001"]},
+                    ]
+                    registry = {
+                        "generated_at": common.now_iso(),
+                        "project_prefix": "TEST",
+                        "phase_order": ["P00"],
+                        "phases": [{"id": "P00", "title": "P0", "status": "blocked", "task_ids": [t["id"] for t in tasks]}],
+                        "tasks": tasks,
+                        "journeys": [],
+                        "task_dag": boot.build_task_dag(tasks),
+                    }
+                    refreshed = common.refresh_phase_statuses(registry)
+                    self.assertEqual(refreshed["phases"][0]["status"], "active", state)
+        finally:
+            td.cleanup()
+
     def test_claim_denies_join_until_all_predecessors_done(self):
         root, td = _setup_root()
         try:

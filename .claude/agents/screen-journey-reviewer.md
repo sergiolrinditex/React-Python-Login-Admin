@@ -115,6 +115,9 @@ No crees FU por bugs visuales o UX reparables en la misma slice. No promociones 
 
 Apendiza al handoff una sección `## Screen/Journey review` con campos machine-readable:
 
+
+**Higiene handoff:** las líneas machine-readable van como bullets o texto plano (`- AGENT` and `- OUTCOME` key lines). No uses subheadings tipo `### AGENT` or `### OUTCOME` field-headings dentro de una sección; si ves ese formato en un handoff existente, corrígelo a línea `- KEY: value` antes de cerrar. El checker lo tolera para recuperación, pero los agentes deben escribir el formato limpio.
+
 ```markdown
 ## Screen/Journey review
 - AGENT: screen-journey-reviewer

@@ -523,4 +523,20 @@ Si los commits aparecen alternando entre cuentas, revisa `git config --show-orig
 
 ### Verify-slice human browser MCP gate
 
-`/verify-slice` delegates to `slice-verifier`, which must perform hard reset, load real/provided verification data, exercise the app through Chrome DevTools MCP or Claude-in-Chrome MCP, observe front/back/DB logs, write evidence, and append `## verify-slice`. If no browser MCP is connected it blocks with `browser_mcp_unavailable`; it must not close via API-only fallback.
+`/verify-slice` delegates to `slice-verifier`, which must perform hard reset, load real/provided verification data, exercise the app through a **usable** browser MCP, observe front/back/DB logs, write evidence, and append `## verify-slice`. The priority is Chrome DevTools MCP first, Claude-in-Chrome second fallback, Agent360 Browser MCP (`browser-mcp`) third fallback. `slice-verifier` has `maxTurns: 130` specifically for browser MCP work; keep the global spawn budget at 20 because it counts subagents, not MCP tool calls. Listed tools are not enough: the agent must make a short health call before relying on an MCP. If Chrome DevTools MCP is locked by a stale/active Chrome profile, use `bash scripts/chrome-mcp-doctor.sh || true` plus `scripts/chrome-devtools-isolated-session.sh --task <TASK_ID>` for diagnostics/isolation before trying fallbacks. If no browser MCP is usable it blocks with `browser_mcp_unavailable`; it must not close via API-only fallback. A broken unused MCP does not invalidate a verification already completed through another accepted MCP.
+
+`slice-verifier` has a slightly larger local budget (`maxTurns: 130`) because Chrome DevTools MCP verification is tool-heavy. The global per-slice spawn budget remains 20. Near budget exhaustion the verifier must persist a final blocked handoff with `BLOCKER_REASON: mcp_budget_exhausted_or_scope_too_large`, not leave a partial run.
+
+A verified slice is not closed yet. The lifecycle is:
+
+```text
+tester pass -> ready_for_close
+slice-verifier verified -> verified_pending_close
+closer committed + git/pr/cleanup proof -> done
+```
+
+For setup and isolation details see `docs/guides/MCP_BROWSER_VERIFY.md`. Short policy: use Chrome DevTools MCP first for all normal verify work, including MFA/2FA when a visible isolated/per-task Chrome can be used; use Claude-in-Chrome as the second fallback; use Agent360 Browser MCP (`browser-mcp`) as the third fallback for real-session/human-in-the-loop cases when the first two are unusable.
+
+The handoff contract for human `VERIFY_OUTCOME: verified` is intentionally strict: it must include `MCP_BROWSER`, `DATA_CONTRACT_ROWS`, `DATA_SETUP`, `PERSISTED_DATA_OBSERVED`, `FLOWS_TESTED` and `EVIDENCE`. The only no-MCP exception is `VERIFY_MODE: auto` with `RISK_LEVEL: low` and deterministic command evidence. This prevents a thin/partial `verified` block from letting the closer mutate the DAG to `done`.
+
+Handoff fields must be written as plain key lines inside the agent section (`- AGENT: validator`, `- OUTCOME: approved`), not as markdown subheadings like `### AGENT: validator`. The parser tolerates old/bad H3 field lines for recovery, but agents are instructed to write the clean form.

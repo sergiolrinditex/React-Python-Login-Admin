@@ -1032,7 +1032,10 @@ def refresh_phase_statuses(registry: dict[str, Any]) -> dict[str, Any]:
         statuses = {t.get("status") for t in phase_tasks}
         if phase_tasks and all(t.get("status") == "done" for t in phase_tasks):
             phase["status"] = "complete"
-        elif "claimed" in statuses or "in_progress" in statuses or "review_pending" in statuses or "test_pending" in statuses or "qa_pending" in statuses or "needs_debug" in statuses:
+        elif statuses & SCHEDULER_ACTIVE_STATUSES or statuses & {"review_pending", "test_pending", "qa_pending"}:
+            # ready_for_close and verified_pending_close are active close states:
+            # dependencies must NOT unlock and the phase must not look blocked
+            # while /verify-slice or closer is still pending.
             phase["status"] = "active"
         elif any(task_is_ready(registry, t) and t.get("status") in {"planned", "blocked", "ready"} for t in phase_tasks):
             phase["status"] = "ready"
@@ -1094,7 +1097,7 @@ def choose_next_scheduler_task(registry: dict[str, Any]) -> tuple[dict[str, Any]
             if task.get("status") == "ready":
                 return phase, task
         for task in phase_tasks:
-            if task.get("status") in {"claimed", "in_progress", "needs_debug", "blocked"}:
+            if task.get("status") in SCHEDULER_ACTIVE_STATUSES or task.get("status") == "blocked":
                 return phase, task
     return None, None
 

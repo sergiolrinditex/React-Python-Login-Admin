@@ -26,8 +26,8 @@
 
 <header class="page-header">
   <div class="crumbs">Página 2 de 7 · Tripas</div>
-  <h1>Los 13 subagentes</h1>
-  <p class="lede">Un subagente es Claude con un prompt acotado, una lista de herramientas y, opcionalmente, un worktree aislado. Cada uno hace <strong>una sola cosa bien</strong>. Aquí están los 13 que componen tu orquestador, qué escriben y qué emiten al terminar.</p>
+  <h1>Los 14 subagentes</h1>
+  <p class="lede">Un subagente es Claude con un prompt acotado, una lista de herramientas y, opcionalmente, un worktree aislado. Cada uno hace <strong>una sola cosa bien</strong>. Aquí están los 14 que componen tu orquestador, qué escriben y qué emiten al terminar.</p>
 </header>
 
 <div class="container">
@@ -161,6 +161,7 @@ JOURNEY_VERIFY_OUTCOME:  <span style="color:var(--text-faint)"># verified | issu
       <tr><td><strong>deployer</strong></td><td><code>deployed</code> · <code>planned</code> · <code>blocked</code> · <code>failed</code></td><td><code>done</code> · <code>blocked</code></td><td>Lifecycle</td></tr>
       <tr><td><strong>developer</strong></td><td><code>success</code> · <code>blocked</code> · <code>failed</code></td><td><code>validator_tester_pending</code> · <code>blocked</code></td><td>Lifecycle</td></tr>
       <tr><td><strong>tester</strong></td><td><code>pass</code> · <code>fail</code> · <code>blocked</code></td><td><code>ready_for_close</code> · <code>needs_debug</code> · <code>blocked</code></td><td>Lifecycle (dueño status)</td></tr>
+      <tr><td><strong>slice-verifier</strong></td><td><code>verified</code> · <code>issues_found</code> · <code>blocked</code></td><td><code>verified_pending_close</code> · <code>needs_debug</code> · <code>blocked</code></td><td>Lifecycle · gate humano MCP</td></tr>
       <tr><td><strong>validator</strong></td><td><code>approved</code> · <code>changes_requested</code> · <code>blocked</code></td><td>(metadata)</td><td>Info-only · bloquea closer</td></tr>
       <tr><td><strong>official-docs-researcher</strong></td><td><code>verified</code> · <code>discrepancy</code> · <code>insufficient</code></td><td>—</td><td>Info-only</td></tr>
       <tr><td><strong>planner</strong></td><td><code>ready</code> · <code>blocked</code></td><td>—</td><td>Info-only</td></tr>
@@ -241,6 +242,13 @@ EVIDENCE: ...</code></pre></div>
     <p style="color:var(--text-dim); font-size:14px"><strong>Si <code>fail</code></strong> → debugger. Máximo 3 ciclos; al 4º se bloquea con <code>max_debug_cycles_reached</code>.</p>
   </div>
 
+  <div id="slice-verifier" class="agent-card featured">
+    <div class="agent-head"><h3>slice-verifier <span class="model">sonnet · maxTurns 130</span></h3>
+      <div class="agent-meta"><span class="tag green">lifecycle</span><span class="tag blue">MCP browser</span><span class="tag">handoff</span></div></div>
+    <p>Gate humano-real previo al closer. Hace hard reset, carga datos reales/proporcionados, reproduce la app con Chrome DevTools MCP, claude-in-chrome o Agent360 Browser MCP (`browser-mcp`), observa logs front/back/DB y apendea <code>## verify-slice</code>. El aumento a <code>maxTurns 130</code> sólo da margen al MCP browser; no cambia los 20 spawns por slice.</p>
+    <p style="color:var(--text-dim); font-size:14px"><strong>Estado:</strong> <code>verified</code> → <code>verified_pending_close</code>. Si no hay MCP browser conectado, bloquea con <code>browser_mcp_unavailable</code>; no hace fallback API-only.</p>
+  </div>
+
   <div id="debugger" class="agent-card">
     <div class="agent-head"><h3>debugger <span class="model">opus · maxTurns 120</span></h3>
       <div class="agent-meta"><span class="tag blue">lifecycle</span><span class="tag purple">worktree-sesión</span><span class="tag">memoria</span></div></div>
@@ -267,7 +275,7 @@ NEXT_STATUS: validator_tester_pending
   <div id="closer" class="agent-card featured">
     <div class="agent-head"><h3>closer <span class="model">sonnet · maxTurns 50</span></h3>
       <div class="agent-meta"><span class="tag blue">lifecycle</span><span class="tag warn">cierre con guardrail</span></div></div>
-    <p>El único que cierra una task. Lo invoca <code>/verify-slice</code> cuando hay <code>VERIFY_OUTCOME: verified</code>. Hace 6 cosas en orden:</p>
+    <p>El único que cierra una task. Lo invoca <code>/verify-slice</code> sólo cuando el router confirma <code>verified_pending_close</code> y un handoff <code>## verify-slice</code> completo con MCP/datos/evidencia. Hace 6 cosas en orden:</p>
     <ol>
       <li>Pre-check del handoff con <code>check-handoff-contract.sh</code>.</li>
       <li>Escribe <code>reports/&lt;TASK_ID&gt;.md</code>.</li>
@@ -385,7 +393,7 @@ NEXT_STATUS: validator_tester_pending
                               │   NO toca task.status
                               │
                               └─ tester (lifecycle):
-                                  escribe task.status = ready_for_close / needs_debug
+                                  escribe task.status = ready_for_close / needs_debug; slice-verifier añade verified_pending_close antes del closer
 
   Schema dice quién es info-only. Hook lo lee.
   Resultado deterministico: tester gana lifecycle, validator gana metadata.</div>

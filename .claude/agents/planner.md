@@ -59,7 +59,7 @@ Si existe una nota sobre este patrón en `orchestrator-state/agent-memory/planne
 
 ### 1.ter Gate de spawn budget (BLOQUEANTE)
 
-Tras el gate de journey, lee `runtime-state.spawns_in_current_slice` (dict `task_id -> count`) y `runtime-state.spawn_budget` (default `20`).
+Tras el gate de journey, lee `runtime-state.spawns_in_current_slice` (dict `task_id -> count`) y `runtime-state.spawn_budget` (default `20`). Este budget cuenta subagentes, no tool-calls MCP; `slice-verifier` tiene su propio `maxTurns: 130` para Chrome DevTools MCP y no justifica ampliar `spawn_budget`.
 
 Si `CLAUDE_ACTIVE_TASK_ID` existe y `spawns_in_current_slice[CLAUDE_ACTIVE_TASK_ID] >= spawn_budget`:
 

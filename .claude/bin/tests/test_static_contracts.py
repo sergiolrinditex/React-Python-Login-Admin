@@ -108,6 +108,12 @@ class StaticClaudeContracts(unittest.TestCase):
         for pattern in forbidden:
             self.assertIsNone(re.search(pattern, corpus, re.IGNORECASE), pattern)
 
+    def test_slice_verifier_has_mcp_browser_turn_budget(self):
+        text = (ROOT / ".claude/agents/slice-verifier.md").read_text(encoding="utf-8")
+        self.assertIn("maxTurns: 130", text)
+        self.assertIn("Chrome DevTools MCP", text)
+        self.assertIn("no cambia el `spawn_budget` global de 20 subagentes", text)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

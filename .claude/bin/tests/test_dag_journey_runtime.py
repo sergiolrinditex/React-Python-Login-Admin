@@ -94,7 +94,17 @@ def _write_verified_handoff(common, task_id: str) -> None:
         f"# Handoff {task_id}\n\n"
         f"## Validator review\n- TASK_ID: {task_id}\n- OUTCOME: approved\n\n"
         f"## Tester run\n- TASK_ID: {task_id}\n- OUTCOME: pass\n\n"
-        f"## verify-slice\n- TASK_ID: {task_id}\n- VERIFY_OUTCOME: verified\n",
+        f"## verify-slice\n"
+        f"- TASK_ID: {task_id}\n"
+        f"- AGENT: slice-verifier\n"
+        f"- MODE: pre-closer\n"
+        f"- MCP_BROWSER: chrome-devtools\n"
+        f"- VERIFY_OUTCOME: verified\n"
+        f"- DATA_CONTRACT_ROWS: VDC-001\n"
+        f"- DATA_SETUP: sandbox-user-1 + seeded record A\n"
+        f"- PERSISTED_DATA_OBSERVED: users/sandbox-user-1 active\n"
+        f"- FLOWS_TESTED: login happy path\n"
+        f"- EVIDENCE: orchestrator-state/tasks/evidence/{task_id}/verify-*\n",
         encoding="utf-8",
     )
 

@@ -19,12 +19,15 @@ Before marking a task as `done`, verify ALL of the following:
 10. `orchestrator-state/memory/PROGRESS.md` was updated with current slice results.
 11. EVERY new/modified file has a docstring (what it does, slice/phase, dependencies).
 12. Human verification gate passed. The handoff MUST contain a `## verify-slice`
-    section with EITHER `VERIFY_OUTCOME: verified` OR an explicit
-    `VERIFY_WAIVED: <reason>` line signed by the human. Loose phrases like
-    "browser check documented in handoff" are NOT acceptable substitutes —
-    that loophole would let the closer commit code that no human ever ran.
-    The `closer` regex this gate as a literal line match; anything else
-    means the slice is not closeable yet, run `/verify-slice` first.
+    section with EITHER a full `VERIFY_OUTCOME: verified` block (including
+    `MCP_BROWSER`, data-contract rows, persisted data, flows tested and
+    `EVIDENCE`; or `VERIFY_MODE: auto` + `RISK_LEVEL: low` with deterministic
+    command evidence for low-risk auto slices) OR an explicit `VERIFY_WAIVED: <reason>` line signed by the
+    human. Loose phrases like "browser check documented in handoff" are NOT
+    acceptable substitutes — that loophole would let the closer commit code
+    that no human ever ran. The `closer` validates this mechanically via
+    `check-handoff-contract.sh`; anything else means the slice is not
+    closeable yet, run `/verify-slice` first.
 
 If ANY condition is missing, `closer` fails with `OUTCOME: blocked` and lists what is missing. After the evidence report and atomic commit, closer must run `configured Git workflow (`./scripts/git-workflow.sh`)` and safe worktree cleanup; if push fails, the slice is not fully closed. Cleanup must not remove the active worktree before Claude runs SubagentStop; `active_deferred=1` is acceptable when cleanup scheduled/printed the deferred removal command. The SubagentStop hook refuses to mark `done` unless the closer trailer has `REPORT_READY: yes`, `GIT_READY: yes`, `PUSH_READY: yes` and `WORKTREES_CLEANED: yes`.
 
