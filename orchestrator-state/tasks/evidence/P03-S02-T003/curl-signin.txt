@@ -1,0 +1,9 @@
+# Step 1: POST /api/v1/auth/sign-in
+# Response: {"data":{"mfa_required":true,"mfa_challenge_token":"<JWT>","expires_in":300},"meta":{"request_id":"..."},"errors":[]}
+
+# Step 2: POST /api/v1/auth/2fa/verify (with challenge_id + TOTP)
+# Response: {"data":{"access_token":"<JWT>","token_type":"bearer","expires_in":900,"user":{...}},"meta":{...},"errors":[]}
+# access_token obtained successfully (length 411 chars)
+
+# Verification employee: employee.verification@inditex-sandbox.com
+# MFA TOTP secret from data/verification/auth/mfa_primary.json

@@ -10,6 +10,7 @@
  * Design decisions (from task pack §8.3 and instrucciones.md §3.3):
  *   - Detector OFF: i18next-browser-languagedetector crashes jsdom (inherited T002 R1).
  *     Activation deferred to AccountPage (P03-S02-T004).
+ *   - §D-T003-I18N: `history` namespace added (P03-S02-T003 — HistoryPage).
  *   - Inline static resources: no HTTP backend, no lazy-load. 8ns × 3 langs ≈ 5KB gzip.
  *   - Interpolation simple {{var}}: no ICU (not needed in P0).
  *   - saveMissing: false, missingKeyHandler: false (silence warnings; real keys added here).
@@ -166,6 +167,30 @@ const resources = {
       languageHint: "El idioma seleccionado se aplica a toda la interfaz",
       logout: "Cerrar sesión",
     },
+    history: {
+      pageTitle: "CONVERSACIONES",
+      groups: {
+        today: "HOY",
+        yesterday: "AYER",
+        thisWeek: "ESTA SEMANA",
+        thisMonth: "ESTE MES",
+        earlier: "ANTERIORES",
+      },
+      empty: {
+        title: "SIN CONVERSACIONES",
+        body: "Empieza una nueva conversación para ver el historial aquí.",
+        cta: "Nueva conversación",
+      },
+      errorNetwork: {
+        title: "Error de conexión. Comprueba tu red.",
+        retry: "Reintentar",
+      },
+      permissionDenied: "No tienes permiso para ver el historial.",
+      loading: "Cargando historial...",
+      untitledConversation: "Conversación sin título",
+      list: { aria: "Historial de conversaciones" },
+      row: { openLabel: "Abrir conversación, {{title}}" },
+    },
     "admin-ai": {
       models: { title: "Modelos LiteLLM", empty: "No hay modelos configurados" },
       mcp: { title: "Integraciones MCP", empty: "No hay integraciones activas" },
@@ -308,6 +333,30 @@ const resources = {
       languageHint: "The selected language applies to the entire interface",
       logout: "Sign out",
     },
+    history: {
+      pageTitle: "CONVERSATIONS",
+      groups: {
+        today: "TODAY",
+        yesterday: "YESTERDAY",
+        thisWeek: "THIS WEEK",
+        thisMonth: "THIS MONTH",
+        earlier: "EARLIER",
+      },
+      empty: {
+        title: "NO CONVERSATIONS",
+        body: "Start a new conversation to see history here.",
+        cta: "New conversation",
+      },
+      errorNetwork: {
+        title: "Connection error. Check your network.",
+        retry: "Try again",
+      },
+      permissionDenied: "You do not have permission to view the history.",
+      loading: "Loading history...",
+      untitledConversation: "Untitled conversation",
+      list: { aria: "Conversation history" },
+      row: { openLabel: "Open conversation, {{title}}" },
+    },
     "admin-ai": {
       models: { title: "LiteLLM models", empty: "No models configured" },
       mcp: { title: "MCP integrations", empty: "No active integrations" },
@@ -449,6 +498,30 @@ const resources = {
       language: "Langue",
       languageHint: "La langue sélectionnée s'applique à toute l'interface",
       logout: "Se déconnecter",
+    },
+    history: {
+      pageTitle: "CONVERSATIONS",
+      groups: {
+        today: "AUJOURD'HUI",
+        yesterday: "HIER",
+        thisWeek: "CETTE SEMAINE",
+        thisMonth: "CE MOIS-CI",
+        earlier: "PLUS ANCIENS",
+      },
+      empty: {
+        title: "AUCUNE CONVERSATION",
+        body: "Démarrez une nouvelle conversation pour voir l'historique ici.",
+        cta: "Nouvelle conversation",
+      },
+      errorNetwork: {
+        title: "Erreur de connexion. Vérifiez votre réseau.",
+        retry: "Réessayer",
+      },
+      permissionDenied: "Vous n'avez pas la permission de voir l'historique.",
+      loading: "Chargement de l'historique...",
+      untitledConversation: "Conversation sans titre",
+      list: { aria: "Historique des conversations" },
+      row: { openLabel: "Ouvrir la conversation, {{title}}" },
     },
     "admin-ai": {
       models: { title: "Modèles LiteLLM", empty: "Aucun modèle configuré" },

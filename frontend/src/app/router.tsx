@@ -7,6 +7,7 @@
  *   WRITE_SET_DRIFT §D-T001-ROUTE (P03-S02-T001): wired /chat to ChatHomePage;
  *     updated / and * redirects so authenticated users land on /chat.
  *   Updated in P03-S01-T002 — added /auth/sign-up route wired to SignUpPage (§D-T002-ROUTER).
+ *   Updated in P03-S02-T003 — added /history route wired to HistoryPage (§D-T003-ROUTER).
  *
  * Responsibility: single mount point for the application's route tree.
  *   Exports <AppRouter> which is consumed by main.tsx inside <Providers>.
@@ -18,6 +19,7 @@
  *   /auth/sign-up      → SignUpPage (real form, P03-S01-T002)
  *   /chat              → ChatHomePage (employee, RequireAuth) — P03-S02-T001
  *   /chat/:conversationId → placeholder (P03-S02-T002 adds real ConversationPage)
+ *   /history              → HistoryPage (employee history, RequireAuth) — P03-S02-T003
  *   /admin             → STUB placeholder (wrapped in RequireRole — test surface)
  *   /                  → RootRedirect: authenticated→/chat, unauthenticated→/auth/sign-in
  *   *                  → redirects to / (catch-all; uses RootRedirect logic)
@@ -44,6 +46,7 @@ import ShowcasePage from "../pages/showcase/ShowcasePage";
 import SignInPage from "../pages/auth/SignInPage";
 import SignUpPage from "../pages/auth/SignUpPage";
 import ChatHomePage from "../pages/chat/ChatHomePage";
+import HistoryPage from "../pages/chat/HistoryPage";
 import { AuthProvider } from "../features/auth/presentation/AuthProvider";
 import { useAuth } from "../features/auth/presentation/AuthProvider";
 import { RequireAuth } from "../features/auth/presentation/RequireAuth";
@@ -67,6 +70,9 @@ export const ROUTE_ADMIN = "/admin";
 
 /** Route path for employee chat home. Implemented in P03-S02-T001. */
 export const ROUTE_CHAT = "/chat";
+
+/** Route path for employee conversation history. Implemented in P03-S02-T003. §D-T003-ROUTER */
+export const ROUTE_HISTORY = "/history";
 
 // ---------------------------------------------------------------------------
 // RootRedirect — auth-aware redirect for "/" and "*" catch-all
@@ -131,8 +137,8 @@ export function AppRouter(): ReactNode {
   if (import.meta.env.VITE_ENABLE_VERBOSE_LOGGING === "true") {
     console.info("AppRouter.render.start", {
       phase: "P03",
-      slice: "P03-S01-T002",
-      routes: [ROUTE_SHOWCASE, ROUTE_AUTH_SIGN_IN, ROUTE_AUTH_SIGN_UP, ROUTE_CHAT, ROUTE_ADMIN],
+      slice: "P03-S02-T003",
+      routes: [ROUTE_SHOWCASE, ROUTE_AUTH_SIGN_IN, ROUTE_AUTH_SIGN_UP, ROUTE_CHAT, ROUTE_HISTORY, ROUTE_ADMIN],
     });
   }
 
@@ -151,6 +157,8 @@ export function AppRouter(): ReactNode {
           <Route element={<RequireAuth><Outlet /></RequireAuth>}>
             {/* /chat — real ChatHomePage (P03-S02-T001) */}
             <Route path={ROUTE_CHAT} element={<ChatHomePage />} />
+            {/* /history — real HistoryPage (P03-S02-T003 §D-T003-ROUTER) */}
+            <Route path={ROUTE_HISTORY} element={<HistoryPage />} />
             {/*
              * /chat/:conversationId — placeholder for P03-S02-T002 (ConversationPage).
              * D-T001-OUTAGE-OF-CHAT-T002: navigate succeeds; unknown path bounces to /chat.

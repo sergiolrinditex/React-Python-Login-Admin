@@ -1,0 +1,24 @@
+{
+  "pageTitle": "CONVERSATIONS",
+  "groups": {
+    "today": "TODAY",
+    "yesterday": "YESTERDAY",
+    "thisWeek": "THIS WEEK",
+    "thisMonth": "THIS MONTH",
+    "earlier": "EARLIER"
+  },
+  "empty": {
+    "title": "NO CONVERSATIONS",
+    "body": "Start a new conversation to see history here.",
+    "cta": "New conversation"
+  },
+  "errorNetwork": {
+    "title": "Connection error. Check your network.",
+    "retry": "Try again"
+  },
+  "permissionDenied": "You do not have permission to view the history.",
+  "loading": "Loading history...",
+  "untitledConversation": "Untitled conversation",
+  "list": { "aria": "Conversation history" },
+  "row": { "openLabel": "Open conversation, {{title}}" }
+}

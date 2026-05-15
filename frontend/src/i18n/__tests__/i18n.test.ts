@@ -45,9 +45,10 @@ const ERROR_CODES = [
 // ---------------------------------------------------------------------------
 
 describe("i18n: configuration", () => {
-  it("i18n: registers all 8 namespaces", () => {
+  it("i18n: registers all 9 namespaces (history added P03-S02-T003 §D-T003-I18N)", () => {
     const registered = i18n.options.ns as string[];
-    expect(I18N_NAMESPACES).toHaveLength(8);
+    // P03-S02-T003 added 'history' namespace → total is now 9
+    expect(I18N_NAMESPACES).toHaveLength(9);
     I18N_NAMESPACES.forEach((ns) => {
       expect(registered).toContain(ns);
     });
@@ -64,7 +65,7 @@ describe("i18n: configuration", () => {
 });
 
 // ---------------------------------------------------------------------------
-// Test 2 — i18n: 24 bundles present (8 namespaces × 3 languages)
+// Test 2 — i18n: 27 bundles present (9 namespaces × 3 languages, P03-S02-T003 adds history)
 // ---------------------------------------------------------------------------
 
 describe("i18n: 24 bundles present", () => {

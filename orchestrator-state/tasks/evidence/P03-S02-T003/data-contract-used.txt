@@ -1,0 +1,20 @@
+## Verification Data Contract — P03-S02-T003
+
+Row used: J102 history-language
+- User: employee.verification@inditex-sandbox.com
+- Provided by: data/verification/users/employee_primary.json
+- MFA TOTP: data/verification/auth/mfa_primary.json (sandbox key JBSWY3DPEHPK3PXP)
+- Required state: ≥2 conversations persistidas, preferred_language=es
+- Observed: 3 conversations in DB (ids: 03ee97a0, 06a535a3, 913e8031)
+- Auth flow: POST /api/v1/auth/sign-in → mfa_challenge_token → POST /api/v1/auth/2fa/verify → access_token
+- Endpoint probed: GET /api/v1/chat/conversations?limit=10 → 200
+
+## contract-observed
+- Route: /history → HistoryPage (RequireAuth)
+- Provider/hook: useHistory → listConversations
+- API client: authFetch (same-origin relative URL, ADR-002)
+- DTO: ConversationSummary (id, user_id, title, language, created_at, updated_at)
+- Endpoint: GET /api/v1/chat/conversations (P02-S03-T001)
+- Repository: chatRepository.listConversations (frontend/src/features/chat/data/chatRepository.ts)
+- Table: conversations (read-only)
+- Pagination: {next_cursor: null, has_more: false} — 3 items on first page
