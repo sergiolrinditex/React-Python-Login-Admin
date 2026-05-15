@@ -1,0 +1,53 @@
+## verify-db.txt — Database evidence for P03-S01-T003
+## Captured via psql — 2026-05-15T10:00Z
+
+### Verification Data Contract (TECHNICAL_GUIDE §6.5):
+- Flow: J100 auth-login (row 355)
+- Persona: employee.verification@inditex-sandbox.com (user_id: 51c8d4f6-f105-461f-9ea3-97f3ae2cc702)
+- Verification employee confirmed in DB:
+  id                                   | email
+  51c8d4f6-f105-461f-9ea3-97f3ae2cc702 | employee.verification@inditex-sandbox.com
+
+### password_reset_tokens after browser verification (ORDER BY expires_at DESC LIMIT 3):
+                  id                  |               user_id                |                            token_hash                            |          expires_at           | used_at
+--------------------------------------+--------------------------------------+------------------------------------------------------------------+-------------------------------+---------
+ eaf12f04-037e-41a0-8d59-984563e81db2 | 51c8d4f6-f105-461f-9ea3-97f3ae2cc702 | 93a0b543741b5f34fbd2f513dd98d4f1...  | 2026-05-15 08:56:45.703845+00 |
+ a6a2eebb-4118-4e9a-90f2-54483f83c0e9 | 51c8d4f6-f105-461f-9ea3-97f3ae2cc702 | da637738484b672c6f979d91376a48b6...  | 2026-05-15 08:52:41.202001+00 |
+ e23e3b4c-f4e7-4508-a20f-6d962e78f737 | 51c8d4f6-f105-461f-9ea3-97f3ae2cc702 | d50de3356f78bd172bc42cf0e5e0f1a3...  | 2026-05-15 08:52:40.632878+00 |
+
+Token schema verified:
+- id: UUID (gen_random_uuid)
+- user_id: FK → users.id (CASCADE DELETE)
+- token_hash: SHA-256 hash (64 hex chars)
+- expires_at: now + ~1hr TTL (confirmed: 08:56:45 - ~08:00 creation ≈ 1hr)
+- used_at: NULL (not consumed yet — correct)
+
+### Anti-enumeration DB check (unknown email):
+unknown email: nobody.verify.T003@inditex-sandbox.com
+unknown_token_count: 0
+→ NO row created in password_reset_tokens for unknown email (anti-enum at DB level confirmed)
+
+### audit_logs (action: auth.password_reset.requested) — last 3 entries:
+
+1. created_at: 2026-05-15 07:56:45 (browser verification final submit)
+   metadata: {"ip_hash":"12ca17b49af2","token_id":"eaf12f04-...","request_id":"fe10fa83-...","user_found":true,"email_domain":"inditex-sandbox.com"}
+
+2. created_at: 2026-05-15 07:52:40 (from unknown email via browser - user_found: false)
+   entity_type: (empty — no user entity)
+   metadata: {"ip_hash":"12ca17b49af2","request_id":"16895a69-...","user_found":false,"email_domain":"inditex-sandbox.com"}
+
+3. created_at: 2026-05-15 07:50:23 (first browser verification submit)
+   metadata: {"ip_hash":"12ca17b49af2","token_id":"9588efe5-...","request_id":"e5a384b1-...","user_found":true,"email_domain":"inditex-sandbox.com"}
+
+PII audit:
+- NEVER full email in audit_logs
+- email_domain only: "inditex-sandbox.com"
+- ip_hash (not IP): anonymized hash
+- user_found: boolean (no email reveal for false case)
+- entity_type: empty for unknown users (no user_id or email revealed)
+
+### Rate limit (audit evidence from curl smoke):
+call 1: HTTP 200
+call 2: HTTP 200
+call 3: HTTP 429 (retry-after set)
+→ AUTH_FORGOT_RATE_PER_MINUTE=3 confirmed

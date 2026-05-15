@@ -1,0 +1,12 @@
+## Validation Error DOM Snapshot
+## Captured via claude-in-chrome read_page — 2026-05-15T10:00Z
+
+### Empty submit:
+Alert: role="alert" text="El email es obligatorio."
+input.aria-invalid="true"
+input.aria-describedby="_r_0_-error"
+
+### Invalid format "not-an-email":
+Alert: role="alert" text="Introduce un email válido."
+
+No fetch call made in either case (client-side zod intercepts before network).

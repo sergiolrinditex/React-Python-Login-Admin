@@ -1,0 +1,44 @@
+## verify-console.txt — Frontend console evidence for P03-S01-T003
+## Captured via claude-in-chrome MCP — 2026-05-15T10:00Z
+
+### Extension EXCEPTION messages (not from app code):
+These are transient extension service worker closure messages from claude-in-chrome:
+  "Error: A listener indicated an asynchronous response by returning true..."
+  Source: http://localhost:5173/@vite/client extension channel — NOT application errors.
+
+### Auth session probe logs (expected — no active session):
+  [WARNING] [auth] auth.repo.refresh.session_expired Object
+  — AuthProvider hydration probe → 401 refresh → session_expired (expected on public routes)
+
+### auth.forgot.* log events captured during verification:
+
+Flow 2/3 (validation 400 — .invalid TLD):
+  [WARNING] [auth] auth.forgot.submit.validation_400 Object
+  [WARNING] [auth] auth.forgot.hook.submit.error Object
+  [WARNING] [auth] auth.forgot.page.submit.failed
+
+Flow 5 (rate limit 429):
+  [WARNING] [auth] auth.forgot.submit.rate_limited Object
+  [WARNING] [auth] auth.forgot.hook.submit.error Object
+  [WARNING] [auth] auth.forgot.page.submit.failed
+
+Flow 6 (network error / TypeError):
+  [ERROR]   [auth] auth.forgot.submit.network Object
+  [WARNING] [auth] auth.forgot.hook.submit.error Object
+  [WARNING] [auth] auth.forgot.page.submit.failed
+
+### Success flow logs (auth.forgot.submit.attempt + auth.forgot.submit.ok):
+Captured via backend audit_log (frontend console logs fired during navigation away).
+Backend audit confirms email_domain only, request_id, user_found — no full email logged.
+See verify-db.txt for backend audit evidence.
+
+### PII check:
+- No full email addresses in any console log
+- email_domain = "inditex-sandbox.com" only
+- Full email never appears in any log event
+
+### Missing-key i18n warnings:
+- NONE observed during any session
+- EN/FR locale files confirmed 15 forgot.* keys present (see verify-flows.md)
+
+### No unexpected app errors observed during verification.

@@ -1,0 +1,26 @@
+## Cold Load DOM Snapshot — /auth/forgot-password
+## Captured via claude-in-chrome read_page — 2026-05-15T10:00Z
+## Note: CDP Page.captureScreenshot timed out; DOM accessibility tree used as evidence
+
+URL: http://localhost:5173/auth/forgot-password
+Result: 200 OK (both curl -sI and browser navigation confirmed)
+
+DOM (accessibility tree):
+main
+  heading "Hilo" (Wordmark)
+    generic "Hilo"
+  generic "Área de empleados" (TrackedLabel subtitle)
+  generic "Recuperar acceso" (page heading)
+  form[aria-label="Recuperar acceso"]
+    label "Email corporativo" [htmlFor="_r_0_"]
+    input[type="email"][id="_r_0_"][placeholder="nombre@empresa.com"]
+    button[type="submit"] "Enviar enlace"
+  nav[aria-label="Auth navigation"]
+    link "Volver a iniciar sesión" [href="/auth/sign-in"]
+
+A11y attributes:
+  input.aria-invalid: null (not yet touched — correct)
+  input.id = label.htmlFor = "_r_0_"
+  form.aria-label = "Recuperar acceso"
+  button.disabled: false
+  button.aria-busy: null

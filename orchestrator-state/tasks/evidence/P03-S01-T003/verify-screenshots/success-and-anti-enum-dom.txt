@@ -1,0 +1,17 @@
+## Success & Anti-enum DOM Evidence
+## Captured via claude-in-chrome MCP — 2026-05-15T10:00Z
+
+### Known email success (employee.verification@inditex-sandbox.com):
+POST /api/v1/auth/forgot-password → HTTP 200
+Navigation: /auth/forgot-password → /auth/sign-in (R1: T004 not yet shipped)
+DB: new row in password_reset_tokens (token_hash present, expires_at ~+1hr, used_at=NULL)
+Audit: user_found=true, email_domain="inditex-sandbox.com" (no full email)
+
+### Unknown email success (nobody.verify.T003@inditex-sandbox.com):
+POST /api/v1/auth/forgot-password → HTTP 200 (SAME status as known email)
+Navigation: /auth/forgot-password → /auth/sign-in (IDENTICAL to known email)
+DB: 0 rows in password_reset_tokens (anti-enum: no token created)
+Audit: user_found=false, entity_type=empty, no token_id (anti-enum server-side)
+
+ANTI-ENUM VERIFIED: Both known and unknown email produce identical HTTP 200
+and identical navigation → anti-enumeration invariant holds end-to-end.

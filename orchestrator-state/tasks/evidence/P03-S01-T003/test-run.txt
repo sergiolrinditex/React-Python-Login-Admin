@@ -1,0 +1,45 @@
+P03-S01-T003 — Developer test run evidence
+==========================================
+Date: 2026-05-15
+
+TESTS (verbose=true):
+  Test Files  15 passed (15)
+  Tests  183 passed (183)
+  Start at  07:04:19
+  Duration  2.76s
+
+TESTS (verbose=false):
+  Test Files  15 passed (15)
+  Tests  183 passed (183)
+  Start at  07:04:27
+  Duration  2.41s
+
+BASELINE (before this slice): 163 tests
+NEW TESTS: +20 (10 useForgotPassword + 10 ForgotPasswordPage)
+
+TYPECHECK: exit 0 (tsc --noEmit clean)
+
+BUILD: 217 modules transformed, 471.58 kB JS (gzip: 142.09 kB)
+
+DESIGN TOKENS: OK "web literals are outside app code or inside token/theme modules"
+
+FILES WRITTEN:
+  [NEW] frontend/src/pages/auth/ForgotPasswordPage.tsx (375 raw / 297 substantive lines — under cap)
+  [NEW] frontend/src/features/auth/presentation/useForgotPassword.ts
+  [NEW] frontend/src/features/auth/__tests__/useForgotPassword.test.tsx
+  [NEW] frontend/src/pages/auth/__tests__/ForgotPasswordPage.test.tsx
+  [EXTENDED] frontend/src/features/auth/domain/AuthRepository.ts (forgotPassword port + types)
+  [EXTENDED] frontend/src/features/auth/data/errors.ts (3 new error classes)
+  [EXTENDED] frontend/src/features/auth/data/authRepository.ts (forgotPassword method)
+  [EXTENDED] frontend/src/features/auth/index.ts (barrel exports)
+  [EXTENDED] frontend/src/app/router.tsx (ROUTE_AUTH_FORGOT + Route)
+  [EXTENDED] frontend/src/i18n/index.ts (forgot.* namespace ES/EN/FR)
+  [EXTENDED] frontend/public/locales/es/auth.json (forgot.* keys)
+  [EXTENDED] frontend/public/locales/en/auth.json (forgot.* keys)
+  [EXTENDED] frontend/public/locales/fr/auth.json (forgot.* keys)
+  [REGRESSION FIX] frontend/src/features/auth/__tests__/useSignIn.test.tsx (forgotPassword stub)
+  [REGRESSION FIX] frontend/src/features/auth/__tests__/useSignUp.test.tsx (forgotPassword stub)
+
+ANTI-ENUM VERIFIED: Both T05 (unknown email) and T04 (known email) produce identical success path in ForgotPasswordPage.test.tsx
+ADR-002 VERIFIED: authRepository.forgotPassword() uses API_BASE = "" (relative URL, line 49 pattern)
+PII VERIFIED: T07 in useForgotPassword.test.tsx asserts no full email logged; only email_domain + email_local_len
