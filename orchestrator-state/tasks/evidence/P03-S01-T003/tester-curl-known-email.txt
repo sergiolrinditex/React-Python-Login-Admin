@@ -1,0 +1,10 @@
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   135  100    82  100    53    523    338 --:--:-- --:--:-- --:--:--   865
+HTTP/1.1 200 OK
+date: Fri, 15 May 2026 05:12:43 GMT
+server: uvicorn
+content-length: 82
+content-type: application/json
+
+{"data":{"sent":true},"meta":{"request_id":"tester-known-1778821963"},"errors":[]}

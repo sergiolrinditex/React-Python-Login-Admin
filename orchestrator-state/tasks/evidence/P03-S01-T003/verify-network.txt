@@ -1,0 +1,36 @@
+## verify-network.txt — Network evidence for P03-S01-T003
+## Captured via claude-in-chrome MCP — 2026-05-15T10:00Z
+
+### ADR-002 same-origin assertion:
+POST request URL observed: http://localhost:5173/api/v1/auth/forgot-password
+- Relative URL path: /api/v1/auth/forgot-password (via Vite proxy to backend :8000)
+- NOT absolute: no "http://localhost:8000" in the URL (ADR-002 compliant)
+- Method: POST
+- Status: 200 (known email), 200 (unknown email), 400 (invalid .invalid TLD), 429 (rate-limited)
+
+### Requests captured during browser verification:
+
+1. GET http://localhost:5173/auth/forgot-password → 200 (page load x3 navigations)
+2. POST http://localhost:5173/api/v1/auth/forgot-password → 200 (known email: employee.verification@inditex-sandbox.com)
+   - Navigation result: → /auth/sign-in (R1 expected: T004 not yet shipped)
+3. POST http://localhost:5173/api/v1/auth/forgot-password → 400 (nobody+verify-T003@example.invalid — .invalid TLD rejected by Pydantic EmailStr)
+4. POST http://localhost:5173/api/v1/auth/forgot-password → 200 (unknown valid-syntax email: nobody.verify.T003@inditex-sandbox.com)
+   - Navigation result: → /auth/sign-in (SAME as known email — anti-enum confirmed)
+5. POST http://localhost:5173/api/v1/auth/forgot-password → 429 (rate limit triggered after 3+ submits in window)
+6. POST http://localhost:5173/api/v1/auth/forgot-password → 200 (final success after rate-limit reset)
+
+### ADR-002 T11 regression guard:
+- Test T11 in ForgotPasswordPage.test.tsx explicitly asserts:
+  expect(forgotUrl).toBe("/api/v1/auth/forgot-password") — positive exact match
+  expect(forgotUrl).not.toMatch(/^https?:\/\//) — negative scheme guard
+  expect(forgotUrl.toLowerCase()).not.toContain("localhost") — negative host guard
+- All 3 assertions green in test suite (184/184 PASS)
+
+### X-Request-ID header:
+- curl smoke tests used explicit X-Request-ID header
+- Browser submit auto-generates UUID via authRepository.ts
+- Backend audit_log confirms request_id in metadata
+
+### Credentials:
+- credentials: 'include' set in fetch (authRepository.ts:477) — same-origin cookies sent
+- No Bearer token (public endpoint)

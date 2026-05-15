@@ -1,0 +1,20 @@
+Anti-Enumeration Comparison — P03-S01-T003
+==========================================
+Verified: 2026-05-15T07:12:xx
+
+KNOWN EMAIL: employee.verification@inditex-sandbox.com
+Response: HTTP/1.1 200 OK
+Body: {"data":{"sent":true},"meta":{"request_id":"tester-known-1778821963"},"errors":[]}
+
+UNKNOWN EMAIL: does-not-exist+verify@example.com
+Response: HTTP/1.1 200 OK
+Body: {"data":{"sent":true},"meta":{"request_id":"tester-unknown-1778821967"},"errors":[]}
+
+VERDICT: PASS
+- Both return HTTP 200
+- Both return identical body shape: {"data":{"sent":true},"meta":{...},"errors":[]}
+- Only request_id differs (echo of X-Request-ID header, which differs per call)
+- Status codes: IDENTICAL (200)
+- data.sent: IDENTICAL (true for both)
+- errors array: IDENTICAL (empty for both)
+- Anti-enumeration invariant CONFIRMED: server does NOT reveal whether email is registered.

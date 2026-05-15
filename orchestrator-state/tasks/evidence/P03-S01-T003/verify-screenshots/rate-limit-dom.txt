@@ -1,0 +1,13 @@
+## Rate Limit 429 DOM Snapshot
+## Captured via claude-in-chrome read_page — 2026-05-15T10:00Z
+
+After rate limit (4 submits in 60s window):
+  alert[role="alert"][data-error-state="error_validation"]
+    text: "Demasiados intentos. Espera 12 segundos e inténtalo de nuevo."
+  button.disabled = true
+  button.aria-busy = null (not loading state — correctly blocked)
+
+NO permission_denied UI state visible — anti-enumeration maintained for 429.
+The rate limit message is generic (no user existence revealed).
+
+Rate limit confirmed: AUTH_FORGOT_RATE_PER_MINUTE=3 (3rd request in window → 429)

@@ -1,0 +1,16 @@
+=== Rate-limit smoke test — 5 calls in rapid succession ===
+Call 1: HTTP/1.1 200 OK
+  Body: {"data":{"sent":true},"meta":{"request_id":"tester-rl-call-1"},"errors":[]}
+  Retry-After: n/a
+Call 2: HTTP/1.1 429 Too Many Requests
+  Body: {"data":null,"meta":{"request_id":"tester-rl-call-2"},"errors":[{"code":"AUTH_FORGOT_RATE_LIMITED","message":"Too many reset requests; retry after 39s","field":null,"details":null}]}
+  retry-after: 39
+Call 3: HTTP/1.1 429 Too Many Requests
+  Body: {"data":null,"meta":{"request_id":"tester-rl-call-3"},"errors":[{"code":"AUTH_FORGOT_RATE_LIMITED","message":"Too many reset requests; retry after 39s","field":null,"details":null}]}
+  retry-after: 39
+Call 4: HTTP/1.1 429 Too Many Requests
+  Body: {"data":null,"meta":{"request_id":"tester-rl-call-4"},"errors":[{"code":"AUTH_FORGOT_RATE_LIMITED","message":"Too many reset requests; retry after 39s","field":null,"details":null}]}
+  retry-after: 39
+Call 5: HTTP/1.1 429 Too Many Requests
+  Body: {"data":null,"meta":{"request_id":"tester-rl-call-5"},"errors":[{"code":"AUTH_FORGOT_RATE_LIMITED","message":"Too many reset requests; retry after 39s","field":null,"details":null}]}
+  retry-after: 39

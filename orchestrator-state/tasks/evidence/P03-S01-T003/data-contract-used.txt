@@ -1,0 +1,23 @@
+Data Contract Used — P03-S01-T003
+===================================
+Contract source: TECHNICAL_GUIDE §6.5 (Verification Data Contract row J100 line 355)
+
+Verification persona: employee.verification@inditex-sandbox.com (Elena Verificación)
+Data file: data/verification/users/employee_primary.json
+Employee ID: EMP-VERIFY-001
+
+Tests executed:
+1. Known email curl: employee.verification@inditex-sandbox.com → HTTP 200 {"data":{"sent":true},...}
+2. Unknown email curl: does-not-exist+verify@example.com → HTTP 200 {"data":{"sent":true},...} (anti-enum)
+3. Rate-limit: 5 rapid calls → call 1: 200, calls 2-5: 429 with retry-after: 39
+
+Data persisted observed:
+- password_reset_tokens: 2 rows for user_id=51c8d4f6-f105-461f-9ea3-97f3ae2cc702 
+  (employee.verification@inditex-sandbox.com), expires_at ~1hr in future, used_at=NULL
+- audit_logs: 2 rows with action='auth.password_reset.requested' for same user_id
+
+Negative-path confirmed:
+- Unknown email does-not-exist+verify@example.com: no row in password_reset_tokens 
+  (server silently short-circuits on unknown email — anti-enum invariant holds)
+
+Contract rows referenced: J100 row (TECHNICAL_GUIDE §6.5 line 355)

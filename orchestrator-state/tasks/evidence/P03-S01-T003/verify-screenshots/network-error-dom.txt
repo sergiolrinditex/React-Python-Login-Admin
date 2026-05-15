@@ -1,0 +1,12 @@
+## Network Error DOM Snapshot
+## Captured via claude-in-chrome read_page — 2026-05-15T10:00Z
+
+After fetch override → TypeError rejection:
+  alert[role="alert"][data-error-state="error_network"]
+    text: "Sin conexión. Comprueba tu red e inténtalo de nuevo."
+
+Console: [ERROR] [auth] auth.forgot.submit.network Object
+(ERROR level logging for network failures — correct severity)
+
+Form did NOT navigate — stayed on /auth/forgot-password (correct: no success on error).
+Button returned to enabled state after error.

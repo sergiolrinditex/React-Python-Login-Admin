@@ -1,0 +1,65 @@
+ERROR:  relation "audit_log" does not exist
+LÍNEA 1: ... user_id, action, resource, timestamp, ip    FROM audit_log ...
+                                                              ^
+       table_name        
+-------------------------
+ agent_runs
+ agents
+ ai_model_tests
+ ai_models
+ ai_provider_credentials
+ ai_providers
+ alembic_version
+ audit_logs
+ conversations
+ document_chunks
+ document_embeddings
+ document_versions
+ documents
+ employee_profiles
+ llm_usage_logs
+ mcp_agent_bindings
+ mcp_approvals
+ mcp_credentials
+ mcp_prompts
+ mcp_resources
+ mcp_servers
+ mcp_tool_invocations
+ mcp_tools
+ message_citations
+ messages
+ mfa_totp_secrets
+ password_reset_tokens
+ permissions
+ rag_collections
+ refresh_tokens
+ roles
+ user_roles
+ users
+ vectorization_jobs
+(34 filas)
+
+                               Tabla «public.audit_logs»
+    Columna    |           Tipo           | Ordenamiento | Nulable  |    Por omisión    
+---------------+--------------------------+--------------+----------+-------------------
+ id            | uuid                     |              | not null | gen_random_uuid()
+ actor_user_id | uuid                     |              |          | 
+ action        | text                     |              | not null | 
+ entity_type   | text                     |              |          | 
+ entity_id     | uuid                     |              |          | 
+ metadata      | jsonb                    |              | not null | '{}'::jsonb
+ created_at    | timestamp with time zone |              | not null | now()
+Índices:
+    "pk_audit_logs" PRIMARY KEY, btree (id)
+    "audit_logs_actor_created_idx" btree (actor_user_id, created_at)
+    "audit_logs_created_at_idx" btree (created_at)
+    "audit_logs_entity_idx" btree (entity_type, entity_id)
+Restricciones de llave foránea:
+    "audit_logs_actor_user_id_fkey" FOREIGN KEY (actor_user_id) REFERENCES users(id) ON DELETE SET NULL
+
+                  id                  |            actor_user_id             |            action             | entity_type |              entity_id               |          created_at           
+--------------------------------------+--------------------------------------+-------------------------------+-------------+--------------------------------------+-------------------------------
+ fb6be1cf-0bbd-4c6b-948e-3ae14aacd267 | 51c8d4f6-f105-461f-9ea3-97f3ae2cc702 | auth.password_reset.requested | user        | 51c8d4f6-f105-461f-9ea3-97f3ae2cc702 | 2026-05-15 05:13:04.466091+00
+ 8e672339-049c-4ad7-a9c1-398cf6d03173 | 51c8d4f6-f105-461f-9ea3-97f3ae2cc702 | auth.password_reset.requested | user        | 51c8d4f6-f105-461f-9ea3-97f3ae2cc702 | 2026-05-15 05:12:43.310287+00
+(2 filas)
+

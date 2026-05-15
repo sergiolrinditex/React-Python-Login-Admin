@@ -1,0 +1,38 @@
+Backend Logging Verification — P03-S01-T003
+============================================
+Date: 2026-05-15
+
+NOTE: uvicorn is running to stdout (no file logging). Log pattern verified by code inspection.
+
+## BEFORE/AFTER log pattern (from backend/app/auth/routers/forgot_reset.py lines 104-108, 153-156)
+
+Router BEFORE:
+  logger.debug("auth.forgot.endpoint.start ip_prefix=%s request_id=%s", ip[:8], request_id)
+
+Router AFTER:
+  logger.debug("auth.forgot.endpoint.done request_id=%s", request_id)
+
+Service BEFORE (backend/app/auth/services/password_reset_request.py lines 89-96):
+  log_email = f"email_domain={email.split('@')[-1]}"  # domain only, never full email
+  logger.debug("auth.forgot.start %s request_id=%s", log_email, request_id)
+
+Service AFTER (lines 133-139):
+  logger.debug("auth.forgot.done %s user_found=%s sent=%s request_id=%s", log_email, ...)
+
+## PII ANALYSIS
+- Full email: NEVER logged. Only email_domain used (e.g., "inditex-sandbox.com").
+- IP: only first 8 chars (ip_prefix) — partial anonymization.
+- Token hash: logged nowhere in verbose output.
+- ENABLE_VERBOSE_LOGGING=true: logger.setLevel(logging.DEBUG) → all debug events visible.
+- ENABLE_VERBOSE_LOGGING=false: logger.setLevel(logging.WARNING) → only warning/error visible.
+
+## VERDICT
+- BEFORE log exists: auth.forgot.endpoint.start + auth.forgot.start
+- AFTER log exists: auth.forgot.endpoint.done + auth.forgot.done
+- PII leak: NONE (email_domain only, never full email)
+- Logging flag respected: CONFIRMED (uses os.getenv("ENABLE_VERBOSE_LOGGING"))
+
+## API Contract confirmation (via curl responses captured in tester-curl-*.txt)
+- Call known email: HTTP 200, {"data":{"sent":true},...,"errors":[]}
+- Call unknown email: HTTP 200, IDENTICAL body shape — anti-enum CONFIRMED
+- Rate limit call 2-5: HTTP 429, retry-after: 39, {"code":"AUTH_FORGOT_RATE_LIMITED",...}
