@@ -75,6 +75,10 @@ function makeRepo(
   return {
     signUp: vi.fn(async (_req: SignUpRequest) => signUpResult),
     signIn: vi.fn(async (_req: SignInRequest) => ({ ok: true as const, value: { kind: "success" as const, accessToken: MOCK_TOKEN, user: MOCK_USER } as SignInOutcome })),
+    // §D-T005-TEST-STUB-EXTEND: forgotPassword stub — IAuthRepository interface extended P03-S01-T003
+    forgotPassword: vi.fn(async () => ({ ok: true as const, value: { sent: true as const } })),
+    // §D-T005-TEST-STUB-EXTEND: verifyMfa stub — IAuthRepository interface extended P03-S01-T005
+    verifyMfa: vi.fn(async () => ({ ok: true as const, value: { accessToken: MOCK_TOKEN, expiresIn: 1800, user: MOCK_USER } })),
     refresh: vi.fn(async () => ({ ok: true as const, value: MOCK_TOKEN })),
     fetchMe: vi.fn(async () => ({ ok: true as const, value: MOCK_USER })),
     logout: vi.fn(async () => ({ ok: true as const, value: undefined })),

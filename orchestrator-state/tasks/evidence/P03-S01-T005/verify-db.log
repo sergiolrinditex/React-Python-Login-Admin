@@ -1,0 +1,19 @@
+# DB Evidence — P03-S01-T005 TwoFactorPage verify-slice
+# Generated: 2026-05-15T11:24:00Z
+
+## refresh_tokens — active row for employee.verification after successful MFA verify
+id                                   | user_id                              | active | expires_at
+-------------------------------------+--------------------------------------+--------+-------------------------------
+4ae1177d-6ada-462f-807f-f8edc2cddbb4 | 2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 | t      | 2026-06-14 11:23:53.379883+00
+
+## audit_logs — auth.mfa.verify entries (most recent 5)
+id                                   | actor_user_id                        | action          | metadata                                                                                                                                              | created_at
+-------------------------------------+--------------------------------------+-----------------+------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------
+e58d3fab-197a-451a-a33b-9d53f322d860 | 2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 | auth.mfa.verify | {"ip":"127.0.0.1","reason":"wrong_code","outcome":"failure","request_id":"21CA49D5...","user_agent":"curl/8.7.1"}                                   | 2026-05-15 11:23:58
+909fb79c-18f7-4d87-9a6b-0b50e0bd9f14 | 2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 | auth.mfa.verify | {"ip":"127.0.0.1","outcome":"success","request_id":"E936B130-1CD5-4FF0-9445-801BB04C81C1","user_agent":"curl/8.7.1"}                                | 2026-05-15 11:23:53
+
+## Verified:
+# 1. refresh_tokens row created for user 2a0f54f0 with active=true (revoked_at IS NULL), expires ~30 days
+# 2. audit_logs row with action='auth.mfa.verify', metadata.outcome='success', request_id matches curl X-Request-ID
+# 3. audit_logs row for wrong code has outcome='failure' and reason='wrong_code' — internal audit logged
+# 4. wire 401 body: AUTH_MFA_CODE_INVALID (aggregate) — no internal reason leaked to wire

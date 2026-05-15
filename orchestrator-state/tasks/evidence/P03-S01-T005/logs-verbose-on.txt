@@ -1,0 +1,200 @@
+2026-05-15 12:41:09,513 app.api.router INFO health.check.ok status=ok uptime=2436.03
+INFO:     127.0.0.1:51776 - "GET /health HTTP/1.1" 200 OK
+2026-05-15 12:41:12,398 app.api.router INFO health.ready.start route=/ready
+2026-05-15 12:41:12,398 app.api.router INFO health.ready.db.ping.start engine=Engine
+2026-05-15 12:41:12,404 app.api.router INFO health.ready.db.ping.ok
+2026-05-15 12:41:12,404 app.api.router INFO health.ready.redis.ping.start
+2026-05-15 12:41:12,407 app.api.router INFO health.ready.redis.ping.ok
+2026-05-15 12:41:12,407 app.api.router INFO health.ready.ok db=ok redis=ok
+INFO:     127.0.0.1:51788 - "GET /ready HTTP/1.1" 200 OK
+2026-05-15 12:41:50,175 app.api.router INFO health.check.start route=/health
+2026-05-15 12:41:50,176 app.api.router INFO health.check.ok status=ok uptime=2476.69
+INFO:     127.0.0.1:51869 - "GET /health HTTP/1.1" 200 OK
+2026-05-15 12:41:50,224 app.api.router INFO health.check.start route=/health
+2026-05-15 12:41:50,224 app.api.router INFO health.check.ok status=ok uptime=2476.74
+INFO:     127.0.0.1:51873 - "GET /health HTTP/1.1" 200 OK
+2026-05-15 12:42:59,976 app.db.session DEBUG db.session.open
+2026-05-15 12:42:59,977 app.auth.routers.sign_in INFO auth.sign_in.received email_domain=inditex-sandbox.com request_id=smoke-test-001
+2026-05-15 12:42:59,977 app.auth.rate_limit DEBUG rate_limit.check.start prefix=SIGNIN ip=SIGNIN:127.0.0.1 rate_per_min=20 burst=20
+2026-05-15 12:42:59,977 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=SIGNIN ip=SIGNIN:127.0.0.1 new_window remaining=19
+2026-05-15 12:42:59,977 app.auth.services.sign_in INFO auth.sign_in.starting request_id=smoke-test-001 email_domain=inditex-sandbox.com
+2026-05-15 12:42:59,977 app.auth.repository DEBUG auth.repo.find_by_email.start email_domain=inditex-sandbox.com
+2026-05-15 12:42:59,992 app.auth.repository DEBUG auth.repo.find_by_email.done found=True
+2026-05-15 12:42:59,994 app.auth.services.sign_in INFO auth.sign_in.user_found user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 request_id=smoke-test-001
+2026-05-15 12:42:59,994 app.auth.repository DEBUG auth.repo.count_signin_failures.start user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 window=900s
+2026-05-15 12:42:59,998 app.auth.repository DEBUG auth.repo.count_signin_failures.done user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 count=0
+2026-05-15 12:42:59,998 app.auth.password DEBUG password.verify_with_dummy.start has_real_hash=True
+2026-05-15 12:43:00,039 app.auth.password DEBUG password.verify_with_dummy.ok
+2026-05-15 12:43:00,044 app.auth.tokens DEBUG tokens.encode_mfa_challenge.start user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 ttl=300s
+2026-05-15 12:43:00,044 app.auth.tokens DEBUG tokens.jwt_key.resolved bytes=64
+2026-05-15 12:43:00,045 app.auth.tokens DEBUG tokens.encode_mfa_challenge.done user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 exp=2026-05-15T10:48:00.043951+00:00
+2026-05-15 12:43:00,045 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.sign_in actor_user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404
+2026-05-15 12:43:00,049 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=2b834170-1599-4cb3-86bd-4f0ea75c2608 action=auth.sign_in
+2026-05-15 12:43:00,053 app.auth.services.sign_in INFO auth.sign_in.mfa_challenge_issued user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 request_id=smoke-test-001
+2026-05-15 12:43:00,054 app.auth.routers.sign_in INFO auth.sign_in.mfa_challenge_issued user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 request_id=smoke-test-001
+INFO:     127.0.0.1:52060 - "POST /api/v1/auth/sign-in HTTP/1.1" 200 OK
+2026-05-15 12:43:00,056 app.db.session DEBUG db.session.closed
+2026-05-15 12:43:08,605 app.db.session DEBUG db.session.open
+2026-05-15 12:43:08,606 app.auth.routers.sign_in INFO auth.sign_in.received email_domain=inditex-sandbox.com request_id=smoke-test-002
+2026-05-15 12:43:08,606 app.auth.rate_limit DEBUG rate_limit.check.start prefix=SIGNIN ip=SIGNIN:127.0.0.1 rate_per_min=20 burst=20
+2026-05-15 12:43:08,606 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=SIGNIN ip=SIGNIN:127.0.0.1 remaining=18
+2026-05-15 12:43:08,606 app.auth.services.sign_in INFO auth.sign_in.starting request_id=smoke-test-002 email_domain=inditex-sandbox.com
+2026-05-15 12:43:08,606 app.auth.repository DEBUG auth.repo.find_by_email.start email_domain=inditex-sandbox.com
+2026-05-15 12:43:08,609 app.auth.repository DEBUG auth.repo.find_by_email.done found=True
+2026-05-15 12:43:08,609 app.auth.services.sign_in INFO auth.sign_in.user_found user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 request_id=smoke-test-002
+2026-05-15 12:43:08,609 app.auth.repository DEBUG auth.repo.count_signin_failures.start user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 window=900s
+2026-05-15 12:43:08,610 app.auth.repository DEBUG auth.repo.count_signin_failures.done user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 count=0
+2026-05-15 12:43:08,610 app.auth.password DEBUG password.verify_with_dummy.start has_real_hash=True
+2026-05-15 12:43:08,651 app.auth.password DEBUG password.verify_with_dummy.ok
+2026-05-15 12:43:08,654 app.auth.tokens DEBUG tokens.encode_mfa_challenge.start user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 ttl=300s
+2026-05-15 12:43:08,654 app.auth.tokens DEBUG tokens.encode_mfa_challenge.done user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 exp=2026-05-15T10:48:08.654242+00:00
+2026-05-15 12:43:08,654 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.sign_in actor_user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404
+2026-05-15 12:43:08,657 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=53ea6308-8b23-4637-ba23-3daa284bb749 action=auth.sign_in
+2026-05-15 12:43:08,662 app.auth.services.sign_in INFO auth.sign_in.mfa_challenge_issued user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 request_id=smoke-test-002
+2026-05-15 12:43:08,662 app.auth.routers.sign_in INFO auth.sign_in.mfa_challenge_issued user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 request_id=smoke-test-002
+INFO:     127.0.0.1:52071 - "POST /api/v1/auth/sign-in HTTP/1.1" 200 OK
+2026-05-15 12:43:08,663 app.db.session DEBUG db.session.closed
+2026-05-15 12:43:08,770 app.db.session DEBUG db.session.open
+2026-05-15 12:43:08,770 app.auth.routers.mfa INFO auth.mfa.verify.router.received request_id=smoke-test-003 ip=127.0.0.1
+2026-05-15 12:43:08,770 app.auth.rate_limit DEBUG rate_limit.check.start prefix=MFA_VERIFY ip=MFA_VERIFY:127.0.0.1 rate_per_min=20 burst=5
+2026-05-15 12:43:08,770 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=MFA_VERIFY ip=MFA_VERIFY:127.0.0.1 new_window remaining=4
+2026-05-15 12:43:08,770 app.auth.services.mfa INFO auth.mfa.verify.received request_id=smoke-test-003 ip=127.0.0.1
+2026-05-15 12:43:08,770 app.auth.tokens DEBUG tokens.decode.start
+2026-05-15 12:43:08,770 app.auth.tokens DEBUG tokens.decode.ok sub=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404
+2026-05-15 12:43:08,776 app.auth.repositories.mfa DEBUG auth.repo.mfa.find_enabled.start user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404
+2026-05-15 12:43:08,778 app.auth.repositories.mfa DEBUG auth.repo.mfa.find_enabled.done user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 found=True
+2026-05-15 12:43:08,791 app.auth.tokens DEBUG tokens.encode_access.start sub=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 ttl=1800s
+2026-05-15 12:43:08,791 app.auth.tokens DEBUG tokens.encode_access.done sub=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 exp=2026-05-15T11:13:08.786643+00:00
+2026-05-15 12:43:08,791 app.auth.repositories.refresh DEBUG auth.repo.refresh.insert_new.start user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404
+2026-05-15 12:43:08,796 app.auth.repositories.refresh DEBUG auth.repo.refresh.insert_new.done user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 new_rt_id=e9635120-a8fb-499a-bad6-b2b873a42c9a
+2026-05-15 12:43:08,796 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.mfa.verify actor_user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404
+2026-05-15 12:43:08,797 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=c5fb7fa3-ee78-4b98-9331-f370c13ebdee action=auth.mfa.verify
+2026-05-15 12:43:08,800 app.auth.repositories.mfa DEBUG auth.repo.mfa.replay_store.consumed jti_prefix=52d49083...
+2026-05-15 12:43:08,801 app.auth.services.mfa INFO auth.mfa.verify.success user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 request_id=smoke-test-003
+2026-05-15 12:43:08,803 app.auth.routers.mfa INFO auth.mfa.verify.router.success user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 request_id=smoke-test-003
+INFO:     127.0.0.1:52073 - "POST /api/v1/auth/2fa/verify HTTP/1.1" 200 OK
+2026-05-15 12:43:08,803 app.db.session DEBUG db.session.closed
+2026-05-15 12:43:16,494 app.db.session DEBUG db.session.open
+2026-05-15 12:43:16,495 app.auth.routers.sign_in INFO auth.sign_in.received email_domain=inditex-sandbox.com request_id=smoke-test-004
+2026-05-15 12:43:16,495 app.auth.rate_limit DEBUG rate_limit.check.start prefix=SIGNIN ip=SIGNIN:127.0.0.1 rate_per_min=20 burst=20
+2026-05-15 12:43:16,495 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=SIGNIN ip=SIGNIN:127.0.0.1 remaining=17
+2026-05-15 12:43:16,495 app.auth.services.sign_in INFO auth.sign_in.starting request_id=smoke-test-004 email_domain=inditex-sandbox.com
+2026-05-15 12:43:16,495 app.auth.repository DEBUG auth.repo.find_by_email.start email_domain=inditex-sandbox.com
+2026-05-15 12:43:16,498 app.auth.repository DEBUG auth.repo.find_by_email.done found=True
+2026-05-15 12:43:16,498 app.auth.services.sign_in INFO auth.sign_in.user_found user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 request_id=smoke-test-004
+2026-05-15 12:43:16,498 app.auth.repository DEBUG auth.repo.count_signin_failures.start user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 window=900s
+2026-05-15 12:43:16,499 app.auth.repository DEBUG auth.repo.count_signin_failures.done user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 count=0
+2026-05-15 12:43:16,499 app.auth.password DEBUG password.verify_with_dummy.start has_real_hash=True
+2026-05-15 12:43:16,543 app.auth.password DEBUG password.verify_with_dummy.ok
+2026-05-15 12:43:16,545 app.auth.tokens DEBUG tokens.encode_mfa_challenge.start user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 ttl=300s
+2026-05-15 12:43:16,545 app.auth.tokens DEBUG tokens.encode_mfa_challenge.done user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 exp=2026-05-15T10:48:16.545291+00:00
+2026-05-15 12:43:16,545 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.sign_in actor_user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404
+2026-05-15 12:43:16,547 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=e9afb2f1-520f-4cb7-b273-4fa46fedeec7 action=auth.sign_in
+2026-05-15 12:43:16,552 app.auth.services.sign_in INFO auth.sign_in.mfa_challenge_issued user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 request_id=smoke-test-004
+2026-05-15 12:43:16,552 app.auth.routers.sign_in INFO auth.sign_in.mfa_challenge_issued user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 request_id=smoke-test-004
+INFO:     127.0.0.1:52091 - "POST /api/v1/auth/sign-in HTTP/1.1" 200 OK
+2026-05-15 12:43:16,553 app.db.session DEBUG db.session.closed
+2026-05-15 12:43:16,600 app.db.session DEBUG db.session.open
+2026-05-15 12:43:16,600 app.auth.routers.mfa INFO auth.mfa.verify.router.received request_id=smoke-test-005 ip=127.0.0.1
+2026-05-15 12:43:16,600 app.auth.rate_limit DEBUG rate_limit.check.start prefix=MFA_VERIFY ip=MFA_VERIFY:127.0.0.1 rate_per_min=20 burst=5
+2026-05-15 12:43:16,600 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=MFA_VERIFY ip=MFA_VERIFY:127.0.0.1 remaining=3
+2026-05-15 12:43:16,600 app.auth.services.mfa INFO auth.mfa.verify.received request_id=smoke-test-005 ip=127.0.0.1
+2026-05-15 12:43:16,600 app.auth.tokens DEBUG tokens.decode.start
+2026-05-15 12:43:16,600 app.auth.tokens DEBUG tokens.decode.ok sub=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404
+2026-05-15 12:43:16,604 app.auth.repositories.mfa DEBUG auth.repo.mfa.find_enabled.start user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404
+2026-05-15 12:43:16,606 app.auth.repositories.mfa DEBUG auth.repo.mfa.find_enabled.done user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 found=True
+2026-05-15 12:43:16,606 app.auth.services.mfa INFO auth.mfa.verify.failure reason=wrong_code user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 request_id=smoke-test-005
+2026-05-15 12:43:16,606 app.auth.services.mfa DEBUG auth.mfa.verify.failure_audit.start reason=wrong_code request_id=smoke-test-005
+2026-05-15 12:43:16,606 app.db.session DEBUG db.session.audit_scope.open
+2026-05-15 12:43:16,606 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.mfa.verify actor_user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404
+2026-05-15 12:43:16,627 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=61938f12-2465-490c-8fbe-03881e98dd66 action=auth.mfa.verify
+2026-05-15 12:43:16,628 app.auth.services.mfa DEBUG auth.mfa.verify.failure_audit.done reason=wrong_code request_id=smoke-test-005
+2026-05-15 12:43:16,628 app.db.session DEBUG db.session.audit_scope.closed
+2026-05-15 12:43:16,628 app.auth.routers.mfa INFO auth.mfa.verify.router.failure reason=401_aggregate request_id=smoke-test-005
+INFO:     127.0.0.1:52093 - "POST /api/v1/auth/2fa/verify HTTP/1.1" 401 Unauthorized
+2026-05-15 12:43:16,629 app.db.session DEBUG db.session.closed
+2026-05-15 12:52:09,286 app.api.router INFO health.check.start route=/health
+2026-05-15 12:52:09,287 app.api.router INFO health.check.ok status=ok uptime=3095.81
+INFO:     127.0.0.1:53153 - "GET /health HTTP/1.1" 200 OK
+2026-05-15 12:53:49,996 app.api.router INFO health.check.start route=/health
+2026-05-15 12:53:49,998 app.api.router INFO health.check.ok status=ok uptime=3196.52
+INFO:     127.0.0.1:53378 - "GET /health HTTP/1.1" 200 OK
+2026-05-15 12:53:50,061 app.db.session DEBUG db.session.open
+2026-05-15 12:53:50,062 app.auth.routers.sign_in INFO auth.sign_in.received email_domain=inditex-sandbox.com request_id=fbf052e3-ebe0-4a62-bb49-cd2e4a970c1a
+2026-05-15 12:53:50,062 app.auth.rate_limit DEBUG rate_limit.check.start prefix=SIGNIN ip=SIGNIN:127.0.0.1 rate_per_min=20 burst=20
+2026-05-15 12:53:50,062 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=SIGNIN ip=SIGNIN:127.0.0.1 new_window remaining=19
+2026-05-15 12:53:50,062 app.auth.services.sign_in INFO auth.sign_in.starting request_id=fbf052e3-ebe0-4a62-bb49-cd2e4a970c1a email_domain=inditex-sandbox.com
+2026-05-15 12:53:50,062 app.auth.repository DEBUG auth.repo.find_by_email.start email_domain=inditex-sandbox.com
+2026-05-15 12:53:50,079 app.auth.repository DEBUG auth.repo.find_by_email.done found=True
+2026-05-15 12:53:50,079 app.auth.services.sign_in INFO auth.sign_in.user_found user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 request_id=fbf052e3-ebe0-4a62-bb49-cd2e4a970c1a
+2026-05-15 12:53:50,079 app.auth.repository DEBUG auth.repo.count_signin_failures.start user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 window=900s
+2026-05-15 12:53:50,081 app.auth.repository DEBUG auth.repo.count_signin_failures.done user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 count=0
+2026-05-15 12:53:50,081 app.auth.password DEBUG password.verify_with_dummy.start has_real_hash=True
+2026-05-15 12:53:50,126 app.auth.password DEBUG password.verify_with_dummy.ok
+2026-05-15 12:53:50,130 app.auth.tokens DEBUG tokens.encode_mfa_challenge.start user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 ttl=300s
+2026-05-15 12:53:50,132 app.auth.tokens DEBUG tokens.encode_mfa_challenge.done user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 exp=2026-05-15T10:58:50.130798+00:00
+2026-05-15 12:53:50,132 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.sign_in actor_user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404
+2026-05-15 12:53:50,135 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=4caad7a3-3794-49ca-bfb7-26f53cc4954a action=auth.sign_in
+2026-05-15 12:53:50,141 app.auth.services.sign_in INFO auth.sign_in.mfa_challenge_issued user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 request_id=fbf052e3-ebe0-4a62-bb49-cd2e4a970c1a
+2026-05-15 12:53:50,141 app.auth.routers.sign_in INFO auth.sign_in.mfa_challenge_issued user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 request_id=fbf052e3-ebe0-4a62-bb49-cd2e4a970c1a
+INFO:     127.0.0.1:53380 - "POST /api/v1/auth/sign-in HTTP/1.1" 200 OK
+2026-05-15 12:53:50,143 app.db.session DEBUG db.session.closed
+2026-05-15 12:53:50,345 app.db.session DEBUG db.session.open
+2026-05-15 12:53:50,345 app.auth.routers.mfa INFO auth.mfa.verify.router.received request_id=e40954ad-d27c-4186-bd6e-67212def2760 ip=127.0.0.1
+2026-05-15 12:53:50,345 app.auth.rate_limit DEBUG rate_limit.check.start prefix=MFA_VERIFY ip=MFA_VERIFY:127.0.0.1 rate_per_min=20 burst=5
+2026-05-15 12:53:50,345 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=MFA_VERIFY ip=MFA_VERIFY:127.0.0.1 new_window remaining=4
+2026-05-15 12:53:50,345 app.auth.services.mfa INFO auth.mfa.verify.received request_id=e40954ad-d27c-4186-bd6e-67212def2760 ip=127.0.0.1
+2026-05-15 12:53:50,345 app.auth.tokens DEBUG tokens.decode.start
+2026-05-15 12:53:50,345 app.auth.tokens DEBUG tokens.decode.ok sub=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404
+2026-05-15 12:53:50,350 app.auth.repositories.mfa DEBUG auth.repo.mfa.find_enabled.start user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404
+2026-05-15 12:53:50,351 app.auth.repositories.mfa DEBUG auth.repo.mfa.find_enabled.done user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 found=True
+2026-05-15 12:53:50,355 app.auth.tokens DEBUG tokens.encode_access.start sub=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 ttl=1800s
+2026-05-15 12:53:50,355 app.auth.tokens DEBUG tokens.encode_access.done sub=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 exp=2026-05-15T11:23:50.353617+00:00
+2026-05-15 12:53:50,355 app.auth.repositories.refresh DEBUG auth.repo.refresh.insert_new.start user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404
+2026-05-15 12:53:50,358 app.auth.repositories.refresh DEBUG auth.repo.refresh.insert_new.done user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 new_rt_id=861d6cbe-34f8-45b8-b6f8-c7afdee48016
+2026-05-15 12:53:50,358 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.mfa.verify actor_user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404
+2026-05-15 12:53:50,359 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=c44eff01-0bc4-48a5-b469-38991a0ef01d action=auth.mfa.verify
+2026-05-15 12:53:50,372 app.auth.repositories.mfa DEBUG auth.repo.mfa.replay_store.consumed jti_prefix=93c4289e...
+2026-05-15 12:53:50,374 app.auth.services.mfa INFO auth.mfa.verify.success user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 request_id=e40954ad-d27c-4186-bd6e-67212def2760
+2026-05-15 12:53:50,375 app.auth.routers.mfa INFO auth.mfa.verify.router.success user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 request_id=e40954ad-d27c-4186-bd6e-67212def2760
+INFO:     127.0.0.1:53383 - "POST /api/v1/auth/2fa/verify HTTP/1.1" 200 OK
+2026-05-15 12:53:50,376 app.db.session DEBUG db.session.closed
+2026-05-15 12:54:00,388 app.db.session DEBUG db.session.open
+2026-05-15 12:54:00,388 app.auth.routers.sign_in INFO auth.sign_in.received email_domain=inditex-sandbox.com request_id=32905e84-b843-4b09-97ae-435d213e4150
+2026-05-15 12:54:00,388 app.auth.rate_limit DEBUG rate_limit.check.start prefix=SIGNIN ip=SIGNIN:127.0.0.1 rate_per_min=20 burst=20
+2026-05-15 12:54:00,388 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=SIGNIN ip=SIGNIN:127.0.0.1 remaining=18
+2026-05-15 12:54:00,388 app.auth.services.sign_in INFO auth.sign_in.starting request_id=32905e84-b843-4b09-97ae-435d213e4150 email_domain=inditex-sandbox.com
+2026-05-15 12:54:00,388 app.auth.repository DEBUG auth.repo.find_by_email.start email_domain=inditex-sandbox.com
+2026-05-15 12:54:00,392 app.auth.repository DEBUG auth.repo.find_by_email.done found=True
+2026-05-15 12:54:00,392 app.auth.services.sign_in INFO auth.sign_in.user_found user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 request_id=32905e84-b843-4b09-97ae-435d213e4150
+2026-05-15 12:54:00,392 app.auth.repository DEBUG auth.repo.count_signin_failures.start user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 window=900s
+2026-05-15 12:54:00,393 app.auth.repository DEBUG auth.repo.count_signin_failures.done user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 count=0
+2026-05-15 12:54:00,393 app.auth.password DEBUG password.verify_with_dummy.start has_real_hash=True
+2026-05-15 12:54:00,430 app.auth.password DEBUG password.verify_with_dummy.ok
+2026-05-15 12:54:00,432 app.auth.tokens DEBUG tokens.encode_mfa_challenge.start user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 ttl=300s
+2026-05-15 12:54:00,432 app.auth.tokens DEBUG tokens.encode_mfa_challenge.done user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 exp=2026-05-15T10:59:00.432623+00:00
+2026-05-15 12:54:00,432 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.sign_in actor_user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404
+2026-05-15 12:54:00,434 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=4360ae50-6416-434c-9eba-18b299f50b00 action=auth.sign_in
+2026-05-15 12:54:00,439 app.auth.services.sign_in INFO auth.sign_in.mfa_challenge_issued user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 request_id=32905e84-b843-4b09-97ae-435d213e4150
+2026-05-15 12:54:00,439 app.auth.routers.sign_in INFO auth.sign_in.mfa_challenge_issued user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 request_id=32905e84-b843-4b09-97ae-435d213e4150
+INFO:     127.0.0.1:53407 - "POST /api/v1/auth/sign-in HTTP/1.1" 200 OK
+2026-05-15 12:54:00,440 app.db.session DEBUG db.session.closed
+2026-05-15 12:54:00,517 app.db.session DEBUG db.session.open
+2026-05-15 12:54:00,517 app.auth.routers.mfa INFO auth.mfa.verify.router.received request_id=b8209bd2-a69a-4f3d-9329-935abad2003d ip=127.0.0.1
+2026-05-15 12:54:00,517 app.auth.rate_limit DEBUG rate_limit.check.start prefix=MFA_VERIFY ip=MFA_VERIFY:127.0.0.1 rate_per_min=20 burst=5
+2026-05-15 12:54:00,518 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=MFA_VERIFY ip=MFA_VERIFY:127.0.0.1 remaining=3
+2026-05-15 12:54:00,518 app.auth.services.mfa INFO auth.mfa.verify.received request_id=b8209bd2-a69a-4f3d-9329-935abad2003d ip=127.0.0.1
+2026-05-15 12:54:00,518 app.auth.tokens DEBUG tokens.decode.start
+2026-05-15 12:54:00,518 app.auth.tokens DEBUG tokens.decode.ok sub=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404
+2026-05-15 12:54:00,523 app.auth.repositories.mfa DEBUG auth.repo.mfa.find_enabled.start user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404
+2026-05-15 12:54:00,525 app.auth.repositories.mfa DEBUG auth.repo.mfa.find_enabled.done user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 found=True
+2026-05-15 12:54:00,525 app.auth.services.mfa INFO auth.mfa.verify.failure reason=wrong_code user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 request_id=b8209bd2-a69a-4f3d-9329-935abad2003d
+2026-05-15 12:54:00,525 app.auth.services.mfa DEBUG auth.mfa.verify.failure_audit.start reason=wrong_code request_id=b8209bd2-a69a-4f3d-9329-935abad2003d
+2026-05-15 12:54:00,525 app.db.session DEBUG db.session.audit_scope.open
+2026-05-15 12:54:00,525 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.mfa.verify actor_user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404
+2026-05-15 12:54:00,529 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=fd3b8458-1d87-4740-b1fe-e02e0a8dccab action=auth.mfa.verify
+2026-05-15 12:54:00,530 app.auth.services.mfa DEBUG auth.mfa.verify.failure_audit.done reason=wrong_code request_id=b8209bd2-a69a-4f3d-9329-935abad2003d
+2026-05-15 12:54:00,530 app.db.session DEBUG db.session.audit_scope.closed
+2026-05-15 12:54:00,530 app.auth.routers.mfa INFO auth.mfa.verify.router.failure reason=401_aggregate request_id=b8209bd2-a69a-4f3d-9329-935abad2003d
+INFO:     127.0.0.1:53409 - "POST /api/v1/auth/2fa/verify HTTP/1.1" 401 Unauthorized
+2026-05-15 12:54:00,531 app.db.session DEBUG db.session.closed

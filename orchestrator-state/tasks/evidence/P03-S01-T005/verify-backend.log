@@ -1,0 +1,33 @@
+# Backend Log Evidence — P03-S01-T005 TwoFactorPage verify-slice
+# Generated: 2026-05-15T11:40:10Z
+# Source: orchestrator-state/tasks/evidence/P03-S01-T005/logs-verbose-on.txt
+
+## auth.mfa.verify.router.received — BEFORE request
+2026-05-15 12:43:08,770 app.auth.routers.mfa INFO auth.mfa.verify.router.received request_id=smoke-test-003 ip=127.0.0.1
+PII CHECK: request_id + ip only — NO code, NO challenge_token, NO email ✓
+
+## auth.mfa.verify.success — happy path
+2026-05-15 12:43:08,801 app.auth.services.mfa INFO auth.mfa.verify.success user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 request_id=smoke-test-003
+PII CHECK: user_id (UUID) + request_id only — NO token, NO code, NO email ✓
+
+## auth.mfa.verify.router.success — AFTER success
+2026-05-15 12:43:08,803 app.auth.routers.mfa INFO auth.mfa.verify.router.success user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 request_id=smoke-test-003
+PII CHECK: user_id + request_id only ✓
+
+## auth.mfa.verify.router.received (for 401 attempt)
+2026-05-15 12:43:16,600 app.auth.routers.mfa INFO auth.mfa.verify.router.received request_id=smoke-test-005 ip=127.0.0.1
+
+## auth.mfa.verify.failure — INTERNAL reason (stays in backend logs only)
+2026-05-15 12:43:16,606 app.auth.services.mfa INFO auth.mfa.verify.failure reason=wrong_code user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 request_id=smoke-test-005
+NOTE: reason=wrong_code is in backend logs only — NOT sent to wire
+
+## auth.mfa.verify.router.failure — WIRE-LEVEL aggregate (no internal reason)
+2026-05-15 12:43:16,628 app.auth.routers.mfa INFO auth.mfa.verify.router.failure reason=401_aggregate request_id=smoke-test-005
+ANTI-ENUM CHECK: wire-level log shows 401_aggregate, NOT wrong_code ✓
+
+## Second successful verify (from tester cycle 1)
+2026-05-15 12:53:50,374 app.auth.services.mfa INFO auth.mfa.verify.success user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 request_id=e40954ad-d27c-4186-bd6e-67212def2760
+
+## Live verification run logs (current verify-slice session)
+2026-05-15 11:23:53 auth.mfa.verify.success request_id=E936B130-1CD5-4FF0-9445-801BB04C81C1 (curl happy path)
+2026-05-15 11:23:58 auth.mfa.verify.router.failure request_id=21CA49D5-... (curl 401 anti-enum)

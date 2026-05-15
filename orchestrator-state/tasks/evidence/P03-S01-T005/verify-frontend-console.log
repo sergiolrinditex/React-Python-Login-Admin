@@ -1,0 +1,29 @@
+# Frontend Console Log Evidence — P03-S01-T005 TwoFactorPage verify-slice
+# Generated: 2026-05-15T11:40:00Z
+# MCP: chrome-devtools
+
+## VERBOSE=false (default dev server, no VITE_ENABLE_VERBOSE_LOGGING in frontend/.env)
+# Only warn/error logs are emitted by the running app
+# Browser console session messages during verification:
+
+msgid=9 [warn] auth.mfa.verify.submit.invalid_code
+  Args: {"status":401,"request_id":"82a09e6f-358f-4cd9-afe7-4331c6e74087"}
+  PII CHECK: status=401 (code), request_id=UUID — NO code value, NO challenge token, NO email, NO access_token ✓
+
+msgid=10 [warn] auth.mfa.verify.hook.submit.error
+  Args: {"error_name":"MfaCodeInvalidError","error_code":"AUTH_MFA_CODE_INVALID"}
+  PII CHECK: error_name + error_code only — NO code value, NO challenge token, NO email ✓
+
+msgid=11 [warn] auth.twofactor.page.submit.failed
+  PII CHECK: no args logged — OK ✓
+
+# auth.repo.refresh.session_expired warnings on page load — expected (no session on initial visit)
+
+## VERBOSE=true (from unit test evidence: frontend-tests-verbose-true.log)
+# When VITE_ENABLE_VERBOSE_LOGGING=true, additional logVerbose events appear:
+# - auth.mfa.verify.hook.submit.start — code_len=6, challenge_token_len=277 (lengths only, not values)
+# - auth.mfa.verify.hook.submit.ok — expires_in=1800, user_id=<UUID> (no token value)
+# PII CHECK: only lengths and user_id logged — confirmed by unit test verbose output ✓
+
+## VERBOSE=off: only warn/error events visible (confirmed) ✓
+## VERBOSE=on: start+ok logVerbose events additionally visible (confirmed via unit tests) ✓

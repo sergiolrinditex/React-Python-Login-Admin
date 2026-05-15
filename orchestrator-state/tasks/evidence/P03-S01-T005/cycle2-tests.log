@@ -1,0 +1,984 @@
+
+> hilo-people-frontend@0.1.0 test
+> vitest --run
+
+
+ RUN  v3.2.4 /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S01-T005/frontend
+
+stderr | src/pages/auth/__tests__/ResetSentPage.test.tsx > ResetSentPage: C01 — state-present renders masked email > C01: renders with_email body containing masked string a***@example.com
+An update to ResetSentPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/pages/auth/__tests__/ResetSentPage.test.tsx > ResetSentPage: C01 — state-present renders masked email > C01: status region has role=status and aria-live=polite
+An update to ResetSentPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T01 — empty state: Wordmark, title, 2 prompt chips, composer
+An update to EmptyPrompts inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Composer inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ChatHomePage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/features/chat/presentation/__tests__/useHistory.test.tsx > useHistory > H03 — network error sets isError with ChatNetworkError
+[chat] chat.useHistory.fetch.error { code: [32m'CHAT_NETWORK_ERROR'[39m }
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T03 — AuthProvider: /refresh 401 → unauthenticated, no /me call > status becomes 'unauthenticated' on refresh 401
+[auth] auth.repo.refresh.session_expired { request_id: [32m'd55d69c0-cd56-401b-aadb-c098f3d646d3'[39m }
+
+stderr | src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T02 — prompt click → mutation triggered → navigate called on success
+An update to EmptyPrompts inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Composer inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ChatHomePage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T04 — AuthProvider: /refresh network error → unauthenticated > status becomes 'unauthenticated' on network error
+[auth] auth.repo.refresh.error { error: [32m'Failed to fetch'[39m }
+
+stderr | src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T03 — submit with empty composer input → send button disabled
+An update to EmptyPrompts inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Composer inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ChatHomePage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T05 — signInAccepted → status=authenticated, /me not re-called > signInAccepted sets token and user without extra fetch
+[auth] auth.repo.refresh.session_expired { request_id: [32m'0f4ed480-6681-4c09-af0b-df6a10b87c68'[39m }
+
+stderr | src/pages/auth/__tests__/ResetSentPage.test.tsx > ResetSentPage: C05 — i18n locale switch > C05: ES renders Spanish title
+An update to ResetSentPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/pages/auth/__tests__/ResetSentPage.test.tsx > ResetSentPage: C05 — i18n locale switch > C05: EN renders English title
+An update to ResetSentPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T04 — submit > MAX chars → validation error shows ES i18n copy, NOT placeholder
+[chat] chat.Composer.submit.validation.too_long { len: [33m4001[39m, max: [33m4000[39m }
+
+stderr | src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T04 — submit > MAX chars → validation error shows ES i18n copy, NOT placeholder
+An update to EmptyPrompts inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ChatHomePage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Composer inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T06 — useLogout: /logout 204 → token cleared, queries cleared > logout clears token and calls onQueriesClear
+[auth] auth.repo.logout.error { error: [32m'Response constructor: Invalid response status code 204'[39m }
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T06 — useLogout: /logout 204 → token cleared, queries cleared > logout clears token and calls onQueriesClear
+[auth] auth.provider.logout.failure_local_cleared { error: [32m'Response constructor: Invalid response status code 204'[39m }
+
+stderr | src/pages/auth/__tests__/ResetSentPage.test.tsx > ResetSentPage: C05 — i18n locale switch > C05: FR renders French title
+An update to ResetSentPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T07 — useLogout: backend 401 → still clears local state (defensive logout) > logout clears token even when backend returns 401
+[auth] auth.repo.logout.non_204 { status: [33m401[39m, request_id: [32m'c509a44b-c87a-4a7f-953c-57a02ba55b5b'[39m }
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T07 — useLogout: backend 401 → still clears local state (defensive logout) > logout clears token even when backend returns 401
+[auth] auth.provider.logout.failure_local_cleared { error: [32m'Session expired or invalid; please sign in again.'[39m }
+
+stderr | src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T04b — submit > MAX chars in EN locale → validation error shows EN i18n copy
+[chat] chat.Composer.submit.validation.too_long { len: [33m4001[39m, max: [33m4000[39m }
+
+stderr | src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T04b — submit > MAX chars in EN locale → validation error shows EN i18n copy
+An update to EmptyPrompts inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ChatHomePage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Composer inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/pages/auth/__tests__/ResetSentPage.test.tsx (22 tests) 99ms
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T08 — RequireAuth: unauthenticated → Navigate with ?next= > redirects to sign-in with ?next= when unauthenticated
+[auth] auth.repo.refresh.session_expired { request_id: [32m'7024d40e-b12a-41b5-b500-60687c385b75'[39m }
+
+stderr | src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T04c — submit > MAX chars in FR locale → validation error shows FR i18n copy
+[chat] chat.Composer.submit.validation.too_long { len: [33m4001[39m, max: [33m4000[39m }
+
+stderr | src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T04c — submit > MAX chars in FR locale → validation error shows FR i18n copy
+An update to EmptyPrompts inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ChatHomePage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Composer inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/features/chat/__tests__/useCreateConversation.test.tsx > useCreateConversation > T03 — onError callback called with typed ChatError
+[chat] chat.hook.useCreateConversation.mutate.error { error: [32m'CHAT_NETWORK_ERROR'[39m }
+
+stderr | src/features/chat/presentation/__tests__/useHistory.test.tsx > useHistory > H04 — ChatAuthExpiredError triggers onAuthFailure
+[chat] chat.useHistory.fetch.error { code: [32m'CHAT_AUTH_EXPIRED'[39m }
+
+stderr | src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T05 — network failure → error_network state with retry CTA
+An update to EmptyPrompts inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to NetworkErrorView inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Composer inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ChatHomePage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T06 — retry CTA triggers mutation again
+An update to EmptyPrompts inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Composer inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ChatHomePage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx (34 tests) 116ms
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T01: deep-link guard — no challengeToken in router state → redirects to /auth/sign-in
+[auth] auth.twofactor.page.missing_challenge
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T01: deep-link guard — no challengeToken in router state → redirects to /auth/sign-in
+[auth] auth.repo.refresh.session_expired { request_id: [32m'9fe06e9b-415b-47d0-ac93-ce2dd946d74d'[39m }
+
+stderr | src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T07 — 403 forbidden → permission_denied view shown (no composer)
+An update to ForbiddenView inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ChatHomePage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T01: renders with i18n ES keys — title, email, fullName, password, checkbox label, CTA
+[auth] auth.repo.refresh.session_expired { request_id: [32m'd52cd6f4-33ef-42b8-bbb7-4bd98342407f'[39m }
+
+stderr | src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T08 — a11y: network-error region has role=status + aria-live
+An update to EmptyPrompts inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to NetworkErrorView inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Composer inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ChatHomePage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/features/chat/__tests__/ChatHomePage.test.tsx (10 tests) 121ms
+stderr | src/pages/auth/__tests__/ForgotPasswordPage.test.tsx > ForgotPasswordPage > T01: renders all UI — TrackedLabel for email, EditorialInput, SolidCTA, back link
+[auth] auth.repo.refresh.session_expired { request_id: [32m'05415409-1ac6-4757-99f6-dfd554ca317a'[39m }
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T02: renders all editorial UI — Wordmark, TrackedLabel titleHint, title, intro, code input, CTA
+[auth] auth.repo.refresh.session_expired { request_id: [32m'ee64b47d-6682-48c2-af59-a97dbbcb2142'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T01: renders with i18n ES keys — email label, password label, submit button visible
+[auth] auth.repo.refresh.session_expired { request_id: [32m'acd8fcca-9133-41a7-8f9a-ddac0951c136'[39m }
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T17 — httpClient: refresh 401 → no loop, onAuthFailure called > throws AuthSessionExpiredError, calls onAuthFailure, clears token
+[auth] auth.http.refresh.failed { status: [33m401[39m, request_id: [32m'2d64f2bc-5339-4c15-b66f-37bfb8b092b9'[39m }
+
+stderr | src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T02: invalid email → aria-invalid + error message visible
+[auth] auth.repo.refresh.session_expired { request_id: [32m'30a185f2-5446-4132-9d1e-edb72c00fabb'[39m }
+
+stderr | src/pages/auth/__tests__/ForgotPasswordPage.test.tsx > ForgotPasswordPage > T02: submit empty → zod inline emailRequired error; no fetch call to forgot-password
+[auth] auth.repo.refresh.session_expired { request_id: [32m'c6ab7aa6-2ac3-4b44-9d40-51cf9a622290'[39m }
+
+ ✓ src/features/auth/__tests__/auth.test.tsx (33 tests) 123ms
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T03: submit empty code → zod codeRequired error shown; repo not called
+[auth] auth.repo.refresh.session_expired { request_id: [32m'c054ebd1-f845-4dae-8616-245f4b7acd00'[39m }
+
+stderr | src/features/chat/__tests__/useCreateConversation.test.tsx > useCreateConversation > T04 — error state set after failed mutation
+[chat] chat.hook.useCreateConversation.mutate.error { error: [32m'CHAT_NETWORK_ERROR'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T02: invalid email triggers validation error with aria-invalid
+[auth] auth.repo.refresh.session_expired { request_id: [32m'6bf99e9f-4706-4313-a2f6-4c9c96975796'[39m }
+
+stderr | src/features/chat/presentation/__tests__/useHistory.test.tsx > useHistory > H05 — refetch re-runs the query
+[chat] chat.useHistory.fetch.error { code: [32m'CHAT_NETWORK_ERROR'[39m }
+
+stderr | src/pages/auth/__tests__/ForgotPasswordPage.test.tsx > ForgotPasswordPage > T03: submit invalid email syntax → zod emailFormat error; no fetch call
+[auth] auth.repo.refresh.session_expired { request_id: [32m'525d843d-caf5-4cd1-8d5b-449e033c9242'[39m }
+
+stderr | src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T03: legal acceptance required — uncheck shows error; check + submit succeeds
+[auth] auth.repo.refresh.session_expired { request_id: [32m'9a7466a7-bd94-436f-9401-107077c5cab6'[39m }
+
+ ✓ src/pages/showcase/__tests__/ShowcasePage.test.tsx (4 tests) 144ms
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T03: submit happy path no-MFA — navigates to /chat (default)
+[auth] auth.repo.refresh.session_expired { request_id: [32m'5b7c4e0d-16be-454f-9a5e-56c5502318e0'[39m }
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T04: submit valid code → loading state — CTA shows submitting label during in-flight
+[auth] auth.mfa.verify.submit.invalid_code { status: [33m401[39m, request_id: [32m'688fec96-e904-49f4-8a38-4a8e9467a2ef'[39m }
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T04: submit valid code → loading state — CTA shows submitting label during in-flight
+[auth] auth.mfa.verify.hook.submit.error {
+  error_name: [32m'MfaCodeInvalidError'[39m,
+  error_code: [32m'AUTH_MFA_CODE_INVALID'[39m
+}
+An update to TwoFactorPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to TwoFactorPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T04: submit valid code → loading state — CTA shows submitting label during in-flight
+[auth] auth.twofactor.page.submit.failed
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T04: submit valid code → loading state — CTA shows submitting label during in-flight
+An update to TwoFactorPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/pages/auth/__tests__/ForgotPasswordPage.test.tsx > ForgotPasswordPage > T04: submit valid known email → 200 success → navigates to /auth/reset-sent
+[auth] auth.repo.refresh.session_expired { request_id: [32m'ba862436-beba-4781-9985-cf46fadea3b2'[39m }
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T05: success path — 200 + fetchMe → navigates to /chat
+[auth] auth.repo.refresh.session_expired { request_id: [32m'34649e94-09ed-443d-9154-d59b51157403'[39m }
+
+stderr | src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T04: happy path → navigates to /auth/sign-in with flash state
+[auth] auth.repo.refresh.session_expired { request_id: [32m'1b18c95e-4fee-4e1d-b374-3254056c2e36'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T04: submit MFA branch — navigates to /auth/2fa
+[auth] auth.repo.refresh.session_expired { request_id: [32m'30906718-0790-441d-adda-259fc7ca10a8'[39m }
+
+stderr | src/pages/auth/__tests__/ForgotPasswordPage.test.tsx > ForgotPasswordPage > T05: submit valid unknown email → same success state (anti-enum: identical to known email)
+[auth] auth.repo.refresh.session_expired { request_id: [32m'90f9d5ce-606e-4040-8656-2cd471e6ee85'[39m }
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T06: wrong code — 401 aggregate → shows invalidCode copy (§D-T005-AGGREGATE-401)
+[auth] auth.repo.refresh.session_expired { request_id: [32m'26b6bab0-bf4f-4988-a64e-d4b3dd14949c'[39m }
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T06: wrong code — 401 aggregate → shows invalidCode copy (§D-T005-AGGREGATE-401)
+[auth] auth.mfa.verify.submit.invalid_code { status: [33m401[39m, request_id: [32m'c9cccb98-d1a9-4fb9-a139-b9766abfbfc0'[39m }
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T06: wrong code — 401 aggregate → shows invalidCode copy (§D-T005-AGGREGATE-401)
+[auth] auth.mfa.verify.hook.submit.error {
+  error_name: [32m'MfaCodeInvalidError'[39m,
+  error_code: [32m'AUTH_MFA_CODE_INVALID'[39m
+}
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T06: wrong code — 401 aggregate → shows invalidCode copy (§D-T005-AGGREGATE-401)
+[auth] auth.twofactor.page.submit.failed
+
+stderr | src/pages/auth/__tests__/ForgotPasswordPage.test.tsx > ForgotPasswordPage > T06: 429 rate-limited → form-level alert shows rateLimited with {{seconds}} interpolated
+[auth] auth.repo.refresh.session_expired { request_id: [32m'cf021b71-d1b1-43ee-9648-ad1b5df093b8'[39m }
+
+stderr | src/pages/auth/__tests__/ForgotPasswordPage.test.tsx > ForgotPasswordPage > T06: 429 rate-limited → form-level alert shows rateLimited with {{seconds}} interpolated
+[auth] auth.forgot.submit.rate_limited {
+  status: [33m429[39m,
+  retry_after: [33m60[39m,
+  request_id: [32m'09b1eb49-71c6-4fe2-80f7-e95d8647a409'[39m
+}
+
+stderr | src/pages/auth/__tests__/ForgotPasswordPage.test.tsx > ForgotPasswordPage > T06: 429 rate-limited → form-level alert shows rateLimited with {{seconds}} interpolated
+[auth] auth.forgot.hook.submit.error { error_name: [32m'ForgotPasswordRateLimitedError'[39m }
+
+stderr | src/pages/auth/__tests__/ForgotPasswordPage.test.tsx > ForgotPasswordPage > T06: 429 rate-limited → form-level alert shows rateLimited with {{seconds}} interpolated
+[auth] auth.forgot.page.submit.failed
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T05: 401 — shows invalidCredentials copy (byte-identical for both failure modes — anti-enum)
+[auth] auth.repo.refresh.session_expired { request_id: [32m'286809a7-b168-4b5a-b782-443c770e39b8'[39m }
+
+ ✓ src/features/chat/__tests__/useCreateConversation.test.tsx (4 tests) 227ms
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T05: 401 — shows invalidCredentials copy (byte-identical for both failure modes — anti-enum)
+[auth] auth.signin.submit.invalid_credentials { status: [33m401[39m, request_id: [32m'1fc1d17e-bbd9-45a4-96b3-ed1491395397'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T05: 401 — shows invalidCredentials copy (byte-identical for both failure modes — anti-enum)
+[auth] auth.signin.hook.submit.error { error_name: [32m'InvalidCredentialsError'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T05: 401 — shows invalidCredentials copy (byte-identical for both failure modes — anti-enum)
+[auth] auth.signin.page.submit.failed
+
+stderr | src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T05: 400 non-corporate email → form-level error shown in permission_denied state
+[auth] auth.repo.refresh.session_expired { request_id: [32m'b42898d6-2880-451a-b4f3-f093d72dcbce'[39m }
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T07: network error — fetch TypeError → error_network copy shown
+[auth] auth.repo.refresh.session_expired { request_id: [32m'1c530c08-c0c1-44fe-a57d-89c5dcc9064c'[39m }
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T07: network error — fetch TypeError → error_network copy shown
+[auth] auth.mfa.verify.submit.network { error: [32m'Failed to fetch'[39m }
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T07: network error — fetch TypeError → error_network copy shown
+[auth] auth.mfa.verify.hook.submit.error { error_name: [32m'NetworkError'[39m, error_code: [32m'NETWORK_ERROR'[39m }
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T07: network error — fetch TypeError → error_network copy shown
+[auth] auth.twofactor.page.submit.failed
+
+stderr | src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T05: 400 non-corporate email → form-level error shown in permission_denied state
+[auth] auth.signup.submit.non_corporate_email {
+  status: [33m400[39m,
+  field: [32m'email'[39m,
+  request_id: [32m'95f7244e-f7cc-46d6-8560-29bc95d4e06d'[39m
+}
+
+stderr | src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T05: 400 non-corporate email → form-level error shown in permission_denied state
+[auth] auth.signup.hook.submit.error { error_name: [32m'NonCorporateEmailError'[39m }
+
+stderr | src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T05: 400 non-corporate email → form-level error shown in permission_denied state
+[auth] auth.signup.page.submit.failed
+
+stderr | src/pages/auth/__tests__/ForgotPasswordPage.test.tsx > ForgotPasswordPage > T07: TypeError network error → error_network copy shown; no navigation
+[auth] auth.repo.refresh.session_expired { request_id: [32m'876898d1-3fd1-4e1f-ad99-1bca9b555ae8'[39m }
+
+stderr | src/pages/auth/__tests__/ForgotPasswordPage.test.tsx > ForgotPasswordPage > T07: TypeError network error → error_network copy shown; no navigation
+[auth] auth.forgot.submit.network { error: [32m'Failed to fetch'[39m }
+
+stderr | src/pages/auth/__tests__/ForgotPasswordPage.test.tsx > ForgotPasswordPage > T07: TypeError network error → error_network copy shown; no navigation
+[auth] auth.forgot.hook.submit.error { error_name: [32m'NetworkError'[39m }
+
+stderr | src/pages/auth/__tests__/ForgotPasswordPage.test.tsx > ForgotPasswordPage > T07: TypeError network error → error_network copy shown; no navigation
+[auth] auth.forgot.page.submit.failed
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T06: 423 account locked — shows accountLocked copy, submit re-enabled (not rate-limit disabled)
+[auth] auth.repo.refresh.session_expired { request_id: [32m'80b43601-f761-4b13-87ea-0cfee6658c73'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T06: 423 account locked — shows accountLocked copy, submit re-enabled (not rate-limit disabled)
+[auth] auth.signin.submit.locked { status: [33m423[39m, request_id: [32m'443a9446-575f-4432-95b8-28a13afec59e'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T06: 423 account locked — shows accountLocked copy, submit re-enabled (not rate-limit disabled)
+[auth] auth.signin.hook.submit.error { error_name: [32m'AccountLockedError'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T06: 423 account locked — shows accountLocked copy, submit re-enabled (not rate-limit disabled)
+[auth] auth.signin.page.submit.failed
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T08: 5xx server error → serverInternal copy shown (error_network state)
+[auth] auth.repo.refresh.session_expired { request_id: [32m'939491d9-e4f2-4927-b530-cb34079e1851'[39m }
+
+stderr | src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T06: 409 email taken → generic error copy, NO email field highlight (anti-enumeration)
+[auth] auth.repo.refresh.session_expired { request_id: [32m'3b7122eb-417e-4024-946e-8463ebe83fe3'[39m }
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T08: 5xx server error → serverInternal copy shown (error_network state)
+[auth] auth.mfa.verify.submit.unexpected { status: [33m503[39m, request_id: [32m'6a4b2742-6820-46d1-999a-c48300b9b035'[39m }
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T08: 5xx server error → serverInternal copy shown (error_network state)
+[auth] auth.mfa.verify.hook.submit.error {
+  error_name: [32m'MfaVerifyInternalError'[39m,
+  error_code: [32m'AUTH_MFA_VERIFY_INTERNAL_ERROR'[39m
+}
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T08: 5xx server error → serverInternal copy shown (error_network state)
+[auth] auth.twofactor.page.submit.failed
+
+stderr | src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T06: 409 email taken → generic error copy, NO email field highlight (anti-enumeration)
+[auth] auth.signup.submit.email_taken { status: [33m409[39m, request_id: [32m'a0f796a1-921a-42f3-8b66-233552f26674'[39m }
+
+stderr | src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T06: 409 email taken → generic error copy, NO email field highlight (anti-enumeration)
+[auth] auth.signup.hook.submit.error { error_name: [32m'EmailTakenError'[39m }
+
+stderr | src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T06: 409 email taken → generic error copy, NO email field highlight (anti-enumeration)
+[auth] auth.signup.page.submit.failed
+
+stderr | src/pages/auth/__tests__/ForgotPasswordPage.test.tsx > ForgotPasswordPage > T08: 500 ServerError → form-level alert shows serverInternal; no navigation
+[auth] auth.repo.refresh.session_expired { request_id: [32m'a1a0ae7c-e440-4b32-9e99-6a6e0363f236'[39m }
+
+stderr | src/pages/auth/__tests__/ForgotPasswordPage.test.tsx > ForgotPasswordPage > T08: 500 ServerError → form-level alert shows serverInternal; no navigation
+[auth] auth.forgot.submit.unexpected { status: [33m500[39m, request_id: [32m'0f60f71f-1d01-4030-95a8-4ad289c2c159'[39m }
+
+stderr | src/pages/auth/__tests__/ForgotPasswordPage.test.tsx > ForgotPasswordPage > T08: 500 ServerError → form-level alert shows serverInternal; no navigation
+[auth] auth.forgot.hook.submit.error { error_name: [32m'ForgotPasswordInternalError'[39m }
+
+stderr | src/pages/auth/__tests__/ForgotPasswordPage.test.tsx > ForgotPasswordPage > T08: 500 ServerError → form-level alert shows serverInternal; no navigation
+[auth] auth.forgot.page.submit.failed
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T07: 429 rate-limited — submit disabled, copy shows seconds interpolated
+[auth] auth.repo.refresh.session_expired { request_id: [32m'6bc77bcd-87ce-4f9f-961e-8cc6b465d2e0'[39m }
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T09: 410 challenge expired → shows expired copy + back-to-signin CTA (§D-T005-EXPIRED-CHALLENGE)
+[auth] auth.repo.refresh.session_expired { request_id: [32m'1568ffd0-196c-4ad5-8e9e-b7a36ffc20b0'[39m }
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T09: 410 challenge expired → shows expired copy + back-to-signin CTA (§D-T005-EXPIRED-CHALLENGE)
+[auth] auth.mfa.verify.submit.challenge_expired { status: [33m410[39m, request_id: [32m'e110ee29-c1b5-4e2c-82ff-f11a0d81ba8d'[39m }
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T09: 410 challenge expired → shows expired copy + back-to-signin CTA (§D-T005-EXPIRED-CHALLENGE)
+[auth] auth.mfa.verify.hook.submit.error {
+  error_name: [32m'MfaChallengeExpiredError'[39m,
+  error_code: [32m'AUTH_MFA_CHALLENGE_EXPIRED'[39m
+}
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T09: 410 challenge expired → shows expired copy + back-to-signin CTA (§D-T005-EXPIRED-CHALLENGE)
+[auth] auth.twofactor.page.submit.failed
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T07: 429 rate-limited — submit disabled, copy shows seconds interpolated
+[auth] auth.signin.submit.rate_limited {
+  status: [33m429[39m,
+  retry_after: [33m60[39m,
+  request_id: [32m'a55183bf-e0b6-4249-bc22-3b47b220770d'[39m
+}
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T07: 429 rate-limited — submit disabled, copy shows seconds interpolated
+[auth] auth.signin.hook.submit.error { error_name: [32m'RateLimitedError'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T07: 429 rate-limited — submit disabled, copy shows seconds interpolated
+[auth] auth.signin.page.submit.failed
+
+stderr | src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T07: 422 password policy → form-level error in error_validation state
+[auth] auth.repo.refresh.session_expired { request_id: [32m'3723929c-ab51-4dcf-9438-f00b94477e38'[39m }
+
+stderr | src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T07: 422 password policy → form-level error in error_validation state
+[auth] auth.signup.submit.password_policy {
+  status: [33m422[39m,
+  field: [32m'password'[39m,
+  request_id: [32m'568415ef-0ab9-426c-98dc-4d522fbf4c47'[39m
+}
+
+stderr | src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T07: 422 password policy → form-level error in error_validation state
+[auth] auth.signup.hook.submit.error { error_name: [32m'PasswordPolicyError'[39m }
+
+stderr | src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T07: 422 password policy → form-level error in error_validation state
+[auth] auth.signup.page.submit.failed
+
+stderr | src/pages/auth/__tests__/ForgotPasswordPage.test.tsx > ForgotPasswordPage > T09: a11y — input has aria-invalid only after touch + error; CTA has no aria-busy by default
+[auth] auth.repo.refresh.session_expired { request_id: [32m'e8551f88-a904-4669-a722-0fc89654cce5'[39m }
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T10: 429 rate limited → shows rateLimited copy; submit disabled
+[auth] auth.repo.refresh.session_expired { request_id: [32m'c755092a-c3b6-4c93-9408-280413b379d9'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T08: network error — shows error_network copy
+[auth] auth.repo.refresh.session_expired { request_id: [32m'44613ab1-a191-4fa4-a954-772fe78a5d37'[39m }
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T10: 429 rate limited → shows rateLimited copy; submit disabled
+[auth] auth.mfa.verify.submit.rate_limited {
+  status: [33m429[39m,
+  retry_after: [33m0[39m,
+  request_id: [32m'59444331-0004-4f98-96a5-1ab008028632'[39m
+}
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T10: 429 rate limited → shows rateLimited copy; submit disabled
+[auth] auth.mfa.verify.hook.submit.error {
+  error_name: [32m'MfaVerifyRateLimitedError'[39m,
+  error_code: [32m'AUTH_MFA_VERIFY_RATE_LIMITED'[39m
+}
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T10: 429 rate limited → shows rateLimited copy; submit disabled
+[auth] auth.twofactor.page.submit.failed
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T08: network error — shows error_network copy
+[auth] auth.signin.submit.network { error: [32m'Failed to fetch'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T08: network error — shows error_network copy
+[auth] auth.signin.hook.submit.error { error_name: [32m'NetworkError'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T08: network error — shows error_network copy
+[auth] auth.signin.page.submit.failed
+
+stderr | src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T08: 429 rate-limited → submit disabled + countdown copy with seconds interpolated
+[auth] auth.repo.refresh.session_expired { request_id: [32m'79d26137-7e99-4066-93e8-211f843aff4d'[39m }
+
+stderr | src/pages/auth/__tests__/ForgotPasswordPage.test.tsx > ForgotPasswordPage > T10: i18n EN — render with changeLanguage('en') → all copy in English
+[auth] auth.repo.refresh.session_expired { request_id: [32m'60d4314b-a11e-455d-af24-6516e72cda5e'[39m }
+
+ ✓ src/features/chat/presentation/__tests__/useHistory.test.tsx (5 tests) 285ms
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T11: paste handling — non-digit characters are stripped from code input
+[auth] auth.repo.refresh.session_expired { request_id: [32m'87968a70-8d8f-4b1d-816a-b3d3e75f3556'[39m }
+
+stderr | src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T08: 429 rate-limited → submit disabled + countdown copy with seconds interpolated
+[auth] auth.signup.submit.rate_limited {
+  status: [33m429[39m,
+  retry_after: [33m60[39m,
+  request_id: [32m'349c960b-300f-4941-b3ef-826b039e42bb'[39m
+}
+
+stderr | src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T08: 429 rate-limited → submit disabled + countdown copy with seconds interpolated
+[auth] auth.signup.hook.submit.error { error_name: [32m'SignupRateLimitedError'[39m }
+
+stderr | src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T08: 429 rate-limited → submit disabled + countdown copy with seconds interpolated
+[auth] auth.signup.page.submit.failed
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T09: keyboard-only flow — Tab through inputs and submit button is reachable
+[auth] auth.repo.refresh.session_expired { request_id: [32m'211e4059-44f7-4465-b3e4-34c6b7c36712'[39m }
+
+stderr | src/pages/auth/__tests__/ForgotPasswordPage.test.tsx > ForgotPasswordPage > T11: ADR-002 same-origin — forgotPassword() must call fetch with RELATIVE URL `/api/v1/auth/forgot-password` (no http(s):// host, no localhost)
+[auth] auth.repo.refresh.session_expired { request_id: [32m'ace8ef65-09ae-4fc7-9f98-21efb08eb126'[39m }
+
+stderr | src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T10: open-redirect ?next=https://evil.com defaults to /chat
+[auth] auth.repo.refresh.session_expired { request_id: [32m'3f7acb49-0a1b-4abf-90c5-c588194669c8'[39m }
+
+ ✓ src/pages/auth/__tests__/ForgotPasswordPage.test.tsx (11 tests) 183ms
+stderr | src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T09: TypeError network error → error_network copy with 'Sin conexión'
+[auth] auth.repo.refresh.session_expired { request_id: [32m'a4b00289-8f3b-49fc-ba89-41564e54228f'[39m }
+
+stderr | src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T09: TypeError network error → error_network copy with 'Sin conexión'
+[auth] auth.signup.submit.network { error: [32m'Failed to fetch'[39m }
+
+stderr | src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T09: TypeError network error → error_network copy with 'Sin conexión'
+[auth] auth.signup.hook.submit.error { error_name: [32m'NetworkError'[39m }
+
+stderr | src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T09: TypeError network error → error_network copy with 'Sin conexión'
+[auth] auth.signup.page.submit.failed
+
+ ✓ src/pages/auth/__tests__/SignInPage.test.tsx (10 tests) 193ms
+stderr | src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T10: keyboard-only flow — Tab through all inputs + checkbox + submit is reachable
+[auth] auth.repo.refresh.session_expired { request_id: [32m'ed028418-e808-4279-adae-a4d01183c9b6'[39m }
+
+ ✓ src/pages/auth/__tests__/SignUpPage.test.tsx (10 tests) 206ms
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T12: design tokens — page uses CSS variable tokens (no inline hex colors)
+[auth] auth.repo.refresh.session_expired { request_id: [32m'0cc1d86e-f821-48f7-a32e-1124f7dad77f'[39m }
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T12: design tokens — page uses CSS variable tokens (no inline hex colors)
+An update to AuthProvider inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/pages/auth/__tests__/TwoFactorPage.test.tsx (12 tests) 206ms
+ ✓ src/features/auth/data/__tests__/httpClient.test.ts (4 tests) 5ms
+ ✓ src/features/chat/presentation/__tests__/historyGrouping.test.ts (10 tests) 5ms
+stderr | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T02 — 400 → Result.err(ChatValidationError)
+[chat] chat.repo.createConversation.validation_error { status: [33m400[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T03 — 403 → Result.err(ChatForbiddenError)
+[chat] chat.repo.createConversation.forbidden { status: [33m403[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T04 — 5xx → Result.err(ChatServerError)
+[chat] chat.repo.createConversation.server_error { status: [33m500[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T05 — network throw → Result.err(ChatNetworkError)
+[chat] chat.repo.createConversation.error { error: [32m'CHAT_NETWORK_ERROR'[39m, message: [32m'Failed to fetch'[39m }
+
+stderr | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T07 — AuthSessionExpiredError from authFetch → Result.err(ChatAuthExpiredError)
+[chat] chat.repo.createConversation.error {
+  error: [32m'CHAT_NETWORK_ERROR'[39m,
+  message: [32m'Session expired or invalid; please sign in again.'[39m
+}
+
+stderr | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.listConversations > R03 — 401 → Result.err(ChatAuthExpiredError)
+[chat] chat.repo.listConversations.auth_expired { status: [33m401[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.listConversations > R04 — network failure → Result.err(ChatNetworkError)
+[chat] chat.repo.listConversations.error { code: [32m'CHAT_NETWORK_ERROR'[39m }
+
+stderr | src/features/chat/__tests__/chatRepository.test.ts > chatRepository.listConversations > R05 — 403 (defensive) → Result.err(ChatForbiddenError)
+[chat] chat.repo.listConversations.forbidden { status: [33m403[39m, request_id: [32m'test-request-id'[39m }
+
+ ✓ src/features/chat/__tests__/chatRepository.test.ts (12 tests) 10ms
+ ✓ src/i18n/__tests__/i18n.test.ts (25 tests) 7ms
+stderr | src/features/auth/__tests__/useForgotPassword.test.tsx > useForgotPassword > T02: submit 400 ForgotPasswordValidationError → error set, isLoading false
+[auth] auth.forgot.hook.submit.error { error_name: [32m'ForgotPasswordValidationError'[39m }
+
+stderr | src/features/auth/__tests__/useForgotPassword.test.tsx > useForgotPassword > T03: submit 429 ForgotPasswordRateLimitedError → error set with retryAfter
+[auth] auth.forgot.hook.submit.error { error_name: [32m'ForgotPasswordRateLimitedError'[39m }
+
+stderr | src/features/auth/__tests__/useForgotPassword.test.tsx > useForgotPassword > T04: submit 500 ForgotPasswordInternalError → error set
+[auth] auth.forgot.hook.submit.error { error_name: [32m'ForgotPasswordInternalError'[39m }
+
+stderr | src/features/auth/__tests__/useForgotPassword.test.tsx > useForgotPassword > T05: submit network failure (TypeError) → NetworkError set
+[auth] auth.forgot.hook.submit.error { error_name: [32m'NetworkError'[39m }
+
+stderr | src/features/auth/__tests__/useVerifyMfa.test.tsx > useVerifyMfa > H02: wrong code — 401 MfaCodeInvalidError → error set, onSuccess not called, outcome null
+[auth] auth.mfa.verify.hook.submit.error {
+  error_name: [32m'MfaCodeInvalidError'[39m,
+  error_code: [32m'AUTH_MFA_CODE_INVALID'[39m
+}
+
+stderr | src/features/auth/__tests__/useForgotPassword.test.tsx > useForgotPassword > T06: clearError → error becomes null
+[auth] auth.forgot.hook.submit.error { error_name: [32m'NetworkError'[39m }
+
+stderr | src/features/auth/__tests__/useVerifyMfa.test.tsx > useVerifyMfa > H03: challenge expired — 410 MfaChallengeExpiredError → error set, onSuccess not called
+[auth] auth.mfa.verify.hook.submit.error {
+  error_name: [32m'MfaChallengeExpiredError'[39m,
+  error_code: [32m'AUTH_MFA_CHALLENGE_EXPIRED'[39m
+}
+
+stderr | src/features/auth/__tests__/useForgotPassword.test.tsx > useForgotPassword > T07: logger NEVER logs full email — PII safety (email_domain only)
+[auth] auth.forgot.hook.submit.error { error_name: [32m'ForgotPasswordRateLimitedError'[39m }
+
+stderr | src/features/auth/__tests__/useVerifyMfa.test.tsx > useVerifyMfa > H04: rate limited — 429 MfaVerifyRateLimitedError → error set with retryAfter
+[auth] auth.mfa.verify.hook.submit.error {
+  error_name: [32m'MfaVerifyRateLimitedError'[39m,
+  error_code: [32m'AUTH_MFA_VERIFY_RATE_LIMITED'[39m
+}
+
+stderr | src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T05: 401 invalid credentials — sets InvalidCredentialsError
+[auth] auth.signin.hook.submit.error { error_name: [32m'InvalidCredentialsError'[39m }
+
+stderr | src/features/auth/__tests__/useVerifyMfa.test.tsx > useVerifyMfa > H05: network down — fetch TypeError → NetworkError set, onSuccess not called
+[auth] auth.mfa.verify.hook.submit.error { error_name: [32m'NetworkError'[39m, error_code: [32m'NETWORK_ERROR'[39m }
+
+stderr | src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T06: 423 account locked — sets AccountLockedError
+[auth] auth.signin.hook.submit.error { error_name: [32m'AccountLockedError'[39m }
+
+stderr | src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T07: 429 rate limited with Retry-After — sets RateLimitedError carrying retry_after
+[auth] auth.signin.hook.submit.error { error_name: [32m'RateLimitedError'[39m }
+
+stderr | src/features/auth/__tests__/useVerifyMfa.test.tsx > useVerifyMfa > H06: code length ≠ 6 → guard returns null without calling repo
+[auth] auth.mfa.verify.hook.submit.invalid_code_format { code_len: [33m5[39m }
+
+stderr | src/features/auth/__tests__/useForgotPassword.test.tsx > useForgotPassword > T10: error is cleared on next successful submit — state transition
+[auth] auth.forgot.hook.submit.error { error_name: [32m'ForgotPasswordValidationError'[39m }
+
+stderr | src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T07: 400 AUTH_SIGNUP_NON_CORPORATE_EMAIL → NonCorporateEmailError surfaced
+[auth] auth.signup.hook.submit.error { error_name: [32m'NonCorporateEmailError'[39m }
+
+stderr | src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T08: TypeError network error — sets NetworkError
+[auth] auth.signin.hook.submit.error { error_name: [32m'NetworkError'[39m }
+
+stderr | src/features/auth/__tests__/useVerifyMfa.test.tsx > useVerifyMfa > H07: missing challengeToken → guard returns null without calling repo
+[auth] auth.mfa.verify.hook.submit.missing_challenge
+
+ ✓ src/features/auth/__tests__/useForgotPassword.test.tsx (10 tests) 23ms
+stderr | src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T09: 500 server error — sets SigninInternalError
+[auth] auth.signin.hook.submit.error { error_name: [32m'SigninInternalError'[39m }
+
+stderr | src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T08: 400 AUTH_SIGNUP_LEGAL_NOT_ACCEPTED → LegalNotAcceptedError surfaced
+[auth] auth.signup.hook.submit.error { error_name: [32m'LegalNotAcceptedError'[39m }
+
+stderr | src/features/auth/__tests__/useVerifyMfa.test.tsx > useVerifyMfa > H08: clearError → error becomes null after clearing previous error
+[auth] auth.mfa.verify.hook.submit.error {
+  error_name: [32m'MfaCodeInvalidError'[39m,
+  error_code: [32m'AUTH_MFA_CODE_INVALID'[39m
+}
+
+stderr | src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T09: 409 AUTH_SIGNUP_EMAIL_TAKEN → EmailTakenError surfaced
+[auth] auth.signup.hook.submit.error { error_name: [32m'EmailTakenError'[39m }
+
+stderr | src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T11: never logs password in any log event
+[auth] auth.signin.hook.submit.error { error_name: [32m'InvalidCredentialsError'[39m }
+
+stderr | src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T10: 422 AUTH_SIGNUP_INVALID_PAYLOAD (password) → PasswordPolicyError surfaced
+[auth] auth.signup.hook.submit.error { error_name: [32m'PasswordPolicyError'[39m }
+
+stderr | src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T11: 429 AUTH_SIGNUP_RATE_LIMITED → SignupRateLimitedError with retryAfter
+[auth] auth.signup.hook.submit.error { error_name: [32m'SignupRateLimitedError'[39m }
+
+ ✓ src/features/auth/__tests__/useSignIn.test.tsx (11 tests) 24ms
+stderr | src/features/auth/__tests__/useVerifyMfa.test.tsx > useVerifyMfa > H11: 5xx MfaVerifyInternalError → error set with status code
+[auth] auth.mfa.verify.hook.submit.error {
+  error_name: [32m'MfaVerifyInternalError'[39m,
+  error_code: [32m'AUTH_MFA_VERIFY_INTERNAL_ERROR'[39m
+}
+
+stderr | src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T12: TypeError network error → NetworkError surfaced
+[auth] auth.signup.hook.submit.error { error_name: [32m'NetworkError'[39m }
+
+stderr | src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T13: 500 server error → SignupInternalError surfaced
+[auth] auth.signup.hook.submit.error { error_name: [32m'SignupInternalError'[39m }
+
+ ✓ src/features/auth/__tests__/useVerifyMfa.test.tsx (11 tests) 26ms
+stderr | src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T14: logger NEVER logs full email, password, or full_name — PII safety
+[auth] auth.signup.hook.submit.error { error_name: [32m'NonCorporateEmailError'[39m }
+
+stderr | src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T14b: clearError resets error state
+[auth] auth.signup.hook.submit.error { error_name: [32m'NetworkError'[39m }
+
+stderr | src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T14c: 422 generic payload error → SignupValidationError surfaced
+[auth] auth.signup.hook.submit.error { error_name: [32m'SignupValidationError'[39m }
+
+ ✓ src/features/auth/__tests__/useSignUp.test.tsx (16 tests) 31ms
+ ✓ src/app/__tests__/providers.test.tsx (4 tests) 18ms
+ ✓ src/pages/chat/__tests__/HistoryPage.test.tsx (10 tests) 52ms
+
+ Test Files  21 passed (21)
+      Tests  268 passed (268)
+   Start at  13:04:17
+   Duration  2.85s (transform 1.57s, setup 2.87s, collect 5.04s, tests 2.10s, environment 10.22s, prepare 1.82s)
+
