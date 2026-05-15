@@ -2,6 +2,8 @@
  * Hilo People — i18n test suite.
  *
  * Slice/Phase: P00-S01-T005 — i18n resources ES/EN/FR / Phase 0 Scaffold.
+ *   Extended in P03-S01-T004 — §D-T004-I18N-LOCKSTEP-TEST: asserts reset_sent.*
+ *   keys exist in all 3 locales and that body.with_email contains {{maskedEmail}}.
  *
  * Responsibility: verify that i18next is configured correctly with all 8 namespaces,
  *   3 locales, fallback behaviour, and error-code coverage.
@@ -16,7 +18,7 @@
  * Source ref: task pack §8.4 (8 test assertions).
  */
 
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, afterEach } from "vitest";
 import i18n from "../index";
 import { SUPPORTED_LANGUAGES, I18N_NAMESPACES, DEFAULT_LANGUAGE } from "../languages";
 
@@ -220,5 +222,111 @@ describe("i18n: no copy-paste across languages", () => {
     expect(es).not.toBe(en);
     expect(es).not.toBe(fr);
     expect(en).not.toBe(fr);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// §D-T004-I18N-LOCKSTEP-TEST — reset_sent keys ES/EN/FR lockstep assertions
+// ---------------------------------------------------------------------------
+
+/**
+ * Lockstep assertions for auth:reset_sent.* keys added in P03-S01-T004.
+ * Verifies:
+ *   1. auth:reset_sent.title resolves to expected locale-specific literal.
+ *   2. auth:reset_sent.body.with_email contains {{maskedEmail}} placeholder.
+ *   3. All 4 keys are non-empty in all 3 locales.
+ */
+describe("i18n: reset_sent lockstep — §D-T004-I18N-LOCKSTEP-TEST", () => {
+  afterEach(async () => {
+    await i18n.changeLanguage("es");
+  });
+
+  it("i18n: auth:reset_sent.title resolves ES literal", async () => {
+    await i18n.changeLanguage("es");
+    expect(i18n.t("auth:reset_sent.title")).toBe("Revisa tu correo");
+  });
+
+  it("i18n: auth:reset_sent.title resolves EN literal", async () => {
+    await i18n.changeLanguage("en");
+    expect(i18n.t("auth:reset_sent.title")).toBe("Check your email");
+  });
+
+  it("i18n: auth:reset_sent.title resolves FR literal", async () => {
+    await i18n.changeLanguage("fr");
+    expect(i18n.t("auth:reset_sent.title")).toBe("Vérifiez votre email");
+  });
+
+  it("i18n: auth:reset_sent.body.with_email ES contains interpolated maskedEmail", async () => {
+    await i18n.changeLanguage("es");
+    // Interpolate with a sentinel value and confirm it appears in the output
+    const result = i18n.t("auth:reset_sent.body.with_email", { maskedEmail: "X" });
+    expect(result).toContain("X");
+    // Raw key must also contain the placeholder (raw resource check)
+    const bundle = i18n.getResourceBundle("es", "auth") as {
+      reset_sent: { body: { with_email: string } };
+    };
+    expect(bundle.reset_sent.body.with_email).toContain("{{maskedEmail}}");
+  });
+
+  it("i18n: auth:reset_sent.body.with_email EN contains interpolated maskedEmail", async () => {
+    await i18n.changeLanguage("en");
+    const result = i18n.t("auth:reset_sent.body.with_email", { maskedEmail: "X" });
+    expect(result).toContain("X");
+    const bundle = i18n.getResourceBundle("en", "auth") as {
+      reset_sent: { body: { with_email: string } };
+    };
+    expect(bundle.reset_sent.body.with_email).toContain("{{maskedEmail}}");
+  });
+
+  it("i18n: auth:reset_sent.body.with_email FR contains interpolated maskedEmail", async () => {
+    await i18n.changeLanguage("fr");
+    const result = i18n.t("auth:reset_sent.body.with_email", { maskedEmail: "X" });
+    expect(result).toContain("X");
+    const bundle = i18n.getResourceBundle("fr", "auth") as {
+      reset_sent: { body: { with_email: string } };
+    };
+    expect(bundle.reset_sent.body.with_email).toContain("{{maskedEmail}}");
+  });
+
+  it("i18n: all 4 reset_sent keys are non-empty in es", () => {
+    const bundle = i18n.getResourceBundle("es", "auth") as {
+      reset_sent: {
+        title: string;
+        body: { with_email: string; fallback: string };
+        actions: { back_to_sign_in: string };
+      };
+    };
+    expect(bundle.reset_sent.title.length).toBeGreaterThan(0);
+    expect(bundle.reset_sent.body.with_email.length).toBeGreaterThan(0);
+    expect(bundle.reset_sent.body.fallback.length).toBeGreaterThan(0);
+    expect(bundle.reset_sent.actions.back_to_sign_in.length).toBeGreaterThan(0);
+  });
+
+  it("i18n: all 4 reset_sent keys are non-empty in en", () => {
+    const bundle = i18n.getResourceBundle("en", "auth") as {
+      reset_sent: {
+        title: string;
+        body: { with_email: string; fallback: string };
+        actions: { back_to_sign_in: string };
+      };
+    };
+    expect(bundle.reset_sent.title.length).toBeGreaterThan(0);
+    expect(bundle.reset_sent.body.with_email.length).toBeGreaterThan(0);
+    expect(bundle.reset_sent.body.fallback.length).toBeGreaterThan(0);
+    expect(bundle.reset_sent.actions.back_to_sign_in.length).toBeGreaterThan(0);
+  });
+
+  it("i18n: all 4 reset_sent keys are non-empty in fr", () => {
+    const bundle = i18n.getResourceBundle("fr", "auth") as {
+      reset_sent: {
+        title: string;
+        body: { with_email: string; fallback: string };
+        actions: { back_to_sign_in: string };
+      };
+    };
+    expect(bundle.reset_sent.title.length).toBeGreaterThan(0);
+    expect(bundle.reset_sent.body.with_email.length).toBeGreaterThan(0);
+    expect(bundle.reset_sent.body.fallback.length).toBeGreaterThan(0);
+    expect(bundle.reset_sent.actions.back_to_sign_in.length).toBeGreaterThan(0);
   });
 });

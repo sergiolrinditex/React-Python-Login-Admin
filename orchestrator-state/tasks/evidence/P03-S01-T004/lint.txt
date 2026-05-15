@@ -1,0 +1,13 @@
+## Lint evidence — P03-S01-T004
+
+eslint: not installed in package.json devDependencies (pre-existing condition).
+binary not found at node_modules/.bin/eslint (symlinked from canonical root, which also lacks eslint).
+
+This is a pre-existing condition documented in all P03-S01 task handoffs (T001, T002, T003).
+ESLint was never installed in this project. npm run lint returns exit 127 (command not found).
+
+Mitigation: tsc --noEmit (exit 0) used as type checker.
+
+Status: informational / pre-existing — NOT a regression introduced by P03-S01-T004.
+
+tsc --noEmit: exit 0 (see tsc.txt)
