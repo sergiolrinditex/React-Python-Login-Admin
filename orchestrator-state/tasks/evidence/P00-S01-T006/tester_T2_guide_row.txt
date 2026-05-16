@@ -1,0 +1,17 @@
+=== T2: TECHNICAL_GUIDE §11.1 LITELLM_MASTER_KEY row ===
+Command:
+  grep -c "LITELLM_MASTER_KEY" docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md
+  grep -n "LITELLM_MASTER_KEY" docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md
+
+Output:
+  1
+  537:| `LITELLM_MASTER_KEY` | dev key | secret | secret | bearer que el backend envía al proxy LiteLLM; debe coincidir con `credential_plain` del fixture activo en `data/verification/admin_ai/credentials/*.json` |
+
+Strict AC2 pattern (must contain both "credential_plain" AND "fixture"):
+  grep -E '\| `LITELLM_MASTER_KEY` \|.*credential_plain.*fixture' → 1 match → PASS
+
+Count: 1 (no duplicates)
+Line 537: row present in §11.1 table
+5th column mentions: "credential_plain" AND "data/verification/admin_ai/credentials/*.json" (fixture path)
+
+RESULT: PASS — 1 row, no duplicates, credential_plain + fixture reference present

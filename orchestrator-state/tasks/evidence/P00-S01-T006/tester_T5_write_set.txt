@@ -1,0 +1,32 @@
+=== T5: Write-set discipline ===
+Command:
+  git diff --name-only main
+
+Output:
+  .env.example
+  docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md
+
+Command:
+  git status --short
+
+Output:
+   M .env.example
+   M docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md
+  ?? orchestrator-state/tasks/evidence/P00-S01-T006/
+  ?? orchestrator-state/tasks/handoffs/P00-S01-T006.md
+  ?? orchestrator-state/tasks/task-packs/P00-S01-T006.md
+
+Analysis:
+- Modified tracked: .env.example (declared write set) ✓
+- Modified tracked: docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md (declared write set) ✓
+- Untracked new: orchestrator-state/tasks/evidence/P00-S01-T006/ (standard developer output) ✓
+- Untracked new: orchestrator-state/tasks/handoffs/P00-S01-T006.md (standard developer output) ✓
+- Untracked new: orchestrator-state/tasks/task-packs/P00-S01-T006.md (standard developer output) ✓
+- No backend code changes ✓
+- No frontend code changes ✓
+- No migration files ✓
+- No docker-compose.yml changes ✓
+- No litellm/config.yaml changes ✓
+- PROGRESS.md in canonical root (not in worktree memory/): standard pattern ✓
+
+RESULT: PASS — write set matches declared scope exactly. No forbidden files touched.

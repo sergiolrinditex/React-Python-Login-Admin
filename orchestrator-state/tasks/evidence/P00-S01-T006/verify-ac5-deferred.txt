@@ -1,0 +1,49 @@
+## AC5 Verification — Smoke chat POST /chat/completions — DEFERRED
+## slice-verifier — 2026-05-16T14:00:00Z
+
+### Preflight diagnostic:
+$ docker info >/dev/null 2>&1; echo "DOCKER_DAEMON=$?"
+DOCKER_DAEMON=127
+
+### Conclusion:
+Docker daemon is DOWN (exit code 127 — docker command not found or daemon not running).
+The litellm container cannot be started without a running docker daemon.
+
+### What this means:
+AC5 requires:
+  1. cp .env.example .env
+  2. docker compose up -d litellm backend
+  3. curl -sS -X POST http://localhost:4000/chat/completions
+     -H "Authorization: Bearer hilo-dev-litellm-master-key-2026"
+     -H "Content-Type: application/json"
+     -d '{"model":"gpt-4o-mini","messages":[{"role":"user","content":"ping"}]}'
+  4. Expected: HTTP 200 (or non-401 4xx like model-not-configured). HTTP 401 = FAIL.
+
+### Background:
+This deferral was pre-authorized in the task pack at R-2:
+  "R-2 — docker daemon DOWN in this worktree (medium, non-blocking): AC5 (smoke real
+  POST /chat/completions → 200) requires litellm UP, which requires docker daemon.
+  In the moment of the planner, daemon DOWN. This does not block the slice..."
+
+### AC1..AC4 deterministic verification status:
+- AC1: PASS — .env.example LITELLM_MASTER_KEY=hilo-dev-litellm-master-key-2026 matches fixture
+- AC2: PASS — §11.1 row with credential_plain+fixture reference inserted and verified
+- AC3: PASS — bootstrap_source_of_truth.py --validate-only exit 0
+- AC4: PASS — canonical PROGRESS.md line 14 has substantive bullet
+
+### USER_ACTION_REQUIRED:
+The user must choose one of these two options and respond in chat:
+
+OPTION A (waive AC5):
+  Reply with exactly:
+  VERIFY_WAIVED: docker daemon down — AC1+AC2+AC3+AC4 deterministic verified offline
+  This will allow the closer to proceed with VERIFY_OUTCOME: verified based on the
+  four deterministic ACs that prove the fix is correct (value sync + guide row + bootstrap + PROGRESS).
+
+OPTION B (run AC5):
+  Start the Docker daemon on this machine, then rerun:
+  /verify-slice P00-S01-T006
+  The slice-verifier will then attempt docker compose up -d litellm backend and run the
+  smoke curl test to confirm HTTP 200 (or non-401 4xx).
+
+DO NOT proceed with closer until the user has chosen one of these options.

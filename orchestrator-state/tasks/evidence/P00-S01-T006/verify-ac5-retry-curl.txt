@@ -1,0 +1,11 @@
+HTTP/1.1 400 Bad Request
+date: Sat, 16 May 2026 10:06:25 GMT
+server: uvicorn
+x-litellm-call-id: d8a3722a-b5f6-4174-8d23-d354778a3b7c
+x-litellm-response-cost: 0
+x-litellm-key-spend: 0.0
+content-length: 352
+content-type: application/json
+
+{"error":{"message":"/chat/completions: Invalid model name passed in model=gpt-4o-mini. Call `/v1/models` to view available models for your key.","type":"None","param":"None","code":"400","provider_specific_fields":{"error":"/chat/completions: Invalid model name passed in model=gpt-4o-mini. Call `/v1/models` to view available models for your key."}}}
+HTTP=400

@@ -1,0 +1,8 @@
+=== AC2: grep -n "LITELLM_MASTER_KEY" TECHNICAL_GUIDE.md ===
+537:| `LITELLM_MASTER_KEY` | dev key | secret | secret | bearer que el backend envía al proxy LiteLLM; debe coincidir con `credential_plain` del fixture activo en `data/verification/admin_ai/credentials/*.json` |
+
+=== AC2: strict pattern match ===
+| `LITELLM_MASTER_KEY` | dev key | secret | secret | bearer que el backend envía al proxy LiteLLM; debe coincidir con `credential_plain` del fixture activo en `data/verification/admin_ai/credentials/*.json` |
+
+=== RESULT: 1 match found in §11.1; row contains credential_plain + fixture ===
+PASS

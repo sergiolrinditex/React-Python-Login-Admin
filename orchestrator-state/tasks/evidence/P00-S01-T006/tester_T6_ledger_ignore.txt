@@ -1,0 +1,10 @@
+=== T6: Ledger files git ignore sanity ===
+Command:
+  git check-ignore orchestrator-state/tasks/bash-ledger.jsonl
+  git check-ignore orchestrator-state/tasks/ledger.jsonl
+
+Output:
+  orchestrator-state/tasks/bash-ledger.jsonl
+  orchestrator-state/tasks/ledger.jsonl
+
+RESULT: PASS (informational) — both runtime ledger files are gitignored. Bash hook events cannot re-dirty the working tree after atomic commit/push.

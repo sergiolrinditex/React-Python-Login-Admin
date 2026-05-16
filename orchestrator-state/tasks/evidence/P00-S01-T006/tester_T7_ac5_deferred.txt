@@ -1,0 +1,21 @@
+=== T7: AC5 smoke test — DEFERRED to /verify-slice ===
+Status: NOT EXECUTED
+Reason: Docker daemon is DOWN in this worktree environment (confirmed by main-orchestrator at task start).
+
+AC5 command (for reference):
+  cp .env.example .env
+  docker compose up -d litellm backend
+  curl -X POST http://localhost:4000/chat/completions \
+    -H "Authorization: Bearer hilo-dev-litellm-master-key-2026" \
+    -H "Content-Type: application/json" \
+    -d '{"model":"gpt-4o-mini","messages":[{"role":"user","content":"ping"}]}'
+  # Expected: HTTP 200 or model-not-configured 4xx (NOT 401)
+
+Deferred to: /verify-slice
+Decision authority: Human gate at /verify-slice
+- If docker daemon is UP at /verify-slice → slice-verifier executes AC5 smoke
+- If docker daemon is still DOWN at /verify-slice → human decides:
+  * waive with VERIFY_WAIVED: "docker daemon down — AC1+AC2+AC3 deterministic verified offline"
+  * OR start daemon before verify
+
+RESULT: DEFERRED — not a tester block; AC1+AC2+AC3 are deterministic and PASS. AC5 requires infra not available at tester time.

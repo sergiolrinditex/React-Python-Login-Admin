@@ -1,0 +1,13 @@
+## AC1 Verification — LITELLM_MASTER_KEY value match
+## slice-verifier — 2026-05-16T14:00:00Z
+
+### Command 1: .env.example value
+$ grep -E '^LITELLM_MASTER_KEY=' .env.example
+LITELLM_MASTER_KEY=hilo-dev-litellm-master-key-2026
+
+### Command 2: fixture credential_plain
+$ python3 -c "import json; print(json.load(open('data/verification/admin_ai/credentials/litellm_sandbox_bearer.json'))['credential_plain'])"
+hilo-dev-litellm-master-key-2026
+
+### Result: PASS
+Both values are exactly equal: "hilo-dev-litellm-master-key-2026"

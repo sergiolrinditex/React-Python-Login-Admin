@@ -534,6 +534,7 @@ Docker Compose local con servicios `frontend`, `backend`, `postgres`, `redis`, `
 | `JWT_PUBLIC_KEY` | dev key | secret | secret | verify JWT |
 | `ENCRYPTION_KEY` | dev key | secret | secret | cifrado credenciales |
 | `LITELLM_BASE_URL` | http://litellm:4000 | staging | prod | gateway modelos |
+| `LITELLM_MASTER_KEY` | dev key | secret | secret | bearer que el backend envía al proxy LiteLLM; debe coincidir con `credential_plain` del fixture activo en `data/verification/admin_ai/credentials/*.json` |
 | `S3_BUCKET_DOCUMENTS` | hilo-docs-dev | staging | prod | originales RAG |
 | `DEFAULT_LANGUAGE` | es | es | es | fallback i18n |
 | `MAX_UPLOAD_MB` | 25 | 25 | 25 | límite documentos |

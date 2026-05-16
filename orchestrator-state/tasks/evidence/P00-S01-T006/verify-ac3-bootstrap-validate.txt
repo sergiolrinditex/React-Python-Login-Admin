@@ -1,0 +1,30 @@
+## AC3 Verification — bootstrap_source_of_truth.py --validate-only
+## slice-verifier — 2026-05-16T14:00:00Z
+
+### Command:
+$ python3 -B -S .claude/bin/bootstrap_source_of_truth.py --validate-only
+
+### Output:
+Source-of-truth contract is valid.
+{
+  "instructions": [
+    "docs/source-of-truth/instrucciones.md"
+  ],
+  "checklist": [
+    "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md"
+  ],
+  "guide": [
+    "docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md"
+  ],
+  "ux": [
+    "docs/source-of-truth/UX_CONTRACT.md"
+  ],
+  "stack_profile": [
+    "docs/source-of-truth/STACK_PROFILE.yaml"
+  ]
+}
+EXIT_CODE=0
+
+### Result: PASS
+- Exit code 0 — source-of-truth contract is valid
+- All five source-of-truth files recognized and valid after §11.1 row insertion

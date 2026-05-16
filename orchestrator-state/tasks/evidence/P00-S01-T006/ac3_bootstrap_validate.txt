@@ -1,0 +1,22 @@
+=== AC3: python3 -B -S .claude/bin/bootstrap_source_of_truth.py --validate-only ===
+Source-of-truth contract is valid.
+{
+  "instructions": [
+    "docs/source-of-truth/instrucciones.md"
+  ],
+  "checklist": [
+    "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md"
+  ],
+  "guide": [
+    "docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md"
+  ],
+  "ux": [
+    "docs/source-of-truth/UX_CONTRACT.md"
+  ],
+  "stack_profile": [
+    "docs/source-of-truth/STACK_PROFILE.yaml"
+  ]
+}
+
+=== RESULT: Exit 0. No contract breakage from §11.1 row insertion ===
+PASS

@@ -1,0 +1,8 @@
+=== AC1: .env.example value ===
+LITELLM_MASTER_KEY=hilo-dev-litellm-master-key-2026
+
+=== AC1: fixture credential_plain ===
+hilo-dev-litellm-master-key-2026
+
+=== RESULT: MATCH — both values are "hilo-dev-litellm-master-key-2026" ===
+PASS

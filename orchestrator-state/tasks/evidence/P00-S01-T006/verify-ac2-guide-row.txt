@@ -1,0 +1,13 @@
+## AC2 Verification — TECHNICAL_GUIDE §11.1 LITELLM_MASTER_KEY row
+## slice-verifier — 2026-05-16T14:00:00Z
+
+### Command:
+$ grep -E '\| `LITELLM_MASTER_KEY` \|.*credential_plain.*fixture' docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md
+
+### Output (1 match):
+| `LITELLM_MASTER_KEY` | dev key | secret | secret | bearer que el backend envía al proxy LiteLLM; debe coincidir con `credential_plain` del fixture activo en `data/verification/admin_ai/credentials/*.json` |
+
+### Result: PASS
+- Row present in §11.1 table
+- 5th column explicitly mentions "credential_plain" and "fixture" — satisfies AC2 requirement
+- Strict pattern matched: | `LITELLM_MASTER_KEY` | ... credential_plain ... fixture

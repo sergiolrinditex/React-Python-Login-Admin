@@ -1,0 +1,9 @@
+=== T4: Security — no .env real modified ===
+Command:
+  git status --short -- .env
+  git diff -- .env | head -5
+
+Output:
+  (empty — no output for .env)
+
+RESULT: PASS — .env is not tracked by git and was not touched. No real env file modified or committed.
