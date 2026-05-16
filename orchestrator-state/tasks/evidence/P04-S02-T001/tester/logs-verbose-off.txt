@@ -1,0 +1,16 @@
+=== RAG Feature Verbose Logging Contract (ENABLE_VERBOSE_LOGGING=false) ===
+
+In verbose=false mode:
+  - logVerbose() → suppressed (VITE_ENABLE_VERBOSE_LOGGING != "true")
+  - logWarn() → always fires (warn-level events: 403, 413, 429, 422, etc.)
+  - logError() → always fires (error-level events: network errors, server errors)
+
+Vitest verbose=false run: 205/205 PASS, VITEST_VERBOSE_FALSE_EXIT:0.
+Error-path [rag] log lines identical to verbose=true run (only error/warn paths visible).
+No additional success-path verbose lines appear.
+
+Sample lines from verbose=false run (identical error paths):
+  [rag] rag.hook.useIndexDocument.error { doc_id: 'doc-001', error: 'RAG_INDEX_IN_PROGRESS' }
+  [rag] rag.repo.listDocuments.forbidden { status: 403, request_id: 'test-req-id' }
+
+Success-path verbose logs (rag.repo.*.start/ok) are suppressed = correct behavior.

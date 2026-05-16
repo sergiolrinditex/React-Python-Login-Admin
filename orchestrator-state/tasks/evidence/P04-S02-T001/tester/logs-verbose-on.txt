@@ -1,0 +1,35 @@
+=== RAG Feature Verbose Logging Contract (ENABLE_VERBOSE_LOGGING=true) ===
+
+Logger implementation (frontend/src/features/rag/data/logger.ts):
+  - logVerbose(): gated by import.meta.env.VITE_ENABLE_VERBOSE_LOGGING === "true" → console.info
+  - logWarn(): always fires → console.warn
+  - logError(): always fires → console.error
+
+Operations instrumented (in ragRepository.ts):
+  BEFORE: logVerbose("rag.repo.listDocuments.start", {collection_id, status, has_cursor, limit})
+  AFTER:  logVerbose("rag.repo.listDocuments.ok", {count, has_next_cursor, request_id})
+  ERROR:  logWarn/logError("rag.repo.listDocuments.forbidden|rate_limited|server_error|error", {...})
+
+  BEFORE: logVerbose("rag.repo.uploadDocument.start", {mime_type, size_bucketed, language, collection_id})
+  AFTER:  logVerbose("rag.repo.uploadDocument.ok", {kind, doc_id, status, language, request_id})
+  ERROR:  logWarn/logError("rag.repo.uploadDocument.validation_error|too_large|error...", {...})
+
+  BEFORE: logVerbose("rag.repo.indexDocument.start", {doc_id}) [in _ragRepositoryExtras.ts]
+  AFTER:  logVerbose("rag.repo.indexDocument.ok", {kind, job_id, status, request_id})
+  ERROR:  logWarn/logError("rag.repo.indexDocument.in_progress|not_found|forbidden|error", {...})
+
+Note: In vitest environment, VITE_ENABLE_VERBOSE_LOGGING is not injected from shell 
+ENABLE_VERBOSE_LOGGING. Verbose gating works correctly in browser dev server.
+Error/warn paths (logWarn, logError) are always visible and appear in vitest output.
+
+Sample error-path logs from vitest verbose=true run:
+  [rag] rag.hook.useIndexDocument.error { doc_id: 'doc-001', error: 'RAG_INDEX_IN_PROGRESS' }
+  [rag] rag.hook.useUploadDocument.error { error: 'RAG_DOCUMENT_INVALID' }
+  [rag] rag.repo.listDocuments.forbidden { status: 403, request_id: 'test-req-id' }
+  [rag] rag.repo.uploadDocument.too_large { status: 413, request_id: 'test-req-id' }
+  [rag] rag.repo.uploadDocument.validation_error { status: 422, field: 'collection_id', request_id: 'test-req-id' }
+  [rag] rag.repo.indexDocument.in_progress { ... }
+  [rag] rag.repo.indexDocument.not_found { doc_id: 'nonexistent-id', request_id: 'test-req-id' }
+  [rag] rag.repo.indexDocument.forbidden { doc_id: 'doc-uuid-001', request_id: 'test-req-id' }
+
+PII check: no email, no bearer token, no password values, no filename content in any log line.

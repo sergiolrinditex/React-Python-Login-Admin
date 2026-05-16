@@ -1,0 +1,10 @@
+=== POST /api/v1/admin/rag/documents (minimal PDF, 328 bytes) ===
+PDF sha256: 62e730b1b469c20af1817001b3fd6bd5ccdac0079245b32ca039218f9d2b70e4
+HTTP_STATUS:500
+{"data":null,"meta":{"request_id":"96d2bf6b-6aba-4433-8530-a5aee5540161"},"errors":[{"code":"RAG_STORAGE_FAILED","message":"Storage upload failed. Please retry.","field":null,"details":null}]}
+
+NOTE: R-5 (KNOWN RISK) — MinIO bucket hilo-docs-dev not configured in dev env.
+Backend received the multipart request correctly (auth, RBAC, validation all passed).
+Storage layer returned 500 RAG_STORAGE_FAILED as documented in R-5.
+This is NOT a test failure — the HTTP contract and RBAC are correct.
+Correct behavior: title="Politica Vacaciones Tester Verification", language=es, collection_id valid UUID, file=328 bytes PDF.

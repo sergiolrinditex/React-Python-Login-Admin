@@ -1,0 +1,14 @@
+## Frontend Smoke — Tester cycle 2 (P04-S02-T001)
+Date: 2026-05-16
+
+Note: Two Vite instances running (P04-S02-T001 on port 5174, P04-S02-T003 on port 5173 which bound first).
+P04-S02-T001 Vite bumped to port 5174 (strictPort: false in vite.config.ts).
+
+http://localhost:5174/ → HTTP 200 (text/html; title="Hilo")
+http://localhost:5174/admin/rag/documents → HTTP 200 (SPA route, React Router handles)
+
+Backend smoke:
+- GET http://localhost:8000/health → 200 status=ok version=0.1.0
+- POST http://localhost:8000/api/v1/auth/sign-in (admin.peopletech@inditex-sandbox.com) → 200 mfa_required=false roles=["people_admin"] access_token len=409
+- GET http://localhost:8000/api/v1/admin/rag/documents?limit=50 → 200 data=[] (empty, expected)
+- GET http://localhost:8000/api/v1/admin/rag/collections → 200 data=[{name:"politicas_tienda"}]

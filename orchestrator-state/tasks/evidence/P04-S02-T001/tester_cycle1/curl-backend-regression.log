@@ -1,0 +1,29 @@
+# Tester cycle1 — backend regression smoke
+# Backend: http://localhost:8000 (up, confirmed)
+# Frontend: http://localhost:5173 (up, confirmed)
+# Admin JWT obtained: admin.peopletech@inditex-sandbox.com / AdminVerify2024!
+# Token length: 409
+
+--- GET /health ---
+{"data":{"status":"ok","version":"0.1.0","uptime":28272.95}}
+
+--- POST /auth/sign-in ---
+200 OK — mfa_required:false, roles:["people_admin"], access_token len=409
+
+--- GET /admin/rag/collections ---
+{"data":[{"id":"1e2af8d5-99c5-40e9-8c61-20aa3af9d689","name":"politicas_tienda","vertical":"hr_policies","language":"es","enabled":true}],"meta":{"request_id":"..."}}
+
+--- GET /admin/rag/documents?limit=50 ---
+{"data":[],"meta":{"pagination":{"cursor":null,"limit":50},"request_id":"..."}} — empty list, correct
+
+--- GET /admin/rag/documents (no auth) ---
+{"errors":[{"code":"AUTH_SESSION_EXPIRED","message":"Session expired or invalid credentials. Please sign in again.","field":null}]} — 401 correct
+
+--- POST /admin/rag/documents (330-byte minimal PDF, sha256: 61548f660e7c1a7c5ca243a3dc3736dc20192ba0876e68837c831e16483be830) ---
+RESULT: 500 RAG_STORAGE_FAILED — auth+RBAC+validation passed; storage layer (MinIO) not configured (R-5, expected)
+
+--- POST /admin/rag/documents/{fake-id}/index ---
+{"errors":[{"code":"RAG_DOCUMENT_INVALID","message":"Document 00000000-0000-0000-0000-000000000000 not found.","field":"id"}]} — 404 correct
+
+--- REGRESSION SUMMARY ---
+All endpoints respond as expected. RAG_STORAGE_FAILED on upload is R-5 (MinIO not configured, same as cycle 0). Not a regression.

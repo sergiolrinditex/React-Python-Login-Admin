@@ -1,0 +1,22 @@
+# Console excerpt — cycle 2 focused regression verify
+# P04-S02-T001 / 2026-05-16T10:10:00Z
+# MCP: claude-in-chrome
+
+## Current session (post sign-in and navigation to /admin/rag/documents)
+# No NEW errors in current session after page load.
+# Page renders correctly with empty state and "Ver colecciones →" button at 44px.
+
+## Stale errors from PREVIOUS session (before this verify run):
+# [8:31:38] [ERROR] [rag] rag.repo.uploadDocument.server_error — R-5 MinIO (prior pass, expected)
+# [8:31:38] [ERROR] [rag] rag.hook.useUploadDocument.error — same
+# [8:31:38] [ERROR] [rag] rag.form.upload_error — same
+# [8:33:41..8:34:38] [ERROR] auth.http.request.network_error + rag.repo.listDocuments.error + rag.repo.listCollections.error — prior session transient backend inaccessibility
+# [EXCEPTION] "A listener indicated an asynchronous response by returning true..." — browser extension message channel noise, NOT app code
+
+## Current session load result:
+# Page: http://localhost:5174/admin/rag/documents
+# HTTP: 200 text/html (SPA React Router)
+# UI: Empty state shown ("NO HAY DOCUMENTOS INDEXADOS") — correct for empty DB
+# Upload form: visible with politicas_tienda in collections dropdown
+# nav-to-collections button: present, 44px height, inline-flex, design token color
+# No app-originated errors from current page load

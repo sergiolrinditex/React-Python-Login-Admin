@@ -1,0 +1,11 @@
+> hilo-people-frontend@0.1.0 build
+> tsc -b && vite build
+
+vite v8.0.12 building client environment for production...
+✓ 230 modules transformed.
+dist/index.html                   1.02 kB │ gzip:   0.61 kB
+dist/assets/index-FMs1kaoC.css    1.02 kB │ gzip:   0.54 kB
+dist/assets/index-D7CdY3pi.js   500.62 kB │ gzip: 150.25 kB
+✓ built in 191ms
+(!) Chunk size warning (cosmetic, pre-existing) - 500.62 kB > 500 kB limit
+BUILD_EXIT:0

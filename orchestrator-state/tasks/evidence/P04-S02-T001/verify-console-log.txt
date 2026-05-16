@@ -1,0 +1,46 @@
+## Browser Console Log — verify-slice P04-S02-T001
+## Captured via mcp__claude-in-chrome__read_console_messages during human reproduction
+
+### PII Check: PASS
+- No email addresses in log keys
+- No bearer tokens in log keys
+- No filenames or titles in log keys (only typed error keys)
+- File size logged bucketed (implementation confirmed in code: <100KB, <1MB, etc.)
+
+### Observed log entries (upload error path):
+[ERROR] [rag] rag.repo.uploadDocument.server_error (Object — 500 RAG_STORAGE_FAILED, R-5 MinIO)
+[ERROR] [rag] rag.hook.useUploadDocument.error (Object)
+[ERROR] [rag] rag.hook.useUploadDocument.mutation_error (Object)
+[ERROR] [rag] rag.form.upload_error (Object)
+
+### Observed log entries (auth boundary):
+[WARNING] [auth] auth.repo.refresh.session_expired (Object — triggered on direct URL nav before login)
+[ERROR] [auth] auth.http.request.network_error (Object — same, two requests)
+
+### Extension noise (not from app):
+[EXCEPTION] Error: A listener indicated an asynchronous response by returning true, but the message channel closed...
+  — Chrome extension communication, NOT from the Hilo app. Not a defect.
+
+### BEFORE/AFTER pattern (frontend):
+rag.repo.listDocuments.start → rag.repo.listDocuments.ok (BEFORE/AFTER confirmed via repo code review)
+rag.repo.listCollections.start → rag.repo.listCollections.ok (same)
+rag.repo.uploadDocument.start → rag.repo.uploadDocument.server_error (failure path)
+
+### verbose=true logging (backend ENABLE_VERBOSE_LOGGING=true):
+Backend process PID 22130 runs with ENABLE_VERBOSE_LOGGING=true.
+Verbose backend logs confirmed via ps eww inspection.
+
+### Accessibility ARIA summary:
+- nav[aria-label="Lista de documentos"]
+- div[aria-live="polite"] (live region for status announcements)
+- section[aria-label="Subir documento"]
+- input[aria-invalid="false"] (flips to true on validation error — confirmed via JS exec)
+- select[aria-invalid="false"]
+- div[aria-label="Archivo (PDF o DOCX)"] + div[role="button"]
+- button[aria-label="Subir"]
+- section[aria-label="Lista de documentos"]
+
+### Tap target sizes:
+- SUBIR button: 108x44px ✅ (meets ≥44px)
+- Dropzone: 1140x93px ✅
+- "Ver colecciones →": 179x36px (36px height — advisory, non-blocking, cosmetic)

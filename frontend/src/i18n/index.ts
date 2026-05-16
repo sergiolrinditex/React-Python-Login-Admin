@@ -226,8 +226,67 @@ const resources = {
     rag: {
       documents: {
         title: "Documentos de People",
+        heading: "Documentos RAG",
+        subtitle: "Gestiona los documentos disponibles para búsqueda semántica",
         empty: "No hay documentos indexados",
-        upload: "Subir documento",
+        "empty.body": "Sube un documento PDF o DOCX para que el asistente pueda responder preguntas sobre su contenido.",
+        "empty.cta": "Subir primer documento",
+        upload: {
+          cta: "Subir documento",
+          uploading: "Subiendo…",
+          submit: "Subir",
+          dedup: "Documento existente reutilizado",
+          fields: {
+            title: "Título",
+            language: "Idioma",
+            "language.es": "Español",
+            "language.en": "Inglés",
+            "language.fr": "Francés",
+            collection: "Colección",
+            file: "Archivo (PDF o DOCX)",
+            "file.hint": "PDF o DOCX · máx. 25 MiB",
+          },
+        },
+        table: {
+          col: {
+            title: "Título",
+            language: "Idioma",
+            collection: "Colección",
+            status: "Estado",
+            actions: "Acciones",
+          },
+        },
+        status: {
+          uploaded: "Subido",
+          pending: "Pendiente",
+          processing: "Procesando",
+          indexed: "Indexado",
+          failed: "Fallido",
+        },
+        action: {
+          index: "Indexar",
+          "index.inProgress": "Indexando",
+        },
+        nav: {
+          collections: "Ver colecciones →",
+        },
+        error: {
+          network: "Error de conexión. Comprueba tu red e inténtalo de nuevo.",
+          permission: "No tienes permiso para gestionar documentos. Necesitas el rol de administrador.",
+          validation: {
+            title: "El título es obligatorio.",
+            language: "El idioma es obligatorio.",
+            collection: "La colección es obligatoria.",
+            file: "Selecciona un archivo PDF o DOCX.",
+          },
+          tooLarge: "El archivo supera el tamaño máximo de {{maxMb}} MiB.",
+          indexInProgress: "Ya existe un trabajo de indexación en progreso (estado: {{status}}).",
+        },
+        aria: {
+          uploading: "Subiendo documento…",
+          indexing: "Indexando documento…",
+          list: "Lista de documentos",
+        },
       },
     },
     // §D-T003-I18N: mcp.servers.* extended for McpServersPage (P04-S02-T003)
@@ -459,8 +518,67 @@ const resources = {
     rag: {
       documents: {
         title: "People documents",
+        heading: "RAG Documents",
+        subtitle: "Manage documents available for semantic search",
         empty: "No documents indexed yet",
-        upload: "Upload document",
+        "empty.body": "Upload a PDF or DOCX document so the assistant can answer questions about its content.",
+        "empty.cta": "Upload first document",
+        upload: {
+          cta: "Upload document",
+          uploading: "Uploading…",
+          submit: "Upload",
+          dedup: "Existing document reused",
+          fields: {
+            title: "Title",
+            language: "Language",
+            "language.es": "Spanish",
+            "language.en": "English",
+            "language.fr": "French",
+            collection: "Collection",
+            file: "File (PDF or DOCX)",
+            "file.hint": "PDF or DOCX · max 25 MiB",
+          },
+        },
+        table: {
+          col: {
+            title: "Title",
+            language: "Language",
+            collection: "Collection",
+            status: "Status",
+            actions: "Actions",
+          },
+        },
+        status: {
+          uploaded: "Uploaded",
+          pending: "Pending",
+          processing: "Processing",
+          indexed: "Indexed",
+          failed: "Failed",
+        },
+        action: {
+          index: "Index",
+          "index.inProgress": "Indexing",
+        },
+        nav: {
+          collections: "View collections →",
+        },
+        error: {
+          network: "Connection error. Check your network and try again.",
+          permission: "You do not have permission to manage documents. You need the admin role.",
+          validation: {
+            title: "Title is required.",
+            language: "Language is required.",
+            collection: "Collection is required.",
+            file: "Select a PDF or DOCX file.",
+          },
+          tooLarge: "The file exceeds the maximum size of {{maxMb}} MiB.",
+          indexInProgress: "An index job is already in progress (status: {{status}}).",
+        },
+        aria: {
+          uploading: "Uploading document…",
+          indexing: "Indexing document…",
+          list: "Documents list",
+        },
       },
     },
     // §D-T003-I18N: mcp.servers.* extended for McpServersPage (P04-S02-T003)
@@ -692,8 +810,67 @@ const resources = {
     rag: {
       documents: {
         title: "Documents People",
+        heading: "Documents RAG",
+        subtitle: "Gérez les documents disponibles pour la recherche sémantique",
         empty: "Aucun document indexé",
-        upload: "Téléverser un document",
+        "empty.body": "Téléversez un document PDF ou DOCX pour que l'assistant puisse répondre aux questions sur son contenu.",
+        "empty.cta": "Téléverser le premier document",
+        upload: {
+          cta: "Téléverser un document",
+          uploading: "Téléversement en cours…",
+          submit: "Téléverser",
+          dedup: "Document existant réutilisé",
+          fields: {
+            title: "Titre",
+            language: "Langue",
+            "language.es": "Espagnol",
+            "language.en": "Anglais",
+            "language.fr": "Français",
+            collection: "Collection",
+            file: "Fichier (PDF ou DOCX)",
+            "file.hint": "PDF ou DOCX · max 25 Mio",
+          },
+        },
+        table: {
+          col: {
+            title: "Titre",
+            language: "Langue",
+            collection: "Collection",
+            status: "Statut",
+            actions: "Actions",
+          },
+        },
+        status: {
+          uploaded: "Téléversé",
+          pending: "En attente",
+          processing: "En cours",
+          indexed: "Indexé",
+          failed: "Échoué",
+        },
+        action: {
+          index: "Indexer",
+          "index.inProgress": "Indexation",
+        },
+        nav: {
+          collections: "Voir les collections →",
+        },
+        error: {
+          network: "Erreur de connexion. Vérifiez votre réseau et réessayez.",
+          permission: "Vous n'avez pas la permission de gérer les documents. Vous devez avoir le rôle administrateur.",
+          validation: {
+            title: "Le titre est obligatoire.",
+            language: "La langue est obligatoire.",
+            collection: "La collection est obligatoire.",
+            file: "Sélectionnez un fichier PDF ou DOCX.",
+          },
+          tooLarge: "Le fichier dépasse la taille maximale de {{maxMb}} Mio.",
+          indexInProgress: "Un travail d'indexation est déjà en cours (statut : {{status}}).",
+        },
+        aria: {
+          uploading: "Téléversement du document…",
+          indexing: "Indexation du document…",
+          list: "Liste des documents",
+        },
       },
     },
     // §D-T003-I18N: mcp.servers.* extended for McpServersPage (P04-S02-T003)

@@ -15,6 +15,7 @@
  *     ROUTE_ADMIN_RAG_COLLECTIONS, ROUTE_ADMIN_AI_MCP, ROUTE_ADMIN_AI_MCP_NEW,
  *     ROUTE_ADMIN_AI_AGENTS, ROUTE_ADMIN_AUDIT, ROUTE_ADMIN_USAGE constants for nav.
  *   Updated in P04-S02-T003 — added /admin/ai/mcp route wired to McpServersPage (§D-T003-ROUTER).
+ *   Updated in P04-S02-T001 — added /admin/rag/documents route wired to RagDocumentsPage (§D-RAGDOC-ROUTER).
  *
  * Responsibility: single mount point for the application's route tree.
  *   Exports <AppRouter> which is consumed by main.tsx inside <Providers>.
@@ -31,6 +32,7 @@
  *   /history              → HistoryPage (employee history, RequireAuth) — P03-S02-T003
  *   /admin             → AdminDashboardPage (people_admin|super_admin) — P04-S01-T001
  *   /admin/ai/mcp      → McpServersPage (admin, RequireRole) — P04-S02-T003 §D-T003-ROUTER
+ *   /admin/rag/documents → RagDocumentsPage (admin, RequireRole) — P04-S02-T001 §D-RAGDOC-ROUTER
  *   /admin/ai/models   → placeholder (P04-S01-T002)
  *   (other admin routes → catch-all → /)
  *   /                  → RootRedirect: authenticated→/chat, unauthenticated→/auth/sign-in
@@ -42,6 +44,7 @@
  * P03-S01-T005 adds: /auth/2fa — TwoFactorPage (public, MFA code verification step).
  * P04-S01-T001 adds: real AdminDashboardPage + ROUTE_ADMIN_* constants (§D-T001-ROUTER).
  * P04-S02-T003 adds: McpServersPage at /admin/ai/mcp (§D-T003-ROUTER).
+ * P04-S02-T001 adds: RagDocumentsPage at /admin/rag/documents (§D-RAGDOC-ROUTER).
  *
  * AuthProvider composition (task pack §I):
  *   INSIDE router.tsx: <AuthProvider> wraps <Routes>.
@@ -65,6 +68,7 @@ import ChatHomePage from "../pages/chat/ChatHomePage";
 import HistoryPage from "../pages/chat/HistoryPage";
 import AdminDashboardPage from "../pages/admin/AdminDashboardPage";
 import McpServersPage from "../pages/admin/mcp/McpServersPage";
+import RagDocumentsPage from "../pages/admin/rag/RagDocumentsPage";
 import { AuthProvider } from "../features/auth/presentation/AuthProvider";
 import { useAuth } from "../features/auth/presentation/AuthProvider";
 import { RequireAuth } from "../features/auth/presentation/RequireAuth";
@@ -192,11 +196,11 @@ function RootRedirect(): ReactNode {
  */
 export function AppRouter(): ReactNode {
   if (import.meta.env.VITE_ENABLE_VERBOSE_LOGGING === "true") {
-    // §D-T003-ROUTER (P04-S02-T003): ROUTE_ADMIN_AI_MCP added to verbose-log routes array
+    // §D-RAGDOC-ROUTER (P04-S02-T001): ROUTE_ADMIN_RAG_DOCUMENTS added to verbose-log routes array
     console.info("AppRouter.render.start", {
       phase: "P04",
-      slice: "P04-S02-T003",
-      routes: [ROUTE_SHOWCASE, ROUTE_AUTH_SIGN_IN, ROUTE_AUTH_SIGN_UP, ROUTE_AUTH_RESET_SENT, ROUTE_AUTH_2FA, ROUTE_CHAT, ROUTE_HISTORY, ROUTE_ADMIN, ROUTE_ADMIN_AI_MCP],
+      slice: "P04-S02-T001",
+      routes: [ROUTE_SHOWCASE, ROUTE_AUTH_SIGN_IN, ROUTE_AUTH_SIGN_UP, ROUTE_AUTH_RESET_SENT, ROUTE_AUTH_2FA, ROUTE_CHAT, ROUTE_HISTORY, ROUTE_ADMIN, ROUTE_ADMIN_AI_MCP, ROUTE_ADMIN_RAG_DOCUMENTS],
     });
   }
 
@@ -244,6 +248,8 @@ export function AppRouter(): ReactNode {
             <Route path={ROUTE_ADMIN} element={<AdminDashboardPage />} />
             {/* P04-S02-T003: McpServersPage — §D-T003-ROUTER, TECHNICAL_GUIDE §6.1 */}
             <Route path={ROUTE_ADMIN_AI_MCP} element={<McpServersPage />} />
+            {/* P04-S02-T001: RagDocumentsPage — §D-RAGDOC-ROUTER, TECHNICAL_GUIDE §6.1 */}
+            <Route path={ROUTE_ADMIN_RAG_DOCUMENTS} element={<RagDocumentsPage />} />
             {/*
              * Subsequent admin sub-routes wired in P04-S01-T002+ slices.
              * Until then, catch-all handles them → / → /chat for admins.

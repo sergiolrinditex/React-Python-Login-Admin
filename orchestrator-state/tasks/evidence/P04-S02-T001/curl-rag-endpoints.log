@@ -1,0 +1,22 @@
+=== Admin sign-in (mfa_required:false, roles:[people_admin]) ===
+POST /api/v1/auth/sign-in
+Response: {"data":{"mfa_required":false,"access_token":"eyJ...","token_type":"Bearer","expires_in":1800},...}
+HTTP 200 - access_token present, refresh cookie HttpOnly set
+Token length: 409 chars
+
+=== GET /api/v1/admin/rag/collections ===
+Response: {"data":[{"id":"1e2af8d5-99c5-40e9-8c61-20aa3af9d689","name":"politicas_tienda","vertical":"hr_policies","language":"es","enabled":true,...}],...}
+HTTP 200 - 1 collection: politicas_tienda (seeded via rag_chat group)
+
+=== GET /api/v1/admin/rag/documents ===
+Response: {"data":[],"meta":{"pagination":{"cursor":null,"limit":50},...},...}
+HTTP 200 - empty list (no documents uploaded yet; expected state for empty UI)
+
+=== POST /api/v1/admin/rag/documents (upload attempt) ===
+Fixture PDF: /tmp/fixture_policy.pdf (383 bytes, minimal valid PDF skeleton)
+Response: {"data":null,...,"errors":[{"code":"RAG_STORAGE_FAILED","message":"Storage upload failed. Please retry.","field":null,"details":null}]}
+HTTP 500 - RAG_STORAGE_FAILED (MinIO bucket hilo-docs-dev not bound in current dev env — R-5 risk, expected)
+
+=== POST /api/v1/admin/rag/documents/00000000.../index ===
+Response: {"data":null,...,"errors":[{"code":"RAG_DOCUMENT_INVALID","message":"Document 00000000-0000-0000-0000-000000000000 not found.","field":"id","details":null}]}
+HTTP 404 - RAG_DOCUMENT_INVALID — correct 404 behavior for nonexistent document id

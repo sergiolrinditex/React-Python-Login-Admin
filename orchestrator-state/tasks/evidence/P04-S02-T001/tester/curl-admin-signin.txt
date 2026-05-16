@@ -1,0 +1,12 @@
+=== POST /api/v1/auth/sign-in (admin) ===
+HTTP_STATUS:200
+{
+    "data": {
+        "mfa_required": false,
+        "access_token": "eyJ...h0A (len=409)",
+        "token_type": "Bearer",
+        "expires_in": 1800
+    },
+    "meta": {"request_id": "06b593a7-b71c-4da7-bc10-a97705f329a1"}
+}
+R-2 RESOLVED: mfa_required=false, roles=["people_admin"]

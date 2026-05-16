@@ -1,0 +1,24 @@
+=== Front → Back → DB Contract Observed ===
+
+Route: /admin/rag/documents (SPA, 200 OK from Vite dev server)
+Auth guard: RequireRole(["people_admin","super_admin"]) — verified via 401 on no-auth requests
+Page: RagDocumentsPage → useRagDocuments, useRagCollections, useUploadDocument, useIndexDocument
+Repository: RagRepository (ragRepository.ts + _ragRepositoryExtras.ts)
+Domain types: RagDocument, RagCollection, UploadDocumentRequest, IndexDocumentOutcome
+Errors: RagDocumentInvalidError, RagDocumentTooLargeError, RagPermissionDeniedError, RagNetworkError, RagIndexInProgressError
+
+Endpoints verified:
+  GET  /api/v1/admin/rag/collections → 200, envelope {data: [RagCollection], meta: {request_id}}
+  GET  /api/v1/admin/rag/documents   → 200, envelope {data: [], meta: {pagination, request_id}}
+  POST /api/v1/admin/rag/documents   → 500 RAG_STORAGE_FAILED (R-5 MinIO, auth+RBAC+validation OK)
+  POST /api/v1/admin/rag/documents/{id}/index (nonexistent) → 404 RAG_DOCUMENT_INVALID (field=id)
+  No auth → 401 AUTH_SESSION_EXPIRED (both /documents and /collections)
+
+DB tables accessed via endpoints:
+  rag_collections (RO): politicas_tienda confirmed via GET /collections
+  documents: 0 rows (empty, confirmed via GET /documents)
+  document_versions: not directly observable (no document created due to R-5)
+  vectorization_jobs: not directly observable (no index job created)
+
+Tests 205/205: ragRepository.test.ts (R01-R15), useRagDocuments.test.tsx, 
+  useUploadDocument.test.tsx, useIndexDocument.test.tsx, RagDocumentsPage.test.tsx — all PASS

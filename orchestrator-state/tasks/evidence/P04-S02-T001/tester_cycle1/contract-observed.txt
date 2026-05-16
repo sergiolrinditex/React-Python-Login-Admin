@@ -1,0 +1,16 @@
+# contract-observed.txt — Tester cycle 1, P04-S02-T001
+# Observed during tests and curl checks:
+#
+# Route: /admin/rag/documents → RagDocumentsPage (RequireRole["people_admin","super_admin"])
+# Provider/state: useRagDocuments (ragDocumentsQuery), useUploadDocument (uploadStore),
+#                 useIndexDocument, useRagCollections
+# Endpoints consumed (curl-verified):
+#   GET  /api/v1/admin/rag/collections → 200 [{politicas_tienda}]
+#   GET  /api/v1/admin/rag/documents?limit=50 → 200 data:[]
+#   POST /api/v1/admin/rag/documents → 500 RAG_STORAGE_FAILED (auth+RBAC+validation OK, MinIO R-5)
+#   POST /api/v1/admin/rag/documents/{fake-id}/index → 404 RAG_DOCUMENT_INVALID field=id
+#   GET  /api/v1/admin/rag/documents (no auth) → 401 AUTH_SESSION_EXPIRED
+# DB tables: documents, document_versions, vectorization_jobs, rag_collections (read-only)
+# DTO: RagDocument, RagCollection, UploadDocumentRequest, UploadDocumentOutcome,
+#      IndexDocumentOutcome, ListDocumentsRequest, ListDocumentsResponse
+# Repository: RagRepository (data/ragRepository.ts) + data/_ragRepositoryExtras.ts
