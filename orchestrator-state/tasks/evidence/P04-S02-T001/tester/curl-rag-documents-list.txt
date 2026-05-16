@@ -1,0 +1,10 @@
+=== GET /api/v1/admin/rag/documents?limit=50 ===
+HTTP_STATUS:200
+{
+    "data": [],
+    "meta": {
+        "pagination": {"cursor": null, "limit": 50},
+        "request_id": "d07e15bd-e5c0-4a16-83b2-549a9e717a1b"
+    }
+}
+Empty list = correct state (no documents uploaded yet)

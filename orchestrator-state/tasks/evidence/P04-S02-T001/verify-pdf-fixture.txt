@@ -1,0 +1,23 @@
+## PDF Fixture Used — verify-slice P04-S02-T001
+## Risk R-1 and R-5 documentation
+
+FIXTURE_PATH: /tmp/politica_vacaciones_verificacion.pdf (runtime-generated, not persisted)
+SHA256: dc362cc1478b6cd12ecf82b0146fafded73840d08ce27a4808b2c96abba68d4b
+SIZE_BYTES: 508
+CONTENT: Minimal valid PDF-1.4 with "Política Vacaciones" text content
+GENERATED_BY: python3 inline bytes (validate PDF header %PDF-1.4, xref, trailer)
+
+COLLECTION_USED: politicas_tienda
+COLLECTION_ID: 1e2af8d5-99c5-40e9-8c61-20aa3af9d689
+COLLECTION_SOURCE: seeded via rag_chat bootstrap group (live in DB)
+
+UPLOAD_RESULT: 500 RAG_STORAGE_FAILED
+REASON: MinIO bucket hilo-docs-dev credentials mismatch in dev env
+  - Backend connects to localhost:9000 (ssh-tunneled MinIO)
+  - Credentials in .env: hilo/hilo-dev-only → 403 InvalidAccessKeyId
+  - Auth+RBAC+validation all passed before storage layer (confirmed by 500 vs 401/403/422)
+  - This is risk R-5 (OPEN, documented in developer handoff)
+
+NOTE_FOR_JOURNEY_VERIFIER: P05-S01-T005 (terminal e2e slice for J104) will require
+  a working MinIO connection. If this requires a separate seed, register as FU from
+  that slice per 05-runtime-write-contract.md §Follow-up tasks.

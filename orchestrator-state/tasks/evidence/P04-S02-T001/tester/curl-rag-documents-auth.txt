@@ -1,0 +1,10 @@
+=== GET /api/v1/admin/rag/documents (no auth) ===
+HTTP_STATUS:401
+{"data":null,"meta":{"request_id":"4a76c232-0dac-41e3-8411-db3eccc4128f"},"errors":[{"code":"AUTH_SESSION_EXPIRED","message":"Session expired or invalid credentials. Please sign in again.","field":null,"details":null}]}
+
+=== GET /api/v1/admin/rag/collections (no auth) ===
+HTTP_STATUS:401
+{"data":null,"meta":{"request_id":"0e237dba-49e6-4565-ab01-4bd3c82a8a2e"},"errors":[{"code":"AUTH_SESSION_EXPIRED","message":"Session expired or invalid credentials. Please sign in again.","field":null,"details":null}]}
+
+NOTE: Employee user (employee.verification@inditex-sandbox.com) has MFA enabled (mfa_required=true).
+403 RBAC test blocked by MFA challenge requirement. 401 (no-auth) verified correctly instead.

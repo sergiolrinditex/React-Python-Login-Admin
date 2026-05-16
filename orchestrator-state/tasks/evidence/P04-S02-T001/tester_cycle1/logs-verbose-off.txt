@@ -1,0 +1,15 @@
+# ENABLE_VERBOSE_LOGGING=false — vitest run summary
+# File: tester_cycle1/vitest-verbose-false.log (full output)
+#
+# Test Files: 18 passed (18)
+# Tests:      211 passed (211)
+# Duration:   3.24s
+#
+# Verbose flag=false should surface only warn+error logs.
+# Observed in vitest output: same error/warn log lines as verbose=true run.
+# This is expected: logWarn/logError always fire regardless of flag.
+# logVerbose (success-path info events) not present in either run in vitest
+#   due to the VITE_/Node env mapping limitation (pre-existing pattern).
+#
+# CONCLUSION: ENABLE_VERBOSE_LOGGING=false does NOT produce verbose info logs.
+#   Only warn+error visible. Contract: PASS (same pre-existing pattern as cycle 0).

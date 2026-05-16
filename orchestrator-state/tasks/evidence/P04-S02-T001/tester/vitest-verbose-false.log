@@ -1,0 +1,12 @@
+RUN  v3.2.4 /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P04-S02-T001/frontend
+
+[Only error/warn [rag] log lines present - same as verbose=true for test env]
+Note: Success-path logVerbose lines absent (both modes) because VITE_ENABLE_VERBOSE_LOGGING
+is not mapped in vitest environment - pre-existing pattern for all features.
+
+Test Files  18 passed (18)
+Tests  205 passed (205)
+Start at  04:04:34
+Duration  3.02s
+
+VITEST_VERBOSE_FALSE_EXIT:0

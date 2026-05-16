@@ -1,0 +1,4 @@
+=== POST /api/v1/admin/rag/documents/00000000-0000-0000-0000-000000000000/index ===
+HTTP_STATUS:404
+{"data":null,"meta":{"request_id":"2142da11-3461-4115-b317-f55b099d4791"},"errors":[{"code":"RAG_DOCUMENT_INVALID","message":"Document 00000000-0000-0000-0000-000000000000 not found.","field":"id","details":null}]}
+Correct 404 RAG_DOCUMENT_INVALID with field=id for nonexistent document.

@@ -1,0 +1,15 @@
+=== GET /api/v1/admin/rag/collections ===
+HTTP_STATUS:200
+{
+    "data": [
+        {
+            "id": "1e2af8d5-99c5-40e9-8c61-20aa3af9d689",
+            "name": "politicas_tienda",
+            "vertical": "hr_policies",
+            "language": "es",
+            "enabled": true,
+            "metadata": {"source": "People Tech sandbox", "description": "..."}
+        }
+    ],
+    "meta": {"request_id": "2aa6fcbe-02a6-43e4-8603-7821132a04f5"}
+}

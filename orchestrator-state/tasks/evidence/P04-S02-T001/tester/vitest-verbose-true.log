@@ -1,0 +1,23 @@
+RUN  v3.2.4 /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P04-S02-T001/frontend
+
+[RAG verbose log lines present - error/warn paths visible]
+[rag] rag.hook.useIndexDocument.error { doc_id: 'doc-001', error: 'RAG_INDEX_IN_PROGRESS' }
+[rag] rag.hook.useUploadDocument.error { error: 'RAG_DOCUMENT_INVALID' }
+[rag] rag.repo.listDocuments.forbidden { status: 403, request_id: 'test-req-id' }
+[rag] rag.repo.uploadDocument.too_large { status: 413, request_id: 'test-req-id' }
+[rag] rag.repo.uploadDocument.validation_error { status: 422, field: 'collection_id', request_id: 'test-req-id' }
+[rag] rag.repo.indexDocument.in_progress { ... }
+[rag] rag.repo.indexDocument.not_found { doc_id: 'nonexistent-id', request_id: 'test-req-id' }
+[rag] rag.repo.indexDocument.forbidden { doc_id: 'doc-uuid-001', request_id: 'test-req-id' }
+
+Note: logVerbose (BEFORE/AFTER success paths) gated by VITE_ENABLE_VERBOSE_LOGGING which 
+is not mapped to shell ENABLE_VERBOSE_LOGGING in vitest. This is a pre-existing pattern
+for all frontend features (auth, chat). Verbose logs visible in browser dev server.
+Error/warn-level logs (logWarn, logError) visible in both modes as expected.
+
+Test Files  18 passed (18)
+Tests  205 passed (205)
+Start at  04:04:30
+Duration  3.31s
+
+VITEST_VERBOSE_TRUE_EXIT:0

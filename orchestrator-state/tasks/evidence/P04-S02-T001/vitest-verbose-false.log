@@ -1,0 +1,28 @@
+
+ RUN  v3.2.4 /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P04-S02-T001/frontend
+
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx (34 tests) 122ms
+ ✓ src/features/chat/__tests__/ChatHomePage.test.tsx (10 tests) 105ms
+ ✓ src/features/auth/__tests__/auth.test.tsx (33 tests) 130ms
+ ✓ src/pages/showcase/__tests__/ShowcasePage.test.tsx (4 tests) 139ms
+ ✓ src/features/rag/__tests__/useIndexDocument.test.tsx (4 tests) 226ms
+ ✓ src/features/rag/__tests__/useRagDocuments.test.tsx (5 tests) 232ms
+ ✓ src/pages/admin/rag/__tests__/RagDocumentsPage.test.tsx (12 tests) 154ms
+ ✓ src/features/chat/__tests__/useCreateConversation.test.tsx (4 tests) 233ms
+ ✓ src/pages/auth/__tests__/SignInPage.test.tsx (10 tests) 201ms
+ ✓ src/features/rag/__tests__/useUploadDocument.test.tsx (6 tests) 339ms
+ ✓ src/pages/auth/__tests__/SignUpPage.test.tsx (10 tests) 236ms
+ ✓ src/features/auth/data/__tests__/httpClient.test.ts (4 tests) 6ms
+ ✓ src/features/chat/__tests__/chatRepository.test.ts (7 tests) 11ms
+ ✓ src/features/rag/__tests__/ragRepository.test.ts (15 tests) 11ms
+ ✓ src/i18n/__tests__/i18n.test.ts (16 tests) 6ms
+ ✓ src/features/auth/__tests__/useSignIn.test.tsx (11 tests) 22ms
+ ✓ src/features/auth/__tests__/useSignUp.test.tsx (16 tests) 26ms
+ ✓ src/app/__tests__/providers.test.tsx (4 tests) 19ms
+
+ Test Files  18 passed (18)
+      Tests  205 passed (205)
+   Start at  03:58:35
+   Duration  2.81s (transform 1.51s, setup 2.11s, collect 4.50s, tests 2.22s, environment 10.61s, prepare 1.55s)
+
+vitest verbose=false EXIT:0

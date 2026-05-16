@@ -1,0 +1,57 @@
+{
+  "task_id": "P04-S02-T001",
+  "cycle": "cycle2-tap-target-regression",
+  "timestamp": "2026-05-16T10:10:00Z",
+  "element": {
+    "selector": "[data-testid='nav-to-collections']",
+    "tagName": "BUTTON",
+    "type": "button",
+    "tabIndex": 0,
+    "innerText": "Ver colecciones →"
+  },
+  "dimensions": {
+    "offsetHeight": 44,
+    "offsetWidth": 108,
+    "clientHeight": 44,
+    "clientWidth": 108,
+    "rectHeight": 44,
+    "rectWidth": 108.1015625
+  },
+  "computed_style": {
+    "minHeight": "44px",
+    "display": "inline-flex",
+    "alignItems": "center",
+    "color": "rgb(10, 10, 10)",
+    "backgroundColor": "rgba(0, 0, 0, 0)"
+  },
+  "inline_style": {
+    "minHeight": "44px",
+    "display": "inline-flex",
+    "alignItems": "center"
+  },
+  "design_tokens": {
+    "btn_color": "rgb(10, 10, 10)",
+    "color_ink_token": "#0a0a0a",
+    "match": true,
+    "hardcoded_bgcolor": "initial",
+    "hardcoded_color": "var(--color-ink)"
+  },
+  "focus": {
+    "isFocused": true,
+    "tabIndex": 0,
+    "isInTabOrder": true,
+    "navBtnIndex": 2,
+    "totalFocusables": 10,
+    "prevElem": "BUTTON[nav-Documentos]",
+    "nextElem": "INPUT[rag-field-title]",
+    "noTabTrap": true
+  },
+  "verdict": {
+    "tap_target_pixels": 44,
+    "ux_contract_min": 44,
+    "passes_ux_contract": true,
+    "design_tokens_used": true,
+    "in_tab_order": true,
+    "no_focus_trap": true
+  }
+}

@@ -1,0 +1,4 @@
+=== Backend smoke: GET /health ===
+curl -sS http://localhost:8000/health
+{"data":{"status":"ok","version":"0.1.0","uptime":26992.99}}
+EXIT:0

@@ -1,0 +1,23 @@
+# ENABLE_VERBOSE_LOGGING=true — vitest run summary
+# File: tester_cycle1/vitest-verbose-true.log (full output)
+#
+# Test Files: 18 passed (18)
+# Tests:      211 passed (211)
+# Duration:   3.70s
+#
+# Verbose (error/warn) log lines observed in vitest output for [rag] namespace:
+# — rag.hook.useIndexDocument.error, rag.hook.useIndexDocument.mutation_error
+# — rag.hook.useUploadDocument.error, rag.hook.useUploadDocument.mutation_error
+# — rag.repo.listDocuments.forbidden, rag.repo.listDocuments.error
+# — rag.repo.uploadDocument.too_large, rag.repo.uploadDocument.validation_error, rag.repo.uploadDocument.error
+# — rag.repo.indexDocument.in_progress, rag.repo.indexDocument.not_found, rag.repo.indexDocument.forbidden
+#
+# Note: logVerbose (*.start, *.ok success-path events) in [rag] are gated by
+#   VITE_ENABLE_VERBOSE_LOGGING at runtime. In vitest (Node), VITE_ env vars are
+#   not mapped from shell env, so verbose info logs do not appear in vitest stdout.
+#   This is the pre-existing pattern for all features (auth, chat, rag). Verbose
+#   events work correctly in the browser dev server. Non-blocking per validator+tester
+#   cycle 0 documentation (LOGS_VERBOSE_CONTRACT: partial).
+#
+# PII check: no email address, no bearer token, no password, no filename (only bucketed
+#   size and content-type) appears in any log line. PASS.

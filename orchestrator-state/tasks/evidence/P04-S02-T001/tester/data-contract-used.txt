@@ -1,0 +1,21 @@
+=== Verification Data Contract Used (TECHNICAL_GUIDE §6.5) ===
+
+Flow/Journey: J104 rag-admin
+Persona/Rol: admin (admin.peopletech@inditex-sandbox.com / AdminVerify2024!)
+
+Data contract rows used by tester:
+1. Admin user — email: admin.peopletech@inditex-sandbox.com, roles: ["people_admin"], mfa_required: false
+   Source: data/verification/users/admin_peopletech.json
+2. Collection — politicas_tienda (id: 1e2af8d5-99c5-40e9-8c61-20aa3af9d689, vertical: hr_policies, language: es, enabled: true)
+   Source: data/verification/rag_chat/collections/politicas_tienda.json
+3. PDF fixture — runtime-generated 328-byte minimal PDF (not from data/verification)
+   sha256: 62e730b1b469c20af1817001b3fd6bd5ccdac0079245b32ca039218f9d2b70e4
+   Stored: /tmp/tester_verify.pdf (ephemeral, not persisted)
+
+Persisted data observed:
+- documents table: empty (no row created — R-5 MinIO storage failed before DB row insertion or rollback on error)
+- rag_collections: politicas_tienda collection confirmed present (GET /admin/rag/collections → 200, 1 item)
+
+R-1 (OPEN): Real PDF fixture politica_vacaciones_es.pdf does not exist on disk.
+R-5 (OPEN): MinIO bucket hilo-docs-dev not configured. Upload returns 500 RAG_STORAGE_FAILED.
+These are notes for /verify-slice, NOT test failures.
