@@ -1,0 +1,1 @@
+{"data":{"status":"ok","version":"0.1.0","uptime":38.16}}HTTP 200 OK

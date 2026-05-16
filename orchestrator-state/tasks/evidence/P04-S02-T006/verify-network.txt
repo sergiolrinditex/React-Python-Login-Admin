@@ -1,0 +1,22 @@
+Browser-executed fetch (via mcp__chrome-devtools__evaluate_script) - P04-S02-T006
+TIMESTAMP: 2026-05-16T14:48:00Z
+
+Flow:
+1. POST /api/v1/auth/sign-in → HTTP 200 (admin.peopletech@inditex-sandbox.com)
+2. POST /api/v1/admin/ai/mcp/servers/0f7a2f24-e601-4255-abf0-9a074dd6d675/sync → HTTP 502
+
+Sync response body:
+{
+  "data": null,
+  "meta": {"request_id": "eb662877-d60c-46dc-aeb1-1b5ffa3ce7fe"},
+  "errors": [
+    {
+      "code": "MCP_SERVER_UNREACHABLE",
+      "message": "Cannot connect to the MCP server. Check the endpoint and credentials.",
+      "field": null,
+      "details": null
+    }
+  ]
+}
+
+Verified via: Chrome DevTools MCP evaluate_script (real browser fetch, CORS-same-origin localhost)

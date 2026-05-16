@@ -1,0 +1,9 @@
+             action              |              entity_id               |                                                                 metadata                                                                 |          created_at           
+---------------------------------+--------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------
+ admin.ai.mcp.server.sync.failed | 0f7a2f24-e601-4255-abf0-9a074dd6d675 | {"outcome": "failure", "request_id": "60cc4ca6-4da7-4229-8562-a630572fc015", "tools_count": 0, "prompts_count": 0, "resources_count": 0} | 2026-05-16 12:48:40.916144+00
+ admin.ai.mcp.server.sync.failed | 68fb9ea0-2949-4fab-a2ea-e4d240dea714 | {"outcome": "failure", "request_id": "734699e9-2e8e-4619-ac54-72b89eaec923", "tools_count": 0, "prompts_count": 0, "resources_count": 0} | 2026-05-16 11:36:37.539209+00
+ admin.ai.mcp.server.sync.failed | 27cb31d6-c6fc-4ee8-919a-0707c8e38ce5 | {"outcome": "failure", "request_id": "3caca529-b64d-4d9d-9f36-2acbe3546986", "tools_count": 0, "prompts_count": 0, "resources_count": 0} | 2026-05-16 11:36:24.291459+00
+ admin.ai.mcp.server.sync.failed | ed3001d0-07d9-485c-b104-09a7348f4583 | {"outcome": "failure", "request_id": "ba0b6312-0c40-4f99-8156-10d1bf75e63d", "tools_count": 0, "prompts_count": 0, "resources_count": 0} | 2026-05-16 11:36:24.141822+00
+ admin.ai.mcp.server.sync        | f56e5bb8-1df6-4e6b-8d17-ad6ed24fcb6b | {"outcome": "success", "request_id": "cc94348d-3240-4edf-a35c-66cd6964745f", "tools_count": 0, "prompts_count": 0, "resources_count": 0} | 2026-05-16 11:36:09.535827+00
+(5 filas)
+

@@ -1,0 +1,27 @@
+# POST /api/v1/admin/ai/mcp/servers/0f7a2f24-e601-4255-abf0-9a074dd6d675/sync
+# Verification data: sandbox_readonly pointing to http://localhost:8080/mcp (no listener)
+# Method: in-process TestClient (avoids stale uvicorn process)
+
+HTTP_STATUS: 502
+{
+  "data": null,
+  "meta": {
+    "request_id": "8e5c2f92-668c-4c80-8d0a-0b392d578e12"
+  },
+  "errors": [
+    {
+      "code": "MCP_SERVER_UNREACHABLE",
+      "message": "Cannot connect to the MCP server. Check the endpoint and credentials.",
+      "field": null,
+      "details": null
+    }
+  ]
+}
+
+# Acceptance criteria check:
+  [PASS] HTTP 502: got 502
+  [PASS] data is null: None
+  [PASS] meta.request_id present: 8e5c2f92-668c-4c80-8d0a-0b392d578e12
+  [PASS] errors[0].code == MCP_SERVER_UNREACHABLE: MCP_SERVER_UNREACHABLE
+  [PASS] errors[0].field is null: None
+  [PASS] errors[0].details is null: None

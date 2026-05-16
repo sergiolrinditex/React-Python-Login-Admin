@@ -1,0 +1,1 @@
+{"data":null,"meta":{"request_id":"60cc4ca6-4da7-4229-8562-a630572fc015"},"errors":[{"code":"MCP_SERVER_UNREACHABLE","message":"Cannot connect to the MCP server. Check the endpoint and credentials.","field":null,"details":null}]}
