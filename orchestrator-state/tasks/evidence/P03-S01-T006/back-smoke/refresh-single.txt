@@ -1,0 +1,9 @@
+HTTP/1.1 200 OK
+date: Fri, 15 May 2026 15:40:41 GMT
+server: uvicorn
+x-request-id: t006-single
+content-length: 527
+content-type: application/json
+set-cookie: refresh_token=YialGlBYfXCwuRdjXrE6MWnGImZOA8Juj8Yv-T09cgz-dXCwcvn9CcPIixwA6sxq; HttpOnly; Max-Age=2592000; Path=/api/v1/auth; SameSite=lax; Secure
+
+{"data":{"access_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyYTBmNTRmMC02MWNkLTQ0YTMtYjRjYS0wYTA1NDFmM2Y0MDQiLCJlbWFpbCI6ImVtcGxveWVlLnZlcmlmaWNhdGlvbkBpbmRpdGV4LXNhbmRib3guY29tIiwicm9sZXMiOlsiZW1wbG95ZWUiXSwicHJlZmVycmVkX2xhbmd1YWdlIjoiZXMiLCJlbXBsb3llZV9wcm9maWxlX2lkIjpudWxsLCJqdGkiOiJkOTFjZGI5MjgzYmU0Y2ZhYjI5YjljMGRhNDEyZTc2NiIsImlhdCI6MTc3ODg1OTY0MiwiZXhwIjoxNzc4ODYxNDQyfQ.b5mcrDvDoICpfd4UUQTsa6Q6yw1mTOSqK75oZhrODWs","token_type":"Bearer","expires_in":1800},"meta":{"request_id":"t006-single"},"errors":[]}

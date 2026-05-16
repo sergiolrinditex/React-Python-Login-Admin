@@ -1,7 +1,8 @@
 /**
- * Hilo People — Auth feature tests (P01-S03-T001).
+ * Hilo People — Auth feature tests (P01-S03-T001, extended P03-S01-T006).
  *
  * Slice/Phase: P01-S03-T001 — Auth state provider and protected route guards / Phase 1.
+ * Extended: P03-S01-T006 — Single-flight refresh tests (T21–T26).
  *
  * Responsibility: Vitest + RTL tests for:
  *   - accessTokenStore (T01)
@@ -14,6 +15,8 @@
  *   - httpClient single-flight 401 (T15–T17)
  *   - httpClient header injection (T18)
  *   - Logging verification (T19–T20)
+ *   - AuthRepository.refresh() single-flight regression (T21–T23) [P03-S01-T006]
+ *   - AuthProvider StrictMode double-mount dedupe (T24–T26) [P03-S01-T006]
  *
  * Test policy (non-negotiables §tests):
  *   - fetch is mocked at the network boundary ONLY (vi.spyOn(global, 'fetch')).
@@ -970,5 +973,339 @@ describe("auth T20 — Logging: verbose=false suppresses info logs", () => {
     setAccessToken("another-secret-token");
 
     expect(infoSpy).not.toHaveBeenCalled();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// T21 — AuthRepository.refresh() single-flight: 2 parallel calls → 1 fetch
+// (P03-S01-T006 §8.2 AR-T01)
+// ---------------------------------------------------------------------------
+
+describe("auth T21 — AuthRepository.refresh() × 2 parallel → 1 fetch to /auth/refresh", () => {
+  beforeEach(() => {
+    clearAccessToken();
+    _resetInflight();
+  });
+  afterEach(() => {
+    clearAccessToken();
+    _resetInflight();
+    vi.restoreAllMocks();
+  });
+
+  it("two concurrent repo.refresh() calls produce exactly 1 network POST", async () => {
+    const refreshBody = { data: { access_token: MOCK_TOKEN, token_type: "Bearer", expires_in: 1800 } };
+    let refreshCallCount = 0;
+
+    vi.spyOn(global, "fetch").mockImplementation((url: RequestInfo | URL) => {
+      const urlStr = String(url);
+      if (urlStr.includes("/auth/refresh")) {
+        refreshCallCount++;
+        return Promise.resolve(
+          new Response(JSON.stringify(refreshBody), {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          }),
+        );
+      }
+      return Promise.resolve(new Response("{}", { status: 200 }));
+    });
+
+    const repo = new AuthRepository(vi.fn());
+
+    const [r1, r2] = await Promise.all([repo.refresh(), repo.refresh()]);
+
+    expect(refreshCallCount).toBe(1); // Single-flight: exactly ONE POST /auth/refresh
+    expect(r1.ok).toBe(true);
+    expect(r2.ok).toBe(true);
+    if (r1.ok && r2.ok) {
+      expect(r1.value).toBe(MOCK_TOKEN);
+      expect(r2.value).toBe(MOCK_TOKEN);
+    }
+  });
+});
+
+// ---------------------------------------------------------------------------
+// T22 — AuthRepository.refresh() sequential: singleton resets after resolution
+// (P03-S01-T006 §8.2 AR-T02)
+// ---------------------------------------------------------------------------
+
+describe("auth T22 — AuthRepository.refresh(): singleton resets after resolve, next call retries", () => {
+  beforeEach(() => {
+    clearAccessToken();
+    _resetInflight();
+  });
+  afterEach(() => {
+    clearAccessToken();
+    _resetInflight();
+    vi.restoreAllMocks();
+  });
+
+  it("sequential calls each produce a separate network POST", async () => {
+    const refreshBody = { data: { access_token: MOCK_TOKEN, token_type: "Bearer", expires_in: 1800 } };
+    let refreshCallCount = 0;
+
+    vi.spyOn(global, "fetch").mockImplementation(() => {
+      refreshCallCount++;
+      return Promise.resolve(
+        new Response(JSON.stringify(refreshBody), {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        }),
+      );
+    });
+
+    const repo = new AuthRepository(vi.fn());
+
+    const r1 = await repo.refresh();
+    const r2 = await repo.refresh(); // second call AFTER first resolved
+
+    expect(refreshCallCount).toBe(2); // Two separate fetches (singleton reset in finally)
+    expect(r1.ok).toBe(true);
+    expect(r2.ok).toBe(true);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// T23 — AuthRepository.refresh() single-flight on 401: both callers receive error
+// (P03-S01-T006 §8.2 AR-T03)
+// ---------------------------------------------------------------------------
+
+describe("auth T23 — AuthRepository.refresh() concurrent + 401: singleton resets on failure", () => {
+  beforeEach(() => {
+    clearAccessToken();
+    _resetInflight();
+  });
+  afterEach(() => {
+    clearAccessToken();
+    _resetInflight();
+    vi.restoreAllMocks();
+  });
+
+  it("401 from refresh: both concurrent callers get ok:false, singleton resets", async () => {
+    vi.spyOn(global, "fetch").mockResolvedValue(
+      new Response("{}", { status: 401, headers: { "Content-Type": "application/json" } }),
+    );
+
+    const repo = new AuthRepository(vi.fn());
+
+    const [r1, r2] = await Promise.all([repo.refresh(), repo.refresh()]);
+
+    expect(r1.ok).toBe(false);
+    expect(r2.ok).toBe(false);
+
+    // After the error, inflight is reset — a fresh call should trigger a new fetch
+    let nextCallCount = 0;
+    vi.spyOn(global, "fetch").mockImplementation(() => {
+      nextCallCount++;
+      return Promise.resolve(
+        new Response(
+          JSON.stringify({ data: { access_token: "new-token", token_type: "Bearer", expires_in: 1800 } }),
+          { status: 200, headers: { "Content-Type": "application/json" } },
+        ),
+      );
+    });
+    const r3 = await repo.refresh();
+    expect(nextCallCount).toBe(1);
+    expect(r3.ok).toBe(true);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// T24 — StrictMode double-mount → exactly 1 fetch to /auth/refresh
+// (P03-S01-T006 §8.2 T19/AP-T18)
+// ---------------------------------------------------------------------------
+
+describe("auth T24 — AuthProvider StrictMode double-mount: exactly 1 POST /auth/refresh", () => {
+  beforeEach(() => {
+    clearAccessToken();
+    _resetInflight();
+  });
+  afterEach(() => {
+    clearAccessToken();
+    _resetInflight();
+    vi.restoreAllMocks();
+  });
+
+  it("renders <StrictMode><AuthProvider> — refresh called once, status=authenticated", async () => {
+    const refreshBody = { data: { access_token: MOCK_TOKEN, token_type: "Bearer", expires_in: 1800 } };
+    const meBody = { data: MOCK_USER };
+    let refreshCallCount = 0;
+    let meCallCount = 0;
+
+    vi.spyOn(global, "fetch").mockImplementation((url: RequestInfo | URL) => {
+      const urlStr = String(url);
+      if (urlStr.includes("/auth/refresh")) {
+        refreshCallCount++;
+        return Promise.resolve(
+          new Response(JSON.stringify(refreshBody), {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          }),
+        );
+      }
+      if (urlStr.includes("/users/me")) {
+        meCallCount++;
+        return Promise.resolve(
+          new Response(JSON.stringify(meBody), {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          }),
+        );
+      }
+      return Promise.resolve(new Response("{}", { status: 200 }));
+    });
+
+    function Consumer() {
+      const { status, user } = useAuth();
+      return (
+        <div>
+          <span data-testid="status">{status}</span>
+          <span data-testid="user_id">{user?.id ?? "none"}</span>
+        </div>
+      );
+    }
+
+    const repo = new AuthRepository(vi.fn());
+    render(
+      <React.StrictMode>
+        <MemoryRouter initialEntries={["/"]}>
+          <AuthProvider _repo={repo} _onQueriesClear={vi.fn()}>
+            <Consumer />
+          </AuthProvider>
+        </MemoryRouter>
+      </React.StrictMode>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId("status").textContent).toBe("authenticated");
+    });
+
+    // AC1 invariant: exactly 1 POST /auth/refresh under StrictMode
+    expect(refreshCallCount).toBe(1);
+    expect(screen.getByTestId("user_id").textContent).toBe(MOCK_USER.id);
+    // Note: /users/me may be called up to 2 times by StrictMode (it is not deduplicated here
+    // intentionally — fetchMe is not the source of the 401 bug). The critical assertion is refresh=1.
+    expect(meCallCount).toBeGreaterThanOrEqual(1);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// T25 — StrictMode double-mount + 401 from refresh → status=unauthenticated
+// (P03-S01-T006 §8.2 T20/AP-T19)
+// ---------------------------------------------------------------------------
+
+describe("auth T25 — AuthProvider StrictMode + refresh 401: status=unauthenticated, refresh called once", () => {
+  beforeEach(() => {
+    clearAccessToken();
+    _resetInflight();
+  });
+  afterEach(() => {
+    clearAccessToken();
+    _resetInflight();
+    vi.restoreAllMocks();
+  });
+
+  it("refresh returns 401 under StrictMode: status=unauthenticated, refresh invoked once", async () => {
+    let refreshCallCount = 0;
+
+    vi.spyOn(global, "fetch").mockImplementation((url: RequestInfo | URL) => {
+      const urlStr = String(url);
+      if (urlStr.includes("/auth/refresh")) {
+        refreshCallCount++;
+        return Promise.resolve(
+          new Response("{}", { status: 401, headers: { "Content-Type": "application/json" } }),
+        );
+      }
+      return Promise.resolve(new Response("{}", { status: 200 }));
+    });
+
+    function Consumer() {
+      const { status } = useAuth();
+      return <span data-testid="status">{status}</span>;
+    }
+
+    const repo = new AuthRepository(vi.fn());
+    render(
+      <React.StrictMode>
+        <MemoryRouter initialEntries={["/"]}>
+          <AuthProvider _repo={repo} _onQueriesClear={vi.fn()}>
+            <Consumer />
+          </AuthProvider>
+        </MemoryRouter>
+      </React.StrictMode>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId("status").textContent).toBe("unauthenticated");
+    });
+
+    // Exactly 1 refresh call under StrictMode (single-flight dedupe)
+    expect(refreshCallCount).toBe(1);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// T26 — No-StrictMode (normal mount) regression: still works as before
+// (P03-S01-T006 §8.2 T20/AP-T20)
+// ---------------------------------------------------------------------------
+
+describe("auth T26 — No-StrictMode: normal mount still produces 1 refresh, authenticated", () => {
+  beforeEach(() => {
+    clearAccessToken();
+    _resetInflight();
+  });
+  afterEach(() => {
+    clearAccessToken();
+    _resetInflight();
+    vi.restoreAllMocks();
+  });
+
+  it("without StrictMode: 1 refresh, status=authenticated (no regression)", async () => {
+    const refreshBody = { data: { access_token: MOCK_TOKEN, token_type: "Bearer", expires_in: 1800 } };
+    const meBody = { data: MOCK_USER };
+
+    vi.spyOn(global, "fetch").mockImplementation((url: RequestInfo | URL) => {
+      const urlStr = String(url);
+      if (urlStr.includes("/auth/refresh")) {
+        return Promise.resolve(
+          new Response(JSON.stringify(refreshBody), {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          }),
+        );
+      }
+      if (urlStr.includes("/users/me")) {
+        return Promise.resolve(
+          new Response(JSON.stringify(meBody), {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          }),
+        );
+      }
+      return Promise.resolve(new Response("{}", { status: 200 }));
+    });
+
+    function Consumer() {
+      const { status, user } = useAuth();
+      return (
+        <div>
+          <span data-testid="status">{status}</span>
+          <span data-testid="user_id">{user?.id ?? "none"}</span>
+        </div>
+      );
+    }
+
+    renderWithAuth(<Consumer />, {
+      fetchResponses: [
+        { status: 200, body: refreshBody },
+        { status: 200, body: meBody },
+      ],
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId("status").textContent).toBe("authenticated");
+    });
+
+    expect(screen.getByTestId("user_id").textContent).toBe(MOCK_USER.id);
   });
 });

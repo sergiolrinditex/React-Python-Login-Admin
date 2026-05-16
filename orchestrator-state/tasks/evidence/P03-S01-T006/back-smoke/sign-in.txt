@@ -1,0 +1,8 @@
+HTTP/1.1 200 OK
+date: Fri, 15 May 2026 15:40:04 GMT
+server: uvicorn
+x-request-id: t006-signin
+content-length: 397
+content-type: application/json
+
+{"data":{"mfa_required":true,"mfa_challenge_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyYTBmNTRmMC02MWNkLTQ0YTMtYjRjYS0wYTA1NDFmM2Y0MDQiLCJwdXJwb3NlIjoibWZhX2NoYWxsZW5nZSIsImp0aSI6IjlmODJmMGQ3ODE0MzQxMGFhOTU5NTUyNzk0OTkyY2RmIiwiaWF0IjoxNzc4ODU5NjA1LCJleHAiOjE3Nzg4NTk5MDV9.2N33dVqEjGrkBMM45PntSnS9MQn7-mh1-IdyacCccR8","expires_in":300},"meta":{"request_id":"t006-signin"},"errors":[]}

@@ -1,0 +1,15 @@
+HTTP/1.1 200 OK
+date: Fri, 15 May 2026 15:40:47 GMT
+server: uvicorn
+x-request-id: t006-a
+content-length: 522
+content-type: application/json
+set-cookie: refresh_token=BQBHr-D33WVB3Gry1K68Hfb0G8fe8MvE_tlZ4_d5ZB2LgV59P81O7pMrvYr2yQMg; HttpOnly; Max-Age=2592000; Path=/api/v1/auth; SameSite=lax; Secure
+
+{"data":{"access_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyYTBmNTRmMC02MWNkLTQ0YTMtYjRjYS0wYTA1NDFmM2Y0MDQiLCJlbWFpbCI6ImVtcGxveWVlLnZlcmlmaWNhdGlvbkBpbmRpdGV4LXNhbmRib3guY29tIiwicm9sZXMiOlsiZW1wbG95ZWUiXSwicHJlZmVycmVkX2xhbmd1YWdlIjoiZXMiLCJlbXBsb3llZV9wcm9maWxlX2lkIjpudWxsLCJqdGkiOiJkOTA1YzQxYTY3ZDU0ZTk2OTZiMjE2ZDQxNTEzMDg0NSIsImlhdCI6MTc3ODg1OTY0NywiZXhwIjoxNzc4ODYxNDQ3fQ.ARK4N8U38RiubLxxt7ogN3KOje8PMevhjdUabkCrvWE","token_type":"Bearer","expires_in":1800},"meta":{"request_id":"t006-a"},"errors":[]}HTTP/1.1 401 Unauthorized
+date: Fri, 15 May 2026 15:40:47 GMT
+server: uvicorn
+content-length: 177
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"t006-b"},"errors":[{"code":"AUTH_SESSION_EXPIRED","message":"Session expired or invalid; please sign in again.","field":null,"details":null}]}

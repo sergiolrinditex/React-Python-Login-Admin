@@ -6,6 +6,10 @@
  *   Extended in P03-S01-T002 — SignUpPage: added signUp() method (§D-T002-AUTH-DATA).
  *   Extended in P03-S01-T003 — ForgotPasswordPage: added forgotPassword() method.
  *   Extended in P03-S01-T005 — TwoFactorPage: added verifyMfa() method (§D-T005-AUTH-DATA).
+ *   Extended in P03-S01-T006 — Single-flight refresh: refresh() now deduplicates concurrent
+ *     calls via refreshOnce() (§D-T006-INFLIGHT-LOCATION). StrictMode double-mount produces
+ *     exactly ONE POST /api/v1/auth/refresh. The dedupe is in the data layer; AuthProvider
+ *     remains unchanged (§D-T006-PROVIDER-IDEMPOTENT).
  *
  * Responsibility: Concrete implementation of IAuthRepository (domain port).
  *   Calls the backend auth/user endpoints. All calls use authFetch (credentials:'include',
@@ -64,6 +68,7 @@ import {
 } from "./errors";
 import { setAccessToken } from "./accessTokenStore";
 import { logVerbose, logWarn, logError } from "./logger";
+import { refreshOnce, type RefreshInflightState } from "./refreshSingleFlight";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "";
 
@@ -89,6 +94,14 @@ async function _safeJson<T>(res: Response): Promise<T> {
  */
 export class AuthRepository implements IAuthRepository {
   private readonly _onAuthFailure: () => void;
+
+  /**
+   * Per-instance inflight state for the single-flight refresh dedupe.
+   * (§D-T006-INFLIGHT-LOCATION, §D-T006-MODULE-SCOPE-RISK)
+   * Each AuthRepository instance starts with { current: null } so tests using
+   * separate repo instances get independent inflight slots — no cross-test bleed.
+   */
+  private readonly _refreshInflight: RefreshInflightState = { current: null };
 
   /**
    * @param onAuthFailure - Called when session expires and cannot be refreshed.
@@ -698,9 +711,25 @@ export class AuthRepository implements IAuthRepository {
   /**
    * Calls POST /api/v1/auth/refresh (no body; refresh cookie auto-sent).
    * Returns the new access token string on 200; error on 401 or network failure.
+   *
+   * P03-S01-T006 — Single-flight dedupe (§D-T006-INFLIGHT-LOCATION):
+   *   Concurrent callers (e.g. React 18 StrictMode double-mount) share one in-flight
+   *   Promise via refreshOnce(). Only ONE POST /api/v1/auth/refresh is emitted per
+   *   bootstrap cycle. The log for the first caller emits "auth.repo.refresh.start";
+   *   deduped callers emit "auth.repo.refresh.dedupe_hit" (logged inside refreshOnce).
    */
   async refresh(): Promise<Result<string>> {
-    logVerbose("auth.repo.refresh.start");
+    return refreshOnce(this._refreshInflight, () => this._refreshHttp());
+  }
+
+  /**
+   * Raw HTTP implementation of the refresh call.
+   * Called by refresh() via refreshOnce() — not called directly.
+   * Logs BEFORE (start emitted by refreshOnce), AFTER ok, AFTER session_expired, ERROR.
+   *
+   * @internal — do not call from outside AuthRepository.
+   */
+  private async _refreshHttp(): Promise<Result<string>> {
     try {
       const requestId = crypto.randomUUID();
       const response = await fetch(`${API_BASE}/api/v1/auth/refresh`, {

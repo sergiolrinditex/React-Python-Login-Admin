@@ -1,0 +1,29 @@
+# Contract Observed — P03-S01-T006
+
+## Route
+- /chat → AuthProvider.useEffect([]) → AuthRepository.refresh() → refreshOnce(state, _refreshHttp)
+
+## Frontend → Backend → DB chain
+- Provider: AuthProvider (presentation/AuthProvider.tsx, docstring update only)
+- Repository: AuthRepository (data/authRepository.ts, split into _refreshHttp + refreshOnce)
+- Single-flight: refreshSingleFlight.ts (new module, per-instance state)
+- API client: fetch() with credentials:include, X-Request-ID header
+- Endpoint: POST /api/v1/auth/refresh
+- Backend: backend/app/auth/routers/refresh.py (unchanged)
+- Table: refresh_tokens (hilo_dev) — schema unchanged
+
+## ADR compliance observed
+- ADR-002: API_BASE="" preserved in _refreshHttp (path relative: /api/v1/auth/refresh)
+- ADR-001: cookie Path=/api/v1/auth preserved (backend unchanged)
+
+## New file contracts
+- refreshSingleFlight.ts exports:
+  - RefreshInflightState interface: { current: Promise<Result<string>> | null }
+  - refreshOnce(state, fetcher): Promise<Result<string>>
+  - _resetRefreshInflight(state): void (test utility)
+
+## Endpoints smoke-tested
+- POST /api/v1/auth/sign-in → 200 OK (mfa_required=true)
+- POST /api/v1/auth/2fa/verify (challenge_id, code) → 200 OK (refresh cookie set)
+- POST /api/v1/auth/refresh → 200 OK (cookie rotation, new access_token)
+- POST /api/v1/auth/refresh concurrent (stale cookie) → 200 + 401 (expected backend behavior)

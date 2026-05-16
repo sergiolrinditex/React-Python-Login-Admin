@@ -1,0 +1,32 @@
+# Verification Data Contract Used — P03-S01-T006
+
+## Source
+HILO_PEOPLE_TECHNICAL_GUIDE.md §Verification Data Contract
+
+## Row used
+| Journey | User | Setup | Reset | Coverage |
+|---------|------|-------|-------|----------|
+| J100 auth-login | employee.verification@inditex-sandbox.com | active + MFA TOTP secret JBSWY3DPEHPK3PXP | dev-restart --reset | J100, P03-S01 |
+
+## Data provided from verification files
+- data/verification/users/employee_primary.json: email, password_plain=VerifyPass2024!
+- data/verification/auth/mfa_primary.json: totp_secret=JBSWY3DPEHPK3PXP, enabled=true
+
+## Steps executed
+1. POST /api/v1/auth/sign-in → 200 mfa_required=true, challenge JWT issued
+2. TOTP generated: pyotp.TOTP('JBSWY3DPEHPK3PXP').now() → live code
+3. POST /api/v1/auth/2fa/verify (challenge_id=JWT, code=TOTP) → 200, refresh_token cookie set
+4. POST /api/v1/auth/refresh (with cookie) → 200, new access_token issued, new cookie rotated
+5. Concurrent test: 2x POST /api/v1/auth/refresh same old cookie → 200 + 401 (expected backend behavior)
+
+## Persisted data observed
+- DB: hilo_dev.refresh_tokens — 1 active row for user_id=2a0f54f0-61cd-44a3-b4ca-0a0541f3f404 after single refresh
+- DB: previous tokens revoked (revoked_at IS NOT NULL)
+- DB: rotation working correctly (atomic revoke+issue)
+
+## Note
+Backend smoke performed with real verification data. 
+Frontend single-flight is verified by unit tests (RSF-T01..T09, T21-T26) + build smoke.
+The concurrent curl test (step 5) demonstrates the ORIGINAL BUG behavior (without frontend dedup).
+The frontend fix (refreshSingleFlight.ts) prevents this by ensuring only 1 POST is ever sent from the browser.
+/verify-slice will confirm AC1/AC2/AC3 with browser MCP + DevTools Network tab.

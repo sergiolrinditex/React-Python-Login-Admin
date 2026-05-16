@@ -20,6 +20,13 @@
  *   hydrating → unauthenticated (refresh returned 401 or network error)
  *   authenticated → unauthenticated (onAuthFailure triggered by 401 interceptor)
  *
+ * P03-S01-T006 — Single-flight dedupe (§D-T006-PROVIDER-IDEMPOTENT):
+ *   AuthProvider itself is NOT modified functionally. The useEffect below calls
+ *   repo.refresh() as before; the concurrent-call dedupe lives in AuthRepository
+ *   via refreshSingleFlight.ts. StrictMode double-mount is now safe: the second
+ *   mount's repo.refresh() awaits the same in-flight Promise from the first mount,
+ *   producing exactly ONE POST /api/v1/auth/refresh.
+ *
  * Non-negotiables §logging: BEFORE + AFTER + ERROR via logger.ts.
  * Security: NEVER log token value. NEVER log user.email. Log user.id only.
  */

@@ -1,0 +1,65 @@
+# AC1 — StrictMode Double-Mount Network Evidence
+# P03-S01-T006 verify-slice
+# Date: 2026-05-16
+# MCP: chrome-devtools
+# Browser: http://localhost:5173/chat (Vite dev server, StrictMode active)
+
+## Verification procedure
+1. Login via /auth/sign-in → /auth/2fa (TOTP 820812) → /chat (authenticated)
+2. Open DevTools Network filter fetch/xhr
+3. Reload /chat 5 times with ignoreCache=true
+4. Count POST /api/v1/auth/refresh per reload
+
+## Results: AC1 — 5 reloads, EXACTLY 1 POST /auth/refresh each, ALL 200
+
+Reload 1:
+  reqid=142  POST http://localhost:5173/api/v1/auth/refresh  [200]
+  reqid=144  GET  http://localhost:5173/api/v1/users/me      [200]
+  Refresh count: 1 (expected: 1) ✓
+
+Reload 2:
+  reqid=212  POST http://localhost:5173/api/v1/auth/refresh  [200]
+  reqid=214  GET  http://localhost:5173/api/v1/users/me      [200]
+  Refresh count: 1 (expected: 1) ✓
+
+Reload 3:
+  reqid=282  POST http://localhost:5173/api/v1/auth/refresh  [200]
+  reqid=284  GET  http://localhost:5173/api/v1/users/me      [200]
+  Refresh count: 1 (expected: 1) ✓
+
+Reload 4:
+  reqid=352  POST http://localhost:5173/api/v1/auth/refresh  [200]
+  reqid=354  GET  http://localhost:5173/api/v1/users/me      [200]
+  Refresh count: 1 (expected: 1) ✓
+
+Reload 5:
+  reqid=422  POST http://localhost:5173/api/v1/auth/refresh  [200]
+  reqid=424  GET  http://localhost:5173/api/v1/users/me      [200]
+  Refresh count: 1 (expected: 1) ✓
+
+TOTAL: 5 POST /auth/refresh calls across 5 reloads. 0 failures. 0 extra calls.
+PRE-FIX expected: ~10 calls with several 401 responses.
+POST-FIX observed: 5 calls, all 200. Single-flight dedupe VERIFIED.
+
+## Console errors/warnings after 5 reloads
+<no console messages found> — zero errors, zero warnings
+
+## AC3 — Multi-tab test
+Second tab opened to http://localhost:5173/chat:
+  reqid=68   POST http://localhost:5173/api/v1/auth/refresh  [200]
+  reqid=70   GET  http://localhost:5173/api/v1/users/me      [200]
+  Second tab: authenticated, /chat shown, 0 errors ✓
+
+Tab 1 after tab 2 opened:
+  URL: http://localhost:5173/chat
+  State: authenticated (¿En qué puedo ayudarte? displayed) ✓
+  No redirect to /auth/sign-in ✓
+  No "session expired" message ✓
+
+## DB state after verification (postgres p03-s01-t005-postgres-1)
+active_tokens: 1  (expected: exactly 1 — rotation working)
+revoked_tokens: 20 (prior tokens from login + 7 AC1 reloads rotations + AC3 second tab rotation)
+
+## API_BASE contract (ADR-002)
+Request URL: http://localhost:5173/api/v1/auth/refresh
+Relative path preserved (no external hostname) ✓
