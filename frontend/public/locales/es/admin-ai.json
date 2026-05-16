@@ -6,5 +6,58 @@
   "mcp": {
     "title": "Integraciones MCP",
     "empty": "No hay integraciones activas"
+  },
+  "dashboard": {
+    "title": "Resumen Admin AI",
+    "window": {
+      "range": "Últimos 30 días — {{from}} → {{to}}"
+    },
+    "kpi": {
+      "invocations": "Invocaciones",
+      "tokens": "Tokens (in + out)",
+      "cost": "Coste estimado",
+      "latency": "Latencia media (ms)"
+    },
+    "table": {
+      "caption": "Uso por modelo",
+      "headers": {
+        "model": "Modelo",
+        "invocations": "Invocaciones",
+        "tokensIn": "Tokens in",
+        "tokensOut": "Tokens out",
+        "cost": "Coste",
+        "latency": "Latencia"
+      }
+    },
+    "empty": {
+      "title": "Sin uso registrado",
+      "body": "Aún no hay actividad LLM en los últimos 30 días. Activa un modelo para empezar."
+    },
+    "errors": {
+      "network": {
+        "title": "No se pudo cargar el resumen",
+        "body": "Comprueba tu conexión e inténtalo de nuevo."
+      },
+      "forbidden": {
+        "title": "Acceso restringido",
+        "body": "No tienes permisos de administrador para ver esta página."
+      }
+    },
+    "actions": {
+      "retry": "Reintentar",
+      "manageModels": "Gestionar modelos"
+    }
+  },
+  "nav": {
+    "dashboard": "Resumen",
+    "models": "Modelos",
+    "modelsNew": "Nuevo modelo",
+    "ragDocuments": "Documentos RAG",
+    "ragCollections": "Colecciones",
+    "mcpServers": "Servidores MCP",
+    "mcpNew": "Nuevo MCP",
+    "agents": "Agentes",
+    "audit": "Auditoría",
+    "usage": "Coste y latencias"
   }
 }

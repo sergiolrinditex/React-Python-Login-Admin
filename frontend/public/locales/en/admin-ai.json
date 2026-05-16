@@ -6,5 +6,58 @@
   "mcp": {
     "title": "MCP integrations",
     "empty": "No active integrations"
+  },
+  "dashboard": {
+    "title": "Admin AI overview",
+    "window": {
+      "range": "Last 30 days — {{from}} → {{to}}"
+    },
+    "kpi": {
+      "invocations": "Invocations",
+      "tokens": "Tokens (in + out)",
+      "cost": "Estimated cost",
+      "latency": "Avg latency (ms)"
+    },
+    "table": {
+      "caption": "Usage by model",
+      "headers": {
+        "model": "Model",
+        "invocations": "Invocations",
+        "tokensIn": "Tokens in",
+        "tokensOut": "Tokens out",
+        "cost": "Cost",
+        "latency": "Latency"
+      }
+    },
+    "empty": {
+      "title": "No usage yet",
+      "body": "No LLM activity in the last 30 days. Activate a model to get started."
+    },
+    "errors": {
+      "network": {
+        "title": "Failed to load summary",
+        "body": "Check your connection and try again."
+      },
+      "forbidden": {
+        "title": "Access restricted",
+        "body": "You do not have administrator permissions to view this page."
+      }
+    },
+    "actions": {
+      "retry": "Retry",
+      "manageModels": "Manage models"
+    }
+  },
+  "nav": {
+    "dashboard": "Overview",
+    "models": "Models",
+    "modelsNew": "New model",
+    "ragDocuments": "RAG documents",
+    "ragCollections": "Collections",
+    "mcpServers": "MCP servers",
+    "mcpNew": "New MCP",
+    "agents": "Agents",
+    "audit": "Audit log",
+    "usage": "Cost & latency"
   }
 }

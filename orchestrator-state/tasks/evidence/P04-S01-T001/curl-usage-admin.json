@@ -1,0 +1,18 @@
+{
+    "data": {
+        "from": "2026-04-16T00:00:00+00:00",
+        "to": "2026-05-16T00:00:00+00:00",
+        "group_by": "model",
+        "rows": [],
+        "totals": {
+            "tokens_in": 0,
+            "tokens_out": 0,
+            "estimated_cost": 0.0,
+            "invocations": 0,
+            "latency_ms_avg": null
+        }
+    },
+    "meta": {
+        "request_id": "f46e9cc9-9804-4611-a9fc-51e08eadf628"
+    }
+}

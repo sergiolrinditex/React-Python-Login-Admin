@@ -1,0 +1,16 @@
+ total_rows_30d 
+----------------
+              1
+(1 fila)
+
+--- Row detail ---
+                  id                  | tokens_in | tokens_out | estimated_cost |          created_at           | model_name  
+--------------------------------------+-----------+------------+----------------+-------------------------------+-------------
+ 796457f2-79ef-4997-b8f8-8d16c44d3adf |       150 |         75 |        0.00045 | 2026-05-16 01:57:18.847329+00 | gpt-4o-mini
+(1 fila)
+
+--- Analysis ---
+DB has 1 llm_usage_log row (created 2026-05-16 01:57:18 UTC, model=gpt-4o-mini, tokens_in=150).
+API call with from=2026-04-16T00:00:00Z to=2026-05-16T00:00:00Z returned 0 rows (consistent: row created AFTER the 'to' boundary).
+API call with extended window to=2026-05-17T00:00:00Z returned exactly that row with correct totals.
+DB state = API response = CONSISTENT. No discrepancy.

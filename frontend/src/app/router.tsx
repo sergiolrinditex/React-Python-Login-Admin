@@ -7,9 +7,10 @@
  *   WRITE_SET_DRIFT §D-T001-ROUTE (P03-S02-T001): wired /chat to ChatHomePage;
  *     updated / and * redirects so authenticated users land on /chat.
  *   Updated in P03-S01-T002 — added /auth/sign-up route wired to SignUpPage (§D-T002-ROUTER).
- *   Updated in P03-S02-T003 — added /history route wired to HistoryPage (§D-T003-ROUTER).
- *   Updated in P03-S01-T004 — added /auth/reset-sent route wired to ResetSentPage (§D-T004-ROUTER).
- *   Updated in P03-S01-T005 — added /auth/2fa route wired to TwoFactorPage (§D-T005-ROUTER).
+ *   Updated in P04-S01-T001 (§D-T001-ROUTER): real AdminDashboardPage replaces AdminStub;
+ *     added ROUTE_ADMIN_AI_MODELS, ROUTE_ADMIN_AI_MODELS_NEW, ROUTE_ADMIN_RAG_DOCUMENTS,
+ *     ROUTE_ADMIN_RAG_COLLECTIONS, ROUTE_ADMIN_AI_MCP, ROUTE_ADMIN_AI_MCP_NEW,
+ *     ROUTE_ADMIN_AI_AGENTS, ROUTE_ADMIN_AUDIT, ROUTE_ADMIN_USAGE constants for nav.
  *
  * Responsibility: single mount point for the application's route tree.
  *   Exports <AppRouter> which is consumed by main.tsx inside <Providers>.
@@ -19,20 +20,18 @@
  *   /showcase          → ShowcasePage (public — design-system demo, dev-only)
  *   /auth/sign-in      → SignInPage (real form, P03-S01-T001)
  *   /auth/sign-up      → SignUpPage (real form, P03-S01-T002)
- *   /auth/reset-sent   → ResetSentPage (P03-S01-T004)
- *   /auth/2fa          → TwoFactorPage (P03-S01-T005, public, J100 MFA step)
  *   /chat              → ChatHomePage (employee, RequireAuth) — P03-S02-T001
  *   /chat/:conversationId → placeholder (P03-S02-T002 adds real ConversationPage)
- *   /history              → HistoryPage (employee history, RequireAuth) — P03-S02-T003
- *   /admin             → STUB placeholder (wrapped in RequireRole — test surface)
+ *   /admin             → AdminDashboardPage (people_admin|super_admin) — P04-S01-T001
+ *   /admin/ai/models   → placeholder (P04-S01-T002)
+ *   (other admin routes → catch-all → /)
  *   /                  → RootRedirect: authenticated→/chat, unauthenticated→/auth/sign-in
  *   *                  → redirects to / (catch-all; uses RootRedirect logic)
  *
  * P03-S01-T001 adds: real SignInPage form replacing the /auth/sign-in stub.
  * P03-S01-T002 adds: real SignUpPage form at /auth/sign-up.
  * P03-S02-T001 adds: /chat real page; updates / and * redirects for authed users.
- * P03-S01-T005 adds: /auth/2fa — TwoFactorPage (public, MFA code verification step).
- * P04-S01-T001 adds: real /admin dashboard replacing stub.
+ * P04-S01-T001 adds: real AdminDashboardPage + ROUTE_ADMIN_* constants (§D-T001-ROUTER).
  *
  * AuthProvider composition (task pack §I):
  *   INSIDE router.tsx: <AuthProvider> wraps <Routes>.
@@ -50,10 +49,8 @@ import type { ReactNode } from "react";
 import ShowcasePage from "../pages/showcase/ShowcasePage";
 import SignInPage from "../pages/auth/SignInPage";
 import SignUpPage from "../pages/auth/SignUpPage";
-import ResetSentPage from "../pages/auth/ResetSentPage";
-import TwoFactorPage from "../pages/auth/TwoFactorPage";
 import ChatHomePage from "../pages/chat/ChatHomePage";
-import HistoryPage from "../pages/chat/HistoryPage";
+import AdminDashboardPage from "../pages/admin/AdminDashboardPage";
 import { AuthProvider } from "../features/auth/presentation/AuthProvider";
 import { useAuth } from "../features/auth/presentation/AuthProvider";
 import { RequireAuth } from "../features/auth/presentation/RequireAuth";
@@ -75,27 +72,40 @@ export const ROUTE_AUTH_SIGN_UP = "/auth/sign-up";
 /** Route path for admin area. Dashboard implemented in P04-S01-T001. */
 export const ROUTE_ADMIN = "/admin";
 
-/**
- * Route path for password-reset confirmation page. Implemented in P03-S01-T004.
- * §D-T004-ROUTER: public route, outside RequireAuth, mirrors /auth/sign-in pattern.
- * Source: TECHNICAL_GUIDE §6.4 Navigation Contract — explicit public route.
- */
-export const ROUTE_AUTH_RESET_SENT = "/auth/reset-sent";
+// ---------------------------------------------------------------------------
+// Admin route constants — §D-T001-ROUTER (P04-S01-T001)
+// Added for AdminShell nav and downstream P04-S01-T002..T004 slices.
+// ---------------------------------------------------------------------------
 
-/**
- * Route path for 2FA verification page. Implemented in P03-S01-T005. §D-T005-ROUTER.
- * Public route — no RequireAuth (§6.4 Navigation Contract).
- * Reads mfa_challenge_token from router state (set by SignInPage on MFA branch).
- * §D-T005-DEEP-LINK-GUARD: without router state, bounces to /auth/sign-in.
- * Source: TECHNICAL_GUIDE §6.4 Navigation Contract — explicit public route.
- */
-export const ROUTE_AUTH_2FA = "/auth/2fa";
+/** Admin AI models list. Implemented in P04-S01-T002. */
+export const ROUTE_ADMIN_AI_MODELS = "/admin/ai/models";
+
+/** Admin AI new model wizard. Implemented in P04-S01-T003. */
+export const ROUTE_ADMIN_AI_MODELS_NEW = "/admin/ai/models/new";
+
+/** Admin RAG documents. Implemented in P04-S02-T001. */
+export const ROUTE_ADMIN_RAG_DOCUMENTS = "/admin/rag/documents";
+
+/** Admin RAG collections. Implemented in P04-S02-T002. */
+export const ROUTE_ADMIN_RAG_COLLECTIONS = "/admin/rag/collections";
+
+/** Admin MCP servers. Implemented in downstream slice. */
+export const ROUTE_ADMIN_AI_MCP = "/admin/ai/mcp";
+
+/** Admin new MCP server. Implemented in downstream slice. */
+export const ROUTE_ADMIN_AI_MCP_NEW = "/admin/ai/mcp/new";
+
+/** Admin AI agents. Implemented in downstream slice. */
+export const ROUTE_ADMIN_AI_AGENTS = "/admin/ai/agents";
+
+/** Admin audit log. Implemented in downstream slice. */
+export const ROUTE_ADMIN_AUDIT = "/admin/audit";
+
+/** Admin usage / cost & latency. Implemented in downstream slice. */
+export const ROUTE_ADMIN_USAGE = "/admin/usage";
 
 /** Route path for employee chat home. Implemented in P03-S02-T001. */
 export const ROUTE_CHAT = "/chat";
-
-/** Route path for employee conversation history. Implemented in P03-S02-T003. §D-T003-ROUTER */
-export const ROUTE_HISTORY = "/history";
 
 // ---------------------------------------------------------------------------
 // RootRedirect — auth-aware redirect for "/" and "*" catch-all
@@ -124,25 +134,7 @@ function RootRedirect(): ReactNode {
   return <Navigate to={ROUTE_AUTH_SIGN_IN} replace />;
 }
 
-// ---------------------------------------------------------------------------
-// Stub page components (placeholders until P04 slices land)
-// ---------------------------------------------------------------------------
-
-/**
- * Admin area STUB. Real dashboard in P04-S01-T001.
- * Protected by RequireRole(['people_admin','super_admin']).
- */
-function AdminStub(): ReactNode {
-  return (
-    <div
-      style={{ padding: "2rem", fontFamily: "var(--font-sans)" }}
-      data-testid="admin-stub"
-    >
-      <h1>Admin — stub</h1>
-      <p>Real admin dashboard implemented in P04-S01-T001.</p>
-    </div>
-  );
-}
+// AdminStub removed in P04-S01-T001 (§D-T001-ROUTER). Replaced by AdminDashboardPage.
 
 // ---------------------------------------------------------------------------
 // Component
@@ -158,11 +150,10 @@ function AdminStub(): ReactNode {
  */
 export function AppRouter(): ReactNode {
   if (import.meta.env.VITE_ENABLE_VERBOSE_LOGGING === "true") {
-    // §D-T005-ROUTER: ROUTE_AUTH_2FA added to verbose-log routes array
     console.info("AppRouter.render.start", {
-      phase: "P03",
-      slice: "P03-S01-T005",
-      routes: [ROUTE_SHOWCASE, ROUTE_AUTH_SIGN_IN, ROUTE_AUTH_SIGN_UP, ROUTE_AUTH_RESET_SENT, ROUTE_AUTH_2FA, ROUTE_CHAT, ROUTE_HISTORY, ROUTE_ADMIN],
+      phase: "P04",
+      slice: "P04-S01-T001",
+      routes: [ROUTE_SHOWCASE, ROUTE_AUTH_SIGN_IN, ROUTE_AUTH_SIGN_UP, ROUTE_CHAT, ROUTE_ADMIN],
     });
   }
 
@@ -176,17 +167,11 @@ export function AppRouter(): ReactNode {
           <Route path={ROUTE_AUTH_SIGN_IN} element={<SignInPage />} />
           {/* P03-S01-T002: real SignUpPage (§D-T002-ROUTER) */}
           <Route path={ROUTE_AUTH_SIGN_UP} element={<SignUpPage />} />
-          {/* P03-S01-T004: ResetSentPage — public route (§D-T004-ROUTER, §D-T004-PUBLIC-ROUTE) */}
-          <Route path={ROUTE_AUTH_RESET_SENT} element={<ResetSentPage />} />
-          {/* P03-S01-T005: TwoFactorPage — public route (§D-T005-ROUTER, §D-T005-DEEP-LINK-GUARD) */}
-          <Route path={ROUTE_AUTH_2FA} element={<TwoFactorPage />} />
 
           {/* Protected employee routes */}
           <Route element={<RequireAuth><Outlet /></RequireAuth>}>
             {/* /chat — real ChatHomePage (P03-S02-T001) */}
             <Route path={ROUTE_CHAT} element={<ChatHomePage />} />
-            {/* /history — real HistoryPage (P03-S02-T003 §D-T003-ROUTER) */}
-            <Route path={ROUTE_HISTORY} element={<HistoryPage />} />
             {/*
              * /chat/:conversationId — placeholder for P03-S02-T002 (ConversationPage).
              * D-T001-OUTAGE-OF-CHAT-T002: navigate succeeds; unknown path bounces to /chat.
@@ -206,7 +191,12 @@ export function AppRouter(): ReactNode {
               </RequireRole>
             }
           >
-            <Route path={ROUTE_ADMIN} element={<AdminStub />} />
+            {/* /admin — real AdminDashboardPage (P04-S01-T001 §D-T001-ROUTER) */}
+            <Route path={ROUTE_ADMIN} element={<AdminDashboardPage />} />
+            {/*
+             * Subsequent admin sub-routes wired in P04-S01-T002+ slices.
+             * Until then, catch-all handles them → / → /chat for admins.
+             */}
           </Route>
 
           {/*
