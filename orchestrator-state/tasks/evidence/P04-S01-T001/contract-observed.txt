@@ -1,0 +1,28 @@
+## Contract Observed — P04-S01-T001
+
+### Route/Provider/API client
+- Route: /admin (frontend router, RequireRole roles=["people_admin","super_admin"])
+- API Client: features/admin-ai/data/adminAiRepository.ts → getUsage()
+- Hook: features/admin-ai/presentation/useDashboardUsage.ts → useDashboardUsage()
+- Auth: features/auth/data/httpClient.ts → authFetch() (credentials:include, X-Request-ID, Bearer injection)
+
+### Endpoints observed
+- POST /api/v1/auth/sign-in (admin) → 200 mfa_required=false
+- POST /api/v1/auth/sign-in (employee) → 200 mfa_required=true
+- POST /api/v1/auth/2fa/verify → 200 (employee TOTP flow)
+- GET /api/v1/admin/usage (unauthenticated) → 401
+- GET /api/v1/admin/usage (admin) → 200 with data.{from,to,group_by,rows,totals}
+- GET /api/v1/admin/usage (employee) → 403 AUTH_PERMISSION_DENIED
+
+### DTOs matched
+- UsageSummary: {from, to, group_by, rows[], totals{tokens_in,tokens_out,estimated_cost,invocations,latency_ms_avg}}
+- UsageRow: {tokens_in, tokens_out, estimated_cost, latency_ms_avg, invocations, model_id, model_name, provider_type}
+- Response envelope: {data: UsageSummary, meta: {request_id}}
+
+### DB tables observed
+- llm_usage_logs: read-only, columns (tokens_in, tokens_out, estimated_cost, latency_ms, created_at, model_id)
+- ai_models: joined for model_name (model_id col), provider_id
+- ai_providers: joined for provider_type
+
+### Migration head
+- 0002_ai_chat_rag_mcp_agents.py (applied, read-only in this slice, no new migration)

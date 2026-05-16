@@ -1,0 +1,30 @@
+## Verification Data Contract Used — P04-S01-T001
+
+### Rows from TECHNICAL_GUIDE §6.5 (J103 admin-ai)
+
+| Field | Value |
+|---|---|
+| Persona / rol | data/verification/users/admin_peopletech.json |
+| Email | admin.peopletech@inditex-sandbox.com |
+| Role | people_admin |
+| Datos reales | Admin user active in DB; 1 llm_usage_log row from prior bootstrap |
+| Non-admin persona | data/verification/users/employee_primary.json (EMP-VERIFY-001) |
+| Employee role | employee (with MFA required) |
+
+### Data flow observed
+
+1. Admin sign-in (POST /api/v1/auth/sign-in) → 200, mfa_required=false → access_token
+2. GET /api/v1/admin/usage?from=2026-04-16T00:00:00Z&to=2026-05-16T00:00:00Z&group_by=model → 200 empty (consistent with row created after 'to' boundary)
+3. Extended window GET ...&to=2026-05-17T00:00:00Z → 200 with 1 row (gpt-4o-mini, tokens_in=150, invocations=1)
+4. Employee MFA sign-in → TOTP completed → GET admin/usage → 403 AUTH_PERMISSION_DENIED
+
+### DB row observed
+
+llm_usage_logs: id=796457f2, model_id=f7c851ae (gpt-4o-mini), tokens_in=150, tokens_out=75, estimated_cost=0.00045, created_at=2026-05-16 01:57:18 UTC
+
+### Consistency check
+
+API with to=2026-05-17T00:00:00Z returned invocations=1, tokens_in=150, tokens_out=75, estimated_cost=0.00045
+DB direct count: 1 row with tokens_in=150, tokens_out=75 — MATCH.
+
+API with to=2026-05-16T00:00:00Z returned invocations=0 (row created AFTER window boundary) — CORRECT, not a discrepancy.

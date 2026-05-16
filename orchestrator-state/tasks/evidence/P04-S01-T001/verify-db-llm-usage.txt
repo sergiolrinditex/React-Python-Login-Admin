@@ -1,0 +1,16 @@
+DB query: SELECT COUNT(*) FROM llm_usage_logs;
+Result: 1 row total
+
+DB query: SELECT COUNT(*) FROM llm_usage_logs WHERE created_at >= NOW() - INTERVAL '30 days';
+Result: 1 row in_30d (WITHIN window — success state expected)
+
+Full row:
+id                                   | tokens_in | tokens_out | estimated_cost | latency_ms | created_at
+796457f2-79ef-4997-b8f8-8d16c44d3adf |       150 |         75 |        0.00045 |        823 | 2026-05-16 01:57:18.847329+00
+
+bootstrap result: {"status": "ok", "groups": [
+  {"group": "admin_ai", "status": "ok", "inserted": 0, "updated": 1, "skipped": 0},
+  {"group": "admin_ai", "status": "ok", "inserted": 0, "updated": 1, "skipped": 0},
+  {"group": "admin_ai", "status": "ok", "inserted": 0, "updated": 1, "skipped": 0},
+  {"group": "admin_ai", "status": "ok", "inserted": 0, "updated": 1, "skipped": 0}
+]}

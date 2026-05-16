@@ -1,0 +1,37 @@
+Network request captured via Chrome DevTools MCP:
+GET /api/v1/admin/usage?from=2026-04-16T02:14:25.357Z&to=2026-05-16T02:14:25.357Z&group_by=model
+Status: 200 OK
+x-request-id: 3815c1f5-d7f7-429f-97a8-533a7a9cd6a2
+
+Response body:
+{
+  "data": {
+    "from": "2026-04-16T02:14:25.357000+00:00",
+    "to": "2026-05-16T02:14:25.357000+00:00",
+    "group_by": "model",
+    "rows": [
+      {
+        "tokens_in": 150,
+        "tokens_out": 75,
+        "estimated_cost": 0.00045,
+        "latency_ms_avg": 823,
+        "invocations": 1,
+        "model_id": "f7c851ae-a90f-480d-9126-8f904ad55cb4",
+        "model_name": "gpt-4o-mini",
+        "provider_type": "litellm"
+      }
+    ],
+    "totals": {
+      "tokens_in": 150,
+      "tokens_out": 75,
+      "estimated_cost": 0.00045,
+      "invocations": 1,
+      "latency_ms_avg": 823
+    }
+  },
+  "meta": { "request_id": "3815c1f5-d7f7-429f-97a8-533a7a9cd6a2" }
+}
+
+Authorization: Bearer token present (roles: ["people_admin"])
+Cookie: csrf_secret present
+No x-request-id missing in response.

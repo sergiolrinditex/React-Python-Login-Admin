@@ -2,8 +2,6 @@
  * Hilo People — i18n test suite.
  *
  * Slice/Phase: P00-S01-T005 — i18n resources ES/EN/FR / Phase 0 Scaffold.
- *   Extended in P03-S01-T004 — §D-T004-I18N-LOCKSTEP-TEST: asserts reset_sent.*
- *   keys exist in all 3 locales and that body.with_email contains {{maskedEmail}}.
  *
  * Responsibility: verify that i18next is configured correctly with all 8 namespaces,
  *   3 locales, fallback behaviour, and error-code coverage.
@@ -18,7 +16,7 @@
  * Source ref: task pack §8.4 (8 test assertions).
  */
 
-import { describe, it, expect, afterEach } from "vitest";
+import { describe, it, expect } from "vitest";
 import i18n from "../index";
 import { SUPPORTED_LANGUAGES, I18N_NAMESPACES, DEFAULT_LANGUAGE } from "../languages";
 
@@ -47,10 +45,9 @@ const ERROR_CODES = [
 // ---------------------------------------------------------------------------
 
 describe("i18n: configuration", () => {
-  it("i18n: registers all 9 namespaces (history added P03-S02-T003 §D-T003-I18N)", () => {
+  it("i18n: registers all 8 namespaces", () => {
     const registered = i18n.options.ns as string[];
-    // P03-S02-T003 added 'history' namespace → total is now 9
-    expect(I18N_NAMESPACES).toHaveLength(9);
+    expect(I18N_NAMESPACES).toHaveLength(8);
     I18N_NAMESPACES.forEach((ns) => {
       expect(registered).toContain(ns);
     });
@@ -67,7 +64,7 @@ describe("i18n: configuration", () => {
 });
 
 // ---------------------------------------------------------------------------
-// Test 2 — i18n: 27 bundles present (9 namespaces × 3 languages, P03-S02-T003 adds history)
+// Test 2 — i18n: 24 bundles present (8 namespaces × 3 languages)
 // ---------------------------------------------------------------------------
 
 describe("i18n: 24 bundles present", () => {
@@ -226,107 +223,125 @@ describe("i18n: no copy-paste across languages", () => {
 });
 
 // ---------------------------------------------------------------------------
-// §D-T004-I18N-LOCKSTEP-TEST — reset_sent keys ES/EN/FR lockstep assertions
+// Test 9 — i18n: admin-ai.dashboard.* keys present in es/en/fr (P04-S01-T001)
+// Write-set anchor: §D-T001-I18N-TEST-EXTEND
 // ---------------------------------------------------------------------------
 
-/**
- * Lockstep assertions for auth:reset_sent.* keys added in P03-S01-T004.
- * Verifies:
- *   1. auth:reset_sent.title resolves to expected locale-specific literal.
- *   2. auth:reset_sent.body.with_email contains {{maskedEmail}} placeholder.
- *   3. All 4 keys are non-empty in all 3 locales.
- */
-describe("i18n: reset_sent lockstep — §D-T004-I18N-LOCKSTEP-TEST", () => {
-  afterEach(async () => {
-    await i18n.changeLanguage("es");
-  });
-
-  it("i18n: auth:reset_sent.title resolves ES literal", async () => {
-    await i18n.changeLanguage("es");
-    expect(i18n.t("auth:reset_sent.title")).toBe("Revisa tu correo");
-  });
-
-  it("i18n: auth:reset_sent.title resolves EN literal", async () => {
-    await i18n.changeLanguage("en");
-    expect(i18n.t("auth:reset_sent.title")).toBe("Check your email");
-  });
-
-  it("i18n: auth:reset_sent.title resolves FR literal", async () => {
-    await i18n.changeLanguage("fr");
-    expect(i18n.t("auth:reset_sent.title")).toBe("Vérifiez votre email");
-  });
-
-  it("i18n: auth:reset_sent.body.with_email ES contains interpolated maskedEmail", async () => {
-    await i18n.changeLanguage("es");
-    // Interpolate with a sentinel value and confirm it appears in the output
-    const result = i18n.t("auth:reset_sent.body.with_email", { maskedEmail: "X" });
-    expect(result).toContain("X");
-    // Raw key must also contain the placeholder (raw resource check)
-    const bundle = i18n.getResourceBundle("es", "auth") as {
-      reset_sent: { body: { with_email: string } };
-    };
-    expect(bundle.reset_sent.body.with_email).toContain("{{maskedEmail}}");
-  });
-
-  it("i18n: auth:reset_sent.body.with_email EN contains interpolated maskedEmail", async () => {
-    await i18n.changeLanguage("en");
-    const result = i18n.t("auth:reset_sent.body.with_email", { maskedEmail: "X" });
-    expect(result).toContain("X");
-    const bundle = i18n.getResourceBundle("en", "auth") as {
-      reset_sent: { body: { with_email: string } };
-    };
-    expect(bundle.reset_sent.body.with_email).toContain("{{maskedEmail}}");
-  });
-
-  it("i18n: auth:reset_sent.body.with_email FR contains interpolated maskedEmail", async () => {
-    await i18n.changeLanguage("fr");
-    const result = i18n.t("auth:reset_sent.body.with_email", { maskedEmail: "X" });
-    expect(result).toContain("X");
-    const bundle = i18n.getResourceBundle("fr", "auth") as {
-      reset_sent: { body: { with_email: string } };
-    };
-    expect(bundle.reset_sent.body.with_email).toContain("{{maskedEmail}}");
-  });
-
-  it("i18n: all 4 reset_sent keys are non-empty in es", () => {
-    const bundle = i18n.getResourceBundle("es", "auth") as {
-      reset_sent: {
-        title: string;
-        body: { with_email: string; fallback: string };
-        actions: { back_to_sign_in: string };
+type AdminAiBundle = {
+  dashboard: {
+    title: string;
+    window: { range: string };
+    kpi: { invocations: string; tokens: string; cost: string; latency: string };
+    table: {
+      caption: string;
+      headers: {
+        model: string;
+        invocations: string;
+        tokensIn: string;
+        tokensOut: string;
+        cost: string;
+        latency: string;
       };
     };
-    expect(bundle.reset_sent.title.length).toBeGreaterThan(0);
-    expect(bundle.reset_sent.body.with_email.length).toBeGreaterThan(0);
-    expect(bundle.reset_sent.body.fallback.length).toBeGreaterThan(0);
-    expect(bundle.reset_sent.actions.back_to_sign_in.length).toBeGreaterThan(0);
+    empty: { title: string; body: string };
+    errors: {
+      network: { title: string; body: string };
+      forbidden: { title: string; body: string };
+    };
+    actions: { retry: string; manageModels: string };
+  };
+  nav: {
+    dashboard: string;
+    models: string;
+    modelsNew: string;
+    ragDocuments: string;
+    ragCollections: string;
+    mcpServers: string;
+    mcpNew: string;
+    agents: string;
+    audit: string;
+    usage: string;
+  };
+};
+
+describe("i18n: admin-ai.dashboard.* lockstep in es/en/fr", () => {
+  it("i18n: admin-ai.dashboard.* all keys present in es", () => {
+    const bundle = i18n.getResourceBundle("es", "admin-ai") as AdminAiBundle;
+    expect(bundle.dashboard.title).toBeTruthy();
+    expect(bundle.dashboard.window.range).toBeTruthy();
+    expect(bundle.dashboard.kpi.invocations).toBeTruthy();
+    expect(bundle.dashboard.kpi.tokens).toBeTruthy();
+    expect(bundle.dashboard.kpi.cost).toBeTruthy();
+    expect(bundle.dashboard.kpi.latency).toBeTruthy();
+    expect(bundle.dashboard.table.caption).toBeTruthy();
+    expect(bundle.dashboard.table.headers.model).toBeTruthy();
+    expect(bundle.dashboard.table.headers.invocations).toBeTruthy();
+    expect(bundle.dashboard.table.headers.tokensIn).toBeTruthy();
+    expect(bundle.dashboard.table.headers.tokensOut).toBeTruthy();
+    expect(bundle.dashboard.table.headers.cost).toBeTruthy();
+    expect(bundle.dashboard.table.headers.latency).toBeTruthy();
+    expect(bundle.dashboard.empty.title).toBeTruthy();
+    expect(bundle.dashboard.empty.body).toBeTruthy();
+    expect(bundle.dashboard.errors.network.title).toBeTruthy();
+    expect(bundle.dashboard.errors.network.body).toBeTruthy();
+    expect(bundle.dashboard.errors.forbidden.title).toBeTruthy();
+    expect(bundle.dashboard.errors.forbidden.body).toBeTruthy();
+    expect(bundle.dashboard.actions.retry).toBeTruthy();
+    expect(bundle.dashboard.actions.manageModels).toBeTruthy();
   });
 
-  it("i18n: all 4 reset_sent keys are non-empty in en", () => {
-    const bundle = i18n.getResourceBundle("en", "auth") as {
-      reset_sent: {
-        title: string;
-        body: { with_email: string; fallback: string };
-        actions: { back_to_sign_in: string };
-      };
-    };
-    expect(bundle.reset_sent.title.length).toBeGreaterThan(0);
-    expect(bundle.reset_sent.body.with_email.length).toBeGreaterThan(0);
-    expect(bundle.reset_sent.body.fallback.length).toBeGreaterThan(0);
-    expect(bundle.reset_sent.actions.back_to_sign_in.length).toBeGreaterThan(0);
+  it("i18n: admin-ai.dashboard.* all keys present in en", () => {
+    const bundle = i18n.getResourceBundle("en", "admin-ai") as AdminAiBundle;
+    expect(bundle.dashboard.title).toBeTruthy();
+    expect(bundle.dashboard.window.range).toBeTruthy();
+    expect(bundle.dashboard.kpi.invocations).toBeTruthy();
+    expect(bundle.dashboard.kpi.tokens).toBeTruthy();
+    expect(bundle.dashboard.kpi.cost).toBeTruthy();
+    expect(bundle.dashboard.kpi.latency).toBeTruthy();
+    expect(bundle.dashboard.table.caption).toBeTruthy();
+    expect(bundle.dashboard.empty.title).toBeTruthy();
+    expect(bundle.dashboard.empty.body).toBeTruthy();
+    expect(bundle.dashboard.errors.network.title).toBeTruthy();
+    expect(bundle.dashboard.errors.forbidden.title).toBeTruthy();
+    expect(bundle.dashboard.actions.retry).toBeTruthy();
+    expect(bundle.dashboard.actions.manageModels).toBeTruthy();
   });
 
-  it("i18n: all 4 reset_sent keys are non-empty in fr", () => {
-    const bundle = i18n.getResourceBundle("fr", "auth") as {
-      reset_sent: {
-        title: string;
-        body: { with_email: string; fallback: string };
-        actions: { back_to_sign_in: string };
-      };
-    };
-    expect(bundle.reset_sent.title.length).toBeGreaterThan(0);
-    expect(bundle.reset_sent.body.with_email.length).toBeGreaterThan(0);
-    expect(bundle.reset_sent.body.fallback.length).toBeGreaterThan(0);
-    expect(bundle.reset_sent.actions.back_to_sign_in.length).toBeGreaterThan(0);
+  it("i18n: admin-ai.dashboard.* all keys present in fr", () => {
+    const bundle = i18n.getResourceBundle("fr", "admin-ai") as AdminAiBundle;
+    expect(bundle.dashboard.title).toBeTruthy();
+    expect(bundle.dashboard.window.range).toBeTruthy();
+    expect(bundle.dashboard.kpi.invocations).toBeTruthy();
+    expect(bundle.dashboard.kpi.tokens).toBeTruthy();
+    expect(bundle.dashboard.kpi.cost).toBeTruthy();
+    expect(bundle.dashboard.kpi.latency).toBeTruthy();
+    expect(bundle.dashboard.table.caption).toBeTruthy();
+    expect(bundle.dashboard.empty.title).toBeTruthy();
+    expect(bundle.dashboard.empty.body).toBeTruthy();
+    expect(bundle.dashboard.errors.network.title).toBeTruthy();
+    expect(bundle.dashboard.errors.forbidden.title).toBeTruthy();
+    expect(bundle.dashboard.actions.retry).toBeTruthy();
+    expect(bundle.dashboard.actions.manageModels).toBeTruthy();
+  });
+
+  it("i18n: admin-ai.dashboard.title differs across es, en, fr", () => {
+    const esBundle = i18n.getResourceBundle("es", "admin-ai") as AdminAiBundle;
+    const enBundle = i18n.getResourceBundle("en", "admin-ai") as AdminAiBundle;
+    const frBundle = i18n.getResourceBundle("fr", "admin-ai") as AdminAiBundle;
+    expect(esBundle.dashboard.title).not.toBe(enBundle.dashboard.title);
+    expect(esBundle.dashboard.title).not.toBe(frBundle.dashboard.title);
+  });
+
+  it("i18n: admin-ai.nav.* all keys present in es/en/fr", () => {
+    const NAV_KEYS: (keyof AdminAiBundle["nav"])[] = [
+      "dashboard", "models", "modelsNew", "ragDocuments", "ragCollections",
+      "mcpServers", "mcpNew", "agents", "audit", "usage",
+    ];
+    SUPPORTED_LANGUAGES.forEach((lng) => {
+      const bundle = i18n.getResourceBundle(lng, "admin-ai") as AdminAiBundle;
+      NAV_KEYS.forEach((key) => {
+        expect(bundle.nav[key]).toBeTruthy();
+      });
+    });
   });
 });

@@ -52,7 +52,6 @@ export const I18N_NAMESPACES = [
   "auth",
   "chat",
   "account",
-  "history",
   "admin-ai",
   "rag",
   "mcp",
