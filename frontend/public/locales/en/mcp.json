@@ -1,6 +1,43 @@
 {
   "servers": {
-    "title": "MCP servers",
-    "empty": "No servers connected"
+    "title": "MCP Servers",
+    "subtitle": "Manage your organisation's MCP server integrations",
+    "empty": "No servers connected",
+    "columns": {
+      "name": "Name",
+      "status": "Status",
+      "transport": "Transport",
+      "lastSync": "Last sync",
+      "toolCount": "Tools",
+      "risk": "Risk",
+      "actions": "Actions"
+    },
+    "status": {
+      "draft": "Draft",
+      "active": "Active",
+      "error": "Error",
+      "unknown": "Unknown"
+    },
+    "lastSync": {
+      "never": "Never",
+      "relative": "{{relative}} ago"
+    },
+    "actions": {
+      "sync": "Sync",
+      "syncing": "Syncing…",
+      "synced": "Synced",
+      "connectFirst": "Connect first server"
+    },
+    "errors": {
+      "sync_not_found": "Server not found",
+      "sync_rate_limited": "Too many sync requests, please wait",
+      "sync_internal": "Internal server error"
+    },
+    "notes": {
+      "risk_per_tool": "Risk level is managed per tool in P04-S02-T004."
+    },
+    "tools": {
+      "none": "—"
+    }
   }
 }

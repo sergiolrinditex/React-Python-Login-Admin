@@ -1,0 +1,21 @@
+## Data Contract Used — P04-S02-T003
+## Tester 2026-05-16T04:18:00Z
+
+=== Verification Data Contract rows (TECHNICAL_GUIDE §6.5) ===
+Row: J105 mcp-agents | admin | MCP sandbox autorizado HTTP read-only, agente people_helper
+Bootstrap cmd: python -m app.verification_data.bootstrap --source data/verification --only mcp_agents
+Cleanup cmd: delete mcp_servers/tools/bindings/runs
+
+=== Real/provided data loaded ===
+File: data/verification/mcp_agents/servers/sandbox_readonly.json
+  → name: sandbox_readonly, transport_type: http, endpoint: http://localhost:8080/mcp, status: active
+File: data/verification/users/admin_peopletech.json
+  → email: admin.peopletech@inditex-sandbox.com, role: people_admin
+
+=== Persisted data observed ===
+mcp_servers.id = fcb8d7dd-951c-4d5b-8e96-e86fe4d39230 (sandbox_readonly, active, null last_sync_at)
+mcp_tools = 0 rows (expected — no successful sync)
+
+=== Verification data source confirmation ===
+Bootstrap was run by developer: python3 -m app.verification_data.bootstrap --source ../data/verification --only mcp_agents
+Confirmed in DB: SELECT id, name, status FROM mcp_servers WHERE name='sandbox_readonly' → 1 row

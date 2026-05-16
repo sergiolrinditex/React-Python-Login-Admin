@@ -1,0 +1,32 @@
+## Contract Observed — P04-S02-T003 (Front → Back → DB)
+## Tester 2026-05-16T04:18:00Z
+
+=== Route/Provider/API client/DTO/Endpoint/Repository/Table observed ===
+
+Route: /admin/ai/mcp
+  → Protected by RequireRole(['people_admin','super_admin']) in router.tsx — CONFIRMED (401 on unauth request)
+
+Page: McpServersPage (frontend/src/pages/admin/mcp/McpServersPage.tsx)
+  → Uses useMcpServers (TanStack useQuery ['admin','mcp','servers'])
+  → Uses useMcpSync (TanStack useMutation)
+
+Repository: frontend/src/features/mcp/data/mcpRepository.ts
+  → listServers() → GET /api/v1/admin/ai/mcp/servers → returns Result<McpServer[], McpError>
+  → syncServer(id) → POST /api/v1/admin/ai/mcp/servers/{id}/sync → returns Result<McpSyncResult, McpError>
+
+Endpoints observed (real backend calls):
+  GET /api/v1/admin/ai/mcp/servers → HTTP 200, {data:[McpServer], meta:{request_id}} — PASS
+  POST /api/v1/admin/ai/mcp/servers/fcb8d7dd.../sync → HTTP 500 (deviation BACKEND-502, expected 502) — frontend handles
+  GET /api/v1/admin/ai/mcp/servers (no auth) → HTTP 401 — PASS
+
+DTO observed (GET /servers response):
+  McpServer: id (uuid), name (str), transport (http|sse), endpoint (str|null), status (active), last_sync_at (null), created_by (null), has_credential (false), auth_type (null)
+  → Matches frontend McpServer interface in features/mcp/domain/types.ts — CONFIRMED by test R01
+
+Tables:
+  mcp_servers: id=fcb8d7dd-951c-4d5b-8e96-e86fe4d39230, name=sandbox_readonly, status=active — CONFIRMED
+  mcp_tools: 0 rows for server fcb8d7dd — CONFIRMED (no successful sync)
+
+Logging contract:
+  VERBOSE=true: mcp.repo.listServers.start (BEFORE), mcp.repo.listServers.ok (AFTER), error-level on errors — PASS
+  VERBOSE=false: only error-level lines emitted (no start lines) — PASS

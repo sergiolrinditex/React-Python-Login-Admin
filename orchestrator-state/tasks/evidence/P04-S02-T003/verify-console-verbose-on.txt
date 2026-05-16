@@ -1,0 +1,52 @@
+=== CONSOLE LOG (VITE_ENABLE_VERBOSE_LOGGING=true) — P04-S02-T003 verify-slice ===
+Date: 2026-05-16T04:22Z
+
+[info] [auth] auth.signin.page.render.start [2 times]
+[info] MobileFrame.render.start [2 times]
+[info] EditorialInput.render.start [4 times]
+[info] SolidCTA.render.start [2 times]
+[info] [auth] auth.guard.RequireRole.render
+[info] [auth] auth.guard.RequireRole.allowed
+[info] [auth] auth.guard.RequireRole.render
+[info] [auth] auth.guard.RequireRole.allowed
+[info] McpServersPage.render.start
+[info] McpServersPage.render.state
+[info] McpServersPage.render.start
+[info] McpServersPage.render.state
+[info] AdminShell.render.start [2 times]
+[info] [mcp] mcp.useMcpServers.fetch.start        ← BEFORE listServers
+[info] [mcp] mcp.repo.listServers.start            ← BEFORE HTTP request
+[info] [auth] auth.http.request.start
+[info] [auth] auth.http.request.ok
+[info] [mcp] mcp.repo.listServers.ok              ← AFTER listServers
+[info] [mcp] mcp.useMcpServers.fetch.success      ← AFTER fetch success
+[info] McpServersPage.render.start [2 times]
+[info] McpServersPage.render.state [2 times]
+[info] AdminShell.render.start [2 times]
+[info] StatusDot.render.start [2 times]
+[info] SolidCTA.render.start [2 times]
+[info] McpServersPage.render.start [2 times]
+[info] McpServersPage.render.state [2 times]
+[info] AdminShell.render.start [2 times]
+[info] StatusDot.render.start [2 times]
+[info] SolidCTA.render.start [2 times]
+[info] [mcp] mcp.useMcpSync.mutate.start          ← BEFORE sync mutation
+[info] [mcp] mcp.repo.syncServer.start            ← BEFORE HTTP request sync
+[info] [auth] auth.http.request.start
+[error] Failed to load resource: server responded 500 (Internal Server Error)
+[info] [auth] auth.http.request.ok                (auth layer treats 500 as ok response)
+[error] [mcp] mcp.repo.syncServer.server_error    ← ERROR path server_error
+[warn]  [mcp] mcp.useMcpSync.mutate.error         ← AFTER error surfaced
+[info] McpServersPage.render.start [2 times]
+[info] McpServersPage.render.state [2 times]
+[info] AdminShell.render.start [2 times]
+[info] StatusDot.render.start [2 times]
+[info] SolidCTA.render.start [2 times]
+
+VERIFICATION:
+- mcp.repo.listServers.start (.start = BEFORE) ✅
+- mcp.repo.listServers.ok (AFTER) ✅
+- mcp.repo.syncServer.start (.start = BEFORE) ✅
+- mcp.repo.syncServer.server_error (ERROR path) ✅
+- mcp.useMcpSync.mutate.error (WARN) ✅
+- No PII in logs (no email, no endpoint URL, no password) ✅

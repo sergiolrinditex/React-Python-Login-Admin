@@ -1,0 +1,16 @@
+=== DB SMOKE TEST — P04-S02-T003 ===
+Date: 2026-05-16T02:05:13Z
+
+## mcp_servers table
+                  id                  |       name       | transport_type | status | last_sync_at 
+--------------------------------------+------------------+----------------+--------+--------------
+ fcb8d7dd-951c-4d5b-8e96-e86fe4d39230 | sandbox_readonly | http           | active | 
+(1 fila)
+
+
+## mcp_tools count for sandbox_readonly
+ count 
+-------
+     0
+(1 fila)
+

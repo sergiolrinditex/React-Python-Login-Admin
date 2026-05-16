@@ -1,0 +1,16 @@
+=== BACKEND SMOKE TEST — P04-S02-T003 ===
+Date: 2026-05-16T02:04:53Z
+
+## Sign-in (admin.peopletech@inditex-sandbox.com)
+Response: mfa_required=false, access_token received OK
+
+## GET /api/v1/admin/ai/mcp/servers
+{"data":[{"id":"fcb8d7dd-951c-4d5b-8e96-e86fe4d39230","name":"sandbox_readonly","transport":"http","endpoint":"http://localhost:8080/mcp","status":"active","last_sync_at":null,"created_by":null,"has_credential":false,"auth_type":null}],"meta":{"request_id":"778CA39F-49A5-447B-81C7-531538B90719"}}
+
+## POST /api/v1/admin/ai/mcp/servers/fcb8d7dd-951c-4d5b-8e96-e86fe4d39230/sync
+{"data":null,"meta":{"request_id":"E0124765-3FCF-4C40-BC4B-13964E729296"},"errors":[{"code":"INTERNAL_ERROR","message":"Failed to sync MCP server.","field":null,"details":null}]}
+HTTP_STATUS: 500
+
+NOTE: Backend returns HTTP 500 (INTERNAL_ERROR) instead of 502 (MCP_SERVER_UNREACHABLE)
+when sandbox MCP endpoint (http://localhost:8080/mcp) is not running.
+Task pack §3.2 states 502 expected. Disclosed as DEVIATION-BACKEND-502.

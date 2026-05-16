@@ -1,0 +1,20 @@
+## Frontend tests — VITE_ENABLE_VERBOSE_LOGGING=false
+## Run by tester (P04-S02-T003) 2026-05-16
+
+Test Files  25 passed (25)
+Tests  292 passed (292)
+Duration  ~5.6s
+
+## Log lines emitted with verbose=false (only warning+error level)
+[mcp] mcp.repo.listServers.auth_expired { status: 401, request_id: 'test-req-id' }
+[mcp] mcp.repo.listServers.forbidden { status: 403, request_id: 'test-req-id' }
+[mcp] mcp.repo.listServers.server_error { status: 500, request_id: 'test-req-id' }
+[mcp] mcp.repo.listServers.error { error: 'MCP_NETWORK_ERROR' }
+[mcp] mcp.repo.syncServer.not_found { server_id: 'server-uuid-1', request_id: 'test-req-id' }
+[mcp] mcp.repo.syncServer.unreachable { server_id: 'server-uuid-1', request_id: 'test-req-id' }
+[mcp] mcp.repo.syncServer.rate_limited { server_id: 'server-uuid-1', request_id: 'test-req-id' }
+[mcp] mcp.useMcpServers.fetch.error { code: 'MCP_AUTH_EXPIRED' }
+[mcp] mcp.useMcpSync.mutate.error { server_id: 'server-uuid-1', code: 'MCP_SERVER_UNREACHABLE' }
+
+## NOTE: No BEFORE (*.start) log lines appear with verbose=false — CORRECT
+## Only warning/error level lines emitted — PASS
