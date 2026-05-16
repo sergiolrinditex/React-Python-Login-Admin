@@ -1,6 +1,43 @@
 {
   "servers": {
     "title": "Serveurs MCP",
-    "empty": "Aucun serveur connecté"
+    "subtitle": "Gérez les intégrations de serveurs MCP de votre organisation",
+    "empty": "Aucun serveur connecté",
+    "columns": {
+      "name": "Nom",
+      "status": "Statut",
+      "transport": "Transport",
+      "lastSync": "Dernière sync.",
+      "toolCount": "Outils",
+      "risk": "Risque",
+      "actions": "Actions"
+    },
+    "status": {
+      "draft": "Brouillon",
+      "active": "Actif",
+      "error": "Erreur",
+      "unknown": "Inconnu"
+    },
+    "lastSync": {
+      "never": "Jamais",
+      "relative": "Il y a {{relative}}"
+    },
+    "actions": {
+      "sync": "Synchroniser",
+      "syncing": "Synchronisation…",
+      "synced": "Synchronisé",
+      "connectFirst": "Connecter le premier serveur"
+    },
+    "errors": {
+      "sync_not_found": "Serveur introuvable",
+      "sync_rate_limited": "Trop de synchronisations, veuillez patienter",
+      "sync_internal": "Erreur interne du serveur"
+    },
+    "notes": {
+      "risk_per_tool": "Le niveau de risque est géré par outil dans P04-S02-T004."
+    },
+    "tools": {
+      "none": "—"
+    }
   }
 }

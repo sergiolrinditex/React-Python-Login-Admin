@@ -1,0 +1,27 @@
+## Tester DB Smoke — P04-S02-T003
+## Run by tester 2026-05-16T04:18:00Z
+
+=== mcp_servers table ===
+Query: SELECT id, name, status, transport_type, last_sync_at FROM mcp_servers ORDER BY name;
+
+                  id                  |       name       | status | transport_type | last_sync_at
+--------------------------------------+------------------+--------+----------------+--------------
+ fcb8d7dd-951c-4d5b-8e96-e86fe4d39230 | sandbox_readonly | active | http           |
+(1 row)
+
+ASSERTION: At least 1 row in mcp_servers — PASS
+ASSERTION: sandbox_readonly row exists (status=active, transport=http, last_sync_at=null) — PASS
+
+=== mcp_tools count by server_id ===
+Query: SELECT server_id, count(*) FROM mcp_tools GROUP BY server_id;
+
+(0 rows)
+
+NOTE: No tool rows because sync has not succeeded (sandbox MCP endpoint :8080 is not running).
+NOTE: This is the expected state per task pack §4.2 — "0 mcp_tools rows initially; Tools materialize only after successful sync"
+ASSERTION: Tool count = 0 as expected — PASS
+
+=== SUMMARY ===
+- mcp_servers: 1 row (sandbox_readonly) — PASS
+- mcp_tools: 0 rows (expected — no successful sync yet) — PASS
+- DB contract matches TECHNICAL_GUIDE §6.5 J105 row — PASS

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "purpose": "Cumulative built baseline snapshot for ChatGPT/source-of-truth increments.",
-  "latest_version": "v1",
+  "latest_version": "current",
   "snapshots": [
     {
       "ts": "2026-05-11T09:23:59+00:00",
@@ -2177,9 +2177,9 @@
       }
     },
     {
-      "ts": "2026-05-16T02:30:43+00:00",
-      "version": "v1",
-      "task_id": "P04-S01-T001",
+      "ts": "2026-05-16T04:48:11+00:00",
+      "version": "current",
+      "task_id": "P04-S02-T003",
       "phase_id": null,
       "reason": "verified slice closed",
       "writer": "sync_product_baseline.py",
@@ -2205,7 +2205,7 @@
         "checklist": {
           "source": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md",
           "target": "docs/product-baseline/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md",
-          "sha256": "747de3b0a7ea624d6cb78b361ded0455ea2ce4b6fdc16e90822478e6d145d953"
+          "sha256": "dd20ce7dd5cf67d0bb27d231c3c11549f0a28bbfb7f88748d7355a857129fb2d"
         },
         "ux_contract": {
           "source": "docs/source-of-truth/UX_CONTRACT.md",
@@ -2220,8 +2220,8 @@
       }
     }
   ],
-  "latest_task_id": "P04-S01-T001",
-  "updated_at": "2026-05-16T02:30:43+00:00",
+  "latest_task_id": "P04-S02-T003",
+  "updated_at": "2026-05-16T04:48:11+00:00",
   "writer": "sync_product_baseline.py",
   "source_pack_contract": "five-file source-of-truth pack",
   "last_written_paths": [

@@ -1,0 +1,41 @@
+## Tester Backend Smoke — P04-S02-T003
+## Run by tester 2026-05-16T04:18:00Z
+
+=== SERVER HEALTH ===
+GET http://localhost:8000/health
+HTTP 200: {"data":{"status":"ok","version":"0.1.0","uptime":28034.78}}
+
+GET http://localhost:8000/ready
+HTTP 200: {"data":{"db":{"status":"ok"},"redis":{"status":"ok"},"litellm":{"status":"unknown"}}}
+RESULT: up (db:ok, redis:ok)
+
+=== SIGN IN (admin.peopletech@inditex-sandbox.com, role: people_admin) ===
+POST http://localhost:8000/api/v1/auth/sign-in
+HTTP 200: {"data":{"mfa_required":false,"access_token":"...","token_type":"Bearer","expires_in":1800},...}
+RESULT: OK — mfa_required=false, access_token issued
+
+=== GET /api/v1/admin/ai/mcp/servers ===
+HTTP 200
+RESPONSE BODY:
+{"data":[{"id":"fcb8d7dd-951c-4d5b-8e96-e86fe4d39230","name":"sandbox_readonly","transport":"http","endpoint":"http://localhost:8080/mcp","status":"active","last_sync_at":null,"created_by":null,"has_credential":false,"auth_type":null}],"meta":{"request_id":"E1B87E30-2159-4A14-8A02-252820706339"}}
+ASSERTION: data[] has 1 item, name=sandbox_readonly, status=active — PASS
+ASSERTION: Envelope {data, meta} present — PASS
+ASSERTION: Fields match §3.1 (id, name, transport, endpoint, status, last_sync_at, created_by, has_credential, auth_type) — PASS
+
+=== POST /api/v1/admin/ai/mcp/servers/fcb8d7dd-951c-4d5b-8e96-e86fe4d39230/sync ===
+HTTP 500 (DEVIATION-BACKEND-502: backend returns 500 INTERNAL_ERROR instead of 502 MCP_SERVER_UNREACHABLE)
+RESPONSE BODY:
+{"data":null,"meta":{"request_id":"AABA0EDB-3AC7-4B18-9C5C-B5BA5D9B27B9"},"errors":[{"code":"INTERNAL_ERROR","message":"Failed to sync MCP server.","field":null,"details":null}]}
+NOTE: Task pack §3.2 states 502 is expected when sandbox unreachable. Backend returns 500 INTERNAL_ERROR.
+NOTE: Frontend handles 500 via McpServerError mapping → renders t("servers.errors.sync_internal")
+NOTE: This is an in-scope deviation per developer disclosure; frontend gracefully handles both 500 and 502.
+
+=== GET /api/v1/admin/ai/mcp/servers (NO AUTH) ===
+HTTP 401
+RESPONSE: {"errors":[{"code":"AUTH_SESSION_EXPIRED","message":"Session expired or invalid credentials..."}]}
+ASSERTION: 401 on unauthenticated request — PASS
+
+=== SUMMARY ===
+- GET /servers: HTTP 200, correct envelope, correct fields — PASS
+- POST /servers/{id}/sync: HTTP 500 (backend-side deviation from §3.2, disclosed as DEVIATION-BACKEND-502) — frontend handles gracefully
+- GET /servers (no auth): HTTP 401 — PASS

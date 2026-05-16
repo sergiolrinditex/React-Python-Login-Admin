@@ -230,10 +230,48 @@ const resources = {
         upload: "Subir documento",
       },
     },
+    // §D-T003-I18N: mcp.servers.* extended for McpServersPage (P04-S02-T003)
     mcp: {
       servers: {
         title: "Servidores MCP",
+        subtitle: "Gestiona las integraciones de servidores MCP de tu organización",
         empty: "No hay servidores conectados",
+        columns: {
+          name: "Nombre",
+          status: "Estado",
+          transport: "Transporte",
+          lastSync: "Última sincronización",
+          toolCount: "Herramientas",
+          risk: "Riesgo",
+          actions: "Acciones",
+        },
+        status: {
+          draft: "Borrador",
+          active: "Activo",
+          error: "Error",
+          unknown: "Desconocido",
+        },
+        lastSync: {
+          never: "Nunca",
+          relative: "Hace {{relative}}",
+        },
+        actions: {
+          sync: "Sincronizar",
+          syncing: "Sincronizando…",
+          synced: "Sincronizado",
+          connectFirst: "Conectar primer servidor",
+        },
+        errors: {
+          sync_not_found: "Servidor no encontrado",
+          sync_rate_limited: "Demasiadas sincronizaciones, espera unos segundos",
+          sync_internal: "Error interno del servidor",
+        },
+        notes: {
+          risk_per_tool: "El nivel de riesgo se gestiona por herramienta en P04-S02-T004.",
+        },
+        tools: {
+          none: "—",
+        },
       },
     },
     errors: {
@@ -425,10 +463,48 @@ const resources = {
         upload: "Upload document",
       },
     },
+    // §D-T003-I18N: mcp.servers.* extended for McpServersPage (P04-S02-T003)
     mcp: {
       servers: {
-        title: "MCP servers",
+        title: "MCP Servers",
+        subtitle: "Manage your organisation's MCP server integrations",
         empty: "No servers connected",
+        columns: {
+          name: "Name",
+          status: "Status",
+          transport: "Transport",
+          lastSync: "Last sync",
+          toolCount: "Tools",
+          risk: "Risk",
+          actions: "Actions",
+        },
+        status: {
+          draft: "Draft",
+          active: "Active",
+          error: "Error",
+          unknown: "Unknown",
+        },
+        lastSync: {
+          never: "Never",
+          relative: "{{relative}} ago",
+        },
+        actions: {
+          sync: "Sync",
+          syncing: "Syncing…",
+          synced: "Synced",
+          connectFirst: "Connect first server",
+        },
+        errors: {
+          sync_not_found: "Server not found",
+          sync_rate_limited: "Too many sync requests, please wait",
+          sync_internal: "Internal server error",
+        },
+        notes: {
+          risk_per_tool: "Risk level is managed per tool in P04-S02-T004.",
+        },
+        tools: {
+          none: "—",
+        },
       },
     },
     errors: {
@@ -620,10 +696,48 @@ const resources = {
         upload: "Téléverser un document",
       },
     },
+    // §D-T003-I18N: mcp.servers.* extended for McpServersPage (P04-S02-T003)
     mcp: {
       servers: {
         title: "Serveurs MCP",
+        subtitle: "Gérez les intégrations de serveurs MCP de votre organisation",
         empty: "Aucun serveur connecté",
+        columns: {
+          name: "Nom",
+          status: "Statut",
+          transport: "Transport",
+          lastSync: "Dernière sync.",
+          toolCount: "Outils",
+          risk: "Risque",
+          actions: "Actions",
+        },
+        status: {
+          draft: "Brouillon",
+          active: "Actif",
+          error: "Erreur",
+          unknown: "Inconnu",
+        },
+        lastSync: {
+          never: "Jamais",
+          relative: "Il y a {{relative}}",
+        },
+        actions: {
+          sync: "Synchroniser",
+          syncing: "Synchronisation…",
+          synced: "Synchronisé",
+          connectFirst: "Connecter le premier serveur",
+        },
+        errors: {
+          sync_not_found: "Serveur introuvable",
+          sync_rate_limited: "Trop de synchronisations, veuillez patienter",
+          sync_internal: "Erreur interne du serveur",
+        },
+        notes: {
+          risk_per_tool: "Le niveau de risque est géré par outil dans P04-S02-T004.",
+        },
+        tools: {
+          none: "—",
+        },
       },
     },
     errors: {

@@ -1,0 +1,305 @@
+
+> hilo-people-frontend@0.1.0 test
+> vitest --run --reporter=verbose
+
+
+ RUN  v3.2.4 /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P04-S02-T003/frontend
+
+ ✓ src/features/chat/presentation/__tests__/useHistory.test.tsx > useHistory > H01 — initial state is pending (isPending true) 11ms
+ ✓ src/features/chat/presentation/__tests__/useHistory.test.tsx > useHistory > H02 — success populates data with conversations 55ms
+ ✓ src/features/mcp/__tests__/useMcpSync.test.tsx > useMcpSync > S01 — mutate happy path → invalidates ['admin','mcp','servers'] 66ms
+ ✓ src/features/chat/__tests__/useCreateConversation.test.tsx > useCreateConversation > T01 — idle → pending → success lifecycle 62ms
+ ✓ src/features/mcp/__tests__/useMcpServers.test.tsx > useMcpServers > H01 — returns servers when repository succeeds 66ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T01 — accessTokenStore: set/get/clear in-memory only > starts null 1ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T01 — accessTokenStore: set/get/clear in-memory only > set → get returns the token 0ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T01 — accessTokenStore: set/get/clear in-memory only > clear → get returns null 0ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T01 — accessTokenStore: set/get/clear in-memory only > NEVER calls localStorage.setItem 0ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T01 — accessTokenStore: set/get/clear in-memory only > NEVER calls localStorage.getItem 0ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T02 — AuthProvider: cold mount → /refresh 200 → /me 200 → authenticated > status becomes 'authenticated' after refresh + me succeed 24ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T03 — AuthProvider: /refresh 401 → unauthenticated, no /me call > status becomes 'unauthenticated' on refresh 401 4ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T04 — AuthProvider: /refresh network error → unauthenticated > status becomes 'unauthenticated' on network error 4ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T05 — signInAccepted → status=authenticated, /me not re-called > signInAccepted sets token and user without extra fetch 7ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T06 — useLogout: /logout 204 → token cleared, queries cleared > logout clears token and calls onQueriesClear 6ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T07 — useLogout: backend 401 → still clears local state (defensive logout) > logout clears token even when backend returns 401 6ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T08 — RequireAuth: unauthenticated → Navigate with ?next= > redirects to sign-in with ?next= when unauthenticated 9ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T09 — RequireAuth: authenticated → renders children > renders children when authenticated 13ms
+ ✓ src/features/mcp/__tests__/useMcpSync.test.tsx > useMcpSync > S02 — mutate 502 → throws McpServerUnreachableError 56ms
+ ✓ src/features/mcp/__tests__/useMcpSync.test.tsx > useMcpSync > S03 — mutate 429 → throws McpRateLimitedError 57ms
+ ✓ src/pages/admin/mcp/__tests__/McpServersPage.test.tsx > McpServersPage > P01 — loading state shows aria-busy section 25ms
+ ✓ src/pages/admin/mcp/__tests__/McpServersPage.test.tsx > McpServersPage > P02 — success state shows server row for sandbox_readonly 11ms
+ ✓ src/pages/admin/mcp/__tests__/McpServersPage.test.tsx > McpServersPage > P03 — empty state when servers list is [] 3ms
+ ✓ src/pages/admin/mcp/__tests__/McpServersPage.test.tsx > McpServersPage > P04 — error_network state on network error with retry CTA 33ms
+ ✓ src/pages/admin/mcp/__tests__/McpServersPage.test.tsx > McpServersPage > P05 — permission_denied state on McpForbiddenError 7ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T10 — RequireAuth: hydrating → renders neither children nor redirect > shows loading placeholder while hydrating, not children or redirect 28ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T11 — RequireRole: employee role denied from admin > redirects employee to /chat when they hit /admin 12ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T12 — RequireRole: people_admin allowed to admin route > renders admin content for people_admin role 4ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T13 — getSafeRedirect: rejects open-redirect attempts > rejects https://evil.com 0ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T13 — getSafeRedirect: rejects open-redirect attempts > rejects //evil.com 0ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T13 — getSafeRedirect: rejects open-redirect attempts > rejects javascript:alert(1) 0ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T13 — getSafeRedirect: rejects open-redirect attempts > rejects \\evil path 0ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T13 — getSafeRedirect: rejects open-redirect attempts > rejects data: pseudo-scheme 0ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T13 — getSafeRedirect: rejects open-redirect attempts > rejects empty string 0ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T13 — getSafeRedirect: rejects open-redirect attempts > rejects null 0ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T14 — getSafeRedirect: safe relative path passes > /chat/abc?x=1 passes through unchanged 0ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T14 — getSafeRedirect: safe relative path passes > /admin passes through 0ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T14 — getSafeRedirect: safe relative path passes > /chat passes through 0ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T15 — httpClient: 401 → single-flight refresh → retry success > fires /refresh once, retries original request with new token 2ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T16 — httpClient: two concurrent 401s → ONE refresh call > fires exactly ONE refresh for two concurrent 401s 1ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T17 — httpClient: refresh 401 → no loop, onAuthFailure called > throws AuthSessionExpiredError, calls onAuthFailure, clears token 2ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T18 — httpClient: Bearer injected on protected endpoints only > injects Authorization Bearer on /api/v1/users/me 0ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T18 — httpClient: Bearer injected on protected endpoints only > does NOT inject Authorization Bearer on /api/v1/auth/refresh 0ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T19 — Logging: verbose=true fires logs, no token value leaked > setAccessToken logs present=true and len, never the token value 0ms
+ ✓ src/features/auth/__tests__/auth.test.tsx > auth T20 — Logging: verbose=false suppresses info logs > setAccessToken does NOT log when verbose=false 1ms
+ ✓ src/pages/showcase/__tests__/ShowcasePage.test.tsx > ShowcasePage > renders the page title 64ms
+ ✓ src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T01: renders with i18n ES keys — email label, password label, submit button visible 54ms
+ ✓ src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T02: invalid email triggers validation error with aria-invalid 24ms
+ ✓ src/features/chat/__tests__/useCreateConversation.test.tsx > useCreateConversation > T02 — onSuccess callback called with conversation data 55ms
+ ✓ src/features/chat/__tests__/useCreateConversation.test.tsx > useCreateConversation > T03 — onError callback called with typed ChatError 55ms
+ ✓ src/pages/auth/__tests__/ForgotPasswordPage.test.tsx > ForgotPasswordPage > T01: renders all UI — TrackedLabel for email, EditorialInput, SolidCTA, back link 63ms
+ ✓ src/pages/auth/__tests__/ForgotPasswordPage.test.tsx > ForgotPasswordPage > T02: submit empty → zod inline emailRequired error; no fetch call to forgot-password 23ms
+ ✓ src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T01: deep-link guard — no challengeToken in router state → redirects to /auth/sign-in 35ms
+ ✓ src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T02: renders all editorial UI — Wordmark, TrackedLabel titleHint, title, intro, code input, CTA 32ms
+ ✓ src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T03: submit empty code → zod codeRequired error shown; repo not called 22ms
+ ✓ src/features/chat/presentation/__tests__/useHistory.test.tsx > useHistory > H03 — network error sets isError with ChatNetworkError 54ms
+ ✓ src/features/chat/presentation/__tests__/useHistory.test.tsx > useHistory > H04 — ChatAuthExpiredError triggers onAuthFailure 58ms
+ ✓ src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T01: renders with i18n ES keys — title, email, fullName, password, checkbox label, CTA 68ms
+ ✓ src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T02: invalid email → aria-invalid + error message visible 24ms
+ ✓ src/features/mcp/__tests__/useMcpServers.test.tsx > useMcpServers > H02 — surfaces McpAuthExpiredError as isError=true 56ms
+ ✓ src/features/chat/__tests__/useCreateConversation.test.tsx > useCreateConversation > T04 — error state set after failed mutation 56ms
+ ✓ src/pages/admin/mcp/__tests__/McpServersPage.test.tsx > McpServersPage > P06 — click Sync → shows syncing → on success updates tool_count display 29ms
+ ✓ src/pages/admin/mcp/__tests__/McpServersPage.test.tsx > McpServersPage > P07 — click Sync → 502 → inline error MCP_SERVER_UNREACHABLE appears 25ms
+ ✓ src/pages/admin/mcp/__tests__/McpServersPage.test.tsx > McpServersPage > P08 — i18n smoke: EN column headers rendered when language is EN 16ms
+ ✓ src/pages/admin/mcp/__tests__/McpServersPage.test.tsx > McpServersPage > P09 — a11y: table has accessible caption; Sync button has accessible label 8ms
+ ✓ src/features/mcp/__tests__/useMcpServers.test.tsx > useMcpServers > H03 — refetch triggers a second listServers call 114ms
+ ✓ src/pages/showcase/__tests__/ShowcasePage.test.tsx > ShowcasePage > renders all 9 component sections 53ms
+ ✓ src/pages/showcase/__tests__/ShowcasePage.test.tsx > ShowcasePage > renders the Wordmark 'Hilo' brand text 22ms
+ ✓ src/pages/showcase/__tests__/ShowcasePage.test.tsx > ShowcasePage > renders the design system footer 19ms
+ ✓ src/features/chat/presentation/__tests__/useHistory.test.tsx > useHistory > H05 — refetch re-runs the query 128ms
+ ✓ src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T03: submit happy path no-MFA — navigates to /chat (default) 24ms
+ ✓ src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T04: submit MFA branch — navigates to /auth/2fa 17ms
+ ✓ src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T05: 401 — shows invalidCredentials copy (byte-identical for both failure modes — anti-enum) 17ms
+ ✓ src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T06: 423 account locked — shows accountLocked copy, submit re-enabled (not rate-limit disabled) 13ms
+ ✓ src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T07: 429 rate-limited — submit disabled, copy shows seconds interpolated 11ms
+ ✓ src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T08: network error — shows error_network copy 9ms
+ ✓ src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T09: keyboard-only flow — Tab through inputs and submit button is reachable 14ms
+ ✓ src/pages/auth/__tests__/ForgotPasswordPage.test.tsx > ForgotPasswordPage > T03: submit invalid email syntax → zod emailFormat error; no fetch call 20ms
+ ✓ src/pages/auth/__tests__/ForgotPasswordPage.test.tsx > ForgotPasswordPage > T04: submit valid known email → 200 success → navigates to /auth/reset-sent 14ms
+ ✓ src/pages/auth/__tests__/ForgotPasswordPage.test.tsx > ForgotPasswordPage > T05: submit valid unknown email → same success state (anti-enum: identical to known email) 15ms
+ ✓ src/pages/auth/__tests__/ForgotPasswordPage.test.tsx > ForgotPasswordPage > T06: 429 rate-limited → form-level alert shows rateLimited with {{seconds}} interpolated 13ms
+ ✓ src/pages/auth/__tests__/ForgotPasswordPage.test.tsx > ForgotPasswordPage > T07: TypeError network error → error_network copy shown; no navigation 10ms
+ ✓ src/pages/auth/__tests__/ForgotPasswordPage.test.tsx > ForgotPasswordPage > T08: 500 ServerError → form-level alert shows serverInternal; no navigation 10ms
+ ✓ src/pages/auth/__tests__/ForgotPasswordPage.test.tsx > ForgotPasswordPage > T09: a11y — input has aria-invalid only after touch + error; CTA has no aria-busy by default 36ms
+ ✓ src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T03: legal acceptance required — uncheck shows error; check + submit succeeds 22ms
+ ✓ src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T04: happy path → navigates to /auth/sign-in with flash state 22ms
+ ✓ src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T05: 400 non-corporate email → form-level error shown in permission_denied state 17ms
+ ✓ src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T06: 409 email taken → generic error copy, NO email field highlight (anti-enumeration) 13ms
+ ✓ src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T07: 422 password policy → form-level error in error_validation state 13ms
+ ✓ src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T08: 429 rate-limited → submit disabled + countdown copy with seconds interpolated 16ms
+ ✓ src/pages/auth/__tests__/SignInPage.test.tsx > SignInPage > T10: open-redirect ?next=https://evil.com defaults to /chat 33ms
+ ✓ src/pages/auth/__tests__/ForgotPasswordPage.test.tsx > ForgotPasswordPage > T10: i18n EN — render with changeLanguage('en') → all copy in English 12ms
+ ✓ src/pages/auth/__tests__/ForgotPasswordPage.test.tsx > ForgotPasswordPage > T11: ADR-002 same-origin — forgotPassword() must call fetch with RELATIVE URL `/api/v1/auth/forgot-password` (no http(s):// host, no localhost) 10ms
+ ✓ src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T09: TypeError network error → error_network copy with 'Sin conexión' 16ms
+ ✓ src/pages/auth/__tests__/SignUpPage.test.tsx > SignUpPage > T10: keyboard-only flow — Tab through all inputs + checkbox + submit is reachable 9ms
+ ✓ src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T04: submit valid code → loading state — CTA shows submitting label during in-flight 17ms
+ ✓ src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T05: success path — 200 + fetchMe → navigates to /chat 13ms
+ ✓ src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T06: wrong code — 401 aggregate → shows invalidCode copy (§D-T005-AGGREGATE-401) 11ms
+ ✓ src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T07: network error — fetch TypeError → error_network copy shown 10ms
+ ✓ src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T08: 5xx server error → serverInternal copy shown (error_network state) 10ms
+ ✓ src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T09: 410 challenge expired → shows expired copy + back-to-signin CTA (§D-T005-EXPIRED-CHALLENGE) 12ms
+ ✓ src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T10: 429 rate limited → shows rateLimited copy; submit disabled 14ms
+ ✓ src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T11: paste handling — non-digit characters are stripped from code input 19ms
+ ✓ src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T12: design tokens — page uses CSS variable tokens (no inline hex colors) 33ms
+ ✓ src/features/auth/data/__tests__/httpClient.test.ts > HC-T01 — API_BASE empty: authFetch uses relative path as-is > authFetch('/api/v1/users/me') passes relative path to global.fetch 6ms
+ ✓ src/features/auth/data/__tests__/httpClient.test.ts > HC-T01 — API_BASE empty: authFetch uses relative path as-is > authFetch('/api/v1/chat/conversations') keeps relative path 0ms
+ ✓ src/features/auth/data/__tests__/httpClient.test.ts > HC-T02 — Absolute URL passed to authFetch: preserved unchanged > authFetch('http://example.test/x') is NOT prefixed with API_BASE 1ms
+ ✓ src/features/auth/data/__tests__/httpClient.test.ts > HC-T03 — 401 → refresh uses relative REFRESH_URL > refresh request uses relative path /api/v1/auth/refresh (not absolute) 1ms
+ ✓ src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T01 — happy path → Result.ok with conversation data 3ms
+ ✓ src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T02 — 400 → Result.err(ChatValidationError) 2ms
+ ✓ src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T03 — 403 → Result.err(ChatForbiddenError) 0ms
+ ✓ src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T04 — 5xx → Result.err(ChatServerError) 0ms
+ ✓ src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T05 — network throw → Result.err(ChatNetworkError) 0ms
+ ✓ src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T06 — request shape: POST, Content-Type, JSON body 4ms
+ ✓ src/features/chat/__tests__/chatRepository.test.ts > chatRepository.createConversation > T07 — AuthSessionExpiredError from authFetch → Result.err(ChatAuthExpiredError) 1ms
+ ✓ src/features/chat/__tests__/chatRepository.test.ts > chatRepository.listConversations > R01 — happy path → Result.ok with correct envelope shape 1ms
+ ✓ src/features/chat/__tests__/chatRepository.test.ts > chatRepository.listConversations > R02 — cursor passed → URL contains ?cursor=... 0ms
+ ✓ src/features/chat/__tests__/chatRepository.test.ts > chatRepository.listConversations > R03 — 401 → Result.err(ChatAuthExpiredError) 0ms
+ ✓ src/features/chat/__tests__/chatRepository.test.ts > chatRepository.listConversations > R04 — network failure → Result.err(ChatNetworkError) 0ms
+ ✓ src/features/chat/__tests__/chatRepository.test.ts > chatRepository.listConversations > R05 — 403 (defensive) → Result.err(ChatForbiddenError) 0ms
+ ✓ src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T01: validates email format via zod — hook returns error on invalid email 9ms
+ ✓ src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T02: validates password required — hook calls repo with given password 1ms
+ ✓ src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T03: success no-MFA — returns outcome and calls onSuccess with token + user 11ms
+ ✓ src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T04: MFA branch — returns outcome with kind:mfa, does NOT call onSuccess 5ms
+ ✓ src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T05: 401 invalid credentials — sets InvalidCredentialsError 6ms
+ ✓ src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T06: 423 account locked — sets AccountLockedError 4ms
+ ✓ src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T07: 429 rate limited with Retry-After — sets RateLimitedError carrying retry_after 4ms
+ ✓ src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T08: TypeError network error — sets NetworkError 9ms
+ ✓ src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T09: 500 server error — sets SigninInternalError 12ms
+ ✓ src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T10: logs auth.signin.submit.start with email_domain only — never logs full email 12ms
+ ✓ src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T11: never logs password in any log event 3ms
+ ✓ src/features/auth/__tests__/useForgotPassword.test.tsx > useForgotPassword > T01: submit success → onSuccess called with {sent:true}, isLoading toggles, no error 10ms
+ ✓ src/features/auth/__tests__/useForgotPassword.test.tsx > useForgotPassword > T02: submit 400 ForgotPasswordValidationError → error set, isLoading false 3ms
+ ✓ src/features/auth/__tests__/useForgotPassword.test.tsx > useForgotPassword > T03: submit 429 ForgotPasswordRateLimitedError → error set with retryAfter 8ms
+ ✓ src/features/auth/__tests__/useForgotPassword.test.tsx > useForgotPassword > T04: submit 500 ForgotPasswordInternalError → error set 6ms
+ ✓ src/features/auth/__tests__/useForgotPassword.test.tsx > useForgotPassword > T05: submit network failure (TypeError) → NetworkError set 5ms
+ ✓ src/features/auth/__tests__/useForgotPassword.test.tsx > useForgotPassword > T06: clearError → error becomes null 4ms
+ ✓ src/features/auth/__tests__/useForgotPassword.test.tsx > useForgotPassword > T07: logger NEVER logs full email — PII safety (email_domain only) 14ms
+ ✓ src/features/auth/__tests__/useForgotPassword.test.tsx > useForgotPassword > T08: unknown email returns success (anti-enum) — onSuccess called with {sent:true}, no error 5ms
+ ✓ src/features/auth/__tests__/useForgotPassword.test.tsx > useForgotPassword > T09: second submit after first resolves — isLoading is false, onSuccess called 17ms
+ ✓ src/features/auth/__tests__/useForgotPassword.test.tsx > useForgotPassword > T10: error is cleared on next successful submit — state transition 5ms
+ ✓ src/features/auth/__tests__/useVerifyMfa.test.tsx > useVerifyMfa > H01: success path — repo.verifyMfa returns 200 → onSuccess called with token+user, isLoading toggles, no error 20ms
+ ✓ src/features/auth/__tests__/useVerifyMfa.test.tsx > useVerifyMfa > H02: wrong code — 401 MfaCodeInvalidError → error set, onSuccess not called, outcome null 3ms
+ ✓ src/features/auth/__tests__/useVerifyMfa.test.tsx > useVerifyMfa > H03: challenge expired — 410 MfaChallengeExpiredError → error set, onSuccess not called 5ms
+ ✓ src/features/auth/__tests__/useVerifyMfa.test.tsx > useVerifyMfa > H04: rate limited — 429 MfaVerifyRateLimitedError → error set with retryAfter 8ms
+ ✓ src/features/auth/__tests__/useVerifyMfa.test.tsx > useVerifyMfa > H05: network down — fetch TypeError → NetworkError set, onSuccess not called 4ms
+ ✓ src/features/auth/__tests__/useVerifyMfa.test.tsx > useVerifyMfa > H06: code length ≠ 6 → guard returns null without calling repo 15ms
+ ✓ src/features/auth/__tests__/useVerifyMfa.test.tsx > useVerifyMfa > H07: missing challengeToken → guard returns null without calling repo 8ms
+ ✓ src/features/auth/__tests__/useVerifyMfa.test.tsx > useVerifyMfa > H08: clearError → error becomes null after clearing previous error 3ms
+ ✓ src/features/auth/__tests__/useVerifyMfa.test.tsx > useVerifyMfa > H09: isLoading starts false, toggles to true during submit, false after 13ms
+ ✓ src/features/auth/__tests__/useVerifyMfa.test.tsx > useVerifyMfa > H10: PII safety — logger NEVER logs code value or challengeToken value 12ms
+ ✓ src/features/auth/__tests__/useVerifyMfa.test.tsx > useVerifyMfa > H11: 5xx MfaVerifyInternalError → error set with status code 1ms
+ ✓ src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T01: zod schema rejects invalid email — form validation layer (hook passes through) 21ms
+ ✓ src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T02: zod schema rejects password < 12 — zod layer; hook passes length to repo 1ms
+ ✓ src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T03: zod schema requires letter + digit — zod layer; hook passes through 3ms
+ ✓ src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T04: zod schema requires legal_acceptance true — zod layer; hook passes through 12ms
+ ✓ src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T05: zod schema strips full_name — confirmed by hook passing trimmed value 11ms
+ ✓ src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T06: happy path — repo returns 201 → onSuccess called with outcome 13ms
+ ✓ src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T07: 400 AUTH_SIGNUP_NON_CORPORATE_EMAIL → NonCorporateEmailError surfaced 12ms
+ ✓ src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T08: 400 AUTH_SIGNUP_LEGAL_NOT_ACCEPTED → LegalNotAcceptedError surfaced 3ms
+ ✓ src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T09: 409 AUTH_SIGNUP_EMAIL_TAKEN → EmailTakenError surfaced 1ms
+ ✓ src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T10: 422 AUTH_SIGNUP_INVALID_PAYLOAD (password) → PasswordPolicyError surfaced 8ms
+ ✓ src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T11: 429 AUTH_SIGNUP_RATE_LIMITED → SignupRateLimitedError with retryAfter 1ms
+ ✓ src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T12: TypeError network error → NetworkError surfaced 2ms
+ ✓ src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T13: 500 server error → SignupInternalError surfaced 1ms
+ ✓ src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T14: logger NEVER logs full email, password, or full_name — PII safety 2ms
+ ✓ src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T14b: clearError resets error state 1ms
+ ✓ src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T14c: 422 generic payload error → SignupValidationError surfaced 2ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > Wordmark > renders 'Hilo' text 18ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > Wordmark > has default aria-label 'Hilo' 2ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > Wordmark > renders custom element via 'as' prop 1ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > TrackedLabel > renders children 1ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > TrackedLabel > renders all variants without throwing 2ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > TrackedLabel > renders as label element 1ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > EditorialInput > renders label and input 4ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > EditorialInput > shows error message with aria-invalid 2ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > EditorialInput > disables input and renders muted label 1ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > EditorialInput > calls onChange 4ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > SolidCTA > renders children 2ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > SolidCTA > is disabled when disabled prop is true 22ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > SolidCTA > shows loading label when loading=true 3ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > SolidCTA > has aria-busy when loading 7ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > SolidCTA > calls onClick when not disabled 3ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > HairlineTable > renders populated rows 4ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > HairlineTable > renders empty message when rows is empty 2ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > HairlineTable > renders error_network state with retry CTA 6ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > HairlineTable > renders permission_denied state 1ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > StatusDot > renders active state with label 1ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > StatusDot > renders error state with label 1ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > StatusDot > renders custom label 1ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > StatusDot > has aria-label with status 1ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > MobileFrame > renders children 1ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > MobileFrame > renders as main when asMain=true 1ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > AdminShell > renders nav items 2ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > AdminShell > renders children in main 2ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > AdminShell > marks active item with aria-current=page 3ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > AdminShell > calls onClick when nav item is clicked 3ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > CitationInline > renders as anchor when href provided 1ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > CitationInline > renders as button when no href 1ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > CitationInline > displays [label] format 1ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > CitationInline > has accessible aria-label 1ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx > CitationInline > adds rel=noopener noreferrer when external 0ms
+ ✓ src/app/__tests__/providers.test.tsx > Providers > renders children without throwing (A7 — smoke render) 14ms
+ ✓ src/app/__tests__/providers.test.tsx > Providers > renders children when no queryClient or i18n is injected (defaults used) 1ms
+ ✓ src/app/__tests__/providers.test.tsx > Providers > emits BEFORE and AFTER console.info logs when VITE_ENABLE_VERBOSE_LOGGING=true (A8) 2ms
+ ✓ src/app/__tests__/providers.test.tsx > Providers > emits NO console.info logs when VITE_ENABLE_VERBOSE_LOGGING=false (A8 silent mode) 1ms
+ ✓ src/pages/auth/__tests__/ResetSentPage.test.tsx > ResetSentPage: maskEmail pure function > M01: masks standard email keeping first local char 1ms
+ ✓ src/pages/auth/__tests__/ResetSentPage.test.tsx > ResetSentPage: maskEmail pure function > M01b: masks john@acme.com → j***@acme.com 0ms
+ ✓ src/pages/auth/__tests__/ResetSentPage.test.tsx > ResetSentPage: maskEmail pure function > M02: empty local part (@acme.com) → ***@acme.com 0ms
+ ✓ src/pages/auth/__tests__/ResetSentPage.test.tsx > ResetSentPage: maskEmail pure function > M03: missing @ (not-an-email) → *** (no throw) 0ms
+ ✓ src/pages/auth/__tests__/ResetSentPage.test.tsx > ResetSentPage: maskEmail pure function > M04: empty string → *** (no throw) 0ms
+ ✓ src/pages/auth/__tests__/ResetSentPage.test.tsx > ResetSentPage: maskEmail pure function > M04b: single-char local (a@x.io) → a***@x.io 0ms
+ ✓ src/pages/auth/__tests__/ResetSentPage.test.tsx > ResetSentPage: C01 — state-present renders masked email > C01: renders with_email body containing masked string a***@example.com 25ms
+ ✓ src/pages/auth/__tests__/ResetSentPage.test.tsx > ResetSentPage: C01 — state-present renders masked email > C01: status region has role=status and aria-live=polite 25ms
+ ✓ src/pages/auth/__tests__/ResetSentPage.test.tsx > ResetSentPage: C02 — state-missing renders fallback > C02: no state renders fallback body without @ in text 5ms
+ ✓ src/pages/auth/__tests__/ResetSentPage.test.tsx > ResetSentPage: C02 — state-missing renders fallback > C02: explicit null state renders fallback without throwing 2ms
+ ✓ src/pages/auth/__tests__/ResetSentPage.test.tsx > ResetSentPage: C03 — CTA is a real anchor to /auth/sign-in > C03: back-to-sign-in link renders as <a href=/auth/sign-in> 2ms
+ ✓ src/pages/auth/__tests__/ResetSentPage.test.tsx > ResetSentPage: C04 — a11y contract > C04: single h1 with title text is present 8ms
+ ✓ src/pages/auth/__tests__/ResetSentPage.test.tsx > ResetSentPage: C04 — a11y contract > C04: reset-sent-title element has non-empty text content 2ms
+ ✓ src/pages/auth/__tests__/ResetSentPage.test.tsx > ResetSentPage: C04 — a11y contract > C04: status region is present (role=status) 3ms
+ ✓ src/pages/auth/__tests__/ResetSentPage.test.tsx > ResetSentPage: C04 — a11y contract > C04: CTA is an <a> element (real navigation, not button/div) 2ms
+ ✓ src/pages/auth/__tests__/ResetSentPage.test.tsx > ResetSentPage: C04 — a11y contract > C04: CTA has accessible name (text content) 2ms
+ ✓ src/pages/auth/__tests__/ResetSentPage.test.tsx > ResetSentPage: C05 — i18n locale switch > C05: ES renders Spanish title 2ms
+ ✓ src/pages/auth/__tests__/ResetSentPage.test.tsx > ResetSentPage: C05 — i18n locale switch > C05: EN renders English title 2ms
+ ✓ src/pages/auth/__tests__/ResetSentPage.test.tsx > ResetSentPage: C05 — i18n locale switch > C05: FR renders French title 3ms
+ ✓ src/pages/auth/__tests__/ResetSentPage.test.tsx > ResetSentPage: C06 — invalid state.email types render fallback > C06: numeric state.email renders fallback 1ms
+ ✓ src/pages/auth/__tests__/ResetSentPage.test.tsx > ResetSentPage: C06 — invalid state.email types render fallback > C06: object state.email renders fallback 1ms
+ ✓ src/pages/auth/__tests__/ResetSentPage.test.tsx > ResetSentPage: C06 — invalid state.email types render fallback > C06: empty string state.email renders fallback (no masked display) 1ms
+ ✓ src/pages/chat/__tests__/HistoryPage.test.tsx > HistoryPage > P01 — loading state shows aria-busy skeleton 21ms
+ ✓ src/pages/chat/__tests__/HistoryPage.test.tsx > HistoryPage > P02 — empty state shows Wordmark + CTA to /chat 9ms
+ ✓ src/pages/chat/__tests__/HistoryPage.test.tsx > HistoryPage > P02 — empty CTA navigates to /chat 5ms
+ ✓ src/pages/chat/__tests__/HistoryPage.test.tsx > HistoryPage > P03 — error_network shows retry CTA and triggers refetch on click 3ms
+ ✓ src/pages/chat/__tests__/HistoryPage.test.tsx > HistoryPage > P04 — permission_denied (403) shows ForbiddenView 2ms
+ ✓ src/pages/chat/__tests__/HistoryPage.test.tsx > HistoryPage > P05 — success renders grouped rows 5ms
+ ✓ src/pages/chat/__tests__/HistoryPage.test.tsx > HistoryPage > P06 — row tap navigates to /chat/:conversationId 3ms
+ ✓ src/pages/chat/__tests__/HistoryPage.test.tsx > HistoryPage > P07 — Enter key on row activates navigation (a11y keyboard nav) 3ms
+ ✓ src/pages/chat/__tests__/HistoryPage.test.tsx > HistoryPage > P08 — ES i18n labels rendered (page title + group label) 4ms
+ ✓ src/pages/chat/__tests__/HistoryPage.test.tsx > HistoryPage > P09 — row has accessible label including conversation title 3ms
+ ✓ src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T01 — empty state: Wordmark, title, 2 prompt chips, composer 34ms
+ ✓ src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T02 — prompt click → mutation triggered → navigate called on success 12ms
+ ✓ src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T03 — submit with empty composer input → send button disabled 4ms
+ ✓ src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T04 — submit > MAX chars → validation error shows ES i18n copy, NOT placeholder 8ms
+ ✓ src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T04b — submit > MAX chars in EN locale → validation error shows EN i18n copy 7ms
+ ✓ src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T04c — submit > MAX chars in FR locale → validation error shows FR i18n copy 9ms
+ ✓ src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T05 — network failure → error_network state with retry CTA 22ms
+ ✓ src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T06 — retry CTA triggers mutation again 12ms
+ ✓ src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T07 — 403 forbidden → permission_denied view shown (no composer) 9ms
+ ✓ src/features/chat/__tests__/ChatHomePage.test.tsx > ChatHomePage > T08 — a11y: network-error region has role=status + aria-live 11ms
+ ✓ src/features/chat/presentation/__tests__/historyGrouping.test.ts > groupConversationsByRelativeDate > G01 — empty input returns [] 1ms
+ ✓ src/features/chat/presentation/__tests__/historyGrouping.test.ts > groupConversationsByRelativeDate > G02 — only today returns single 'today' group 3ms
+ ✓ src/features/chat/presentation/__tests__/historyGrouping.test.ts > groupConversationsByRelativeDate > G03 — today + yesterday produces 2 groups in canonical order 0ms
+ ✓ src/features/chat/presentation/__tests__/historyGrouping.test.ts > groupConversationsByRelativeDate > G04 — spans all 5 buckets produces 5 groups in canonical order 0ms
+ ✓ src/features/chat/presentation/__tests__/historyGrouping.test.ts > groupConversationsByRelativeDate > G05 — same UTC moment that is today in one timezone resolves to today 0ms
+ ✓ src/features/chat/presentation/__tests__/historyGrouping.test.ts > groupConversationsByRelativeDate > G06 — ordering within group preserves input order 0ms
+ ✓ src/features/chat/presentation/__tests__/historyGrouping.test.ts > groupConversationsByRelativeDate > G07 — single item in 'earlier' bucket 0ms
+ ✓ src/features/chat/presentation/__tests__/historyGrouping.test.ts > groupConversationsByRelativeDate > G08 — week boundary: 7 days ago → thisWeek, 8 days ago → thisMonth 0ms
+ ✓ src/features/chat/presentation/__tests__/historyGrouping.test.ts > groupConversationsByRelativeDate > G09 — month boundary: 30 days ago → thisMonth, 31 days ago → earlier 0ms
+ ✓ src/features/chat/presentation/__tests__/historyGrouping.test.ts > groupConversationsByRelativeDate > G10 — null title does not cause grouping to fail 0ms
+ ✓ src/features/mcp/__tests__/mcpRepository.test.ts > mcpRepository.listServers > R01 — 200 → Result.ok with mapped server array 2ms
+ ✓ src/features/mcp/__tests__/mcpRepository.test.ts > mcpRepository.listServers > R02 — 401 → Result.err McpAuthExpiredError 2ms
+ ✓ src/features/mcp/__tests__/mcpRepository.test.ts > mcpRepository.listServers > R03 — 403 → Result.err McpForbiddenError 0ms
+ ✓ src/features/mcp/__tests__/mcpRepository.test.ts > mcpRepository.listServers > R04 — 500 → Result.err McpServerError 0ms
+ ✓ src/features/mcp/__tests__/mcpRepository.test.ts > mcpRepository.listServers > R05 — network failure → Result.err McpNetworkError 0ms
+ ✓ src/features/mcp/__tests__/mcpRepository.test.ts > mcpRepository.syncServer > R06 — 200 → Result.ok with tools_count 0ms
+ ✓ src/features/mcp/__tests__/mcpRepository.test.ts > mcpRepository.syncServer > R07 — 404 → Result.err McpServerNotFoundError 0ms
+ ✓ src/features/mcp/__tests__/mcpRepository.test.ts > mcpRepository.syncServer > R08 — 502 → Result.err McpServerUnreachableError 0ms
+ ✓ src/features/mcp/__tests__/mcpRepository.test.ts > mcpRepository.syncServer > R09 — 429 → Result.err McpRateLimitedError 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: configuration > i18n: registers all 9 namespaces (history added P03-S02-T003 §D-T003-I18N) 1ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: configuration > i18n: lng=es, fallbackLng=es, defaultNS=common 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: 24 bundles present > i18n: all 3 locales have all 8 namespaces loaded 1ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: fallback behaviour > i18n: falls back to es value for key absent in en and fr 1ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: key resolution across namespaces > i18n: resolves common:productName in es 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: key resolution across namespaces > i18n: resolves auth:signIn.title in es 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: key resolution across namespaces > i18n: resolves errors:AUTH_INVALID_CREDENTIALS in es 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: changeLanguage > i18n: changeLanguage updates auth:signIn.title to EN 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: changeLanguage > i18n: changeLanguage updates auth:signIn.title to FR 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: changeLanguage > i18n: reverts to es correctly 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: missing key handler > i18n: missing key in all languages returns key or empty string, never throws 1ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: errors namespace coverage > i18n: all error codes present in es 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: errors namespace coverage > i18n: all error codes present in en 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: errors namespace coverage > i18n: all error codes present in fr 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: no copy-paste across languages > i18n: errors:AUTH_INVALID_CREDENTIALS differs across es, en, fr 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: no copy-paste across languages > i18n: auth:signIn.title differs across es, en, fr 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: reset_sent lockstep — §D-T004-I18N-LOCKSTEP-TEST > i18n: auth:reset_sent.title resolves ES literal 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: reset_sent lockstep — §D-T004-I18N-LOCKSTEP-TEST > i18n: auth:reset_sent.title resolves EN literal 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: reset_sent lockstep — §D-T004-I18N-LOCKSTEP-TEST > i18n: auth:reset_sent.title resolves FR literal 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: reset_sent lockstep — §D-T004-I18N-LOCKSTEP-TEST > i18n: auth:reset_sent.body.with_email ES contains interpolated maskedEmail 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: reset_sent lockstep — §D-T004-I18N-LOCKSTEP-TEST > i18n: auth:reset_sent.body.with_email EN contains interpolated maskedEmail 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: reset_sent lockstep — §D-T004-I18N-LOCKSTEP-TEST > i18n: auth:reset_sent.body.with_email FR contains interpolated maskedEmail 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: reset_sent lockstep — §D-T004-I18N-LOCKSTEP-TEST > i18n: all 4 reset_sent keys are non-empty in es 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: reset_sent lockstep — §D-T004-I18N-LOCKSTEP-TEST > i18n: all 4 reset_sent keys are non-empty in en 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: reset_sent lockstep — §D-T004-I18N-LOCKSTEP-TEST > i18n: all 4 reset_sent keys are non-empty in fr 0ms
+
+ Test Files  25 passed (25)
+      Tests  292 passed (292)
+   Start at  04:18:27
+   Duration  4.63s (transform 1.80s, setup 4.32s, collect 6.53s, tests 3.08s, environment 18.51s, prepare 2.70s)
+
