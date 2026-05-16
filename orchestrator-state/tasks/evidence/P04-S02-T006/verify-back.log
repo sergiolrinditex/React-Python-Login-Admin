@@ -1,0 +1,4 @@
+2026-05-16 14:48:41,770 app.mcp.client_handshake ERROR mcp.client.handshake.connect_error method=initialize error=ConnectError
+2026-05-16 14:48:41,771 app.mcp.service_sync ERROR mcp.service.sync_server.unreachable server_id=0f7a2f24-e601-4255-abf0-9a074dd6d675 error=Cannot connect to MCP server: ConnectError
+2026-05-16 14:48:41,774 app.mcp.router_servers ERROR mcp.router.sync_server.unreachable server_id=0f7a2f24-e601-4255-abf0-9a074dd6d675 request_id=60cc4ca6-4da7-4229-8562-a630572fc015 error=Cannot connect to MCP server: ConnectError
+INFO:     127.0.0.1:59065 - "POST /api/v1/admin/ai/mcp/servers/0f7a2f24-e601-4255-abf0-9a074dd6d675/sync HTTP/1.1" 502 Bad Gateway

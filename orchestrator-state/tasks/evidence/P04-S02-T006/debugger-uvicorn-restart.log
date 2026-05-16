@@ -1,0 +1,59 @@
+=== BEFORE: lsof :8000 ===
+22130
+22136
+
+=== BEFORE: ps for PIDs ===
+  PID USER     COMMAND
+22130 sergiolr /Library/Frameworks/Python.framework/Versions/3.11/Resources/Python.app/Contents/MacOS/Python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+Python  22130 sergiolr  cwd    DIR               1,18       64           183128321 /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S01-T005/backend
+Python  22130 sergiolr  txt    REG               1,18   151584             2598898 /Library/Frameworks/Python.framework/Versions/3.11/Resources/Python.app/Contents/MacOS/Python
+Python  22130 sergiolr  txt    REG               1,18   292048             2599007 /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/lib-dynload/_socket.cpython-311-darwin.so
+  PID USER     COMMAND
+22136 sergiolr /Library/Frameworks/Python.framework/Versions/3.11/Resources/Python.app/Contents/MacOS/Python -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=5, pipe_handle=7) --multiprocessing-fork
+Python  22136 sergiolr  cwd       DIR               1,18       64           183128321 /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S01-T005/backend
+Python  22136 sergiolr  txt       REG               1,18   151584             2598898 /Library/Frameworks/Python.framework/Versions/3.11/Resources/Python.app/Contents/MacOS/Python
+Python  22136 sergiolr  txt       REG               1,18   375920             2598991 /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/lib-dynload/_pickle.cpython-311-darwin.so
+
+=== KILL stale uvicorn ===
+=== AFTER KILL: lsof :8000 ===
+no process on :8000
+
+=== dev-restart.sh --soft (from worktree P04-S02-T006) ===
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P04-S02-T006
+==> Ensuring infra up: postgres redis
+WARN: compose up failed — see /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P04-S02-T006/orchestrator-state/dev-logs/back.log
+ERROR: Cannot start backend: infra services (postgres/redis) are not ready.
+       Bring up Rancher Desktop / Docker Desktop and retry, or run:
+         docker compose -f docker-compose.yml up -d postgres redis
+=== docker / pg / redis status ===
+(eval):1: command not found: docker
+---
+localhost:5432 - aceptando conexiones
+---
+(eval):1: command not found: redis-cli
+redis: not ready
+
+=== Infra check (post-kill) ===
+pg: localhost:5432 - aceptando conexiones
+redis: True
+
+=== Launch uvicorn directly (infra natively up; docker absent) ===
+ls: .venv/bin/python: No such file or directory
+ls: backend/.venv/bin/python: No such file or directory
+/usr/local/bin/python3
+uvicorn: 0.42.0 fastapi: 0.135.2
+
+=== AFTER RESTART: lsof :8000 ===
+41591
+41595
+
+=== ps for new PIDs ===
+  PID USER     COMMAND
+41591 sergiolr /Library/Frameworks/Python.framework/Versions/3.11/Resources/Python.app/Contents/MacOS/Python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+Python  41591 sergiolr  cwd    DIR               1,18      384           183463234 /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P04-S02-T006/backend
+  PID USER     COMMAND
+41595 sergiolr /Library/Frameworks/Python.framework/Versions/3.11/Resources/Python.app/Contents/MacOS/Python -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=5, pipe_handle=7) --multiprocessing-fork
+Python  41595 sergiolr  cwd       DIR               1,18      384           183463234 /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P04-S02-T006/backend
+
+=== health ===
+{"data":{"status":"ok","version":"0.1.0","uptime":7.87}}

@@ -1,0 +1,2 @@
+{"data":null,"meta":{"request_id":"3ef0ba1a-8291-4b84-90db-f071007594ca"},"errors":[{"code":"INTERNAL_ERROR","message":"Failed to sync MCP server.","field":null,"details":null}]}
+HTTP_STATUS: 500 (from stale uvicorn process running P03-S01-T005 worktree code)

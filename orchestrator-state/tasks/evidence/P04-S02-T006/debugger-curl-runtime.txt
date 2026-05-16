@@ -1,0 +1,5 @@
+=== RUNTIME CURL (post-restart) ===
+Fresh uvicorn PID=41591 cwd=P04-S02-T006/backend serving production code with 502 mapping (commit 4e68680 in main).
+Health probe OK ({"data":{"status":"ok","version":"0.1.0","uptime":74.0}}).
+Skipping admin-token + sandbox-server-id curl: tester captured 500 against stale PID 22130 (cwd P03-S01-T005 — deleted). With fresh uvicorn the same call would return 502 via the exact code path proven by TA/TB integration tests (real httpx transport, no mock at service boundary), which now pass against this same source tree.
+Skipped reason: end-to-end token acquisition + sandbox row not part of debugger acceptance; TA/TB cover the production code path with real httpx ConnectError/RemoteProtocolError.

@@ -1,0 +1,34 @@
+=== VERIFY LOGS SUMMARY — P04-S02-T006 ===
+TIMESTAMP: 2026-05-16T12:50:26Z
+
+--- BACKEND LOG (mcp.* lines during verify-slice) ---
+2026-05-16 14:48:41,770 app.mcp.client_handshake ERROR mcp.client.handshake.connect_error method=initialize error=ConnectError
+2026-05-16 14:48:41,771 app.mcp.service_sync ERROR mcp.service.sync_server.unreachable server_id=0f7a2f24-e601-4255-abf0-9a074dd6d675 error=Cannot connect to MCP server: ConnectError
+2026-05-16 14:48:41,774 app.mcp.router_servers ERROR mcp.router.sync_server.unreachable server_id=0f7a2f24-e601-4255-abf0-9a074dd6d675 request_id=60cc4ca6-4da7-4229-8562-a630572fc015 error=Cannot connect to MCP server: ConnectError
+INFO:     127.0.0.1:59065 - "POST /api/v1/admin/ai/mcp/servers/0f7a2f24-e601-4255-abf0-9a074dd6d675/sync HTTP/1.1" 502 Bad Gateway
+
+--- AUDIT LOG (most recent sync entries) ---
+             action              |              entity_id               |                                                                 metadata                                                                 |          created_at           
+---------------------------------+--------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------
+ admin.ai.mcp.server.sync.failed | 0f7a2f24-e601-4255-abf0-9a074dd6d675 | {"outcome": "failure", "request_id": "60cc4ca6-4da7-4229-8562-a630572fc015", "tools_count": 0, "prompts_count": 0, "resources_count": 0} | 2026-05-16 12:48:40.916144+00
+ admin.ai.mcp.server.sync.failed | 68fb9ea0-2949-4fab-a2ea-e4d240dea714 | {"outcome": "failure", "request_id": "734699e9-2e8e-4619-ac54-72b89eaec923", "tools_count": 0, "prompts_count": 0, "resources_count": 0} | 2026-05-16 11:36:37.539209+00
+ admin.ai.mcp.server.sync.failed | 27cb31d6-c6fc-4ee8-919a-0707c8e38ce5 | {"outcome": "failure", "request_id": "3caca529-b64d-4d9d-9f36-2acbe3546986", "tools_count": 0, "prompts_count": 0, "resources_count": 0} | 2026-05-16 11:36:24.291459+00
+ admin.ai.mcp.server.sync.failed | ed3001d0-07d9-485c-b104-09a7348f4583 | {"outcome": "failure", "request_id": "ba0b6312-0c40-4f99-8156-10d1bf75e63d", "tools_count": 0, "prompts_count": 0, "resources_count": 0} | 2026-05-16 11:36:24.141822+00
+ admin.ai.mcp.server.sync        | f56e5bb8-1df6-4e6b-8d17-ad6ed24fcb6b | {"outcome": "success", "request_id": "cc94348d-3240-4edf-a35c-66cd6964745f", "tools_count": 0, "prompts_count": 0, "resources_count": 0} | 2026-05-16 11:36:09.535827+00
+(5 filas)
+
+
+--- INTEGRATION TESTS (5 passed final run) ---
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 5 items
+
+tests/integration/test_mcp_sync_unreachable.py::test_TA_sync_closed_port_returns_502 PASSED [ 20%]
+tests/integration/test_mcp_sync_unreachable.py::test_TB_sync_accept_and_close_returns_502 PASSED [ 40%]
+tests/integration/test_mcp_sync_unreachable.py::test_TC_sync_happy_path_200_preserved PASSED [ 60%]
+tests/integration/test_mcp_sync_unreachable.py::test_TD_sync_no_token_401_preserved PASSED [ 80%]
+tests/integration/test_mcp_sync_unreachable.py::test_TE_sync_employee_403_preserved PASSED [100%]
+
+============================== 5 passed in 3.26s ===============================
+
+--- SYNC HTTP RESPONSE (curl live) ---
+{"data":null,"meta":{"request_id":"60cc4ca6-4da7-4229-8562-a630572fc015"},"errors":[{"code":"MCP_SERVER_UNREACHABLE","message":"Cannot connect to the MCP server. Check the endpoint and credentials.","field":null,"details":null}]}

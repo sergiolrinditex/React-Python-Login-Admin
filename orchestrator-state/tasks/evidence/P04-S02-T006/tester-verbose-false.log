@@ -1,0 +1,138 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.5, pytest-9.0.2, pluggy-1.6.0 -- /usr/local/bin/python3
+cachedir: .pytest_cache
+rootdir: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P04-S02-T006/backend
+configfile: pyproject.toml
+plugins: httpx-0.36.0, asyncio-1.3.0, langsmith-0.8.3, anyio-4.13.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 5 items
+
+tests/integration/test_mcp_sync_unreachable.py::test_TA_sync_closed_port_returns_502 FAILED
+tests/integration/test_mcp_sync_unreachable.py::test_TB_sync_accept_and_close_returns_502 FAILED
+tests/integration/test_mcp_sync_unreachable.py::test_TC_sync_happy_path_200_preserved FAILED
+tests/integration/test_mcp_sync_unreachable.py::test_TD_sync_no_token_401_preserved PASSED
+tests/integration/test_mcp_sync_unreachable.py::test_TE_sync_employee_403_preserved PASSED
+
+=================================== FAILURES ===================================
+_____________________ test_TA_sync_closed_port_returns_502 _____________________
+
+    def test_TA_sync_closed_port_returns_502() -> None:
+        """TA: POST /sync target=closed-port forces real httpx.ConnectError → 502.
+    
+        This test does NOT mock discover(). It uses a port that has no listener so
+        the real httpx client triggers ConnectError inside client_handshake.py →
+        McpServerUnreachableError → router maps to 502.
+    
+        Confirms:
+        - HTTP 502
+        - errors[0].code == MCP_SERVER_UNREACHABLE
+        - data is null, meta.request_id present, field=null, details=null
+        - audit_log row admin.ai.mcp.server.sync.failed written
+        """
+        admin = _create_admin(f"ta.unreachable.{uuid.uuid4().hex[:6]}@inditex-sandbox.com")
+        token = _sign_in(admin["email"], "UnreachAdmin2024!")
+        # Port 65500 is not in use; this triggers ConnectError immediately.
+        server_id = _register_server(token, "http://127.0.0.1:65500/mcp")
+    
+        resp = _client.post(
+            f"/api/v1/admin/ai/mcp/servers/{server_id}/sync",
+            headers={"Authorization": f"Bearer {token}"},
+        )
+    
+>       assert resp.status_code == 502, f"Expected 502, got {resp.status_code}: {resp.text}"
+E       AssertionError: Expected 502, got 429: {"data":null,"meta":{"request_id":"f6b7b8b3-4091-494d-9c6a-41b5b48446fa"},"errors":[{"code":"RATE_LIMITED","message":"Too many requests. Retry after 30 seconds.","field":null,"details":null}]}
+E       assert 429 == 502
+E        +  where 429 = <Response [429 Too Many Requests]>.status_code
+
+tests/integration/test_mcp_sync_unreachable.py:283: AssertionError
+------------------------------ Captured log call -------------------------------
+WARNING  app.security.rate_limit:rate_limit.py:201 security.rate_limit.exceeded prefix=MCP_SYNC ip=testclient count=11 burst=5 retry_after=30s request_id=f6b7b8b3-4091-494d-9c6a-41b5b48446fa
+__________________ test_TB_sync_accept_and_close_returns_502 ___________________
+
+    def test_TB_sync_accept_and_close_returns_502() -> None:
+        """TB: TCP server that accepts then closes → httpx.RemoteProtocolError → 502.
+    
+        This exercises the `except (httpx.ConnectError, httpx.RequestError)` branch
+        in _http_post_json (client_handshake.py) with a REAL httpx client making a
+        REAL TCP connection. httpx.RemoteProtocolError is a subclass of
+        httpx.RequestError and is caught correctly.
+    
+        The stub runs in a background thread; the ready_event ensures the test
+        does not POST before the socket is listening.
+        """
+        admin = _create_admin(f"tb.unreachable.{uuid.uuid4().hex[:6]}@inditex-sandbox.com")
+        token = _sign_in(admin["email"], "UnreachAdmin2024!")
+    
+        # Pick an ephemeral port
+        with socket.socket() as s:
+            s.bind(("127.0.0.1", 0))
+            port = s.getsockname()[1]
+    
+        ready = threading.Event()
+        stub_thread = threading.Thread(
+            target=_run_accept_and_close_server,
+            args=("127.0.0.1", port, ready),
+            daemon=True,
+        )
+        stub_thread.start()
+        ready.wait(timeout=2.0)
+    
+        server_id = _register_server(token, f"http://127.0.0.1:{port}/mcp")
+    
+        resp = _client.post(
+            f"/api/v1/admin/ai/mcp/servers/{server_id}/sync",
+            headers={"Authorization": f"Bearer {token}"},
+        )
+        stub_thread.join(timeout=3.0)
+    
+>       assert resp.status_code == 502, f"Expected 502, got {resp.status_code}: {resp.text}"
+E       AssertionError: Expected 502, got 429: {"data":null,"meta":{"request_id":"d6c498b4-092e-4c0c-9769-3920552d36c9"},"errors":[{"code":"RATE_LIMITED","message":"Too many requests. Retry after 29 seconds.","field":null,"details":null}]}
+E       assert 429 == 502
+E        +  where 429 = <Response [429 Too Many Requests]>.status_code
+
+tests/integration/test_mcp_sync_unreachable.py:362: AssertionError
+------------------------------ Captured log call -------------------------------
+WARNING  app.security.rate_limit:rate_limit.py:201 security.rate_limit.exceeded prefix=MCP_SYNC ip=testclient count=12 burst=5 retry_after=29s request_id=d6c498b4-092e-4c0c-9769-3920552d36c9
+____________________ test_TC_sync_happy_path_200_preserved _____________________
+
+    def test_TC_sync_happy_path_200_preserved() -> None:
+        """TC: POST /sync with monkeypatched httpx → 200 + envelope correct.
+    
+        Uses a minimal httpx.MockTransport to simulate a real MCP server that
+        responds to initialize + tools/list + resources/list + prompts/list.
+        Verifies that the 200 path is not broken by any 502 changes.
+        """
+        import httpx  # noqa: PLC0415
+    
+        admin = _create_admin(f"tc.unreachable.{uuid.uuid4().hex[:6]}@inditex-sandbox.com")
+        token = _sign_in(admin["email"], "UnreachAdmin2024!")
+        # Use localhost — MCP_ALLOWLIST_DOMAINS allows localhost by default
+        server_id = _register_server(token, "http://localhost:19999/mcp")
+    
+        transport = httpx.MockTransport(_FakeMcpTransport().handle_request)
+    
+        with patch("httpx.Client") as mock_client_cls:
+            # httpx.Client is used as context manager: __enter__ returns the client
+            mock_inst = mock_client_cls.return_value.__enter__.return_value
+            mock_inst.post.side_effect = lambda url, **kw: transport.handle_request(
+                httpx.Request("POST", url, content=json.dumps(kw.get("json", {})).encode())
+            )
+    
+            resp = _client.post(
+                f"/api/v1/admin/ai/mcp/servers/{server_id}/sync",
+                headers={"Authorization": f"Bearer {token}"},
+            )
+    
+>       assert resp.status_code == 200, f"Expected 200, got {resp.status_code}: {resp.text}"
+E       AssertionError: Expected 200, got 429: {"data":null,"meta":{"request_id":"662749b4-7fb8-413d-8bf1-0ae6169e2ecc"},"errors":[{"code":"RATE_LIMITED","message":"Too many requests. Retry after 26 seconds.","field":null,"details":null}]}
+E       assert 429 == 200
+E        +  where 429 = <Response [429 Too Many Requests]>.status_code
+
+tests/integration/test_mcp_sync_unreachable.py:455: AssertionError
+------------------------------ Captured log call -------------------------------
+WARNING  app.security.rate_limit:rate_limit.py:201 security.rate_limit.exceeded prefix=MCP_SYNC ip=testclient count=13 burst=5 retry_after=26s request_id=662749b4-7fb8-413d-8bf1-0ae6169e2ecc
+=========================== short test summary info ============================
+FAILED tests/integration/test_mcp_sync_unreachable.py::test_TA_sync_closed_port_returns_502
+FAILED tests/integration/test_mcp_sync_unreachable.py::test_TB_sync_accept_and_close_returns_502
+FAILED tests/integration/test_mcp_sync_unreachable.py::test_TC_sync_happy_path_200_preserved
+========================= 3 failed, 2 passed in 6.73s ==========================

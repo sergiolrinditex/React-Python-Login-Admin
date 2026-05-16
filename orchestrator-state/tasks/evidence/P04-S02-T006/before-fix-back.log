@@ -1,0 +1,4 @@
+Running uvicorn PID: 22130, started from P03-S01-T005/backend (worktree now deleted)
+Server log file: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S01-T005/orchestrator-state/dev-logs/back.log (deleted)
+Root cause: uvicorn loaded code from deleted P03-S01-T005 worktree before that worktree's McpServerUnreachableError→502 mapping was reloaded.
+In-process TestClient test CONFIRMS 502 (code is correct in worktree).

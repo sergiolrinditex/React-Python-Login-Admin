@@ -1,0 +1,10 @@
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   178  100   178    0     0  12754      0 --:--:-- --:--:-- --:--:-- 13692
+HTTP/1.1 500 Internal Server Error
+date: Sat, 16 May 2026 11:26:07 GMT
+server: uvicorn
+content-length: 178
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"c43140d1-df17-4acd-b29a-26edd567c61e"},"errors":[{"code":"INTERNAL_ERROR","message":"Failed to sync MCP server.","field":null,"details":null}]}
