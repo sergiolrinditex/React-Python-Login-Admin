@@ -1,0 +1,24 @@
+HTTP/1.1 200 OK
+date: Sat, 16 May 2026 10:07:05 GMT
+server: uvicorn
+content-length: 580
+content-type: application/json
+x-litellm-call-id: 9f290993-6810-4a79-ad13-00b4500deb63
+x-litellm-model-id: 81a42b2a7306da4482f083b5bc0ca0fe97b046a05aaae19ea271bcc31b8e4d50
+x-litellm-model-api-base: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent
+x-litellm-version: 1.83.14
+x-litellm-response-cost: 7.81e-05
+x-litellm-response-cost-original: 7.81e-05
+x-litellm-response-cost-discount-amount: 0.0
+x-litellm-response-cost-margin-amount: 0.0
+x-litellm-response-cost-margin-percent: 0.0
+x-litellm-key-spend: 7.81e-05
+x-litellm-response-duration-ms: 762.856
+x-litellm-overhead-duration-ms: 7.666
+x-litellm-callback-duration-ms: 0.0
+x-litellm-model-group: gemini/gemini-2.5-flash
+x-litellm-attempted-retries: 0
+x-litellm-attempted-fallbacks: 0
+
+{"id":"ykEIatLeGNe-xN8Pz7jM6AI","created":1778926025,"model":"gemini/gemini-2.5-flash","object":"chat.completion","choices":[{"finish_reason":"stop","index":0,"message":{"content":"Pong.","role":"assistant","images":[],"thinking_blocks":[]}}],"usage":{"completion_tokens":31,"prompt_tokens":2,"total_tokens":33,"completion_tokens_details":{"reasoning_tokens":29,"text_tokens":2},"prompt_tokens_details":{"text_tokens":2}},"vertex_ai_grounding_metadata":[],"vertex_ai_url_context_metadata":[],"vertex_ai_safety_results":[],"vertex_ai_citation_metadata":[],"service_tier":"default"}
+HTTP=200

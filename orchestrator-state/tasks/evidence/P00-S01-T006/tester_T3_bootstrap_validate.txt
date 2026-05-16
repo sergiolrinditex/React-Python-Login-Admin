@@ -1,0 +1,17 @@
+=== T3: bootstrap_source_of_truth.py --validate-only ===
+Command:
+  python3 -B -S .claude/bin/bootstrap_source_of_truth.py --validate-only
+  echo "exit=$?"
+
+Output:
+  Source-of-truth contract is valid.
+  {
+    "instructions": ["docs/source-of-truth/instrucciones.md"],
+    "checklist": ["docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md"],
+    "guide": ["docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md"],
+    "ux": ["docs/source-of-truth/UX_CONTRACT.md"],
+    "stack_profile": ["docs/source-of-truth/STACK_PROFILE.yaml"]
+  }
+  exit=0
+
+RESULT: PASS — exit 0, "Source-of-truth contract is valid." No contract breakage from §11.1 row insertion.

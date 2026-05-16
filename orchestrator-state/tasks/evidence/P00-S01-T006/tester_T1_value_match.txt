@@ -1,0 +1,14 @@
+=== T1: Value match — .env.example vs fixture credential_plain ===
+Command:
+  ENV_VAL=$(grep -E "^LITELLM_MASTER_KEY=" .env.example | cut -d= -f2-)
+  FIX_VAL=$(python3 -c "import json; print(json.load(open('data/verification/admin_ai/credentials/litellm_sandbox_bearer.json'))['credential_plain'])")
+  echo "ENV=$ENV_VAL"
+  echo "FIX=$FIX_VAL"
+  test "$ENV_VAL" = "$FIX_VAL" && echo "T1=PASS" || echo "T1=FAIL"
+
+Output:
+  ENV=hilo-dev-litellm-master-key-2026
+  FIX=hilo-dev-litellm-master-key-2026
+  T1=PASS
+
+RESULT: PASS — both values are "hilo-dev-litellm-master-key-2026" (exact match)

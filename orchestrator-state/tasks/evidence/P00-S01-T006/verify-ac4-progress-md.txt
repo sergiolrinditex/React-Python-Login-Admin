@@ -1,0 +1,13 @@
+## AC4 Verification — PROGRESS.md P00-S01-T006 bullet
+## slice-verifier — 2026-05-16T14:00:00Z
+
+### Command:
+$ grep -n "P00-S01-T006" /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/orchestrator-state/memory/PROGRESS.md
+
+### Output:
+14:  - **P00-S01-T006 — Sync LITELLM_MASTER_KEY .env.example ↔ fixture — developer done 2026-05-16**: Wiring fix promoted from FU-20260516020115. .env.example LITELLM_MASTER_KEY=hilo-dev-litellm-master-key-2026 to match data/verification/admin_ai/credentials/litellm_sandbox_bearer.json credential_plain. TECHNICAL_GUIDE §11.1 LITELLM_MASTER_KEY row added noting explicit matching requirement. D3 comment also applied: fixture reference added to .env.example comment block lines 63-70. No code/tests added; bootstrap_source_of_truth.py --validate-only PASS. Verify-slice will confirm `cp .env.example .env` + docker compose up litellm + backend smoke POST /chat/completions returns 200 not 401. journey_refs=[].
+
+### Result: PASS
+- Bullet present at canonical PROGRESS.md line 14
+- Contains TASK_ID, new value, fixture ref, FU origin, journey_refs=[], AC5 deferred reason
+- Meets developer update standard

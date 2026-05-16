@@ -1,0 +1,11 @@
+NAME      IMAGE     COMMAND   SERVICE   CREATED   STATUS    PORTS
+p00-s01-t006-backend-1                                                                                                   Created                   
+p00-s01-t006-litellm-1                                                                                                   Created                   
+p00-s01-t006-postgres-1                                                                                                  Created                   
+p00-s01-t006-redis-1                                                                                                     Created                   
+p04-s03-t002-litellm-1                                                                                                   Created                   
+react-python-login-admin-litellm-1                                                                                       Up 8 hours (healthy)      0.0.0.0:4000->4000/tcp, [::]:4000->4000/tcp
+p03-s01-t006-postgres-1                                                                                                  Created                   
+p03-s01-t006-litellm-1                                                                                                   Exited (0) 8 hours ago    
+p03-s01-t006-minio-1                                                                                                     Up 9 hours (healthy)      0.0.0.0:9000-9001->9000-9001/tcp, [::]:9000-9001->9000-9001/tcp
+p03-s01-t006-redis-1                                                                                                     Created                   
