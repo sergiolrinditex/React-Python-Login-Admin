@@ -1,0 +1,142 @@
+
+> hilo-people-frontend@0.1.0 test
+> vitest --run --reporter=verbose src/features/admin-ai/__tests__/useModelTest.test.tsx src/features/admin-ai/__tests__/adminAiRepository.test.ts
+
+
+ RUN  v3.2.4 /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P04-S01-T004/frontend
+
+stderr | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T03 — 401 final → Result.err(AdminAiAuthExpiredError)
+[admin-ai] admin-ai.repo.getUsage.auth_expired { status: [33m401[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T03b — AuthSessionExpiredError thrown by authFetch → Result.err(AdminAiAuthExpiredError)
+[admin-ai] admin-ai.repo.getUsage.auth_expired_via_client {}
+
+stderr | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T04 — 403 forbidden → Result.err(AdminAiForbiddenError)
+[admin-ai] admin-ai.repo.getUsage.forbidden { status: [33m403[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T05 — 422 validation error → Result.err(AdminAiValidationError) with server code
+[admin-ai] admin-ai.repo.getUsage.validation_error {
+  status: [33m422[39m,
+  server_code: [32m'ADMIN_USAGE_WINDOW_TOO_WIDE'[39m,
+  request_id: [32m'test-request-id'[39m,
+  note: [32m'422 from admin/usage — client params may have drifted from spec'[39m
+}
+
+stderr | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T06 — 500 server error → Result.err(AdminAiInternalError)
+[admin-ai] admin-ai.repo.getUsage.server_error { status: [33m500[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T07 — network rejection (TypeError) → Result.err(AdminAiNetworkError)
+[admin-ai] admin-ai.repo.getUsage.network_error { error_class: [32m'AdminAiNetworkError'[39m }
+
+stderr | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getProviders > T09 — getProviders 401 → AdminAiAuthExpiredError; onAuthFailure invoked via authFetch
+[admin-ai] admin-ai.repo.getProviders.auth_expired { status: [33m401[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getProviders > T10 — getProviders 403 → AdminAiForbiddenError
+[admin-ai] admin-ai.repo.getProviders.forbidden { status: [33m403[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getProviders > T11 — getProviders 500 → AdminAiInternalError
+[admin-ai] admin-ai.repo.getProviders.server_error { status: [33m500[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getProviders > T12 — getProviders network reject → AdminAiNetworkError
+[admin-ai] admin-ai.repo.getProviders.network_error { error_class: [32m'AdminAiNetworkError'[39m }
+
+stderr | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getModels > T14 — getModels 401 → AdminAiAuthExpiredError
+[admin-ai] admin-ai.repo.getModels.auth_expired { status: [33m401[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getModels > T15 — getModels 403 → AdminAiForbiddenError
+[admin-ai] admin-ai.repo.getModels.forbidden { status: [33m403[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getModels > T16 — getModels 500 → AdminAiInternalError
+[admin-ai] admin-ai.repo.getModels.server_error { status: [33m500[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getModels > T17 — getModels network reject → AdminAiNetworkError
+[admin-ai] admin-ai.repo.getModels.network_error { error_class: [32m'AdminAiNetworkError'[39m }
+
+stderr | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.testModel > T28 — testModel 400 → AdminAiValidationError with fieldErrors[0].field='prompt'
+[admin-ai] admin-ai.repo.testModel.bad_request {
+  status: [33m400[39m,
+  server_code: [32m'MODEL_TEST_BAD_PROMPT'[39m,
+  request_id: [32m'test-request-id'[39m,
+  field_count: [33m1[39m
+}
+
+stderr | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.testModel > T29 — testModel 401 → AdminAiAuthExpiredError
+[admin-ai] admin-ai.repo.testModel.auth_expired { status: [33m401[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.testModel > T30 — testModel 403 → AdminAiForbiddenError
+[admin-ai] admin-ai.repo.testModel.forbidden { status: [33m403[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.testModel > T31 — testModel 404 → AdminAiNotFoundError
+[admin-ai] admin-ai.repo.testModel.not_found { status: [33m404[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.testModel > T32 — testModel 502 → AdminAiUpstreamError
+[admin-ai] admin-ai.repo.testModel.upstream_error { status: [33m502[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.testModel > T33 — testModel 503 → AdminAiInternalError
+[admin-ai] admin-ai.repo.testModel.server_error { status: [33m503[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.testModel > T34 — testModel network reject → AdminAiNetworkError
+[admin-ai] admin-ai.repo.testModel.network_error { error_class: [32m'AdminAiNetworkError'[39m }
+
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T01 — 200 happy path → Result.ok with populated rows 2ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T02 — 200 empty (rows=[], totals all zeros) → Result.ok with empty data 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T03 — 401 final → Result.err(AdminAiAuthExpiredError) 2ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T03b — AuthSessionExpiredError thrown by authFetch → Result.err(AdminAiAuthExpiredError) 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T04 — 403 forbidden → Result.err(AdminAiForbiddenError) 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T05 — 422 validation error → Result.err(AdminAiValidationError) with server code 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T06 — 500 server error → Result.err(AdminAiInternalError) 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T07 — network rejection (TypeError) → Result.err(AdminAiNetworkError) 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T08-url — URL is built correctly with all params 1ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getProviders > T08 — getProviders happy path → Result.ok([AiProvider]) 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getProviders > T09 — getProviders 401 → AdminAiAuthExpiredError; onAuthFailure invoked via authFetch 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getProviders > T10 — getProviders 403 → AdminAiForbiddenError 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getProviders > T11 — getProviders 500 → AdminAiInternalError 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getProviders > T12 — getProviders network reject → AdminAiNetworkError 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getModels > T13 — getModels happy path (no provider_id) → Result.ok([AiModel]) 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getModels > T14 — getModels 401 → AdminAiAuthExpiredError 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getModels > T15 — getModels 403 → AdminAiForbiddenError 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getModels > T16 — getModels 500 → AdminAiInternalError 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getModels > T17 — getModels network reject → AdminAiNetworkError 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.createProvider > T18 — createProvider 201 happy path → Result.ok(AiProvider) 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.createProvider > T19 — createProvider 401 → AdminAiAuthExpiredError 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.createProvider > T20 — createProvider 403 → AdminAiForbiddenError 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.createProvider > T21 — createProvider 422 with fieldErrors → AdminAiValidationError with fieldErrors[] 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.createProvider > T22 — createProvider 400 → AdminAiValidationError 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.createProvider > T23 — createProvider 409 → AdminAiValidationError (ADMIN_PROVIDER_DUPLICATE_NAME) 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.createProvider > T24 — createProvider 500 → AdminAiInternalError 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.createProvider > T25 — createProvider network reject → AdminAiNetworkError 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.createProvider > T26 — createProvider PII-clean: secret_plain NEVER appears in console logs 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.testModel > T27 — testModel 200 → Result.ok({output, latency_ms, cost}) 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.testModel > T28 — testModel 400 → AdminAiValidationError with fieldErrors[0].field='prompt' 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.testModel > T29 — testModel 401 → AdminAiAuthExpiredError 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.testModel > T30 — testModel 403 → AdminAiForbiddenError 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.testModel > T31 — testModel 404 → AdminAiNotFoundError 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.testModel > T32 — testModel 502 → AdminAiUpstreamError 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.testModel > T33 — testModel 503 → AdminAiInternalError 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.testModel > T34 — testModel network reject → AdminAiNetworkError 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.testModel > T36 — testModel PII-clean: prompt + output content NEVER appear in console logs 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.updateModel > T35 — updateModel 200 → Result.ok(AiModel) with is_default patched 0ms
+stderr | src/features/admin-ai/__tests__/useModelTest.test.tsx > useModelTest > U06 — submit returns error_network → submissionState=error_network
+[admin-ai] admin-ai.hook.useModelTest.submit.error { error_class: [32m'AdminAiNetworkError'[39m }
+
+ ✓ src/features/admin-ai/__tests__/useModelTest.test.tsx > useModelTest > U01 — initial state: prompt empty, submissionState=idle, no fieldErrors 9ms
+ ✓ src/features/admin-ai/__tests__/useModelTest.test.tsx > useModelTest > U02 — setPrompt updates prompt value 2ms
+ ✓ src/features/admin-ai/__tests__/useModelTest.test.tsx > useModelTest > U03 — submit with empty prompt → error_validation + fieldErrors.prompt set 1ms
+ ✓ src/features/admin-ai/__tests__/useModelTest.test.tsx > useModelTest > U04 — submit with prompt >4000 chars → error_validation 1ms
+ ✓ src/features/admin-ai/__tests__/useModelTest.test.tsx > useModelTest > U05 — submit success → submissionState=success, testResult populated 55ms
+stderr | src/features/admin-ai/__tests__/useModelTest.test.tsx > useModelTest > U07 — submit 403 → submissionState=permission_denied
+[admin-ai] admin-ai.hook.useModelTest.submit.forbidden {}
+
+ ✓ src/features/admin-ai/__tests__/useModelTest.test.tsx > useModelTest > U06 — submit returns error_network → submissionState=error_network 54ms
+ ✓ src/features/admin-ai/__tests__/useModelTest.test.tsx > useModelTest > U07 — submit 403 → submissionState=permission_denied 55ms
+ ✓ src/features/admin-ai/__tests__/useModelTest.test.tsx > useModelTest > U08 — activate success → activateState=success 54ms
+ ✓ src/features/admin-ai/__tests__/useModelTest.test.tsx > useModelTest — pure helpers > U09 — formatLatencyMs <1000ms → 'Xms' 0ms
+ ✓ src/features/admin-ai/__tests__/useModelTest.test.tsx > useModelTest — pure helpers > U09b — formatLatencyMs ≥1000ms → 'X.Xs' 0ms
+ ✓ src/features/admin-ai/__tests__/useModelTest.test.tsx > useModelTest — pure helpers > U10 — formatCostUsd 0 → em-dash 0ms
+ ✓ src/features/admin-ai/__tests__/useModelTest.test.tsx > useModelTest — pure helpers > U10b — formatCostUsd >0 → formatted USD string 12ms
+
+ Test Files  2 passed (2)
+      Tests  50 passed (50)
+   Start at  00:20:22
+   Duration  1.44s (transform 130ms, setup 166ms, collect 236ms, tests 256ms, environment 980ms, prepare 181ms)
+

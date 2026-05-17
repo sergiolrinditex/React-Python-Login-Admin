@@ -1,0 +1,7 @@
+HTTP/1.1 200 OK
+date: Sun, 17 May 2026 22:17:15 GMT
+server: uvicorn
+content-length: 324
+content-type: application/json
+
+{"data":[{"id":"d2b1a84f-7b8a-49cd-b52b-4fc017797c12","provider_id":"e3542c34-1c63-4520-ae07-c79906079610","model_id":"gemini-2.5-flash","model_type":"chat","capabilities":["chat","streaming"],"enabled":true,"is_default":true,"pricing":{},"latency_ms_avg":null}],"meta":{"request_id":"661c5075-46fb-482e-bab0-e4a77846dde8"}}

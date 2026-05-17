@@ -4,10 +4,11 @@
  * Slice/Phase: P04-S01-T001 — AdminDashboardPage / Phase 4.
  *   Extended in P04-S01-T002 (§D-T002-TESTS): getProviders + getModels added.
  *   Extended in P04-S01-T003 (§D-T003-TESTS): createProvider added.
- * Write-set anchor: §D-T001-TESTS, §D-T002-TESTS, §D-T003-TESTS
+ *   Extended in P04-S01-T004 (§D-T004-TESTS): testModel + updateModel added.
+ * Write-set anchor: §D-T001-TESTS, §D-T002-TESTS, §D-T003-TESTS, §D-T004-TESTS
  *
  * Responsibility: Unit tests for adminAiRepository.getUsage, getProviders, getModels,
- *   createProvider.
+ *   createProvider; and adminAiRepository.test-and-update.ts testModel, updateModel.
  *   authFetch is mocked at the fetch boundary (unit-level boundary, not business logic).
  *   Tests cover all Result paths that map to the 6 UX states.
  *
@@ -33,17 +34,31 @@
  *   T24 — createProvider 500 → AdminAiInternalError.
  *   T25 — createProvider network reject → AdminAiNetworkError.
  *   T26 — createProvider PII-clean: secret_plain NEVER in logs.
+ * Cases (T27-T36): testModel + updateModel (P04-S01-T004 additions).
+ *   T27 — testModel 200 → Result.ok({output, latency_ms, cost}).
+ *   T28 — testModel 400 → AdminAiValidationError with fieldErrors[0].field="prompt".
+ *   T29 — testModel 401 → AdminAiAuthExpiredError.
+ *   T30 — testModel 403 → AdminAiForbiddenError.
+ *   T31 — testModel 404 → AdminAiNotFoundError.
+ *   T32 — testModel 502 → AdminAiUpstreamError.
+ *   T33 — testModel 503 → AdminAiInternalError.
+ *   T34 — testModel network reject → AdminAiNetworkError.
+ *   T35 — updateModel 200 → Result.ok(AiModel) with is_default patched.
+ *   T36 — testModel PII-clean: prompt/output content NEVER in console logs.
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import type { MockInstance } from "vitest";
 import { getUsage, getProviders, getModels, createProvider } from "../data/adminAiRepository";
+import { testModel, updateModel } from "../data/adminAiRepository.test-and-update";
 import {
   AdminAiAuthExpiredError,
   AdminAiForbiddenError,
   AdminAiValidationError,
   AdminAiNetworkError,
   AdminAiInternalError,
+  AdminAiNotFoundError,
+  AdminAiUpstreamError,
 } from "../data/errors";
 import { AuthSessionExpiredError } from "../../auth/data/errors";
 
@@ -628,6 +643,203 @@ describe("adminAiRepository.createProvider", () => {
     const secretValue = "hilo-dev-litellm-master-key-2026";
     for (const logEntry of allLogCalls) {
       expect(logEntry).not.toContain(secretValue);
+    }
+  });
+});
+
+// ---------------------------------------------------------------------------
+// T27-T36 — testModel + updateModel (P04-S01-T004 extensions)
+// ---------------------------------------------------------------------------
+
+const MOCK_MODEL_OUT = {
+  id: "mod-uuid-1",
+  provider_id: "prov-uuid-1",
+  model_id: "gpt-4o-mini",
+  enabled: true,
+  is_default: false,
+  model_type: "llm",
+  capabilities: ["chat"],
+  pricing: {},
+  latency_ms_avg: null,
+  config_json: {},
+  created_at: "2026-05-17T00:00:00Z",
+  updated_at: "2026-05-17T00:00:00Z",
+};
+
+const MOCK_TEST_RESPONSE = {
+  output: "Test output text from model",
+  latency_ms: 342,
+  cost: 0.000123,
+};
+
+describe("adminAiRepository.testModel", () => {
+  let consoleSpy: MockInstance;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    consoleSpy = vi.spyOn(console, "info").mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    consoleSpy.mockRestore();
+  });
+
+  it("T27 — testModel 200 → Result.ok({output, latency_ms, cost})", async () => {
+    mockAuthFetch.mockResolvedValueOnce(
+      makeResponse(200, { data: MOCK_TEST_RESPONSE, meta: { request_id: "t27" } }),
+    );
+
+    const result = await testModel("mod-uuid-1", { prompt: "Hello?" }, onAuthFailure);
+
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.value.output).toBe("Test output text from model");
+      expect(result.value.latency_ms).toBe(342);
+      expect(result.value.cost).toBeCloseTo(0.000123);
+    }
+  });
+
+  it("T28 — testModel 400 → AdminAiValidationError with fieldErrors[0].field='prompt'", async () => {
+    mockAuthFetch.mockResolvedValueOnce(
+      makeResponse(400, {
+        code: "MODEL_TEST_BAD_PROMPT",
+        errors: [{ field: "prompt", code: "TOO_LONG", message: "Prompt exceeds 4000 chars." }],
+      }),
+    );
+
+    const result = await testModel("mod-uuid-1", { prompt: "x".repeat(4001) }, onAuthFailure);
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toBeInstanceOf(AdminAiValidationError);
+      const err = result.error as AdminAiValidationError;
+      expect(err.fieldErrors?.[0]?.field).toBe("prompt");
+    }
+  });
+
+  it("T29 — testModel 401 → AdminAiAuthExpiredError", async () => {
+    mockAuthFetch.mockResolvedValueOnce(
+      makeResponse(401, { errors: [{ code: "AUTH_SESSION_EXPIRED" }] }),
+    );
+
+    const result = await testModel("mod-uuid-1", { prompt: "hi" }, onAuthFailure);
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toBeInstanceOf(AdminAiAuthExpiredError);
+    }
+  });
+
+  it("T30 — testModel 403 → AdminAiForbiddenError", async () => {
+    mockAuthFetch.mockResolvedValueOnce(
+      makeResponse(403, { errors: [{ code: "PERMISSION_DENIED" }] }),
+    );
+
+    const result = await testModel("mod-uuid-1", { prompt: "hi" }, onAuthFailure);
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toBeInstanceOf(AdminAiForbiddenError);
+    }
+  });
+
+  it("T31 — testModel 404 → AdminAiNotFoundError", async () => {
+    mockAuthFetch.mockResolvedValueOnce(
+      makeResponse(404, { errors: [{ code: "MODEL_NOT_FOUND" }] }),
+    );
+
+    const result = await testModel("mod-uuid-1", { prompt: "hi" }, onAuthFailure);
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toBeInstanceOf(AdminAiNotFoundError);
+      expect((result.error as AdminAiNotFoundError).status).toBe(404);
+    }
+  });
+
+  it("T32 — testModel 502 → AdminAiUpstreamError", async () => {
+    mockAuthFetch.mockResolvedValueOnce(
+      makeResponse(502, { errors: [{ code: "UPSTREAM_LLM_ERROR" }] }),
+    );
+
+    const result = await testModel("mod-uuid-1", { prompt: "hi" }, onAuthFailure);
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toBeInstanceOf(AdminAiUpstreamError);
+      expect((result.error as AdminAiUpstreamError).status).toBe(502);
+    }
+  });
+
+  it("T33 — testModel 503 → AdminAiInternalError", async () => {
+    mockAuthFetch.mockResolvedValueOnce(
+      makeResponse(503, { errors: [{ code: "SERVICE_UNAVAILABLE" }] }),
+    );
+
+    const result = await testModel("mod-uuid-1", { prompt: "hi" }, onAuthFailure);
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toBeInstanceOf(AdminAiInternalError);
+      expect((result.error as AdminAiInternalError).status).toBe(503);
+    }
+  });
+
+  it("T34 — testModel network reject → AdminAiNetworkError", async () => {
+    mockAuthFetch.mockRejectedValueOnce(new TypeError("Failed to fetch"));
+
+    const result = await testModel("mod-uuid-1", { prompt: "hi" }, onAuthFailure);
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toBeInstanceOf(AdminAiNetworkError);
+    }
+  });
+
+  it("T36 — testModel PII-clean: prompt + output content NEVER appear in console logs", async () => {
+    const secretPrompt = "my-super-secret-prompt-T36";
+    const secretOutput = "my-super-secret-output-T36";
+    mockAuthFetch.mockResolvedValueOnce(
+      makeResponse(200, {
+        data: { output: secretOutput, latency_ms: 100, cost: 0.0001 },
+        meta: { request_id: "t36-pii" },
+      }),
+    );
+
+    await testModel("mod-uuid-1", { prompt: secretPrompt }, onAuthFailure);
+
+    const allLogCalls = consoleSpy.mock.calls.map((args) => JSON.stringify(args));
+    for (const logEntry of allLogCalls) {
+      expect(logEntry).not.toContain(secretPrompt);
+      expect(logEntry).not.toContain(secretOutput);
+    }
+  });
+});
+
+describe("adminAiRepository.updateModel", () => {
+  let consoleSpy: MockInstance;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    consoleSpy = vi.spyOn(console, "info").mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    consoleSpy.mockRestore();
+  });
+
+  it("T35 — updateModel 200 → Result.ok(AiModel) with is_default patched", async () => {
+    const patchedModel = { ...MOCK_MODEL_OUT, is_default: true };
+    mockAuthFetch.mockResolvedValueOnce(
+      makeResponse(200, { data: patchedModel, meta: { request_id: "t35" } }),
+    );
+
+    const result = await updateModel("mod-uuid-1", { is_default: true }, onAuthFailure);
+
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.value.is_default).toBe(true);
+      expect(result.value.model_id).toBe("gpt-4o-mini");
     }
   });
 });

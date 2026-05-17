@@ -37,6 +37,7 @@ import {
   MODELS_TABLE_WRAPPER,
   STEP_HEADING_TIGHT,
 } from "./ModelWizardPage.styles";
+import { routeAdminAiModelsTestFor } from "../../../app/router";
 
 interface ModelsStepProps {
   wizard: UseModelWizardResult;
@@ -148,9 +149,10 @@ export function ModelsStep({
         {providerModels.length > 0 && createdProvider && (
           <SolidCTA
             onClick={() => {
-              // P04-S01-T004 (ModelTestDrawer) not yet wired — graceful fallback to models list.
+              // §D-T004-WIZARD-CTA-WIRING: navigate to ModelTestDrawer for the first model.
+              // Wired in P04-S01-T004 (WRITE_SET_DRIFT documented in handoff).
               logVerbose("admin-ai.page.ModelWizardPage.testModel.click", {});
-              navigate(routeAdminAiModels);
+              navigate(routeAdminAiModelsTestFor(providerModels[0].id));
             }}
             aria-label={t("admin-ai:modelsNew.actions.testModel")}
             data-testid="wizard-test-model-btn"

@@ -1,0 +1,17 @@
+# Verification Screenshots Log — P04-S01-T004
+# MCP: claude-in-chrome
+
+ss_3344rdaex - SIGN-IN PAGE (initial load, login form visible)
+ss_4708zqxuk - SIGN-IN REDIRECT (session expired redirect to sign-in with next param)
+ss_3393hlm4x - ADMIN AI MODELS LIST (gemini-2.5-flash + PROBAR CTA per row visible)
+ss_85917d5ln - MODEL TEST PAGE INITIAL STATE (prompt input, disabled PROBAR, VOLVER A MODELOS)
+ss_95256d6ok - PROMPT TYPED STATE (PROBAR enabled after typing prompt)
+ss_14622ddkm - ERROR UPSTREAM STATE (model-test-error-upstream: "El proveedor LLM no respondió")
+ss_3124v0duu - EMPTY PROMPT STATE (PROBAR disabled, error banner from prev submission)
+ss_3870leizc - BACK NAVIGATION (admin/ai/models with POR DEFECTO: Sí visible)
+ss_3947xn2bs - SUCCESS STATE (RESPUESTA DEL MODELO, latency 342ms, cost—, ACTIVAR CTA)
+ss_89246bll4 - ACTIVATE SUCCESS STATE (model-test-activate-success, "Modelo activado como predeterminado.")
+
+# All screenshots captured via claude-in-chrome browser MCP
+# URL: http://localhost:5173/admin/ai/models/d2b1a84f-7b8a-49cd-b52b-4fc017797c12/test
+# Admin user: admin.peopletech@inditex-sandbox.com

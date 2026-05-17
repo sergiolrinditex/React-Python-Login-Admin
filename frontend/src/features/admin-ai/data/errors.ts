@@ -113,13 +113,46 @@ export class AdminAiInternalError extends Error {
   }
 }
 
+/**
+ * Not found error — server returned 404 (model/resource not found).
+ * Treated as error_network at the UX level with specific copy "El modelo no existe".
+ * Slice: P04-S01-T004 — ModelTestDrawer (additive extension).
+ */
+export class AdminAiNotFoundError extends Error {
+  public readonly code = "ADMIN_AI_NOT_FOUND";
+  public readonly status = 404;
+
+  constructor(message = "The requested resource was not found.") {
+    super(message);
+    this.name = "AdminAiNotFoundError";
+  }
+}
+
+/**
+ * Upstream LLM provider error — server returned 502 (LiteLLM proxy failure).
+ * Treated as error_network sub-state with copy "El proveedor LLM no respondió. Reintenta."
+ * Source: TECHNICAL_GUIDE §6.2 lists 502 explicitly for POST /models/{id}/test.
+ * Slice: P04-S01-T004 — ModelTestDrawer (additive extension).
+ */
+export class AdminAiUpstreamError extends Error {
+  public readonly code = "ADMIN_AI_UPSTREAM_ERROR";
+  public readonly status = 502;
+
+  constructor(message = "The LLM provider did not respond. Please try again.") {
+    super(message);
+    this.name = "AdminAiUpstreamError";
+  }
+}
+
 /** Union of all typed admin-ai errors. */
 export type AdminAiError =
   | AdminAiAuthExpiredError
   | AdminAiForbiddenError
   | AdminAiValidationError
   | AdminAiNetworkError
-  | AdminAiInternalError;
+  | AdminAiInternalError
+  | AdminAiNotFoundError
+  | AdminAiUpstreamError;
 
 // ---------------------------------------------------------------------------
 // Error mapper
@@ -138,6 +171,8 @@ export function mapAdminAiError(err: unknown): AdminAiError {
   if (err instanceof AdminAiValidationError) return err;
   if (err instanceof AdminAiNetworkError) return err;
   if (err instanceof AdminAiInternalError) return err;
+  if (err instanceof AdminAiNotFoundError) return err;
+  if (err instanceof AdminAiUpstreamError) return err;
   if (err instanceof TypeError) return new AdminAiNetworkError(err.message, err);
   if (err instanceof Error) return new AdminAiNetworkError(err.message, err);
   return new AdminAiNetworkError("Unknown error");

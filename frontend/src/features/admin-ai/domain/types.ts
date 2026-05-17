@@ -208,6 +208,50 @@ export interface WizardFieldErrors {
 }
 
 // ---------------------------------------------------------------------------
+// Model Test domain types (§D-T004-MODELTEST-TYPES)
+// ---------------------------------------------------------------------------
+
+/**
+ * Request body for POST /api/v1/admin/ai/models/{id}/test.
+ * Source: TECHNICAL_GUIDE §6.2, task pack §5.
+ * Slice: P04-S01-T004 — ModelTestDrawer / Phase 4.
+ *
+ * PII note: prompt may contain sensitive user data.
+ * NEVER log the full prompt value — only prompt_len.
+ */
+export interface TestModelRequest {
+  /** 1–4000 chars. Validated on both frontend (useModelTest) and backend (Pydantic). */
+  prompt: string;
+}
+
+/**
+ * Response data from POST /api/v1/admin/ai/models/{id}/test.
+ * Source: TECHNICAL_GUIDE §6.2, task pack §5.
+ * Slice: P04-S01-T004 — ModelTestDrawer / Phase 4.
+ *
+ * PII note: output may contain sensitive model-generated content.
+ * NEVER log the full output value — only output_length.
+ */
+export interface TestModelResponse {
+  /** Model-generated text output. */
+  output: string;
+  /** End-to-end latency in milliseconds. */
+  latency_ms: number;
+  /** Estimated USD cost; 0 if pricing is empty (see D-T002-COST-FORMAT). */
+  cost: number;
+}
+
+/**
+ * Request body for PATCH /api/v1/admin/ai/models/{id}.
+ * Source: TECHNICAL_GUIDE §6.2, task pack §5.
+ * Slice: P04-S01-T004 — ModelTestDrawer / Phase 4.
+ */
+export interface UpdateModelRequest {
+  enabled?: boolean;
+  is_default?: boolean;
+}
+
+// ---------------------------------------------------------------------------
 // AI Provider list item (re-exported from P04-S01-T002)
 // ---------------------------------------------------------------------------
 

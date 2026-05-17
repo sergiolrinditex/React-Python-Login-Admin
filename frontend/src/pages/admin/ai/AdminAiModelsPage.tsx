@@ -57,6 +57,7 @@ import {
   ROUTE_ADMIN_AI_AGENTS,
   ROUTE_ADMIN_AUDIT,
   ROUTE_ADMIN_USAGE,
+  routeAdminAiModelsTestFor,
 } from "../../../app/router";
 import {
   LoadingView,
@@ -248,6 +249,29 @@ export default function AdminAiModelsPage(): ReactNode {
     {
       header: t("admin-ai:models.table.headers.latency"),
       accessor: (row) => formatLatency(row.latency_ms_avg, i18n.language),
+    },
+    {
+      // §D-T004-LIST-ROW-CTA: "Probar" CTA per row — wired in P04-S01-T004.
+      // WRITE_SET_DRIFT: authorized by task pack §6.2 file #15.
+      header: t("admin-ai:models.table.headers.actions"),
+      accessor: (row) => (
+        <SolidCTA
+          onClick={() => navigate(routeAdminAiModelsTestFor(row.id))}
+          aria-label={`${t("admin-ai:models.actions.testModel")} ${row.model_id}`}
+          data-testid={`model-test-cta-${row.id}`}
+          width="auto"
+          style={{
+            padding: "0.375rem 0.875rem",
+            minHeight: "44px",
+            fontSize: "0.8125rem",
+            background: "transparent",
+            color: "var(--color-ink)",
+            border: "var(--hairline)",
+          }}
+        >
+          {t("admin-ai:models.actions.testModel")}
+        </SolidCTA>
+      ),
     },
   ];
 
