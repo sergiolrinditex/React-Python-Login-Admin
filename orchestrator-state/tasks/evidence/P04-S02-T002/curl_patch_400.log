@@ -1,0 +1,34 @@
+=== PATCH invalid body empty {} (expect 400) ===
+{
+  "detail": [
+    {
+      "type": "rag_invalid_payload",
+      "loc": [
+        "body"
+      ],
+      "msg": "at_least_one_field_required",
+      "input": {}
+    }
+  ]
+}
+HTTP status (empty body):
+422
+=== PATCH invalid language 'zz' (expect 400) ===
+{
+  "detail": [
+    {
+      "type": "string_pattern_mismatch",
+      "loc": [
+        "body",
+        "language"
+      ],
+      "msg": "String should match pattern '^(es|en|fr)$'",
+      "input": "zz",
+      "ctx": {
+        "pattern": "^(es|en|fr)$"
+      }
+    }
+  ]
+}
+=== HTTP status for invalid language ===
+422

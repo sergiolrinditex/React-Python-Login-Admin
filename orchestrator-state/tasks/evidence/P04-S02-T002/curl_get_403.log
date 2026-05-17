@@ -1,0 +1,29 @@
+Employee sign-in response: {
+  "data": {
+    "mfa_required": false,
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmZTE4MDk3YS04YTEyLTQ0MWQtYjFhNy1lMzkzNTE1M2MxMjQiLCJlbWFpbCI6ImVtcGxveWVlLnZlcmlmaWNhdGlvbkBpbmRpdGV4LXNhbmRib3guY29tIiwicm9sZXMiOlsiZW1wbG95ZWUiXSwicHJlZmVycmVkX2xhbmd1YWdlIjoiZXMiLCJlbXBsb3llZV9wcm9maWxlX2lkIjpudWxsLCJqdGkiOiI3MDA4YmZlMDhjNWU0MDY3OWQ2OTcxYjdiYWIzY2Q5ZSIsImlhdCI6MTc3ODkzMDMyMywiZXhwIjoxNzc4OTMyMTIzfQ.gpNhuEpKwFplTzLnVpFVl8o51gQ3jyUn4r6U23-O9Gs",
+    "token_type": "Bearer",
+    "expires_in": 1800
+  },
+  "meta": {
+    "request_id": "a710ccc7-08ab-4347-89e1-ebc446fe271a"
+  },
+  "errors": []
+}
+Employee token: eyJhbGciOiJIUzI1NiIsInR5cCI6Ik...
+=== GET with employee bearer ===
+HTTP status: 403
+{
+  "data": null,
+  "meta": {
+    "request_id": "tester-t002-403"
+  },
+  "errors": [
+    {
+      "code": "AUTH_PERMISSION_DENIED",
+      "message": "You do not have permission to perform this action.",
+      "field": null,
+      "details": null
+    }
+  ]
+}

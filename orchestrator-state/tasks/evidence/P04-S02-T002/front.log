@@ -1,0 +1,38 @@
+npm warn deprecated whatwg-encoding@3.1.1: Use @exodus/bytes instead for a more spec-conformant and faster implementation
+
+added 166 packages, and audited 168 packages in 3s
+
+38 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+
+> hilo-people-frontend@0.1.0 dev
+> vite --host 0.0.0.0 --port 5173
+
+
+  VITE v8.0.12  ready in 1066 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: http://192.168.8.133:5173/
+  ➜  Network: http://10.102.70.223:5173/
+  ➜  Network: http://192.168.64.1:5173/
+12:37:09 PM [vite] (client) hmr update /src/app/router.tsx
+12:37:09 PM [vite] (client) hmr update /src/app/providers.tsx, /src/pages/showcase/I18nDemoSection.tsx
+12:48:48 PM [vite] (client) hmr update /src/pages/admin/rag/RagDocumentsPage.tsx
+12:48:54 PM [vite] (client) hmr update /src/pages/admin/rag/RagDocumentsPage.tsx
+12:49:03 PM [vite] (client) hmr update /src/pages/admin/rag/RagDocumentsPage.tsx
+12:49:15 PM [vite] (client) hmr update /src/pages/admin/rag/RagDocumentsPage.tsx
+12:49:23 PM [vite] (client) hmr update /src/pages/admin/rag/RagDocumentsPage.tsx
+12:49:29 PM [vite] (client) hmr update /src/pages/admin/rag/RagDocumentsPage.tsx
+12:49:49 PM [vite] (client) hmr update /src/pages/admin/rag/RagDocumentsPage.tsx
+12:49:56 PM [vite] (client) hmr update /src/pages/admin/rag/RagDocumentsPage.tsx
+12:50:00 PM [vite] (client) hmr update /src/pages/admin/rag/RagDocumentsPage.tsx
+12:50:09 PM [vite] (client) hmr update /src/pages/admin/rag/RagDocumentsPage.tsx
+12:52:54 PM [vite] (client) hmr update /src/app/router.tsx
+12:53:04 PM [vite] (client) hmr update /src/app/router.tsx
+12:53:12 PM [vite] (client) hmr update /src/app/router.tsx
+12:53:17 PM [vite] (client) hmr update /src/app/router.tsx
+12:53:49 PM [vite] (client) hmr update /src/app/providers.tsx, /src/pages/showcase/I18nDemoSection.tsx
+12:54:07 PM [vite] (client) hmr update /src/app/providers.tsx, /src/pages/showcase/I18nDemoSection.tsx
+12:54:29 PM [vite] (client) hmr update /src/app/providers.tsx, /src/pages/showcase/I18nDemoSection.tsx

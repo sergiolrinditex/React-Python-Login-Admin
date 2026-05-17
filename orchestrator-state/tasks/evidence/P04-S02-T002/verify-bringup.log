@@ -1,0 +1,25 @@
+=== VERIFY BRINGUP LOG ===
+TIMESTAMP: 2026-05-17T12:09:48Z
+
+=== BACKEND HEALTH ===
+{"data":{"status":"ok","version":"0.1.0","uptime":67811.81}}
+
+=== FRONTEND HEALTH ===
+HTTP 200
+
+=== DB: rag_collections ===
+                  id                  |       name       |  vertical   | language | enabled 
+--------------------------------------+------------------+-------------+----------+---------
+ d27bc386-fa20-403c-aa00-a537bc62595e | politicas_tienda | hr_policies | es       | t
+(1 fila)
+
+
+=== ADMIN USER ROLES ===
+                email                 |     role     
+--------------------------------------+--------------
+ admin.peopletech@inditex-sandbox.com | people_admin
+(1 fila)
+
+
+=== BOOTSTRAP RESULT ===
+{"status": "ok", "groups": [{"group": "rag_chat", "status": "ok", "inserted": 0, "updated": 1, "skipped": 0}]}

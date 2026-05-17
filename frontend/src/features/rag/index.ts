@@ -2,6 +2,7 @@
  * Hilo People — RAG feature barrel export.
  *
  * Slice/Phase: P04-S02-T001 — RagDocumentsPage / Phase 4 Complete Features.
+ *   Extended in P04-S02-T002 — RagCollectionsPage (§D-T002-BARREL).
  *
  * Responsibility: Public API for the RAG feature module.
  *   Only exports symbols used by outside modules (pages, router).
@@ -20,6 +21,9 @@ export type {
   ListDocumentsResponse,
 } from "./domain/types";
 export { INFLIGHT_STATUSES, TERMINAL_STATUSES } from "./domain/types";
+
+// Update collection (P04-S02-T002) §D-T002-BARREL
+export type { UpdateCollectionRequest, UpdateCollectionOutcome } from "./domain/types";
 
 // Domain port
 export type { IRagDocumentsRepository } from "./domain/RagDocumentsRepository";
@@ -45,3 +49,5 @@ export { useRagDocuments } from "./presentation/useRagDocuments";
 export { useRagCollections } from "./presentation/useRagCollections";
 export { useUploadDocument } from "./presentation/useUploadDocument";
 export { useIndexDocument } from "./presentation/useIndexDocument";
+// Update collection hook (P04-S02-T002) §D-T002-BARREL
+export { useUpdateCollection } from "./presentation/useUpdateCollection";

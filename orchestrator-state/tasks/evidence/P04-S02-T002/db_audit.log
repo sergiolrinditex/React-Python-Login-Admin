@@ -1,0 +1,45 @@
+=== audit_logs schema ===
+                               Tabla «public.audit_logs»
+    Columna    |           Tipo           | Ordenamiento | Nulable  |    Por omisión    
+---------------+--------------------------+--------------+----------+-------------------
+ id            | uuid                     |              | not null | gen_random_uuid()
+ actor_user_id | uuid                     |              |          | 
+ action        | text                     |              | not null | 
+ entity_type   | text                     |              |          | 
+ entity_id     | uuid                     |              |          | 
+ metadata      | jsonb                    |              | not null | '{}'::jsonb
+ created_at    | timestamp with time zone |              | not null | now()
+Índices:
+    "pk_audit_logs" PRIMARY KEY, btree (id)
+    "audit_logs_actor_created_idx" btree (actor_user_id, created_at)
+    "audit_logs_created_at_idx" btree (created_at)
+    "audit_logs_entity_idx" btree (entity_type, entity_id)
+Restricciones de llave foránea:
+    "audit_logs_actor_user_id_fkey" FOREIGN KEY (actor_user_id) REFERENCES users(id) ON DELETE SET NULL
+
+=== audit_logs for RAG collection actions ===
+           action            |  entity_type   |              entity_id               |                req_id                |          created_at           
+-----------------------------+----------------+--------------------------------------+--------------------------------------+-------------------------------
+ admin.rag.collection.update | rag_collection | d27bc386-fa20-403c-aa00-a537bc62595e | tester-t002-restore                  | 2026-05-16 11:19:26.932497+00
+ admin.rag.collection.update | rag_collection | d27bc386-fa20-403c-aa00-a537bc62595e | tester-t002-patch-lang-restore       | 2026-05-16 11:19:02.133075+00
+ admin.rag.collection.update | rag_collection | d27bc386-fa20-403c-aa00-a537bc62595e | tester-t002-patch-lang               | 2026-05-16 11:19:02.096205+00
+ admin.rag.collection.update | rag_collection | d27bc386-fa20-403c-aa00-a537bc62595e | 4643b6d8-c6a2-49ca-92c3-8f943dc1581c | 2026-05-16 11:18:53.934206+00
+ admin.rag.collection.update | rag_collection | d27bc386-fa20-403c-aa00-a537bc62595e | tester-t002-patch-enabled            | 2026-05-16 11:18:53.887878+00
+(5 filas)
+
+
+=== All recent audit_logs (last 10) ===
+           action            |  entity_type   |                req_id                |          created_at           
+-----------------------------+----------------+--------------------------------------+-------------------------------
+ admin.rag.collection.update | rag_collection | tester-t002-restore                  | 2026-05-16 11:19:26.932497+00
+ auth.sign_in                | user           | 5187e5b7-7564-4c97-84d8-09422c5ac72d | 2026-05-16 11:19:26.775804+00
+ auth.sign_in                | user           | 05fbe1e8-66d6-4057-bccd-a2fd341a2189 | 2026-05-16 11:19:15.353273+00
+ admin.rag.collection.update | rag_collection | tester-t002-patch-lang-restore       | 2026-05-16 11:19:02.133075+00
+ admin.rag.collection.update | rag_collection | tester-t002-patch-lang               | 2026-05-16 11:19:02.096205+00
+ auth.sign_in                | user           | f0a079f1-9da6-46db-8aa3-771e794114e2 | 2026-05-16 11:19:01.963022+00
+ admin.rag.collection.update | rag_collection | 4643b6d8-c6a2-49ca-92c3-8f943dc1581c | 2026-05-16 11:18:53.934206+00
+ admin.rag.collection.update | rag_collection | tester-t002-patch-enabled            | 2026-05-16 11:18:53.887878+00
+ auth.sign_in                | user           | 4a00ae0e-cbfd-4762-b704-2020fa794726 | 2026-05-16 11:18:53.72201+00
+ auth.sign_in                | user           | a710ccc7-08ab-4347-89e1-ebc446fe271a | 2026-05-16 11:18:42.705883+00
+(10 filas)
+
