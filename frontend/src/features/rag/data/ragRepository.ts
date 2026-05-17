@@ -32,6 +32,8 @@ import type {
   IndexDocumentOutcome,
   RagDocument,
   RagCollection,
+  UpdateCollectionRequest,
+  UpdateCollectionOutcome,
 } from "../domain/types";
 import type { IRagDocumentsRepository } from "../domain/RagDocumentsRepository";
 import { authFetch } from "../../auth/data/httpClient";
@@ -46,7 +48,7 @@ import {
   type RagError,
 } from "./errors";
 import { logVerbose, logWarn, logError } from "./logger";
-import { indexDocumentHttp, listCollectionsHttp } from "./_ragRepositoryExtras";
+import { indexDocumentHttp, listCollectionsHttp, updateCollectionHttp } from "./_ragRepositoryExtras";
 
 // ---------------------------------------------------------------------------
 // URL constants
@@ -293,6 +295,22 @@ export class RagRepository implements IRagDocumentsRepository {
     onAuthFailure: () => void;
   }): Promise<Result<RagCollection[], RagError>> {
     return listCollectionsHttp(opts);
+  }
+
+  /**
+   * Delegates to _ragRepositoryExtras.updateCollectionHttp.
+   * PATCH /api/v1/admin/rag/collections/{id}
+   *
+   * §D-T002-REPO-DELEGATE: single delegating method; body is in extras (cap safety).
+   *
+   * @param request - UpdateCollectionRequest with id and partial patch.
+   * @param onAuthFailure - Session expired callback.
+   */
+  async updateCollection(
+    request: UpdateCollectionRequest,
+    onAuthFailure: () => void,
+  ): Promise<Result<UpdateCollectionOutcome, RagError>> {
+    return updateCollectionHttp(request, { onAuthFailure });
   }
 }
 

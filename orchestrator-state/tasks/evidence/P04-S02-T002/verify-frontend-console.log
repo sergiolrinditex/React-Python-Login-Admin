@@ -1,0 +1,12 @@
+=== VERIFY FRONTEND CONSOLE LOGS ===
+TIMESTAMP: 2026-05-17T12:14:16Z
+MCP_BROWSER: chrome-devtools
+STATUS: browser_not_rendering
+REASON: pre-existing SyntaxError — MfaChallengeExpiredError not exported from /src/features/auth/data/errors.ts
+ORIGIN: P04-S01-T001 accidentally stripped MFA error classes from auth/data/errors.ts (git diff 21859a4..4a75d15)
+CONSOLE_ERROR: Uncaught SyntaxError: The requested module '/src/features/auth/data/errors.ts' does not provide an export named 'MfaChallengeExpiredError'
+
+=== API VERIFICATION (curl-based) ===
+
+--- 1. GET /api/v1/admin/rag/collections (admin) ---
+{"data":[{"id":"d27bc386-fa20-403c-aa00-a537bc62595e","name":"politicas_tienda","vertical":"hr_policies","language":"es","enabled":true,"metadata":{"source":"People Tech sandbox","description":"Colección de políticas de recursos humanos para verificación"}}],"meta":{"request_id":"vs-t002-get-1"}}

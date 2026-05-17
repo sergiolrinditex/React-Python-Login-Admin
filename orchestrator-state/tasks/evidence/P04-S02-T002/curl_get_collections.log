@@ -1,0 +1,22 @@
+=== GET /api/v1/admin/rag/collections (admin) ===
+{
+  "data": [
+    {
+      "id": "d27bc386-fa20-403c-aa00-a537bc62595e",
+      "name": "politicas_tienda",
+      "vertical": "hr_policies",
+      "language": "es",
+      "enabled": true,
+      "metadata": {
+        "source": "People Tech sandbox",
+        "description": "Colección de políticas de recursos humanos para verificación"
+      }
+    }
+  ],
+  "meta": {
+    "request_id": "tester-t002-get"
+  }
+}
+---
+HTTP status:
+200

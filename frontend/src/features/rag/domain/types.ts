@@ -2,6 +2,8 @@
  * Hilo People — RAG documents feature domain types.
  *
  * Slice/Phase: P04-S02-T001 — RagDocumentsPage / Phase 4 Complete Features.
+ *   Extended in P04-S02-T002 — RagCollectionsPage (UpdateCollectionRequest,
+ *   UpdateCollectionOutcome, RagCollection.language nullable).
  *
  * Responsibility: Pure domain types for RAG document management.
  *   No external framework imports; no fetch calls; no React.
@@ -10,6 +12,8 @@
  * Source refs:
  *   TECHNICAL_GUIDE §6.1 (route row /admin/rag/documents), §6.2 (endpoint contracts),
  *   §10.3 (DB schema), instrucciones.md §3.1 (RAG admin business rules).
+ *   §D-T002-COLLECTION-LANGUAGE-NULLABLE: backend CollectionOut.language is str | None.
+ *   §D-T002-TYPES: UpdateCollectionRequest/Outcome for PATCH collections endpoint.
  *
  * Key deps: none (pure domain types).
  */
@@ -57,14 +61,17 @@ export interface RagDocument {
 }
 
 /**
- * A RAG collection (read-only in this slice; writeable in P04-S02-T002).
+ * A RAG collection (read-only in T001; inline-editable in P04-S02-T002).
  * Mirrors RagCollection from backend/app/rag/collections/schemas.py.
+ *
+ * §D-T002-COLLECTION-LANGUAGE-NULLABLE: language is str | None in CollectionOut.
+ *   Null means "multilingual" or unset. UI displays "—" for null language.
  */
 export interface RagCollection {
   id: string;
   name: string;
   vertical: string;
-  language: "es" | "en" | "fr";
+  language: "es" | "en" | "fr" | null;
   enabled: boolean;
 }
 
@@ -99,6 +106,35 @@ export type UploadDocumentOutcome =
 export type IndexDocumentOutcome =
   | { kind: "enqueued"; job_id: string; status: "pending" }
   | { kind: "in_progress"; job_id: string; status: string };
+
+// ---------------------------------------------------------------------------
+// Collection update types (P04-S02-T002)
+// ---------------------------------------------------------------------------
+
+/**
+ * Request for PATCH /api/v1/admin/rag/collections/{id}.
+ *
+ * §D-T002-TYPES: matches backend CollectionPatchIn (name?, vertical?, language?, enabled?).
+ * At least one field must be present (backend validator "at_least_one_field").
+ * §D-T002-LANGUAGE-NULL-READ-ONLY-CLEAR: language null cannot be sent via PATCH
+ *   (backend pattern only accepts es|en|fr). The UI only reads null, never sends it.
+ */
+export interface UpdateCollectionRequest {
+  id: string;
+  patch: Partial<Pick<RagCollection, "name" | "vertical" | "language" | "enabled">>;
+  signal?: AbortSignal;
+}
+
+/**
+ * Outcome of a successful collection update.
+ *
+ * - updated: PATCH 200, new collection state returned.
+ */
+export type UpdateCollectionOutcome = { kind: "updated"; collection: RagCollection };
+
+// ---------------------------------------------------------------------------
+// Pagination
+// ---------------------------------------------------------------------------
 
 /** Pagination cursor for list requests. */
 export interface PaginationCursor {

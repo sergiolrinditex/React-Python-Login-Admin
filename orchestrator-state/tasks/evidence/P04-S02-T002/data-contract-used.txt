@@ -1,0 +1,29 @@
+# Verification Data Contract Used — P04-S02-T002
+
+## Source Row
+J104 rag-admin (TECHNICAL_GUIDE §6.5, line 359):
+  persona: admin
+  seed: politica_vacaciones_es.pdf, colección politicas_tienda
+  setup_cmd: python -m app.verification_data.bootstrap --source data/verification --only rag_chat
+  cleanup: delete documents/chunks/embeddings/jobs
+  journey_refs: J104, P02-S06, P04-S02
+
+## Real/Provided Data Used
+- Admin user: admin.peopletech@inditex-sandbox.com / AdminVerify2024! (from data/verification/users/admin_peopletech.json)
+- Employee user: employee.verification@inditex-sandbox.com / VerifyPass2024! (from data/verification/users/employee_primary.json)
+- Collection: politicas_tienda (id: d27bc386-fa20-403c-aa00-a537bc62595e, vertical: hr_policies, language: es, enabled: true)
+
+## Data Observed in DB
+Before smokes: id=d27bc386-fa20-403c-aa00-a537bc62595e, name=politicas_tienda, vertical=hr_policies, language=es, enabled=t
+After PATCH+restore: same — language=es, enabled=t (clean state confirmed)
+
+## Audit Log Entries Observed
+5 entries for action=admin.rag.collection.update with entity_id=d27bc386-fa20-403c-aa00-a537bc62595e:
+  - tester-t002-patch-enabled (enabled=false then restored)
+  - tester-t002-patch-lang (language=fr)
+  - tester-t002-patch-lang-restore (language=es)
+  - tester-t002-restore (final restore)
+
+## Notes
+- 422 HTTP code from backend for empty body PATCH (FastAPI Pydantic default) — consistent with pre-existing API behavior, handled in updateCollectionHttp at line 243 (response.status === 400 || response.status === 422)
+- user_roles bridge caveat: admin user already has people_admin role in dev DB (carry-over from T001)

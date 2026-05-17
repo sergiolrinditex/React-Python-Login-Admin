@@ -1,0 +1,71 @@
+
+ RUN  v3.2.4 /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P04-S02-T002/frontend
+
+stderr | src/features/rag/__tests__/updateCollection.test.ts > RagRepository.updateCollection > U02 — PATCH 400 with field=name → RagDocumentInvalidError with .field === 'name'
+[rag] rag.repo.updateCollection.validation_error {
+  collection_id: [32m'coll-uuid-001'[39m,
+  status: [33m400[39m,
+  field: [32m'name'[39m,
+  request_id: [32m'req-001'[39m
+}
+
+stderr | src/features/rag/__tests__/updateCollection.test.ts > RagRepository.updateCollection > U03 — PATCH 400 empty body → RagDocumentInvalidError field undefined/body
+[rag] rag.repo.updateCollection.validation_error {
+  collection_id: [32m'coll-uuid-001'[39m,
+  status: [33m400[39m,
+  field: [1mnull[22m,
+  request_id: [32m'req-001'[39m
+}
+
+stderr | src/features/rag/__tests__/updateCollection.test.ts > RagRepository.updateCollection > U04 — PATCH 401 → onAuthFailure invoked
+[rag] rag.repo.updateCollection.error { collection_id: [32m'coll-uuid-001'[39m, error: [32m'RAG_NETWORK_ERROR'[39m }
+
+stderr | src/features/rag/__tests__/updateCollection.test.ts > RagRepository.updateCollection > U05 — PATCH 403 → RagPermissionDeniedError
+[rag] rag.repo.updateCollection.forbidden { collection_id: [32m'coll-uuid-001'[39m, request_id: [32m'req-001'[39m }
+
+stderr | src/features/rag/__tests__/updateCollection.test.ts > RagRepository.updateCollection > U06 — PATCH 404 → RagDocumentNotFoundError
+[rag] rag.repo.updateCollection.not_found {
+  collection_id: [32m'00000000-0000-0000-0000-000000000000'[39m,
+  request_id: [32m'req-001'[39m
+}
+
+stderr | src/features/rag/__tests__/updateCollection.test.ts > RagRepository.updateCollection > U07 — PATCH network reject → RagNetworkError
+[rag] rag.repo.updateCollection.error { collection_id: [32m'coll-uuid-001'[39m, error: [32m'RAG_NETWORK_ERROR'[39m }
+
+ ✓ src/features/rag/__tests__/updateCollection.test.ts > RagRepository.updateCollection > U01 — PATCH 200 → Result.ok {kind: 'updated', collection} 3ms
+ ✓ src/features/rag/__tests__/updateCollection.test.ts > RagRepository.updateCollection > U02 — PATCH 400 with field=name → RagDocumentInvalidError with .field === 'name' 2ms
+ ✓ src/features/rag/__tests__/updateCollection.test.ts > RagRepository.updateCollection > U03 — PATCH 400 empty body → RagDocumentInvalidError field undefined/body 0ms
+ ✓ src/features/rag/__tests__/updateCollection.test.ts > RagRepository.updateCollection > U04 — PATCH 401 → onAuthFailure invoked 0ms
+ ✓ src/features/rag/__tests__/updateCollection.test.ts > RagRepository.updateCollection > U05 — PATCH 403 → RagPermissionDeniedError 0ms
+ ✓ src/features/rag/__tests__/updateCollection.test.ts > RagRepository.updateCollection > U06 — PATCH 404 → RagDocumentNotFoundError 0ms
+ ✓ src/features/rag/__tests__/updateCollection.test.ts > RagRepository.updateCollection > U07 — PATCH network reject → RagNetworkError 0ms
+ ✓ src/features/rag/__tests__/updateCollection.test.ts > RagRepository.updateCollection > U08 — PATCH sets Content-Type: application/json (JSON body, NOT FormData) 0ms
+stderr | src/features/rag/__tests__/useUpdateCollection.test.tsx > useUpdateCollection > H02 — error: rolls back to previous cache snapshot
+[rag] rag.hook.useUpdateCollection.onError { error: [32m'RAG_PERMISSION_DENIED'[39m }
+
+stderr | src/features/rag/__tests__/useUpdateCollection.test.tsx > useUpdateCollection > H03 — mutationFn throws RagError → typed error on result.current.error
+[rag] rag.hook.useUpdateCollection.onError { error: [32m'RAG_NETWORK_ERROR'[39m }
+
+stderr | src/features/rag/__tests__/useUpdateCollection.test.tsx > useUpdateCollection > H04 — onAuthFailure wired to logout (mutationFn calls ragRepository.updateCollection)
+[rag] rag.hook.useUpdateCollection.onError { error: [32m'RAG_NETWORK_ERROR'[39m }
+
+ ✓ src/features/rag/__tests__/useUpdateCollection.test.tsx > useUpdateCollection > H01 — success: optimistic update patches cache + onSettled invalidates 64ms
+ ✓ src/features/rag/__tests__/useUpdateCollection.test.tsx > useUpdateCollection > H02 — error: rolls back to previous cache snapshot 5ms
+ ✓ src/features/rag/__tests__/useUpdateCollection.test.tsx > useUpdateCollection > H03 — mutationFn throws RagError → typed error on result.current.error 3ms
+ ✓ src/features/rag/__tests__/useUpdateCollection.test.tsx > useUpdateCollection > H04 — onAuthFailure wired to logout (mutationFn calls ragRepository.updateCollection) 3ms
+ ✓ src/pages/admin/rag/__tests__/RagCollectionsPage.test.tsx > RagCollectionsPage > P01 — loading state: LoadingSkeletonView rendered 25ms
+ ✓ src/pages/admin/rag/__tests__/RagCollectionsPage.test.tsx > RagCollectionsPage > P02 — empty state: CollectionsEmptyView body text rendered 5ms
+ ✓ src/pages/admin/rag/__tests__/RagCollectionsPage.test.tsx > RagCollectionsPage > P03 — error_network state: NetworkErrorView shown with retry button 37ms
+ ✓ src/pages/admin/rag/__tests__/RagCollectionsPage.test.tsx > RagCollectionsPage > P04 — error_validation on PATCH: ValidationErrorInline appears under vertical cell 19ms
+ ✓ src/pages/admin/rag/__tests__/RagCollectionsPage.test.tsx > RagCollectionsPage > P05 — permission_denied state: ForbiddenView shown 3ms
+ ✓ src/pages/admin/rag/__tests__/RagCollectionsPage.test.tsx > RagCollectionsPage > P06 — success state: table with 1 row containing name/vertical/enabled toggle 6ms
+ ✓ src/pages/admin/rag/__tests__/RagCollectionsPage.test.tsx > RagCollectionsPage > P07 — inline edit: toggle click calls mutation.mutate with {enabled: false} 8ms
+ ✓ src/pages/admin/rag/__tests__/RagCollectionsPage.test.tsx > RagCollectionsPage > P08 — per-field error placement: 400 on vertical shows error under vertical cell 7ms
+ ✓ src/pages/admin/rag/__tests__/RagCollectionsPage.test.tsx > RagCollectionsPage > P09 — tap-target ≥44px on enabled toggle 4ms
+ ✓ src/pages/admin/rag/__tests__/RagCollectionsPage.test.tsx > RagCollectionsPage > P10 — i18n key existence: collections.heading returns non-empty string in ES 4ms
+
+ Test Files  3 passed (3)
+      Tests  22 passed (22)
+   Start at  13:17:57
+   Duration  1.44s (transform 301ms, setup 272ms, collect 564ms, tests 202ms, environment 1.52s, prepare 265ms)
+

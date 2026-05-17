@@ -1,0 +1,61 @@
+=== rag_collections schema ===
+                  Tabla «public.rag_collections»
+ Columna  |  Tipo   | Ordenamiento | Nulable  |    Por omisión    
+----------+---------+--------------+----------+-------------------
+ id       | uuid    |              | not null | gen_random_uuid()
+ name     | text    |              | not null | 
+ vertical | text    |              | not null | 
+ language | text    |              |          | 
+ enabled  | boolean |              | not null | true
+ metadata | jsonb   |              | not null | '{}'::jsonb
+Índices:
+    "pk_rag_collections" PRIMARY KEY, btree (id)
+Referenciada por:
+    TABLE "documents" CONSTRAINT "documents_collection_id_fkey" FOREIGN KEY (collection_id) REFERENCES rag_collections(id) ON DELETE SET NULL
+
+=== Tables in public schema ===
+                 Listado de tablas
+ Esquema |         Nombre          | Tipo  | Dueño 
+---------+-------------------------+-------+-------
+ public  | agent_runs              | tabla | hilo
+ public  | agents                  | tabla | hilo
+ public  | ai_model_tests          | tabla | hilo
+ public  | ai_models               | tabla | hilo
+ public  | ai_provider_credentials | tabla | hilo
+ public  | ai_providers            | tabla | hilo
+ public  | alembic_version         | tabla | hilo
+ public  | audit_logs              | tabla | hilo
+ public  | conversations           | tabla | hilo
+ public  | document_chunks         | tabla | hilo
+ public  | document_embeddings     | tabla | hilo
+ public  | document_versions       | tabla | hilo
+ public  | documents               | tabla | hilo
+ public  | employee_profiles       | tabla | hilo
+ public  | llm_usage_logs          | tabla | hilo
+ public  | mcp_agent_bindings      | tabla | hilo
+ public  | mcp_approvals           | tabla | hilo
+ public  | mcp_credentials         | tabla | hilo
+ public  | mcp_prompts             | tabla | hilo
+ public  | mcp_resources           | tabla | hilo
+ public  | mcp_servers             | tabla | hilo
+ public  | mcp_tool_invocations    | tabla | hilo
+ public  | mcp_tools               | tabla | hilo
+ public  | message_citations       | tabla | hilo
+ public  | messages                | tabla | hilo
+ public  | mfa_totp_secrets        | tabla | hilo
+ public  | password_reset_tokens   | tabla | hilo
+ public  | permissions             | tabla | hilo
+ public  | rag_collections         | tabla | hilo
+ public  | refresh_tokens          | tabla | hilo
+ public  | roles                   | tabla | hilo
+ public  | user_roles              | tabla | hilo
+ public  | users                   | tabla | hilo
+ public  | vectorization_jobs      | tabla | hilo
+(34 filas)
+
+=== rag_collections rows ===
+                  id                  |       name       |  vertical   | language | enabled 
+--------------------------------------+------------------+-------------+----------+---------
+ d27bc386-fa20-403c-aa00-a537bc62595e | politicas_tienda | hr_policies | es       | t
+(1 fila)
+

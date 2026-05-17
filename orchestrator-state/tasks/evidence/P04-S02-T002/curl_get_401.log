@@ -1,0 +1,16 @@
+=== GET without Bearer (expect 401) ===
+401
+{
+  "data": null,
+  "meta": {
+    "request_id": "03f45dbf-64c1-4330-989b-c22d7cf0e8dc"
+  },
+  "errors": [
+    {
+      "code": "AUTH_SESSION_EXPIRED",
+      "message": "Session expired or invalid credentials. Please sign in again.",
+      "field": null,
+      "details": null
+    }
+  ]
+}

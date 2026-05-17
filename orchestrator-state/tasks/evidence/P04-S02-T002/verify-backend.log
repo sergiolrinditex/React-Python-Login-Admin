@@ -1,0 +1,125 @@
+=== VERIFY BACKEND LOG (API requests for /admin/rag/collections) ===
+TIMESTAMP: 2026-05-17T12:14:28Z
+
+--- GET admin/collections (200 expected) ---
+* Host localhost:8000 was resolved.
+* IPv6: ::1
+* IPv4: 127.0.0.1
+*   Trying [::1]:8000...
+* connect to ::1 port 8000 from ::1 port 56526 failed: Connection refused
+*   Trying 127.0.0.1:8000...
+* Connected to localhost (127.0.0.1) port 8000
+> GET /api/v1/admin/rag/collections HTTP/1.1
+> Host: localhost:8000
+> User-Agent: curl/8.7.1
+> Accept: */*
+> Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyZTU5Y2RmOC02MGNmLTQ2ZDktODQyOS0zMzNkN2ZiMGQ5OWMiLCJlbWFpbCI6ImFkbWluLnBlb3BsZXRlY2hAaW5kaXRleC1zYW5kYm94LmNvbSIsInJvbGVzIjpbInBlb3BsZV9hZG1pbiJdLCJwcmVmZXJyZWRfbGFuZ3VhZ2UiOiJlcyIsImVtcGxveWVlX3Byb2ZpbGVfaWQiOm51bGwsImp0aSI6ImQ3MmU1Y2ZkYmJhYTRiOWRhMDkxN2I4M2M3YjBmOTVmIiwiaWF0IjoxNzc5MDIwMDY4LCJleHAiOjE3NzkwMjE4Njh9.rPkfpqyMUP-i5wn4DGEZJ2ljsLKUGQm0cAhECgTVCU0
+> X-Request-ID: vs-t002-get-1
+> 
+* Request completely sent off
+< HTTP/1.1 200 OK
+< date: Sun, 17 May 2026 12:14:28 GMT
+< server: uvicorn
+< content-length: 300
+< content-type: application/json
+< x-request-id: vs-t002-get-1
+< 
+{ [300 bytes data]
+* Connection #0 to host localhost left intact
+{"data":[{"id":"d27bc386-fa20-403c-aa00-a537bc62595e","name":"politicas_tienda","vertical":"hr_policies","language":"es","enabled":true,"metadata":{"source":"People Tech sandbox","description":"Colección de políticas de recursos humanos para verificación"}}],"meta":{"request_id":"vs-t002-get-1"}}
+
+--- GET no auth (401 expected) ---
+* Host localhost:8000 was resolved.
+* IPv6: ::1
+* IPv4: 127.0.0.1
+*   Trying [::1]:8000...
+* connect to ::1 port 8000 from ::1 port 56528 failed: Connection refused
+*   Trying 127.0.0.1:8000...
+* Connected to localhost (127.0.0.1) port 8000
+> GET /api/v1/admin/rag/collections HTTP/1.1
+> Host: localhost:8000
+> User-Agent: curl/8.7.1
+> Accept: */*
+> 
+* Request completely sent off
+< HTTP/1.1 401 Unauthorized
+< date: Sun, 17 May 2026 12:14:28 GMT
+< server: uvicorn
+< content-length: 219
+< content-type: application/json
+< 
+{ [219 bytes data]
+* Connection #0 to host localhost left intact
+{"data":null,"meta":{"request_id":"a3b99584-aa0f-41ea-9d9d-1de51ac71000"},"errors":[{"code":"AUTH_SESSION_EXPIRED","message":"Session expired or invalid credentials. Please sign in again.","field":null,"details":null}]}
+--- PATCH enabled=false (200 expected) ---
+* Host localhost:8000 was resolved.
+* IPv6: ::1
+* IPv4: 127.0.0.1
+*   Trying [::1]:8000...
+* connect to ::1 port 8000 from ::1 port 56530 failed: Connection refused
+*   Trying 127.0.0.1:8000...
+* Connected to localhost (127.0.0.1) port 8000
+> PATCH /api/v1/admin/rag/collections/d27bc386-fa20-403c-aa00-a537bc62595e HTTP/1.1
+> Host: localhost:8000
+> User-Agent: curl/8.7.1
+> Accept: */*
+> Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyZTU5Y2RmOC02MGNmLTQ2ZDktODQyOS0zMzNkN2ZiMGQ5OWMiLCJlbWFpbCI6ImFkbWluLnBlb3BsZXRlY2hAaW5kaXRleC1zYW5kYm94LmNvbSIsInJvbGVzIjpbInBlb3BsZV9hZG1pbiJdLCJwcmVmZXJyZWRfbGFuZ3VhZ2UiOiJlcyIsImVtcGxveWVlX3Byb2ZpbGVfaWQiOm51bGwsImp0aSI6ImQ3MmU1Y2ZkYmJhYTRiOWRhMDkxN2I4M2M3YjBmOTVmIiwiaWF0IjoxNzc5MDIwMDY4LCJleHAiOjE3NzkwMjE4Njh9.rPkfpqyMUP-i5wn4DGEZJ2ljsLKUGQm0cAhECgTVCU0
+> Content-Type: application/json
+> X-Request-ID: vs-t002-patch-1
+> Content-Length: 18
+> 
+} [18 bytes data]
+* upload completely sent off: 18 bytes
+< HTTP/1.1 200 OK
+< date: Sun, 17 May 2026 12:14:28 GMT
+< server: uvicorn
+< content-length: 301
+< content-type: application/json
+< x-request-id: vs-t002-patch-1
+< 
+{ [301 bytes data]
+* Connection #0 to host localhost left intact
+{"data":{"id":"d27bc386-fa20-403c-aa00-a537bc62595e","name":"politicas_tienda","vertical":"hr_policies","language":"es","enabled":false,"metadata":{"source":"People Tech sandbox","description":"Colección de políticas de recursos humanos para verificación"}},"meta":{"request_id":"vs-t002-patch-1"}}
+--- DB after toggle-off ---
+                  id                  |       name       | language | enabled 
+--------------------------------------+------------------+----------+---------
+ d27bc386-fa20-403c-aa00-a537bc62595e | politicas_tienda | es       | f
+(1 fila)
+
+
+--- PATCH enabled=true RESTORE (200 expected) ---
+* Host localhost:8000 was resolved.
+* IPv6: ::1
+* IPv4: 127.0.0.1
+*   Trying [::1]:8000...
+* connect to ::1 port 8000 from ::1 port 56537 failed: Connection refused
+*   Trying 127.0.0.1:8000...
+* Connected to localhost (127.0.0.1) port 8000
+> PATCH /api/v1/admin/rag/collections/d27bc386-fa20-403c-aa00-a537bc62595e HTTP/1.1
+> Host: localhost:8000
+> User-Agent: curl/8.7.1
+> Accept: */*
+> Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyZTU5Y2RmOC02MGNmLTQ2ZDktODQyOS0zMzNkN2ZiMGQ5OWMiLCJlbWFpbCI6ImFkbWluLnBlb3BsZXRlY2hAaW5kaXRleC1zYW5kYm94LmNvbSIsInJvbGVzIjpbInBlb3BsZV9hZG1pbiJdLCJwcmVmZXJyZWRfbGFuZ3VhZ2UiOiJlcyIsImVtcGxveWVlX3Byb2ZpbGVfaWQiOm51bGwsImp0aSI6ImQ3MmU1Y2ZkYmJhYTRiOWRhMDkxN2I4M2M3YjBmOTVmIiwiaWF0IjoxNzc5MDIwMDY4LCJleHAiOjE3NzkwMjE4Njh9.rPkfpqyMUP-i5wn4DGEZJ2ljsLKUGQm0cAhECgTVCU0
+> Content-Type: application/json
+> X-Request-ID: vs-t002-patch-restore-1
+> Content-Length: 17
+> 
+} [17 bytes data]
+* upload completely sent off: 17 bytes
+< HTTP/1.1 200 OK
+< date: Sun, 17 May 2026 12:14:28 GMT
+< server: uvicorn
+< content-length: 308
+< content-type: application/json
+< x-request-id: vs-t002-patch-restore-1
+< 
+{ [308 bytes data]
+* Connection #0 to host localhost left intact
+{"data":{"id":"d27bc386-fa20-403c-aa00-a537bc62595e","name":"politicas_tienda","vertical":"hr_policies","language":"es","enabled":true,"metadata":{"source":"People Tech sandbox","description":"Colección de políticas de recursos humanos para verificación"}},"meta":{"request_id":"vs-t002-patch-restore-1"}}
+--- DB after restore ---
+                  id                  |       name       | language | enabled 
+--------------------------------------+------------------+----------+---------
+ d27bc386-fa20-403c-aa00-a537bc62595e | politicas_tienda | es       | t
+(1 fila)
+
+

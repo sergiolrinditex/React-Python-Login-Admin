@@ -17,6 +17,7 @@
  *   Updated in P04-S02-T003 — added /admin/ai/mcp route wired to McpServersPage (§D-T003-ROUTER).
  *   Updated in P04-S02-T001 — added /admin/rag/documents route wired to RagDocumentsPage (§D-RAGDOC-ROUTER).
  *   Updated in P04-S01-T002 — added /admin/ai/models route wired to AdminAiModelsPage (§D-T002-ROUTER).
+ *   Updated in P04-S02-T002 — added /admin/rag/collections route wired to RagCollectionsPage (§D-T002-ROUTER).
  *
  * Responsibility: single mount point for the application's route tree.
  *   Exports <AppRouter> which is consumed by main.tsx inside <Providers>.
@@ -34,6 +35,7 @@
  *   /admin             → AdminDashboardPage (people_admin|super_admin) — P04-S01-T001
  *   /admin/ai/mcp      → McpServersPage (admin, RequireRole) — P04-S02-T003 §D-T003-ROUTER
  *   /admin/rag/documents → RagDocumentsPage (admin, RequireRole) — P04-S02-T001 §D-RAGDOC-ROUTER
+ *   /admin/rag/collections → RagCollectionsPage (admin, RequireRole) — P04-S02-T002 §D-T002-ROUTER
  *   /admin/ai/models   → placeholder (P04-S01-T002)
  *   (other admin routes → catch-all → /)
  *   /                  → RootRedirect: authenticated→/chat, unauthenticated→/auth/sign-in
@@ -71,6 +73,7 @@ import AdminDashboardPage from "../pages/admin/AdminDashboardPage";
 import AdminAiModelsPage from "../pages/admin/ai/AdminAiModelsPage";
 import McpServersPage from "../pages/admin/mcp/McpServersPage";
 import RagDocumentsPage from "../pages/admin/rag/RagDocumentsPage";
+import RagCollectionsPage from "../pages/admin/rag/RagCollectionsPage";
 import { AuthProvider } from "../features/auth/presentation/AuthProvider";
 import { useAuth } from "../features/auth/presentation/AuthProvider";
 import { RequireAuth } from "../features/auth/presentation/RequireAuth";
@@ -254,6 +257,8 @@ export function AppRouter(): ReactNode {
             <Route path={ROUTE_ADMIN_RAG_DOCUMENTS} element={<RagDocumentsPage />} />
             {/* P04-S01-T002: AdminAiModelsPage — §D-T002-ROUTER, TECHNICAL_GUIDE §6.1 */}
             <Route path={ROUTE_ADMIN_AI_MODELS} element={<AdminAiModelsPage />} />
+            {/* P04-S02-T002: RagCollectionsPage — §D-T002-ROUTER, TECHNICAL_GUIDE §6.1 */}
+            <Route path={ROUTE_ADMIN_RAG_COLLECTIONS} element={<RagCollectionsPage />} />
           </Route>
 
           {/*

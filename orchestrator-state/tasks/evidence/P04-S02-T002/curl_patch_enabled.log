@@ -1,0 +1,18 @@
+=== PATCH enabled=false (expect 200) ===
+{
+  "data": {
+    "id": "d27bc386-fa20-403c-aa00-a537bc62595e",
+    "name": "politicas_tienda",
+    "vertical": "hr_policies",
+    "language": "es",
+    "enabled": false,
+    "metadata": {
+      "source": "People Tech sandbox",
+      "description": "Colección de políticas de recursos humanos para verificación"
+    }
+  },
+  "meta": {
+    "request_id": "tester-t002-patch-enabled"
+  }
+}
+HTTP status (enabled=false): 200 (checked above) / HTTP status (restore enabled=true): 200

@@ -1,0 +1,56 @@
+vite v8.0.12 building client environment for production...
+[2Ktransforming...✓ 256 modules transformed.
+rendering chunks...
+✗ Build failed in 556ms
+error during build:
+Build failed with 5 errors:
+
+[31m[MISSING_EXPORT] Error:[0m "MfaChallengeExpiredError" is not exported by "src/features/auth/data/errors.ts".
+    [38;5;246m╭[0m[38;5;246m─[0m[38;5;246m[[0m src/pages/auth/TwoFactorPage.tsx:47:10 [38;5;246m][0m
+    [38;5;246m│[0m
+ [38;5;246m47 │[0m [38;5;249mi[0m[38;5;249mm[0m[38;5;249mp[0m[38;5;249mo[0m[38;5;249mr[0m[38;5;249mt[0m[38;5;249m [0m[38;5;249m{[0m[38;5;249m [0mMfaChallengeExpiredError[38;5;249m,[0m[38;5;249m [0m[38;5;249mM[0m[38;5;249mf[0m[38;5;249ma[0m[38;5;249mV[0m[38;5;249me[0m[38;5;249mr[0m[38;5;249mi[0m[38;5;249mf[0m[38;5;249my[0m[38;5;249mR[0m[38;5;249ma[0m[38;5;249mt[0m[38;5;249me[0m[38;5;249mL[0m[38;5;249mi[0m[38;5;249mm[0m[38;5;249mi[0m[38;5;249mt[0m[38;5;249me[0m[38;5;249md[0m[38;5;249mE[0m[38;5;249mr[0m[38;5;249mr[0m[38;5;249mo[0m[38;5;249mr[0m[38;5;249m [0m[38;5;249m}[0m[38;5;249m [0m[38;5;249mf[0m[38;5;249mr[0m[38;5;249mo[0m[38;5;249mm[0m[38;5;249m [0m[38;5;249m"[0m[38;5;249m@[0m[38;5;249m/[0m[38;5;249mf[0m[38;5;249me[0m[38;5;249ma[0m[38;5;249mt[0m[38;5;249mu[0m[38;5;249mr[0m[38;5;249me[0m[38;5;249ms[0m[38;5;249m/[0m[38;5;249ma[0m[38;5;249mu[0m[38;5;249mt[0m[38;5;249mh[0m[38;5;249m/[0m[38;5;249md[0m[38;5;249ma[0m[38;5;249mt[0m[38;5;249ma[0m[38;5;249m/[0m[38;5;249me[0m[38;5;249mr[0m[38;5;249mr[0m[38;5;249mo[0m[38;5;249mr[0m[38;5;249ms[0m[38;5;249m"[0m[38;5;249m;[0m
+ [38;5;240m   │[0m          ────────────┬───────────  
+ [38;5;240m   │[0m                      ╰───────────── Missing export
+[38;5;246m────╯[0m
+
+[31m[MISSING_EXPORT] Error:[0m "MfaVerifyRateLimitedError" is not exported by "src/features/auth/data/errors.ts".
+    [38;5;246m╭[0m[38;5;246m─[0m[38;5;246m[[0m src/pages/auth/TwoFactorPage.tsx:47:36 [38;5;246m][0m
+    [38;5;246m│[0m
+ [38;5;246m47 │[0m [38;5;249mi[0m[38;5;249mm[0m[38;5;249mp[0m[38;5;249mo[0m[38;5;249mr[0m[38;5;249mt[0m[38;5;249m [0m[38;5;249m{[0m[38;5;249m [0m[38;5;249mM[0m[38;5;249mf[0m[38;5;249ma[0m[38;5;249mC[0m[38;5;249mh[0m[38;5;249ma[0m[38;5;249ml[0m[38;5;249ml[0m[38;5;249me[0m[38;5;249mn[0m[38;5;249mg[0m[38;5;249me[0m[38;5;249mE[0m[38;5;249mx[0m[38;5;249mp[0m[38;5;249mi[0m[38;5;249mr[0m[38;5;249me[0m[38;5;249md[0m[38;5;249mE[0m[38;5;249mr[0m[38;5;249mr[0m[38;5;249mo[0m[38;5;249mr[0m[38;5;249m,[0m[38;5;249m [0mMfaVerifyRateLimitedError[38;5;249m [0m[38;5;249m}[0m[38;5;249m [0m[38;5;249mf[0m[38;5;249mr[0m[38;5;249mo[0m[38;5;249mm[0m[38;5;249m [0m[38;5;249m"[0m[38;5;249m@[0m[38;5;249m/[0m[38;5;249mf[0m[38;5;249me[0m[38;5;249ma[0m[38;5;249mt[0m[38;5;249mu[0m[38;5;249mr[0m[38;5;249me[0m[38;5;249ms[0m[38;5;249m/[0m[38;5;249ma[0m[38;5;249mu[0m[38;5;249mt[0m[38;5;249mh[0m[38;5;249m/[0m[38;5;249md[0m[38;5;249ma[0m[38;5;249mt[0m[38;5;249ma[0m[38;5;249m/[0m[38;5;249me[0m[38;5;249mr[0m[38;5;249mr[0m[38;5;249mo[0m[38;5;249mr[0m[38;5;249ms[0m[38;5;249m"[0m[38;5;249m;[0m
+ [38;5;240m   │[0m                                    ────────────┬────────────  
+ [38;5;240m   │[0m                                                ╰────────────── Missing export
+[38;5;246m────╯[0m
+
+[31m[MISSING_EXPORT] Error:[0m "listConversations" is not exported by "src/features/chat/data/chatRepository.ts".
+    [38;5;246m╭[0m[38;5;246m─[0m[38;5;246m[[0m src/features/chat/presentation/useHistory.ts:21:10 [38;5;246m][0m
+    [38;5;246m│[0m
+ [38;5;246m21 │[0m [38;5;249mi[0m[38;5;249mm[0m[38;5;249mp[0m[38;5;249mo[0m[38;5;249mr[0m[38;5;249mt[0m[38;5;249m [0m[38;5;249m{[0m[38;5;249m [0mlistConversations[38;5;249m [0m[38;5;249m}[0m[38;5;249m [0m[38;5;249mf[0m[38;5;249mr[0m[38;5;249mo[0m[38;5;249mm[0m[38;5;249m [0m[38;5;249m"[0m[38;5;249m.[0m[38;5;249m.[0m[38;5;249m/[0m[38;5;249md[0m[38;5;249ma[0m[38;5;249mt[0m[38;5;249ma[0m[38;5;249m/[0m[38;5;249mc[0m[38;5;249mh[0m[38;5;249ma[0m[38;5;249mt[0m[38;5;249mR[0m[38;5;249me[0m[38;5;249mp[0m[38;5;249mo[0m[38;5;249ms[0m[38;5;249mi[0m[38;5;249mt[0m[38;5;249mo[0m[38;5;249mr[0m[38;5;249my[0m[38;5;249m"[0m[38;5;249m;[0m
+ [38;5;240m   │[0m          ────────┬────────  
+ [38;5;240m   │[0m                  ╰────────── Missing export
+[38;5;246m────╯[0m
+
+[31m[MISSING_EXPORT] Error:[0m "MfaChallengeExpiredError" is not exported by "src/features/auth/data/errors.ts".
+    [38;5;246m╭[0m[38;5;246m─[0m[38;5;246m[[0m src/pages/auth/twoFactorHelpers.ts:18:10 [38;5;246m][0m
+    [38;5;246m│[0m
+ [38;5;246m18 │[0m [38;5;249mi[0m[38;5;249mm[0m[38;5;249mp[0m[38;5;249mo[0m[38;5;249mr[0m[38;5;249mt[0m[38;5;249m [0m[38;5;249m{[0m[38;5;249m [0mMfaChallengeExpiredError[38;5;249m,[0m[38;5;249m [0m[38;5;249mM[0m[38;5;249mf[0m[38;5;249ma[0m[38;5;249mV[0m[38;5;249me[0m[38;5;249mr[0m[38;5;249mi[0m[38;5;249mf[0m[38;5;249my[0m[38;5;249mR[0m[38;5;249ma[0m[38;5;249mt[0m[38;5;249me[0m[38;5;249mL[0m[38;5;249mi[0m[38;5;249mm[0m[38;5;249mi[0m[38;5;249mt[0m[38;5;249me[0m[38;5;249md[0m[38;5;249mE[0m[38;5;249mr[0m[38;5;249mr[0m[38;5;249mo[0m[38;5;249mr[0m[38;5;249m,[0m[38;5;249m [0m[38;5;249mN[0m[38;5;249me[0m[38;5;249mt[0m[38;5;249mw[0m[38;5;249mo[0m[38;5;249mr[0m[38;5;249mk[0m[38;5;249mE[0m[38;5;249mr[0m[38;5;249mr[0m[38;5;249mo[0m[38;5;249mr[0m[38;5;249m [0m[38;5;249m}[0m[38;5;249m [0m[38;5;249mf[0m[38;5;249mr[0m[38;5;249mo[0m[38;5;249mm[0m[38;5;249m [0m[38;5;249m"[0m[38;5;249m@[0m[38;5;249m/[0m[38;5;249mf[0m[38;5;249me[0m[38;5;249ma[0m[38;5;249mt[0m[38;5;249mu[0m[38;5;249mr[0m[38;5;249me[0m[38;5;249ms[0m[38;5;249m/[0m[38;5;249ma[0m[38;5;249mu[0m[38;5;249mt[0m[38;5;249mh[0m[38;5;249m/[0m[38;5;249md[0m[38;5;249ma[0m[38;5;249mt[0m[38;5;249ma[0m[38;5;249m/[0m[38;5;249me[0m[38;5;249mr[0m[38;5;249mr[0m[38;5;249mo[0m[38;5;249mr[0m[38;5;249ms[0m[38;5;249m"[0m[38;5;249m;[0m
+ [38;5;240m   │[0m          ────────────┬───────────  
+ [38;5;240m   │[0m                      ╰───────────── Missing export
+[38;5;246m────╯[0m
+
+[31m[MISSING_EXPORT] Error:[0m "MfaVerifyRateLimitedError" is not exported by "src/features/auth/data/errors.ts".
+    [38;5;246m╭[0m[38;5;246m─[0m[38;5;246m[[0m src/pages/auth/twoFactorHelpers.ts:18:36 [38;5;246m][0m
+    [38;5;246m│[0m
+ [38;5;246m18 │[0m [38;5;249mi[0m[38;5;249mm[0m[38;5;249mp[0m[38;5;249mo[0m[38;5;249mr[0m[38;5;249mt[0m[38;5;249m [0m[38;5;249m{[0m[38;5;249m [0m[38;5;249mM[0m[38;5;249mf[0m[38;5;249ma[0m[38;5;249mC[0m[38;5;249mh[0m[38;5;249ma[0m[38;5;249ml[0m[38;5;249ml[0m[38;5;249me[0m[38;5;249mn[0m[38;5;249mg[0m[38;5;249me[0m[38;5;249mE[0m[38;5;249mx[0m[38;5;249mp[0m[38;5;249mi[0m[38;5;249mr[0m[38;5;249me[0m[38;5;249md[0m[38;5;249mE[0m[38;5;249mr[0m[38;5;249mr[0m[38;5;249mo[0m[38;5;249mr[0m[38;5;249m,[0m[38;5;249m [0mMfaVerifyRateLimitedError[38;5;249m,[0m[38;5;249m [0m[38;5;249mN[0m[38;5;249me[0m[38;5;249mt[0m[38;5;249mw[0m[38;5;249mo[0m[38;5;249mr[0m[38;5;249mk[0m[38;5;249mE[0m[38;5;249mr[0m[38;5;249mr[0m[38;5;249mo[0m[38;5;249mr[0m[38;5;249m [0m[38;5;249m}[0m[38;5;249m [0m[38;5;249mf[0m[38;5;249mr[0m[38;5;249mo[0m[38;5;249mm[0m[38;5;249m [0m[38;5;249m"[0m[38;5;249m@[0m[38;5;249m/[0m[38;5;249mf[0m[38;5;249me[0m[38;5;249ma[0m[38;5;249mt[0m[38;5;249mu[0m[38;5;249mr[0m[38;5;249me[0m[38;5;249ms[0m[38;5;249m/[0m[38;5;249ma[0m[38;5;249mu[0m[38;5;249mt[0m[38;5;249mh[0m[38;5;249m/[0m[38;5;249md[0m[38;5;249ma[0m[38;5;249mt[0m[38;5;249ma[0m[38;5;249m/[0m[38;5;249me[0m[38;5;249mr[0m[38;5;249mr[0m[38;5;249mo[0m[38;5;249mr[0m[38;5;249ms[0m[38;5;249m"[0m[38;5;249m;[0m
+ [38;5;240m   │[0m                                    ────────────┬────────────  
+ [38;5;240m   │[0m                                                ╰────────────── Missing export
+[38;5;246m────╯[0m
+
+    at aggregateBindingErrorsIntoJsError (file:///Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P04-S02-T002/node_modules/rolldown/dist/shared/error-BrnLyQ-g.mjs:48:18)
+    at unwrapBindingResult (file:///Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P04-S02-T002/node_modules/rolldown/dist/shared/error-BrnLyQ-g.mjs:18:128)
+    at #build (file:///Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P04-S02-T002/node_modules/rolldown/dist/shared/rolldown-build-D_ShytiL.mjs:3257:34)
+    at async buildEnvironment (file:///Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P04-S02-T002/node_modules/vite/dist/node/chunks/node.js:33052:64)
+    at async Object.build (file:///Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P04-S02-T002/node_modules/vite/dist/node/chunks/node.js:33474:19)
+    at async Object.buildApp (file:///Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P04-S02-T002/node_modules/vite/dist/node/chunks/node.js:33471:153)
+    at async CAC.<anonymous> (file:///Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P04-S02-T002/node_modules/vite/dist/node/cli.js:778:3) {
+  errors: [Getter/Setter]
+}

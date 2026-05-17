@@ -1,0 +1,13 @@
+           action            |              entity_id               |                req_id                |          created_at           
+-----------------------------+--------------------------------------+--------------------------------------+-------------------------------
+ admin.rag.collection.update | d27bc386-fa20-403c-aa00-a537bc62595e | vs-t002-lang-restore                 | 2026-05-17 12:14:44.966788+00
+ admin.rag.collection.update | d27bc386-fa20-403c-aa00-a537bc62595e | vs-t002-lang-1                       | 2026-05-17 12:14:44.807079+00
+ admin.rag.collection.update | d27bc386-fa20-403c-aa00-a537bc62595e | vs-t002-patch-restore-1              | 2026-05-17 12:14:28.338671+00
+ admin.rag.collection.update | d27bc386-fa20-403c-aa00-a537bc62595e | vs-t002-patch-1                      | 2026-05-17 12:14:27.951861+00
+ admin.rag.collection.update | d27bc386-fa20-403c-aa00-a537bc62595e | tester-t002-restore                  | 2026-05-16 11:19:26.932497+00
+ admin.rag.collection.update | d27bc386-fa20-403c-aa00-a537bc62595e | tester-t002-patch-lang-restore       | 2026-05-16 11:19:02.133075+00
+ admin.rag.collection.update | d27bc386-fa20-403c-aa00-a537bc62595e | tester-t002-patch-lang               | 2026-05-16 11:19:02.096205+00
+ admin.rag.collection.update | d27bc386-fa20-403c-aa00-a537bc62595e | 4643b6d8-c6a2-49ca-92c3-8f943dc1581c | 2026-05-16 11:18:53.934206+00
+ admin.rag.collection.update | d27bc386-fa20-403c-aa00-a537bc62595e | tester-t002-patch-enabled            | 2026-05-16 11:18:53.887878+00
+(9 filas)
+

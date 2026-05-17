@@ -1,0 +1,129 @@
+=== DB COLLECTIONS VERIFICATION ===
+TIMESTAMP: 2026-05-17T12:14:45Z
+
+--- Initial state ---
+                  id                  |       name       |  vertical   | language | enabled 
+--------------------------------------+------------------+-------------+----------+---------
+ d27bc386-fa20-403c-aa00-a537bc62595e | politicas_tienda | hr_policies | es       | t
+(1 fila)
+
+
+--- PATCH language: es → fr ---
+{
+    "data": {
+        "id": "d27bc386-fa20-403c-aa00-a537bc62595e",
+        "name": "politicas_tienda",
+        "vertical": "hr_policies",
+        "language": "fr",
+        "enabled": true,
+        "metadata": {
+            "source": "People Tech sandbox",
+            "description": "Colecci\u00f3n de pol\u00edticas de recursos humanos para verificaci\u00f3n"
+        }
+    },
+    "meta": {
+        "request_id": "vs-t002-lang-1"
+    }
+}
+
+--- DB after language patch ---
+                  id                  |       name       | language | enabled 
+--------------------------------------+------------------+----------+---------
+ d27bc386-fa20-403c-aa00-a537bc62595e | politicas_tienda | fr       | t
+(1 fila)
+
+
+--- Restore language to es ---
+{
+    "data": {
+        "id": "d27bc386-fa20-403c-aa00-a537bc62595e",
+        "name": "politicas_tienda",
+        "vertical": "hr_policies",
+        "language": "es",
+        "enabled": true,
+        "metadata": {
+            "source": "People Tech sandbox",
+            "description": "Colecci\u00f3n de pol\u00edticas de recursos humanos para verificaci\u00f3n"
+        }
+    },
+    "meta": {
+        "request_id": "vs-t002-lang-restore"
+    }
+}
+
+--- DB after restore ---
+                  id                  |       name       | language | enabled 
+--------------------------------------+------------------+----------+---------
+ d27bc386-fa20-403c-aa00-a537bc62595e | politicas_tienda | es       | t
+(1 fila)
+
+
+--- PATCH error_validation: language=zz ---
+HTTP response:
+{
+    "detail": [
+        {
+            "type": "string_pattern_mismatch",
+            "loc": [
+                "body",
+                "language"
+            ],
+            "msg": "String should match pattern '^(es|en|fr)$'",
+            "input": "zz",
+            "ctx": {
+                "pattern": "^(es|en|fr)$"
+            }
+        }
+    ]
+}
+
+--- PATCH error_validation: empty body ---
+HTTP response:
+{
+    "detail": [
+        {
+            "type": "rag_invalid_payload",
+            "loc": [
+                "body"
+            ],
+            "msg": "at_least_one_field_required",
+            "input": {}
+        }
+    ]
+}
+
+--- PATCH 404: nonexistent UUID ---
+HTTP response:
+{
+    "data": null,
+    "meta": {
+        "request_id": "6d805f21-d860-4a89-b7e6-c26370cdba67"
+    },
+    "errors": [
+        {
+            "code": "RAG_COLLECTION_NOT_FOUND",
+            "message": "Collection not found.",
+            "field": null,
+            "details": null
+        }
+    ]
+}
+
+--- GET 403: employee token ---
+Employee login: eyJhbGciOiJIUzI1NiIsInR5cCI6Ik...
+GET collections as employee:
+{
+    "data": null,
+    "meta": {
+        "request_id": "c35506b0-75f2-47c7-94b3-35f169ddae1e"
+    },
+    "errors": [
+        {
+            "code": "AUTH_PERMISSION_DENIED",
+            "message": "You do not have permission to perform this action.",
+            "field": null,
+            "details": null
+        }
+    ]
+}
+

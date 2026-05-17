@@ -1,0 +1,39 @@
+# Contract Observed — P04-S02-T002
+
+## Frontend → Backend → DB Contract
+
+### Routes/Pages
+- Route: /admin/rag/collections → RagCollectionsPage.tsx (observed via curl of frontend at http://localhost:5173/)
+- Protected by RequireRole(['people_admin','super_admin']) in router.tsx
+
+### Hooks/Providers Observed
+- useRagCollections: queryKey ["rag","collections"], GET /api/v1/admin/rag/collections
+- useUpdateCollection: mutationKey ["rag","collections","update"], PATCH /api/v1/admin/rag/collections/{id}
+
+### API Client / Adapters
+- listCollectionsHttp: GET /api/v1/admin/rag/collections → 200 {data:[CollectionOut], meta}
+- updateCollectionHttp: PATCH /api/v1/admin/rag/collections/{id} → 200 {data:CollectionOut, meta}
+
+### DTOs Observed
+- RagCollection domain type (id, name, vertical, language:"es"|"en"|"fr"|null, enabled)
+- UpdateCollectionRequest {id, patch: Partial<Pick<RagCollection,"name"|"vertical"|"language"|"enabled">>}
+- CollectionOut (backend) ↔ RagCollection (frontend)
+- CollectionPatchIn (backend): name?,vertical?,enabled?,language? (pattern ^(es|en|fr)$)
+
+### Repository
+- RagRepository.updateCollection() delegates to updateCollectionHttp()
+- RagRepository.listCollections() delegates to listCollectionsHttp()
+
+### Endpoints Verified (curl)
+- GET /api/v1/admin/rag/collections → 200 with politicas_tienda row (admin token)
+- GET /api/v1/admin/rag/collections → 401 without bearer
+- GET /api/v1/admin/rag/collections → 403 with employee bearer
+- PATCH /api/v1/admin/rag/collections/{id} {enabled:false} → 200 response payload reflects enabled=false
+- PATCH /api/v1/admin/rag/collections/{id} {language:"fr"} → 200 response payload reflects language=fr
+- PATCH /api/v1/admin/rag/collections/00000000-0000-0000-0000-000000000000 → 404 RAG_COLLECTION_NOT_FOUND
+- PATCH /api/v1/admin/rag/collections/{id} {} → 422 (FastAPI validation: at_least_one_field_required)
+- PATCH /api/v1/admin/rag/collections/{id} {language:"zz"} → 422 (pattern mismatch)
+
+### Tables Observed
+- rag_collections: confirmed 1 row (politicas_tienda) — read + updated via PATCH, restored to clean state
+- audit_logs: confirmed 5 entries for admin.rag.collection.update with matching request_ids

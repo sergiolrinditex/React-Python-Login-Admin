@@ -1,0 +1,17 @@
+=== PATCH nonexistent UUID (expect 404) ===
+{
+  "data": null,
+  "meta": {
+    "request_id": "tester-t002-404"
+  },
+  "errors": [
+    {
+      "code": "RAG_COLLECTION_NOT_FOUND",
+      "message": "Collection not found.",
+      "field": null,
+      "details": null
+    }
+  ]
+}
+HTTP status:
+404

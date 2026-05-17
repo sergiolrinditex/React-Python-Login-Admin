@@ -339,6 +339,50 @@ const resources = {
           list: "Lista de documentos",
         },
       },
+      // §D-T002-I18N: rag.collections.* added for RagCollectionsPage (P04-S02-T002)
+      collections: {
+        title: "Colecciones RAG",
+        heading: "Colecciones RAG",
+        subtitle: "Gestiona las colecciones y verticales disponibles para búsqueda semántica",
+        empty: "No hay colecciones",
+        "empty.body": "Cuando se creen colecciones desde el backend, aparecerán aquí.",
+        table: {
+          caption: "Tabla de colecciones RAG",
+          col: {
+            name: "Nombre",
+            vertical: "Vertical",
+            language: "Idioma",
+            enabled: "Estado",
+          },
+        },
+        enabled: { on: "Activa", off: "Inactiva" },
+        language: { es: "Español", en: "Inglés", fr: "Francés", null: "—" },
+        action: {
+          update: "Guardar",
+          updating: "Guardando…",
+          saved: "Guardado",
+        },
+        error: {
+          network: "Error de conexión. Comprueba tu red e inténtalo de nuevo.",
+          permission: "No tienes permiso para gestionar colecciones. Necesitas el rol de administrador.",
+          validation: {
+            name: "El nombre no es válido.",
+            vertical: "La vertical no es válida.",
+            language: "El idioma no es válido.",
+            enabled: "El estado no es válido.",
+            body: "Cambia al menos un campo.",
+          },
+          notFound: "La colección ya no existe. Actualiza la lista.",
+          rateLimited: "Demasiadas peticiones. Inténtalo más tarde.",
+          internal: "Error del servidor. Inténtalo más tarde.",
+        },
+        nav: { documents: "← Ver documentos" },
+        aria: {
+          list: "Lista de colecciones",
+          updating: "Actualizando colección…",
+          enabled_toggle: "Activar o desactivar colección {{name}}",
+        },
+      },
     },
     // §D-T003-I18N: mcp.servers.* extended for McpServersPage (P04-S02-T003)
     mcp: {
@@ -682,6 +726,50 @@ const resources = {
           list: "Documents list",
         },
       },
+      // §D-T002-I18N: rag.collections.* added for RagCollectionsPage (P04-S02-T002)
+      collections: {
+        title: "RAG Collections",
+        heading: "RAG Collections",
+        subtitle: "Manage collections and verticals available for semantic search",
+        empty: "No collections",
+        "empty.body": "When collections are created from the backend, they will appear here.",
+        table: {
+          caption: "RAG collections table",
+          col: {
+            name: "Name",
+            vertical: "Vertical",
+            language: "Language",
+            enabled: "Status",
+          },
+        },
+        enabled: { on: "Active", off: "Inactive" },
+        language: { es: "Spanish", en: "English", fr: "French", null: "—" },
+        action: {
+          update: "Save",
+          updating: "Saving…",
+          saved: "Saved",
+        },
+        error: {
+          network: "Connection error. Check your network and try again.",
+          permission: "You do not have permission to manage collections. You need the admin role.",
+          validation: {
+            name: "Name is invalid.",
+            vertical: "Vertical is invalid.",
+            language: "Language is invalid.",
+            enabled: "Status is invalid.",
+            body: "Change at least one field.",
+          },
+          notFound: "The collection no longer exists. Refresh the list.",
+          rateLimited: "Too many requests. Please try again later.",
+          internal: "Server error. Please try again later.",
+        },
+        nav: { documents: "← View documents" },
+        aria: {
+          list: "Collections list",
+          updating: "Updating collection…",
+          enabled_toggle: "Enable or disable collection {{name}}",
+        },
+      },
     },
     // §D-T003-I18N: mcp.servers.* extended for McpServersPage (P04-S02-T003)
     mcp: {
@@ -1023,6 +1111,50 @@ const resources = {
           uploading: "Téléversement du document…",
           indexing: "Indexation du document…",
           list: "Liste des documents",
+        },
+      },
+      // §D-T002-I18N: rag.collections.* added for RagCollectionsPage (P04-S02-T002)
+      collections: {
+        title: "Collections RAG",
+        heading: "Collections RAG",
+        subtitle: "Gérez les collections et verticaux disponibles pour la recherche sémantique",
+        empty: "Aucune collection",
+        "empty.body": "Lorsque des collections seront créées depuis le backend, elles apparaîtront ici.",
+        table: {
+          caption: "Tableau des collections RAG",
+          col: {
+            name: "Nom",
+            vertical: "Vertical",
+            language: "Langue",
+            enabled: "Statut",
+          },
+        },
+        enabled: { on: "Active", off: "Inactive" },
+        language: { es: "Espagnol", en: "Anglais", fr: "Français", null: "—" },
+        action: {
+          update: "Enregistrer",
+          updating: "Enregistrement…",
+          saved: "Enregistré",
+        },
+        error: {
+          network: "Erreur de connexion. Vérifiez votre réseau et réessayez.",
+          permission: "Vous n'avez pas la permission de gérer les collections. Vous devez avoir le rôle administrateur.",
+          validation: {
+            name: "Le nom est invalide.",
+            vertical: "Le vertical est invalide.",
+            language: "La langue est invalide.",
+            enabled: "Le statut est invalide.",
+            body: "Modifiez au moins un champ.",
+          },
+          notFound: "La collection n'existe plus. Actualisez la liste.",
+          rateLimited: "Trop de requêtes. Veuillez réessayer plus tard.",
+          internal: "Erreur serveur. Veuillez réessayer plus tard.",
+        },
+        nav: { documents: "← Voir les documents" },
+        aria: {
+          list: "Liste des collections",
+          updating: "Mise à jour de la collection…",
+          enabled_toggle: "Activer ou désactiver la collection {{name}}",
         },
       },
     },
