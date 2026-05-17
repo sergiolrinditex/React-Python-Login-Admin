@@ -1,0 +1,40 @@
+# LiteLLM proxy configuration — Hilo People verification stack
+#
+# Source-of-truth: docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md §6.5 (Verification Data Contract)
+#                  docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md §11.1 (env vars)
+#
+# Purpose: declare the chat models the backend may request from the LiteLLM proxy
+#          and the upstream provider routing for each one. Keys are never hardcoded —
+#          they are resolved at proxy runtime from the container environment.
+#
+# Backend integration: backend/app/llm_gateway/litellm_client.py composes
+# `model="openai/<model_id>"` (because the DB provider has `provider_type='litellm'`,
+# which is OpenAI-compatible) and points `api_base` at this proxy. The proxy then
+# re-routes `<model_id>` to the actual upstream declared below.
+
+model_list:
+  # Gemini 2.5 Flash — Google AI Studio (verification default).
+  # Used by data/verification/admin_ai/models/litellm_chat_default.json.
+  - model_name: gemini-2.5-flash
+    litellm_params:
+      model: gemini/gemini-2.5-flash
+      api_key: os.environ/GEMINI_API_KEY
+  # Alias for the same model under the `openai/` prefix the backend SDK emits
+  # when AiProvider.provider_type='litellm' (see _PROVIDER_TYPE_TO_SDK_PREFIX in
+  # backend/app/llm_gateway/litellm_client.py). Both names route to the same upstream.
+  - model_name: openai/gemini-2.5-flash
+    litellm_params:
+      model: gemini/gemini-2.5-flash
+      api_key: os.environ/GEMINI_API_KEY
+
+litellm_settings:
+  # Drop SDK-only params the upstream provider does not understand
+  # (e.g. OpenAI-specific knobs that Gemini ignores). Prevents 400s
+  # when the backend sends OpenAI-compatible payloads.
+  drop_params: true
+
+general_settings:
+  # Master key consumed when the backend authenticates against the proxy.
+  # MUST match the `credential_plain` value of the active provider credential
+  # in data/verification/admin_ai/credentials/<provider>_bearer.json.
+  master_key: os.environ/LITELLM_MASTER_KEY
