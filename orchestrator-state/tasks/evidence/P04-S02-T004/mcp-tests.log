@@ -1,0 +1,81 @@
+
+ RUN  v3.2.4 /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P04-S02-T004/frontend
+
+stderr | src/features/mcp/__tests__/mcpRepository.test.ts > mcpRepository.listServers > R02 — 401 → Result.err McpAuthExpiredError
+[mcp] mcp.repo.listServers.auth_expired { status: [33m401[39m, request_id: [32m'test-req-id'[39m }
+
+stderr | src/features/mcp/__tests__/mcpRepository.test.ts > mcpRepository.listServers > R03 — 403 → Result.err McpForbiddenError
+[mcp] mcp.repo.listServers.forbidden { status: [33m403[39m, request_id: [32m'test-req-id'[39m }
+
+stderr | src/features/mcp/__tests__/mcpRepository.test.ts > mcpRepository.listServers > R04 — 500 → Result.err McpServerError
+[mcp] mcp.repo.listServers.server_error { status: [33m500[39m, request_id: [32m'test-req-id'[39m }
+
+stderr | src/features/mcp/__tests__/mcpRepository.test.ts > mcpRepository.listServers > R05 — network failure → Result.err McpNetworkError
+[mcp] mcp.repo.listServers.error { error: [32m'MCP_NETWORK_ERROR'[39m }
+
+stderr | src/features/mcp/__tests__/mcpRepository.test.ts > mcpRepository.syncServer > R07 — 404 → Result.err McpServerNotFoundError
+[mcp] mcp.repo.syncServer.not_found { server_id: [32m'server-uuid-1'[39m, request_id: [32m'test-req-id'[39m }
+
+stderr | src/features/mcp/__tests__/mcpRepository.test.ts > mcpRepository.syncServer > R08 — 502 → Result.err McpServerUnreachableError
+[mcp] mcp.repo.syncServer.unreachable { server_id: [32m'server-uuid-1'[39m, request_id: [32m'test-req-id'[39m }
+
+stderr | src/features/mcp/__tests__/mcpRepository.test.ts > mcpRepository.syncServer > R09 — 429 → Result.err McpRateLimitedError
+[mcp] mcp.repo.syncServer.rate_limited { server_id: [32m'server-uuid-1'[39m, request_id: [32m'test-req-id'[39m }
+
+stderr | src/features/mcp/__tests__/mcpRepository.test.ts > mcpRepository.createServer > R12 — 400 → McpEndpointNotAllowedError (§D-T004-400-UNIT-ONLY)
+[mcp] mcp.repo.createServer.endpoint_not_allowed { status: [33m400[39m, request_id: [32m'test-req-id'[39m }
+
+stderr | src/features/mcp/__tests__/mcpRepository.test.ts > mcpRepository.createServer > R13 — 422 → McpValidationError with fieldErrors (§D-T004-422-PARSE)
+[mcp] mcp.repo.createServer.validation_error { field_count: [33m2[39m, request_id: [32m'test-req-id'[39m }
+
+stderr | src/features/mcp/__tests__/mcpRepository.test.ts > mcpRepository.createServer > R14 — 429 → McpRateLimitedError
+[mcp] mcp.repo.createServer.rate_limited { status: [33m429[39m, request_id: [32m'test-req-id'[39m }
+
+stderr | src/features/mcp/__tests__/mcpRepository.test.ts > mcpRepository.createServer > R15 — 500 → McpServerError
+[mcp] mcp.repo.createServer.server_error { status: [33m500[39m, request_id: [32m'test-req-id'[39m }
+
+stderr | src/features/mcp/__tests__/mcpRepository.test.ts > mcpRepository.createServer > R16 — network failure → McpNetworkError
+[mcp] mcp.repo.createServer.error { error: [32m'MCP_NETWORK_ERROR'[39m }
+
+stderr | src/features/mcp/__tests__/mcpRepository.test.ts > mcpRepository.createServer > R17 — 401 → McpAuthExpiredError
+[mcp] mcp.repo.createServer.auth_expired { status: [33m401[39m, request_id: [32m'test-req-id'[39m }
+
+stderr | src/features/mcp/__tests__/mcpRepository.test.ts > mcpRepository.createServer > R18 — 403 → McpForbiddenError
+[mcp] mcp.repo.createServer.forbidden { status: [33m403[39m, request_id: [32m'test-req-id'[39m }
+
+ ✓ src/features/mcp/__tests__/mcpRepository.test.ts (18 tests) 8ms
+stderr | src/features/mcp/__tests__/useMcpServers.test.tsx > useMcpServers > H02 — surfaces McpAuthExpiredError as isError=true
+[mcp] mcp.useMcpServers.fetch.error { code: [32m'MCP_AUTH_EXPIRED'[39m }
+
+stderr | src/features/mcp/__tests__/useMcpSync.test.tsx > useMcpSync > S02 — mutate 502 → throws McpServerUnreachableError
+[mcp] mcp.useMcpSync.mutate.error { server_id: [32m'server-uuid-1'[39m, code: [32m'MCP_SERVER_UNREACHABLE'[39m }
+
+stderr | src/features/mcp/__tests__/useMcpServers.test.tsx > useMcpServers > H03 — refetch triggers a second listServers call
+[mcp] mcp.useMcpServers.fetch.error { code: [32m'MCP_NETWORK_ERROR'[39m }
+
+stderr | src/features/mcp/__tests__/useMcpSync.test.tsx > useMcpSync > S03 — mutate 429 → throws McpRateLimitedError
+[mcp] mcp.useMcpSync.mutate.error { server_id: [32m'server-uuid-1'[39m, code: [32m'MCP_RATE_LIMITED'[39m }
+
+ ✓ src/features/mcp/__tests__/useMcpSync.test.tsx (3 tests) 174ms
+ ✓ src/features/mcp/__tests__/useMcpServers.test.tsx (3 tests) 228ms
+ ✓ src/pages/admin/mcp/__tests__/McpServersPage.test.tsx (9 tests) 123ms
+stderr | src/features/mcp/__tests__/useCreateMcpServer.test.tsx > useCreateMcpServer > C02 — mutate 422 → throws McpValidationError with fieldErrors
+[mcp] mcp.useCreateMcpServer.mutate.error { code: [32m'MCP_VALIDATION_ERROR'[39m }
+
+stderr | src/features/mcp/__tests__/useCreateMcpServer.test.tsx > useCreateMcpServer > C02 — mutate 422 → throws McpValidationError with fieldErrors
+[mcp] mcp.useCreateMcpServer.onError { code: [32m'MCP_VALIDATION_ERROR'[39m }
+
+stderr | src/features/mcp/__tests__/useCreateMcpServer.test.tsx > useCreateMcpServer > C03 — mutate 500 → throws McpServerError
+[mcp] mcp.useCreateMcpServer.mutate.error { code: [32m'MCP_SERVER_ERROR'[39m }
+
+stderr | src/features/mcp/__tests__/useCreateMcpServer.test.tsx > useCreateMcpServer > C03 — mutate 500 → throws McpServerError
+[mcp] mcp.useCreateMcpServer.onError { code: [32m'MCP_SERVER_ERROR'[39m }
+
+ ✓ src/pages/admin/mcp/__tests__/McpWizardPage.test.tsx (11 tests) 122ms
+ ✓ src/features/mcp/__tests__/useCreateMcpServer.test.tsx (4 tests) 230ms
+
+ Test Files  6 passed (6)
+      Tests  48 passed (48)
+   Start at  21:59:15
+   Duration  2.09s (transform 723ms, setup 709ms, collect 2.17s, tests 886ms, environment 3.52s, prepare 581ms)
+

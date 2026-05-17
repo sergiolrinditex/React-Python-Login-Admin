@@ -1,0 +1,23 @@
+## Curl test: POST /api/v1/admin/ai/mcp/servers — happy path auth=none
+## Timestamp: 2026-05-17T22:22:00Z
+## Admin: admin.peopletech@inditex-sandbox.com (people_admin role)
+## Note: people_admin role was manually assigned via INSERT INTO user_roles before this test
+##   (verification data bootstrap only loaded mcp_agents group; user role not in that group)
+
+curl -sS -X POST http://localhost:8000/api/v1/admin/ai/mcp/servers \
+  -H "Authorization: Bearer <JWT>" \
+  -H 'Content-Type: application/json' \
+  -H "X-Request-ID: <uuid>" \
+  -d '{"name":"tester_sandbox_none","transport":"http","endpoint":"http://localhost:8080/mcp","auth":{"type":"none","secret":null,"refresh_token":null}}'
+
+RESPONSE:
+{"data":{"id":"b8520fd0-3ee3-43fa-a358-474144b07aeb","name":"tester_sandbox_none","transport":"http","endpoint":"http://localhost:8080/mcp","status":"draft","last_sync_at":null,"created_by":"fe6e41e9-3805-48f3-89d1-8bb942e39a14","has_credential":false,"auth_type":null},"meta":{"request_id":"4b2606d1-5e1f-40b8-86e1-8ce8e94a1ddd"}}
+HTTP_STATUS=201
+
+ASSERTIONS:
+- status=201: PASS
+- data.status="draft": PASS
+- data.has_credential=false: PASS
+- data.auth_type=null: PASS
+- secret NOT in response: PASS
+- X-Request-ID propagated: PASS (meta.request_id present)

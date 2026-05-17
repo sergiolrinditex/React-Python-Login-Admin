@@ -1,0 +1,15 @@
+## Curl test: POST /api/v1/admin/ai/mcp/servers — 401 unauthenticated
+## Timestamp: 2026-05-17T22:22:00Z
+
+curl -sS -X POST http://localhost:8000/api/v1/admin/ai/mcp/servers \
+  -H 'Content-Type: application/json' \
+  -d '{"name":"x","transport":"http","endpoint":"http://localhost:8080/mcp","auth":{"type":"none","secret":null,"refresh_token":null}}'
+
+RESPONSE:
+{"data":null,"meta":{"request_id":"cef64ac6-a12e-4c30-9424-18769ef26e40"},"errors":[{"code":"AUTH_SESSION_EXPIRED","message":"Session expired or invalid credentials. Please sign in again.","field":null,"details":null}]}
+HTTP_STATUS=401
+
+ASSERTIONS:
+- status=401: PASS
+- error code AUTH_SESSION_EXPIRED: PASS
+- frontend McpAuthExpiredError mapping: covered by repo test R17

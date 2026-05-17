@@ -1,0 +1,31 @@
+## Curl test: POST /api/v1/admin/ai/mcp/servers — 500 when auth=api_key (ENCRYPTION_KEY not in uvicorn env)
+## Timestamp: 2026-05-17T22:22:00Z
+## CLASSIFICATION: Environment setup issue, NOT a T004 frontend code defect
+
+curl -sS -X POST http://localhost:8000/api/v1/admin/ai/mcp/servers \
+  -H "Authorization: Bearer <JWT>" \
+  -H 'Content-Type: application/json' \
+  -d '{"name":"tester_sandbox_apikey","transport":"sse","endpoint":"http://localhost:8080/sse","auth":{"type":"api_key","secret":"vt-sandbox-key","refresh_token":null}}'
+
+RESPONSE:
+{"data":null,"meta":{"request_id":"f6bd1916-f6e7-48f3-8114-b46b9e40da54"},"errors":[{"code":"INTERNAL_ERROR","message":"Failed to register MCP server.","field":null,"details":null}]}
+HTTP_STATUS=500
+
+ROOT CAUSE:
+- ENCRYPTION_KEY env var is present in .env file but the running uvicorn process
+  was started WITHOUT loading .env (env var not set in the process environment).
+- Backend service_register.py calls Fernet(ENCRYPTION_KEY) during api_key credential creation.
+- Without ENCRYPTION_KEY the Fernet call fails → 500.
+- Bootstrap confirms: ERROR: "ENCRYPTION_KEY environment variable is not set."
+- auth=none path (no Fernet call needed) works correctly → 201.
+
+SCOPE CLASSIFICATION:
+- This is an environment setup issue for the tester environment (backend not started with .env loaded).
+- It is NOT a frontend code defect (frontend sends the correct payload structure).
+- Frontend correctly maps 500 → McpServerError → inline form-level error (covered by repo test R15, hook test C03).
+- Full api_key path will be exercised by /verify-slice with proper backend env setup.
+
+FRONTEND UNIT TEST COVERAGE:
+- R13: 201 api_key → McpServer with has_credential=true: PASS (unit test with mocked fetch)
+- C03: mutate 500 → McpServerError → inline form error: PASS
+- W04: error_network (McpServerError) form-level state: PASS

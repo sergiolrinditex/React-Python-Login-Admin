@@ -34,10 +34,54 @@
       "sync_internal": "Error interno del servidor"
     },
     "notes": {
-      "risk_per_tool": "El nivel de riesgo se gestiona por herramienta en P04-S02-T004."
+      "risk_per_tool": "El nivel de riesgo se gestiona por herramienta."
     },
     "tools": {
       "none": "—"
+    }
+  },
+  "wizard": {
+    "title": "Conectar servidor MCP",
+    "subtitle": "Registra un servidor MCP externo. Las tools quedarán desactivadas hasta que las apruebes.",
+    "fields": {
+      "name": "Nombre",
+      "transport": "Transporte",
+      "transport.http": "HTTP",
+      "transport.sse": "SSE",
+      "endpoint": "Endpoint",
+      "authType": "Tipo de autenticación",
+      "authType.none": "Ninguna",
+      "authType.api_key": "API key",
+      "authType.bearer": "Bearer",
+      "authType.oauth2": "OAuth2",
+      "secret": "Secreto",
+      "refreshToken": "Refresh token"
+    },
+    "actions": {
+      "submit": "Conectar",
+      "submitting": "Conectando…",
+      "cancel": "Cancelar"
+    },
+    "errors": {
+      "nameRequired": "Nombre obligatorio",
+      "nameMax": "Máximo 200 caracteres",
+      "endpointRequired": "Endpoint obligatorio",
+      "endpointInvalid": "Debe empezar por http:// o https:// o sse://",
+      "endpointNotAllowed": "Este endpoint no está en la allowlist autorizada",
+      "secretRequired": "Se requiere un secreto para este tipo de autenticación",
+      "forbidden": "No tienes permiso para registrar servidores MCP",
+      "network": "Error de red. Vuelve a intentarlo.",
+      "rateLimited": "Demasiados intentos. Espera unos segundos.",
+      "serverError": "Error del servidor. Vuelve a intentarlo."
+    },
+    "success": {
+      "title": "Servidor conectado",
+      "body": "Las tools se descubrirán en la próxima sincronización."
+    },
+    "permissionDenied": {
+      "title": "Acceso denegado",
+      "body": "No tienes permiso para registrar servidores MCP.",
+      "back": "Volver a servidores MCP"
     }
   }
 }

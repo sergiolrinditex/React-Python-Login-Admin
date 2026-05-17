@@ -1,0 +1,38 @@
+## Contract observed — Front → Back → DB wiring — P04-S02-T004
+## Timestamp: 2026-05-17T22:23:00Z
+
+## ROUTE:
+## /admin/ai/mcp/new → ROUTE_ADMIN_AI_MCP_NEW constant → McpWizardPage component
+## Observed: curl -sI http://localhost:5173/admin/ai/mcp/new → 200 OK (SPA route served)
+
+## PROVIDER/HOOKS:
+## useCreateMcpServer → mcpRepository.createServer → authFetch (relative URL per ADR-002)
+## Observed: C01-C04 hook tests confirm useMutation wiring + queryClient.invalidateQueries(['admin','mcp','servers'])
+
+## ENDPOINT:
+## POST /api/v1/admin/ai/mcp/servers (observed via curl with admin JWT)
+## - 201 with valid payload auth=none: PASS
+## - 422 with stdio transport: PASS (Pydantic literal_error)
+## - 401 without auth header: PASS (AUTH_SESSION_EXPIRED)
+
+## REQUEST DTO:
+## { name, transport, endpoint, auth: { type, secret, refresh_token } }
+## Observed: R10 (201 api_key), R11 (201 none), R12 (400), R13 (422), R14-R18
+
+## RESPONSE DTO:
+## { id, name, transport, endpoint, status, last_sync_at, created_by, has_credential, auth_type }
+## Observed via curl: b8520fd0-3ee3-43fa-a358-474144b07aeb, status=draft, has_credential=false
+## Secret NEVER returned: PASS (confirmed in all curl responses)
+
+## DB TABLES:
+## mcp_servers: row created with tester_sandbox_none (transport=http, status=draft, endpoint_url=http://localhost:8080/mcp)
+## mcp_credentials: no row for auth=none (correct; credential only for non-none auth types)
+## audit_logs: mcp_server_registered NOT observed (backend scope, not T004)
+
+## AUTH GUARD:
+## RequireRole wired in router.tsx within admin guard block
+## Observed: router route added, frontend RequireRole gates people_admin
+
+## INVALIDATION:
+## On success: queryClient.invalidateQueries(['admin','mcp','servers'])
+## Observed: C01 test asserts invalidateQueries called with correct key

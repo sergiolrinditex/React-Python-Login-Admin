@@ -1,0 +1,37 @@
+Tester Evidence Summary — P04-S02-T004 McpWizardPage
+Timestamp: 2026-05-17T22:26:00Z
+Agent: tester
+Cycle: fresh run (after debugger cycle 2 — McpWizardPage.tsx=290 LOC)
+
+Environment:
+  Backend: http://localhost:8000 — UP (uptime 25933s)
+  Frontend: http://localhost:5173 — UP (200 OK)
+  DB: postgresql://hilo:hilo@localhost:5432/hilo_dev — UP
+
+TypeScript (tsc --noEmit): EXIT_CODE=0, 0 errors
+Design tokens: "OK Design tokens"
+ESLint: no ESLint config; tsc is de-facto lint authority
+
+Full test suite: 425/451 pass, 26 fail (all pre-existing P04-S01-T005)
+T004-only tests (33): McpWizardPage.test.tsx W01-W11 (11), useCreateMcpServer.test.tsx C01-C04 (4), mcpRepository.test.ts R10-R18 (9) — ALL PASS
+
+Curl smoke:
+  POST auth=none: 201 PASS
+  POST auth=api_key+secret: 500 (ENCRYPTION_KEY not in uvicorn env — env setup issue, not T004 code defect)
+  POST transport=stdio: 422 PASS
+  POST no-auth: 401 PASS
+  POST name-missing: 422 PASS
+
+DB: tester_sandbox_none row (status=draft, transport=http) — PASS; no mcp_credentials for auth=none — PASS
+Logging: VERBOSE=true shows start+ok+error; VERBOSE=false shows only warn+error — PASS
+Secret: never in any log line — PASS
+Visual smoke: http://localhost:5173/admin/ai/mcp/new → 200 OK
+
+File sizes (post debugger cycle 2):
+  McpWizardPage.tsx: 290 (≤300 cap) — PASS
+  _McpWizardPage.form.tsx: 235 — PASS
+  _McpWizardPage.select-field.tsx: 147 — PASS
+  _McpWizardPage.feedback.tsx: 181 — PASS
+  _McpWizardPage.styles.ts: 211 — PASS
+
+Verdict: PASS

@@ -22,6 +22,7 @@
  *     WRITE_SET_DRIFT: router.tsx is not in the Coverage Registry write_set but is required
  *     to make the page reachable; justified by identical precedent in P04-S01-T002 (line 22
  *     of that handoff). Documented in handoff §D-T003-ROUTER.
+ *   Updated in P04-S02-T004 — added /admin/ai/mcp/new route wired to McpWizardPage (§D-T004-ROUTER).
  *
  * Responsibility: single mount point for the application's route tree.
  *   Exports <AppRouter> which is consumed by main.tsx inside <Providers>.
@@ -38,6 +39,7 @@
  *   /history              → HistoryPage (employee history, RequireAuth) — P03-S02-T003
  *   /admin             → AdminDashboardPage (people_admin|super_admin) — P04-S01-T001
  *   /admin/ai/mcp      → McpServersPage (admin, RequireRole) — P04-S02-T003 §D-T003-ROUTER
+ *   /admin/ai/mcp/new  → McpWizardPage (admin, RequireRole) — P04-S02-T004 §D-T004-ROUTER
  *   /admin/rag/documents → RagDocumentsPage (admin, RequireRole) — P04-S02-T001 §D-RAGDOC-ROUTER
  *   /admin/rag/collections → RagCollectionsPage (admin, RequireRole) — P04-S02-T002 §D-T002-ROUTER
  *   /admin/ai/models   → placeholder (P04-S01-T002)
@@ -51,6 +53,7 @@
  * P03-S01-T005 adds: /auth/2fa — TwoFactorPage (public, MFA code verification step).
  * P04-S01-T001 adds: real AdminDashboardPage + ROUTE_ADMIN_* constants (§D-T001-ROUTER).
  * P04-S02-T003 adds: McpServersPage at /admin/ai/mcp (§D-T003-ROUTER).
+ * P04-S02-T004 adds: McpWizardPage at /admin/ai/mcp/new (§D-T004-ROUTER).
  * P04-S02-T001 adds: RagDocumentsPage at /admin/rag/documents (§D-RAGDOC-ROUTER).
  *
  * AuthProvider composition (task pack §I):
@@ -77,6 +80,7 @@ import AdminDashboardPage from "../pages/admin/AdminDashboardPage";
 import AdminAiModelsPage from "../pages/admin/ai/AdminAiModelsPage";
 import ModelWizardPage from "../pages/admin/ai/ModelWizardPage";
 import McpServersPage from "../pages/admin/mcp/McpServersPage";
+import McpWizardPage from "../pages/admin/mcp/McpWizardPage";
 import RagDocumentsPage from "../pages/admin/rag/RagDocumentsPage";
 import RagCollectionsPage from "../pages/admin/rag/RagCollectionsPage";
 import { AuthProvider } from "../features/auth/presentation/AuthProvider";
@@ -258,6 +262,8 @@ export function AppRouter(): ReactNode {
             <Route path={ROUTE_ADMIN} element={<AdminDashboardPage />} />
             {/* P04-S02-T003: McpServersPage — §D-T003-ROUTER, TECHNICAL_GUIDE §6.1 */}
             <Route path={ROUTE_ADMIN_AI_MCP} element={<McpServersPage />} />
+            {/* P04-S02-T004: McpWizardPage — §D-T004-ROUTER, TECHNICAL_GUIDE §6.1 */}
+            <Route path={ROUTE_ADMIN_AI_MCP_NEW} element={<McpWizardPage />} />
             {/* P04-S02-T001: RagDocumentsPage — §D-RAGDOC-ROUTER, TECHNICAL_GUIDE §6.1 */}
             <Route path={ROUTE_ADMIN_RAG_DOCUMENTS} element={<RagDocumentsPage />} />
             {/* P04-S01-T002: AdminAiModelsPage — §D-T002-ROUTER, TECHNICAL_GUIDE §6.1 */}

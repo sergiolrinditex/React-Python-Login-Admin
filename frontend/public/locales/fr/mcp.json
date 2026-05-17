@@ -34,10 +34,54 @@
       "sync_internal": "Erreur interne du serveur"
     },
     "notes": {
-      "risk_per_tool": "Le niveau de risque est géré par outil dans P04-S02-T004."
+      "risk_per_tool": "Le niveau de risque est géré par outil."
     },
     "tools": {
       "none": "—"
+    }
+  },
+  "wizard": {
+    "title": "Connecter serveur MCP",
+    "subtitle": "Enregistrez un serveur MCP externe. Les outils resteront désactivés jusqu'à votre approbation.",
+    "fields": {
+      "name": "Nom",
+      "transport": "Transport",
+      "transport.http": "HTTP",
+      "transport.sse": "SSE",
+      "endpoint": "Endpoint",
+      "authType": "Type d'authentification",
+      "authType.none": "Aucune",
+      "authType.api_key": "API key",
+      "authType.bearer": "Bearer",
+      "authType.oauth2": "OAuth2",
+      "secret": "Secret",
+      "refreshToken": "Refresh token"
+    },
+    "actions": {
+      "submit": "Connecter",
+      "submitting": "Connexion…",
+      "cancel": "Annuler"
+    },
+    "errors": {
+      "nameRequired": "Nom obligatoire",
+      "nameMax": "Maximum 200 caractères",
+      "endpointRequired": "Endpoint obligatoire",
+      "endpointInvalid": "Doit commencer par http://, https:// ou sse://",
+      "endpointNotAllowed": "Cet endpoint n'est pas dans la liste autorisée",
+      "secretRequired": "Un secret est requis pour ce type d'authentification",
+      "forbidden": "Vous n'avez pas la permission d'enregistrer des serveurs MCP",
+      "network": "Erreur réseau. Veuillez réessayer.",
+      "rateLimited": "Trop de tentatives. Veuillez patienter.",
+      "serverError": "Erreur serveur. Veuillez réessayer."
+    },
+    "success": {
+      "title": "Serveur connecté",
+      "body": "Les outils seront découverts lors de la prochaine synchronisation."
+    },
+    "permissionDenied": {
+      "title": "Accès refusé",
+      "body": "Vous n'avez pas la permission d'enregistrer des serveurs MCP.",
+      "back": "Retour aux serveurs MCP"
     }
   }
 }

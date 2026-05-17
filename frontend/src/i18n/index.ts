@@ -459,6 +459,7 @@ const resources = {
       },
     },
     // §D-T003-I18N: mcp.servers.* extended for McpServersPage (P04-S02-T003)
+    // §D-T004-I18N: mcp.wizard.* added for McpWizardPage (P04-S02-T004)
     mcp: {
       servers: {
         title: "Servidores MCP",
@@ -495,10 +496,54 @@ const resources = {
           sync_internal: "Error interno del servidor",
         },
         notes: {
-          risk_per_tool: "El nivel de riesgo se gestiona por herramienta en P04-S02-T004.",
+          risk_per_tool: "El nivel de riesgo se gestiona por herramienta.",
         },
         tools: {
           none: "—",
+        },
+      },
+      wizard: {
+        title: "Conectar servidor MCP",
+        subtitle: "Registra un servidor MCP externo. Las tools quedarán desactivadas hasta que las apruebes.",
+        fields: {
+          name: "Nombre",
+          transport: "Transporte",
+          "transport.http": "HTTP",
+          "transport.sse": "SSE",
+          endpoint: "Endpoint",
+          authType: "Tipo de autenticación",
+          "authType.none": "Ninguna",
+          "authType.api_key": "API key",
+          "authType.bearer": "Bearer",
+          "authType.oauth2": "OAuth2",
+          secret: "Secreto",
+          refreshToken: "Refresh token",
+        },
+        actions: {
+          submit: "Conectar",
+          submitting: "Conectando…",
+          cancel: "Cancelar",
+        },
+        errors: {
+          nameRequired: "Nombre obligatorio",
+          nameMax: "Máximo 200 caracteres",
+          endpointRequired: "Endpoint obligatorio",
+          endpointInvalid: "Debe empezar por http:// o https:// o sse://",
+          endpointNotAllowed: "Este endpoint no está en la allowlist autorizada",
+          secretRequired: "Se requiere un secreto para este tipo de autenticación",
+          forbidden: "No tienes permiso para registrar servidores MCP",
+          network: "Error de red. Vuelve a intentarlo.",
+          rateLimited: "Demasiados intentos. Espera unos segundos.",
+          serverError: "Error del servidor. Vuelve a intentarlo.",
+        },
+        success: {
+          title: "Servidor conectado",
+          body: "Las tools se descubrirán en la próxima sincronización.",
+        },
+        permissionDenied: {
+          title: "Acceso denegado",
+          body: "No tienes permiso para registrar servidores MCP.",
+          back: "Volver a servidores MCP",
         },
       },
     },
@@ -920,6 +965,7 @@ const resources = {
       },
     },
     // §D-T003-I18N: mcp.servers.* extended for McpServersPage (P04-S02-T003)
+    // §D-T004-I18N: mcp.wizard.* added for McpWizardPage (P04-S02-T004)
     mcp: {
       servers: {
         title: "MCP Servers",
@@ -956,10 +1002,54 @@ const resources = {
           sync_internal: "Internal server error",
         },
         notes: {
-          risk_per_tool: "Risk level is managed per tool in P04-S02-T004.",
+          risk_per_tool: "Risk level is managed per tool.",
         },
         tools: {
           none: "—",
+        },
+      },
+      wizard: {
+        title: "Connect MCP server",
+        subtitle: "Register an external MCP server. Tools will be disabled until you approve them.",
+        fields: {
+          name: "Name",
+          transport: "Transport",
+          "transport.http": "HTTP",
+          "transport.sse": "SSE",
+          endpoint: "Endpoint",
+          authType: "Auth type",
+          "authType.none": "None",
+          "authType.api_key": "API key",
+          "authType.bearer": "Bearer",
+          "authType.oauth2": "OAuth2",
+          secret: "Secret",
+          refreshToken: "Refresh token",
+        },
+        actions: {
+          submit: "Connect",
+          submitting: "Connecting…",
+          cancel: "Cancel",
+        },
+        errors: {
+          nameRequired: "Name is required",
+          nameMax: "Max 200 characters",
+          endpointRequired: "Endpoint is required",
+          endpointInvalid: "Must start with http://, https:// or sse://",
+          endpointNotAllowed: "This endpoint is not in the authorised allowlist",
+          secretRequired: "A secret is required for this authentication type",
+          forbidden: "You do not have permission to register MCP servers",
+          network: "Network error. Please try again.",
+          rateLimited: "Too many attempts. Please wait a moment.",
+          serverError: "Server error. Please try again.",
+        },
+        success: {
+          title: "Server connected",
+          body: "Tools will be discovered on the next sync.",
+        },
+        permissionDenied: {
+          title: "Access denied",
+          body: "You do not have permission to register MCP servers.",
+          back: "Back to MCP servers",
         },
       },
     },
@@ -1381,6 +1471,7 @@ const resources = {
       },
     },
     // §D-T003-I18N: mcp.servers.* extended for McpServersPage (P04-S02-T003)
+    // §D-T004-I18N: mcp.wizard.* added for McpWizardPage (P04-S02-T004)
     mcp: {
       servers: {
         title: "Serveurs MCP",
@@ -1417,10 +1508,54 @@ const resources = {
           sync_internal: "Erreur interne du serveur",
         },
         notes: {
-          risk_per_tool: "Le niveau de risque est géré par outil dans P04-S02-T004.",
+          risk_per_tool: "Le niveau de risque est géré par outil.",
         },
         tools: {
           none: "—",
+        },
+      },
+      wizard: {
+        title: "Connecter serveur MCP",
+        subtitle: "Enregistrez un serveur MCP externe. Les outils resteront désactivés jusqu'à votre approbation.",
+        fields: {
+          name: "Nom",
+          transport: "Transport",
+          "transport.http": "HTTP",
+          "transport.sse": "SSE",
+          endpoint: "Endpoint",
+          authType: "Type d'authentification",
+          "authType.none": "Aucune",
+          "authType.api_key": "API key",
+          "authType.bearer": "Bearer",
+          "authType.oauth2": "OAuth2",
+          secret: "Secret",
+          refreshToken: "Refresh token",
+        },
+        actions: {
+          submit: "Connecter",
+          submitting: "Connexion…",
+          cancel: "Annuler",
+        },
+        errors: {
+          nameRequired: "Nom obligatoire",
+          nameMax: "Maximum 200 caractères",
+          endpointRequired: "Endpoint obligatoire",
+          endpointInvalid: "Doit commencer par http://, https:// ou sse://",
+          endpointNotAllowed: "Cet endpoint n'est pas dans la liste autorisée",
+          secretRequired: "Un secret est requis pour ce type d'authentification",
+          forbidden: "Vous n'avez pas la permission d'enregistrer des serveurs MCP",
+          network: "Erreur réseau. Veuillez réessayer.",
+          rateLimited: "Trop de tentatives. Veuillez patienter.",
+          serverError: "Erreur serveur. Veuillez réessayer.",
+        },
+        success: {
+          title: "Serveur connecté",
+          body: "Les outils seront découverts lors de la prochaine synchronisation.",
+        },
+        permissionDenied: {
+          title: "Accès refusé",
+          body: "Vous n'avez pas la permission d'enregistrer des serveurs MCP.",
+          back: "Retour aux serveurs MCP",
         },
       },
     },

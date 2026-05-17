@@ -8,11 +8,14 @@
  *   No external imports — pure domain layer.
  *
  * §D-T003-DOMAIN-TYPES (P04-S02-T003 task pack §5)
+ * §D-T004-DOMAIN-TYPES (P04-S02-T004 task pack §6) — added McpTransport, McpAuthType,
+ *   CreateServerRequest per backend POST /api/v1/admin/ai/mcp/servers contract
+ *   (schemas.py:64-86). Slice: P04-S02-T004 — McpWizardPage / Phase 4.
  *
  * Clean Architecture: domain layer — no React, no fetch, no external libs.
  *   Presentation and data layers import from here; domain imports nothing external.
  *
- * Wire contract source: TECHNICAL_GUIDE §6.2 + §3.1 of task pack.
+ * Wire contract source: TECHNICAL_GUIDE §6.2 + §3.1 + §6.3 of task pack.
  */
 
 // Re-export Result type from auth domain for reuse (P-29 #2 pattern)
@@ -78,4 +81,59 @@ export interface McpSyncResult {
   prompts_count: number;
   /** Server status after sync. */
   status: McpServerStatus;
+}
+
+// ---------------------------------------------------------------------------
+// Wizard create types — §D-T004-DOMAIN-TYPES
+// Mirrors backend CreateServerRequest (schemas.py:64) exactly.
+// stdio is intentionally excluded per instrucciones.md §3.1 line 99.
+// ---------------------------------------------------------------------------
+
+/**
+ * Transport protocol for MCP servers.
+ * stdio is excluded — backend supports it but UI must not offer it (§3.1 line 99).
+ */
+export type McpTransport = "http" | "sse";
+
+/**
+ * Authentication type for MCP server credentials.
+ * Mirrors backend auth.type enum (schemas.py:71).
+ */
+export type McpAuthType = "none" | "api_key" | "bearer" | "oauth2";
+
+/**
+ * Auth sub-object for CreateServerRequest.
+ * secret is required (non-empty) unless type='none'.
+ * refresh_token is optional; only meaningful for oauth2.
+ */
+export interface McpCreateAuth {
+  /** Auth method. */
+  type: McpAuthType;
+  /**
+   * Credential secret.
+   * null when type='none'; non-null required for api_key/bearer/oauth2.
+   * NEVER logged, NEVER stored in client storage beyond form lifetime.
+   */
+  secret: string | null;
+  /** Refresh token for OAuth2. null for all other types. */
+  refresh_token: string | null;
+}
+
+/**
+ * Wire DTO for POST /api/v1/admin/ai/mcp/servers.
+ *
+ * Mirrors backend CreateServerRequest (schemas.py:64) with extra="forbid".
+ * Validated on frontend by CreateServerFormSchema (Zod).
+ *
+ * §D-T004-DOMAIN-TYPES
+ */
+export interface CreateServerRequest {
+  /** Human-readable server name (1..200 chars). */
+  name: string;
+  /** Transport protocol. stdio excluded (instrucciones §3.1 line 99). */
+  transport: McpTransport;
+  /** URL of MCP HTTP/SSE endpoint (1..2000 chars). */
+  endpoint: string;
+  /** Auth configuration. */
+  auth: McpCreateAuth;
 }
