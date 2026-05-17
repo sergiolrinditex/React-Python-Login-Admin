@@ -19,6 +19,9 @@ export type {
   UsageTotals,
   UsageSummary,
   GetUsageRequest,
+  // P04-S01-T002 additions (§D-T002-FEATURE-BARREL)
+  AiProvider,
+  AiModel,
 } from "./domain/types";
 
 // Error classes and union
@@ -33,8 +36,16 @@ export {
 export type { AdminAiError } from "./data/errors";
 
 // Repository
-export { getUsage } from "./data/adminAiRepository";
+export { getUsage, getProviders, getModels } from "./data/adminAiRepository";
+export type { GetModelsParams } from "./data/adminAiRepository";
 
-// Presentation hook
+// Presentation hooks
 export { useDashboardUsage, computeUsageWindow } from "./presentation/useDashboardUsage";
 export type { UseDashboardUsageResult } from "./presentation/useDashboardUsage";
+
+// P04-S01-T002 additions (§D-T002-FEATURE-BARREL)
+export { useAdminAiModels } from "./presentation/useAdminAiModels";
+export type {
+  UseAdminAiModelsResult,
+  AdminAiModelRow,
+} from "./presentation/useAdminAiModels";

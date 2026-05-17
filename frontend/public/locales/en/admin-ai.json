@@ -1,7 +1,55 @@
 {
   "models": {
     "title": "LiteLLM models",
-    "empty": "No models configured"
+    "empty": "No models configured",
+    "table": {
+      "caption": "AI models list",
+      "headers": {
+        "model": "Model",
+        "type": "Type",
+        "provider": "Provider",
+        "status": "Status",
+        "default": "Default",
+        "cost": "Cost",
+        "latency": "Latency"
+      }
+    },
+    "status": {
+      "active": "Active",
+      "modelDisabled": "Model disabled",
+      "providerInactive": "Provider inactive",
+      "bothInactive": "Both inactive",
+      "unknown": "Unknown"
+    },
+    "default": {
+      "yes": "Yes",
+      "no": "—"
+    },
+    "cost": {
+      "unknown": "—"
+    },
+    "latency": {
+      "unknown": "—",
+      "value": "{{ms}} ms"
+    },
+    "empty": {
+      "body": "No models configured yet. Create a model to get started.",
+      "cta": "New model"
+    },
+    "errors": {
+      "network": {
+        "title": "Failed to load models",
+        "body": "Check your connection and try again."
+      },
+      "forbidden": {
+        "title": "Access restricted",
+        "body": "You do not have administrator permissions to view this page."
+      }
+    },
+    "actions": {
+      "retry": "Retry",
+      "newModel": "New model"
+    }
   },
   "mcp": {
     "title": "MCP integrations",

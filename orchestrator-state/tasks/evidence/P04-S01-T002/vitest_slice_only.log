@@ -1,0 +1,252 @@
+
+ RUN  v3.2.4 /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P04-S01-T002/frontend
+
+stderr | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T03 — 401 final → Result.err(AdminAiAuthExpiredError)
+[admin-ai] admin-ai.repo.getUsage.auth_expired { status: [33m401[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T03b — AuthSessionExpiredError thrown by authFetch → Result.err(AdminAiAuthExpiredError)
+[admin-ai] admin-ai.repo.getUsage.auth_expired_via_client {}
+
+stderr | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T04 — 403 forbidden → Result.err(AdminAiForbiddenError)
+[admin-ai] admin-ai.repo.getUsage.forbidden { status: [33m403[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T05 — 422 validation error → Result.err(AdminAiValidationError) with server code
+[admin-ai] admin-ai.repo.getUsage.validation_error {
+  status: [33m422[39m,
+  server_code: [32m'ADMIN_USAGE_WINDOW_TOO_WIDE'[39m,
+  request_id: [32m'test-request-id'[39m,
+  note: [32m'422 from admin/usage — client params may have drifted from spec'[39m
+}
+
+stderr | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T06 — 500 server error → Result.err(AdminAiInternalError)
+[admin-ai] admin-ai.repo.getUsage.server_error { status: [33m500[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T07 — network rejection (TypeError) → Result.err(AdminAiNetworkError)
+[admin-ai] admin-ai.repo.getUsage.network_error { error_class: [32m'AdminAiNetworkError'[39m }
+
+stderr | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getProviders > T09 — getProviders 401 → AdminAiAuthExpiredError; onAuthFailure invoked via authFetch
+[admin-ai] admin-ai.repo.getProviders.auth_expired { status: [33m401[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getProviders > T10 — getProviders 403 → AdminAiForbiddenError
+[admin-ai] admin-ai.repo.getProviders.forbidden { status: [33m403[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getProviders > T11 — getProviders 500 → AdminAiInternalError
+[admin-ai] admin-ai.repo.getProviders.server_error { status: [33m500[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getProviders > T12 — getProviders network reject → AdminAiNetworkError
+[admin-ai] admin-ai.repo.getProviders.network_error { error_class: [32m'AdminAiNetworkError'[39m }
+
+stderr | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getModels > T14 — getModels 401 → AdminAiAuthExpiredError
+[admin-ai] admin-ai.repo.getModels.auth_expired { status: [33m401[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getModels > T15 — getModels 403 → AdminAiForbiddenError
+[admin-ai] admin-ai.repo.getModels.forbidden { status: [33m403[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getModels > T16 — getModels 500 → AdminAiInternalError
+[admin-ai] admin-ai.repo.getModels.server_error { status: [33m500[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getModels > T17 — getModels network reject → AdminAiNetworkError
+[admin-ai] admin-ai.repo.getModels.network_error { error_class: [32m'AdminAiNetworkError'[39m }
+
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T01 — 200 happy path → Result.ok with populated rows 2ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T02 — 200 empty (rows=[], totals all zeros) → Result.ok with empty data 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T03 — 401 final → Result.err(AdminAiAuthExpiredError) 2ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T03b — AuthSessionExpiredError thrown by authFetch → Result.err(AdminAiAuthExpiredError) 1ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T04 — 403 forbidden → Result.err(AdminAiForbiddenError) 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T05 — 422 validation error → Result.err(AdminAiValidationError) with server code 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T06 — 500 server error → Result.err(AdminAiInternalError) 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T07 — network rejection (TypeError) → Result.err(AdminAiNetworkError) 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T08-url — URL is built correctly with all params 1ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getProviders > T08 — getProviders happy path → Result.ok([AiProvider]) 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getProviders > T09 — getProviders 401 → AdminAiAuthExpiredError; onAuthFailure invoked via authFetch 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getProviders > T10 — getProviders 403 → AdminAiForbiddenError 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getProviders > T11 — getProviders 500 → AdminAiInternalError 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getProviders > T12 — getProviders network reject → AdminAiNetworkError 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getModels > T13 — getModels happy path (no provider_id) → Result.ok([AiModel]) 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getModels > T14 — getModels 401 → AdminAiAuthExpiredError 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getModels > T15 — getModels 403 → AdminAiForbiddenError 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getModels > T16 — getModels 500 → AdminAiInternalError 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getModels > T17 — getModels network reject → AdminAiNetworkError 0ms
+ ✓ src/features/admin-ai/__tests__/useAdminAiModels.test.tsx > useAdminAiModels > H01 — loading state on mount: isLoading=true, data=undefined 10ms
+ ✓ src/features/admin-ai/__tests__/useAdminAiModels.test.tsx > useAdminAiModels > H02 — success: joins providers+models into rows with derived providerName+providerStatus 54ms
+stderr | src/features/admin-ai/__tests__/useAdminAiModels.test.tsx > useAdminAiModels > H04 — error_network: getModels rejects → isError=true, error instanceof AdminAiNetworkError
+[admin-ai] admin-ai.hook.useAdminAiModels.queryFn.models_error { error_class: [32m'AdminAiNetworkError'[39m }
+
+stderr | src/features/admin-ai/__tests__/useAdminAiModels.test.tsx > useAdminAiModels > H05 — permission_denied: getProviders returns 403 → AdminAiForbiddenError surfaces
+[admin-ai] admin-ai.hook.useAdminAiModels.queryFn.providers_error { error_class: [32m'AdminAiForbiddenError'[39m }
+
+stderr | src/features/admin-ai/__tests__/useAdminAiModels.test.tsx > useAdminAiModels > H05 — permission_denied: getProviders returns 403 → AdminAiForbiddenError surfaces
+[admin-ai] admin-ai.hook.useAdminAiModels.forbidden_in_error
+
+ ✓ src/features/admin-ai/__tests__/useAdminAiModels.test.tsx > useAdminAiModels > H03 — empty: providers=[] → data.rows=[] (D-T002-EMPTY-STATE) 55ms
+ ✓ src/features/admin-ai/__tests__/useAdminAiModels.test.tsx > useAdminAiModels > H04 — error_network: getModels rejects → isError=true, error instanceof AdminAiNetworkError 53ms
+ ✓ src/features/admin-ai/__tests__/useAdminAiModels.test.tsx > useAdminAiModels > H05 — permission_denied: getProviders returns 403 → AdminAiForbiddenError surfaces 53ms
+ ✓ src/features/admin-ai/__tests__/useAdminAiModels.test.tsx > useAdminAiModels > H06 — refetch invalidates query and re-runs both fetches 55ms
+stderr | src/pages/admin/__tests__/AdminAiModelsPage.test.tsx > AdminAiModelsPage > P01 — loading state: aria-busy skeleton visible
+An update to LoadingView inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to AdminAiModelsPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/pages/admin/__tests__/AdminAiModelsPage.test.tsx > AdminAiModelsPage > P02 — success: hairline table with joined rows and tracked-label headers
+An update to AdminAiModelsPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/pages/admin/__tests__/AdminAiModelsPage.test.tsx > AdminAiModelsPage > P03 — StatusDot active when provider.status=active AND model.enabled=true
+An update to AdminAiModelsPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/pages/admin/__tests__/AdminAiModelsPage.test.tsx > AdminAiModelsPage > P04 — StatusDot inactive when model.enabled=false (modelDisabled label)
+An update to AdminAiModelsPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/pages/admin/__tests__/AdminAiModelsPage.test.tsx > AdminAiModelsPage > P05 — empty state: Wordmark + body + Create-model CTA when providers=[]
+An update to EmptyView inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to AdminAiModelsPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/pages/admin/__tests__/AdminAiModelsPage.test.tsx > AdminAiModelsPage > P06 — error_network: NetworkErrorView visible + retry CTA calls refetch
+An update to NetworkErrorView inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to AdminAiModelsPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/pages/admin/__tests__/AdminAiModelsPage.test.tsx > AdminAiModelsPage > P07 — permission_denied: ForbiddenView renders when error instanceof AdminAiForbiddenError
+[admin-ai] admin-ai.page.AdminAiModelsPage.permission_denied
+
+stderr | src/pages/admin/__tests__/AdminAiModelsPage.test.tsx > AdminAiModelsPage > P07 — permission_denied: ForbiddenView renders when error instanceof AdminAiForbiddenError
+An update to ForbiddenView inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to AdminAiModelsPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+[admin-ai] admin-ai.page.AdminAiModelsPage.permission_denied
+
+stderr | src/pages/admin/__tests__/AdminAiModelsPage.test.tsx > AdminAiModelsPage > P08 — cost cell: em-dash when pricing={}, formatted currency when pricing.input_per_1k_tokens set
+An update to AdminAiModelsPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/pages/admin/__tests__/AdminAiModelsPage.test.tsx > AdminAiModelsPage > P01 — loading state: aria-busy skeleton visible 28ms
+ ✓ src/pages/admin/__tests__/AdminAiModelsPage.test.tsx > AdminAiModelsPage > P02 — success: hairline table with joined rows and tracked-label headers 26ms
+ ✓ src/pages/admin/__tests__/AdminAiModelsPage.test.tsx > AdminAiModelsPage > P03 — StatusDot active when provider.status=active AND model.enabled=true 8ms
+ ✓ src/pages/admin/__tests__/AdminAiModelsPage.test.tsx > AdminAiModelsPage > P04 — StatusDot inactive when model.enabled=false (modelDisabled label) 7ms
+ ✓ src/pages/admin/__tests__/AdminAiModelsPage.test.tsx > AdminAiModelsPage > P05 — empty state: Wordmark + body + Create-model CTA when providers=[] 5ms
+ ✓ src/pages/admin/__tests__/AdminAiModelsPage.test.tsx > AdminAiModelsPage > P06 — error_network: NetworkErrorView visible + retry CTA calls refetch 8ms
+ ✓ src/pages/admin/__tests__/AdminAiModelsPage.test.tsx > AdminAiModelsPage > P07 — permission_denied: ForbiddenView renders when error instanceof AdminAiForbiddenError 4ms
+ ✓ src/pages/admin/__tests__/AdminAiModelsPage.test.tsx > AdminAiModelsPage > P08 — cost cell: em-dash when pricing={}, formatted currency when pricing.input_per_1k_tokens set 7ms
+ ✓ src/pages/admin/__tests__/AdminAiModelsPage.test.tsx > formatCost > returns em-dash for empty pricing (ASSUMPTION-1) 0ms
+ ✓ src/pages/admin/__tests__/AdminAiModelsPage.test.tsx > formatCost > formats input_per_1k_tokens + output_per_1k_tokens (LiteLLM canonical shape) 0ms
+ ✓ src/pages/admin/__tests__/AdminAiModelsPage.test.tsx > formatCost > formats input + output (fallback shape) 0ms
+ ✓ src/pages/admin/__tests__/AdminAiModelsPage.test.tsx > formatCost > returns em-dash for unknown pricing shape 0ms
+ ✓ src/pages/admin/__tests__/AdminAiModelsPage.test.tsx > formatLatency > returns em-dash for null latency (R-4) 0ms
+ ✓ src/pages/admin/__tests__/AdminAiModelsPage.test.tsx > formatLatency > formats integer ms with locale grouping 0ms
+ ✓ src/pages/admin/__tests__/AdminAiModelsPage.test.tsx > deriveStatusDotState > active + enabled → active 0ms
+ ✓ src/pages/admin/__tests__/AdminAiModelsPage.test.tsx > deriveStatusDotState > active + disabled → inactive 0ms
+ ✓ src/pages/admin/__tests__/AdminAiModelsPage.test.tsx > deriveStatusDotState > draft + enabled → inactive 0ms
+ ✓ src/pages/admin/__tests__/AdminAiModelsPage.test.tsx > deriveStatusDotState > unknown → error 0ms
+ ✓ src/pages/admin/__tests__/AdminAiModelsPage.test.tsx > deriveStatusLabelKey > active + enabled → models.status.active 0ms
+ ✓ src/pages/admin/__tests__/AdminAiModelsPage.test.tsx > deriveStatusLabelKey > active + disabled → models.status.modelDisabled 0ms
+ ✓ src/pages/admin/__tests__/AdminAiModelsPage.test.tsx > deriveStatusLabelKey > inactive + disabled → models.status.bothInactive 0ms
+ ✓ src/pages/admin/__tests__/AdminAiModelsPage.test.tsx > deriveStatusLabelKey > unknown → models.status.unknown 0ms
+
+ Test Files  3 passed (3)
+      Tests  47 passed (47)
+   Start at  13:03:54
+   Duration  1.63s (transform 395ms, setup 380ms, collect 756ms, tests 382ms, environment 1.51s, prepare 327ms)
+

@@ -2,24 +2,29 @@
  * Hilo People — adminAiRepository unit tests.
  *
  * Slice/Phase: P04-S01-T001 — AdminDashboardPage / Phase 4.
- * Write-set anchor: §D-T001-TESTS
+ *   Extended in P04-S01-T002 (§D-T002-TESTS): getProviders + getModels added.
+ * Write-set anchor: §D-T001-TESTS, §D-T002-TESTS
  *
- * Responsibility: Unit tests for adminAiRepository.getUsage.
+ * Responsibility: Unit tests for adminAiRepository.getUsage, getProviders, getModels.
  *   authFetch is mocked at the fetch boundary (unit-level boundary, not business logic).
- *   Tests cover all 7 Result paths that map to the 5 UX states.
+ *   Tests cover all Result paths that map to the 5 UX states.
  *
- * Cases:
- *   T01 — 200 happy path → Result.ok(UsageSummary) with populated rows.
- *   T02 — 200 empty (rows=[], totals all zeros) → Result.ok, empty UX state.
- *   T03 — 401 final (authFetch exhausted) → Result.err(AdminAiAuthExpiredError).
- *   T04 — 403 forbidden → Result.err(AdminAiForbiddenError).
- *   T05 — 422 validation error → Result.err(AdminAiValidationError) with server code.
- *   T06 — 500 server error → Result.err(AdminAiInternalError).
- *   T07 — network rejection → Result.err(AdminAiNetworkError).
+ * Cases (T01-T07): getUsage (existing).
+ * Cases (T08-T17): getProviders + getModels (P04-S01-T002 additions).
+ *   T08 — getProviders 200 happy path → Result.ok([AiProvider, ...]).
+ *   T09 — getProviders 401 → AdminAiAuthExpiredError; onAuthFailure invoked.
+ *   T10 — getProviders 403 → AdminAiForbiddenError.
+ *   T11 — getProviders 500 → AdminAiInternalError.
+ *   T12 — getProviders network reject → AdminAiNetworkError.
+ *   T13 — getModels 200 happy path (no provider_id) → Result.ok([AiModel, ...]).
+ *   T14 — getModels 401 → AdminAiAuthExpiredError.
+ *   T15 — getModels 403 → AdminAiForbiddenError.
+ *   T16 — getModels 500 → AdminAiInternalError.
+ *   T17 — getModels network reject → AdminAiNetworkError.
  */
 
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { getUsage } from "../data/adminAiRepository";
+import { getUsage, getProviders, getModels } from "../data/adminAiRepository";
 import {
   AdminAiAuthExpiredError,
   AdminAiForbiddenError,
@@ -235,7 +240,7 @@ describe("adminAiRepository.getUsage", () => {
     }
   });
 
-  it("T08 — URL is built correctly with all params", async () => {
+  it("T08-url — URL is built correctly with all params", async () => {
     mockAuthFetch.mockResolvedValueOnce(
       makeResponse(200, { data: MOCK_USAGE_SUMMARY, meta: {} }),
     );
@@ -250,5 +255,184 @@ describe("adminAiRepository.getUsage", () => {
       expect.objectContaining({ method: "GET" }),
       expect.objectContaining({ onAuthFailure }),
     );
+  });
+});
+
+// ---------------------------------------------------------------------------
+// P04-S01-T002 additions: getProviders + getModels
+// ---------------------------------------------------------------------------
+
+// Fixtures for providers + models
+const MOCK_PROVIDER = {
+  id: "prov-uuid-1234",
+  name: "litellm_verification_sandbox",
+  provider_type: "litellm",
+  base_url: "http://localhost:4000",
+  status: "active",
+  created_by: null,
+  has_credentials: false,
+  credential_auth_type: null,
+  expires_at: null,
+};
+
+const MOCK_MODEL = {
+  id: "model-uuid-5678",
+  provider_id: "prov-uuid-1234",
+  model_id: "gpt-4o-mini",
+  model_type: "chat",
+  capabilities: ["chat", "streaming"],
+  enabled: true,
+  is_default: true,
+  pricing: {},
+  latency_ms_avg: null,
+};
+
+describe("adminAiRepository.getProviders", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("T08 — getProviders happy path → Result.ok([AiProvider])", async () => {
+    mockAuthFetch.mockResolvedValueOnce(
+      makeResponse(200, { data: [MOCK_PROVIDER], meta: { request_id: "test-req-1" } }),
+    );
+
+    const result = await getProviders(onAuthFailure);
+
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.value).toHaveLength(1);
+      expect(result.value[0].status).toBe("active");
+      expect(result.value[0].provider_type).toBe("litellm");
+    }
+  });
+
+  it("T09 — getProviders 401 → AdminAiAuthExpiredError; onAuthFailure invoked via authFetch", async () => {
+    mockAuthFetch.mockResolvedValueOnce(
+      makeResponse(401, { errors: [{ code: "AUTH_SESSION_EXPIRED" }] }),
+    );
+
+    const result = await getProviders(onAuthFailure);
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toBeInstanceOf(AdminAiAuthExpiredError);
+    }
+  });
+
+  it("T10 — getProviders 403 → AdminAiForbiddenError", async () => {
+    mockAuthFetch.mockResolvedValueOnce(
+      makeResponse(403, { errors: [{ code: "AUTH_FORBIDDEN" }] }),
+    );
+
+    const result = await getProviders(onAuthFailure);
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toBeInstanceOf(AdminAiForbiddenError);
+    }
+  });
+
+  it("T11 — getProviders 500 → AdminAiInternalError", async () => {
+    mockAuthFetch.mockResolvedValueOnce(
+      makeResponse(500, { errors: [{ code: "INTERNAL_ERROR" }] }),
+    );
+
+    const result = await getProviders(onAuthFailure);
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toBeInstanceOf(AdminAiInternalError);
+      const err = result.error as AdminAiInternalError;
+      expect(err.status).toBe(500);
+    }
+  });
+
+  it("T12 — getProviders network reject → AdminAiNetworkError", async () => {
+    mockAuthFetch.mockRejectedValueOnce(new TypeError("Failed to fetch"));
+
+    const result = await getProviders(onAuthFailure);
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toBeInstanceOf(AdminAiNetworkError);
+    }
+  });
+});
+
+describe("adminAiRepository.getModels", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("T13 — getModels happy path (no provider_id) → Result.ok([AiModel])", async () => {
+    mockAuthFetch.mockResolvedValueOnce(
+      makeResponse(200, { data: [MOCK_MODEL], meta: { request_id: "test-req-2" } }),
+    );
+
+    const result = await getModels(undefined, onAuthFailure);
+
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.value).toHaveLength(1);
+      expect(result.value[0].enabled).toBe(true);
+      expect(result.value[0].is_default).toBe(true);
+    }
+    // URL should not contain provider_id filter
+    expect(mockAuthFetch).toHaveBeenCalledWith(
+      "/api/v1/admin/ai/models",
+      expect.objectContaining({ method: "GET" }),
+      expect.objectContaining({ onAuthFailure }),
+    );
+  });
+
+  it("T14 — getModels 401 → AdminAiAuthExpiredError", async () => {
+    mockAuthFetch.mockResolvedValueOnce(
+      makeResponse(401, { errors: [{ code: "AUTH_SESSION_EXPIRED" }] }),
+    );
+
+    const result = await getModels(undefined, onAuthFailure);
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toBeInstanceOf(AdminAiAuthExpiredError);
+    }
+  });
+
+  it("T15 — getModels 403 → AdminAiForbiddenError", async () => {
+    mockAuthFetch.mockResolvedValueOnce(
+      makeResponse(403, { errors: [{ code: "AUTH_FORBIDDEN" }] }),
+    );
+
+    const result = await getModels(undefined, onAuthFailure);
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toBeInstanceOf(AdminAiForbiddenError);
+    }
+  });
+
+  it("T16 — getModels 500 → AdminAiInternalError", async () => {
+    mockAuthFetch.mockResolvedValueOnce(
+      makeResponse(500, { errors: [{ code: "INTERNAL_ERROR" }] }),
+    );
+
+    const result = await getModels(undefined, onAuthFailure);
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toBeInstanceOf(AdminAiInternalError);
+    }
+  });
+
+  it("T17 — getModels network reject → AdminAiNetworkError", async () => {
+    mockAuthFetch.mockRejectedValueOnce(new TypeError("Failed to fetch"));
+
+    const result = await getModels(undefined, onAuthFailure);
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toBeInstanceOf(AdminAiNetworkError);
+    }
   });
 });

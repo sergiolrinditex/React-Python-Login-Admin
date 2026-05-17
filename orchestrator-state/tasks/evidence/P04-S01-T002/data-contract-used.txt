@@ -1,0 +1,23 @@
+# Data Contract Used — P04-S01-T002
+
+## Verification Data Contract Row Applied
+J103 admin-ai (TECHNICAL_GUIDE §6.5):
+- Admin user: data/verification/users/admin_peopletech.json.email
+- Seed provider: litellm_verification_sandbox (provider_type=litellm, base_url=http://localhost:4000, status=active)
+- Seed model: gpt-4o-mini (model_type=chat, enabled=true, is_default=true, capabilities=["chat","streaming"], pricing={})
+- Load command: python -m app.verification_data.bootstrap --source data/verification --only admin_ai
+
+## Endpoints Smoked
+- GET /api/v1/admin/ai/providers → 401 unauth (confirmed live, auth guard works)
+- GET /api/v1/admin/ai/models → 401 unauth (confirmed live, auth guard works)
+- GET /health → 200 OK (status=ok, version=0.1.0)
+
+## Persisted Data (deferred to /verify-slice with admin session)
+- Bearer token verification deferred: no admin session available in headless tester env
+- Database seed verification: ai_providers + ai_models rows expected from --only admin_ai bootstrap
+- Full authenticated verification will occur in /verify-slice with admin_peopletech user
+
+## Tests Executed Against Real Backend
+- 47 slice-only tests (adminAiRepository, useAdminAiModels, AdminAiModelsPage) — all PASS
+- All tests run against mock httpClient (unit tests — correct for frontend feature tests)
+- Backend smoke: real HTTP hits confirm endpoints live at expected status codes

@@ -1,0 +1,72 @@
+# Browser Verification Diagnostic — P04-S01-T002
+# Generated: 2026-05-17
+
+## MCP Browser Preflight Results
+
+### Chrome DevTools MCP (primary)
+- Status: listed_but_unusable
+- Reason: stale_profile_lock (PID 9955 holds SingletonLock)
+- Doctor output: LOCK_STATUS=active_process_holds_profile
+- Isolated session: STARTED (port 9461) but Chrome DevTools MCP tool cannot connect to isolated session (MCP configured for default profile only)
+
+### claude-in-chrome MCP (fallback 1)
+- Status: listed_but_unusable
+- Reason: list_connected_browsers returned [] (no connected browsers)
+
+### browser-mcp / Agent360 (fallback 2)
+- Status: USABLE (preflight: navigate about:blank succeeded)
+- Preflight: PASS — about:blank loaded, tab_id=777662109
+
+## Frontend App Rendering Issue
+
+### Root Cause
+React app fails to mount in ALL browser contexts due to:
+  - router.tsx (line 67) imports TwoFactorPage
+  - TwoFactorPage → twoFactorHelpers.ts → imports MfaChallengeExpiredError
+  - MfaChallengeExpiredError NOT exported from features/auth/data/errors.ts
+  - This is P03-S01-T005 worktree-only state (never merged to this branch)
+  
+### Error message (confirmed via browser_execute_script):
+  "The requested module '/src/features/auth/data/errors.ts' does not provide 
+   an export named 'MfaChallengeExpiredError'"
+
+### Effect
+  - Root div stays empty (<div id="root"></div>)
+  - No React components render
+  - Cannot log in, cannot navigate to /admin/ai/models
+  - Affects ALL ports: 5173 (P04-S02-T002), 5177 (P04-S01-T002)
+  - Consistent with developer/tester notes: R-BUILD-PRE-EXISTING
+
+### Classification
+  - pre_existing: YES (documented in handoff R-BUILD-PRE-EXISTING)
+  - introduced by P04-S01-T002: NO (confirmed by developer via git stash test)
+  - in scope for P04-S01-T002 debugger: NO (requires merging P03-S01-T005 worktree state)
+  - blocks this verify-slice: YES
+
+## Backend API Verification (PASSED via curl)
+
+### Login
+  POST /api/v1/auth/sign-in
+  → 200 OK, access_token obtained, mfa_required=false
+  admin.peopletech@inditex-sandbox.com + AdminVerify2024!
+
+### Providers endpoint (authenticated)
+  GET /api/v1/admin/ai/providers
+  → 200 OK, 1 provider: litellm_verification_sandbox (status=active, type=litellm)
+
+### Models endpoint (authenticated)
+  GET /api/v1/admin/ai/models  
+  → 200 OK, 1 model: gpt-4o-mini (model_type=chat, enabled=true, is_default=true, pricing={}, latency_ms_avg=null)
+
+### Unauthenticated access
+  GET /api/v1/admin/ai/providers → 401 (auth guard works)
+  GET /api/v1/admin/ai/models → 401 (auth guard works)
+
+## Verification Data Bootstrap
+  Command: python3 -m app.verification_data.bootstrap --source data/verification --only admin_ai
+  Result: OK (inserted=1 ai_provider_credentials, inserted=1 ai_models, updated=1 admin user, updated=1 ai_provider)
+  DB rows confirmed: 1 provider + 1 model matching Verification Data Contract §9.3
+
+## Recommendation
+  BLOCKED: browser_mcp unusable due to pre-existing app mount failure (R-BUILD-PRE-EXISTING)
+  Resolution: Merge P03-S01-T005 worktree state to fix broken auth module exports, then re-run /verify-slice P04-S01-T002

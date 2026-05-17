@@ -2,10 +2,11 @@
  * Hilo People — Admin AI repository (concrete HTTP adapter).
  *
  * Slice/Phase: P04-S01-T001 — AdminDashboardPage / Phase 4.
- * Write-set anchor: §D-T001-ADMINAI-FEATURE
+ *   Extended in P04-S01-T002 (§D-T002-FEATURE-DATA): getProviders + getModels added.
+ * Write-set anchor: §D-T001-ADMINAI-FEATURE, §D-T002-FEATURE-DATA
  *
- * Responsibility: Fetches data from /api/v1/admin/usage via authFetch.
- *   Returns Result<UsageSummary, AdminAiError> — never throws to presentation layer.
+ * Responsibility: Fetches data from /api/v1/admin/* via authFetch.
+ *   Returns Result<T, AdminAiError> — never throws to presentation layer.
  *   Mirrors chatRepository.ts pattern: BEFORE/AFTER/ERROR logging, Result shape.
  *
  * Clean Architecture: this is the DATA layer for the admin-ai feature.
@@ -15,17 +16,15 @@
  *   - Uses authFetch (X-Request-ID, credentials:include, Bearer injection, single-flight 401).
  *   - Relative URL per ADR-002 (same-origin via vite proxy in dev, Nginx in prod).
  *   - NEVER hardcode http://localhost:8000 here.
- *   - PII-clean logs: no email, no model API keys, no prompt text.
- *     Log only: row count, error class name, request IDs, window dates.
+ *   - PII-clean logs (§D-T002-LOGS-PII-CLEAN): no provider names, no base_url contents,
+ *     no credential metadata, no model_ids in error logs.
+ *     Log only: provider_count, model_count, error class name, request IDs.
  *
  * Non-negotiables §logging: BEFORE + AFTER + ERROR on every public method.
- *
- * Will be extended in P04-S01-T002..T004 with: listProviders, createProvider,
- * listModels, patchModel, testModel. The barrel index.ts is designed for this reuse.
  */
 
 import type { Result } from "../../auth/domain/AuthRepository";
-import type { GetUsageRequest, UsageSummary } from "../domain/types";
+import type { GetUsageRequest, UsageSummary, AiProvider, AiModel } from "../domain/types";
 import { authFetch } from "../../auth/data/httpClient";
 import { AuthSessionExpiredError } from "../../auth/data/errors";
 import {
@@ -44,6 +43,9 @@ import { logVerbose, logWarn, logError } from "./logger";
 // ---------------------------------------------------------------------------
 
 const USAGE_URL = "/api/v1/admin/usage";
+// §D-T002-FEATURE-DATA — ADR-002 relative URLs (same-origin)
+const PROVIDERS_URL = "/api/v1/admin/ai/providers";
+const MODELS_URL = "/api/v1/admin/ai/models";
 
 // ---------------------------------------------------------------------------
 // Helper: safely parse response JSON
@@ -170,6 +172,220 @@ export async function getUsage(
     }
     const mapped = mapAdminAiError(err);
     logError("admin-ai.repo.getUsage.network_error", {
+      error_class: mapped.constructor.name,
+    });
+    return { ok: false, error: mapped };
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Public: getProviders (§D-T002-FEATURE-DATA)
+// ---------------------------------------------------------------------------
+
+/**
+ * Fetches AI provider list from GET /api/v1/admin/ai/providers.
+ *
+ * Source: TECHNICAL_GUIDE §6.2, backend ProviderOut shape. ADR-002 relative URL.
+ * Returns a Result — never throws upward.
+ *
+ * PII-clean logs (§D-T002-LOGS-PII-CLEAN): logs provider_count and request_id only.
+ * NEVER logs provider names, base_url, credential_auth_type, or created_by.
+ *
+ * Status mapping:
+ *   200 OK         → Result.ok(AiProvider[])
+ *   401            → Result.err(AdminAiAuthExpiredError)  — authFetch already retried
+ *   403            → Result.err(AdminAiForbiddenError)
+ *   5xx            → Result.err(AdminAiInternalError)
+ *   network reject → Result.err(AdminAiNetworkError)
+ *
+ * @param onAuthFailure - Called when session is fully expired.
+ * @param signal - Optional AbortSignal for cancellation.
+ * @returns Result<AiProvider[], AdminAiError>
+ */
+export async function getProviders(
+  onAuthFailure: () => void,
+  signal?: AbortSignal,
+): Promise<Result<AiProvider[], AdminAiError>> {
+  logVerbose("admin-ai.repo.getProviders.start", {});
+
+  try {
+    const response = await authFetch(
+      PROVIDERS_URL,
+      { method: "GET", signal },
+      { onAuthFailure },
+    );
+    const requestId = response.headers.get("x-request-id") ?? "unknown";
+
+    if (response.status === 401) {
+      logWarn("admin-ai.repo.getProviders.auth_expired", {
+        status: 401,
+        request_id: requestId,
+      });
+      return { ok: false, error: new AdminAiAuthExpiredError() };
+    }
+
+    if (response.status === 403) {
+      logWarn("admin-ai.repo.getProviders.forbidden", {
+        status: 403,
+        request_id: requestId,
+      });
+      return { ok: false, error: new AdminAiForbiddenError() };
+    }
+
+    if (response.status >= 500) {
+      logError("admin-ai.repo.getProviders.server_error", {
+        status: response.status,
+        request_id: requestId,
+      });
+      return { ok: false, error: new AdminAiInternalError(response.status) };
+    }
+
+    if (!response.ok) {
+      logError("admin-ai.repo.getProviders.unexpected_status", {
+        status: response.status,
+        request_id: requestId,
+      });
+      return {
+        ok: false,
+        error: new AdminAiNetworkError(`Unexpected status ${response.status}`),
+      };
+    }
+
+    const body = await _safeJson<{ data: AiProvider[]; meta?: { request_id?: string } }>(response);
+    const providers = body.data;
+
+    // PII-clean: log count only — never provider names or credentials
+    logVerbose("admin-ai.repo.getProviders.ok", {
+      provider_count: providers.length,
+      request_id: requestId,
+    });
+
+    return { ok: true, value: providers };
+  } catch (err: unknown) {
+    if (err instanceof AdminAiAuthExpiredError) return { ok: false, error: err };
+    if (err instanceof AdminAiForbiddenError) return { ok: false, error: err };
+    if (err instanceof AuthSessionExpiredError) {
+      logWarn("admin-ai.repo.getProviders.auth_expired_via_client", {});
+      return { ok: false, error: new AdminAiAuthExpiredError() };
+    }
+    const mapped = mapAdminAiError(err);
+    logError("admin-ai.repo.getProviders.network_error", {
+      error_class: mapped.constructor.name,
+    });
+    return { ok: false, error: mapped };
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Public: getModels (§D-T002-FEATURE-DATA)
+// ---------------------------------------------------------------------------
+
+/**
+ * Optional filter parameters for getModels.
+ * provider_id is future-proofed for T003 (not passed by AdminAiModelsPage v1).
+ */
+export interface GetModelsParams {
+  /** Optional UUID to filter models by provider. Not used by AdminAiModelsPage v1. */
+  provider_id?: string;
+}
+
+/**
+ * Fetches AI model list from GET /api/v1/admin/ai/models.
+ *
+ * Source: TECHNICAL_GUIDE §6.2, backend ModelOut shape. ADR-002 relative URL.
+ * Returns a Result — never throws upward.
+ *
+ * PII-clean logs (§D-T002-LOGS-PII-CLEAN): logs model_count and request_id only.
+ * NEVER logs model_ids, provider names, pricing values, or capabilities.
+ *
+ * Status mapping:
+ *   200 OK         → Result.ok(AiModel[])
+ *   401            → Result.err(AdminAiAuthExpiredError)
+ *   403            → Result.err(AdminAiForbiddenError)
+ *   5xx            → Result.err(AdminAiInternalError)
+ *   network reject → Result.err(AdminAiNetworkError)
+ *
+ * @param params - Optional filter parameters (provider_id for future T003).
+ * @param onAuthFailure - Called when session is fully expired.
+ * @param signal - Optional AbortSignal for cancellation.
+ * @returns Result<AiModel[], AdminAiError>
+ */
+export async function getModels(
+  params: GetModelsParams | undefined,
+  onAuthFailure: () => void,
+  signal?: AbortSignal,
+): Promise<Result<AiModel[], AdminAiError>> {
+  const query = params?.provider_id
+    ? new URLSearchParams({ provider_id: params.provider_id })
+    : null;
+  const url = query ? `${MODELS_URL}?${query.toString()}` : MODELS_URL;
+
+  logVerbose("admin-ai.repo.getModels.start", {
+    has_provider_filter: Boolean(params?.provider_id),
+  });
+
+  try {
+    const response = await authFetch(
+      url,
+      { method: "GET", signal },
+      { onAuthFailure },
+    );
+    const requestId = response.headers.get("x-request-id") ?? "unknown";
+
+    if (response.status === 401) {
+      logWarn("admin-ai.repo.getModels.auth_expired", {
+        status: 401,
+        request_id: requestId,
+      });
+      return { ok: false, error: new AdminAiAuthExpiredError() };
+    }
+
+    if (response.status === 403) {
+      logWarn("admin-ai.repo.getModels.forbidden", {
+        status: 403,
+        request_id: requestId,
+      });
+      return { ok: false, error: new AdminAiForbiddenError() };
+    }
+
+    if (response.status >= 500) {
+      logError("admin-ai.repo.getModels.server_error", {
+        status: response.status,
+        request_id: requestId,
+      });
+      return { ok: false, error: new AdminAiInternalError(response.status) };
+    }
+
+    if (!response.ok) {
+      logError("admin-ai.repo.getModels.unexpected_status", {
+        status: response.status,
+        request_id: requestId,
+      });
+      return {
+        ok: false,
+        error: new AdminAiNetworkError(`Unexpected status ${response.status}`),
+      };
+    }
+
+    const body = await _safeJson<{ data: AiModel[]; meta?: { request_id?: string } }>(response);
+    const models = body.data;
+
+    // PII-clean: log count only — never model_ids or pricing
+    logVerbose("admin-ai.repo.getModels.ok", {
+      model_count: models.length,
+      request_id: requestId,
+    });
+
+    return { ok: true, value: models };
+  } catch (err: unknown) {
+    if (err instanceof AdminAiAuthExpiredError) return { ok: false, error: err };
+    if (err instanceof AdminAiForbiddenError) return { ok: false, error: err };
+    if (err instanceof AuthSessionExpiredError) {
+      logWarn("admin-ai.repo.getModels.auth_expired_via_client", {});
+      return { ok: false, error: new AdminAiAuthExpiredError() };
+    }
+    const mapped = mapAdminAiError(err);
+    logError("admin-ai.repo.getModels.network_error", {
       error_class: mapped.constructor.name,
     });
     return { ok: false, error: mapped };
