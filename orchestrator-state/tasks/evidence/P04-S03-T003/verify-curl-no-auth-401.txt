@@ -1,0 +1,7 @@
+HTTP/1.1 401 Unauthorized
+date: Sun, 17 May 2026 21:03:34 GMT
+server: uvicorn
+content-length: 210
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"verify-no-auth-401-evidence"},"errors":[{"code":"AUTH_SESSION_EXPIRED","message":"Session expired or invalid credentials. Please sign in again.","field":null,"details":null}]}

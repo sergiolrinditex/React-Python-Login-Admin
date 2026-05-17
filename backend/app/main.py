@@ -49,6 +49,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 from app.admin import admin_router, admin_usage_router  # P02-S05-T001 §D-AAM; P02-S05-T002 §D-USAGE-WIRE
+from app.admin.audit import audit_router  # P04-S03-T003 WRITE_SET_DRIFT §D-AUDIT-MAIN
 from app.agents import agents_runs_router  # P02-S08-T001 WRITE_SET_DRIFT §D-AGWIRE-MAIN
 from app.api.router import api_router
 from app.auth import auth_router
@@ -95,6 +96,7 @@ app.include_router(admin_usage_router, prefix="/api/v1/admin", tags=["admin-usag
 app.include_router(agents_runs_router, prefix="/api/v1", tags=["agents"])  # P02-S08-T001 WRITE_SET_DRIFT §D-AGWIRE-MAIN
 app.include_router(rag_documents_router, prefix="/api/v1/admin/rag", tags=["admin-rag"])  # P02-S06-T001 WRITE_SET_DRIFT §D-RAGDOCS-MAIN
 app.include_router(rag_collections_router, prefix="/api/v1/admin/rag", tags=["admin-rag"])  # P02-S06-T002 WRITE_SET_DRIFT §D-RAGCOLL-MAIN
+app.include_router(audit_router, prefix="/api/v1/admin", tags=["admin-audit"])  # P04-S03-T003 WRITE_SET_DRIFT §D-AUDIT-MAIN
 
 
 # ---------------------------------------------------------------------------

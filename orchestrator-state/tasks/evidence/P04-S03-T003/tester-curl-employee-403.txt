@@ -1,0 +1,14 @@
+# Tester: ASGI curl-equivalent — employee JWT → 403
+# Date: 2026-05-17T22:24:22Z
+#
+# curl-equivalent (ASGI TestClient — employee JWT):
+# GET /api/v1/admin/audit?from=2026-05-01T00:00:00Z&to=2026-05-31T23:59:59Z
+# Headers: Authorization: Bearer <employee_token>
+#
+# Result:
+# EMPLOYEE_403: status=403 error_code=AUTH_PERMISSION_DENIED
+#
+# WARNING logged: security.permissions.require_role.denied role=people_auditor
+#   user_id=0f62a184... held_roles=['employee']
+#
+# Confirms: employee role (non-auditor) returns 403 AUTH_PERMISSION_DENIED envelope.

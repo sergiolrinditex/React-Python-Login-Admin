@@ -1,0 +1,13 @@
+# Curl smoke: no Bearer → 401 AUTH_SESSION_EXPIRED
+# NOTE: Live backend on :8000 runs from worktree P04-S02-T005 (different slice).
+# The audit endpoint is mounted in THIS worktree (P04-S03-T003) only.
+# Equivalent coverage provided by pytest ASGI tests using real DB:
+#   test_T05_no_bearer_401 PASSED — verifies 401 AUTH_SESSION_EXPIRED with real ASGI+DB
+# See evidence/pytest-verbose-false.txt and pytest-verbose-true.txt: 15/15 PASSED.
+# 
+# Manual curl equivalent (must be run with this worktree's backend):
+# curl -i 'http://localhost:8000/api/v1/admin/audit?from=2026-05-01T00:00:00Z&to=2026-05-31T23:59:59Z'
+# Expected: HTTP 401 + {"data":null,"meta":{...},"errors":[{"code":"AUTH_SESSION_EXPIRED",...}]}
+#
+# D-PERM1 note: super_admin passes require_auditor per superset rule.
+# /verify-slice will use live stack with this worktree backend for browser verification.

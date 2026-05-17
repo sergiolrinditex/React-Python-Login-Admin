@@ -1,0 +1,24 @@
+INFO:     Started server process [50817]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8003 (Press CTRL+C to quit)
+INFO:     127.0.0.1:57022 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57024 - "POST /api/v1/auth/sign-in HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57027 - "GET /api/v1/admin/audit?from=2026-04-01T00:00:00Z&to=2026-06-28T23:59:59Z&limit=3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57156 - "POST /api/v1/auth/sign-in HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57158 - "POST /api/v1/auth/sign-in HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57160 - "POST /api/v1/auth/sign-in HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57162 - "GET /api/v1/admin/audit?from=2026-04-01T00:00:00Z&to=2026-06-28T23:59:59Z&limit=5 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57164 - "GET /api/v1/admin/audit?from=2026-04-01T00:00:00Z&to=2026-06-28T23:59:59Z&limit=5 HTTP/1.1" 200 OK
+2026-05-17 23:03:34,651 app.users.deps WARNING users.deps.auth_failed reason=missing_bearer request_id=verify-no-auth-401-evidence
+INFO:     127.0.0.1:57166 - "GET /api/v1/admin/audit?from=2026-04-01T00:00:00Z&to=2026-06-28T23:59:59Z HTTP/1.1" 401 Unauthorized
+2026-05-17 23:03:34,679 app.security.permissions WARNING security.permissions.require_role.denied role=people_auditor user_id=69a51772-dbf3-4b00-a1f8-993f892343c9 held_roles=['employee'] request_id=verify-emp-403-evidence
+INFO:     127.0.0.1:57168 - "GET /api/v1/admin/audit?from=2026-04-01T00:00:00Z&to=2026-06-28T23:59:59Z HTTP/1.1" 403 Forbidden
+2026-05-17 23:03:34,714 app.admin.audit.service WARNING admin.audit.service.list_events.window_too_wide days=365.0 max=90 request_id=verify-window-too-wide-evidence
+INFO:     127.0.0.1:57170 - "GET /api/v1/admin/audit?from=2026-01-01T00:00:00Z&to=2026-12-31T23:59:59Z HTTP/1.1" 422 Unprocessable Entity
+2026-05-17 23:03:34,741 app.admin.audit.service WARNING admin.audit.service.list_events.invalid_window from=2026-06-01T00:00:00+00:00 to=2026-04-01T00:00:00+00:00 request_id=verify-window-invalid-evidence
+INFO:     127.0.0.1:57172 - "GET /api/v1/admin/audit?from=2026-06-01T00:00:00Z&to=2026-04-01T00:00:00Z HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:57174 - "GET /api/v1/admin/audit?from=2026-04-01T00:00:00Z&to=2026-06-28T23:59:59Z&action=auth.sign_in&limit=5 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57176 - "GET /api/v1/admin/audit?from=2026-04-01T00:00:00Z&to=2026-06-28T23:59:59Z&actor=fe6e41e9-3805-48f3-89d1-8bb942e39a14&limit=5 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57178 - "GET /api/v1/admin/audit?from=2026-04-01T00:00:00Z&to=2026-06-28T23:59:59Z&limit=3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57181 - "GET /api/v1/admin/audit?from=2026-04-01T00:00:00Z&to=2026-06-28T23:59:59Z&limit=3&cursor=MjAyNi0wNS0xN1QyMTowMzozMy44MjE5NjArMDA6MDB8NTkwYTViNGItMjM1YS00M2E4LTkyYTMtN2I1OWE3YzdiNjUw HTTP/1.1" 200 OK
