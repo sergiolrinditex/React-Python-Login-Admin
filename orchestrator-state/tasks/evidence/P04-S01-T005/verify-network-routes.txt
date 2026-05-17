@@ -1,0 +1,7 @@
+=== Network verification for T005 ===
+Server: http://localhost:5180 (main repo with T005 + T002 fixes)
+
+GET /auth/sign-in -> HTTP 200
+GET /auth/forgot-password -> HTTP 200
+GET /auth/2fa -> HTTP 200
+GET /admin/rag/documents -> HTTP 200

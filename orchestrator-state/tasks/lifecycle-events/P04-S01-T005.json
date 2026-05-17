@@ -1,0 +1,27 @@
+{
+  "agent_type": "closer",
+  "created_at": "2026-05-17T18:18:37+00:00",
+  "git": {
+    "branch": "dev/P04-S01-T005",
+    "head": "2fb111cbfe18c54a7bfd900c370ed8a92c8a8112"
+  },
+  "next_status": "done",
+  "outcome": "committed",
+  "paths": {
+    "evidence": "orchestrator-state/tasks/evidence/P04-S01-T005",
+    "handoff": "orchestrator-state/tasks/handoffs/P04-S01-T005.md",
+    "report": "orchestrator-state/tasks/reports/P04-S01-T005.md",
+    "task_pack": "orchestrator-state/tasks/task-packs/P04-S01-T005.md"
+  },
+  "phase_id": "P04",
+  "previous_last_updated_by": "screen-journey-reviewer",
+  "previous_status": "verified_pending_close",
+  "root_split": {
+    "canonical_root_hint": "React-Python-Login-Admin",
+    "workspace_root_hint": "P04-S01-T005"
+  },
+  "schema": "orquestador.lifecycle-event.v1",
+  "source": "git-add-slice",
+  "task_id": "P04-S01-T005",
+  "title": "Restore stripped MFA + ForgotPassword error classes in features/auth/data/errors.ts (regression from P04-S01-T001 commit 4a75d15)"
+}

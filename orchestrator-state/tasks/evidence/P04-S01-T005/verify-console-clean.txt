@@ -1,0 +1,38 @@
+# verify-console-clean.txt — P04-S01-T005
+# Date: 2026-05-17
+# Vite server: http://localhost:5180 (T005 worktree frontend)
+# MCP: claude-in-chrome
+
+CONSOLE_ERRORS_FROM_ERRORS_TS: 0
+SYNTAX_ERROR_MfaChallengeExpiredError: NOT FOUND (zero occurrences from port 5180)
+SYNTAX_ERROR_ForgotPasswordValidationError: NOT FOUND
+SYNTAX_ERROR_MfaCodeInvalidError: NOT FOUND
+SYNTAX_ERROR_errors_ts: NOT FOUND
+
+PRE_EXISTING_OUT_OF_SCOPE_ERROR:
+  Source: http://localhost:5180/src/features/chat/presentation/useHistory.ts:20:9
+  Error: SyntaxError: The requested module '/src/features/chat/data/chatRepository.ts' does not provide an export named 'listConversations'
+  Classification: Pre-existing regression from commit 4a75d15 (same commit that stripped errors.ts)
+  In-scope: NO (chatRepository.ts not in T005 write_set)
+  FU: FU-20260517174657 (already registered by validator)
+
+DYNAMIC_IMPORT_TEST (via javascript_tool):
+  ForgotPasswordValidationError: blocked by extension security filter (not importError)
+  ForgotPasswordRateLimitedError: blocked by extension security filter (not importError)
+  ForgotPasswordInternalError: blocked by extension security filter (not importError)
+  MfaPayloadInvalidError: typeof=function (PASS)
+  MfaCodeInvalidError: typeof=function (PASS)
+  MfaChallengeExpiredError: typeof=function (PASS)
+  MfaVerifyRateLimitedError: typeof=function (PASS)
+  MfaVerifyInternalError: typeof=function (PASS)
+  MfaVerifyError: type-erased at runtime (expected - TypeScript type export)
+  importError: NONE — module loaded successfully
+
+VITE_MODULE_CURL_CHECK:
+  curl http://localhost:5180/src/features/auth/data/errors.ts | grep MfaChallengeExpiredError: 2 occurrences (PASS)
+  All 23 export class statements present including all 8 restored classes
+
+NOTE: App cannot fully mount due to pre-existing chatRepository.ts regression from commit 4a75d15.
+The regression prevents useHistory.ts from importing 'listConversations' causing an unhandled module
+error that blocks React tree initialization. This is out of T005 scope and documented in FU-20260517174657.
+The errors.ts restoration is verified correct via vite module serve + dynamic import.

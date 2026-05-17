@@ -1,0 +1,12 @@
+
+> hilo-people-frontend@0.1.0 lint
+> eslint src
+
+sh: eslint: command not found
+npm error Lifecycle script `lint` failed with error:
+npm error code 127
+npm error path /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P04-S01-T005/frontend
+npm error workspace hilo-people-frontend@0.1.0
+npm error location /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P04-S01-T005/frontend
+npm error command failed
+npm error command sh -c eslint src

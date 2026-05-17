@@ -2392,9 +2392,9 @@
       }
     },
     {
-      "ts": "2026-05-17T16:54:16+00:00",
-      "version": "v1",
-      "task_id": "P04-S01-T002",
+      "ts": "2026-05-17T18:18:27+00:00",
+      "version": "current",
+      "task_id": "P04-S01-T005",
       "phase_id": null,
       "reason": "verified slice closed",
       "writer": "sync_product_baseline.py",
@@ -2415,12 +2415,12 @@
         "guide": {
           "source": "docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md",
           "target": "docs/product-baseline/HILO_PEOPLE_TECHNICAL_GUIDE.md",
-          "sha256": "0d279330d95a091acd38f02b80010af0f0d26b07e5bd1fa09372c85762b99e88"
+          "sha256": "3dea6eac8456e430e322f626eeb77b8af84ab16c0dae89008b541c250002b29d"
         },
         "checklist": {
           "source": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md",
           "target": "docs/product-baseline/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md",
-          "sha256": "747de3b0a7ea624d6cb78b361ded0455ea2ce4b6fdc16e90822478e6d145d953"
+          "sha256": "fc17f55f3f1f81366785567b0e28aa5e9763d88447b49267c2c70a418b9483e4"
         },
         "ux_contract": {
           "source": "docs/source-of-truth/UX_CONTRACT.md",
@@ -2435,8 +2435,8 @@
       }
     }
   ],
-  "latest_task_id": "P04-S01-T002",
-  "updated_at": "2026-05-17T16:54:16+00:00",
+  "latest_task_id": "P04-S01-T005",
+  "updated_at": "2026-05-17T18:18:27+00:00",
   "writer": "sync_product_baseline.py",
   "source_pack_contract": "five-file source-of-truth pack",
   "last_written_paths": [

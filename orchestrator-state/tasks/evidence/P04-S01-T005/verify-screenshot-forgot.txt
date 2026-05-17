@@ -1,0 +1,9 @@
+Screenshot: /auth/forgot-password
+URL: http://localhost:5180/auth/forgot-password
+Result: Route NOT in router.tsx (forgot-password page not routed in current P04-S01 branch).
+        App redirects to /auth/sign-in (protected by Route 404 → / → sign-in).
+        This is a pre-existing condition from AuthRepository.ts regression (same commit 4a75d15).
+        The ForgotPasswordPage file exists and compiles, but is not registered as a route yet.
+        HTTP 200 from vite server (react-router handles navigation client-side).
+        This is OUT OF SCOPE for T005 (T005 write_set = errors.ts only).
+        Covered by FU-20260517174657.
