@@ -1,0 +1,52 @@
+## Frontend tests — P04-S02-T004
+## Command: cd frontend && npx vitest run
+## Timestamp: 2026-05-17T22:25:00Z (after debugger cycle 2)
+
+## SUMMARY:
+##   Test Files  4 failed | 37 passed (41)
+##   Tests       26 failed | 425 passed (451)
+##   Duration    ~13s
+
+## FAILING TEST FILES (all pre-existing, P04-S01-T005 scope):
+##   src/pages/auth/__tests__/ForgotPasswordPage.test.tsx  — 11 failures
+##   src/pages/auth/__tests__/ResetSentPage.test.tsx       — 4 failures
+##   src/pages/auth/__tests__/TwoFactorPage.test.tsx       — 9 failures
+##   src/pages/chat/__tests__/HistoryPage.test.tsx         — 3 failures (P02 empty, P08 i18n, P09 aria-label)
+## NONE of the 26 failures are in T004 MCP scope.
+
+## T004-SPECIFIC TESTS (run isolated):
+## Command: npx vitest run src/pages/admin/mcp/__tests__/McpWizardPage.test.tsx src/features/mcp/__tests__/useCreateMcpServer.test.tsx src/features/mcp/__tests__/mcpRepository.test.ts
+##
+##   Test Files  3 passed (3)
+##   Tests       33 passed (33)  — 18 repo + 4 hook + 11 page
+##   Duration    ~1.7s
+##
+## Details:
+##   mcpRepository.test.ts:
+##     R01-R09: listServers (pre-existing T003 tests) — all pass
+##     R10-R18: createServer (201, 400-EndpointNotAllowed, 422-Validation, 429-RateLimited,
+##               500, network, 401-AuthExpired, 403-Forbidden, auth=api_key) — all 9 pass
+##
+##   useCreateMcpServer.test.tsx:
+##     C01: mutate 201 → invalidates ['admin','mcp','servers'] — pass
+##     C02: mutate 422 → McpValidationError with fieldErrors — pass
+##     C03: mutate 500 → McpServerError — pass
+##     C04: result.data has no secret/refresh_token — pass
+##
+##   McpWizardPage.test.tsx:
+##     W01: renders 4 visible fields — pass
+##     W02: loading state (aria-busy + Conectando…) — pass
+##     W03: success block renders — pass
+##     W04: error_network inline block — pass
+##     W05: Zod inline validation (Nombre obligatorio) — pass
+##     W06: permission_denied block renders — pass
+##     W07: secret type="password" when authType=api_key — pass
+##     W08: secret NOT rendered when authType=none — pass
+##     W09: oauth2 → secret + refreshToken; api_key → secret only — pass
+##     W10: secret NEVER in document.body.textContent — pass
+##     W11: aria-labelledby on form, accessible submit — pass
+
+## VERBOSE LOGGING:
+##   VERBOSE=true:  createServer.start (transport,auth_type), createServer.ok appear — BEFORE/AFTER confirmed
+##   VERBOSE=false: only logWarn/logError (error paths, status codes) — no start/ok lines
+##   Secret never appears in any log (only auth_type logged)

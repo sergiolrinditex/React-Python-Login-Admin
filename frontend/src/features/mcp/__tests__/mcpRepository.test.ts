@@ -2,12 +2,14 @@
  * Hilo People — mcpRepository tests.
  *
  * Slice/Phase: P04-S02-T003 — McpServersPage / Phase 4.
+ *   Updated: P04-S02-T004 — McpWizardPage / Phase 4.
  *
  * Responsibility: Unit tests for the MCP HTTP repository adapter.
- *   Tests the Result<T,E> contract for both listServers and syncServer.
+ *   Tests the Result<T,E> contract for listServers, syncServer, and createServer.
  *   authFetch is mocked at the module boundary (HTTP boundary, not business logic).
  *
  * §D-T003-TESTS-REPO (P04-S02-T003 task pack §5)
+ * §D-T004-TESTS-REPO (P04-S02-T004 task pack §6)
  *   R01 listServers 200 → Result.ok array
  *   R02 listServers 401 → McpAuthExpiredError
  *   R03 listServers 403 → McpForbiddenError
@@ -17,6 +19,15 @@
  *   R07 syncServer 404 → McpServerNotFoundError
  *   R08 syncServer 502 → McpServerUnreachableError
  *   R09 syncServer 429 → McpRateLimitedError
+ *   R10 createServer 201 → Result.ok McpServer (has_credential false)
+ *   R11 createServer 201 → Result.ok McpServer (has_credential true, api_key)
+ *   R12 createServer 400 → McpEndpointNotAllowedError
+ *   R13 createServer 422 → McpValidationError with fieldErrors map
+ *   R14 createServer 429 → McpRateLimitedError
+ *   R15 createServer 500 → McpServerError
+ *   R16 createServer network failure → McpNetworkError
+ *   R17 createServer 401 → McpAuthExpiredError
+ *   R18 createServer 403 → McpForbiddenError
  */
 
 import { describe, it, expect, vi, beforeEach } from "vitest";
@@ -28,6 +39,8 @@ import {
   McpRateLimitedError,
   McpServerError,
   McpNetworkError,
+  McpValidationError,
+  McpEndpointNotAllowedError,
 } from "../data/errors";
 
 // ---------------------------------------------------------------------------
@@ -39,7 +52,7 @@ vi.mock("../../auth/data/httpClient", () => ({
 }));
 
 import { authFetch } from "../../auth/data/httpClient";
-import { listServers, syncServer } from "../data/mcpRepository";
+import { listServers, syncServer, createServer } from "../data/mcpRepository";
 
 const mockAuthFetch = vi.mocked(authFetch);
 
@@ -223,6 +236,194 @@ describe("mcpRepository.syncServer", () => {
     if (!result.ok) {
       expect(result.error).toBeInstanceOf(McpRateLimitedError);
       expect(result.error.code).toBe("MCP_RATE_LIMITED");
+    }
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Tests — createServer — §D-T004-TESTS-REPO
+// ---------------------------------------------------------------------------
+
+/** Fixture: minimal create request (auth.type = none, no credential) */
+const CREATE_REQ_NONE = {
+  name: "sandbox_writeonly",
+  transport: "http" as const,
+  endpoint: "http://localhost:8080/mcp",
+  auth: { type: "none" as const, secret: null, refresh_token: null },
+};
+
+/** Fixture: create request with api_key auth */
+const CREATE_REQ_API_KEY = {
+  name: "sandbox_apikey",
+  transport: "http" as const,
+  endpoint: "https://api.example.com/mcp",
+  auth: { type: "api_key" as const, secret: "vt-sandbox-key", refresh_token: null },
+};
+
+/** Fixture: 201 response body — no credential */
+const MOCK_CREATED_SERVER_NONE = {
+  id: "server-uuid-new",
+  name: "sandbox_writeonly",
+  transport: "http",
+  endpoint: "http://localhost:8080/mcp",
+  status: "draft",
+  last_sync_at: null,
+  created_by: "user-uuid",
+  has_credential: false,
+  auth_type: null,
+};
+
+/** Fixture: 201 response body — has_credential true */
+const MOCK_CREATED_SERVER_APIKEY = {
+  id: "server-uuid-apikey",
+  name: "sandbox_apikey",
+  transport: "http",
+  endpoint: "https://api.example.com/mcp",
+  status: "draft",
+  last_sync_at: null,
+  created_by: "user-uuid",
+  has_credential: true,
+  auth_type: "api_key",
+};
+
+describe("mcpRepository.createServer", () => {
+  const onAuthFailure = vi.fn();
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("R10 — 201 (auth=none) → Result.ok McpServer (has_credential=false)", async () => {
+    mockAuthFetch.mockResolvedValueOnce(
+      makeResponse(201, { data: MOCK_CREATED_SERVER_NONE, meta: { request_id: "r10" } }),
+    );
+
+    const result = await createServer(CREATE_REQ_NONE, onAuthFailure);
+
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.value.id).toBe("server-uuid-new");
+      expect(result.value.status).toBe("draft");
+      expect(result.value.has_credential).toBe(false);
+      expect(result.value.auth_type).toBeNull();
+    }
+  });
+
+  it("R11 — 201 (auth=api_key) → Result.ok McpServer (has_credential=true)", async () => {
+    mockAuthFetch.mockResolvedValueOnce(
+      makeResponse(201, { data: MOCK_CREATED_SERVER_APIKEY, meta: { request_id: "r11" } }),
+    );
+
+    const result = await createServer(CREATE_REQ_API_KEY, onAuthFailure);
+
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.value.has_credential).toBe(true);
+      expect(result.value.auth_type).toBe("api_key");
+      // Verify secret is NOT in the response value
+      expect(result.value).not.toHaveProperty("secret");
+    }
+  });
+
+  it("R12 — 400 → McpEndpointNotAllowedError (§D-T004-400-UNIT-ONLY)", async () => {
+    mockAuthFetch.mockResolvedValueOnce(
+      makeResponse(400, {
+        data: null,
+        meta: { request_id: "r12" },
+        errors: [{ code: "MCP_ENDPOINT_NOT_ALLOWED", message: "Endpoint not allowed" }],
+      }),
+    );
+
+    const result = await createServer(CREATE_REQ_NONE, onAuthFailure);
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toBeInstanceOf(McpEndpointNotAllowedError);
+      expect(result.error.code).toBe("MCP_ENDPOINT_NOT_ALLOWED");
+    }
+  });
+
+  it("R13 — 422 → McpValidationError with fieldErrors (§D-T004-422-PARSE)", async () => {
+    mockAuthFetch.mockResolvedValueOnce(
+      makeResponse(422, {
+        detail: [
+          { loc: ["body", "auth", "secret"], msg: "Field required", type: "missing" },
+          { loc: ["body", "name"], msg: "ensure this value has at least 1 characters", type: "value_error" },
+        ],
+      }),
+    );
+
+    const result = await createServer(CREATE_REQ_NONE, onAuthFailure);
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toBeInstanceOf(McpValidationError);
+      const validationErr = result.error as McpValidationError;
+      expect(validationErr.code).toBe("MCP_VALIDATION_ERROR");
+      expect(validationErr.fieldErrors["secret"]).toBe("Field required");
+      expect(validationErr.fieldErrors["name"]).toBeDefined();
+    }
+  });
+
+  it("R14 — 429 → McpRateLimitedError", async () => {
+    mockAuthFetch.mockResolvedValueOnce(makeResponse(429, {}));
+
+    const result = await createServer(CREATE_REQ_NONE, onAuthFailure);
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toBeInstanceOf(McpRateLimitedError);
+      expect(result.error.code).toBe("MCP_RATE_LIMITED");
+    }
+  });
+
+  it("R15 — 500 → McpServerError", async () => {
+    mockAuthFetch.mockResolvedValueOnce(makeResponse(500, {}));
+
+    const result = await createServer(CREATE_REQ_NONE, onAuthFailure);
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toBeInstanceOf(McpServerError);
+      expect((result.error as McpServerError).status).toBe(500);
+    }
+  });
+
+  it("R16 — network failure → McpNetworkError", async () => {
+    mockAuthFetch.mockImplementationOnce(() => {
+      return Promise.reject(new TypeError("Failed to fetch"));
+    });
+
+    const result = await createServer(CREATE_REQ_NONE, onAuthFailure);
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toBeInstanceOf(McpNetworkError);
+      expect(result.error.code).toBe("MCP_NETWORK_ERROR");
+    }
+  });
+
+  it("R17 — 401 → McpAuthExpiredError", async () => {
+    mockAuthFetch.mockResolvedValueOnce(makeResponse(401, {}));
+
+    const result = await createServer(CREATE_REQ_NONE, onAuthFailure);
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toBeInstanceOf(McpAuthExpiredError);
+      expect(result.error.code).toBe("MCP_AUTH_EXPIRED");
+    }
+  });
+
+  it("R18 — 403 → McpForbiddenError", async () => {
+    mockAuthFetch.mockResolvedValueOnce(makeResponse(403, {}));
+
+    const result = await createServer(CREATE_REQ_NONE, onAuthFailure);
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toBeInstanceOf(McpForbiddenError);
+      expect(result.error.code).toBe("MCP_FORBIDDEN");
     }
   });
 });

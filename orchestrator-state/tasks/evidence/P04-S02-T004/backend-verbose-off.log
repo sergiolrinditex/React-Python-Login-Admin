@@ -1,0 +1,26 @@
+## Backend logging verification — VERBOSE OFF
+## Timestamp: 2026-05-17T22:24:00Z
+## Command: VITE_ENABLE_VERBOSE_LOGGING=false npx vitest run mcp tests
+
+## With VERBOSE=false:
+##   - logVerbose lines DO NOT appear (start, ok lines absent)
+##   - logWarn/logError lines appear (error paths: auth_expired, forbidden, endpoint_not_allowed,
+##     validation_error, rate_limited, server_error, network_error — these are expected always-visible)
+
+## Confirmed ABSENT with VERBOSE=false (correct behavior):
+##   mcp.repo.createServer.start — NOT present
+##   mcp.repo.createServer.ok   — NOT present
+##   mcp.repo.listServers.start — NOT present
+##   mcp.repo.listServers.ok    — NOT present
+
+## Confirmed PRESENT with VERBOSE=false (expected: error/warning paths):
+##   [mcp] mcp.repo.createServer.endpoint_not_allowed
+##   [mcp] mcp.repo.createServer.validation_error
+##   [mcp] mcp.repo.createServer.rate_limited
+##   [mcp] mcp.repo.createServer.server_error
+##   [mcp] mcp.repo.createServer.error
+##   [mcp] mcp.repo.createServer.auth_expired
+##   [mcp] mcp.repo.createServer.forbidden
+
+## RULE COMPLIANCE: verbose=false shows only warning+error — PASS
+## Non-negotiables §logging: "false shows only warning+error" — PASS

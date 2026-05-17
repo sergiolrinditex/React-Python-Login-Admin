@@ -1,0 +1,14 @@
+Front console log evidence - P04-S02-T004
+MCP session: claude-in-chrome tab 777662329
+Timestamp: 2026-05-17T23:05:00Z
+
+Filtered for: mcp|wizard|createServer|secret|error
+
+Results:
+  [EXCEPTION] (browser extension) "A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received"
+  → All 6 exceptions are from browser extensions (chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/), NOT from the app
+  → Zero app-level console errors during wizard operation
+  → App verbose logs (mcp/wizard) not captured in browser console because VITE_ENABLE_VERBOSE_LOGGING is not set to true in dev server env (correct behavior)
+  → Tester's verbose-on log confirms: createServer.start logs transport+auth_type only; createServer.ok logs server_id+has_credential+auth_type+request_id; secret NEVER in any log line
+
+Conclusion: No app-level console errors. Secret never appears in console logs.

@@ -8,18 +8,20 @@
  *   No imports of external libs, no React, no fetch calls here.
  *
  * §D-T003-DOMAIN-PORT (P04-S02-T003 task pack §5)
+ * §D-T004-DOMAIN-PORT (P04-S02-T004 task pack §6) — added createServer method.
+ *   Slice: P04-S02-T004 — McpWizardPage / Phase 4.
  *
  * Clean Architecture: presentation/ depends on this port, NOT on mcpRepository.ts
  *   directly. This decouples the UI from fetch implementation details.
  */
 
-import type { Result, McpServer, McpSyncResult } from "./types";
+import type { Result, McpServer, McpSyncResult, CreateServerRequest } from "./types";
 import type { McpError } from "../data/errors";
 
 /**
  * Repository port for MCP server operations.
  *
- * Both methods return Result<T, McpError> — never throw to the presentation layer.
+ * All methods return Result<T, McpError> — never throw to the presentation layer.
  */
 export interface IMcpRepository {
   /**
@@ -39,4 +41,19 @@ export interface IMcpRepository {
    *   or a typed McpError.
    */
   syncServer(id: string, onAuthFailure: () => void): Promise<Result<McpSyncResult, McpError>>;
+
+  /**
+   * Register a new MCP server.
+   *
+   * POST /api/v1/admin/ai/mcp/servers — returns the created ServerOut on 201.
+   * Handles 400 MCP_ENDPOINT_NOT_ALLOWED, 422 Pydantic field errors, 429 rate limit,
+   * 401 auth expired, 403 forbidden, and 5xx server errors.
+   *
+   * §D-T004-DOMAIN-PORT
+   *
+   * @param req - Wire DTO matching CreateServerRequest (domain type).
+   * @param onAuthFailure - Called when session expires and cannot be refreshed.
+   * @returns Result with the created McpServer or a typed McpError.
+   */
+  createServer(req: CreateServerRequest, onAuthFailure: () => void): Promise<Result<McpServer, McpError>>;
 }

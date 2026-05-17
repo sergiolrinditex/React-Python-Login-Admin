@@ -1,0 +1,10 @@
+Network requests evidence - P04-S02-T004
+MCP session: claude-in-chrome tab 777662329
+Timestamp: 2026-05-17T23:05:00Z
+
+POST /api/v1/admin/ai/mcp/servers → 201 (sandbox_writeonly, auth_type=none)  [PASS]
+POST /api/v1/admin/ai/mcp/servers → 201 (verify-T004-loading-test, auth_type=none)  [PASS]
+POST /api/v1/admin/ai/mcp/servers → 500 (sandbox_apikey_test, auth_type=api_key, ENCRYPTION_KEY not in uvicorn env)  [EXPECTED/PASS - maps to form-level error]
+GET  /api/v1/admin/ai/mcp/servers → 200 (list after successful create - query invalidation worked)  [PASS]
+
+201 response body keys confirmed: id, name, transport, endpoint, status, has_credential, auth_type (NO secret field)

@@ -1,0 +1,16 @@
+## Curl test: POST /api/v1/admin/ai/mcp/servers — 422 stdio transport rejected
+## Timestamp: 2026-05-17T22:22:00Z
+
+curl -sS -X POST http://localhost:8000/api/v1/admin/ai/mcp/servers \
+  -H "Authorization: Bearer <JWT>" \
+  -H 'Content-Type: application/json' \
+  -d '{"name":"x","transport":"stdio","endpoint":"http://localhost:8080/mcp","auth":{"type":"none","secret":null,"refresh_token":null}}'
+
+RESPONSE:
+{"detail":[{"type":"literal_error","loc":["body","transport"],"msg":"Input should be 'http' or 'sse'","input":"stdio","ctx":{"expected":"'http' or 'sse'"}}]}
+HTTP_STATUS=422
+
+ASSERTIONS:
+- status=422: PASS
+- stdio transport rejected by Pydantic: PASS
+- frontend correctly does NOT offer stdio in UI: PASS (instrucciones §3.1 line 99)

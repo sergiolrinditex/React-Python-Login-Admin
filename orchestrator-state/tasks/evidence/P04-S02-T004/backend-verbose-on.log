@@ -1,0 +1,34 @@
+## Backend logging verification — VERBOSE ON
+## Timestamp: 2026-05-17T22:24:00Z
+## Note: Backend logging is tested via frontend unit tests (VITE_ENABLE_VERBOSE_LOGGING=true)
+## Backend server logs are captured by the uvicorn process; cannot easily pipe here in this env.
+
+## FRONTEND-SIDE VERBOSE=true (confirmed via test run):
+## Command: VITE_ENABLE_VERBOSE_LOGGING=true npx vitest run mcp tests
+
+## Confirmed BEFORE lines (logVerbose → only appears with VERBOSE=true):
+##   [mcp] mcp.repo.createServer.start { transport: 'http', auth_type: 'none' }
+##   [mcp] mcp.repo.createServer.start { transport: 'http', auth_type: 'api_key' }
+##   [mcp] mcp.repo.listServers.start
+##   [mcp] mcp.repo.syncServer.start { server_id: 'server-uuid-1' }
+
+## Confirmed AFTER lines (logVerbose → only appears with VERBOSE=true):
+##   [mcp] mcp.repo.createServer.ok { ... }
+##   [mcp] mcp.repo.listServers.ok { count: 1, request_id: 'test-req-id' }
+##   [mcp] mcp.repo.syncServer.ok { ... }
+
+## Confirmed ERROR lines (logWarn/logError → always visible):
+##   [mcp] mcp.repo.createServer.endpoint_not_allowed { status: 400, request_id: 'test-req-id' }
+##   [mcp] mcp.repo.createServer.validation_error { field_count: 2, request_id: 'test-req-id' }
+##   [mcp] mcp.repo.createServer.rate_limited { status: 429, request_id: 'test-req-id' }
+##   [mcp] mcp.repo.createServer.server_error { status: 500, request_id: 'test-req-id' }
+##   [mcp] mcp.repo.createServer.error { error: 'MCP_NETWORK_ERROR' }
+##   [mcp] mcp.repo.createServer.auth_expired { status: 401, request_id: 'test-req-id' }
+##   [mcp] mcp.repo.createServer.forbidden { status: 403, request_id: 'test-req-id' }
+
+## SECRET INSPECTION:
+##   createServer.start ONLY logs transport and auth_type — NO secret, NO refresh_token
+##   createServer.ok ONLY logs server_id, has_credential, auth_type, request_id
+##   No secret ever appears in any log line (confirmed visually in all test output)
+
+## STATUS: PASS

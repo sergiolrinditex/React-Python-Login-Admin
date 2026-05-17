@@ -34,10 +34,54 @@
       "sync_internal": "Internal server error"
     },
     "notes": {
-      "risk_per_tool": "Risk level is managed per tool in P04-S02-T004."
+      "risk_per_tool": "Risk level is managed per tool."
     },
     "tools": {
       "none": "—"
+    }
+  },
+  "wizard": {
+    "title": "Connect MCP server",
+    "subtitle": "Register an external MCP server. Tools will be disabled until you approve them.",
+    "fields": {
+      "name": "Name",
+      "transport": "Transport",
+      "transport.http": "HTTP",
+      "transport.sse": "SSE",
+      "endpoint": "Endpoint",
+      "authType": "Auth type",
+      "authType.none": "None",
+      "authType.api_key": "API key",
+      "authType.bearer": "Bearer",
+      "authType.oauth2": "OAuth2",
+      "secret": "Secret",
+      "refreshToken": "Refresh token"
+    },
+    "actions": {
+      "submit": "Connect",
+      "submitting": "Connecting…",
+      "cancel": "Cancel"
+    },
+    "errors": {
+      "nameRequired": "Name is required",
+      "nameMax": "Max 200 characters",
+      "endpointRequired": "Endpoint is required",
+      "endpointInvalid": "Must start with http://, https:// or sse://",
+      "endpointNotAllowed": "This endpoint is not in the authorised allowlist",
+      "secretRequired": "A secret is required for this authentication type",
+      "forbidden": "You do not have permission to register MCP servers",
+      "network": "Network error. Please try again.",
+      "rateLimited": "Too many attempts. Please wait a moment.",
+      "serverError": "Server error. Please try again."
+    },
+    "success": {
+      "title": "Server connected",
+      "body": "Tools will be discovered on the next sync."
+    },
+    "permissionDenied": {
+      "title": "Access denied",
+      "body": "You do not have permission to register MCP servers.",
+      "back": "Back to MCP servers"
     }
   }
 }

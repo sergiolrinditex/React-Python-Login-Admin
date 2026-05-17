@@ -1,0 +1,32 @@
+## Verification Data Contract — P04-S02-T004
+## Timestamp: 2026-05-17T22:23:00Z
+
+## CONTRACT ROW USED:
+## J105 mcp-agents | admin | MCP sandbox autorizado HTTP read-only, agente 'people_helper' |
+##   python -m app.verification_data.bootstrap --source data/verification --only mcp_agents |
+##   delete mcp_servers/tools/bindings/runs |
+##   J105, P02-S07, P02-S08, P04-S02
+
+## ADMIN USER:
+## admin.peopletech@inditex-sandbox.com (from data/verification/users/admin_peopletech.json)
+## password_plain: AdminVerify2024!
+## Note: people_admin role was manually assigned (INSERT INTO user_roles) for tester environment
+##   because bootstrap --only auth loaded user but not role assignment.
+##   This is a tester environment setup issue, not a product defect.
+
+## BOOTSTRAP COMMANDS RUN:
+## 1. cd backend && DATABASE_URL=postgresql+asyncpg://hilo:hilo@localhost:5432/hilo_dev python3 -m app.verification_data.bootstrap --source ../data/verification --only mcp_agents
+##    Result: {"status": "ok", "groups": [{"group": "mcp_agents", "status": "ok", "inserted": 0, "updated": 1, ...}]}
+## 2. cd backend && DATABASE_URL=postgresql+asyncpg://hilo:hilo@localhost:5432/hilo_dev python3 -m app.verification_data.bootstrap --source ../data/verification --only auth
+##    Result: {"status": "ok", "groups": [{"group": "auth", "status": "ok", "inserted": 0, "updated": 2, ...}]}
+
+## REAL DATA CREATED DURING TESTER RUN:
+## - tester_sandbox_none: mcp_servers row (id=b8520fd0, transport=http, status=draft, auth_type=null)
+## - sandbox_readonly: pre-existing seed server (status=active, from mcp_agents bootstrap)
+
+## CURL CHECKS RUN:
+## 1. POST auth=none → 201, status=draft, has_credential=false — PASS
+## 2. POST auth=api_key, secret="vt-sandbox-key" → 500 (ENCRYPTION_KEY not in uvicorn env) — env issue
+## 3. POST transport=stdio → 422 (Pydantic literal_error) — PASS
+## 4. POST no auth header → 401 — PASS
+## 5. POST name missing → 422 — PASS

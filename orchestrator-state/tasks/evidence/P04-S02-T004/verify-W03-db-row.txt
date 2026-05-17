@@ -1,0 +1,9 @@
+802289fe-934c-45f5-991c-a4903eb5cc38|sandbox_readonly|http|http://localhost:8080/mcp|active
+31f26fd7-2897-4396-81aa-6cf075d5b303|sandbox_writeonly|http|http://localhost:8080/mcp|draft
+23343f7f-aede-47fd-b20a-83b0298df9a2|verify-T004-loading-test|http|http://localhost:8080/mcp|draft
+mcp_credentials count for auth=none servers:
+0
+audit_log most recent:
+auth.refresh|user|fe6e41e9-3805-48f3-89d1-8bb942e39a14|{"ip": "127.0.0.1", "reason": "revoked", "outcome": "failure", "request_id": "babfae6a-346d-4b23-8faf-b1949df3aedf", "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36"}
+auth.refresh|user|fe6e41e9-3805-48f3-89d1-8bb942e39a14|{"ip": "127.0.0.1", "reason": "revoked", "outcome": "failure", "request_id": "6bafc3a9-3ce0-4047-87e8-6589a01bb988", "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36"}
+auth.refresh|user|fe6e41e9-3805-48f3-89d1-8bb942e39a14|{"ip": "127.0.0.1", "reason": "revoked", "outcome": "failure", "request_id": "f579376f-42fb-4f55-9043-a2771d30b4e5", "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36"}
