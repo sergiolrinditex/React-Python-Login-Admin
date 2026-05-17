@@ -12,12 +12,13 @@ import argparse
 import datetime as dt
 import hashlib
 import json
+import os
 import shutil
 import sys
 from dataclasses import dataclass
 from pathlib import Path
 
-DEFAULT_THRESHOLD_LINES = 200
+DEFAULT_THRESHOLD_LINES = 250
 
 KEYWORDS_BY_AGENT: dict[str, list[str]] = {
     "developer": [
@@ -197,35 +198,78 @@ def compact_text(agent: str, original: str, archive_rel: str, original_lines: in
     return "\n".join(out)
 
 
+def _acquire_lock(lock_path: Path) -> int | None:
+    try:
+        fd = os.open(str(lock_path), os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+    except FileExistsError:
+        return None
+    os.write(fd, f"pid={os.getpid()}\n".encode("utf-8"))
+    return fd
+
+
 def compact(candidate: Candidate, timestamp: str) -> dict[str, object]:
-    original_bytes = candidate.path.read_bytes()
-    original_text = original_bytes.decode("utf-8", errors="replace")
-    archive_dir = candidate.path.parent / "archive"
-    archive_dir.mkdir(parents=True, exist_ok=True)
-    archive = archive_dir / f"MEMORY.full.{timestamp}.md"
-    if archive.exists():
-        raise FileExistsError(f"archive already exists: {archive}")
-    shutil.copy2(candidate.path, archive)
-    if archive.read_bytes() != original_bytes:
-        raise RuntimeError(f"archive copy mismatch for {candidate.path}")
-    archive_rel = archive.relative_to(repo_root()).as_posix()
-    compacted = compact_text(
-        candidate.agent,
-        original_text,
-        archive_rel,
-        candidate.line_count,
-        sha256(archive),
-        timestamp,
-    )
-    candidate.path.write_text(compacted, encoding="utf-8")
-    return {
-        "agent": candidate.agent,
-        "memory": candidate.path.relative_to(repo_root()).as_posix(),
-        "archive": archive_rel,
-        "original_lines": candidate.line_count,
-        "new_lines": count_lines(candidate.path),
-        "original_sha256": sha256(archive),
-    }
+    lock_path = candidate.path.parent / ".MEMORY.compact.lock"
+    fd = _acquire_lock(lock_path)
+    if fd is None:
+        return {
+            "agent": candidate.agent,
+            "memory": candidate.path.relative_to(repo_root()).as_posix(),
+            "skipped": "locked",
+        }
+
+    try:
+        original_bytes = candidate.path.read_bytes()
+        original_text = original_bytes.decode("utf-8", errors="replace")
+        original_lines = len(original_text.splitlines())
+        archive_dir = candidate.path.parent / "archive"
+        archive_dir.mkdir(parents=True, exist_ok=True)
+        archive = archive_dir / f"MEMORY.full.{timestamp}.md"
+        if archive.exists():
+            raise FileExistsError(f"archive already exists: {archive}")
+
+        # Write the archive first, then ensure the live memory did not change
+        # before replacing it. Agents do not share this lock, so the SHA check
+        # prevents compaction from overwriting a concurrent append.
+        archive.write_bytes(original_bytes)
+        if archive.read_bytes() != original_bytes:
+            raise RuntimeError(f"archive copy mismatch for {candidate.path}")
+        if candidate.path.read_bytes() != original_bytes:
+            archive.unlink(missing_ok=True)
+            return {
+                "agent": candidate.agent,
+                "memory": candidate.path.relative_to(repo_root()).as_posix(),
+                "skipped": "changed_during_compaction",
+            }
+
+        archive_rel = archive.relative_to(repo_root()).as_posix()
+        original_sha = sha256(archive)
+        compacted = compact_text(
+            candidate.agent,
+            original_text,
+            archive_rel,
+            original_lines,
+            original_sha,
+            timestamp,
+        )
+        tmp = candidate.path.with_name("MEMORY.md.compact.tmp")
+        tmp.write_text(compacted, encoding="utf-8")
+        os.replace(tmp, candidate.path)
+        return {
+            "agent": candidate.agent,
+            "memory": candidate.path.relative_to(repo_root()).as_posix(),
+            "archive": archive_rel,
+            "original_lines": original_lines,
+            "new_lines": count_lines(candidate.path),
+            "original_sha256": original_sha,
+        }
+    finally:
+        try:
+            os.close(fd)
+        finally:
+            try:
+                lock_path.unlink()
+            except FileNotFoundError:
+                pass
 
 
 def parse_args(argv: list[str]) -> argparse.Namespace:
@@ -236,6 +280,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument("--threshold-lines", type=int, default=DEFAULT_THRESHOLD_LINES)
     parser.add_argument("--timestamp", help="override timestamp for deterministic tests")
     parser.add_argument("--json", action="store_true", help="emit machine-readable summary")
+    parser.add_argument("--quiet", action="store_true", help="suppress human output when nothing actionable is needed")
     return parser.parse_args(argv)
 
 
@@ -253,16 +298,26 @@ def main(argv: list[str] | None = None) -> int:
         "found": [c.__dict__ | {"path": c.path.relative_to(repo_root()).as_posix()} for c in candidates],
         "selected": [c.__dict__ | {"path": c.path.relative_to(repo_root()).as_posix()} for c in selected],
         "changed": [],
+        "skipped": [],
     }
 
     if args.apply:
         changed = []
+        skipped = []
         for candidate in selected:
-            changed.append(compact(candidate, timestamp))
+            item = compact(candidate, timestamp)
+            if item.get("skipped"):
+                skipped.append(item)
+            else:
+                changed.append(item)
         result["changed"] = changed
+        result["skipped"] = skipped
 
     if args.json:
         print(json.dumps(result, indent=2, sort_keys=True))
+        return 0
+
+    if args.quiet:
         return 0
 
     title = "AGENT MEMORY COMPACTION"

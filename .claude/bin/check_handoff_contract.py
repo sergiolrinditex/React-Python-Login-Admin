@@ -14,7 +14,13 @@ import sys
 from pathlib import Path
 from typing import Dict, List, Tuple
 
-from common import handoff_path as _handoff_path_resolver, workspace_relpath
+from common import (
+    find_task,
+    handoff_path as _handoff_path_resolver,
+    load_registry,
+    task_write_set,
+    workspace_relpath,
+)
 
 SECTION_RE = re.compile(r"^(?P<hashes>#{2,6})\s+(?P<title>.+?)\s*$")
 KEY_RE = re.compile(r"^\s*-?\s*(?P<key>[A-Za-z][A-Za-z0-9_]*):\s*(?P<value>.*?)\s*$")
@@ -74,6 +80,68 @@ CONTRACT_SECTION_NAMES = {
 FOLLOWUP_ID_RE = re.compile(r"\bFU-[A-Za-z0-9_.:-]+\b")
 FOLLOWUP_CANDIDATE_RE = re.compile(r"(?im)^\s*-?\s*(followup_candidate|FOLLOWUP_REQUIRED)\s*:\s*(yes|true|si|sí)\s*$")
 VERIFY_BROWSER_ACCEPTED = {"chrome-devtools", "claude-in-chrome", "agent360-browser-mcp"}
+SHARED_VISUAL_WRITE_SET_HINTS = (
+    "/errors.ts", "/errors.tsx", "/errors.py", "/exceptions.py",
+    "/auth/", "/chat/", "/security/", "/routes/", "/router/",
+    "/navigation/", "/providers/", "/context/", "/store/",
+)
+
+
+# Auto verify is intentionally narrow. Slices touching UI, navigation, auth,
+# shared frontend/domain files, or broad cross-feature modules need the human
+# browser MCP gate so regressions that unit tests miss (e.g. deleted auth/chat
+# error classes) are caught before closer.
+AUTO_VERIFY_HUMAN_REQUIRED_EXTENSIONS = (".tsx", ".jsx", ".vue", ".svelte", ".dart")
+AUTO_VERIFY_HUMAN_REQUIRED_TOKENS = (
+    "errors.ts",
+    "error.ts",
+    "/error",
+    "/errors",
+    "router",
+    "routes",
+    "navigation",
+    "layout",
+    "provider",
+    "providers",
+    "auth",
+    "mfa",
+    "2fa",
+    "forgot",
+    "chat",
+    "shared",
+    "core",
+)
+AUTO_VERIFY_HUMAN_REQUIRED_KINDS = ("front", "frontend", "ui", "ux", "screen", "page", "route", "journey", "gate")
+
+
+def _load_task_for_verify(task_id: str) -> dict[str, object] | None:
+    try:
+        return find_task(load_registry(), task_id)
+    except Exception:
+        return None
+
+
+def _task_requires_human_browser_verify(task: dict[str, object] | None) -> tuple[bool, str]:
+    if not task:
+        return False, ""
+    verify_mode = str(task.get("verify_mode") or task.get("verify") or "").strip().lower()
+    if verify_mode and verify_mode not in {"auto", "low+auto", "automatic"}:
+        return True, f"task verify_mode={verify_mode!r} is not auto"
+    if task.get("route") or task.get("screen_route"):
+        return True, "task declares a UI route/screen"
+    if task.get("journey_refs"):
+        return True, "task participates in a journey"
+    haystack = " ".join(str(task.get(k) or "") for k in ("kind", "target", "title", "acceptance", "source_ref")).lower()
+    if any(token in haystack for token in AUTO_VERIFY_HUMAN_REQUIRED_KINDS):
+        return True, "task kind/title/target indicates UI/UX/frontend/journey work"
+    for raw in task_write_set(task):
+        path = raw.strip().lower().replace("\\", "/")
+        if path.endswith(AUTO_VERIFY_HUMAN_REQUIRED_EXTENSIONS):
+            return True, f"write_set touches browser UI file {raw!r}"
+        if any(token in path for token in AUTO_VERIFY_HUMAN_REQUIRED_TOKENS):
+            return True, f"write_set touches shared/auth/navigation file {raw!r}"
+    return False, ""
+
 _VERIFY_REQUIRED_WHEN_VERIFIED = (
     "MCP_BROWSER",
     "DATA_CONTRACT_ROWS",
@@ -84,6 +152,27 @@ _VERIFY_REQUIRED_WHEN_VERIFIED = (
 )
 
 
+
+def _task_requires_human_visual(task_id: str) -> tuple[bool, str]:
+    try:
+        task = find_task(load_registry(), task_id)
+    except Exception:
+        return False, "registry_unavailable"
+    if not task:
+        return False, "task_not_found"
+    risk = str(task.get("risk_level") or "").strip().lower()
+    verify_mode = str(task.get("verify_mode") or "").strip().lower()
+    if verify_mode == "human" or risk in {"medium", "high", "critical"}:
+        return True, f"verify_mode={verify_mode or 'n/a'} risk_level={risk or 'n/a'}"
+    if task.get("route") or task.get("screen_route") or task.get("journey_refs"):
+        return True, "ui_or_journey_task"
+    for raw in task.get("write_set") or []:
+        path = (str(raw).replace("\\", "/").strip().lower())
+        if not path.startswith("/"):
+            path = "/" + path
+        if any(hint in path for hint in SHARED_VISUAL_WRITE_SET_HINTS):
+            return True, f"shared_visual_risk_write_set={raw}"
+    return False, ""
 
 
 def _heading_key_value(line: str) -> tuple[str, str] | None:
@@ -320,6 +409,12 @@ def validate(task_id: str, *, require_ready_for_close: bool, require_verify_slic
                     risk = str(verify.get("RISK_LEVEL") or "low").strip().lower()
                     if risk != "low":
                         errors.append("auto verify-slice verified requires RISK_LEVEL: low")
+                    requires_human, reason = _task_requires_human_browser_verify(_load_task_for_verify(task_id))
+                    if requires_human:
+                        errors.append(
+                            "auto verify-slice is not allowed for UI/shared/auth/navigation/journey work; "
+                            f"run /verify-slice with browser MCP. Reason: {reason}"
+                        )
                     for key in ("DATA_CONTRACT_ROWS", "PERSISTED_DATA_OBSERVED", "FLOWS_TESTED", "EVIDENCE"):
                         if _missing_verified_field(verify.get(key)):
                             errors.append(f"missing auto verified verify-slice {key} line in handoff")

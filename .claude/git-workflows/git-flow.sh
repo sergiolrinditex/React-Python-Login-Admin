@@ -231,7 +231,8 @@ rebase_onto_develop() {
 }
 
 push_current_branch() {
-  local push_log="$LOG_DIR/${RUN_ID}-push-$(safe_name "$BRANCH").log"
+  local push_log
+  push_log="$LOG_DIR/${RUN_ID}-push-$(safe_name "$BRANCH").log"
   if ! git push --force-with-lease -u "$REMOTE" "$BRANCH" >"$push_log" 2>&1; then
     abort 3 "Reason: push of '$BRANCH' to '$REMOTE' failed. See $push_log"
   fi
@@ -240,7 +241,8 @@ push_current_branch() {
 push_repo_head_to_branch() {
   local repo_path="$1"
   local branch="$2"
-  local push_log="$LOG_DIR/${RUN_ID}-push-$(safe_name "$branch").log"
+  local push_log
+  push_log="$LOG_DIR/${RUN_ID}-push-$(safe_name "$branch").log"
   if ! git -C "$repo_path" push "$REMOTE" "HEAD:refs/heads/${branch}" >"$push_log" 2>&1; then
     abort 3 "Reason: push of '$branch' to '$REMOTE' failed. See $push_log"
   fi
@@ -259,7 +261,8 @@ push_develop_only() {
         "  ./scripts/git-workflow.sh"
     fi
   fi
-  local push_log="$LOG_DIR/${RUN_ID}-push-$(safe_name "$DEVELOP_BRANCH").log"
+  local push_log
+  push_log="$LOG_DIR/${RUN_ID}-push-$(safe_name "$DEVELOP_BRANCH").log"
   if ! git push "$REMOTE" "$DEVELOP_BRANCH" >"$push_log" 2>&1; then
     abort 3 "Reason: push of '$DEVELOP_BRANCH' to '$REMOTE' failed. See $push_log"
   fi

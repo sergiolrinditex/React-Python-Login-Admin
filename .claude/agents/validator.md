@@ -249,22 +249,29 @@ Antes de crear FU, clasifica el hallazgo:
 - **Out-of-scope work**: falta cobertura en source-of-truth, falta lane/slice, se requiere ampliar `Write set`/`Conflict group`, falta contrato de datos reales/proporcionados, o hay decisión de producto fuera de esta slice. Resultado: crea FU formal.
 - **Duda**: bloquea con pregunta concreta al main-orchestrator/usuario; no uses FU para mover el problema de sitio.
 
-Cuando crees FU, usa siempre triage explícito y **no dejes el hallazgo sólo como prosa en el handoff**. Si clasificas algo como out-of-scope, debes ejecutar `./scripts/register-followup-task.sh propose` en esta misma respuesta y copiar el `FOLLOWUP_ID`, `scope_classification`, `why_not_debugger` devuelto en `## Validator review`. El usuario/main-orchestrator sólo debe decidir `promote` o `waive`; no debe tener que convertir a mano una frase tuya en YAML.
+Casos aprendidos de triage:
 
-```bash
-./scripts/register-followup-task.sh propose \
-  --origin-task <TASK_ID> \
-  --severity high|medium|low \
-  --kind bug|ux|wiring|data|test|security|followup \
-  --scope-classification out_of_scope|missing_coverage|missing_real_data|external_dependency|future_enhancement|scope_expansion|blocked_by_human_decision \
-  --why-not-debugger "<por qué debugger/retest no lo puede arreglar dentro del TASK_ID>" \
-  --title "..." \
-  --description "..." \
-  --acceptance "..." \
-  --verify "..."
+- Un bug hermano fuera del `Write set` actual es `missing_coverage`/`out_of_scope`, no `in_scope_defect`; el `debugger` no puede tocar archivos fuera del pack.
+- En una slice frontend, un mismatch de response code backend/API es FU `kind=bug`, `scope_classification=out_of_scope`, con `why_not_debugger="response code is outside frontend write_set; conflict_group splits front:X from api:X"` o equivalente.
+- Si detectas una FU duplicada de algo ya hecho, no la promociones ni la waivees. Escribe en `## Validator review` una nota factual: `duplicate_of_done=<TASK_ID|FOLLOWUP_ID>` y recomienda waiver `duplicate_of_done`; el main-orchestrator/usuario decide.
+- Validator es paralelo/info-only: no spawnea debugger, no llama `promote`, no modifica source-of-truth y no cambia `registry.json`.
+
+Si clasificas algo como out-of-scope, NO ejecutes `register-followup-task.sh` desde validator. Validator corre en el par paralelo y no debe mutar runtime/source-of-truth. En su lugar escribe un bloque machine-readable en `## Validator review` para que el **main-orchestrator** registre la FU una sola vez después de leer validator+tester:
+
+```text
+FU_PROPOSAL: yes
+FU_SEVERITY: high|medium|low|critical|blocker
+FU_KIND: bug|ux|wiring|data|test|security|followup
+FU_SCOPE_CLASSIFICATION: out_of_scope|missing_coverage|missing_real_data|external_dependency|future_enhancement|scope_expansion|blocked_by_human_decision
+FU_WHY_NOT_DEBUGGER: <por qué debugger/retest no lo puede arreglar dentro del TASK_ID>
+FU_TITLE: <título>
+FU_DESCRIPTION: <descripción>
+FU_ACCEPTANCE: <criterios>
+FU_VERIFY: <cómo verificar>
+POSSIBLE_DUPLICATE_OF: <TASK_ID|FOLLOWUP_ID|none>
 ```
 
-El script rechaza `--scope-classification in_scope_defect` y exige `--why-not-debugger` para FU bloqueantes. Usa `severity high|critical|blocker` solo cuando no debe seguir ninguna nueva wave sin promoción/waiver. No llames a `promote`; eso lo decide el main-orchestrator/usuario. Una FU formal fuera de scope no bloquea el PR de la slice origen: el closer la incluye como `proposed`.
+El main-orchestrator decide si ejecutar `./scripts/register-followup-task.sh propose`, si pedir waiver `duplicate_of_done`, o si enviar a `debugger`. El script rechaza `in_scope_defect` y exige `why_not_debugger` para FU bloqueantes. Una FU formal fuera de scope no bloquea el PR de la slice origen; el closer la incluye como `proposed`.
 
 ## Production DAG trailer vocabulary
 

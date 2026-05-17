@@ -255,6 +255,9 @@ def test_cleanup_worktrees_records_active_cleanup_request_and_deferred_helper_re
     assert "DEFERRED_CLEANUP_COMMAND:" in applied.stdout
     req = repo / "orchestrator-state" / "tasks" / "cleanup-requests" / "P00-S01-T777.json"
     assert req.exists()
+    # Deferred cleanup now waits until the task is actually closed/merged.
+    # A lifecycle event is the durable signal emitted by the closer/git-add flow.
+    _write_lifecycle_event(repo, "P00-S01-T777")
 
     env = {**os.environ, "CLAUDE_DEFERRED_CLEANUP_ASSUME_INACTIVE": "1"}
     flushed = subprocess.run(
@@ -277,3 +280,216 @@ def test_cleanup_deferred_helper_is_bash32_compatible():
     assert "mapfile" not in text
     result = subprocess.run(["bash", str(script), "--help"], text=True, capture_output=True, check=True)
     assert "cleanup-deferred-worktrees" in result.stdout
+
+
+def _setup_repo_with_task_worktree(tmp_path, task_id: str):
+    repo = tmp_path / "repo"
+    container = tmp_path / "repo-worktrees"
+    wt = container / task_id
+    repo.mkdir()
+    run(["git", "init", "-b", "main"], repo)
+    run(["git", "config", "user.email", "test@example.com"], repo)
+    run(["git", "config", "user.name", "Test User"], repo)
+    (repo / "README.md").write_text("hello\n", encoding="utf-8")
+    run(["git", "add", "README.md"], repo)
+    run(["git", "commit", "-m", "init"], repo)
+    run(["git", "branch", f"dev/{task_id}"], repo)
+    run(["git", "worktree", "add", str(wt), f"dev/{task_id}"], repo)
+    return repo, wt
+
+
+def _write_cleanup_request(repo: Path, task_id: str, wt: Path):
+    req_dir = repo / "orchestrator-state" / "tasks" / "cleanup-requests"
+    req_dir.mkdir(parents=True, exist_ok=True)
+    req = req_dir / f"{task_id}.json"
+    req.write_text(
+        '{\n'
+        f'  "task_id": "{task_id}",\n'
+        f'  "worktree": "{wt.as_posix()}",\n'
+        f'  "branch": "dev/{task_id}"\n'
+        '}\n',
+        encoding="utf-8",
+    )
+    return req
+
+
+def _write_registry(repo: Path, task_id: str, status: str):
+    path = repo / "orchestrator-state" / "tasks" / "registry.json"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        '{"task_dag":{"mode":"explicit_dag"},"tasks":[{"id":"%s","status":"%s"}]}\n' % (task_id, status),
+        encoding="utf-8",
+    )
+
+
+def _write_lifecycle_event(repo: Path, task_id: str):
+    path = repo / "orchestrator-state" / "tasks" / "lifecycle-events" / f"{task_id}.json"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        '{\n'
+        '  "schema": "orquestador.lifecycle-event.v1",\n'
+        f'  "task_id": "{task_id}",\n'
+        '  "agent_type": "closer",\n'
+        '  "outcome": "committed",\n'
+        '  "next_status": "done"\n'
+        '}\n',
+        encoding="utf-8",
+    )
+
+
+def test_deferred_cleanup_does_not_warn_or_delete_task_that_is_not_closed(tmp_path):
+    task_id = "P00-S01-T901"
+    repo, wt = _setup_repo_with_task_worktree(tmp_path, task_id)
+    req = _write_cleanup_request(repo, task_id, wt)
+    _write_registry(repo, task_id, "ready")
+
+    result = subprocess.run(
+        ["bash", str(ROOT / "scripts" / "cleanup-deferred-worktrees.sh"), "--apply", "--task", task_id],
+        cwd=repo,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+
+    assert result.returncode == 0, result.stderr + result.stdout
+    assert "pending=1" in result.stdout
+    assert wt.exists()
+    assert req.exists()
+
+
+def test_deferred_cleanup_removes_when_lifecycle_event_proves_closed(tmp_path):
+    task_id = "P00-S01-T902"
+    repo, wt = _setup_repo_with_task_worktree(tmp_path, task_id)
+    req = _write_cleanup_request(repo, task_id, wt)
+    _write_registry(repo, task_id, "ready")
+    _write_lifecycle_event(repo, task_id)
+
+    env = {**os.environ, "CLAUDE_DEFERRED_CLEANUP_ASSUME_INACTIVE": "1"}
+    result = subprocess.run(
+        ["bash", str(ROOT / "scripts" / "cleanup-deferred-worktrees.sh"), "--apply", "--task", task_id],
+        cwd=repo,
+        env=env,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+
+    assert result.returncode == 0, result.stderr + result.stdout
+    assert "removed=1" in result.stdout
+    assert not wt.exists()
+    assert not req.exists()
+
+
+def test_deferred_cleanup_dirty_closed_task_reports_dirty_paths(tmp_path):
+    task_id = "P00-S01-T903"
+    repo, wt = _setup_repo_with_task_worktree(tmp_path, task_id)
+    _write_cleanup_request(repo, task_id, wt)
+    _write_registry(repo, task_id, "done")
+    (wt / "uncommitted.txt").write_text("not committed\n", encoding="utf-8")
+
+    env = {**os.environ, "CLAUDE_DEFERRED_CLEANUP_ASSUME_INACTIVE": "1"}
+    result = subprocess.run(
+        ["bash", str(ROOT / "scripts" / "cleanup-deferred-worktrees.sh"), "--apply", "--task", task_id, "--quiet"],
+        cwd=repo,
+        env=env,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+
+    assert result.returncode == 3
+    assert wt.exists()
+    assert "skip dirty:" in result.stderr
+    assert "DIRTY_STATUS_BEGIN" in result.stderr
+    assert "uncommitted.txt" in result.stderr
+
+CLOSED_CLEANUP = ROOT / "scripts" / "cleanup-closed-task-worktrees.sh"
+
+
+def test_cleanup_closed_task_worktrees_removes_done_clean_worktree_and_branch_without_request(tmp_path):
+    task_id = "P04-S03-T001"
+    repo, wt = _setup_repo_with_task_worktree(tmp_path, task_id)
+    _write_registry(repo, task_id, "done")
+
+    result = subprocess.run(
+        ["bash", str(CLOSED_CLEANUP), "--apply", "--task", task_id],
+        cwd=repo,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+
+    assert result.returncode == 0, result.stderr + result.stdout
+    assert not wt.exists()
+    assert "removed closed worktree" in result.stdout
+    assert "deleted closed task branch: dev/P04-S03-T001" in result.stdout
+    show = subprocess.run(["git", "show-ref", "--verify", f"refs/heads/dev/{task_id}"], cwd=repo)
+    assert show.returncode != 0
+
+
+def test_cleanup_closed_task_worktrees_deletes_orphan_branch_for_done_task(tmp_path):
+    task_id = "P04-S03-T002"
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    run(["git", "init", "-b", "main"], repo)
+    run(["git", "config", "user.email", "test@example.com"], repo)
+    run(["git", "config", "user.name", "Test User"], repo)
+    (repo / "README.md").write_text("hello\n", encoding="utf-8")
+    run(["git", "add", "README.md"], repo)
+    run(["git", "commit", "-m", "init"], repo)
+    run(["git", "branch", f"dev/{task_id}"], repo)
+    _write_lifecycle_event(repo, task_id)
+
+    result = subprocess.run(
+        ["bash", str(CLOSED_CLEANUP), "--apply", "--task", task_id],
+        cwd=repo,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+
+    assert result.returncode == 0, result.stderr + result.stdout
+    assert "deleted closed task branch: dev/P04-S03-T002" in result.stdout
+    show = subprocess.run(["git", "show-ref", "--verify", f"refs/heads/dev/{task_id}"], cwd=repo)
+    assert show.returncode != 0
+
+
+def test_cleanup_closed_task_worktrees_does_not_remove_ready_task(tmp_path):
+    task_id = "P04-S03-T003"
+    repo, wt = _setup_repo_with_task_worktree(tmp_path, task_id)
+    _write_registry(repo, task_id, "ready")
+
+    result = subprocess.run(
+        ["bash", str(CLOSED_CLEANUP), "--apply", "--task", task_id],
+        cwd=repo,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+
+    assert result.returncode == 0, result.stderr + result.stdout
+    assert wt.exists()
+    show = subprocess.run(["git", "show-ref", "--verify", f"refs/heads/dev/{task_id}"], cwd=repo)
+    assert show.returncode == 0
+    assert "pending task=" in result.stdout
+
+
+def test_cleanup_closed_task_worktrees_skips_dirty_done_worktree(tmp_path):
+    task_id = "P04-S03-T004"
+    repo, wt = _setup_repo_with_task_worktree(tmp_path, task_id)
+    _write_registry(repo, task_id, "done")
+    (wt / "dirty.txt").write_text("keep me\n", encoding="utf-8")
+
+    result = subprocess.run(
+        ["bash", str(CLOSED_CLEANUP), "--apply", "--task", task_id, "--verbose"],
+        cwd=repo,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+
+    assert result.returncode == 3
+    assert wt.exists()
+    assert "skip dirty closed worktree" in result.stderr
+    show = subprocess.run(["git", "show-ref", "--verify", f"refs/heads/dev/{task_id}"], cwd=repo)
+    assert show.returncode == 0

@@ -671,8 +671,8 @@ class BootstrapRuntimePreservationTests(unittest.TestCase):
                 registry["tasks"][1]["status"] = "claimed"
                 registry["tasks"][1]["claimed_by"] = "worker-2"
                 common_mod.save_registry(registry)
-                # FW-006: reconciler keeps open_followups entries only when
-                # the YAML exists on disk (disk is the source of truth).
+                # FW-006: reconciler keeps open_followups entries when the
+                # YAML exists on disk and treats disk status as the source of truth.
                 fu_dir = root / "orchestrator-state/tasks/follow-ups"
                 fu_dir.mkdir(parents=True, exist_ok=True)
                 (fu_dir / "FU-test.yaml").write_text(
@@ -762,6 +762,26 @@ class BootstrapRuntimePreservationTests(unittest.TestCase):
                 self.assertEqual(task["last_updated_by"], "closer")
                 self.assertEqual(task["last_stop_at"], "2026-05-11T00:00:00Z")
                 self.assertFalse(task.get("source_fingerprint_changed", False))
+        finally:
+            td.cleanup()
+
+
+    def test_refresh_preserves_open_followup_if_yaml_is_missing(self):
+        td, root = self._root()
+        try:
+            with self._with_root(root) as (boot_mod, common_mod):
+                self.assertTrue(boot_mod.generate_artifacts()["ok"])
+                common_mod.save_runtime_state({
+                    "open_followups": [{"id": "FU-missing", "status": "proposed", "severity": "blocker"}],
+                    "spawn_budget": 20,
+                    "spawns_in_current_slice": {},
+                })
+
+                result = boot_mod.generate_artifacts()
+                self.assertTrue(result["ok"])
+                runtime = common_mod.load_runtime_state()
+                self.assertEqual(runtime["open_followups"][0]["id"], "FU-missing")
+                self.assertTrue(runtime["open_followups"][0]["yaml_missing"])
         finally:
             td.cleanup()
 

@@ -252,7 +252,7 @@ FU no es un escape para bugs de la slice. Antes de aceptar o promover una FU, ap
 - **Trabajo nuevo real fuera de scope**: falta Coverage Registry row, nuevo endpoint/ruta/tabla/journey, ampliación de `Write set`/`Conflict group`, datos reales/proporcionados no definidos, dependencia externa o decisión humana. Acción: FU formal y luego `/promote-followup <FOLLOWUP_ID>` si el usuario aprueba.
 - **Ambiguo**: pregunta al usuario; no bloquees el DAG con FU innecesaria.
 
-Toda FU propuesta debe traer `triage.scope_classification` y `triage.why_not_debugger`. Para crearla, los agentes deben usar `./scripts/register-followup-task.sh propose --scope-classification ... --why-not-debugger ...`. La promoción se hace con `/promote-followup <FOLLOWUP_ID>` desde el main-orchestrator, nunca desde closer ni desde un worker activo. Las propuestas `high|critical|blocker` bloquean nuevas waves/claims hasta decisión humana, pero el closer debe crear el PR de la slice origen con esas FU en estado `proposed`.
+Toda FU propuesta debe traer `scope_classification` y `why_not_debugger`. Los subagentes del par paralelo (validator/tester) NO mutan runtime: escriben `FU_PROPOSAL: yes` + campos `FU_*` en el handoff. El main-orchestrator registra una sola FU con `./scripts/register-followup-task.sh propose --scope-classification ... --why-not-debugger ...` después de leer ambos handoffs, comprobando duplicados (`possible_duplicates`, `duplicate_of_done`) antes de promover. La promoción se hace con `/promote-followup <FOLLOWUP_ID>` desde el main-orchestrator, nunca desde closer ni desde un worker activo. Las propuestas `high|critical|blocker` bloquean nuevas waves/claims hasta decisión humana, pero el closer debe crear el PR de la slice origen con esas FU en estado `proposed`.
 
 ## Cierre obligatorio
 
@@ -286,3 +286,8 @@ OUTCOME: ready|blocked
 - Slice artifacts are workspace-local: `./orchestrator-state/tasks/handoffs/<TASK_ID>.md`, `evidence/<TASK_ID>/`, `reports/<TASK_ID>.md`, `task-packs/<TASK_ID>.md`. The closer commits these from the active worktree.
 - Informational reviewers must not create/promote follow-ups for mechanical contract noise; fix the contract/run or block.
 
+
+## Learned FU decisions
+
+- If a validator/tester note says `duplicate_of_done=<TASK_ID|FOLLOWUP_ID>`, prefer waiver with reason `duplicate_of_done:<id>` over promotion. Do not create duplicate DAG work for an already-closed fix.
+- If a promoted FU has path drift, ask planner to resolve actual files with `find`/`grep`; do not create another FU just to correct a string.

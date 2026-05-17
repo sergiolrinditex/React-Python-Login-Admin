@@ -83,3 +83,40 @@ def test_compact_agent_memory_apply_archives_full_before_compacting(tmp_path: Pa
     assert "docker-compose.yml" in compacted
     assert ".claude/orchestrator-contract.json" in compacted
     assert len(compacted.splitlines()) < len(before_memory.decode("utf-8").splitlines())
+
+
+def test_compact_agent_memory_default_threshold_is_250(tmp_path: Path) -> None:
+    root = make_repo(tmp_path)
+    memory = root / "orchestrator-state" / "agent-memory" / "developer" / "MEMORY.md"
+    lines = ["# Developer memory"] + ["- short DAG note" for _ in range(240)]
+    memory.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+    result = run_compact(root, "--all", "--timestamp", "2026-05-09-120000")
+
+    assert result.returncode == 0, result.stderr
+    assert "No agent memories above threshold" in result.stdout
+    assert not (memory.parent / "archive").exists()
+
+
+def test_compact_agent_memory_quiet_apply_compacts_without_stdout(tmp_path: Path) -> None:
+    root = make_repo(tmp_path)
+    result = run_compact(root, "--all", "--apply", "--quiet", "--threshold-lines", "200", "--timestamp", "2026-05-09-120000")
+
+    assert result.returncode == 0, result.stderr
+    assert result.stdout == ""
+    assert (root / "orchestrator-state" / "agent-memory" / "developer" / "archive" / "MEMORY.full.2026-05-09-120000.md").is_file()
+
+
+def test_next_wave_auto_compacts_agent_memory_before_listing() -> None:
+    text = (ROOT / "scripts" / "next-wave.sh").read_text(encoding="utf-8")
+    assert "compact-agent-memory.py" in text
+    assert "CLAUDE_AUTO_COMPACT_AGENT_MEMORY" in text
+    assert "CLAUDE_AGENT_MEMORY_COMPACT_THRESHOLD_LINES:-250" in text
+    assert "--quiet" in text
+
+
+def test_agent_memory_archives_are_gitignored() -> None:
+    text = (ROOT / ".gitignore").read_text(encoding="utf-8")
+    assert "orchestrator-state/agent-memory/*/archive/" in text
+    assert "orchestrator-state/agent-memory/*/*.lock" in text
+    assert "orchestrator-state/agent-memory/*/*.tmp" in text

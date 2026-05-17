@@ -227,6 +227,18 @@ done
 # 5) baseline (si fue tocado por sync-product-baseline.sh)
 add_if_exists "$BASELINE"
 
+# Guardrail: write_set is not permission to delete product files. Any staged
+# deletion must be explicitly declared as delete_set/allowed_deletions in the
+# task record, otherwise broad globs or stale worktrees can erase unrelated
+# modules during closer. Violating deletions are unstaged but the worktree is
+# not modified.
+if [ "$DRY_RUN" -eq 0 ]; then
+  DELETE_GUARD="$SCRIPT_ROOT/scripts/check_staged_deletions.py"
+  if [ -f "$DELETE_GUARD" ]; then
+    python3 -B -S "$DELETE_GUARD" "$TASK_ID" --registry "$REG" --repo "$WORKSPACE_ROOT" --unstage
+  fi
+fi
+
 # Resumen
 if [ "$DRY_RUN" -eq 1 ]; then
   echo "git-add-slice DRY-RUN: TASK_ID=$TASK_ID (use sin --dry-run para aplicar)"

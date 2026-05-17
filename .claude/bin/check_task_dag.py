@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from typing import Any
 
@@ -27,6 +28,17 @@ def _norm_edges(edges: list[list[str]] | list[tuple[str, str]] | None) -> list[l
 
 MAX_TASKS_PER_PHASE = 20
 MAX_TASKS_PER_STEP = 15
+
+
+def is_size_budget_warning(warning: str) -> bool:
+    """Return True for advisory slice-count warnings.
+
+    These budgets are planning hygiene, not DAG correctness. A phase with 24
+    coherent slices can still have a valid explicit DAG and should not make CI
+    red by default. Projects that want the historical hard cap can opt in with
+    --enforce-size-budgets or CLAUDE_DAG_ENFORCE_SIZE_BUDGETS=1.
+    """
+    return "tasks exceeds max" in str(warning or "")
 
 
 def validate_phase_budgets(registry: dict[str, Any]) -> list[str]:
@@ -99,7 +111,6 @@ def validate_registry_dag(registry: dict[str, Any]) -> tuple[dict[str, Any], lis
         if stored.get("topological_levels") != recomputed.get("topological_levels"):
             errors.append("registry.task_dag.topological_levels drift from registry.tasks[].depends_on")
 
-    warnings.extend(validate_phase_budgets(registry))
     warnings.extend(validate_dag_view_files(registry))
     return recomputed, warnings, errors
 
@@ -107,19 +118,27 @@ def validate_registry_dag(registry: dict[str, Any]) -> tuple[dict[str, Any], lis
 def main() -> int:
     parser = argparse.ArgumentParser(description="Validate registry task DAG and derived adjacency matrix.")
     parser.add_argument("--json", action="store_true", help="Print machine-readable JSON")
-    parser.add_argument("--strict", action="store_true", help="Return non-zero on warnings as well as errors")
+    parser.add_argument("--strict", action="store_true", help="Return non-zero on structural warnings as well as errors")
+    parser.add_argument("--enforce-size-budgets", action="store_true", help="Treat phase/step size advisories as strict warnings")
     args = parser.parse_args()
 
     registry = load_registry()
     task_dag, warnings, errors = validate_registry_dag(registry)
+    advisories = validate_phase_budgets(registry)
+    enforce_size_budgets = bool(args.enforce_size_budgets or os.environ.get("CLAUDE_DAG_ENFORCE_SIZE_BUDGETS") == "1")
+    strict_warnings = list(warnings)
+    if enforce_size_budgets:
+        strict_warnings.extend(advisories)
     result = {
-        "ok": not errors and (not args.strict or not warnings),
+        "ok": not errors and (not args.strict or not strict_warnings),
         "checked_at": now_iso(),
         "mode": task_dag.get("mode"),
         "node_count": len(task_dag.get("nodes") or []),
         "edge_count": len(task_dag.get("edges") or []),
         "wave_count": len(task_dag.get("topological_levels") or []),
-        "warnings": warnings,
+        "warnings": strict_warnings,
+        "advisories": [] if enforce_size_budgets else advisories,
+        "size_budget_enforced": enforce_size_budgets,
         "errors": errors,
     }
     if args.json:
@@ -127,8 +146,11 @@ def main() -> int:
     else:
         status = "OK" if result["ok"] else "INVALID"
         print(f"Task DAG: {status} mode={result['mode']} nodes={result['node_count']} edges={result['edge_count']} waves={result['wave_count']}")
-        for warning in warnings:
+        for warning in strict_warnings:
             print(f"WARNING: {warning}")
+        if not enforce_size_budgets:
+            for advisory in advisories:
+                print(f"ADVISORY: {advisory}")
         for error in errors:
             print(f"ERROR: {error}")
     return 0 if result["ok"] else 1

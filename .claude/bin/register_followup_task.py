@@ -143,6 +143,16 @@ def _proposal_path(fid: str) -> Path:
     return followups_dir() / f"{fid}.yaml"
 
 
+
+def _unique_followup_id(title: str) -> str:
+    base = _now_id(title)
+    fid = base
+    counter = 2
+    while _proposal_path(fid).exists():
+        fid = f"{base}-{counter}"
+        counter += 1
+    return fid
+
 def _normalise_severity(value: str | None) -> str:
     value = str(value or "medium").strip().lower()
     aliases = {"critico": "critical", "crítico": "critical", "alto": "high", "media": "medium", "bajo": "low"}
@@ -258,6 +268,62 @@ def blocking_open_followups(runtime: dict[str, Any] | None = None) -> list[dict[
     return out
 
 
+
+def _norm_duplicate_key(value: Any) -> str:
+    text = str(value or "").lower()
+    text = re.sub(r"[^a-z0-9]+", " ", text).strip()
+    return re.sub(r"\s+", " ", text)
+
+
+def _followup_duplicate_key(data: dict[str, Any]) -> tuple[str, str, str, str]:
+    triage = data.get("triage") or {}
+    scope = data.get("scope_classification") or triage.get("scope_classification") or ""
+    target = data.get("endpoint") or data.get("screen_route") or ",".join(str(t) for t in data.get("tables") or [])
+    return (
+        _norm_duplicate_key(data.get("kind") or "followup"),
+        _norm_duplicate_key(data.get("title")),
+        _norm_duplicate_key(scope),
+        _norm_duplicate_key(target),
+    )
+
+
+def _possible_duplicate_followups(candidate: dict[str, Any], *, ignore_id: str | None = None) -> list[dict[str, Any]]:
+    key = _followup_duplicate_key(candidate)
+    if not key[1]:
+        return []
+    matches: list[dict[str, Any]] = []
+    directory = followups_dir()
+    if not directory.is_dir():
+        return []
+    for path in sorted(directory.glob("*.y*ml")):
+        try:
+            data = _read_yaml(path)
+        except Exception:
+            continue
+        if ignore_id and data.get("id") == ignore_id:
+            continue
+        other_key = _followup_duplicate_key(data)
+        exact_title = other_key[1] == key[1]
+        same_target = bool(key[3]) and key[3] == other_key[3]
+        same_scope_kind = key[0] == other_key[0] and key[2] == other_key[2]
+        if exact_title or (same_target and same_scope_kind):
+            matches.append({
+                "id": data.get("id"),
+                "status": data.get("status"),
+                "origin_task_id": data.get("origin_task_id"),
+                "promoted_task_id": data.get("promoted_task_id"),
+                "title": data.get("title"),
+                "proposal_path": relpath(path),
+            })
+    return matches
+
+
+def _task_status(registry: dict[str, Any], task_id: str | None) -> str:
+    if not task_id:
+        return ""
+    task = find_task(registry, task_id)
+    return str((task or {}).get("status") or "")
+
 def propose(args: argparse.Namespace) -> dict[str, Any]:
     registry = load_registry()
     origin_task = find_task(registry, args.origin_task) if args.origin_task else None
@@ -267,7 +333,7 @@ def propose(args: argparse.Namespace) -> dict[str, Any]:
     scope_classification = _normalise_scope_classification(getattr(args, "scope_classification", None))
     why_not_debugger = getattr(args, "why_not_debugger", None)
     triage_warnings = _validate_followup_triage(severity, scope_classification, why_not_debugger)
-    fid = args.id or _now_id(args.title)
+    fid = args.id or _unique_followup_id(args.title)
     proposal = {
         "id": fid,
         "schema_version": 1,
@@ -301,6 +367,8 @@ def propose(args: argparse.Namespace) -> dict[str, Any]:
             "warnings": triage_warnings,
         },
     }
+    duplicates = _possible_duplicate_followups(proposal, ignore_id=fid)
+    proposal["possible_duplicates"] = duplicates
     path = _proposal_path(fid)
     proposal["proposal_path"] = relpath(path)
     _write_yaml(path, proposal)
@@ -308,7 +376,7 @@ def propose(args: argparse.Namespace) -> dict[str, Any]:
         runtime = _append_open_followup(load_runtime_state(), proposal)
         save_runtime_state(runtime)
     append_jsonl(ledger_path(), {"ts": now_iso(), "event": "followup_proposed", "followup_id": fid, "origin_task_id": args.origin_task, "severity": severity, "scope_classification": scope_classification, "path": relpath(path)})
-    return {"ok": True, "followup_id": fid, "proposal_path": relpath(path), "blocking": severity in BLOCKING_SEVERITIES, "scope_classification": scope_classification, "triage_warnings": triage_warnings}
+    return {"ok": True, "followup_id": fid, "proposal_path": relpath(path), "blocking": severity in BLOCKING_SEVERITIES, "scope_classification": scope_classification, "triage_warnings": triage_warnings, "possible_duplicates": duplicates}
 
 
 def _normalise_step_id(phase_id: str, step_id: str | None) -> str:
@@ -527,6 +595,21 @@ def promote(args: argparse.Namespace) -> dict[str, Any]:
         return {"ok": True, "already_promoted": True, "task_id": proposal.get("promoted_task_id"), "proposal_path": relpath(_proposal_path(args.followup_id))}
     with file_lock(registry_path()):
         registry = load_registry()
+        duplicates = _possible_duplicate_followups(proposal, ignore_id=proposal.get("id"))
+        blocking_duplicates = []
+        for dup in duplicates:
+            status = str(dup.get("status") or "").lower()
+            task_status = _task_status(registry, dup.get("promoted_task_id"))
+            if status == "promoted" or task_status in {"ready", "claimed", "in_progress", "ready_for_close", "verified_pending_close", "done"}:
+                dup = dict(dup)
+                dup["promoted_task_status"] = task_status
+                blocking_duplicates.append(dup)
+        if blocking_duplicates and not getattr(args, "allow_duplicate", False):
+            raise SystemExit(
+                "possible duplicate follow-up already exists/promoted; do not promote another one without human override. "
+                "Use waive --reason duplicate_of:<ID> or rerun promote with --allow-duplicate if this is intentionally distinct. "
+                + json.dumps(blocking_duplicates, ensure_ascii=False)
+            )
         origin = find_task(registry, args.origin_task or proposal.get("origin_task_id")) if (args.origin_task or proposal.get("origin_task_id")) else None
         phase_id = args.phase or proposal.get("origin_phase_id") or (origin or {}).get("phase_id")
         if not phase_id:
@@ -701,6 +784,7 @@ def build_parser() -> argparse.ArgumentParser:
     pp.add_argument("--step")
     pp.add_argument("--depends-on", action="append")
     pp.add_argument("--no-source-doc-update", action="store_true")
+    pp.add_argument("--allow-duplicate", action="store_true", help="Override duplicate follow-up guard after human review")
 
     w = sub.add_parser("waive", help="Waive a proposal after human decision.")
     w.add_argument("followup_id")

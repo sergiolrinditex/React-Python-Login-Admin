@@ -7,6 +7,8 @@
 - `orchestrator-state/memory/PROGRESS.md` is the live project snapshot. Developer updates after every slice. All agents read it after `/clear`.
 - `orchestrator-state/memory/task-dag.json` and `.md` are derived DAG artifacts. They contain adjacency matrix, adjacency list, reverse dependencies, topological waves, conflict groups and write-set metadata. They are never edited by hand; update the Coverage Registry `Depends on` / `Conflict group` / `Write set` cells instead.
 
+- `orchestrator-state/agent-memory/<agent>/MEMORY.md` is live per-agent memory. `./scripts/next-wave.sh` auto-compacts files above 250 lines using `scripts/compact-agent-memory.py --apply`; originals are archived byte-for-byte under `archive/` and ignored by Git. Disable per run with `CLAUDE_AUTO_COMPACT_AGENT_MEMORY=0`.
+
 ## Handoff
 
 - Every slice produces exactly one handoff: `orchestrator-state/tasks/handoffs/<TASK_ID>.md`.

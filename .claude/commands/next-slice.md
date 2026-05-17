@@ -58,21 +58,37 @@ Cada slice se arranca con contexto limpio (lo obliga CLAUDE.md). Un pipeline de 
 
 ## Paso 1 — Reconstruir contexto (barato)
 
+Primero determina el `TASK_ID` sólo desde `$ARGUMENTS` o `CLAUDE_ACTIVE_TASK_ID`. Si no hay ninguno, PARA y ejecuta/sugiere `./scripts/next-wave.sh --limit 1` para obtener el comando copiable. No leas ningún implicit selector/phase: en DAG-only están eliminados del modo DAG.
+
+Después ejecuta el inspector read-only; no escribas snippets Python/Node ad-hoc contra `registry.json` ni asumas que `tasks` es un mapping. El schema canónico es `tasks[]` lista, y el inspector también tolera migraciones antiguas tipo mapping:
+
+```bash
+ROOT="$(bash scripts/ensure-task-worktree.sh --print-root 2>/dev/null || pwd -P)"
+bash "$ROOT/scripts/inspect-task-state.sh" --task <TASK_ID>
+bash "$ROOT/scripts/check-worktree-deps-visible.sh" <TASK_ID> --json
+```
+
+Si `check-worktree-deps-visible.sh` devuelve `reason=stale_worktree_dep_missing`, PARA. No hagas rebase desde `/next-slice` ni desde `planner`: git mutation no es rol del agente. Usa una worktree actualizada/recreada desde el root canónico y relanza `/next-slice <TASK_ID>`. Este bloqueo evita planear sobre una dependencia ya mergeada que la worktree activa aún no ve.
+
 Lee en paralelo (máximo 10 ficheros — si necesitas más, replantea):
 
-1. `orchestrator-state/memory/PROGRESS.md` (cabecera + últimas 3 slices).
-2. `orchestrator-state/tasks/registry.json` (solo `task_dag.mode`, últimas 3 `done`, primeras 5 `ready`/`pending`, y la fila del `TASK_ID` solicitado).
-3. `orchestrator-state/tasks/runtime-state.json` (último worker, último evento — para detectar pipeline a medio).
+1. Salida de `scripts/inspect-task-state.sh --task <TASK_ID>`: `task_dag.mode`, task solicitada, counts, últimas/primeras tasks relevantes, runtime y paths workspace/canonical.
+2. `orchestrator-state/memory/PROGRESS.md` (cabecera + últimas 3 slices).
+3. `orchestrator-state/tasks/runtime-state.json` solo si el inspector mostró un estado raro que necesita detalle.
 4. `.claude/CLAUDE.md` + `.claude/rules/01-non-negotiables.md` (relee los non-negotiables).
 5. Títulos de los documentos source-of-truth fuente (primeras 60 líneas de `instrucciones.md`, TOC del guide, la sección de la fase activa del checklist).
 6. Último handoff `orchestrator-state/tasks/handoffs/{TASK_ID_ACTIVE_OR_LAST}.md` si existe.
-7. Determina el `TASK_ID` sólo desde `$ARGUMENTS` o `CLAUDE_ACTIVE_TASK_ID`. Si no hay ninguno, PARA y ejecuta/sugiere `./scripts/next-wave.sh --limit 1` para obtener el comando copiable. No leas ningún implicit selector/phase: en DAG-only están eliminados del modo DAG.
+
+Gate de freshness worktree: si estás dentro de una worktree de tarea, antes de spawnear `planner` ejecuta checks read-only (`git status -sb`, `git log --oneline --grep <DEP_TASK_ID> --all`, `ls`/`rg` de paths esperados por dependencias). Si una dependencia marcada `done` no existe en esta worktree, bloquea con `stale_worktree_dep_missing`; no hagas `rebase`, `merge` ni `reset` desde `/next-slice`.
+
+Nota worktree: en una worktree recién creada puede faltar `./orchestrator-state/tasks/task-packs/<TASK_ID>.md` o el handoff local. Eso es normal antes de que `planner` materialice/enriquezca el pack. Si el inspector dice que el pack existe en el root canónico, usa ese fallback (`$CLAUDE_TASK_PACK` suele apuntar allí). Si no existe ni en workspace ni en canonical root, bloquea antes de spawnear agentes.
 
 Prohibido:
 
 - Releer los documentos source-of-truth fuente completos (solo cuando `planner` los extrae por secciones).
 - Lanzar subagentes.
 - Escribir/mutar ficheros.
+- Usar snippets contra `registry.json` que hagan `registry["tasks"].get(...)`; `tasks` es lista canónica. Usa `scripts/inspect-task-state.sh`.
 
 ---
 
@@ -238,8 +254,9 @@ Después de cada ronda paralela `validator ‖ tester`, decide por las líneas m
 - `validator OUTCOME=approved` **y** `tester OUTCOME=pass` → la slice queda lista para gate humano; no invoques `debugger`.
 - `validator OUTCOME=changes_requested` o `tester OUTCOME=fail` → defecto reparable dentro de este `TASK_ID` salvo que el handoff explique explícitamente trabajo fuera de scope. Invoca `debugger` con el mismo `TASK_ID` y `CLAUDE_TASK_PACK`, luego repite `validator ‖ tester`.
 - `validator OUTCOME=blocked` o `tester OUTCOME=blocked` → para y pide decisión humana; no lo transformes automáticamente en FU.
-- Si `validator` o `tester` describen trabajo fuera de scope pero no hay `FOLLOWUP_ID` formal en el handoff ni YAML en `orchestrator-state/tasks/follow-ups/`, no continúes: pide al mismo agente registrar la FU con `./scripts/register-followup-task.sh propose` y triage completo. Un hallazgo productivo no puede quedar sólo como prosa.
-- Si el handoff propone `FOLLOWUP_ID`, inspecciona `scope_classification` y `why_not_debugger`: `in_scope_defect` está prohibido; `out_of_scope|missing_coverage|missing_real_data|external_dependency|future_enhancement|scope_expansion|blocked_by_human_decision` requiere `/promote-followup` o waiver humano.
+- Si `validator` o `tester` describen trabajo fuera de scope, busca primero un bloque `FU_PROPOSAL: yes` con `FU_SCOPE_CLASSIFICATION` y `FU_WHY_NOT_DEBUGGER`. No pidas al subagente que ejecute scripts; el main-orchestrator registra una sola FU con `./scripts/register-followup-task.sh propose` después de comprobar duplicados.
+- Si no hay `FOLLOWUP_ID` formal ni bloque `FU_PROPOSAL`, no continúes: pide al mismo agente corregir el handoff con triage machine-readable. Un hallazgo productivo no puede quedar sólo como prosa.
+- Si el handoff propone `FOLLOWUP_ID`, inspecciona `scope_classification`, `why_not_debugger` y `possible_duplicates`: `in_scope_defect` está prohibido; duplicados deben preferir waiver `duplicate_of_done:<id>`; `out_of_scope|missing_coverage|missing_real_data|external_dependency|future_enhancement|scope_expansion|blocked_by_human_decision` requiere `/promote-followup` o waiver humano.
 - Nunca promociones FU desde un worker terminal con `CLAUDE_ACTIVE_TASK_ID` activo; usa un terminal/control limpio con `main-orchestrator`.
 
 ── Fin del pipeline automático de `/next-slice`. A partir de aquí: gate humano. ──

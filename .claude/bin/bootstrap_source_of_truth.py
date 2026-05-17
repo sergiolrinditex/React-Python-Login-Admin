@@ -96,6 +96,7 @@ _DEPENDENCY_HEADER_RE = re.compile(
 _DEPENDENCY_NONE_VALUES = {"", "-", "—", "none", "n/a", "na", "null", "sin dependencias", "ninguna"}
 _CONFLICT_HEADER_RE = re.compile(r"(?i)^(?:conflict\s*groups?|conflict\s*group|grupo(?:s)?\s*de\s*conflicto|seriali[sz]e\s*group)$")
 _WRITE_SET_HEADER_RE = re.compile(r"(?i)^(?:write\s*set|writes?|expected\s*files\s*touched|files\s*touched|touches|ficheros\s*esperados|archivos\s*esperados)$")
+_DELETE_SET_HEADER_RE = re.compile(r"(?i)^(?:delete\s*set|allowed\s*deletions?|delete\s*paths?|remove\s*set|removes?|expected\s*deletions?|borrados?|eliminaciones?)$")
 _PRODUCT_INCREMENT_HEADER_RE = re.compile(r"(?i)^(?:product\s*increment|increment|version|release|m[óo]dulo|modulo|producto\s*versi[óo]n)$")
 _BUILD_STATE_HEADER_RE = re.compile(r"(?i)^(?:build\s*state|estado\s*build|estado|lifecycle|baseline\s*state|status\s*inicial)$")
 _RISK_LEVEL_HEADER_RE = re.compile(r"(?i)^(?:risk\s*level|risk|riesgo|nivel\s*de\s*riesgo)$")
@@ -165,6 +166,15 @@ def _is_conflict_header_key(key: str) -> bool:
 def _is_write_set_header_key(key: str) -> bool:
     """True for the optional expected write-set column."""
     return bool(_WRITE_SET_HEADER_RE.match(key.strip().lower()))
+
+
+def _is_delete_set_header_key(key: str) -> bool:
+    """True for the optional explicit deletion-set column.
+
+    write_set permits edits/creates; destructive removals must be declared
+    separately so broad globs cannot erase unrelated product modules.
+    """
+    return bool(_DELETE_SET_HEADER_RE.match(key.strip().lower()))
 
 
 def _is_product_increment_header_key(key: str) -> bool:
@@ -376,7 +386,7 @@ def parse_coverage_registry(checklist_text: str) -> list[dict[str, Any]]:
       - step_ref (the "Step X.Y" reference cell, used to locate the matching
         body section). Empty string if no such column exists.
       - depends_on_raw / dependency_column_present (optional DAG adjacency)
-      - conflict_groups / write_set (optional DAG parallelism guardrails)
+      - conflict_groups / write_set / delete_set (optional DAG guardrails)
       - source_columns (raw cells, kept for traceability/debugging)
 
     Multiple tables may declare overlapping IDs (rare but legal) — the FIRST
@@ -433,6 +443,7 @@ def parse_coverage_registry(checklist_text: str) -> list[dict[str, Any]]:
 
             conflict_groups_raw = ""
             write_set_raw = ""
+            delete_set_raw = ""
             product_increment_raw = ""
             build_state_raw = ""
             risk_level_raw = ""
@@ -442,6 +453,8 @@ def parse_coverage_registry(checklist_text: str) -> list[dict[str, Any]]:
                     conflict_groups_raw = v
                 if _is_write_set_header_key(k):
                     write_set_raw = v
+                if _is_delete_set_header_key(k):
+                    delete_set_raw = v
                 if _is_product_increment_header_key(k):
                     product_increment_raw = v
                 if _is_build_state_header_key(k):
@@ -545,6 +558,7 @@ def parse_coverage_registry(checklist_text: str) -> list[dict[str, Any]]:
                     "dependency_column_present": dependency_column_present,
                     "conflict_groups": _split_meta_refs(conflict_groups_raw),
                     "write_set": _split_meta_refs(write_set_raw),
+                    "delete_set": _split_meta_refs(delete_set_raw),
                     "product_increment": _strip_md_inline(product_increment_raw) or "unspecified",
                     "build_state": _strip_md_inline(build_state_raw) or "planned",
                     "risk_level": (_strip_md_inline(risk_level_raw) or "medium").lower(),
@@ -568,6 +582,7 @@ def parse_coverage_registry(checklist_text: str) -> list[dict[str, Any]]:
                     "source_cells_by_header": dict(cell_by_header),
                     "conflict_groups_raw": conflict_groups_raw,
                     "write_set_raw": write_set_raw,
+                    "delete_set_raw": delete_set_raw,
                     "product_increment_raw": product_increment_raw,
                     "build_state_raw": build_state_raw,
                     "risk_level_raw": risk_level_raw,
@@ -588,7 +603,7 @@ def parse_coverage_registry(checklist_text: str) -> list[dict[str, Any]]:
                     existing["dependency_column_present"] = True
                     if depends_on_raw and not existing.get("depends_on_raw"):
                         existing["depends_on_raw"] = depends_on_raw
-                for key, raw_value in (("conflict_groups", conflict_groups_raw), ("write_set", write_set_raw)):
+                for key, raw_value in (("conflict_groups", conflict_groups_raw), ("write_set", write_set_raw), ("delete_set", delete_set_raw)):
                     existing_items = list(existing.get(key) or [])
                     for item in _split_meta_refs(raw_value):
                         if item not in existing_items:
@@ -598,6 +613,8 @@ def parse_coverage_registry(checklist_text: str) -> list[dict[str, Any]]:
                     existing["conflict_groups_raw"] = conflict_groups_raw
                 if write_set_raw and not existing.get("write_set_raw"):
                     existing["write_set_raw"] = write_set_raw
+                if delete_set_raw and not existing.get("delete_set_raw"):
+                    existing["delete_set_raw"] = delete_set_raw
                 if product_increment_raw and not existing.get("product_increment_raw"):
                     existing["product_increment_raw"] = product_increment_raw
                     existing["product_increment"] = _strip_md_inline(product_increment_raw) or existing.get("product_increment") or "unspecified"
@@ -1227,6 +1244,7 @@ def build_phases_and_tasks(checklist_path: Path, checklist_text: str) -> tuple[l
                     "allowed_paths": list(canonical.get("write_set") or []),
                     "conflict_groups": list(canonical.get("conflict_groups") or []),
                     "write_set": list(canonical.get("write_set") or []),
+                    "delete_set": list(canonical.get("delete_set") or []),
                     "handoff_path": f"orchestrator-state/tasks/handoffs/{tid}.md",
                     "evidence_dir": f"orchestrator-state/tasks/evidence/{tid}",
                     "notes": [],
@@ -1236,6 +1254,7 @@ def build_phases_and_tasks(checklist_path: Path, checklist_text: str) -> tuple[l
                     task_record["depends_on_raw"] = canonical.get("depends_on_raw", "")
                     task_record["conflict_groups_raw"] = canonical.get("conflict_groups_raw", "")
                     task_record["write_set_raw"] = canonical.get("write_set_raw", "")
+                    task_record["delete_set_raw"] = canonical.get("delete_set_raw", "")
                     task_record["product_increment_raw"] = canonical.get("product_increment_raw", "")
                     task_record["build_state_raw"] = canonical.get("build_state_raw", "")
                     task_record["risk_level_raw"] = canonical.get("risk_level_raw", "")

@@ -19,6 +19,8 @@ Usage: scripts/cleanup-deferred-worktrees.sh [--apply] [--task TASK_ID] [--quiet
 Scans orchestrator-state/tasks/cleanup-requests/*.json and removes completed
 per-slice worktrees from a safe checkout. Default is dry-run. This is the
 hook-safe follow-up for cleanup-worktrees.sh when it reports active_deferred=1.
+Requests for tasks that are not closed yet stay pending; dirty closed worktrees
+are never discarded automatically and must be reviewed manually.
 USAGE
 }
 
@@ -122,10 +124,55 @@ path_has_live_usage() {
   return 1
 }
 
+cleanup_ready_state() {
+  local tid="$1"
+  python3 - "$ROOT_REAL" "$tid" <<'PY_READY'
+import json, sys
+from pathlib import Path
+root = Path(sys.argv[1])
+tid = sys.argv[2]
+
+def load_json(path):
+    try:
+        return json.loads(path.read_text(encoding='utf-8'))
+    except Exception:
+        return None
+
+event = load_json(root / 'orchestrator-state' / 'tasks' / 'lifecycle-events' / f'{tid}.json')
+if isinstance(event, dict):
+    if (event.get('schema') == 'orquestador.lifecycle-event.v1'
+        and event.get('task_id') == tid
+        and event.get('agent_type') == 'closer'
+        and event.get('outcome') == 'committed'
+        and event.get('next_status') == 'done'):
+        print('ready:lifecycle-event')
+        raise SystemExit(0)
+
+registry = load_json(root / 'orchestrator-state' / 'tasks' / 'registry.json')
+status = ''
+if isinstance(registry, dict):
+    tasks = registry.get('tasks')
+    task = None
+    if isinstance(tasks, list):
+        task = next((t for t in tasks if isinstance(t, dict) and str(t.get('id') or t.get('task_id') or '') == tid), None)
+    elif isinstance(tasks, dict):
+        obj = tasks.get(tid)
+        task = obj if isinstance(obj, dict) else None
+    if isinstance(task, dict):
+        status = str(task.get('status') or '')
+        if status == 'done':
+            print('ready:registry-done')
+            raise SystemExit(0)
+print('pending:' + (status or 'unknown'))
+raise SystemExit(1)
+PY_READY
+}
+
 TOTAL=0
 REMOVED=0
 SKIPPED=0
 STALE=0
+PENDING=0
 
 while IFS= read -r req; do
   [ -n "$req" ] || continue
@@ -153,23 +200,34 @@ PY
   if [ -n "$TASK_ID" ] && [ "$tid" != "$TASK_ID" ]; then
     continue
   fi
-  wt_real="$(cd "$wt" 2>/dev/null && pwd -P || printf '%s' "$wt")"
-  if [ "$wt_real" = "$CURRENT_REAL" ]; then
-    SKIPPED=$((SKIPPED + 1))
-    say "skip active current checkout: $wt ($branch)"
-    say "manual command from another terminal: cd '$ROOT_REAL' && bash scripts/cleanup-deferred-worktrees.sh --apply --task '$tid'"
-    continue
-  fi
   if [ ! -e "$wt" ]; then
     rm -f "$req"
     STALE=$((STALE + 1))
     [ "$VERBOSE" -eq 1 ] && say "removed stale cleanup request: $req"
     continue
   fi
+  ready_state="$(cleanup_ready_state "$tid" 2>/dev/null || true)"
+  case "$ready_state" in
+    ready:*)
+      [ "$VERBOSE" -eq 1 ] && say "cleanup ready: $tid (${ready_state#ready:})"
+      ;;
+    *)
+      PENDING=$((PENDING + 1))
+      [ "$VERBOSE" -eq 1 ] && say "defer cleanup pending close/merge: $tid (${ready_state#pending:})"
+      continue
+      ;;
+  esac
+  wt_real="$(cd "$wt" 2>/dev/null && pwd -P || printf '%s' "$wt")"
+  if [ "$wt_real" = "$CURRENT_REAL" ]; then
+    SKIPPED=$((SKIPPED + 1))
+    say "skip active current checkout: $wt ($branch)"
+    say "auto cleanup pending: Stop hook janitor/next-wave will retry; fallback command: cd '$ROOT_REAL' && bash scripts/cleanup-deferred-worktrees.sh --apply --task '$tid'"
+    continue
+  fi
   if path_has_live_usage "$wt"; then
     SKIPPED=$((SKIPPED + 1))
     say "skip live deferred worktree: $wt ($branch)"
-    say "retry later: cd '$ROOT_REAL' && bash scripts/cleanup-deferred-worktrees.sh --apply --task '$tid'"
+    say "auto cleanup will retry later; fallback command: cd '$ROOT_REAL' && bash scripts/cleanup-deferred-worktrees.sh --apply --task '$tid'"
     continue
   fi
   if [ "$APPLY" -ne 1 ]; then
@@ -179,6 +237,7 @@ PY
 
   # Ignore stale Claude env vars from the old worker; current cwd is the safety signal.
   if env -u CLAUDE_PROJECT_DIR -u CLAUDE_WORKTREE_ROOT -u CLAUDE_WORKSPACE_ROOT \
+      CLAUDE_CLEANUP_EXPLAIN_DIRTY=1 \
       bash "$CLEANUP_WORKTREES_SCRIPT" --apply --task "$tid" --remove-active >/tmp/cleanup-deferred-$$.log 2>&1; then
     [ "$QUIET" -eq 1 ] || cat /tmp/cleanup-deferred-$$.log
     rm -f /tmp/cleanup-deferred-$$.log
@@ -198,8 +257,8 @@ PY
   fi
 done <"$REQUESTS_FILE"
 
-say "cleanup-deferred-worktrees: requests=$TOTAL removed=$REMOVED skipped=$SKIPPED stale=$STALE mode=$([ "$APPLY" -eq 1 ] && echo apply || echo dry-run) task=${TASK_ID:-all}"
+say "cleanup-deferred-worktrees: requests=$TOTAL removed=$REMOVED skipped=$SKIPPED pending=$PENDING stale=$STALE mode=$([ "$APPLY" -eq 1 ] && echo apply || echo dry-run) task=${TASK_ID:-all}"
 
-if [ "$APPLY" -eq 1 ] && [ -n "$TASK_ID" ] && [ "$SKIPPED" -gt 0 ]; then
+if [ "$APPLY" -eq 1 ] && [ "$SKIPPED" -gt 0 ]; then
   exit 3
 fi

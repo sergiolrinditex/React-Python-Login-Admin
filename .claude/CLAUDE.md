@@ -178,7 +178,7 @@ Do not create hidden runtime folders such as `.orchestrator/`. The only hidden c
 - `/promote-followup <FU_ID>` — promoción segura vía main-orchestrator: convierte una FU aprobada en task DAG persistente en source-of-truth + registry + work-items.
 - `./scripts/sync-product-baseline.sh status|sync` — mantiene `docs/product-baseline/` como snapshot construido acumulativo para el siguiente incremento. `sync` requiere handoff verificado salvo migración manual explícita con `--allow-unverified`.
 - `/verify-journey <JID>` — gate humano end-to-end **a nivel journey** (multi-pantalla, no por slice). Se lanza tras el `closer` de la ÚLTIMA slice de un journey declarado en la Journey Coverage Matrix de `instrucciones.md` (sección Journey Coverage Matrix; el bootstrap la localiza por nombre, no por número). `pending_journey_verifications[]` difiere solo las tasks que referencian esos journeys. No existe modo alternativo de journey gate en DAG-only. Hard reset + datos reales/proporcionados consolidados + reproducción del flujo entero + estados marginales (empty/error/permission/back/deep_link) + next action. Resiliente al `/clear`.
-- `/slice-maintain clean|compact|compact-agent-memory` — mantenimiento entre slices, compactación de PROGRESS.md y compactación lossless de memorias de agentes.
+- `/slice-maintain clean|compact|compact-agent-memory` — mantenimiento entre slices, compactación de PROGRESS.md y compactación lossless de memorias de agentes. `./scripts/next-wave.sh` auto-compacta memorias de agentes >250 líneas antes de calcular la wave.
 
 Recommended order when closing a slice: tester pass → (optional `/clear` to free context) → `/verify-slice` (spawns `closer` if verified) → `/slice-maintain clean` → `/clear` → `/next-slice`.
 
@@ -210,7 +210,7 @@ Si aparece trabajo real fuera del TASK_ID actual, no se deja en el handoff como 
 4. Execute only dependency-ready tasks.
 5. After each slice: verify backend health + verify in browser + run ALL tests.
 6. Require handoff, validator approval, tester pass, full `VERIFY_OUTCOME: verified` from `slice-verifier` (`verified_pending_close`), closer baseline sync + commit + push before `done`, and (when the slice closes a journey) `JOURNEY_VERIFY_OUTCOME: verified` from inline `/verify-slice` or `/verify-journey` before dependent journey tasks continue.
-7. Keep context small. Daily read = `PROGRESS.md` + per-task pack (`orchestrator-state/tasks/task-packs/<TASK_ID>.md`). Use only the per-task pack for the current `TASK_ID`.
+7. Keep context small. Daily read = `PROGRESS.md` + per-task pack (`orchestrator-state/tasks/task-packs/<TASK_ID>.md`). Use only the per-task pack for the current `TASK_ID`. Agent `MEMORY.md` files above 250 lines are compacted automatically by `./scripts/next-wave.sh`; do not ask a subagent to compact its own memory.
 
 ## Compact instructions
 

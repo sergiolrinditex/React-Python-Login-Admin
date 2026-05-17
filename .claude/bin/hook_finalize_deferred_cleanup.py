@@ -29,11 +29,15 @@ def main() -> int:
         if not req_dir.exists() or not any(req_dir.glob("*.json")):
             return 0
 
-        delay = os.environ.get("CLAUDE_DEFERRED_CLEANUP_DELAY", "30")
+        delay = os.environ.get("CLAUDE_DEFERRED_CLEANUP_DELAY", "10")
+        interval = os.environ.get("CLAUDE_DEFERRED_CLEANUP_INTERVAL", "15")
+        timeout = os.environ.get("CLAUDE_DEFERRED_CLEANUP_TIMEOUT", "600")
         log_dir = root / "orchestrator-state" / "tasks"
         log_dir.mkdir(parents=True, exist_ok=True)
         log_path = log_dir / "cleanup-deferred-hook.log"
-        script = root / "scripts" / "cleanup-deferred-worktrees.sh"
+        script = root / "scripts" / "cleanup-deferred-worktrees-loop.sh"
+        if not script.exists():
+            script = root / "scripts" / "cleanup-deferred-worktrees.sh"
         if not script.exists():
             return 0
 
@@ -42,14 +46,27 @@ def main() -> int:
         # The child is an external janitor, not the old task checkout.
         for key in ("CLAUDE_PROJECT_DIR", "CLAUDE_WORKTREE_ROOT", "CLAUDE_WORKSPACE_ROOT"):
             env.pop(key, None)
-        cmd = [
-            "bash",
-            "-lc",
-            "sleep \"$1\"; cd \"$2\" && bash scripts/cleanup-deferred-worktrees.sh --apply --quiet",
-            "cleanup-deferred-hook",
-            str(delay),
-            str(root),
-        ]
+        if script.name == "cleanup-deferred-worktrees-loop.sh":
+            cmd = [
+                "bash",
+                str(script),
+                "--initial-delay",
+                str(delay),
+                "--interval",
+                str(interval),
+                "--timeout",
+                str(timeout),
+                "--quiet",
+            ]
+        else:
+            cmd = [
+                "bash",
+                "-lc",
+                "sleep \"$1\"; cd \"$2\" && bash scripts/cleanup-deferred-worktrees.sh --apply --quiet",
+                "cleanup-deferred-hook",
+                str(delay),
+                str(root),
+            ]
         with log_path.open("a", encoding="utf-8") as log:
             subprocess.Popen(
                 cmd,

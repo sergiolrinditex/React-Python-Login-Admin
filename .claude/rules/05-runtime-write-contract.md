@@ -157,7 +157,14 @@ Every FU proposal must explain why it is not going through debugger/retest:
   --verify "<verification with real/provided data>"
 ```
 
-The script rejects `--scope-classification in_scope_defect` and requires `--why-not-debugger` for `high|critical|blocker` proposals. `validator`, `tester` and `debugger` are allowed to run `propose` for real out-of-scope findings, but they must never call `promote`; `screen-journey-reviewer` is the exception and only writes `followup_candidate=yes` for `/verify-slice` to register. That prevents FU spam while keeping real out-of-scope debt visible.
+The script rejects `--scope-classification in_scope_defect` and requires `--why-not-debugger` for `high|critical|blocker` proposals. `validator`, `tester` and `debugger` should normally emit `FU_PROPOSAL:*` machine-readable fields in their handoff instead of mutating runtime while the parallel pair is still racing. The main-orchestrator registers exactly one proposal with `propose`, after checking duplicates. No subagent calls `promote`; `screen-journey-reviewer` only writes `followup_candidate=yes` for `/verify-slice` to register. That prevents FU spam while keeping real out-of-scope debt visible.
+
+Operational lessons:
+
+- Do not create a FU to repair a stale `write_set` string. Resolve real paths with `find`/`grep`, document the drift in the task pack/handoff, and only block if product scope is ambiguous.
+- A sibling/out-of-write_set bug is `missing_coverage` or `out_of_scope`; it is not an in-scope debugger fix.
+- Duplicate FU triage is a waiver decision, not a promotion decision. Subagents may recommend `duplicate_of_done=<TASK_ID|FOLLOWUP_ID>`; only the main orchestrator/user runs `waive`.
+- Promoted FU with missing checklist row: do not edit source-of-truth from a worker terminal. Use the registry/work-item/FU YAML linkage and fix source-of-truth from a clean orchestrator maintenance context.
 
 Only the main orchestrator promotes or waives it after explicit human decision:
 

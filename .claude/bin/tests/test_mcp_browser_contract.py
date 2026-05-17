@@ -92,3 +92,14 @@ def test_mcp_browser_guide_documents_requested_fallback_order() -> None:
     assert "Chrome DevTools MCP first" in text
     assert "try `claude-in-chrome`" in text
     assert "try Agent360/`browser-mcp`" in text
+
+
+def test_next_wave_does_not_kill_browser_mcps() -> None:
+    command = (ROOT / ".claude/commands/next-wave.md").read_text(encoding="utf-8")
+    guide = (ROOT / "docs/guides/MCP_BROWSER_VERIFY.md").read_text(encoding="utf-8")
+    assert "No reinicies ni mates MCPs desde `/next-wave`" in command
+    assert "Do not kill or restart browser MCPs from `/next-wave`" in guide
+    next_wave = (ROOT / "scripts" / "next-wave.sh").read_text(encoding="utf-8")
+    assert "pkill" not in next_wave
+    assert "killall" not in next_wave
+    assert "chrome-mcp-doctor" not in next_wave

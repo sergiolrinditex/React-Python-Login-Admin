@@ -60,9 +60,15 @@ Before advancing to the next phase:
 
 Production execution is DAG-only. DAG execution is enabled by the Coverage Registry dependency column in the checklist; if `task_dag.mode` is `missing dependency column`, treat it as a source-of-truth defect and do not open workers. The planner must treat `depends_on` as a hard gate: a node can be selected only when every predecessor is `done`. Multiple ready nodes in the earliest incomplete phase form the current wave.
 
+Cross-slice regression guard:
+
+- Shared frontend/domain files (`errors.ts`, auth/MFA/ForgotPassword, router/routes, chat/domain, providers/layout, shared/core) require real `/verify-slice` browser evidence before closer. Auto verify is only for low-risk non-UI/non-shared deterministic tasks.
+- If a worktree cannot see a done dependency from `origin/main`, stop as `stale_worktree_dep_missing`; do not let planner auto-rebase or silently plan against stale files.
+- PROGRESS.md is canonical in the main repo. During a slice, a worktree may not show a local PROGRESS diff; `progress_md_gate: inconclusive` is diagnostic, not by itself a product blocker.
+
 Rules for DAG waves:
 
-- Use `/next-wave` to list independent `ready` nodes. The script enforces `Conflict group` and `Write set` guardrails before opening worker terminals.
+- Use `/next-wave` to list independent `ready` nodes. The script first performs safe local housekeeping (agent MEMORY.md auto-compaction above 250 lines, deferred worktree cleanup, lifecycle-event sync) and then enforces `Conflict group` and `Write set` guardrails before opening worker terminals. It must not kill/restart browser MCPs; MCP health belongs to `/verify-slice`.
 - Do not spawn several slice pipelines inside one Claude session. Use one terminal per `TASK_ID`, each with `CLAUDE_ACTIVE_TASK_ID=<TASK_ID>`.
 - Before the first worker call in a DAG terminal, claim the task with `.claude/bin/claim_task.py <TASK_ID>`. This prevents duplicate terminals from taking the same node and denies claims that conflict with DAG tasks by `Conflict group`/`Write set`.
 - Do not bypass journey gates, phase gates, spawn budget, human verification or closer. DAG only changes which independent slices may be worked at the same time.

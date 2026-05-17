@@ -2,7 +2,7 @@ id: P04-S01-T003
 phase_id: P04
 step_id: P04-S01
 title: "ModelWizardPage"
-status: blocked
+status: ready
 kind: "frontend"
 target: "ModelWizardPage"
 product_increment: "v1"

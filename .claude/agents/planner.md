@@ -43,6 +43,25 @@ Lee en paralelo:
 - `orchestrator-state/tasks/runtime-state.json` solo para contexto de progreso; no lo uses como identidad de worker si no hay `CLAUDE_ACTIVE_TASK_ID`.
 - Si existe `CLAUDE_ACTIVE_TASK_ID` o el comando padre te pasó un `TASK_ID`, usa `orchestrator-state/tasks/task-packs/<TASK_ID>.md` como pack canónico de esta terminal. No existe implicit selector/fase en DAG; el task-pack por `TASK_ID` es la única autoridad de contexto.
 
+### 1.pre Gate de worktree freshness (read-only)
+
+Antes de confiar en el pack o en paths de dependencias, ejecuta desde el root canónico o la worktree activa:
+
+```bash
+ROOT="$(bash scripts/ensure-task-worktree.sh --print-root 2>/dev/null || pwd -P)"
+bash "$ROOT/scripts/check-worktree-deps-visible.sh" <TASK_ID> --json
+```
+
+Si devuelve `reason=stale_worktree_dep_missing`, emite:
+
+```text
+CONTEXT_READY: no
+OUTCOME: blocked
+REASON: stale_worktree_dep_missing
+```
+
+No hagas auto-rebase, no actualices ramas y no recrees worktrees desde el planner. Ese es trabajo de shell/orquestador, no del subagente. Antes de planear dependencias recientes, también comprueba `git status -sb`, `git log --grep <DEP_TASK_ID>` y los paths esperados de la dependencia cuando el script te indique drift.
+
 ### 1.bis Gate de journeys pendientes
 
 Comprueba `runtime-state.pending_journey_verifications`. En DAG-only NO bloquea todo el DAG: solo devuelve `CONTEXT_READY: no` si el `TASK_ID` pedido referencia alguno de los journeys pendientes en `Journey refs`, `depends_on_journeys` o `journey_gate_refs`. Las ramas independientes pueden seguir. Nunca mutes registry, runtime-state ni implicit selector desde el planner.
@@ -247,9 +266,20 @@ When `registry.task_dag.mode == "explicit_dag"`, keep the existing agents and pe
 
 El planner no crea FU por bugs de implementación: esos van por `validator/tester -> debugger -> retest`. Su rol es detectar huecos de planificación antes de ejecutar:
 
+- Si una FU promovida trae `write_set` que no coincide con el layout real, no abras otra FU para corregir el string. Haz `find`/`grep` read-only, documenta el path real en el task pack y, si hace falta, pide a main-orchestrator corregir source-of-truth fuera de la slice. Peor remedio: crear FU para el propio typo de FU.
+- Si una FU ya está `promoted` pero todavía no ves la fila en el checklist, no edites source-of-truth mid-slice. Documenta el linkage explícito en el task pack (`origin.followup_id`, proposal YAML, work-item YAML) y bloquea sólo si falta el work-item o el registry task.
+- Si detectas posible duplicado de FU ya resuelto/promovido, no promociones ni waivees desde planner: marca `CONTEXT_READY: no` con `POSSIBLE_DUPLICATE_FOLLOWUP` y deja que main-orchestrator decida.
+
 - Si el task pack está incompleto para la propia slice pero se puede enriquecer desde source-of-truth existente, prepara el pack; no abras FU.
 - Si falta coverage real en source-of-truth (nueva lane/slice, dependency, write_set/conflict_group, data contract o journey no declarado), devuelve `CONTEXT_READY: no` y pide corregir docs o crear FU triageada.
 - No uses FU para partir una task a mitad de ejecución salvo que la unidad canónica sea inviable y haya aprobación humana para source-of-truth amendment.
+
+### Lifecycle lessons to apply before packing
+
+- **Promoted FU path drift:** a promoted FU `write_set` may contain stale/human path strings. Before trusting it literally, run `find`/`grep` against the current worktree and existing modules. Put the resolved real files in the task pack as `Resolved write set`. Do not open another FU just to fix a path string; block only if the real product scope is unclear.
+- **Promoted FU without checklist row:** if a FU is already promoted but the checklist row is missing or not yet visible in this worktree, do not edit source-of-truth mid-slice. The pack must document the linkage explicitly (`runtime_followup:<FU_ID>`, origin task, acceptance, verify, write_set) and continue only if registry/work-item are coherent.
+- **Stale worktree dependency gate:** before planning from a worktree, check `git status -sb`, search recent history for dependency task IDs (`git log --grep <DEP_TASK_ID>`), and verify expected dependency paths exist. If a done dependency is invisible in this worktree, emit `CONTEXT_READY: no` with `REASON: stale_worktree_dep_missing`. The planner must not auto-rebase, merge or reset; Git mutation is closer/user workflow, not planner role.
+- **Journey participation is not journey closure:** always run `python3 -B -S .claude/bin/list_journey_closures.py <TASK_ID> --json` before claiming a task closes a journey. Do not infer closure from membership in `journey_refs` or from task list position.
 
 ## Open follow-ups gate
 

@@ -1,5 +1,5 @@
 ---
-description: Mantenimiento entre slices. Subcomandos — `clean` (limpieza conservadora), `compact` (PROGRESS.md/memory global) y `compact-agent-memory` (memorias vivas de agentes con snapshot íntegro). Dry-run obligatorio por defecto.
+description: Mantenimiento entre slices. Subcomandos — `clean` (limpieza conservadora), `compact` (PROGRESS.md/memory global) y `compact-agent-memory` (memorias vivas de agentes con snapshot íntegro). Dry-run manual por defecto; next-wave auto-compacta memorias >250 líneas.
 argument-hint: "clean [--apply]  |  compact [--apply] [--keep N] [--threshold-days D]  |  compact-agent-memory [--apply] [--agent NAME|--all] [--threshold-lines N]"
 ---
 
@@ -262,8 +262,9 @@ Este subcomando es distinto de `compact`:
 
 - `compact` toca `orchestrator-state/memory/PROGRESS.md` y compañeros de memoria global.
 - `compact-agent-memory` toca sólo `orchestrator-state/agent-memory/<agent>/MEMORY.md` y crea snapshots íntegros bajo `orchestrator-state/agent-memory/<agent>/archive/`.
+- Los snapshots y locks de compactación son runtime local gitignored; no deben entrar en PRs de producto.
 
-**Dry-run por defecto.** No compactes memoria de agentes como parte de una limpieza normal; debe ser una acción explícita.
+**Dry-run por defecto cuando lo invoca un humano.** `./scripts/next-wave.sh` ejecuta una compactación automática conservadora al inicio con umbral 250 líneas. Esa ruta archiva el original completo y no toca `.claude/agents/*.md`.
 
 ## Comando mecánico recomendado
 
@@ -285,7 +286,7 @@ Aplicar sólo tras revisar el plan:
 python3 -B -S scripts/compact-agent-memory.py --all --apply
 ```
 
-Umbral por defecto: 200 líneas. Override:
+Umbral por defecto: 250 líneas. Override:
 
 ```bash
 python3 -B -S scripts/compact-agent-memory.py --all --threshold-lines 150
@@ -338,7 +339,7 @@ Para `official-docs-researcher`:
 AGENT MEMORY COMPACTION
 =======================
 mode: dry-run
-threshold_lines: 200
+threshold_lines: 250
 COMPACT developer: 433 lines -> snapshot orchestrator-state/agent-memory/developer/archive/MEMORY.full.<ts>.md
 COMPACT official-docs-researcher: 510 lines -> snapshot orchestrator-state/agent-memory/official-docs-researcher/archive/MEMORY.full.<ts>.md
 Dry-run only. Re-run with --apply to archive originals and compact MEMORY.md.

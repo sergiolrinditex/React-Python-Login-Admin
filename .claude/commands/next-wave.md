@@ -21,7 +21,9 @@ Antes de resumir manualmente, ejecuta:
 ./scripts/next-wave.sh
 ```
 
-Usa su salida como base. No inventes ready nodes a mano si el script dice que no hay.
+El wrapper hace housekeeping no destructivo antes de calcular la wave: compacta automáticamente `orchestrator-state/agent-memory/*/MEMORY.md` cuando superan 250 líneas, limpia worktrees diferidas si ya es seguro, rehidrata registry desde lifecycle-events y borra worktrees limpios + ramas locales `dev/<TASK_ID>`/`feature/<TASK_ID>` de tasks ya cerradas. Una cleanup request con PR todavía abierta queda pendiente y no es warning; una task cerrada pero dirty debe mostrar diagnóstico y requiere revisión humana antes de borrar. Usa su salida como base. No inventes ready nodes a mano si el script dice que no hay.
+
+No reinicies ni mates MCPs desde `/next-wave`. Los MCPs de navegador pertenecen al preflight de `/verify-slice`/`slice-verifier`, porque puede haber terminales DAG paralelas usando sesiones visibles.
 
 ## Lectura obligatoria
 

@@ -100,6 +100,10 @@ DEFERRED_CLEANUP_SCRIPT="$ROOT_REAL/scripts/cleanup-deferred-worktrees.sh"
 if [ ! -f "$DEFERRED_CLEANUP_SCRIPT" ]; then
   DEFERRED_CLEANUP_SCRIPT="$SCRIPT_DIR/cleanup-deferred-worktrees.sh"
 fi
+DEFERRED_CLEANUP_LOOP_SCRIPT="$ROOT_REAL/scripts/cleanup-deferred-worktrees-loop.sh"
+if [ ! -f "$DEFERRED_CLEANUP_LOOP_SCRIPT" ]; then
+  DEFERRED_CLEANUP_LOOP_SCRIPT="$SCRIPT_DIR/cleanup-deferred-worktrees-loop.sh"
+fi
 cd "$ROOT_REAL"
 
 if [ "$DEFERRED_ONLY" -eq 1 ]; then
@@ -153,13 +157,16 @@ schedule_deferred_cleanup() {
   mkdir -p "$ROOT_REAL/orchestrator-state/tasks" 2>/dev/null || true
   (
     cd "$root_real" || exit 0
-    sleep "$delay"
-    env -u CLAUDE_PROJECT_DIR -u CLAUDE_WORKTREE_ROOT -u CLAUDE_WORKSPACE_ROOT \
-      bash "$DEFERRED_CLEANUP_SCRIPT" --apply --task "$task_id" --quiet >>"$log_file" 2>&1 || true
+    if [ -f "$DEFERRED_CLEANUP_LOOP_SCRIPT" ]; then
+      env -u CLAUDE_PROJECT_DIR -u CLAUDE_WORKTREE_ROOT -u CLAUDE_WORKSPACE_ROOT         bash "$DEFERRED_CLEANUP_LOOP_SCRIPT" --initial-delay "$delay" --interval "${CLAUDE_WORKTREE_CLEANUP_INTERVAL_SECONDS:-15}" --timeout "${CLAUDE_WORKTREE_CLEANUP_TIMEOUT_SECONDS:-600}" --quiet >>"$log_file" 2>&1 || true
+    else
+      sleep "$delay"
+      env -u CLAUDE_PROJECT_DIR -u CLAUDE_WORKTREE_ROOT -u CLAUDE_WORKSPACE_ROOT         bash "$DEFERRED_CLEANUP_SCRIPT" --apply --task "$task_id" --quiet >>"$log_file" 2>&1 || true
+    fi
   ) >/dev/null 2>&1 &
   local pid=$!
   disown "$pid" 2>/dev/null || true
-  echo "ACTIVE_CLEANUP_SCHEDULED: yes task=$task_id delay=${delay}s log=$log_file"
+  echo "ACTIVE_CLEANUP_SCHEDULED: yes task=$task_id delay=${delay}s retry_window=${CLAUDE_WORKTREE_CLEANUP_TIMEOUT_SECONDS:-600}s log=$log_file"
 }
 
 branch_short_name() {
@@ -284,6 +291,23 @@ process_record() {
   if [ -n "$status" ]; then
     SKIPPED=$((SKIPPED + 1))
     echo "skip dirty: $wt_path ($wt_branch)"
+    if [ "$VERBOSE" -eq 1 ] || [ "${CLAUDE_CLEANUP_EXPLAIN_DIRTY:-0}" = "1" ]; then
+      local limit shown total
+      limit="${CLAUDE_CLEANUP_DIRTY_STATUS_LIMIT:-40}"
+      case "$limit" in ''|*[!0-9]*) limit=40 ;; esac
+      total="$(printf '%s\n' "$status" | sed '/^$/d' | wc -l | tr -d ' ')"
+      shown=0
+      echo "DIRTY_STATUS_BEGIN: $wt_path total=$total shown_limit=$limit"
+      printf '%s\n' "$status" | sed -n "1,${limit}p" | sed 's/^/  /'
+      shown="$(printf '%s\n' "$status" | sed -n "1,${limit}p" | sed '/^$/d' | wc -l | tr -d ' ')"
+      if [ "$total" -gt "$shown" ] 2>/dev/null; then
+        echo "  ... $((total - shown)) more dirty path(s) omitted"
+      fi
+      echo "DIRTY_STATUS_END: $wt_path"
+      if [ -n "$TASK_ID" ]; then
+        echo "MANUAL_REVIEW_COMMAND: git -C '$wt_path' status --short && git -C '$wt_path' diff --stat"
+      fi
+    fi
     return 0
   fi
 

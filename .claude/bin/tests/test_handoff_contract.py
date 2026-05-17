@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import os
 import subprocess
 import sys
@@ -32,6 +33,25 @@ def _run(tmp_path: Path, handoff_text: str, task_id: str = "P00-S01-T001"):
         stderr=subprocess.PIPE,
     )
 
+
+
+
+def _write_registry(tmp_path: Path, task_id: str, **task_overrides) -> None:
+    tasks_dir = tmp_path / "orchestrator-state" / "tasks"
+    tasks_dir.mkdir(parents=True, exist_ok=True)
+    task = {
+        "id": task_id,
+        "title": "Test task",
+        "phase_id": "P00",
+        "step_id": "P00-S01",
+        "status": "ready",
+        "risk_level": "low",
+        "verify_mode": "auto",
+        "write_set": [],
+    }
+    task.update(task_overrides)
+    registry = {"tasks": [task], "phases": [], "journeys": [], "task_dag": {"mode": "explicit_dag"}}
+    (tasks_dir / "registry.json").write_text(json.dumps(registry), encoding="utf-8")
 
 def _verified_verify_block(task_id: str, *, heading: str = "## verify-slice", extra: str = "") -> str:
     return f"""{heading}
@@ -352,6 +372,80 @@ def test_handoff_contract_accepts_low_risk_auto_verify_without_browser_mcp(tmp_p
     assert result.returncode == 0, result.stdout + result.stderr
 
 
+
+
+def test_handoff_contract_rejects_auto_verify_for_shared_frontend_files(tmp_path: Path) -> None:
+    task_id = "P00-S01-T001"
+    _write_registry(
+        tmp_path,
+        task_id,
+        kind="frontend",
+        title="Update shared auth error mapping",
+        write_set=["src/shared/errors.ts"],
+    )
+    result = _run(
+        tmp_path,
+        f"""
+# Task Handoff — {task_id}
+
+## Validator review
+- OUTCOME: approved
+
+## Tester run
+- OUTCOME: pass
+
+## verify-slice
+- TASK_ID: {task_id}
+- VERIFY_MODE: auto
+- RISK_LEVEL: low
+- VERIFY_OUTCOME: verified
+- DATA_CONTRACT_ROWS: VDC-auto-low
+- PERSISTED_DATA_OBSERVED: command evidence
+- FLOWS_TESTED: pytest tests/smoke.py
+- EVIDENCE: orchestrator-state/tasks/evidence/{task_id}/auto-verify.json
+""",
+        task_id,
+    )
+    output = result.stdout + result.stderr
+    assert result.returncode == 2
+    assert "auto verify-slice is not allowed" in output
+    assert "browser MCP" in output
+
+
+def test_handoff_contract_allows_auto_verify_for_low_risk_backend_only_task(tmp_path: Path) -> None:
+    task_id = "P00-S01-T001"
+    _write_registry(
+        tmp_path,
+        task_id,
+        kind="backend",
+        title="Add deterministic pure helper",
+        write_set=["backend/app/services/token_expiry.py"],
+    )
+    result = _run(
+        tmp_path,
+        f"""
+# Task Handoff — {task_id}
+
+## Validator review
+- OUTCOME: approved
+
+## Tester run
+- OUTCOME: pass
+
+## verify-slice
+- TASK_ID: {task_id}
+- VERIFY_MODE: auto
+- RISK_LEVEL: low
+- VERIFY_OUTCOME: verified
+- DATA_CONTRACT_ROWS: VDC-auto-low
+- PERSISTED_DATA_OBSERVED: command evidence
+- FLOWS_TESTED: pytest tests/smoke.py
+- EVIDENCE: orchestrator-state/tasks/evidence/{task_id}/auto-verify.json
+""",
+        task_id,
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
+
 def test_handoff_contract_rejects_verified_without_human_mcp_proof(tmp_path: Path) -> None:
     task_id = "P00-S01-T001"
     result = _run(
@@ -572,3 +666,36 @@ def test_handoff_contract_treats_blocked_verify_as_valid_but_not_closeable(tmp_p
     output = result.stdout + result.stderr
     assert "verify-slice not verified" in output
     assert "invalid verify-slice VERIFY_OUTCOME" not in output
+
+
+def test_handoff_contract_rejects_auto_verify_for_shared_visual_risk_write_set(tmp_path: Path) -> None:
+    task_id = "P00-S01-T001"
+    _write_registry(tmp_path, task_id, write_set=["src/features/auth/errors.ts"], verify_mode="auto", risk_level="low")
+    result = _run(
+        tmp_path,
+        f"""
+# Task Handoff — {task_id}
+
+## Validator review
+- TASK_ID: {task_id}
+- OUTCOME: approved
+
+## Tester run
+- TASK_ID: {task_id}
+- OUTCOME: pass
+
+## verify-slice
+- TASK_ID: {task_id}
+- VERIFY_MODE: auto
+- RISK_LEVEL: low
+- VERIFY_OUTCOME: verified
+- DATA_CONTRACT_ROWS: n/a
+- PERSISTED_DATA_OBSERVED: n/a
+- FLOWS_TESTED: deterministic checks
+- EVIDENCE: orchestrator-state/tasks/evidence/{task_id}/auto-*
+""",
+        task_id,
+    )
+    assert result.returncode != 0
+    payload = json.loads(result.stdout)
+    assert any("auto verify-slice is not allowed" in err for err in payload["errors"])

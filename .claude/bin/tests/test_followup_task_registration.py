@@ -256,3 +256,31 @@ def test_cli_json_flag_is_accepted_after_subcommand(seeded_registry, capsys):
         assert "followups" in data
     finally:
         sys.argv = old_argv
+
+
+def test_reconciler_restores_open_followups_from_yaml_if_runtime_was_reset(seeded_registry):
+    result = fut.propose(_args(severity="blocker"))
+    fid = result["followup_id"]
+    runtime = common.load_runtime_state()
+    runtime["open_followups"] = []
+    common.save_runtime_state(runtime)
+
+    repaired, repairs = common.reconcile_runtime_state(common.load_registry(), apply=True)
+
+    assert any(r.get("field") == "open_followups" and r.get("added") == fid for r in repairs)
+    assert repaired["open_followups"][0]["id"] == fid
+    assert common.load_runtime_state()["open_followups"][0]["id"] == fid
+
+
+def test_promote_blocks_likely_duplicate_followup_without_override(seeded_registry):
+    import pytest
+    import register_followup_task as fut
+
+    first = fut.propose(_args(title="Fix auth response code", kind="bug", scope_classification="out_of_scope", why_not_debugger="outside write_set", journey_ref=[]))
+    promoted = fut.promote(type("Args", (), {"followup_id": first["followup_id"], "task_id": None, "origin_task": None, "phase": None, "step": None, "depends_on": None, "no_source_doc_update": True, "allow_duplicate": False})())
+    assert promoted["ok"] is True
+
+    second = fut.propose(_args(title="Fix auth response code", kind="bug", scope_classification="out_of_scope", why_not_debugger="outside write_set", journey_ref=[]))
+    with pytest.raises(SystemExit) as exc:
+        fut.promote(type("Args", (), {"followup_id": second["followup_id"], "task_id": None, "origin_task": None, "phase": None, "step": None, "depends_on": None, "no_source_doc_update": True, "allow_duplicate": False})())
+    assert "possible duplicate follow-up" in str(exc.value)

@@ -17,4 +17,5 @@ task_ids:
   - P04-S03-T002
   - P04-S03-T003
   - P04-S02-T006
+  - P04-S01-T005
 source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Phase 4 — Admin UX"

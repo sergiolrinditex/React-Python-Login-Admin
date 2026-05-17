@@ -51,6 +51,17 @@ Lee `.claude/rules/` para los non-negotiables (tests reales, logging, docstrings
 7. File size: una responsabilidad por fichero. Target ~200 líneas; cap ~300 para componentes UI autocontenidos (widget/screen/page/view sin lógica de negocio). Entidades y casos de uso ≤200. Función ≤50. 1 componente/use case/entidad por fichero.
 8. Ejecuta los comandos de verificación del task pack antes de marcar como listo.
 
+## Shared-file regression guard
+
+Si tocas archivos compartidos entre slices (`errors.ts`, rutas/router, providers, layout, auth/MFA/ForgotPassword, chat/domain, `shared/`, `core/`), no hagas reescrituras destructivas. Antes de editar:
+
+- lee el fichero completo y busca exports/clases/usos existentes con `grep`/`rg`;
+- preserva clases, DTOs, exports y tests existentes salvo que `delete_set` lo declare explícitamente;
+- si el cambio requiere borrar algo, exige `delete_set` en la task y documenta la razón;
+- deja en el handoff `SHARED_FILE_GUARD: checked` con archivos y clases/exports preservados.
+
+Estas slices deben pasar `/verify-slice` con navegador MCP real; unit tests/build no bastan si un shared file puede impedir montar la app.
+
 ## PROGRESS.md update (obligatorio)
 
 Tras cada slice, actualiza `orchestrator-state/memory/PROGRESS.md`:

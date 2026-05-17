@@ -58,3 +58,12 @@ def test_cleanup_deferred_missing_task_request_is_quiet_success(tmp_path: Path) 
 
     assert result.stdout == ""
     assert result.stderr == ""
+
+
+def test_cleanup_loop_is_bash3_compatible() -> None:
+    text = (ROOT / "scripts" / "cleanup-deferred-worktrees-loop.sh").read_text(encoding="utf-8")
+    code = "\n".join(line for line in text.splitlines() if not line.strip().startswith("#"))
+    assert "mapfile" not in code
+    assert "readarray" not in code
+    assert "sort -z" not in code
+    assert "[@]" not in code

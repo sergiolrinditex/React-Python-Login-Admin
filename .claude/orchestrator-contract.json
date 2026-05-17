@@ -351,7 +351,13 @@
       "blocked_by_human_decision"
     ],
     "rejected_scope_classification": "in_scope_defect",
-    "closer_policy": "Formal proposed follow-ups from the same origin_task_id do not block closer/PR. They must be referenced in the report and staged by scripts/git-add-slice.sh; /next-wave and claim_task.py remain blocked until promote or waiver."
+    "closer_policy": "Formal proposed follow-ups from the same origin_task_id do not block closer/PR. They must be referenced in the report and staged by scripts/git-add-slice.sh; /next-wave and claim_task.py remain blocked until promote or waiver.",
+    "learned_triage_rules": [
+      "out-of-write_set sibling bug => missing_coverage/out_of_scope, not in_scope_defect",
+      "duplicate FU => recommend waiver duplicate_of_done; subagents do not promote or waive",
+      "promoted FU write_set path drift => planner resolves real files with find/grep; do not open FU for string drift",
+      "promoted FU missing checklist row => document runtime_followup linkage in task pack; do not edit source-of-truth mid-slice"
+    ]
   },
   "product_baseline": {
     "purpose": "docs/product-baseline/ stores the built cumulative baseline snapshot passed to ChatGPT before planning the next increment.",
@@ -700,5 +706,8 @@
   },
   "journey_gate": {
     "policy": "pending journeys defer only tasks whose Journey refs/dependencies reference that JID"
+  },
+  "verification": {
+    "shared_file_browser_gate": "tasks touching errors.ts/auth/chat/router/providers/layout/shared/core/frontend UI files must use human browser MCP verify; auto verify is rejected by check-handoff-contract for shared/UI work"
   }
 }
