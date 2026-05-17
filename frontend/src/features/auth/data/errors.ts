@@ -4,6 +4,8 @@
  * Slice/Phase: P01-S03-T001 — Auth state provider and protected route guards / Phase 1.
  *   Extended in P03-S01-T001 — SignInPage: added sign-in-specific error classes.
  *   Extended in P03-S01-T002 — SignUpPage: added sign-up-specific error classes (§D-T002-AUTH-ERRORS).
+ *   Extended in P03-S01-T003 — ForgotPasswordPage: added forgot-password error classes (§D-T003-AUTH-ERRORS).
+ *   Extended in P03-S01-T005 — TwoFactorPage: added MFA verify error classes (§D-T005-AUTH-ERRORS).
  *
  * Responsibility: Typed error classes for auth operations.
  *   authRepository.ts throws these; presentation/ catches them via Result<T,E> patterns.
@@ -16,6 +18,11 @@
  *   Sign-up error codes (§5 task pack): AUTH_SIGNUP_NON_CORPORATE_EMAIL (400),
  *   AUTH_SIGNUP_LEGAL_NOT_ACCEPTED (400), AUTH_SIGNUP_EMAIL_TAKEN (409),
  *   AUTH_SIGNUP_INVALID_PAYLOAD (422), AUTH_SIGNUP_RATE_LIMITED (429).
+ *   Forgot-password error codes (P03-S01-T003): AUTH_FORGOT_VALIDATION (400),
+ *   AUTH_FORGOT_RATE_LIMITED (429), AUTH_FORGOT_INTERNAL (5xx).
+ *   MFA verify error codes (P03-S01-T005): AUTH_MFA_CODE_INVALID (401 aggregate),
+ *   AUTH_MFA_CHALLENGE_EXPIRED (410), AUTH_MFA_VERIFY_RATE_LIMITED (429),
+ *   AUTH_INVALID_PAYLOAD (400), AUTH_MFA_VERIFY_INTERNAL_ERROR (5xx).
  */
 
 // ---------------------------------------------------------------------------
@@ -251,6 +258,150 @@ export class SignupInternalError extends Error {
     this.status = status;
   }
 }
+
+// ---------------------------------------------------------------------------
+// Forgot-password specific errors (P03-S01-T003 — §D-T003-AUTH-ERRORS)
+// ---------------------------------------------------------------------------
+
+/**
+ * Validation error from forgot-password — server returned 400.
+ * Rare: client-side zod should catch first, but we handle for defence in depth.
+ * UI state: error_validation → inline field error.
+ */
+export class ForgotPasswordValidationError extends Error {
+  public readonly code = "AUTH_FORGOT_VALIDATION";
+  /** Backend field name where the error occurred, if present. */
+  public readonly field?: string;
+
+  constructor(field?: string, message = "Datos de email no válidos.") {
+    super(message);
+    this.name = "ForgotPasswordValidationError";
+    this.field = field;
+  }
+}
+
+/**
+ * Rate limited — server returned 429 for forgot-password.
+ * Carries retryAfter seconds from the Retry-After response header.
+ * UI state: permission_denied → disabled submit + countdown copy.
+ */
+export class ForgotPasswordRateLimitedError extends Error {
+  public readonly code = "AUTH_FORGOT_RATE_LIMITED";
+  /** Seconds to wait before retrying, from Retry-After header. 0 if header absent. */
+  public readonly retryAfter: number;
+
+  constructor(retryAfter = 0, message = "Demasiados intentos. Intenta de nuevo más tarde.") {
+    super(message);
+    this.name = "ForgotPasswordRateLimitedError";
+    this.retryAfter = retryAfter;
+  }
+}
+
+/**
+ * Internal server error from forgot-password — server returned 500 or unexpected status.
+ * UI state: error_network → generic server error copy.
+ */
+export class ForgotPasswordInternalError extends Error {
+  public readonly code = "AUTH_FORGOT_INTERNAL_ERROR";
+  public readonly status: number;
+
+  constructor(status: number, message = "Error interno del servidor.") {
+    super(message);
+    this.name = "ForgotPasswordInternalError";
+    this.status = status;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// MFA verify specific errors (P03-S01-T005 — §D-T005-AUTH-ERRORS)
+// ---------------------------------------------------------------------------
+
+/**
+ * Payload validation error from MFA verify — server returned 400 AUTH_INVALID_PAYLOAD.
+ * Triggered when code is not 6 digits or challenge_id < 30 chars.
+ * UI state: error_validation → inline field error on code input.
+ */
+export class MfaPayloadInvalidError extends Error {
+  public readonly code = "AUTH_INVALID_PAYLOAD";
+
+  constructor(message = "Introduce un código de 6 dígitos.") {
+    super(message);
+    this.name = "MfaPayloadInvalidError";
+  }
+}
+
+/**
+ * Invalid code — server returned 401 AUTH_MFA_CODE_INVALID.
+ * §D-T005-AGGREGATE-401: anti-enumeration design. Backend returns BYTE-IDENTICAL body
+ * for wrong code, invalid challenge, missing secret, AND replay. UI MUST NOT differentiate.
+ * One single copy: "Código incorrecto. Vuelve a intentarlo."
+ * UI state: error_validation.
+ */
+export class MfaCodeInvalidError extends Error {
+  public readonly code = "AUTH_MFA_CODE_INVALID";
+
+  constructor(message = "Código incorrecto. Vuelve a intentarlo.") {
+    super(message);
+    this.name = "MfaCodeInvalidError";
+  }
+}
+
+/**
+ * Challenge expired — server returned 410 AUTH_MFA_CHALLENGE_EXPIRED.
+ * Signature is valid but exp < now.
+ * UI state: permission_denied → auto-redirect to /auth/sign-in after 1.5s flash.
+ * §D-T005-EXPIRED-CHALLENGE.
+ */
+export class MfaChallengeExpiredError extends Error {
+  public readonly code = "AUTH_MFA_CHALLENGE_EXPIRED";
+
+  constructor(message = "Tu desafío ha expirado. Inicia sesión de nuevo.") {
+    super(message);
+    this.name = "MfaChallengeExpiredError";
+  }
+}
+
+/**
+ * Rate limited — server returned 429 AUTH_MFA_VERIFY_RATE_LIMITED.
+ * > 20/min/IP (burst 5). Carries retryAfter seconds from Retry-After header.
+ * UI state: permission_denied → disabled submit + countdown copy.
+ */
+export class MfaVerifyRateLimitedError extends Error {
+  public readonly code = "AUTH_MFA_VERIFY_RATE_LIMITED";
+  /** Seconds to wait before retrying, from Retry-After header. 0 if header absent. */
+  public readonly retryAfter: number;
+
+  constructor(retryAfter = 0, message = "Demasiados intentos. Espera unos segundos e inténtalo de nuevo.") {
+    super(message);
+    this.name = "MfaVerifyRateLimitedError";
+    this.retryAfter = retryAfter;
+  }
+}
+
+/**
+ * Internal server error from MFA verify — server returned 500 or unexpected status.
+ * UI state: error_network → generic server error copy.
+ */
+export class MfaVerifyInternalError extends Error {
+  public readonly code = "AUTH_MFA_VERIFY_INTERNAL_ERROR";
+  public readonly status: number;
+
+  constructor(status: number, message = "Error interno del servidor.") {
+    super(message);
+    this.name = "MfaVerifyInternalError";
+    this.status = status;
+  }
+}
+
+/** Union type for all MFA verify errors (§D-T005-AUTH-ERRORS). */
+export type MfaVerifyError =
+  | MfaPayloadInvalidError
+  | MfaCodeInvalidError
+  | MfaChallengeExpiredError
+  | MfaVerifyRateLimitedError
+  | MfaVerifyInternalError
+  | NetworkError
+  | Error;
 
 // ---------------------------------------------------------------------------
 // Error mapper

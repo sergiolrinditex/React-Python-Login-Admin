@@ -1,0 +1,49 @@
+src/features/auth/__tests__/useForgotPassword.test.tsx(30,3): error TS2305: Module '"../domain/AuthRepository"' has no exported member 'ForgotPasswordRequest'.
+src/features/auth/__tests__/useForgotPassword.test.tsx(31,3): error TS2305: Module '"../domain/AuthRepository"' has no exported member 'ForgotPasswordOutcome'.
+src/features/auth/__tests__/useForgotPassword.test.tsx(35,3): error TS2305: Module '"../data/errors"' has no exported member 'ForgotPasswordValidationError'.
+src/features/auth/__tests__/useForgotPassword.test.tsx(36,3): error TS2305: Module '"../data/errors"' has no exported member 'ForgotPasswordRateLimitedError'.
+src/features/auth/__tests__/useForgotPassword.test.tsx(37,3): error TS2305: Module '"../data/errors"' has no exported member 'ForgotPasswordInternalError'.
+src/features/auth/__tests__/useForgotPassword.test.tsx(77,5): error TS2353: Object literal may only specify known properties, and 'forgotPassword' does not exist in type 'IAuthRepository'.
+src/features/auth/__tests__/useVerifyMfa.test.tsx(23,32): error TS2305: Module '"../domain/AuthRepository"' has no exported member 'VerifyMfaRequest'.
+src/features/auth/__tests__/useVerifyMfa.test.tsx(23,50): error TS2305: Module '"../domain/AuthRepository"' has no exported member 'VerifyMfaOutcome'.
+src/features/auth/__tests__/useVerifyMfa.test.tsx(24,60): error TS2305: Module '"../domain/AuthRepository"' has no exported member 'ForgotPasswordRequest'.
+src/features/auth/__tests__/useVerifyMfa.test.tsx(27,3): error TS2305: Module '"../data/errors"' has no exported member 'MfaCodeInvalidError'.
+src/features/auth/__tests__/useVerifyMfa.test.tsx(28,3): error TS2305: Module '"../data/errors"' has no exported member 'MfaChallengeExpiredError'.
+src/features/auth/__tests__/useVerifyMfa.test.tsx(29,3): error TS2305: Module '"../data/errors"' has no exported member 'MfaVerifyRateLimitedError'.
+src/features/auth/__tests__/useVerifyMfa.test.tsx(30,3): error TS2305: Module '"../data/errors"' has no exported member 'MfaVerifyInternalError'.
+src/features/auth/__tests__/useVerifyMfa.test.tsx(72,5): error TS2353: Object literal may only specify known properties, and 'verifyMfa' does not exist in type 'IAuthRepository'.
+src/features/auth/__tests__/useVerifyMfa.test.tsx(122,17): error TS2339: Property 'verifyMfa' does not exist on type 'IAuthRepository'.
+src/features/auth/__tests__/useVerifyMfa.test.tsx(191,17): error TS2339: Property 'verifyMfa' does not exist on type 'IAuthRepository'.
+src/features/auth/__tests__/useVerifyMfa.test.tsx(208,17): error TS2339: Property 'verifyMfa' does not exist on type 'IAuthRepository'.
+src/features/auth/__tests__/useVerifyMfa.test.tsx(235,7): error TS2353: Object literal may only specify known properties, and 'verifyMfa' does not exist in type 'IAuthRepository'.
+src/features/auth/__tests__/useVerifyMfa.test.tsx(235,80): error TS2339: Property 'verifyMfa' does not exist on type 'IAuthRepository'.
+src/features/auth/presentation/useForgotPassword.ts(29,15): error TS2305: Module '"../domain/AuthRepository"' has no exported member 'ForgotPasswordRequest'.
+src/features/auth/presentation/useForgotPassword.ts(29,38): error TS2305: Module '"../domain/AuthRepository"' has no exported member 'ForgotPasswordOutcome'.
+src/features/auth/presentation/useForgotPassword.ts(32,3): error TS2305: Module '"../data/errors"' has no exported member 'ForgotPasswordValidationError'.
+src/features/auth/presentation/useForgotPassword.ts(33,3): error TS2305: Module '"../data/errors"' has no exported member 'ForgotPasswordRateLimitedError'.
+src/features/auth/presentation/useForgotPassword.ts(34,3): error TS2305: Module '"../data/errors"' has no exported member 'ForgotPasswordInternalError'.
+src/features/auth/presentation/useForgotPassword.ts(103,35): error TS2339: Property 'forgotPassword' does not exist on type 'IAuthRepository'.
+src/features/auth/presentation/useVerifyMfa.ts(26,15): error TS2305: Module '"../domain/AuthRepository"' has no exported member 'VerifyMfaRequest'.
+src/features/auth/presentation/useVerifyMfa.ts(26,33): error TS2305: Module '"../domain/AuthRepository"' has no exported member 'VerifyMfaOutcome'.
+src/features/auth/presentation/useVerifyMfa.ts(29,3): error TS2305: Module '"../data/errors"' has no exported member 'MfaPayloadInvalidError'.
+src/features/auth/presentation/useVerifyMfa.ts(30,3): error TS2305: Module '"../data/errors"' has no exported member 'MfaCodeInvalidError'.
+src/features/auth/presentation/useVerifyMfa.ts(31,3): error TS2305: Module '"../data/errors"' has no exported member 'MfaChallengeExpiredError'.
+src/features/auth/presentation/useVerifyMfa.ts(32,3): error TS2305: Module '"../data/errors"' has no exported member 'MfaVerifyRateLimitedError'.
+src/features/auth/presentation/useVerifyMfa.ts(33,3): error TS2305: Module '"../data/errors"' has no exported member 'MfaVerifyInternalError'.
+src/features/auth/presentation/useVerifyMfa.ts(118,35): error TS2339: Property 'verifyMfa' does not exist on type 'IAuthRepository'.
+src/features/chat/presentation/__tests__/historyGrouping.test.ts(27,15): error TS2305: Module '"../../domain/types"' has no exported member 'ConversationSummary'.
+src/features/chat/presentation/__tests__/useHistory.test.tsx(24,15): error TS2724: '"../../domain/types"' has no exported member named 'ListConversationsResponse'. Did you mean 'CreateConversationResponse'?
+src/features/chat/presentation/__tests__/useHistory.test.tsx(34,10): error TS2305: Module '"../../data/chatRepository"' has no exported member 'listConversations'.
+src/features/chat/presentation/historyGrouping.ts(27,15): error TS2305: Module '"../domain/types"' has no exported member 'ConversationSummary'.
+src/features/chat/presentation/useHistory.ts(22,15): error TS2724: '"../domain/types"' has no exported member named 'ListConversationsResponse'. Did you mean 'CreateConversationResponse'?
+src/features/chat/presentation/useHistory.ts(24,10): error TS2305: Module '"../data/chatRepository"' has no exported member 'listConversations'.
+src/pages/auth/ForgotPasswordPage.tsx(62,10): error TS2305: Module '"@/features/auth/data/errors"' has no exported member 'ForgotPasswordRateLimitedError'.
+src/pages/auth/ForgotPasswordPage.tsx(64,15): error TS2305: Module '"@/features/auth/domain/AuthRepository"' has no exported member 'ForgotPasswordOutcome'.
+src/pages/auth/ForgotPasswordPage.tsx(113,37): error TS2339: Property 'retryAfter' does not exist on type 'Error'.
+src/pages/auth/twoFactorHelpers.ts(19,10): error TS2305: Module '"@/features/auth/data/errors"' has no exported member 'MfaChallengeExpiredError'.
+src/pages/auth/twoFactorHelpers.ts(19,36): error TS2305: Module '"@/features/auth/data/errors"' has no exported member 'MfaVerifyRateLimitedError'.
+src/pages/auth/twoFactorHelpers.ts(76,37): error TS2339: Property 'retryAfter' does not exist on type 'Error'.
+src/pages/auth/TwoFactorPage.tsx(54,3): error TS2305: Module '"@/features/auth/data/errors"' has no exported member 'MfaChallengeExpiredError'.
+src/pages/auth/TwoFactorPage.tsx(55,3): error TS2305: Module '"@/features/auth/data/errors"' has no exported member 'MfaVerifyRateLimitedError'.
+src/pages/chat/__tests__/HistoryPage.test.tsx(34,15): error TS2724: '"../../../features/chat/domain/types"' has no exported member named 'ListConversationsResponse'. Did you mean 'CreateConversationResponse'?
+src/pages/chat/HistoryPage.tsx(41,15): error TS2305: Module '"../../features/chat/domain/types"' has no exported member 'ConversationSummary'.

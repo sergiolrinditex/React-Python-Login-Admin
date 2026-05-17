@@ -20,7 +20,12 @@
  */
 
 import type { Result } from "../../auth/domain/AuthRepository";
-import type { CreateConversationRequest, Conversation } from "../domain/types";
+import type {
+  CreateConversationRequest,
+  Conversation,
+  ListConversationsRequest,
+  ListConversationsResponse,
+} from "../domain/types";
 import { authFetch } from "../../auth/data/httpClient";
 import {
   ChatValidationError,
@@ -131,6 +136,102 @@ export async function createConversation(
     logError("chat.repo.createConversation.error", {
       error: domainErr.code,
       message: domainErr.message,
+    });
+    return { ok: false, error: domainErr };
+  }
+}
+
+// ---------------------------------------------------------------------------
+// §D-T003-REPO-LIST — listConversations (P03-S02-T003)
+// ---------------------------------------------------------------------------
+
+/**
+ * Calls GET /api/v1/chat/conversations with optional cursor + limit.
+ *
+ * Returns Result.ok(ListConversationsResponse) on 200.
+ * Returns typed Result.err for all failure paths (401, 403, 5xx, network).
+ *
+ * Logging rules: BEFORE/AFTER/ERROR — PII-clean.
+ *   Log count + has_more only. NEVER log conversation IDs or titles.
+ *
+ * @param request - Pagination request (cursor, limit, signal).
+ * @param onAuthFailure - Called when session expires and cannot be refreshed.
+ * @returns Result<ListConversationsResponse, ChatError>
+ */
+export async function listConversations(
+  request: ListConversationsRequest,
+  onAuthFailure: () => void,
+): Promise<Result<ListConversationsResponse, ChatError>> {
+  const hasCursor = Boolean(request.cursor);
+  const limit = request.limit ?? null;
+
+  logVerbose("chat.repo.listConversations.start", {
+    has_cursor: hasCursor,
+    limit,
+  });
+
+  try {
+    const params = new URLSearchParams();
+    if (request.cursor) params.set("cursor", request.cursor);
+    if (request.limit !== undefined) params.set("limit", String(request.limit));
+    const qs = params.toString();
+    const url = qs
+      ? `${CONVERSATIONS_URL}?${qs}`
+      : CONVERSATIONS_URL;
+
+    const response = await authFetch(
+      url,
+      { method: "GET", signal: request.signal },
+      { onAuthFailure },
+    );
+
+    const requestId = response.headers.get("x-request-id") ?? "unknown";
+
+    if (response.status === 401) {
+      logWarn("chat.repo.listConversations.auth_expired", {
+        status: 401,
+        request_id: requestId,
+      });
+      return { ok: false, error: new ChatAuthExpiredError() };
+    }
+
+    if (response.status === 403) {
+      logWarn("chat.repo.listConversations.forbidden", {
+        status: 403,
+        request_id: requestId,
+      });
+      return { ok: false, error: new ChatForbiddenError() };
+    }
+
+    if (!response.ok) {
+      logError("chat.repo.listConversations.server_error", {
+        status: response.status,
+        request_id: requestId,
+      });
+      return { ok: false, error: new ChatServerError(response.status) };
+    }
+
+    const body = await _safeJson<ListConversationsResponse>(response);
+    const count = body.data.length;
+    const hasMore = body.meta.pagination?.has_more ?? false;
+    const hasCursorNext = Boolean(body.meta.pagination?.next_cursor);
+
+    logVerbose("chat.repo.listConversations.success", {
+      count,
+      has_more: hasMore,
+      has_cursor_next: hasCursorNext,
+      request_id: requestId,
+    });
+
+    return { ok: true, value: body };
+  } catch (err: unknown) {
+    if (err instanceof DOMException && err.name === "AbortError") {
+      logVerbose("chat.repo.listConversations.aborted");
+      return { ok: false, error: new ChatNetworkError("Request aborted", err) };
+    }
+    const domainErr = mapChatError(err);
+    logWarn("chat.repo.listConversations.error", {
+      code: domainErr.code,
     });
     return { ok: false, error: domainErr };
   }

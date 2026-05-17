@@ -167,7 +167,58 @@ const resources = {
       logout: "Cerrar sesión",
     },
     "admin-ai": {
-      models: { title: "Modelos LiteLLM", empty: "No hay modelos configurados" },
+      // §D-T002-I18N: models.* extended for AdminAiModelsPage (P04-S01-T002)
+      models: {
+        title: "Modelos LiteLLM",
+        table: {
+          caption: "Lista de modelos AI",
+          headers: {
+            model: "Modelo",
+            type: "Tipo",
+            provider: "Proveedor",
+            status: "Estado",
+            default: "Por defecto",
+            cost: "Coste",
+            latency: "Latencia",
+          },
+        },
+        status: {
+          active: "Activo",
+          modelDisabled: "Modelo desactivado",
+          providerInactive: "Proveedor inactivo",
+          bothInactive: "Ambos inactivos",
+          unknown: "Desconocido",
+        },
+        default: {
+          yes: "Sí",
+          no: "—",
+        },
+        cost: {
+          unknown: "—",
+        },
+        latency: {
+          unknown: "—",
+          value: "{{ms}} ms",
+        },
+        empty: {
+          body: "Aún no hay modelos configurados. Crea un modelo para empezar.",
+          cta: "Nuevo modelo",
+        },
+        errors: {
+          network: {
+            title: "No se pudieron cargar los modelos",
+            body: "Comprueba tu conexión e inténtalo de nuevo.",
+          },
+          forbidden: {
+            title: "Acceso restringido",
+            body: "No tienes permisos de administrador para ver esta página.",
+          },
+        },
+        actions: {
+          retry: "Reintentar",
+          newModel: "Nuevo modelo",
+        },
+      },
       mcp: { title: "Integraciones MCP", empty: "No hay integraciones activas" },
       dashboard: {
         title: "Resumen Admin AI",
@@ -459,7 +510,58 @@ const resources = {
       logout: "Sign out",
     },
     "admin-ai": {
-      models: { title: "LiteLLM models", empty: "No models configured" },
+      // §D-T002-I18N: models.* extended for AdminAiModelsPage (P04-S01-T002)
+      models: {
+        title: "LiteLLM models",
+        table: {
+          caption: "AI models list",
+          headers: {
+            model: "Model",
+            type: "Type",
+            provider: "Provider",
+            status: "Status",
+            default: "Default",
+            cost: "Cost",
+            latency: "Latency",
+          },
+        },
+        status: {
+          active: "Active",
+          modelDisabled: "Model disabled",
+          providerInactive: "Provider inactive",
+          bothInactive: "Both inactive",
+          unknown: "Unknown",
+        },
+        default: {
+          yes: "Yes",
+          no: "—",
+        },
+        cost: {
+          unknown: "—",
+        },
+        latency: {
+          unknown: "—",
+          value: "{{ms}} ms",
+        },
+        empty: {
+          body: "No models configured yet. Create a model to get started.",
+          cta: "New model",
+        },
+        errors: {
+          network: {
+            title: "Failed to load models",
+            body: "Check your connection and try again.",
+          },
+          forbidden: {
+            title: "Access restricted",
+            body: "You do not have administrator permissions to view this page.",
+          },
+        },
+        actions: {
+          retry: "Retry",
+          newModel: "New model",
+        },
+      },
       mcp: { title: "MCP integrations", empty: "No active integrations" },
       dashboard: {
         title: "Admin AI overview",
@@ -751,7 +853,58 @@ const resources = {
       logout: "Se déconnecter",
     },
     "admin-ai": {
-      models: { title: "Modèles LiteLLM", empty: "Aucun modèle configuré" },
+      // §D-T002-I18N: models.* extended for AdminAiModelsPage (P04-S01-T002)
+      models: {
+        title: "Modèles LiteLLM",
+        table: {
+          caption: "Liste des modèles AI",
+          headers: {
+            model: "Modèle",
+            type: "Type",
+            provider: "Fournisseur",
+            status: "Statut",
+            default: "Par défaut",
+            cost: "Coût",
+            latency: "Latence",
+          },
+        },
+        status: {
+          active: "Actif",
+          modelDisabled: "Modèle désactivé",
+          providerInactive: "Fournisseur inactif",
+          bothInactive: "Les deux inactifs",
+          unknown: "Inconnu",
+        },
+        default: {
+          yes: "Oui",
+          no: "—",
+        },
+        cost: {
+          unknown: "—",
+        },
+        latency: {
+          unknown: "—",
+          value: "{{ms}} ms",
+        },
+        empty: {
+          body: "Aucun modèle configuré. Créez un modèle pour commencer.",
+          cta: "Nouveau modèle",
+        },
+        errors: {
+          network: {
+            title: "Impossible de charger les modèles",
+            body: "Vérifiez votre connexion et réessayez.",
+          },
+          forbidden: {
+            title: "Accès restreint",
+            body: "Vous n'avez pas les permissions d'administrateur pour afficher cette page.",
+          },
+        },
+        actions: {
+          retry: "Réessayer",
+          newModel: "Nouveau modèle",
+        },
+      },
       mcp: { title: "Intégrations MCP", empty: "Aucune intégration active" },
       dashboard: {
         title: "Synthèse Admin AI",

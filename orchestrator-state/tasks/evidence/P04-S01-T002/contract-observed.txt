@@ -1,0 +1,39 @@
+# Contract Observed — P04-S01-T002
+
+## Route/Provider/API Client/DTO/Endpoint/Repository/Table
+
+### Route
+- /admin/ai/models → AdminAiModelsPage (frontend/src/pages/admin/ai/AdminAiModelsPage.tsx)
+- Router wiring confirmed in frontend/src/app/router.tsx inside RequireRole block
+
+### Provider/Hook
+- useAdminAiModels (frontend/src/features/admin-ai/presentation/useAdminAiModels.ts)
+- TanStack v5 queryKey ["admin","ai","models"]
+- Promise.all([getProviders, getModels]) with client-side join
+
+### DTOs/Schemas
+- AiProvider (frontend/src/features/admin-ai/domain/types.ts) ↔ ProviderOut (backend/app/admin/providers/schemas.py)
+- AiModel (frontend/src/features/admin-ai/domain/types.ts) ↔ ModelOut (backend/app/admin/model_catalog/schemas.py)
+- AdminAiModelRow (frontend/src/features/admin-ai/presentation/useAdminAiModels.ts) — client-side join type
+
+### Endpoints/Repository
+- getProviders() → GET /api/v1/admin/ai/providers → Result<AiProvider[]>
+- getModels() → GET /api/v1/admin/ai/models → Result<AiModel[]>
+- Both use authFetch with relative URLs (ADR-002 compliant)
+
+### Tables (DB)
+- ai_providers (read-only: id, name, provider_type, base_url, status, created_by)
+- ai_models (read-only: id, provider_id, model_id, model_type, capabilities, enabled, is_default, pricing, latency_ms_avg)
+
+### Observed During Tests
+- adminAiRepository.test.ts: T08-T17 (getProviders + getModels happy path + all error cases)
+- useAdminAiModels.test.tsx: H01-H06 (loading, success, empty, error_network, permission_denied, refetch)
+- AdminAiModelsPage.test.tsx: P01-P08 + formatters + derivation pure functions (47 total)
+- i18n.test.ts: admin-ai.models.* lockstep assertions for ES/EN/FR
+
+### Error Handling Verified
+- 401 → AdminAiAuthExpiredError (logWarn, always visible)
+- 403 → AdminAiForbiddenError (logWarn, always visible)
+- 500 → AdminAiInternalError (logError, always visible)
+- network reject → AdminAiNetworkError (logError, always visible)
+- 200 → Result.ok (logVerbose, only with VITE_ENABLE_VERBOSE_LOGGING=true)

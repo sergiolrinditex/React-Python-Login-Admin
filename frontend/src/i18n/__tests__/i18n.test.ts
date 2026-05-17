@@ -227,7 +227,36 @@ describe("i18n: no copy-paste across languages", () => {
 // Write-set anchor: §D-T001-I18N-TEST-EXTEND
 // ---------------------------------------------------------------------------
 
+type AdminAiModelsBundle = {
+  table: {
+    caption: string;
+    headers: {
+      model: string;
+      type: string;
+      provider: string;
+      status: string;
+      default: string;
+      cost: string;
+      latency: string;
+    };
+  };
+  status: {
+    active: string;
+    modelDisabled: string;
+    providerInactive: string;
+    bothInactive: string;
+    unknown: string;
+  };
+  empty: { body: string; cta: string };
+  errors: {
+    network: { title: string; body: string };
+    forbidden: { title: string; body: string };
+  };
+  actions: { retry: string; newModel: string };
+};
+
 type AdminAiBundle = {
+  models: AdminAiModelsBundle;
   dashboard: {
     title: string;
     window: { range: string };
@@ -343,5 +372,63 @@ describe("i18n: admin-ai.dashboard.* lockstep in es/en/fr", () => {
         expect(bundle.nav[key]).toBeTruthy();
       });
     });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Test 10 — i18n: admin-ai.models.* lockstep in es/en/fr (P04-S01-T002)
+// Write-set anchor: §D-T002-I18N-TEST-EXTEND
+// ---------------------------------------------------------------------------
+
+describe("i18n: admin-ai.models.* lockstep in es/en/fr", () => {
+  it("i18n: admin-ai.models.* table headers present in es/en/fr", () => {
+    SUPPORTED_LANGUAGES.forEach((lng) => {
+      const bundle = i18n.getResourceBundle(lng, "admin-ai") as AdminAiBundle;
+      expect(bundle.models.table.caption).toBeTruthy();
+      expect(bundle.models.table.headers.model).toBeTruthy();
+      expect(bundle.models.table.headers.type).toBeTruthy();
+      expect(bundle.models.table.headers.provider).toBeTruthy();
+      expect(bundle.models.table.headers.status).toBeTruthy();
+      expect(bundle.models.table.headers.default).toBeTruthy();
+      expect(bundle.models.table.headers.cost).toBeTruthy();
+      expect(bundle.models.table.headers.latency).toBeTruthy();
+    });
+  });
+
+  it("i18n: admin-ai.models.status.* labels present in es/en/fr", () => {
+    SUPPORTED_LANGUAGES.forEach((lng) => {
+      const bundle = i18n.getResourceBundle(lng, "admin-ai") as AdminAiBundle;
+      expect(bundle.models.status.active).toBeTruthy();
+      expect(bundle.models.status.modelDisabled).toBeTruthy();
+      expect(bundle.models.status.providerInactive).toBeTruthy();
+      expect(bundle.models.status.bothInactive).toBeTruthy();
+      expect(bundle.models.status.unknown).toBeTruthy();
+    });
+  });
+
+  it("i18n: admin-ai.models.empty.* CTA and body present in es/en/fr", () => {
+    SUPPORTED_LANGUAGES.forEach((lng) => {
+      const bundle = i18n.getResourceBundle(lng, "admin-ai") as AdminAiBundle;
+      expect(bundle.models.empty.body).toBeTruthy();
+      expect(bundle.models.empty.cta).toBeTruthy();
+    });
+  });
+
+  it("i18n: admin-ai.models.errors.* present in es/en/fr", () => {
+    SUPPORTED_LANGUAGES.forEach((lng) => {
+      const bundle = i18n.getResourceBundle(lng, "admin-ai") as AdminAiBundle;
+      expect(bundle.models.errors.network.title).toBeTruthy();
+      expect(bundle.models.errors.network.body).toBeTruthy();
+      expect(bundle.models.errors.forbidden.title).toBeTruthy();
+      expect(bundle.models.errors.forbidden.body).toBeTruthy();
+    });
+  });
+
+  it("i18n: admin-ai.models.status.active differs across es, en, fr", () => {
+    const es = (i18n.getResourceBundle("es", "admin-ai") as AdminAiBundle).models.status.active;
+    const en = (i18n.getResourceBundle("en", "admin-ai") as AdminAiBundle).models.status.active;
+    const fr = (i18n.getResourceBundle("fr", "admin-ai") as AdminAiBundle).models.status.active;
+    // Not all three can be identical — at least es vs en must differ
+    expect(es).not.toBe(en);
   });
 });

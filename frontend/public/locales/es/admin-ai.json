@@ -1,7 +1,55 @@
 {
   "models": {
     "title": "Modelos LiteLLM",
-    "empty": "No hay modelos configurados"
+    "empty": "No hay modelos configurados",
+    "table": {
+      "caption": "Lista de modelos AI",
+      "headers": {
+        "model": "Modelo",
+        "type": "Tipo",
+        "provider": "Proveedor",
+        "status": "Estado",
+        "default": "Por defecto",
+        "cost": "Coste",
+        "latency": "Latencia"
+      }
+    },
+    "status": {
+      "active": "Activo",
+      "modelDisabled": "Modelo desactivado",
+      "providerInactive": "Proveedor inactivo",
+      "bothInactive": "Ambos inactivos",
+      "unknown": "Desconocido"
+    },
+    "default": {
+      "yes": "Sí",
+      "no": "—"
+    },
+    "cost": {
+      "unknown": "—"
+    },
+    "latency": {
+      "unknown": "—",
+      "value": "{{ms}} ms"
+    },
+    "empty": {
+      "body": "Aún no hay modelos configurados. Crea un modelo para empezar.",
+      "cta": "Nuevo modelo"
+    },
+    "errors": {
+      "network": {
+        "title": "No se pudieron cargar los modelos",
+        "body": "Comprueba tu conexión e inténtalo de nuevo."
+      },
+      "forbidden": {
+        "title": "Acceso restringido",
+        "body": "No tienes permisos de administrador para ver esta página."
+      }
+    },
+    "actions": {
+      "retry": "Reintentar",
+      "newModel": "Nuevo modelo"
+    }
   },
   "mcp": {
     "title": "Integraciones MCP",

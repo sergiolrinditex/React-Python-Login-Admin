@@ -1,0 +1,40 @@
+## verify-success — AdminAiModelsPage observed state
+TIMESTAMP: 2026-05-17T17:00:00Z
+MCP: browser-mcp
+URL: http://localhost:5177/admin/ai/models
+
+### Page observed
+- Title: "Modelos LiteLLM"
+- Subtitle: "Modelos"
+- AdminShell left nav: "Modelos" bold (current), Resumen, Nuevo modelo, Documentos RAG, Colecciones, Servidores MCP, Nuevo MCP, Agentes, Auditoría, Coste y latencias
+- HairlineTable columns: MODELO | TIPO | PROVEEDOR | ESTADO | POR DEFECTO | COSTE | LATENCIA
+- Row 1: gpt-4o-mini | CHAT | litellm_verification_sandbox | • ACTIVO (StatusDot active) | Sí | — | —
+- COSTE em-dash: CONFIRMED (pricing={} → em-dash render correct per ASSUMPTION-1)
+- LATENCIA em-dash: CONFIRMED (latency_ms_avg=null → em-dash)
+- SolidCTA "NUEVO MODELO": visible below table
+- Console: no errors, no warnings
+
+### Redirect guard observed
+- URL when unauthenticated: http://localhost:5177/auth/sign-in?next=%2Fadmin%2Fai%2Fmodels
+- Sign-in page rendered with ?next param — RequireAuth working correctly
+
+### Network
+- GET /api/v1/admin/ai/providers → 200 (authenticated, 1 provider returned)
+- GET /api/v1/admin/ai/models → 200 (authenticated, 1 model returned)
+- Promise.all join → 1 AdminAiModelRow derived
+
+### Verification data confirmed
+- ai_providers: litellm_verification_sandbox (status=active)
+- ai_models: gpt-4o-mini (enabled=true, is_default=true, pricing={}, latency_ms_avg=null)
+- StatusDot derivation: provider.status=active + model.enabled=true → StatusDotState=active → label ACTIVO ✓
+
+### Design tokens
+- Background: --color-bg (#f5f3ee warm off-white) ✓
+- Font: --font-display (Bodoni Moda) for title ✓
+- Font: --font-sans for table content ✓
+- --hairline borders on table ✓
+- --tracking-label uppercase tracked labels ✓
+- --radius 0 (no rounded corners) ✓
+- No hardcoded colors ✓
+
+### All gates PASS

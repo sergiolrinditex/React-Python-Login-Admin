@@ -1,0 +1,22 @@
+[admin-ai] admin-ai.hook.useAdminAiModels.queryFn.models_error { error_class: [32m'AdminAiNetworkError'[39m }
+[admin-ai] admin-ai.hook.useAdminAiModels.queryFn.providers_error { error_class: [32m'AdminAiForbiddenError'[39m }
+[admin-ai] admin-ai.hook.useAdminAiModels.forbidden_in_error
+[admin-ai] admin-ai.hook.useDashboardUsage.queryFn.error { error_class: [32m'AdminAiNetworkError'[39m }
+[admin-ai] admin-ai.page.AdminDashboardPage.permission_denied
+[admin-ai] admin-ai.page.AdminDashboardPage.permission_denied
+[admin-ai] admin-ai.page.AdminAiModelsPage.permission_denied
+[admin-ai] admin-ai.page.AdminAiModelsPage.permission_denied
+[admin-ai] admin-ai.repo.getUsage.auth_expired { status: [33m401[39m, request_id: [32m'test-request-id'[39m }
+[admin-ai] admin-ai.repo.getUsage.auth_expired_via_client {}
+[admin-ai] admin-ai.repo.getUsage.forbidden { status: [33m403[39m, request_id: [32m'test-request-id'[39m }
+[admin-ai] admin-ai.repo.getUsage.validation_error {
+[admin-ai] admin-ai.repo.getUsage.server_error { status: [33m500[39m, request_id: [32m'test-request-id'[39m }
+[admin-ai] admin-ai.repo.getUsage.network_error { error_class: [32m'AdminAiNetworkError'[39m }
+[admin-ai] admin-ai.repo.getProviders.auth_expired { status: [33m401[39m, request_id: [32m'test-request-id'[39m }
+[admin-ai] admin-ai.repo.getProviders.forbidden { status: [33m403[39m, request_id: [32m'test-request-id'[39m }
+[admin-ai] admin-ai.repo.getProviders.server_error { status: [33m500[39m, request_id: [32m'test-request-id'[39m }
+[admin-ai] admin-ai.repo.getProviders.network_error { error_class: [32m'AdminAiNetworkError'[39m }
+[admin-ai] admin-ai.repo.getModels.auth_expired { status: [33m401[39m, request_id: [32m'test-request-id'[39m }
+[admin-ai] admin-ai.repo.getModels.forbidden { status: [33m403[39m, request_id: [32m'test-request-id'[39m }
+[admin-ai] admin-ai.repo.getModels.server_error { status: [33m500[39m, request_id: [32m'test-request-id'[39m }
+[admin-ai] admin-ai.repo.getModels.network_error { error_class: [32m'AdminAiNetworkError'[39m }

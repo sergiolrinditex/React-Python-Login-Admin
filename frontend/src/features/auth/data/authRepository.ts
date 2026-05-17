@@ -4,6 +4,8 @@
  * Slice/Phase: P01-S03-T001 — Auth state provider and protected route guards / Phase 1.
  *   Extended in P03-S01-T001 — SignInPage: added signIn() method.
  *   Extended in P03-S01-T002 — SignUpPage: added signUp() method (§D-T002-AUTH-DATA).
+ *   Extended in P03-S01-T003 — ForgotPasswordPage: added forgotPassword() method.
+ *   Extended in P03-S01-T005 — TwoFactorPage: added verifyMfa() method (§D-T005-AUTH-DATA).
  *
  * Responsibility: Concrete implementation of IAuthRepository (domain port).
  *   Calls the backend auth/user endpoints. All calls use authFetch (credentials:'include',
@@ -15,6 +17,8 @@
  * Endpoints consumed (TECHNICAL_GUIDE §6.2):
  *   - POST /api/v1/auth/sign-in  → email+password; returns SignInOutcome (no-MFA or MFA).
  *   - POST /api/v1/auth/sign-up  → email+password+full_name+legal_acceptance; returns SignUpOutcome.
+ *   - POST /api/v1/auth/forgot-password → email only; anti-enum 200; returns {sent:true}.
+ *   - POST /api/v1/auth/2fa/verify → challenge_id (JWT) + code; returns VerifyMfaOutcome.
  *   - POST /api/v1/auth/refresh  → cookie-only; returns new access_token.
  *   - GET  /api/v1/users/me      → Bearer required; returns UserProfile.
  *   - POST /api/v1/auth/logout   → Bearer required; 204 on success.
@@ -22,9 +26,16 @@
  * Non-negotiables §logging: BEFORE + AFTER + ERROR on every public method.
  * Security: NEVER log password. NEVER log full email. NEVER log full name (PII).
  *   Log email_domain only. Log password_len (numeric) only.
+ *   §D-T005-PII-LOGGING: NEVER log code, challengeToken, access_token. Log only lengths.
  */
 
-import type { IAuthRepository, Result, SignInRequest, SignInOutcome, SignUpRequest, SignUpOutcome } from "../domain/AuthRepository";
+import type {
+  IAuthRepository, Result,
+  SignInRequest, SignInOutcome,
+  SignUpRequest, SignUpOutcome,
+  ForgotPasswordRequest, ForgotPasswordOutcome,
+  VerifyMfaRequest, VerifyMfaOutcome,
+} from "../domain/AuthRepository";
 import type { UserProfile } from "../domain/types";
 import {
   AuthSessionExpiredError,
@@ -42,6 +53,14 @@ import {
   SignupRateLimitedError,
   SignupValidationError,
   SignupInternalError,
+  ForgotPasswordValidationError,
+  ForgotPasswordRateLimitedError,
+  ForgotPasswordInternalError,
+  MfaPayloadInvalidError,
+  MfaCodeInvalidError,
+  MfaChallengeExpiredError,
+  MfaVerifyRateLimitedError,
+  MfaVerifyInternalError,
 } from "./errors";
 import { setAccessToken } from "./accessTokenStore";
 import { logVerbose, logWarn, logError } from "./logger";
@@ -412,6 +431,267 @@ export class AuthRepository implements IAuthRepository {
         ok: false,
         error: domainErr instanceof NetworkError ? domainErr : new NetworkError(domainErr.message),
       };
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // forgotPassword — P03-S01-T003
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Calls POST /api/v1/auth/forgot-password with email only.
+   * Anti-enumeration: server returns 200 for ALL valid email syntax inputs.
+   * UI MUST NOT distinguish between known and unknown emails.
+   *
+   * Security:
+   *   - Uses plain fetch (not authFetch) — public endpoint.
+   *   - credentials:'include' for cookie continuity; X-Request-ID injected.
+   *   - NEVER log full email or password (PII).
+   *   - Log email_domain + email_local_len only.
+   *
+   * Error mapping:
+   *   400 → ForgotPasswordValidationError (rare — client zod should catch first).
+   *   429 → ForgotPasswordRateLimitedError(retryAfter).
+   *   5xx → ForgotPasswordInternalError(status).
+   *   TypeError → NetworkError.
+   *
+   * @param req - { email }
+   * @returns Result<ForgotPasswordOutcome, Error>
+   */
+  async forgotPassword(req: ForgotPasswordRequest): Promise<Result<ForgotPasswordOutcome>> {
+    const requestId = crypto.randomUUID();
+    const emailParts = req.email.split("@");
+    const emailDomain = emailParts.length > 1 ? emailParts[1] : "unknown";
+    const emailLocalLen = emailParts[0]?.length ?? 0;
+
+    logVerbose("auth.forgot.submit.start", {
+      email_domain: emailDomain,
+      email_local_len: emailLocalLen,
+      request_id: requestId,
+    });
+
+    try {
+      const response = await fetch(`${API_BASE}/api/v1/auth/forgot-password`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Request-ID": requestId,
+        },
+        body: JSON.stringify({ email: req.email }),
+      });
+
+      if (response.status === 400) {
+        const body = await _safeJson<{
+          errors: Array<{ code: string; field?: string }>;
+        }>(response);
+        const errField = body.errors[0]?.field;
+        logWarn("auth.forgot.submit.validation_400", {
+          status: 400,
+          field: errField,
+          request_id: requestId,
+        });
+        return { ok: false, error: new ForgotPasswordValidationError(errField) };
+      }
+
+      if (response.status === 429) {
+        const retryAfterHeader = response.headers.get("Retry-After");
+        const retryAfter = retryAfterHeader ? parseInt(retryAfterHeader, 10) : 0;
+        logWarn("auth.forgot.submit.rate_limited", {
+          status: 429,
+          retry_after: retryAfter,
+          request_id: requestId,
+        });
+        return { ok: false, error: new ForgotPasswordRateLimitedError(isNaN(retryAfter) ? 0 : retryAfter) };
+      }
+
+      if (!response.ok) {
+        logError("auth.forgot.submit.unexpected", {
+          status: response.status,
+          request_id: requestId,
+        });
+        return { ok: false, error: new ForgotPasswordInternalError(response.status) };
+      }
+
+      // 200 — anti-enum success (sent:true regardless of email existence)
+      logVerbose("auth.forgot.submit.ok", {
+        status: response.status,
+        request_id: requestId,
+      });
+      return { ok: true, value: { sent: true } };
+    } catch (err: unknown) {
+      if (
+        err instanceof ForgotPasswordValidationError ||
+        err instanceof ForgotPasswordRateLimitedError ||
+        err instanceof ForgotPasswordInternalError
+      ) {
+        return { ok: false, error: err };
+      }
+      const domainErr = mapFetchError(err);
+      logError("auth.forgot.submit.network", { error: domainErr.message });
+      return { ok: false, error: domainErr instanceof NetworkError ? domainErr : new NetworkError(domainErr.message) };
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // verifyMfa — P03-S01-T005 (§D-T005-AUTH-DATA)
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Calls POST /api/v1/auth/2fa/verify with challenge_id (JWT) + code.
+   *
+   * §D-T005-CHALLENGE-FIELD-NAME: request body field is `challenge_id` but VALUE is
+   *   the full JWT mfa_challenge_token. Despite the misleading name, the JWT is sent verbatim.
+   *
+   * §D-T005-USERFETCH-AFTER-MFA: on 200, the wire response contains a shorter MfaUserDto
+   *   (id, email, preferred_language, roles). fetchMe() is called with the access_token
+   *   to get the full UserProfile before invoking signInAccepted. This prevents pages
+   *   from crashing on missing fields (full_name, employee_profile, status, etc.).
+   *
+   * §D-T005-AGGREGATE-401: 401 AUTH_MFA_CODE_INVALID aggregates 4 internal failure modes
+   *   (wrong code, invalid challenge, missing secret, replay). UI shows ONE copy.
+   *
+   * §D-T005-PII-LOGGING: NEVER log code, challengeToken, or full email.
+   *   Log code_len, challenge_token_len, request_id, expires_in, user_id only.
+   *
+   * Security:
+   *   - ADR-002: uses API_BASE = import.meta.env.VITE_API_BASE_URL ?? "" (proxy-friendly).
+   *   - credentials:'include' so backend can set refresh cookie.
+   *   - X-Request-ID injected for end-to-end correlation.
+   *   - setAccessToken() called BEFORE fetchMe (token needed for GET /users/me Bearer).
+   *
+   * Error mapping:
+   *   400 AUTH_INVALID_PAYLOAD     → MfaPayloadInvalidError.
+   *   401 AUTH_MFA_CODE_INVALID    → MfaCodeInvalidError (aggregate — anti-enum).
+   *   410 AUTH_MFA_CHALLENGE_EXPIRED → MfaChallengeExpiredError.
+   *   429 AUTH_MFA_VERIFY_RATE_LIMITED → MfaVerifyRateLimitedError(retryAfter).
+   *   5xx                           → MfaVerifyInternalError(status).
+   *   TypeError                     → NetworkError.
+   *
+   * @param req - { challengeToken: JWT string, code: '123456' }
+   * @returns Result<VerifyMfaOutcome>
+   */
+  async verifyMfa(req: VerifyMfaRequest): Promise<Result<VerifyMfaOutcome>> {
+    const requestId = crypto.randomUUID();
+
+    // §D-T005-PII-LOGGING: log only lengths, never values
+    logVerbose("auth.mfa.verify.submit.start", {
+      challenge_token_len: req.challengeToken.length,
+      code_len: req.code.length,
+      request_id: requestId,
+    });
+
+    try {
+      const response = await fetch(`${API_BASE}/api/v1/auth/2fa/verify`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Request-ID": requestId,
+        },
+        // §D-T005-CHALLENGE-FIELD-NAME: wire field is challenge_id; value is the JWT
+        body: JSON.stringify({ challenge_id: req.challengeToken, code: req.code }),
+      });
+
+      if (response.status === 400) {
+        logWarn("auth.mfa.verify.submit.payload_invalid", {
+          status: 400,
+          request_id: requestId,
+        });
+        return { ok: false, error: new MfaPayloadInvalidError() };
+      }
+
+      if (response.status === 401) {
+        // §D-T005-AGGREGATE-401: do NOT inspect error code — aggregate 401
+        logWarn("auth.mfa.verify.submit.invalid_code", {
+          status: 401,
+          request_id: requestId,
+        });
+        return { ok: false, error: new MfaCodeInvalidError() };
+      }
+
+      if (response.status === 410) {
+        logWarn("auth.mfa.verify.submit.challenge_expired", {
+          status: 410,
+          request_id: requestId,
+        });
+        return { ok: false, error: new MfaChallengeExpiredError() };
+      }
+
+      if (response.status === 429) {
+        const retryAfterHeader = response.headers.get("Retry-After");
+        const retryAfter = retryAfterHeader ? parseInt(retryAfterHeader, 10) : 0;
+        logWarn("auth.mfa.verify.submit.rate_limited", {
+          status: 429,
+          retry_after: retryAfter,
+          request_id: requestId,
+        });
+        return { ok: false, error: new MfaVerifyRateLimitedError(isNaN(retryAfter) ? 0 : retryAfter) };
+      }
+
+      if (!response.ok) {
+        logError("auth.mfa.verify.submit.unexpected", {
+          status: response.status,
+          request_id: requestId,
+        });
+        return { ok: false, error: new MfaVerifyInternalError(response.status) };
+      }
+
+      // 200 success
+      const body = await _safeJson<{
+        data: {
+          access_token: string;
+          token_type: string;
+          expires_in: number;
+          // Wire shape is MfaUserDto (shorter than UserProfile)
+          user: { id: string; email: string; preferred_language: string; roles: string[] };
+        };
+        meta: { request_id: string };
+      }>(response);
+
+      const accessToken = body.data.access_token;
+      const expiresIn = body.data.expires_in;
+
+      logVerbose("auth.mfa.verify.submit.ok_200", {
+        token_len: accessToken.length,
+        expires_in: expiresIn,
+        request_id: requestId,
+      });
+
+      // §D-T005-USERFETCH-AFTER-MFA: set token then fetchMe for the full UserProfile
+      setAccessToken(accessToken);
+      const meResult = await this.fetchMe(accessToken);
+      if (!meResult.ok) {
+        logError("auth.mfa.verify.submit.fetchme_failed", {
+          error: meResult.error.message,
+          request_id: requestId,
+        });
+        return { ok: false, error: meResult.error };
+      }
+
+      logVerbose("auth.mfa.verify.submit.after", {
+        user_id: meResult.value.id,
+        expires_in: expiresIn,
+        request_id: requestId,
+      });
+
+      return {
+        ok: true,
+        value: { accessToken, expiresIn, user: meResult.value },
+      };
+    } catch (err: unknown) {
+      if (
+        err instanceof MfaPayloadInvalidError ||
+        err instanceof MfaCodeInvalidError ||
+        err instanceof MfaChallengeExpiredError ||
+        err instanceof MfaVerifyRateLimitedError ||
+        err instanceof MfaVerifyInternalError
+      ) {
+        return { ok: false, error: err };
+      }
+      const domainErr = mapFetchError(err);
+      logError("auth.mfa.verify.submit.network", { error: domainErr.message });
+      return { ok: false, error: domainErr instanceof NetworkError ? domainErr : new NetworkError(domainErr.message) };
     }
   }
 

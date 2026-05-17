@@ -16,6 +16,7 @@
  *     ROUTE_ADMIN_AI_AGENTS, ROUTE_ADMIN_AUDIT, ROUTE_ADMIN_USAGE constants for nav.
  *   Updated in P04-S02-T003 — added /admin/ai/mcp route wired to McpServersPage (§D-T003-ROUTER).
  *   Updated in P04-S02-T001 — added /admin/rag/documents route wired to RagDocumentsPage (§D-RAGDOC-ROUTER).
+ *   Updated in P04-S01-T002 — added /admin/ai/models route wired to AdminAiModelsPage (§D-T002-ROUTER).
  *
  * Responsibility: single mount point for the application's route tree.
  *   Exports <AppRouter> which is consumed by main.tsx inside <Providers>.
@@ -67,6 +68,7 @@ import TwoFactorPage from "../pages/auth/TwoFactorPage";
 import ChatHomePage from "../pages/chat/ChatHomePage";
 import HistoryPage from "../pages/chat/HistoryPage";
 import AdminDashboardPage from "../pages/admin/AdminDashboardPage";
+import AdminAiModelsPage from "../pages/admin/ai/AdminAiModelsPage";
 import McpServersPage from "../pages/admin/mcp/McpServersPage";
 import RagDocumentsPage from "../pages/admin/rag/RagDocumentsPage";
 import { AuthProvider } from "../features/auth/presentation/AuthProvider";
@@ -196,11 +198,11 @@ function RootRedirect(): ReactNode {
  */
 export function AppRouter(): ReactNode {
   if (import.meta.env.VITE_ENABLE_VERBOSE_LOGGING === "true") {
-    // §D-RAGDOC-ROUTER (P04-S02-T001): ROUTE_ADMIN_RAG_DOCUMENTS added to verbose-log routes array
+    // §D-T002-ROUTER (P04-S01-T002): ROUTE_ADMIN_AI_MODELS added to verbose-log routes array
     console.info("AppRouter.render.start", {
       phase: "P04",
-      slice: "P04-S02-T001",
-      routes: [ROUTE_SHOWCASE, ROUTE_AUTH_SIGN_IN, ROUTE_AUTH_SIGN_UP, ROUTE_AUTH_RESET_SENT, ROUTE_AUTH_2FA, ROUTE_CHAT, ROUTE_HISTORY, ROUTE_ADMIN, ROUTE_ADMIN_AI_MCP, ROUTE_ADMIN_RAG_DOCUMENTS],
+      slice: "P04-S01-T002",
+      routes: [ROUTE_SHOWCASE, ROUTE_AUTH_SIGN_IN, ROUTE_AUTH_SIGN_UP, ROUTE_AUTH_RESET_SENT, ROUTE_AUTH_2FA, ROUTE_CHAT, ROUTE_HISTORY, ROUTE_ADMIN, ROUTE_ADMIN_AI_MCP, ROUTE_ADMIN_RAG_DOCUMENTS, ROUTE_ADMIN_AI_MODELS],
     });
   }
 
@@ -250,10 +252,8 @@ export function AppRouter(): ReactNode {
             <Route path={ROUTE_ADMIN_AI_MCP} element={<McpServersPage />} />
             {/* P04-S02-T001: RagDocumentsPage — §D-RAGDOC-ROUTER, TECHNICAL_GUIDE §6.1 */}
             <Route path={ROUTE_ADMIN_RAG_DOCUMENTS} element={<RagDocumentsPage />} />
-            {/*
-             * Subsequent admin sub-routes wired in P04-S01-T002+ slices.
-             * Until then, catch-all handles them → / → /chat for admins.
-             */}
+            {/* P04-S01-T002: AdminAiModelsPage — §D-T002-ROUTER, TECHNICAL_GUIDE §6.1 */}
+            <Route path={ROUTE_ADMIN_AI_MODELS} element={<AdminAiModelsPage />} />
           </Route>
 
           {/*
