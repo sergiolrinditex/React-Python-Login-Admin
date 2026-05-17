@@ -1,0 +1,11 @@
+=== VERIFY ENDPOINT PROBES — 2026-05-17T22:36:46Z ===
+
+--- GET /api/v1/admin/ai/providers (anon) ---
+{"data":null,"meta":{"request_id":"286f0059-1be3-4f8b-9f14-89f863c8b8dd"},"errors":[{"code":"AUTH_SESSION_EXPIRED","message":"Session expired or invalid credentials. Please sign in again.","field":null,"details":null}]}
+HTTP_STATUS:401
+--- GET /api/v1/admin/ai/models (anon) ---
+{"data":null,"meta":{"request_id":"9dc28821-a30f-4ff0-94d4-96d6ea03484f"},"errors":[{"code":"AUTH_SESSION_EXPIRED","message":"Session expired or invalid credentials. Please sign in again.","field":null,"details":null}]}
+HTTP_STATUS:401
+--- PATCH /api/v1/admin/ai/models/d2b1a84f-7b8a-49cd-b52b-4fc017797c12 (anon) ---
+{"data":null,"meta":{"request_id":"3a506047-5113-4e5c-b347-088a90973a41"},"errors":[{"code":"AUTH_SESSION_EXPIRED","message":"Session expired or invalid credentials. Please sign in again.","field":null,"details":null}]}
+HTTP_STATUS:401

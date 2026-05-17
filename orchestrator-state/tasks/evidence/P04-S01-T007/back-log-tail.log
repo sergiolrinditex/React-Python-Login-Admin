@@ -1,0 +1,200 @@
+2026-05-15 09:55:05,171 app.auth.services.refresh DEBUG auth.refresh.execute.start request_id=c0bf09e7-ba8a-4017-80b1-c290ec448551 ip=127.0.0.1
+2026-05-15 09:55:05,172 app.auth.rate_limit DEBUG rate_limit.check.start prefix=REFRESH ip=REFRESH:127.0.0.1 rate_per_min=30 burst=30
+2026-05-15 09:55:05,173 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=REFRESH ip=REFRESH:127.0.0.1 remaining=28
+2026-05-15 09:55:05,173 app.auth.services.refresh DEBUG auth.refresh.execute.start request_id=6d8c6778-4a02-414b-9653-2311304182c7 ip=127.0.0.1
+2026-05-15 09:55:05,174 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_active_for_update.start hash_prefix=9075acb5...
+2026-05-15 09:55:05,172 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_active_for_update.start hash_prefix=9075acb5...
+2026-05-15 09:55:05,290 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_active_for_update.done found=False hash_prefix=9075acb5...
+2026-05-15 09:55:05,290 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_by_hash.start hash_prefix=9075acb5...
+2026-05-15 09:55:05,292 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_active_for_update.done found=False hash_prefix=9075acb5...
+2026-05-15 09:55:05,292 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_by_hash.start hash_prefix=9075acb5...
+2026-05-15 09:55:05,293 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_by_hash.done found=False
+2026-05-15 09:55:05,293 app.auth.services.refresh DEBUG auth.refresh.rejected reason=unknown_hash request_id=6d8c6778-4a02-414b-9653-2311304182c7
+2026-05-15 09:55:05,293 app.auth.services.refresh_audit DEBUG auth.refresh.failure_audit.start reason=unknown_hash request_id=6d8c6778-4a02-414b-9653-2311304182c7
+2026-05-15 09:55:05,293 app.db.session DEBUG db.session.audit_scope.open
+2026-05-15 09:55:05,293 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.refresh actor_user_id=NULL
+2026-05-15 09:55:05,301 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_by_hash.done found=False
+2026-05-15 09:55:05,301 app.auth.services.refresh DEBUG auth.refresh.rejected reason=unknown_hash request_id=c0bf09e7-ba8a-4017-80b1-c290ec448551
+2026-05-15 09:55:05,301 app.auth.services.refresh_audit DEBUG auth.refresh.failure_audit.start reason=unknown_hash request_id=c0bf09e7-ba8a-4017-80b1-c290ec448551
+2026-05-15 09:55:05,301 app.db.session DEBUG db.session.audit_scope.open
+2026-05-15 09:55:05,301 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.refresh actor_user_id=NULL
+2026-05-15 09:55:05,321 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=58d1b41b-d7be-41b1-baed-6414439cab78 action=auth.refresh
+2026-05-15 09:55:05,325 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=cb333448-ab6f-4dee-86ca-770cd492c01f action=auth.refresh
+2026-05-15 09:55:05,328 app.auth.services.refresh_audit DEBUG auth.refresh.failure_audit.done reason=unknown_hash request_id=6d8c6778-4a02-414b-9653-2311304182c7
+2026-05-15 09:55:05,328 app.db.session DEBUG db.session.audit_scope.closed
+INFO:     127.0.0.1:63824 - "POST /api/v1/auth/refresh HTTP/1.1" 401 Unauthorized
+2026-05-15 09:55:05,330 app.auth.services.refresh_audit DEBUG auth.refresh.failure_audit.done reason=unknown_hash request_id=c0bf09e7-ba8a-4017-80b1-c290ec448551
+2026-05-15 09:55:05,332 app.db.session DEBUG db.session.audit_scope.closed
+INFO:     127.0.0.1:63825 - "POST /api/v1/auth/refresh HTTP/1.1" 401 Unauthorized
+2026-05-15 09:55:05,335 app.db.session DEBUG db.session.closed
+2026-05-15 09:55:05,335 app.db.session DEBUG db.session.closed
+2026-05-15 09:56:00,101 app.db.session DEBUG db.session.open
+2026-05-15 09:56:00,103 app.db.session DEBUG db.session.open
+2026-05-15 09:56:00,104 app.auth.routers.refresh DEBUG auth.refresh.received request_id=fdee41af-e878-4164-a211-d1d7b47161aa ip=127.0.0.1
+2026-05-15 09:56:00,104 app.auth.rate_limit DEBUG rate_limit.check.start prefix=REFRESH ip=REFRESH:127.0.0.1 rate_per_min=30 burst=30
+2026-05-15 09:56:00,104 app.auth.routers.refresh DEBUG auth.refresh.received request_id=0eb108db-7dc1-427e-97e8-efa6754f066d ip=127.0.0.1
+2026-05-15 09:56:00,105 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=REFRESH ip=REFRESH:127.0.0.1 remaining=27
+2026-05-15 09:56:00,105 app.auth.rate_limit DEBUG rate_limit.check.start prefix=REFRESH ip=REFRESH:127.0.0.1 rate_per_min=30 burst=30
+2026-05-15 09:56:00,105 app.auth.services.refresh DEBUG auth.refresh.execute.start request_id=fdee41af-e878-4164-a211-d1d7b47161aa ip=127.0.0.1
+2026-05-15 09:56:00,105 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=REFRESH ip=REFRESH:127.0.0.1 remaining=26
+2026-05-15 09:56:00,105 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_active_for_update.start hash_prefix=9075acb5...
+2026-05-15 09:56:00,105 app.auth.services.refresh DEBUG auth.refresh.execute.start request_id=0eb108db-7dc1-427e-97e8-efa6754f066d ip=127.0.0.1
+2026-05-15 09:56:00,109 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_active_for_update.start hash_prefix=9075acb5...
+2026-05-15 09:56:00,124 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_active_for_update.done found=False hash_prefix=9075acb5...
+2026-05-15 09:56:00,124 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_active_for_update.done found=False hash_prefix=9075acb5...
+2026-05-15 09:56:00,124 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_by_hash.start hash_prefix=9075acb5...
+2026-05-15 09:56:00,124 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_by_hash.start hash_prefix=9075acb5...
+2026-05-15 09:56:00,125 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_by_hash.done found=False
+2026-05-15 09:56:00,126 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_by_hash.done found=False
+2026-05-15 09:56:00,126 app.auth.services.refresh DEBUG auth.refresh.rejected reason=unknown_hash request_id=0eb108db-7dc1-427e-97e8-efa6754f066d
+2026-05-15 09:56:00,126 app.auth.services.refresh DEBUG auth.refresh.rejected reason=unknown_hash request_id=fdee41af-e878-4164-a211-d1d7b47161aa
+2026-05-15 09:56:00,126 app.auth.services.refresh_audit DEBUG auth.refresh.failure_audit.start reason=unknown_hash request_id=0eb108db-7dc1-427e-97e8-efa6754f066d
+2026-05-15 09:56:00,126 app.auth.services.refresh_audit DEBUG auth.refresh.failure_audit.start reason=unknown_hash request_id=fdee41af-e878-4164-a211-d1d7b47161aa
+2026-05-15 09:56:00,126 app.db.session DEBUG db.session.audit_scope.open
+2026-05-15 09:56:00,126 app.db.session DEBUG db.session.audit_scope.open
+2026-05-15 09:56:00,126 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.refresh actor_user_id=NULL
+2026-05-15 09:56:00,126 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.refresh actor_user_id=NULL
+2026-05-15 09:56:00,131 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=65fdaa04-dc1f-4539-957a-bfcf8f23ee5e action=auth.refresh
+2026-05-15 09:56:00,137 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=376ab21d-d5fc-44b6-b467-c4916db62c16 action=auth.refresh
+2026-05-15 09:56:00,137 app.auth.services.refresh_audit DEBUG auth.refresh.failure_audit.done reason=unknown_hash request_id=0eb108db-7dc1-427e-97e8-efa6754f066d
+2026-05-15 09:56:00,138 app.db.session DEBUG db.session.audit_scope.closed
+INFO:     127.0.0.1:63934 - "POST /api/v1/auth/refresh HTTP/1.1" 401 Unauthorized
+2026-05-15 09:56:00,138 app.auth.services.refresh_audit DEBUG auth.refresh.failure_audit.done reason=unknown_hash request_id=fdee41af-e878-4164-a211-d1d7b47161aa
+2026-05-15 09:56:00,138 app.db.session DEBUG db.session.audit_scope.closed
+INFO:     127.0.0.1:63933 - "POST /api/v1/auth/refresh HTTP/1.1" 401 Unauthorized
+2026-05-15 09:56:00,140 app.db.session DEBUG db.session.closed
+2026-05-15 09:56:00,140 app.db.session DEBUG db.session.closed
+2026-05-15 09:56:45,691 app.db.session DEBUG db.session.open
+2026-05-15 09:56:45,695 app.auth.routers.forgot_reset DEBUG auth.forgot.endpoint.start ip_prefix=127.0.0. request_id=fe10fa83-62da-48bb-90d1-a5627538929d
+2026-05-15 09:56:45,695 app.auth.rate_limit DEBUG rate_limit.check.start prefix=FORGOT ip=FORGOT:127.0.0.1 rate_per_min=3 burst=3
+2026-05-15 09:56:45,695 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=FORGOT ip=FORGOT:127.0.0.1 new_window remaining=2
+2026-05-15 09:56:45,695 app.auth.services.password_reset_request DEBUG auth.forgot.start email_domain=inditex-sandbox.com request_id=fe10fa83-62da-48bb-90d1-a5627538929d
+2026-05-15 09:56:45,695 app.auth.repository DEBUG auth.repo.find_by_email.start email_domain=inditex-sandbox.com
+2026-05-15 09:56:45,703 app.auth.repository DEBUG auth.repo.find_by_email.done found=True
+2026-05-15 09:56:45,703 app.auth.repositories.password_reset DEBUG auth.repo.password_reset.insert.start user_id=51c8d4f6-f105-461f-9ea3-97f3ae2cc702
+2026-05-15 09:56:45,706 app.auth.repositories.password_reset DEBUG auth.repo.password_reset.insert.done user_id=51c8d4f6-f105-461f-9ea3-97f3ae2cc702 prt_id=eaf12f04-037e-41a0-8d59-984563e81db2
+2026-05-15 09:56:45,706 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.password_reset.requested actor_user_id=51c8d4f6-f105-461f-9ea3-97f3ae2cc702
+2026-05-15 09:56:45,707 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=54efeaed-e2f3-4952-901c-c1637dc47522 action=auth.password_reset.requested
+2026-05-15 09:56:45,712 app.auth.services.password_reset_request DEBUG auth.forgot.dispatch_email.start locale=es request_id=fe10fa83-62da-48bb-90d1-a5627538929d
+2026-05-15 09:56:45,712 app.mail.outbox_mailer DEBUG mail.outbox.send_reset_email.start to_domain=inditex-sandbox.com locale=es
+2026-05-15 09:56:45,716 app.mail.outbox DEBUG mail.outbox.append.start to_domain=inditex-sandbox.com locale=es template=reset_password
+2026-05-15 09:56:45,717 app.mail.outbox DEBUG mail.outbox.append.done template=reset_password locale=es
+2026-05-15 09:56:45,717 app.mail.outbox_mailer DEBUG mail.outbox.send_reset_email.done to_domain=inditex-sandbox.com locale=es html_len=1364
+2026-05-15 09:56:45,717 app.auth.services.password_reset_request DEBUG auth.forgot.dispatch_email.done locale=es
+2026-05-15 09:56:45,717 app.auth.services.password_reset_request DEBUG auth.forgot.done email_domain=inditex-sandbox.com user_found=True sent=True request_id=fe10fa83-62da-48bb-90d1-a5627538929d
+2026-05-15 09:56:45,718 app.auth.routers.forgot_reset DEBUG auth.forgot.endpoint.done request_id=fe10fa83-62da-48bb-90d1-a5627538929d
+INFO:     127.0.0.1:64019 - "POST /api/v1/auth/forgot-password HTTP/1.1" 200 OK
+2026-05-15 09:56:45,719 app.db.session DEBUG db.session.closed
+2026-05-15 10:10:54,877 app.db.session DEBUG db.session.open
+2026-05-15 10:10:54,877 app.db.session DEBUG db.session.open
+2026-05-15 10:10:54,878 app.auth.routers.refresh DEBUG auth.refresh.received request_id=757002b2-de1d-4579-98d2-d75645b50e7f ip=127.0.0.1
+2026-05-15 10:10:54,878 app.auth.routers.refresh DEBUG auth.refresh.received request_id=732a61e4-89a6-490b-973f-f2e4ee4e742a ip=127.0.0.1
+2026-05-15 10:10:54,878 app.auth.rate_limit DEBUG rate_limit.check.start prefix=REFRESH ip=REFRESH:127.0.0.1 rate_per_min=30 burst=30
+2026-05-15 10:10:54,878 app.auth.rate_limit DEBUG rate_limit.check.start prefix=REFRESH ip=REFRESH:127.0.0.1 rate_per_min=30 burst=30
+2026-05-15 10:10:54,878 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=REFRESH ip=REFRESH:127.0.0.1 new_window remaining=29
+2026-05-15 10:10:54,879 app.auth.services.refresh DEBUG auth.refresh.execute.start request_id=757002b2-de1d-4579-98d2-d75645b50e7f ip=127.0.0.1
+2026-05-15 10:10:54,879 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=REFRESH ip=REFRESH:127.0.0.1 remaining=28
+2026-05-15 10:10:54,879 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_active_for_update.start hash_prefix=9075acb5...
+2026-05-15 10:10:54,879 app.auth.services.refresh DEBUG auth.refresh.execute.start request_id=732a61e4-89a6-490b-973f-f2e4ee4e742a ip=127.0.0.1
+2026-05-15 10:10:54,891 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_active_for_update.start hash_prefix=9075acb5...
+2026-05-15 10:10:54,926 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_active_for_update.done found=False hash_prefix=9075acb5...
+2026-05-15 10:10:54,926 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_by_hash.start hash_prefix=9075acb5...
+2026-05-15 10:10:54,926 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_active_for_update.done found=False hash_prefix=9075acb5...
+2026-05-15 10:10:54,927 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_by_hash.start hash_prefix=9075acb5...
+2026-05-15 10:10:54,929 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_by_hash.done found=False
+2026-05-15 10:10:54,929 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_by_hash.done found=False
+2026-05-15 10:10:54,929 app.auth.services.refresh DEBUG auth.refresh.rejected reason=unknown_hash request_id=732a61e4-89a6-490b-973f-f2e4ee4e742a
+2026-05-15 10:10:54,929 app.auth.services.refresh DEBUG auth.refresh.rejected reason=unknown_hash request_id=757002b2-de1d-4579-98d2-d75645b50e7f
+2026-05-15 10:10:54,929 app.auth.services.refresh_audit DEBUG auth.refresh.failure_audit.start reason=unknown_hash request_id=732a61e4-89a6-490b-973f-f2e4ee4e742a
+2026-05-15 10:10:54,929 app.auth.services.refresh_audit DEBUG auth.refresh.failure_audit.start reason=unknown_hash request_id=757002b2-de1d-4579-98d2-d75645b50e7f
+2026-05-15 10:10:54,929 app.db.session DEBUG db.session.audit_scope.open
+2026-05-15 10:10:54,929 app.db.session DEBUG db.session.audit_scope.open
+2026-05-15 10:10:54,929 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.refresh actor_user_id=NULL
+2026-05-15 10:10:54,929 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.refresh actor_user_id=NULL
+2026-05-15 10:10:54,957 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=27c8037a-7f7c-4f3d-b1b4-0708cf16489c action=auth.refresh
+2026-05-15 10:10:54,958 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=f096f42a-90a5-4fff-a8e4-da5ca08d096f action=auth.refresh
+2026-05-15 10:10:54,962 app.auth.services.refresh_audit DEBUG auth.refresh.failure_audit.done reason=unknown_hash request_id=757002b2-de1d-4579-98d2-d75645b50e7f
+2026-05-15 10:10:54,962 app.db.session DEBUG db.session.audit_scope.closed
+2026-05-15 10:10:54,966 app.auth.services.refresh_audit DEBUG auth.refresh.failure_audit.done reason=unknown_hash request_id=732a61e4-89a6-490b-973f-f2e4ee4e742a
+INFO:     127.0.0.1:49470 - "POST /api/v1/auth/refresh HTTP/1.1" 401 Unauthorized
+2026-05-15 10:10:54,967 app.db.session DEBUG db.session.audit_scope.closed
+INFO:     127.0.0.1:49471 - "POST /api/v1/auth/refresh HTTP/1.1" 401 Unauthorized
+2026-05-15 10:10:54,971 app.db.session DEBUG db.session.closed
+2026-05-15 10:10:54,971 app.db.session DEBUG db.session.closed
+2026-05-15 10:11:08,650 app.db.session DEBUG db.session.open
+2026-05-15 10:11:08,650 app.db.session DEBUG db.session.open
+2026-05-15 10:11:08,651 app.auth.routers.refresh DEBUG auth.refresh.received request_id=ec6b1147-3d17-41d9-bb1f-11721e5a1478 ip=127.0.0.1
+2026-05-15 10:11:08,651 app.auth.rate_limit DEBUG rate_limit.check.start prefix=REFRESH ip=REFRESH:127.0.0.1 rate_per_min=30 burst=30
+2026-05-15 10:11:08,651 app.auth.routers.refresh DEBUG auth.refresh.received request_id=87ff6ba5-d602-471d-a4fd-0bf0a31c7cb4 ip=127.0.0.1
+2026-05-15 10:11:08,651 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=REFRESH ip=REFRESH:127.0.0.1 remaining=27
+2026-05-15 10:11:08,651 app.auth.rate_limit DEBUG rate_limit.check.start prefix=REFRESH ip=REFRESH:127.0.0.1 rate_per_min=30 burst=30
+2026-05-15 10:11:08,651 app.auth.services.refresh DEBUG auth.refresh.execute.start request_id=ec6b1147-3d17-41d9-bb1f-11721e5a1478 ip=127.0.0.1
+2026-05-15 10:11:08,651 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=REFRESH ip=REFRESH:127.0.0.1 remaining=26
+2026-05-15 10:11:08,651 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_active_for_update.start hash_prefix=9075acb5...
+2026-05-15 10:11:08,651 app.auth.services.refresh DEBUG auth.refresh.execute.start request_id=87ff6ba5-d602-471d-a4fd-0bf0a31c7cb4 ip=127.0.0.1
+2026-05-15 10:11:08,655 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_active_for_update.start hash_prefix=9075acb5...
+2026-05-15 10:11:08,664 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_active_for_update.done found=False hash_prefix=9075acb5...
+2026-05-15 10:11:08,664 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_by_hash.start hash_prefix=9075acb5...
+2026-05-15 10:11:08,667 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_active_for_update.done found=False hash_prefix=9075acb5...
+2026-05-15 10:11:08,667 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_by_hash.start hash_prefix=9075acb5...
+2026-05-15 10:11:08,669 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_by_hash.done found=False
+2026-05-15 10:11:08,669 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_by_hash.done found=False
+2026-05-15 10:11:08,669 app.auth.services.refresh DEBUG auth.refresh.rejected reason=unknown_hash request_id=87ff6ba5-d602-471d-a4fd-0bf0a31c7cb4
+2026-05-15 10:11:08,669 app.auth.services.refresh DEBUG auth.refresh.rejected reason=unknown_hash request_id=ec6b1147-3d17-41d9-bb1f-11721e5a1478
+2026-05-15 10:11:08,669 app.auth.services.refresh_audit DEBUG auth.refresh.failure_audit.start reason=unknown_hash request_id=ec6b1147-3d17-41d9-bb1f-11721e5a1478
+2026-05-15 10:11:08,669 app.db.session DEBUG db.session.audit_scope.open
+2026-05-15 10:11:08,669 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.refresh actor_user_id=NULL
+2026-05-15 10:11:08,669 app.auth.services.refresh_audit DEBUG auth.refresh.failure_audit.start reason=unknown_hash request_id=87ff6ba5-d602-471d-a4fd-0bf0a31c7cb4
+2026-05-15 10:11:08,671 app.db.session DEBUG db.session.audit_scope.open
+2026-05-15 10:11:08,671 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.refresh actor_user_id=NULL
+2026-05-15 10:11:08,679 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=c220330d-3670-49bb-b3ab-3009725f5252 action=auth.refresh
+2026-05-15 10:11:08,680 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=2bfc6d18-bf19-4908-93a9-141e95f32dab action=auth.refresh
+2026-05-15 10:11:08,681 app.auth.services.refresh_audit DEBUG auth.refresh.failure_audit.done reason=unknown_hash request_id=ec6b1147-3d17-41d9-bb1f-11721e5a1478
+2026-05-15 10:11:08,681 app.auth.services.refresh_audit DEBUG auth.refresh.failure_audit.done reason=unknown_hash request_id=87ff6ba5-d602-471d-a4fd-0bf0a31c7cb4
+2026-05-15 10:11:08,681 app.db.session DEBUG db.session.audit_scope.closed
+2026-05-15 10:11:08,681 app.db.session DEBUG db.session.audit_scope.closed
+INFO:     127.0.0.1:49516 - "POST /api/v1/auth/refresh HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:49517 - "POST /api/v1/auth/refresh HTTP/1.1" 401 Unauthorized
+2026-05-15 10:11:08,685 app.db.session DEBUG db.session.closed
+2026-05-15 10:11:08,685 app.db.session DEBUG db.session.closed
+2026-05-15 10:11:40,650 app.db.session DEBUG db.session.open
+2026-05-15 10:11:40,652 app.db.session DEBUG db.session.open
+2026-05-15 10:11:40,652 app.auth.routers.refresh DEBUG auth.refresh.received request_id=ddf15d8d-0cb0-49fb-8244-8c1d657343b3 ip=127.0.0.1
+2026-05-15 10:11:40,652 app.auth.rate_limit DEBUG rate_limit.check.start prefix=REFRESH ip=REFRESH:127.0.0.1 rate_per_min=30 burst=30
+2026-05-15 10:11:40,652 app.auth.routers.refresh DEBUG auth.refresh.received request_id=23f8a2da-f38d-4b04-9afc-7612cafca7b2 ip=127.0.0.1
+2026-05-15 10:11:40,652 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=REFRESH ip=REFRESH:127.0.0.1 remaining=25
+2026-05-15 10:11:40,652 app.auth.rate_limit DEBUG rate_limit.check.start prefix=REFRESH ip=REFRESH:127.0.0.1 rate_per_min=30 burst=30
+2026-05-15 10:11:40,652 app.auth.services.refresh DEBUG auth.refresh.execute.start request_id=ddf15d8d-0cb0-49fb-8244-8c1d657343b3 ip=127.0.0.1
+2026-05-15 10:11:40,653 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=REFRESH ip=REFRESH:127.0.0.1 remaining=24
+2026-05-15 10:11:40,653 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_active_for_update.start hash_prefix=9075acb5...
+2026-05-15 10:11:40,653 app.auth.services.refresh DEBUG auth.refresh.execute.start request_id=23f8a2da-f38d-4b04-9afc-7612cafca7b2 ip=127.0.0.1
+2026-05-15 10:11:40,657 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_active_for_update.start hash_prefix=9075acb5...
+2026-05-15 10:11:40,676 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_active_for_update.done found=False hash_prefix=9075acb5...
+2026-05-15 10:11:40,676 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_by_hash.start hash_prefix=9075acb5...
+2026-05-15 10:11:40,676 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_active_for_update.done found=False hash_prefix=9075acb5...
+2026-05-15 10:11:40,676 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_by_hash.start hash_prefix=9075acb5...
+2026-05-15 10:11:40,677 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_by_hash.done found=False
+2026-05-15 10:11:40,677 app.auth.repositories.refresh DEBUG auth.repo.refresh.find_by_hash.done found=False
+2026-05-15 10:11:40,677 app.auth.services.refresh DEBUG auth.refresh.rejected reason=unknown_hash request_id=ddf15d8d-0cb0-49fb-8244-8c1d657343b3
+2026-05-15 10:11:40,677 app.auth.services.refresh DEBUG auth.refresh.rejected reason=unknown_hash request_id=23f8a2da-f38d-4b04-9afc-7612cafca7b2
+2026-05-15 10:11:40,677 app.auth.services.refresh_audit DEBUG auth.refresh.failure_audit.start reason=unknown_hash request_id=ddf15d8d-0cb0-49fb-8244-8c1d657343b3
+2026-05-15 10:11:40,677 app.auth.services.refresh_audit DEBUG auth.refresh.failure_audit.start reason=unknown_hash request_id=23f8a2da-f38d-4b04-9afc-7612cafca7b2
+2026-05-15 10:11:40,678 app.db.session DEBUG db.session.audit_scope.open
+2026-05-15 10:11:40,678 app.db.session DEBUG db.session.audit_scope.open
+2026-05-15 10:11:40,678 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.refresh actor_user_id=NULL
+2026-05-15 10:11:40,678 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.refresh actor_user_id=NULL
+2026-05-15 10:11:40,684 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=1ce84613-0b27-4b76-a7c5-e2270f534d99 action=auth.refresh
+2026-05-15 10:11:40,687 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=3cbafada-1a30-4d56-8f85-c8b39f625561 action=auth.refresh
+2026-05-15 10:11:40,689 app.auth.services.refresh_audit DEBUG auth.refresh.failure_audit.done reason=unknown_hash request_id=ddf15d8d-0cb0-49fb-8244-8c1d657343b3
+2026-05-15 10:11:40,689 app.auth.services.refresh_audit DEBUG auth.refresh.failure_audit.done reason=unknown_hash request_id=23f8a2da-f38d-4b04-9afc-7612cafca7b2
+2026-05-15 10:11:40,689 app.db.session DEBUG db.session.audit_scope.closed
+2026-05-15 10:11:40,689 app.db.session DEBUG db.session.audit_scope.closed
+INFO:     127.0.0.1:49588 - "POST /api/v1/auth/refresh HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:49589 - "POST /api/v1/auth/refresh HTTP/1.1" 401 Unauthorized
+2026-05-15 10:11:40,691 app.db.session DEBUG db.session.closed
+2026-05-15 10:11:40,691 app.db.session DEBUG db.session.closed
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [43036]
+INFO:     Stopping reloader process [43031]

@@ -1,0 +1,11 @@
+=== ADMIN AUTHENTICATED ENDPOINT PROBES — 2026-05-17T22:36:46Z ===
+
+--- GET /api/v1/admin/ai/providers (admin Bearer) ---
+{"data":[{"id":"e3542c34-1c63-4520-ae07-c79906079610","name":"litellm_verification_sandbox","provider_type":"litellm","base_url":"http://localhost:4000","status":"active","created_by":null,"has_credentials":true,"credential_auth_type":"bearer","expires_at":null}],"meta":{"request_id":"357c958d-947e-41db-a176-ea9312750d40"}}
+HTTP_STATUS:200
+--- GET /api/v1/admin/ai/models (admin Bearer) ---
+{"data":[{"id":"d2b1a84f-7b8a-49cd-b52b-4fc017797c12","provider_id":"e3542c34-1c63-4520-ae07-c79906079610","model_id":"gemini-2.5-flash","model_type":"chat","capabilities":["chat","streaming"],"enabled":true,"is_default":false,"pricing":{},"latency_ms_avg":null}],"meta":{"request_id":"26df8a0d-8392-46dc-9504-d0138adcd7af"}}
+HTTP_STATUS:200
+--- PATCH /api/v1/admin/ai/models/d2b1a84f-7b8a-49cd-b52b-4fc017797c12 (admin Bearer) ---
+{"data":{"id":"d2b1a84f-7b8a-49cd-b52b-4fc017797c12","provider_id":"e3542c34-1c63-4520-ae07-c79906079610","model_id":"gemini-2.5-flash","model_type":"chat","capabilities":["chat","streaming"],"enabled":true,"is_default":false,"pricing":{},"latency_ms_avg":null},"meta":{"request_id":"c76f8c52-a4f4-420c-bc14-cf461e45d4d1"}}
+HTTP_STATUS:200
