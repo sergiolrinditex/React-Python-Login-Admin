@@ -3,11 +3,13 @@
  *
  * Slice/Phase: P04-S01-T001 — AdminDashboardPage / Phase 4.
  *   Extended in P04-S01-T002 (§D-T002-TESTS): getProviders + getModels added.
- * Write-set anchor: §D-T001-TESTS, §D-T002-TESTS
+ *   Extended in P04-S01-T003 (§D-T003-TESTS): createProvider added.
+ * Write-set anchor: §D-T001-TESTS, §D-T002-TESTS, §D-T003-TESTS
  *
- * Responsibility: Unit tests for adminAiRepository.getUsage, getProviders, getModels.
+ * Responsibility: Unit tests for adminAiRepository.getUsage, getProviders, getModels,
+ *   createProvider.
  *   authFetch is mocked at the fetch boundary (unit-level boundary, not business logic).
- *   Tests cover all Result paths that map to the 5 UX states.
+ *   Tests cover all Result paths that map to the 6 UX states.
  *
  * Cases (T01-T07): getUsage (existing).
  * Cases (T08-T17): getProviders + getModels (P04-S01-T002 additions).
@@ -21,10 +23,21 @@
  *   T15 — getModels 403 → AdminAiForbiddenError.
  *   T16 — getModels 500 → AdminAiInternalError.
  *   T17 — getModels network reject → AdminAiNetworkError.
+ * Cases (T18-T26): createProvider (P04-S01-T003 additions).
+ *   T18 — createProvider 201 happy path → Result.ok(AiProvider).
+ *   T19 — createProvider 401 → AdminAiAuthExpiredError.
+ *   T20 — createProvider 403 → AdminAiForbiddenError.
+ *   T21 — createProvider 422 with fieldErrors → AdminAiValidationError with fieldErrors.
+ *   T22 — createProvider 400 → AdminAiValidationError.
+ *   T23 — createProvider 409 → AdminAiValidationError (ADMIN_PROVIDER_DUPLICATE_NAME).
+ *   T24 — createProvider 500 → AdminAiInternalError.
+ *   T25 — createProvider network reject → AdminAiNetworkError.
+ *   T26 — createProvider PII-clean: secret_plain NEVER in logs.
  */
 
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { getUsage, getProviders, getModels } from "../data/adminAiRepository";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import type { MockInstance } from "vitest";
+import { getUsage, getProviders, getModels, createProvider } from "../data/adminAiRepository";
 import {
   AdminAiAuthExpiredError,
   AdminAiForbiddenError,
@@ -433,6 +446,188 @@ describe("adminAiRepository.getModels", () => {
     expect(result.ok).toBe(false);
     if (!result.ok) {
       expect(result.error).toBeInstanceOf(AdminAiNetworkError);
+    }
+  });
+});
+
+// ---------------------------------------------------------------------------
+// P04-S01-T003 additions: createProvider
+// ---------------------------------------------------------------------------
+
+// Fixture for createProvider request (secret_plain cast for test purposes)
+const MOCK_CREATE_PROVIDER_REQUEST = {
+  provider_type: "litellm" as const,
+  name: "litellm_verification_sandbox",
+  base_url: "http://localhost:4000",
+  credentials: {
+    auth_type: "bearer" as const,
+    secret_plain: "hilo-dev-litellm-master-key-2026",
+  },
+};
+
+const MOCK_PROVIDER_OUT = {
+  id: "prov-uuid-created-1234",
+  name: "litellm_verification_sandbox",
+  provider_type: "litellm",
+  base_url: "http://localhost:4000",
+  status: "draft",
+  created_by: null,
+  has_credentials: true,
+  credential_auth_type: "bearer",
+  expires_at: null,
+};
+
+describe("adminAiRepository.createProvider", () => {
+  let consoleSpy: MockInstance;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    // Spy on ALL console methods to verify PII-clean logs
+    consoleSpy = vi.spyOn(console, "info").mockImplementation(() => {});
+    vi.spyOn(console, "warn").mockImplementation(() => {});
+    vi.spyOn(console, "error").mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("T18 — createProvider 201 happy path → Result.ok(AiProvider)", async () => {
+    mockAuthFetch.mockResolvedValueOnce(
+      makeResponse(201, { data: MOCK_PROVIDER_OUT, meta: { request_id: "test-req-create" } }),
+    );
+
+    const result = await createProvider(MOCK_CREATE_PROVIDER_REQUEST, onAuthFailure);
+
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.value.provider_type).toBe("litellm");
+      expect(result.value.has_credentials).toBe(true);
+      expect(result.value.status).toBe("draft");
+    }
+    // Verify POST was called with JSON body
+    expect(mockAuthFetch).toHaveBeenCalledWith(
+      "/api/v1/admin/ai/providers",
+      expect.objectContaining({ method: "POST" }),
+      expect.objectContaining({ onAuthFailure }),
+    );
+  });
+
+  it("T19 — createProvider 401 → AdminAiAuthExpiredError", async () => {
+    mockAuthFetch.mockResolvedValueOnce(
+      makeResponse(401, { errors: [{ code: "AUTH_SESSION_EXPIRED" }] }),
+    );
+
+    const result = await createProvider(MOCK_CREATE_PROVIDER_REQUEST, onAuthFailure);
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toBeInstanceOf(AdminAiAuthExpiredError);
+    }
+  });
+
+  it("T20 — createProvider 403 → AdminAiForbiddenError", async () => {
+    mockAuthFetch.mockResolvedValueOnce(
+      makeResponse(403, { errors: [{ code: "AUTH_FORBIDDEN" }] }),
+    );
+
+    const result = await createProvider(MOCK_CREATE_PROVIDER_REQUEST, onAuthFailure);
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toBeInstanceOf(AdminAiForbiddenError);
+    }
+  });
+
+  it("T21 — createProvider 422 with fieldErrors → AdminAiValidationError with fieldErrors[]", async () => {
+    mockAuthFetch.mockResolvedValueOnce(
+      makeResponse(422, {
+        code: "ADMIN_PROVIDER_VALIDATION_ERROR",
+        errors: [
+          { field: "name", code: "INVALID_NAME", message: "Name must be non-blank." },
+          { field: "credentials", code: "INVALID_SECRET", message: "Secret is required." },
+        ],
+      }),
+    );
+
+    const result = await createProvider(MOCK_CREATE_PROVIDER_REQUEST, onAuthFailure);
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toBeInstanceOf(AdminAiValidationError);
+      const err = result.error as AdminAiValidationError;
+      expect(err.serverCode).toBe("ADMIN_PROVIDER_VALIDATION_ERROR");
+      expect(err.fieldErrors).toHaveLength(2);
+      expect(err.fieldErrors?.[0].field).toBe("name");
+    }
+  });
+
+  it("T22 — createProvider 400 → AdminAiValidationError", async () => {
+    mockAuthFetch.mockResolvedValueOnce(
+      makeResponse(400, { code: "ADMIN_PROVIDER_BAD_REQUEST", error: "Bad request" }),
+    );
+
+    const result = await createProvider(MOCK_CREATE_PROVIDER_REQUEST, onAuthFailure);
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toBeInstanceOf(AdminAiValidationError);
+    }
+  });
+
+  it("T23 — createProvider 409 → AdminAiValidationError (ADMIN_PROVIDER_DUPLICATE_NAME)", async () => {
+    mockAuthFetch.mockResolvedValueOnce(
+      makeResponse(409, { code: "ADMIN_PROVIDER_DUPLICATE_NAME", error: "Conflict" }),
+    );
+
+    const result = await createProvider(MOCK_CREATE_PROVIDER_REQUEST, onAuthFailure);
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toBeInstanceOf(AdminAiValidationError);
+      const err = result.error as AdminAiValidationError;
+      expect(err.serverCode).toBe("ADMIN_PROVIDER_DUPLICATE_NAME");
+    }
+  });
+
+  it("T24 — createProvider 500 → AdminAiInternalError", async () => {
+    mockAuthFetch.mockResolvedValueOnce(
+      makeResponse(500, { errors: [{ code: "INTERNAL_ERROR" }] }),
+    );
+
+    const result = await createProvider(MOCK_CREATE_PROVIDER_REQUEST, onAuthFailure);
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toBeInstanceOf(AdminAiInternalError);
+      const err = result.error as AdminAiInternalError;
+      expect(err.status).toBe(500);
+    }
+  });
+
+  it("T25 — createProvider network reject → AdminAiNetworkError", async () => {
+    mockAuthFetch.mockRejectedValueOnce(new TypeError("Failed to fetch"));
+
+    const result = await createProvider(MOCK_CREATE_PROVIDER_REQUEST, onAuthFailure);
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toBeInstanceOf(AdminAiNetworkError);
+    }
+  });
+
+  it("T26 — createProvider PII-clean: secret_plain NEVER appears in console logs", async () => {
+    mockAuthFetch.mockResolvedValueOnce(
+      makeResponse(201, { data: MOCK_PROVIDER_OUT, meta: { request_id: "pii-test" } }),
+    );
+
+    await createProvider(MOCK_CREATE_PROVIDER_REQUEST, onAuthFailure);
+
+    // Collect all console.info calls as strings
+    const allLogCalls = consoleSpy.mock.calls.map((args) => JSON.stringify(args));
+    const secretValue = "hilo-dev-litellm-master-key-2026";
+    for (const logEntry of allLogCalls) {
+      expect(logEntry).not.toContain(secretValue);
     }
   });
 });

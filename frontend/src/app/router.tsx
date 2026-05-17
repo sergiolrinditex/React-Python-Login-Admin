@@ -18,6 +18,10 @@
  *   Updated in P04-S02-T001 — added /admin/rag/documents route wired to RagDocumentsPage (§D-RAGDOC-ROUTER).
  *   Updated in P04-S01-T002 — added /admin/ai/models route wired to AdminAiModelsPage (§D-T002-ROUTER).
  *   Updated in P04-S02-T002 — added /admin/rag/collections route wired to RagCollectionsPage (§D-T002-ROUTER).
+ *   Updated in P04-S01-T003 — wired /admin/ai/models/new to ModelWizardPage (§D-T003-ROUTER).
+ *     WRITE_SET_DRIFT: router.tsx is not in the Coverage Registry write_set but is required
+ *     to make the page reachable; justified by identical precedent in P04-S01-T002 (line 22
+ *     of that handoff). Documented in handoff §D-T003-ROUTER.
  *
  * Responsibility: single mount point for the application's route tree.
  *   Exports <AppRouter> which is consumed by main.tsx inside <Providers>.
@@ -71,6 +75,7 @@ import ChatHomePage from "../pages/chat/ChatHomePage";
 import HistoryPage from "../pages/chat/HistoryPage";
 import AdminDashboardPage from "../pages/admin/AdminDashboardPage";
 import AdminAiModelsPage from "../pages/admin/ai/AdminAiModelsPage";
+import ModelWizardPage from "../pages/admin/ai/ModelWizardPage";
 import McpServersPage from "../pages/admin/mcp/McpServersPage";
 import RagDocumentsPage from "../pages/admin/rag/RagDocumentsPage";
 import RagCollectionsPage from "../pages/admin/rag/RagCollectionsPage";
@@ -201,11 +206,11 @@ function RootRedirect(): ReactNode {
  */
 export function AppRouter(): ReactNode {
   if (import.meta.env.VITE_ENABLE_VERBOSE_LOGGING === "true") {
-    // §D-T002-ROUTER (P04-S01-T002): ROUTE_ADMIN_AI_MODELS added to verbose-log routes array
+    // §D-T003-ROUTER (P04-S01-T003): ROUTE_ADMIN_AI_MODELS_NEW added to verbose-log routes array
     console.info("AppRouter.render.start", {
       phase: "P04",
-      slice: "P04-S01-T002",
-      routes: [ROUTE_SHOWCASE, ROUTE_AUTH_SIGN_IN, ROUTE_AUTH_SIGN_UP, ROUTE_AUTH_RESET_SENT, ROUTE_AUTH_2FA, ROUTE_CHAT, ROUTE_HISTORY, ROUTE_ADMIN, ROUTE_ADMIN_AI_MCP, ROUTE_ADMIN_RAG_DOCUMENTS, ROUTE_ADMIN_AI_MODELS],
+      slice: "P04-S01-T003",
+      routes: [ROUTE_SHOWCASE, ROUTE_AUTH_SIGN_IN, ROUTE_AUTH_SIGN_UP, ROUTE_AUTH_RESET_SENT, ROUTE_AUTH_2FA, ROUTE_CHAT, ROUTE_HISTORY, ROUTE_ADMIN, ROUTE_ADMIN_AI_MCP, ROUTE_ADMIN_RAG_DOCUMENTS, ROUTE_ADMIN_AI_MODELS, ROUTE_ADMIN_AI_MODELS_NEW],
     });
   }
 
@@ -257,6 +262,10 @@ export function AppRouter(): ReactNode {
             <Route path={ROUTE_ADMIN_RAG_DOCUMENTS} element={<RagDocumentsPage />} />
             {/* P04-S01-T002: AdminAiModelsPage — §D-T002-ROUTER, TECHNICAL_GUIDE §6.1 */}
             <Route path={ROUTE_ADMIN_AI_MODELS} element={<AdminAiModelsPage />} />
+            {/* P04-S01-T003: ModelWizardPage — §D-T003-ROUTER, TECHNICAL_GUIDE §6.1
+                Must be placed BEFORE any catch-all/wildcard admin route.
+                WRITE_SET_DRIFT: justified by identical T002 pattern; documented in handoff. */}
+            <Route path={ROUTE_ADMIN_AI_MODELS_NEW} element={<ModelWizardPage />} />
             {/* P04-S02-T002: RagCollectionsPage — §D-T002-ROUTER, TECHNICAL_GUIDE §6.1 */}
             <Route path={ROUTE_ADMIN_RAG_COLLECTIONS} element={<RagCollectionsPage />} />
           </Route>

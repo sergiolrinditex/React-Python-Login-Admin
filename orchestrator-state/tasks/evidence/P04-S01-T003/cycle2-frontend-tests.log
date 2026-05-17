@@ -1,0 +1,187 @@
+
+> hilo-people-frontend@0.1.0 test
+> vitest --run --reporter=verbose src/features/admin-ai src/pages/admin/ai/__tests__ src/i18n/__tests__
+
+
+ RUN  v3.2.4 /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P04-S01-T003/frontend
+
+stderr | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T03 — 401 final → Result.err(AdminAiAuthExpiredError)
+[admin-ai] admin-ai.repo.getUsage.auth_expired { status: [33m401[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T03b — AuthSessionExpiredError thrown by authFetch → Result.err(AdminAiAuthExpiredError)
+[admin-ai] admin-ai.repo.getUsage.auth_expired_via_client {}
+
+stderr | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T04 — 403 forbidden → Result.err(AdminAiForbiddenError)
+[admin-ai] admin-ai.repo.getUsage.forbidden { status: [33m403[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T05 — 422 validation error → Result.err(AdminAiValidationError) with server code
+[admin-ai] admin-ai.repo.getUsage.validation_error {
+  status: [33m422[39m,
+  server_code: [32m'ADMIN_USAGE_WINDOW_TOO_WIDE'[39m,
+  request_id: [32m'test-request-id'[39m,
+  note: [32m'422 from admin/usage — client params may have drifted from spec'[39m
+}
+
+stderr | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T06 — 500 server error → Result.err(AdminAiInternalError)
+[admin-ai] admin-ai.repo.getUsage.server_error { status: [33m500[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T07 — network rejection (TypeError) → Result.err(AdminAiNetworkError)
+[admin-ai] admin-ai.repo.getUsage.network_error { error_class: [32m'AdminAiNetworkError'[39m }
+
+stderr | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getProviders > T09 — getProviders 401 → AdminAiAuthExpiredError; onAuthFailure invoked via authFetch
+[admin-ai] admin-ai.repo.getProviders.auth_expired { status: [33m401[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getProviders > T10 — getProviders 403 → AdminAiForbiddenError
+[admin-ai] admin-ai.repo.getProviders.forbidden { status: [33m403[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getProviders > T11 — getProviders 500 → AdminAiInternalError
+[admin-ai] admin-ai.repo.getProviders.server_error { status: [33m500[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getProviders > T12 — getProviders network reject → AdminAiNetworkError
+[admin-ai] admin-ai.repo.getProviders.network_error { error_class: [32m'AdminAiNetworkError'[39m }
+
+stderr | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getModels > T14 — getModels 401 → AdminAiAuthExpiredError
+[admin-ai] admin-ai.repo.getModels.auth_expired { status: [33m401[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getModels > T15 — getModels 403 → AdminAiForbiddenError
+[admin-ai] admin-ai.repo.getModels.forbidden { status: [33m403[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getModels > T16 — getModels 500 → AdminAiInternalError
+[admin-ai] admin-ai.repo.getModels.server_error { status: [33m500[39m, request_id: [32m'test-request-id'[39m }
+
+stderr | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getModels > T17 — getModels network reject → AdminAiNetworkError
+[admin-ai] admin-ai.repo.getModels.network_error { error_class: [32m'AdminAiNetworkError'[39m }
+
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T01 — 200 happy path → Result.ok with populated rows 2ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T02 — 200 empty (rows=[], totals all zeros) → Result.ok with empty data 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T03 — 401 final → Result.err(AdminAiAuthExpiredError) 2ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T03b — AuthSessionExpiredError thrown by authFetch → Result.err(AdminAiAuthExpiredError) 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T04 — 403 forbidden → Result.err(AdminAiForbiddenError) 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T05 — 422 validation error → Result.err(AdminAiValidationError) with server code 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T06 — 500 server error → Result.err(AdminAiInternalError) 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T07 — network rejection (TypeError) → Result.err(AdminAiNetworkError) 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T08-url — URL is built correctly with all params 1ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getProviders > T08 — getProviders happy path → Result.ok([AiProvider]) 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getProviders > T09 — getProviders 401 → AdminAiAuthExpiredError; onAuthFailure invoked via authFetch 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getProviders > T10 — getProviders 403 → AdminAiForbiddenError 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getProviders > T11 — getProviders 500 → AdminAiInternalError 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getProviders > T12 — getProviders network reject → AdminAiNetworkError 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getModels > T13 — getModels happy path (no provider_id) → Result.ok([AiModel]) 1ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getModels > T14 — getModels 401 → AdminAiAuthExpiredError 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getModels > T15 — getModels 403 → AdminAiForbiddenError 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getModels > T16 — getModels 500 → AdminAiInternalError 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getModels > T17 — getModels network reject → AdminAiNetworkError 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.createProvider > T18 — createProvider 201 happy path → Result.ok(AiProvider) 1ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.createProvider > T19 — createProvider 401 → AdminAiAuthExpiredError 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.createProvider > T20 — createProvider 403 → AdminAiForbiddenError 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.createProvider > T21 — createProvider 422 with fieldErrors → AdminAiValidationError with fieldErrors[] 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.createProvider > T22 — createProvider 400 → AdminAiValidationError 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.createProvider > T23 — createProvider 409 → AdminAiValidationError (ADMIN_PROVIDER_DUPLICATE_NAME) 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.createProvider > T24 — createProvider 500 → AdminAiInternalError 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.createProvider > T25 — createProvider network reject → AdminAiNetworkError 0ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.createProvider > T26 — createProvider PII-clean: secret_plain NEVER appears in console logs 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: configuration > i18n: registers all 8 namespaces 1ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: configuration > i18n: lng=es, fallbackLng=es, defaultNS=common 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: 24 bundles present > i18n: all 3 locales have all 8 namespaces loaded 1ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: fallback behaviour > i18n: falls back to es value for key absent in en and fr 1ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: key resolution across namespaces > i18n: resolves common:productName in es 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: key resolution across namespaces > i18n: resolves auth:signIn.title in es 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: key resolution across namespaces > i18n: resolves errors:AUTH_INVALID_CREDENTIALS in es 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: changeLanguage > i18n: changeLanguage updates auth:signIn.title to EN 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: changeLanguage > i18n: changeLanguage updates auth:signIn.title to FR 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: changeLanguage > i18n: reverts to es correctly 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: missing key handler > i18n: missing key in all languages returns key or empty string, never throws 1ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: errors namespace coverage > i18n: all error codes present in es 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: errors namespace coverage > i18n: all error codes present in en 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: errors namespace coverage > i18n: all error codes present in fr 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: no copy-paste across languages > i18n: errors:AUTH_INVALID_CREDENTIALS differs across es, en, fr 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: no copy-paste across languages > i18n: auth:signIn.title differs across es, en, fr 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: admin-ai.dashboard.* lockstep in es/en/fr > i18n: admin-ai.dashboard.* all keys present in es 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: admin-ai.dashboard.* lockstep in es/en/fr > i18n: admin-ai.dashboard.* all keys present in en 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: admin-ai.dashboard.* lockstep in es/en/fr > i18n: admin-ai.dashboard.* all keys present in fr 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: admin-ai.dashboard.* lockstep in es/en/fr > i18n: admin-ai.dashboard.title differs across es, en, fr 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: admin-ai.dashboard.* lockstep in es/en/fr > i18n: admin-ai.nav.* all keys present in es/en/fr 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: admin-ai.models.* lockstep in es/en/fr > i18n: admin-ai.models.* table headers present in es/en/fr 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: admin-ai.models.* lockstep in es/en/fr > i18n: admin-ai.models.status.* labels present in es/en/fr 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: admin-ai.models.* lockstep in es/en/fr > i18n: admin-ai.models.empty.* CTA and body present in es/en/fr 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: admin-ai.models.* lockstep in es/en/fr > i18n: admin-ai.models.errors.* present in es/en/fr 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: admin-ai.models.* lockstep in es/en/fr > i18n: admin-ai.models.status.active differs across es, en, fr 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: admin-ai.modelsNew.* lockstep in es/en/fr > i18n: admin-ai.modelsNew.* core keys present in es/en/fr 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: admin-ai.modelsNew.* lockstep in es/en/fr > i18n: admin-ai.modelsNew.fields.* present in es/en/fr 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: admin-ai.modelsNew.* lockstep in es/en/fr > i18n: admin-ai.modelsNew.providerOptions.* present in es/en/fr 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: admin-ai.modelsNew.* lockstep in es/en/fr > i18n: admin-ai.modelsNew.authTypeOptions.* present in es/en/fr 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: admin-ai.modelsNew.* lockstep in es/en/fr > i18n: admin-ai.modelsNew.actions.* present in es/en/fr 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: admin-ai.modelsNew.* lockstep in es/en/fr > i18n: admin-ai.modelsNew.success.* present in es/en/fr 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: admin-ai.modelsNew.* lockstep in es/en/fr > i18n: admin-ai.modelsNew.errors.* present in es/en/fr 0ms
+ ✓ src/i18n/__tests__/i18n.test.ts > i18n: admin-ai.modelsNew.* lockstep in es/en/fr > i18n: admin-ai.modelsNew.title differs across es, en, fr 0ms
+stderr | src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: hook integration > W06 — submit error_network: submissionState=error_network, stays on credentials
+[admin-ai] admin-ai.hook.useModelWizard.submit.error { error_class: [32m'AdminAiNetworkError'[39m }
+
+ ✓ src/features/admin-ai/__tests__/useDashboardUsage.test.tsx > useDashboardUsage > H01 — query key includes admin/usage/dashboard with from/to/group_by shape 65ms
+ ✓ src/features/admin-ai/__tests__/useAdminAiModels.test.tsx > useAdminAiModels > H01 — loading state on mount: isLoading=true, data=undefined 10ms
+ ✓ src/features/admin-ai/__tests__/useAdminAiModels.test.tsx > useAdminAiModels > H02 — success: joins providers+models into rows with derived providerName+providerStatus 55ms
+ ✓ src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: validators (pure) > W-validators-01 — validateProviderType: valid values return null 1ms
+ ✓ src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: validators (pure) > W-validators-02 — validateProviderType: empty/invalid returns i18n key 0ms
+ ✓ src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: validators (pure) > W-validators-03 — validateName: non-blank ≤200 chars returns null 0ms
+ ✓ src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: validators (pure) > W-validators-04 — validateName: blank returns i18n key 0ms
+ ✓ src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: validators (pure) > W-validators-05 — validateName: >200 chars returns i18n key 0ms
+ ✓ src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: validators (pure) > W-validators-06 — validateSecret: non-blank returns null 0ms
+ ✓ src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: validators (pure) > W-validators-07 — validateSecret: blank returns i18n key (NEVER log value) 0ms
+ ✓ src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: validators (pure) > W-validators-08 — validateAuthType: valid values return null 0ms
+ ✓ src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: validators (pure) > W-validators-09 — validateAuthType: invalid returns i18n key 0ms
+ ✓ src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: validators (pure) > W-validators-10 — formatMaskedSecret: shows last 4 0ms
+ ✓ src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: validators (pure) > W-validators-11 — formatMaskedSecret: short secret → all masked 0ms
+ ✓ src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: hook integration > W01 — initial state: step=provider, form empty, no errors, submissionState=idle 10ms
+ ✓ src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: hook integration > W02 — goNext on provider step with valid data: advances to credentials 2ms
+ ✓ src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: hook integration > W03 — goNext with invalid provider step: stays on provider, fieldErrors populated 1ms
+ ✓ src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: hook integration > W04 — setSecret updates hasSecret; maskedSecret shows last-4 mask 1ms
+ ✓ src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: hook integration > W05 — submit success: step advances to models, createdProvider set, secret cleared 56ms
+stderr | src/features/admin-ai/__tests__/useAdminAiModels.test.tsx > useAdminAiModels > H04 — error_network: getModels rejects → isError=true, error instanceof AdminAiNetworkError
+[admin-ai] admin-ai.hook.useAdminAiModels.queryFn.models_error { error_class: [32m'AdminAiNetworkError'[39m }
+
+stderr | src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: hook integration > W07 — submit 422 validation error: fieldErrors from server are surfaced
+[admin-ai] admin-ai.hook.useModelWizard.submit.error { error_class: [32m'AdminAiValidationError'[39m }
+
+stderr | src/features/admin-ai/__tests__/useAdminAiModels.test.tsx > useAdminAiModels > H05 — permission_denied: getProviders returns 403 → AdminAiForbiddenError surfaces
+[admin-ai] admin-ai.hook.useAdminAiModels.queryFn.providers_error { error_class: [32m'AdminAiForbiddenError'[39m }
+
+stderr | src/features/admin-ai/__tests__/useAdminAiModels.test.tsx > useAdminAiModels > H05 — permission_denied: getProviders returns 403 → AdminAiForbiddenError surfaces
+[admin-ai] admin-ai.hook.useAdminAiModels.forbidden_in_error
+
+stderr | src/features/admin-ai/__tests__/useDashboardUsage.test.tsx > useDashboardUsage > H04 — loading → error: isError with typed AdminAiError
+[admin-ai] admin-ai.hook.useDashboardUsage.queryFn.error { error_class: [32m'AdminAiNetworkError'[39m }
+
+stderr | src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: hook integration > W08 — submit permission_denied 403: submissionState=permission_denied
+[admin-ai] admin-ai.hook.useModelWizard.submit.error { error_class: [32m'AdminAiForbiddenError'[39m }
+
+ ✓ src/features/admin-ai/__tests__/useAdminAiModels.test.tsx > useAdminAiModels > H03 — empty: providers=[] → data.rows=[] (D-T002-EMPTY-STATE) 53ms
+ ✓ src/features/admin-ai/__tests__/useAdminAiModels.test.tsx > useAdminAiModels > H04 — error_network: getModels rejects → isError=true, error instanceof AdminAiNetworkError 52ms
+ ✓ src/features/admin-ai/__tests__/useDashboardUsage.test.tsx > useDashboardUsage > H02 — loading → success with populated data 55ms
+ ✓ src/features/admin-ai/__tests__/useDashboardUsage.test.tsx > useDashboardUsage > H03 — loading → empty: isSuccess with rows=[], invocations=0 55ms
+ ✓ src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: hook integration > W06 — submit error_network: submissionState=error_network, stays on credentials 55ms
+ ✓ src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: hook integration > W07 — submit 422 validation error: fieldErrors from server are surfaced 55ms
+ ✓ src/features/admin-ai/__tests__/useAdminAiModels.test.tsx > useAdminAiModels > H05 — permission_denied: getProviders returns 403 → AdminAiForbiddenError surfaces 53ms
+ ✓ src/features/admin-ai/__tests__/useAdminAiModels.test.tsx > useAdminAiModels > H06 — refetch invalidates query and re-runs both fetches 54ms
+ ✓ src/features/admin-ai/__tests__/useDashboardUsage.test.tsx > useDashboardUsage > H04 — loading → error: isError with typed AdminAiError 54ms
+ ✓ src/features/admin-ai/__tests__/useDashboardUsage.test.tsx > useDashboardUsage > H05 — refetch: calls getUsage again 54ms
+ ✓ src/features/admin-ai/__tests__/useDashboardUsage.test.tsx > computeUsageWindow > H05 — returns 30-day window ending at nowMs 0ms
+ ✓ src/features/admin-ai/__tests__/useDashboardUsage.test.tsx > computeUsageWindow > H06 — from and to are valid ISO-8601 strings 0ms
+ ✓ src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: hook integration > W08 — submit permission_denied 403: submissionState=permission_denied 54ms
+ ✓ src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: hook integration > W09 — goBack from credentials returns to provider step 1ms
+ ✓ src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: hook integration > W10 — reset clears all state including secret and errors 54ms
+ ✓ src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: hook integration > W11 — unmount: hook cleanup does not throw (secret clear guard) 1ms
+ ✓ src/pages/admin/ai/__tests__/ModelWizardPage.test.tsx > ModelWizardPage: UX states > P01 — loading (step=submitting): submit button shows submitting state 30ms
+ ✓ src/pages/admin/ai/__tests__/ModelWizardPage.test.tsx > ModelWizardPage: UX states > P02 — provider step: renders provider type select and name input 8ms
+ ✓ src/pages/admin/ai/__tests__/ModelWizardPage.test.tsx > ModelWizardPage: UX states > P03 — credentials step: secret input is type=password (SECURITY) 7ms
+ ✓ src/pages/admin/ai/__tests__/ModelWizardPage.test.tsx > ModelWizardPage: UX states > P04 — error_network state in credentials step: shows error banner 6ms
+ ✓ src/pages/admin/ai/__tests__/ModelWizardPage.test.tsx > ModelWizardPage: UX states > P05 — error_validation state: field errors shown 26ms
+ ✓ src/pages/admin/ai/__tests__/ModelWizardPage.test.tsx > ModelWizardPage: UX states > P06 — permission_denied in credentials step: shows forbidden message 7ms
+ ✓ src/pages/admin/ai/__tests__/ModelWizardPage.test.tsx > ModelWizardPage: UX states > P07 — success/models step: shows success title and back-to-models button 4ms
+ ✓ src/pages/admin/ai/__tests__/ModelWizardPage.test.tsx > ModelWizardPage: UX states > P08 — accessibility: provider type select has associated label 4ms
+ ✓ src/pages/admin/ai/__tests__/ModelWizardPage.test.tsx > ModelWizardPage: UX states > P09 — submit button is disabled when hasSecret=false 4ms
+
+ Test Files  6 passed (6)
+      Tests  106 passed (106)
+   Start at  22:20:24
+   Duration  1.89s (transform 703ms, setup 692ms, collect 1.72s, tests 974ms, environment 3.68s, prepare 409ms)
+

@@ -1,0 +1,10 @@
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   327  100   219  100   108  16143   7961 --:--:-- --:--:-- --:--:-- 23357100   327  100   219  100   108  15904   7843 --:--:-- --:--:-- --:--:-- 23357
+HTTP/1.1 401 Unauthorized
+date: Sun, 17 May 2026 19:58:21 GMT
+server: uvicorn
+content-length: 219
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"d390bd66-40e8-4577-98cc-415cfc722480"},"errors":[{"code":"AUTH_SESSION_EXPIRED","message":"Session expired or invalid credentials. Please sign in again.","field":null,"details":null}]}

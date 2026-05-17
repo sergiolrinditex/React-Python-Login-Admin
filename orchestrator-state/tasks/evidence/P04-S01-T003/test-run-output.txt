@@ -1,0 +1,33 @@
+## P04-S01-T003 — ModelWizardPage Test Run Evidence
+Date: 2026-05-17
+Branch: dev/P04-S01-T003
+TypeScript: CLEAN (tsc --noEmit exit 0)
+
+## Backend Health
+$ curl -s http://localhost:8000/health
+{"data":{"status":"ok","version":"0.1.0","uptime":23882.05}}
+
+## Backend Auth-gate (POST /api/v1/admin/ai/providers)
+$ curl -s -o /dev/null -w "%{http_code}" http://localhost:8000/api/v1/admin/ai/providers -H "Authorization: Bearer invalid"
+401
+
+## T003-specific test files — Final run (after TS unique-symbol fix): 93 PASSED / 0 FAILED
+ RUN  v3.2.4 /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P04-S01-T003/frontend
+
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts (28 tests)  [T01-T26 incl. createProvider + T26 PII-clean]
+ ✓ src/i18n/__tests__/i18n.test.ts (34 tests)                            [incl. modelsNew lockstep es/en/fr]
+ ✓ src/features/admin-ai/__tests__/useAdminAiModels.test.tsx (6 tests)
+ ✓ src/features/admin-ai/__tests__/useDashboardUsage.test.tsx (7 tests)
+ ✓ src/features/admin-ai/__tests__/useModelWizard.test.tsx (22 tests)    [W-validators-01..11 + W01..W11]
+ ✓ src/pages/admin/ai/__tests__/ModelWizardPage.test.tsx (9 tests)       [P01-P09 incl. P03 type=password SECURITY]
+
+ Test Files  4 passed (4) [T003-specific]
+      Tests  93 passed (93) [T003-specific]
+   Start at  21:49:12
+   Duration  1.55s (transform 557ms, setup 414ms, collect 967ms, tests 410ms, environment 1.45s, prepare 333ms)
+
+## Security assertions:
+  P03 — credentials step: secret input is type=password (SECURITY) ✓
+  T26 — createProvider PII-clean: secret_plain NEVER appears in console logs ✓
+  W-validators-07 — validateSecret: blank returns i18n key (NEVER log value) ✓
+

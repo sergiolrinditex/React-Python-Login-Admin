@@ -115,6 +115,102 @@ export interface AiProvider {
   expires_at: string | null;
 }
 
+// ---------------------------------------------------------------------------
+// Wizard domain types (§D-T003-WIZARD-TYPES)
+// ---------------------------------------------------------------------------
+
+/**
+ * Provider type enum — must match backend Literal[7 enum] from
+ * backend/app/admin/providers/schemas.py CreateProviderRequest.
+ * Slice: P04-S01-T003 — ModelWizardPage / Phase 4.
+ */
+export type ProviderType =
+  | "openai"
+  | "anthropic"
+  | "azure"
+  | "litellm"
+  | "ollama"
+  | "google"
+  | "custom";
+
+/**
+ * Auth type enum — mirrors backend ProviderCredentialsInput.auth_type.
+ * Slice: P04-S01-T003 — ModelWizardPage / Phase 4.
+ */
+export type CredentialAuthType = "api_key" | "oauth2" | "bearer";
+
+/**
+ * Credential input shape — mirrors backend ProviderCredentialsInput.
+ * SECURITY: secret_plain is a live secret. NEVER serialize to localStorage/logs.
+ * The field is typed as plain string to avoid cross-module unique symbol incompatibility.
+ * Security enforcement is enforced by convention (PII-clean logs) and test T26.
+ * Slice: P04-S01-T003 — ModelWizardPage / Phase 4.
+ */
+export interface ProviderCredentialsInput {
+  auth_type: CredentialAuthType;
+  /** SECURITY: NEVER LOG THIS FIELD — live API key/token. Backend encrypts on write. */
+  secret_plain: string;
+  refresh_token_plain?: string | null;
+  expires_at?: string | null;
+}
+
+/**
+ * Create provider request body — mirrors backend CreateProviderRequest.
+ * Slice: P04-S01-T003 — ModelWizardPage / Phase 4.
+ * Source: TECHNICAL_GUIDE §6.2, backend/app/admin/providers/schemas.py.
+ *
+ * SECURITY: credentials.secret_plain is a live secret. Backend encrypts it with
+ * Fernet on write. The frontend never persists or logs this field.
+ */
+export interface CreateProviderRequest {
+  provider_type: ProviderType;
+  /** 1–200 chars non-blank. */
+  name: string;
+  base_url?: string | null;
+  credentials: ProviderCredentialsInput;
+}
+
+/**
+ * Wizard step machine state.
+ * Slice: P04-S01-T003 — ModelWizardPage / Phase 4.
+ */
+export type WizardStep =
+  | "provider"
+  | "credentials"
+  | "submitting"
+  | "models"
+  | "success";
+
+/**
+ * Wizard form state managed by useModelWizard.
+ * Slice: P04-S01-T003 — ModelWizardPage / Phase 4.
+ * All fields are optional at init; validation runs on submit.
+ */
+export interface WizardFormState {
+  provider_type: ProviderType | "";
+  name: string;
+  base_url: string;
+  auth_type: CredentialAuthType;
+  /** Kept in React state only — discarded after submit or unmount. */
+  secret_plain: string;
+}
+
+/**
+ * Per-field validation errors from client-side validators.
+ * Slice: P04-S01-T003 — ModelWizardPage / Phase 4.
+ */
+export interface WizardFieldErrors {
+  provider_type?: string;
+  name?: string;
+  secret_plain?: string;
+  auth_type?: string;
+  base_url?: string;
+}
+
+// ---------------------------------------------------------------------------
+// AI Provider list item (re-exported from P04-S01-T002)
+// ---------------------------------------------------------------------------
+
 /**
  * Model list item from GET /api/v1/admin/ai/models.
  * Source: backend ModelOut (backend/app/admin/model_catalog/schemas.py HEAD).

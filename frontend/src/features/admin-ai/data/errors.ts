@@ -47,19 +47,41 @@ export class AdminAiForbiddenError extends Error {
 }
 
 /**
+ * Per-field error detail from backend 422 response.
+ * Shape mirrors backend {error, code, details} envelope where details may include
+ * an errors[] array with field-level messages.
+ * Slice: P04-S01-T003 — ModelWizardPage (additive extension).
+ */
+export interface ValidationFieldError {
+  field: string;
+  code: string;
+  message: string;
+}
+
+/**
  * Validation error — server returned 422 (bad params or window too wide).
  * Should not occur in practice with the client's hard-coded 30d window + group_by=model,
  * but handled defensively — falls through to error_network UX state.
  * Source: TECHNICAL_GUIDE §6.2 — ADMIN_USAGE_INVALID_PAYLOAD, ADMIN_USAGE_WINDOW_TOO_WIDE.
+ *
+ * Extended in P04-S01-T003: added optional fieldErrors[] for wizard field-level
+ * validation messages from POST /api/v1/admin/ai/providers 422 response body.
  */
 export class AdminAiValidationError extends Error {
   public readonly code = "ADMIN_AI_VALIDATION_ERROR";
   public readonly serverCode: string;
+  /** Optional array of field-level errors for form display (§D-T003-422-FIELD-ERRORS). */
+  public readonly fieldErrors?: ValidationFieldError[];
 
-  constructor(serverCode = "ADMIN_USAGE_INVALID_PAYLOAD", message = "Invalid usage request.") {
+  constructor(
+    serverCode = "ADMIN_USAGE_INVALID_PAYLOAD",
+    message = "Invalid usage request.",
+    fieldErrors?: ValidationFieldError[],
+  ) {
     super(message);
     this.name = "AdminAiValidationError";
     this.serverCode = serverCode;
+    this.fieldErrors = fieldErrors;
   }
 }
 

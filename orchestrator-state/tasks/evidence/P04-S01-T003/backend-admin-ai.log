@@ -1,0 +1,1165 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.5, pytest-9.0.2, pluggy-1.6.0 -- /usr/local/bin/python3
+cachedir: .pytest_cache
+rootdir: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin/backend
+configfile: pyproject.toml
+plugins: httpx-0.36.0, asyncio-1.3.0, langsmith-0.8.3, anyio-4.13.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 26 items
+
+backend/tests/integration/test_admin_ai.py::test_T01_get_providers_admin_200 FAILED [  3%]
+backend/tests/integration/test_admin_ai.py::test_T02_get_providers_employee_403 FAILED [  7%]
+backend/tests/integration/test_admin_ai.py::test_T03_get_providers_no_bearer_401 PASSED [ 11%]
+backend/tests/integration/test_admin_ai.py::test_T04_get_providers_has_credentials FAILED [ 15%]
+backend/tests/integration/test_admin_ai.py::test_T05_post_provider_creates_encrypted_credential FAILED [ 19%]
+backend/tests/integration/test_admin_ai.py::test_T06_post_provider_invalid_type_422 FAILED [ 23%]
+backend/tests/integration/test_admin_ai.py::test_T07_post_provider_missing_credentials_422 FAILED [ 26%]
+backend/tests/integration/test_admin_ai.py::test_T08_post_provider_auth_failures FAILED [ 30%]
+backend/tests/integration/test_admin_ai.py::test_T09_post_provider_rate_limit_429 FAILED [ 34%]
+backend/tests/integration/test_admin_ai.py::test_T10_post_provider_redis_down_503 FAILED [ 38%]
+backend/tests/integration/test_admin_ai.py::test_T11_post_provider_encryption_error_500 FAILED [ 42%]
+backend/tests/integration/test_admin_ai.py::test_T12_verbose_logging_no_secret_in_logs FAILED [ 46%]
+backend/tests/integration/test_admin_ai.py::test_T13_get_models_admin_200 FAILED [ 50%]
+backend/tests/integration/test_admin_ai.py::test_T14_get_models_provider_filter FAILED [ 53%]
+backend/tests/integration/test_admin_ai.py::test_T15_get_models_invalid_provider_id_422 FAILED [ 57%]
+backend/tests/integration/test_admin_ai.py::test_T16_get_models_auth_failures FAILED [ 61%]
+backend/tests/integration/test_admin_ai.py::test_T17_patch_model_enabled FAILED [ 65%]
+backend/tests/integration/test_admin_ai.py::test_T18_patch_model_is_default_clears_previous FAILED [ 69%]
+backend/tests/integration/test_admin_ai.py::test_T19_patch_model_empty_payload_400 FAILED [ 73%]
+backend/tests/integration/test_admin_ai.py::test_T20_patch_model_not_found_404 FAILED [ 76%]
+backend/tests/integration/test_admin_ai.py::test_T21_patch_model_auth_failures FAILED [ 80%]
+backend/tests/integration/test_admin_ai.py::test_T22_patch_model_remove_only_default FAILED [ 84%]
+backend/tests/integration/test_admin_ai.py::test_T23_request_id_propagated FAILED [ 88%]
+backend/tests/integration/test_admin_ai.py::test_T24_response_envelope_shape FAILED [ 92%]
+backend/tests/integration/test_admin_ai.py::test_T25_no_test_residue FAILED [ 96%]
+backend/tests/integration/test_admin_ai.py::test_T26_concurrent_patch_default_conflict FAILED [100%]
+
+=================================== FAILURES ===================================
+_______________________ test_T01_get_providers_admin_200 _______________________
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   psycopg.errors.UndefinedTable: relation "users" does not exist
+E   LINE 1: INSERT INTO users (id, email, password_hash, full_name, stat...
+E                       ^
+
+The above exception was the direct cause of the following exception:
+backend/tests/integration/test_admin_ai.py:346: in test_T01_get_providers_admin_200
+    _create_user_with_role(email, "people_admin")
+backend/tests/integration/test_admin_ai.py:158: in _create_user_with_role
+    sess.execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:2351: in execute
+    return self._execute_internal(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:2258: in _execute_internal
+    result = conn.execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1419: in execute
+    return meth(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/sql/elements.py:527: in _execute_on_connection
+    return connection._execute_clauseelement(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1641: in _execute_clauseelement
+    ret = self._execute_context(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1846: in _execute_context
+    return self._exec_single_context(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1986: in _exec_single_context
+    self._handle_dbapi_exception(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:2363: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation "users" does not exist
+E   LINE 1: INSERT INTO users (id, email, password_hash, full_name, stat...
+E                       ^
+E   [SQL: INSERT INTO users (id, email, password_hash, full_name, status) VALUES (%(id)s, %(email)s, %(pw)s, %(name)s, %(status)s)]
+E   [parameters: {'id': '58c75da3-0eab-492c-96a7-d6b65881d6b6', 'email': 'admin.test.313eda87@inditex-sandbox.com', 'pw': '$argon2id$v=19$m=65536,t=3,p=4$8+bmsMWY/7W0AqJ53p5zBQ$XAeJ5A/DAuI0dGpSWYfhUCUpZJ2vg6fRp80NK0QOP3A', 'name': 'Test User', 'status': 'active'}]
+E   (Background on this error at: https://sqlalche.me/e/20/f405)
+_____________________ test_T02_get_providers_employee_403 ______________________
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   psycopg.errors.UndefinedTable: relation "users" does not exist
+E   LINE 1: INSERT INTO users (id, email, password_hash, full_name, stat...
+E                       ^
+
+The above exception was the direct cause of the following exception:
+backend/tests/integration/test_admin_ai.py:367: in test_T02_get_providers_employee_403
+    _create_user_with_role(email, "employee")
+backend/tests/integration/test_admin_ai.py:158: in _create_user_with_role
+    sess.execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:2351: in execute
+    return self._execute_internal(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:2258: in _execute_internal
+    result = conn.execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1419: in execute
+    return meth(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/sql/elements.py:527: in _execute_on_connection
+    return connection._execute_clauseelement(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1641: in _execute_clauseelement
+    ret = self._execute_context(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1846: in _execute_context
+    return self._exec_single_context(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1986: in _exec_single_context
+    self._handle_dbapi_exception(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:2363: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation "users" does not exist
+E   LINE 1: INSERT INTO users (id, email, password_hash, full_name, stat...
+E                       ^
+E   [SQL: INSERT INTO users (id, email, password_hash, full_name, status) VALUES (%(id)s, %(email)s, %(pw)s, %(name)s, %(status)s)]
+E   [parameters: {'id': '1e829896-ce24-469a-8ceb-010a9d4595d0', 'email': 'employee.test.d0a2e441@inditex-sandbox.com', 'pw': '$argon2id$v=19$m=65536,t=3,p=4$2EjCrCs1Fe+KwdT+bIW9iA$TPTRWDJZqeJar6P02LcgwvS6lfnd0kZQCv/7L/ha9AQ', 'name': 'Test User', 'status': 'active'}]
+E   (Background on this error at: https://sqlalche.me/e/20/f405)
+____________________ test_T04_get_providers_has_credentials ____________________
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   psycopg.errors.UndefinedTable: relation "users" does not exist
+E   LINE 1: INSERT INTO users (id, email, password_hash, full_name, stat...
+E                       ^
+
+The above exception was the direct cause of the following exception:
+backend/tests/integration/test_admin_ai.py:396: in test_T04_get_providers_has_credentials
+    _create_user_with_role(email, "people_admin")
+backend/tests/integration/test_admin_ai.py:158: in _create_user_with_role
+    sess.execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:2351: in execute
+    return self._execute_internal(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:2258: in _execute_internal
+    result = conn.execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1419: in execute
+    return meth(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/sql/elements.py:527: in _execute_on_connection
+    return connection._execute_clauseelement(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1641: in _execute_clauseelement
+    ret = self._execute_context(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1846: in _execute_context
+    return self._exec_single_context(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1986: in _exec_single_context
+    self._handle_dbapi_exception(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:2363: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation "users" does not exist
+E   LINE 1: INSERT INTO users (id, email, password_hash, full_name, stat...
+E                       ^
+E   [SQL: INSERT INTO users (id, email, password_hash, full_name, status) VALUES (%(id)s, %(email)s, %(pw)s, %(name)s, %(status)s)]
+E   [parameters: {'id': 'd432c809-a4ad-49e6-9d9f-6474ed9cd8a9', 'email': 'admin.test.d2134c5c@inditex-sandbox.com', 'pw': '$argon2id$v=19$m=65536,t=3,p=4$7zda2h2E4awNhpmzMz+Elw$spG0nHMnnChl7580Rr883QWY6DEbjCPuSuuPZu3aYN8', 'name': 'Test User', 'status': 'active'}]
+E   (Background on this error at: https://sqlalche.me/e/20/f405)
+_____________ test_T05_post_provider_creates_encrypted_credential ______________
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   psycopg.errors.UndefinedTable: relation "users" does not exist
+E   LINE 1: INSERT INTO users (id, email, password_hash, full_name, stat...
+E                       ^
+
+The above exception was the direct cause of the following exception:
+backend/tests/integration/test_admin_ai.py:424: in test_T05_post_provider_creates_encrypted_credential
+    user = _create_user_with_role(email, "people_admin")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend/tests/integration/test_admin_ai.py:158: in _create_user_with_role
+    sess.execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:2351: in execute
+    return self._execute_internal(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:2258: in _execute_internal
+    result = conn.execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1419: in execute
+    return meth(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/sql/elements.py:527: in _execute_on_connection
+    return connection._execute_clauseelement(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1641: in _execute_clauseelement
+    ret = self._execute_context(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1846: in _execute_context
+    return self._exec_single_context(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1986: in _exec_single_context
+    self._handle_dbapi_exception(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:2363: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation "users" does not exist
+E   LINE 1: INSERT INTO users (id, email, password_hash, full_name, stat...
+E                       ^
+E   [SQL: INSERT INTO users (id, email, password_hash, full_name, status) VALUES (%(id)s, %(email)s, %(pw)s, %(name)s, %(status)s)]
+E   [parameters: {'id': '4779e6e2-0ae1-4f3e-9f45-1981ca0448c4', 'email': 'admin.test.1aab237b@inditex-sandbox.com', 'pw': '$argon2id$v=19$m=65536,t=3,p=4$8N9Btc7b1eoo0FcyBtwdWQ$530O0oHT7sLebkIJh3yukYv0W2jd7DYv5CktvtK7IWY', 'name': 'Test User', 'status': 'active'}]
+E   (Background on this error at: https://sqlalche.me/e/20/f405)
+___________________ test_T06_post_provider_invalid_type_422 ____________________
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   psycopg.errors.UndefinedTable: relation "users" does not exist
+E   LINE 1: INSERT INTO users (id, email, password_hash, full_name, stat...
+E                       ^
+
+The above exception was the direct cause of the following exception:
+backend/tests/integration/test_admin_ai.py:504: in test_T06_post_provider_invalid_type_422
+    _create_user_with_role(email, "people_admin")
+backend/tests/integration/test_admin_ai.py:158: in _create_user_with_role
+    sess.execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:2351: in execute
+    return self._execute_internal(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:2258: in _execute_internal
+    result = conn.execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1419: in execute
+    return meth(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/sql/elements.py:527: in _execute_on_connection
+    return connection._execute_clauseelement(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1641: in _execute_clauseelement
+    ret = self._execute_context(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1846: in _execute_context
+    return self._exec_single_context(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1986: in _exec_single_context
+    self._handle_dbapi_exception(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:2363: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation "users" does not exist
+E   LINE 1: INSERT INTO users (id, email, password_hash, full_name, stat...
+E                       ^
+E   [SQL: INSERT INTO users (id, email, password_hash, full_name, status) VALUES (%(id)s, %(email)s, %(pw)s, %(name)s, %(status)s)]
+E   [parameters: {'id': 'e03a8163-34b7-4f79-b902-b47bfdf1e000', 'email': 'admin.test.766b7ab7@inditex-sandbox.com', 'pw': '$argon2id$v=19$m=65536,t=3,p=4$eenWuvRyuzqnlENnuONIyA$PDV+dJdkzCQgTrKv5LT6xWZUF0SzXsENbzi8RWxqXQQ', 'name': 'Test User', 'status': 'active'}]
+E   (Background on this error at: https://sqlalche.me/e/20/f405)
+________________ test_T07_post_provider_missing_credentials_422 ________________
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   psycopg.errors.UndefinedTable: relation "users" does not exist
+E   LINE 1: INSERT INTO users (id, email, password_hash, full_name, stat...
+E                       ^
+
+The above exception was the direct cause of the following exception:
+backend/tests/integration/test_admin_ai.py:525: in test_T07_post_provider_missing_credentials_422
+    _create_user_with_role(email, "people_admin")
+backend/tests/integration/test_admin_ai.py:158: in _create_user_with_role
+    sess.execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:2351: in execute
+    return self._execute_internal(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:2258: in _execute_internal
+    result = conn.execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1419: in execute
+    return meth(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/sql/elements.py:527: in _execute_on_connection
+    return connection._execute_clauseelement(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1641: in _execute_clauseelement
+    ret = self._execute_context(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1846: in _execute_context
+    return self._exec_single_context(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1986: in _exec_single_context
+    self._handle_dbapi_exception(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:2363: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation "users" does not exist
+E   LINE 1: INSERT INTO users (id, email, password_hash, full_name, stat...
+E                       ^
+E   [SQL: INSERT INTO users (id, email, password_hash, full_name, status) VALUES (%(id)s, %(email)s, %(pw)s, %(name)s, %(status)s)]
+E   [parameters: {'id': 'cb71f922-7b90-45ac-840d-ff9099c8f42c', 'email': 'admin.test.36147081@inditex-sandbox.com', 'pw': '$argon2id$v=19$m=65536,t=3,p=4$QYwJGIfB8ycNTGTfGoKnHQ$aeVf2wkPkO2jPH9PlPC8fwMdAKBJUD3s9ktQLQN5TuY', 'name': 'Test User', 'status': 'active'}]
+E   (Background on this error at: https://sqlalche.me/e/20/f405)
+_____________________ test_T08_post_provider_auth_failures _____________________
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   psycopg.errors.UndefinedTable: relation "users" does not exist
+E   LINE 1: INSERT INTO users (id, email, password_hash, full_name, stat...
+E                       ^
+
+The above exception was the direct cause of the following exception:
+backend/tests/integration/test_admin_ai.py:545: in test_T08_post_provider_auth_failures
+    _create_user_with_role(email, "employee")
+backend/tests/integration/test_admin_ai.py:158: in _create_user_with_role
+    sess.execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:2351: in execute
+    return self._execute_internal(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:2258: in _execute_internal
+    result = conn.execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1419: in execute
+    return meth(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/sql/elements.py:527: in _execute_on_connection
+    return connection._execute_clauseelement(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1641: in _execute_clauseelement
+    ret = self._execute_context(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1846: in _execute_context
+    return self._exec_single_context(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1986: in _exec_single_context
+    self._handle_dbapi_exception(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:2363: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation "users" does not exist
+E   LINE 1: INSERT INTO users (id, email, password_hash, full_name, stat...
+E                       ^
+E   [SQL: INSERT INTO users (id, email, password_hash, full_name, status) VALUES (%(id)s, %(email)s, %(pw)s, %(name)s, %(status)s)]
+E   [parameters: {'id': '34a4d183-a8db-45d2-8a5b-9720ad1203df', 'email': 'employee.test.34a90c83@inditex-sandbox.com', 'pw': '$argon2id$v=19$m=65536,t=3,p=4$dgC49H0bDGwGLjoBWytFew$75G6mpoTQWzQFXkDqjqjZKiywo+xduAgK2CdSBbPeFA', 'name': 'Test User', 'status': 'active'}]
+E   (Background on this error at: https://sqlalche.me/e/20/f405)
+____________________ test_T09_post_provider_rate_limit_429 _____________________
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   psycopg.errors.UndefinedTable: relation "users" does not exist
+E   LINE 1: INSERT INTO users (id, email, password_hash, full_name, stat...
+E                       ^
+
+The above exception was the direct cause of the following exception:
+backend/tests/integration/test_admin_ai.py:572: in test_T09_post_provider_rate_limit_429
+    _create_user_with_role(email, "people_admin")
+backend/tests/integration/test_admin_ai.py:158: in _create_user_with_role
+    sess.execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:2351: in execute
+    return self._execute_internal(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:2258: in _execute_internal
+    result = conn.execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1419: in execute
+    return meth(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/sql/elements.py:527: in _execute_on_connection
+    return connection._execute_clauseelement(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1641: in _execute_clauseelement
+    ret = self._execute_context(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1846: in _execute_context
+    return self._exec_single_context(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1986: in _exec_single_context
+    self._handle_dbapi_exception(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:2363: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation "users" does not exist
+E   LINE 1: INSERT INTO users (id, email, password_hash, full_name, stat...
+E                       ^
+E   [SQL: INSERT INTO users (id, email, password_hash, full_name, status) VALUES (%(id)s, %(email)s, %(pw)s, %(name)s, %(status)s)]
+E   [parameters: {'id': '77fdd699-5b47-4f2a-a78e-519a192e7806', 'email': 'admin.test.8ac27a88@inditex-sandbox.com', 'pw': '$argon2id$v=19$m=65536,t=3,p=4$3feViFxP4v3tNnIwU71AKw$znuU+9KItXz8AOgupQ1QtTWJiYZneN7aMfdM8PuWE3A', 'name': 'Test User', 'status': 'active'}]
+E   (Background on this error at: https://sqlalche.me/e/20/f405)
+____________________ test_T10_post_provider_redis_down_503 _____________________
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   psycopg.errors.UndefinedTable: relation "users" does not exist
+E   LINE 1: INSERT INTO users (id, email, password_hash, full_name, stat...
+E                       ^
+
+The above exception was the direct cause of the following exception:
+backend/tests/integration/test_admin_ai.py:620: in test_T10_post_provider_redis_down_503
+    _create_user_with_role(email, "people_admin")
+backend/tests/integration/test_admin_ai.py:158: in _create_user_with_role
+    sess.execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:2351: in execute
+    return self._execute_internal(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:2258: in _execute_internal
+    result = conn.execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1419: in execute
+    return meth(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/sql/elements.py:527: in _execute_on_connection
+    return connection._execute_clauseelement(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1641: in _execute_clauseelement
+    ret = self._execute_context(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1846: in _execute_context
+    return self._exec_single_context(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1986: in _exec_single_context
+    self._handle_dbapi_exception(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:2363: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation "users" does not exist
+E   LINE 1: INSERT INTO users (id, email, password_hash, full_name, stat...
+E                       ^
+E   [SQL: INSERT INTO users (id, email, password_hash, full_name, status) VALUES (%(id)s, %(email)s, %(pw)s, %(name)s, %(status)s)]
+E   [parameters: {'id': 'a06a6b7f-400d-4a21-8c31-5883cbab065a', 'email': 'admin.test.e3e3f577@inditex-sandbox.com', 'pw': '$argon2id$v=19$m=65536,t=3,p=4$g2+oWZPjFsxlva08j0KqYw$WstsjeD81gCd/oENcH/45ec1X37ODvLrMXuMMRGfUCg', 'name': 'Test User', 'status': 'active'}]
+E   (Background on this error at: https://sqlalche.me/e/20/f405)
+_________________ test_T11_post_provider_encryption_error_500 __________________
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   psycopg.errors.UndefinedTable: relation "users" does not exist
+E   LINE 1: INSERT INTO users (id, email, password_hash, full_name, stat...
+E                       ^
+
+The above exception was the direct cause of the following exception:
+backend/tests/integration/test_admin_ai.py:649: in test_T11_post_provider_encryption_error_500
+    _create_user_with_role(email, "people_admin")
+backend/tests/integration/test_admin_ai.py:158: in _create_user_with_role
+    sess.execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:2351: in execute
+    return self._execute_internal(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:2258: in _execute_internal
+    result = conn.execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1419: in execute
+    return meth(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/sql/elements.py:527: in _execute_on_connection
+    return connection._execute_clauseelement(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1641: in _execute_clauseelement
+    ret = self._execute_context(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1846: in _execute_context
+    return self._exec_single_context(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1986: in _exec_single_context
+    self._handle_dbapi_exception(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:2363: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation "users" does not exist
+E   LINE 1: INSERT INTO users (id, email, password_hash, full_name, stat...
+E                       ^
+E   [SQL: INSERT INTO users (id, email, password_hash, full_name, status) VALUES (%(id)s, %(email)s, %(pw)s, %(name)s, %(status)s)]
+E   [parameters: {'id': '88713a25-d669-4db0-a31a-b9d1d0047902', 'email': 'admin.test.aca8005b@inditex-sandbox.com', 'pw': '$argon2id$v=19$m=65536,t=3,p=4$KWLiAANjBEsfnh1F1CrNCA$7jleQEzqmCJOWACytB9cogM6DJcWoYiNWPgbzy6x/dQ', 'name': 'Test User', 'status': 'active'}]
+E   (Background on this error at: https://sqlalche.me/e/20/f405)
+__________________ test_T12_verbose_logging_no_secret_in_logs __________________
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   psycopg.errors.UndefinedTable: relation "users" does not exist
+E   LINE 1: INSERT INTO users (id, email, password_hash, full_name, stat...
+E                       ^
+
+The above exception was the direct cause of the following exception:
+backend/tests/integration/test_admin_ai.py:703: in test_T12_verbose_logging_no_secret_in_logs
+    _create_user_with_role(email, "people_admin")
+backend/tests/integration/test_admin_ai.py:158: in _create_user_with_role
+    sess.execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:2351: in execute
+    return self._execute_internal(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:2258: in _execute_internal
+    result = conn.execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1419: in execute
+    return meth(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/sql/elements.py:527: in _execute_on_connection
+    return connection._execute_clauseelement(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1641: in _execute_clauseelement
+    ret = self._execute_context(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1846: in _execute_context
+    return self._exec_single_context(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1986: in _exec_single_context
+    self._handle_dbapi_exception(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:2363: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation "users" does not exist
+E   LINE 1: INSERT INTO users (id, email, password_hash, full_name, stat...
+E                       ^
+E   [SQL: INSERT INTO users (id, email, password_hash, full_name, status) VALUES (%(id)s, %(email)s, %(pw)s, %(name)s, %(status)s)]
+E   [parameters: {'id': 'd316a8ef-2bf8-4090-ac7b-427599c69a2e', 'email': 'admin.test.1f119d0b@inditex-sandbox.com', 'pw': '$argon2id$v=19$m=65536,t=3,p=4$FSwk+2hvDnZk+eqB9/+MOw$KDBoYVp0dH1FuWw7sRcA/Oknk8LwGWnCAnZMM1lXwWQ', 'name': 'Test User', 'status': 'active'}]
+E   (Background on this error at: https://sqlalche.me/e/20/f405)
+________________________ test_T13_get_models_admin_200 _________________________
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   psycopg.errors.UndefinedTable: relation "users" does not exist
+E   LINE 1: INSERT INTO users (id, email, password_hash, full_name, stat...
+E                       ^
+
+The above exception was the direct cause of the following exception:
+backend/tests/integration/test_admin_ai.py:735: in test_T13_get_models_admin_200
+    _create_user_with_role(email, "people_admin")
+backend/tests/integration/test_admin_ai.py:158: in _create_user_with_role
+    sess.execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:2351: in execute
+    return self._execute_internal(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:2258: in _execute_internal
+    result = conn.execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1419: in execute
+    return meth(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/sql/elements.py:527: in _execute_on_connection
+    return connection._execute_clauseelement(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1641: in _execute_clauseelement
+    ret = self._execute_context(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1846: in _execute_context
+    return self._exec_single_context(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1986: in _exec_single_context
+    self._handle_dbapi_exception(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:2363: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation "users" does not exist
+E   LINE 1: INSERT INTO users (id, email, password_hash, full_name, stat...
+E                       ^
+E   [SQL: INSERT INTO users (id, email, password_hash, full_name, status) VALUES (%(id)s, %(email)s, %(pw)s, %(name)s, %(status)s)]
+E   [parameters: {'id': '8af8e0c2-6298-4759-b4a7-8420d0664087', 'email': 'admin.test.c0d5f918@inditex-sandbox.com', 'pw': '$argon2id$v=19$m=65536,t=3,p=4$XK6xGrG1NSrsB4daEyRKzw$fl60Gq3prdIQA0ML+Rq/otWkvsgir6LJc7jgZOQN9NQ', 'name': 'Test User', 'status': 'active'}]
+E   (Background on this error at: https://sqlalche.me/e/20/f405)
+_____________________ test_T14_get_models_provider_filter ______________________
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   psycopg.errors.UndefinedTable: relation "users" does not exist
+E   LINE 1: INSERT INTO users (id, email, password_hash, full_name, stat...
+E                       ^
+
+The above exception was the direct cause of the following exception:
+backend/tests/integration/test_admin_ai.py:756: in test_T14_get_models_provider_filter
+    _create_user_with_role(email, "people_admin")
+backend/tests/integration/test_admin_ai.py:158: in _create_user_with_role
+    sess.execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:2351: in execute
+    return self._execute_internal(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:2258: in _execute_internal
+    result = conn.execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1419: in execute
+    return meth(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/sql/elements.py:527: in _execute_on_connection
+    return connection._execute_clauseelement(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1641: in _execute_clauseelement
+    ret = self._execute_context(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1846: in _execute_context
+    return self._exec_single_context(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1986: in _exec_single_context
+    self._handle_dbapi_exception(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:2363: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation "users" does not exist
+E   LINE 1: INSERT INTO users (id, email, password_hash, full_name, stat...
+E                       ^
+E   [SQL: INSERT INTO users (id, email, password_hash, full_name, status) VALUES (%(id)s, %(email)s, %(pw)s, %(name)s, %(status)s)]
+E   [parameters: {'id': '4fa934b9-3234-4cb0-b9c7-96fd333c839e', 'email': 'admin.test.d0cf981b@inditex-sandbox.com', 'pw': '$argon2id$v=19$m=65536,t=3,p=4$QxybK5YESPNQ2PdYiCjhfA$sT6rwcqwncQD79GQra+s5cDUQV2s7I/+C2V5Ar4/aO8', 'name': 'Test User', 'status': 'active'}]
+E   (Background on this error at: https://sqlalche.me/e/20/f405)
+_________________ test_T15_get_models_invalid_provider_id_422 __________________
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   psycopg.errors.UndefinedTable: relation "users" does not exist
+E   LINE 1: INSERT INTO users (id, email, password_hash, full_name, stat...
+E                       ^
+
+The above exception was the direct cause of the following exception:
+backend/tests/integration/test_admin_ai.py:790: in test_T15_get_models_invalid_provider_id_422
+    _create_user_with_role(email, "people_admin")
+backend/tests/integration/test_admin_ai.py:158: in _create_user_with_role
+    sess.execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:2351: in execute
+    return self._execute_internal(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:2258: in _execute_internal
+    result = conn.execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1419: in execute
+    return meth(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/sql/elements.py:527: in _execute_on_connection
+    return connection._execute_clauseelement(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1641: in _execute_clauseelement
+    ret = self._execute_context(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1846: in _execute_context
+    return self._exec_single_context(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1986: in _exec_single_context
+    self._handle_dbapi_exception(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:2363: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation "users" does not exist
+E   LINE 1: INSERT INTO users (id, email, password_hash, full_name, stat...
+E                       ^
+E   [SQL: INSERT INTO users (id, email, password_hash, full_name, status) VALUES (%(id)s, %(email)s, %(pw)s, %(name)s, %(status)s)]
+E   [parameters: {'id': '2553ae7e-300a-4281-804c-5066f7f612e2', 'email': 'admin.test.329f5413@inditex-sandbox.com', 'pw': '$argon2id$v=19$m=65536,t=3,p=4$nL58uPKFeVw2Gt6bqqRkUA$CTU8WSyfOwTnoWch8EyxwRII4DTtkJS85EvUmqeWzzQ', 'name': 'Test User', 'status': 'active'}]
+E   (Background on this error at: https://sqlalche.me/e/20/f405)
+______________________ test_T16_get_models_auth_failures _______________________
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   psycopg.errors.UndefinedTable: relation "users" does not exist
+E   LINE 1: INSERT INTO users (id, email, password_hash, full_name, stat...
+E                       ^
+
+The above exception was the direct cause of the following exception:
+backend/tests/integration/test_admin_ai.py:806: in test_T16_get_models_auth_failures
+    _create_user_with_role(email, "employee")
+backend/tests/integration/test_admin_ai.py:158: in _create_user_with_role
+    sess.execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:2351: in execute
+    return self._execute_internal(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:2258: in _execute_internal
+    result = conn.execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1419: in execute
+    return meth(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/sql/elements.py:527: in _execute_on_connection
+    return connection._execute_clauseelement(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1641: in _execute_clauseelement
+    ret = self._execute_context(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1846: in _execute_context
+    return self._exec_single_context(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1986: in _exec_single_context
+    self._handle_dbapi_exception(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:2363: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation "users" does not exist
+E   LINE 1: INSERT INTO users (id, email, password_hash, full_name, stat...
+E                       ^
+E   [SQL: INSERT INTO users (id, email, password_hash, full_name, status) VALUES (%(id)s, %(email)s, %(pw)s, %(name)s, %(status)s)]
+E   [parameters: {'id': '052ff20b-1246-40f9-ab92-498560dd4d61', 'email': 'employee.test.d6030f36@inditex-sandbox.com', 'pw': '$argon2id$v=19$m=65536,t=3,p=4$6xYd5ANuLYbJ8zmpQRtsVQ$suN3wHD7Nww7ZQiw4+6qNqfbd+TuaqditX0NGxFi7sk', 'name': 'Test User', 'status': 'active'}]
+E   (Background on this error at: https://sqlalche.me/e/20/f405)
+_________________________ test_T17_patch_model_enabled _________________________
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   psycopg.errors.UndefinedTable: relation "users" does not exist
+E   LINE 1: INSERT INTO users (id, email, password_hash, full_name, stat...
+E                       ^
+
+The above exception was the direct cause of the following exception:
+backend/tests/integration/test_admin_ai.py:825: in test_T17_patch_model_enabled
+    _create_user_with_role(email, "people_admin")
+backend/tests/integration/test_admin_ai.py:158: in _create_user_with_role
+    sess.execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:2351: in execute
+    return self._execute_internal(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:2258: in _execute_internal
+    result = conn.execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1419: in execute
+    return meth(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/sql/elements.py:527: in _execute_on_connection
+    return connection._execute_clauseelement(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1641: in _execute_clauseelement
+    ret = self._execute_context(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1846: in _execute_context
+    return self._exec_single_context(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1986: in _exec_single_context
+    self._handle_dbapi_exception(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:2363: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation "users" does not exist
+E   LINE 1: INSERT INTO users (id, email, password_hash, full_name, stat...
+E                       ^
+E   [SQL: INSERT INTO users (id, email, password_hash, full_name, status) VALUES (%(id)s, %(email)s, %(pw)s, %(name)s, %(status)s)]
+E   [parameters: {'id': '089ee4c5-b192-48a0-bbfa-d4a9ebe28cdd', 'email': 'admin.test.0c4bc3eb@inditex-sandbox.com', 'pw': '$argon2id$v=19$m=65536,t=3,p=4$0CMHCZH+UmsSC5VXRqgllg$KHIa02nm0hG6sPXp/1e0FmcA3oS6Z7h7opYVP1brgOQ', 'name': 'Test User', 'status': 'active'}]
+E   (Background on this error at: https://sqlalche.me/e/20/f405)
+_______________ test_T18_patch_model_is_default_clears_previous ________________
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   psycopg.errors.UndefinedTable: relation "users" does not exist
+E   LINE 1: INSERT INTO users (id, email, password_hash, full_name, stat...
+E                       ^
+
+The above exception was the direct cause of the following exception:
+backend/tests/integration/test_admin_ai.py:877: in test_T18_patch_model_is_default_clears_previous
+    _create_user_with_role(email, "people_admin")
+backend/tests/integration/test_admin_ai.py:158: in _create_user_with_role
+    sess.execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:2351: in execute
+    return self._execute_internal(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:2258: in _execute_internal
+    result = conn.execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1419: in execute
+    return meth(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/sql/elements.py:527: in _execute_on_connection
+    return connection._execute_clauseelement(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1641: in _execute_clauseelement
+    ret = self._execute_context(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1846: in _execute_context
+    return self._exec_single_context(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1986: in _exec_single_context
+    self._handle_dbapi_exception(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:2363: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation "users" does not exist
+E   LINE 1: INSERT INTO users (id, email, password_hash, full_name, stat...
+E                       ^
+E   [SQL: INSERT INTO users (id, email, password_hash, full_name, status) VALUES (%(id)s, %(email)s, %(pw)s, %(name)s, %(status)s)]
+E   [parameters: {'id': '2e0add7a-9dba-4cdd-bff5-7ebbe5892b8a', 'email': 'admin.test.fbb33e49@inditex-sandbox.com', 'pw': '$argon2id$v=19$m=65536,t=3,p=4$RJGJZKQLfoYHGPxRLuiQpQ$1HAnmlHeqReVd7WngIHFf1UwUIfsMRL1hzm0BR0Oniw', 'name': 'Test User', 'status': 'active'}]
+E   (Background on this error at: https://sqlalche.me/e/20/f405)
+____________________ test_T19_patch_model_empty_payload_400 ____________________
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   psycopg.errors.UndefinedTable: relation "users" does not exist
+E   LINE 1: INSERT INTO users (id, email, password_hash, full_name, stat...
+E                       ^
+
+The above exception was the direct cause of the following exception:
+backend/tests/integration/test_admin_ai.py:937: in test_T19_patch_model_empty_payload_400
+    _create_user_with_role(email, "people_admin")
+backend/tests/integration/test_admin_ai.py:158: in _create_user_with_role
+    sess.execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:2351: in execute
+    return self._execute_internal(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:2258: in _execute_internal
+    result = conn.execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1419: in execute
+    return meth(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/sql/elements.py:527: in _execute_on_connection
+    return connection._execute_clauseelement(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1641: in _execute_clauseelement
+    ret = self._execute_context(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1846: in _execute_context
+    return self._exec_single_context(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1986: in _exec_single_context
+    self._handle_dbapi_exception(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:2363: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation "users" does not exist
+E   LINE 1: INSERT INTO users (id, email, password_hash, full_name, stat...
+E                       ^
+E   [SQL: INSERT INTO users (id, email, password_hash, full_name, status) VALUES (%(id)s, %(email)s, %(pw)s, %(name)s, %(status)s)]
+E   [parameters: {'id': '4a3bde30-39b9-4ad0-8b2d-390ca329dce1', 'email': 'admin.test.42593e54@inditex-sandbox.com', 'pw': '$argon2id$v=19$m=65536,t=3,p=4$4NEnOaq7fArKOh9OT1CLcA$l6d9z8ynXrcWLv4E/EucJT+WvGBJ/tdf+PHwfbSQRYo', 'name': 'Test User', 'status': 'active'}]
+E   (Background on this error at: https://sqlalche.me/e/20/f405)
+______________________ test_T20_patch_model_not_found_404 ______________________
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   psycopg.errors.UndefinedTable: relation "users" does not exist
+E   LINE 1: INSERT INTO users (id, email, password_hash, full_name, stat...
+E                       ^
+
+The above exception was the direct cause of the following exception:
+backend/tests/integration/test_admin_ai.py:959: in test_T20_patch_model_not_found_404
+    _create_user_with_role(email, "people_admin")
+backend/tests/integration/test_admin_ai.py:158: in _create_user_with_role
+    sess.execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:2351: in execute
+    return self._execute_internal(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:2258: in _execute_internal
+    result = conn.execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1419: in execute
+    return meth(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/sql/elements.py:527: in _execute_on_connection
+    return connection._execute_clauseelement(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1641: in _execute_clauseelement
+    ret = self._execute_context(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1846: in _execute_context
+    return self._exec_single_context(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1986: in _exec_single_context
+    self._handle_dbapi_exception(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:2363: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation "users" does not exist
+E   LINE 1: INSERT INTO users (id, email, password_hash, full_name, stat...
+E                       ^
+E   [SQL: INSERT INTO users (id, email, password_hash, full_name, status) VALUES (%(id)s, %(email)s, %(pw)s, %(name)s, %(status)s)]
+E   [parameters: {'id': '0f0f7de4-48e1-44f4-8cca-4232a1bc4e41', 'email': 'admin.test.bd212acb@inditex-sandbox.com', 'pw': '$argon2id$v=19$m=65536,t=3,p=4$48cuLDPVeGvtF25rcsO0jw$mknVptQFPgRXC+e0oxu84LLJhOcQLPT9W6btZCU0OKA', 'name': 'Test User', 'status': 'active'}]
+E   (Background on this error at: https://sqlalche.me/e/20/f405)
+______________________ test_T21_patch_model_auth_failures ______________________
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   psycopg.errors.UndefinedTable: relation "users" does not exist
+E   LINE 1: INSERT INTO users (id, email, password_hash, full_name, stat...
+E                       ^
+
+The above exception was the direct cause of the following exception:
+backend/tests/integration/test_admin_ai.py:979: in test_T21_patch_model_auth_failures
+    _create_user_with_role(email_admin, "people_admin")
+backend/tests/integration/test_admin_ai.py:158: in _create_user_with_role
+    sess.execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:2351: in execute
+    return self._execute_internal(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:2258: in _execute_internal
+    result = conn.execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1419: in execute
+    return meth(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/sql/elements.py:527: in _execute_on_connection
+    return connection._execute_clauseelement(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1641: in _execute_clauseelement
+    ret = self._execute_context(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1846: in _execute_context
+    return self._exec_single_context(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1986: in _exec_single_context
+    self._handle_dbapi_exception(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:2363: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation "users" does not exist
+E   LINE 1: INSERT INTO users (id, email, password_hash, full_name, stat...
+E                       ^
+E   [SQL: INSERT INTO users (id, email, password_hash, full_name, status) VALUES (%(id)s, %(email)s, %(pw)s, %(name)s, %(status)s)]
+E   [parameters: {'id': 'e30e4d59-e39a-4613-b6d1-f29e3672c1d4', 'email': 'admin.test.6468f4ff@inditex-sandbox.com', 'pw': '$argon2id$v=19$m=65536,t=3,p=4$00iMziojgrmc0+e7hCkQ1Q$otAxnpAbjxvJA4D5V5Tb8GclzUrag88qoGEaByTZa8Y', 'name': 'Test User', 'status': 'active'}]
+E   (Background on this error at: https://sqlalche.me/e/20/f405)
+___________________ test_T22_patch_model_remove_only_default ___________________
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   psycopg.errors.UndefinedTable: relation "users" does not exist
+E   LINE 1: INSERT INTO users (id, email, password_hash, full_name, stat...
+E                       ^
+
+The above exception was the direct cause of the following exception:
+backend/tests/integration/test_admin_ai.py:1008: in test_T22_patch_model_remove_only_default
+    _create_user_with_role(email, "people_admin")
+backend/tests/integration/test_admin_ai.py:158: in _create_user_with_role
+    sess.execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:2351: in execute
+    return self._execute_internal(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:2258: in _execute_internal
+    result = conn.execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1419: in execute
+    return meth(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/sql/elements.py:527: in _execute_on_connection
+    return connection._execute_clauseelement(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1641: in _execute_clauseelement
+    ret = self._execute_context(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1846: in _execute_context
+    return self._exec_single_context(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1986: in _exec_single_context
+    self._handle_dbapi_exception(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:2363: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation "users" does not exist
+E   LINE 1: INSERT INTO users (id, email, password_hash, full_name, stat...
+E                       ^
+E   [SQL: INSERT INTO users (id, email, password_hash, full_name, status) VALUES (%(id)s, %(email)s, %(pw)s, %(name)s, %(status)s)]
+E   [parameters: {'id': '9d2d5b4a-5644-4a0f-ab99-38265db41f0e', 'email': 'admin.test.bcc13b80@inditex-sandbox.com', 'pw': '$argon2id$v=19$m=65536,t=3,p=4$2zs/7ypWI8kqg7c2tSEduQ$l6p1sUTz43YegLGPVZeCziigg1+IVNc11HPyKXMBQ88', 'name': 'Test User', 'status': 'active'}]
+E   (Background on this error at: https://sqlalche.me/e/20/f405)
+________________________ test_T23_request_id_propagated ________________________
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   psycopg.errors.UndefinedTable: relation "users" does not exist
+E   LINE 1: INSERT INTO users (id, email, password_hash, full_name, stat...
+E                       ^
+
+The above exception was the direct cause of the following exception:
+backend/tests/integration/test_admin_ai.py:1039: in test_T23_request_id_propagated
+    _create_user_with_role(email, "people_admin")
+backend/tests/integration/test_admin_ai.py:158: in _create_user_with_role
+    sess.execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:2351: in execute
+    return self._execute_internal(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:2258: in _execute_internal
+    result = conn.execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1419: in execute
+    return meth(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/sql/elements.py:527: in _execute_on_connection
+    return connection._execute_clauseelement(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1641: in _execute_clauseelement
+    ret = self._execute_context(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1846: in _execute_context
+    return self._exec_single_context(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1986: in _exec_single_context
+    self._handle_dbapi_exception(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:2363: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation "users" does not exist
+E   LINE 1: INSERT INTO users (id, email, password_hash, full_name, stat...
+E                       ^
+E   [SQL: INSERT INTO users (id, email, password_hash, full_name, status) VALUES (%(id)s, %(email)s, %(pw)s, %(name)s, %(status)s)]
+E   [parameters: {'id': '97c03724-3625-4c08-8a91-fe9988d87767', 'email': 'admin.test.311f20c4@inditex-sandbox.com', 'pw': '$argon2id$v=19$m=65536,t=3,p=4$EAyjas4PKLSwjypsh0nVBw$xCQA53jTH6mxxr3g7Ob8c6ODGnQ5oC40z06Sgy5a6w4', 'name': 'Test User', 'status': 'active'}]
+E   (Background on this error at: https://sqlalche.me/e/20/f405)
+_______________________ test_T24_response_envelope_shape _______________________
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   psycopg.errors.UndefinedTable: relation "users" does not exist
+E   LINE 1: INSERT INTO users (id, email, password_hash, full_name, stat...
+E                       ^
+
+The above exception was the direct cause of the following exception:
+backend/tests/integration/test_admin_ai.py:1057: in test_T24_response_envelope_shape
+    _create_user_with_role(email, "people_admin")
+backend/tests/integration/test_admin_ai.py:158: in _create_user_with_role
+    sess.execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:2351: in execute
+    return self._execute_internal(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:2258: in _execute_internal
+    result = conn.execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1419: in execute
+    return meth(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/sql/elements.py:527: in _execute_on_connection
+    return connection._execute_clauseelement(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1641: in _execute_clauseelement
+    ret = self._execute_context(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1846: in _execute_context
+    return self._exec_single_context(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1986: in _exec_single_context
+    self._handle_dbapi_exception(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:2363: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation "users" does not exist
+E   LINE 1: INSERT INTO users (id, email, password_hash, full_name, stat...
+E                       ^
+E   [SQL: INSERT INTO users (id, email, password_hash, full_name, status) VALUES (%(id)s, %(email)s, %(pw)s, %(name)s, %(status)s)]
+E   [parameters: {'id': 'da5a35cf-b0c5-444f-9bb6-965e315f5a7f', 'email': 'admin.test.59a0c0e7@inditex-sandbox.com', 'pw': '$argon2id$v=19$m=65536,t=3,p=4$95eMcdyGzrJHKkEsTN/qIw$Thtv+wx/TTcSnYAj6e1smuKUIM3f6CRuSHhg2oH5P18', 'name': 'Test User', 'status': 'active'}]
+E   (Background on this error at: https://sqlalche.me/e/20/f405)
+___________________________ test_T25_no_test_residue ___________________________
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   psycopg.errors.UndefinedTable: relation "users" does not exist
+E   LINE 1: INSERT INTO users (id, email, password_hash, full_name, stat...
+E                       ^
+
+The above exception was the direct cause of the following exception:
+backend/tests/integration/test_admin_ai.py:1100: in test_T25_no_test_residue
+    _create_user_with_role(email, "people_admin")
+backend/tests/integration/test_admin_ai.py:158: in _create_user_with_role
+    sess.execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:2351: in execute
+    return self._execute_internal(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:2258: in _execute_internal
+    result = conn.execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1419: in execute
+    return meth(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/sql/elements.py:527: in _execute_on_connection
+    return connection._execute_clauseelement(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1641: in _execute_clauseelement
+    ret = self._execute_context(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1846: in _execute_context
+    return self._exec_single_context(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1986: in _exec_single_context
+    self._handle_dbapi_exception(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:2363: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation "users" does not exist
+E   LINE 1: INSERT INTO users (id, email, password_hash, full_name, stat...
+E                       ^
+E   [SQL: INSERT INTO users (id, email, password_hash, full_name, status) VALUES (%(id)s, %(email)s, %(pw)s, %(name)s, %(status)s)]
+E   [parameters: {'id': '5d87fb25-573a-4464-a2ef-c90ecc280b44', 'email': 'admin.test.96a3ad33@inditex-sandbox.com', 'pw': '$argon2id$v=19$m=65536,t=3,p=4$v4ZF8zCWbVsjhUhtV3LJ9w$ZaOsN3r9BOxKgfvRmwaEK94qKoVt8wUchKkVJIX3RlI', 'name': 'Test User', 'status': 'active'}]
+E   (Background on this error at: https://sqlalche.me/e/20/f405)
+__________________ test_T26_concurrent_patch_default_conflict __________________
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   psycopg.errors.UndefinedTable: relation "users" does not exist
+E   LINE 1: INSERT INTO users (id, email, password_hash, full_name, stat...
+E                       ^
+
+The above exception was the direct cause of the following exception:
+backend/tests/integration/test_admin_ai.py:1179: in test_T26_concurrent_patch_default_conflict
+    _create_user_with_role(email, "people_admin")
+backend/tests/integration/test_admin_ai.py:158: in _create_user_with_role
+    sess.execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:2351: in execute
+    return self._execute_internal(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/orm/session.py:2258: in _execute_internal
+    result = conn.execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1419: in execute
+    return meth(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/sql/elements.py:527: in _execute_on_connection
+    return connection._execute_clauseelement(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1641: in _execute_clauseelement
+    ret = self._execute_context(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1846: in _execute_context
+    return self._exec_single_context(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1986: in _exec_single_context
+    self._handle_dbapi_exception(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:2363: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+../../../Library/Python/3.11/lib/python/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation "users" does not exist
+E   LINE 1: INSERT INTO users (id, email, password_hash, full_name, stat...
+E                       ^
+E   [SQL: INSERT INTO users (id, email, password_hash, full_name, status) VALUES (%(id)s, %(email)s, %(pw)s, %(name)s, %(status)s)]
+E   [parameters: {'id': 'dcbf564e-b652-4d19-91fb-a6bf979b17ba', 'email': 'admin.test.1d461074@inditex-sandbox.com', 'pw': '$argon2id$v=19$m=65536,t=3,p=4$zl5EM7vZOiTF6VnlozFhiA$e67QCq7i2x0UVGrhns/4tnUbnsN++o/cCC8APrinGtQ', 'name': 'Test User', 'status': 'active'}]
+E   (Background on this error at: https://sqlalche.me/e/20/f405)
+=========================== short test summary info ============================
+FAILED backend/tests/integration/test_admin_ai.py::test_T01_get_providers_admin_200
+FAILED backend/tests/integration/test_admin_ai.py::test_T02_get_providers_employee_403
+FAILED backend/tests/integration/test_admin_ai.py::test_T04_get_providers_has_credentials
+FAILED backend/tests/integration/test_admin_ai.py::test_T05_post_provider_creates_encrypted_credential
+FAILED backend/tests/integration/test_admin_ai.py::test_T06_post_provider_invalid_type_422
+FAILED backend/tests/integration/test_admin_ai.py::test_T07_post_provider_missing_credentials_422
+FAILED backend/tests/integration/test_admin_ai.py::test_T08_post_provider_auth_failures
+FAILED backend/tests/integration/test_admin_ai.py::test_T09_post_provider_rate_limit_429
+FAILED backend/tests/integration/test_admin_ai.py::test_T10_post_provider_redis_down_503
+FAILED backend/tests/integration/test_admin_ai.py::test_T11_post_provider_encryption_error_500
+FAILED backend/tests/integration/test_admin_ai.py::test_T12_verbose_logging_no_secret_in_logs
+FAILED backend/tests/integration/test_admin_ai.py::test_T13_get_models_admin_200
+FAILED backend/tests/integration/test_admin_ai.py::test_T14_get_models_provider_filter
+FAILED backend/tests/integration/test_admin_ai.py::test_T15_get_models_invalid_provider_id_422
+FAILED backend/tests/integration/test_admin_ai.py::test_T16_get_models_auth_failures
+FAILED backend/tests/integration/test_admin_ai.py::test_T17_patch_model_enabled
+FAILED backend/tests/integration/test_admin_ai.py::test_T18_patch_model_is_default_clears_previous
+FAILED backend/tests/integration/test_admin_ai.py::test_T19_patch_model_empty_payload_400
+FAILED backend/tests/integration/test_admin_ai.py::test_T20_patch_model_not_found_404
+FAILED backend/tests/integration/test_admin_ai.py::test_T21_patch_model_auth_failures
+FAILED backend/tests/integration/test_admin_ai.py::test_T22_patch_model_remove_only_default
+FAILED backend/tests/integration/test_admin_ai.py::test_T23_request_id_propagated
+FAILED backend/tests/integration/test_admin_ai.py::test_T24_response_envelope_shape
+FAILED backend/tests/integration/test_admin_ai.py::test_T25_no_test_residue
+FAILED backend/tests/integration/test_admin_ai.py::test_T26_concurrent_patch_default_conflict
+========================= 25 failed, 1 passed in 8.90s =========================
