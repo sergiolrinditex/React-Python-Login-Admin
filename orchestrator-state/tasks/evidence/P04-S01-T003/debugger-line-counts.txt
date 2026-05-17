@@ -1,0 +1,9 @@
+     201 frontend/src/pages/admin/ai/ModelWizardPage.tsx
+     136 frontend/src/pages/admin/ai/_ModelWizardPage.provider-step.tsx
+     243 frontend/src/pages/admin/ai/_ModelWizardPage.credentials-step.tsx
+     172 frontend/src/pages/admin/ai/_ModelWizardPage.models-step.tsx
+     294 frontend/src/features/admin-ai/presentation/useModelWizard.ts
+     103 frontend/src/features/admin-ai/presentation/useModelWizard.helpers.ts
+     127 frontend/src/features/admin-ai/presentation/useModelWizard.types.ts
+     181 frontend/src/pages/admin/ai/ModelWizardPage.styles.ts
+    1457 total
