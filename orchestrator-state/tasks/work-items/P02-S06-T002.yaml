@@ -2,7 +2,7 @@ id: P02-S06-T002
 phase_id: P02
 step_id: P02-S06
 title: "RAG collection endpoints"
-status: ready_for_close
+status: done
 kind: "api"
 target: "RAG collection endpoints"
 product_increment: "v1"

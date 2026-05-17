@@ -1,0 +1,38 @@
+id: P03-S02-T006
+phase_id: P03
+step_id: P03-S02
+title: "[SUPERSEDED 2026-05-15 — merged into P03-S01-T005 source-of-truth amendment; T005 write_set extended to cover /auth/2fa router wiring + useVerifyMfa hook + tests + authRepository.verifyMfa + i18n; closes FU-20260514142939 inline] MFA flow incomplete — missing /auth/2fa route and TwoFactorPage component"
+status: done
+kind: "bug"
+target: "[SUPERSEDED 2026-05-15 — merged into P03-S01-T005 source-of-truth amendment; T005 write_set extended to cover /auth/2fa router wiring + useVerifyMfa hook + tests + authRepository.verifyMfa + i18n; closes FU-20260514142939 inline] MFA flow incomplete — missing /auth/2fa route and TwoFactorPage component"
+product_increment: "current"
+build_state: "done"
+risk_level: "high"
+verify_mode: "human"
+route: ""
+endpoint: ""
+journey_refs:
+  - "J100"
+tables:
+depends_on:
+  - P03-S02-T004
+acceptance:
+  - "Superseded by P03-S01-T005 acceptance + write_set extension. Same five behaviours covered there: (1) /auth/2fa route exists and renders TwoFactorPage. (2) TwoFactorPage receives mfa_challenge_token via router state, renders TOTP 6-digit input + submit, calls POST /api/v1/auth/2fa/verify, on 200 obtains access_token and triggers signInAccepted → navigates to ?next= or /chat. (3) Error states (invalid TOTP, expired challenge token, network) covered. (4) Tests: useVerifyMfa hook + TwoFactorPage with 5 UX states + integration via SignInPage→TwoFactorPage redirect with router state. (5) Real-user e2e via Chrome MCP with employee.verification@inditex-sandbox.com TOTP secret JBSWY3DPEHPK3PXP completes sign-in to /chat."
+verification_commands:
+  - "Verification deferred to /verify-slice P03-S01-T005 — real Chrome MCP human flow: sign-in with employee.verification@inditex-sandbox.com + VerifyPass2024! → /auth/2fa loads → introduce TOTP from pyotp.TOTP('JBSWY3DPEHPK3PXP').now() → POST /api/v1/auth/2fa/verify → 200 → access_token issued → redirect to /chat. Marginal: wrong TOTP → user-facing error + retry, expired challenge token (after 5min) → fallback to sign-in."
+allowed_paths:
+  - "frontend/src/pages/auth/TwoFactorPage.tsx"
+  - "frontend/src/pages/auth/__tests__/TwoFactorPage.test.tsx"
+  - "frontend/src/app/router.tsx"
+  - "frontend/src/features/auth/presentation/useVerifyMfa.ts"
+conflict_groups:
+  - "front:auth"
+write_set:
+  - "frontend/src/pages/auth/TwoFactorPage.tsx"
+  - "frontend/src/pages/auth/__tests__/TwoFactorPage.test.tsx"
+  - "frontend/src/app/router.tsx"
+  - "frontend/src/features/auth/presentation/useVerifyMfa.ts"
+handoff_path: orchestrator-state/tasks/handoffs/P03-S02-T006.md
+evidence_dir: orchestrator-state/tasks/evidence/P03-S02-T006
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime follow-up P03-S02-T004"
+source_fingerprint: "6c61fb7a8f0c787b622364443430f8019044f10e26698572af489c95a4faae63"

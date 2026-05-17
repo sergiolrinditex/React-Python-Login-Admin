@@ -2,7 +2,7 @@ id: P03-S01-T004
 phase_id: P03
 step_id: P03-S01
 title: "ResetSentPage"
-status: blocked
+status: done
 kind: "frontend"
 target: "ResetSentPage"
 product_increment: "v1"

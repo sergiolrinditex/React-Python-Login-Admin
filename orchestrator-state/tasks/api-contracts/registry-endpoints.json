@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-14T11:01:20+00:00",
+  "generated_at": "2026-05-17T11:27:34+00:00",
   "endpoints": [
     {
       "method": "GET",
@@ -141,6 +141,7 @@
       "slice_ids": [
         "P02-S07-T001",
         "P04-S02-T003",
+        "P04-S02-T006",
         "P05-S01-T006"
       ],
       "journey_refs": [
@@ -355,6 +356,7 @@
       "path_params": [],
       "slice_ids": [
         "P04-S03-T001",
+        "P04-S03-T003",
         "P05-S02-T001"
       ],
       "journey_refs": [

@@ -1,0 +1,32 @@
+id: P03-S01-T007
+phase_id: P03
+step_id: P03-S01
+title: "httpClient.ts API_BASE fallback violates ADR-002 same-origin contract"
+status: done
+kind: "security"
+target: "httpClient.ts API_BASE fallback violates ADR-002 same-origin contract"
+product_increment: "current"
+build_state: "planned"
+risk_level: "high"
+verify_mode: "human"
+route: ""
+endpoint: ""
+journey_refs:
+  - "J100"
+tables:
+depends_on:
+  - P03-S01-T002
+acceptance:
+  - "Change httpClient.ts line 34 from ?? \"http://localhost:8000\" to ?? \"\" (same fix as authRepository.ts P03-S01-T002). All existing tests still pass. Browser flow to GET /api/v1/users/me uses relative URL /api/v1/users/me and goes through Vite proxy (dev) / Nginx (prod) per ADR-002. No CORS preflight."
+verification_commands:
+  - "/verify-slice with real corporate sandbox account — sign in → /chat must succeed in Chrome with VITE_API_BASE_URL unset, observe authFetch network panel uses relative path /api/v1/users/me, no CORS preflight, no cookie-block warnings, logs show user_id from /users/me hydration."
+allowed_paths:
+  - "frontend/src/features/auth/data/httpClient.ts"
+conflict_groups:
+  - "front:auth"
+write_set:
+  - "frontend/src/features/auth/data/httpClient.ts"
+handoff_path: orchestrator-state/tasks/handoffs/P03-S01-T007.md
+evidence_dir: orchestrator-state/tasks/evidence/P03-S01-T007
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime follow-up P03-S01-T002"
+source_fingerprint: "6419ee41dbe361c41da15d0372d50f035932894b7b4ff31fe24666acf0bd0ad8"

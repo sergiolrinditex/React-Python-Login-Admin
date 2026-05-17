@@ -1,7 +1,7 @@
 {
-  "_comment": "Default chat model for litellm_verification_sandbox provider — gpt-4o-mini via LiteLLM proxy.",
+  "_comment": "Default chat model for litellm_verification_sandbox provider — gemini-2.5-flash via LiteLLM proxy (Google AI Studio). See TECHNICAL_GUIDE §6.5 and litellm/config.yaml model_list.",
   "provider_ref": "litellm_verification_sandbox",
-  "model_id": "gpt-4o-mini",
+  "model_id": "gemini-2.5-flash",
   "model_type": "chat",
   "enabled": true,
   "is_default": true,

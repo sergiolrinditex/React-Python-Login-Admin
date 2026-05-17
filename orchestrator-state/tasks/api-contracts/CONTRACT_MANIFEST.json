@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-05-14T11:01:20+00:00",
+  "generated_at": "2026-05-17T11:27:34+00:00",
   "generator": ".claude/bin/generate_api_contracts.py",
   "source": "orchestrator-state/tasks/registry.json",
-  "source_digest": "9f69457a5f158393d9ddd2f5e022811f9d1e7a4a2d473834264c424e86e5aa03",
+  "source_digest": "693faccfcf530fcff81882a5b98f9898c79246c6615ca5c631830d9f17e36eaf",
   "endpoint_count": 35,
   "artifacts": [
     "orchestrator-state/tasks/api-contracts/registry-endpoints.json",

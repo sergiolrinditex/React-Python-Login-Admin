@@ -90,6 +90,14 @@ services:
     image: ghcr.io/berriai/litellm:v1.83.14-stable.patch.3
     environment:
       LITELLM_MASTER_KEY: ${LITELLM_MASTER_KEY}
+      # Google AI Studio key consumed by the proxy to call Gemini upstream.
+      # Declared in TECHNICAL_GUIDE §6.5 + §11.1. Never logged, never returned to FE.
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+    volumes:
+      # Read-only proxy config — declares model_list + master_key resolver.
+      # See litellm/config.yaml. Edit that file (not env) to add/remove models.
+      - ./litellm/config.yaml:/app/config.yaml:ro
+    command: ["--config", "/app/config.yaml", "--port", "4000"]
     ports:
       - "4000:4000"
     networks:

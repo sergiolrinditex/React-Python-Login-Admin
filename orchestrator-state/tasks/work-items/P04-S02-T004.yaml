@@ -2,7 +2,7 @@ id: P04-S02-T004
 phase_id: P04
 step_id: P04-S02
 title: "McpWizardPage"
-status: blocked
+status: ready
 kind: "frontend"
 target: "McpWizardPage"
 product_increment: "v1"

@@ -2,7 +2,7 @@ id: P05-S01-T002
 phase_id: P05
 step_id: P05-S01
 title: "J101 chat RAG e2e"
-status: blocked
+status: ready
 kind: "journey"
 target: "J101 chat RAG e2e"
 product_increment: "v1"

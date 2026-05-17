@@ -2,7 +2,7 @@ id: P02-S03-T007
 phase_id: P02
 step_id: P02-S03
 title: "Fix check_handoff_contract.py — worktree path bug in pr-flow"
-status: blocked
+status: done
 kind: "wiring"
 target: "Fix check_handoff_contract.py — worktree path bug in pr-flow"
 product_increment: "current"

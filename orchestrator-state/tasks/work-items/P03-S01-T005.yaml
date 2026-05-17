@@ -2,7 +2,7 @@ id: P03-S01-T005
 phase_id: P03
 step_id: P03-S01
 title: "TwoFactorPage"
-status: blocked
+status: done
 kind: "frontend"
 target: "TwoFactorPage"
 product_increment: "v1"
@@ -21,16 +21,43 @@ depends_on:
   - P03-S01-T001
 acceptance:
   - "Six digit 2FA UI supports paste, validation and success redirect"
+  - "covers full router wiring (/auth/2fa public route), useVerifyMfa hook, authRepository.verifyMfa extension, error taxonomy, i18n ES/EN/FR auth.twofactor namespace and component tests so the MFA branch is end-to-end functional in Chrome"
   - "VISUAL_CONTRACT_CHECK documents tokens, components, required states, real data/backend and visual evidence"
 verification_commands:
   - "/verify-slice P03-S01-T005 in Chrome with TOTP generated from provided data/verification/auth/mfa_primary.json + visual evidence referenced in handoff"
 allowed_paths:
   - "frontend/src/pages/auth/TwoFactorPage.tsx"
+  - "frontend/src/pages/auth/__tests__/TwoFactorPage.test.tsx"
+  - "frontend/src/features/auth/presentation/useVerifyMfa.ts"
+  - "frontend/src/features/auth/presentation/__tests__/useVerifyMfa.test.tsx"
+  - "frontend/src/features/auth/domain/types.ts"
+  - "frontend/src/features/auth/domain/AuthRepository.ts"
+  - "frontend/src/features/auth/data/authRepository.ts"
+  - "frontend/src/features/auth/data/errors.ts"
+  - "frontend/src/features/auth/index.ts"
+  - "frontend/src/app/router.tsx"
+  - "frontend/src/i18n/index.ts"
+  - "frontend/public/locales/es/auth.json"
+  - "frontend/public/locales/en/auth.json"
+  - "frontend/public/locales/fr/auth.json"
 conflict_groups:
   - "front:auth"
 write_set:
   - "frontend/src/pages/auth/TwoFactorPage.tsx"
+  - "frontend/src/pages/auth/__tests__/TwoFactorPage.test.tsx"
+  - "frontend/src/features/auth/presentation/useVerifyMfa.ts"
+  - "frontend/src/features/auth/presentation/__tests__/useVerifyMfa.test.tsx"
+  - "frontend/src/features/auth/domain/types.ts"
+  - "frontend/src/features/auth/domain/AuthRepository.ts"
+  - "frontend/src/features/auth/data/authRepository.ts"
+  - "frontend/src/features/auth/data/errors.ts"
+  - "frontend/src/features/auth/index.ts"
+  - "frontend/src/app/router.tsx"
+  - "frontend/src/i18n/index.ts"
+  - "frontend/public/locales/es/auth.json"
+  - "frontend/public/locales/en/auth.json"
+  - "frontend/public/locales/fr/auth.json"
 handoff_path: orchestrator-state/tasks/handoffs/P03-S01-T005.md
 evidence_dir: orchestrator-state/tasks/evidence/P03-S01-T005
 source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 3.1 — Login pages"
-source_fingerprint: "a1e3904c2fa88e9b0c8e54fb55594f5bfa9b4b65870b08c5900520df3c8dbb12"
+source_fingerprint: "4f1062b0e812639f2a66aca8fd26a80727a2bbad39ed3b1a5e4c550a706a25c2"

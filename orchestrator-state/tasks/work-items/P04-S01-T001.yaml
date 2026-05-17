@@ -2,7 +2,7 @@ id: P04-S01-T001
 phase_id: P04
 step_id: P04-S01
 title: "AdminDashboardPage"
-status: ready
+status: done
 kind: "frontend"
 target: "AdminDashboardPage"
 product_increment: "v1"

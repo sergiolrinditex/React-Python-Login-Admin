@@ -1,0 +1,53 @@
+{
+  "id": "FU-20260514122959-httpclient-ts-api-base-fallback-violates-adr-002",
+  "schema_version": 1,
+  "status": "promoted",
+  "created_at": "2026-05-14T12:29:59+00:00",
+  "created_by": "sergiolr",
+  "origin_task_id": "P03-S01-T002",
+  "origin_phase_id": "P03",
+  "origin_step_id": "P03-S01",
+  "kind": "security",
+  "product_increment": "current",
+  "build_state": "planned",
+  "severity": "high",
+  "title": "httpClient.ts API_BASE fallback violates ADR-002 same-origin contract",
+  "description": "frontend/src/features/auth/data/httpClient.ts line 34 has the same defect already fixed in authRepository.ts for T002: const API_BASE = import.meta.env.VITE_API_BASE_URL ?? \"http://localhost:8000\". The hardcoded fallback triggers cross-origin XHR from :5173 → :8000 when VITE_API_BASE_URL is unset, breaks the SameSite=Lax cookie contract documented in ADR-001, and violates ADR-002 same-origin / reverse-proxy topology declared in frontend/.env.example. Pre-existing since commit 100867a (P01-S03-T001 — Auth state provider). Affects ALL authenticated browser flows (GET /api/v1/users/me, refresh, logout). Detected by slice-verifier during /verify-slice P03-S01-T002 alongside the sibling authRepository.ts defect that WAS in T002 write_set and has been fixed.",
+  "journey_refs": [
+    "J100"
+  ],
+  "screen_route": "—",
+  "endpoint": "—",
+  "tables": [],
+  "depends_on": [
+    "P03-S01-T002"
+  ],
+  "conflict_groups": [
+    "front:auth"
+  ],
+  "write_set": [
+    "frontend/src/features/auth/data/httpClient.ts"
+  ],
+  "acceptance": [
+    "Change httpClient.ts line 34 from `?? \"http://localhost:8000\"` to `?? \"\"` (same fix as authRepository.ts P03-S01-T002). All existing tests still pass. Browser flow to GET /api/v1/users/me uses relative URL /api/v1/users/me and goes through Vite proxy (dev) / Nginx (prod) per ADR-002. No CORS preflight."
+  ],
+  "verify": [
+    "/verify-slice with real corporate sandbox account — sign in → /chat must succeed in Chrome with VITE_API_BASE_URL unset",
+    "observe authFetch network panel uses relative path /api/v1/users/me",
+    "no CORS preflight",
+    "no cookie-block warnings",
+    "logs show user_id from /users/me hydration."
+  ],
+  "notes": [],
+  "triage": {
+    "scope_classification": "out_of_scope",
+    "why_not_debugger": "frontend/src/features/auth/data/httpClient.ts is not in P03-S01-T002 write_set (registry write_set = SignUpPage.tsx; pre-authorized drift anchors §D-T002-* explicitly list authRepository.ts but NOT httpClient.ts). File belongs to P01-S03-T001's slice and is shared infrastructure used by all authenticated flows (authFetch). Fixing it under T002 would be write_set drift outside what T002 authorizes. Same one-character fix as authRepository.ts but should go through its own revise-slice or follow-up task.",
+    "decision": "followup_only_when_outside_current_slice",
+    "debugger_path": "in_scope_defects_use_validator_tester_debugger_retest",
+    "warnings": []
+  },
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260514122959-httpclient-ts-api-base-fallback-violates-adr-002.yaml",
+  "promoted_at": "2026-05-14T14:53:29+00:00",
+  "promoted_task_id": "P03-S01-T007",
+  "source_doc_updated": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md"
+}

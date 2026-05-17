@@ -1,0 +1,58 @@
+{
+  "id": "FU-20260514142939-mfa-flow-incomplete-missing-auth-2fa-route-and-t",
+  "schema_version": 1,
+  "status": "promoted",
+  "created_at": "2026-05-14T14:29:39+00:00",
+  "created_by": "sergiolr",
+  "origin_task_id": "P03-S02-T004",
+  "origin_phase_id": "P03",
+  "origin_step_id": "P03-S02",
+  "kind": "bug",
+  "product_increment": "current",
+  "build_state": "planned",
+  "severity": "high",
+  "title": "MFA flow incomplete — missing /auth/2fa route and TwoFactorPage component",
+  "description": "Found during /verify-slice P03-S02-T004 with Chrome DevTools MCP: backend POST /api/v1/auth/sign-in correctly returns 200 with {mfa_required:true, mfa_challenge_token, expires_in:300}. SignInPage onSubmit (frontend/src/pages/auth/SignInPage.tsx:167-180) correctly detects outcome.kind==='mfa' and calls navigate('/auth/2fa', {state:{mfa_challenge_token, expires_in}}). However: (1) frontend/src/app/router.tsx has NO Route element for /auth/2fa — only ROUTE_SHOWCASE, ROUTE_AUTH_SIGN_IN, ROUTE_CHAT, ROUTE_CHAT/:id, ROUTE_ACCOUNT, ROUTE_ADMIN, / and catch-all *. (2) No TwoFactorPage component exists (find frontend/src -name '*TwoFactor*' -o -name '*2fa*' -o -name '*Mfa*' returns 0 files). (3) Effect: real user signs in with employee.verification@inditex-sandbox.com, server returns mfa_required:true, frontend navigates to /auth/2fa, catch-all redirects to '/', RootRedirect sees unauthenticated → back to /auth/sign-in. The whole MFA-enabled login path is broken end-to-end despite all backend curl smokes passing in tester evidence. Detected reproducibly via Chrome MCP isolated context — backend network request 67 returned 200 with mfa_required:true; URL stayed at /auth/sign-in; no submit.start log; no errors visible. Impacts journey J100 (auth-login) and indirectly every protected route for MFA-enabled employees.",
+  "journey_refs": [
+    "J100"
+  ],
+  "screen_route": "—",
+  "endpoint": "—",
+  "tables": [],
+  "depends_on": [
+    "P03-S02-T004"
+  ],
+  "conflict_groups": [
+    "front:auth"
+  ],
+  "write_set": [
+    "frontend/src/pages/auth/TwoFactorPage.tsx",
+    "frontend/src/pages/auth/__tests__/TwoFactorPage.test.tsx",
+    "frontend/src/app/router.tsx",
+    "frontend/src/features/auth/presentation/useVerifyMfa.ts"
+  ],
+  "acceptance": [
+    "(1) /auth/2fa route exists and renders TwoFactorPage. (2) TwoFactorPage receives mfa_challenge_token via router state",
+    "renders TOTP 6-digit input + submit",
+    "calls POST /api/v1/auth/2fa/verify",
+    "on 200 obtains access_token and triggers signInAccepted → navigates to ?next= or /chat. (3) Error states (invalid TOTP",
+    "expired challenge token",
+    "network) covered. (4) Tests: useVerifyMfa hook + TwoFactorPage with 5 UX states + integration via SignInPage→TwoFactorPage redirect with router state. (5) Real-user e2e via Chrome MCP with employee.verification@inditex-sandbox.com TOTP secret JBSWY3DPEHPK3PXP completes sign-in to /chat."
+  ],
+  "verify": [
+    "/verify-slice on the new task — real Chrome MCP human flow: sign-in with employee.verification@inditex-sandbox.com + VerifyPass2024! → /auth/2fa loads → introduce TOTP from pyotp.TOTP('JBSWY3DPEHPK3PXP').now() → POST /api/v1/auth/2fa/verify → 200 → access_token issued → redirect to /chat. Marginal: wrong TOTP → user-facing error + retry",
+    "expired challenge token (after 5min) → fallback to sign-in."
+  ],
+  "notes": [],
+  "triage": {
+    "scope_classification": "missing_coverage",
+    "why_not_debugger": "Out of scope for T004. T004 write_set = 'frontend/src/pages/chat/AccountPage.tsx, frontend/src/features/user/**' (predeclared drifts: router.tsx§D-T004-ROUTER /account only, i18n/index.ts§D-T004-I18N-EXTEND, locales/account.json§D-T004-I18N-BUNDLE). The defect requires NEW component frontend/src/pages/auth/TwoFactorPage.tsx and NEW Route entry for /auth/2fa in router.tsx (different anchor), plus an MFA-verify presentation hook. None of those are in T004 write_set; debugger inside T004 cannot fix this without expanding scope beyond pages/chat + features/user. Belongs to a revise-slice on P03-S01-T001 or a new task.",
+    "decision": "followup_only_when_outside_current_slice",
+    "debugger_path": "in_scope_defects_use_validator_tester_debugger_retest",
+    "warnings": []
+  },
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260514142939-mfa-flow-incomplete-missing-auth-2fa-route-and-t.yaml",
+  "promoted_at": "2026-05-14T14:53:33+00:00",
+  "promoted_task_id": "P03-S02-T006",
+  "source_doc_updated": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md"
+}

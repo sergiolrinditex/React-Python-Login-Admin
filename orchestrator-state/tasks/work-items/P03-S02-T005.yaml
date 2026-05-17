@@ -2,7 +2,7 @@ id: P03-S02-T005
 phase_id: P03
 step_id: P03-S02
 title: "Composer over-limit: usar copy i18n dedicado en vez de reusar placeholder"
-status: ready
+status: done
 kind: "ux"
 target: "Composer over-limit: usar copy i18n dedicado en vez de reusar placeholder"
 product_increment: "current"
@@ -17,13 +17,9 @@ tables:
 depends_on:
   - P03-S02-T001
 acceptance:
-  - "Escribir >4000 chars en Composer dispara inline alert (role=alert"
-  - "aria-live=assertive) cuyo texto proviene de una i18n key dedicada (e.g. chat.errors.tooLong) y NO reusa el placeholder. Tres locales (es"
-  - "en"
-  - "fr) traducen la key. Composer.tsx referencia la nueva key en vez del placeholder."
+  - "Escribir >4000 chars en Composer dispara inline alert (role=alert, aria-live=assertive) cuyo texto proviene de una i18n key dedicada (e.g. chat.errors.tooLong) y NO reusa el placeholder. Tres locales (es, en, fr) traducen la key. Composer.tsx referencia la nueva key en vez del placeholder."
 verification_commands:
-  - "En Chrome /chat"
-  - "escribir 4001 chars en composer + click Enviar → alert text es el i18n dedicado (no el placeholder). Cambiar locale a en y fr y reproducir → texto traducido. Tests vitest de Composer cubren el nuevo copy. Design tokens enforcer sigue verde."
+  - "En Chrome /chat, escribir 4001 chars en composer + click Enviar → alert text es el i18n dedicado (no el placeholder). Cambiar locale a en y fr y reproducir → texto traducido. Tests vitest de Composer cubren el nuevo copy. Design tokens enforcer sigue verde."
 allowed_paths:
   - "frontend/src/features/chat/presentation/Composer.tsx"
   - "frontend/public/locales/es/chat.json"
@@ -40,4 +36,5 @@ write_set:
   - "frontend/src/i18n/index.ts"
 handoff_path: orchestrator-state/tasks/handoffs/P03-S02-T005.md
 evidence_dir: orchestrator-state/tasks/evidence/P03-S02-T005
-source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry"
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime follow-up P03-S02-T001"
+source_fingerprint: "bf97c347e1e498d1edc893cdf9a6abdabe721e837490870a48112b17f31ddb2e"

@@ -1,0 +1,37 @@
+id: P00-S01-T006
+phase_id: P00
+step_id: P00-S01
+title: "Sync LITELLM_MASTER_KEY between .env.example and verification fixture"
+status: done
+kind: "wiring"
+target: "Sync LITELLM_MASTER_KEY between .env.example and verification fixture"
+product_increment: "current"
+build_state: "planned"
+risk_level: "medium"
+verify_mode: "human"
+route: ""
+endpoint: ""
+journey_refs:
+tables:
+depends_on:
+  - P00-S01-T001
+acceptance:
+  - "After cp .env.example .env (sin editar manualmente), docker compose up litellm + backend smoke chat works without 401 from proxy. .env.example value matches credential_plain in active fixture. TECHNICAL_GUIDE §11.1 row LITELLM_MASTER_KEY notes the matching requirement explicitly."
+verification_commands:
+  - "Reset .env from .env.example, restart litellm + backend, run smoke curl POST /chat/completions with master key. Expect HTTP 200 not 401."
+allowed_paths:
+  - ".env.example"
+  - "docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md"
+conflict_groups:
+  - "config:env-template"
+  - "infra:env"
+write_set:
+  - ".env.example"
+  - "docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md"
+scope_inferred_from_acceptance:
+  - ".env.example"
+  - "infra:env"
+handoff_path: orchestrator-state/tasks/handoffs/P00-S01-T006.md
+evidence_dir: orchestrator-state/tasks/evidence/P00-S01-T006
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime follow-up P00-S01-T001"
+source_fingerprint: "e0fe0997ba6e59f59d496e293dc14c5efcefffc3d77dc81c52bd95e6759a86e3"

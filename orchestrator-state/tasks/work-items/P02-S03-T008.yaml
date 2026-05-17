@@ -2,7 +2,7 @@ id: P02-S03-T008
 phase_id: P02
 step_id: P02-S03
 title: "complete_chat.py uses non-existent SDK provider 'litellm/<model>' (same as P02-S03-T006)"
-status: ready
+status: done
 kind: "bug"
 target: "complete_chat.py uses non-existent SDK provider 'litellm/<model>' (same as P02-S03-T006)"
 product_increment: "current"
@@ -17,11 +17,9 @@ tables:
 depends_on:
   - P02-S03-T006
 acceptance:
-  - "complete_chat.py imports and uses _compose_sdk_model_args from litellm_client (or relocated to a shared module)"
-  - "unit test verifies provider_type='litellm' produces model='openai/<model_id>' + api_base=provider.base_url"
+  - "complete_chat.py imports and uses _compose_sdk_model_args from litellm_client (or relocated to a shared module), unit test verifies provider_type='litellm' produces model='openai/<model_id>' + api_base=provider.base_url"
 verification_commands:
-  - "POST /api/v1/admin/ai/models/{id}/test against seeded litellm provider returns 200 with usage"
-  - "no BadRequestError in back.log"
+  - "POST /api/v1/admin/ai/models/{id}/test against seeded litellm provider returns 200 with usage, no BadRequestError in back.log"
 allowed_paths:
   - "backend/app/llm_gateway/complete_chat.py"
   - "backend/tests/unit/test_llm_gateway_complete_chat.py"
@@ -32,4 +30,5 @@ write_set:
   - "backend/tests/unit/test_llm_gateway_complete_chat.py"
 handoff_path: orchestrator-state/tasks/handoffs/P02-S03-T008.md
 evidence_dir: orchestrator-state/tasks/evidence/P02-S03-T008
-source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry"
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime follow-up P02-S03-T006"
+source_fingerprint: "c9b155a79c860790b00d31218bebde0a8321e01caed23485d010a895c5fdcfee"

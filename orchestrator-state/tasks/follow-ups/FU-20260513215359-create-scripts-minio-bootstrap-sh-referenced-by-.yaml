@@ -1,7 +1,7 @@
 {
   "id": "FU-20260513215359-create-scripts-minio-bootstrap-sh-referenced-by-",
   "schema_version": 1,
-  "status": "promoted",
+  "status": "waived",
   "created_at": "2026-05-13T21:53:59+00:00",
   "created_by": "sergiolr",
   "origin_task_id": "P02-S06-T001",
@@ -14,8 +14,8 @@
   "title": "Create scripts/minio-bootstrap.sh referenced by docker-compose minio-init",
   "description": "docker-compose.yml declares a one-shot sidecar service 'minio-init' (image: minio/mc:latest, entrypoint /bin/sh /scripts/minio-bootstrap.sh, depends_on: minio service_healthy, restart: no) with a bind-mount of ./scripts/minio-bootstrap.sh:/scripts/minio-bootstrap.sh:ro. The script file does NOT exist in the repo. Consequence: on first boot of a clean repo (after dev-restart --reset which does docker compose down -v --remove-orphans destroying the minio_data volume), the bucket S3_BUCKET_DOCUMENTS=hilo-docs-dev is never created. P02-S06-T001 (RAG document upload endpoint) silently fails the boto3 put_object on first call because the bucket is missing; current tests only pass because someone created the bucket manually after first boot. This FU closes that gap by adding the POSIX-sh sidecar script. No source-of-truth changes to docker-compose or .env needed (compose contract is already correct). Single-file write set.",
   "journey_refs": [],
-  "screen_route": "—",
-  "endpoint": "—",
+  "screen_route": "\u2014",
+  "endpoint": "\u2014",
   "tables": [],
   "depends_on": [
     "P02-S06-T001"
@@ -57,5 +57,8 @@
   "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260513215359-create-scripts-minio-bootstrap-sh-referenced-by-.yaml",
   "promoted_at": "2026-05-14T04:01:29+00:00",
   "promoted_task_id": "P02-S06-T004",
-  "source_doc_updated": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md"
+  "source_doc_updated": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md",
+  "waive_reason": "duplicate of P02-S06-T003 (FU-20260513204522); same FU promoted twice by mistake",
+  "waived_at": "2026-05-15T13:50:00+00:00",
+  "waived_by": "main-orchestrator/maintenance"
 }

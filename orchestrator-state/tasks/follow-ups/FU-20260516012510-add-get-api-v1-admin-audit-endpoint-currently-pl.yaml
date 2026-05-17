@@ -1,0 +1,67 @@
+{
+  "id": "FU-20260516012510-add-get-api-v1-admin-audit-endpoint-currently-pl",
+  "schema_version": 1,
+  "status": "promoted",
+  "created_at": "2026-05-16T01:25:10+00:00",
+  "created_by": "sergiolr",
+  "origin_task_id": "P04-S03-T001",
+  "origin_phase_id": "P04",
+  "origin_step_id": "S03",
+  "kind": "wiring",
+  "product_increment": "v1",
+  "build_state": "planned",
+  "severity": "high",
+  "title": "Add GET /api/v1/admin/audit endpoint (currently planned in P05-S02-T001) to unblock P04-S03-T001 AuditLogPage",
+  "description": "Discovered during /next-slice P04-S03-T001 (Phase 4) preflight: the frontend AuditLogPage.tsx page consumes GET /api/v1/admin/audit, but no admin/audit router is wired in backend/app/main.py and the endpoint is planned only for P05-S02-T001 (Phase 5 — release/hardening). The DAG row for P04-S03-T001 declares deps only on P01-S02-T007 (users/me + language) and P00-S01-T004 (design tokens), so the task is technically 'ready' but its real success path is not verifiable end-to-end with real data until the backend endpoint exists. The audit_logs table itself exists since migration 0001 with real rows from auth events (sign-up, sign-in, refresh). Either advance the endpoint as its own slice, split P05-S02-T001's audit-endpoint subset out of the security_headers/rate_limit hardening, or add explicit dep P05-S02-T001 -> P04-S03-T001 in the Coverage Registry. This FU does not block parallel P04 work on screens that do not depend on audit endpoints.",
+  "journey_refs": [
+    "J103"
+  ],
+  "screen_route": "/admin/audit",
+  "endpoint": "GET /api/v1/admin/audit",
+  "tables": [
+    "audit_logs"
+  ],
+  "depends_on": [
+    "P04-S03-T001"
+  ],
+  "conflict_groups": [
+    "admin-audit-backend"
+  ],
+  "write_set": [
+    "backend/app/admin/audit/**",
+    "backend/app/main.py",
+    "backend/tests/integration/test_audit_endpoint.py"
+  ],
+  "acceptance": [
+    "Backend module backend/app/admin/audit/{router",
+    "service",
+    "repository",
+    "schemas",
+    "audit}.py exists",
+    "exposes GET /api/v1/admin/audit with cursor pagination",
+    "filters from/to/actor/action",
+    "returns 403 for non-auditor JWT",
+    "200 with paginated AuditLog rows for auditor JWT",
+    "real audit_logs rows are surfaced (no mocks)",
+    "and backend/tests/integration/test_audit_endpoint.py covers auditor success + non-auditor 403 + filter combinations under both ENABLE_VERBOSE_LOGGING modes."
+  ],
+  "verify": [
+    "curl -H 'Authorization: Bearer <auditor JWT>' http://localhost:8000/api/v1/admin/audit?from=2026-05-01&to=2026-05-31 returns 200 with real audit_logs rows. curl with non-auditor JWT returns 403. pytest backend/tests/integration -k audit passes 100% both verbose modes."
+  ],
+  "notes": [
+    "Discovered by main-orchestrator during /next-slice P04-S03-T001 paso 4 preflight on 2026-05-16. User chose Option B (block and re-prioritize) over Option A (front-only with deferred success state) and Option C (expand write_set to frontend+api in same slice). Promotion path: human runs /promote-followup <FU_ID> from a clean main-orchestrator terminal (CLAUDE_ACTIVE_TASK_ID unset). Alternative path: edit docs/source-of-truth/*_IMPLEMENTATION_CHECKLIST.md to either split P05-S02-T001 into endpoint-first + hardening-second rows",
+    "or add P05-S02-T001 to the depends_on column of P04-S03-T001 row 56",
+    "then rerun python3 -B -S .claude/bin/bootstrap_source_of_truth.py --refresh and ./scripts/check-task-dag.sh --strict."
+  ],
+  "triage": {
+    "scope_classification": "missing_coverage",
+    "why_not_debugger": "Out of scope of P04-S03-T001 frontend write_set. The missing artifact is a backend module (backend/app/admin/audit/**) and a new include_router in main.py. Adding it inside P04-S03-T001 would require expanding the 'frontend' slice into 'frontend+api', invalidating the slice's declared layer in the Coverage Registry and DAG. Debugger/retest cannot conjure a backend endpoint that does not exist in the source-of-truth scope for this TASK_ID.",
+    "decision": "followup_only_when_outside_current_slice",
+    "debugger_path": "in_scope_defects_use_validator_tester_debugger_retest",
+    "warnings": []
+  },
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260516012510-add-get-api-v1-admin-audit-endpoint-currently-pl.yaml",
+  "promoted_at": "2026-05-16T08:44:52+00:00",
+  "promoted_task_id": "P04-S03-T003",
+  "source_doc_updated": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md"
+}

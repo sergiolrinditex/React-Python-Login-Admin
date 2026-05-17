@@ -1,0 +1,62 @@
+{
+  "id": "FU-20260516044404-backend-mcp-sync-returns-500-instead-of-502-for-",
+  "schema_version": 1,
+  "status": "promoted",
+  "created_at": "2026-05-16T04:44:04+00:00",
+  "created_by": "sergiolr",
+  "origin_task_id": "P04-S02-T003",
+  "origin_phase_id": "P04",
+  "origin_step_id": "P04-S02",
+  "kind": "bug",
+  "product_increment": "current",
+  "build_state": "planned",
+  "severity": "medium",
+  "title": "Backend MCP sync returns 500 instead of 502 for unreachable MCP server",
+  "description": "TECHNICAL_GUIDE §6.2 declares POST /api/v1/admin/ai/mcp/servers/{id}/sync error codes 401,403,404,502 — where 502 is the contract for MCP server unreachable. The current backend implementation returns HTTP 500 with errors[0].code=INTERNAL_ERROR for the same condition (verified runtime: sandbox MCP at :8080 is intentionally down; POST sync returns 500 not 502). DEVIATION-BACKEND-502 was pre-disclosed by the frontend developer and the frontend handles 500 gracefully via mapMcpError → McpServerError → errors:sync_internal. The fix is to surface 502 with errors[0].code=MCP_SERVER_UNREACHABLE per the published contract.",
+  "journey_refs": [
+    "J105"
+  ],
+  "screen_route": "/admin/ai/mcp",
+  "endpoint": "POST /api/v1/admin/ai/mcp/servers/{id}/sync",
+  "tables": [
+    "mcp_servers"
+  ],
+  "depends_on": [
+    "P04-S02-T003"
+  ],
+  "conflict_groups": [
+    "front:mcp"
+  ],
+  "write_set": [
+    "backend/app/api/admin/ai/mcp/**",
+    "backend/tests/api/admin/ai/mcp/**"
+  ],
+  "acceptance": [
+    "POST /api/v1/admin/ai/mcp/servers/{id}/sync against an unreachable MCP endpoint returns HTTP 502 with envelope {data:null",
+    "meta:{request_id}",
+    "errors:[{code:MCP_SERVER_UNREACHABLE",
+    "message:...",
+    "field:null",
+    "details:null}]}",
+    "existing 200 success path unaffected",
+    "existing 401/403/404 mappings unaffected."
+  ],
+  "verify": [
+    "/verify-slice P04-S02-T003 sandbox row → click Sync → observe HTTP 502 + code=MCP_SERVER_UNREACHABLE in network panel",
+    "frontend renders errors:MCP_SERVER_UNREACHABLE inline (already wired since this slice). Backend integration test covers 502 path with a stub MCP server that closes the connection."
+  ],
+  "notes": [
+    "Discovered by /verify-slice P04-S02-T003 (slice-verifier + screen-journey-reviewer approved with this FU). Frontend slice does NOT need re-verify after backend fix — only the inline error string switches from sync_internal to MCP_SERVER_UNREACHABLE i18n key which already exists in frontend code."
+  ],
+  "triage": {
+    "scope_classification": "out_of_scope",
+    "why_not_debugger": "Backend code fix in app/api/admin/ai/mcp module — outside frontend slice (P04-S02-T003) write_set (frontend/src/**). Frontend already maps the backend HTTP 500 to errors:sync_internal i18n key and renders inline error gracefully — verified runtime in /verify-slice Flow 3 (evidence verify-05-sync-error.png + verify-network.network-response showing code=INTERNAL_ERROR). Debugger inside this slice cannot fix backend.",
+    "decision": "followup_only_when_outside_current_slice",
+    "debugger_path": "in_scope_defects_use_validator_tester_debugger_retest",
+    "warnings": []
+  },
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260516044404-backend-mcp-sync-returns-500-instead-of-502-for-.yaml",
+  "promoted_at": "2026-05-16T08:44:56+00:00",
+  "promoted_task_id": "P04-S02-T006",
+  "source_doc_updated": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md"
+}

@@ -2,7 +2,7 @@ id: P02-S03-T005
 phase_id: P02
 step_id: P02-S03
 title: "Fix /ready 500 — _ping_db uses sync engine.connect() on async asyncpg engine"
-status: blocked
+status: done
 kind: "bug"
 target: "Fix /ready 500 — _ping_db uses sync engine.connect() on async asyncpg engine"
 product_increment: "current"

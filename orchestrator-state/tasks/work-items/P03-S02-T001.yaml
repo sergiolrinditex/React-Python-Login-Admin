@@ -2,7 +2,7 @@ id: P03-S02-T001
 phase_id: P03
 step_id: P03-S02
 title: "ChatHomePage"
-status: ready
+status: done
 kind: "frontend"
 target: "ChatHomePage"
 product_increment: "v1"

@@ -1,6 +1,6 @@
 # Architecture contract
 
-- Generated at: 2026-05-14T04:03:33+00:00
+- Generated at: 2026-05-17T11:27:34+00:00
 - Source: `docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md`
 
 ## Structural headings
@@ -50,6 +50,7 @@
 - Toda pantalla frontend debe:
 - El handoff de cada slice frontend debe incluir:
 - CONSTRAINT users_language_chk CHECK (preferred_language IN ('es','en','fr'))
+- | `LITELLM_MASTER_KEY` | dev key | secret | secret | bearer que el backend envía al proxy LiteLLM; debe coincidir con `credential_plain` del fixture activo en `data/verification/admin_ai/credentials/*.json` |
 - - SSE / streaming (P02-S04 `POST /api/v1/chat/conversations/{id}/stream`) debe verificarse explícitamente a través del proxy cuando aterrice; vite preserva chunked transfer por defecto.
 
 ## Operating note

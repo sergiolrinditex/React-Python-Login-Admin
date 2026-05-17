@@ -1,0 +1,38 @@
+id: P04-S03-T003
+phase_id: P04
+step_id: P04-S03
+title: "Add GET /api/v1/admin/audit endpoint (currently planned in P05-S02-T001) to unblock P04-S03-T001 AuditLogPage"
+status: ready
+kind: "wiring"
+target: "Add GET /api/v1/admin/audit endpoint (currently planned in P05-S02-T001) to unblock P04-S03-T001 AuditLogPage"
+product_increment: "v1"
+build_state: "planned"
+risk_level: "high"
+verify_mode: "human"
+route: "/admin/audit"
+endpoint: "GET /api/v1/admin/audit"
+journey_refs:
+  - "J103"
+tables:
+  - "audit_logs"
+depends_on:
+  - P01-S02-T007
+  - P00-S01-T003
+acceptance:
+  - "Backend module backend/app/admin/audit/{router, service, repository, schemas, audit}.py exists, exposes GET /api/v1/admin/audit with cursor pagination, filters from/to/actor/action, returns 403 for non-auditor JWT, 200 with paginated AuditLog rows for auditor JWT, real audit_logs rows are surfaced (no mocks), and backend/tests/integration/test_audit_endpoint.py covers auditor success + non-auditor 403 + filter combinations under both ENABLE_VERBOSE_LOGGING modes."
+verification_commands:
+  - "curl -H 'Authorization: Bearer <auditor JWT>' http://localhost:8000/api/v1/admin/audit?from=2026-05-01&to=2026-05-31 returns 200 with real audit_logs rows. curl with non-auditor JWT returns 403. pytest backend/tests/integration -k audit passes 100% both verbose modes."
+allowed_paths:
+  - "backend/app/admin/audit/**"
+  - "backend/app/main.py"
+  - "backend/tests/integration/test_audit_endpoint.py"
+conflict_groups:
+  - "admin-audit-backend"
+write_set:
+  - "backend/app/admin/audit/**"
+  - "backend/app/main.py"
+  - "backend/tests/integration/test_audit_endpoint.py"
+handoff_path: orchestrator-state/tasks/handoffs/P04-S03-T003.md
+evidence_dir: orchestrator-state/tasks/evidence/P04-S03-T003
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime follow-up P04-S03-T001"
+source_fingerprint: "144e5318d1916c21e86add000ab3b8df34a3e37222695b4d75f119ba03bf385b"

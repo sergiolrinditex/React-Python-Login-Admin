@@ -2,7 +2,7 @@ id: P04-S03-T001
 phase_id: P04
 step_id: P04-S03
 title: "AuditLogPage"
-status: ready
+status: blocked
 kind: "frontend"
 target: "AuditLogPage"
 product_increment: "v1"
@@ -20,6 +20,7 @@ tables:
 depends_on:
   - P01-S02-T007
   - P00-S01-T004
+  - P04-S03-T003
 acceptance:
   - "Audit table filters events and handles empty/permission states"
   - "VISUAL_CONTRACT_CHECK documents tokens, components, required states, real data/backend and visual evidence"
@@ -34,4 +35,4 @@ write_set:
 handoff_path: orchestrator-state/tasks/handoffs/P04-S03-T001.md
 evidence_dir: orchestrator-state/tasks/evidence/P04-S03-T001
 source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Step 4.3 — Audit and usage"
-source_fingerprint: "a71eec54a8b810e2bef984e4974658498830e419ac4b3e58ce35e31c269410e8"
+source_fingerprint: "391d1dbbefe703fd80c1a0dfc4fd3170a18fd811fb02236a736afc9d12127a39"

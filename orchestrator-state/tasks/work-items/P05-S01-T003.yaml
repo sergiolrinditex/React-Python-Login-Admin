@@ -2,7 +2,7 @@ id: P05-S01-T003
 phase_id: P05
 step_id: P05-S01
 title: "J102 history language e2e"
-status: blocked
+status: ready
 kind: "journey"
 target: "J102 history language e2e"
 product_increment: "v1"

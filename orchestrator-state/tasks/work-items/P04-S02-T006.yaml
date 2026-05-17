@@ -1,0 +1,35 @@
+id: P04-S02-T006
+phase_id: P04
+step_id: P04-S02
+title: "Backend MCP sync returns 500 instead of 502 for unreachable MCP server"
+status: done
+kind: "bug"
+target: "Backend MCP sync returns 500 instead of 502 for unreachable MCP server"
+product_increment: "current"
+build_state: "planned"
+risk_level: "medium"
+verify_mode: "human"
+route: "/admin/ai/mcp"
+endpoint: "POST /api/v1/admin/ai/mcp/servers/{id}/sync"
+journey_refs:
+  - "J105"
+tables:
+  - "mcp_servers"
+depends_on:
+  - P04-S02-T003
+acceptance:
+  - "POST /api/v1/admin/ai/mcp/servers/{id}/sync against an unreachable MCP endpoint returns HTTP 502 with envelope {data:null, meta:{request_id}, errors:[{code:MCP_SERVER_UNREACHABLE, message:..., field:null, details:null}]}, existing 200 success path unaffected, existing 401/403/404 mappings unaffected."
+verification_commands:
+  - "/verify-slice P04-S02-T003 sandbox row → click Sync → observe HTTP 502 + code=MCP_SERVER_UNREACHABLE in network panel, frontend renders errors:MCP_SERVER_UNREACHABLE inline (already wired since this slice). Backend integration test covers 502 path with a stub MCP server that closes the connection."
+allowed_paths:
+  - "backend/app/api/admin/ai/mcp/**"
+  - "backend/tests/api/admin/ai/mcp/**"
+conflict_groups:
+  - "front:mcp"
+write_set:
+  - "backend/app/api/admin/ai/mcp/**"
+  - "backend/tests/api/admin/ai/mcp/**"
+handoff_path: orchestrator-state/tasks/handoffs/P04-S02-T006.md
+evidence_dir: orchestrator-state/tasks/evidence/P04-S02-T006
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime follow-up P04-S02-T003"
+source_fingerprint: "3392aec5a8fb94eab1cedbbfc1407b67863cbc5dafe36f5a9d43461242568ce8"

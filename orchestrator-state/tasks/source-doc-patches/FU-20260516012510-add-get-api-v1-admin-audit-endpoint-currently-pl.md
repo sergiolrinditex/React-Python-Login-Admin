@@ -1,0 +1,7 @@
+# Source-of-truth amendment — FU-20260516012510-add-get-api-v1-admin-audit-endpoint-currently-pl
+
+Appended to `docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md`:
+
+```md
+| P04-S03-T003 | wiring | Add GET /api/v1/admin/audit endpoint (currently planned in P05-S02-T001) to unblock P04-S03-T001 AuditLogPage | Runtime follow-up P04-S03-T001 | v1 | planned | high | human | P04-S03-T001 | admin-audit-backend | backend/app/admin/audit/**, backend/app/main.py, backend/tests/integration/test_audit_endpoint.py | J103 | /admin/audit | GET /api/v1/admin/audit | audit_logs | runtime-followup#FU-20260516012510-add-get-api-v1-admin-audit-endpoint-currently-pl | runtime-followup#FU-20260516012510-add-get-api-v1-admin-audit-endpoint-currently-pl | Backend module backend/app/admin/audit/{router, service, repository, schemas, audit}.py exists, exposes GET /api/v1/admin/audit with cursor pagination, filters from/to/actor/action, returns 403 for non-auditor JWT, 200 with paginated AuditLog rows for auditor JWT, real audit_logs rows are surfaced (no mocks), and backend/tests/integration/test_audit_endpoint.py covers auditor success + non-auditor 403 + filter combinations under both ENABLE_VERBOSE_LOGGING modes. | curl -H 'Authorization: Bearer <auditor JWT>' http://localhost:8000/api/v1/admin/audit?from=2026-05-01&to=2026-05-31 returns 200 with real audit_logs rows. curl with non-auditor JWT returns 403. pytest backend/tests/integration -k audit passes 100% both verbose modes. |
+```

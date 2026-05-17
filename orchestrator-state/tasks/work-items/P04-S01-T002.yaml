@@ -2,7 +2,7 @@ id: P04-S01-T002
 phase_id: P04
 step_id: P04-S01
 title: "AdminAiModelsPage"
-status: blocked
+status: ready_for_close
 kind: "frontend"
 target: "AdminAiModelsPage"
 product_increment: "v1"

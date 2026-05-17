@@ -2,7 +2,7 @@ id: P04-S02-T002
 phase_id: P04
 step_id: P04-S02
 title: "RagCollectionsPage"
-status: blocked
+status: ready_for_close
 kind: "frontend"
 target: "RagCollectionsPage"
 product_increment: "v1"

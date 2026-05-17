@@ -2,7 +2,7 @@ id: P03-S01-T006
 phase_id: P03
 step_id: P03-S01
 title: "Single-flight refresh para evitar 401 por rotación bajo StrictMode/concurrencia"
-status: ready
+status: done
 kind: "bug"
 target: "Single-flight refresh para evitar 401 por rotación bajo StrictMode/concurrencia"
 product_increment: "current"
@@ -20,8 +20,7 @@ depends_on:
 acceptance:
   - "Two consecutive AuthProvider mounts under StrictMode (or any two concurrent callers of authRepository.refresh) produce exactly ONE network POST /api/v1/auth/refresh (single-flight/inflight-dedupe). No 401 from /auth/refresh on a valid session. Multi-tab opening /chat in a second tab does not invalidate the first."
 verification_commands:
-  - "Hard reset + login con MFA real (employee.verification@inditex-sandbox.com). En DevTools Network: recargar /chat 5 veces seguidas — exactamente 1 POST /api/v1/auth/refresh por recarga"
-  - "todas 200. Abrir 2ª pestaña a /chat: ambas siguen autenticadas. Repetir con StrictMode activo (vite dev) y con prod build. Cubre J100 al confirmar que el bootstrap aguanta carreras."
+  - "Hard reset + login con MFA real (employee.verification@inditex-sandbox.com). En DevTools Network: recargar /chat 5 veces seguidas — exactamente 1 POST /api/v1/auth/refresh por recarga, todas 200. Abrir 2ª pestaña a /chat: ambas siguen autenticadas. Repetir con StrictMode activo (vite dev) y con prod build. Cubre J100 al confirmar que el bootstrap aguanta carreras."
 allowed_paths:
   - "frontend/src/features/auth/data/authRepository.ts"
   - "frontend/src/features/auth/presentation/AuthProvider.tsx"
@@ -32,4 +31,5 @@ write_set:
   - "frontend/src/features/auth/presentation/AuthProvider.tsx"
 handoff_path: orchestrator-state/tasks/handoffs/P03-S01-T006.md
 evidence_dir: orchestrator-state/tasks/evidence/P03-S01-T006
-source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry"
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime follow-up P03-S02-T001"
+source_fingerprint: "619665f1b120d7a73cfaf63d8fa871b60fd91193e680302eb6dbac01de6cd715"

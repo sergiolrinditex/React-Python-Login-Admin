@@ -2,7 +2,7 @@ id: P03-S01-T003
 phase_id: P03
 step_id: P03-S01
 title: "ForgotPasswordPage"
-status: ready
+status: done
 kind: "frontend"
 target: "ForgotPasswordPage"
 product_increment: "v1"

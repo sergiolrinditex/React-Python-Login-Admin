@@ -2,7 +2,7 @@ id: P02-S03-T004
 phase_id: P02
 step_id: P02-S03
 title: "Rotate ENCRYPTION_KEY in dev .env + seed active AI provider with encrypted credentials"
-status: blocked
+status: done
 kind: "data"
 target: "Rotate ENCRYPTION_KEY in dev .env + seed active AI provider with encrypted credentials"
 product_increment: "current"

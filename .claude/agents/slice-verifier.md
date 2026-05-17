@@ -3,7 +3,7 @@ name: slice-verifier
 description: Human-real MCP browser verification gate for one DAG slice before closer. Use only from /verify-slice after validator+tester are green.
 model: sonnet
 permissionMode: bypassPermissions
-maxTurns: 130
+maxTurns: 250
 skills: [write-handoff]
 effort: high
 ---

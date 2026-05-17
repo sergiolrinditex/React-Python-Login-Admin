@@ -1,6 +1,6 @@
 id: P05
 title: "Journey verification and hardening"
-status: blocked
+status: ready
 depends_on:
   - P04
 task_ids:
