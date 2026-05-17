@@ -1,0 +1,49 @@
+=== DB STATE VERIFICATION — 2026-05-17T22:37:27Z ===
+
+--- alembic_version ---
+ version_num 
+-------------
+ 0003
+(1 fila)
+
+
+--- Required tables present ---
+       table_name        
+-------------------------
+ ai_models
+ ai_provider_credentials
+ ai_providers
+ audit_logs
+ roles
+ user_roles
+ users
+(7 filas)
+
+
+--- ai_providers count and summary ---
+                  id                  |             name             | provider_type | status 
+--------------------------------------+------------------------------+---------------+--------
+ e3542c34-1c63-4520-ae07-c79906079610 | litellm_verification_sandbox | litellm       | active
+(1 fila)
+
+
+--- ai_models count ---
+ model_count 
+-------------
+           1
+(1 fila)
+
+
+--- audit_logs count (verify audit records) ---
+ audit_count 
+-------------
+         682
+(1 fila)
+
+
+--- ai_provider_credentials (no secret_plain exposure) ---
+                  id                  |             provider_id              | auth_type |        encrypted_secret        
+--------------------------------------+--------------------------------------+-----------+--------------------------------
+ b78798c7-dd20-4d65-a482-9a53ff40333d | e3542c34-1c63-4520-ae07-c79906079610 | bearer    | PRESENT (encrypted, not shown)
+(1 fila)
+

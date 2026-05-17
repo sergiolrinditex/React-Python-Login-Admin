@@ -1,0 +1,47 @@
+{
+  "id": "FU-20260517224235-fix-test-mcp-registry-py-test-t06-failing-with-c",
+  "schema_version": 1,
+  "status": "proposed",
+  "created_at": "2026-05-17T22:42:35+00:00",
+  "created_by": "sergiolr",
+  "origin_task_id": "P04-S01-T007",
+  "origin_phase_id": "P04",
+  "origin_step_id": "P04-S01",
+  "kind": "bug",
+  "product_increment": "current",
+  "build_state": "planned",
+  "severity": "medium",
+  "title": "Fix test_mcp_registry.py::test_T06 failing with cryptography.fernet.InvalidToken (pre-existing, out-of-scope)",
+  "description": "test_T06_post_server_api_key_fernet_roundtrip in backend/tests/integration/test_mcp_registry.py fails with cryptography.fernet.InvalidToken. Pre-existing failure unrelated to admin-ai write_set. Surfaced during P04-S01-T007 tester pass (full-suite run). Likely root cause: stale Fernet token in test fixture/seed that was encrypted with the pre-rotation ENCRYPTION_KEY; P02-S03-T004 rotated the key but only refreshed admin_ai seed data, not mcp_registry test fixtures. Possibly also a fixture key-generation mismatch in tests/integration/test_mcp_registry.py setup.",
+  "journey_refs": [],
+  "screen_route": "—",
+  "endpoint": "—",
+  "tables": [],
+  "depends_on": [
+    "P04-S01-T007"
+  ],
+  "conflict_groups": [
+    "mcp:registry-tests"
+  ],
+  "write_set": [
+    "backend/tests/integration/test_mcp_registry.py",
+    "backend/app/security/encryption.py"
+  ],
+  "acceptance": [
+    "pytest backend/tests/integration/test_mcp_registry.py -k test_T06 returns PASSED with current ENCRYPTION_KEY."
+  ],
+  "verify": [
+    "pytest backend/tests/integration/test_mcp_registry.py -v -k test_T06 confirms PASSED",
+    "full-file run shows no fernet.InvalidToken."
+  ],
+  "notes": [],
+  "triage": {
+    "scope_classification": "out_of_scope",
+    "why_not_debugger": "backend/tests/integration/test_mcp_registry.py and the MCP registry product code are outside the write_set of P04-S01-T007 (which is backend/app/admin/providers/**, backend/app/admin/model_catalog/**, backend/tests/integration/test_admin_ai.py). Debugger cannot fix a test in a different module/feature surface. Related to P02-S03-T004 (ENCRYPTION_KEY rotation, status=done) but different surface: that FU fixed scripts/gen-dev-secrets.sh + admin_ai seed data; this failure is in MCP registry test fixture (likely stale Fernet token from pre-rotation key).",
+    "decision": "followup_only_when_outside_current_slice",
+    "debugger_path": "in_scope_defects_use_validator_tester_debugger_retest",
+    "warnings": []
+  },
+  "possible_duplicates": [],
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260517224235-fix-test-mcp-registry-py-test-t06-failing-with-c.yaml"
+}

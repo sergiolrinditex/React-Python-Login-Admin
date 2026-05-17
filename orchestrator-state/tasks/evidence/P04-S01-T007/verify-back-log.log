@@ -1,0 +1,26 @@
+=== BACKEND LIVE LOG CAPTURE — 2026-05-17T22:38:32Z ===
+
+Backend process: sergiolr         17821   0,0  0,0 411021504   4320   ??  SN    3:09PM   0:24.55 /Library/Frameworks/Python.framework/Versions/3.11/Resources/Python.app/Contents/MacOS/Python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+BEFORE/AFTER pattern verification: T23 (request_id propagation) confirmed by X-Request-ID roundtrip
+Response shows request_id echoed back in meta field:
+{
+    "data": [
+        {
+            "id": "e3542c34-1c63-4520-ae07-c79906079610",
+            "name": "litellm_verification_sandbox",
+            "provider_type": "litellm",
+            "base_url": "http://localhost:4000",
+            "status": "active",
+            "created_by": null,
+            "has_credentials": true,
+            "credential_auth_type": "bearer",
+            "expires_at": null
+        }
+    ],
+    "meta": {
+        "request_id": "verify-back-log-capture-T007"
+    }
+}
+
+Note: Backend running with --reload (stdout only); no back.log file present. T12 passes via caplog assertion in test suite.
