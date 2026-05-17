@@ -1,0 +1,32 @@
+# Verification Data Contract — P04-S01-T004
+
+## Contract Rows Used (from task pack §6.5 / Verification Data Contract J103)
+
+1. User: admin.peopletech@inditex-sandbox.com / AdminVerify2024! (roles: people_admin)
+   - File: data/verification/users/admin_peopletech.json
+   - Used for: sign-in → access_token → all authenticated curl checks
+
+2. Model: gemini-2.5-flash (model_type=chat, is_default=true)
+   - UUID observed: d2b1a84f-7b8a-49cd-b52b-4fc017797c12
+   - provider_id: e3542c34-1c63-4520-ae07-c79906079610
+   - File: data/verification/admin_ai/models/litellm_chat_default.json (via bootstrap)
+   - Used for: POST /models/{id}/test, PATCH /models/{id}, GET /models
+
+## Provided Verification Data Loaded
+- Sign-in credentials: admin.peopletech@inditex-sandbox.com / AdminVerify2024!
+- Model seed: gemini-2.5-flash already in DB from prior slice bootstrap (P04-S01-T003)
+
+## Persisted Data Observed
+
+### ai_model_tests (3 rows from tester runs)
+- status=failure, no output/latency/cost (expected — R2/LiteLLM compose bug P02-S03-T008)
+- prompt text stored in DB (NOT in logs — PII contract upheld for logging)
+- Rows created for each POST /test call, even on failure
+
+### ai_models (after PATCH)
+- gemini-2.5-flash: enabled=t, is_default=t (confirmed immediately after PATCH)
+- audit_logs: action=admin.ai.model.update, actor_user_id=ff459a63..., entity_id=d2b1a84f...
+
+### Note: ai_model_tests rows have status=failure due to R2 (LiteLLM compose bug)
+This is a known backend bug (P02-S03-T008), not a T004 defect.
+The frontend correctly handles 502 → AdminAiUpstreamError → model-test-error-upstream UI state.

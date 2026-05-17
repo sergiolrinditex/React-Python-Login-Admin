@@ -1,0 +1,35 @@
+# Front → Back → DB Contract Observed — P04-S01-T004
+
+## Route / Provider
+- Route: /admin/ai/models/:modelId/test (page component)
+- Auth guard: RequireRole(['people_admin','super_admin']) — observed: 401 returned for unauthenticated requests ✓
+- Auth provider: AuthProvider (useAuth) — admin token issued by POST /api/v1/auth/sign-in ✓
+
+## API Client / DTO
+- Endpoint observed: POST /api/v1/admin/ai/models/{id}/test
+  - Request: {prompt: "Di hola en una palabra"} → HTTP 502 (R2 known, P02-S03-T008)
+  - Response code: AI_PROVIDER_TEST_FAILED (502) — correctly mapped to AdminAiUpstreamError
+  - 401 without token: AUTH_SESSION_EXPIRED → guard working ✓
+- Endpoint observed: PATCH /api/v1/admin/ai/models/{id}
+  - Request: {enabled:true, is_default:true} → HTTP 200 ✓
+  - Response: {data: AiModel} with is_default=true ✓
+- Endpoint observed: GET /api/v1/admin/ai/models
+  - HTTP 200, returns model list with gemini-2.5-flash ✓
+
+## Repository
+- adminAiRepository.test-and-update.ts: testModel + updateModel ✓
+  - T27-T36 all passing (10 tests) ✓
+  - PII-clean: logs contain prompt_len/output_length only, never prompt/output content ✓
+
+## DB Tables
+- ai_model_tests: rows created on POST /test (even on 502 failure, status='failure') ✓
+- ai_models: PATCH → is_default=t, enabled=t in DB (confirmed immediately after PATCH) ✓
+- audit_logs: admin.ai.model.update action recorded with actor_user_id and entity_id ✓
+- No audit entry for model.test on failure (expected — backend records failure to ai_model_tests table)
+
+## Frontend Tests Coverage
+- useModelTest.test.tsx: U01-U10b (12 tests) — all passing ✓
+- ModelTestDrawer.test.tsx: D01-D08 (8 tests) — all passing ✓
+- adminAiRepository.test.ts: T27-T36 (10 new tests) — all passing ✓
+- i18n.test.ts: IT01-IT07 (7 tests) — passing in full suite ✓
+- Total targeted T004: 102/102 tests passing (7 test files)

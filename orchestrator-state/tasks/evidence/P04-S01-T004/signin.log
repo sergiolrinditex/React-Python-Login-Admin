@@ -1,0 +1,9 @@
+HTTP/1.1 200 OK
+date: Sun, 17 May 2026 22:17:15 GMT
+server: uvicorn
+x-request-id: 0c11e75e-33f2-47ab-aac3-3b13a4b4f07b
+content-length: 571
+content-type: application/json
+set-cookie: refresh_token=Ho316eRftqkHOjgGWAvuAxesge1XH4JdDCG0OOrVd-dzYtEO7CkARQc4MZBjEQDL; HttpOnly; Max-Age=2592000; Path=/api/v1/auth; SameSite=lax; Secure
+
+{"data":{"mfa_required":false,"access_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmZjQ1OWE2My0xM2ZmLTQ1ZjktODM0NS0zZDk3N2JmNzc0YzIiLCJlbWFpbCI6ImFkbWluLnBlb3BsZXRlY2hAaW5kaXRleC1zYW5kYm94LmNvbSIsInJvbGVzIjpbInBlb3BsZV9hZG1pbiJdLCJwcmVmZXJyZWRfbGFuZ3VhZ2UiOiJlcyIsImVtcGxveWVlX3Byb2ZpbGVfaWQiOm51bGwsImp0aSI6IjBkOTM0YWZkMmI0MzRlNTliMDA5ZDRkZTRjNDBkNGM0IiwiaWF0IjoxNzc5MDU2MjM2LCJleHAiOjE3NzkwNTgwMzZ9.eG04Bu0O1OmtUQOtBCe9NL9bwX1FHGR2J2RQfCNvNoc","token_type":"Bearer","expires_in":1800},"meta":{"request_id":"0c11e75e-33f2-47ab-aac3-3b13a4b4f07b"},"errors":[]}

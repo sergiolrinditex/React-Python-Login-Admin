@@ -23,6 +23,8 @@
  *     to make the page reachable; justified by identical precedent in P04-S01-T002 (line 22
  *     of that handoff). Documented in handoff §D-T003-ROUTER.
  *   Updated in P04-S02-T004 — added /admin/ai/mcp/new route wired to McpWizardPage (§D-T004-ROUTER).
+ *   Updated in P04-S01-T004 — added /admin/ai/models/:modelId/test wired to ModelTestDrawer (§D-T004-ROUTER).
+ *     WRITE_SET_DRIFT §D-T004-ROUTER: authorized by task pack §6.2 file #11 (pre-approved wiring pattern).
  *
  * Responsibility: single mount point for the application's route tree.
  *   Exports <AppRouter> which is consumed by main.tsx inside <Providers>.
@@ -79,6 +81,7 @@ import HistoryPage from "../pages/chat/HistoryPage";
 import AdminDashboardPage from "../pages/admin/AdminDashboardPage";
 import AdminAiModelsPage from "../pages/admin/ai/AdminAiModelsPage";
 import ModelWizardPage from "../pages/admin/ai/ModelWizardPage";
+import ModelTestDrawer from "../pages/admin/ai/ModelTestDrawer";
 import McpServersPage from "../pages/admin/mcp/McpServersPage";
 import McpWizardPage from "../pages/admin/mcp/McpWizardPage";
 import RagDocumentsPage from "../pages/admin/rag/RagDocumentsPage";
@@ -136,6 +139,26 @@ export const ROUTE_ADMIN_AI_MODELS = "/admin/ai/models";
 
 /** Admin AI new model wizard. Implemented in P04-S01-T003. */
 export const ROUTE_ADMIN_AI_MODELS_NEW = "/admin/ai/models/new";
+
+/**
+ * Admin AI model test playground. Implemented in P04-S01-T004.
+ * §D-T004-ROUTER: template string (contains :modelId param — do not use directly).
+ * Use routeAdminAiModelsTestFor(modelId) to build actual URL.
+ * Route: /admin/ai/models/:modelId/test (RequireRole['people_admin','super_admin']).
+ * Deep-links work; auth guard redirects to /auth/sign-in?next=... on unauthenticated access.
+ */
+export const ROUTE_ADMIN_AI_MODELS_TEST = "/admin/ai/models/:modelId/test";
+
+/**
+ * Builds the concrete URL for a specific model's test page.
+ * Usage: navigate(routeAdminAiModelsTestFor(model.id))
+ *
+ * @param modelId - UUID of the model to test.
+ * @returns Concrete URL string e.g. "/admin/ai/models/abc-123/test".
+ */
+export function routeAdminAiModelsTestFor(modelId: string): string {
+  return `/admin/ai/models/${modelId}/test`;
+}
 
 /** Admin RAG documents. Implemented in P04-S02-T001. */
 export const ROUTE_ADMIN_RAG_DOCUMENTS = "/admin/rag/documents";
@@ -210,11 +233,11 @@ function RootRedirect(): ReactNode {
  */
 export function AppRouter(): ReactNode {
   if (import.meta.env.VITE_ENABLE_VERBOSE_LOGGING === "true") {
-    // §D-T003-ROUTER (P04-S01-T003): ROUTE_ADMIN_AI_MODELS_NEW added to verbose-log routes array
+    // §D-T004-ROUTER (P04-S01-T004): ROUTE_ADMIN_AI_MODELS_TEST added to verbose-log routes array
     console.info("AppRouter.render.start", {
       phase: "P04",
-      slice: "P04-S01-T003",
-      routes: [ROUTE_SHOWCASE, ROUTE_AUTH_SIGN_IN, ROUTE_AUTH_SIGN_UP, ROUTE_AUTH_RESET_SENT, ROUTE_AUTH_2FA, ROUTE_CHAT, ROUTE_HISTORY, ROUTE_ADMIN, ROUTE_ADMIN_AI_MCP, ROUTE_ADMIN_RAG_DOCUMENTS, ROUTE_ADMIN_AI_MODELS, ROUTE_ADMIN_AI_MODELS_NEW],
+      slice: "P04-S01-T004",
+      routes: [ROUTE_SHOWCASE, ROUTE_AUTH_SIGN_IN, ROUTE_AUTH_SIGN_UP, ROUTE_AUTH_RESET_SENT, ROUTE_AUTH_2FA, ROUTE_CHAT, ROUTE_HISTORY, ROUTE_ADMIN, ROUTE_ADMIN_AI_MCP, ROUTE_ADMIN_RAG_DOCUMENTS, ROUTE_ADMIN_AI_MODELS, ROUTE_ADMIN_AI_MODELS_NEW, ROUTE_ADMIN_AI_MODELS_TEST],
     });
   }
 
@@ -272,6 +295,11 @@ export function AppRouter(): ReactNode {
                 Must be placed BEFORE any catch-all/wildcard admin route.
                 WRITE_SET_DRIFT: justified by identical T002 pattern; documented in handoff. */}
             <Route path={ROUTE_ADMIN_AI_MODELS_NEW} element={<ModelWizardPage />} />
+            {/* P04-S01-T004: ModelTestDrawer — §D-T004-ROUTER, TECHNICAL_GUIDE §6.1, §6.4.
+                Route /admin/ai/models/:modelId/test (RequireRole guard already applied above).
+                Deep-links respect auth guard via RequireRole wrapper (redirects to sign-in?next=…).
+                WRITE_SET_DRIFT §D-T004-ROUTER: authorized by task pack §6.2 file #11. */}
+            <Route path={ROUTE_ADMIN_AI_MODELS_TEST} element={<ModelTestDrawer />} />
             {/* P04-S02-T002: RagCollectionsPage — §D-T002-ROUTER, TECHNICAL_GUIDE §6.1 */}
             <Route path={ROUTE_ADMIN_RAG_COLLECTIONS} element={<RagCollectionsPage />} />
           </Route>

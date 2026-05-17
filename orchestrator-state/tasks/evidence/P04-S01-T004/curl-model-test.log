@@ -1,0 +1,9 @@
+=== POST /test (502 - known R2 P02-S03-T008) ===
+{"data":null,"meta":{"request_id":"0411d17b-e41f-4295-a1f3-a738dab1af84"},"errors":[{"code":"AI_PROVIDER_TEST_FAILED","message":"Model test invocation failed.","field":null,"details":null}]}
+=== POST /test unauthenticated (401 - expected) ===
+{"data":null,"meta":{"request_id":"b3e545b9-79f7-4b9d-b089-bae1d528a9da"},"errors":[{"code":"AUTH_SESSION_EXPIRED","message":"Session expired or invalid credentials. Please sign in again.","field":null,"details":null}]}
+HTTP_STATUS: 401
+
+=== PATCH /models/d2b1a84f-7b8a-49cd-b52b-4fc017797c12 (200 - enabled+is_default) ===
+{"data":{"id":"d2b1a84f-7b8a-49cd-b52b-4fc017797c12","provider_id":"e3542c34-1c63-4520-ae07-c79906079610","model_id":"gemini-2.5-flash","model_type":"chat","capabilities":["chat","streaming"],"enabled":true,"is_default":true,"pricing":{},"latency_ms_avg":null},"meta":{"request_id":"34d0e871-2f8c-42dd-9bb2-1ccc46d978e4"}}
+HTTP_STATUS: 200

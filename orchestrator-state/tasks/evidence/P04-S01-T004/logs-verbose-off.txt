@@ -1,0 +1,4 @@
+stderr | src/features/admin-ai/__tests__/useModelTest.test.tsx > useModelTest > U06 — submit returns error_network → submissionState=error_network
+[admin-ai] admin-ai.hook.useModelTest.submit.error { error_class: [32m'AdminAiNetworkError'[39m }
+stderr | src/features/admin-ai/__tests__/useModelTest.test.tsx > useModelTest > U07 — submit 403 → submissionState=permission_denied
+[admin-ai] admin-ai.hook.useModelTest.submit.forbidden {}

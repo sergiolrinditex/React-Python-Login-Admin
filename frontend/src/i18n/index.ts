@@ -168,6 +168,7 @@ const resources = {
     },
     "admin-ai": {
       // §D-T002-I18N: models.* extended for AdminAiModelsPage (P04-S01-T002)
+      // §D-T004-I18N: models.table.headers.actions + models.actions.testModel added (P04-S01-T004)
       models: {
         title: "Modelos LiteLLM",
         table: {
@@ -180,6 +181,7 @@ const resources = {
             default: "Por defecto",
             cost: "Coste",
             latency: "Latencia",
+            actions: "Acciones",
           },
         },
         status: {
@@ -217,6 +219,7 @@ const resources = {
         actions: {
           retry: "Reintentar",
           newModel: "Nuevo modelo",
+          testModel: "Probar",
         },
       },
       mcp: { title: "Integraciones MCP", empty: "No hay integraciones activas" },
@@ -345,6 +348,35 @@ const resources = {
             title: "Acceso restringido",
             body: "No tienes permisos para crear proveedores de IA. Necesitas el rol de administrador.",
           },
+        },
+      },
+      // §D-T004-I18N: modelTest.* added for ModelTestDrawer (P04-S01-T004)
+      modelTest: {
+        title: "Probar modelo",
+        subtitle: "Envía un prompt real y comprueba la respuesta, latencia y coste del modelo.",
+        promptLabel: "Prompt",
+        promptPlaceholder: "Escribe tu pregunta o prompt aquí…",
+        actions: {
+          submit: "Probar",
+          submitting: "Probando…",
+          activate: "Activar como modelo por defecto",
+          activating: "Activando…",
+          retry: "Reintentar",
+          back: "Volver a modelos",
+        },
+        success: {
+          title: "Respuesta del modelo",
+          latency: "Latencia",
+          cost: "Coste",
+          activated: "Modelo activado como predeterminado.",
+        },
+        errors: {
+          network: "No se pudo conectar. Comprueba tu red e inténtalo de nuevo.",
+          upstream: "El proveedor LLM no respondió. Inténtalo de nuevo en unos segundos.",
+          validation: "El prompt no es válido. Revisa el campo e inténtalo de nuevo.",
+          permissionDenied: "No tienes permiso para probar modelos. Necesitas el rol de administrador.",
+          activateFailed: "No se pudo activar el modelo. Inténtalo de nuevo.",
+          notFound: "El modelo no existe o ha sido eliminado.",
         },
       },
     },
@@ -674,6 +706,7 @@ const resources = {
     },
     "admin-ai": {
       // §D-T002-I18N: models.* extended for AdminAiModelsPage (P04-S01-T002)
+      // §D-T004-I18N: models.table.headers.actions + models.actions.testModel added (P04-S01-T004)
       models: {
         title: "LiteLLM models",
         table: {
@@ -686,6 +719,7 @@ const resources = {
             default: "Default",
             cost: "Cost",
             latency: "Latency",
+            actions: "Actions",
           },
         },
         status: {
@@ -723,6 +757,7 @@ const resources = {
         actions: {
           retry: "Retry",
           newModel: "New model",
+          testModel: "Test",
         },
       },
       mcp: { title: "MCP integrations", empty: "No active integrations" },
@@ -851,6 +886,35 @@ const resources = {
             title: "Access restricted",
             body: "You do not have permission to create AI providers. You need the admin role.",
           },
+        },
+      },
+      // §D-T004-I18N: modelTest.* added for ModelTestDrawer (P04-S01-T004)
+      modelTest: {
+        title: "Test model",
+        subtitle: "Send a real prompt and check the model's response, latency and cost.",
+        promptLabel: "Prompt",
+        promptPlaceholder: "Type your question or prompt here…",
+        actions: {
+          submit: "Test",
+          submitting: "Testing…",
+          activate: "Set as default model",
+          activating: "Activating…",
+          retry: "Try again",
+          back: "Back to models",
+        },
+        success: {
+          title: "Model response",
+          latency: "Latency",
+          cost: "Cost",
+          activated: "Model set as default.",
+        },
+        errors: {
+          network: "Could not connect. Check your network and try again.",
+          upstream: "The LLM provider did not respond. Please try again in a few seconds.",
+          validation: "The prompt is not valid. Review the field and try again.",
+          permissionDenied: "You do not have permission to test models. You need the admin role.",
+          activateFailed: "Could not activate the model. Please try again.",
+          notFound: "The model does not exist or has been removed.",
         },
       },
     },
@@ -1180,6 +1244,7 @@ const resources = {
     },
     "admin-ai": {
       // §D-T002-I18N: models.* extended for AdminAiModelsPage (P04-S01-T002)
+      // §D-T004-I18N: models.table.headers.actions + models.actions.testModel added (P04-S01-T004)
       models: {
         title: "Modèles LiteLLM",
         table: {
@@ -1192,6 +1257,7 @@ const resources = {
             default: "Par défaut",
             cost: "Coût",
             latency: "Latence",
+            actions: "Actions",
           },
         },
         status: {
@@ -1229,6 +1295,7 @@ const resources = {
         actions: {
           retry: "Réessayer",
           newModel: "Nouveau modèle",
+          testModel: "Tester",
         },
       },
       mcp: { title: "Intégrations MCP", empty: "Aucune intégration active" },
@@ -1357,6 +1424,35 @@ const resources = {
             title: "Accès restreint",
             body: "Vous n'avez pas la permission de créer des fournisseurs IA. Vous avez besoin du rôle administrateur.",
           },
+        },
+      },
+      // §D-T004-I18N: modelTest.* added for ModelTestDrawer (P04-S01-T004)
+      modelTest: {
+        title: "Tester le modèle",
+        subtitle: "Envoyez un prompt réel et vérifiez la réponse, la latence et le coût du modèle.",
+        promptLabel: "Prompt",
+        promptPlaceholder: "Tapez votre question ou prompt ici…",
+        actions: {
+          submit: "Tester",
+          submitting: "Test en cours…",
+          activate: "Définir comme modèle par défaut",
+          activating: "Activation en cours…",
+          retry: "Réessayer",
+          back: "Retour aux modèles",
+        },
+        success: {
+          title: "Réponse du modèle",
+          latency: "Latence",
+          cost: "Coût",
+          activated: "Modèle défini comme modèle par défaut.",
+        },
+        errors: {
+          network: "Impossible de se connecter. Vérifiez votre réseau et réessayez.",
+          upstream: "Le fournisseur LLM n'a pas répondu. Veuillez réessayer dans quelques secondes.",
+          validation: "Le prompt n'est pas valide. Vérifiez le champ et réessayez.",
+          permissionDenied: "Vous n'avez pas la permission de tester les modèles. Vous avez besoin du rôle administrateur.",
+          activateFailed: "Impossible d'activer le modèle. Veuillez réessayer.",
+          notFound: "Le modèle n'existe pas ou a été supprimé.",
         },
       },
     },

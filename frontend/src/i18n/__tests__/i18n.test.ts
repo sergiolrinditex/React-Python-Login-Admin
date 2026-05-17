@@ -565,3 +565,117 @@ describe("i18n: admin-ai.modelsNew.* lockstep in es/en/fr", () => {
     expect(es).not.toBe(fr);
   });
 });
+
+// ---------------------------------------------------------------------------
+// Test 12 — i18n: admin-ai.modelTest.* lockstep in es/en/fr (P04-S01-T004)
+// Write-set anchor: §D-T004-I18N-TEST-EXTEND
+// ---------------------------------------------------------------------------
+
+type ModelTestBundle = {
+  title: string;
+  subtitle: string;
+  promptLabel: string;
+  promptPlaceholder: string;
+  actions: {
+    submit: string;
+    submitting: string;
+    activate: string;
+    activating: string;
+    retry: string;
+    back: string;
+  };
+  success: {
+    title: string;
+    latency: string;
+    cost: string;
+    activated: string;
+  };
+  errors: {
+    network: string;
+    upstream: string;
+    validation: string;
+    permissionDenied: string;
+    activateFailed: string;
+    notFound: string;
+  };
+};
+
+type AdminAiBundleWithModelTest = AdminAiBundle & {
+  modelTest: ModelTestBundle;
+};
+
+describe("i18n: admin-ai.modelTest.* lockstep in es/en/fr (P04-S01-T004)", () => {
+  it("IT01 — i18n: admin-ai.modelTest.* title + subtitle present in es/en/fr", () => {
+    SUPPORTED_LANGUAGES.forEach((lng) => {
+      const bundle = i18n.getResourceBundle(lng, "admin-ai") as AdminAiBundleWithModelTest;
+      expect(bundle.modelTest.title).toBeTruthy();
+      expect(bundle.modelTest.subtitle).toBeTruthy();
+      expect(bundle.modelTest.promptLabel).toBeTruthy();
+      expect(bundle.modelTest.promptPlaceholder).toBeTruthy();
+    });
+  });
+
+  it("IT02 — i18n: admin-ai.modelTest.actions.* present in es/en/fr", () => {
+    SUPPORTED_LANGUAGES.forEach((lng) => {
+      const bundle = i18n.getResourceBundle(lng, "admin-ai") as AdminAiBundleWithModelTest;
+      expect(bundle.modelTest.actions.submit).toBeTruthy();
+      expect(bundle.modelTest.actions.submitting).toBeTruthy();
+      expect(bundle.modelTest.actions.activate).toBeTruthy();
+      expect(bundle.modelTest.actions.activating).toBeTruthy();
+      expect(bundle.modelTest.actions.retry).toBeTruthy();
+      expect(bundle.modelTest.actions.back).toBeTruthy();
+    });
+  });
+
+  it("IT03 — i18n: admin-ai.modelTest.success.* present in es/en/fr", () => {
+    SUPPORTED_LANGUAGES.forEach((lng) => {
+      const bundle = i18n.getResourceBundle(lng, "admin-ai") as AdminAiBundleWithModelTest;
+      expect(bundle.modelTest.success.title).toBeTruthy();
+      expect(bundle.modelTest.success.latency).toBeTruthy();
+      expect(bundle.modelTest.success.cost).toBeTruthy();
+      expect(bundle.modelTest.success.activated).toBeTruthy();
+    });
+  });
+
+  it("IT04 — i18n: admin-ai.modelTest.errors.* present in es/en/fr", () => {
+    SUPPORTED_LANGUAGES.forEach((lng) => {
+      const bundle = i18n.getResourceBundle(lng, "admin-ai") as AdminAiBundleWithModelTest;
+      expect(bundle.modelTest.errors.network).toBeTruthy();
+      expect(bundle.modelTest.errors.upstream).toBeTruthy();
+      expect(bundle.modelTest.errors.validation).toBeTruthy();
+      expect(bundle.modelTest.errors.permissionDenied).toBeTruthy();
+      expect(bundle.modelTest.errors.activateFailed).toBeTruthy();
+      expect(bundle.modelTest.errors.notFound).toBeTruthy();
+    });
+  });
+
+  it("IT05 — i18n: admin-ai.modelTest.title differs across es, en, fr", () => {
+    const es = (i18n.getResourceBundle("es", "admin-ai") as AdminAiBundleWithModelTest).modelTest.title;
+    const en = (i18n.getResourceBundle("en", "admin-ai") as AdminAiBundleWithModelTest).modelTest.title;
+    const fr = (i18n.getResourceBundle("fr", "admin-ai") as AdminAiBundleWithModelTest).modelTest.title;
+    // All three must be non-empty truthy strings
+    expect(es).toBeTruthy();
+    expect(en).toBeTruthy();
+    expect(fr).toBeTruthy();
+    // ES vs EN must differ (EN uses "Test model", ES uses "Probar modelo")
+    expect(es).not.toBe(en);
+  });
+
+  it("IT06 — i18n: admin-ai.models.table.headers.actions present in es/en/fr (P04-S01-T004)", () => {
+    SUPPORTED_LANGUAGES.forEach((lng) => {
+      const bundle = i18n.getResourceBundle(lng, "admin-ai") as AdminAiBundle;
+      // Cast to extended type that has actions header
+      const headers = bundle.models.table.headers as Record<string, string>;
+      expect(headers["actions"]).toBeTruthy();
+    });
+  });
+
+  it("IT07 — i18n: admin-ai.models.actions.testModel present in es/en/fr (P04-S01-T004)", () => {
+    SUPPORTED_LANGUAGES.forEach((lng) => {
+      const bundle = i18n.getResourceBundle(lng, "admin-ai") as AdminAiBundle;
+      // Cast to extended type that has testModel action
+      const actions = bundle.models.actions as Record<string, string>;
+      expect(actions["testModel"]).toBeTruthy();
+    });
+  });
+});

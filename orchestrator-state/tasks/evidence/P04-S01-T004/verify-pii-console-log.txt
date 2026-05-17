@@ -1,0 +1,17 @@
+# PII Console Log Verification — P04-S01-T004
+
+VITE_ENABLE_VERBOSE_LOGGING: true (set via localStorage)
+
+Console logs observed after submit (real 502):
+- [ERROR] [admin-ai] admin-ai.repo.testModel.upstream_error Object
+- [ERROR] [admin-ai] admin-ai.hook.useModelTest.submit.upstream Object
+
+Console logs observed after submit (mocked 200):
+- [LOG] [MOCK] Intercepting POST /test to return success
+
+PII CONTRACT VERIFICATION:
+- Prompt text "Hola, dame un saludo breve" → NOT in any console log
+- Output text "Hola! Espero que tengas un día maravilloso." → NOT in any console log
+- Only structured metadata logged: upstream_error, submit.upstream (error_class, status)
+- No raw prompt, no output content in any console log
+- PII contract: PASS

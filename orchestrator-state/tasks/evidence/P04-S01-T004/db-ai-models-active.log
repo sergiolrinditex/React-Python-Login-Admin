@@ -1,0 +1,12 @@
+                  id                  |     model_id     | enabled | is_default 
+--------------------------------------+------------------+---------+------------
+ d2b1a84f-7b8a-49cd-b52b-4fc017797c12 | gemini-2.5-flash | t       | t
+(1 fila)
+
+            actor_user_id             |        action         | entity_type |              entity_id               |          created_at           
+--------------------------------------+-----------------------+-------------+--------------------------------------+-------------------------------
+ ff459a63-13ff-45f9-8345-3d977bf774c2 | admin.ai.model.update | ai_model    | d2b1a84f-7b8a-49cd-b52b-4fc017797c12 | 2026-05-17 22:18:41.147585+00
+                                      | admin.ai.model.update | ai_model    | 5c04e6e6-e0a9-46e7-b713-3ff8fd365710 | 2026-05-17 22:17:51.150244+00
+                                      | admin.ai.model.update | ai_model    | 5c04e6e6-e0a9-46e7-b713-3ff8fd365710 | 2026-05-17 22:17:51.141771+00
+(3 filas)
+

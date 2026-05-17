@@ -1,0 +1,7 @@
+HTTP/1.1 502 Bad Gateway
+date: Sun, 17 May 2026 22:17:26 GMT
+server: uvicorn
+content-length: 190
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"922d7180-92d4-4fc9-9019-1e47aa62a20d"},"errors":[{"code":"AI_PROVIDER_TEST_FAILED","message":"Model test invocation failed.","field":null,"details":null}]}
