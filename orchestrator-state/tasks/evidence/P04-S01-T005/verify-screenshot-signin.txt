@@ -1,0 +1,6 @@
+Screenshot ID: ss_1717tz16m / ss_14311k1e0 (taken via claude-in-chrome MCP)
+URL: http://localhost:5180/auth/sign-in
+Server: main repo vite frontend (errors.ts 429-line restored + chatRepository.ts fixed)
+Result: Page mounts correctly — shows "ÁREA DE EMPLEADOS / Entrar" heading, 2 inputs (EMAIL CORPORATIVO, CONTRASEÑA), INICIAR SESIÓN button, Crear cuenta + ¿Olvidaste tu contraseña? links
+Console errors from errors.ts: ZERO
+Notes: Uses main repo because T005 worktree-only frontend was blocked by pre-existing chatRepository.ts regression (same commit 4a75d15, covered by FU-20260517174657).

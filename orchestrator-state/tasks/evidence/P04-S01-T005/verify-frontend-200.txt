@@ -1,0 +1,5 @@
+HTTP/1.1 200 OK
+Vary: Origin
+Content-Type: text/html
+Cache-Control: no-cache
+Etag: W/"4b1-B//dCWEEI9AucLmMmLwKfmOjtVI"

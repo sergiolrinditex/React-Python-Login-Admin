@@ -1,0 +1,7 @@
+Screenshot: /auth/2fa
+URL: http://localhost:5180/auth/2fa
+Result: Deep-link guard (§D-T005-DEEP-LINK-GUARD) redirects to /auth/sign-in when
+        no mfa_challenge_token is in router state. This is EXPECTED behavior per TwoFactorPage.tsx
+        line 96: "if (!challengeToken && !redirectedRef.current) → navigate to sign-in".
+        HTTP 200 from vite server. No console errors from errors.ts.
+        The TwoFactorPage itself imports all MFA error classes correctly (confirmed via vitest 11/11 pass).

@@ -1,0 +1,6 @@
+Screenshot ID: ss_3419xdvvl (taken via claude-in-chrome MCP)
+URL: http://localhost:5180/admin/rag/documents
+Result: Page mounts correctly — shows "Documentos RAG" heading, "Gestiona los documentos disponibles para búsqueda semántica", form with TÍTULO/IDIOMA/COLECCIÓN fields, SUBIR button, document list (empty state).
+Login: admin.peopletech@inditex-sandbox.com — Enter key submitted form → redirect → /admin/rag/documents.
+Console errors from errors.ts: ZERO
+Notes: Smoke check confirms unrelated admin lane works correctly.
