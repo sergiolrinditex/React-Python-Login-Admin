@@ -1,0 +1,42 @@
+# Tester: Contract observed during tests and curl checks
+# Date: 2026-05-17T22:24:10Z
+#
+# Route observed: GET /api/v1/admin/audit
+#   - Registered in backend/app/main.py via app.include_router(audit_router, prefix="/api/v1/admin")
+#   - FastAPI route at backend/app/admin/audit/router.py
+#
+# Auth guard observed: Depends(require_auditor)
+#   - require_auditor = require_role("people_auditor") from backend/app/security/permissions.py
+#   - people_auditor → 200 (T01)
+#   - super_admin → 200 (T02, D-PERM1 superset confirmed)
+#   - people_admin → 403 AUTH_PERMISSION_DENIED (T03)
+#   - employee → 403 AUTH_PERMISSION_DENIED (T04)
+#   - no Bearer → 401 AUTH_SESSION_EXPIRED (T05)
+#
+# Service observed: AuditService.list_events() at backend/app/admin/audit/service.py
+#   - Window validation: from_dt required, to_dt required, from >= to → 422 AUDIT_WINDOW_INVALID
+#   - Window cap: > 90 days → 422 AUDIT_WINDOW_TOO_WIDE
+#
+# Repository observed: AuditRepository.list_events() at backend/app/admin/audit/repository.py
+#   - SQLAlchemy ORM query over audit_logs table
+#   - Filters: created_at BETWEEN from_dt AND to_dt (index-friendly)
+#   - Optional: actor_user_id == actor, action == action
+#   - Order: created_at DESC, id DESC
+#   - Cursor: opaque base64 over (created_at_iso|id_uuid)
+#   - limit+1 trick for has_more detection (no COUNT query)
+#
+# DB table observed: audit_logs
+#   - Columns: id (UUID), actor_user_id (UUID nullable FK), action (TEXT),
+#     entity_type (TEXT nullable), entity_id (UUID nullable),
+#     metadata (JSONB — ORM attr extra_metadata), created_at (TIMESTAMPTZ)
+#   - Indexes: (created_at), (actor_user_id, created_at) — used by repo queries
+#
+# Response envelope observed: {data: [AuditLogOut], meta: {request_id, next_cursor, has_more, count}, errors: []}
+#   - Matches API contract §6.4 {data, meta, errors}
+#   - meta.request_id matches X-Request-ID header (confirmed T01, T15)
+#
+# Logging contract observed:
+#   - verbose=true: DEBUG BEFORE at router+service+repository (.start), AFTER (.ok)
+#   - verbose=false: INFO only for completion (.ok), no DEBUG BEFORE
+#   - Hashed IDs in logs: user_id_hash, actor_user_id_hash (not raw UUID/email)
+#   - No PII observed in either mode

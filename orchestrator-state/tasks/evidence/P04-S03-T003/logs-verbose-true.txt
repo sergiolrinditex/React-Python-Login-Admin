@@ -1,0 +1,6 @@
+DEBUG    app.admin.audit.router:router.py:92 admin.audit.router.get_audit.start user_id_hash=6df2127d request_id=test-t01-rid
+DEBUG    app.admin.audit.service:service.py:83 admin.audit.service.list_events.start actor_user_id_hash=6df2127d request_id=test-t01-rid
+DEBUG    app.admin.audit.repository:repository.py:104 admin.audit.repository.list.start from=2026-04-01T00:00:00+00:00 to=2026-06-28T23:59:59+00:00 actor_hash=None action_truncated=None cursor_present=False limit=50
+DEBUG    app.admin.audit.repository:repository.py:157 admin.audit.repository.list.ok count=50 has_more=True
+DEBUG    app.admin.audit.service:service.py:156 admin.audit.service.list_events.ok actor_user_id_hash=6df2127d count=50 has_more=True request_id=test-t01-rid
+DEBUG    app.admin.audit.router:router.py:123 admin.audit.router.get_audit.ok user_id_hash=6df2127d count=50 request_id=test-t01-rid

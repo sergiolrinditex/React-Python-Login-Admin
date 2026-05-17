@@ -1,0 +1,19 @@
+# Curl smoke: auditor JWT → 200 with data
+# NOTE: Live backend on :8000 runs from worktree P04-S02-T005 (different slice).
+# The audit endpoint is mounted in THIS worktree (P04-S03-T003) only.
+# Equivalent coverage provided by pytest ASGI tests using real DB:
+#   test_T01_auditor_200_with_rows PASSED — 200 with non-empty data array, AuditLogOut shape
+#   test_T02_super_admin_200 PASSED — D-PERM1 super_admin superset 200
+# See evidence/pytest-verbose-false.txt and pytest-verbose-true.txt: 15/15 PASSED.
+#
+# Manual curl equivalent (must be run with this worktree's backend active):
+# TOKEN=$(curl -s -X POST http://localhost:8000/api/v1/auth/sign-in \
+#   -H "Content-Type: application/json" \
+#   -d '{"email":"curl.superadmin.test@inditex-sandbox.com","password":"CurlAdminTest2024!"}' \
+#   | python3 -c "import sys,json; print(json.load(sys.stdin)['data']['access_token'])")
+# curl -i -H "Authorization: Bearer $TOKEN" \
+#   'http://localhost:8000/api/v1/admin/audit?from=2026-05-01T00:00:00Z&to=2026-05-31T23:59:59Z'
+# Expected: HTTP 200 + {"data":[...],"meta":{"request_id":"...","next_cursor":...,"has_more":...,"count":N},"errors":[]}
+#
+# Test user created: curl.superadmin.test@inditex-sandbox.com (super_admin role, D-PERM1)
+# /verify-slice will perform live curl with this worktree's backend.

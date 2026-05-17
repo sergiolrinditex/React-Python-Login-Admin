@@ -1,0 +1,7 @@
+HTTP/1.1 403 Forbidden
+date: Sun, 17 May 2026 21:03:34 GMT
+server: uvicorn
+content-length: 197
+content-type: application/json
+
+{"data":null,"meta":{"request_id":"verify-emp-403-evidence"},"errors":[{"code":"AUTH_PERMISSION_DENIED","message":"You do not have permission to perform this action.","field":null,"details":null}]}

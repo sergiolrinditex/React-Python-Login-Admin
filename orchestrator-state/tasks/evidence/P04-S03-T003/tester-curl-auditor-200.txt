@@ -1,0 +1,19 @@
+# Tester: ASGI curl-equivalent — auditor JWT → 200
+# Date: 2026-05-17T22:24:10Z
+# Note: The live backend on :8000 runs from worktree P04-S02-T005 and does NOT
+# have the audit endpoint (confirmed: GET /api/v1/admin/audit → 404 on that process).
+# ASGI TestClient with real DB provides equivalent coverage — same FastAPI app
+# from this worktree, real Postgres connection, committed test users.
+#
+# curl-equivalent (ASGI TestClient — people_auditor JWT):
+# GET /api/v1/admin/audit?from=2026-05-01T00:00:00Z&to=2026-05-31T23:59:59Z
+# Headers: Authorization: Bearer <people_auditor_token>, X-Request-ID: curl-tester-rid
+#
+# Result:
+# SIGN_IN: 200
+# AUDITOR_200: status=200 data_count=50 meta_keys=['request_id', 'next_cursor', 'has_more', 'count'] errors=[]
+#   First row keys: ['id', 'actor_user_id', 'action', 'entity_type', 'entity_id', 'metadata', 'created_at']
+#   meta.request_id=curl-tester-rid has_more=True
+#
+# Confirms: endpoint returns 200 with real audit_logs rows, correct envelope,
+# all response fields present, X-Request-ID propagated to meta.request_id.

@@ -1,0 +1,29 @@
+# Tester: Verification Data Contract — rows used and data observed
+# Date: 2026-05-17T22:24:10Z
+#
+# VDC rows referenced (task pack §Verification Data Contract):
+# - J103 admin-ai (TECHNICAL_GUIDE §6.5 row 358): admin verification user already loaded;
+#   ai_provider rows generate admin.ai.* audit rows. Confirmed in DB:
+#   admin.ai.mcp.server.create: 24 rows, admin.ai.model.test: 17 rows.
+# - J100 auth-login (row 355): employee verification user; sign-in flow generates
+#   user.login.success / auth.sign_in rows. Confirmed in DB:
+#   auth.sign_in: 151 rows.
+#
+# Real/provided data used:
+# - Inline test users created per-test with people_auditor, super_admin, people_admin,
+#   employee roles (committed to real Postgres, visible to FastAPI ASGI handler).
+# - AuditLog rows inserted directly via SQL (committed, real DB).
+# - 265 total existing audit_logs rows from prior slice executions (real data).
+#
+# Persisted data observed:
+# - T01: auditor JWT → 200, data_count=50 (limit default), has_more=True
+#   (265 rows in window 2026-04-01..2026-06-28).
+# - T06: actor filter → only rows with matching actor_user_id confirmed.
+# - T07: action filter → only rows with exact action string confirmed.
+# - T08: combined actor+action filter → AND semantics confirmed.
+# - T13: cursor pagination → 3 rows, limit=2: page1=2 rows has_more=True,
+#   page2=1 row has_more=False, no duplicate IDs, all 3 inserted IDs accounted for.
+# - T15: metadata JSONB roundtrip {'key':'value','nested':{'a':1}} preserved intact.
+#
+# Mocks: NONE for own services. No mock of audit_logs queries, repositories,
+# auth service, or DB session. Only FastAPI TestClient (ASGI transport) used.

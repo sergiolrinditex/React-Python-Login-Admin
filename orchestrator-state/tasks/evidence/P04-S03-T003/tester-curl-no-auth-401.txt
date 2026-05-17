@@ -1,0 +1,11 @@
+# Tester: ASGI curl-equivalent — no auth → 401
+# Date: 2026-05-17T22:24:10Z
+#
+# curl-equivalent (ASGI TestClient — no Authorization header):
+# GET /api/v1/admin/audit?from=2026-05-01T00:00:00Z&to=2026-05-31T23:59:59Z
+#
+# Result:
+# NO_AUTH_401: status=401 error_code=AUTH_SESSION_EXPIRED
+#
+# WARNING logged: users.deps.auth_failed reason=missing_bearer
+# Confirms: missing Bearer token returns 401 AUTH_SESSION_EXPIRED envelope.

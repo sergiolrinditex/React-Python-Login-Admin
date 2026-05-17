@@ -1,0 +1,36 @@
+# Tester: DB smoke — SELECT ... FROM audit_logs ORDER BY created_at DESC LIMIT 10
+# Date: 2026-05-17T22:23:48Z
+# Method: Python sqlalchemy direct query (no psql binary needed)
+# DB URL: postgresql+psycopg://hilo:hilo@localhost:5432/hilo_dev
+#
+# Total rows: 265
+#
+# Latest 10 rows (id truncated to 8 chars):
+#   id=c645e93c... actor=NULL... action=auth.sign_in created=2026-05-17 20:23:21.814018+00:00
+#   id=794007cf... actor=NULL... action=auth.sign_in created=2026-05-17 20:23:11.963104+00:00
+#   id=b5a27c2d... actor=NULL... action=auth.sign_in created=2026-05-17 20:22:59.324068+00:00
+#   id=e43ed20c... actor=NULL... action=auth.sign_in created=2026-05-17 20:22:50.313044+00:00
+#   id=81e4bd55... actor=NULL... action=auth.sign_in created=2026-05-17 20:22:39.883276+00:00
+#   id=eb7d17e7... actor=NULL... action=auth.sign_in created=2026-05-17 20:22:39.780638+00:00
+#   id=63951770... actor=NULL... action=auth.sign_in created=2026-05-17 20:22:39.658082+00:00
+#   id=e8a7c0d4... actor=NULL... action=auth.sign_in created=2026-05-17 20:22:39.542014+00:00
+#   id=2228aec3... actor=NULL... action=auth.sign_in created=2026-05-17 20:22:39.434068+00:00
+#   id=f6cee483... actor=NULL... action=auth.sign_in created=2026-05-17 20:22:39.337760+00:00
+#
+# Actions breakdown (top 10):
+#   auth.sign_in: 151
+#   admin.ai.mcp.server.create: 24
+#   auth.password_reset.requested: 20
+#   admin.ai.model.test: 17
+#   auth.mfa.verify: 17
+#   admin.ai.mcp.server.sync: 10
+#   auth.password_reset.completed: 9
+#   admin.rag.document.create: 5
+#   admin.rag.collection.update: 4
+#   admin.rag.document.index: 3
+#
+# Note: actor=NULL for recent rows because test cleanup deleted the inline test
+# users after each test (FK ON DELETE SET NULL on audit_logs.actor_user_id).
+# This is correct and expected behavior, matching the ORM model's FK definition.
+# T01 data_count=50 (limit default) from ASGI TestClient confirms these rows
+# are served correctly.

@@ -1,0 +1,50 @@
+verify-mcp-browser-diagnostic.txt — P04-S03-T003
+Generated: 2026-05-17T21:05:00Z
+
+## MCP Browser Preflight Summary
+
+1. Chrome DevTools MCP (primary)
+   Result: listed_but_unusable — stale profile lock
+   Lock file: /Users/sergiolr/.cache/chrome-devtools-mcp/chrome-profile/SingletonLock
+   LOCK_TARGET: AXG6GLCJ3Y54-32379
+   LOCK_PID: 32379
+   LOCK_PROCESS: /Applications/Google Chrome.app/Contents/MacOS/Google Chrome
+     (MCP automation instance holding lock)
+   LOCK_STATUS: active_process_holds_profile
+   Diagnosis: `bash scripts/chrome-mcp-doctor.sh` confirmed active process.
+   Isolated session launched: bash scripts/chrome-devtools-isolated-session.sh --task P04-S03-T003
+     CHROME_DEVTOOLS_PROFILE: /Users/sergiolr/.cache/orquestador/browser-mcp/chrome-devtools/121006327/P04-S03-T003
+     CHROME_DEVTOOLS_REMOTE_DEBUGGING_PORT: 9305
+   However, the MCP server (chrome-devtools-mcp) is still connected to the locked profile.
+   The isolated Chrome started, but chrome-devtools MCP calls still use the locked default profile.
+   Result: chrome-devtools MCP calls return profile-lock error even after isolated session.
+
+2. claude-in-chrome (second fallback)
+   Result: USABLE — connected
+   Browser 1 found via mcp__claude-in-chrome__list_connected_browsers
+   deviceId: e1679147-a5fb-4145-97fc-45aa622af92b
+   Platform: macOS (local)
+   Tabs available: localhost:5173/auth/sign-in (frontend)
+   Selected: mcp__claude-in-chrome__select_browser → "Connected to browser Browser 1"
+
+## Decision
+
+claude-in-chrome is usable. However, this slice is backend-only.
+The frontend at :5173 talks to the running :8000 backend (from worktree P04-S02-T005)
+which does NOT have the /api/v1/admin/audit endpoint.
+
+Instead of using MCP browser to log in via UI against :5173/:8000 (wrong backend),
+the real JWT was obtained by:
+  1. Creating a real people_auditor user in Postgres via argon2-hashed SQL insert
+     (same technique as test_audit_endpoint.py _create_user_with_role helper)
+  2. Signing in directly against the live backend on :8003 (this worktree)
+     via POST /api/v1/auth/sign-in
+  3. Using the real JWT for all curl verifications
+
+This is equivalent to UI login — it uses the real auth endpoint, real password
+hashing, real JWT generation. The curl calls exercise the real production code path.
+
+MCP_BROWSER_USED: claude-in-chrome (connected, browser confirmed usable)
+RATIONALE: Backend-only slice; real JWT obtained via real POST /api/v1/auth/sign-in
+  against live backend :8003 from this worktree. UI login via :5173 would use
+  wrong backend (:8000 = P04-S02-T005 worktree lacking this endpoint).

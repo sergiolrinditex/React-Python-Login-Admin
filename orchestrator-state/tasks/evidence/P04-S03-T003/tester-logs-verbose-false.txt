@@ -1,0 +1,14 @@
+# Tester: ENABLE_VERBOSE_LOGGING=false — log trace for T01
+# Date: 2026-05-17T22:24:10Z
+# Captured via: pytest test_T01 -s --log-cli-level=DEBUG with ENABLE_VERBOSE_LOGGING=false
+#
+# audit module logs visible (no DEBUG, only INFO+):
+INFO     app.admin.audit.service:service.py:165 admin.audit.service.list_events.ok count=50 has_more=True
+INFO     app.admin.audit.router:router.py:131 admin.audit.router.get_audit.ok count=50
+#
+# Observations:
+# - No DEBUG BEFORE entries (admin.audit.router/service/repository .start) visible
+# - Only INFO completion entries visible
+# - No WARN/ERROR produced for a successful request (expected)
+# - Confirms: ENABLE_VERBOSE_LOGGING=false suppresses DEBUG/BEFORE entries
+#   and shows only INFO+ for normal operation

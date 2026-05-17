@@ -1,0 +1,628 @@
+INFO:     Started server process [48777]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8003 (Press CTRL+C to quit)
+2026-05-17 22:59:04,818 app.api.router INFO health.check.start route=/health
+2026-05-17 22:59:04,818 app.api.router INFO health.check.ok status=ok uptime=6.33
+INFO:     127.0.0.1:56537 - "GET /health HTTP/1.1" 200 OK
+2026-05-17 23:00:24,630 app.db.session DEBUG db.session.open
+2026-05-17 23:00:24,642 app.auth.routers.sign_in INFO auth.sign_in.received email_domain=inditex-sandbox.com request_id=verify-auditor-signin-001
+2026-05-17 23:00:24,642 app.auth.rate_limit DEBUG rate_limit.check.start prefix=SIGNIN ip=SIGNIN:127.0.0.1 rate_per_min=20 burst=20
+2026-05-17 23:00:24,642 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=SIGNIN ip=SIGNIN:127.0.0.1 new_window remaining=19
+2026-05-17 23:00:24,642 app.auth.services.sign_in INFO auth.sign_in.starting request_id=verify-auditor-signin-001 email_domain=inditex-sandbox.com
+2026-05-17 23:00:24,642 app.auth.repository DEBUG auth.repo.find_by_email.start email_domain=inditex-sandbox.com
+2026-05-17 23:00:24,694 app.auth.repository DEBUG auth.repo.find_by_email.done found=True
+2026-05-17 23:00:24,694 app.auth.services.sign_in INFO auth.sign_in.user_found user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=verify-auditor-signin-001
+2026-05-17 23:00:24,694 app.auth.repository DEBUG auth.repo.count_signin_failures.start user_id=205f42eb-2894-459e-bf25-b4bee3618e4d window=900s
+2026-05-17 23:00:24,696 app.auth.repository DEBUG auth.repo.count_signin_failures.done user_id=205f42eb-2894-459e-bf25-b4bee3618e4d count=0
+2026-05-17 23:00:24,696 app.auth.password DEBUG password.verify_with_dummy.start has_real_hash=True
+2026-05-17 23:00:24,734 app.auth.password DEBUG password.verify_with_dummy.ok
+2026-05-17 23:00:24,742 app.auth.tokens DEBUG tokens.encode_access.start sub=205f42eb-2894-459e-bf25-b4bee3618e4d ttl=1800s
+2026-05-17 23:00:24,742 app.auth.tokens DEBUG tokens.jwt_key.resolved bytes=64
+2026-05-17 23:00:24,743 app.auth.tokens DEBUG tokens.encode_access.done sub=205f42eb-2894-459e-bf25-b4bee3618e4d exp=2026-05-17T21:30:24.738026+00:00
+2026-05-17 23:00:24,743 app.auth.repository DEBUG auth.repo.insert_refresh_token.start user_id=205f42eb-2894-459e-bf25-b4bee3618e4d
+2026-05-17 23:00:24,747 app.auth.repository DEBUG auth.repo.insert_refresh_token.done user_id=205f42eb-2894-459e-bf25-b4bee3618e4d rt_id=31290146-5995-475f-b1ee-016d7a9fb15c
+2026-05-17 23:00:24,747 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.sign_in actor_user_id=205f42eb-2894-459e-bf25-b4bee3618e4d
+2026-05-17 23:00:24,750 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=b345bc19-a57d-4f54-8c8a-4591865262cf action=auth.sign_in
+2026-05-17 23:00:24,756 app.auth.services.sign_in INFO auth.sign_in.success user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=verify-auditor-signin-001
+2026-05-17 23:00:24,756 app.auth.routers.sign_in INFO auth.sign_in.success user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=verify-auditor-signin-001
+INFO:     127.0.0.1:56703 - "POST /api/v1/auth/sign-in HTTP/1.1" 200 OK
+2026-05-17 23:00:24,757 app.db.session DEBUG db.session.closed
+2026-05-17 23:00:38,621 app.db.session DEBUG db.session.open
+2026-05-17 23:00:38,627 app.auth.routers.sign_in INFO auth.sign_in.received email_domain=inditex-sandbox.com request_id=verify-sa-signin-001
+2026-05-17 23:00:38,627 app.auth.rate_limit DEBUG rate_limit.check.start prefix=SIGNIN ip=SIGNIN:127.0.0.1 rate_per_min=20 burst=20
+2026-05-17 23:00:38,627 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=SIGNIN ip=SIGNIN:127.0.0.1 remaining=18
+2026-05-17 23:00:38,628 app.auth.services.sign_in INFO auth.sign_in.starting request_id=verify-sa-signin-001 email_domain=inditex-sandbox.com
+2026-05-17 23:00:38,628 app.auth.repository DEBUG auth.repo.find_by_email.start email_domain=inditex-sandbox.com
+2026-05-17 23:00:38,641 app.auth.repository DEBUG auth.repo.find_by_email.done found=True
+2026-05-17 23:00:38,641 app.auth.services.sign_in INFO auth.sign_in.user_found user_id=9ced3399-1ee8-4781-bfca-26dad18fc6a0 request_id=verify-sa-signin-001
+2026-05-17 23:00:38,641 app.auth.repository DEBUG auth.repo.count_signin_failures.start user_id=9ced3399-1ee8-4781-bfca-26dad18fc6a0 window=900s
+2026-05-17 23:00:38,643 app.auth.repository DEBUG auth.repo.count_signin_failures.done user_id=9ced3399-1ee8-4781-bfca-26dad18fc6a0 count=0
+2026-05-17 23:00:38,643 app.auth.password DEBUG password.verify_with_dummy.start has_real_hash=True
+2026-05-17 23:00:38,681 app.auth.password DEBUG password.verify_with_dummy.ok
+2026-05-17 23:00:38,687 app.auth.tokens DEBUG tokens.encode_access.start sub=9ced3399-1ee8-4781-bfca-26dad18fc6a0 ttl=1800s
+2026-05-17 23:00:38,688 app.auth.tokens DEBUG tokens.encode_access.done sub=9ced3399-1ee8-4781-bfca-26dad18fc6a0 exp=2026-05-17T21:30:38.684225+00:00
+2026-05-17 23:00:38,688 app.auth.repository DEBUG auth.repo.insert_refresh_token.start user_id=9ced3399-1ee8-4781-bfca-26dad18fc6a0
+2026-05-17 23:00:38,690 app.auth.repository DEBUG auth.repo.insert_refresh_token.done user_id=9ced3399-1ee8-4781-bfca-26dad18fc6a0 rt_id=ac6cdff2-4287-482d-945f-b123c1543ac8
+2026-05-17 23:00:38,691 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.sign_in actor_user_id=9ced3399-1ee8-4781-bfca-26dad18fc6a0
+2026-05-17 23:00:38,693 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=67c5e14d-bb1f-4169-8cce-34ba4bdde459 action=auth.sign_in
+2026-05-17 23:00:38,699 app.auth.services.sign_in INFO auth.sign_in.success user_id=9ced3399-1ee8-4781-bfca-26dad18fc6a0 request_id=verify-sa-signin-001
+2026-05-17 23:00:38,699 app.auth.routers.sign_in INFO auth.sign_in.success user_id=9ced3399-1ee8-4781-bfca-26dad18fc6a0 request_id=verify-sa-signin-001
+INFO:     127.0.0.1:56733 - "POST /api/v1/auth/sign-in HTTP/1.1" 200 OK
+2026-05-17 23:00:38,701 app.db.session DEBUG db.session.closed
+2026-05-17 23:00:46,535 app.db.session DEBUG db.session.open
+2026-05-17 23:00:46,537 app.auth.routers.sign_in INFO auth.sign_in.received email_domain=inditex-sandbox.com request_id=893c1f42-6b8b-48c2-8466-a28616a19f65
+2026-05-17 23:00:46,537 app.auth.rate_limit DEBUG rate_limit.check.start prefix=SIGNIN ip=SIGNIN:127.0.0.1 rate_per_min=20 burst=20
+2026-05-17 23:00:46,537 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=SIGNIN ip=SIGNIN:127.0.0.1 remaining=17
+2026-05-17 23:00:46,537 app.auth.services.sign_in INFO auth.sign_in.starting request_id=893c1f42-6b8b-48c2-8466-a28616a19f65 email_domain=inditex-sandbox.com
+2026-05-17 23:00:46,537 app.auth.repository DEBUG auth.repo.find_by_email.start email_domain=inditex-sandbox.com
+2026-05-17 23:00:46,543 app.auth.repository DEBUG auth.repo.find_by_email.done found=True
+2026-05-17 23:00:46,543 app.auth.services.sign_in INFO auth.sign_in.user_found user_id=69a51772-dbf3-4b00-a1f8-993f892343c9 request_id=893c1f42-6b8b-48c2-8466-a28616a19f65
+2026-05-17 23:00:46,543 app.auth.repository DEBUG auth.repo.count_signin_failures.start user_id=69a51772-dbf3-4b00-a1f8-993f892343c9 window=900s
+2026-05-17 23:00:46,544 app.auth.repository DEBUG auth.repo.count_signin_failures.done user_id=69a51772-dbf3-4b00-a1f8-993f892343c9 count=0
+2026-05-17 23:00:46,544 app.auth.password DEBUG password.verify_with_dummy.start has_real_hash=True
+2026-05-17 23:00:46,578 app.auth.password DEBUG password.verify_with_dummy.ok
+2026-05-17 23:00:46,582 app.auth.tokens DEBUG tokens.encode_access.start sub=69a51772-dbf3-4b00-a1f8-993f892343c9 ttl=1800s
+2026-05-17 23:00:46,583 app.auth.tokens DEBUG tokens.encode_access.done sub=69a51772-dbf3-4b00-a1f8-993f892343c9 exp=2026-05-17T21:30:46.580600+00:00
+2026-05-17 23:00:46,583 app.auth.repository DEBUG auth.repo.insert_refresh_token.start user_id=69a51772-dbf3-4b00-a1f8-993f892343c9
+2026-05-17 23:00:46,585 app.auth.repository DEBUG auth.repo.insert_refresh_token.done user_id=69a51772-dbf3-4b00-a1f8-993f892343c9 rt_id=c24e1859-ea91-454d-9e74-b49d654024c5
+2026-05-17 23:00:46,585 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.sign_in actor_user_id=69a51772-dbf3-4b00-a1f8-993f892343c9
+2026-05-17 23:00:46,586 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=ac2fa11f-531c-49c0-9a3a-c9526e34e249 action=auth.sign_in
+2026-05-17 23:00:46,589 app.auth.services.sign_in INFO auth.sign_in.success user_id=69a51772-dbf3-4b00-a1f8-993f892343c9 request_id=893c1f42-6b8b-48c2-8466-a28616a19f65
+2026-05-17 23:00:46,589 app.auth.routers.sign_in INFO auth.sign_in.success user_id=69a51772-dbf3-4b00-a1f8-993f892343c9 request_id=893c1f42-6b8b-48c2-8466-a28616a19f65
+INFO:     127.0.0.1:56759 - "POST /api/v1/auth/sign-in HTTP/1.1" 200 OK
+2026-05-17 23:00:46,590 app.db.session DEBUG db.session.closed
+2026-05-17 23:00:54,806 app.db.session DEBUG db.session.open
+2026-05-17 23:00:54,808 app.auth.routers.sign_in INFO auth.sign_in.received email_domain=inditex-sandbox.com request_id=verify-auditor-main
+2026-05-17 23:00:54,808 app.auth.rate_limit DEBUG rate_limit.check.start prefix=SIGNIN ip=SIGNIN:127.0.0.1 rate_per_min=20 burst=20
+2026-05-17 23:00:54,808 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=SIGNIN ip=SIGNIN:127.0.0.1 remaining=16
+2026-05-17 23:00:54,808 app.auth.services.sign_in INFO auth.sign_in.starting request_id=verify-auditor-main email_domain=inditex-sandbox.com
+2026-05-17 23:00:54,808 app.auth.repository DEBUG auth.repo.find_by_email.start email_domain=inditex-sandbox.com
+2026-05-17 23:00:54,825 app.auth.repository DEBUG auth.repo.find_by_email.done found=True
+2026-05-17 23:00:54,826 app.auth.services.sign_in INFO auth.sign_in.user_found user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=verify-auditor-main
+2026-05-17 23:00:54,826 app.auth.repository DEBUG auth.repo.count_signin_failures.start user_id=205f42eb-2894-459e-bf25-b4bee3618e4d window=900s
+2026-05-17 23:00:54,831 app.auth.repository DEBUG auth.repo.count_signin_failures.done user_id=205f42eb-2894-459e-bf25-b4bee3618e4d count=0
+2026-05-17 23:00:54,831 app.auth.password DEBUG password.verify_with_dummy.start has_real_hash=True
+2026-05-17 23:00:54,872 app.auth.password DEBUG password.verify_with_dummy.ok
+2026-05-17 23:00:54,878 app.auth.tokens DEBUG tokens.encode_access.start sub=205f42eb-2894-459e-bf25-b4bee3618e4d ttl=1800s
+2026-05-17 23:00:54,879 app.auth.tokens DEBUG tokens.encode_access.done sub=205f42eb-2894-459e-bf25-b4bee3618e4d exp=2026-05-17T21:30:54.874906+00:00
+2026-05-17 23:00:54,879 app.auth.repository DEBUG auth.repo.insert_refresh_token.start user_id=205f42eb-2894-459e-bf25-b4bee3618e4d
+2026-05-17 23:00:54,882 app.auth.repository DEBUG auth.repo.insert_refresh_token.done user_id=205f42eb-2894-459e-bf25-b4bee3618e4d rt_id=8ff30b60-5140-4a25-bdb8-d8f3c4109c5d
+2026-05-17 23:00:54,882 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.sign_in actor_user_id=205f42eb-2894-459e-bf25-b4bee3618e4d
+2026-05-17 23:00:54,886 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=e4292c0c-67cf-4420-a649-366306049f82 action=auth.sign_in
+2026-05-17 23:00:54,894 app.auth.services.sign_in INFO auth.sign_in.success user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=verify-auditor-main
+2026-05-17 23:00:54,894 app.auth.routers.sign_in INFO auth.sign_in.success user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=verify-auditor-main
+INFO:     127.0.0.1:56774 - "POST /api/v1/auth/sign-in HTTP/1.1" 200 OK
+2026-05-17 23:00:54,896 app.db.session DEBUG db.session.closed
+2026-05-17 23:00:54,913 app.db.session DEBUG db.session.open
+2026-05-17 23:00:54,913 app.auth.routers.sign_in INFO auth.sign_in.received email_domain=inditex-sandbox.com request_id=verify-sa-main
+2026-05-17 23:00:54,914 app.auth.rate_limit DEBUG rate_limit.check.start prefix=SIGNIN ip=SIGNIN:127.0.0.1 rate_per_min=20 burst=20
+2026-05-17 23:00:54,914 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=SIGNIN ip=SIGNIN:127.0.0.1 remaining=15
+2026-05-17 23:00:54,914 app.auth.services.sign_in INFO auth.sign_in.starting request_id=verify-sa-main email_domain=inditex-sandbox.com
+2026-05-17 23:00:54,914 app.auth.repository DEBUG auth.repo.find_by_email.start email_domain=inditex-sandbox.com
+2026-05-17 23:00:54,918 app.auth.repository DEBUG auth.repo.find_by_email.done found=True
+2026-05-17 23:00:54,918 app.auth.services.sign_in INFO auth.sign_in.user_found user_id=9ced3399-1ee8-4781-bfca-26dad18fc6a0 request_id=verify-sa-main
+2026-05-17 23:00:54,918 app.auth.repository DEBUG auth.repo.count_signin_failures.start user_id=9ced3399-1ee8-4781-bfca-26dad18fc6a0 window=900s
+2026-05-17 23:00:54,920 app.auth.repository DEBUG auth.repo.count_signin_failures.done user_id=9ced3399-1ee8-4781-bfca-26dad18fc6a0 count=0
+2026-05-17 23:00:54,920 app.auth.password DEBUG password.verify_with_dummy.start has_real_hash=True
+2026-05-17 23:00:54,961 app.auth.password DEBUG password.verify_with_dummy.ok
+2026-05-17 23:00:54,967 app.auth.tokens DEBUG tokens.encode_access.start sub=9ced3399-1ee8-4781-bfca-26dad18fc6a0 ttl=1800s
+2026-05-17 23:00:54,968 app.auth.tokens DEBUG tokens.encode_access.done sub=9ced3399-1ee8-4781-bfca-26dad18fc6a0 exp=2026-05-17T21:30:54.964453+00:00
+2026-05-17 23:00:54,968 app.auth.repository DEBUG auth.repo.insert_refresh_token.start user_id=9ced3399-1ee8-4781-bfca-26dad18fc6a0
+2026-05-17 23:00:54,969 app.auth.repository DEBUG auth.repo.insert_refresh_token.done user_id=9ced3399-1ee8-4781-bfca-26dad18fc6a0 rt_id=23dd73d1-1b02-45b9-ac12-c3e83052f549
+2026-05-17 23:00:54,970 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.sign_in actor_user_id=9ced3399-1ee8-4781-bfca-26dad18fc6a0
+2026-05-17 23:00:54,971 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=adad2973-f5b3-4730-b980-cd3696264d95 action=auth.sign_in
+2026-05-17 23:00:54,978 app.auth.services.sign_in INFO auth.sign_in.success user_id=9ced3399-1ee8-4781-bfca-26dad18fc6a0 request_id=verify-sa-main
+2026-05-17 23:00:54,978 app.auth.routers.sign_in INFO auth.sign_in.success user_id=9ced3399-1ee8-4781-bfca-26dad18fc6a0 request_id=verify-sa-main
+INFO:     127.0.0.1:56776 - "POST /api/v1/auth/sign-in HTTP/1.1" 200 OK
+2026-05-17 23:00:54,980 app.db.session DEBUG db.session.closed
+2026-05-17 23:00:54,998 app.db.session DEBUG db.session.open
+2026-05-17 23:00:54,998 app.auth.routers.sign_in INFO auth.sign_in.received email_domain=inditex-sandbox.com request_id=verify-emp-main
+2026-05-17 23:00:54,998 app.auth.rate_limit DEBUG rate_limit.check.start prefix=SIGNIN ip=SIGNIN:127.0.0.1 rate_per_min=20 burst=20
+2026-05-17 23:00:54,998 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=SIGNIN ip=SIGNIN:127.0.0.1 remaining=14
+2026-05-17 23:00:54,998 app.auth.services.sign_in INFO auth.sign_in.starting request_id=verify-emp-main email_domain=inditex-sandbox.com
+2026-05-17 23:00:54,998 app.auth.repository DEBUG auth.repo.find_by_email.start email_domain=inditex-sandbox.com
+2026-05-17 23:00:55,005 app.auth.repository DEBUG auth.repo.find_by_email.done found=True
+2026-05-17 23:00:55,005 app.auth.services.sign_in INFO auth.sign_in.user_found user_id=69a51772-dbf3-4b00-a1f8-993f892343c9 request_id=verify-emp-main
+2026-05-17 23:00:55,005 app.auth.repository DEBUG auth.repo.count_signin_failures.start user_id=69a51772-dbf3-4b00-a1f8-993f892343c9 window=900s
+2026-05-17 23:00:55,007 app.auth.repository DEBUG auth.repo.count_signin_failures.done user_id=69a51772-dbf3-4b00-a1f8-993f892343c9 count=0
+2026-05-17 23:00:55,007 app.auth.password DEBUG password.verify_with_dummy.start has_real_hash=True
+2026-05-17 23:00:55,042 app.auth.password DEBUG password.verify_with_dummy.ok
+2026-05-17 23:00:55,047 app.auth.tokens DEBUG tokens.encode_access.start sub=69a51772-dbf3-4b00-a1f8-993f892343c9 ttl=1800s
+2026-05-17 23:00:55,047 app.auth.tokens DEBUG tokens.encode_access.done sub=69a51772-dbf3-4b00-a1f8-993f892343c9 exp=2026-05-17T21:30:55.044921+00:00
+2026-05-17 23:00:55,047 app.auth.repository DEBUG auth.repo.insert_refresh_token.start user_id=69a51772-dbf3-4b00-a1f8-993f892343c9
+2026-05-17 23:00:55,049 app.auth.repository DEBUG auth.repo.insert_refresh_token.done user_id=69a51772-dbf3-4b00-a1f8-993f892343c9 rt_id=372ba780-1347-464b-800d-e339b42f0e69
+2026-05-17 23:00:55,049 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.sign_in actor_user_id=69a51772-dbf3-4b00-a1f8-993f892343c9
+2026-05-17 23:00:55,050 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=b6c5ebab-7d44-4c14-8d83-05b0fb2bb960 action=auth.sign_in
+2026-05-17 23:00:55,055 app.auth.services.sign_in INFO auth.sign_in.success user_id=69a51772-dbf3-4b00-a1f8-993f892343c9 request_id=verify-emp-main
+2026-05-17 23:00:55,055 app.auth.routers.sign_in INFO auth.sign_in.success user_id=69a51772-dbf3-4b00-a1f8-993f892343c9 request_id=verify-emp-main
+INFO:     127.0.0.1:56778 - "POST /api/v1/auth/sign-in HTTP/1.1" 200 OK
+2026-05-17 23:00:55,056 app.db.session DEBUG db.session.closed
+2026-05-17 23:00:55,080 app.db.session DEBUG db.session.open
+2026-05-17 23:00:55,080 app.users.deps DEBUG users.deps.get_current_user.start request_id=verify-curl-auditor-200-01 ip=127.0.0.1
+2026-05-17 23:00:55,080 app.auth.tokens DEBUG tokens.decode.start
+2026-05-17 23:00:55,080 app.auth.tokens DEBUG tokens.decode.ok sub=205f42eb-2894-459e-bf25-b4bee3618e4d
+2026-05-17 23:00:55,080 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.start user_id=205f42eb-2894-459e-bf25-b4bee3618e4d
+2026-05-17 23:00:55,090 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.done user_id=205f42eb-2894-459e-bf25-b4bee3618e4d found=True
+2026-05-17 23:00:55,091 app.users.deps DEBUG users.deps.get_current_user.done user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=verify-curl-auditor-200-01
+2026-05-17 23:00:55,091 app.security.permissions DEBUG security.permissions.require_role.start role=people_auditor user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=verify-curl-auditor-200-01
+2026-05-17 23:00:55,091 app.security.permissions DEBUG security.permissions.require_role.ok role=people_auditor user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=verify-curl-auditor-200-01
+2026-05-17 23:00:55,091 app.admin.audit.router DEBUG admin.audit.router.get_audit.start user_id_hash=df2cb1a4 request_id=verify-curl-auditor-200-01
+2026-05-17 23:00:55,091 app.admin.audit.service DEBUG admin.audit.service.list_events.start actor_user_id_hash=df2cb1a4 request_id=verify-curl-auditor-200-01
+2026-05-17 23:00:55,091 app.admin.audit.service WARNING admin.audit.service.list_events.window_too_wide days=365.0 max=90 request_id=verify-curl-auditor-200-01
+2026-05-17 23:00:55,091 app.admin.audit.router DEBUG admin.audit.router.get_audit.validation_error code=AUDIT_WINDOW_TOO_WIDE request_id=verify-curl-auditor-200-01
+INFO:     127.0.0.1:56780 - "GET /api/v1/admin/audit?from=2026-01-01T00:00:00Z&to=2026-12-31T23:59:59Z&limit=10 HTTP/1.1" 422 Unprocessable Entity
+2026-05-17 23:00:55,092 app.db.session DEBUG db.session.closed
+2026-05-17 23:01:09,106 app.db.session DEBUG db.session.open
+2026-05-17 23:01:09,108 app.auth.routers.sign_in INFO auth.sign_in.received email_domain=inditex-sandbox.com request_id=7b38d6fe-5551-49ea-b3d8-23b67fd1e8a9
+2026-05-17 23:01:09,108 app.auth.rate_limit DEBUG rate_limit.check.start prefix=SIGNIN ip=SIGNIN:127.0.0.1 rate_per_min=20 burst=20
+2026-05-17 23:01:09,108 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=SIGNIN ip=SIGNIN:127.0.0.1 remaining=13
+2026-05-17 23:01:09,108 app.auth.services.sign_in INFO auth.sign_in.starting request_id=7b38d6fe-5551-49ea-b3d8-23b67fd1e8a9 email_domain=inditex-sandbox.com
+2026-05-17 23:01:09,108 app.auth.repository DEBUG auth.repo.find_by_email.start email_domain=inditex-sandbox.com
+2026-05-17 23:01:09,121 app.auth.repository DEBUG auth.repo.find_by_email.done found=True
+2026-05-17 23:01:09,121 app.auth.services.sign_in INFO auth.sign_in.user_found user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=7b38d6fe-5551-49ea-b3d8-23b67fd1e8a9
+2026-05-17 23:01:09,121 app.auth.repository DEBUG auth.repo.count_signin_failures.start user_id=205f42eb-2894-459e-bf25-b4bee3618e4d window=900s
+2026-05-17 23:01:09,125 app.auth.repository DEBUG auth.repo.count_signin_failures.done user_id=205f42eb-2894-459e-bf25-b4bee3618e4d count=0
+2026-05-17 23:01:09,125 app.auth.password DEBUG password.verify_with_dummy.start has_real_hash=True
+2026-05-17 23:01:09,213 app.auth.password DEBUG password.verify_with_dummy.ok
+2026-05-17 23:01:09,220 app.auth.tokens DEBUG tokens.encode_access.start sub=205f42eb-2894-459e-bf25-b4bee3618e4d ttl=1800s
+2026-05-17 23:01:09,221 app.auth.tokens DEBUG tokens.encode_access.done sub=205f42eb-2894-459e-bf25-b4bee3618e4d exp=2026-05-17T21:31:09.216970+00:00
+2026-05-17 23:01:09,221 app.auth.repository DEBUG auth.repo.insert_refresh_token.start user_id=205f42eb-2894-459e-bf25-b4bee3618e4d
+2026-05-17 23:01:09,223 app.auth.repository DEBUG auth.repo.insert_refresh_token.done user_id=205f42eb-2894-459e-bf25-b4bee3618e4d rt_id=af39a7a8-d142-4914-b5c3-c2cfb8b308c2
+2026-05-17 23:01:09,223 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.sign_in actor_user_id=205f42eb-2894-459e-bf25-b4bee3618e4d
+2026-05-17 23:01:09,227 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=9fcb4ef2-dae2-436c-b497-844481d890ff action=auth.sign_in
+2026-05-17 23:01:09,232 app.auth.services.sign_in INFO auth.sign_in.success user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=7b38d6fe-5551-49ea-b3d8-23b67fd1e8a9
+2026-05-17 23:01:09,232 app.auth.routers.sign_in INFO auth.sign_in.success user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=7b38d6fe-5551-49ea-b3d8-23b67fd1e8a9
+INFO:     127.0.0.1:56805 - "POST /api/v1/auth/sign-in HTTP/1.1" 200 OK
+2026-05-17 23:01:09,233 app.db.session DEBUG db.session.closed
+2026-05-17 23:01:09,252 app.db.session DEBUG db.session.open
+2026-05-17 23:01:09,252 app.auth.routers.sign_in INFO auth.sign_in.received email_domain=inditex-sandbox.com request_id=1df9e7e9-5855-4bc4-aaf1-a6f6efd5fff3
+2026-05-17 23:01:09,252 app.auth.rate_limit DEBUG rate_limit.check.start prefix=SIGNIN ip=SIGNIN:127.0.0.1 rate_per_min=20 burst=20
+2026-05-17 23:01:09,252 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=SIGNIN ip=SIGNIN:127.0.0.1 remaining=12
+2026-05-17 23:01:09,253 app.auth.services.sign_in INFO auth.sign_in.starting request_id=1df9e7e9-5855-4bc4-aaf1-a6f6efd5fff3 email_domain=inditex-sandbox.com
+2026-05-17 23:01:09,253 app.auth.repository DEBUG auth.repo.find_by_email.start email_domain=inditex-sandbox.com
+2026-05-17 23:01:09,256 app.auth.repository DEBUG auth.repo.find_by_email.done found=True
+2026-05-17 23:01:09,257 app.auth.services.sign_in INFO auth.sign_in.user_found user_id=9ced3399-1ee8-4781-bfca-26dad18fc6a0 request_id=1df9e7e9-5855-4bc4-aaf1-a6f6efd5fff3
+2026-05-17 23:01:09,257 app.auth.repository DEBUG auth.repo.count_signin_failures.start user_id=9ced3399-1ee8-4781-bfca-26dad18fc6a0 window=900s
+2026-05-17 23:01:09,259 app.auth.repository DEBUG auth.repo.count_signin_failures.done user_id=9ced3399-1ee8-4781-bfca-26dad18fc6a0 count=0
+2026-05-17 23:01:09,259 app.auth.password DEBUG password.verify_with_dummy.start has_real_hash=True
+2026-05-17 23:01:09,298 app.auth.password DEBUG password.verify_with_dummy.ok
+2026-05-17 23:01:09,303 app.auth.tokens DEBUG tokens.encode_access.start sub=9ced3399-1ee8-4781-bfca-26dad18fc6a0 ttl=1800s
+2026-05-17 23:01:09,304 app.auth.tokens DEBUG tokens.encode_access.done sub=9ced3399-1ee8-4781-bfca-26dad18fc6a0 exp=2026-05-17T21:31:09.300813+00:00
+2026-05-17 23:01:09,304 app.auth.repository DEBUG auth.repo.insert_refresh_token.start user_id=9ced3399-1ee8-4781-bfca-26dad18fc6a0
+2026-05-17 23:01:09,306 app.auth.repository DEBUG auth.repo.insert_refresh_token.done user_id=9ced3399-1ee8-4781-bfca-26dad18fc6a0 rt_id=4a3694d5-de91-4ec8-a9c8-912e7bac8e13
+2026-05-17 23:01:09,306 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.sign_in actor_user_id=9ced3399-1ee8-4781-bfca-26dad18fc6a0
+2026-05-17 23:01:09,307 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=6313d046-38ca-47cc-9a73-eee24cab9038 action=auth.sign_in
+2026-05-17 23:01:09,311 app.auth.services.sign_in INFO auth.sign_in.success user_id=9ced3399-1ee8-4781-bfca-26dad18fc6a0 request_id=1df9e7e9-5855-4bc4-aaf1-a6f6efd5fff3
+2026-05-17 23:01:09,311 app.auth.routers.sign_in INFO auth.sign_in.success user_id=9ced3399-1ee8-4781-bfca-26dad18fc6a0 request_id=1df9e7e9-5855-4bc4-aaf1-a6f6efd5fff3
+INFO:     127.0.0.1:56807 - "POST /api/v1/auth/sign-in HTTP/1.1" 200 OK
+2026-05-17 23:01:09,313 app.db.session DEBUG db.session.closed
+2026-05-17 23:01:09,331 app.db.session DEBUG db.session.open
+2026-05-17 23:01:09,332 app.auth.routers.sign_in INFO auth.sign_in.received email_domain=inditex-sandbox.com request_id=a160f2b1-8640-41c1-a23c-6bd848d8dad5
+2026-05-17 23:01:09,332 app.auth.rate_limit DEBUG rate_limit.check.start prefix=SIGNIN ip=SIGNIN:127.0.0.1 rate_per_min=20 burst=20
+2026-05-17 23:01:09,332 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=SIGNIN ip=SIGNIN:127.0.0.1 remaining=11
+2026-05-17 23:01:09,332 app.auth.services.sign_in INFO auth.sign_in.starting request_id=a160f2b1-8640-41c1-a23c-6bd848d8dad5 email_domain=inditex-sandbox.com
+2026-05-17 23:01:09,332 app.auth.repository DEBUG auth.repo.find_by_email.start email_domain=inditex-sandbox.com
+2026-05-17 23:01:09,336 app.auth.repository DEBUG auth.repo.find_by_email.done found=True
+2026-05-17 23:01:09,336 app.auth.services.sign_in INFO auth.sign_in.user_found user_id=69a51772-dbf3-4b00-a1f8-993f892343c9 request_id=a160f2b1-8640-41c1-a23c-6bd848d8dad5
+2026-05-17 23:01:09,336 app.auth.repository DEBUG auth.repo.count_signin_failures.start user_id=69a51772-dbf3-4b00-a1f8-993f892343c9 window=900s
+2026-05-17 23:01:09,341 app.auth.repository DEBUG auth.repo.count_signin_failures.done user_id=69a51772-dbf3-4b00-a1f8-993f892343c9 count=0
+2026-05-17 23:01:09,341 app.auth.password DEBUG password.verify_with_dummy.start has_real_hash=True
+2026-05-17 23:01:09,383 app.auth.password DEBUG password.verify_with_dummy.ok
+2026-05-17 23:01:09,393 app.auth.tokens DEBUG tokens.encode_access.start sub=69a51772-dbf3-4b00-a1f8-993f892343c9 ttl=1800s
+2026-05-17 23:01:09,393 app.auth.tokens DEBUG tokens.encode_access.done sub=69a51772-dbf3-4b00-a1f8-993f892343c9 exp=2026-05-17T21:31:09.389739+00:00
+2026-05-17 23:01:09,393 app.auth.repository DEBUG auth.repo.insert_refresh_token.start user_id=69a51772-dbf3-4b00-a1f8-993f892343c9
+2026-05-17 23:01:09,395 app.auth.repository DEBUG auth.repo.insert_refresh_token.done user_id=69a51772-dbf3-4b00-a1f8-993f892343c9 rt_id=235cf813-a897-4b83-a8b6-e2c6bd1e13be
+2026-05-17 23:01:09,395 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.sign_in actor_user_id=69a51772-dbf3-4b00-a1f8-993f892343c9
+2026-05-17 23:01:09,398 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=c42332dc-8490-4dfa-a1fc-5becaa58a1ce action=auth.sign_in
+2026-05-17 23:01:09,402 app.auth.services.sign_in INFO auth.sign_in.success user_id=69a51772-dbf3-4b00-a1f8-993f892343c9 request_id=a160f2b1-8640-41c1-a23c-6bd848d8dad5
+2026-05-17 23:01:09,402 app.auth.routers.sign_in INFO auth.sign_in.success user_id=69a51772-dbf3-4b00-a1f8-993f892343c9 request_id=a160f2b1-8640-41c1-a23c-6bd848d8dad5
+INFO:     127.0.0.1:56809 - "POST /api/v1/auth/sign-in HTTP/1.1" 200 OK
+2026-05-17 23:01:09,404 app.db.session DEBUG db.session.closed
+2026-05-17 23:01:09,427 app.db.session DEBUG db.session.open
+2026-05-17 23:01:09,427 app.users.deps DEBUG users.deps.get_current_user.start request_id=verify-curl-auditor-200-01 ip=127.0.0.1
+2026-05-17 23:01:09,427 app.auth.tokens DEBUG tokens.decode.start
+2026-05-17 23:01:09,427 app.auth.tokens DEBUG tokens.decode.ok sub=205f42eb-2894-459e-bf25-b4bee3618e4d
+2026-05-17 23:01:09,427 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.start user_id=205f42eb-2894-459e-bf25-b4bee3618e4d
+2026-05-17 23:01:09,431 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.done user_id=205f42eb-2894-459e-bf25-b4bee3618e4d found=True
+2026-05-17 23:01:09,431 app.users.deps DEBUG users.deps.get_current_user.done user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=verify-curl-auditor-200-01
+2026-05-17 23:01:09,431 app.security.permissions DEBUG security.permissions.require_role.start role=people_auditor user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=verify-curl-auditor-200-01
+2026-05-17 23:01:09,431 app.security.permissions DEBUG security.permissions.require_role.ok role=people_auditor user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=verify-curl-auditor-200-01
+2026-05-17 23:01:09,432 app.admin.audit.router DEBUG admin.audit.router.get_audit.start user_id_hash=df2cb1a4 request_id=verify-curl-auditor-200-01
+2026-05-17 23:01:09,432 app.admin.audit.service DEBUG admin.audit.service.list_events.start actor_user_id_hash=df2cb1a4 request_id=verify-curl-auditor-200-01
+2026-05-17 23:01:09,432 app.admin.audit.repository DEBUG admin.audit.repository.list.start from=2026-04-01T00:00:00+00:00 to=2026-06-28T23:59:59+00:00 actor_hash=None action_truncated=None cursor_present=False limit=10
+2026-05-17 23:01:09,439 app.admin.audit.repository DEBUG admin.audit.repository.list.ok count=10 has_more=True
+2026-05-17 23:01:09,441 app.admin.audit.service DEBUG admin.audit.service.list_events.ok actor_user_id_hash=df2cb1a4 count=10 has_more=True request_id=verify-curl-auditor-200-01
+2026-05-17 23:01:09,441 app.admin.audit.router DEBUG admin.audit.router.get_audit.ok user_id_hash=df2cb1a4 count=10 request_id=verify-curl-auditor-200-01
+INFO:     127.0.0.1:56811 - "GET /api/v1/admin/audit?from=2026-04-01T00:00:00Z&to=2026-06-28T23:59:59Z&limit=10 HTTP/1.1" 200 OK
+2026-05-17 23:01:09,442 app.db.session DEBUG db.session.closed
+2026-05-17 23:01:21,272 app.db.session DEBUG db.session.open
+2026-05-17 23:01:21,273 app.auth.routers.sign_in INFO auth.sign_in.received email_domain=inditex-sandbox.com request_id=16f8de89-45a5-42af-b36b-f42b7700dfb7
+2026-05-17 23:01:21,273 app.auth.rate_limit DEBUG rate_limit.check.start prefix=SIGNIN ip=SIGNIN:127.0.0.1 rate_per_min=20 burst=20
+2026-05-17 23:01:21,273 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=SIGNIN ip=SIGNIN:127.0.0.1 remaining=10
+2026-05-17 23:01:21,273 app.auth.services.sign_in INFO auth.sign_in.starting request_id=16f8de89-45a5-42af-b36b-f42b7700dfb7 email_domain=inditex-sandbox.com
+2026-05-17 23:01:21,273 app.auth.repository DEBUG auth.repo.find_by_email.start email_domain=inditex-sandbox.com
+2026-05-17 23:01:21,284 app.auth.repository DEBUG auth.repo.find_by_email.done found=True
+2026-05-17 23:01:21,284 app.auth.services.sign_in INFO auth.sign_in.user_found user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=16f8de89-45a5-42af-b36b-f42b7700dfb7
+2026-05-17 23:01:21,284 app.auth.repository DEBUG auth.repo.count_signin_failures.start user_id=205f42eb-2894-459e-bf25-b4bee3618e4d window=900s
+2026-05-17 23:01:21,287 app.auth.repository DEBUG auth.repo.count_signin_failures.done user_id=205f42eb-2894-459e-bf25-b4bee3618e4d count=0
+2026-05-17 23:01:21,287 app.auth.password DEBUG password.verify_with_dummy.start has_real_hash=True
+2026-05-17 23:01:21,324 app.auth.password DEBUG password.verify_with_dummy.ok
+2026-05-17 23:01:21,332 app.auth.tokens DEBUG tokens.encode_access.start sub=205f42eb-2894-459e-bf25-b4bee3618e4d ttl=1800s
+2026-05-17 23:01:21,333 app.auth.tokens DEBUG tokens.encode_access.done sub=205f42eb-2894-459e-bf25-b4bee3618e4d exp=2026-05-17T21:31:21.328359+00:00
+2026-05-17 23:01:21,333 app.auth.repository DEBUG auth.repo.insert_refresh_token.start user_id=205f42eb-2894-459e-bf25-b4bee3618e4d
+2026-05-17 23:01:21,336 app.auth.repository DEBUG auth.repo.insert_refresh_token.done user_id=205f42eb-2894-459e-bf25-b4bee3618e4d rt_id=046171e8-4b64-4ca0-bbf5-74edcae1b966
+2026-05-17 23:01:21,336 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.sign_in actor_user_id=205f42eb-2894-459e-bf25-b4bee3618e4d
+2026-05-17 23:01:21,338 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=0338dad5-df50-4cc1-94e6-61144f196539 action=auth.sign_in
+2026-05-17 23:01:21,343 app.auth.services.sign_in INFO auth.sign_in.success user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=16f8de89-45a5-42af-b36b-f42b7700dfb7
+2026-05-17 23:01:21,343 app.auth.routers.sign_in INFO auth.sign_in.success user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=16f8de89-45a5-42af-b36b-f42b7700dfb7
+INFO:     127.0.0.1:56841 - "POST /api/v1/auth/sign-in HTTP/1.1" 200 OK
+2026-05-17 23:01:21,346 app.db.session DEBUG db.session.closed
+2026-05-17 23:01:21,361 app.db.session DEBUG db.session.open
+2026-05-17 23:01:21,361 app.auth.routers.sign_in INFO auth.sign_in.received email_domain=inditex-sandbox.com request_id=526172d8-18d9-4e19-a994-e6516c54d2c8
+2026-05-17 23:01:21,362 app.auth.rate_limit DEBUG rate_limit.check.start prefix=SIGNIN ip=SIGNIN:127.0.0.1 rate_per_min=20 burst=20
+2026-05-17 23:01:21,362 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=SIGNIN ip=SIGNIN:127.0.0.1 remaining=9
+2026-05-17 23:01:21,362 app.auth.services.sign_in INFO auth.sign_in.starting request_id=526172d8-18d9-4e19-a994-e6516c54d2c8 email_domain=inditex-sandbox.com
+2026-05-17 23:01:21,362 app.auth.repository DEBUG auth.repo.find_by_email.start email_domain=inditex-sandbox.com
+2026-05-17 23:01:21,367 app.auth.repository DEBUG auth.repo.find_by_email.done found=True
+2026-05-17 23:01:21,367 app.auth.services.sign_in INFO auth.sign_in.user_found user_id=9ced3399-1ee8-4781-bfca-26dad18fc6a0 request_id=526172d8-18d9-4e19-a994-e6516c54d2c8
+2026-05-17 23:01:21,367 app.auth.repository DEBUG auth.repo.count_signin_failures.start user_id=9ced3399-1ee8-4781-bfca-26dad18fc6a0 window=900s
+2026-05-17 23:01:21,369 app.auth.repository DEBUG auth.repo.count_signin_failures.done user_id=9ced3399-1ee8-4781-bfca-26dad18fc6a0 count=0
+2026-05-17 23:01:21,369 app.auth.password DEBUG password.verify_with_dummy.start has_real_hash=True
+2026-05-17 23:01:21,402 app.auth.password DEBUG password.verify_with_dummy.ok
+2026-05-17 23:01:21,408 app.auth.tokens DEBUG tokens.encode_access.start sub=9ced3399-1ee8-4781-bfca-26dad18fc6a0 ttl=1800s
+2026-05-17 23:01:21,408 app.auth.tokens DEBUG tokens.encode_access.done sub=9ced3399-1ee8-4781-bfca-26dad18fc6a0 exp=2026-05-17T21:31:21.405637+00:00
+2026-05-17 23:01:21,408 app.auth.repository DEBUG auth.repo.insert_refresh_token.start user_id=9ced3399-1ee8-4781-bfca-26dad18fc6a0
+2026-05-17 23:01:21,411 app.auth.repository DEBUG auth.repo.insert_refresh_token.done user_id=9ced3399-1ee8-4781-bfca-26dad18fc6a0 rt_id=ac750bff-1e16-4958-8032-59b45b748635
+2026-05-17 23:01:21,411 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.sign_in actor_user_id=9ced3399-1ee8-4781-bfca-26dad18fc6a0
+2026-05-17 23:01:21,413 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=3f8ae689-6e76-445c-af74-3e2360c1f4ac action=auth.sign_in
+2026-05-17 23:01:21,416 app.auth.services.sign_in INFO auth.sign_in.success user_id=9ced3399-1ee8-4781-bfca-26dad18fc6a0 request_id=526172d8-18d9-4e19-a994-e6516c54d2c8
+2026-05-17 23:01:21,416 app.auth.routers.sign_in INFO auth.sign_in.success user_id=9ced3399-1ee8-4781-bfca-26dad18fc6a0 request_id=526172d8-18d9-4e19-a994-e6516c54d2c8
+INFO:     127.0.0.1:56843 - "POST /api/v1/auth/sign-in HTTP/1.1" 200 OK
+2026-05-17 23:01:21,417 app.db.session DEBUG db.session.closed
+2026-05-17 23:01:21,436 app.db.session DEBUG db.session.open
+2026-05-17 23:01:21,436 app.auth.routers.sign_in INFO auth.sign_in.received email_domain=inditex-sandbox.com request_id=d1d4fbd1-e172-4d0c-96be-23635a7f6732
+2026-05-17 23:01:21,437 app.auth.rate_limit DEBUG rate_limit.check.start prefix=SIGNIN ip=SIGNIN:127.0.0.1 rate_per_min=20 burst=20
+2026-05-17 23:01:21,437 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=SIGNIN ip=SIGNIN:127.0.0.1 remaining=8
+2026-05-17 23:01:21,437 app.auth.services.sign_in INFO auth.sign_in.starting request_id=d1d4fbd1-e172-4d0c-96be-23635a7f6732 email_domain=inditex-sandbox.com
+2026-05-17 23:01:21,437 app.auth.repository DEBUG auth.repo.find_by_email.start email_domain=inditex-sandbox.com
+2026-05-17 23:01:21,439 app.auth.repository DEBUG auth.repo.find_by_email.done found=True
+2026-05-17 23:01:21,439 app.auth.services.sign_in INFO auth.sign_in.user_found user_id=69a51772-dbf3-4b00-a1f8-993f892343c9 request_id=d1d4fbd1-e172-4d0c-96be-23635a7f6732
+2026-05-17 23:01:21,439 app.auth.repository DEBUG auth.repo.count_signin_failures.start user_id=69a51772-dbf3-4b00-a1f8-993f892343c9 window=900s
+2026-05-17 23:01:21,444 app.auth.repository DEBUG auth.repo.count_signin_failures.done user_id=69a51772-dbf3-4b00-a1f8-993f892343c9 count=0
+2026-05-17 23:01:21,444 app.auth.password DEBUG password.verify_with_dummy.start has_real_hash=True
+2026-05-17 23:01:21,478 app.auth.password DEBUG password.verify_with_dummy.ok
+2026-05-17 23:01:21,482 app.auth.tokens DEBUG tokens.encode_access.start sub=69a51772-dbf3-4b00-a1f8-993f892343c9 ttl=1800s
+2026-05-17 23:01:21,482 app.auth.tokens DEBUG tokens.encode_access.done sub=69a51772-dbf3-4b00-a1f8-993f892343c9 exp=2026-05-17T21:31:21.480917+00:00
+2026-05-17 23:01:21,482 app.auth.repository DEBUG auth.repo.insert_refresh_token.start user_id=69a51772-dbf3-4b00-a1f8-993f892343c9
+2026-05-17 23:01:21,484 app.auth.repository DEBUG auth.repo.insert_refresh_token.done user_id=69a51772-dbf3-4b00-a1f8-993f892343c9 rt_id=38e21c17-11a8-42b9-b6a2-2d68e235fbb7
+2026-05-17 23:01:21,484 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.sign_in actor_user_id=69a51772-dbf3-4b00-a1f8-993f892343c9
+2026-05-17 23:01:21,485 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=964fdc40-d735-497d-97b7-b4f054207168 action=auth.sign_in
+2026-05-17 23:01:21,488 app.auth.services.sign_in INFO auth.sign_in.success user_id=69a51772-dbf3-4b00-a1f8-993f892343c9 request_id=d1d4fbd1-e172-4d0c-96be-23635a7f6732
+2026-05-17 23:01:21,488 app.auth.routers.sign_in INFO auth.sign_in.success user_id=69a51772-dbf3-4b00-a1f8-993f892343c9 request_id=d1d4fbd1-e172-4d0c-96be-23635a7f6732
+INFO:     127.0.0.1:56845 - "POST /api/v1/auth/sign-in HTTP/1.1" 200 OK
+2026-05-17 23:01:21,489 app.db.session DEBUG db.session.closed
+2026-05-17 23:01:21,513 app.db.session DEBUG db.session.open
+2026-05-17 23:01:21,513 app.users.deps DEBUG users.deps.get_current_user.start request_id=verify-sa-200-02 ip=127.0.0.1
+2026-05-17 23:01:21,513 app.auth.tokens DEBUG tokens.decode.start
+2026-05-17 23:01:21,513 app.auth.tokens DEBUG tokens.decode.ok sub=9ced3399-1ee8-4781-bfca-26dad18fc6a0
+2026-05-17 23:01:21,513 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.start user_id=9ced3399-1ee8-4781-bfca-26dad18fc6a0
+2026-05-17 23:01:21,517 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.done user_id=9ced3399-1ee8-4781-bfca-26dad18fc6a0 found=True
+2026-05-17 23:01:21,517 app.users.deps DEBUG users.deps.get_current_user.done user_id=9ced3399-1ee8-4781-bfca-26dad18fc6a0 request_id=verify-sa-200-02
+2026-05-17 23:01:21,517 app.security.permissions DEBUG security.permissions.require_role.start role=people_auditor user_id=9ced3399-1ee8-4781-bfca-26dad18fc6a0 request_id=verify-sa-200-02
+2026-05-17 23:01:21,517 app.security.permissions DEBUG security.permissions.require_role.ok role=people_auditor user_id=9ced3399-1ee8-4781-bfca-26dad18fc6a0 request_id=verify-sa-200-02
+2026-05-17 23:01:21,517 app.admin.audit.router DEBUG admin.audit.router.get_audit.start user_id_hash=2b8eddee request_id=verify-sa-200-02
+2026-05-17 23:01:21,517 app.admin.audit.service DEBUG admin.audit.service.list_events.start actor_user_id_hash=2b8eddee request_id=verify-sa-200-02
+2026-05-17 23:01:21,517 app.admin.audit.repository DEBUG admin.audit.repository.list.start from=2026-04-01T00:00:00+00:00 to=2026-06-28T23:59:59+00:00 actor_hash=None action_truncated=None cursor_present=False limit=5
+2026-05-17 23:01:21,518 app.admin.audit.repository DEBUG admin.audit.repository.list.ok count=5 has_more=True
+2026-05-17 23:01:21,518 app.admin.audit.service DEBUG admin.audit.service.list_events.ok actor_user_id_hash=2b8eddee count=5 has_more=True request_id=verify-sa-200-02
+2026-05-17 23:01:21,518 app.admin.audit.router DEBUG admin.audit.router.get_audit.ok user_id_hash=2b8eddee count=5 request_id=verify-sa-200-02
+INFO:     127.0.0.1:56848 - "GET /api/v1/admin/audit?from=2026-04-01T00:00:00Z&to=2026-06-28T23:59:59Z&limit=5 HTTP/1.1" 200 OK
+2026-05-17 23:01:21,519 app.db.session DEBUG db.session.closed
+2026-05-17 23:01:34,330 app.db.session DEBUG db.session.open
+2026-05-17 23:01:34,332 app.auth.routers.sign_in INFO auth.sign_in.received email_domain=inditex-sandbox.com request_id=4c657ca9-6004-48ed-8c58-24b497fae627
+2026-05-17 23:01:34,332 app.auth.rate_limit DEBUG rate_limit.check.start prefix=SIGNIN ip=SIGNIN:127.0.0.1 rate_per_min=20 burst=20
+2026-05-17 23:01:34,332 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=SIGNIN ip=SIGNIN:127.0.0.1 new_window remaining=19
+2026-05-17 23:01:34,332 app.auth.services.sign_in INFO auth.sign_in.starting request_id=4c657ca9-6004-48ed-8c58-24b497fae627 email_domain=inditex-sandbox.com
+2026-05-17 23:01:34,332 app.auth.repository DEBUG auth.repo.find_by_email.start email_domain=inditex-sandbox.com
+2026-05-17 23:01:34,347 app.auth.repository DEBUG auth.repo.find_by_email.done found=True
+2026-05-17 23:01:34,347 app.auth.services.sign_in INFO auth.sign_in.user_found user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=4c657ca9-6004-48ed-8c58-24b497fae627
+2026-05-17 23:01:34,347 app.auth.repository DEBUG auth.repo.count_signin_failures.start user_id=205f42eb-2894-459e-bf25-b4bee3618e4d window=900s
+2026-05-17 23:01:34,350 app.auth.repository DEBUG auth.repo.count_signin_failures.done user_id=205f42eb-2894-459e-bf25-b4bee3618e4d count=0
+2026-05-17 23:01:34,350 app.auth.password DEBUG password.verify_with_dummy.start has_real_hash=True
+2026-05-17 23:01:34,388 app.auth.password DEBUG password.verify_with_dummy.ok
+2026-05-17 23:01:34,395 app.auth.tokens DEBUG tokens.encode_access.start sub=205f42eb-2894-459e-bf25-b4bee3618e4d ttl=1800s
+2026-05-17 23:01:34,395 app.auth.tokens DEBUG tokens.encode_access.done sub=205f42eb-2894-459e-bf25-b4bee3618e4d exp=2026-05-17T21:31:34.391630+00:00
+2026-05-17 23:01:34,395 app.auth.repository DEBUG auth.repo.insert_refresh_token.start user_id=205f42eb-2894-459e-bf25-b4bee3618e4d
+2026-05-17 23:01:34,398 app.auth.repository DEBUG auth.repo.insert_refresh_token.done user_id=205f42eb-2894-459e-bf25-b4bee3618e4d rt_id=81551090-815f-4d8f-ade7-fc4e2e6fd116
+2026-05-17 23:01:34,398 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.sign_in actor_user_id=205f42eb-2894-459e-bf25-b4bee3618e4d
+2026-05-17 23:01:34,401 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=1d4152a7-eb9b-4cfe-950e-8dde37e9dd55 action=auth.sign_in
+2026-05-17 23:01:34,406 app.auth.services.sign_in INFO auth.sign_in.success user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=4c657ca9-6004-48ed-8c58-24b497fae627
+2026-05-17 23:01:34,406 app.auth.routers.sign_in INFO auth.sign_in.success user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=4c657ca9-6004-48ed-8c58-24b497fae627
+INFO:     127.0.0.1:56867 - "POST /api/v1/auth/sign-in HTTP/1.1" 200 OK
+2026-05-17 23:01:34,408 app.db.session DEBUG db.session.closed
+2026-05-17 23:01:34,425 app.db.session DEBUG db.session.open
+2026-05-17 23:01:34,425 app.auth.routers.sign_in INFO auth.sign_in.received email_domain=inditex-sandbox.com request_id=c211a6e5-8241-4ba6-b462-e02051a0b24d
+2026-05-17 23:01:34,425 app.auth.rate_limit DEBUG rate_limit.check.start prefix=SIGNIN ip=SIGNIN:127.0.0.1 rate_per_min=20 burst=20
+2026-05-17 23:01:34,425 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=SIGNIN ip=SIGNIN:127.0.0.1 remaining=18
+2026-05-17 23:01:34,425 app.auth.services.sign_in INFO auth.sign_in.starting request_id=c211a6e5-8241-4ba6-b462-e02051a0b24d email_domain=inditex-sandbox.com
+2026-05-17 23:01:34,425 app.auth.repository DEBUG auth.repo.find_by_email.start email_domain=inditex-sandbox.com
+2026-05-17 23:01:34,429 app.auth.repository DEBUG auth.repo.find_by_email.done found=True
+2026-05-17 23:01:34,429 app.auth.services.sign_in INFO auth.sign_in.user_found user_id=9ced3399-1ee8-4781-bfca-26dad18fc6a0 request_id=c211a6e5-8241-4ba6-b462-e02051a0b24d
+2026-05-17 23:01:34,429 app.auth.repository DEBUG auth.repo.count_signin_failures.start user_id=9ced3399-1ee8-4781-bfca-26dad18fc6a0 window=900s
+2026-05-17 23:01:34,431 app.auth.repository DEBUG auth.repo.count_signin_failures.done user_id=9ced3399-1ee8-4781-bfca-26dad18fc6a0 count=0
+2026-05-17 23:01:34,431 app.auth.password DEBUG password.verify_with_dummy.start has_real_hash=True
+2026-05-17 23:01:34,464 app.auth.password DEBUG password.verify_with_dummy.ok
+2026-05-17 23:01:34,470 app.auth.tokens DEBUG tokens.encode_access.start sub=9ced3399-1ee8-4781-bfca-26dad18fc6a0 ttl=1800s
+2026-05-17 23:01:34,470 app.auth.tokens DEBUG tokens.encode_access.done sub=9ced3399-1ee8-4781-bfca-26dad18fc6a0 exp=2026-05-17T21:31:34.467043+00:00
+2026-05-17 23:01:34,470 app.auth.repository DEBUG auth.repo.insert_refresh_token.start user_id=9ced3399-1ee8-4781-bfca-26dad18fc6a0
+2026-05-17 23:01:34,472 app.auth.repository DEBUG auth.repo.insert_refresh_token.done user_id=9ced3399-1ee8-4781-bfca-26dad18fc6a0 rt_id=30673e0d-dba3-43b3-bd78-62b418f44bd8
+2026-05-17 23:01:34,472 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.sign_in actor_user_id=9ced3399-1ee8-4781-bfca-26dad18fc6a0
+2026-05-17 23:01:34,473 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=889e04b7-f696-4323-820c-5ad43c83a1a0 action=auth.sign_in
+2026-05-17 23:01:34,478 app.auth.services.sign_in INFO auth.sign_in.success user_id=9ced3399-1ee8-4781-bfca-26dad18fc6a0 request_id=c211a6e5-8241-4ba6-b462-e02051a0b24d
+2026-05-17 23:01:34,478 app.auth.routers.sign_in INFO auth.sign_in.success user_id=9ced3399-1ee8-4781-bfca-26dad18fc6a0 request_id=c211a6e5-8241-4ba6-b462-e02051a0b24d
+INFO:     127.0.0.1:56869 - "POST /api/v1/auth/sign-in HTTP/1.1" 200 OK
+2026-05-17 23:01:34,479 app.db.session DEBUG db.session.closed
+2026-05-17 23:01:34,496 app.db.session DEBUG db.session.open
+2026-05-17 23:01:34,496 app.auth.routers.sign_in INFO auth.sign_in.received email_domain=inditex-sandbox.com request_id=05d9cbb4-e421-4c9f-9391-e116e2bf86fd
+2026-05-17 23:01:34,496 app.auth.rate_limit DEBUG rate_limit.check.start prefix=SIGNIN ip=SIGNIN:127.0.0.1 rate_per_min=20 burst=20
+2026-05-17 23:01:34,496 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=SIGNIN ip=SIGNIN:127.0.0.1 remaining=17
+2026-05-17 23:01:34,496 app.auth.services.sign_in INFO auth.sign_in.starting request_id=05d9cbb4-e421-4c9f-9391-e116e2bf86fd email_domain=inditex-sandbox.com
+2026-05-17 23:01:34,496 app.auth.repository DEBUG auth.repo.find_by_email.start email_domain=inditex-sandbox.com
+2026-05-17 23:01:34,500 app.auth.repository DEBUG auth.repo.find_by_email.done found=True
+2026-05-17 23:01:34,500 app.auth.services.sign_in INFO auth.sign_in.user_found user_id=69a51772-dbf3-4b00-a1f8-993f892343c9 request_id=05d9cbb4-e421-4c9f-9391-e116e2bf86fd
+2026-05-17 23:01:34,500 app.auth.repository DEBUG auth.repo.count_signin_failures.start user_id=69a51772-dbf3-4b00-a1f8-993f892343c9 window=900s
+2026-05-17 23:01:34,502 app.auth.repository DEBUG auth.repo.count_signin_failures.done user_id=69a51772-dbf3-4b00-a1f8-993f892343c9 count=0
+2026-05-17 23:01:34,502 app.auth.password DEBUG password.verify_with_dummy.start has_real_hash=True
+2026-05-17 23:01:34,558 app.auth.password DEBUG password.verify_with_dummy.ok
+2026-05-17 23:01:34,579 app.auth.tokens DEBUG tokens.encode_access.start sub=69a51772-dbf3-4b00-a1f8-993f892343c9 ttl=1800s
+2026-05-17 23:01:34,579 app.auth.tokens DEBUG tokens.encode_access.done sub=69a51772-dbf3-4b00-a1f8-993f892343c9 exp=2026-05-17T21:31:34.563335+00:00
+2026-05-17 23:01:34,580 app.auth.repository DEBUG auth.repo.insert_refresh_token.start user_id=69a51772-dbf3-4b00-a1f8-993f892343c9
+2026-05-17 23:01:34,582 app.auth.repository DEBUG auth.repo.insert_refresh_token.done user_id=69a51772-dbf3-4b00-a1f8-993f892343c9 rt_id=ff5ea7be-119f-4773-a728-a52b2a2a141d
+2026-05-17 23:01:34,582 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.sign_in actor_user_id=69a51772-dbf3-4b00-a1f8-993f892343c9
+2026-05-17 23:01:34,584 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=ec467027-b945-440d-8c2a-bc5478b121d9 action=auth.sign_in
+2026-05-17 23:01:34,587 app.auth.services.sign_in INFO auth.sign_in.success user_id=69a51772-dbf3-4b00-a1f8-993f892343c9 request_id=05d9cbb4-e421-4c9f-9391-e116e2bf86fd
+2026-05-17 23:01:34,587 app.auth.routers.sign_in INFO auth.sign_in.success user_id=69a51772-dbf3-4b00-a1f8-993f892343c9 request_id=05d9cbb4-e421-4c9f-9391-e116e2bf86fd
+INFO:     127.0.0.1:56872 - "POST /api/v1/auth/sign-in HTTP/1.1" 200 OK
+2026-05-17 23:01:34,588 app.db.session DEBUG db.session.closed
+2026-05-17 23:01:34,610 app.db.session DEBUG db.session.open
+2026-05-17 23:01:34,610 app.users.deps DEBUG users.deps.get_current_user.start request_id=verify-sa-200-02 ip=127.0.0.1
+2026-05-17 23:01:34,610 app.auth.tokens DEBUG tokens.decode.start
+2026-05-17 23:01:34,610 app.auth.tokens DEBUG tokens.decode.ok sub=9ced3399-1ee8-4781-bfca-26dad18fc6a0
+2026-05-17 23:01:34,610 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.start user_id=9ced3399-1ee8-4781-bfca-26dad18fc6a0
+2026-05-17 23:01:34,615 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.done user_id=9ced3399-1ee8-4781-bfca-26dad18fc6a0 found=True
+2026-05-17 23:01:34,615 app.users.deps DEBUG users.deps.get_current_user.done user_id=9ced3399-1ee8-4781-bfca-26dad18fc6a0 request_id=verify-sa-200-02
+2026-05-17 23:01:34,616 app.security.permissions DEBUG security.permissions.require_role.start role=people_auditor user_id=9ced3399-1ee8-4781-bfca-26dad18fc6a0 request_id=verify-sa-200-02
+2026-05-17 23:01:34,616 app.security.permissions DEBUG security.permissions.require_role.ok role=people_auditor user_id=9ced3399-1ee8-4781-bfca-26dad18fc6a0 request_id=verify-sa-200-02
+2026-05-17 23:01:34,616 app.admin.audit.router DEBUG admin.audit.router.get_audit.start user_id_hash=2b8eddee request_id=verify-sa-200-02
+2026-05-17 23:01:34,617 app.admin.audit.service DEBUG admin.audit.service.list_events.start actor_user_id_hash=2b8eddee request_id=verify-sa-200-02
+2026-05-17 23:01:34,617 app.admin.audit.repository DEBUG admin.audit.repository.list.start from=2026-04-01T00:00:00+00:00 to=2026-06-28T23:59:59+00:00 actor_hash=None action_truncated=None cursor_present=False limit=5
+2026-05-17 23:01:34,624 app.admin.audit.repository DEBUG admin.audit.repository.list.ok count=5 has_more=True
+2026-05-17 23:01:34,624 app.admin.audit.service DEBUG admin.audit.service.list_events.ok actor_user_id_hash=2b8eddee count=5 has_more=True request_id=verify-sa-200-02
+2026-05-17 23:01:34,624 app.admin.audit.router DEBUG admin.audit.router.get_audit.ok user_id_hash=2b8eddee count=5 request_id=verify-sa-200-02
+INFO:     127.0.0.1:56874 - "GET /api/v1/admin/audit?from=2026-04-01T00:00:00Z&to=2026-06-28T23:59:59Z&limit=5 HTTP/1.1" 200 OK
+2026-05-17 23:01:34,626 app.db.session DEBUG db.session.closed
+2026-05-17 23:01:34,721 app.db.session DEBUG db.session.open
+2026-05-17 23:01:34,721 app.users.deps DEBUG users.deps.get_current_user.start request_id=verify-no-auth-401-03 ip=127.0.0.1
+2026-05-17 23:01:34,721 app.users.deps WARNING users.deps.auth_failed reason=missing_bearer request_id=verify-no-auth-401-03
+2026-05-17 23:01:34,721 app.security.permissions DEBUG security.permissions.require_role.auth_failed role=people_auditor
+INFO:     127.0.0.1:56876 - "GET /api/v1/admin/audit?from=2026-04-01T00:00:00Z&to=2026-06-28T23:59:59Z HTTP/1.1" 401 Unauthorized
+2026-05-17 23:01:34,721 app.db.session DEBUG db.session.closed
+2026-05-17 23:01:34,793 app.db.session DEBUG db.session.open
+2026-05-17 23:01:34,793 app.users.deps DEBUG users.deps.get_current_user.start request_id=verify-emp-403-04 ip=127.0.0.1
+2026-05-17 23:01:34,793 app.auth.tokens DEBUG tokens.decode.start
+2026-05-17 23:01:34,793 app.auth.tokens DEBUG tokens.decode.ok sub=69a51772-dbf3-4b00-a1f8-993f892343c9
+2026-05-17 23:01:34,793 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.start user_id=69a51772-dbf3-4b00-a1f8-993f892343c9
+2026-05-17 23:01:34,799 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.done user_id=69a51772-dbf3-4b00-a1f8-993f892343c9 found=True
+2026-05-17 23:01:34,799 app.users.deps DEBUG users.deps.get_current_user.done user_id=69a51772-dbf3-4b00-a1f8-993f892343c9 request_id=verify-emp-403-04
+2026-05-17 23:01:34,799 app.security.permissions DEBUG security.permissions.require_role.start role=people_auditor user_id=69a51772-dbf3-4b00-a1f8-993f892343c9 request_id=verify-emp-403-04
+2026-05-17 23:01:34,799 app.security.permissions WARNING security.permissions.require_role.denied role=people_auditor user_id=69a51772-dbf3-4b00-a1f8-993f892343c9 held_roles=['employee'] request_id=verify-emp-403-04
+INFO:     127.0.0.1:56879 - "GET /api/v1/admin/audit?from=2026-04-01T00:00:00Z&to=2026-06-28T23:59:59Z HTTP/1.1" 403 Forbidden
+2026-05-17 23:01:34,801 app.db.session DEBUG db.session.closed
+2026-05-17 23:01:48,081 app.db.session DEBUG db.session.open
+2026-05-17 23:01:48,083 app.auth.routers.sign_in INFO auth.sign_in.received email_domain=inditex-sandbox.com request_id=7f14f164-afab-4161-858a-565fd77cc90f
+2026-05-17 23:01:48,083 app.auth.rate_limit DEBUG rate_limit.check.start prefix=SIGNIN ip=SIGNIN:127.0.0.1 rate_per_min=20 burst=20
+2026-05-17 23:01:48,083 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=SIGNIN ip=SIGNIN:127.0.0.1 remaining=16
+2026-05-17 23:01:48,083 app.auth.services.sign_in INFO auth.sign_in.starting request_id=7f14f164-afab-4161-858a-565fd77cc90f email_domain=inditex-sandbox.com
+2026-05-17 23:01:48,083 app.auth.repository DEBUG auth.repo.find_by_email.start email_domain=inditex-sandbox.com
+2026-05-17 23:01:48,094 app.auth.repository DEBUG auth.repo.find_by_email.done found=True
+2026-05-17 23:01:48,094 app.auth.services.sign_in INFO auth.sign_in.user_found user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=7f14f164-afab-4161-858a-565fd77cc90f
+2026-05-17 23:01:48,094 app.auth.repository DEBUG auth.repo.count_signin_failures.start user_id=205f42eb-2894-459e-bf25-b4bee3618e4d window=900s
+2026-05-17 23:01:48,098 app.auth.repository DEBUG auth.repo.count_signin_failures.done user_id=205f42eb-2894-459e-bf25-b4bee3618e4d count=0
+2026-05-17 23:01:48,098 app.auth.password DEBUG password.verify_with_dummy.start has_real_hash=True
+2026-05-17 23:01:48,138 app.auth.password DEBUG password.verify_with_dummy.ok
+2026-05-17 23:01:48,143 app.auth.tokens DEBUG tokens.encode_access.start sub=205f42eb-2894-459e-bf25-b4bee3618e4d ttl=1800s
+2026-05-17 23:01:48,143 app.auth.tokens DEBUG tokens.encode_access.done sub=205f42eb-2894-459e-bf25-b4bee3618e4d exp=2026-05-17T21:31:48.140807+00:00
+2026-05-17 23:01:48,143 app.auth.repository DEBUG auth.repo.insert_refresh_token.start user_id=205f42eb-2894-459e-bf25-b4bee3618e4d
+2026-05-17 23:01:48,145 app.auth.repository DEBUG auth.repo.insert_refresh_token.done user_id=205f42eb-2894-459e-bf25-b4bee3618e4d rt_id=a309dddb-3147-423b-871f-706d6ff67c27
+2026-05-17 23:01:48,145 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.sign_in actor_user_id=205f42eb-2894-459e-bf25-b4bee3618e4d
+2026-05-17 23:01:48,147 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=cf0ea84b-1c81-4280-9920-fc48f6a08b8c action=auth.sign_in
+2026-05-17 23:01:48,151 app.auth.services.sign_in INFO auth.sign_in.success user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=7f14f164-afab-4161-858a-565fd77cc90f
+2026-05-17 23:01:48,151 app.auth.routers.sign_in INFO auth.sign_in.success user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=7f14f164-afab-4161-858a-565fd77cc90f
+INFO:     127.0.0.1:56923 - "POST /api/v1/auth/sign-in HTTP/1.1" 200 OK
+2026-05-17 23:01:48,152 app.db.session DEBUG db.session.closed
+2026-05-17 23:01:48,240 app.db.session DEBUG db.session.open
+2026-05-17 23:01:48,241 app.users.deps DEBUG users.deps.get_current_user.start request_id=verify-window-too-wide-05 ip=127.0.0.1
+2026-05-17 23:01:48,241 app.auth.tokens DEBUG tokens.decode.start
+2026-05-17 23:01:48,241 app.auth.tokens DEBUG tokens.decode.ok sub=205f42eb-2894-459e-bf25-b4bee3618e4d
+2026-05-17 23:01:48,241 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.start user_id=205f42eb-2894-459e-bf25-b4bee3618e4d
+2026-05-17 23:01:48,244 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.done user_id=205f42eb-2894-459e-bf25-b4bee3618e4d found=True
+2026-05-17 23:01:48,244 app.users.deps DEBUG users.deps.get_current_user.done user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=verify-window-too-wide-05
+2026-05-17 23:01:48,244 app.security.permissions DEBUG security.permissions.require_role.start role=people_auditor user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=verify-window-too-wide-05
+2026-05-17 23:01:48,244 app.security.permissions DEBUG security.permissions.require_role.ok role=people_auditor user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=verify-window-too-wide-05
+2026-05-17 23:01:48,245 app.admin.audit.router DEBUG admin.audit.router.get_audit.start user_id_hash=df2cb1a4 request_id=verify-window-too-wide-05
+2026-05-17 23:01:48,245 app.admin.audit.service DEBUG admin.audit.service.list_events.start actor_user_id_hash=df2cb1a4 request_id=verify-window-too-wide-05
+2026-05-17 23:01:48,245 app.admin.audit.service WARNING admin.audit.service.list_events.window_too_wide days=365.0 max=90 request_id=verify-window-too-wide-05
+2026-05-17 23:01:48,245 app.admin.audit.router DEBUG admin.audit.router.get_audit.validation_error code=AUDIT_WINDOW_TOO_WIDE request_id=verify-window-too-wide-05
+INFO:     127.0.0.1:56927 - "GET /api/v1/admin/audit?from=2026-01-01T00:00:00Z&to=2026-12-31T23:59:59Z HTTP/1.1" 422 Unprocessable Entity
+2026-05-17 23:01:48,246 app.db.session DEBUG db.session.closed
+2026-05-17 23:01:48,311 app.db.session DEBUG db.session.open
+2026-05-17 23:01:48,311 app.users.deps DEBUG users.deps.get_current_user.start request_id=verify-window-invalid-06 ip=127.0.0.1
+2026-05-17 23:01:48,311 app.auth.tokens DEBUG tokens.decode.start
+2026-05-17 23:01:48,311 app.auth.tokens DEBUG tokens.decode.ok sub=205f42eb-2894-459e-bf25-b4bee3618e4d
+2026-05-17 23:01:48,311 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.start user_id=205f42eb-2894-459e-bf25-b4bee3618e4d
+2026-05-17 23:01:48,315 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.done user_id=205f42eb-2894-459e-bf25-b4bee3618e4d found=True
+2026-05-17 23:01:48,315 app.users.deps DEBUG users.deps.get_current_user.done user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=verify-window-invalid-06
+2026-05-17 23:01:48,315 app.security.permissions DEBUG security.permissions.require_role.start role=people_auditor user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=verify-window-invalid-06
+2026-05-17 23:01:48,315 app.security.permissions DEBUG security.permissions.require_role.ok role=people_auditor user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=verify-window-invalid-06
+2026-05-17 23:01:48,315 app.admin.audit.router DEBUG admin.audit.router.get_audit.start user_id_hash=df2cb1a4 request_id=verify-window-invalid-06
+2026-05-17 23:01:48,315 app.admin.audit.service DEBUG admin.audit.service.list_events.start actor_user_id_hash=df2cb1a4 request_id=verify-window-invalid-06
+2026-05-17 23:01:48,315 app.admin.audit.service WARNING admin.audit.service.list_events.invalid_window from=2026-06-01T00:00:00+00:00 to=2026-04-01T00:00:00+00:00 request_id=verify-window-invalid-06
+2026-05-17 23:01:48,315 app.admin.audit.router DEBUG admin.audit.router.get_audit.validation_error code=AUDIT_WINDOW_INVALID request_id=verify-window-invalid-06
+INFO:     127.0.0.1:56929 - "GET /api/v1/admin/audit?from=2026-06-01T00:00:00Z&to=2026-04-01T00:00:00Z HTTP/1.1" 422 Unprocessable Entity
+2026-05-17 23:01:48,316 app.db.session DEBUG db.session.closed
+2026-05-17 23:01:48,383 app.db.session DEBUG db.session.open
+2026-05-17 23:01:48,383 app.users.deps DEBUG users.deps.get_current_user.start request_id=verify-action-filter-07 ip=127.0.0.1
+2026-05-17 23:01:48,383 app.auth.tokens DEBUG tokens.decode.start
+2026-05-17 23:01:48,384 app.auth.tokens DEBUG tokens.decode.ok sub=205f42eb-2894-459e-bf25-b4bee3618e4d
+2026-05-17 23:01:48,384 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.start user_id=205f42eb-2894-459e-bf25-b4bee3618e4d
+2026-05-17 23:01:48,388 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.done user_id=205f42eb-2894-459e-bf25-b4bee3618e4d found=True
+2026-05-17 23:01:48,388 app.users.deps DEBUG users.deps.get_current_user.done user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=verify-action-filter-07
+2026-05-17 23:01:48,388 app.security.permissions DEBUG security.permissions.require_role.start role=people_auditor user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=verify-action-filter-07
+2026-05-17 23:01:48,388 app.security.permissions DEBUG security.permissions.require_role.ok role=people_auditor user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=verify-action-filter-07
+2026-05-17 23:01:48,388 app.admin.audit.router DEBUG admin.audit.router.get_audit.start user_id_hash=df2cb1a4 request_id=verify-action-filter-07
+2026-05-17 23:01:48,388 app.admin.audit.service DEBUG admin.audit.service.list_events.start actor_user_id_hash=df2cb1a4 request_id=verify-action-filter-07
+2026-05-17 23:01:48,388 app.admin.audit.repository DEBUG admin.audit.repository.list.start from=2026-04-01T00:00:00+00:00 to=2026-06-28T23:59:59+00:00 actor_hash=None action_truncated=auth.sign_in cursor_present=False limit=5
+2026-05-17 23:01:48,391 app.admin.audit.repository DEBUG admin.audit.repository.list.ok count=5 has_more=True
+2026-05-17 23:01:48,391 app.admin.audit.service DEBUG admin.audit.service.list_events.ok actor_user_id_hash=df2cb1a4 count=5 has_more=True request_id=verify-action-filter-07
+2026-05-17 23:01:48,391 app.admin.audit.router DEBUG admin.audit.router.get_audit.ok user_id_hash=df2cb1a4 count=5 request_id=verify-action-filter-07
+INFO:     127.0.0.1:56931 - "GET /api/v1/admin/audit?from=2026-04-01T00:00:00Z&to=2026-06-28T23:59:59Z&action=auth.sign_in&limit=5 HTTP/1.1" 200 OK
+2026-05-17 23:01:48,392 app.db.session DEBUG db.session.closed
+2026-05-17 23:02:04,732 app.db.session DEBUG db.session.open
+2026-05-17 23:02:04,734 app.auth.routers.sign_in INFO auth.sign_in.received email_domain=inditex-sandbox.com request_id=022a5067-09c8-4a4e-b2f5-fbce306e6941
+2026-05-17 23:02:04,734 app.auth.rate_limit DEBUG rate_limit.check.start prefix=SIGNIN ip=SIGNIN:127.0.0.1 rate_per_min=20 burst=20
+2026-05-17 23:02:04,734 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=SIGNIN ip=SIGNIN:127.0.0.1 remaining=15
+2026-05-17 23:02:04,734 app.auth.services.sign_in INFO auth.sign_in.starting request_id=022a5067-09c8-4a4e-b2f5-fbce306e6941 email_domain=inditex-sandbox.com
+2026-05-17 23:02:04,735 app.auth.repository DEBUG auth.repo.find_by_email.start email_domain=inditex-sandbox.com
+2026-05-17 23:02:04,749 app.auth.repository DEBUG auth.repo.find_by_email.done found=True
+2026-05-17 23:02:04,749 app.auth.services.sign_in INFO auth.sign_in.user_found user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=022a5067-09c8-4a4e-b2f5-fbce306e6941
+2026-05-17 23:02:04,749 app.auth.repository DEBUG auth.repo.count_signin_failures.start user_id=205f42eb-2894-459e-bf25-b4bee3618e4d window=900s
+2026-05-17 23:02:04,752 app.auth.repository DEBUG auth.repo.count_signin_failures.done user_id=205f42eb-2894-459e-bf25-b4bee3618e4d count=0
+2026-05-17 23:02:04,752 app.auth.password DEBUG password.verify_with_dummy.start has_real_hash=True
+2026-05-17 23:02:04,790 app.auth.password DEBUG password.verify_with_dummy.ok
+2026-05-17 23:02:04,797 app.auth.tokens DEBUG tokens.encode_access.start sub=205f42eb-2894-459e-bf25-b4bee3618e4d ttl=1800s
+2026-05-17 23:02:04,798 app.auth.tokens DEBUG tokens.encode_access.done sub=205f42eb-2894-459e-bf25-b4bee3618e4d exp=2026-05-17T21:32:04.794326+00:00
+2026-05-17 23:02:04,798 app.auth.repository DEBUG auth.repo.insert_refresh_token.start user_id=205f42eb-2894-459e-bf25-b4bee3618e4d
+2026-05-17 23:02:04,801 app.auth.repository DEBUG auth.repo.insert_refresh_token.done user_id=205f42eb-2894-459e-bf25-b4bee3618e4d rt_id=38d2f05a-346d-4a03-be3c-9469ec0be87d
+2026-05-17 23:02:04,801 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.sign_in actor_user_id=205f42eb-2894-459e-bf25-b4bee3618e4d
+2026-05-17 23:02:04,802 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=56386595-a38b-4c81-be2b-2ab32e8369ae action=auth.sign_in
+2026-05-17 23:02:04,807 app.auth.services.sign_in INFO auth.sign_in.success user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=022a5067-09c8-4a4e-b2f5-fbce306e6941
+2026-05-17 23:02:04,807 app.auth.routers.sign_in INFO auth.sign_in.success user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=022a5067-09c8-4a4e-b2f5-fbce306e6941
+INFO:     127.0.0.1:56959 - "POST /api/v1/auth/sign-in HTTP/1.1" 200 OK
+2026-05-17 23:02:04,809 app.db.session DEBUG db.session.closed
+2026-05-17 23:02:04,830 app.db.session DEBUG db.session.open
+2026-05-17 23:02:04,830 app.users.deps DEBUG users.deps.get_current_user.start request_id=verify-actor-filter-08 ip=127.0.0.1
+2026-05-17 23:02:04,830 app.auth.tokens DEBUG tokens.decode.start
+2026-05-17 23:02:04,830 app.auth.tokens DEBUG tokens.decode.ok sub=205f42eb-2894-459e-bf25-b4bee3618e4d
+2026-05-17 23:02:04,830 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.start user_id=205f42eb-2894-459e-bf25-b4bee3618e4d
+2026-05-17 23:02:04,838 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.done user_id=205f42eb-2894-459e-bf25-b4bee3618e4d found=True
+2026-05-17 23:02:04,838 app.users.deps DEBUG users.deps.get_current_user.done user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=verify-actor-filter-08
+2026-05-17 23:02:04,838 app.security.permissions DEBUG security.permissions.require_role.start role=people_auditor user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=verify-actor-filter-08
+2026-05-17 23:02:04,838 app.security.permissions DEBUG security.permissions.require_role.ok role=people_auditor user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=verify-actor-filter-08
+2026-05-17 23:02:04,838 app.admin.audit.router DEBUG admin.audit.router.get_audit.start user_id_hash=df2cb1a4 request_id=verify-actor-filter-08
+2026-05-17 23:02:04,838 app.admin.audit.service DEBUG admin.audit.service.list_events.start actor_user_id_hash=df2cb1a4 request_id=verify-actor-filter-08
+2026-05-17 23:02:04,838 app.admin.audit.repository DEBUG admin.audit.repository.list.start from=2026-04-01T00:00:00+00:00 to=2026-06-28T23:59:59+00:00 actor_hash=d748ba5f action_truncated=None cursor_present=False limit=5
+2026-05-17 23:02:04,842 app.admin.audit.repository DEBUG admin.audit.repository.list.ok count=5 has_more=True
+2026-05-17 23:02:04,842 app.admin.audit.service DEBUG admin.audit.service.list_events.ok actor_user_id_hash=df2cb1a4 count=5 has_more=True request_id=verify-actor-filter-08
+2026-05-17 23:02:04,842 app.admin.audit.router DEBUG admin.audit.router.get_audit.ok user_id_hash=df2cb1a4 count=5 request_id=verify-actor-filter-08
+INFO:     127.0.0.1:56962 - "GET /api/v1/admin/audit?from=2026-04-01T00:00:00Z&to=2026-06-28T23:59:59Z&actor=fe6e41e9-3805-48f3-89d1-8bb942e39a14&limit=5 HTTP/1.1" 200 OK
+2026-05-17 23:02:04,844 app.db.session DEBUG db.session.closed
+2026-05-17 23:02:04,921 app.db.session DEBUG db.session.open
+2026-05-17 23:02:04,921 app.users.deps DEBUG users.deps.get_current_user.start request_id=verify-cursor-p1-09 ip=127.0.0.1
+2026-05-17 23:02:04,921 app.auth.tokens DEBUG tokens.decode.start
+2026-05-17 23:02:04,921 app.auth.tokens DEBUG tokens.decode.ok sub=205f42eb-2894-459e-bf25-b4bee3618e4d
+2026-05-17 23:02:04,921 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.start user_id=205f42eb-2894-459e-bf25-b4bee3618e4d
+2026-05-17 23:02:04,927 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.done user_id=205f42eb-2894-459e-bf25-b4bee3618e4d found=True
+2026-05-17 23:02:04,927 app.users.deps DEBUG users.deps.get_current_user.done user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=verify-cursor-p1-09
+2026-05-17 23:02:04,927 app.security.permissions DEBUG security.permissions.require_role.start role=people_auditor user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=verify-cursor-p1-09
+2026-05-17 23:02:04,928 app.security.permissions DEBUG security.permissions.require_role.ok role=people_auditor user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=verify-cursor-p1-09
+2026-05-17 23:02:04,928 app.admin.audit.router DEBUG admin.audit.router.get_audit.start user_id_hash=df2cb1a4 request_id=verify-cursor-p1-09
+2026-05-17 23:02:04,928 app.admin.audit.service DEBUG admin.audit.service.list_events.start actor_user_id_hash=df2cb1a4 request_id=verify-cursor-p1-09
+2026-05-17 23:02:04,928 app.admin.audit.repository DEBUG admin.audit.repository.list.start from=2026-04-01T00:00:00+00:00 to=2026-06-28T23:59:59+00:00 actor_hash=None action_truncated=None cursor_present=False limit=3
+2026-05-17 23:02:04,930 app.admin.audit.repository DEBUG admin.audit.repository.list.ok count=3 has_more=True
+2026-05-17 23:02:04,930 app.admin.audit.service DEBUG admin.audit.service.list_events.ok actor_user_id_hash=df2cb1a4 count=3 has_more=True request_id=verify-cursor-p1-09
+2026-05-17 23:02:04,930 app.admin.audit.router DEBUG admin.audit.router.get_audit.ok user_id_hash=df2cb1a4 count=3 request_id=verify-cursor-p1-09
+INFO:     127.0.0.1:56964 - "GET /api/v1/admin/audit?from=2026-04-01T00:00:00Z&to=2026-06-28T23:59:59Z&limit=3 HTTP/1.1" 200 OK
+2026-05-17 23:02:04,932 app.db.session DEBUG db.session.closed
+2026-05-17 23:02:05,031 app.db.session DEBUG db.session.open
+2026-05-17 23:02:05,031 app.users.deps DEBUG users.deps.get_current_user.start request_id=verify-cursor-p2-09 ip=127.0.0.1
+2026-05-17 23:02:05,031 app.auth.tokens DEBUG tokens.decode.start
+2026-05-17 23:02:05,031 app.auth.tokens DEBUG tokens.decode.ok sub=205f42eb-2894-459e-bf25-b4bee3618e4d
+2026-05-17 23:02:05,031 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.start user_id=205f42eb-2894-459e-bf25-b4bee3618e4d
+2026-05-17 23:02:05,038 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.done user_id=205f42eb-2894-459e-bf25-b4bee3618e4d found=True
+2026-05-17 23:02:05,038 app.users.deps DEBUG users.deps.get_current_user.done user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=verify-cursor-p2-09
+2026-05-17 23:02:05,038 app.security.permissions DEBUG security.permissions.require_role.start role=people_auditor user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=verify-cursor-p2-09
+2026-05-17 23:02:05,038 app.security.permissions DEBUG security.permissions.require_role.ok role=people_auditor user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=verify-cursor-p2-09
+2026-05-17 23:02:05,038 app.admin.audit.router DEBUG admin.audit.router.get_audit.start user_id_hash=df2cb1a4 request_id=verify-cursor-p2-09
+2026-05-17 23:02:05,038 app.admin.audit.service DEBUG admin.audit.service.list_events.start actor_user_id_hash=df2cb1a4 request_id=verify-cursor-p2-09
+2026-05-17 23:02:05,038 app.admin.audit.repository DEBUG admin.audit.repository.list.start from=2026-04-01T00:00:00+00:00 to=2026-06-28T23:59:59+00:00 actor_hash=None action_truncated=None cursor_present=True limit=3
+2026-05-17 23:02:05,044 app.admin.audit.repository DEBUG admin.audit.repository.list.ok count=3 has_more=True
+2026-05-17 23:02:05,044 app.admin.audit.service DEBUG admin.audit.service.list_events.ok actor_user_id_hash=df2cb1a4 count=3 has_more=True request_id=verify-cursor-p2-09
+2026-05-17 23:02:05,044 app.admin.audit.router DEBUG admin.audit.router.get_audit.ok user_id_hash=df2cb1a4 count=3 request_id=verify-cursor-p2-09
+INFO:     127.0.0.1:56966 - "GET /api/v1/admin/audit?from=2026-04-01T00:00:00Z&to=2026-06-28T23:59:59Z&limit=3&cursor=MjAyNi0wNS0xN1QyMTowMTo0NS45OTc1NTErMDA6MDB8M2Y3MWYwNWMtZWMxNy00MjFhLTg0MzUtMTI2NTQ1YTRlY2Fh HTTP/1.1" 200 OK
+2026-05-17 23:02:05,045 app.db.session DEBUG db.session.closed
+2026-05-17 23:02:16,076 app.db.session DEBUG db.session.open
+2026-05-17 23:02:16,077 app.auth.routers.sign_in INFO auth.sign_in.received email_domain=inditex-sandbox.com request_id=7f93695d-baa0-4cd4-878d-63e11fa8e471
+2026-05-17 23:02:16,077 app.auth.rate_limit DEBUG rate_limit.check.start prefix=SIGNIN ip=SIGNIN:127.0.0.1 rate_per_min=20 burst=20
+2026-05-17 23:02:16,077 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=SIGNIN ip=SIGNIN:127.0.0.1 remaining=14
+2026-05-17 23:02:16,077 app.auth.services.sign_in INFO auth.sign_in.starting request_id=7f93695d-baa0-4cd4-878d-63e11fa8e471 email_domain=inditex-sandbox.com
+2026-05-17 23:02:16,077 app.auth.repository DEBUG auth.repo.find_by_email.start email_domain=inditex-sandbox.com
+2026-05-17 23:02:16,086 app.auth.repository DEBUG auth.repo.find_by_email.done found=True
+2026-05-17 23:02:16,086 app.auth.services.sign_in INFO auth.sign_in.user_found user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=7f93695d-baa0-4cd4-878d-63e11fa8e471
+2026-05-17 23:02:16,086 app.auth.repository DEBUG auth.repo.count_signin_failures.start user_id=205f42eb-2894-459e-bf25-b4bee3618e4d window=900s
+2026-05-17 23:02:16,089 app.auth.repository DEBUG auth.repo.count_signin_failures.done user_id=205f42eb-2894-459e-bf25-b4bee3618e4d count=0
+2026-05-17 23:02:16,089 app.auth.password DEBUG password.verify_with_dummy.start has_real_hash=True
+2026-05-17 23:02:16,130 app.auth.password DEBUG password.verify_with_dummy.ok
+2026-05-17 23:02:16,136 app.auth.tokens DEBUG tokens.encode_access.start sub=205f42eb-2894-459e-bf25-b4bee3618e4d ttl=1800s
+2026-05-17 23:02:16,136 app.auth.tokens DEBUG tokens.encode_access.done sub=205f42eb-2894-459e-bf25-b4bee3618e4d exp=2026-05-17T21:32:16.133637+00:00
+2026-05-17 23:02:16,136 app.auth.repository DEBUG auth.repo.insert_refresh_token.start user_id=205f42eb-2894-459e-bf25-b4bee3618e4d
+2026-05-17 23:02:16,138 app.auth.repository DEBUG auth.repo.insert_refresh_token.done user_id=205f42eb-2894-459e-bf25-b4bee3618e4d rt_id=6ea775aa-1fc6-46f1-a3c7-317877bd0260
+2026-05-17 23:02:16,138 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.sign_in actor_user_id=205f42eb-2894-459e-bf25-b4bee3618e4d
+2026-05-17 23:02:16,140 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=0214c719-ac34-4032-b639-59ac9ba6fe19 action=auth.sign_in
+2026-05-17 23:02:16,146 app.auth.services.sign_in INFO auth.sign_in.success user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=7f93695d-baa0-4cd4-878d-63e11fa8e471
+2026-05-17 23:02:16,146 app.auth.routers.sign_in INFO auth.sign_in.success user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=7f93695d-baa0-4cd4-878d-63e11fa8e471
+INFO:     127.0.0.1:56989 - "POST /api/v1/auth/sign-in HTTP/1.1" 200 OK
+2026-05-17 23:02:16,147 app.db.session DEBUG db.session.closed
+2026-05-17 23:02:16,394 app.db.session DEBUG db.session.open
+2026-05-17 23:02:16,394 app.users.deps DEBUG users.deps.get_current_user.start request_id=verify-logs-verbose-001 ip=127.0.0.1
+2026-05-17 23:02:16,394 app.auth.tokens DEBUG tokens.decode.start
+2026-05-17 23:02:16,394 app.auth.tokens DEBUG tokens.decode.ok sub=205f42eb-2894-459e-bf25-b4bee3618e4d
+2026-05-17 23:02:16,394 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.start user_id=205f42eb-2894-459e-bf25-b4bee3618e4d
+2026-05-17 23:02:16,401 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.done user_id=205f42eb-2894-459e-bf25-b4bee3618e4d found=True
+2026-05-17 23:02:16,401 app.users.deps DEBUG users.deps.get_current_user.done user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=verify-logs-verbose-001
+2026-05-17 23:02:16,401 app.security.permissions DEBUG security.permissions.require_role.start role=people_auditor user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=verify-logs-verbose-001
+2026-05-17 23:02:16,401 app.security.permissions DEBUG security.permissions.require_role.ok role=people_auditor user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=verify-logs-verbose-001
+2026-05-17 23:02:16,401 app.admin.audit.router DEBUG admin.audit.router.get_audit.start user_id_hash=df2cb1a4 request_id=verify-logs-verbose-001
+2026-05-17 23:02:16,401 app.admin.audit.service DEBUG admin.audit.service.list_events.start actor_user_id_hash=df2cb1a4 request_id=verify-logs-verbose-001
+2026-05-17 23:02:16,401 app.admin.audit.repository DEBUG admin.audit.repository.list.start from=2026-04-01T00:00:00+00:00 to=2026-06-28T23:59:59+00:00 actor_hash=None action_truncated=None cursor_present=False limit=3
+2026-05-17 23:02:16,410 app.admin.audit.repository DEBUG admin.audit.repository.list.ok count=3 has_more=True
+2026-05-17 23:02:16,410 app.admin.audit.service DEBUG admin.audit.service.list_events.ok actor_user_id_hash=df2cb1a4 count=3 has_more=True request_id=verify-logs-verbose-001
+2026-05-17 23:02:16,411 app.admin.audit.router DEBUG admin.audit.router.get_audit.ok user_id_hash=df2cb1a4 count=3 request_id=verify-logs-verbose-001
+INFO:     127.0.0.1:56991 - "GET /api/v1/admin/audit?from=2026-04-01T00:00:00Z&to=2026-06-28T23:59:59Z&limit=3 HTTP/1.1" 200 OK
+2026-05-17 23:02:16,412 app.db.session DEBUG db.session.closed
+2026-05-17 23:02:31,369 app.db.session DEBUG db.session.open
+2026-05-17 23:02:31,370 app.auth.routers.sign_in INFO auth.sign_in.received email_domain=inditex-sandbox.com request_id=24f6913d-8d4d-470a-892f-e143b82b1964
+2026-05-17 23:02:31,370 app.auth.rate_limit DEBUG rate_limit.check.start prefix=SIGNIN ip=SIGNIN:127.0.0.1 rate_per_min=20 burst=20
+2026-05-17 23:02:31,370 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=SIGNIN ip=SIGNIN:127.0.0.1 remaining=13
+2026-05-17 23:02:31,370 app.auth.services.sign_in INFO auth.sign_in.starting request_id=24f6913d-8d4d-470a-892f-e143b82b1964 email_domain=inditex-sandbox.com
+2026-05-17 23:02:31,370 app.auth.repository DEBUG auth.repo.find_by_email.start email_domain=inditex-sandbox.com
+2026-05-17 23:02:31,374 app.auth.repository DEBUG auth.repo.find_by_email.done found=True
+2026-05-17 23:02:31,374 app.auth.services.sign_in INFO auth.sign_in.user_found user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=24f6913d-8d4d-470a-892f-e143b82b1964
+2026-05-17 23:02:31,374 app.auth.repository DEBUG auth.repo.count_signin_failures.start user_id=205f42eb-2894-459e-bf25-b4bee3618e4d window=900s
+2026-05-17 23:02:31,376 app.auth.repository DEBUG auth.repo.count_signin_failures.done user_id=205f42eb-2894-459e-bf25-b4bee3618e4d count=0
+2026-05-17 23:02:31,376 app.auth.password DEBUG password.verify_with_dummy.start has_real_hash=True
+2026-05-17 23:02:31,421 app.auth.password DEBUG password.verify_with_dummy.ok
+2026-05-17 23:02:31,427 app.auth.tokens DEBUG tokens.encode_access.start sub=205f42eb-2894-459e-bf25-b4bee3618e4d ttl=1800s
+2026-05-17 23:02:31,428 app.auth.tokens DEBUG tokens.encode_access.done sub=205f42eb-2894-459e-bf25-b4bee3618e4d exp=2026-05-17T21:32:31.425130+00:00
+2026-05-17 23:02:31,428 app.auth.repository DEBUG auth.repo.insert_refresh_token.start user_id=205f42eb-2894-459e-bf25-b4bee3618e4d
+2026-05-17 23:02:31,432 app.auth.repository DEBUG auth.repo.insert_refresh_token.done user_id=205f42eb-2894-459e-bf25-b4bee3618e4d rt_id=ecb50c56-ad07-4422-883b-3dc8635f5ccf
+2026-05-17 23:02:31,432 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.sign_in actor_user_id=205f42eb-2894-459e-bf25-b4bee3618e4d
+2026-05-17 23:02:31,433 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=3baa38b0-a737-42b9-9544-ca0fcd4d3206 action=auth.sign_in
+2026-05-17 23:02:31,438 app.auth.services.sign_in INFO auth.sign_in.success user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=24f6913d-8d4d-470a-892f-e143b82b1964
+2026-05-17 23:02:31,438 app.auth.routers.sign_in INFO auth.sign_in.success user_id=205f42eb-2894-459e-bf25-b4bee3618e4d request_id=24f6913d-8d4d-470a-892f-e143b82b1964
+INFO:     127.0.0.1:57011 - "POST /api/v1/auth/sign-in HTTP/1.1" 200 OK
+2026-05-17 23:02:31,439 app.db.session DEBUG db.session.closed
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [48777]

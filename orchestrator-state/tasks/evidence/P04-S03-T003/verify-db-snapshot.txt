@@ -1,0 +1,43 @@
+ total_rows | distinct_actors |            oldest             |            newest             
+------------+-----------------+-------------------------------+-------------------------------
+        400 |              33 | 2026-05-17 20:10:05.808272+00 | 2026-05-17 21:03:46.279859+00
+(1 fila)
+
+              action               | cnt 
+-----------------------------------+-----
+ auth.sign_in                      | 224
+ auth.refresh                      |  54
+ admin.ai.mcp.server.create        |  28
+ auth.password_reset.requested     |  20
+ admin.ai.model.test               |  17
+ auth.mfa.verify                   |  17
+ admin.ai.mcp.server.sync          |  10
+ auth.password_reset.completed     |   9
+ admin.rag.document.create         |   5
+ admin.rag.collection.update       |   4
+ admin.rag.document.index          |   3
+ admin.ai.mcp.tool.update          |   3
+ admin.ai.mcp.server.sync.failed   |   3
+ admin.ai.mcp.server.create.failed |   2
+ admin.ai.provider.create          |   1
+(15 filas)
+
+                  id                  |            actor_user_id             |             action              | entity_type |          created_at           
+--------------------------------------+--------------------------------------+---------------------------------+-------------+-------------------------------
+ 0db38bc9-6d72-4dd3-903b-baa3fab28531 | fe6e41e9-3805-48f3-89d1-8bb942e39a14 | auth.refresh                    | user        | 2026-05-17 21:03:46.279859+00
+ 3b44d010-6c87-4455-a90e-6be2d807fcee | fe6e41e9-3805-48f3-89d1-8bb942e39a14 | auth.refresh                    | user        | 2026-05-17 21:03:46.260522+00
+ cc61a058-8aa9-4043-b6c6-c06cea1b2a8a | fe6e41e9-3805-48f3-89d1-8bb942e39a14 | admin.ai.mcp.server.sync.failed | mcp_server  | 2026-05-17 21:03:44.583544+00
+ 9d7e6402-8339-440e-a533-85a9055e2113 | fe6e41e9-3805-48f3-89d1-8bb942e39a14 | admin.ai.mcp.server.sync.failed | mcp_server  | 2026-05-17 21:03:42.148609+00
+ ad94c5a4-a3d1-4832-8532-1c66b81d4a23 | 69a51772-dbf3-4b00-a1f8-993f892343c9 | auth.sign_in                    | user        | 2026-05-17 21:03:33.99106+00
+ 062f7b7f-5fa4-401c-ac7a-0860fcdd9077 | 9ced3399-1ee8-4781-bfca-26dad18fc6a0 | auth.sign_in                    | user        | 2026-05-17 21:03:33.909575+00
+ 590a5b4b-235a-43a8-92a3-7b59a7c7b650 | 205f42eb-2894-459e-bf25-b4bee3618e4d | auth.sign_in                    | user        | 2026-05-17 21:03:33.82196+00
+ 11d6b8ca-24ef-48be-a21b-47b0c9d4a0a3 | fe6e41e9-3805-48f3-89d1-8bb942e39a14 | auth.refresh                    | user        | 2026-05-17 21:03:30.925447+00
+ cdc54214-72ff-40e4-98df-a19b599277a8 | fe6e41e9-3805-48f3-89d1-8bb942e39a14 | auth.refresh                    | user        | 2026-05-17 21:03:30.890825+00
+ 3f7d0c7f-45f9-41ac-ab1f-ce0e34b4fe7e | fe6e41e9-3805-48f3-89d1-8bb942e39a14 | admin.ai.mcp.server.create      | mcp_server  | 2026-05-17 21:03:14.884914+00
+ ce240be2-f999-4753-855c-3c5ea7b60c37 | 205f42eb-2894-459e-bf25-b4bee3618e4d | auth.sign_in                    | user        | 2026-05-17 21:02:37.175245+00
+ 3baa38b0-a737-42b9-9544-ca0fcd4d3206 | 205f42eb-2894-459e-bf25-b4bee3618e4d | auth.sign_in                    | user        | 2026-05-17 21:02:30.867805+00
+ 0214c719-ac34-4032-b639-59ac9ba6fe19 | 205f42eb-2894-459e-bf25-b4bee3618e4d | auth.sign_in                    | user        | 2026-05-17 21:02:15.577434+00
+ 56386595-a38b-4c81-be2b-2ab32e8369ae | 205f42eb-2894-459e-bf25-b4bee3618e4d | auth.sign_in                    | user        | 2026-05-17 21:02:04.239569+00
+ cf0ea84b-1c81-4280-9920-fc48f6a08b8c | 205f42eb-2894-459e-bf25-b4bee3618e4d | auth.sign_in                    | user        | 2026-05-17 21:01:47.586424+00
+(15 filas)
+
