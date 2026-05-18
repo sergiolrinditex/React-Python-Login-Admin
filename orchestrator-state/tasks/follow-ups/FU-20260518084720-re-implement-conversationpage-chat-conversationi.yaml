@@ -1,0 +1,55 @@
+{
+  "id": "FU-20260518084720-re-implement-conversationpage-chat-conversationi",
+  "schema_version": 1,
+  "status": "proposed",
+  "created_at": "2026-05-18T08:47:20+00:00",
+  "created_by": "sergiolr",
+  "origin_task_id": "P03-S02-T002",
+  "origin_phase_id": "P03",
+  "origin_step_id": "P03-S02",
+  "kind": "followup",
+  "product_increment": "current",
+  "build_state": "planned",
+  "severity": "medium",
+  "title": "Re-implement ConversationPage /chat/:conversationId from scratch (J101+J102)",
+  "description": "Task DAG P03-S02-T002 está marked status=done en registry pero su código nunca llegó a main por el bug pr-flow.sh:169 (silenció auto-merge). El router.tsx en main tiene un placeholder con el comentario literal 'placeholder for P03-S02-T002 (ConversationPage). This route must exist to prevent the catch-all intercepting /chat/:id navigations'. Para retomar la feature: (1) Abrir slice DAG NUEVA (no rebase de la antigua: la branch dev/P03-S02-T002@f7f5f33 es del 14 mayo y el drift contra main actual es 970+ archivos). (2) El developer usará la branch antigua SOLO como referencia visual de UI/tests, pero re-implementará alineado con la arquitectura actual de chat/ + auth/ + admin/ ya mergeada. (3) Verify-slice probará el flujo J101 (start conversation) y J102 (open existing). PR #32 fue cerrado documentando este path.",
+  "journey_refs": [
+    "J101",
+    "J102"
+  ],
+  "screen_route": "/chat/:conversationId",
+  "endpoint": "GET /api/v1/chat/conversations/{id}, POST /api/v1/chat/conversations/{id}/messages",
+  "tables": [],
+  "depends_on": [
+    "P03-S02-T002"
+  ],
+  "conflict_groups": [
+    "front:chat"
+  ],
+  "write_set": [
+    "frontend/src/pages/chat/ConversationPage*",
+    "frontend/src/features/chat/**",
+    "frontend/src/app/router.tsx (replace placeholder)"
+  ],
+  "acceptance": [
+    "Ruta /chat/:conversationId renderiza ConversationPage real (no placeholder). Usuario auth puede abrir conversación existente desde HistoryPage y enviar mensajes. Tests vitest verdes. Handoff con ## verify-slice VERIFY_OUTCOME=verified."
+  ],
+  "verify": [
+    "Tras retoma DAG: login employee",
+    "/chat (ChatHomePage)",
+    "abrir conversación seed",
+    "ver mensajes",
+    "enviar mensaje nuevo",
+    "verificar que persiste en DB tras refresh."
+  ],
+  "notes": [],
+  "triage": {
+    "scope_classification": "future_enhancement",
+    "why_not_debugger": "No es defecto in-scope ni debugger flow: la feature original (ConversationPage en /chat/:conversationId) nunca llegó a main por el bug pr-flow.sh:169 (silenció auto-merge). La branch origin/dev/P03-S02-T002 (commit f7f5f33 del 2026-05-14) contiene desarrollo del developer original pero es DEMASIADO ANTIGUA para rebase: main ha mergeado 13+ PRs desde entonces; rebasearla daría >190k líneas en conflicto con drift acumulado en router.tsx, i18n, chat module structure. La forma correcta es slice DAG nueva (re-implement) que use la branch antigua ÚNICAMENTE como referencia visual del diseño y tests que ya escribió el developer.",
+    "decision": "followup_only_when_outside_current_slice",
+    "debugger_path": "in_scope_defects_use_validator_tester_debugger_retest",
+    "warnings": []
+  },
+  "possible_duplicates": [],
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260518084720-re-implement-conversationpage-chat-conversationi.yaml"
+}
