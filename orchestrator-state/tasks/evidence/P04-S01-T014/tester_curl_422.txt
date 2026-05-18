@@ -1,0 +1,10 @@
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   169  100   167  100     2   4709     56 --:--:-- --:--:-- --:--:--  4828
+HTTP/1.1 422 Unprocessable Entity
+date: Mon, 18 May 2026 05:39:23 GMT
+server: uvicorn
+content-length: 167
+content-type: application/json
+
+{"detail":[{"type":"missing","loc":["body","email"],"msg":"Field required","input":{}},{"type":"missing","loc":["body","password"],"msg":"Field required","input":{}}]}

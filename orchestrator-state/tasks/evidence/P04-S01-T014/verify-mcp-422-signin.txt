@@ -1,0 +1,3 @@
+POST /api/v1/auth/sign-in with empty body {} → HTTP 422
+{"detail":[{"type":"missing","loc":["body","email"],"msg":"Field required","input":{}},{"type":"missing","loc":["body","password"],"msg":"Field required","input":{}}]}
+HTTP_STATUS:422

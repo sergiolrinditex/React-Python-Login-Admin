@@ -1,0 +1,15 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.5, pytest-9.0.2, pluggy-1.6.0 -- /usr/local/bin/python3
+cachedir: .pytest_cache
+rootdir: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P04-S01-T014/backend
+configfile: pyproject.toml
+plugins: httpx-0.36.0, asyncio-1.3.0, langsmith-0.8.3, anyio-4.13.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 4 items
+
+backend/tests/integration/test_auth_signin.py::test_signin_missing_field_returns_422 PASSED [ 25%]
+backend/tests/integration/test_auth_signup.py::test_signup_missing_full_name_422 PASSED [ 50%]
+backend/tests/integration/test_rag_documents_index.py::test_T24_index_null_collection_422 PASSED [ 75%]
+backend/tests/integration/test_rag_collections.py::test_T08_patch_invalid_language_422 PASSED [100%]
+
+============================== 4 passed in 3.83s ===============================
