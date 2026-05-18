@@ -1,0 +1,48 @@
+# Contract Observed — P04-S03-T002
+
+## Front → Back → DB contract (task pack §7)
+
+### Page/Route
+- Route: /admin/usage (SPA serves index.html → 200 confirmed via curl -sI)
+- RequireRole(["people_admin","super_admin"]) — RBAC guard verified:
+  - admin user → 200 on endpoint
+  - employee user → 403 on endpoint
+
+### Provider/state  
+- frontend/src/features/admin/presentation/useUsage.ts — TanStack v5 useQuery
+- queryKey: ["admin","usage",{from,to,groupBy}]
+- staleTime: 30_000, retry: 1, AbortController via signal
+
+### Data repo
+- frontend/src/features/admin/data/usageRepository.ts — authFetch to /api/v1/admin/usage
+- Result<UsageSummary, UsageError> pattern
+
+### Endpoint
+- GET /api/v1/admin/usage — backend/app/admin/usage.py
+- Response: {data:{from,to,group_by,rows[],totals}, meta:{request_id}}
+- 200 with rows: verified (model_id, day, invocations, tokens_in, tokens_out, estimated_cost)
+- 422 (missing params): verified
+- 403 (non-admin): verified
+
+### DB Table
+- llm_usage_logs — read-only in this slice
+- Columns observed: id, model_id, tokens_in, tokens_out, estimated_cost, latency_ms, created_at
+- No migration in this slice
+
+### i18n
+- languages.ts: I18N_NAMESPACES = 9 entries (was 8)
+- i18n/index.ts: usage namespace loaded for ES/EN/FR
+- Tests: 17 i18n tests pass, toHaveLength(9) verified
+
+### Errors
+- UsageValidationError(422) — tested via useUsage.test.tsx (range invariant)
+- UsageForbiddenError(403) — tested via usageRepository.test.ts + curl
+- UsageAuthExpiredError(401) — tested via usageRepository.test.ts
+- UsageNetworkError — tested via usageRepository.test.ts
+- UsageServerError(5xx) — tested via usageRepository.test.ts
+
+### Logging contract
+- BEFORE: usage.repo.fetch.before — verified in verbose=true tests (5 occurrences)
+- AFTER: usage.repo.fetch.after — verified in verbose=true tests
+- ERROR: usage.repo.fetch.error, usage.hook.queryFn.error — verified in both modes (8 each)
+- verbose=false suppresses info/debug (fetch.before/after = 0 lines confirmed)

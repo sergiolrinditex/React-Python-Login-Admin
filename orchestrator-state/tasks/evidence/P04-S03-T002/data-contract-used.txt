@@ -1,0 +1,28 @@
+# Verification Data Contract Used — P04-S03-T002
+
+## Verification Data Contract rows (TECHNICAL_GUIDE §6.5, task pack §8)
+- J103 admin-ai row:
+  - User: data/verification/users/admin_peopletech.json
+    - email: admin.peopletech@inditex-sandbox.com
+    - password_plain: AdminVerify2024!
+    - roles: [people_admin]
+  - Employee user: data/verification/users/employee_primary.json
+    - email: employee.verification@inditex-sandbox.com
+    - password_plain: VerifyPass2024!
+    - MFA: data/verification/auth/mfa_primary.json (TOTP secret JBSWY3DPEHPK3PXP)
+
+## Real/Provided data loaded during tests
+- Admin login: admin.peopletech@inditex-sandbox.com -> access_token obtained: YES
+- Admin role confirmed: people_admin (via /api/v1/users/me)
+- Employee login: employee.verification@inditex-sandbox.com + MFA -> access_token obtained: YES
+- Seeded row: INSERT INTO llm_usage_logs (model_id=f7c851ae-..., tokens_in=150, tokens_out=75, estimated_cost=0.00045, latency_ms=823)
+
+## Persisted data observed
+- DB llm_usage_logs: 1 row after seed insert
+  - model_id: f7c851ae-a90f-480d-9126-8f904ad55cb4 (gpt-4o-mini)
+  - invocations: 1, tokens_in: 150, tokens_out: 75, estimated_cost: 0.00045, latency_ms: 823
+
+## curl checks summary
+- GET /api/v1/admin/usage (admin, 30d range with seeded row) → 200, row_count=1
+- GET /api/v1/admin/usage (admin, no from/to) → 422 FastAPI validation
+- GET /api/v1/admin/usage (employee) → 403 AUTH_PERMISSION_DENIED

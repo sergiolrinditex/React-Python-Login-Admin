@@ -1,0 +1,9 @@
+{
+  "name": "hilo-people-frontend",
+  "lockfileVersion": 3,
+  "root_dependencies_has_eslint": false,
+  "root_devDependencies_has_eslint": true,
+  "eslint_pkg_dev": true,
+  "eslint_pkg_version": "10.4.0",
+  "total_packages": 310
+}

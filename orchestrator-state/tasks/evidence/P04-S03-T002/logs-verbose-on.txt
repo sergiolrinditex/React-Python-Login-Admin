@@ -1,0 +1,21 @@
+# Logs Verbose ON — P04-S03-T002 Frontend Tests
+
+ENABLE_VERBOSE_LOGGING=true vitest run: 190/190 PASS
+
+## Admin usage info lines present (verbose=true only):
+- usage.repo.fetch.before {from, to, group_by, request_id}  [5 occurrences in test output]
+- usage.repo.fetch.after {row_count, range_days, request_id}
+- usage.repo.fetch.forbidden {status, request_id}
+- usage.repo.fetch.auth_expired {status, request_id}
+- usage.repo.fetch.server_error {status, request_id}
+- usage.repo.fetch.error {error_class, message, request_id}
+- usage.hook.queryFn.error {error_code}
+
+## Observed in vitest-verbose-true.log:
+  [admin] usage.repo.fetch.forbidden { status: 403, request_id: '5b28cd3c-...' }
+  [admin] usage.repo.fetch.auth_expired { status: 401, request_id: '4e21a28e-...' }
+  [admin] usage.repo.fetch.server_error { status: 500, request_id: '0517e7c4-...' }
+  [admin] usage.repo.fetch.error { error_class: 'USAGE_NETWORK_ERROR', message: 'Failed to fetch', request_id: '00e1f1e1-...' }
+  [admin] usage.hook.queryFn.error { error_code: 'USAGE_NETWORK_ERROR' }
+
+## PII check: NO tokens, NO passwords, NO email addresses found in verbose output.

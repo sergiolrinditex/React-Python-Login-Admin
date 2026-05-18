@@ -1,0 +1,36 @@
+# Backend Log Excerpt — P04-S03-T002 Tester Run
+
+## Log file situation
+The running backend process (PID 22130) was started from worktree P03-S01-T005
+which has since been cleaned. Its log file (P03-S01-T005/orchestrator-state/dev-logs/back.log)
+is still open by the OS but inaccessible from the filesystem (worktree removed).
+
+## Alternative verification: source code inspection
+backend/app/admin/usage.py lines 94-97 (BEFORE):
+  if _VERBOSE:
+      logger.debug(
+          "admin.usage.list.start user_id=%s from=%s to=%s group_by=%s request_id=%s",
+          str(user.id), from_dt.isoformat(), to_dt.isoformat(), group_by, request_id,
+      )  # BEFORE
+
+backend/app/admin/usage.py lines 156-159 (AFTER):
+      logger.debug(
+          "admin.usage.list.done user_id=%s request_id=%s rows=%d",
+          str(user.id), request_id, len(rows),
+      )  # AFTER
+
+backend/app/admin/usage.py lines 136-138 (ERROR):
+      logger.error(
+          "admin.usage.list.error user_id=%s request_id=%s error=%s",
+          str(user.id), request_id, type(exc).__name__, exc_info=True,
+      )
+
+## Endpoint functional verification: CONFIRMED
+- HTTP 200 with group_by=model_day: ✓ row_count=1 (seeded)
+- HTTP 422 with missing from/to: ✓ FastAPI validation error
+- HTTP 403 for non-admin employee: ✓ AUTH_PERMISSION_DENIED
+
+## Note
+Backend ENABLE_VERBOSE_LOGGING controls logger.debug (BEFORE/AFTER only when _VERBOSE=True).
+logger.error (ERROR) fires regardless of flag.
+This contract is correctly implemented per backend source inspection.
