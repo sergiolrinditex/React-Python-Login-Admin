@@ -1,0 +1,9 @@
+REGISTRY_ACCEPTANCE: 'pytest backend/tests/integration -k admin_ai_models passes 25/25 (or test scope updated with explicit rationale in source-of-truth).'
+EXPECTED: 'pytest backend/tests/integration/test_admin_ai.py passes 26/26 (or test scope updated with explicit rationale in source-of-truth).'
+MATCH: False
+
+NOTE: registry.json lives in canonical root and is NOT in the PR branch.
+Per R2 in task pack + T013 pattern (commit bd68fa9): registry will be updated
+post-merge when main-orchestrator runs bootstrap --refresh against merged checklist.
+Current checklist (in this PR branch) correctly shows: pytest backend/tests/integration/test_admin_ai.py passes 26/26
+This is the same pattern as T013 — registry.json is local scheduler state, not PR payload.

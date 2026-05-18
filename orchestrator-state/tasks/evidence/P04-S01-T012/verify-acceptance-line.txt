@@ -1,0 +1,15 @@
+=== Checklist line 194 (worktree) ===
+194:| P04-S01-T007 | bug | Backend admin AI integration tests regressed (25 failures in test_admin_ai.py) | Runtime follow-up P04-S01-T003 | current | planned | high | human | P04-S01-T003 | back:admin-ai | backend/app/admin/providers/**, backend/app/admin/model_catalog/**, backend/tests/integration/test_admin_ai.py | J103 | — | — | — | runtime-followup#FU-20260517210429-backend-admin-ai-integration-tests-regressed-25- | runtime-followup#FU-20260517210429-backend-admin-ai-integration-tests-regressed-25- | pytest backend/tests/integration/test_admin_ai.py passes 26/26 (or test scope updated with explicit rationale in source-of-truth). | full backend admin-ai integration suite green AND a fresh /verify-slice for the J103 admin AI happy path still passes. |
+
+=== Acceptance string extracted from checklist ===
+CHECKLIST_ACC: pytest backend/tests/integration/test_admin_ai.py passes 26/26 (or test scope updated with explicit rationale in source-of-truth). 
+
+=== Expected acceptance string ===
+EXPECTED: pytest backend/tests/integration/test_admin_ai.py passes 26/26 (or test scope updated with explicit rationale in source-of-truth).
+
+=== Registry acceptance field for P04-S01-T007 ===
+REGISTRY_ACC: 'pytest backend/tests/integration -k admin_ai_models passes 25/25 (or test scope updated with explicit rationale in source-of-truth).'
+MATCH_WITH_NEW: False
+STILL_HAS_OLD_STRING: True
+STATUS: done
+NOTE: registry pre-merge holds old string (R2 behavior, same as T013/bd68fa9; post-merge bootstrap --refresh will sync)
