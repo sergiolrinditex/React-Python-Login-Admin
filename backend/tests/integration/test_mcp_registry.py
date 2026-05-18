@@ -84,8 +84,19 @@ if not os.getenv("MFA_ENCRYPTION_KEY"):
 # Clear any leftover allowlist from other tests
 os.environ.pop("MCP_ALLOWLIST_DOMAINS", None)
 
-from app.main import app  # noqa: E402
+# Drop any Fernet instance that a previously-collected test module (e.g.
+# test_admin_ai.py, which runs alphabetically before this file) may have
+# primed in the lru_cache with its own ENCRYPTION_KEY.  If we do not clear
+# the cache here, _get_fernet() returns the stale Fernet(KEY_A) from the
+# earlier module, causing encrypt_secret() to produce ciphertexts that
+# Fernet(_TEST_FERNET_KEY) cannot decrypt — the exact root-cause of the
+# test_T06 InvalidToken failure in full-suite ordering.
+# Pattern mirrors test_admin_ai.py:335 and test_chat_stream.py:124.
+# Fix surface: P04-S01-T011 (FU-20260517224235).
 from app.security.encryption import reset_fernet_cache  # noqa: E402
+reset_fernet_cache()
+
+from app.main import app  # noqa: E402
 from app.auth import rate_limit as _auth_rl_module  # noqa: E402
 
 # ---------------------------------------------------------------------------
@@ -215,6 +226,26 @@ def _reset_rate_limits() -> None:
                 r.delete(*keys)
     except Exception:
         pass  # Redis unavailable — T11 covers that separately
+
+
+@pytest.fixture(autouse=True)
+def _restore_fernet_key_per_test():
+    """Restore THIS module's ENCRYPTION_KEY + clear Fernet lru_cache before each test.
+
+    A previously-collected test module (e.g. test_admin_ai.py, which runs
+    alphabetically before this file) has an autouse teardown that reasserts its
+    own ENCRYPTION_KEY into os.environ after every one of its tests.  That
+    teardown fires at *execution* time — after module-level code already ran —
+    and leaves the wrong key cached.  Without this per-test restore, T06 (and
+    any other test that verifies a Fernet roundtrip) would attempt to decrypt
+    ciphertexts produced with KEY_A using Fernet(KEY_B), yielding InvalidToken.
+
+    Fix surface: P04-S01-T011 (FU-20260517224235).
+    Pattern: mirrors test_admin_ai.py lines 334-336.
+    """
+    os.environ["ENCRYPTION_KEY"] = _TEST_FERNET_KEY
+    reset_fernet_cache()
+    yield
 
 
 @pytest.fixture(autouse=True)
