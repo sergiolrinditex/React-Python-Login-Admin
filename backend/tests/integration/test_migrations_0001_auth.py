@@ -46,7 +46,10 @@ from sqlalchemy import create_engine, text
 # Config
 # ---------------------------------------------------------------------------
 _BACKEND_DIR = Path(__file__).parent.parent.parent  # backend/
-_DATABASE_URL = os.getenv("DATABASE_URL", "postgresql+psycopg://hilo:hilo@localhost:5432/hilo_dev")
+_DATABASE_URL = os.getenv(
+    "DATABASE_URL", "postgresql+psycopg://hilo:hilo@localhost:5432/hilo_dev"
+)
+
 
 # Locate alembic binary — prefer user Python path, fall back to PATH lookup.
 def _find_alembic() -> str:
@@ -90,7 +93,9 @@ def _get_tables(engine) -> list[str]:
     """Return list of table names in public schema, sorted."""
     with engine.connect() as conn:
         result = conn.execute(
-            text("SELECT tablename FROM pg_tables WHERE schemaname='public' ORDER BY tablename")
+            text(
+                "SELECT tablename FROM pg_tables WHERE schemaname='public' ORDER BY tablename"
+            )
         )
         return [row[0] for row in result]
 
@@ -100,15 +105,22 @@ def _get_tables(engine) -> list[str]:
 # ---------------------------------------------------------------------------
 @pytest.fixture(autouse=True)
 def reset_migrations():
-    """Downgrade to base before each test and cleanup after."""
+    """Downgrade to base before each test (clean slate), upgrade head after (suite hygiene).
+
+    CHANGED P04-S01-T010: teardown was `downgrade base`. Changed to `upgrade head` to prevent
+    schema-teardown pollution of tests that run alphabetically after this file:
+    test_model_test, test_password_reset, test_rag_*, test_users_me,
+    test_vectorization_worker, test_verification_data_*. See FU-20260517220254.
+    """
     _run_alembic("downgrade", "base")
     yield
-    _run_alembic("downgrade", "base")
+    _run_alembic("upgrade", "head")
 
 
 # ---------------------------------------------------------------------------
 # Tests
 # ---------------------------------------------------------------------------
+
 
 @pytest.mark.integration
 def test_upgrade_creates_all_9_tables():
@@ -209,7 +221,12 @@ def test_on_delete_cascade_removes_child_rows():
                 "INSERT INTO users (id, email, password_hash, full_name)"
                 " VALUES (:id, :email, :pw, :name)"
             ),
-            {"id": user_id, "email": "cascade@test.com", "pw": "hash", "name": "Cascade User"},
+            {
+                "id": user_id,
+                "email": "cascade@test.com",
+                "pw": "hash",
+                "name": "Cascade User",
+            },
         )
         # Insert employee_profile (FK CASCADE)
         conn.execute(
@@ -219,8 +236,13 @@ def test_on_delete_cascade_removes_child_rows():
                 " VALUES (:uid, :eid, :brand, :soc, :ctr, :cntry, :dept)"
             ),
             {
-                "uid": user_id, "eid": "EMP-001", "brand": "Zara",
-                "soc": "ITX", "ctr": "HQ", "cntry": "ES", "dept": "Tech",
+                "uid": user_id,
+                "eid": "EMP-001",
+                "brand": "Zara",
+                "soc": "ITX",
+                "ctr": "HQ",
+                "cntry": "ES",
+                "dept": "Tech",
             },
         )
         # Insert role and user_role (FK CASCADE)
@@ -274,7 +296,9 @@ def test_on_delete_cascade_removes_child_rows():
                 text(f"SELECT COUNT(*) FROM {table} WHERE {col} = :uid"),  # noqa: S608
                 {"uid": user_id},
             ).scalar()
-            assert count == 0, f"Expected 0 rows in {table} after CASCADE delete, got {count}"
+            assert count == 0, (
+                f"Expected 0 rows in {table} after CASCADE delete, got {count}"
+            )
 
     engine.dispose()
 
@@ -293,13 +317,17 @@ def test_audit_log_actor_set_null_on_user_delete():
                 "INSERT INTO users (id, email, password_hash, full_name)"
                 " VALUES (:id, :email, :pw, :name)"
             ),
-            {"id": user_id, "email": "audit.setnull@test.com", "pw": "hash", "name": "Audit User"},
+            {
+                "id": user_id,
+                "email": "audit.setnull@test.com",
+                "pw": "hash",
+                "name": "Audit User",
+            },
         )
         # Insert audit log with actor_user_id
         conn.execute(
             text(
-                "INSERT INTO audit_logs (actor_user_id, action)"
-                " VALUES (:uid, :action)"
+                "INSERT INTO audit_logs (actor_user_id, action) VALUES (:uid, :action)"
             ),
             {"uid": user_id, "action": "user.login"},
         )
@@ -322,8 +350,12 @@ def test_audit_log_actor_set_null_on_user_delete():
             text("SELECT actor_user_id FROM audit_logs WHERE id = :id"),
             {"id": log_id},
         ).fetchone()
-        assert row is not None, "audit_logs row must NOT be deleted (SET NULL, not CASCADE)"
-        assert row[0] is None, f"actor_user_id must be NULL after user deletion, got {row[0]}"
+        assert row is not None, (
+            "audit_logs row must NOT be deleted (SET NULL, not CASCADE)"
+        )
+        assert row[0] is None, (
+            f"actor_user_id must be NULL after user deletion, got {row[0]}"
+        )
 
     engine.dispose()
 

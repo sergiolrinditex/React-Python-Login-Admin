@@ -1,0 +1,80 @@
+backend/tests/integration/test_migrations_0001_auth.py::test_upgrade_creates_all_9_tables FAILED
+backend/tests/integration/test_migrations_0001_auth.py::test_check_language_constraint_rejects_invalid PASSED
+backend/tests/integration/test_migrations_0001_auth.py::test_unique_email_constraint_rejects_duplicate PASSED
+backend/tests/integration/test_migrations_0001_auth.py::test_on_delete_cascade_removes_child_rows PASSED
+backend/tests/integration/test_migrations_0001_auth.py::test_audit_log_actor_set_null_on_user_delete PASSED
+backend/tests/integration/test_migrations_0001_auth.py::test_downgrade_removes_all_tables FAILED
+
+=================================== FAILURES ===================================
+______________________ test_upgrade_creates_all_9_tables _______________________
+
+    @pytest.mark.integration
+    def test_upgrade_creates_all_9_tables():
+        """After upgrade head, exactly 9 auth tables + alembic_version must exist."""
+        result = _run_alembic("upgrade", "head")
+        assert result.returncode == 0, f"upgrade failed: {result.stderr}"
+    
+        engine = _get_sync_engine()
+        tables = _get_tables(engine)
+        engine.dispose()
+    
+        expected = {
+            "alembic_version",
+            "users",
+            "employee_profiles",
+            "roles",
+            "permissions",
+            "user_roles",
+            "refresh_tokens",
+            "mfa_totp_secrets",
+            "password_reset_tokens",
+            "audit_logs",
+        }
+>       assert set(tables) == expected, f"Expected {expected}, got {set(tables)}"
+E       AssertionError: Expected {'alembic_version', 'users', 'roles', 'permissions', 'user_roles', 'audit_logs', 'mfa_totp_secrets', 'employee_profiles', 'refresh_tokens', 'password_reset_tokens'}, got {'mcp_tool_invocations', 'mcp_prompts', 'document_versions', 'document_chunks', 'mcp_approvals', 'ai_providers', 'rag_collections', 'mcp_agent_bindings', 'mcp_credentials', 'alembic_version', 'documents', 'mcp_tools', 'employee_profiles', 'mcp_resources', 'messages', 'user_roles', 'ai_provider_credentials', 'ai_model_tests', 'audit_logs', 'message_citations', 'password_reset_tokens', 'conversations', 'agents', 'mcp_servers', 'mfa_totp_secrets', 'document_embeddings', 'vectorization_jobs', 'users', 'roles', 'ai_models', 'agent_runs', 'permissions', 'llm_usage_logs', 'refresh_tokens'}
+E       assert {'agent_runs'...oviders', ...} == {'alembic_ver...issions', ...}
+E         
+E         Extra items in the left set:
+E         'mcp_tool_invocations'
+E         'mcp_prompts'
+E         'document_versions'
+E         'document_chunks'
+E         'mcp_approvals'...
+E         
+E         ...Full output truncated (57 lines hidden), use '-vv' to show
+
+backend/tests/integration/test_migrations_0001_auth.py:147: AssertionError
+______________________ test_downgrade_removes_all_tables _______________________
+
+    @pytest.mark.integration
+    def test_downgrade_removes_all_tables():
+        """Downgrade -1 must remove all 9 tables created by this migration."""
+        _run_alembic("upgrade", "head")
+        result = _run_alembic("downgrade", "-1")
+        assert result.returncode == 0, f"downgrade failed: {result.stderr}"
+    
+        engine = _get_sync_engine()
+        tables = _get_tables(engine)
+        engine.dispose()
+    
+        # Only alembic_version should remain after downgrade
+>       assert tables == ["alembic_version"], (
+            f"Expected only ['alembic_version'] after downgrade, got {tables}"
+        )
+E       AssertionError: Expected only ['alembic_version'] after downgrade, got ['agent_runs', 'agents', 'ai_model_tests', 'ai_models', 'ai_provider_credentials', 'ai_providers', 'alembic_version', 'audit_logs', 'conversations', 'document_chunks', 'document_embeddings', 'document_versions', 'documents', 'employee_profiles', 'llm_usage_logs', 'mcp_agent_bindings', 'mcp_approvals', 'mcp_credentials', 'mcp_prompts', 'mcp_resources', 'mcp_servers', 'mcp_tool_invocations', 'mcp_tools', 'message_citations', 'messages', 'mfa_totp_secrets', 'password_reset_tokens', 'permissions', 'rag_collections', 'refresh_tokens', 'roles', 'user_roles', 'users', 'vectorization_jobs']
+E       assert ['agent_runs'...oviders', ...] == ['alembic_version']
+E         
+E         At index 0 diff: 'agent_runs' != 'alembic_version'
+E         Left contains 33 more items, first extra item: 'agents'
+E         
+E         Full diff:
+E           [
+E         +     'agent_runs',...
+E         
+E         ...Full output truncated (34 lines hidden), use '-vv' to show
+
+backend/tests/integration/test_migrations_0001_auth.py:375: AssertionError
+=========================== short test summary info ============================
+FAILED backend/tests/integration/test_migrations_0001_auth.py::test_upgrade_creates_all_9_tables
+FAILED backend/tests/integration/test_migrations_0001_auth.py::test_downgrade_removes_all_tables
+========================= 2 failed, 4 passed in 15.71s =========================

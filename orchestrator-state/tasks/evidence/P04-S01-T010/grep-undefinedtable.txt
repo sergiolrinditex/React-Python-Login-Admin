@@ -1,0 +1,19 @@
+# UndefinedTable / OperationalError grep results — P04-S01-T010
+
+## BEFORE fix (before-fix-pytest-integration.txt)
+UndefinedTable count:
+734
+
+Sample UndefinedTable lines (BEFORE):
+E           psycopg.errors.UndefinedTable: relation "users" does not exist
+../../../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: UndefinedTable
+E           sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation "users" does not exist
+E           psycopg.errors.UndefinedTable: relation "users" does not exist
+../../../../../Library/Python/3.11/lib/python/site-packages/psycopg/cursor.py:117: UndefinedTable
+
+## AFTER fix
+UndefinedTable count run1: 0
+UndefinedTable count run2: 0
+UndefinedTable count run3: 0
+
+RESULT: ACCEPTANCE PASSED — zero UndefinedTable/OperationalError from schema teardown

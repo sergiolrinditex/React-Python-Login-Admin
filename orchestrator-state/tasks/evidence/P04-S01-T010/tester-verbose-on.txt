@@ -1,0 +1,80 @@
+
+
+=================================== FAILURES ===================================
+______________________ test_upgrade_creates_all_9_tables _______________________
+
+    @pytest.mark.integration
+    def test_upgrade_creates_all_9_tables():
+        """After upgrade head, exactly 9 auth tables + alembic_version must exist."""
+        result = _run_alembic("upgrade", "head")
+        assert result.returncode == 0, f"upgrade failed: {result.stderr}"
+    
+        engine = _get_sync_engine()
+        tables = _get_tables(engine)
+        engine.dispose()
+    
+        expected = {
+            "alembic_version",
+            "users",
+            "employee_profiles",
+            "roles",
+            "permissions",
+            "user_roles",
+            "refresh_tokens",
+            "mfa_totp_secrets",
+            "password_reset_tokens",
+            "audit_logs",
+        }
+>       assert set(tables) == expected, f"Expected {expected}, got {set(tables)}"
+E       AssertionError: Expected {'employee_profiles', 'refresh_tokens', 'password_reset_tokens', 'mfa_totp_secrets', 'audit_logs', 'user_roles', 'roles', 'users', 'permissions', 'alembic_version'}, got {'ai_model_tests', 'mcp_resources', 'mcp_agent_bindings', 'refresh_tokens', 'audit_logs', 'mcp_credentials', 'ai_providers', 'document_embeddings', 'users', 'password_reset_tokens', 'mcp_prompts', 'alembic_version', 'rag_collections', 'ai_provider_credentials', 'messages', 'llm_usage_logs', 'documents', 'conversations', 'message_citations', 'employee_profiles', 'mcp_tools', 'ai_models', 'user_roles', 'mcp_approvals', 'document_versions', 'mcp_servers', 'mfa_totp_secrets', 'vectorization_jobs', 'document_chunks', 'agent_runs', 'roles', 'agents', 'mcp_tool_invocations', 'permissions'}
+E       assert {'agent_runs'...oviders', ...} == {'alembic_ver...issions', ...}
+E         
+E         Extra items in the left set:
+E         'mcp_resources'
+E         'ai_model_tests'
+E         'mcp_agent_bindings'
+E         'mcp_credentials'
+E         'ai_providers'...
+E         
+E         ...Full output truncated (57 lines hidden), use '-vv' to show
+
+backend/tests/integration/test_migrations_0001_auth.py:147: AssertionError
+------------------------------ Captured log setup ------------------------------
+INFO     tests.integration.conftest:conftest.py:82 [integration/conftest] BEFORE alembic upgrade head | cwd=/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P04-S01-T010/backend | db=localhost:5432/hilo_dev
+INFO     tests.integration.conftest:conftest.py:110 [integration/conftest] AFTER alembic upgrade head | rc=0 | stdout=(no output)
+______________________ test_downgrade_removes_all_tables _______________________
+
+    @pytest.mark.integration
+    def test_downgrade_removes_all_tables():
+        """Downgrade -1 must remove all 9 tables created by this migration."""
+        _run_alembic("upgrade", "head")
+        result = _run_alembic("downgrade", "-1")
+        assert result.returncode == 0, f"downgrade failed: {result.stderr}"
+    
+        engine = _get_sync_engine()
+        tables = _get_tables(engine)
+        engine.dispose()
+    
+        # Only alembic_version should remain after downgrade
+>       assert tables == ["alembic_version"], (
+            f"Expected only ['alembic_version'] after downgrade, got {tables}"
+        )
+E       AssertionError: Expected only ['alembic_version'] after downgrade, got ['agent_runs', 'agents', 'ai_model_tests', 'ai_models', 'ai_provider_credentials', 'ai_providers', 'alembic_version', 'audit_logs', 'conversations', 'document_chunks', 'document_embeddings', 'document_versions', 'documents', 'employee_profiles', 'llm_usage_logs', 'mcp_agent_bindings', 'mcp_approvals', 'mcp_credentials', 'mcp_prompts', 'mcp_resources', 'mcp_servers', 'mcp_tool_invocations', 'mcp_tools', 'message_citations', 'messages', 'mfa_totp_secrets', 'password_reset_tokens', 'permissions', 'rag_collections', 'refresh_tokens', 'roles', 'user_roles', 'users', 'vectorization_jobs']
+E       assert ['agent_runs'...oviders', ...] == ['alembic_version']
+E         
+E         At index 0 diff: 'agent_runs' != 'alembic_version'
+E         Left contains 33 more items, first extra item: 'agents'
+E         
+E         Full diff:
+E           [
+E         +     'agent_runs',...
+E         
+E         ...Full output truncated (34 lines hidden), use '-vv' to show
+
+backend/tests/integration/test_migrations_0001_auth.py:375: AssertionError
+---------------------------- Captured log teardown -----------------------------
+INFO     tests.integration.conftest:conftest.py:158 [integration/conftest] post-session alembic upgrade head OK | rc=0
+=========================== short test summary info ============================
+FAILED backend/tests/integration/test_migrations_0001_auth.py::test_upgrade_creates_all_9_tables
+FAILED backend/tests/integration/test_migrations_0001_auth.py::test_downgrade_removes_all_tables
+========================= 2 failed, 4 passed in 17.76s =========================

@@ -1,0 +1,6 @@
+INFO     tests.integration.conftest:conftest.py:82 [integration/conftest] BEFORE alembic upgrade head | cwd=/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P04-S01-T010/backend | db=localhost:5432/hilo_dev
+INFO     tests.integration.conftest:conftest.py:110 [integration/conftest] AFTER alembic upgrade head | rc=0 | stdout=(no output)
+INFO     tests.integration.conftest:conftest.py:158 [integration/conftest] post-session alembic upgrade head OK | rc=0
+INFO     tests.integration.conftest:conftest.py:82 [integration/conftest] BEFORE alembic upgrade head | cwd=/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P04-S01-T010/backend | db=localhost:5432/hilo_dev
+INFO     tests.integration.conftest:conftest.py:110 [integration/conftest] AFTER alembic upgrade head | rc=0 | stdout=(no output)
+INFO     tests.integration.conftest:conftest.py:158 [integration/conftest] post-session alembic upgrade head OK | rc=0
