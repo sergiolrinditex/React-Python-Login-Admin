@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-18T05:13:50+00:00",
+  "generated_at": "2026-05-18T08:57:44+00:00",
   "endpoints": [
     {
       "method": "GET",
@@ -634,10 +634,12 @@
       "path_params": [],
       "slice_ids": [
         "P01-S02-T004",
-        "P03-S02-T004"
+        "P03-S02-T004",
+        "P03-S02-T007"
       ],
       "journey_refs": [
-        "J102"
+        "J102",
+        "J100"
       ],
       "tables": [
         "refresh_tokens",
@@ -649,6 +651,44 @@
         "/account"
       ],
       "first_task_kind": "api"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "operation_id": "getApiV1AuthMe",
+      "request_schema": "GetApiV1AuthMeRequest",
+      "response_schema": "GetApiV1AuthMeResponse",
+      "path_params": [],
+      "slice_ids": [
+        "P03-S02-T007"
+      ],
+      "journey_refs": [
+        "J100"
+      ],
+      "tables": [],
+      "routes": [
+        "/account"
+      ],
+      "first_task_kind": "followup"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/auth/me/language",
+      "operation_id": "patchApiV1AuthMeLanguage",
+      "request_schema": "PatchApiV1AuthMeLanguageRequest",
+      "response_schema": "PatchApiV1AuthMeLanguageResponse",
+      "path_params": [],
+      "slice_ids": [
+        "P03-S02-T007"
+      ],
+      "journey_refs": [
+        "J100"
+      ],
+      "tables": [],
+      "routes": [
+        "/account"
+      ],
+      "first_task_kind": "followup"
     },
     {
       "method": "POST",
@@ -819,6 +859,7 @@
       "slice_ids": [
         "P02-S03-T001",
         "P03-S02-T002",
+        "P03-S02-T008",
         "P05-S01-T002",
         "P05-S01-T003"
       ],
@@ -840,6 +881,28 @@
         "/history → /chat/:conversationId → /account"
       ],
       "first_task_kind": "api"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/chat/conversations/{id}/messages",
+      "operation_id": "postApiV1ChatConversationsIdMessages",
+      "request_schema": "PostApiV1ChatConversationsIdMessagesRequest",
+      "response_schema": "PostApiV1ChatConversationsIdMessagesResponse",
+      "path_params": [
+        "id"
+      ],
+      "slice_ids": [
+        "P03-S02-T008"
+      ],
+      "journey_refs": [
+        "J101",
+        "J102"
+      ],
+      "tables": [],
+      "routes": [
+        "/chat/:conversationId"
+      ],
+      "first_task_kind": "followup"
     },
     {
       "method": "POST",

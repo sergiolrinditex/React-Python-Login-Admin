@@ -1,7 +1,7 @@
 {
   "id": "FU-20260518081321-re-launch-p04-s02-t005-agentspage-from-rescue-br",
   "schema_version": 1,
-  "status": "proposed",
+  "status": "promoted",
   "created_at": "2026-05-18T08:13:21+00:00",
   "created_by": "sergiolr",
   "origin_task_id": "P04-S02-T005",
@@ -55,5 +55,8 @@
     "warnings": []
   },
   "possible_duplicates": [],
-  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260518081321-re-launch-p04-s02-t005-agentspage-from-rescue-br.yaml"
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260518081321-re-launch-p04-s02-t005-agentspage-from-rescue-br.yaml",
+  "promoted_at": "2026-05-18T08:57:43+00:00",
+  "promoted_task_id": "P04-S02-T007",
+  "source_doc_updated": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md"
 }

@@ -1,0 +1,41 @@
+id: P03-S02-T007
+phase_id: P03
+step_id: P03-S02
+title: "Re-implement AccountPage /account from scratch (profile + language + logout)"
+status: ready
+kind: "followup"
+target: "Re-implement AccountPage /account from scratch (profile + language + logout)"
+product_increment: "current"
+build_state: "planned"
+risk_level: "medium"
+verify_mode: "human"
+route: "/account"
+endpoint: "GET /api/v1/auth/me, PATCH /api/v1/auth/me/language, POST /api/v1/auth/logout"
+journey_refs:
+  - "J100"
+tables:
+depends_on:
+  - P03-S02-T004
+acceptance:
+  - "Ruta /account renderiza AccountPage. Usuario auth ve su email + language actual. Cambio language → cookie/storage actualizado + UI re-renderiza. Click 'Logout' → cookies cleared + redirect /auth/sign-in. Tests vitest verdes."
+verification_commands:
+  - "Tras retoma DAG: login employee"
+  - "navegar a /account (link en navbar)"
+  - "ver perfil"
+  - "cambiar idioma ES→EN → texto cambia"
+  - "click Logout → vuelve a /auth/sign-in."
+allowed_paths:
+  - "frontend/src/pages/account/**"
+  - "frontend/src/features/auth/presentation/useLogout*"
+  - "frontend/src/features/auth/presentation/useLanguagePicker*"
+  - "frontend/src/app/router.tsx"
+conflict_groups:
+  - "front:account"
+write_set:
+  - "frontend/src/pages/account/**"
+  - "frontend/src/features/auth/presentation/useLogout*"
+  - "frontend/src/features/auth/presentation/useLanguagePicker*"
+  - "frontend/src/app/router.tsx"
+handoff_path: orchestrator-state/tasks/handoffs/P03-S02-T007.md
+evidence_dir: orchestrator-state/tasks/evidence/P03-S02-T007
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry"

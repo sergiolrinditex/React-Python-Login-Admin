@@ -1402,10 +1402,12 @@
         ],
         "x-slice-ids": [
           "P01-S02-T004",
-          "P03-S02-T004"
+          "P03-S02-T004",
+          "P03-S02-T007"
         ],
         "x-journey-refs": [
-          "J102"
+          "J102",
+          "J100"
         ],
         "x-tables": [
           "refresh_tokens",
@@ -1452,6 +1454,112 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/PostApiV1AuthLogoutRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/me": {
+      "get": {
+        "operationId": "getApiV1AuthMe",
+        "tags": [
+          "followup"
+        ],
+        "x-slice-ids": [
+          "P03-S02-T007"
+        ],
+        "x-journey-refs": [
+          "J100"
+        ],
+        "x-tables": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetApiV1AuthMeResponse"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Client error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/me/language": {
+      "patch": {
+        "operationId": "patchApiV1AuthMeLanguage",
+        "tags": [
+          "followup"
+        ],
+        "x-slice-ids": [
+          "P03-S02-T007"
+        ],
+        "x-journey-refs": [
+          "J100"
+        ],
+        "x-tables": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatchApiV1AuthMeLanguageResponse"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Client error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchApiV1AuthMeLanguageRequest"
               }
             }
           }
@@ -1845,6 +1953,7 @@
         "x-slice-ids": [
           "P02-S03-T001",
           "P03-S02-T002",
+          "P03-S02-T008",
           "P05-S01-T002",
           "P05-S01-T003"
         ],
@@ -1898,6 +2007,74 @@
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
                 }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/chat/conversations/{id}/messages": {
+      "post": {
+        "operationId": "postApiV1ChatConversationsIdMessages",
+        "tags": [
+          "followup"
+        ],
+        "x-slice-ids": [
+          "P03-S02-T008"
+        ],
+        "x-journey-refs": [
+          "J101",
+          "J102"
+        ],
+        "x-tables": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostApiV1ChatConversationsIdMessagesResponse"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Client error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostApiV1ChatConversationsIdMessagesRequest"
               }
             }
           }
@@ -2774,7 +2951,8 @@
         ],
         "x-generated-from": [
           "P01-S02-T004",
-          "P03-S02-T004"
+          "P03-S02-T004",
+          "P03-S02-T007"
         ]
       },
       "PostApiV1AuthLogoutResponse": {
@@ -2785,7 +2963,48 @@
         ],
         "x-generated-from": [
           "P01-S02-T004",
-          "P03-S02-T004"
+          "P03-S02-T004",
+          "P03-S02-T007"
+        ]
+      },
+      "GetApiV1AuthMeRequest": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/GenericJson"
+          }
+        ],
+        "x-generated-from": [
+          "P03-S02-T007"
+        ]
+      },
+      "GetApiV1AuthMeResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/GenericJson"
+          }
+        ],
+        "x-generated-from": [
+          "P03-S02-T007"
+        ]
+      },
+      "PatchApiV1AuthMeLanguageRequest": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/GenericJson"
+          }
+        ],
+        "x-generated-from": [
+          "P03-S02-T007"
+        ]
+      },
+      "PatchApiV1AuthMeLanguageResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/GenericJson"
+          }
+        ],
+        "x-generated-from": [
+          "P03-S02-T007"
         ]
       },
       "PostApiV1AuthRefreshRequest": {
@@ -2935,6 +3154,7 @@
         "x-generated-from": [
           "P02-S03-T001",
           "P03-S02-T002",
+          "P03-S02-T008",
           "P05-S01-T002",
           "P05-S01-T003"
         ]
@@ -2948,8 +3168,29 @@
         "x-generated-from": [
           "P02-S03-T001",
           "P03-S02-T002",
+          "P03-S02-T008",
           "P05-S01-T002",
           "P05-S01-T003"
+        ]
+      },
+      "PostApiV1ChatConversationsIdMessagesRequest": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/GenericJson"
+          }
+        ],
+        "x-generated-from": [
+          "P03-S02-T008"
+        ]
+      },
+      "PostApiV1ChatConversationsIdMessagesResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/GenericJson"
+          }
+        ],
+        "x-generated-from": [
+          "P03-S02-T008"
         ]
       },
       "PostApiV1ChatConversationsIdStreamRequest": {

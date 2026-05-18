@@ -1,0 +1,41 @@
+id: P03-S02-T008
+phase_id: P03
+step_id: P03-S02
+title: "Re-implement ConversationPage /chat/:conversationId from scratch (J101+J102)"
+status: ready
+kind: "followup"
+target: "Re-implement ConversationPage /chat/:conversationId from scratch (J101+J102)"
+product_increment: "current"
+build_state: "planned"
+risk_level: "medium"
+verify_mode: "human"
+route: "/chat/:conversationId"
+endpoint: "GET /api/v1/chat/conversations/{id}, POST /api/v1/chat/conversations/{id}/messages"
+journey_refs:
+  - "J101"
+  - "J102"
+tables:
+depends_on:
+  - P03-S02-T002
+acceptance:
+  - "Ruta /chat/:conversationId renderiza ConversationPage real (no placeholder). Usuario auth puede abrir conversación existente desde HistoryPage y enviar mensajes. Tests vitest verdes. Handoff con ## verify-slice VERIFY_OUTCOME=verified."
+verification_commands:
+  - "Tras retoma DAG: login employee"
+  - "/chat (ChatHomePage)"
+  - "abrir conversación seed"
+  - "ver mensajes"
+  - "enviar mensaje nuevo"
+  - "verificar que persiste en DB tras refresh."
+allowed_paths:
+  - "frontend/src/pages/chat/ConversationPage*"
+  - "frontend/src/features/chat/**"
+  - "frontend/src/app/router.tsx (replace placeholder)"
+conflict_groups:
+  - "front:chat"
+write_set:
+  - "frontend/src/pages/chat/ConversationPage*"
+  - "frontend/src/features/chat/**"
+  - "frontend/src/app/router.tsx (replace placeholder)"
+handoff_path: orchestrator-state/tasks/handoffs/P03-S02-T008.md
+evidence_dir: orchestrator-state/tasks/evidence/P03-S02-T008
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry"

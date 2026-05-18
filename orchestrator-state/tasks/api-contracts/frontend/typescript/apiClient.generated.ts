@@ -25,14 +25,17 @@ export const API_ENDPOINTS: ApiEndpointMeta[] = [
   {"operationId": "postApiV1AgentsRuns", "method": "POST", "path": "/api/v1/agents/runs", "sliceIds": ["P02-S08-T001", "P04-S02-T005"], "journeyRefs": ["J105"], "pathParams": []},
   {"operationId": "postApiV1Auth2faVerify", "method": "POST", "path": "/api/v1/auth/2fa/verify", "sliceIds": ["P01-S02-T006", "P03-S01-T005", "P05-S01-T001"], "journeyRefs": ["J100"], "pathParams": []},
   {"operationId": "postApiV1AuthForgotPassword", "method": "POST", "path": "/api/v1/auth/forgot-password", "sliceIds": ["P01-S02-T005", "P03-S01-T003"], "journeyRefs": ["J100"], "pathParams": []},
-  {"operationId": "postApiV1AuthLogout", "method": "POST", "path": "/api/v1/auth/logout", "sliceIds": ["P01-S02-T004", "P03-S02-T004"], "journeyRefs": ["J102"], "pathParams": []},
+  {"operationId": "postApiV1AuthLogout", "method": "POST", "path": "/api/v1/auth/logout", "sliceIds": ["P01-S02-T004", "P03-S02-T004", "P03-S02-T007"], "journeyRefs": ["J102", "J100"], "pathParams": []},
+  {"operationId": "getApiV1AuthMe", "method": "GET", "path": "/api/v1/auth/me", "sliceIds": ["P03-S02-T007"], "journeyRefs": ["J100"], "pathParams": []},
+  {"operationId": "patchApiV1AuthMeLanguage", "method": "PATCH", "path": "/api/v1/auth/me/language", "sliceIds": ["P03-S02-T007"], "journeyRefs": ["J100"], "pathParams": []},
   {"operationId": "postApiV1AuthRefresh", "method": "POST", "path": "/api/v1/auth/refresh", "sliceIds": ["P01-S02-T003", "P01-S03-T001", "P03-S01-T006"], "journeyRefs": ["J100", "J102"], "pathParams": []},
   {"operationId": "postApiV1AuthResetPassword", "method": "POST", "path": "/api/v1/auth/reset-password", "sliceIds": ["P01-S02-T005"], "journeyRefs": ["J100"], "pathParams": []},
   {"operationId": "postApiV1AuthSignIn", "method": "POST", "path": "/api/v1/auth/sign-in", "sliceIds": ["P01-S02-T002", "P03-S01-T001", "P05-S01-T001"], "journeyRefs": ["J100"], "pathParams": []},
   {"operationId": "postApiV1AuthSignUp", "method": "POST", "path": "/api/v1/auth/sign-up", "sliceIds": ["P01-S02-T001", "P03-S01-T002"], "journeyRefs": ["J100"], "pathParams": []},
   {"operationId": "getApiV1ChatConversations", "method": "GET", "path": "/api/v1/chat/conversations", "sliceIds": ["P02-S03-T001", "P03-S02-T003", "P05-S01-T003"], "journeyRefs": ["J101", "J102"], "pathParams": []},
   {"operationId": "postApiV1ChatConversations", "method": "POST", "path": "/api/v1/chat/conversations", "sliceIds": ["P02-S03-T001", "P03-S02-T001", "P05-S01-T002"], "journeyRefs": ["J101", "J102", "J100"], "pathParams": []},
-  {"operationId": "getApiV1ChatConversationsId", "method": "GET", "path": "/api/v1/chat/conversations/{id}", "sliceIds": ["P02-S03-T001", "P03-S02-T002", "P05-S01-T002", "P05-S01-T003"], "journeyRefs": ["J101", "J102"], "pathParams": ["id"]},
+  {"operationId": "getApiV1ChatConversationsId", "method": "GET", "path": "/api/v1/chat/conversations/{id}", "sliceIds": ["P02-S03-T001", "P03-S02-T002", "P03-S02-T008", "P05-S01-T002", "P05-S01-T003"], "journeyRefs": ["J101", "J102"], "pathParams": ["id"]},
+  {"operationId": "postApiV1ChatConversationsIdMessages", "method": "POST", "path": "/api/v1/chat/conversations/{id}/messages", "sliceIds": ["P03-S02-T008"], "journeyRefs": ["J101", "J102"], "pathParams": ["id"]},
   {"operationId": "postApiV1ChatConversationsIdStream", "method": "POST", "path": "/api/v1/chat/conversations/{id}/stream", "sliceIds": ["P02-S03-T002", "P03-S02-T002", "P05-S01-T002"], "journeyRefs": ["J101", "J102"], "pathParams": ["id"]},
   {"operationId": "getApiV1UsersMe", "method": "GET", "path": "/api/v1/users/me", "sliceIds": ["P01-S02-T007", "P01-S03-T001", "P03-S02-T001", "P03-S02-T004", "P05-S01-T001"], "journeyRefs": ["J100", "J102", "J101"], "pathParams": []},
   {"operationId": "patchApiV1UsersMeLanguage", "method": "PATCH", "path": "/api/v1/users/me/language", "sliceIds": ["P01-S02-T007", "P03-S02-T004", "P05-S01-T003"], "journeyRefs": ["J100", "J102"], "pathParams": []},
@@ -120,43 +123,52 @@ export class ApiClient {
   postApiV1AuthLogout(args: { pathParams?: Record<string, string | number>; query?: Record<string, string | number | boolean | undefined>; body?: Json; headers?: Record<string, string>; } = {}) {
     return this.request(API_ENDPOINTS[21], args);
   }
-  postApiV1AuthRefresh(args: { pathParams?: Record<string, string | number>; query?: Record<string, string | number | boolean | undefined>; body?: Json; headers?: Record<string, string>; } = {}) {
+  getApiV1AuthMe(args: { pathParams?: Record<string, string | number>; query?: Record<string, string | number | boolean | undefined>; body?: Json; headers?: Record<string, string>; } = {}) {
     return this.request(API_ENDPOINTS[22], args);
   }
-  postApiV1AuthResetPassword(args: { pathParams?: Record<string, string | number>; query?: Record<string, string | number | boolean | undefined>; body?: Json; headers?: Record<string, string>; } = {}) {
+  patchApiV1AuthMeLanguage(args: { pathParams?: Record<string, string | number>; query?: Record<string, string | number | boolean | undefined>; body?: Json; headers?: Record<string, string>; } = {}) {
     return this.request(API_ENDPOINTS[23], args);
   }
-  postApiV1AuthSignIn(args: { pathParams?: Record<string, string | number>; query?: Record<string, string | number | boolean | undefined>; body?: Json; headers?: Record<string, string>; } = {}) {
+  postApiV1AuthRefresh(args: { pathParams?: Record<string, string | number>; query?: Record<string, string | number | boolean | undefined>; body?: Json; headers?: Record<string, string>; } = {}) {
     return this.request(API_ENDPOINTS[24], args);
   }
-  postApiV1AuthSignUp(args: { pathParams?: Record<string, string | number>; query?: Record<string, string | number | boolean | undefined>; body?: Json; headers?: Record<string, string>; } = {}) {
+  postApiV1AuthResetPassword(args: { pathParams?: Record<string, string | number>; query?: Record<string, string | number | boolean | undefined>; body?: Json; headers?: Record<string, string>; } = {}) {
     return this.request(API_ENDPOINTS[25], args);
   }
-  getApiV1ChatConversations(args: { pathParams?: Record<string, string | number>; query?: Record<string, string | number | boolean | undefined>; body?: Json; headers?: Record<string, string>; } = {}) {
+  postApiV1AuthSignIn(args: { pathParams?: Record<string, string | number>; query?: Record<string, string | number | boolean | undefined>; body?: Json; headers?: Record<string, string>; } = {}) {
     return this.request(API_ENDPOINTS[26], args);
   }
-  postApiV1ChatConversations(args: { pathParams?: Record<string, string | number>; query?: Record<string, string | number | boolean | undefined>; body?: Json; headers?: Record<string, string>; } = {}) {
+  postApiV1AuthSignUp(args: { pathParams?: Record<string, string | number>; query?: Record<string, string | number | boolean | undefined>; body?: Json; headers?: Record<string, string>; } = {}) {
     return this.request(API_ENDPOINTS[27], args);
   }
-  getApiV1ChatConversationsId(args: { pathParams?: Record<string, string | number>; query?: Record<string, string | number | boolean | undefined>; body?: Json; headers?: Record<string, string>; } = {}) {
+  getApiV1ChatConversations(args: { pathParams?: Record<string, string | number>; query?: Record<string, string | number | boolean | undefined>; body?: Json; headers?: Record<string, string>; } = {}) {
     return this.request(API_ENDPOINTS[28], args);
   }
-  postApiV1ChatConversationsIdStream(args: { pathParams?: Record<string, string | number>; query?: Record<string, string | number | boolean | undefined>; body?: Json; headers?: Record<string, string>; } = {}) {
+  postApiV1ChatConversations(args: { pathParams?: Record<string, string | number>; query?: Record<string, string | number | boolean | undefined>; body?: Json; headers?: Record<string, string>; } = {}) {
     return this.request(API_ENDPOINTS[29], args);
   }
-  getApiV1UsersMe(args: { pathParams?: Record<string, string | number>; query?: Record<string, string | number | boolean | undefined>; body?: Json; headers?: Record<string, string>; } = {}) {
+  getApiV1ChatConversationsId(args: { pathParams?: Record<string, string | number>; query?: Record<string, string | number | boolean | undefined>; body?: Json; headers?: Record<string, string>; } = {}) {
     return this.request(API_ENDPOINTS[30], args);
   }
-  patchApiV1UsersMeLanguage(args: { pathParams?: Record<string, string | number>; query?: Record<string, string | number | boolean | undefined>; body?: Json; headers?: Record<string, string>; } = {}) {
+  postApiV1ChatConversationsIdMessages(args: { pathParams?: Record<string, string | number>; query?: Record<string, string | number | boolean | undefined>; body?: Json; headers?: Record<string, string>; } = {}) {
     return this.request(API_ENDPOINTS[31], args);
   }
-  getHealth(args: { pathParams?: Record<string, string | number>; query?: Record<string, string | number | boolean | undefined>; body?: Json; headers?: Record<string, string>; } = {}) {
+  postApiV1ChatConversationsIdStream(args: { pathParams?: Record<string, string | number>; query?: Record<string, string | number | boolean | undefined>; body?: Json; headers?: Record<string, string>; } = {}) {
     return this.request(API_ENDPOINTS[32], args);
   }
-  getLive(args: { pathParams?: Record<string, string | number>; query?: Record<string, string | number | boolean | undefined>; body?: Json; headers?: Record<string, string>; } = {}) {
+  getApiV1UsersMe(args: { pathParams?: Record<string, string | number>; query?: Record<string, string | number | boolean | undefined>; body?: Json; headers?: Record<string, string>; } = {}) {
     return this.request(API_ENDPOINTS[33], args);
   }
-  getReady(args: { pathParams?: Record<string, string | number>; query?: Record<string, string | number | boolean | undefined>; body?: Json; headers?: Record<string, string>; } = {}) {
+  patchApiV1UsersMeLanguage(args: { pathParams?: Record<string, string | number>; query?: Record<string, string | number | boolean | undefined>; body?: Json; headers?: Record<string, string>; } = {}) {
     return this.request(API_ENDPOINTS[34], args);
+  }
+  getHealth(args: { pathParams?: Record<string, string | number>; query?: Record<string, string | number | boolean | undefined>; body?: Json; headers?: Record<string, string>; } = {}) {
+    return this.request(API_ENDPOINTS[35], args);
+  }
+  getLive(args: { pathParams?: Record<string, string | number>; query?: Record<string, string | number | boolean | undefined>; body?: Json; headers?: Record<string, string>; } = {}) {
+    return this.request(API_ENDPOINTS[36], args);
+  }
+  getReady(args: { pathParams?: Record<string, string | number>; query?: Record<string, string | number | boolean | undefined>; body?: Json; headers?: Record<string, string>; } = {}) {
+    return this.request(API_ENDPOINTS[37], args);
   }
 }

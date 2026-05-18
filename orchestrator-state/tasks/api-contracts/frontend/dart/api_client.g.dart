@@ -36,14 +36,17 @@ const apiEndpoints = <ApiEndpointMeta>[
   ApiEndpointMeta(operationId: "postApiV1AgentsRuns", method: "POST", path: "/api/v1/agents/runs", sliceIds: ["P02-S08-T001", "P04-S02-T005"], journeyRefs: ["J105"], pathParams: []),
   ApiEndpointMeta(operationId: "postApiV1Auth2faVerify", method: "POST", path: "/api/v1/auth/2fa/verify", sliceIds: ["P01-S02-T006", "P03-S01-T005", "P05-S01-T001"], journeyRefs: ["J100"], pathParams: []),
   ApiEndpointMeta(operationId: "postApiV1AuthForgotPassword", method: "POST", path: "/api/v1/auth/forgot-password", sliceIds: ["P01-S02-T005", "P03-S01-T003"], journeyRefs: ["J100"], pathParams: []),
-  ApiEndpointMeta(operationId: "postApiV1AuthLogout", method: "POST", path: "/api/v1/auth/logout", sliceIds: ["P01-S02-T004", "P03-S02-T004"], journeyRefs: ["J102"], pathParams: []),
+  ApiEndpointMeta(operationId: "postApiV1AuthLogout", method: "POST", path: "/api/v1/auth/logout", sliceIds: ["P01-S02-T004", "P03-S02-T004", "P03-S02-T007"], journeyRefs: ["J102", "J100"], pathParams: []),
+  ApiEndpointMeta(operationId: "getApiV1AuthMe", method: "GET", path: "/api/v1/auth/me", sliceIds: ["P03-S02-T007"], journeyRefs: ["J100"], pathParams: []),
+  ApiEndpointMeta(operationId: "patchApiV1AuthMeLanguage", method: "PATCH", path: "/api/v1/auth/me/language", sliceIds: ["P03-S02-T007"], journeyRefs: ["J100"], pathParams: []),
   ApiEndpointMeta(operationId: "postApiV1AuthRefresh", method: "POST", path: "/api/v1/auth/refresh", sliceIds: ["P01-S02-T003", "P01-S03-T001", "P03-S01-T006"], journeyRefs: ["J100", "J102"], pathParams: []),
   ApiEndpointMeta(operationId: "postApiV1AuthResetPassword", method: "POST", path: "/api/v1/auth/reset-password", sliceIds: ["P01-S02-T005"], journeyRefs: ["J100"], pathParams: []),
   ApiEndpointMeta(operationId: "postApiV1AuthSignIn", method: "POST", path: "/api/v1/auth/sign-in", sliceIds: ["P01-S02-T002", "P03-S01-T001", "P05-S01-T001"], journeyRefs: ["J100"], pathParams: []),
   ApiEndpointMeta(operationId: "postApiV1AuthSignUp", method: "POST", path: "/api/v1/auth/sign-up", sliceIds: ["P01-S02-T001", "P03-S01-T002"], journeyRefs: ["J100"], pathParams: []),
   ApiEndpointMeta(operationId: "getApiV1ChatConversations", method: "GET", path: "/api/v1/chat/conversations", sliceIds: ["P02-S03-T001", "P03-S02-T003", "P05-S01-T003"], journeyRefs: ["J101", "J102"], pathParams: []),
   ApiEndpointMeta(operationId: "postApiV1ChatConversations", method: "POST", path: "/api/v1/chat/conversations", sliceIds: ["P02-S03-T001", "P03-S02-T001", "P05-S01-T002"], journeyRefs: ["J101", "J102", "J100"], pathParams: []),
-  ApiEndpointMeta(operationId: "getApiV1ChatConversationsId", method: "GET", path: "/api/v1/chat/conversations/{id}", sliceIds: ["P02-S03-T001", "P03-S02-T002", "P05-S01-T002", "P05-S01-T003"], journeyRefs: ["J101", "J102"], pathParams: ["id"]),
+  ApiEndpointMeta(operationId: "getApiV1ChatConversationsId", method: "GET", path: "/api/v1/chat/conversations/{id}", sliceIds: ["P02-S03-T001", "P03-S02-T002", "P03-S02-T008", "P05-S01-T002", "P05-S01-T003"], journeyRefs: ["J101", "J102"], pathParams: ["id"]),
+  ApiEndpointMeta(operationId: "postApiV1ChatConversationsIdMessages", method: "POST", path: "/api/v1/chat/conversations/{id}/messages", sliceIds: ["P03-S02-T008"], journeyRefs: ["J101", "J102"], pathParams: ["id"]),
   ApiEndpointMeta(operationId: "postApiV1ChatConversationsIdStream", method: "POST", path: "/api/v1/chat/conversations/{id}/stream", sliceIds: ["P02-S03-T002", "P03-S02-T002", "P05-S01-T002"], journeyRefs: ["J101", "J102"], pathParams: ["id"]),
   ApiEndpointMeta(operationId: "getApiV1UsersMe", method: "GET", path: "/api/v1/users/me", sliceIds: ["P01-S02-T007", "P01-S03-T001", "P03-S02-T001", "P03-S02-T004", "P05-S01-T001"], journeyRefs: ["J100", "J102", "J101"], pathParams: []),
   ApiEndpointMeta(operationId: "patchApiV1UsersMeLanguage", method: "PATCH", path: "/api/v1/users/me/language", sliceIds: ["P01-S02-T007", "P03-S02-T004", "P05-S01-T003"], journeyRefs: ["J100", "J102"], pathParams: []),
@@ -127,6 +130,12 @@ class ApiClient {
   Future<Map<String, dynamic>> postApiV1AuthLogout({Map<String, Object?> pathParams = const {}, Map<String, Object?> query = const {}, Object? body}) {
     return requestByOperation('postApiV1AuthLogout', pathParams: pathParams, query: query, body: body);
   }
+  Future<Map<String, dynamic>> getApiV1AuthMe({Map<String, Object?> pathParams = const {}, Map<String, Object?> query = const {}, Object? body}) {
+    return requestByOperation('getApiV1AuthMe', pathParams: pathParams, query: query, body: body);
+  }
+  Future<Map<String, dynamic>> patchApiV1AuthMeLanguage({Map<String, Object?> pathParams = const {}, Map<String, Object?> query = const {}, Object? body}) {
+    return requestByOperation('patchApiV1AuthMeLanguage', pathParams: pathParams, query: query, body: body);
+  }
   Future<Map<String, dynamic>> postApiV1AuthRefresh({Map<String, Object?> pathParams = const {}, Map<String, Object?> query = const {}, Object? body}) {
     return requestByOperation('postApiV1AuthRefresh', pathParams: pathParams, query: query, body: body);
   }
@@ -147,6 +156,9 @@ class ApiClient {
   }
   Future<Map<String, dynamic>> getApiV1ChatConversationsId({Map<String, Object?> pathParams = const {}, Map<String, Object?> query = const {}, Object? body}) {
     return requestByOperation('getApiV1ChatConversationsId', pathParams: pathParams, query: query, body: body);
+  }
+  Future<Map<String, dynamic>> postApiV1ChatConversationsIdMessages({Map<String, Object?> pathParams = const {}, Map<String, Object?> query = const {}, Object? body}) {
+    return requestByOperation('postApiV1ChatConversationsIdMessages', pathParams: pathParams, query: query, body: body);
   }
   Future<Map<String, dynamic>> postApiV1ChatConversationsIdStream({Map<String, Object?> pathParams = const {}, Map<String, Object?> query = const {}, Object? body}) {
     return requestByOperation('postApiV1ChatConversationsIdStream', pathParams: pathParams, query: query, body: body);

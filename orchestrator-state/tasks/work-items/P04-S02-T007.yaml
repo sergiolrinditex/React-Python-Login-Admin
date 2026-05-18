@@ -1,0 +1,47 @@
+id: P04-S02-T007
+phase_id: P04
+step_id: P04-S02
+title: "Re-launch P04-S02-T005 AgentsPage from rescue branch (needs_debug → closer)"
+status: blocked
+kind: "followup"
+target: "Re-launch P04-S02-T005 AgentsPage from rescue branch (needs_debug → closer)"
+product_increment: "current"
+build_state: "planned"
+risk_level: "high"
+verify_mode: "human"
+route: "/admin/ai/agents"
+endpoint: ""
+journey_refs:
+  - "J105"
+tables:
+depends_on:
+  - P04-S02-T005
+acceptance:
+  - "AgentsPage /admin/ai/agents accesible en main"
+  - "ruta funcional"
+  - "40 tests verdes en frontend"
+  - "handoff con ## verify-slice VERIFY_OUTCOME=verified"
+  - "branch dev/P04-S02-T005 mergeada a main vía pr-flow"
+  - "status=done en registry."
+verification_commands:
+  - "Tras retoma: pytest backend/tests verde"
+  - "vitest frontend/src verde"
+  - "navegación browser a /admin/ai/agents como people_admin renderiza la página"
+  - "smoke API GET /api/v1/admin/ai/agents → 200."
+allowed_paths:
+  - "frontend/src/features/agents/**"
+  - "frontend/src/pages/admin/agents/**"
+  - "frontend/src/app/router.tsx"
+  - "frontend/src/i18n/index.ts"
+  - "frontend/src/i18n/languages.ts"
+conflict_groups:
+  - "front:agents"
+write_set:
+  - "frontend/src/features/agents/**"
+  - "frontend/src/pages/admin/agents/**"
+  - "frontend/src/app/router.tsx"
+  - "frontend/src/i18n/index.ts"
+  - "frontend/src/i18n/languages.ts"
+handoff_path: orchestrator-state/tasks/handoffs/P04-S02-T007.md
+evidence_dir: orchestrator-state/tasks/evidence/P04-S02-T007
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry"
