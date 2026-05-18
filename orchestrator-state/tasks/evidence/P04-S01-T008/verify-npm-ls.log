@@ -1,0 +1,23 @@
+hilo-people-frontend@0.1.0 /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P04-S01-T008/frontend
+├─┬ @eslint/js@10.0.1
+│ └── eslint@10.4.0 deduped
+├─┬ eslint-plugin-react-hooks@7.1.1
+│ └── eslint@10.4.0 deduped
+├─┬ eslint-plugin-react-refresh@0.5.2
+│ └── eslint@10.4.0 deduped
+├─┬ eslint@10.4.0
+│ └─┬ @eslint-community/eslint-utils@4.9.1
+│   └── eslint@10.4.0 deduped
+├── globals@17.6.0
+└─┬ typescript-eslint@8.59.3
+  ├─┬ @typescript-eslint/eslint-plugin@8.59.3
+  │ ├─┬ @typescript-eslint/type-utils@8.59.3
+  │ │ └── eslint@10.4.0 deduped
+  │ └── eslint@10.4.0 deduped
+  ├─┬ @typescript-eslint/parser@8.59.3
+  │ └── eslint@10.4.0 deduped
+  ├─┬ @typescript-eslint/utils@8.59.3
+  │ └── eslint@10.4.0 deduped
+  └── eslint@10.4.0 deduped
+
+EXIT_CODE: 0

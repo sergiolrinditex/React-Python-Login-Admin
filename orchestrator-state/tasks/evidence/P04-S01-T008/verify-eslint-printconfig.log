@@ -1,0 +1,51 @@
+{
+  "linterOptions": {
+    "reportUnusedDisableDirectives": 0
+  },
+  "rules": {
+    "constructor-super": [
+      0
+    ],
+    "for-direction": [
+      2
+    ],
+    "getter-return": [
+      0,
+      {
+        "allowImplicit": false
+      }
+    ],
+    "no-async-promise-executor": [
+      2
+    ],
+    "no-case-declarations": [
+      2
+    ],
+    "no-class-assign": [
+      0
+    ],
+    "no-compare-neg-zero": [
+      2
+    ],
+    "no-cond-assign": [
+      2,
+      "except-parens"
+    ],
+    "no-const-assign": [
+      0
+    ],
+    "no-constant-binary-expression": [
+      2
+    ],
+    "no-constant-condition": [
+      2,
+      {
+        "checkLoops": "allExceptWhileTrue"
+      }
+    ],
+    "no-control-regex": [
+      2
+    ],
+    "no-debugger": [
+      2
+EXIT_CODE: 0
