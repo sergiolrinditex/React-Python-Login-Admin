@@ -1,0 +1,17 @@
+ frontend/src/app/router.tsx                        |   6 +
+ .../features/mcp/__tests__/mcpRepository.test.ts   | 205 ++++++++++++++-
+ .../mcp/__tests__/useCreateMcpServer.test.tsx      | 211 +++++++++++++++
+ frontend/src/features/mcp/data/errors.ts           |  62 ++++-
+ frontend/src/features/mcp/data/mcpRepository.ts    | 157 ++++++++++-
+ frontend/src/features/mcp/domain/IMcpRepository.ts |  21 +-
+ frontend/src/features/mcp/domain/types.ts          |  60 ++++-
+ frontend/src/features/mcp/index.ts                 |  15 +-
+ .../mcp/presentation/useCreateMcpServer.ts         | 119 +++++++++
+ frontend/src/i18n/index.ts                         | 141 +++++++++-
+ frontend/src/pages/admin/mcp/McpWizardPage.tsx     | 290 +++++++++++++++++++++
+ .../pages/admin/mcp/_McpWizardPage.feedback.tsx    | 181 +++++++++++++
+ .../src/pages/admin/mcp/_McpWizardPage.form.tsx    | 235 +++++++++++++++++
+ .../admin/mcp/_McpWizardPage.select-field.tsx      | 147 +++++++++++
+ .../src/pages/admin/mcp/_McpWizardPage.styles.ts   | 211 +++++++++++++++
+ .../admin/mcp/__tests__/McpWizardPage.test.tsx     | 267 +++++++++++++++++++
+ 16 files changed, 2315 insertions(+), 13 deletions(-)

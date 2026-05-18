@@ -1,0 +1,20 @@
+{
+  "linterOptions": {
+    "reportUnusedDisableDirectives": 0
+  },
+  "rules": {
+    "constructor-super": [
+      0
+    ],
+    "for-direction": [
+      2
+    ],
+    "getter-return": [
+      0,
+      {
+        "allowImplicit": false
+      }
+    ],
+    "no-async-promise-executor": [
+      2
+    ],

@@ -1,0 +1,9 @@
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P04-S01-T008/frontend/src/features/auth/presentation/AuthProvider.tsx:169:    // eslint-disable-next-line react-hooks/exhaustive-deps
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P04-S01-T008/frontend/src/features/admin-ai/presentation/useModelWizard.ts:195:    // eslint-disable-next-line react-hooks/exhaustive-deps
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P04-S01-T008/frontend/src/features/admin-ai/presentation/useDashboardUsage.ts:110:    // eslint-disable-next-line react-hooks/exhaustive-deps
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P04-S01-T008/frontend/src/pages/auth/twoFactorHelpers.ts:41:    // eslint-disable-next-line react-hooks/exhaustive-deps
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P04-S01-T008/frontend/src/pages/auth/ForgotPasswordPage.tsx:88:    // eslint-disable-next-line react-hooks/exhaustive-deps
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P04-S01-T008/frontend/src/pages/auth/SignInPage.tsx:75:    // eslint-disable-next-line react-hooks/exhaustive-deps
+/Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P04-S01-T008/frontend/src/pages/auth/signUpHelpers.ts:73:    // eslint-disable-next-line react-hooks/exhaustive-deps
+EXIT_CODE: 0
+LINE_COUNT: 7
