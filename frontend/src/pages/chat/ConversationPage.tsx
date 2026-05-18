@@ -3,6 +3,8 @@
  *
  * Slice/Phase: P03-S02-T008 — ConversationPage re-implementation / Phase 3.
  *   Re-implemented from reference branch f7f5f33 (P03-S02-T002).
+ *   Updated P03-S02-T009: mounts ChatNavbar in non-forbidden branches
+ *   (§D-T009-NAVBAR-PLACEMENT-INSIDE-PAGE, §D-T009-NAVBAR-VISIBILITY).
  *
  * Responsibility: Employee conversation screen at /chat/:conversationId.
  *   Streams RAG-cited assistant responses over SSE. Implements all 7 required
@@ -61,6 +63,7 @@ import {
 } from "./ConversationPage.styles";
 import { ROUTE_CHAT } from "../../app/router";
 import { logVerbose, logWarn, logError } from "../../features/chat/data/logger";
+import ChatNavbar from "./_ChatNavbar";
 import type { Message, MessageCitation } from "../../features/chat/domain/types";
 
 // ---------------------------------------------------------------------------
@@ -241,6 +244,8 @@ export default function ConversationPage(): ReactNode {
     });
     return (
       <MobileFrame asMain fullHeight>
+        {/* §D-T009-NAVBAR-VISIBILITY: visible in not_found branch (not forbidden) */}
+        <ChatNavbar />
         <div style={PAGE_STYLE} data-testid="conversation-page">
           <NotFoundView onNewConversation={handleBackToChat} />
         </div>
@@ -254,6 +259,8 @@ export default function ConversationPage(): ReactNode {
   if (isLoading || status === "pending") {
     return (
       <MobileFrame asMain fullHeight>
+        {/* §D-T009-NAVBAR-VISIBILITY: visible during loading */}
+        <ChatNavbar />
         <div
           style={PAGE_STYLE}
           data-testid="conversation-page"
@@ -275,6 +282,8 @@ export default function ConversationPage(): ReactNode {
   if (status === "success" && messages.length === 0 && phase === "idle") {
     return (
       <MobileFrame asMain fullHeight>
+        {/* §D-T009-NAVBAR-VISIBILITY: visible in empty state */}
+        <ChatNavbar />
         <div style={PAGE_STYLE} data-testid="conversation-page">
           <div style={HEADER_STYLE}>
             <TrackedLabel>{headerTitle}</TrackedLabel>
@@ -290,6 +299,8 @@ export default function ConversationPage(): ReactNode {
   // ---------------------------------------------------------------------------
   return (
     <MobileFrame asMain fullHeight>
+      {/* §D-T009-NAVBAR-VISIBILITY: visible in success/streaming/error branches */}
+      <ChatNavbar />
       <div style={PAGE_STYLE} data-testid="conversation-page">
         {/* Header */}
         <div style={HEADER_STYLE}>

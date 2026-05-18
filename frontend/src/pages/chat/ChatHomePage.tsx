@@ -2,6 +2,8 @@
  * Hilo People — ChatHomePage.
  *
  * Slice/Phase: P03-S02-T001 — ChatHomePage / Phase 3.
+ *   Updated P03-S02-T009: mounts ChatNavbar as first child of MobileFrame
+ *   (§D-T009-NAVBAR-PLACEMENT-INSIDE-PAGE, §D-T009-NAVBAR-VISIBILITY).
  *
  * Responsibility: Employee chat home page — the post-login default destination.
  *   Orchestrates the 6 required UX states: loading, empty, error_network,
@@ -40,6 +42,7 @@ import { useAuth } from "../../features/auth/presentation/AuthProvider";
 import { useCreateConversation } from "../../features/chat/presentation/useCreateConversation";
 import { ChatForbiddenError } from "../../features/chat/data/errors";
 import { logVerbose, logWarn, logError } from "../../features/chat/data/logger";
+import ChatNavbar from "./_ChatNavbar";
 
 // ---------------------------------------------------------------------------
 // Styles (tokens only)
@@ -225,6 +228,8 @@ export default function ChatHomePage(): ReactNode {
 
   return (
     <MobileFrame asMain fullHeight>
+      {/* §D-T009-NAVBAR-PLACEMENT-INSIDE-PAGE: account link in all non-forbidden states */}
+      {!isForbidden && <ChatNavbar />}
       <div style={PAGE_STYLE} data-testid="chat-home-page">
         {/* Empty state (always visible as baseline behind errors) */}
         {!isForbidden && (

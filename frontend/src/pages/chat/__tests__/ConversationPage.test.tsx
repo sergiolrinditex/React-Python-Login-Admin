@@ -21,12 +21,18 @@
  *   T11 — deep-link auto-stream: last message is user → start() called
  *   T12 — error_validation state: ValidationErrorBanner visible (role=alert,
  *         data-testid=validation-error-banner) and no streaming placeholder.
+ *   T13-T009 — success state: navbar account link visible.
+ *   T14-T009 — loading state: navbar account link visible.
+ *   T15-T009 — empty state: navbar account link visible.
+ *   T16-T009 — permission_denied state: navbar account link HIDDEN.
  */
 
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, act } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { I18nextProvider } from "react-i18next";
+import i18n from "../../../i18n/index";
 import type { ReactNode } from "react";
 
 // ---------------------------------------------------------------------------
@@ -118,12 +124,14 @@ function renderPage(conversationId = "conv-test", qc?: QueryClient): ReturnType<
   const client = qc ?? makeQueryClient();
   return render(
     <QueryClientProvider client={client}>
-      <MemoryRouter initialEntries={[`/chat/${conversationId}`]}>
-        <Routes>
-          <Route path="/chat/:conversationId" element={<ConversationPage />} />
-          <Route path="/chat" element={<div data-testid="chat-home" />} />
-        </Routes>
-      </MemoryRouter>
+      <I18nextProvider i18n={i18n}>
+        <MemoryRouter initialEntries={[`/chat/${conversationId}`]}>
+          <Routes>
+            <Route path="/chat/:conversationId" element={<ConversationPage />} />
+            <Route path="/chat" element={<div data-testid="chat-home" />} />
+          </Routes>
+        </MemoryRouter>
+      </I18nextProvider>
     </QueryClientProvider>,
   );
 }
@@ -381,5 +389,86 @@ describe("ConversationPage", () => {
 
     // No network-error retry CTA — validation errors do not auto-retry.
     expect(screen.queryByTestId("network-error-retry-cta")).toBeNull();
+  });
+
+  // --- P03-S02-T009: navbar account link assertions ---
+
+  it("T13-T009 — success state: navbar account link visible (§D-T009-NAVBAR-VISIBILITY)", () => {
+    mockUseConversation.mockReturnValue({
+      data: MOCK_DETAIL,
+      status: "success",
+      error: null,
+      isLoading: false,
+      isSuccess: true,
+      refetch: vi.fn(),
+    });
+    mockUseChatStream.mockReturnValue({ ...IDLE_STREAM });
+
+    renderPage();
+
+    const navbar = screen.getByTestId("chat-navbar");
+    expect(navbar).toBeDefined();
+
+    const link = screen.getByTestId("chat-navbar-account-link");
+    expect(link).toBeDefined();
+    expect(link.getAttribute("href")).toBe("/account");
+  });
+
+  it("T14-T009 — loading state: navbar account link visible", () => {
+    mockUseConversation.mockReturnValue({
+      data: undefined,
+      status: "pending",
+      error: null,
+      isLoading: true,
+      isSuccess: false,
+      refetch: vi.fn(),
+    });
+    mockUseChatStream.mockReturnValue({ ...IDLE_STREAM });
+
+    renderPage();
+
+    const navbar = screen.getByTestId("chat-navbar");
+    expect(navbar).toBeDefined();
+  });
+
+  it("T15-T009 — empty state: navbar account link visible", () => {
+    const emptyDetail = { ...MOCK_DETAIL, messages: [], citations: [] };
+    mockUseConversation.mockReturnValue({
+      data: emptyDetail,
+      status: "success",
+      error: null,
+      isLoading: false,
+      isSuccess: true,
+      refetch: vi.fn(),
+    });
+    mockUseChatStream.mockReturnValue({ ...IDLE_STREAM });
+
+    renderPage();
+
+    const navbar = screen.getByTestId("chat-navbar");
+    expect(navbar).toBeDefined();
+  });
+
+  it("T16-T009 — permission_denied state: navbar account link HIDDEN (§D-T009-NAVBAR-VISIBILITY)", () => {
+    const forbiddenErr = new ChatForbiddenError();
+
+    mockUseConversation.mockReturnValue({
+      data: undefined,
+      status: "error",
+      error: forbiddenErr as ChatError,
+      isLoading: false,
+      isSuccess: false,
+      refetch: vi.fn(),
+    });
+    mockUseChatStream.mockReturnValue({ ...IDLE_STREAM });
+
+    renderPage();
+
+    // The forbidden branch returns early without rendering ChatNavbar
+    expect(screen.queryByTestId("chat-navbar")).toBeNull();
+    expect(screen.queryByTestId("chat-navbar-account-link")).toBeNull();
+
+    // But the forbidden view itself must be rendered
+    expect(screen.getByTestId("forbidden-view")).toBeDefined();
   });
 });

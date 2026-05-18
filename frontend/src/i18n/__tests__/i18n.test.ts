@@ -679,3 +679,38 @@ describe("i18n: admin-ai.modelTest.* lockstep in es/en/fr (P04-S01-T004)", () =>
     });
   });
 });
+
+// ---------------------------------------------------------------------------
+// Test 13 — i18n: account.nav.openAccount lockstep in es/en/fr (P03-S02-T009)
+// Write-set anchor: §D-T009-I18N-KEYS
+// ---------------------------------------------------------------------------
+
+type AccountNavBundle = {
+  nav: {
+    openAccount: string;
+  };
+};
+
+describe("i18n: account.nav.openAccount lockstep in es/en/fr (P03-S02-T009)", () => {
+  it("IT13-01 — i18n: account.nav.openAccount present and truthy in es/en/fr", () => {
+    SUPPORTED_LANGUAGES.forEach((lng) => {
+      const bundle = i18n.getResourceBundle(lng, "account") as AccountNavBundle;
+      expect(bundle.nav).toBeDefined();
+      expect(bundle.nav.openAccount).toBeTruthy();
+    });
+  });
+
+  it("IT13-02 — i18n: account.nav.openAccount differs across es, en, fr", () => {
+    const es = (i18n.getResourceBundle("es", "account") as AccountNavBundle).nav.openAccount;
+    const en = (i18n.getResourceBundle("en", "account") as AccountNavBundle).nav.openAccount;
+    const fr = (i18n.getResourceBundle("fr", "account") as AccountNavBundle).nav.openAccount;
+    // All three must be non-empty truthy strings
+    expect(es).toBeTruthy();
+    expect(en).toBeTruthy();
+    expect(fr).toBeTruthy();
+    // ES and EN must differ (ES "Abrir cuenta", EN "Open account")
+    expect(es).not.toBe(en);
+    // EN and FR must differ ("Open account" vs "Ouvrir le compte")
+    expect(en).not.toBe(fr);
+  });
+});

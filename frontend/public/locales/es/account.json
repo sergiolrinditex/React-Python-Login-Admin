@@ -2,5 +2,8 @@
   "title": "Mi cuenta",
   "language": "Idioma",
   "languageHint": "El idioma seleccionado se aplica a toda la interfaz",
-  "logout": "Cerrar sesión"
+  "logout": "Cerrar sesión",
+  "nav": {
+    "openAccount": "Abrir cuenta"
+  }
 }

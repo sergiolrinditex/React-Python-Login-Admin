@@ -2,5 +2,8 @@
   "title": "Mon compte",
   "language": "Langue",
   "languageHint": "La langue sélectionnée s'applique à toute l'interface",
-  "logout": "Se déconnecter"
+  "logout": "Se déconnecter",
+  "nav": {
+    "openAccount": "Ouvrir le compte"
+  }
 }
