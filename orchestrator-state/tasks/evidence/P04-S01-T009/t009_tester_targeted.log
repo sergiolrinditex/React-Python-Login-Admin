@@ -1,0 +1,294 @@
+
+> hilo-people-frontend@0.1.0 test
+> vitest --run ForgotPasswordPage TwoFactorPage ResetSentPage HistoryPage
+
+
+ RUN  v3.2.4 /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P04-S01-T009/frontend
+
+stderr | src/pages/auth/__tests__/ResetSentPage.test.tsx > ResetSentPage: C01 — state-present renders masked email > C01: renders with_email body containing masked string a***@example.com
+An update to ResetSentPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/pages/auth/__tests__/ResetSentPage.test.tsx > ResetSentPage: C01 — state-present renders masked email > C01: status region has role=status and aria-live=polite
+An update to ResetSentPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/pages/chat/__tests__/HistoryPage.test.tsx (10 tests) 61ms
+stderr | src/pages/auth/__tests__/ResetSentPage.test.tsx > ResetSentPage: C05 — i18n locale switch > C05: ES renders Spanish title
+An update to ResetSentPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/pages/auth/__tests__/ResetSentPage.test.tsx > ResetSentPage: C05 — i18n locale switch > C05: EN renders English title
+An update to ResetSentPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/pages/auth/__tests__/ResetSentPage.test.tsx > ResetSentPage: C05 — i18n locale switch > C05: FR renders French title
+An update to ResetSentPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/pages/auth/__tests__/ResetSentPage.test.tsx (22 tests) 103ms
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T01: deep-link guard — no challengeToken in router state → redirects to /auth/sign-in
+[auth] auth.twofactor.page.missing_challenge
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T01: deep-link guard — no challengeToken in router state → redirects to /auth/sign-in
+[auth] auth.repo.refresh.session_expired { request_id: [32m'c70aff36-2b8c-45c2-a512-751226e3473f'[39m }
+
+stderr | src/pages/auth/__tests__/ForgotPasswordPage.test.tsx > ForgotPasswordPage > T01: renders all UI — TrackedLabel for email, EditorialInput, SolidCTA, back link
+[auth] auth.repo.refresh.session_expired { request_id: [32m'41fd9b82-b8fb-48f0-8d33-06053f653bd5'[39m }
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T02: renders all editorial UI — Wordmark, TrackedLabel titleHint, title, intro, code input, CTA
+[auth] auth.repo.refresh.session_expired { request_id: [32m'414feeb9-0693-4c7c-8fc0-778329ff8f4c'[39m }
+
+stderr | src/pages/auth/__tests__/ForgotPasswordPage.test.tsx > ForgotPasswordPage > T02: submit empty → zod inline emailRequired error; no fetch call to forgot-password
+[auth] auth.repo.refresh.session_expired { request_id: [32m'299c021a-78a1-4c65-a312-f5b0bb45a6d2'[39m }
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T03: submit empty code → zod codeRequired error shown; repo not called
+[auth] auth.repo.refresh.session_expired { request_id: [32m'5fb6a046-ffbe-44bd-9e1c-8281ee5ebdec'[39m }
+
+stderr | src/pages/auth/__tests__/ForgotPasswordPage.test.tsx > ForgotPasswordPage > T03: submit invalid email syntax → zod emailFormat error; no fetch call
+[auth] auth.repo.refresh.session_expired { request_id: [32m'5968c0ef-f6f2-40ad-823e-6bcd5c4b4325'[39m }
+
+stderr | src/pages/auth/__tests__/ForgotPasswordPage.test.tsx > ForgotPasswordPage > T04: submit valid known email → 200 success → navigates to /auth/reset-sent
+[auth] auth.repo.refresh.session_expired { request_id: [32m'2f2dae91-c744-40b1-b726-b89dbd66ee8c'[39m }
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T04: submit valid code → loading state — CTA shows submitting label during in-flight
+[auth] auth.mfa.verify.submit.invalid_code { status: [33m401[39m, request_id: [32m'7809579a-6bca-44b5-ae02-b30068474726'[39m }
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T04: submit valid code → loading state — CTA shows submitting label during in-flight
+[auth] auth.mfa.verify.hook.submit.error {
+  error_name: [32m'MfaCodeInvalidError'[39m,
+  error_code: [32m'AUTH_MFA_CODE_INVALID'[39m
+}
+An update to TwoFactorPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to TwoFactorPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T04: submit valid code → loading state — CTA shows submitting label during in-flight
+[auth] auth.twofactor.page.submit.failed
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T04: submit valid code → loading state — CTA shows submitting label during in-flight
+An update to TwoFactorPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T05: success path — 200 + fetchMe → navigates to /chat
+[auth] auth.repo.refresh.session_expired { request_id: [32m'11189a94-6601-483a-af20-cefe6541f2ae'[39m }
+
+stderr | src/pages/auth/__tests__/ForgotPasswordPage.test.tsx > ForgotPasswordPage > T05: submit valid unknown email → same success state (anti-enum: identical to known email)
+[auth] auth.repo.refresh.session_expired { request_id: [32m'a8061f31-93d9-46bf-b448-5cf6a2ea53f3'[39m }
+
+stderr | src/pages/auth/__tests__/ForgotPasswordPage.test.tsx > ForgotPasswordPage > T06: 429 rate-limited → form-level alert shows rateLimited with {{seconds}} interpolated
+[auth] auth.repo.refresh.session_expired { request_id: [32m'a25cafe8-3d8e-4bc7-ac7e-163619c217cd'[39m }
+
+stderr | src/pages/auth/__tests__/ForgotPasswordPage.test.tsx > ForgotPasswordPage > T06: 429 rate-limited → form-level alert shows rateLimited with {{seconds}} interpolated
+[auth] auth.forgot.submit.rate_limited {
+  status: [33m429[39m,
+  retry_after: [33m60[39m,
+  request_id: [32m'4d350545-2090-492e-876b-1558013d507c'[39m
+}
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T06: wrong code — 401 aggregate → shows invalidCode copy (§D-T005-AGGREGATE-401)
+[auth] auth.repo.refresh.session_expired { request_id: [32m'cd60a430-2784-4283-97d9-3fd9cd8d3b95'[39m }
+
+stderr | src/pages/auth/__tests__/ForgotPasswordPage.test.tsx > ForgotPasswordPage > T06: 429 rate-limited → form-level alert shows rateLimited with {{seconds}} interpolated
+[auth] auth.forgot.hook.submit.error { error_name: [32m'ForgotPasswordRateLimitedError'[39m }
+
+stderr | src/pages/auth/__tests__/ForgotPasswordPage.test.tsx > ForgotPasswordPage > T06: 429 rate-limited → form-level alert shows rateLimited with {{seconds}} interpolated
+[auth] auth.forgot.page.submit.failed
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T06: wrong code — 401 aggregate → shows invalidCode copy (§D-T005-AGGREGATE-401)
+[auth] auth.mfa.verify.submit.invalid_code { status: [33m401[39m, request_id: [32m'c91200a0-f553-4b7a-8e55-6d3ed105a4bf'[39m }
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T06: wrong code — 401 aggregate → shows invalidCode copy (§D-T005-AGGREGATE-401)
+[auth] auth.mfa.verify.hook.submit.error {
+  error_name: [32m'MfaCodeInvalidError'[39m,
+  error_code: [32m'AUTH_MFA_CODE_INVALID'[39m
+}
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T06: wrong code — 401 aggregate → shows invalidCode copy (§D-T005-AGGREGATE-401)
+[auth] auth.twofactor.page.submit.failed
+
+stderr | src/pages/auth/__tests__/ForgotPasswordPage.test.tsx > ForgotPasswordPage > T07: TypeError network error → error_network copy shown; no navigation
+[auth] auth.repo.refresh.session_expired { request_id: [32m'63aeec38-d9dd-4173-96e2-ace91c712876'[39m }
+
+stderr | src/pages/auth/__tests__/ForgotPasswordPage.test.tsx > ForgotPasswordPage > T07: TypeError network error → error_network copy shown; no navigation
+[auth] auth.forgot.submit.network { error: [32m'Failed to fetch'[39m }
+
+stderr | src/pages/auth/__tests__/ForgotPasswordPage.test.tsx > ForgotPasswordPage > T07: TypeError network error → error_network copy shown; no navigation
+[auth] auth.forgot.hook.submit.error { error_name: [32m'NetworkError'[39m }
+
+stderr | src/pages/auth/__tests__/ForgotPasswordPage.test.tsx > ForgotPasswordPage > T07: TypeError network error → error_network copy shown; no navigation
+[auth] auth.forgot.page.submit.failed
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T07: network error — fetch TypeError → error_network copy shown
+[auth] auth.repo.refresh.session_expired { request_id: [32m'e4073beb-8ce0-493d-9649-26df7abfbcf3'[39m }
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T07: network error — fetch TypeError → error_network copy shown
+[auth] auth.mfa.verify.submit.network { error: [32m'Failed to fetch'[39m }
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T07: network error — fetch TypeError → error_network copy shown
+[auth] auth.mfa.verify.hook.submit.error { error_name: [32m'NetworkError'[39m, error_code: [32m'NETWORK_ERROR'[39m }
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T07: network error — fetch TypeError → error_network copy shown
+[auth] auth.twofactor.page.submit.failed
+
+stderr | src/pages/auth/__tests__/ForgotPasswordPage.test.tsx > ForgotPasswordPage > T08: 500 ServerError → form-level alert shows serverInternal; no navigation
+[auth] auth.repo.refresh.session_expired { request_id: [32m'328d25c1-64f2-40c9-b1e2-8971a7e7bb51'[39m }
+
+stderr | src/pages/auth/__tests__/ForgotPasswordPage.test.tsx > ForgotPasswordPage > T08: 500 ServerError → form-level alert shows serverInternal; no navigation
+[auth] auth.forgot.submit.unexpected { status: [33m500[39m, request_id: [32m'd895873a-9b36-4906-b6fe-9c181495e665'[39m }
+
+stderr | src/pages/auth/__tests__/ForgotPasswordPage.test.tsx > ForgotPasswordPage > T08: 500 ServerError → form-level alert shows serverInternal; no navigation
+[auth] auth.forgot.hook.submit.error { error_name: [32m'ForgotPasswordInternalError'[39m }
+
+stderr | src/pages/auth/__tests__/ForgotPasswordPage.test.tsx > ForgotPasswordPage > T08: 500 ServerError → form-level alert shows serverInternal; no navigation
+[auth] auth.forgot.page.submit.failed
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T08: 5xx server error → serverInternal copy shown (error_network state)
+[auth] auth.repo.refresh.session_expired { request_id: [32m'2524bd36-0c49-4217-abc4-bf39b2e57bbf'[39m }
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T08: 5xx server error → serverInternal copy shown (error_network state)
+[auth] auth.mfa.verify.submit.unexpected { status: [33m503[39m, request_id: [32m'663b1007-b460-4ee6-a9a0-ff525a59551f'[39m }
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T08: 5xx server error → serverInternal copy shown (error_network state)
+[auth] auth.mfa.verify.hook.submit.error {
+  error_name: [32m'MfaVerifyInternalError'[39m,
+  error_code: [32m'AUTH_MFA_VERIFY_INTERNAL_ERROR'[39m
+}
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T08: 5xx server error → serverInternal copy shown (error_network state)
+[auth] auth.twofactor.page.submit.failed
+
+stderr | src/pages/auth/__tests__/ForgotPasswordPage.test.tsx > ForgotPasswordPage > T09: a11y — input has aria-invalid only after touch + error; CTA has no aria-busy by default
+[auth] auth.repo.refresh.session_expired { request_id: [32m'a5bcdf93-7aca-47c7-8304-dce8b964539a'[39m }
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T09: 410 challenge expired → shows expired copy + back-to-signin CTA (§D-T005-EXPIRED-CHALLENGE)
+[auth] auth.repo.refresh.session_expired { request_id: [32m'1dbd1253-a38b-4345-bc80-796e75c291c5'[39m }
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T09: 410 challenge expired → shows expired copy + back-to-signin CTA (§D-T005-EXPIRED-CHALLENGE)
+[auth] auth.mfa.verify.submit.challenge_expired { status: [33m410[39m, request_id: [32m'7742e0ee-4cdd-4488-8ce0-739702b2afb6'[39m }
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T09: 410 challenge expired → shows expired copy + back-to-signin CTA (§D-T005-EXPIRED-CHALLENGE)
+[auth] auth.mfa.verify.hook.submit.error {
+  error_name: [32m'MfaChallengeExpiredError'[39m,
+  error_code: [32m'AUTH_MFA_CHALLENGE_EXPIRED'[39m
+}
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T09: 410 challenge expired → shows expired copy + back-to-signin CTA (§D-T005-EXPIRED-CHALLENGE)
+[auth] auth.twofactor.page.submit.failed
+
+stderr | src/pages/auth/__tests__/ForgotPasswordPage.test.tsx > ForgotPasswordPage > T10: i18n EN — render with changeLanguage('en') → all copy in English
+[auth] auth.repo.refresh.session_expired { request_id: [32m'5186c0a5-30bf-4f4a-a908-c6a050c2027e'[39m }
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T10: 429 rate limited → shows rateLimited copy; submit disabled
+[auth] auth.repo.refresh.session_expired { request_id: [32m'226ae002-68cc-4ddb-8a2d-9f47f272edf8'[39m }
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T10: 429 rate limited → shows rateLimited copy; submit disabled
+[auth] auth.mfa.verify.submit.rate_limited {
+  status: [33m429[39m,
+  retry_after: [33m0[39m,
+  request_id: [32m'c7223039-b781-4bc7-b6ab-0c43a84947d2'[39m
+}
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T10: 429 rate limited → shows rateLimited copy; submit disabled
+[auth] auth.mfa.verify.hook.submit.error {
+  error_name: [32m'MfaVerifyRateLimitedError'[39m,
+  error_code: [32m'AUTH_MFA_VERIFY_RATE_LIMITED'[39m
+}
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T10: 429 rate limited → shows rateLimited copy; submit disabled
+[auth] auth.twofactor.page.submit.failed
+
+stderr | src/pages/auth/__tests__/ForgotPasswordPage.test.tsx > ForgotPasswordPage > T11: ADR-002 same-origin — forgotPassword() must call fetch with RELATIVE URL `/api/v1/auth/forgot-password` (no http(s):// host, no localhost)
+[auth] auth.repo.refresh.session_expired { request_id: [32m'2a23b6c3-6187-4582-b27a-251ca8b44628'[39m }
+
+ ✓ src/pages/auth/__tests__/ForgotPasswordPage.test.tsx (11 tests) 141ms
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T11: paste handling — non-digit characters are stripped from code input
+[auth] auth.repo.refresh.session_expired { request_id: [32m'80b179de-a31d-4a51-9e96-2c7fe6cc8d24'[39m }
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T12: design tokens — page uses CSS variable tokens (no inline hex colors)
+[auth] auth.repo.refresh.session_expired { request_id: [32m'bd3336de-f901-47d6-94ef-4a75125f76ae'[39m }
+
+stderr | src/pages/auth/__tests__/TwoFactorPage.test.tsx > TwoFactorPage > T12: design tokens — page uses CSS variable tokens (no inline hex colors)
+An update to AuthProvider inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/pages/auth/__tests__/TwoFactorPage.test.tsx (12 tests) 168ms
+
+ Test Files  4 passed (4)
+      Tests  55 passed (55)
+   Start at  07:45:21
+   Duration  1.70s (transform 410ms, setup 420ms, collect 1.44s, tests 473ms, environment 2.15s, prepare 465ms)
+
