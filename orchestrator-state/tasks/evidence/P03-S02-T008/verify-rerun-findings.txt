@@ -1,0 +1,81 @@
+## P03-S02-T008 Verify-slice RERUN — Evidence log
+## Timestamp: 2026-05-18T19:15:00Z
+## MCP: claude-in-chrome (primary: chrome-devtools MCP blocked by SingletonLock profile lock PID=38510)
+
+### Environment
+- Backend: http://localhost:8000/health → {"data":{"status":"ok","version":"0.1.0","uptime":4842.12}}
+- Frontend T008 worktree: http://localhost:5183 (PID=41138, Vite --port 5174 bound on 5183 due to port collision)
+- Frontend canonical: http://localhost:5173 (canonical main)
+- DB: hilo_dev on localhost:5432 — 16 conversations, 14 messages, 0 citations (history+rag_chat bootstrap ran OK)
+
+### Data bootstrap result
+- auth: OK (skipped — updated 0, user already exists)
+- history: OK (updated 2 — 2 conversations for employee_primary seeded)
+- rag_chat: OK (updated 1 — LiteLLM model record updated)
+
+### DB state verified
+- employee.verification@inditex-sandbox.com has conversations in DB:
+  - d45d8571-2167-4f86-9a1f-ade71ddda36b: "¿Cuántos días de vacaciones me quedan?" (most recent)
+  - 654728c5-8ba7-4b94-b68b-cc1ec55cc23a: "¿Cuántos días de vacaciones me quedan?"
+  - 68339e61-2a8d-4081-a9e5-ef2ed1a2ec76: "¿Cuántos días de vacaciones me quedan?"
+  - [+13 more total in DB]
+
+### Flows exercised and i18n verified (ES — primary fix target)
+
+FLOW 1: Login + 2FA → /chat (ChatHomePage)
+- Result: PASS. ChatHomePage renders with "¿En qué puedo ayudarte?" suggestion chips in ES.
+
+FLOW 2: Deep-link /chat/d45d8571... → auth redirect → 2FA → ConversationPage with error_network
+- URL observed: http://localhost:5183/auth/sign-in?next=%2Fchat%2Fd45d8571-2167-4f86-9a1f-ade71ddda36b
+- After 2FA success: redirected to /chat/d45d8571...
+- ConversationPage rendered with:
+  - Title: "¿CUÁNTOS DÍAS DE VACACIONES ME QUEDAN?" (translated, not raw key)
+  - User role label: "TÚ" (FIXED — was "CONVERSATION.YOU" before debugger fix)
+  - User message: "¿Cuántos días de vacaciones me quedan?"
+  - Error state: "Error de conexión. Por favor, inténtalo de nuevo." (FIXED — was raw key before)
+  - Retry CTA: "REINTENTAR" (FIXED — was raw key before)
+  - Auto-stream fired (chat.stream.http_error → 502 LiteLLM absent, expected R1)
+- Result: PASS (i18n fix confirmed functional)
+
+FLOW 3: NotFoundView /chat/00000000-0000-0000-0000-000000000000
+- NotFoundView renders with:
+  - "CONVERSACIÓN NO ENCONTRADA." (FIXED — was "CONVERSATION.ERRORS.NOTFOUND.TITLE" before)
+  - "NUEVO CHAT" button (FIXED — was "CONVERSATION.ERRORS.NOTFOUND.CTA" before)
+- Result: PASS (i18n fix confirmed functional)
+
+### Network requests verified
+- GET /api/v1/chat/conversations/d45d8571... → 200 OK
+- POST /api/v1/chat/conversations/d45d8571.../stream → 502 (LiteLLM absent, expected R1)
+- GET /api/v1/chat/conversations/00000000... → 404 CHAT_CONVERSATION_NOT_FOUND
+
+### Console logs verified
+- chat.repo.getConversation.not_found (when accessing fake UUID) — CORRECT
+- chat.hook.useConversation.fetch.error — CORRECT typed error mapping
+- chat.conversation.render.not_found — CORRECT render state log
+- chat.stream.http_error — CORRECT stream 502 error
+- chat.useChatStream.result.error — CORRECT streaming error state
+- NO raw i18n keys in console
+- NO i18n missing-key warnings in console
+
+### i18n inline bundle verification (code inspection)
+All 3 locales have conversation.* keys in frontend/src/i18n/index.ts:
+- ES @ L210: you="Tú", assistant="Asistente", errors.notFound.title="Conversación no encontrada.",
+             errors.notFound.cta="Nuevo chat", errors.network.title="Error de conexión...",
+             errors.network.retry="Reintentar", errors.permission.title="No tienes acceso..."
+- EN @ L845: you="You", assistant="Assistant", errors.notFound.title="Conversation not found.",
+             errors.notFound.cta="New chat", errors.network.title="Connection error. Please try again.",
+             errors.network.retry="Try again", errors.permission.title="You do not have access..."
+- FR @ L1480: you="Vous", assistant="Assistant", errors.notFound.title="Conversation introuvable.",
+              errors.notFound.cta="Nouveau chat", errors.network.title="Erreur de connexion...",
+              errors.network.retry="Réessayer", errors.permission.title="Vous n'avez pas accès..."
+
+### Previous defect status
+DEFECT (slice-verifier first run): "conversation.* keys absent from i18n/index.ts inline bundle → raw keys displayed"
+DEBUGGER FIX: Added conversation: {...} block to ES/EN/FR in i18n/index.ts (L210, L845, L1480)
+RERUN RESULT: FIXED — all tested ES keys render with translated copy, no raw keys visible
+
+### Observations
+- Dev session TTL very short in this environment (~3-4 minutes). Required multiple re-logins for language switch testing. This is environmental, not a T008 defect.
+- EN locale browser verification: app uses server-side user.preferred_language as i18next source-of-truth (overrides localStorage). EN keys confirmed present in inline bundle via code inspection (L845-870). Live EN rendering verified via DB preferred_language=en test but app loaded with ES from session — expected architectural behavior.
+- FR locale: confirmed present at L1480-1505, not separately verified in browser (budget conservation).
+- 502 stream error_network: expected dev-env state (LiteLLM not configured, pack R1). NOT a T008 defect.

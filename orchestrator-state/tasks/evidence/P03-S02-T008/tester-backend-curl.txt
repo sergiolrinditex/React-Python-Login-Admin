@@ -1,0 +1,24 @@
+=== T008 BACKEND SMOKE - 2026-05-18T11:13:41Z ===
+
+--- GET /api/v1/chat/conversations (list) ---
+{"data":[{"id":"931f903f-9982-4bf0-8bf9-ef06f499ac1b","user_id":"c8c00f55-a514-462b-88fa-06b6283ae582","title":"hola","language":"es","created_at":"2026-05-18T06:28:29.927920Z","updated_at":"2026-05-18T06:28:29.927920Z"},{"id":"c46134ff-b9a6-4409-ae31-bb7280221689","user_id":"c8c00f55-a514-462b-88fa-06b6283ae582","title":"Política de movilidad interna","language":"es","created_at":"2026-05-18T06:28:27.343860Z","updated_at":"2026-05-18T06:28:27.343860Z"},{"id":"faa8c682-80a7-4dc0-94b1-149815f522a9","user_id":"c8c00f55-a514-462b-88fa-06b6283ae582","title":"Política de movilidad interna","language":"es","created_at":"2026-05-18T06:28:26.782119Z","updated_at":"2026-05-18T06:28:26.782119Z"},{"id":"c6159bed-9ad3-4ddd-9c13-524b7a8ed1b8","user_id":"c8c00f55-a514-462b-88fa-06b6283ae582","title":"¿Cuántos días de vacaciones me quedan?","language":"es","created_at":"2026-05-18T06:28:26.174043Z","updated_at":"2026-05-18T06:28:26.174043Z"},{"id":"691a549e-792b-4b83-b7d7-7e2148a3fce8","user_id":"c8c00f55-a514-462b-88fa-06b6283ae582","title":"¿Cuántos días de vacaciones me quedan?","language":"es","created_at":"2026-05-18T06:28:25.208780Z","updated_at":"2026-05-18T06:28:25.208780Z"},{"id":"a1b2c3d4-0002-0002-0002-000000000002","user_id":"c8c00f55-a514-462b-88fa-06b6283ae582","title":"Baja médica","language":"es","created_at":"2026-05-17T05:56:43.502120Z","updated_at":"2026-05-17T05:56:43.502120Z"},{"id":"a1b2c3d4-0001-0001-0001-000000000001","user_id":"c8c00f55-a514-462b-88fa-06b6283ae582","title":"Consulta sobre vacaciones","language":"es","created_at":"2026-05-16T05:56:43.502120Z","updated_at":"2026-05-16T05:56:43.502120Z"}],"meta":{"request_id":"tester-t008-c1","pagination":{"next_cursor":null,"has_more":false}},"errors":[]}
+HTTP_STATUS:200
+
+--- GET /api/v1/chat/conversations/931f903f-9982-4bf0-8bf9-ef06f499ac1b (detail) ---
+{"data":{"id":"931f903f-9982-4bf0-8bf9-ef06f499ac1b","user_id":"c8c00f55-a514-462b-88fa-06b6283ae582","title":"hola","language":"es","created_at":"2026-05-18T06:28:29.927920Z","updated_at":"2026-05-18T06:28:29.927920Z","messages":[{"id":"35e47df7-4232-476b-9a7e-c532589c9766","conversation_id":"931f903f-9982-4bf0-8bf9-ef06f499ac1b","role":"user","content":"hola","token_count":null,"created_at":"2026-05-18T06:28:29.927920Z"}],"citations":[]},"meta":{"request_id":"tester-t008-c2","pagination":null},"errors":[]}
+HTTP_STATUS:200
+
+--- GET /api/v1/chat/conversations/00000000-0000-0000-0000-000000000000 (404 expected) ---
+{"data":null,"meta":{"request_id":"tester-t008-c3"},"errors":[{"code":"CHAT_CONVERSATION_NOT_FOUND","message":"Conversation not found.","field":null,"details":null}]}
+HTTP_STATUS:404
+
+--- POST /api/v1/auth/sign-in (test auth, 200 expected) ---
+{"data":{"mfa_required":true,"mfa_challenge_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjOGMwMGY1NS1hNTE0LTQ2MmItODhmYS0wNmI2MjgzYWU1ODIiLCJwdXJwb3NlIjoibWZhX2NoYWxsZW5nZSIsImp0aSI6IjhjZmEwOGYyMjBmZDRkYjRhNGI1MzExNDEwZTJlYTY2IiwiaWF0IjoxNzc5MTAyODIxLCJleHAiOjE3NzkxMDMxMjF9.kgWt7KxBqypoVP0r6ICXD1k6TgxyGUOQLqJYoDVw8D8","expires_in":300},"meta":{"request_id":"tester-t008-c4"},"errors":[]}
+HTTP_STATUS:200
+
+--- GET /health ---
+{"data":{"status":"ok","version":"0.1.0","uptime":318.11}}
+HTTP_STATUS:200
+
+--- NOTE: POST /api/v1/chat/conversations/{id}/stream NOT TESTED ---
+LiteLLM not configured in dev; expected 502 error_network. Per pack R1 and task context.

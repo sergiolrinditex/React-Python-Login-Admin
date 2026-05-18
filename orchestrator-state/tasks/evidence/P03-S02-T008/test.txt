@@ -1,0 +1,58 @@
+
+ RUN  v3.2.4 /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S02-T008/frontend
+
+ ✓ src/features/rag/__tests__/useRagDocuments.test.tsx (5 tests) 237ms
+ ✓ src/features/admin-ai/__tests__/useModelTest.test.tsx (12 tests) 256ms
+ ✓ src/features/admin-ai/__tests__/useAdminAiModels.test.tsx (6 tests) 289ms
+ ✓ src/features/admin-ai/__tests__/useDashboardUsage.test.tsx (7 tests) 290ms
+ ✓ src/features/chat/presentation/__tests__/useHistory.test.tsx (5 tests) 287ms
+ ✓ src/features/chat/__tests__/useConversation.test.tsx (6 tests) 292ms
+ ✓ src/features/admin-ai/__tests__/useModelWizard.test.tsx (22 tests) 296ms
+ ✓ src/features/rag/__tests__/useUploadDocument.test.tsx (6 tests) 343ms
+ ✓ src/pages/auth/__tests__/SignUpPage.test.tsx (10 tests) 189ms
+ ✓ src/pages/auth/__tests__/TwoFactorPage.test.tsx (12 tests) 198ms
+ ✓ src/features/mcp/__tests__/useCreateMcpServer.test.tsx (4 tests) 239ms
+ ✓ src/pages/admin/mcp/__tests__/McpServersPage.test.tsx (9 tests) 154ms
+ ✓ src/features/mcp/__tests__/useMcpSync.test.tsx (3 tests) 174ms
+ ✓ src/features/chat/__tests__/useCreateConversation.test.tsx (4 tests) 220ms
+ ✓ src/pages/admin/rag/__tests__/RagDocumentsPage.test.tsx (18 tests) 195ms
+ ✓ src/features/mcp/__tests__/useMcpServers.test.tsx (3 tests) 224ms
+ ✓ src/features/rag/__tests__/useIndexDocument.test.tsx (4 tests) 232ms
+ ✓ src/pages/auth/__tests__/SignInPage.test.tsx (10 tests) 180ms
+ ✓ src/pages/auth/__tests__/ForgotPasswordPage.test.tsx (11 tests) 186ms
+ ✓ src/pages/admin/ai/__tests__/ModelWizardPage.test.tsx (9 tests) 106ms
+ ✓ src/pages/admin/mcp/__tests__/McpWizardPage.test.tsx (11 tests) 176ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx (34 tests) 114ms
+ ✓ src/features/auth/__tests__/auth.test.tsx (33 tests) 133ms
+ ✓ src/pages/auth/__tests__/ResetSentPage.test.tsx (22 tests) 106ms
+ ✓ src/pages/showcase/__tests__/ShowcasePage.test.tsx (4 tests) 141ms
+ ✓ src/features/chat/__tests__/ChatHomePage.test.tsx (10 tests) 117ms
+ ✓ src/features/chat/__tests__/useChatStream.test.tsx (7 tests) 153ms
+ ✓ src/pages/admin/rag/__tests__/RagCollectionsPage.test.tsx (10 tests) 149ms
+ ✓ src/pages/chat/__tests__/ConversationPage.test.tsx (12 tests) 77ms
+ ✓ src/pages/admin/ai/__tests__/ModelTestDrawer.test.tsx (8 tests) 86ms
+ ✓ src/pages/admin/__tests__/AdminDashboardPage.test.tsx (8 tests) 133ms
+ ✓ src/pages/admin/__tests__/AdminAiModelsPage.test.tsx (22 tests) 137ms
+ ✓ src/features/rag/__tests__/ragRepository.test.ts (15 tests) 11ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts (38 tests) 12ms
+ ✓ src/features/chat/__tests__/stream.test.ts (17 tests) 19ms
+ ✓ src/features/auth/__tests__/useForgotPassword.test.tsx (10 tests) 24ms
+ ✓ src/features/auth/__tests__/useVerifyMfa.test.tsx (11 tests) 27ms
+ ✓ src/features/auth/__tests__/useSignIn.test.tsx (11 tests) 27ms
+ ✓ src/features/auth/__tests__/useSignUp.test.tsx (16 tests) 28ms
+ ✓ src/app/__tests__/providers.test.tsx (4 tests) 18ms
+ ✓ src/features/rag/__tests__/useUpdateCollection.test.tsx (4 tests) 84ms
+ ✓ src/pages/admin/rag/__tests__/RagDocumentsPage.tap-target.test.tsx (2 tests) 39ms
+ ✓ src/pages/chat/__tests__/HistoryPage.test.tsx (10 tests) 62ms
+ ✓ src/features/chat/presentation/__tests__/historyGrouping.test.ts (10 tests) 5ms
+ ✓ src/features/mcp/__tests__/mcpRepository.test.ts (18 tests) 8ms
+ ✓ src/features/auth/data/__tests__/httpClient.test.ts (4 tests) 7ms
+ ✓ src/features/rag/__tests__/updateCollection.test.ts (8 tests) 8ms
+ ✓ src/features/chat/__tests__/chatRepository.test.ts (12 tests) 13ms
+ ✓ src/i18n/__tests__/i18n.test.ts (41 tests) 14ms
+
+ Test Files  49 passed (49)
+      Tests  578 passed (578)
+   Start at  12:53:02
+   Duration  8.79s (transform 3.72s, setup 8.62s, collect 16.44s, tests 6.51s, environment 38.13s, prepare 4.99s)
+

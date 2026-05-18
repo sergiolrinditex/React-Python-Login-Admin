@@ -1,0 +1,9 @@
+ frontend/public/locales/en/chat.json              |   26 +
+ frontend/public/locales/es/chat.json              |   26 +
+ frontend/public/locales/fr/chat.json              |   26 +
+ frontend/src/app/router.tsx                       |   11 +-
+ frontend/src/features/chat/data/chatRepository.ts |   98 +-
+ frontend/src/features/chat/data/errors.ts         |   36 +
+ frontend/src/features/chat/domain/types.ts        |  139 ++
+ package-lock.json                                 | 1677 ++++++++++++++++++++-
+ 8 files changed, 2018 insertions(+), 21 deletions(-)

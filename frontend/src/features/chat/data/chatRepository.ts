@@ -2,9 +2,11 @@
  * Hilo People — Chat repository (concrete HTTP adapter).
  *
  * Slice/Phase: P03-S02-T001 — ChatHomePage / Phase 3.
+ *   Extended in P03-S02-T008 — ConversationPage: added getConversation()
+ *   for GET /api/v1/chat/conversations/{id} (§D-T002-REPO-GET).
  *
- * Responsibility: Calls POST /api/v1/chat/conversations via authFetch.
- *   Returns Result<Conversation, ChatError> — never throws to presentation layer.
+ * Responsibility: HTTP adapter for chat operations via authFetch.
+ *   Returns Result<T, ChatError> — never throws to presentation layer.
  *   Mirrors authRepository.ts pattern: BEFORE/AFTER/ERROR logging, Result shape.
  *
  * Clean Architecture: this is the DATA layer for the chat feature.
@@ -23,6 +25,8 @@ import type { Result } from "../../auth/domain/AuthRepository";
 import type {
   CreateConversationRequest,
   Conversation,
+  ConversationDetail,
+  GetConversationResponse,
   ListConversationsRequest,
   ListConversationsResponse,
 } from "../domain/types";
@@ -32,6 +36,7 @@ import {
   ChatNetworkError,
   ChatAuthExpiredError,
   ChatForbiddenError,
+  ChatNotFoundError,
   ChatServerError,
   mapChatError,
   type ChatError,
@@ -232,6 +237,95 @@ export async function listConversations(
     const domainErr = mapChatError(err);
     logWarn("chat.repo.listConversations.error", {
       code: domainErr.code,
+    });
+    return { ok: false, error: domainErr };
+  }
+}
+
+// ---------------------------------------------------------------------------
+// §D-T002-REPO-GET — getConversation (P03-S02-T008)
+// ---------------------------------------------------------------------------
+
+/**
+ * Calls GET /api/v1/chat/conversations/{id}.
+ *
+ * Returns Result.ok(ConversationDetail) on 200.
+ * Returns typed Result.err for all failure paths (401, 403, 404, 5xx, network).
+ *
+ * §D-T002-403-VS-404: 403 = forbidden (another user's conversation);
+ *   404 = not found (UUID does not exist). These are surfaced as distinct errors.
+ *
+ * Logging rules: BEFORE/AFTER/ERROR — PII-clean.
+ *   Log conversation_id prefix and counts only. NEVER log message content.
+ *
+ * @param id - Conversation UUID.
+ * @param onAuthFailure - Called when session expires and cannot be refreshed.
+ * @returns Result<ConversationDetail, ChatError>
+ */
+export async function getConversation(
+  id: string,
+  onAuthFailure: () => void,
+): Promise<Result<ConversationDetail, ChatError>> {
+  logVerbose("chat.repo.getConversation.start", {
+    conversation_id: id.slice(0, 8),
+  });
+
+  try {
+    const url = `${CONVERSATIONS_URL}/${id}`;
+    const response = await authFetch(
+      url,
+      { method: "GET" },
+      { onAuthFailure },
+    );
+
+    const requestId = response.headers.get("x-request-id") ?? "unknown";
+
+    if (response.status === 401) {
+      logWarn("chat.repo.getConversation.auth_expired", {
+        status: 401,
+        request_id: requestId,
+      });
+      return { ok: false, error: new ChatAuthExpiredError() };
+    }
+
+    if (response.status === 403) {
+      logWarn("chat.repo.getConversation.forbidden", {
+        status: 403,
+        request_id: requestId,
+      });
+      return { ok: false, error: new ChatForbiddenError() };
+    }
+
+    if (response.status === 404) {
+      logWarn("chat.repo.getConversation.not_found", {
+        status: 404,
+        request_id: requestId,
+      });
+      return { ok: false, error: new ChatNotFoundError() };
+    }
+
+    if (!response.ok) {
+      logError("chat.repo.getConversation.server_error", {
+        status: response.status,
+        request_id: requestId,
+      });
+      return { ok: false, error: new ChatServerError(response.status) };
+    }
+
+    const body = await _safeJson<GetConversationResponse>(response);
+    logVerbose("chat.repo.getConversation.ok", {
+      conversation_id: body.data.id.slice(0, 8),
+      message_count: body.data.messages.length,
+      citation_count: body.data.citations.length,
+      request_id: requestId,
+    });
+
+    return { ok: true, value: body.data };
+  } catch (err: unknown) {
+    const domainErr = mapChatError(err);
+    logError("chat.repo.getConversation.error", {
+      error: domainErr.code,
+      message: domainErr.message,
     });
     return { ok: false, error: domainErr };
   }

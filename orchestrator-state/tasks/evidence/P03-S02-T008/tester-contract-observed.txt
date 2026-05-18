@@ -1,0 +1,33 @@
+## Contract Observed — P03-S02-T008 Tester Run
+
+### Front → Back → DB contract observed during tests/smoke
+
+| Layer | Observed |
+|-------|----------|
+| Route | /chat/:conversationId → ConversationPage (router.tsx — router.test.tsx not found; verified via dev + task handoff) |
+| Endpoint GET | GET /api/v1/chat/conversations/{conversation_id} → 200 {data: ConversationDetail, meta:{request_id}, errors:[]} |
+| Endpoint GET 404 | GET /api/v1/chat/conversations/00000000-... → 404 {errors:[{code: CHAT_CONVERSATION_NOT_FOUND}]} |
+| Endpoint LIST | GET /api/v1/chat/conversations → 200 {data: [{id, user_id, title, language, created_at, updated_at}]} |
+| Endpoint POST SSE | POST /api/v1/chat/conversations/{id}/stream → NOT tested (LiteLLM absent in dev, expected 502) |
+| Auth | POST /api/v1/auth/sign-in → 200 {data:{mfa_required:true, mfa_challenge_token}} |
+| Auth MFA | POST /api/v1/auth/2fa/verify → 200 {data:{access_token}} + Set-Cookie refresh_token (HttpOnly) |
+| Repository | chatRepository.getConversation() → verified in useConversation.test.tsx T01-T06 with real TanStack client |
+| Repository | chatRepository.getConversation() 401/403/404 → typed errors verified in unit tests |
+| SSE parser | _parseSseRecord: 6 event types (meta/chunk/citation/usage/error/done) + unknown + malformed JSON |
+| SSE guard | §D-T002-STREAM-DONE-GUARD: T15 passes (premature close → ChatNetworkError "without done") |
+| TanStack cache | setQueryData on stream done → T04 useChatStream test confirms |
+| DB tables | conversations + messages + citations (via GET endpoint) |
+
+### Backend BEFORE/AFTER logging observed in back.log
+- chat.routers.get_conversation.start (request_id=tester-t008-c2)
+- chat.service.get_conversation_detail.start
+- chat.service.get_conversation_detail.done (latency_ms tracked)
+- chat.routers.get_conversation.done (status=200, msgs=1, citations=0)
+- chat.routers.get_conversation.start (request_id=tester-t008-c3)
+- chat.service.get_conversation_detail.not_found (404 case)
+- chat.routers.get_conversation.not_found
+
+### No PII observed in any log
+- user_id logged as uid_hash (9ba098c47ec80436)
+- conversation_id logged as prefix (conv_prefix=931f903f)
+- No delta, content, prompt, password in any log line

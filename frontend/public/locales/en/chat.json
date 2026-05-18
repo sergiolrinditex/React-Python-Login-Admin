@@ -14,5 +14,31 @@
     "errors": {
       "tooLong": "Messages cannot exceed {{max}} characters."
     }
+  },
+  "conversation": {
+    "title": "Conversation",
+    "you": "You",
+    "assistant": "Assistant",
+    "empty": {
+      "title": "No messages yet. Type your first question.",
+      "cta": "New conversation"
+    },
+    "loading": { "label": "Loading..." },
+    "streaming": { "label": "Assistant" },
+    "citations": { "label": "Sources" },
+    "errors": {
+      "notFound": {
+        "title": "Conversation not found.",
+        "cta": "New chat"
+      },
+      "network": {
+        "title": "Connection error. Please try again.",
+        "retry": "Try again"
+      },
+      "permission": {
+        "title": "You do not have access to this conversation.",
+        "cta": "Back to chat"
+      }
+    }
   }
 }
