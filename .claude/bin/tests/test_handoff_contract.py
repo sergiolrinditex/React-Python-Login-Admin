@@ -270,8 +270,10 @@ def test_handoff_contract_ignores_non_contract_h3_subheadings_inside_sections(tm
 
 def test_handoff_contract_accepts_agent360_browser_mcp_aliases(tmp_path: Path) -> None:
     task_id = "P00-S01-T001"
-    for value in ("browser-mcp", "agent360-browser-mcp", "Agent360 Browser MCP"):
-        case_dir = tmp_path / value.replace(" ", "-")
+    for idx, value in enumerate(("browser-mcp", "agent360-browser-mcp", "Agent360 Browser MCP")):
+        # idx prefix keeps case-insensitive filesystems (macOS APFS default) from
+        # collapsing "agent360-browser-mcp" and "Agent360-Browser-MCP" to the same path.
+        case_dir = tmp_path / f"case-{idx}-{value.replace(' ', '-')}"
         result = _run(
             case_dir,
             f"""

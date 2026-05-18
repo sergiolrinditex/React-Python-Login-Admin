@@ -155,7 +155,7 @@ echo "PR_URL: ${PR_URL:-unknown}"
 STATE="$(gh pr view "$PR_NUMBER" --json state -q .state 2>/dev/null || echo '')"
 if [ "$STATE" != "MERGED" ]; then
   if [ "${CLAUDE_PR_FLOW_ADMIN_MERGE:-0}" = "1" ]; then
-    if gh pr merge "$PR_NUMBER" --squash --delete-branch --admin "${merge_author_args[@]}" >"$MERGE_LOG" 2>&1; then
+    if gh pr merge "$PR_NUMBER" --squash --delete-branch --admin ${merge_author_args[@]+"${merge_author_args[@]}"} >"$MERGE_LOG" 2>&1; then
       echo "MERGE_MODE: admin-squash-explicit"
     else
       echo "GIT_WORKFLOW_READY: blocked"
@@ -166,7 +166,7 @@ if [ "$STATE" != "MERGED" ]; then
       sed 's/^/  /' "$MERGE_LOG" >&2 || true
       exit 3
     fi
-  elif gh pr merge "$PR_NUMBER" --squash --delete-branch --auto "${merge_author_args[@]}" >"$MERGE_LOG" 2>&1; then
+  elif gh pr merge "$PR_NUMBER" --squash --delete-branch --auto ${merge_author_args[@]+"${merge_author_args[@]}"} >"$MERGE_LOG" 2>&1; then
     echo "MERGE_MODE: auto-squash"
     echo "MERGED: auto-queued"
   elif grep -Eiq '(already.*auto.?merge|auto.?merge.*already|already.*enabled)' "$MERGE_LOG" 2>/dev/null; then

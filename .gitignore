@@ -85,6 +85,9 @@ orchestrator-state/memory/PROGRESS.md.archive/
 orchestrator-state/agent-memory/*/MEMORY.md
 # agent MEMORY.md auto-compaction archives (byte-for-byte snapshots, runtime-only)
 orchestrator-state/agent-memory/*/archive/
+# agent memory transient state (fcntl locks + atomic-rename temp files)
+orchestrator-state/agent-memory/*/*.lock
+orchestrator-state/agent-memory/*/*.tmp
 # deferred worktree cleanup requests (transient state of live worktrees)
 orchestrator-state/tasks/cleanup-requests/
 orchestrator-state/tasks/runtime-state.json

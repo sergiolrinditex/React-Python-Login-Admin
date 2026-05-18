@@ -273,6 +273,23 @@ POSSIBLE_DUPLICATE_OF: <TASK_ID|FOLLOWUP_ID|none>
 
 El main-orchestrator decide si ejecutar `./scripts/register-followup-task.sh propose`, si pedir waiver `duplicate_of_done`, o si enviar a `debugger`. El script rechaza `in_scope_defect` y exige `why_not_debugger` para FU bloqueantes. Una FU formal fuera de scope no bloquea el PR de la slice origen; el closer la incluye como `proposed`.
 
+A modo de referencia operativa, el comando completo que el main-orchestrator ejecutará tras leer tu `FU_PROPOSAL` es:
+
+```bash
+./scripts/register-followup-task.sh propose \
+  --origin-task <TASK_ID> \
+  --severity high|medium|low|critical|blocker \
+  --kind bug|ux|wiring|data|test|security|followup \
+  --scope-classification out_of_scope|missing_coverage|missing_real_data|external_dependency|future_enhancement|scope_expansion|blocked_by_human_decision \
+  --why-not-debugger "<por qué debugger/retest no lo puede arreglar dentro del TASK_ID>" \
+  --title "..." \
+  --description "..." \
+  --acceptance "..." \
+  --verify "..."
+```
+
+Si dejas el hallazgo sólo como prosa libre en `## Validator review`, no basta: el main-orchestrator necesita los campos machine-readable (`FU_SCOPE_CLASSIFICATION`, `FU_WHY_NOT_DEBUGGER`, etc.) para componer ese comando sin reinterpretarte. Referencia luego el `FOLLOWUP_ID` resultante, `scope_classification` y `why_not_debugger` desde la sección `## Validator review`. No edites `registry.json` ni source-of-truth a mano; no llames a `promote` desde validator. La promoción a task DAG la hace el main-orchestrator tras aprobación humana.
+
 ## Production DAG trailer vocabulary
 
 Closed trailer enums live in `.claude/orchestrator-contract.json` → `trailer_schema.roles.validator.outcome_values` and `trailer_schema.roles.validator.next_status_values`. Read that path before emitting the trailer. Scope writes by `CLAUDE_ACTIVE_TASK_ID`/`CLAUDE_TASK_PACK`; never edit generated registry/runtime/task-dag directly. Use `/register-followup` for discovered work outside current slice.
