@@ -1,0 +1,6 @@
+# Check I: diff --name-only (spillover check)
+# Command: git --no-pager diff --name-only
+# Output:
+# docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md
+# EXIT: 0
+# RESULT: PASS — only the checklist file is modified; no spillover outside write_set

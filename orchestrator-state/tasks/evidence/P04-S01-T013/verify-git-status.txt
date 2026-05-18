@@ -1,0 +1,4 @@
+ M docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md
+?? orchestrator-state/tasks/evidence/P04-S01-T013/
+?? orchestrator-state/tasks/handoffs/P04-S01-T013.md
+?? orchestrator-state/tasks/task-packs/P04-S01-T013.md

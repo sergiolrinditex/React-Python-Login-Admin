@@ -1,0 +1,27 @@
+{
+  "agent_type": "closer",
+  "created_at": "2026-05-18T05:52:17+00:00",
+  "git": {
+    "branch": "dev/P04-S01-T013",
+    "head": "38ede60524f8b450155384cf755f6be9330d9f40"
+  },
+  "next_status": "done",
+  "outcome": "committed",
+  "paths": {
+    "evidence": "orchestrator-state/tasks/evidence/P04-S01-T013",
+    "handoff": "orchestrator-state/tasks/handoffs/P04-S01-T013.md",
+    "report": "orchestrator-state/tasks/reports/P04-S01-T013.md",
+    "task_pack": "orchestrator-state/tasks/task-packs/P04-S01-T013.md"
+  },
+  "phase_id": "P04",
+  "previous_last_updated_by": "slice-verifier",
+  "previous_status": "verified_pending_close",
+  "root_split": {
+    "canonical_root_hint": "React-Python-Login-Admin",
+    "workspace_root_hint": "P04-S01-T013"
+  },
+  "schema": "orquestador.lifecycle-event.v1",
+  "source": "git-add-slice",
+  "task_id": "P04-S01-T013",
+  "title": "Fix path drift in checklist row 32: providers.py/model_catalog.py are packages, not single files"
+}

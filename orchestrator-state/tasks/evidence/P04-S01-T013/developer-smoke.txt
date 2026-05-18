@@ -1,0 +1,57 @@
+Developer smoke checks — P04-S01-T013
+Run date: 2026-05-18
+Task: Fix path drift in checklist rows 32 and 176
+
+=== A. Disk reality sanity ===
+test -d backend/app/admin/providers && test -d backend/app/admin/model_catalog && test -f backend/tests/integration/test_admin_ai.py && echo "disk-reality-ok"
+OUTPUT: disk-reality-ok
+STATUS: PASS
+
+=== B. Drift eliminated (no .py suffix matches) ===
+grep -nE "backend/app/admin/(providers|model_catalog)\.py" docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md
+OUTPUT: (no output)
+Exit code: 1 (grep no-match = success)
+STATUS: PASS
+
+=== C. Replacement strings present (rows 32 and 176) ===
+grep -nE "backend/app/admin/(providers|model_catalog)/" docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md
+OUTPUT:
+32:| P02-S05-T001 | api | Admin AI providers and models endpoints | ... | backend/app/admin/providers/**, backend/app/admin/model_catalog/**, backend/tests/integration/test_admin_ai.py | ...
+176:| P02-S05-T003 | bug | Add partial unique index for is_default=true per model_type in ai_models | ... | backend/app/admin/providers/**, backend/app/admin/model_catalog/**, backend/tests/integration/test_admin_ai.py | ...
+STATUS: PASS (2 lines, 4 total pattern occurrences via grep -oE)
+
+=== D. grep -oE occurrence count ===
+grep -oE 'backend/app/admin/(providers|model_catalog)/\*\*' ... | wc -l
+OUTPUT: 4
+STATUS: PASS (4 occurrences = 2 patterns × 2 rows)
+
+=== E. Source-of-truth contract valid ===
+python3 -B -S .claude/bin/bootstrap_source_of_truth.py --validate-only
+OUTPUT: Source-of-truth contract is valid.
+Exit code: 0
+STATUS: PASS
+
+=== F. DAG still consistent ===
+./scripts/check-task-dag.sh --strict
+OUTPUT: Task DAG: OK mode=explicit_dag nodes=96 edges=156 waves=17
+Exit code: 0
+STATUS: PASS
+
+=== G. Wiring contract consistent ===
+./scripts/check-wiring-contract.sh --strict --require-new-template-columns
+OUTPUT: Wiring contract coherent — 20 routes, 35 endpoints, 96 registry rows, 6 journeys, data_contract=1
+Exit code: 0
+STATUS: PASS
+
+=== H. Focused diff check ===
+git diff --unified=0 docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md | grep -E "^[+-][^+-]" | wc -l
+OUTPUT: 4
+git diff --stat: 1 file changed, 2 insertions(+), 2 deletions(-)
+STATUS: PASS (exactly 2 lines modified = 4 diff lines: 2 removed + 2 added)
+
+=== SUMMARY ===
+All 8 acceptance criteria met.
+Files changed: docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md (lines 32 and 176 only)
+Change: backend/app/admin/providers.py → backend/app/admin/providers/**
+        backend/app/admin/model_catalog.py → backend/app/admin/model_catalog/**
+        backend/tests/integration/test_admin_ai.py (UNCHANGED on both rows)

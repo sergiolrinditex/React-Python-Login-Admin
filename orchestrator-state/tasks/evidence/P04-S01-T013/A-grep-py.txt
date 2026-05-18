@@ -1,0 +1,5 @@
+# Check A: grep for old .py paths (expect 0 matches, exit 1)
+# Command: grep -nE "backend/app/admin/(providers|model_catalog)\.py" docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md
+# Output: (empty - no matches)
+# EXIT: 1
+# RESULT: PASS (0 matches = drift eliminated)
