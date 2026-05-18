@@ -2,6 +2,9 @@
  * Hilo People — Chat domain errors.
  *
  * Slice/Phase: P03-S02-T001 — ChatHomePage / Phase 3.
+ *   Extended in P03-S02-T008 — ConversationPage: added ChatNotFoundError
+ *   (§D-T002-ERRORS-EXTEND) and ChatStreamError (mid-stream `event: error` handler).
+ *   Updated ChatError union and mapChatError to include the two new types.
  *
  * Responsibility: Typed error classes for chat operations.
  *   chatRepository.ts returns these via Result<T,E> patterns.
@@ -80,12 +83,43 @@ export class ChatServerError extends Error {
   }
 }
 
+/**
+ * Not found error — server returned 404 (conversation does not exist for this user).
+ * §D-T002-403-VS-404: 404 ≠ forbidden. Shows "not found" empty state.
+ */
+export class ChatNotFoundError extends Error {
+  public readonly code = "CHAT_NOT_FOUND";
+
+  constructor(message = "Conversation not found.") {
+    super(message);
+    this.name = "ChatNotFoundError";
+  }
+}
+
+/**
+ * Stream error — server emitted `event: error` mid-stream.
+ * §D-T002-STREAM-MODULE: surface from SSE parser as a typed domain error.
+ * code = the machine-readable code from the server payload (e.g. "STREAM_ERROR").
+ */
+export class ChatStreamError extends Error {
+  public readonly code = "CHAT_STREAM_ERROR";
+  public readonly serverCode: string;
+
+  constructor(serverCode: string, message = "Stream error from server.") {
+    super(message);
+    this.name = "ChatStreamError";
+    this.serverCode = serverCode;
+  }
+}
+
 /** Union of all typed chat errors. */
 export type ChatError =
   | ChatValidationError
   | ChatNetworkError
   | ChatAuthExpiredError
   | ChatForbiddenError
+  | ChatNotFoundError
+  | ChatStreamError
   | ChatServerError;
 
 // ---------------------------------------------------------------------------
@@ -103,6 +137,8 @@ export function mapChatError(err: unknown): ChatError {
   if (err instanceof ChatNetworkError) return err;
   if (err instanceof ChatAuthExpiredError) return err;
   if (err instanceof ChatForbiddenError) return err;
+  if (err instanceof ChatNotFoundError) return err;
+  if (err instanceof ChatStreamError) return err;
   if (err instanceof ChatServerError) return err;
   if (err instanceof TypeError) {
     return new ChatNetworkError(err.message, err);

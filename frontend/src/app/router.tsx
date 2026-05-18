@@ -41,7 +41,7 @@
  *   /auth/reset-sent   → ResetSentPage (P03-S01-T004)
  *   /auth/2fa          → TwoFactorPage (P03-S01-T005, public, J100 MFA step)
  *   /chat              → ChatHomePage (employee, RequireAuth) — P03-S02-T001
- *   /chat/:conversationId → placeholder (P03-S02-T002 adds real ConversationPage)
+ *   /chat/:conversationId → ConversationPage (P03-S02-T008 re-implementation — §D-T002-ROUTE)
  *   /history              → HistoryPage (employee history, RequireAuth) — P03-S02-T003
  *   /account              → AccountPage (employee account, RequireAuth) — P03-S02-T007 §D-T007-ROUTER
  *   /admin             → AdminDashboardPage (people_admin|super_admin) — P04-S01-T001
@@ -82,6 +82,7 @@ import SignUpPage from "../pages/auth/SignUpPage";
 import ResetSentPage from "../pages/auth/ResetSentPage";
 import TwoFactorPage from "../pages/auth/TwoFactorPage";
 import ChatHomePage from "../pages/chat/ChatHomePage";
+import ConversationPage from "../pages/chat/ConversationPage";
 import HistoryPage from "../pages/chat/HistoryPage";
 import AdminDashboardPage from "../pages/admin/AdminDashboardPage";
 import AdminAiModelsPage from "../pages/admin/ai/AdminAiModelsPage";
@@ -280,13 +281,13 @@ export function AppRouter(): ReactNode {
                 bounces to /auth/sign-in?next=/account via RequireAuth pattern. */}
             <Route path={ROUTE_ACCOUNT} element={<AccountPage />} />
             {/*
-             * /chat/:conversationId — placeholder for P03-S02-T002 (ConversationPage).
-             * D-T001-OUTAGE-OF-CHAT-T002: navigate succeeds; unknown path bounces to /chat.
-             * This route must exist to prevent the catch-all intercepting /chat/:id navigations.
+             * /chat/:conversationId — real ConversationPage (P03-S02-T008 §D-T002-ROUTE).
+             * Re-implemented from reference f7f5f33 (P03-S02-T002); code now live in main.
+             * SSE streaming via POST .../stream (ADR-002: fetch + ReadableStream, no EventSource).
              */}
             <Route
               path={`${ROUTE_CHAT}/:conversationId`}
-              element={<Navigate to={ROUTE_CHAT} replace />}
+              element={<ConversationPage />}
             />
           </Route>
 

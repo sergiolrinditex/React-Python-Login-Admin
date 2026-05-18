@@ -1,0 +1,10 @@
+=== Debugger fix: conversation keys present in inline i18n bundle ===
+2026-05-18T12:18:36Z
+
+--- grep conversation: in frontend/src/i18n/index.ts ---
+210:      conversation: {
+845:      conversation: {
+1480:      conversation: {
+
+--- count of conversation.errors.* (3 locales x notFound/network/permission triplets) ---
+54

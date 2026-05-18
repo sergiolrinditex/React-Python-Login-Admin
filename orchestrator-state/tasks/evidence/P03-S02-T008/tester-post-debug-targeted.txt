@@ -1,0 +1,20 @@
+TESTER POST-DEBUGGER TARGETED T008 TEST RUN
+TASK_ID: P03-S02-T008
+TIMESTAMP: 2026-05-18T14:25:13Z
+COMMAND: npx vitest --run src/features/chat/__tests__/stream.test.ts src/features/chat/__tests__/useChatStream.test.tsx src/features/chat/__tests__/useConversation.test.tsx src/pages/chat/__tests__/ConversationPage.test.tsx
+
+ ✓ src/features/chat/__tests__/stream.test.ts (17 tests) 13ms
+ ✓ src/features/chat/__tests__/useChatStream.test.tsx (7 tests) 132ms
+ ✓ src/features/chat/__tests__/useConversation.test.tsx (6 tests) 284ms
+ ✓ src/pages/chat/__tests__/ConversationPage.test.tsx (12 tests) 63ms
+
+ Test Files  4 passed (4)
+      Tests  42 passed (42)
+   Start at  14:25:13
+   Duration  1.81s
+
+STATUS: PASS — 42/42 targeted T008 tests.
+  - stream.test.ts: 17/17 (includes T15/T16/T17 §D-T002-STREAM-DONE-GUARD)
+  - useChatStream.test.tsx: 7/7
+  - useConversation.test.tsx: 6/6
+  - ConversationPage.test.tsx: 12/12

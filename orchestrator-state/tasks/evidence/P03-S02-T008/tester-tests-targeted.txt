@@ -1,0 +1,51 @@
+
+ RUN  v3.2.4 /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S02-T008/frontend
+
+ ✓ src/features/chat/__tests__/stream.test.ts > _parseSseRecord > T01 — parse meta event 1ms
+ ✓ src/features/chat/__tests__/stream.test.ts > _parseSseRecord > T02 — parse chunk event 0ms
+ ✓ src/features/chat/__tests__/stream.test.ts > _parseSseRecord > T03 — parse citation event 0ms
+ ✓ src/features/chat/__tests__/stream.test.ts > _parseSseRecord > T04 — parse usage event 0ms
+ ✓ src/features/chat/__tests__/stream.test.ts > _parseSseRecord > T05 — parse done event 0ms
+ ✓ src/features/chat/__tests__/stream.test.ts > _parseSseRecord > T06 — parse error event returns error SseEvent 0ms
+ ✓ src/features/chat/__tests__/stream.test.ts > _parseSseRecord > T07 — unknown event name → null 1ms
+ ✓ src/features/chat/__tests__/stream.test.ts > _parseSseRecord > T08 — malformed JSON in data: line → null 0ms
+ ✓ src/features/chat/__tests__/stream.test.ts > _parseSseRecord > T09 — empty record → null 0ms
+ ✓ src/features/chat/__tests__/stream.test.ts > _parseSseRecord > T10 — missing event: line → null (data-only record) 0ms
+ ✓ src/features/chat/__tests__/stream.test.ts > _parseSseRecord > T11 — UTF-8 multibyte characters preserved (é, ñ, ç) 0ms
+ ✓ src/features/chat/__tests__/stream.test.ts > streamConversation > T12 — non-200 HTTP status 400 maps to ChatValidationError 2ms
+ ✓ src/features/chat/__tests__/stream.test.ts > streamConversation > T13 — AbortController abort returns Result.ok 1ms
+ ✓ src/features/chat/__tests__/stream.test.ts > streamConversation > T14 — full stream with chunked boundary (record split across reads) 7ms
+ ✓ src/features/chat/__tests__/stream.test.ts > streamConversation > T15 — DEFECT-1: closed without event:done returns ChatNetworkError 1ms
+ ✓ src/features/chat/__tests__/stream.test.ts > streamConversation > T16 — DEFECT-1 regression guard: stream that DID emit done returns ok:true 0ms
+ ✓ src/features/chat/__tests__/stream.test.ts > streamConversation > T17 — DEFECT-1 abort safety: aborted mid-stream does not produce 'without done' 0ms
+ ✓ src/features/chat/__tests__/useConversation.test.tsx > useConversation > T01 — happy path: returns ConversationDetail on 200 64ms
+ ✓ src/features/chat/__tests__/useChatStream.test.tsx > useChatStream > T01 — start sets phase=streaming immediately 10ms
+ ✓ src/features/chat/__tests__/useChatStream.test.tsx > useChatStream > T02 — chunks accumulate in assistantText 4ms
+ ✓ src/features/chat/__tests__/useChatStream.test.tsx > useChatStream > T03 — citations accumulate 3ms
+ ✓ src/features/chat/__tests__/useChatStream.test.tsx > useChatStream > T04 — done event transitions to completed and updates TanStack cache 5ms
+ ✓ src/features/chat/__tests__/useChatStream.test.tsx > useChatStream > T05 — error_network on network failure (ChatNetworkError) 54ms
+ ✓ src/features/chat/__tests__/useChatStream.test.tsx > useChatStream > T06 — retry resets phase and re-starts with same message 55ms
+ ✓ src/features/chat/__tests__/useChatStream.test.tsx > useChatStream > T07 — unmount aborts: AbortController.abort is called on cleanup 1ms
+ ✓ src/features/chat/__tests__/useConversation.test.tsx > useConversation > T02 — 401 final: throws ChatAuthExpiredError 54ms
+ ✓ src/features/chat/__tests__/useConversation.test.tsx > useConversation > T03 — 403: throws ChatForbiddenError 54ms
+ ✓ src/features/chat/__tests__/useConversation.test.tsx > useConversation > T04 — 404: throws ChatNotFoundError 54ms
+ ✓ src/features/chat/__tests__/useConversation.test.tsx > useConversation > T05 — network error: throws ChatNetworkError 53ms
+ ✓ src/features/chat/__tests__/useConversation.test.tsx > useConversation > T06 — disabled when id is empty string 1ms
+ ✓ src/pages/chat/__tests__/ConversationPage.test.tsx > ConversationPage > T01 — loading state: aria-busy=true, loading label visible 23ms
+ ✓ src/pages/chat/__tests__/ConversationPage.test.tsx > ConversationPage > T02 — empty state: 0 messages, CTA to new conversation 5ms
+ ✓ src/pages/chat/__tests__/ConversationPage.test.tsx > ConversationPage > T03 — success state: transcript rendered with messages 7ms
+ ✓ src/pages/chat/__tests__/ConversationPage.test.tsx > ConversationPage > T04 — streaming state: streaming placeholder visible, composer shows loading 4ms
+ ✓ src/pages/chat/__tests__/ConversationPage.test.tsx > ConversationPage > T05 — error_network state: retry CTA visible 5ms
+ ✓ src/pages/chat/__tests__/ConversationPage.test.tsx > ConversationPage > T06 — permission_denied state: forbidden view visible (from query error) 4ms
+ ✓ src/pages/chat/__tests__/ConversationPage.test.tsx > ConversationPage > T07 — not_found state: not-found view visible (from query error) 3ms
+ ✓ src/pages/chat/__tests__/ConversationPage.test.tsx > ConversationPage > T08 — transcript has role='log' and aria-live='polite' 3ms
+ ✓ src/pages/chat/__tests__/ConversationPage.test.tsx > ConversationPage > T09 — no .bubble class on message blocks (editorial no-bubble layout) 4ms
+ ✓ src/pages/chat/__tests__/ConversationPage.test.tsx > ConversationPage > T10 — citations render as CitationInline within assistant block 5ms
+ ✓ src/pages/chat/__tests__/ConversationPage.test.tsx > ConversationPage > T11 — deep-link auto-stream: last message is user role → start() called 3ms
+ ✓ src/pages/chat/__tests__/ConversationPage.test.tsx > ConversationPage > T12 — error_validation state: ValidationErrorBanner visible (alert role) 4ms
+
+ Test Files  4 passed (4)
+      Tests  42 passed (42)
+   Start at  13:13:23
+   Duration  1.73s (transform 608ms, setup 312ms, collect 1.12s, tests 499ms, environment 1.71s, prepare 327ms)
+

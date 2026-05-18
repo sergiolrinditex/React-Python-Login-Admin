@@ -14,5 +14,31 @@
     "errors": {
       "tooLong": "Le message ne peut pas dépasser {{max}} caractères."
     }
+  },
+  "conversation": {
+    "title": "Conversation",
+    "you": "Vous",
+    "assistant": "Assistant",
+    "empty": {
+      "title": "Aucun message pour l'instant. Rédigez votre première question.",
+      "cta": "Nouvelle conversation"
+    },
+    "loading": { "label": "Chargement..." },
+    "streaming": { "label": "Assistant" },
+    "citations": { "label": "Sources" },
+    "errors": {
+      "notFound": {
+        "title": "Conversation introuvable.",
+        "cta": "Nouveau chat"
+      },
+      "network": {
+        "title": "Erreur de connexion. Veuillez réessayer.",
+        "retry": "Réessayer"
+      },
+      "permission": {
+        "title": "Vous n'avez pas accès à cette conversation.",
+        "cta": "Retour au chat"
+      }
+    }
   }
 }

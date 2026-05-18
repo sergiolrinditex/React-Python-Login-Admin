@@ -1,0 +1,51 @@
+## Browser Verification Findings — P03-S02-T008
+
+### MCP Used
+claude-in-chrome (Browser 1, deviceId: e1679147-a5fb-4145-97fc-45aa622af92b)
+
+### Port 5173 (Canonical Root — NOT T008 code)
+- Router has placeholder `<Navigate to={ROUTE_CHAT} replace />` for `/chat/:conversationId`
+- Navigating to `/chat/<uuid>` on :5173 correctly redirects to `/chat` (expected — T008 code not deployed here)
+
+### Port 5183 (T008 Worktree — ACTUAL T008 code)
+Vite server started: `node_modules/.bin/vite --host 0.0.0.0 --port 5183` from T008 worktree/frontend
+
+#### PASS: Route Registration
+- `/chat/:conversationId` renders ConversationPage (T008 code), NOT placeholder
+- Deep-link redirect: `/chat/<uuid>` → `/auth/sign-in?next=/chat/<uuid>` → 2FA → returns to `/chat/<uuid>` ✓
+
+#### PASS: error_network state (per pack R1)
+- Auto-stream triggers on last-message-user conversations
+- POST /stream → 502 (LiteLLM absent, expected) → error_network state renders with NetworkErrorView
+- Retry CTA visible ✓
+
+#### PASS: NotFoundView (not_found state)
+- `/chat/00000000-0000-0000-0000-000000000000` → GET returns 404 CHAT_CONVERSATION_NOT_FOUND
+- NotFoundView renders with title + CTA ✓
+
+#### CRITICAL DEFECT: i18n inline bundle missing conversation.* keys
+- All `conversation.*` i18n keys show as RAW KEYS in the UI
+- Examples: "CONVERSATION.YOU" instead of "Tú", "conversation.errors.network.title" instead of "Error de conexión...",
+  "CONVERSATION.ERRORS.NETWORK.RETRY" instead of "Reintentar", "CONVERSATION.ERRORS.NOTFOUND.TITLE" etc.
+- Root cause: frontend/src/i18n/index.ts uses INLINE STATIC resources (no HTTP backend)
+  The conversation.* keys were added to public/locales/{es,en,fr}/chat.json but NOT to the inline bundle
+  The inline ES `chat` namespace (line 193-208 of index.ts) contains only: empty, citation, composer
+  Missing: conversation.* (~26 keys per locale × 3 locales = ~78 missing entries)
+- Acceptance criterion 10 ("i18n paridad ES/EN/FR") is NOT satisfied at runtime
+- This is an IN-SCOPE defect: frontend/src/i18n/index.ts is within the write_set (shared file)
+
+### Logs evidence
+- chat.stream.http_error: confirmed (LiteLLM 502)
+- chat.useChatStream.result.error: confirmed (error_network transition)
+- chat.conversation.render.start: confirmed (ConversationPage renders)
+- chat.hook.useConversation.fetch.start/ok: confirmed (GET returns data)
+- i18n.init.ok: confirmed (but chat namespace lacks conversation.* keys in inline bundle)
+
+### Data Contract
+- employee_primary loaded via: cd backend && DATABASE_URL=... python3 -m app.verification_data.bootstrap --source .../data/verification --only auth --only history --only rag_chat
+- Conversations for employee_primary: 7 total, all with 1 user message (no assistant reply)
+- GET /api/v1/chat/conversations/d45d8571-... → 200 (verified by tester earlier)
+- POST /api/v1/chat/conversations/.../stream → 502 LiteLLM 502 (expected per R1)
+
+### VERDICT: issues_found
+- 1 in-scope defect requiring debugger: missing conversation.* keys in i18n/index.ts inline bundle

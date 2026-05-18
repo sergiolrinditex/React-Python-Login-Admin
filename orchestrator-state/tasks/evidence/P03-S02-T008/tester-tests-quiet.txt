@@ -1,0 +1,15 @@
+
+stderr | src/features/rag/__tests__/ragRepository.test.ts > RagRepository > R13 — indexDocument 404 → Result.err(RagDocumentNotFoundError)
+[rag] rag.repo.indexDocument.not_found { doc_id: [32m'nonexistent-id'[39m, request_id: [32m'test-req-id'[39m }
+
+stderr | src/features/rag/__tests__/ragRepository.test.ts > RagRepository > R14 — indexDocument 403 → Result.err(RagPermissionDeniedError)
+[rag] rag.repo.indexDocument.forbidden { doc_id: [32m'doc-uuid-001'[39m, request_id: [32m'test-req-id'[39m }
+
+ ✓ src/features/rag/__tests__/ragRepository.test.ts (15 tests) 10ms
+ ✓ src/i18n/__tests__/i18n.test.ts (41 tests) 9ms
+
+ Test Files  49 passed (49)
+      Tests  578 passed (578)
+   Start at  13:13:08
+   Duration  9.83s (transform 4.38s, setup 8.38s, collect 20.35s, tests 7.21s, environment 45.08s, prepare 6.03s)
+

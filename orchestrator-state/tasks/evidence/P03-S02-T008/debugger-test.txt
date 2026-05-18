@@ -1,0 +1,28 @@
+=== Debugger fix: vitest after fix ===
+2026-05-18T12:18:16Z
+
+stderr | src/features/mcp/__tests__/mcpRepository.test.ts > mcpRepository.createServer > R14 — 429 → McpRateLimitedError
+[mcp] mcp.repo.createServer.rate_limited { status: [33m429[39m, request_id: [32m'test-req-id'[39m }
+
+stderr | src/features/mcp/__tests__/mcpRepository.test.ts > mcpRepository.createServer > R15 — 500 → McpServerError
+[mcp] mcp.repo.createServer.server_error { status: [33m500[39m, request_id: [32m'test-req-id'[39m }
+
+ ✓ src/features/rag/__tests__/updateCollection.test.ts (8 tests) 23ms
+stderr | src/features/mcp/__tests__/mcpRepository.test.ts > mcpRepository.createServer > R16 — network failure → McpNetworkError
+[mcp] mcp.repo.createServer.error { error: [32m'MCP_NETWORK_ERROR'[39m }
+
+stderr | src/features/mcp/__tests__/mcpRepository.test.ts > mcpRepository.createServer > R17 — 401 → McpAuthExpiredError
+[mcp] mcp.repo.createServer.auth_expired { status: [33m401[39m, request_id: [32m'test-req-id'[39m }
+
+stderr | src/features/mcp/__tests__/mcpRepository.test.ts > mcpRepository.createServer > R18 — 403 → McpForbiddenError
+[mcp] mcp.repo.createServer.forbidden { status: [33m403[39m, request_id: [32m'test-req-id'[39m }
+
+ ✓ src/features/mcp/__tests__/mcpRepository.test.ts (18 tests) 23ms
+ ✓ src/i18n/__tests__/i18n.test.ts (41 tests) 10ms
+ ✓ src/features/chat/presentation/__tests__/historyGrouping.test.ts (10 tests) 5ms
+
+ Test Files  49 passed (49)
+      Tests  578 passed (578)
+   Start at  14:18:17
+   Duration  9.20s (transform 3.29s, setup 9.13s, collect 16.52s, tests 7.20s, environment 40.01s, prepare 5.63s)
+

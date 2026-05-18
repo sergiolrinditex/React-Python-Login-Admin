@@ -1,0 +1,80 @@
+2026-05-18 13:12:16,688 app.auth.tokens DEBUG tokens.decode.ok sub=c8c00f55-a514-462b-88fa-06b6283ae582
+2026-05-18 13:12:16,688 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.start user_id=c8c00f55-a514-462b-88fa-06b6283ae582
+2026-05-18 13:12:16,701 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.done user_id=c8c00f55-a514-462b-88fa-06b6283ae582 found=True
+2026-05-18 13:12:16,701 app.users.deps DEBUG users.deps.get_current_user.done user_id=c8c00f55-a514-462b-88fa-06b6283ae582 request_id=tester-t008-c3
+2026-05-18 13:12:16,702 app.chat.routers.conversations DEBUG chat.routers.get_conversation.start request_id=tester-t008-c3 uid_hash=9ba098c47ec80436 conv_prefix=00000000
+2026-05-18 13:12:16,702 app.chat.services.get_conversation_detail DEBUG chat.service.get_conversation_detail.start request_id=tester-t008-c3 user_id_hash=9ba098c47ec80436 conv_id_prefix=00000000
+2026-05-18 13:12:16,702 app.chat.repositories.conversations DEBUG chat.repo.find_conversation_with_messages.start conv_id_prefix=00000000
+2026-05-18 13:12:16,703 app.chat.repositories.conversations DEBUG chat.repo.find_conversation_with_messages.not_found conv_id_prefix=00000000
+2026-05-18 13:12:16,703 app.chat.services.get_conversation_detail DEBUG chat.service.get_conversation_detail.not_found request_id=tester-t008-c3 conv_id_prefix=00000000
+2026-05-18 13:12:16,703 app.chat.routers.conversations DEBUG chat.routers.get_conversation.not_found request_id=tester-t008-c3 conv_prefix=00000000 ms=1.3
+INFO:     127.0.0.1:65247 - "GET /api/v1/chat/conversations/00000000-0000-0000-0000-000000000000 HTTP/1.1" 404 Not Found
+2026-05-18 13:12:16,706 app.db.session DEBUG db.session.closed
+2026-05-18 13:13:41,055 app.db.session DEBUG db.session.open
+2026-05-18 13:13:41,056 app.users.deps DEBUG users.deps.get_current_user.start request_id=tester-t008-c1 ip=127.0.0.1
+2026-05-18 13:13:41,056 app.auth.tokens DEBUG tokens.decode.start
+2026-05-18 13:13:41,056 app.auth.tokens DEBUG tokens.decode.ok sub=c8c00f55-a514-462b-88fa-06b6283ae582
+2026-05-18 13:13:41,056 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.start user_id=c8c00f55-a514-462b-88fa-06b6283ae582
+2026-05-18 13:13:41,069 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.done user_id=c8c00f55-a514-462b-88fa-06b6283ae582 found=True
+2026-05-18 13:13:41,069 app.users.deps DEBUG users.deps.get_current_user.done user_id=c8c00f55-a514-462b-88fa-06b6283ae582 request_id=tester-t008-c1
+2026-05-18 13:13:41,070 app.chat.routers.conversations DEBUG chat.routers.list_conversations.start request_id=tester-t008-c1 uid_hash=9ba098c47ec80436 limit=20 cursor=False
+2026-05-18 13:13:41,070 app.chat.services.list_conversations DEBUG chat.service.list_conversations.start request_id=tester-t008-c1 user_id_hash=9ba098c47ec80436 limit=20 has_cursor=False
+2026-05-18 13:13:41,070 app.chat.repositories.conversations DEBUG chat.repo.find_conversations_paginated.start user_id_prefix=c8c00f55 limit=20 has_cursor=False
+2026-05-18 13:13:41,072 app.chat.repositories.conversations DEBUG chat.repo.find_conversations_paginated.done user_id_prefix=c8c00f55 count=7 has_more=False
+2026-05-18 13:13:41,072 app.chat.services.list_conversations DEBUG chat.service.list_conversations.done request_id=tester-t008-c1 user_id_hash=9ba098c47ec80436 count=7 has_more=False latency_ms=2.0
+2026-05-18 13:13:41,072 app.chat.routers.conversations DEBUG chat.routers.list_conversations.done request_id=tester-t008-c1 uid_hash=9ba098c47ec80436 count=7 has_more=False status=200 ms=2.2
+INFO:     127.0.0.1:65408 - "GET /api/v1/chat/conversations HTTP/1.1" 200 OK
+2026-05-18 13:13:41,074 app.db.session DEBUG db.session.closed
+2026-05-18 13:13:41,089 app.db.session DEBUG db.session.open
+2026-05-18 13:13:41,090 app.users.deps DEBUG users.deps.get_current_user.start request_id=tester-t008-c2 ip=127.0.0.1
+2026-05-18 13:13:41,090 app.auth.tokens DEBUG tokens.decode.start
+2026-05-18 13:13:41,090 app.auth.tokens DEBUG tokens.decode.ok sub=c8c00f55-a514-462b-88fa-06b6283ae582
+2026-05-18 13:13:41,090 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.start user_id=c8c00f55-a514-462b-88fa-06b6283ae582
+2026-05-18 13:13:41,094 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.done user_id=c8c00f55-a514-462b-88fa-06b6283ae582 found=True
+2026-05-18 13:13:41,094 app.users.deps DEBUG users.deps.get_current_user.done user_id=c8c00f55-a514-462b-88fa-06b6283ae582 request_id=tester-t008-c2
+2026-05-18 13:13:41,094 app.chat.routers.conversations DEBUG chat.routers.get_conversation.start request_id=tester-t008-c2 uid_hash=9ba098c47ec80436 conv_prefix=931f903f
+2026-05-18 13:13:41,094 app.chat.services.get_conversation_detail DEBUG chat.service.get_conversation_detail.start request_id=tester-t008-c2 user_id_hash=9ba098c47ec80436 conv_id_prefix=931f903f
+2026-05-18 13:13:41,094 app.chat.repositories.conversations DEBUG chat.repo.find_conversation_with_messages.start conv_id_prefix=931f903f
+2026-05-18 13:13:41,097 app.chat.repositories.conversations DEBUG chat.repo.find_conversation_with_messages.done conv_id_prefix=931f903f msg_count=1 citation_count=0
+2026-05-18 13:13:41,097 app.chat.services.get_conversation_detail DEBUG chat.service.get_conversation_detail.done request_id=tester-t008-c2 user_id_hash=9ba098c47ec80436 conv_id_prefix=931f903f msg_count=1 citation_count=0 latency_ms=3.2
+2026-05-18 13:13:41,097 app.chat.routers.conversations DEBUG chat.routers.get_conversation.done request_id=tester-t008-c2 uid_hash=9ba098c47ec80436 conv_prefix=931f903f msgs=1 citations=0 status=200 ms=3.3
+INFO:     127.0.0.1:65410 - "GET /api/v1/chat/conversations/931f903f-9982-4bf0-8bf9-ef06f499ac1b HTTP/1.1" 200 OK
+2026-05-18 13:13:41,098 app.db.session DEBUG db.session.closed
+2026-05-18 13:13:41,114 app.db.session DEBUG db.session.open
+2026-05-18 13:13:41,114 app.users.deps DEBUG users.deps.get_current_user.start request_id=tester-t008-c3 ip=127.0.0.1
+2026-05-18 13:13:41,114 app.auth.tokens DEBUG tokens.decode.start
+2026-05-18 13:13:41,114 app.auth.tokens DEBUG tokens.decode.ok sub=c8c00f55-a514-462b-88fa-06b6283ae582
+2026-05-18 13:13:41,114 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.start user_id=c8c00f55-a514-462b-88fa-06b6283ae582
+2026-05-18 13:13:41,117 app.users.repositories.user_profile DEBUG user_profile.repository.find_by_id.done user_id=c8c00f55-a514-462b-88fa-06b6283ae582 found=True
+2026-05-18 13:13:41,117 app.users.deps DEBUG users.deps.get_current_user.done user_id=c8c00f55-a514-462b-88fa-06b6283ae582 request_id=tester-t008-c3
+2026-05-18 13:13:41,117 app.chat.routers.conversations DEBUG chat.routers.get_conversation.start request_id=tester-t008-c3 uid_hash=9ba098c47ec80436 conv_prefix=00000000
+2026-05-18 13:13:41,118 app.chat.services.get_conversation_detail DEBUG chat.service.get_conversation_detail.start request_id=tester-t008-c3 user_id_hash=9ba098c47ec80436 conv_id_prefix=00000000
+2026-05-18 13:13:41,118 app.chat.repositories.conversations DEBUG chat.repo.find_conversation_with_messages.start conv_id_prefix=00000000
+2026-05-18 13:13:41,119 app.chat.repositories.conversations DEBUG chat.repo.find_conversation_with_messages.not_found conv_id_prefix=00000000
+2026-05-18 13:13:41,119 app.chat.services.get_conversation_detail DEBUG chat.service.get_conversation_detail.not_found request_id=tester-t008-c3 conv_id_prefix=00000000
+2026-05-18 13:13:41,119 app.chat.routers.conversations DEBUG chat.routers.get_conversation.not_found request_id=tester-t008-c3 conv_prefix=00000000 ms=1.5
+INFO:     127.0.0.1:65412 - "GET /api/v1/chat/conversations/00000000-0000-0000-0000-000000000000 HTTP/1.1" 404 Not Found
+2026-05-18 13:13:41,120 app.db.session DEBUG db.session.closed
+2026-05-18 13:13:41,134 app.db.session DEBUG db.session.open
+2026-05-18 13:13:41,135 app.auth.routers.sign_in INFO auth.sign_in.received email_domain=inditex-sandbox.com request_id=tester-t008-c4
+2026-05-18 13:13:41,135 app.auth.rate_limit DEBUG rate_limit.check.start prefix=SIGNIN ip=SIGNIN:127.0.0.1 rate_per_min=20 burst=20
+2026-05-18 13:13:41,135 app.auth.rate_limit DEBUG rate_limit.check.ok prefix=SIGNIN ip=SIGNIN:127.0.0.1 new_window remaining=19
+2026-05-18 13:13:41,135 app.auth.services.sign_in INFO auth.sign_in.starting request_id=tester-t008-c4 email_domain=inditex-sandbox.com
+2026-05-18 13:13:41,135 app.auth.repository DEBUG auth.repo.find_by_email.start email_domain=inditex-sandbox.com
+2026-05-18 13:13:41,138 app.auth.repository DEBUG auth.repo.find_by_email.done found=True
+2026-05-18 13:13:41,138 app.auth.services.sign_in INFO auth.sign_in.user_found user_id=c8c00f55-a514-462b-88fa-06b6283ae582 request_id=tester-t008-c4
+2026-05-18 13:13:41,138 app.auth.repository DEBUG auth.repo.count_signin_failures.start user_id=c8c00f55-a514-462b-88fa-06b6283ae582 window=900s
+2026-05-18 13:13:41,139 app.auth.repository DEBUG auth.repo.count_signin_failures.done user_id=c8c00f55-a514-462b-88fa-06b6283ae582 count=0
+2026-05-18 13:13:41,139 app.auth.password DEBUG password.verify_with_dummy.start has_real_hash=True
+2026-05-18 13:13:41,176 app.auth.password DEBUG password.verify_with_dummy.ok
+2026-05-18 13:13:41,179 app.auth.tokens DEBUG tokens.encode_mfa_challenge.start user_id=c8c00f55-a514-462b-88fa-06b6283ae582 ttl=300s
+2026-05-18 13:13:41,179 app.auth.tokens DEBUG tokens.encode_mfa_challenge.done user_id=c8c00f55-a514-462b-88fa-06b6283ae582 exp=2026-05-18T11:18:41.179540+00:00
+2026-05-18 13:13:41,179 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.sign_in actor_user_id=c8c00f55-a514-462b-88fa-06b6283ae582
+2026-05-18 13:13:41,182 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=1787daa6-85d3-451d-a1a7-3c819b9580c1 action=auth.sign_in
+2026-05-18 13:13:41,192 app.auth.services.sign_in INFO auth.sign_in.mfa_challenge_issued user_id=c8c00f55-a514-462b-88fa-06b6283ae582 request_id=tester-t008-c4
+2026-05-18 13:13:41,193 app.auth.routers.sign_in INFO auth.sign_in.mfa_challenge_issued user_id=c8c00f55-a514-462b-88fa-06b6283ae582 request_id=tester-t008-c4
+INFO:     127.0.0.1:65415 - "POST /api/v1/auth/sign-in HTTP/1.1" 200 OK
+2026-05-18 13:13:41,195 app.db.session DEBUG db.session.closed
+2026-05-18 13:13:41,208 app.api.router INFO health.check.start route=/health
+2026-05-18 13:13:41,209 app.api.router INFO health.check.ok status=ok uptime=318.11
+INFO:     127.0.0.1:65417 - "GET /health HTTP/1.1" 200 OK

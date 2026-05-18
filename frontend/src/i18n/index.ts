@@ -205,6 +205,34 @@ const resources = {
           tooLong: "El mensaje no puede superar {{max}} caracteres.",
         },
       },
+      // §D-T008-I18N: conversation namespace added (P03-S02-T008 — ConversationPage)
+      // §D-T008-I18N-LOCKSTEP: all keys present in ES/EN/FR (parallel update)
+      conversation: {
+        title: "Conversación",
+        you: "Tú",
+        assistant: "Asistente",
+        empty: {
+          title: "Aún no hay mensajes. Escribe tu primera pregunta.",
+          cta: "Nueva conversación",
+        },
+        loading: { label: "Cargando..." },
+        streaming: { label: "Asistente" },
+        citations: { label: "Fuentes" },
+        errors: {
+          notFound: {
+            title: "Conversación no encontrada.",
+            cta: "Nuevo chat",
+          },
+          network: {
+            title: "Error de conexión. Por favor, inténtalo de nuevo.",
+            retry: "Reintentar",
+          },
+          permission: {
+            title: "No tienes acceso a esta conversación.",
+            cta: "Volver al chat",
+          },
+        },
+      },
     },
     // §D-T007-WRITE-SET-DRIFT-I18N (P03-S02-T007): account namespace extended with profile,
     // languagePicker, states and logoutAction keys. Same drift pattern as §D-T003-I18N,
@@ -852,6 +880,34 @@ const resources = {
           tooLong: "Messages cannot exceed {{max}} characters.",
         },
       },
+      // §D-T008-I18N: conversation namespace added (P03-S02-T008 — ConversationPage)
+      // §D-T008-I18N-LOCKSTEP: all keys present in ES/EN/FR (parallel update)
+      conversation: {
+        title: "Conversation",
+        you: "You",
+        assistant: "Assistant",
+        empty: {
+          title: "No messages yet. Type your first question.",
+          cta: "New conversation",
+        },
+        loading: { label: "Loading..." },
+        streaming: { label: "Assistant" },
+        citations: { label: "Sources" },
+        errors: {
+          notFound: {
+            title: "Conversation not found.",
+            cta: "New chat",
+          },
+          network: {
+            title: "Connection error. Please try again.",
+            retry: "Try again",
+          },
+          permission: {
+            title: "You do not have access to this conversation.",
+            cta: "Back to chat",
+          },
+        },
+      },
     },
     // §D-T007-WRITE-SET-DRIFT-I18N (P03-S02-T007): account namespace extended (EN).
     account: {
@@ -1495,6 +1551,34 @@ const resources = {
         send: "Envoyer",
         errors: {
           tooLong: "Le message ne peut pas dépasser {{max}} caractères.",
+        },
+      },
+      // §D-T008-I18N: conversation namespace added (P03-S02-T008 — ConversationPage)
+      // §D-T008-I18N-LOCKSTEP: all keys present in ES/EN/FR (parallel update)
+      conversation: {
+        title: "Conversation",
+        you: "Vous",
+        assistant: "Assistant",
+        empty: {
+          title: "Aucun message pour l'instant. Rédigez votre première question.",
+          cta: "Nouvelle conversation",
+        },
+        loading: { label: "Chargement..." },
+        streaming: { label: "Assistant" },
+        citations: { label: "Sources" },
+        errors: {
+          notFound: {
+            title: "Conversation introuvable.",
+            cta: "Nouveau chat",
+          },
+          network: {
+            title: "Erreur de connexion. Veuillez réessayer.",
+            retry: "Réessayer",
+          },
+          permission: {
+            title: "Vous n'avez pas accès à cette conversation.",
+            cta: "Retour au chat",
+          },
         },
       },
     },

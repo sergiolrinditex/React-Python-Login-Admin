@@ -1,0 +1,27 @@
+## Data Contract Used — P03-S02-T008 Tester Run
+
+### Verification Data Contract rows applied
+
+| Row | Persona | Data | Used |
+|-----|---------|------|------|
+| J101 chat-rag | employee_primary | data/verification/users/employee_primary.json | YES |
+| J102 history-language | employee_primary | data/verification/history/conversations.json | YES (conversations already seeded in DB) |
+| mfa_primary | employee_primary | data/verification/auth/mfa_primary.json | YES (TOTP for auth) |
+
+### Real/provided data used in smoke
+- email: employee.verification@inditex-sandbox.com (from employee_primary.json)
+- password: VerifyPass2024! (from employee_primary.json)
+- TOTP secret: JBSWY3DPEHPK3PXP (from mfa_primary.json)
+- Authenticated successfully via POST /api/v1/auth/sign-in + POST /api/v1/auth/2fa/verify
+- Set-Cookie: refresh_token (HttpOnly, Secure, SameSite=lax) — token storage contract verified
+
+### Persisted data observed
+- 7 conversations exist for employee_primary in DB (list returned 7 items)
+- Conversation 931f903f-9982-4bf0-8bf9-ef06f499ac1b: 1 message (user role, "hola"), 0 citations
+- GET /api/v1/chat/conversations/931f903f-... → 200 with messages[] and citations[] present
+- GET /api/v1/chat/conversations/00000000-... → 404 with CHAT_CONVERSATION_NOT_FOUND
+
+### NOTE: POST /api/v1/chat/conversations/{id}/stream NOT tested
+- LiteLLM not configured in dev (GEMINI_API_KEY absent)
+- Expected 502 / error_network per task pack R1
+- Marked as PARTIAL per task instructions
