@@ -1,0 +1,198 @@
+
+> hilo-people-frontend@0.1.0 test
+> vitest --run src/features/auth
+
+
+ RUN  v3.2.4 /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S02-T007/frontend
+
+ ✓ src/features/auth/data/__tests__/httpClient.test.ts (4 tests) 6ms
+stderr | src/features/auth/__tests__/useForgotPassword.test.tsx > useForgotPassword > T02: submit 400 ForgotPasswordValidationError → error set, isLoading false
+[auth] auth.forgot.hook.submit.error { error_name: [32m'ForgotPasswordValidationError'[39m }
+
+stderr | src/features/auth/__tests__/useVerifyMfa.test.tsx > useVerifyMfa > H02: wrong code — 401 MfaCodeInvalidError → error set, onSuccess not called, outcome null
+[auth] auth.mfa.verify.hook.submit.error {
+  error_name: [32m'MfaCodeInvalidError'[39m,
+  error_code: [32m'AUTH_MFA_CODE_INVALID'[39m
+}
+
+stderr | src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T05: 401 invalid credentials — sets InvalidCredentialsError
+[auth] auth.signin.hook.submit.error { error_name: [32m'InvalidCredentialsError'[39m }
+
+stderr | src/features/auth/__tests__/useForgotPassword.test.tsx > useForgotPassword > T03: submit 429 ForgotPasswordRateLimitedError → error set with retryAfter
+[auth] auth.forgot.hook.submit.error { error_name: [32m'ForgotPasswordRateLimitedError'[39m }
+
+stderr | src/features/auth/__tests__/useVerifyMfa.test.tsx > useVerifyMfa > H03: challenge expired — 410 MfaChallengeExpiredError → error set, onSuccess not called
+[auth] auth.mfa.verify.hook.submit.error {
+  error_name: [32m'MfaChallengeExpiredError'[39m,
+  error_code: [32m'AUTH_MFA_CHALLENGE_EXPIRED'[39m
+}
+
+stderr | src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T06: 423 account locked — sets AccountLockedError
+[auth] auth.signin.hook.submit.error { error_name: [32m'AccountLockedError'[39m }
+
+stderr | src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T07: 429 rate limited with Retry-After — sets RateLimitedError carrying retry_after
+[auth] auth.signin.hook.submit.error { error_name: [32m'RateLimitedError'[39m }
+
+stderr | src/features/auth/__tests__/useForgotPassword.test.tsx > useForgotPassword > T04: submit 500 ForgotPasswordInternalError → error set
+[auth] auth.forgot.hook.submit.error { error_name: [32m'ForgotPasswordInternalError'[39m }
+
+stderr | src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T08: TypeError network error — sets NetworkError
+[auth] auth.signin.hook.submit.error { error_name: [32m'NetworkError'[39m }
+
+stderr | src/features/auth/__tests__/useVerifyMfa.test.tsx > useVerifyMfa > H04: rate limited — 429 MfaVerifyRateLimitedError → error set with retryAfter
+[auth] auth.mfa.verify.hook.submit.error {
+  error_name: [32m'MfaVerifyRateLimitedError'[39m,
+  error_code: [32m'AUTH_MFA_VERIFY_RATE_LIMITED'[39m
+}
+
+stderr | src/features/auth/__tests__/useForgotPassword.test.tsx > useForgotPassword > T05: submit network failure (TypeError) → NetworkError set
+[auth] auth.forgot.hook.submit.error { error_name: [32m'NetworkError'[39m }
+
+stderr | src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T09: 500 server error — sets SigninInternalError
+[auth] auth.signin.hook.submit.error { error_name: [32m'SigninInternalError'[39m }
+
+stderr | src/features/auth/__tests__/useVerifyMfa.test.tsx > useVerifyMfa > H05: network down — fetch TypeError → NetworkError set, onSuccess not called
+[auth] auth.mfa.verify.hook.submit.error { error_name: [32m'NetworkError'[39m, error_code: [32m'NETWORK_ERROR'[39m }
+
+stderr | src/features/auth/__tests__/useVerifyMfa.test.tsx > useVerifyMfa > H06: code length ≠ 6 → guard returns null without calling repo
+[auth] auth.mfa.verify.hook.submit.invalid_code_format { code_len: [33m5[39m }
+
+stderr | src/features/auth/__tests__/useForgotPassword.test.tsx > useForgotPassword > T06: clearError → error becomes null
+[auth] auth.forgot.hook.submit.error { error_name: [32m'NetworkError'[39m }
+
+stderr | src/features/auth/__tests__/useSignIn.test.tsx > useSignIn > T11: never logs password in any log event
+[auth] auth.signin.hook.submit.error { error_name: [32m'InvalidCredentialsError'[39m }
+
+stderr | src/features/auth/__tests__/useVerifyMfa.test.tsx > useVerifyMfa > H07: missing challengeToken → guard returns null without calling repo
+[auth] auth.mfa.verify.hook.submit.missing_challenge
+
+stderr | src/features/auth/__tests__/useForgotPassword.test.tsx > useForgotPassword > T07: logger NEVER logs full email — PII safety (email_domain only)
+[auth] auth.forgot.hook.submit.error { error_name: [32m'ForgotPasswordRateLimitedError'[39m }
+
+ ✓ src/features/auth/__tests__/useSignIn.test.tsx (11 tests) 34ms
+stderr | src/features/auth/__tests__/useVerifyMfa.test.tsx > useVerifyMfa > H08: clearError → error becomes null after clearing previous error
+[auth] auth.mfa.verify.hook.submit.error {
+  error_name: [32m'MfaCodeInvalidError'[39m,
+  error_code: [32m'AUTH_MFA_CODE_INVALID'[39m
+}
+
+stderr | src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T07: 400 AUTH_SIGNUP_NON_CORPORATE_EMAIL → NonCorporateEmailError surfaced
+[auth] auth.signup.hook.submit.error { error_name: [32m'NonCorporateEmailError'[39m }
+
+stderr | src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T08: 400 AUTH_SIGNUP_LEGAL_NOT_ACCEPTED → LegalNotAcceptedError surfaced
+[auth] auth.signup.hook.submit.error { error_name: [32m'LegalNotAcceptedError'[39m }
+
+stderr | src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T09: 409 AUTH_SIGNUP_EMAIL_TAKEN → EmailTakenError surfaced
+[auth] auth.signup.hook.submit.error { error_name: [32m'EmailTakenError'[39m }
+
+stderr | src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T10: 422 AUTH_SIGNUP_INVALID_PAYLOAD (password) → PasswordPolicyError surfaced
+[auth] auth.signup.hook.submit.error { error_name: [32m'PasswordPolicyError'[39m }
+
+stderr | src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T11: 429 AUTH_SIGNUP_RATE_LIMITED → SignupRateLimitedError with retryAfter
+[auth] auth.signup.hook.submit.error { error_name: [32m'SignupRateLimitedError'[39m }
+
+stderr | src/features/auth/__tests__/useVerifyMfa.test.tsx > useVerifyMfa > H11: 5xx MfaVerifyInternalError → error set with status code
+[auth] auth.mfa.verify.hook.submit.error {
+  error_name: [32m'MfaVerifyInternalError'[39m,
+  error_code: [32m'AUTH_MFA_VERIFY_INTERNAL_ERROR'[39m
+}
+
+stderr | src/features/auth/__tests__/useForgotPassword.test.tsx > useForgotPassword > T10: error is cleared on next successful submit — state transition
+[auth] auth.forgot.hook.submit.error { error_name: [32m'ForgotPasswordValidationError'[39m }
+
+stderr | src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T12: TypeError network error → NetworkError surfaced
+[auth] auth.signup.hook.submit.error { error_name: [32m'NetworkError'[39m }
+
+ ✓ src/features/auth/__tests__/useForgotPassword.test.tsx (10 tests) 42ms
+ ✓ src/features/auth/__tests__/useVerifyMfa.test.tsx (11 tests) 40ms
+stderr | src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T13: 500 server error → SignupInternalError surfaced
+[auth] auth.signup.hook.submit.error { error_name: [32m'SignupInternalError'[39m }
+
+stderr | src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T14: logger NEVER logs full email, password, or full_name — PII safety
+[auth] auth.signup.hook.submit.error { error_name: [32m'NonCorporateEmailError'[39m }
+
+stderr | src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T14b: clearError resets error state
+[auth] auth.signup.hook.submit.error { error_name: [32m'NetworkError'[39m }
+
+stderr | src/features/auth/__tests__/useSignUp.test.tsx > useSignUp > T14c: 422 generic payload error → SignupValidationError surfaced
+[auth] auth.signup.hook.submit.error { error_name: [32m'SignupValidationError'[39m }
+
+ ✓ src/features/auth/__tests__/useSignUp.test.tsx (16 tests) 50ms
+stderr | src/features/auth/presentation/useLanguagePicker.test.tsx > useLanguagePicker > LP5: on validation error, i18n reverted to 'es', error.code is 'validation'
+[auth] auth.language.update.error {
+  error: [32m"LANGUAGE_INVALID: language 'xx' rejected by server (422)"[39m,
+  request_id: [32m'ee43efe4-b1e8-422c-ad28-a34ea33aad7c'[39m
+}
+
+stderr | src/features/auth/presentation/useLanguagePicker.test.tsx > useLanguagePicker > LP6: on network error, i18n reverted to 'es', error.code is 'network'
+[auth] auth.language.update.error {
+  error: [32m'Network request failed.'[39m,
+  request_id: [32m'2f75d2e3-d79b-49c4-b8a9-8581d4b48c00'[39m
+}
+
+stderr | src/features/auth/presentation/useLanguagePicker.test.tsx > useLanguagePicker > LP8: clearError resets the error state
+[auth] auth.language.update.error {
+  error: [32m'Network request failed.'[39m,
+  request_id: [32m'22003265-dd27-4686-856c-48a4835280ba'[39m
+}
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T03 — AuthProvider: /refresh 401 → unauthenticated, no /me call > status becomes 'unauthenticated' on refresh 401
+[auth] auth.repo.refresh.session_expired { request_id: [32m'ed9499af-867d-4466-82dc-ae72be26f6e3'[39m }
+
+stderr | src/features/auth/presentation/useLanguagePicker.test.tsx > useLanguagePicker > LP10: on 422 validation error, current and i18n.language stay at 'es' (no rollback corruption)
+[auth] auth.language.update.error {
+  error: [32m"LANGUAGE_INVALID: language 'en' rejected by server (422)"[39m,
+  request_id: [32m'e2b80a57-8620-4dc6-90e2-d4e1929d97ed'[39m
+}
+
+stderr | src/features/auth/presentation/useLanguagePicker.test.tsx > useLanguagePicker > LP11: after success then failed attempt, current keeps the last confirmed language
+[auth] auth.language.update.error {
+  error: [32m"LANGUAGE_INVALID: language 'fr' rejected by server (422)"[39m,
+  request_id: [32m'c6ed4aa8-c61e-4223-8fb3-e535efd81d50'[39m
+}
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T04 — AuthProvider: /refresh network error → unauthenticated > status becomes 'unauthenticated' on network error
+[auth] auth.repo.refresh.error { error: [32m'Failed to fetch'[39m }
+
+ ✓ src/features/auth/presentation/useLanguagePicker.test.tsx (11 tests) 36ms
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T05 — signInAccepted → status=authenticated, /me not re-called > signInAccepted sets token and user without extra fetch
+[auth] auth.repo.refresh.session_expired { request_id: [32m'8112f43b-4f72-4a73-861a-d31afd4d5f30'[39m }
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T06 — useLogout: /logout 204 → token cleared, queries cleared > logout clears token and calls onQueriesClear
+[auth] auth.repo.logout.error { error: [32m'Response constructor: Invalid response status code 204'[39m }
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T06 — useLogout: /logout 204 → token cleared, queries cleared > logout clears token and calls onQueriesClear
+[auth] auth.provider.logout.failure_local_cleared { error: [32m'Response constructor: Invalid response status code 204'[39m }
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T07 — useLogout: backend 401 → still clears local state (defensive logout) > logout clears token even when backend returns 401
+[auth] auth.repo.logout.non_204 { status: [33m401[39m, request_id: [32m'820f93d5-8262-45ed-b702-dd09e9de2ecd'[39m }
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T07 — useLogout: backend 401 → still clears local state (defensive logout) > logout clears token even when backend returns 401
+[auth] auth.provider.logout.failure_local_cleared { error: [32m'Session expired or invalid; please sign in again.'[39m }
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T08 — RequireAuth: unauthenticated → Navigate with ?next= > redirects to sign-in with ?next= when unauthenticated
+[auth] auth.repo.refresh.session_expired { request_id: [32m'630d5e34-062a-435f-bdd3-6ee934e08319'[39m }
+
+stderr | src/features/auth/__tests__/auth.test.tsx > auth T17 — httpClient: refresh 401 → no loop, onAuthFailure called > throws AuthSessionExpiredError, calls onAuthFailure, clears token
+[auth] auth.http.refresh.failed { status: [33m401[39m, request_id: [32m'0f00b7d1-b671-4921-82cb-ab0ba0409b0b'[39m }
+
+ ✓ src/features/auth/__tests__/auth.test.tsx (33 tests) 119ms
+stderr | src/features/auth/presentation/useLogout.test.tsx > useLogout > L3: if AuthProvider.logout() rejects with 401-like error, still navigates
+[auth] auth.logout.error { error: [32m'AUTH_SESSION_EXPIRED'[39m }
+
+stderr | src/features/auth/presentation/useLogout.test.tsx > useLogout > L4: if AuthProvider.logout() rejects with network error, still navigates
+[auth] auth.logout.error { error: [32m'Network request failed.'[39m }
+
+stdout | src/features/auth/presentation/useLogout.test.tsx > useLogout > L5: emits auth.logout.start log under VITE_ENABLE_VERBOSE_LOGGING=true
+[auth] auth.logout.start
+
+stdout | src/features/auth/presentation/useLogout.test.tsx > useLogout > L5: emits auth.logout.start log under VITE_ENABLE_VERBOSE_LOGGING=true
+[auth] auth.logout.ok
+
+ ✓ src/features/auth/presentation/useLogout.test.tsx (6 tests) 18ms
+
+ Test Files  8 passed (8)
+      Tests  102 passed (102)
+   Start at  13:03:23
+   Duration  2.49s (transform 1.16s, setup 1.67s, collect 2.71s, tests 345ms, environment 5.88s, prepare 1.30s)
+

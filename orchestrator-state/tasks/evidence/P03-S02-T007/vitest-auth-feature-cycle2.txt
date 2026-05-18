@@ -1,0 +1,27 @@
+
+> hilo-people-frontend@0.1.0 test
+> vitest --run src/features/auth
+
+
+ RUN  v3.2.4 /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S02-T007/frontend
+
+ ✓ src/features/auth/data/__tests__/httpClient.test.ts (4 tests) 6ms
+ ✓ src/features/auth/__tests__/useSignIn.test.tsx (11 tests) 35ms
+ ✓ src/features/auth/__tests__/useForgotPassword.test.tsx (10 tests) 35ms
+ ✓ src/features/auth/__tests__/useVerifyMfa.test.tsx (11 tests) 36ms
+ ✓ src/features/auth/__tests__/useSignUp.test.tsx (16 tests) 44ms
+ ✓ src/features/auth/__tests__/auth.test.tsx (33 tests) 105ms
+ ✓ src/features/auth/presentation/useLanguagePicker.test.tsx (11 tests) 22ms
+stdout | src/features/auth/presentation/useLogout.test.tsx > useLogout > L5: emits auth.logout.start log under VITE_ENABLE_VERBOSE_LOGGING=true
+[auth] auth.logout.start
+
+stdout | src/features/auth/presentation/useLogout.test.tsx > useLogout > L5: emits auth.logout.start log under VITE_ENABLE_VERBOSE_LOGGING=true
+[auth] auth.logout.ok
+
+ ✓ src/features/auth/presentation/useLogout.test.tsx (6 tests) 21ms
+
+ Test Files  8 passed (8)
+      Tests  102 passed (102)
+   Start at  13:09:48
+   Duration  2.22s (transform 1.00s, setup 1.19s, collect 2.29s, tests 305ms, environment 4.69s, prepare 805ms)
+

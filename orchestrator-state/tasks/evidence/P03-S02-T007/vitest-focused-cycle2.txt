@@ -1,0 +1,62 @@
+
+> hilo-people-frontend@0.1.0 test
+> vitest --run --reporter=verbose src/features/auth/presentation/useLogout src/features/auth/presentation/useLanguagePicker src/pages/account
+
+
+ RUN  v3.2.4 /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S02-T007/frontend
+
+ ✓ src/features/auth/presentation/useLanguagePicker.test.tsx > useLanguagePicker > LP1: initial current reflects useAuth().user.preferred_language 8ms
+ ✓ src/features/auth/presentation/useLanguagePicker.test.tsx > useLanguagePicker > LP2: setLanguage('en') calls authRepository.updateLanguage with token and 'en' 3ms
+ ✓ src/features/auth/presentation/useLanguagePicker.test.tsx > useLanguagePicker > LP3: i18n.language flips to 'en' optimistically before PATCH resolves 1ms
+ ✓ src/features/auth/presentation/useLanguagePicker.test.tsx > useLanguagePicker > LP4: on 200 success, i18n stays at 'en', error is null, isPending is false 1ms
+ ✓ src/features/auth/presentation/useLanguagePicker.test.tsx > useLanguagePicker > LP5: on validation error, i18n reverted to 'es', error.code is 'validation' 3ms
+ ✓ src/features/auth/presentation/useLanguagePicker.test.tsx > useLanguagePicker > LP6: on network error, i18n reverted to 'es', error.code is 'network' 1ms
+ ✓ src/features/auth/presentation/useLanguagePicker.test.tsx > useLanguagePicker > LP7: rapid es→en→fr sequence: final i18n.language is fr 1ms
+ ✓ src/features/auth/presentation/useLanguagePicker.test.tsx > useLanguagePicker > LP8: clearError resets the error state 1ms
+ ✓ src/features/auth/presentation/useLanguagePicker.test.tsx > useLanguagePicker > LP9: after 200 PATCH, result.current.current updates to the server-confirmed language 1ms
+ ✓ src/features/auth/presentation/useLanguagePicker.test.tsx > useLanguagePicker > LP10: on 422 validation error, current and i18n.language stay at 'es' (no rollback corruption) 1ms
+ ✓ src/features/auth/presentation/useLanguagePicker.test.tsx > useLanguagePicker > LP11: after success then failed attempt, current keeps the last confirmed language 1ms
+stdout | src/features/auth/presentation/useLogout.test.tsx > useLogout > L5: emits auth.logout.start log under VITE_ENABLE_VERBOSE_LOGGING=true
+[auth] auth.logout.start
+
+stdout | src/features/auth/presentation/useLogout.test.tsx > useLogout > L5: emits auth.logout.start log under VITE_ENABLE_VERBOSE_LOGGING=true
+[auth] auth.logout.ok
+
+ ✓ src/features/auth/presentation/useLogout.test.tsx > useLogout > L1: calls AuthProvider.logout() and navigates to /auth/sign-in on success 9ms
+ ✓ src/features/auth/presentation/useLogout.test.tsx > useLogout > L2: isLoggingOut is true during logout and false after 1ms
+ ✓ src/features/auth/presentation/useLogout.test.tsx > useLogout > L3: if AuthProvider.logout() rejects with 401-like error, still navigates 2ms
+ ✓ src/features/auth/presentation/useLogout.test.tsx > useLogout > L4: if AuthProvider.logout() rejects with network error, still navigates 1ms
+ ✓ src/features/auth/presentation/useLogout.test.tsx > useLogout > L5: emits auth.logout.start log under VITE_ENABLE_VERBOSE_LOGGING=true 1ms
+ ✓ src/features/auth/presentation/useLogout.test.tsx > useLogout > L5b: logVerbose function exists and is gated by VITE_ENABLE_VERBOSE_LOGGING 1ms
+stdout | src/pages/account/__tests__/AccountPage.test.tsx > AccountPage > AP13: no verbose logger call contains the full email value
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mfalse[39m }
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [90mundefined[39m
+}
+[auth] account.page.mount { user_id: [32m'acc-user-uuid-001'[39m }
+
+ ✓ src/pages/account/__tests__/AccountPage.test.tsx > AccountPage > AP01: renders aria-busy skeleton during hydration 42ms
+ ✓ src/pages/account/__tests__/AccountPage.test.tsx > AccountPage > AP02: success state renders user profile fields 10ms
+ ✓ src/pages/account/__tests__/AccountPage.test.tsx > AccountPage > AP03: language picker shows 3 options with es selected 5ms
+ ✓ src/pages/account/__tests__/AccountPage.test.tsx > AccountPage > AP04: clicking 'en' option calls setLanguage('en') 6ms
+ ✓ src/pages/account/__tests__/AccountPage.test.tsx > AccountPage > AP05: after switching to EN, UI text renders in English 7ms
+ ✓ src/pages/account/__tests__/AccountPage.test.tsx > AccountPage > AP06: clicking logout button calls logout() 4ms
+ ✓ src/pages/account/__tests__/AccountPage.test.tsx > AccountPage > AP07: unauthenticated state shows permission denied view (no user) 3ms
+ ✓ src/pages/account/__tests__/AccountPage.test.tsx > AccountPage > AP08: error_validation shows inline error near language picker 4ms
+ ✓ src/pages/account/__tests__/AccountPage.test.tsx > AccountPage > AP09: permission_denied state renders PermissionDeniedView with sign-in CTA 2ms
+ ✓ src/pages/account/__tests__/AccountPage.test.tsx > AccountPage > AP10: sign-in CTA in permission denied navigates to /auth/sign-in?next=/account 2ms
+ ✓ src/pages/account/__tests__/AccountPage.test.tsx > AccountPage > AP11: authenticated user deep-linking to /account sees the success state 3ms
+ ✓ src/pages/account/__tests__/AccountPage.test.tsx > AccountPage > AP12: rendered profile section contains no hardcoded hex color values in textContent 3ms
+ ✓ src/pages/account/__tests__/AccountPage.test.tsx > AccountPage > AP13: no verbose logger call contains the full email value 3ms
+ ✓ src/pages/account/__tests__/AccountPage.test.tsx > AccountPage > AP14: PATCH /me/language network error renders NetworkErrorView with retry CTA 4ms
+ ✓ src/pages/account/__tests__/AccountPage.test.tsx > AccountPage > AP14b: clicking retry on NetworkErrorView calls setLanguage with current language 4ms
+ ✓ src/pages/account/__tests__/AccountPage.test.tsx > AccountPage > AP14c: validation error and network error views are mutually exclusive 3ms
+
+ Test Files  3 passed (3)
+      Tests  33 passed (33)
+   Start at  13:09:42
+   Duration  1.83s (transform 531ms, setup 306ms, collect 1.58s, tests 144ms, environment 1.48s, prepare 210ms)
+

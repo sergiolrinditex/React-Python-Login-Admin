@@ -1,0 +1,10 @@
+Command: bash .claude/enforcers/design_tokens_v1.sh
+Exit code: 0
+
+OK Design tokens - web literals are outside app code or inside token/theme modules.
+
+Manual git diff check for hardcoded literals in changed files:
+Command: git diff HEAD -- frontend/src/pages/account frontend/src/features/auth/presentation/useLogout.ts frontend/src/features/auth/presentation/useLanguagePicker.ts | grep -E '#[0-9a-fA-F]{3,8}|rgb\(|rgba\(|\bpx\b|\brem\b|\bfont-family\b'
+Result: (no output = 0 violations)
+
+Result: PASS — no hardcoded visual literals outside theme_root.

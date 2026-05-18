@@ -1,0 +1,8 @@
+=== GET /api/v1/users/me (pre language change) ===
+preferred_language: es
+email_domain: inditex-sandbox.com
+brand: Zara
+country: ES
+department: People & Talent
+center: Madrid-HQ
+employee_id: EMP-VERIFY-001

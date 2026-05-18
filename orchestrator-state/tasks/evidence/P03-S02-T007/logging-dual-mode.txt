@@ -1,0 +1,37 @@
+Logging dual-mode evidence — VITE_ENABLE_VERBOSE_LOGGING on/off
+
+SOURCE: Test output from vitest-focused.txt + vitest-auth-feature.txt
+
+=== VERBOSE MODE ON (VITE_ENABLE_VERBOSE_LOGGING=true) ===
+
+Observed in L5 test (useLogout.test.tsx):
+  stdout: [auth] auth.logout.start
+  stdout: [auth] auth.logout.ok
+  (logVerbose spy called with: ["auth.logout.start"], ["auth.logout.ok"])
+
+Observed in AP13 test (AccountPage.test.tsx — verbose=true, AP13 assertion):
+  stdout: MobileFrame.render.start { phase: 'P00', slice: 'P00-S01-T004', fullHeight: false }
+  stdout: SolidCTA.render.start { phase: 'P00', slice: 'P00-S01-T004', loading: false, disabled: undefined }
+  stdout: [auth] account.page.mount { user_id: 'acc-user-uuid-001' }
+
+Observed in useLanguagePicker error paths (stderr on error cases):
+  [auth] auth.language.update.error { error: "LANGUAGE_INVALID: language 'xx' rejected..." }
+  [auth] auth.language.update.error { error: 'Network request failed.' }
+
+=== VERBOSE MODE OFF ===
+
+L5b test (useLogout.test.tsx) confirms:
+  - logVerbose spy is called (function invoked) but VITE_ENABLE_VERBOSE_LOGGING not set
+  - No console.info output appears in test (flag gates actual console output)
+  - Default test env does not set VITE_ENABLE_VERBOSE_LOGGING, so console.info is silent
+
+auth.test.tsx T20 confirms:
+  - "setAccessToken does NOT log when verbose=false" → PASS
+
+=== LOGGING PATTERN VERIFIED ===
+
+BEFORE pattern: auth.logout.start, auth.language.update.start
+AFTER OK pattern: auth.logout.ok, auth.language.update.ok
+AFTER ERROR pattern: auth.logout.error, auth.language.update.error
+PII-clean: user_id logged (not email), no token value logged (token_len only per convention)
+AP13 assertion: "no verbose logger call contains the full email value" → PASS

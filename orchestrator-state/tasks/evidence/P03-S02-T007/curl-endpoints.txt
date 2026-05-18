@@ -1,0 +1,30 @@
+Backend status: UP (localhost:8000)
+  GET /health → 200 {"data":{"status":"ok","version":"0.1.0","uptime":1509.23}}
+  GET /ready  → 200 {"data":{"db":{"status":"ok"},"redis":{"status":"ok"},"litellm":{"status":"unknown"}}}
+
+Note: Task context mentioned /ready might return 500 due to multi-worktree port collision,
+but at test execution time /ready returned 200. Backend is healthy and DB is up.
+
+=== SMOKE CHECKS ===
+
+1. GET /api/v1/users/me (no token) → 401
+HTTP/1.1 401 Unauthorized
+{"data":null,"meta":{"request_id":"fffa1a06-edfd-4201-97ae-1d3c31e9eeb8"},"errors":[{"code":"AUTH_SESSION_EXPIRED","message":"Session expired or invalid credentials. Please sign in again.","field":null,"details":null}]}
+EXIT: 0 — endpoint EXISTS, requires auth as expected
+
+2. POST /api/v1/auth/logout (no token) → 401
+HTTP/1.1 401 Unauthorized
+x-request-id: a2b60e17-8351-42b9-9f6e-ddb661f08d17
+set-cookie: refresh_token=""; HttpOnly; Max-Age=0; Path=/api/v1/auth; SameSite=lax; Secure
+{"data":null,"meta":{"request_id":"a2b60e17-8351-42b9-9f6e-ddb661f08d17"},"errors":[{"code":"AUTH_SESSION_EXPIRED","message":"Session expired or invalid; please sign in again.","field":null,"details":null}]}
+EXIT: 0 — endpoint EXISTS, requires auth as expected
+NOTE: Cookie cleared on logout attempt even without valid token (defensive behavior)
+
+3. PATCH /api/v1/users/me/language (no token) → 401
+HTTP/1.1 401 Unauthorized
+{"data":null,"meta":{"request_id":"af00c5ec-579f-439f-bd27-87f38aef2415"},"errors":[{"code":"AUTH_SESSION_EXPIRED","message":"Session expired or invalid credentials. Please sign in again.","field":null,"details":null}]}
+EXIT: 0 — endpoint EXISTS, requires auth as expected
+
+=== RESULT ===
+All 3 endpoints respond 401 (not 404), confirming they exist and are auth-protected.
+R2 endpoint discrepancy (planner resolved: /users/me family confirmed, not /auth/me) is verified.

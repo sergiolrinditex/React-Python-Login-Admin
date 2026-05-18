@@ -6,6 +6,9 @@
  *   Extended in P03-S01-T002 — SignUpPage: added signUp() method (§D-T002-AUTH-DATA).
  *   Extended in P03-S01-T003 — ForgotPasswordPage: added forgotPassword() method.
  *   Extended in P03-S01-T005 — TwoFactorPage: added verifyMfa() method (§D-T005-AUTH-DATA).
+ *   Extended in P03-S02-T007 — AccountPage: added updateLanguage() method
+ *     (§D-T007-WRITE-SET-DRIFT-AUTHREPO: language endpoint is part of the auth/user contract,
+ *      lives next to fetchMe and logout; moving to presentation/ would violate Clean Architecture).
  *
  * Responsibility: Concrete implementation of IAuthRepository (domain port).
  *   Calls the backend auth/user endpoints. All calls use authFetch (credentials:'include',
@@ -22,11 +25,13 @@
  *   - POST /api/v1/auth/refresh  → cookie-only; returns new access_token.
  *   - GET  /api/v1/users/me      → Bearer required; returns UserProfile.
  *   - POST /api/v1/auth/logout   → Bearer required; 204 on success.
+ *   - PATCH /api/v1/users/me/language → Bearer required; returns UserProfile (§D-T007-WRITE-SET-DRIFT-AUTHREPO).
  *
  * Non-negotiables §logging: BEFORE + AFTER + ERROR on every public method.
  * Security: NEVER log password. NEVER log full email. NEVER log full name (PII).
  *   Log email_domain only. Log password_len (numeric) only.
  *   §D-T005-PII-LOGGING: NEVER log code, challengeToken, access_token. Log only lengths.
+ *   §D-T007-PII-LOGGING: NEVER log token value in updateLanguage. Log token_len only.
  */
 
 import type {
@@ -776,6 +781,107 @@ export class AuthRepository implements IAuthRepository {
       const domainErr = mapFetchError(err);
       logError("auth.repo.fetchMe.error", { error: domainErr.message });
       return { ok: false, error: domainErr };
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // updateLanguage — P03-S02-T007 (§D-T007-WRITE-SET-DRIFT-AUTHREPO)
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Calls PATCH /api/v1/users/me/language with { language } body.
+   * Returns the updated UserProfile on 200; error on 400/401/422/network.
+   *
+   * §D-T007-WRITE-SET-DRIFT-AUTHREPO: this method is added here (data layer) rather
+   *   than in presentation/useLanguagePicker.ts to preserve Clean Architecture.
+   *   Language preference is an auth/user domain operation (requires Bearer token,
+   *   lives next to fetchMe and logout in the same /users/me family).
+   *   Precedent: same pattern as §D-T003-I18N, §D-T004-ROUTER.
+   *
+   * Logging contract:
+   *   BEFORE: from_language (if available — uses token_len for safety), to, token_len, request_id.
+   *   AFTER OK: status, user_id (UUID, not PII), request_id.
+   *   AFTER ERR: status, request_id, error.message. NEVER log the token value.
+   *
+   * @param accessToken - Current in-memory access token (Bearer).
+   * @param language - Target language: 'es' | 'en' | 'fr'.
+   * @returns Result<UserProfile> — updated profile on success; error on failure.
+   */
+  async updateLanguage(
+    accessToken: string,
+    language: "es" | "en" | "fr",
+  ): Promise<Result<UserProfile>> {
+    const requestId = crypto.randomUUID();
+
+    logVerbose("auth.repo.updateLanguage.start", {
+      to: language,
+      token_len: accessToken.length,
+      request_id: requestId,
+    });
+
+    try {
+      const response = await fetch(`${API_BASE}/api/v1/users/me/language`, {
+        method: "PATCH",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+          "X-Request-ID": requestId,
+        },
+        body: JSON.stringify({ language }),
+      });
+
+      if (response.status === 401) {
+        logWarn("auth.repo.updateLanguage.unauthorized", {
+          status: 401,
+          request_id: requestId,
+        });
+        return { ok: false, error: new AuthSessionExpiredError() };
+      }
+
+      if (response.status === 400 || response.status === 422) {
+        logWarn("auth.repo.updateLanguage.validation", {
+          status: response.status,
+          to: language,
+          request_id: requestId,
+        });
+        return {
+          ok: false,
+          error: new Error(
+            `LANGUAGE_INVALID: language '${language}' rejected by server (${response.status})`,
+          ),
+        };
+      }
+
+      if (!response.ok) {
+        logError("auth.repo.updateLanguage.unexpected", {
+          status: response.status,
+          request_id: requestId,
+        });
+        return {
+          ok: false,
+          error: new Error(`updateLanguage failed: ${response.status}`),
+        };
+      }
+
+      // 200 — full UserProfile body returned (DISCREPANCY-1 resolved by P01-S02-T007)
+      const body = await _safeJson<{ data: UserProfile }>(response);
+      logVerbose("auth.repo.updateLanguage.ok", {
+        status: response.status,
+        user_id: body.data.id,
+        request_id: requestId,
+      });
+      return { ok: true, value: body.data };
+    } catch (err: unknown) {
+      const domainErr = mapFetchError(err);
+      logError("auth.repo.updateLanguage.error", {
+        error: domainErr.message,
+        request_id: requestId,
+      });
+      return {
+        ok: false,
+        error: domainErr instanceof NetworkError ? domainErr : new NetworkError(domainErr.message),
+      };
     }
   }
 
