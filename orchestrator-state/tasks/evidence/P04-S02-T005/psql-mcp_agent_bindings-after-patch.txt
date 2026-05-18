@@ -1,0 +1,5 @@
+mcp_agent_bindings query after PATCH
+ agent_id | tool_id | enabled 
+----------+---------+---------
+(0 filas)
+

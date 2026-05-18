@@ -1,0 +1,6 @@
+Backend verbose log sample (§D-T005-LOGS-PII-CLEAN verification):
+- agents.service.start_run.start: agent_id=UUID, input_len=4 (NOT input text) ✓
+- agents.service.bind_tools.start: agent_id=UUID, tool_count=0 (NOT tool_id values) ✓  
+- agents.router.patch_tools.ok: user_id=UUID, agent_id=UUID ✓
+- agents.service.start_run.disabled: agent_id=UUID (warning, no PII) ✓
+No agent.name, no tool_id values, no run input text in any log line.

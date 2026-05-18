@@ -1,0 +1,6 @@
+GET /api/v1/admin/ai/agents (no auth):
+Status: 401 - error code: AUTH_SESSION_EXPIRED
+
+GET /api/v1/admin/ai/agents (employee role):
+Status: 403 - error code: AUTH_PERMISSION_DENIED
+(confirmed permission_denied flow for non-admin users)

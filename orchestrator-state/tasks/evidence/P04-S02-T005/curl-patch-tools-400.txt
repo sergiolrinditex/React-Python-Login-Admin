@@ -1,0 +1,2 @@
+{"data":null,"meta":{"request_id":"test-tester-003"},"errors":[{"code":"AGENT_TOOL_NOT_FOUND","message":"Tool not found: 00000000-0000-0000-0000-000000000001","field":"tool_ids","details":null}]}
+HTTP_CODE:400

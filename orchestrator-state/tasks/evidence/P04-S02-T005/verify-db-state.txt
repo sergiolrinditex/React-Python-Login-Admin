@@ -1,0 +1,3 @@
+After mcp_agents seed: agents table has people_helper (enabled=true)
+After PATCH tool_ids=[]: mcp_agent_bindings count=0 (confirmed)
+After 409 test: agents.enabled restored to true

@@ -1,0 +1,4 @@
+PATCH /api/v1/admin/ai/agents/6cf15afb-.../tools
+Body: {"tool_ids":["00000000-0000-0000-0000-000000000099"]}
+Status: 400 Bad Request
+Error: AGENT_TOOL_NOT_FOUND - field: tool_ids (error_validation path confirmed)

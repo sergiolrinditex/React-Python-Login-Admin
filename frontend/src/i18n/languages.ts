@@ -55,6 +55,7 @@ export const I18N_NAMESPACES = [
   "admin-ai",
   "rag",
   "mcp",
+  "agents",
   "errors",
 ] as const;
 
