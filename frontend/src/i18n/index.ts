@@ -135,13 +135,59 @@ const resources = {
           payloadInvalid: "Datos de registro no válidos. Comprueba los campos e inténtalo de nuevo.",
         },
       },
+      // §D-T003-I18N (ForgotPasswordPage namespace — extended in P03-S01-T005 to fix T003 gap)
       forgot: {
         title: "Recuperar acceso",
+        titleHint: "Área de empleados",
+        email: "Email corporativo",
+        emailPlaceholder: "nombre@empresa.com",
+        submit: "Enviar enlace de recuperación",
         cta: "Enviar enlace de recuperación",
+        status: { submitting: "Enviando…" },
+        successFlash: "Si el email está registrado, recibirás las instrucciones en breve.",
+        actions: { signIn: "Volver a iniciar sesión" },
+        errors: {
+          emailRequired: "El email es obligatorio.",
+          emailFormat: "Introduce un email válido.",
+          rateLimited: "Demasiados intentos. Espera {{seconds}} segundos e inténtalo de nuevo.",
+          network: "Sin conexión. Comprueba tu red e inténtalo de nuevo.",
+          serverInternal: "Error interno del servidor. Inténtalo de nuevo más tarde.",
+        },
       },
+      // §D-T004-I18N: reset_sent keys (ES) — anti-enumeration tone, {{maskedEmail}} only in body.with_email
+      // §D-T004-I18N-BUNDLE: resource bundle insertion ES
+      reset_sent: {
+        title: "Revisa tu correo",
+        body: {
+          with_email: "Si {{maskedEmail}} está registrado en Hilo, recibirás un correo con instrucciones en breve.",
+          fallback: "Si la dirección está registrada en Hilo, recibirás un correo con instrucciones en breve.",
+        },
+        actions: {
+          back_to_sign_in: "Volver al inicio de sesión",
+        },
+      },
+      // §D-T005-I18N: twoFactor namespace extended (P03-S01-T005)
+      // §D-T005-I18N-LOCKSTEP: all keys present in ES/EN/FR (parallel update)
       twoFactor: {
         title: "Verificación en dos pasos",
+        titleHint: "Área de empleados",
+        intro: "Introduce el código de 6 dígitos de tu app de autenticación.",
         codeLabel: "Código de verificación",
+        codePlaceholder: "123456",
+        submit: "Verificar",
+        cta: "Verificar y entrar",
+        status: { submitting: "Verificando…" },
+        errors: {
+          codeRequired: "El código es obligatorio.",
+          codeFormat: "Introduce un código de 6 dígitos numéricos.",
+          invalidCode: "Código incorrecto. Vuelve a intentarlo.",
+          challengeExpired: "Tu desafío ha expirado. Inicia sesión de nuevo.",
+          rateLimited: "Demasiados intentos. Espera {{seconds}} segundos e inténtalo de nuevo.",
+          network: "Sin conexión. Comprueba tu red e inténtalo de nuevo.",
+          serverInternal: "Error interno del servidor. Inténtalo de nuevo más tarde.",
+          missingChallenge: "No hay desafío activo. Inicia sesión de nuevo.",
+        },
+        actions: { backToSignIn: "Volver a iniciar sesión" },
       },
     },
     chat: {
@@ -165,6 +211,31 @@ const resources = {
       language: "Idioma",
       languageHint: "El idioma seleccionado se aplica a toda la interfaz",
       logout: "Cerrar sesión",
+    },
+    // §D-T003-I18N: history namespace added (P03-S02-T003 — HistoryPage)
+    history: {
+      pageTitle: "CONVERSACIONES",
+      groups: {
+        today: "HOY",
+        yesterday: "AYER",
+        thisWeek: "ESTA SEMANA",
+        thisMonth: "ESTE MES",
+        earlier: "ANTERIORES",
+      },
+      empty: {
+        title: "SIN CONVERSACIONES",
+        body: "Empieza una nueva conversación para ver el historial aquí.",
+        cta: "Nueva conversación",
+      },
+      errorNetwork: {
+        title: "Error de conexión. Comprueba tu red.",
+        retry: "Reintentar",
+      },
+      permissionDenied: "No tienes permiso para ver el historial.",
+      loading: "Cargando historial...",
+      untitledConversation: "Conversación sin título",
+      list: { aria: "Historial de conversaciones" },
+      row: { openLabel: "Abrir conversación, {{title}}" },
     },
     "admin-ai": {
       // §D-T002-I18N: models.* extended for AdminAiModelsPage (P04-S01-T002)
@@ -673,13 +744,57 @@ const resources = {
           payloadInvalid: "Invalid registration data. Check the fields and try again.",
         },
       },
+      // §D-T003-I18N EN (ForgotPasswordPage namespace — extended in P03-S01-T005 to fix T003 gap)
       forgot: {
         title: "Reset access",
+        titleHint: "Employee area",
+        email: "Corporate email",
+        emailPlaceholder: "name@company.com",
+        submit: "Send recovery link",
         cta: "Send recovery link",
+        status: { submitting: "Sending…" },
+        successFlash: "If the email is registered, you will receive the instructions shortly.",
+        actions: { signIn: "Back to sign in" },
+        errors: {
+          emailRequired: "Email is required.",
+          emailFormat: "Enter a valid email address.",
+          rateLimited: "Too many attempts. Wait {{seconds}} seconds and try again.",
+          network: "No connection. Check your network and try again.",
+          serverInternal: "Internal server error. Please try again later.",
+        },
       },
+      // §D-T004-I18N-BUNDLE: resource bundle insertion EN
+      reset_sent: {
+        title: "Check your email",
+        body: {
+          with_email: "If {{maskedEmail}} is registered in Hilo, you will receive an email with instructions shortly.",
+          fallback: "If the address is registered in Hilo, you will receive an email with instructions shortly.",
+        },
+        actions: {
+          back_to_sign_in: "Back to sign in",
+        },
+      },
+      // §D-T005-I18N-BUNDLE: twoFactor namespace extended EN (P03-S01-T005)
       twoFactor: {
         title: "Two-step verification",
+        titleHint: "Employee area",
+        intro: "Enter the 6-digit code from your authenticator app.",
         codeLabel: "Verification code",
+        codePlaceholder: "123456",
+        submit: "Verify",
+        cta: "Verify and continue",
+        status: { submitting: "Verifying…" },
+        errors: {
+          codeRequired: "The code is required.",
+          codeFormat: "Enter a 6-digit numeric code.",
+          invalidCode: "Incorrect code. Please try again.",
+          challengeExpired: "Your challenge has expired. Please sign in again.",
+          rateLimited: "Too many attempts. Try again in {{seconds}} seconds.",
+          network: "No connection. Check your network and try again.",
+          serverInternal: "Internal server error. Please try again later.",
+          missingChallenge: "No active challenge. Please sign in again.",
+        },
+        actions: { backToSignIn: "Back to sign in" },
       },
     },
     chat: {
@@ -703,6 +818,31 @@ const resources = {
       language: "Language",
       languageHint: "The selected language applies to the entire interface",
       logout: "Sign out",
+    },
+    // §D-T003-I18N: history namespace added (P03-S02-T003 — HistoryPage)
+    history: {
+      pageTitle: "CONVERSATIONS",
+      groups: {
+        today: "TODAY",
+        yesterday: "YESTERDAY",
+        thisWeek: "THIS WEEK",
+        thisMonth: "THIS MONTH",
+        earlier: "EARLIER",
+      },
+      empty: {
+        title: "NO CONVERSATIONS",
+        body: "Start a new conversation to see history here.",
+        cta: "New conversation",
+      },
+      errorNetwork: {
+        title: "Connection error. Check your network.",
+        retry: "Try again",
+      },
+      permissionDenied: "You do not have permission to view the history.",
+      loading: "Loading history...",
+      untitledConversation: "Untitled conversation",
+      list: { aria: "Conversation history" },
+      row: { openLabel: "Open conversation, {{title}}" },
     },
     "admin-ai": {
       // §D-T002-I18N: models.* extended for AdminAiModelsPage (P04-S01-T002)
@@ -1211,13 +1351,57 @@ const resources = {
           payloadInvalid: "Données d'inscription invalides. Vérifiez les champs et réessayez.",
         },
       },
+      // §D-T003-I18N FR (ForgotPasswordPage namespace — extended in P03-S01-T005 to fix T003 gap)
       forgot: {
         title: "Réinitialiser l'accès",
+        titleHint: "Espace employé",
+        email: "Email professionnel",
+        emailPlaceholder: "nom@entreprise.com",
+        submit: "Envoyer le lien de récupération",
         cta: "Envoyer le lien de récupération",
+        status: { submitting: "Envoi en cours…" },
+        successFlash: "Si l'email est enregistré, vous recevrez les instructions sous peu.",
+        actions: { signIn: "Retour à la connexion" },
+        errors: {
+          emailRequired: "L'email est obligatoire.",
+          emailFormat: "Entrez une adresse email valide.",
+          rateLimited: "Trop de tentatives. Attendez {{seconds}} secondes et réessayez.",
+          network: "Pas de connexion. Vérifiez votre réseau et réessayez.",
+          serverInternal: "Erreur interne du serveur. Veuillez réessayer plus tard.",
+        },
       },
+      // §D-T004-I18N-BUNDLE: resource bundle insertion FR
+      reset_sent: {
+        title: "Vérifiez votre email",
+        body: {
+          with_email: "Si {{maskedEmail}} est enregistré dans Hilo, vous recevrez un email contenant les instructions sous peu.",
+          fallback: "Si l'adresse est enregistrée dans Hilo, vous recevrez un email contenant les instructions sous peu.",
+        },
+        actions: {
+          back_to_sign_in: "Retour à la connexion",
+        },
+      },
+      // §D-T005-I18N-BUNDLE: twoFactor namespace extended FR (P03-S01-T005)
       twoFactor: {
         title: "Vérification en deux étapes",
+        titleHint: "Espace employé",
+        intro: "Saisis le code à 6 chiffres de ton application d'authentification.",
         codeLabel: "Code de vérification",
+        codePlaceholder: "123456",
+        submit: "Vérifier",
+        cta: "Vérifier et continuer",
+        status: { submitting: "Vérification…" },
+        errors: {
+          codeRequired: "Le code est obligatoire.",
+          codeFormat: "Saisis un code de 6 chiffres numériques.",
+          invalidCode: "Code incorrect. Réessaie.",
+          challengeExpired: "Ton défi a expiré. Reconnecte-toi.",
+          rateLimited: "Trop de tentatives. Réessaie dans {{seconds}} secondes.",
+          network: "Pas de connexion. Vérifie ton réseau et réessaie.",
+          serverInternal: "Erreur interne du serveur. Réessaie plus tard.",
+          missingChallenge: "Aucun défi actif. Reconnecte-toi.",
+        },
+        actions: { backToSignIn: "Retour à la connexion" },
       },
     },
     chat: {
@@ -1241,6 +1425,31 @@ const resources = {
       language: "Langue",
       languageHint: "La langue sélectionnée s'applique à toute l'interface",
       logout: "Se déconnecter",
+    },
+    // §D-T003-I18N: history namespace added (P03-S02-T003 — HistoryPage)
+    history: {
+      pageTitle: "CONVERSATIONS",
+      groups: {
+        today: "AUJOURD'HUI",
+        yesterday: "HIER",
+        thisWeek: "CETTE SEMAINE",
+        thisMonth: "CE MOIS-CI",
+        earlier: "PLUS ANCIENS",
+      },
+      empty: {
+        title: "AUCUNE CONVERSATION",
+        body: "Démarrez une nouvelle conversation pour voir l'historique ici.",
+        cta: "Nouvelle conversation",
+      },
+      errorNetwork: {
+        title: "Erreur de connexion. Vérifiez votre réseau.",
+        retry: "Réessayer",
+      },
+      permissionDenied: "Vous n'avez pas la permission de voir l'historique.",
+      loading: "Chargement de l'historique...",
+      untitledConversation: "Conversation sans titre",
+      list: { aria: "Historique des conversations" },
+      row: { openLabel: "Ouvrir la conversation, {{title}}" },
     },
     "admin-ai": {
       // §D-T002-I18N: models.* extended for AdminAiModelsPage (P04-S01-T002)

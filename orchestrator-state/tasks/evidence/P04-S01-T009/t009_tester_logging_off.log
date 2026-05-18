@@ -1,0 +1,20 @@
+
+stderr | src/features/mcp/__tests__/mcpRepository.test.ts > mcpRepository.createServer > R17 — 401 → McpAuthExpiredError
+[mcp] mcp.repo.createServer.auth_expired { status: [33m401[39m, request_id: [32m'test-req-id'[39m }
+
+stderr | src/features/rag/__tests__/updateCollection.test.ts > RagRepository.updateCollection > U07 — PATCH network reject → RagNetworkError
+[rag] rag.repo.updateCollection.error { collection_id: [32m'coll-uuid-001'[39m, error: [32m'RAG_NETWORK_ERROR'[39m }
+
+stderr | src/features/mcp/__tests__/mcpRepository.test.ts > mcpRepository.createServer > R18 — 403 → McpForbiddenError
+[mcp] mcp.repo.createServer.forbidden { status: [33m403[39m, request_id: [32m'test-req-id'[39m }
+
+ ✓ src/features/mcp/__tests__/mcpRepository.test.ts (18 tests) 7ms
+ ✓ src/features/rag/__tests__/updateCollection.test.ts (8 tests) 7ms
+ ✓ src/features/chat/presentation/__tests__/historyGrouping.test.ts (10 tests) 5ms
+ ✓ src/features/auth/data/__tests__/httpClient.test.ts (4 tests) 6ms
+
+ Test Files  45 passed (45)
+      Tests  536 passed (536)
+   Start at  07:45:30
+   Duration  7.97s (transform 3.34s, setup 7.05s, collect 14.56s, tests 6.46s, environment 32.92s, prepare 5.30s)
+
