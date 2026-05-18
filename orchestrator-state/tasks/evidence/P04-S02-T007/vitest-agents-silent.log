@@ -1,0 +1,89 @@
+
+> hilo-people-frontend@0.1.0 test
+> vitest --run src/features/agents src/pages/admin/agents
+
+
+ RUN  v3.2.4 /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P04-S02-T007/frontend
+
+stderr | src/features/agents/__tests__/agentsRepository.test.ts > agentsRepository.listAgents > R02 — 401 → Result.err AgentsAuthExpiredError
+[agents] agents.repo.listAgents.auth_expired { status: [33m401[39m, request_id: [32m'test-req-id'[39m }
+
+stderr | src/features/agents/__tests__/agentsRepository.test.ts > agentsRepository.listAgents > R03 — 403 → Result.err AgentsForbiddenError
+[agents] agents.repo.listAgents.forbidden { status: [33m403[39m, request_id: [32m'test-req-id'[39m }
+
+stderr | src/features/agents/__tests__/agentsRepository.test.ts > agentsRepository.listAgents > R04 — 500 → Result.err AgentsServerError
+[agents] agents.repo.listAgents.server_error { status: [33m500[39m, request_id: [32m'test-req-id'[39m }
+
+stderr | src/features/agents/__tests__/agentsRepository.test.ts > agentsRepository.listAgents > R04b — network failure → Result.err AgentsNetworkError
+[agents] agents.repo.listAgents.error { error: [32m'AGENTS_NETWORK_ERROR'[39m }
+
+stderr | src/features/agents/__tests__/agentsRepository.test.ts > agentsRepository.updateAgentTools > R06 — 400 AGENT_TOOL_NOT_APPROVED → AgentsToolNotApprovedError
+[agents] agents.repo.updateAgentTools.validation_error {
+  agent_id: [32m'agent-uuid-1'[39m,
+  error_code: [32m'AGENT_TOOL_NOT_APPROVED'[39m,
+  request_id: [32m'test-req-id'[39m
+}
+
+stderr | src/features/agents/__tests__/agentsRepository.test.ts > agentsRepository.updateAgentTools > R06b — 400 AGENT_TOOL_NOT_FOUND → AgentsToolNotFoundError
+[agents] agents.repo.updateAgentTools.validation_error {
+  agent_id: [32m'agent-uuid-1'[39m,
+  error_code: [32m'AGENT_TOOL_NOT_FOUND'[39m,
+  request_id: [32m'test-req-id'[39m
+}
+
+stderr | src/features/agents/__tests__/agentsRepository.test.ts > agentsRepository.updateAgentTools > R07 — 404 → AgentsAgentNotFoundError
+[agents] agents.repo.updateAgentTools.not_found { agent_id: [32m'agent-uuid-1'[39m, request_id: [32m'test-req-id'[39m }
+
+stderr | src/features/agents/__tests__/agentsRepository.test.ts > agentsRepository.startAgentRun > R09 — 409 AGENT_DISABLED → AgentsAgentDisabledError
+[agents] agents.repo.startAgentRun.agent_disabled { agent_id: [32m'agent-uuid-1'[39m, request_id: [32m'test-req-id'[39m }
+
+stderr | src/features/agents/__tests__/agentsRepository.test.ts > agentsRepository.startAgentRun > R10 — 502 → AgentsRunUnreachableError (expected dev sandbox path)
+[agents] agents.repo.startAgentRun.unreachable { agent_id: [32m'agent-uuid-1'[39m, request_id: [32m'test-req-id'[39m }
+
+ ✓ src/features/agents/__tests__/agentsRepository.test.ts (12 tests) 7ms
+stderr | src/features/agents/__tests__/useStartAgentRun.test.ts > useStartAgentRun > S02 — 409 AGENT_DISABLED → throws AgentsAgentDisabledError
+[agents] agents.useStartAgentRun.mutate.error { agent_id: [32m'agent-uuid-1'[39m, code: [32m'AGENT_DISABLED'[39m }
+
+stderr | src/features/agents/__tests__/useAgents.test.ts > useAgents > H03 — surfaces AgentsForbiddenError as isError=true
+[agents] agents.useAgents.fetch.error { code: [32m'AGENTS_FORBIDDEN'[39m }
+
+stderr | src/features/agents/__tests__/useUpdateAgentTools.test.ts > useUpdateAgentTools > U02 — error reverts optimistic cache update
+[agents] agents.useUpdateAgentTools.mutate.error { agent_id: [32m'agent-uuid-1'[39m, code: [32m'AGENT_TOOL_NOT_APPROVED'[39m }
+
+stderr | src/features/agents/__tests__/useUpdateAgentTools.test.ts > useUpdateAgentTools > U02 — error reverts optimistic cache update
+[agents] agents.useUpdateAgentTools.onError.reverted { agent_id: [32m'agent-uuid-1'[39m, error: [32m'AGENT_TOOL_NOT_APPROVED'[39m }
+
+stderr | src/features/agents/__tests__/useAgents.test.ts > useAgents > H04 — surfaces AgentsAuthExpiredError as isError=true
+[agents] agents.useAgents.fetch.error { code: [32m'AGENTS_AUTH_EXPIRED'[39m }
+
+stderr | src/features/agents/__tests__/useStartAgentRun.test.ts > useStartAgentRun > S03 — 502 → throws AgentsRunUnreachableError (expected dev sandbox path)
+[agents] agents.useStartAgentRun.mutate.error { agent_id: [32m'agent-uuid-1'[39m, code: [32m'AGENT_RUN_FAILED'[39m }
+
+stderr | src/features/agents/__tests__/useAgents.test.ts > useAgents > H05 — refetch triggers a second listAgents call
+[agents] agents.useAgents.fetch.error { code: [32m'AGENTS_NETWORK_ERROR'[39m }
+
+ ✓ src/features/agents/__tests__/useStartAgentRun.test.ts (4 tests) 173ms
+stderr | src/features/agents/__tests__/useUpdateAgentTools.test.ts > useUpdateAgentTools > U04 — 400 AGENT_TOOL_NOT_APPROVED → throws AgentsToolNotApprovedError
+[agents] agents.useUpdateAgentTools.mutate.error { agent_id: [32m'agent-uuid-1'[39m, code: [32m'AGENT_TOOL_NOT_APPROVED'[39m }
+
+stderr | src/features/agents/__tests__/useUpdateAgentTools.test.ts > useUpdateAgentTools > U04 — 400 AGENT_TOOL_NOT_APPROVED → throws AgentsToolNotApprovedError
+[agents] agents.useUpdateAgentTools.onError.reverted { agent_id: [32m'agent-uuid-1'[39m, error: [32m'AGENT_TOOL_NOT_APPROVED'[39m }
+
+stderr | src/features/agents/__tests__/useUpdateAgentTools.test.ts > useUpdateAgentTools > U05 — 404 → throws AgentsAgentNotFoundError
+[agents] agents.useUpdateAgentTools.mutate.error { agent_id: [32m'nonexistent-agent'[39m, code: [32m'AGENT_NOT_FOUND'[39m }
+
+stderr | src/features/agents/__tests__/useUpdateAgentTools.test.ts > useUpdateAgentTools > U05 — 404 → throws AgentsAgentNotFoundError
+[agents] agents.useUpdateAgentTools.onError.reverted { agent_id: [32m'nonexistent-agent'[39m, error: [32m'AGENT_NOT_FOUND'[39m }
+
+ ✓ src/pages/admin/agents/__tests__/AgentsPage.test.tsx (12 tests) 135ms
+stderr | src/features/agents/__tests__/useAgents.test.ts > useAgents > H06 — 500 error surfaces as AgentsServerError
+[agents] agents.useAgents.fetch.error { code: [32m'AGENTS_SERVER_ERROR'[39m }
+
+ ✓ src/features/agents/__tests__/useUpdateAgentTools.test.ts (6 tests) 280ms
+ ✓ src/features/agents/__tests__/useAgents.test.ts (6 tests) 328ms
+
+ Test Files  5 passed (5)
+      Tests  40 passed (40)
+   Start at  01:17:08
+   Duration  1.96s (transform 425ms, setup 815ms, collect 920ms, tests 923ms, environment 3.17s, prepare 800ms)
+

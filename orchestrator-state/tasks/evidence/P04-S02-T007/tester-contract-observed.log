@@ -1,0 +1,29 @@
+=== Contract Observed — P04-S02-T007 Tester Run ===
+Date: 2026-05-18T23:27:00Z
+
+Route: /admin/ai/agents (router.tsx:329, inside RequireRole(["people_admin","super_admin"]))
+Provider: agentsQuery (queryKey ["admin","agents"], staleTime 30s)
+
+API client / endpoints observed:
+  - GET /api/v1/admin/ai/agents → HTTP 200, response: {data:[{id,name,enabled,config,bound_tools}]}
+    Observed: people_helper agent (UUID 1d287599-9047-4835-86e2-81628c6d93a0, enabled=true)
+  - POST /api/v1/agents/runs → HTTP 502, error code: AGENT_RUN_FAILED (§D-T005-502-INTENT confirmed)
+
+DTO observed:
+  - Agent: {id, name, description, enabled, config: {model,max_tokens,mcp_server_ref}, bound_tools: []}
+  - AgentRun error: {code: "AGENT_RUN_FAILED", message: "Agent run failed. Check server logs for details."}
+
+Repository layer (frontend):
+  - agentsRepository.ts — authFetch-based adapter, 10 typed errors
+  - All 12 repository tests pass (R01-R10 + 2)
+
+DB tables observed:
+  - agents table: SELECT id, name, enabled WHERE name='people_helper' → 1 row (UUID 1d287599..., enabled=t)
+
+i18n:
+  - languages.ts:58 — "agents" in I18N_NAMESPACES
+  - index.ts — agents namespace ES@725, EN@1447, FR@2080
+
+Auth guard:
+  - RequireRole(["people_admin","super_admin"]) at router.tsx:300-334
+  - Token acquired via POST /api/v1/auth/sign-in as admin.peopletech@inditex-sandbox.com (people_admin role)

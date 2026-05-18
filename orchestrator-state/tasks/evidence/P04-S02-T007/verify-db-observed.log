@@ -1,0 +1,24 @@
+# DB observed state — P04-S02-T007 verify-slice
+# Timestamp: 2026-05-19T10:00:00+00:00
+
+# Hard reset (before seed):
+DELETE FROM agent_runs; → DELETE 4
+DELETE FROM mcp_agent_bindings; → DELETE 0
+DELETE FROM mcp_tools; → DELETE 0
+DELETE FROM mcp_servers; → DELETE 1
+
+# Seed command:
+DATABASE_URL=postgresql+psycopg://hilo:hilo@localhost:5432/hilo_dev \
+  python3 -m app.verification_data.bootstrap --source data/verification --only mcp_agents
+# Result: {"status":"ok","groups":[{"group":"mcp_agents","status":"ok","inserted":1,"updated":0,...},{"group":"mcp_agents","status":"ok","inserted":0,"updated":1,...}]}
+
+# Post-seed DB state:
+SELECT id, name, enabled FROM agents WHERE name='people_helper';
+  id                                   | name          | enabled
+  1d287599-9047-4835-86e2-81628c6d93a0 | people_helper | t
+  (1 row)
+
+# After POST /agents/runs (502 expected):
+SELECT id, agent_id, status, created_at FROM agent_runs ORDER BY created_at DESC LIMIT 3;
+  f09695e7-af7a-41a2-a908-40e8498b6e3c | 1d287599-9047-4835-86e2-81628c6d93a0 | failed | 2026-05-18 23:34:19.036965+00
+  (1 row) — run persisted with status=failed

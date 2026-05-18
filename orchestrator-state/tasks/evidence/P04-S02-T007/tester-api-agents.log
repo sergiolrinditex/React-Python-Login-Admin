@@ -1,0 +1,1 @@
+{"data":[{"id":"1d287599-9047-4835-86e2-81628c6d93a0","name":"people_helper","description":"Agente de ayuda para consultas de políticas de RRHH","enabled":true,"config":{"model":"gpt-4o","max_tokens":1024,"mcp_server_ref":"sandbox_readonly"},"bound_tools":[]}],"meta":{"request_id":"b2d06852-4b8d-4686-afcc-66624e610f91"}}

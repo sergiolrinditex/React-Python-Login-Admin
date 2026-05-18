@@ -1,0 +1,25 @@
+# Console PII scan — P04-S02-T007 verify-slice
+# MCP: chrome-devtools
+# Timestamp: 2026-05-19T10:00:00+00:00
+
+# Page load console messages (agents scope):
+[info] [agents] agents.useAgents.fetch.start (no payload)
+[info] [agents] agents.repo.listAgents.start (no payload)
+[info] [auth] auth.http.request.start (request metadata only)
+[info] [auth] auth.http.request.ok (request metadata only)
+[info] [agents] agents.repo.listAgents.ok {"count":1,"request_id":"unknown"}
+[info] [agents] agents.useAgents.fetch.success {"count":1}
+
+# Run launcher error console messages:
+[warn] [agents] agents.repo.startAgentRun.unreachable {"agent_id":"1d287599-9047-4835-86e2-81628c6d93a0","request_id":"unknown"}
+[warn] [agents] agents.useStartAgentRun.mutate.error {"agent_id":"1d287599-9047-4835-86e2-81628c6d93a0","code":"AGENT_RUN_FAILED"}
+
+# PII Assessment:
+# - No tokens logged (access token, refresh token, API key)
+# - No passwords logged
+# - No user email logged
+# - No run input text logged ("ping test" input NOT in any log payload)
+# - agent_id UUID is a public non-secret identifier (visible in admin UI)
+# - Error code AGENT_RUN_FAILED is expected per §D-T005-502-INTENT
+# - Log keys follow BEFORE/AFTER/ERROR pattern per logging contract
+# RESULT: PII_CLEAN = YES

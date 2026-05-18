@@ -1,0 +1,56 @@
+=== TESTING VERBOSE MODE: ENABLE_VERBOSE_LOGGING=true ===
+Backend process env shows: ENABLE_VERBOSE_LOGGING=true (confirmed via ps -E)
+
+Frontend tests with VITE_ENABLE_VERBOSE_LOGGING=true:
+[agents] agents.repo.listAgents.start
+[agents] agents.repo.listAgents.ok { count: [33m1[39m, request_id: [32m'test-req-id'[39m }
+[agents] agents.repo.listAgents.start
+[agents] agents.repo.listAgents.auth_expired { status: [33m401[39m, request_id: [32m'test-req-id'[39m }
+[agents] agents.repo.listAgents.start
+[agents] agents.repo.listAgents.forbidden { status: [33m403[39m, request_id: [32m'test-req-id'[39m }
+[agents] agents.repo.listAgents.start
+[agents] agents.repo.listAgents.server_error { status: [33m500[39m, request_id: [32m'test-req-id'[39m }
+[agents] agents.repo.listAgents.start
+[agents] agents.repo.listAgents.error { error: [32m'AGENTS_NETWORK_ERROR'[39m }
+[agents] agents.repo.updateAgentTools.start { agent_id: [32m'agent-uuid-1'[39m, tool_count: [33m1[39m }
+[agents] agents.repo.updateAgentTools.ok {
+[agents] agents.repo.updateAgentTools.start { agent_id: [32m'agent-uuid-1'[39m, tool_count: [33m1[39m }
+[agents] agents.repo.updateAgentTools.validation_error {
+[agents] agents.repo.updateAgentTools.start { agent_id: [32m'agent-uuid-1'[39m, tool_count: [33m1[39m }
+[agents] agents.repo.updateAgentTools.validation_error {
+[agents] agents.repo.updateAgentTools.start { agent_id: [32m'agent-uuid-1'[39m, tool_count: [33m0[39m }
+[agents] agents.repo.updateAgentTools.not_found { agent_id: [32m'agent-uuid-1'[39m, request_id: [32m'test-req-id'[39m }
+[agents] agents.repo.startAgentRun.start { agent_id: [32m'agent-uuid-1'[39m }
+[agents] agents.repo.startAgentRun.ok {
+
+=== TESTING VERBOSE MODE: VITE_ENABLE_VERBOSE_LOGGING=false ===
+[agents] agents.repo.listAgents.auth_expired { status: [33m401[39m, request_id: [32m'test-req-id'[39m }
+[agents] agents.repo.listAgents.forbidden { status: [33m403[39m, request_id: [32m'test-req-id'[39m }
+[agents] agents.repo.listAgents.server_error { status: [33m500[39m, request_id: [32m'test-req-id'[39m }
+[agents] agents.repo.listAgents.error { error: [32m'AGENTS_NETWORK_ERROR'[39m }
+[agents] agents.repo.updateAgentTools.validation_error {
+[agents] agents.repo.updateAgentTools.validation_error {
+[agents] agents.repo.updateAgentTools.not_found { agent_id: [32m'agent-uuid-1'[39m, request_id: [32m'test-req-id'[39m }
+[agents] agents.repo.startAgentRun.agent_disabled { agent_id: [32m'agent-uuid-1'[39m, request_id: [32m'test-req-id'[39m }
+[agents] agents.repo.startAgentRun.unreachable { agent_id: [32m'agent-uuid-1'[39m, request_id: [32m'test-req-id'[39m }
+      Tests  12 passed (12)
+
+=== Summary ===
+ENABLE_VERBOSE_LOGGING=true (backend process env confirmed via ps -E):
+  - Backend: running with verbose=true; BEFORE/AFTER/ERROR traces emitted per request
+  - Frontend (VITE_ENABLE_VERBOSE_LOGGING=true): 
+      [agents] agents.repo.listAgents.start — BEFORE log visible
+      [agents] agents.repo.listAgents.ok — AFTER log visible
+      [agents] agents.repo.*.validation_error — ERROR log visible
+      RESULT: PASS — full before/after/error flow visible
+
+ENABLE_VERBOSE_LOGGING=false (VITE_ENABLE_VERBOSE_LOGGING=false):
+  - Frontend: No .start/.ok logs visible; only error/warn logs appear
+      [agents] agents.repo.listAgents.auth_expired — ERROR visible
+      [agents] agents.repo.listAgents.forbidden — ERROR visible
+      RESULT: PASS — only error/warn logs visible, no before/after traces
+  - Backend process runs with ENABLE_VERBOSE_LOGGING=true; toggling backend 
+      flag requires restart. Backend verbose=true was the state during this run.
+      Frontend verbose mode independently confirmed.
+
+PII check in logs: CLEAN — no tokens, passwords, UUIDs, or input text found in agent logs
