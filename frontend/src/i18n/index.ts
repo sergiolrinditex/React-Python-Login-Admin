@@ -722,6 +722,47 @@ const resources = {
         },
       },
     },
+    // §D-T005-I18N: agents.* namespace for AgentsPage (P04-S02-T005)
+    agents: {
+      title: "Agentes IA",
+      subtitle: "Gestiona los agentes de IA y sus herramientas aprobadas",
+      empty: "No hay agentes configurados",
+      "empty.body": "Los agentes se configuran mediante migraciones y datos de verificación.",
+      columns: {
+        name: "Nombre",
+        description: "Descripción",
+        enabled: "Habilitado",
+        toolCount: "Herramientas",
+        actions: "Herramientas asignadas",
+      },
+      tools: {
+        none: "—",
+        add: "Asignar herramienta",
+        remove: "Quitar herramienta",
+        save: "Guardar selección",
+      },
+      actions: {
+        run: "Ejecutar",
+        running: "Ejecutando…",
+      },
+      run: {
+        title: "Lanzar agente",
+        inputPlaceholder: "Escribe un mensaje para el agente…",
+        submit: "Ejecutar",
+        success: "Ejecución iniciada · estado: {{status}}",
+        errors: {
+          disabled: "Este agente está deshabilitado.",
+          empty: "El mensaje no puede estar vacío.",
+          tooLong: "El mensaje no puede superar {{max}} caracteres.",
+        },
+      },
+      errors: {
+        patch_tool_not_found: "Una o más herramientas no existen.",
+        patch_tool_not_approved: "Una o más herramientas no están aprobadas.",
+        patch_not_found: "Agente no encontrado.",
+        run_rate_limited: "Demasiadas ejecuciones. Inténtalo en un momento.",
+      },
+    },
     errors: {
       AUTH_INVALID_CREDENTIALS: "Email o contraseña incorrectos",
       AUTH_MFA_REQUIRED: "Se requiere verificación en dos pasos",
@@ -734,6 +775,10 @@ const resources = {
       MCP_SERVER_UNREACHABLE: "No se puede conectar con el servidor MCP",
       MCP_TOOL_REQUIRES_APPROVAL: "Esta herramienta requiere aprobación antes de ejecutarse",
       AGENT_RUN_FAILED: "El agente no pudo completar la tarea",
+      AGENT_NOT_FOUND: "Agente no encontrado",
+      AGENT_TOOL_NOT_FOUND: "Una o más herramientas no existen",
+      AGENT_TOOL_NOT_APPROVED: "Una o más herramientas no están aprobadas",
+      AGENT_DISABLED: "Este agente está deshabilitado",
       UNKNOWN: "Ha ocurrido un error inesperado",
       NETWORK: "Error de conexión. Comprueba tu red e inténtalo de nuevo",
     },
@@ -1399,6 +1444,47 @@ const resources = {
         },
       },
     },
+    // §D-T005-I18N: agents.* namespace for AgentsPage (P04-S02-T005)
+    agents: {
+      title: "AI Agents",
+      subtitle: "Manage AI agents and their approved tools",
+      empty: "No agents configured",
+      "empty.body": "Agents are configured through migrations and verification data.",
+      columns: {
+        name: "Name",
+        description: "Description",
+        enabled: "Enabled",
+        toolCount: "Tools",
+        actions: "Assigned tools",
+      },
+      tools: {
+        none: "—",
+        add: "Assign tool",
+        remove: "Remove tool",
+        save: "Save selection",
+      },
+      actions: {
+        run: "Run",
+        running: "Running…",
+      },
+      run: {
+        title: "Launch agent",
+        inputPlaceholder: "Type a message for the agent…",
+        submit: "Run",
+        success: "Run started · status: {{status}}",
+        errors: {
+          disabled: "This agent is disabled.",
+          empty: "The message cannot be empty.",
+          tooLong: "The message cannot exceed {{max}} characters.",
+        },
+      },
+      errors: {
+        patch_tool_not_found: "One or more tools do not exist.",
+        patch_tool_not_approved: "One or more tools are not approved.",
+        patch_not_found: "Agent not found.",
+        run_rate_limited: "Too many runs. Please try again in a moment.",
+      },
+    },
     errors: {
       AUTH_INVALID_CREDENTIALS: "Incorrect email or password",
       AUTH_MFA_REQUIRED: "Two-step verification is required",
@@ -1411,6 +1497,10 @@ const resources = {
       MCP_SERVER_UNREACHABLE: "Unable to connect to the MCP server",
       MCP_TOOL_REQUIRES_APPROVAL: "This tool requires approval before it can run",
       AGENT_RUN_FAILED: "The agent could not complete the task",
+      AGENT_NOT_FOUND: "Agent not found",
+      AGENT_TOOL_NOT_FOUND: "One or more tools do not exist",
+      AGENT_TOOL_NOT_APPROVED: "One or more tools are not approved",
+      AGENT_DISABLED: "This agent is disabled",
       UNKNOWN: "An unexpected error occurred",
       NETWORK: "Connection error. Check your network and try again",
     },
@@ -1987,6 +2077,47 @@ const resources = {
         },
       },
     },
+    // §D-T005-I18N: agents.* namespace for AgentsPage (P04-S02-T005)
+    agents: {
+      title: "Agents IA",
+      subtitle: "Gérez les agents IA et leurs outils approuvés",
+      empty: "Aucun agent configuré",
+      "empty.body": "Les agents sont configurés via les migrations et les données de vérification.",
+      columns: {
+        name: "Nom",
+        description: "Description",
+        enabled: "Activé",
+        toolCount: "Outils",
+        actions: "Outils assignés",
+      },
+      tools: {
+        none: "—",
+        add: "Assigner un outil",
+        remove: "Retirer l'outil",
+        save: "Enregistrer la sélection",
+      },
+      actions: {
+        run: "Exécuter",
+        running: "Exécution…",
+      },
+      run: {
+        title: "Lancer l'agent",
+        inputPlaceholder: "Rédigez un message pour l'agent…",
+        submit: "Exécuter",
+        success: "Exécution démarrée · statut : {{status}}",
+        errors: {
+          disabled: "Cet agent est désactivé.",
+          empty: "Le message ne peut pas être vide.",
+          tooLong: "Le message ne peut pas dépasser {{max}} caractères.",
+        },
+      },
+      errors: {
+        patch_tool_not_found: "Un ou plusieurs outils n'existent pas.",
+        patch_tool_not_approved: "Un ou plusieurs outils ne sont pas approuvés.",
+        patch_not_found: "Agent introuvable.",
+        run_rate_limited: "Trop d'exécutions. Veuillez réessayer dans un moment.",
+      },
+    },
     // §D-T003-I18N: mcp.servers.* extended for McpServersPage (P04-S02-T003)
     // §D-T004-I18N: mcp.wizard.* added for McpWizardPage (P04-S02-T004)
     mcp: {
@@ -2089,6 +2220,10 @@ const resources = {
       MCP_SERVER_UNREACHABLE: "Impossible de se connecter au serveur MCP",
       MCP_TOOL_REQUIRES_APPROVAL: "Cet outil nécessite une approbation avant de s'exécuter",
       AGENT_RUN_FAILED: "L'agent n'a pas pu accomplir la tâche",
+      AGENT_NOT_FOUND: "Agent introuvable",
+      AGENT_TOOL_NOT_FOUND: "Un ou plusieurs outils n'existent pas",
+      AGENT_TOOL_NOT_APPROVED: "Un ou plusieurs outils ne sont pas approuvés",
+      AGENT_DISABLED: "Cet agent est désactivé",
       UNKNOWN: "Une erreur inattendue s'est produite",
       NETWORK: "Erreur de connexion. Vérifiez votre réseau et réessayez",
     },

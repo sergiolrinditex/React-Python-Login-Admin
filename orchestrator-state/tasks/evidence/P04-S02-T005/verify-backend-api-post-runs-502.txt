@@ -1,0 +1,4 @@
+POST /api/v1/agents/runs
+Body: {"agent_id":"6cf15afb-...","input":"ping"}
+Status: 502 Bad Gateway
+Error code: AGENT_RUN_FAILED (§D-T005-502-INTENT confirmed - DeepAgents downstream down)

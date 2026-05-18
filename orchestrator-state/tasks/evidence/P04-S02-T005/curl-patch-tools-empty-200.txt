@@ -1,0 +1,2 @@
+{"data":{"id":"6cf15afb-3f44-4cbd-baf2-fb7d30c16f5d","name":"people_helper","description":"Agente de ayuda para consultas de políticas de RRHH","enabled":true,"config":{"model":"gpt-4o","max_tokens":1024,"mcp_server_ref":"sandbox_readonly"},"bound_tools":[]},"meta":{"request_id":"test-tester-002"}}
+HTTP_CODE:200

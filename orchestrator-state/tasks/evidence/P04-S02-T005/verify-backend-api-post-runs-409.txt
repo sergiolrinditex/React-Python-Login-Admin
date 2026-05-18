@@ -1,0 +1,5 @@
+POST /api/v1/agents/runs (with agent.enabled=false in DB)
+Body: {"agent_id":"6cf15afb-...","input":"ping"}
+Status: 409 Conflict
+Error code: AGENT_DISABLED (§D-T005-BACKEND-NEW-409 confirmed)
+Agent re-enabled after test: UPDATE agents SET enabled=true WHERE id=...

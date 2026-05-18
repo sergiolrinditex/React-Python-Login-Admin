@@ -1,0 +1,108 @@
+P04-S02-T005 Re-verification API Evidence
+TIMESTAMP: 2026-05-19T00:10:00+00:00
+RERUN: Post FINDING-1 fix (MfaChallengeExpiredError now exported in errors.ts)
+
+=== BACKEND HEALTH ===
+GET http://localhost:8000/health
+Response: {"data":{"status":"ok","version":"0.1.0","uptime":5.0}}
+HTTP: 200 OK
+
+=== AUTH LOGIN (admin) ===
+POST http://localhost:8000/api/v1/auth/sign-in
+Body: {"email":"admin.peopletech@inditex-sandbox.com","password":"AdminVerify2024!"}
+Response: {"data":{"access_token":"...","refresh_token":"...",...}}
+HTTP: 200 OK
+TOKEN_LENGTH: 409 chars
+
+=== GET /api/v1/admin/ai/agents (200 success) ===
+GET http://localhost:8000/api/v1/admin/ai/agents
+Authorization: Bearer <admin_token>
+Response:
+{
+  "data": [{
+    "id": "1d287599-9047-4835-86e2-81628c6d93a0",
+    "name": "people_helper",
+    "description": "Agente de ayuda para consultas de políticas de RRHH",
+    "enabled": true,
+    "config": {"model":"gpt-4o","max_tokens":1024,"mcp_server_ref":"sandbox_readonly"},
+    "bound_tools": []
+  }],
+  "meta": {"request_id": "..."}
+}
+HTTP: 200 OK
+AGENT COUNT: 1
+AGENT NAME: people_helper
+AGENT ENABLED: true
+BOUND TOOLS: 0
+
+=== PATCH /api/v1/admin/ai/agents/{id}/tools (400 AGENT_TOOL_NOT_FOUND) ===
+PATCH http://localhost:8000/api/v1/admin/ai/agents/1d287599-9047-4835-86e2-81628c6d93a0/tools
+Body: {"tool_ids":["00000000-0000-0000-0000-000000000000"]}
+Response:
+{
+  "data": null,
+  "meta": {"request_id": "54fc8c9c-..."},
+  "errors": [{"code":"AGENT_TOOL_NOT_FOUND","message":"Tool not found: 00000000-0000-0000-0000-000000000000","field":"tool_ids","details":null}]
+}
+HTTP: 400 BAD REQUEST
+STATUS: PASS - error_validation inline per §D-T005-VALIDATION-INLINE-PER-ROW
+
+=== PATCH /api/v1/admin/ai/agents/{id}/tools (200 unbind-all) ===
+PATCH http://localhost:8000/api/v1/admin/ai/agents/1d287599-9047-4835-86e2-81628c6d93a0/tools
+Body: {"tool_ids":[]}
+Response:
+{
+  "data": {"id":"1d287599-...","name":"people_helper","enabled":true,"config":{...},"bound_tools":[]},
+  "meta": {"request_id": "a0afbf6b-..."}
+}
+HTTP: 200 OK
+STATUS: PASS - optimistic unbind-all succeeds, bound_tools=[]
+
+=== POST /api/v1/agents/runs (502 AGENT_RUN_FAILED - expected §D-T005-502-INTENT) ===
+POST http://localhost:8000/api/v1/agents/runs
+Body: {"agent_id":"1d287599-...","input":"ping"}
+Response:
+{
+  "data": null,
+  "meta": {"request_id": "bfb0dda5-..."},
+  "errors": [{"code":"AGENT_RUN_FAILED","message":"Agent run failed. Check server logs for details.","field":null,"details":null}]
+}
+HTTP: 502 BAD GATEWAY
+STATUS: PASS - expected dev sandbox path per §D-T005-502-INTENT
+
+=== POST /api/v1/agents/runs (409 AGENT_DISABLED - §D-T005-BACKEND-NEW-409) ===
+[DB: UPDATE agents SET enabled=false WHERE id='1d287599-...']
+POST http://localhost:8000/api/v1/agents/runs
+Body: {"agent_id":"1d287599-...","input":"ping"}
+Response:
+{
+  "data": null,
+  "meta": {"request_id": "420b844c-..."},
+  "errors": [{"code":"AGENT_DISABLED","message":"Agent is disabled and cannot accept run requests.","field":null,"details":null}]
+}
+HTTP: 409 CONFLICT
+STATUS: PASS - §D-T005-BACKEND-NEW-409 confirmed
+[DB: UPDATE agents SET enabled=true WHERE id='1d287599-...'] (restored)
+
+=== GET /api/v1/admin/ai/agents (401 no auth) ===
+GET http://localhost:8000/api/v1/admin/ai/agents (no Authorization header)
+Response: {"data":null,"meta":{"request_id":"..."},"errors":[{"code":"AUTH_SESSION_EXPIRED",...}]}
+HTTP: 401 UNAUTHORIZED
+STATUS: PASS - auth guard works
+
+=== DB STATE AFTER ALL TESTS ===
+agents: 1 row (people_helper, enabled=true, restored)
+mcp_agent_bindings: 0 rows
+agent_runs: 1 row (status=failed - from 502 test)
+mcp_tool_invocations: 0 rows
+
+=== PII LOG CHECK ===
+Backend verbose logs show:
+- email_domain: inditex-sandbox.com (never full email)
+- user_id: UUID only
+- request_id: UUID only
+- agent_id: UUID only
+- input_len: not logged (no input text exposed)
+- No agent.name in logs
+- No tool_id values in logs
+STATUS: PASS - §D-T005-LOGS-PII-CLEAN verified

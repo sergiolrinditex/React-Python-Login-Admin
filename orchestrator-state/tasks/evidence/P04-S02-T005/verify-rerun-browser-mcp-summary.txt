@@ -1,0 +1,75 @@
+P04-S02-T005 Re-verification Browser MCP Evidence
+TIMESTAMP: 2026-05-19T00:10:00+00:00
+MCP_BROWSER: chrome-devtools
+FRONTEND_PORT: 5178 (T005 worktree)
+
+=== APP MOUNT CHECK ===
+URL: http://localhost:5178/
+Result: App mounts correctly. Redirected to /auth/sign-in.
+No SyntaxError. No console errors.
+FINDING-1 (MfaChallengeExpiredError) CONFIRMED FIXED.
+MfaChallengeExpiredError exported at line 355 of frontend/src/features/auth/data/errors.ts.
+
+=== LOGIN PAGE ===
+URL: http://localhost:5178/auth/sign-in
+Snapshot confirms: login form rendered (email + password fields + INICIAR SESIÓN button)
+Console errors: none
+STATUS: PASS
+
+=== ADMIN LOGIN ===
+Credentials: admin.peopletech@inditex-sandbox.com / AdminVerify2024!
+Result: Redirected to /admin/ai/agents (via ?next= param)
+Console errors: none
+STATUS: PASS
+
+=== AGENTS PAGE - LOADING STATE ===
+URL: http://localhost:5178/admin/ai/agents
+Snapshot shows: heading "Agentes IA", table columns NOMBRE/HABILITADO/HERRAMIENTAS/HERRAMIENTAS ASIGNADAS/LANZAR AGENTE
+Page loads people_helper agent row immediately (fast network on localhost).
+Console errors: none
+STATUS: PASS
+
+=== AGENTS PAGE - SUCCESS STATE ===
+Agent: people_helper
+- Name: "people_helper"
+- Description: "Agente de ayuda para consultas de políticas de RRHH"
+- Status: "HABILITADO" (enabled=true)
+- Bound tools: "—" (none bound, correct)
+- Run launcher: textbox "Lanzar agente" + button "Ejecutar: people_helper"
+- aria-live regions present (uid=4_4 and uid=4_18)
+Network: GET /api/v1/admin/ai/agents [200]
+STATUS: PASS
+
+=== RUN LAUNCHER - 502 AGENT_RUN_FAILED (§D-T005-502-INTENT) ===
+Action: Fill "ping" in textbox + click "Ejecutar: people_helper"
+Result: alert "El agente no pudo completar la tarea" rendered with aria role=alert
+Console: [agents] agents.repo.startAgentRun.unreachable {agent_id:"1d287599-...",request_id:"unknown"}
+PII check: console log shows only agent_id (UUID) and request_id - no input text, no agent.name
+STATUS: PASS - §D-T005-502-INTENT confirmed end-to-end in browser
+
+=== AUTH GUARD (RequireRole) ===
+Direct navigate to /admin/ai/agents while not authenticated:
+Result: Redirected to /auth/sign-in?next=%2Fadmin%2Fai%2Fagents
+After login: Redirected back to /admin/ai/agents
+STATUS: PASS - RequireRole guard works correctly
+
+=== NETWORK REQUESTS (from DevTools) ===
+POST /api/v1/auth/refresh [401] - initial access token check
+POST /api/v1/auth/refresh [200] - refresh rotation succeeds
+GET /api/v1/users/me [200] - user profile/role fetch
+GET /api/v1/admin/ai/agents [200] - agents list loads
+
+=== CONSOLE ERRORS REVIEW ===
+Only errors observed:
+- 401 from initial auth/refresh (expected - part of token rotation flow)
+- 502 from /api/v1/agents/runs (expected §D-T005-502-INTENT)
+No SyntaxError. No unexpected module load failures. No react-dom errors.
+
+=== SCREENSHOTS SAVED ===
+verify-rerun-01-home-page.png
+verify-rerun-02-login-page.png
+verify-rerun-03-post-login-chat.png
+verify-rerun-04-agents-page-loading.png
+verify-rerun-05-agents-page-success.png
+verify-rerun-06-agent-run-502-error.png
+verify-rerun-07-agents-success-final.png

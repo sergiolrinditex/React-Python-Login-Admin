@@ -29,6 +29,8 @@
  *     WRITE_SET_DRIFT §D-T007-ROUTER: router.tsx is in the canonical Coverage Registry write_set
  *     for T007 (listed as `frontend/src/app/router.tsx`). No drift here.
  *     Route is inside existing RequireAuth block (sibling of /chat and /history).
+ *   Updated in P04-S02-T005 — added /admin/ai/agents route wired to AgentsPage (§D-T005-ROUTER).
+ *     WRITE_SET_DRIFT §D-T005-ROUTER: router.tsx declared in T005 Coverage Registry write_set.
  *
  * Responsibility: single mount point for the application's route tree.
  *   Exports <AppRouter> which is consumed by main.tsx inside <Providers>.
@@ -49,6 +51,7 @@
  *   /admin/ai/mcp/new  → McpWizardPage (admin, RequireRole) — P04-S02-T004 §D-T004-ROUTER
  *   /admin/rag/documents → RagDocumentsPage (admin, RequireRole) — P04-S02-T001 §D-RAGDOC-ROUTER
  *   /admin/rag/collections → RagCollectionsPage (admin, RequireRole) — P04-S02-T002 §D-T002-ROUTER
+ *   /admin/ai/agents   → AgentsPage (admin, RequireRole) — P04-S02-T005 §D-T005-ROUTER
  *   /admin/ai/models   → placeholder (P04-S01-T002)
  *   (other admin routes → catch-all → /)
  *   /                  → RootRedirect: authenticated→/chat, unauthenticated→/auth/sign-in
@@ -62,6 +65,7 @@
  * P04-S02-T003 adds: McpServersPage at /admin/ai/mcp (§D-T003-ROUTER).
  * P04-S02-T004 adds: McpWizardPage at /admin/ai/mcp/new (§D-T004-ROUTER).
  * P04-S02-T001 adds: RagDocumentsPage at /admin/rag/documents (§D-RAGDOC-ROUTER).
+ * P04-S02-T005 adds: AgentsPage at /admin/ai/agents (§D-T005-ROUTER).
  *
  * AuthProvider composition (task pack §I):
  *   INSIDE router.tsx: <AuthProvider> wraps <Routes>.
@@ -93,6 +97,7 @@ import McpWizardPage from "../pages/admin/mcp/McpWizardPage";
 import RagDocumentsPage from "../pages/admin/rag/RagDocumentsPage";
 import RagCollectionsPage from "../pages/admin/rag/RagCollectionsPage";
 import AccountPage from "../pages/account/AccountPage";
+import AgentsPage from "../pages/admin/agents/AgentsPage";
 import { AuthProvider } from "../features/auth/presentation/AuthProvider";
 import { useAuth } from "../features/auth/presentation/AuthProvider";
 import { RequireAuth } from "../features/auth/presentation/RequireAuth";
@@ -249,9 +254,9 @@ export function AppRouter(): ReactNode {
   if (import.meta.env.VITE_ENABLE_VERBOSE_LOGGING === "true") {
     // §D-T007-ROUTER (P03-S02-T007): ROUTE_ACCOUNT added to verbose-log routes array
     console.info("AppRouter.render.start", {
-      phase: "P03",
-      slice: "P03-S02-T007",
-      routes: [ROUTE_SHOWCASE, ROUTE_AUTH_SIGN_IN, ROUTE_AUTH_SIGN_UP, ROUTE_AUTH_RESET_SENT, ROUTE_AUTH_2FA, ROUTE_CHAT, ROUTE_HISTORY, ROUTE_ACCOUNT, ROUTE_ADMIN, ROUTE_ADMIN_AI_MCP, ROUTE_ADMIN_RAG_DOCUMENTS, ROUTE_ADMIN_AI_MODELS, ROUTE_ADMIN_AI_MODELS_NEW, ROUTE_ADMIN_AI_MODELS_TEST],
+      phase: "P04",
+      slice: "P04-S02-T005",
+      routes: [ROUTE_SHOWCASE, ROUTE_AUTH_SIGN_IN, ROUTE_AUTH_SIGN_UP, ROUTE_AUTH_RESET_SENT, ROUTE_AUTH_2FA, ROUTE_CHAT, ROUTE_HISTORY, ROUTE_ACCOUNT, ROUTE_ADMIN, ROUTE_ADMIN_AI_MCP, ROUTE_ADMIN_AI_MCP_NEW, ROUTE_ADMIN_RAG_DOCUMENTS, ROUTE_ADMIN_RAG_COLLECTIONS, ROUTE_ADMIN_AI_MODELS, ROUTE_ADMIN_AI_MODELS_NEW, ROUTE_ADMIN_AI_MODELS_TEST, ROUTE_ADMIN_AI_AGENTS],
     });
   }
 
@@ -320,6 +325,12 @@ export function AppRouter(): ReactNode {
             <Route path={ROUTE_ADMIN_AI_MODELS_TEST} element={<ModelTestDrawer />} />
             {/* P04-S02-T002: RagCollectionsPage — §D-T002-ROUTER, TECHNICAL_GUIDE §6.1 */}
             <Route path={ROUTE_ADMIN_RAG_COLLECTIONS} element={<RagCollectionsPage />} />
+            {/* P04-S02-T005: AgentsPage — §D-T005-ROUTER, TECHNICAL_GUIDE §6.1 line 242 */}
+            <Route path={ROUTE_ADMIN_AI_AGENTS} element={<AgentsPage />} />
+            {/*
+             * Subsequent admin sub-routes wired in P04-S01-T002+ slices.
+             * Until then, catch-all handles them → / → /chat for admins.
+             */}
           </Route>
 
           {/*

@@ -1,0 +1,8 @@
+GET /api/v1/admin/ai/agents
+Status: 200 OK
+User: admin.peopletech@inditex-sandbox.com (people_admin)
+Response:
+{
+  "data": [{"id":"6cf15afb-3f44-4cbd-baf2-fb7d30c16f5d","name":"people_helper","enabled":true,"config":{...},"bound_tools":[]}],
+  "meta":{"request_id":"d77ccb2a-1288-4777-99c7-05742713c71b"}
+}

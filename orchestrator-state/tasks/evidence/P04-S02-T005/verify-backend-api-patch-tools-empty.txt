@@ -1,0 +1,5 @@
+PATCH /api/v1/admin/ai/agents/6cf15afb-.../tools
+Body: {"tool_ids":[]}
+Status: 200 OK (unbind all confirmed)
+Response: full Agent with bound_tools: []
+DB: mcp_agent_bindings WHERE agent_id=... → 0 rows (confirmed via psql)

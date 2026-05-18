@@ -1,0 +1,2 @@
+{"data":null,"meta":{"request_id":"test-tester-004"},"errors":[{"code":"AGENT_RUN_FAILED","message":"Agent run failed. Check server logs for details.","field":null,"details":null}]}
+HTTP_CODE:502
