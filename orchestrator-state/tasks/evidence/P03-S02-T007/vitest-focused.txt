@@ -1,0 +1,42 @@
+Command: npm --prefix frontend run test -- --run --reporter=verbose src/features/auth/presentation/useLogout.test.tsx src/features/auth/presentation/useLanguagePicker.test.tsx src/pages/account
+Exit code: 0
+
+ RUN  v3.2.4
+
+useLanguagePicker:
+  ✓ LP1: initial current reflects useAuth().user.preferred_language
+  ✓ LP2: setLanguage('en') calls authRepository.updateLanguage with token and 'en'
+  ✓ LP3: i18n.language flips to 'en' optimistically before PATCH resolves
+  ✓ LP4: on 200 success, i18n stays at 'en', error is null, isPending is false
+  ✓ LP5: on validation error, i18n reverted to 'es', error.code is 'validation'
+  ✓ LP6: on network error, i18n reverted to 'es', error.code is 'network'
+  ✓ LP7: rapid es→en→fr sequence: final i18n.language is fr
+  ✓ LP8: clearError resets the error state
+
+useLogout:
+  ✓ L1: calls AuthProvider.logout() and navigates to /auth/sign-in on success
+  ✓ L2: isLoggingOut is true during logout and false after
+  ✓ L3: if AuthProvider.logout() rejects with 401-like error, still navigates
+  ✓ L4: if AuthProvider.logout() rejects with network error, still navigates
+  ✓ L5: emits auth.logout.start log under VITE_ENABLE_VERBOSE_LOGGING=true
+  ✓ L5b: logVerbose function exists and is gated by VITE_ENABLE_VERBOSE_LOGGING
+
+AccountPage:
+  ✓ AP01: renders aria-busy skeleton during hydration
+  ✓ AP02: success state renders user profile fields
+  ✓ AP03: language picker shows 3 options with es selected
+  ✓ AP04: clicking 'en' option calls setLanguage('en')
+  ✓ AP05: after switching to EN, UI text renders in English
+  ✓ AP06: clicking logout button calls logout()
+  ✓ AP07: unauthenticated state shows permission denied view (no user)
+  ✓ AP08: error_validation shows inline error near language picker
+  ✓ AP09: permission_denied state renders PermissionDeniedView with sign-in CTA
+  ✓ AP10: sign-in CTA in permission denied navigates to /auth/sign-in?next=/account
+  ✓ AP11: authenticated user deep-linking to /account sees the success state
+  ✓ AP12: rendered profile section contains no hardcoded hex color values in textContent
+  ✓ AP13: no verbose logger call contains the full email value
+
+ Test Files  3 passed (3)
+      Tests  27 passed (27)
+   Start at  12:52:51
+   Duration  1.90s

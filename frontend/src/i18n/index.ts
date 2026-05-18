@@ -206,11 +206,51 @@ const resources = {
         },
       },
     },
+    // §D-T007-WRITE-SET-DRIFT-I18N (P03-S02-T007): account namespace extended with profile,
+    // languagePicker, states and logoutAction keys. Same drift pattern as §D-T003-I18N,
+    // §D-T004-I18N-EXTEND. Validator accepts when documented.
     account: {
       title: "Mi cuenta",
       language: "Idioma",
       languageHint: "El idioma seleccionado se aplica a toda la interfaz",
       logout: "Cerrar sesión",
+      profile: {
+        email: "Email",
+        fullName: "Nombre completo",
+        brand: "Marca",
+        department: "Departamento",
+        country: "País",
+        center: "Centro",
+      },
+      languagePicker: {
+        aria: "Selecciona idioma",
+        options: {
+          es: "Español",
+          en: "Inglés",
+          fr: "Francés",
+        },
+      },
+      states: {
+        loading: "Cargando tu cuenta...",
+        errorNetwork: {
+          title: "Error de conexión",
+          body: "No pudimos cargar tus datos. Comprueba tu red.",
+          retry: "Reintentar",
+        },
+        errorValidation: {
+          title: "No pudimos cambiar el idioma",
+          body: "El idioma seleccionado no es válido.",
+        },
+        permissionDenied: {
+          title: "Sesión caducada",
+          body: "Vuelve a iniciar sesión para continuar.",
+          cta: "Iniciar sesión",
+        },
+      },
+      logoutAction: {
+        inProgress: "Cerrando sesión...",
+        error: "No pudimos cerrar sesión. Inténtalo de nuevo.",
+      },
     },
     // §D-T003-I18N: history namespace added (P03-S02-T003 — HistoryPage)
     history: {
@@ -813,11 +853,49 @@ const resources = {
         },
       },
     },
+    // §D-T007-WRITE-SET-DRIFT-I18N (P03-S02-T007): account namespace extended (EN).
     account: {
       title: "My account",
       language: "Language",
       languageHint: "The selected language applies to the entire interface",
       logout: "Sign out",
+      profile: {
+        email: "Email",
+        fullName: "Full name",
+        brand: "Brand",
+        department: "Department",
+        country: "Country",
+        center: "Center",
+      },
+      languagePicker: {
+        aria: "Select language",
+        options: {
+          es: "Spanish",
+          en: "English",
+          fr: "French",
+        },
+      },
+      states: {
+        loading: "Loading your account...",
+        errorNetwork: {
+          title: "Connection error",
+          body: "We couldn't load your data. Check your network.",
+          retry: "Retry",
+        },
+        errorValidation: {
+          title: "We couldn't change the language",
+          body: "The selected language is not valid.",
+        },
+        permissionDenied: {
+          title: "Session expired",
+          body: "Sign in again to continue.",
+          cta: "Sign in",
+        },
+      },
+      logoutAction: {
+        inProgress: "Signing out...",
+        error: "We couldn't sign you out. Please try again.",
+      },
     },
     // §D-T003-I18N: history namespace added (P03-S02-T003 — HistoryPage)
     history: {
@@ -1420,11 +1498,49 @@ const resources = {
         },
       },
     },
+    // §D-T007-WRITE-SET-DRIFT-I18N (P03-S02-T007): account namespace extended (FR).
     account: {
       title: "Mon compte",
       language: "Langue",
       languageHint: "La langue sélectionnée s'applique à toute l'interface",
       logout: "Se déconnecter",
+      profile: {
+        email: "Email",
+        fullName: "Nom complet",
+        brand: "Marque",
+        department: "Département",
+        country: "Pays",
+        center: "Centre",
+      },
+      languagePicker: {
+        aria: "Sélectionnez la langue",
+        options: {
+          es: "Espagnol",
+          en: "Anglais",
+          fr: "Français",
+        },
+      },
+      states: {
+        loading: "Chargement de votre compte...",
+        errorNetwork: {
+          title: "Erreur de connexion",
+          body: "Nous n'avons pas pu charger vos données. Vérifiez votre réseau.",
+          retry: "Réessayer",
+        },
+        errorValidation: {
+          title: "Nous n'avons pas pu changer la langue",
+          body: "La langue sélectionnée n'est pas valide.",
+        },
+        permissionDenied: {
+          title: "Session expirée",
+          body: "Reconnectez-vous pour continuer.",
+          cta: "Se connecter",
+        },
+      },
+      logoutAction: {
+        inProgress: "Déconnexion...",
+        error: "Nous n'avons pas pu vous déconnecter. Veuillez réessayer.",
+      },
     },
     // §D-T003-I18N: history namespace added (P03-S02-T003 — HistoryPage)
     history: {

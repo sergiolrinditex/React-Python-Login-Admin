@@ -25,6 +25,10 @@
  *   Updated in P04-S02-T004 — added /admin/ai/mcp/new route wired to McpWizardPage (§D-T004-ROUTER).
  *   Updated in P04-S01-T004 — added /admin/ai/models/:modelId/test wired to ModelTestDrawer (§D-T004-ROUTER).
  *     WRITE_SET_DRIFT §D-T004-ROUTER: authorized by task pack §6.2 file #11 (pre-approved wiring pattern).
+ *   Updated in P03-S02-T007 — added /account route wired to AccountPage (§D-T007-ROUTER).
+ *     WRITE_SET_DRIFT §D-T007-ROUTER: router.tsx is in the canonical Coverage Registry write_set
+ *     for T007 (listed as `frontend/src/app/router.tsx`). No drift here.
+ *     Route is inside existing RequireAuth block (sibling of /chat and /history).
  *
  * Responsibility: single mount point for the application's route tree.
  *   Exports <AppRouter> which is consumed by main.tsx inside <Providers>.
@@ -39,6 +43,7 @@
  *   /chat              → ChatHomePage (employee, RequireAuth) — P03-S02-T001
  *   /chat/:conversationId → placeholder (P03-S02-T002 adds real ConversationPage)
  *   /history              → HistoryPage (employee history, RequireAuth) — P03-S02-T003
+ *   /account              → AccountPage (employee account, RequireAuth) — P03-S02-T007 §D-T007-ROUTER
  *   /admin             → AdminDashboardPage (people_admin|super_admin) — P04-S01-T001
  *   /admin/ai/mcp      → McpServersPage (admin, RequireRole) — P04-S02-T003 §D-T003-ROUTER
  *   /admin/ai/mcp/new  → McpWizardPage (admin, RequireRole) — P04-S02-T004 §D-T004-ROUTER
@@ -86,6 +91,7 @@ import McpServersPage from "../pages/admin/mcp/McpServersPage";
 import McpWizardPage from "../pages/admin/mcp/McpWizardPage";
 import RagDocumentsPage from "../pages/admin/rag/RagDocumentsPage";
 import RagCollectionsPage from "../pages/admin/rag/RagCollectionsPage";
+import AccountPage from "../pages/account/AccountPage";
 import { AuthProvider } from "../features/auth/presentation/AuthProvider";
 import { useAuth } from "../features/auth/presentation/AuthProvider";
 import { RequireAuth } from "../features/auth/presentation/RequireAuth";
@@ -128,6 +134,13 @@ export const ROUTE_CHAT = "/chat";
 
 /** Route path for employee conversation history. Implemented in P03-S02-T003. §D-T003-ROUTER */
 export const ROUTE_HISTORY = "/history";
+
+/**
+ * Route path for employee account page. Implemented in P03-S02-T007. §D-T007-ROUTER.
+ * Protected by RequireAuth. Deep link without session → /auth/sign-in?next=/account.
+ * Source: TECHNICAL_GUIDE §3 (line 349 lists /account in "Rutas empleado").
+ */
+export const ROUTE_ACCOUNT = "/account";
 
 // ---------------------------------------------------------------------------
 // Admin route constants — §D-T001-ROUTER (P04-S01-T001)
@@ -233,11 +246,11 @@ function RootRedirect(): ReactNode {
  */
 export function AppRouter(): ReactNode {
   if (import.meta.env.VITE_ENABLE_VERBOSE_LOGGING === "true") {
-    // §D-T004-ROUTER (P04-S01-T004): ROUTE_ADMIN_AI_MODELS_TEST added to verbose-log routes array
+    // §D-T007-ROUTER (P03-S02-T007): ROUTE_ACCOUNT added to verbose-log routes array
     console.info("AppRouter.render.start", {
-      phase: "P04",
-      slice: "P04-S01-T004",
-      routes: [ROUTE_SHOWCASE, ROUTE_AUTH_SIGN_IN, ROUTE_AUTH_SIGN_UP, ROUTE_AUTH_RESET_SENT, ROUTE_AUTH_2FA, ROUTE_CHAT, ROUTE_HISTORY, ROUTE_ADMIN, ROUTE_ADMIN_AI_MCP, ROUTE_ADMIN_RAG_DOCUMENTS, ROUTE_ADMIN_AI_MODELS, ROUTE_ADMIN_AI_MODELS_NEW, ROUTE_ADMIN_AI_MODELS_TEST],
+      phase: "P03",
+      slice: "P03-S02-T007",
+      routes: [ROUTE_SHOWCASE, ROUTE_AUTH_SIGN_IN, ROUTE_AUTH_SIGN_UP, ROUTE_AUTH_RESET_SENT, ROUTE_AUTH_2FA, ROUTE_CHAT, ROUTE_HISTORY, ROUTE_ACCOUNT, ROUTE_ADMIN, ROUTE_ADMIN_AI_MCP, ROUTE_ADMIN_RAG_DOCUMENTS, ROUTE_ADMIN_AI_MODELS, ROUTE_ADMIN_AI_MODELS_NEW, ROUTE_ADMIN_AI_MODELS_TEST],
     });
   }
 
@@ -262,6 +275,10 @@ export function AppRouter(): ReactNode {
             <Route path={ROUTE_CHAT} element={<ChatHomePage />} />
             {/* /history — real HistoryPage (P03-S02-T003 §D-T003-ROUTER) */}
             <Route path={ROUTE_HISTORY} element={<HistoryPage />} />
+            {/* /account — real AccountPage (P03-S02-T007 §D-T007-ROUTER).
+                RequireAuth guard already applied above. Deep link without session
+                bounces to /auth/sign-in?next=/account via RequireAuth pattern. */}
+            <Route path={ROUTE_ACCOUNT} element={<AccountPage />} />
             {/*
              * /chat/:conversationId — placeholder for P03-S02-T002 (ConversationPage).
              * D-T001-OUTAGE-OF-CHAT-T002: navigate succeeds; unknown path bounces to /chat.

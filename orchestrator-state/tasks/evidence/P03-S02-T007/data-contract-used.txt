@@ -1,0 +1,30 @@
+Verification Data Contract — J102 history-language row
+
+Source: TECHNICAL_GUIDE §6.5, Task Pack line 133-145
+
+Contract row used:
+  - Journey: J102 (history-language)
+  - Data: empleado con conversación previa, 2 conversaciones persistidas, idioma inicial 'es'
+  - Setup cmd: python -m app.verification_data.bootstrap --source data/verification --only history
+  - Reset cmd: reset user language to es (bootstrap idempotently resets preferred_language='es')
+
+Verification credentials (from data/verification/users/employee_primary.json):
+  - email: employee.verification@inditex-sandbox.com
+  - employee_id: EMP-VERIFY-001
+  - brand: Zara
+  - country: ES
+  - department: People & Talent
+  - initial preferred_language: es
+
+Note for tester (pre-/verify-slice phase):
+  The data contract applies fully to /verify-slice (manual human gate), not to tester.
+  Tester is pure frontend (vitest) — no real DB verification data loading needed.
+  The vitest tests use fixture user objects based on the contract data above.
+  AccountPage.test.tsx AP02 uses MOCK_USER with:
+    - id: acc-user-uuid-001
+    - email: employee.verification@inditex-sandbox.com
+    - employee_id: EMP-VERIFY-001
+    - brand: Zara, country: ES, department: People & Talent
+
+Backend UP and DB healthy at test time (GET /ready → 200, db: ok).
+Real data verification will be performed by slice-verifier during /verify-slice.

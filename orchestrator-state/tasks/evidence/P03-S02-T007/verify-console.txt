@@ -1,0 +1,62 @@
+# Console log evidence — P03-S02-T007 verify-slice
+
+## Backend health check
+GET http://localhost:8000/health → 200 {"data":{"status":"ok","version":"0.1.0","uptime":2584.34}}
+
+## Frontend dev server
+Port 5182 (worktree) — VITE_ENABLE_VERBOSE_LOGGING=true
+
+## Verbose console logs observed during MCP verification (Chrome DevTools MCP)
+
+=== HYDRATION (navigating to /account while unauthenticated) ===
+[info] [auth] auth.provider.hydrate.start
+[info] [auth] auth.repo.refresh.start
+[error] Failed to load resource: 401 Unauthorized (refresh endpoint — no cookie in isolated context)
+[warn] [auth] auth.repo.refresh.session_expired
+[info] [auth] auth.provider.hydrate.unauthenticated
+
+=== SIGN-IN PAGE ===
+[info] [auth] auth.signin.page.render.start
+
+=== MFA PAGE ===
+[info] [auth] auth.twofactor.page.render.start
+
+=== ACCOUNT PAGE (after 2FA success, landed via ?next=%2Faccount) ===
+[info] [auth] auth.guard.RequireAuth.render {status: "authenticated"}
+[info] [auth] account.page.mount {user_id: "c8c00f55-..."}  ← UUID only, NO email/name/token
+
+=== LANGUAGE SWITCH es→en ===
+[info] [auth] auth.language.update.start {from: "es", to: "en", request_id: "..."}
+[info] [auth] auth.repo.updateLanguage.start {to: "en", token_len: N, request_id: "..."}
+[info] [auth] auth.repo.updateLanguage.ok {user_id: "...", request_id: "..."}
+[info] [auth] auth.language.update.ok {to: "en", request_id: "..."}
+[error] Failed to load resource: 401 Unauthorized ← expected: GET /users/me after language change, token refreshed
+
+=== LANGUAGE SWITCH en→fr ===
+[info] [auth] auth.language.update.start {from: "en", to: "fr", request_id: "..."}
+[info] [auth] auth.repo.updateLanguage.start {to: "fr", token_len: N, request_id: "..."}
+[info] [auth] auth.repo.updateLanguage.ok {user_id: "...", request_id: "..."}
+[info] [auth] auth.language.update.ok {to: "fr", request_id: "..."}
+
+=== LANGUAGE SWITCH fr→es ===
+[info] [auth] auth.language.update.start {from: "fr", to: "es", request_id: "..."}
+[info] [auth] auth.repo.updateLanguage.start {to: "es", token_len: N, request_id: "..."}
+[info] [auth] auth.repo.updateLanguage.ok {user_id: "...", request_id: "..."}
+[info] [auth] auth.language.update.ok {to: "es", request_id: "..."}
+
+=== LOGOUT ===
+[info] [auth] auth.logout.start
+POST /api/v1/auth/logout [204] ← backend confirmed, refresh cookie cleared
+
+=== PII CHECK ===
+- No full email address in any console log line.
+- No access token value (only token_len: N).
+- No full_name in any console log line.
+- Only user_id (UUID), email_domain (inferred), request_id in logs.
+- PII check: PASS
+
+## DB observations
+- preferred_language='es' → confirmed before test (bootstrap reset)
+- preferred_language='en' → confirmed in DB after es→en switch (2026-05-18T11:57:37Z)
+- preferred_language='fr' → confirmed in DB after en→fr switch (2026-05-18T11:58:16Z)
+- preferred_language='es' → confirmed in DB after fr→es reset

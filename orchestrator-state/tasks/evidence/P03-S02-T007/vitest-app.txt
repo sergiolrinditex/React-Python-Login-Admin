@@ -1,0 +1,18 @@
+Command: npm --prefix frontend run test -- --run --reporter=verbose src/app
+Exit code: 0
+
+ RUN  v3.2.4
+
+Providers:
+  ✓ renders children without throwing (A7 — smoke render)
+  ✓ renders children when no queryClient or i18n is injected (defaults used)
+  ✓ emits BEFORE and AFTER console.info logs when VITE_ENABLE_VERBOSE_LOGGING=true (A8)
+  ✓ emits NO console.info logs when VITE_ENABLE_VERBOSE_LOGGING=false (A8 silent mode)
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  12:53:01
+   Duration  984ms
+
+No router regression tests found (router.tsx is tested indirectly via integration tests in
+auth.test.tsx + AccountPage.test.tsx). All passing.

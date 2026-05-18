@@ -1,0 +1,19 @@
+Command: npm --prefix frontend run test -- --run --reporter=verbose src/features/auth
+Exit code: 0
+
+ Test Files  8 passed (8)
+      Tests  99 passed (99)
+   Start at  12:52:58
+   Duration  1.99s
+
+Files covered:
+- src/features/auth/data/__tests__/httpClient.test.ts (3 tests)
+- src/features/auth/__tests__/useForgotPassword.test.tsx (10 tests)
+- src/features/auth/__tests__/useSignIn.test.tsx (11 tests)
+- src/features/auth/__tests__/useVerifyMfa.test.tsx (11 tests)
+- src/features/auth/__tests__/useSignUp.test.tsx (15 tests)
+- src/features/auth/__tests__/auth.test.tsx (36 tests)
+- src/features/auth/presentation/useLanguagePicker.test.tsx (8 tests)  ← new T007
+- src/features/auth/presentation/useLogout.test.tsx (6 tests)           ← new T007
+
+No regressions. All pre-existing tests (93) still pass + 14 new T007 hook tests.
