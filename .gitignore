@@ -83,6 +83,10 @@ build/
 orchestrator-state/memory/PROGRESS.md
 orchestrator-state/memory/PROGRESS.md.archive/
 orchestrator-state/agent-memory/*/MEMORY.md
+# agent MEMORY.md auto-compaction archives (byte-for-byte snapshots, runtime-only)
+orchestrator-state/agent-memory/*/archive/
+# deferred worktree cleanup requests (transient state of live worktrees)
+orchestrator-state/tasks/cleanup-requests/
 orchestrator-state/tasks/runtime-state.json
 orchestrator-state/tasks/ledger.jsonl
 orchestrator-state/tasks/bash-ledger.jsonl
