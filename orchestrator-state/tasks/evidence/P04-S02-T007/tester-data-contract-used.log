@@ -1,0 +1,21 @@
+=== Verification Data Contract Used — P04-S02-T007 Tester Run ===
+Date: 2026-05-18T23:27:00Z
+
+Data contract row referenced: TECHNICAL_GUIDE §6.5 — "J105 mcp-agents"
+  - Persona: admin (admin.peopletech@inditex-sandbox.com, people_admin role)
+  - Data: MCP sandbox autorizado HTTP read-only + agente people_helper
+  - Loader: python -m app.verification_data.bootstrap --source data/verification --only mcp_agents
+  - Already loaded (developer confirmed; DB SELECT verifies row exists)
+
+Real/provided data observed:
+  - agents table row: id=1d287599-9047-4835-86e2-81628c6d93a0, name=people_helper, enabled=true
+  - Admin token acquired via real sign-in API (not mocked)
+  - GET /api/v1/admin/ai/agents → returns people_helper in real DB response
+
+Persisted data observed:
+  - agents.people_helper: present in DB with enabled=true
+  - bound_tools: [] (no tools bound, expected for bootstrap state)
+
+Note: POST /agents/runs persists an agent_run record before hitting the 502 gateway error
+(dev sandbox has no LiteLLM backend). The agent_run row is created but not returned 
+due to the 502 error (this is the §D-T005-502-INTENT documented expected behavior).

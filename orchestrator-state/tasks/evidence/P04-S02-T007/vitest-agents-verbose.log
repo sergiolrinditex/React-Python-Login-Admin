@@ -1,0 +1,636 @@
+
+> hilo-people-frontend@0.1.0 test
+> vitest --run --reporter=verbose src/features/agents src/pages/admin/agents
+
+
+ RUN  v3.2.4 /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P04-S02-T007/frontend
+
+stdout | src/features/agents/__tests__/agentsRepository.test.ts > agentsRepository.listAgents > R01 — 200 → Result.ok with mapped agent array
+[agents] agents.repo.listAgents.start
+
+stdout | src/features/agents/__tests__/agentsRepository.test.ts > agentsRepository.listAgents > R01 — 200 → Result.ok with mapped agent array
+[agents] agents.repo.listAgents.ok { count: [33m1[39m, request_id: [32m'test-req-id'[39m }
+
+stdout | src/features/agents/__tests__/agentsRepository.test.ts > agentsRepository.listAgents > R02 — 401 → Result.err AgentsAuthExpiredError
+[agents] agents.repo.listAgents.start
+
+stderr | src/features/agents/__tests__/agentsRepository.test.ts > agentsRepository.listAgents > R02 — 401 → Result.err AgentsAuthExpiredError
+[agents] agents.repo.listAgents.auth_expired { status: [33m401[39m, request_id: [32m'test-req-id'[39m }
+
+stdout | src/features/agents/__tests__/agentsRepository.test.ts > agentsRepository.listAgents > R03 — 403 → Result.err AgentsForbiddenError
+[agents] agents.repo.listAgents.start
+
+stderr | src/features/agents/__tests__/agentsRepository.test.ts > agentsRepository.listAgents > R03 — 403 → Result.err AgentsForbiddenError
+[agents] agents.repo.listAgents.forbidden { status: [33m403[39m, request_id: [32m'test-req-id'[39m }
+
+stdout | src/features/agents/__tests__/agentsRepository.test.ts > agentsRepository.listAgents > R04 — 500 → Result.err AgentsServerError
+[agents] agents.repo.listAgents.start
+
+stderr | src/features/agents/__tests__/agentsRepository.test.ts > agentsRepository.listAgents > R04 — 500 → Result.err AgentsServerError
+[agents] agents.repo.listAgents.server_error { status: [33m500[39m, request_id: [32m'test-req-id'[39m }
+
+stdout | src/features/agents/__tests__/agentsRepository.test.ts > agentsRepository.listAgents > R04b — network failure → Result.err AgentsNetworkError
+[agents] agents.repo.listAgents.start
+
+stderr | src/features/agents/__tests__/agentsRepository.test.ts > agentsRepository.listAgents > R04b — network failure → Result.err AgentsNetworkError
+[agents] agents.repo.listAgents.error { error: [32m'AGENTS_NETWORK_ERROR'[39m }
+
+stdout | src/features/agents/__tests__/agentsRepository.test.ts > agentsRepository.updateAgentTools > R05 — 200 → Result.ok agent with refreshed bound_tools
+[agents] agents.repo.updateAgentTools.start { agent_id: [32m'agent-uuid-1'[39m, tool_count: [33m1[39m }
+
+stdout | src/features/agents/__tests__/agentsRepository.test.ts > agentsRepository.updateAgentTools > R05 — 200 → Result.ok agent with refreshed bound_tools
+[agents] agents.repo.updateAgentTools.ok {
+  agent_id: [32m'agent-uuid-1'[39m,
+  bound_tool_count: [33m1[39m,
+  request_id: [32m'test-req-id'[39m
+}
+
+stdout | src/features/agents/__tests__/agentsRepository.test.ts > agentsRepository.updateAgentTools > R06 — 400 AGENT_TOOL_NOT_APPROVED → AgentsToolNotApprovedError
+[agents] agents.repo.updateAgentTools.start { agent_id: [32m'agent-uuid-1'[39m, tool_count: [33m1[39m }
+
+stderr | src/features/agents/__tests__/agentsRepository.test.ts > agentsRepository.updateAgentTools > R06 — 400 AGENT_TOOL_NOT_APPROVED → AgentsToolNotApprovedError
+[agents] agents.repo.updateAgentTools.validation_error {
+  agent_id: [32m'agent-uuid-1'[39m,
+  error_code: [32m'AGENT_TOOL_NOT_APPROVED'[39m,
+  request_id: [32m'test-req-id'[39m
+}
+
+stdout | src/features/agents/__tests__/agentsRepository.test.ts > agentsRepository.updateAgentTools > R06b — 400 AGENT_TOOL_NOT_FOUND → AgentsToolNotFoundError
+[agents] agents.repo.updateAgentTools.start { agent_id: [32m'agent-uuid-1'[39m, tool_count: [33m1[39m }
+
+stderr | src/features/agents/__tests__/agentsRepository.test.ts > agentsRepository.updateAgentTools > R06b — 400 AGENT_TOOL_NOT_FOUND → AgentsToolNotFoundError
+[agents] agents.repo.updateAgentTools.validation_error {
+  agent_id: [32m'agent-uuid-1'[39m,
+  error_code: [32m'AGENT_TOOL_NOT_FOUND'[39m,
+  request_id: [32m'test-req-id'[39m
+}
+
+stdout | src/features/agents/__tests__/agentsRepository.test.ts > agentsRepository.updateAgentTools > R07 — 404 → AgentsAgentNotFoundError
+[agents] agents.repo.updateAgentTools.start { agent_id: [32m'agent-uuid-1'[39m, tool_count: [33m0[39m }
+
+stderr | src/features/agents/__tests__/agentsRepository.test.ts > agentsRepository.updateAgentTools > R07 — 404 → AgentsAgentNotFoundError
+[agents] agents.repo.updateAgentTools.not_found { agent_id: [32m'agent-uuid-1'[39m, request_id: [32m'test-req-id'[39m }
+
+stdout | src/features/agents/__tests__/agentsRepository.test.ts > agentsRepository.startAgentRun > R08 — 200 → Result.ok with run_id and status
+[agents] agents.repo.startAgentRun.start { agent_id: [32m'agent-uuid-1'[39m }
+
+stdout | src/features/agents/__tests__/agentsRepository.test.ts > agentsRepository.startAgentRun > R08 — 200 → Result.ok with run_id and status
+[agents] agents.repo.startAgentRun.ok {
+  agent_id: [32m'agent-uuid-1'[39m,
+  run_id: [32m'run-uuid-1'[39m,
+  status: [32m'pending'[39m,
+  request_id: [32m'test-req-id'[39m
+}
+
+stdout | src/features/agents/__tests__/agentsRepository.test.ts > agentsRepository.startAgentRun > R09 — 409 AGENT_DISABLED → AgentsAgentDisabledError
+[agents] agents.repo.startAgentRun.start { agent_id: [32m'agent-uuid-1'[39m }
+
+stderr | src/features/agents/__tests__/agentsRepository.test.ts > agentsRepository.startAgentRun > R09 — 409 AGENT_DISABLED → AgentsAgentDisabledError
+[agents] agents.repo.startAgentRun.agent_disabled { agent_id: [32m'agent-uuid-1'[39m, request_id: [32m'test-req-id'[39m }
+
+stdout | src/features/agents/__tests__/agentsRepository.test.ts > agentsRepository.startAgentRun > R10 — 502 → AgentsRunUnreachableError (expected dev sandbox path)
+[agents] agents.repo.startAgentRun.start { agent_id: [32m'agent-uuid-1'[39m }
+
+stderr | src/features/agents/__tests__/agentsRepository.test.ts > agentsRepository.startAgentRun > R10 — 502 → AgentsRunUnreachableError (expected dev sandbox path)
+[agents] agents.repo.startAgentRun.unreachable { agent_id: [32m'agent-uuid-1'[39m, request_id: [32m'test-req-id'[39m }
+
+ ✓ src/features/agents/__tests__/agentsRepository.test.ts > agentsRepository.listAgents > R01 — 200 → Result.ok with mapped agent array 4ms
+ ✓ src/features/agents/__tests__/agentsRepository.test.ts > agentsRepository.listAgents > R02 — 401 → Result.err AgentsAuthExpiredError 1ms
+ ✓ src/features/agents/__tests__/agentsRepository.test.ts > agentsRepository.listAgents > R03 — 403 → Result.err AgentsForbiddenError 0ms
+ ✓ src/features/agents/__tests__/agentsRepository.test.ts > agentsRepository.listAgents > R04 — 500 → Result.err AgentsServerError 0ms
+ ✓ src/features/agents/__tests__/agentsRepository.test.ts > agentsRepository.listAgents > R04b — network failure → Result.err AgentsNetworkError 0ms
+ ✓ src/features/agents/__tests__/agentsRepository.test.ts > agentsRepository.updateAgentTools > R05 — 200 → Result.ok agent with refreshed bound_tools 0ms
+ ✓ src/features/agents/__tests__/agentsRepository.test.ts > agentsRepository.updateAgentTools > R06 — 400 AGENT_TOOL_NOT_APPROVED → AgentsToolNotApprovedError 0ms
+ ✓ src/features/agents/__tests__/agentsRepository.test.ts > agentsRepository.updateAgentTools > R06b — 400 AGENT_TOOL_NOT_FOUND → AgentsToolNotFoundError 0ms
+ ✓ src/features/agents/__tests__/agentsRepository.test.ts > agentsRepository.updateAgentTools > R07 — 404 → AgentsAgentNotFoundError 0ms
+ ✓ src/features/agents/__tests__/agentsRepository.test.ts > agentsRepository.startAgentRun > R08 — 200 → Result.ok with run_id and status 0ms
+ ✓ src/features/agents/__tests__/agentsRepository.test.ts > agentsRepository.startAgentRun > R09 — 409 AGENT_DISABLED → AgentsAgentDisabledError 0ms
+ ✓ src/features/agents/__tests__/agentsRepository.test.ts > agentsRepository.startAgentRun > R10 — 502 → AgentsRunUnreachableError (expected dev sandbox path) 0ms
+stdout | src/features/agents/__tests__/useStartAgentRun.test.ts > useStartAgentRun > S01 — mutate success returns run_id + status
+[agents] agents.useStartAgentRun.mutate.start { agent_id: [32m'agent-uuid-1'[39m }
+
+stdout | src/features/agents/__tests__/useStartAgentRun.test.ts > useStartAgentRun > S01 — mutate success returns run_id + status
+[agents] agents.useStartAgentRun.mutate.success { agent_id: [32m'agent-uuid-1'[39m, run_id: [32m'run-uuid-1'[39m, status: [32m'pending'[39m }
+
+stdout | src/features/agents/__tests__/useUpdateAgentTools.test.ts > useUpdateAgentTools > U01 — mutate success returns updated agent
+[agents] agents.useUpdateAgentTools.onMutate.optimistic { agent_id: [32m'agent-uuid-1'[39m, tool_count: [33m1[39m }
+
+stdout | src/features/agents/__tests__/useUpdateAgentTools.test.ts > useUpdateAgentTools > U01 — mutate success returns updated agent
+[agents] agents.useUpdateAgentTools.mutate.start { agent_id: [32m'agent-uuid-1'[39m, tool_count: [33m1[39m }
+
+stdout | src/features/agents/__tests__/useUpdateAgentTools.test.ts > useUpdateAgentTools > U01 — mutate success returns updated agent
+[agents] agents.useUpdateAgentTools.mutate.success { agent_id: [32m'agent-uuid-1'[39m, bound_tool_count: [33m1[39m }
+
+stdout | src/features/agents/__tests__/useAgents.test.ts > useAgents > H01 — returns agents when repository succeeds
+[agents] agents.useAgents.fetch.start
+
+stdout | src/features/agents/__tests__/useAgents.test.ts > useAgents > H01 — returns agents when repository succeeds
+[agents] agents.useAgents.fetch.success { count: [33m1[39m }
+
+stdout | src/pages/admin/agents/__tests__/AgentsPage.test.tsx
+i18n.init.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T005'[39m,
+  lng: [32m'es'[39m,
+  fallbackLng: [32m'es'[39m,
+  ns: [
+    [32m'common'[39m,   [32m'auth'[39m,
+    [32m'chat'[39m,     [32m'account'[39m,
+    [32m'admin-ai'[39m, [32m'rag'[39m,
+    [32m'mcp'[39m,      [32m'agents'[39m,
+    [32m'errors'[39m
+  ],
+  defaultNS: [32m'common'[39m
+}
+i18n.init.ok {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T005'[39m,
+  isInitialized: [33mtrue[39m,
+  language: [32m'es'[39m,
+  namespaceCount: [33m9[39m,
+  localeCount: [33m3[39m
+}
+
+stdout | src/features/agents/__tests__/useAgents.test.ts > useAgents > H03 — surfaces AgentsForbiddenError as isError=true
+[agents] agents.useAgents.fetch.start
+
+stderr | src/features/agents/__tests__/useAgents.test.ts > useAgents > H03 — surfaces AgentsForbiddenError as isError=true
+[agents] agents.useAgents.fetch.error { code: [32m'AGENTS_FORBIDDEN'[39m }
+
+stdout | src/features/agents/__tests__/useStartAgentRun.test.ts > useStartAgentRun > S02 — 409 AGENT_DISABLED → throws AgentsAgentDisabledError
+[agents] agents.useStartAgentRun.mutate.start { agent_id: [32m'agent-uuid-1'[39m }
+
+stderr | src/features/agents/__tests__/useStartAgentRun.test.ts > useStartAgentRun > S02 — 409 AGENT_DISABLED → throws AgentsAgentDisabledError
+[agents] agents.useStartAgentRun.mutate.error { agent_id: [32m'agent-uuid-1'[39m, code: [32m'AGENT_DISABLED'[39m }
+
+stdout | src/features/agents/__tests__/useUpdateAgentTools.test.ts > useUpdateAgentTools > U02 — error reverts optimistic cache update
+[agents] agents.useUpdateAgentTools.onMutate.optimistic { agent_id: [32m'agent-uuid-1'[39m, tool_count: [33m1[39m }
+
+stdout | src/features/agents/__tests__/useUpdateAgentTools.test.ts > useUpdateAgentTools > U02 — error reverts optimistic cache update
+[agents] agents.useUpdateAgentTools.mutate.start { agent_id: [32m'agent-uuid-1'[39m, tool_count: [33m1[39m }
+
+stderr | src/features/agents/__tests__/useUpdateAgentTools.test.ts > useUpdateAgentTools > U02 — error reverts optimistic cache update
+[agents] agents.useUpdateAgentTools.mutate.error { agent_id: [32m'agent-uuid-1'[39m, code: [32m'AGENT_TOOL_NOT_APPROVED'[39m }
+
+stderr | src/features/agents/__tests__/useUpdateAgentTools.test.ts > useUpdateAgentTools > U02 — error reverts optimistic cache update
+[agents] agents.useUpdateAgentTools.onError.reverted { agent_id: [32m'agent-uuid-1'[39m, error: [32m'AGENT_TOOL_NOT_APPROVED'[39m }
+
+ ✓ src/features/agents/__tests__/useStartAgentRun.test.ts > useStartAgentRun > S01 — mutate success returns run_id + status 64ms
+ ✓ src/features/agents/__tests__/useAgents.test.ts > useAgents > H01 — returns agents when repository succeeds 63ms
+ ✓ src/features/agents/__tests__/useAgents.test.ts > useAgents > H02 — uses queryKey ['admin','agents'] 0ms
+stdout | src/features/agents/__tests__/useAgents.test.ts > useAgents > H04 — surfaces AgentsAuthExpiredError as isError=true
+[agents] agents.useAgents.fetch.start
+
+stderr | src/features/agents/__tests__/useAgents.test.ts > useAgents > H04 — surfaces AgentsAuthExpiredError as isError=true
+[agents] agents.useAgents.fetch.error { code: [32m'AGENTS_AUTH_EXPIRED'[39m }
+
+stdout | src/features/agents/__tests__/useStartAgentRun.test.ts > useStartAgentRun > S03 — 502 → throws AgentsRunUnreachableError (expected dev sandbox path)
+[agents] agents.useStartAgentRun.mutate.start { agent_id: [32m'agent-uuid-1'[39m }
+
+stderr | src/features/agents/__tests__/useStartAgentRun.test.ts > useStartAgentRun > S03 — 502 → throws AgentsRunUnreachableError (expected dev sandbox path)
+[agents] agents.useStartAgentRun.mutate.error { agent_id: [32m'agent-uuid-1'[39m, code: [32m'AGENT_RUN_FAILED'[39m }
+
+ ✓ src/features/agents/__tests__/useUpdateAgentTools.test.ts > useUpdateAgentTools > U01 — mutate success returns updated agent 64ms
+stdout | src/features/agents/__tests__/useUpdateAgentTools.test.ts > useUpdateAgentTools > U03 — onSettled invalidates ['admin','agents']
+[agents] agents.useUpdateAgentTools.onMutate.optimistic { agent_id: [32m'agent-uuid-1'[39m, tool_count: [33m1[39m }
+
+stdout | src/features/agents/__tests__/useUpdateAgentTools.test.ts > useUpdateAgentTools > U03 — onSettled invalidates ['admin','agents']
+[agents] agents.useUpdateAgentTools.mutate.start { agent_id: [32m'agent-uuid-1'[39m, tool_count: [33m1[39m }
+
+stdout | src/features/agents/__tests__/useUpdateAgentTools.test.ts > useUpdateAgentTools > U03 — onSettled invalidates ['admin','agents']
+[agents] agents.useUpdateAgentTools.mutate.success { agent_id: [32m'agent-uuid-1'[39m, bound_tool_count: [33m1[39m }
+
+stdout | src/pages/admin/agents/__tests__/AgentsPage.test.tsx > AgentsPage > P01 — loading state shows aria-busy section
+AgentsPage.render.start { phase: [32m'P04'[39m, slice: [32m'P04-S02-T005'[39m, route: [32m'/admin/ai/agents'[39m }
+AgentsPage.render.state {
+  tableState: [32m'loading'[39m,
+  agentCount: [33m0[39m,
+  isLoading: [33mtrue[39m,
+  isError: [33mfalse[39m
+}
+AdminShell.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, navItemCount: [33m1[39m }
+
+stdout | src/pages/admin/agents/__tests__/AgentsPage.test.tsx > AgentsPage > P02 — success state shows agent row for people_helper
+AgentsPage.render.start { phase: [32m'P04'[39m, slice: [32m'P04-S02-T005'[39m, route: [32m'/admin/ai/agents'[39m }
+AgentsPage.render.state {
+  tableState: [32m'populated'[39m,
+  agentCount: [33m1[39m,
+  isLoading: [33mfalse[39m,
+  isError: [33mfalse[39m
+}
+AdminShell.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, navItemCount: [33m1[39m }
+StatusDot.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, state: [32m'active'[39m }
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+
+ ✓ src/features/agents/__tests__/useStartAgentRun.test.ts > useStartAgentRun > S02 — 409 AGENT_DISABLED → throws AgentsAgentDisabledError 53ms
+ ✓ src/features/agents/__tests__/useStartAgentRun.test.ts > useStartAgentRun > S03 — 502 → throws AgentsRunUnreachableError (expected dev sandbox path) 53ms
+ ✓ src/features/agents/__tests__/useStartAgentRun.test.ts > useStartAgentRun > S04 — mutation key is ['agents','startRun'] 0ms
+stdout | src/features/agents/__tests__/useAgents.test.ts > useAgents > H05 — refetch triggers a second listAgents call
+[agents] agents.useAgents.fetch.start
+
+stderr | src/features/agents/__tests__/useAgents.test.ts > useAgents > H05 — refetch triggers a second listAgents call
+[agents] agents.useAgents.fetch.error { code: [32m'AGENTS_NETWORK_ERROR'[39m }
+
+stdout | src/features/agents/__tests__/useUpdateAgentTools.test.ts > useUpdateAgentTools > U04 — 400 AGENT_TOOL_NOT_APPROVED → throws AgentsToolNotApprovedError
+[agents] agents.useUpdateAgentTools.onMutate.optimistic { agent_id: [32m'agent-uuid-1'[39m, tool_count: [33m1[39m }
+
+stdout | src/features/agents/__tests__/useUpdateAgentTools.test.ts > useUpdateAgentTools > U04 — 400 AGENT_TOOL_NOT_APPROVED → throws AgentsToolNotApprovedError
+[agents] agents.useUpdateAgentTools.mutate.start { agent_id: [32m'agent-uuid-1'[39m, tool_count: [33m1[39m }
+
+stderr | src/features/agents/__tests__/useUpdateAgentTools.test.ts > useUpdateAgentTools > U04 — 400 AGENT_TOOL_NOT_APPROVED → throws AgentsToolNotApprovedError
+[agents] agents.useUpdateAgentTools.mutate.error { agent_id: [32m'agent-uuid-1'[39m, code: [32m'AGENT_TOOL_NOT_APPROVED'[39m }
+
+stderr | src/features/agents/__tests__/useUpdateAgentTools.test.ts > useUpdateAgentTools > U04 — 400 AGENT_TOOL_NOT_APPROVED → throws AgentsToolNotApprovedError
+[agents] agents.useUpdateAgentTools.onError.reverted { agent_id: [32m'agent-uuid-1'[39m, error: [32m'AGENT_TOOL_NOT_APPROVED'[39m }
+
+stdout | src/pages/admin/agents/__tests__/AgentsPage.test.tsx > AgentsPage > P03 — empty state shows Wordmark + body paragraph, no CTA
+AgentsPage.render.start { phase: [32m'P04'[39m, slice: [32m'P04-S02-T005'[39m, route: [32m'/admin/ai/agents'[39m }
+AgentsPage.render.state {
+  tableState: [32m'empty'[39m,
+  agentCount: [33m0[39m,
+  isLoading: [33mfalse[39m,
+  isError: [33mfalse[39m
+}
+AdminShell.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, navItemCount: [33m1[39m }
+HairlineTable.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, state: [32m'empty'[39m, rowCount: [33m0[39m }
+
+stdout | src/pages/admin/agents/__tests__/AgentsPage.test.tsx > AgentsPage > P04 — error_network state on network error with retry CTA
+AgentsPage.render.start { phase: [32m'P04'[39m, slice: [32m'P04-S02-T005'[39m, route: [32m'/admin/ai/agents'[39m }
+AgentsPage.render.state {
+  tableState: [32m'error_network'[39m,
+  agentCount: [33m0[39m,
+  isLoading: [33mfalse[39m,
+  isError: [33mtrue[39m
+}
+AdminShell.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, navItemCount: [33m1[39m }
+HairlineTable.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  state: [32m'error_network'[39m,
+  rowCount: [33m0[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [90mundefined[39m
+}
+
+stdout | src/pages/admin/agents/__tests__/AgentsPage.test.tsx > AgentsPage > P05 — permission_denied state on AgentsForbiddenError
+AgentsPage.render.start { phase: [32m'P04'[39m, slice: [32m'P04-S02-T005'[39m, route: [32m'/admin/ai/agents'[39m }
+AgentsPage.render.state {
+  tableState: [32m'permission_denied'[39m,
+  agentCount: [33m0[39m,
+  isLoading: [33mfalse[39m,
+  isError: [33mtrue[39m
+}
+AdminShell.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, navItemCount: [33m1[39m }
+HairlineTable.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  state: [32m'permission_denied'[39m,
+  rowCount: [33m0[39m
+}
+
+stdout | src/pages/admin/agents/__tests__/AgentsPage.test.tsx > AgentsPage > P06 — run launcher 409 AGENT_DISABLED shows inline error near launcher
+AgentsPage.render.start { phase: [32m'P04'[39m, slice: [32m'P04-S02-T005'[39m, route: [32m'/admin/ai/agents'[39m }
+AgentsPage.render.state {
+  tableState: [32m'populated'[39m,
+  agentCount: [33m1[39m,
+  isLoading: [33mfalse[39m,
+  isError: [33mfalse[39m
+}
+AdminShell.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, navItemCount: [33m1[39m }
+StatusDot.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, state: [32m'active'[39m }
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+AgentsPage.render.start { phase: [32m'P04'[39m, slice: [32m'P04-S02-T005'[39m, route: [32m'/admin/ai/agents'[39m }
+AgentsPage.render.state {
+  tableState: [32m'populated'[39m,
+  agentCount: [33m1[39m,
+  isLoading: [33mfalse[39m,
+  isError: [33mfalse[39m
+}
+AdminShell.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, navItemCount: [33m1[39m }
+StatusDot.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, state: [32m'active'[39m }
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+
+stdout | src/pages/admin/agents/__tests__/AgentsPage.test.tsx > AgentsPage > P06 — run launcher 409 AGENT_DISABLED shows inline error near launcher
+AgentsPage.render.start { phase: [32m'P04'[39m, slice: [32m'P04-S02-T005'[39m, route: [32m'/admin/ai/agents'[39m }
+AgentsPage.render.state {
+  tableState: [32m'populated'[39m,
+  agentCount: [33m1[39m,
+  isLoading: [33mfalse[39m,
+  isError: [33mfalse[39m
+}
+AdminShell.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, navItemCount: [33m1[39m }
+StatusDot.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, state: [32m'active'[39m }
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+
+stdout | src/pages/admin/agents/__tests__/AgentsPage.test.tsx > AgentsPage > P07 — run launcher 502 shows AGENT_RUN_FAILED inline error (expected dev path)
+AgentsPage.render.start { phase: [32m'P04'[39m, slice: [32m'P04-S02-T005'[39m, route: [32m'/admin/ai/agents'[39m }
+AgentsPage.render.state {
+  tableState: [32m'populated'[39m,
+  agentCount: [33m1[39m,
+  isLoading: [33mfalse[39m,
+  isError: [33mfalse[39m
+}
+AdminShell.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, navItemCount: [33m1[39m }
+StatusDot.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, state: [32m'active'[39m }
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+AgentsPage.render.start { phase: [32m'P04'[39m, slice: [32m'P04-S02-T005'[39m, route: [32m'/admin/ai/agents'[39m }
+AgentsPage.render.state {
+  tableState: [32m'populated'[39m,
+  agentCount: [33m1[39m,
+  isLoading: [33mfalse[39m,
+  isError: [33mfalse[39m
+}
+AdminShell.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, navItemCount: [33m1[39m }
+StatusDot.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, state: [32m'active'[39m }
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+
+ ✓ src/features/agents/__tests__/useAgents.test.ts > useAgents > H03 — surfaces AgentsForbiddenError as isError=true 52ms
+ ✓ src/features/agents/__tests__/useAgents.test.ts > useAgents > H04 — surfaces AgentsAuthExpiredError as isError=true 55ms
+stdout | src/pages/admin/agents/__tests__/AgentsPage.test.tsx > AgentsPage > P07 — run launcher 502 shows AGENT_RUN_FAILED inline error (expected dev path)
+AgentsPage.render.start { phase: [32m'P04'[39m, slice: [32m'P04-S02-T005'[39m, route: [32m'/admin/ai/agents'[39m }
+AgentsPage.render.state {
+  tableState: [32m'populated'[39m,
+  agentCount: [33m1[39m,
+  isLoading: [33mfalse[39m,
+  isError: [33mfalse[39m
+}
+AdminShell.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, navItemCount: [33m1[39m }
+StatusDot.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, state: [32m'active'[39m }
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+
+ ✓ src/pages/admin/agents/__tests__/AgentsPage.test.tsx > AgentsPage > P01 — loading state shows aria-busy section 28ms
+ ✓ src/pages/admin/agents/__tests__/AgentsPage.test.tsx > AgentsPage > P02 — success state shows agent row for people_helper 12ms
+ ✓ src/pages/admin/agents/__tests__/AgentsPage.test.tsx > AgentsPage > P03 — empty state shows Wordmark + body paragraph, no CTA 26ms
+ ✓ src/pages/admin/agents/__tests__/AgentsPage.test.tsx > AgentsPage > P04 — error_network state on network error with retry CTA 6ms
+ ✓ src/pages/admin/agents/__tests__/AgentsPage.test.tsx > AgentsPage > P05 — permission_denied state on AgentsForbiddenError 4ms
+ ✓ src/pages/admin/agents/__tests__/AgentsPage.test.tsx > AgentsPage > P06 — run launcher 409 AGENT_DISABLED shows inline error near launcher 15ms
+ ✓ src/features/agents/__tests__/useUpdateAgentTools.test.ts > useUpdateAgentTools > U02 — error reverts optimistic cache update 54ms
+ ✓ src/features/agents/__tests__/useUpdateAgentTools.test.ts > useUpdateAgentTools > U03 — onSettled invalidates ['admin','agents'] 55ms
+stdout | src/features/agents/__tests__/useAgents.test.ts > useAgents > H05 — refetch triggers a second listAgents call
+[agents] agents.useAgents.fetch.start
+
+stdout | src/features/agents/__tests__/useAgents.test.ts > useAgents > H05 — refetch triggers a second listAgents call
+[agents] agents.useAgents.fetch.success { count: [33m1[39m }
+
+stdout | src/features/agents/__tests__/useUpdateAgentTools.test.ts > useUpdateAgentTools > U05 — 404 → throws AgentsAgentNotFoundError
+[agents] agents.useUpdateAgentTools.onMutate.optimistic { agent_id: [32m'nonexistent-agent'[39m, tool_count: [33m0[39m }
+
+stdout | src/features/agents/__tests__/useUpdateAgentTools.test.ts > useUpdateAgentTools > U05 — 404 → throws AgentsAgentNotFoundError
+[agents] agents.useUpdateAgentTools.mutate.start { agent_id: [32m'nonexistent-agent'[39m, tool_count: [33m0[39m }
+
+stderr | src/features/agents/__tests__/useUpdateAgentTools.test.ts > useUpdateAgentTools > U05 — 404 → throws AgentsAgentNotFoundError
+[agents] agents.useUpdateAgentTools.mutate.error { agent_id: [32m'nonexistent-agent'[39m, code: [32m'AGENT_NOT_FOUND'[39m }
+
+stderr | src/features/agents/__tests__/useUpdateAgentTools.test.ts > useUpdateAgentTools > U05 — 404 → throws AgentsAgentNotFoundError
+[agents] agents.useUpdateAgentTools.onError.reverted { agent_id: [32m'nonexistent-agent'[39m, error: [32m'AGENT_NOT_FOUND'[39m }
+
+stdout | src/pages/admin/agents/__tests__/AgentsPage.test.tsx > AgentsPage > P08 — run launcher success shows run result
+AgentsPage.render.start { phase: [32m'P04'[39m, slice: [32m'P04-S02-T005'[39m, route: [32m'/admin/ai/agents'[39m }
+AgentsPage.render.state {
+  tableState: [32m'populated'[39m,
+  agentCount: [33m1[39m,
+  isLoading: [33mfalse[39m,
+  isError: [33mfalse[39m
+}
+AdminShell.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, navItemCount: [33m1[39m }
+StatusDot.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, state: [32m'active'[39m }
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+AgentsPage.render.start { phase: [32m'P04'[39m, slice: [32m'P04-S02-T005'[39m, route: [32m'/admin/ai/agents'[39m }
+AgentsPage.render.state {
+  tableState: [32m'populated'[39m,
+  agentCount: [33m1[39m,
+  isLoading: [33mfalse[39m,
+  isError: [33mfalse[39m
+}
+AdminShell.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, navItemCount: [33m1[39m }
+StatusDot.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, state: [32m'active'[39m }
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+
+stdout | src/pages/admin/agents/__tests__/AgentsPage.test.tsx > AgentsPage > P08 — run launcher success shows run result
+AgentsPage.render.start { phase: [32m'P04'[39m, slice: [32m'P04-S02-T005'[39m, route: [32m'/admin/ai/agents'[39m }
+AgentsPage.render.state {
+  tableState: [32m'populated'[39m,
+  agentCount: [33m1[39m,
+  isLoading: [33mfalse[39m,
+  isError: [33mfalse[39m
+}
+AdminShell.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, navItemCount: [33m1[39m }
+StatusDot.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, state: [32m'active'[39m }
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+
+stdout | src/pages/admin/agents/__tests__/AgentsPage.test.tsx > AgentsPage > P09 — PATCH 400 AGENT_TOOL_NOT_APPROVED shows inline error below row
+AgentsPage.render.start { phase: [32m'P04'[39m, slice: [32m'P04-S02-T005'[39m, route: [32m'/admin/ai/agents'[39m }
+AgentsPage.render.state {
+  tableState: [32m'populated'[39m,
+  agentCount: [33m1[39m,
+  isLoading: [33mfalse[39m,
+  isError: [33mfalse[39m
+}
+AdminShell.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, navItemCount: [33m1[39m }
+StatusDot.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, state: [32m'active'[39m }
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+AgentsPage.render.start { phase: [32m'P04'[39m, slice: [32m'P04-S02-T005'[39m, route: [32m'/admin/ai/agents'[39m }
+AgentsPage.render.state {
+  tableState: [32m'populated'[39m,
+  agentCount: [33m1[39m,
+  isLoading: [33mfalse[39m,
+  isError: [33mfalse[39m
+}
+AdminShell.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, navItemCount: [33m1[39m }
+StatusDot.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, state: [32m'active'[39m }
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+
+stdout | src/pages/admin/agents/__tests__/AgentsPage.test.tsx > AgentsPage > P09 — PATCH 400 AGENT_TOOL_NOT_APPROVED shows inline error below row
+AgentsPage.render.start { phase: [32m'P04'[39m, slice: [32m'P04-S02-T005'[39m, route: [32m'/admin/ai/agents'[39m }
+AgentsPage.render.state {
+  tableState: [32m'populated'[39m,
+  agentCount: [33m1[39m,
+  isLoading: [33mfalse[39m,
+  isError: [33mfalse[39m
+}
+AdminShell.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, navItemCount: [33m1[39m }
+StatusDot.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, state: [32m'active'[39m }
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+
+stdout | src/pages/admin/agents/__tests__/AgentsPage.test.tsx > AgentsPage > P10 — a11y: table has sr-only caption and run button has aria-label
+AgentsPage.render.start { phase: [32m'P04'[39m, slice: [32m'P04-S02-T005'[39m, route: [32m'/admin/ai/agents'[39m }
+AgentsPage.render.state {
+  tableState: [32m'populated'[39m,
+  agentCount: [33m1[39m,
+  isLoading: [33mfalse[39m,
+  isError: [33mfalse[39m
+}
+AdminShell.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, navItemCount: [33m1[39m }
+StatusDot.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, state: [32m'active'[39m }
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+
+stdout | src/pages/admin/agents/__tests__/AgentsPage.test.tsx > AgentsPage > P11 — i18n smoke: EN title rendered when language is EN
+AgentsPage.render.start { phase: [32m'P04'[39m, slice: [32m'P04-S02-T005'[39m, route: [32m'/admin/ai/agents'[39m }
+AgentsPage.render.state {
+  tableState: [32m'populated'[39m,
+  agentCount: [33m1[39m,
+  isLoading: [33mfalse[39m,
+  isError: [33mfalse[39m
+}
+AdminShell.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, navItemCount: [33m1[39m }
+StatusDot.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, state: [32m'active'[39m }
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+AgentsPage.render.start { phase: [32m'P04'[39m, slice: [32m'P04-S02-T005'[39m, route: [32m'/admin/ai/agents'[39m }
+AgentsPage.render.state {
+  tableState: [32m'populated'[39m,
+  agentCount: [33m1[39m,
+  isLoading: [33mfalse[39m,
+  isError: [33mfalse[39m
+}
+AdminShell.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, navItemCount: [33m1[39m }
+StatusDot.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, state: [32m'active'[39m }
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+
+stdout | src/pages/admin/agents/__tests__/AgentsPage.test.tsx > AgentsPage > P12 — run launcher empty input shows validation error
+AgentsPage.render.start { phase: [32m'P04'[39m, slice: [32m'P04-S02-T005'[39m, route: [32m'/admin/ai/agents'[39m }
+AgentsPage.render.state {
+  tableState: [32m'populated'[39m,
+  agentCount: [33m1[39m,
+  isLoading: [33mfalse[39m,
+  isError: [33mfalse[39m
+}
+AdminShell.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, navItemCount: [33m1[39m }
+StatusDot.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, state: [32m'active'[39m }
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [33mfalse[39m
+}
+
+ ✓ src/pages/admin/agents/__tests__/AgentsPage.test.tsx > AgentsPage > P07 — run launcher 502 shows AGENT_RUN_FAILED inline error (expected dev path) 12ms
+ ✓ src/pages/admin/agents/__tests__/AgentsPage.test.tsx > AgentsPage > P08 — run launcher success shows run result 10ms
+ ✓ src/pages/admin/agents/__tests__/AgentsPage.test.tsx > AgentsPage > P09 — PATCH 400 AGENT_TOOL_NOT_APPROVED shows inline error below row 9ms
+ ✓ src/pages/admin/agents/__tests__/AgentsPage.test.tsx > AgentsPage > P10 — a11y: table has sr-only caption and run button has aria-label 5ms
+ ✓ src/pages/admin/agents/__tests__/AgentsPage.test.tsx > AgentsPage > P11 — i18n smoke: EN title rendered when language is EN 6ms
+ ✓ src/pages/admin/agents/__tests__/AgentsPage.test.tsx > AgentsPage > P12 — run launcher empty input shows validation error 5ms
+stdout | src/features/agents/__tests__/useAgents.test.ts > useAgents > H06 — 500 error surfaces as AgentsServerError
+[agents] agents.useAgents.fetch.start
+
+stderr | src/features/agents/__tests__/useAgents.test.ts > useAgents > H06 — 500 error surfaces as AgentsServerError
+[agents] agents.useAgents.fetch.error { code: [32m'AGENTS_SERVER_ERROR'[39m }
+
+ ✓ src/features/agents/__tests__/useUpdateAgentTools.test.ts > useUpdateAgentTools > U04 — 400 AGENT_TOOL_NOT_APPROVED → throws AgentsToolNotApprovedError 53ms
+ ✓ src/features/agents/__tests__/useUpdateAgentTools.test.ts > useUpdateAgentTools > U05 — 404 → throws AgentsAgentNotFoundError 53ms
+ ✓ src/features/agents/__tests__/useUpdateAgentTools.test.ts > useUpdateAgentTools > U06 — empty tool_ids (unbind all) → mutation key is correct 0ms
+ ✓ src/features/agents/__tests__/useAgents.test.ts > useAgents > H05 — refetch triggers a second listAgents call 107ms
+ ✓ src/features/agents/__tests__/useAgents.test.ts > useAgents > H06 — 500 error surfaces as AgentsServerError 55ms
+
+ Test Files  5 passed (5)
+      Tests  40 passed (40)
+   Start at  01:16:56
+   Duration  1.53s (transform 360ms, setup 506ms, collect 780ms, tests 928ms, environment 2.53s, prepare 519ms)
+

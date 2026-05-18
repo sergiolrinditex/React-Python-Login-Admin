@@ -1,0 +1,20 @@
+# Network trace — P04-S02-T007 verify-slice
+# MCP: chrome-devtools
+# Timestamp: 2026-05-19T10:00:00+00:00
+
+Flow 1 (Login + agents page):
+  POST http://localhost:5173/api/v1/auth/refresh [401] (pre-login, expected)
+  POST http://localhost:5173/api/v1/auth/sign-in [200]
+  GET  http://localhost:5173/api/v1/users/me [200]
+  GET  http://localhost:5173/api/v1/admin/ai/agents [200]
+
+Flow 2 (RequireRole redirect):
+  Direct nav to http://localhost:5173/admin/ai/agents (no auth)
+  → REDIRECTED to http://localhost:5173/auth/sign-in?next=%2Fadmin%2Fai%2Fagents
+  Verified via: page URL in chrome-devtools list_pages
+
+Flow 3 (POST /agents/runs → 502):
+  POST http://localhost:5173/api/v1/agents/runs [502]
+  → UI rendered alert: "El agente no pudo completar la tarea"
+  → NO crash, NO generic toast
+  → alert[role=alert][aria-live=assertive] confirmed in snapshot
