@@ -2,5 +2,8 @@
   "title": "My account",
   "language": "Language",
   "languageHint": "The selected language applies to the entire interface",
-  "logout": "Sign out"
+  "logout": "Sign out",
+  "nav": {
+    "openAccount": "Open account"
+  }
 }

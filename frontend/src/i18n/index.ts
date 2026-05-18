@@ -237,11 +237,15 @@ const resources = {
     // §D-T007-WRITE-SET-DRIFT-I18N (P03-S02-T007): account namespace extended with profile,
     // languagePicker, states and logoutAction keys. Same drift pattern as §D-T003-I18N,
     // §D-T004-I18N-EXTEND. Validator accepts when documented.
+    // §D-T009-I18N-KEYS (P03-S02-T009): account.nav.openAccount added (chat-shell navbar).
     account: {
       title: "Mi cuenta",
       language: "Idioma",
       languageHint: "El idioma seleccionado se aplica a toda la interfaz",
       logout: "Cerrar sesión",
+      nav: {
+        openAccount: "Abrir cuenta",
+      },
       profile: {
         email: "Email",
         fullName: "Nombre completo",
@@ -910,11 +914,15 @@ const resources = {
       },
     },
     // §D-T007-WRITE-SET-DRIFT-I18N (P03-S02-T007): account namespace extended (EN).
+    // §D-T009-I18N-KEYS (P03-S02-T009): account.nav.openAccount added (chat-shell navbar).
     account: {
       title: "My account",
       language: "Language",
       languageHint: "The selected language applies to the entire interface",
       logout: "Sign out",
+      nav: {
+        openAccount: "Open account",
+      },
       profile: {
         email: "Email",
         fullName: "Full name",
@@ -1583,11 +1591,15 @@ const resources = {
       },
     },
     // §D-T007-WRITE-SET-DRIFT-I18N (P03-S02-T007): account namespace extended (FR).
+    // §D-T009-I18N-KEYS (P03-S02-T009): account.nav.openAccount added (chat-shell navbar).
     account: {
       title: "Mon compte",
       language: "Langue",
       languageHint: "La langue sélectionnée s'applique à toute l'interface",
       logout: "Se déconnecter",
+      nav: {
+        openAccount: "Ouvrir le compte",
+      },
       profile: {
         email: "Email",
         fullName: "Nom complet",

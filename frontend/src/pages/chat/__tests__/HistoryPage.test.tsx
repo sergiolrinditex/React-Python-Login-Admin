@@ -23,7 +23,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import React from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -351,5 +351,81 @@ describe("HistoryPage", () => {
     const ariaLabel = row.getAttribute("aria-label") ?? "";
     // Should contain the conversation title
     expect(ariaLabel).toContain("My first conversation");
+  });
+
+  // --- P03-S02-T009: navbar account link assertions ---
+
+  it("P10-T009 — success state: navbar account link present (§D-T009-NAVBAR-VISIBILITY)", () => {
+    mockUseHistory.mockReturnValue({
+      isPending: false,
+      isError: false,
+      error: null,
+      data: MOCK_RESPONSE,
+      refetch: vi.fn(),
+      isFetching: false,
+    } as unknown as ReturnType<typeof useHistory>);
+
+    renderPage();
+
+    const navbar = screen.getByTestId("chat-navbar");
+    expect(navbar).toBeDefined();
+
+    const link = screen.getByTestId("chat-navbar-account-link");
+    expect(link).toBeDefined();
+    expect(link.getAttribute("href")).toBe("/account");
+  });
+
+  it("P11-T009 — loading state: navbar account link present", () => {
+    mockUseHistory.mockReturnValue({
+      isPending: true,
+      isError: false,
+      error: null,
+      data: undefined,
+      refetch: vi.fn(),
+      isFetching: false,
+    } as unknown as ReturnType<typeof useHistory>);
+
+    renderPage();
+
+    const navbar = screen.getByTestId("chat-navbar");
+    expect(navbar).toBeDefined();
+  });
+
+  it("P12-T009 — permission_denied state: navbar account link HIDDEN (§D-T009-NAVBAR-VISIBILITY)", () => {
+    mockUseHistory.mockReturnValue({
+      isPending: false,
+      isError: true,
+      error: new ChatForbiddenError(),
+      data: undefined,
+      refetch: vi.fn(),
+      isFetching: false,
+    } as unknown as ReturnType<typeof useHistory>);
+
+    renderPage();
+
+    // Navbar must NOT be rendered in the forbidden state
+    expect(screen.queryByTestId("chat-navbar")).toBeNull();
+    expect(screen.queryByTestId("chat-navbar-account-link")).toBeNull();
+  });
+
+  it("P13-T009 — clicking navbar link does NOT trigger history refetch", () => {
+    const mockRefetch = vi.fn();
+
+    mockUseHistory.mockReturnValue({
+      isPending: false,
+      isError: false,
+      error: null,
+      data: MOCK_RESPONSE,
+      refetch: mockRefetch,
+      isFetching: false,
+    } as unknown as ReturnType<typeof useHistory>);
+
+    renderPage();
+
+    const link = screen.getByTestId("chat-navbar-account-link");
+    fireEvent.click(link);
+
+    // refetch must NOT be called as a result of clicking the navbar link
+    expect(mockRefetch).not.toHaveBeenCalled();
   });
 });

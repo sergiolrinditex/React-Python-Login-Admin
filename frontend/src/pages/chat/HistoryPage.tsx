@@ -2,6 +2,8 @@
  * Hilo People — HistoryPage.
  *
  * Slice/Phase: P03-S02-T003 — HistoryPage / Phase 3.
+ *   Updated P03-S02-T009: mounts ChatNavbar as first child of MobileFrame
+ *   (§D-T009-NAVBAR-PLACEMENT-INSIDE-PAGE, §D-T009-NAVBAR-VISIBILITY).
  *
  * Responsibility: Employee conversation history page (/history).
  *   Renders the 5 required UX states: loading, empty, error_network,
@@ -46,6 +48,7 @@ import {
   NetworkErrorView,
   ForbiddenView,
 } from "./_HistoryPage.error-views";
+import ChatNavbar from "./_ChatNavbar";
 
 // ---------------------------------------------------------------------------
 // Styles (tokens only — no hardcoded colors, radii, or shadows)
@@ -221,6 +224,8 @@ export default function HistoryPage(): ReactNode {
 
   return (
     <MobileFrame asMain>
+      {/* §D-T009-NAVBAR-PLACEMENT-INSIDE-PAGE: account link in all non-forbidden states */}
+      {!isForbidden && <ChatNavbar />}
       <div
         style={PAGE_STYLE}
         data-testid="history-page"

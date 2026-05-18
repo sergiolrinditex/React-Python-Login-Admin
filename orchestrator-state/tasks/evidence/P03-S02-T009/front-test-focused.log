@@ -1,0 +1,48 @@
+
+> hilo-people-frontend@0.1.0 test
+> vitest --run src/pages/chat src/i18n src/pages/account
+
+
+ RUN  v3.2.4 /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P03-S02-T009/frontend
+
+ ✓ src/i18n/__tests__/i18n.test.ts (43 tests) 10ms
+ ✓ src/pages/chat/__tests__/ChatHomePage.test.tsx (3 tests) 50ms
+stderr | src/pages/chat/__tests__/ConversationPage.test.tsx > ConversationPage > T06 — permission_denied state: forbidden view visible (from query error)
+[chat] chat.conversation.render.forbidden { conversation_id: [32m'conv-tes'[39m }
+
+stderr | src/pages/chat/__tests__/ConversationPage.test.tsx > ConversationPage > T07 — not_found state: not-found view visible (from query error)
+[chat] chat.conversation.render.not_found { conversation_id: [32m'conv-tes'[39m }
+
+ ✓ src/pages/chat/__tests__/_ChatNavbar.test.tsx (7 tests) 69ms
+ ✓ src/pages/chat/__tests__/HistoryPage.test.tsx (14 tests) 83ms
+stderr | src/pages/account/__tests__/AccountPage.test.tsx > AccountPage > AP07: unauthenticated state shows permission denied view (no user)
+[auth] account.page.permission_denied { status: [32m'unauthenticated'[39m }
+
+stderr | src/pages/chat/__tests__/ConversationPage.test.tsx > ConversationPage > T16-T009 — permission_denied state: navbar account link HIDDEN (§D-T009-NAVBAR-VISIBILITY)
+[chat] chat.conversation.render.forbidden { conversation_id: [32m'conv-tes'[39m }
+
+ ✓ src/pages/chat/__tests__/ConversationPage.test.tsx (16 tests) 92ms
+stderr | src/pages/account/__tests__/AccountPage.test.tsx > AccountPage > AP09: permission_denied state renders PermissionDeniedView with sign-in CTA
+[auth] account.page.permission_denied { status: [32m'unauthenticated'[39m }
+
+stderr | src/pages/account/__tests__/AccountPage.test.tsx > AccountPage > AP10: sign-in CTA in permission denied navigates to /auth/sign-in?next=/account
+[auth] account.page.permission_denied { status: [32m'unauthenticated'[39m }
+[auth] account.page.permission_denied.signin_cta
+
+stdout | src/pages/account/__tests__/AccountPage.test.tsx > AccountPage > AP13: no verbose logger call contains the full email value
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mfalse[39m }
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [90mundefined[39m
+}
+[auth] account.page.mount { user_id: [32m'acc-user-uuid-001'[39m }
+
+ ✓ src/pages/account/__tests__/AccountPage.test.tsx (16 tests) 119ms
+
+ Test Files  6 passed (6)
+      Tests  99 passed (99)
+   Start at  15:40:52
+   Duration  2.18s (transform 839ms, setup 926ms, collect 3.95s, tests 423ms, environment 3.75s, prepare 1.01s)
+

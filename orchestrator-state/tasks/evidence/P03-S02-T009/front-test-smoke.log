@@ -1,0 +1,30 @@
+[rag] rag.repo.updateCollection.not_found {
+  collection_id: [32m'00000000-0000-0000-0000-000000000000'[39m,
+  request_id: [32m'req-001'[39m
+}
+
+stderr | src/features/rag/__tests__/updateCollection.test.ts > RagRepository.updateCollection > U07 — PATCH network reject → RagNetworkError
+[rag] rag.repo.updateCollection.error { collection_id: [32m'coll-uuid-001'[39m, error: [32m'RAG_NETWORK_ERROR'[39m }
+
+ ✓ src/features/rag/__tests__/updateCollection.test.ts (8 tests) 7ms
+stderr | src/features/auth/presentation/useLogout.test.tsx > useLogout > L3: if AuthProvider.logout() rejects with 401-like error, still navigates
+[auth] auth.logout.error { error: [32m'AUTH_SESSION_EXPIRED'[39m }
+
+stderr | src/features/auth/presentation/useLogout.test.tsx > useLogout > L4: if AuthProvider.logout() rejects with network error, still navigates
+[auth] auth.logout.error { error: [32m'Network request failed.'[39m }
+
+stdout | src/features/auth/presentation/useLogout.test.tsx > useLogout > L5: emits auth.logout.start log under VITE_ENABLE_VERBOSE_LOGGING=true
+[auth] auth.logout.start
+
+stdout | src/features/auth/presentation/useLogout.test.tsx > useLogout > L5: emits auth.logout.start log under VITE_ENABLE_VERBOSE_LOGGING=true
+[auth] auth.logout.ok
+
+ ✓ src/features/auth/presentation/useLogout.test.tsx (6 tests) 18ms
+ ✓ src/features/auth/data/__tests__/httpClient.test.ts (4 tests) 6ms
+ ✓ src/features/chat/presentation/__tests__/historyGrouping.test.ts (10 tests) 5ms
+
+ Test Files  54 passed (54)
+      Tests  631 passed (631)
+   Start at  15:40:59
+   Duration  9.34s (transform 3.26s, setup 8.39s, collect 18.90s, tests 7.22s, environment 38.39s, prepare 5.63s)
+
