@@ -1,0 +1,53 @@
+{
+  "id": "FU-20260518111311-add-account-link-from-chat-shell-navbar-entry-po",
+  "schema_version": 1,
+  "status": "promoted",
+  "created_at": "2026-05-18T11:13:11+00:00",
+  "created_by": "sergiolr",
+  "origin_task_id": "P03-S02-T007",
+  "origin_phase_id": "P03",
+  "origin_step_id": "P03-S02",
+  "kind": "ux",
+  "product_increment": "current",
+  "build_state": "planned",
+  "severity": "medium",
+  "title": "Add /account link from chat shell (navbar entry point)",
+  "description": "T007 acceptance text from the original FU YAML mentions a navbar link to /account, but the chat shell is not in T007 write_set. Per task pack §D-T007-NAVBAR-DEFERRED the deferral is intentional. A separate slice with chat-shell write_set is needed to add the link (icon + ROUTE_ACCOUNT + verbose-log entry).",
+  "journey_refs": [
+    "J102"
+  ],
+  "screen_route": "—",
+  "endpoint": "—",
+  "tables": [],
+  "depends_on": [
+    "P03-S02-T007"
+  ],
+  "conflict_groups": [
+    "front:chat"
+  ],
+  "write_set": [
+    "frontend/src/pages/chat/**"
+  ],
+  "acceptance": [
+    "Visible avatar/account icon in chat shell linking to /account",
+    "keyboard accessible",
+    "passes design tokens",
+    "existing chat tests stay green."
+  ],
+  "verify": [
+    "/verify-slice navigates from /chat → click navbar account icon → /account renders."
+  ],
+  "notes": [],
+  "triage": {
+    "scope_classification": "missing_coverage",
+    "why_not_debugger": "chat shell write_set is not in T007 allowed_paths; the navbar link addition requires opening the chat shell (frontend/src/pages/chat/** or shared chrome) which lives in a different Conflict group. Cannot be fixed inside T007 write_set without scope_expansion.",
+    "decision": "followup_only_when_outside_current_slice",
+    "debugger_path": "in_scope_defects_use_validator_tester_debugger_retest",
+    "warnings": []
+  },
+  "possible_duplicates": [],
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260518111311-add-account-link-from-chat-shell-navbar-entry-po.yaml",
+  "promoted_at": "2026-05-18T13:12:37+00:00",
+  "promoted_task_id": "P03-S02-T009",
+  "source_doc_updated": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md"
+}

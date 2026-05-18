@@ -11,12 +11,13 @@ task_ids:
   - P03-S01-T005
   - P03-S02-T001
   - P03-S02-T002
-  - P03-S02-T008
   - P03-S02-T003
   - P03-S02-T004
-  - P03-S02-T007
   - P03-S01-T006
   - P03-S02-T005
   - P03-S01-T007
   - P03-S02-T006
+  - P03-S02-T007
+  - P03-S02-T009
+  - P03-S02-T008
 source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Phase 3 — Employee UX / Auth + Chat"
