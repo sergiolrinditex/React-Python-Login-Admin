@@ -1,0 +1,8 @@
+# Check F: check-task-dag.sh --strict
+# Command: ./scripts/check-task-dag.sh --strict
+# Output:
+# Task DAG: OK mode=explicit_dag nodes=96 edges=156 waves=17
+# ADVISORY: P02: 23 tasks exceeds max 20; split by screen/module lane
+# ADVISORY: P04: 23 tasks exceeds max 20; split by screen/module lane
+# EXIT: 0
+# RESULT: PASS (advisories are non-blocking informational messages, not errors)

@@ -1,0 +1,7 @@
+# Check H: focused diff numstat
+# Command: git --no-pager diff --numstat -- docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md
+# Output:
+# 2	2	docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md
+# EXIT: 0
+# RESULT: PASS — exactly 2 insertions, 2 deletions (one per modified line x 2 rows)
+# Note: task pack acceptance criterion 8 uses grep+wc -l on unified diff = 4 lines total (2 removed + 2 added), consistent with 2+2 numstat

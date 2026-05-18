@@ -1,0 +1,53 @@
+=== VERIFY-SLICE RE-RUN: P04-S01-T013 ===
+TIMESTAMP: 2026-05-18T05:44:48Z
+
+--- A. Disk reality sanity ---
+disk-reality-ok
+
+--- B. Drift eliminated (must return 0 lines / exit from ! grep) ---
+PASS: no .py drift found (0 matches)
+
+--- C. Replacement globs present (must return exactly 4 hits) ---
+grep -cE count: 2
+FAIL: count=2 (expected 4)
+
+--- D. Post-fix lines for evidence ---
+32:| P02-S05-T001 | api | Admin AI providers and models endpoints | Step 2.5 | v1 | planned | high | human | P02-S01-T001,P02-S02-T001 | api:admin-ai | backend/app/admin/providers/**, backend/app/admin/model_catalog/**, backend/tests/integration/test_admin_ai.py | J103 | — | GET /api/v1/admin/ai/providers, POST /api/v1/admin/ai/providers, GET /api/v1/admin/ai/models, PATCH /api/v1/admin/ai/models/{id} | ai_providers, ai_provider_credentials, ai_models, audit_logs | §3.1#admin-ai | §6.2#admin-ai | Admin can create provider, store encrypted credentials, list/activate models | pytest backend/tests/integration -k admin_ai_models |
+176:| P02-S05-T003 | bug | Add partial unique index for is_default=true per model_type in ai_models | Runtime follow-up P02-S05-T001 | current | planned | medium | human | P02-S05-T001 | api:admin-ai | backend/app/admin/providers/**, backend/app/admin/model_catalog/**, backend/tests/integration/test_admin_ai.py | — | — | — | — | runtime-followup#FU-20260513085435-add-partial-unique-index-for-is-default-true-per | runtime-followup#FU-20260513085435-add-partial-unique-index-for-is-default-true-per | Migration 0003 with partial unique index applied, existing integration tests (T18) still pass, a concurrent-PATCH test proves the DB rejects the second concurrent SET is_default=true for same model_type. | Run pytest backend/tests/integration -k admin_ai_models, try concurrent PATCHes setting is_default=true on two models of same type, verify DB raises unique_violation instead of silently allowing two defaults. |
+
+--- E. Source-of-truth contract valid ---
+Source-of-truth contract is valid.
+{
+  "instructions": [
+    "docs/source-of-truth/instrucciones.md"
+  ],
+  "checklist": [
+    "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md"
+  ],
+  "guide": [
+    "docs/source-of-truth/HILO_PEOPLE_TECHNICAL_GUIDE.md"
+  ],
+  "ux": [
+    "docs/source-of-truth/UX_CONTRACT.md"
+  ],
+  "stack_profile": [
+    "docs/source-of-truth/STACK_PROFILE.yaml"
+  ]
+}
+EXIT: 0
+
+--- F. DAG consistent ---
+Task DAG: OK mode=explicit_dag nodes=96 edges=156 waves=17
+ADVISORY: P02: 23 tasks exceeds max 20; split by screen/module lane
+ADVISORY: P04: 23 tasks exceeds max 20; split by screen/module lane
+EXIT: 0
+
+--- G. Wiring contract consistent ---
+Wiring contract coherent — 20 routes, 35 endpoints, 96 registry rows, 6 journeys, data_contract=1
+EXIT: 0
+
+--- H. Focused diff exactly 4 lines (2 removed + 2 added) ---
+diff line count: 4
+PASS: count=4
+
+=== ALL ACCEPTANCE COMMANDS COMPLETE ===

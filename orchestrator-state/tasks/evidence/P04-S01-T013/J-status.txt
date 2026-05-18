@@ -1,0 +1,13 @@
+# Check J: git status -sb
+# Command: git --no-pager status -sb
+# Output:
+# ## dev/P04-S01-T013
+#  M docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md
+# ?? orchestrator-state/tasks/evidence/P04-S01-T013/
+# ?? orchestrator-state/tasks/handoffs/P04-S01-T013.md
+# ?? orchestrator-state/tasks/task-packs/P04-S01-T013.md
+# EXIT: 0
+# RESULT: PASS
+#   - Modified tracked file: checklist only (in write_set)
+#   - Untracked: evidence/, handoffs/, task-packs/ — all expected slice artifacts for this TASK_ID
+#   - No unexpected dirty files outside write_set

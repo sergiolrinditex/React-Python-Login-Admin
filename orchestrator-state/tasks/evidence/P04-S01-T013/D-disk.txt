@@ -1,0 +1,5 @@
+# Check D: Disk reality sanity check
+# Command: test -d backend/app/admin/providers && test -d backend/app/admin/model_catalog && echo OK
+# Output: OK
+# EXIT: 0
+# RESULT: PASS — both packages exist as directories on disk

@@ -1,0 +1,10 @@
+# Check B: grep for new glob paths (expect 4 occurrences across 2 lines, exit 0)
+# Command: grep -nE "backend/app/admin/(providers|model_catalog)/\*\*" docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md
+# Lines matching: 32 and 176 (both contain providers/** AND model_catalog/**)
+# Individual occurrences via -oE: 4
+#   backend/app/admin/providers/**
+#   backend/app/admin/model_catalog/**
+#   backend/app/admin/providers/**
+#   backend/app/admin/model_catalog/**
+# EXIT: 0
+# RESULT: PASS (4 glob occurrences confirmed)

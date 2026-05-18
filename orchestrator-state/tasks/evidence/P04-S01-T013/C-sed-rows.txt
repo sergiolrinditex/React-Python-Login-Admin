@@ -1,0 +1,7 @@
+# Check C: Show lines 32 and 176 content (both must contain providers/** and model_catalog/**)
+# Command: sed -n '32p;176p' docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md
+# Line 32 (P02-S05-T001):
+# | P02-S05-T001 | api | Admin AI providers and models endpoints | Step 2.5 | v1 | planned | high | human | P02-S01-T001,P02-S02-T001 | api:admin-ai | backend/app/admin/providers/**, backend/app/admin/model_catalog/**, backend/tests/integration/test_admin_ai.py | J103 | ...
+# Line 176 (P02-S05-T003):
+# | P02-S05-T003 | bug | Add partial unique index for is_default=true per model_type in ai_models | Runtime follow-up P02-S05-T001 | current | planned | medium | human | P02-S05-T001 | api:admin-ai | backend/app/admin/providers/**, backend/app/admin/model_catalog/**, backend/tests/integration/test_admin_ai.py | ...
+# RESULT: PASS — both rows contain providers/** and model_catalog/**, test file preserved as single literal
