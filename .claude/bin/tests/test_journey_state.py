@@ -134,6 +134,7 @@ def test_hook_integration_closer_emits_pending(seeded_registry, monkeypatch):
         "BASELINE_SYNC_READY: yes",
         "GIT_READY: yes",
         "PUSH_READY: yes",
+        "GIT_WORKFLOW_READY: yes",
         "WORKTREES_CLEANED: yes",
         "JOURNEY_PENDING_VERIFY: J101",
     ])

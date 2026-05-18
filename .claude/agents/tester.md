@@ -138,7 +138,7 @@ Al proponer FU, incluye siempre:
   --verify "..."
 ```
 
-Si clasificas el hallazgo como out-of-scope, debes ejecutar `./scripts/register-followup-task.sh propose` en esta misma respuesta; no basta con escribir una recomendación en texto libre. Referencia el `FOLLOWUP_ID`, `scope_classification` y `why_not_debugger` en la sección tester del handoff. No edites `registry.json` ni source-of-truth a mano; no llames a `promote`. La promoción a task DAG la hace el main-orchestrator tras aprobación humana.
+Si clasificas el hallazgo como out-of-scope, no basta con escribir una recomendación en texto libre. Como tester del par paralelo, NO ejecutes mutaciones runtime; deja un bloque `FU_PROPOSAL` machine-readable para que el main-orchestrator ejecute `./scripts/register-followup-task.sh propose` una sola vez. Cuando exista, referencia el `FOLLOWUP_ID`, `scope_classification` y `why_not_debugger` en la sección tester del handoff. No edites `registry.json` ni source-of-truth a mano; no llames a `promote`. La promoción a task DAG la hace el main-orchestrator tras aprobación humana.
 
 ## Production DAG trailer vocabulary
 
@@ -166,3 +166,30 @@ EVIDENCE: orchestrator-state/tasks/evidence/<TASK_ID>/
 - Artefactos de la slice: `./orchestrator-state/tasks/...` en la worktree activa (`handoff`, `evidence`, `report`, `task-pack`).
 - No crees follow-ups por ruido mecánico de orquestador; corrige/reintenta/bloquea. Follow-up solo para trabajo real fuera de scope.
 
+
+## Canonical FU handoff triage appendix
+
+This appendix is intentionally literal for CI/static contracts and for Claude Code after `/clear`.
+
+- In-scope defect => `OUTCOME: fail`, same `TASK_ID`, debugger -> retest. No crees FU para evitar un fix posible.
+- Como subagente, no spawnees otros subagentes. El **main-orchestrator** invocará `debugger` cuando corresponda.
+- Para hallazgos fuera de scope usa exactamente este criterio visible: `scope-classification out_of_scope|missing_coverage|missing_real_data`.
+- No basta con describir el hallazgo como prosa: no dejes el hallazgo sólo como prosa. Debe quedar un bloque machine-readable para que el main-orchestrator registre un `FOLLOWUP_ID` formal.
+- No llames a `promote`. Tester sólo deja la propuesta; el main-orchestrator decide registro/promoción/waiver.
+
+Reference command template for the main-orchestrator only; tester does not execute it directly during the parallel pair:
+
+```bash
+./scripts/register-followup-task.sh propose \
+  --origin-task <TASK_ID> \
+  --severity high|medium|low|critical|blocker \
+  --kind bug|ux|wiring|data|test|security|followup \
+  --scope-classification out_of_scope|missing_coverage|missing_real_data \
+  --why-not-debugger "why debugger/retest cannot fix this inside the current TASK_ID" \
+  --title "..." \
+  --description "..." \
+  --acceptance "..." \
+  --verify "..."
+```
+
+When the main-orchestrator registers it, preserve these fields in the handoff/report: `FOLLOWUP_ID`, `scope_classification`, `why_not_debugger`, and `--why-not-debugger` rationale.

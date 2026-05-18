@@ -65,10 +65,15 @@ resolve_canonical_root() {
   fi
 }
 
-merge_author_args=()
-if [ -n "${CLAUDE_PR_MERGE_AUTHOR_EMAIL:-}" ]; then
-  merge_author_args=(--author-email "$CLAUDE_PR_MERGE_AUTHOR_EMAIL")
-fi
+gh_pr_merge() {
+  # macOS still ships Bash 3.2 in many environments. Avoid empty arrays under
+  # `set -u` here; `${arr[@]}` can throw "unbound variable" and leave PRs open.
+  if [ -n "${CLAUDE_PR_MERGE_AUTHOR_EMAIL:-}" ]; then
+    gh pr merge "$@" --author-email "$CLAUDE_PR_MERGE_AUTHOR_EMAIL"
+  else
+    gh pr merge "$@"
+  fi
+}
 
 if [ -z "$BRANCH" ] || [ "$BRANCH" = "$TARGET_BRANCH" ] || [ "$BRANCH" = "main" ] || [ "$BRANCH" = "master" ] || [ "$BRANCH" = "develop" ]; then
   wrong_workflow "Reason: pr-flow requires a feature branch for the TASK_ID, current=${BRANCH:-detached}. Use push-to-main/direct-main only when STACK_PROFILE.yaml declares it."
@@ -88,7 +93,8 @@ if [ -n "$(git status --porcelain=v1 --untracked-files=all)" ]; then
   blocked "Reason: working tree dirty before PR flow. Commit slice changes first."
 fi
 
-if ! git fetch "$TARGET_REMOTE" "$TARGET_BRANCH" --prune >"$FETCH_LOG" 2>&1; then
+FETCH_REFSPEC="+refs/heads/${TARGET_BRANCH}:refs/remotes/${TARGET_REMOTE}/${TARGET_BRANCH}"
+if ! git fetch "$TARGET_REMOTE" --prune "$FETCH_REFSPEC" >"$FETCH_LOG" 2>&1; then
   blocked "Reason: could not fetch '$TARGET_REMOTE/$TARGET_BRANCH'. See $FETCH_LOG"
 fi
 TARGET_REF="$TARGET_REMOTE/$TARGET_BRANCH"
@@ -155,7 +161,7 @@ echo "PR_URL: ${PR_URL:-unknown}"
 STATE="$(gh pr view "$PR_NUMBER" --json state -q .state 2>/dev/null || echo '')"
 if [ "$STATE" != "MERGED" ]; then
   if [ "${CLAUDE_PR_FLOW_ADMIN_MERGE:-0}" = "1" ]; then
-    if gh pr merge "$PR_NUMBER" --squash --delete-branch --admin ${merge_author_args[@]+"${merge_author_args[@]}"} >"$MERGE_LOG" 2>&1; then
+    if gh_pr_merge "$PR_NUMBER" --squash --delete-branch --admin >"$MERGE_LOG" 2>&1; then
       echo "MERGE_MODE: admin-squash-explicit"
     else
       echo "GIT_WORKFLOW_READY: blocked"
@@ -166,13 +172,13 @@ if [ "$STATE" != "MERGED" ]; then
       sed 's/^/  /' "$MERGE_LOG" >&2 || true
       exit 3
     fi
-  elif gh pr merge "$PR_NUMBER" --squash --delete-branch --auto ${merge_author_args[@]+"${merge_author_args[@]}"} >"$MERGE_LOG" 2>&1; then
+  elif gh_pr_merge "$PR_NUMBER" --squash --delete-branch --auto >"$MERGE_LOG" 2>&1; then
     echo "MERGE_MODE: auto-squash"
     echo "MERGED: auto-queued"
   elif grep -Eiq '(already.*auto.?merge|auto.?merge.*already|already.*enabled)' "$MERGE_LOG" 2>/dev/null; then
     echo "MERGE_MODE: auto-squash-already-enabled"
     echo "MERGED: auto-queued"
-  elif grep -Eiq '(delete.*branch|branch.*delete|merge queue)' "$MERGE_LOG" 2>/dev/null && gh pr merge "$PR_NUMBER" --squash --auto >>"$MERGE_LOG" 2>&1; then
+  elif grep -Eiq '(delete.*branch|branch.*delete|merge queue)' "$MERGE_LOG" 2>/dev/null && gh_pr_merge "$PR_NUMBER" --squash --auto >>"$MERGE_LOG" 2>&1; then
     echo "MERGE_MODE: auto-squash"
     echo "MERGED: auto-queued"
     echo "REMOTE_DELETE_MODE: post-merge-fallback"
@@ -243,7 +249,7 @@ if [ "$ROOT_BRANCH" = "$TARGET_BRANCH" ]; then
     echo "GIT_WORKFLOW_READY: blocked"
     exit 3
   fi
-  if ! git -C "$ROOT" fetch "$TARGET_REMOTE" "$TARGET_BRANCH" >"$SYNC_LOG" 2>&1; then
+  if ! git -C "$ROOT" fetch "$TARGET_REMOTE" --prune "$FETCH_REFSPEC" >"$SYNC_LOG" 2>&1; then
     echo "CANONICAL_MAIN_SYNCED: no"
     echo "Reason: canonical root fetch failed. See $SYNC_LOG"
     echo "GIT_WORKFLOW_READY: blocked"
@@ -263,7 +269,18 @@ if [ "$ROOT_BRANCH" = "$TARGET_BRANCH" ]; then
   fi
   echo "CANONICAL_MAIN_SYNCED: yes"
 else
-  echo "CANONICAL_MAIN_SYNCED: skipped (canonical root branch=${ROOT_BRANCH:-detached})"
+  CURRENT_CHECKOUT_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd -P)"
+  if [ "$ROOT" = "$CURRENT_CHECKOUT_ROOT" ]; then
+    # Single-checkout feature-branch repos have no separate canonical main
+    # worktree to fast-forward without switching the active checkout. Linked
+    # worktree orchestration is preferred; simple repos remain supported.
+    echo "CANONICAL_MAIN_SYNCED: skipped (single-checkout feature branch; no separate main worktree)"
+  else
+    echo "CANONICAL_MAIN_SYNCED: no"
+    echo "Reason: canonical root branch is ${ROOT_BRANCH:-detached}, expected $TARGET_BRANCH. DAG close requires local main to be fast-forwarded after merge so the next slice starts from integrated code."
+    echo "GIT_WORKFLOW_READY: blocked"
+    exit 3
+  fi
 fi
 
 echo "GIT_WORKFLOW_READY: yes"

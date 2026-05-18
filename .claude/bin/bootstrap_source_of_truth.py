@@ -1491,7 +1491,7 @@ def build_phases_and_tasks(checklist_path: Path, checklist_text: str) -> tuple[l
         phase_tasks = [task_by_id.get(tid) for tid in phase.get("task_ids", [])]
         phase_tasks = [t for t in phase_tasks if t]
         if phase_tasks and all(t.get("status") == "done" for t in phase_tasks):
-            phase["status"] = "done"
+            phase["status"] = "complete"
         elif any(t.get("status") in {"ready", "claimed", "in_progress", "validator_tester_pending", "ready_for_close", "verified_pending_close"} for t in phase_tasks):
             phase["status"] = "ready"
 
@@ -2016,6 +2016,27 @@ def _apply_preserved_runtime(tasks: list[dict[str, Any]], phases: list[dict[str,
         # fingerprint, so the next refresh becomes fully drift-aware.
         missing_previous_fingerprint = not old_fp
         if not (same_definition or missing_previous_fingerprint):
+            if _is_closer_final_task(old):
+                # A completed slice is immutable runtime history. A source doc
+                # edit or a Runtime Follow-up Coverage Registry append must not
+                # silently reopen it or rewrite its work-item from done ->
+                # blocked. Surface the drift as metadata so humans can create a
+                # new follow-up if the changed definition represents new work.
+                for key in _RUNTIME_TASK_FIELDS_TO_PRESERVE:
+                    if key in old:
+                        task[key] = old[key]
+                for key in ("status", "last_outcome", "last_updated_by", "last_stop_at"):
+                    if key in old:
+                        task[key] = old[key]
+                task["source_fingerprint_changed_after_done"] = True
+                task["previous_source_fingerprint"] = old.get("source_fingerprint")
+                task["source_fingerprint_change_recorded_at"] = now_iso()
+                notes = task.setdefault("notes", [])
+                note = "Source fingerprint changed after closer-final state; preserved done lifecycle. Open/promote a follow-up for any new work instead of reopening this slice."
+                if note not in notes:
+                    notes.append(note)
+                preserved += 1
+                continue
             _mark_source_fingerprint_changed(task, old)
             continue
         for key in _RUNTIME_TASK_FIELDS_TO_PRESERVE:
@@ -2029,15 +2050,17 @@ def _apply_preserved_runtime(tasks: list[dict[str, Any]], phases: list[dict[str,
                 if key in old:
                     task[key] = old[key]
         preserved += 1
-    # Recompute phase status from preserved task statuses while keeping the
-    # bootstrap phase vocabulary (`done`, not the runtime helper's `complete`).
+    # Recompute phase status from preserved task statuses using the same
+    # phase vocabulary as common.refresh_phase_statuses (`complete` for all-done
+    # phases). This keeps bootstrap refresh/register-followup regeneration from
+    # reverting project phase YAML from complete -> done.
     task_by_id = {str(t.get("id")): t for t in tasks if t.get("id")}
     for phase in phases:
         phase_tasks = [task_by_id.get(str(tid)) for tid in phase.get("task_ids", [])]
         phase_tasks = [t for t in phase_tasks if t]
         statuses = {str(t.get("status") or "") for t in phase_tasks}
         if phase_tasks and all(st == "done" for st in statuses):
-            phase["status"] = "done"
+            phase["status"] = "complete"
         elif statuses & {"ready", "claimed", "in_progress", "validator_tester_pending", "ready_for_close", "verified_pending_close", "needs_debug", "test_pending", "qa_pending", "review_pending"}:
             phase["status"] = "ready"
         elif phase_tasks:

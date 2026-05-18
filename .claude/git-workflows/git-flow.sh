@@ -16,16 +16,19 @@ mkdir -p "$LOG_DIR"
 RUN_ID="git-flow-$$-$(date +%s)"
 TMP_WT_DIR="$LOG_DIR/${RUN_ID}-worktrees"
 LOCK_DIR=""
-TMP_WTS=()
+TMP_WTS_FILE="$LOG_DIR/${RUN_ID}-tmp-worktrees.txt"
+: >"$TMP_WTS_FILE"
 NEW_DETACHED_WORKTREE=""
 MERGE_RESULT_WT=""
 
 cleanup_all() {
   local wt
-  for wt in "${TMP_WTS[@]:-}"; do
-    [ -n "$wt" ] || continue
-    git worktree remove --force "$wt" >/dev/null 2>&1 || rm -rf "$wt" 2>/dev/null || true
-  done
+  if [ -f "$TMP_WTS_FILE" ]; then
+    while IFS= read -r wt; do
+      [ -n "$wt" ] || continue
+      git worktree remove --force "$wt" >/dev/null 2>&1 || rm -rf "$wt" 2>/dev/null || true
+    done <"$TMP_WTS_FILE"
+  fi
   rmdir "$TMP_WT_DIR" >/dev/null 2>&1 || true
   if [ -n "${LOCK_DIR:-}" ] && [ -d "$LOCK_DIR" ]; then
     rmdir "$LOCK_DIR" >/dev/null 2>&1 || true
@@ -196,7 +199,7 @@ new_detached_worktree() {
     abort 3 "Reason: could not create detached integration worktree for '$label' at '$ref'." \
       "Run: git worktree list"
   fi
-  TMP_WTS+=("$wt")
+  printf '%s\n' "$wt" >>"$TMP_WTS_FILE"
   NEW_DETACHED_WORKTREE="$wt"
 }
 

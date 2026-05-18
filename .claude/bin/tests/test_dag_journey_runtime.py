@@ -79,6 +79,7 @@ def _closer_trailer(task_id: str, *, extra: list[str] | None = None) -> str:
                         "BASELINE_SYNC_READY: yes",
         "GIT_READY: yes",
         "PUSH_READY: yes",
+        "GIT_WORKFLOW_READY: yes",
         "WORKTREES_CLEANED: yes",
     ]
     if extra:

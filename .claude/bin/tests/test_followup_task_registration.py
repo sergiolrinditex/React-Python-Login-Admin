@@ -192,6 +192,7 @@ def test_closer_done_allows_formal_proposed_blocker_followup_for_pr(seeded_regis
         "BASELINE_SYNC_READY: yes",
         "GIT_READY: yes",
         "PUSH_READY: yes",
+        "GIT_WORKFLOW_READY: yes",
         "WORKTREES_CLEANED: yes",
     ])
     monkeypatch.setattr("sys.stdin", type("In", (), {"read": lambda self: payload})())

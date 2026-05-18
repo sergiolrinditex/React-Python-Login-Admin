@@ -50,22 +50,24 @@ fi
 # amend only those known trace files, then refuse every other dirty path so
 # product changes cannot be hidden behind push/PR automation.
 amend_late_trace_files() {
-  local late_paths=()
-  for path in \
-    orchestrator-state/tasks/ledger.jsonl \
-    orchestrator-state/tasks/bash-ledger.jsonl \
-    orchestrator-state/tasks/runtime-state.json
-  do
+  local found=0
+  local path
+  while IFS= read -r path; do
+    [ -z "$path" ] && continue
     if ! git diff --quiet -- "$path" 2>/dev/null || ! git diff --cached --quiet -- "$path" 2>/dev/null; then
-      late_paths+=("$path")
+      git add -- "$path" 2>/dev/null || true
+      found=1
     fi
-  done
+  done <<'EOF_LATE_TRACE_PATHS'
+orchestrator-state/tasks/ledger.jsonl
+orchestrator-state/tasks/bash-ledger.jsonl
+orchestrator-state/tasks/runtime-state.json
+EOF_LATE_TRACE_PATHS
 
-  if [ "${#late_paths[@]}" -eq 0 ]; then
+  if [ "$found" -eq 0 ]; then
     return 0
   fi
 
-  git add -- "${late_paths[@]}"
   if git diff --cached --quiet; then
     return 0
   fi

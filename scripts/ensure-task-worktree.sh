@@ -97,6 +97,20 @@ else
 fi
 CURRENT_BRANCH="$(git -C "$CURRENT_ROOT" branch --show-current 2>/dev/null || true)"
 
+# Before creating/reusing a task worktree for branch-based PR flow, make sure
+# the canonical main checkout is fast-forwarded to origin/main. This closes the
+# class of drift where /next-slice is launched directly (without a prior
+# /next-wave) and the new dev/<TASK_ID> branch is cut from stale local main.
+# --check-current and --print-root remain read-only.
+if [ "$MODE" = "ensure" ] && [ "$WORKFLOW" = "pr-flow" ] && [ "${CLAUDE_SKIP_MAIN_SYNC_BEFORE_WAVE:-0}" != "1" ] && [ "${CLAUDE_SKIP_MAIN_SYNC_BEFORE_WORKTREE:-0}" != "1" ] && [ -f "$ROOT/scripts/sync-main-before-wave.sh" ]; then
+  if ! bash "$ROOT/scripts/sync-main-before-wave.sh" --apply --quiet --remote "$MAIN_REMOTE" --main "$DEFAULT_BRANCH"; then
+    echo "TASK_WORKTREE_READY: no" >&2
+    echo "Reason: canonical $DEFAULT_BRANCH could not fast-forward to $MAIN_REMOTE/$DEFAULT_BRANCH before creating task worktree." >&2
+    echo "Run: cd '$ROOT' && bash scripts/sync-main-before-wave.sh --apply --remote '$MAIN_REMOTE' --main '$DEFAULT_BRANCH'" >&2
+    exit 3
+  fi
+fi
+
 if [ "$WORKFLOW" = "push-to-main" ]; then
   if [ "$MODE" = "check" ]; then
     if [ "$CURRENT_BRANCH" != "$DEFAULT_BRANCH" ]; then
@@ -156,6 +170,18 @@ if [ -n "$existing" ] && [ -d "$existing" ]; then
   exit 0
 fi
 
+# Before cutting a NEW PR-flow task branch, bring the canonical main checkout up
+# to origin/main when that is safe. This keeps terminal N+1 from starting on an
+# old main after terminal N has merged. Existing/in-flight task branches are not
+# rebased here.
+if [ "$WORKFLOW" != "git-flow" ] && [ "${CLAUDE_SKIP_MAIN_SYNC_BEFORE_SLICE:-0}" != "1" ] && [ -x "$ROOT/scripts/sync-main-before-wave.sh" ]; then
+  if ! bash "$ROOT/scripts/sync-main-before-wave.sh" --apply --quiet; then
+    echo "TASK_WORKTREE_READY: no" >&2
+    echo "Reason: canonical main could not sync with remote before creating $BRANCH. Run: bash scripts/sync-main-before-wave.sh --apply" >&2
+    exit 3
+  fi
+fi
+
 base_ref_for_workflow() {
   if [ "$WORKFLOW" = "git-flow" ]; then
     if git -C "$ROOT" show-ref --verify --quiet "refs/heads/$DEVELOP_BRANCH"; then
@@ -175,10 +201,17 @@ base_ref_for_workflow() {
     return 2
   fi
 
-  if git -C "$ROOT" show-ref --verify --quiet "refs/heads/$DEFAULT_BRANCH"; then
-    printf '%s\n' "$DEFAULT_BRANCH"
-  elif git -C "$ROOT" show-ref --verify --quiet "refs/remotes/$MAIN_REMOTE/$DEFAULT_BRANCH"; then
+  # PR-flow worktrees must start from the newest remote default branch, not
+  # from a potentially stale local main. This is intentionally a fetch + branch
+  # from origin/main instead of a planner-side rebase: new slices start fresh;
+  # existing/in-flight task branches are never mutated here.
+  if git -C "$ROOT" remote get-url "$MAIN_REMOTE" >/dev/null 2>&1; then
+    git -C "$ROOT" fetch "$MAIN_REMOTE" --prune "+refs/heads/$DEFAULT_BRANCH:refs/remotes/$MAIN_REMOTE/$DEFAULT_BRANCH" >/dev/null 2>&1 || true
+  fi
+  if git -C "$ROOT" show-ref --verify --quiet "refs/remotes/$MAIN_REMOTE/$DEFAULT_BRANCH"; then
     printf '%s\n' "$MAIN_REMOTE/$DEFAULT_BRANCH"
+  elif git -C "$ROOT" show-ref --verify --quiet "refs/heads/$DEFAULT_BRANCH"; then
+    printf '%s\n' "$DEFAULT_BRANCH"
   else
     printf '%s\n' "HEAD"
   fi
@@ -186,7 +219,7 @@ base_ref_for_workflow() {
 
 BASE_REF="$(base_ref_for_workflow)"
 if ! git -C "$ROOT" show-ref --verify --quiet "refs/heads/$BRANCH"; then
-  git -C "$ROOT" branch "$BRANCH" "$BASE_REF"
+  git -C "$ROOT" branch "$BRANCH" "$BASE_REF" >/dev/null 2>&1
 fi
 
 WT_PARENT="${CLAUDE_TASK_WORKTREES_DIR:-$(dirname "$ROOT")/$(basename "$ROOT")-worktrees}"

@@ -41,13 +41,15 @@ case "$FRAMEWORK" in
       echo "i  ${MODULE_ROOT} no existe todavia - skip."
       exit 0
     fi
-    THEME_ARG=()
     if [ "$THEME_ROOT" != "none" ] && [ -n "$THEME_ROOT" ]; then
-      THEME_ARG=(--theme-root "$PROJECT_ROOT/$THEME_ROOT")
+      exec python3 -B -S "$TOOL_ROOT/scripts/check_web_design_tokens.py" \
+        --root "$PROJECT_ROOT" \
+        --target "$TARGET" \
+        --theme-root "$PROJECT_ROOT/$THEME_ROOT" "$@"
     fi
     exec python3 -B -S "$TOOL_ROOT/scripts/check_web_design_tokens.py" \
       --root "$PROJECT_ROOT" \
-      --target "$TARGET" "${THEME_ARG[@]}" "$@"
+      --target "$TARGET" "$@"
     ;;
   swiftui|swift)
     echo "i  design_tokens_v1 SwiftUI extension point: configure a project-specific plugin if strict Swift scanning is required."

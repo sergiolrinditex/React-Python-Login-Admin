@@ -1,5 +1,10 @@
 # OrquestadorDAG AnyStack — orquestador production DAG para aplicaciones fullstack
 
+### PR-flow invariant: next slice must start from integrated main
+
+For `git_workflow: pr-flow`, a closed slice is not `done` just because a PR exists. The closer must run `./scripts/git-workflow.sh`, `pr-flow.sh` must wait until GitHub reports the PR as `MERGED`, and the canonical main checkout must fast-forward to `origin/main`. New task worktrees are cut from the freshly fetched default branch; if local main cannot sync safely, `/next-wave` or `/next-slice` blocks instead of starting work on stale code.
+
+
 Orquestador para construir aplicaciones fullstack en producción mediante Claude Code, usando cinco documentos source-of-truth, slices verificables, journeys, UX, matriz DAG, memoria en disco, hooks, locks, follow-ups formales y cierre Git estricto.
 
 ## Cheat sheet
@@ -21,6 +26,9 @@ ChatGPT Pro rellena templates
 ```
 
 La matriz de adyacencia no se escribe a mano. Se deriva del `Canonical Coverage Registry` del checklist, concretamente de `Depends on`. La fuente runtime canónica del DAG es `orchestrator-state/tasks/registry.json` (`tasks[]` + `task_dag.source_digest`); `task-dag.json`, `task-dag.md` y `execution-graph.json` son vistas derivadas que `./scripts/check-task-dag.sh --strict` compara contra el registry antes de paralelizar. `Conflict group` y `Write set` evitan paralelizar slices que pisan los mismos ficheros o recursos. En workflows PR/worktree, `registry.json` es estado local y no viaja como payload de la slice: el commit incluye `orchestrator-state/tasks/lifecycle-events/<TASK_ID>.json`, y `sync-lifecycle-events.sh --apply` lo rehidrata tras merge/reset.
+
+
+Nota DAG: los avisos de tamaño de phase/step (`phase >20`, `step >15`) son hygiene/advisory por defecto; `--strict` sigue fallando por errores estructurales del DAG, drift de vistas o dependencias inválidas. Para convertir esos avisos de tamaño en fallo CI, usa `CLAUDE_DAG_ENFORCE_SIZE_BUDGETS=1 ./scripts/check-task-dag.sh --strict` o `--enforce-size-budgets`.
 
 **Production DAG-only**: en operación normal `task_dag.mode` debe ser `explicit_dag`. Si falta `Depends on`, el bootstrap/checker debe bloquear: faltan dependencias reales o el Coverage Registry está incompleto. Corrige los source-of-truth docs y vuelve a ejecutar `bootstrap_source_of_truth.py --refresh`.
 
@@ -414,15 +422,17 @@ claude --agent main-orchestrator --permission-mode bypassPermissions "/next-slic
 
 `/slice-maintain compact` compacta `orchestrator-state/memory/PROGRESS.md` y memoria global del proyecto. No toca memorias de agentes.
 
-Para memorias largas de agentes usa el modo explícito:
+`./scripts/next-wave.sh` compacta automáticamente memorias de subagentes cuando `orchestrator-state/agent-memory/<agent>/MEMORY.md` supera 250 líneas. Es housekeeping local: archiva el original completo, deja un índice operativo y los snapshots quedan gitignored. Puedes desactivarlo con `CLAUDE_AUTO_COMPACT_AGENT_MEMORY=0` o cambiar el umbral con `CLAUDE_AGENT_MEMORY_COMPACT_THRESHOLD_LINES=<N>`.
+
+Para revisar o ejecutar manualmente:
 
 ```bash
-python3 -B -S scripts/compact-agent-memory.py --all          # dry-run
+python3 -B -S scripts/compact-agent-memory.py --all          # dry-run, umbral 250
 python3 -B -S scripts/compact-agent-memory.py --agent developer
 python3 -B -S scripts/compact-agent-memory.py --all --apply  # archiva original completo y compacta
 ```
 
-Contrato: el original completo queda en `orchestrator-state/agent-memory/<agent>/archive/MEMORY.full.<timestamp>.md` antes de reescribir `MEMORY.md`. No toca `.claude/agents/*.md`, `docs/source-of-truth/**`, registry/runtime/task-dag ni artefactos de tasks.
+Contrato: el original completo queda en `orchestrator-state/agent-memory/<agent>/archive/MEMORY.full.<timestamp>.md` antes de reescribir `MEMORY.md`. No toca `.claude/agents/*.md`, `docs/source-of-truth/**`, registry/runtime/task-dag ni artefactos de tasks. Si una memoria cambia mientras se compacta, el script salta ese agente y no pisa la escritura concurrente.
 
 ## Seguridad de escrituras
 
@@ -494,7 +504,7 @@ El orquestador ya no debe asumir un stack concreto. Cada app declara su stack en
 Git close note: `hook_update_ledger.py` writes Bash PostToolUse events to `orchestrator-state/tasks/bash-ledger.jsonl`, which is runtime-only and ignored by Git. This prevents Bash hooks from re-dirtying the working tree after the atomic commit/push in DAG close. Do not use `git stash` as the normal closer flow; stage required changes into the slice commit before running `./scripts/git-workflow.sh`.
 ### Limpieza automática de worktrees e identidad Git
 
-En `pr-flow`, el closer no borra la worktree activa antes de que Claude ejecute `SubagentStop`; si lo hiciera, se puede perder el trailer del closer. `cleanup-worktrees.sh` la marca como `active_deferred=1`, registra la limpieza en `orchestrator-state/tasks/cleanup-requests/<TASK_ID>.json` y `scripts/cleanup-deferred-worktrees.sh` la elimina automáticamente desde el Stop hook, y también se reintenta en `scripts/next-wave.sh`/`scripts/ensure-task-worktree.sh` si ya no es la worktree activa. Si quieres forzar limpieza tras ver el prompt de vuelta, usa el `DEFERRED_CLEANUP_COMMAND` que imprime el cleanup.
+En `pr-flow`, el closer no borra la worktree activa antes de que Claude ejecute `SubagentStop`; si lo hiciera, se puede perder el trailer del closer. `cleanup-worktrees.sh` la marca como `active_deferred=1`, registra la limpieza en `orchestrator-state/tasks/cleanup-requests/<TASK_ID>.json` y `scripts/cleanup-deferred-worktrees.sh` la elimina automáticamente desde el Stop hook, y también se reintenta en `scripts/next-wave.sh`/`scripts/ensure-task-worktree.sh` si ya no es la worktree activa. El `DEFERRED_CLEANUP_COMMAND` es sólo fallback; el Stop hook lanza un janitor diferido con reintentos y `next-wave`/`next-slice` reintentan sin intervención manual.
 
 La identidad de commits no está hardcodeada. `scripts/check-git-identity.sh` usa `git config user.name` y `git config user.email`; si quieres exigir una identidad, configura `claude.expectedUserName`/`claude.expectedUserEmail` en Git o exporta `CLAUDE_GIT_EXPECTED_NAME`/`CLAUDE_GIT_EXPECTED_EMAIL`.
 
@@ -502,10 +512,18 @@ La identidad de commits no está hardcodeada. `scripts/check-git-identity.sh` us
 
 ### Limpieza diferida de worktrees
 
-Si el closer reporta `active_deferred=1`, no es fallo: protegió los hooks de Claude. La limpieza se reintenta automáticamente al ejecutar `/next-wave` o crear otra worktree. Comando manual seguro desde el root canónico: `bash scripts/cleanup-deferred-worktrees.sh --apply --task <TASK_ID>`.
+Si el closer reporta `active_deferred=1`, no es fallo: protegió los hooks de Claude. La limpieza se reintenta automáticamente al ejecutar `/next-wave` o crear otra worktree, pero sólo borra cuando la task ya está cerrada (`registry.status=done` o lifecycle-event `next_status=done`). Si la PR sigue abierta, la request queda pendiente y no debe ensuciar la wave. Si ya está cerrada pero la worktree sigue dirty, el cleanup no descarta cambios: imprime `DIRTY_STATUS_*` y debes revisar `git -C <worktree> status --short && git -C <worktree> diff --stat` antes de borrar. Fallback manual seguro desde el root canónico, sólo si el janitor no pudo porque la worktree seguía viva/dirty: `bash scripts/cleanup-deferred-worktrees.sh --apply --task <TASK_ID>`.
 
-Para limpiar también ramas remotas de PR tras squash-merge, `pr-flow.sh` usa `gh pr merge --delete-branch` y, después de confirmar `MERGED`, intenta `git push <remote> --delete <branch>` como fallback idempotente. Recomendado una vez por repo si tienes permisos admin: `bash scripts/configure-github-pr-cleanup.sh` para activar delete-branch-on-merge en GitHub; si reglas/protecciones lo impiden, el closer imprime `REMOTE_BRANCH_CLEANUP_COMMAND`.
+Además, `/next-wave` ejecuta `scripts/cleanup-closed-task-worktrees.sh --apply --quiet`: borra worktrees limpios y ramas locales `dev/<TASK_ID>`/`feature/<TASK_ID>` de tasks ya cerradas aunque no exista cleanup request. Es el equivalente seguro de `git worktree remove <path>` + `git branch -D dev/<TASK_ID>`, pero sólo si el TASK_ID está `done` por registry/lifecycle-event y la worktree no está activa ni dirty. Manual: `bash scripts/cleanup-closed-task-worktrees.sh --apply --task <TASK_ID> --verbose`.
 
+
+`/next-wave` también ejecuta `scripts/sync-main-before-wave.sh --apply --quiet` antes de calcular el frontier. Eso hace `git fetch --prune` y fast-forward de `main` a `origin/main` cuando es seguro; si hay cambios dirty no-runtime (por ejemplo `docs/source-of-truth/*`), local-main ahead o divergencia, bloquea la wave en vez de calcular sobre una base vieja. Desactívalo sólo para inspección con `CLAUDE_SKIP_MAIN_SYNC_BEFORE_WAVE=1`.
+
+Además ejecuta `scripts/cleanup-zombie-task-worktrees.sh --apply --quiet`: borra worktrees/ramas locales task-scoped que no tienen patches únicos frente a `origin/main` y no son live según registry. Sirve para cáscaras vacías tras squash merge u old branches equivalentes a main. No borra worktrees dirty, activas, live (`claimed`/`in_progress`/`ready_for_close`/etc.) ni branches con patches únicos. Manual/auditable: `bash scripts/cleanup-zombie-task-worktrees.sh --dry-run --verbose` y luego `--apply`.
+
+También ejecuta `scripts/cleanup-merged-pr-branches.sh --apply --quiet`: borra ramas remotas `origin/dev/<TASK_ID>`/`origin/feature/<TASK_ID>` sólo cuando GitHub confirma que la PR está `MERGED` y el SHA de la rama remota coincide con `headRefOid` de esa PR. PRs abiertas, cerradas sin merge, forks, ramas movidas o ambiguas quedan intactas. Manual/auditable: `bash scripts/cleanup-merged-pr-branches.sh --dry-run --verbose` y, si el plan es correcto, `bash scripts/cleanup-merged-pr-branches.sh --apply --verbose`. Desactívalo en una sesión con `CLAUDE_DISABLE_REMOTE_BRANCH_CLEANUP=1 ./scripts/next-wave.sh` o `CLAUDE_CLEAN_MERGED_PR_BRANCHES=0 ./scripts/next-wave.sh`.
+
+Para limpiar también ramas remotas de PR tras squash-merge en el cierre de la propia slice, `pr-flow.sh` usa `gh pr merge --delete-branch` y, después de confirmar `MERGED`, intenta `git push <remote> --delete <branch>` como fallback idempotente y hace `git fetch --prune`. Recomendado una vez por repo si tienes permisos admin: `bash scripts/configure-github-pr-cleanup.sh` para activar delete-branch-on-merge en GitHub; si reglas/protecciones lo impiden, el cleanup remoto de `/next-wave` hace de janitor conservador.
 
 ### Identidad Git y PR squash
 
@@ -540,3 +558,39 @@ For setup and isolation details see `docs/guides/MCP_BROWSER_VERIFY.md`. Short p
 The handoff contract for human `VERIFY_OUTCOME: verified` is intentionally strict: it must include `MCP_BROWSER`, `DATA_CONTRACT_ROWS`, `DATA_SETUP`, `PERSISTED_DATA_OBSERVED`, `FLOWS_TESTED` and `EVIDENCE`. The only no-MCP exception is `VERIFY_MODE: auto` with `RISK_LEVEL: low` and deterministic command evidence. This prevents a thin/partial `verified` block from letting the closer mutate the DAG to `done`.
 
 Handoff fields must be written as plain key lines inside the agent section (`- AGENT: validator`, `- OUTCOME: approved`), not as markdown subheadings like `### AGENT: validator`. The parser tolerates old/bad H3 field lines for recovery, but agents are instructed to write the clean form.
+
+### Inspector read-only para `/next-slice`
+
+`/next-slice <TASK_ID>` reconstruye contexto cada vez. Es normal que, al arrancar dentro de una worktree recién creada, todavía no exista el task-pack/handoff local; el pack puede vivir en el root canónico hasta que `planner` lo materialice. Para evitar snippets frágiles contra `registry.json`, usa:
+
+```bash
+ROOT="$(bash scripts/ensure-task-worktree.sh --print-root 2>/dev/null || pwd -P)"
+bash "$ROOT/scripts/inspect-task-state.sh" --task <TASK_ID>
+```
+
+El schema canónico del registry es `tasks[]` lista, no mapping.
+
+### Janitor diferido con reintentos
+
+Cuando el closer está ejecutándose dentro de la worktree activa, `cleanup-worktrees.sh` no puede borrarla sin arriesgar el trailer `SubagentStop`. Ahora deja una cleanup request y el Stop hook arranca `cleanup-deferred-worktrees-loop.sh`, que reintenta durante una ventana acotada. El comando `DEFERRED_CLEANUP_COMMAND` es fallback, no acción pendiente normal del usuario.
+
+
+### Learned guardrails
+
+- FU path drift: resolve real files with `find`/`grep`; do not open a second FU just to fix a `write_set` string.
+- Duplicate FU: recommend waiver `duplicate_of_done:<id>`; only main-orchestrator/user decides.
+- Shared frontend/auth/chat/router/error files require real browser `/verify-slice` evidence before closer; auto verify is for low-risk non-UI/non-shared tasks only.
+- Planner must block stale task worktrees as `stale_worktree_dep_missing`; it must not auto-rebase/merge/reset.
+
+### Operational guardrails from lifecycle/FU lessons
+
+Recent framework hardening treats stale worktrees, duplicate follow-ups and shared-file regressions as mechanical risks rather than product follow-ups. `/next-slice` should run `scripts/check-worktree-deps-visible.sh <TASK_ID>` before planning. Validator/tester emit `FU_PROPOSAL` fields; the main orchestrator registers/promotes once and checks duplicates. `git-add-slice.sh` blocks undeclared file deletions and large/structural removals in shared-risk files unless the task declares `delete_set`/`destructive_edit_set`; such shared-risk slices require human browser MCP verification.
+
+### PR/worktree sync invariant
+
+For `pr-flow`, new task worktrees are cut from the newest `origin/main`, not from a stale local `main`. `scripts/next-wave.sh` resolves the canonical repository root even when invoked from a task worktree, fast-forwards canonical `main` to `origin/main` when safe, and then computes the DAG frontier. `scripts/ensure-task-worktree.sh` repeats the same fast-forward check before creating a new `dev/<TASK_ID>` branch, so direct `/next-slice <TASK_ID>` launches do not start from an old base. Existing in-flight task branches are never auto-rebased by planner/next-slice; stale worktrees block and must be reconciled explicitly.
+
+### Follow-up promotion and bootstrap refresh safety
+
+`register-followup-task.sh promote` appends a runtime follow-up as new DAG work; it must not reopen already-closed slices. Bootstrap refresh preserves closer-final tasks as `done` even if their source fingerprint later drifts, records `source_fingerprint_changed_after_done`, and keeps all-done phases as `complete`. If the changed source represents new product work, create/promote a new follow-up instead of mutating the closed slice.
+

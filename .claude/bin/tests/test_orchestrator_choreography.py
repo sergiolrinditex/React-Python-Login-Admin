@@ -181,6 +181,7 @@ def _verify_then_close(task_id: str = "P00-S01-T001", *, journey: str | None = N
         "BASELINE_SYNC_READY: yes",
         "GIT_READY: yes",
         "PUSH_READY: yes",
+        "GIT_WORKFLOW_READY: yes",
         "WORKTREES_CLEANED: yes",
     ]
     if journey:
@@ -236,6 +237,7 @@ class FullPipelineChoreographyTests(unittest.TestCase):
                         "BASELINE_SYNC_READY: yes",
                         "GIT_READY: yes",
                         "PUSH_READY: yes",
+                        "GIT_WORKFLOW_READY: yes",
                         "WORKTREES_CLEANED: yes",
                     ],
                 ))
@@ -260,6 +262,7 @@ class FullPipelineChoreographyTests(unittest.TestCase):
                         "BASELINE_SYNC_READY: yes",
                         "GIT_READY: yes",
                         "PUSH_READY: yes",
+                        "GIT_WORKFLOW_READY: yes",
                         "WORKTREES_CLEANED: yes",
                     ],
                 ))
@@ -413,6 +416,7 @@ class SliceVerifierChoreographyTests(unittest.TestCase):
                         "BASELINE_SYNC_READY: yes",
                         "GIT_READY: yes",
                         "PUSH_READY: yes",
+                        "GIT_WORKFLOW_READY: yes",
                         "WORKTREES_CLEANED: yes",
                     ],
                 ))
@@ -434,6 +438,69 @@ class SliceVerifierChoreographyTests(unittest.TestCase):
                         "BASELINE_SYNC_READY: yes",
                         "GIT_READY: yes",
                         "PUSH_READY: yes",
+                        "GIT_WORKFLOW_READY: yes",
+                        "WORKTREES_CLEANED: yes",
+                    ],
+                ))
+                self.assertEqual(common.find_task(common.load_registry(), "P00-S01-T001")["status"], "done")
+        finally:
+            td.cleanup()
+
+    def test_pr_flow_closer_done_requires_merged_and_canonical_main_synced(self):
+        root, td = _setup_tmp_project()
+        try:
+            with _Sandbox(root):
+                import common
+                (root / "docs" / "source-of-truth").mkdir(parents=True, exist_ok=True)
+                (root / "docs" / "source-of-truth" / "STACK_PROFILE.yaml").write_text(
+                    "git_workflow: pr-flow\n",
+                    encoding="utf-8",
+                )
+                _seed_two_task_registry()
+                _write_valid_verified_handoff(root, "P00-S01-T001")
+                _fire_subagent_stop("slice-verifier", _trailer(
+                    "P00-S01-T001", "verified", "verified_pending_close",
+                    handoff="orchestrator-state/tasks/handoffs/P00-S01-T001.md",
+                    evidence="orchestrator-state/tasks/evidence/P00-S01-T001/verify-proof.md",
+                    extras=["VERIFY_OUTCOME: verified"],
+                ))
+                _fire_subagent_stop("closer", _trailer(
+                    "P00-S01-T001", "committed", "done",
+                    extras=[
+                        "REPORT: orchestrator-state/tasks/reports/P00-S01-T001.md",
+                        "REPORT_READY: yes",
+                        "BASELINE_SYNC_READY: yes",
+                        "GIT_READY: yes",
+                        "PUSH_READY: yes",
+                        "GIT_WORKFLOW_READY: yes",
+                        "PR_READY: yes",
+                        "MERGED: auto-queued",
+                        "CANONICAL_MAIN_SYNCED: no",
+                        "WORKTREES_CLEANED: yes",
+                    ],
+                ))
+                self.assertEqual(common.find_task(common.load_registry(), "P00-S01-T001")["status"], "blocked")
+
+                _seed_two_task_registry()
+                _write_valid_verified_handoff(root, "P00-S01-T001")
+                _fire_subagent_stop("slice-verifier", _trailer(
+                    "P00-S01-T001", "verified", "verified_pending_close",
+                    handoff="orchestrator-state/tasks/handoffs/P00-S01-T001.md",
+                    evidence="orchestrator-state/tasks/evidence/P00-S01-T001/verify-proof.md",
+                    extras=["VERIFY_OUTCOME: verified"],
+                ))
+                _fire_subagent_stop("closer", _trailer(
+                    "P00-S01-T001", "committed", "done",
+                    extras=[
+                        "REPORT: orchestrator-state/tasks/reports/P00-S01-T001.md",
+                        "REPORT_READY: yes",
+                        "BASELINE_SYNC_READY: yes",
+                        "GIT_READY: yes",
+                        "PUSH_READY: yes",
+                        "GIT_WORKFLOW_READY: yes",
+                        "PR_READY: yes",
+                        "MERGED: yes",
+                        "CANONICAL_MAIN_SYNCED: yes",
                         "WORKTREES_CLEANED: yes",
                     ],
                 ))
@@ -525,3 +592,56 @@ class SpawnBudgetChoreographyTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
+
+    def test_pr_flow_closer_done_requires_actual_merge_and_main_sync(self):
+        root, td = _setup_tmp_project()
+        try:
+            with _Sandbox(root):
+                import common
+                _seed_two_task_registry()
+                (root / "docs" / "source-of-truth").mkdir(parents=True, exist_ok=True)
+                (root / "docs" / "source-of-truth" / "STACK_PROFILE.yaml").write_text(
+                    "profile_version: stack-profile-v1\ngit_workflow: pr-flow\n", encoding="utf-8"
+                )
+                _write_valid_verified_handoff(root, "P00-S01-T001")
+                _fire_subagent_stop("closer", _trailer(
+                    "P00-S01-T001", "committed", "done",
+                    extras=[
+                        "REPORT: orchestrator-state/tasks/reports/P00-S01-T001.md",
+                        "REPORT_READY: yes",
+                        "BASELINE_SYNC_READY: yes",
+                        "GIT_READY: yes",
+                        "PUSH_READY: yes",
+                        "GIT_WORKFLOW_READY: yes",
+                        "WORKTREES_CLEANED: yes",
+                        "GIT_WORKFLOW_READY: no",
+                        "PR_READY: yes",
+                        "MERGED: no",
+                        "CANONICAL_MAIN_SYNCED: no",
+                    ],
+                ))
+                task = common.find_task(common.load_registry(), "P00-S01-T001")
+                self.assertEqual(task["status"], "blocked")
+
+                _seed_two_task_registry()
+                _write_valid_verified_handoff(root, "P00-S01-T001")
+                _fire_subagent_stop("closer", _trailer(
+                    "P00-S01-T001", "committed", "done",
+                    extras=[
+                        "REPORT: orchestrator-state/tasks/reports/P00-S01-T001.md",
+                        "REPORT_READY: yes",
+                        "BASELINE_SYNC_READY: yes",
+                        "GIT_READY: yes",
+                        "PUSH_READY: yes",
+                        "GIT_WORKFLOW_READY: yes",
+                        "WORKTREES_CLEANED: yes",
+                        "GIT_WORKFLOW_READY: yes",
+                        "PR_READY: yes",
+                        "MERGED: yes",
+                        "CANONICAL_MAIN_SYNCED: yes",
+                    ],
+                ))
+                task = common.find_task(common.load_registry(), "P00-S01-T001")
+                self.assertEqual(task["status"], "done")
+        finally:
+            td.cleanup()

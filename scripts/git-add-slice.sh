@@ -84,14 +84,17 @@ if [ -z "$WRITE_SET" ]; then
   echo "WARN: no write_set declared for $TASK_ID in registry.json" >&2
 fi
 
-# Paths slice-specific (siempre incluidos si existen)
-SLICE_PATHS=(
-  "orchestrator-state/tasks/handoffs/${TASK_ID}.md"
-  "orchestrator-state/tasks/evidence/${TASK_ID}"
-  "orchestrator-state/tasks/reports/${TASK_ID}.md"
-  "orchestrator-state/tasks/task-packs/${TASK_ID}.md"
-  "orchestrator-state/tasks/work-items/${TASK_ID}.yaml"
-  "orchestrator-state/tasks/lifecycle-events/${TASK_ID}.json"
+# Paths slice-specific (siempre incluidos si existen). Keep this as a
+# newline list instead of a Bash array so macOS Bash 3.2 + set -u cannot fail on
+# empty-array expansion.
+SLICE_PATHS=$(cat <<EOF_SLICE_PATHS
+orchestrator-state/tasks/handoffs/${TASK_ID}.md
+orchestrator-state/tasks/evidence/${TASK_ID}
+orchestrator-state/tasks/reports/${TASK_ID}.md
+orchestrator-state/tasks/task-packs/${TASK_ID}.md
+orchestrator-state/tasks/work-items/${TASK_ID}.yaml
+orchestrator-state/tasks/lifecycle-events/${TASK_ID}.json
+EOF_SLICE_PATHS
 )
 # official-doc-notes son por TASK_ID con sufijo de tema
 DOC_NOTES_GLOB="orchestrator-state/memory/official-doc-notes/${TASK_ID}-*.md"
@@ -209,9 +212,12 @@ while IFS= read -r glob; do
 done <<< "$WRITE_SET"
 
 # 2) slice metadata
-for p in "${SLICE_PATHS[@]}"; do
+while IFS= read -r p; do
+  [ -z "$p" ] && continue
   add_if_exists "$p" 1
-done
+done <<EOF_SLICE_PATHS_LOOP
+$SLICE_PATHS
+EOF_SLICE_PATHS_LOOP
 
 # 3) follow-up proposals owned by this TASK_ID
 while IFS= read -r fu_path; do

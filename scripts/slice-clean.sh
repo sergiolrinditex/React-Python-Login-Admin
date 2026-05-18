@@ -76,23 +76,26 @@ rotate_ledger_file() {
 rotate_ledger_file "$LEDGER" "ledger"
 rotate_ledger_file "$BASH_LEDGER" "bash-ledger"
 
-prune_paths=(.git .claude orchestrator-state/tasks orchestrator-state/memory docs flutter_template .venv venv node_modules)
-prune_args=()
-for p in "${prune_paths[@]}"; do prune_args+=( -path "./$p" -prune -o ); done
+# Avoid Bash arrays here: slice-clean runs during closer cleanup, and macOS
+# Bash 3.2 + set -u can fail on empty array expansions. Keep the prune list as
+# literal find predicates.
+find_pruned() {
+  find .     \( -path "./.git"     -o -path "./.claude"     -o -path "./orchestrator-state/tasks"     -o -path "./orchestrator-state/memory"     -o -path "./docs"     -o -path "./flutter_template"     -o -path "./.venv"     -o -path "./venv"     -o -path "./node_modules" \) -prune     -o "$@" -print 2>/dev/null
+}
 
 while IFS= read -r d; do
   [ -z "$d" ] && continue
   sz=$(size_bytes "$d"); sz=${sz:-0}
   hr_count=$((hr_count+1)); hr_size=$((hr_size+sz))
   maybe rm -rf "$d"
-done < <(find . "${prune_args[@]}" -type d \( -name __pycache__ -o -name .pytest_cache -o -name htmlcov -o -name .ruff_cache -o -name .mypy_cache \) -print 2>/dev/null)
+done < <(find_pruned -type d \( -name __pycache__ -o -name .pytest_cache -o -name htmlcov -o -name .ruff_cache -o -name .mypy_cache \))
 
 while IFS= read -r f; do
   [ -z "$f" ] && continue
   sz=$(wc -c < "$f" 2>/dev/null); sz=${sz:-0}
   sd_count=$((sd_count+1)); sd_size=$((sd_size+sz))
   maybe rm -f "$f"
-done < <(find . "${prune_args[@]}" -type f \( -name '.DS_Store' -o -name 'Thumbs.db' -o -name '*.tmp' -o -name '*.bak' -o -name '*.swp' \) -print 2>/dev/null)
+done < <(find_pruned -type f \( -name '.DS_Store' -o -name 'Thumbs.db' -o -name '*.tmp' -o -name '*.bak' -o -name '*.swp' \))
 
 if [ "$ARCHIVE_DONE" -eq 1 ] && command -v jq >/dev/null 2>&1 && [ -f orchestrator-state/tasks/registry.json ]; then
   done_ids=$(jq -r '.tasks[] | select(.status == "done") | .id' orchestrator-state/tasks/registry.json 2>/dev/null | reverse_lines | tail -n "+$((KEEP+1))" | reverse_lines)

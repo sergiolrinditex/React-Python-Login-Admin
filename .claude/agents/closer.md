@@ -165,7 +165,7 @@ Ambos se escriben en `orchestrator-state/tasks/reports/` con sufijo apropiado (`
 
 ## Cierre obligatorio
 
-Si `REPORT_READY`, `BASELINE_SYNC_READY`, `GIT_READY`, `PUSH_READY` o `WORKTREES_CLEANED` no son `yes`, no emitas `NEXT_STATUS: done`: emite `OUTCOME: blocked`, `NEXT_STATUS: blocked` y explica el motivo. El hook también lo hará cumplir mecánicamente.
+Si `REPORT_READY`, `BASELINE_SYNC_READY`, `GIT_READY`, `PUSH_READY`, `GIT_WORKFLOW_READY` o `WORKTREES_CLEANED` no son `yes`, no emitas `NEXT_STATUS: done`: emite `OUTCOME: blocked`, `NEXT_STATUS: blocked` y explica el motivo. En `pr-flow`, además, no basta con PR creada o auto-merge queued: sólo puedes cerrar si `./scripts/git-workflow.sh` terminó en `GIT_WORKFLOW_READY: yes`, `PR_READY: yes`, `MERGED: yes` y `CANONICAL_MAIN_SYNCED: yes`. El hook también lo hará cumplir mecánicamente.
 
 ```
 CLAUDE_TRAILER:
@@ -179,6 +179,10 @@ BASELINE_SYNC_READY: yes|no
 GIT_READY: yes|no
 PUSH_READY: yes|no
 WORKTREES_CLEANED: yes|no
+GIT_WORKFLOW_READY: yes|no
+PR_READY: yes|no|n/a
+MERGED: yes|no|n/a
+CANONICAL_MAIN_SYNCED: yes|no|skipped
 ACTIVE_WORKTREE_DEFERRED: yes|no
 DEFERRED_CLEANUP_COMMAND: <command or none>
 REMOTE_BRANCH_CLEANED: yes|no|not_found|skipped
@@ -202,6 +206,10 @@ Reglas de las líneas `JOURNEY_*` (emite una por línea, repite la línea si hay
 `GIT_READY`: `yes` si el commit atómico quedó creado en el checkout correcto para el `git_workflow` configurado con mensaje válido y sin ficheros huérfanos. `no` si hay conflictos, ficheros sin añadir, o el working tree está sucio de forma inesperada.
 
 `PUSH_READY`: `yes` si `./scripts/git-workflow.sh` terminó con exit code 0 y el workflow declaró push/PR correcto. `no` si no existe remoto, falla autenticación, hay non-fast-forward o cualquier error de push. No ejecutes `git push --force`; los plugins pueden usar `--force-with-lease` cuando el workflow lo justifica y la lease protege la ref remota.
+
+`GIT_WORKFLOW_READY`: copia literal del workflow. Para `pr-flow`, debe ser `yes` sólo si el PR llegó a `MERGED: yes` y el root canónico quedó `CANONICAL_MAIN_SYNCED: yes`. Si el workflow devuelve `blocked`, `PR_READY: yes` o `MERGED: auto-queued` pero no `MERGED: yes`, el closer debe bloquear la slice; una PR abierta no equivale a main integrado.
+
+`PR_READY`, `MERGED`, `CANONICAL_MAIN_SYNCED`: obligatorios en `pr-flow`. Usa `n/a` sólo en workflows que no usan PR (`push-to-main`, `direct-main`, partes de `git-flow`).
 
 `WORKTREES_CLEANED`: `yes` si `cleanup-worktrees.sh --apply --task <TASK_ID> --schedule-active` terminó correctamente, no encontró candidatos, borró las worktrees seguras, o diferió la worktree activa (`active_deferred=1`) y emitió `DEFERRED_CLEANUP_COMMAND` para proteger los hooks de Claude. `no` si quedaron worktrees candidatos dirty/skipped o hubo error de limpieza. No uses `--remove-active` durante el cierre de la propia slice. Si hubo `active_deferred=1`, emite `ACTIVE_WORKTREE_DEFERRED: yes` y `DEFERRED_CLEANUP_COMMAND: cd <ROOT> && bash scripts/cleanup-deferred-worktrees.sh --apply --task <TASK_ID>` como fallback, no como tarea pendiente del usuario.
 
@@ -239,5 +247,9 @@ BASELINE_SYNC_READY: yes|no
 GIT_READY: yes|no
 PUSH_READY: yes|no
 WORKTREES_CLEANED: yes|no
+GIT_WORKFLOW_READY: yes|no
+PR_READY: yes|no|n/a
+MERGED: yes|no|n/a
+CANONICAL_MAIN_SYNCED: yes|no|skipped
 ```
 

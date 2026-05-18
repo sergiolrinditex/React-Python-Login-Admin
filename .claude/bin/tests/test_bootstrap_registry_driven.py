@@ -709,7 +709,7 @@ class BootstrapRuntimePreservationTests(unittest.TestCase):
         finally:
             td.cleanup()
 
-    def test_refresh_blocks_done_task_when_source_fingerprint_changes(self):
+    def test_refresh_preserves_done_task_when_source_fingerprint_changes(self):
         td, root = self._root()
         try:
             with self._with_root(root) as (boot_mod, common_mod):
@@ -734,10 +734,13 @@ class BootstrapRuntimePreservationTests(unittest.TestCase):
                 by_id = {t["id"]: t for t in refreshed["tasks"]}
                 task = by_id["P00-S01-T001"]
                 self.assertNotEqual(task["source_fingerprint"], old_fp)
-                self.assertEqual(task["status"], "blocked")
-                self.assertEqual(task["blocked_reason"], "source_of_truth_changed_after_runtime_state")
-                self.assertTrue(task.get("source_fingerprint_changed"))
-                self.assertEqual(task.get("previous_runtime_status"), "done")
+                self.assertEqual(task["status"], "done")
+                self.assertEqual(task["last_outcome"], "committed")
+                self.assertEqual(task["last_updated_by"], "closer")
+                self.assertTrue(task.get("source_fingerprint_changed_after_done"))
+                self.assertNotEqual(task.get("previous_source_fingerprint"), task.get("source_fingerprint"))
+                work_item = root / "orchestrator-state/tasks/work-items/P00-S01-T001.yaml"
+                self.assertIn("status: done", work_item.read_text(encoding="utf-8"))
         finally:
             td.cleanup()
 
@@ -762,6 +765,27 @@ class BootstrapRuntimePreservationTests(unittest.TestCase):
                 self.assertEqual(task["last_updated_by"], "closer")
                 self.assertEqual(task["last_stop_at"], "2026-05-11T00:00:00Z")
                 self.assertFalse(task.get("source_fingerprint_changed", False))
+        finally:
+            td.cleanup()
+
+
+    def test_refresh_writes_complete_phase_status_when_all_tasks_done(self):
+        td, root = self._root()
+        try:
+            with self._with_root(root) as (boot_mod, common_mod):
+                self.assertTrue(boot_mod.generate_artifacts()["ok"])
+                registry = common_mod.load_registry()
+                for task in registry["tasks"]:
+                    task["status"] = "done"
+                    task["last_outcome"] = "committed"
+                    task["last_updated_by"] = "closer"
+                common_mod.save_registry(registry)
+                result = boot_mod.generate_artifacts()
+                self.assertTrue(result["ok"])
+                phase = common_mod.load_registry()["phases"][0]
+                self.assertEqual(phase["status"], "complete")
+                phase_yaml = root / "orchestrator-state/tasks/phases/P00.yaml"
+                self.assertIn("status: complete", phase_yaml.read_text(encoding="utf-8"))
         finally:
             td.cleanup()
 

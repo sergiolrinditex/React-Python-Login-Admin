@@ -412,6 +412,7 @@
       "BASELINE_SYNC_READY",
       "GIT_READY",
       "PUSH_READY",
+      "GIT_WORKFLOW_READY",
       "WORKTREES_CLEANED",
       "JOURNEY_PENDING_VERIFY",
       "JOURNEY_VERIFIED_INLINE",
@@ -436,7 +437,13 @@
         "required_keys": [
           "TASK_ID",
           "OUTCOME",
-          "NEXT_STATUS"
+          "NEXT_STATUS",
+          "REPORT_READY",
+          "BASELINE_SYNC_READY",
+          "GIT_READY",
+          "PUSH_READY",
+          "GIT_WORKFLOW_READY",
+          "WORKTREES_CLEANED"
         ],
         "outcome_values": [
           "committed",
@@ -448,7 +455,8 @@
         ],
         "mutates_registry_lifecycle": true,
         "info_only": false,
-        "allowed_to_close_task": true
+        "allowed_to_close_task": true,
+        "transport_completion_policy": "Closer NEXT_STATUS=done requires REPORT_READY, BASELINE_SYNC_READY, GIT_READY, PUSH_READY, GIT_WORKFLOW_READY and WORKTREES_CLEANED all yes. For pr-flow it also requires PR_READY=yes, MERGED=yes and CANONICAL_MAIN_SYNCED=yes; PR open/queued/auto-merge pending is blocked, not done."
       },
       "debugger": {
         "description": "Applies the smallest fix inside the same TASK_ID after tester/validator failure.",

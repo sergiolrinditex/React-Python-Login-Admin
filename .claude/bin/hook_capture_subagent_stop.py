@@ -439,18 +439,38 @@ def apply_journey_mutations(journey_data: dict[str, object]) -> dict[str, object
 
 
 
+def configured_git_workflow() -> str:
+    """Return the normalized git workflow for close-time safety checks."""
+    try:
+        from common import project_root
+        from stack_profile import load_stack_profile
+        raw = str(load_stack_profile(project_root()).get("git_workflow") or "push-to-main")
+    except Exception:
+        raw = "push-to-main"
+    workflow = "".join(ch for ch in raw if ch.isalnum() or ch in "_-")
+    if workflow in {"direct-main", "direct-main-push", "push-main"}:
+        return "push-to-main"
+    if workflow == "gitflow":
+        return "git-flow"
+    return workflow or "push-to-main"
+
+
 def enforce_closer_done_guardrail(trailer: dict[str, str], agent_type: str | None) -> dict[str, str]:
     """Never let a closer mark a task done without verify, commit/push/cleanup proof.
 
     Proposed follow-ups may travel in the PR, but close-time mechanics must be
     true on disk: report, baseline sync, Git workflow, worktree cleanup and a
-    verified handoff section (or explicit human waiver).
+    verified handoff section (or explicit human waiver). For pr-flow, a pushed
+    PR is not enough: the PR must be MERGED and the canonical main checkout must
+    be fast-forwarded before the DAG node can become done.
     """
     if agent_type != "closer":
         return trailer
     if str(trailer.get("next_status", "")).strip().lower() != "done":
         return trailer
     required_yes = ["report_ready", "baseline_sync_ready", "git_ready", "push_ready", "worktrees_cleaned"]
+    if configured_git_workflow() == "pr-flow":
+        required_yes.extend(["git_workflow_ready", "pr_ready", "merged", "canonical_main_synced"])
     bad = [k for k in required_yes if str(trailer.get(k, "")).strip().lower() != "yes"]
     if str(trailer.get("outcome", "")).strip().lower() != "committed":
         bad.append("outcome")
