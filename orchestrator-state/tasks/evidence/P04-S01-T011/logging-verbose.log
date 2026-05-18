@@ -1,0 +1,89 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.5, pytest-9.0.2, pluggy-1.6.0 -- /usr/local/bin/python3
+cachedir: .pytest_cache
+rootdir: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P04-S01-T011/backend
+configfile: pyproject.toml
+plugins: httpx-0.36.0, asyncio-1.3.0, langsmith-0.8.3, anyio-4.13.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... 
+----------------------------- live log collection ------------------------------
+DEBUG    app.auth.password:password.py:71 password.hash.start
+DEBUG    app.auth.password:password.py:73 password.hash.done
+DEBUG    httpcore.connection:_trace.py:47 connect_tcp.started host='raw.githubusercontent.com' port=443 local_address=None timeout=5 socket_options=None
+DEBUG    httpcore.connection:_trace.py:47 connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x109e2a5d0>
+DEBUG    httpcore.connection:_trace.py:47 start_tls.started ssl_context=<ssl.SSLContext object at 0x10a29b890> server_hostname='raw.githubusercontent.com' timeout=5
+DEBUG    httpcore.connection:_trace.py:47 start_tls.complete return_value=<httpcore._backends.sync.SyncStream object at 0x10822fa90>
+DEBUG    httpcore.http11:_trace.py:47 send_request_headers.started request=<Request [b'GET']>
+DEBUG    httpcore.http11:_trace.py:47 send_request_headers.complete
+DEBUG    httpcore.http11:_trace.py:47 send_request_body.started request=<Request [b'GET']>
+DEBUG    httpcore.http11:_trace.py:47 send_request_body.complete
+DEBUG    httpcore.http11:_trace.py:47 receive_response_headers.started request=<Request [b'GET']>
+DEBUG    httpcore.http11:_trace.py:47 receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Connection', b'keep-alive'), (b'Content-Length', b'72014'), (b'Cache-Control', b'max-age=300'), (b'Content-Security-Policy', b"default-src 'none'; style-src 'unsafe-inline'; sandbox"), (b'Content-Type', b'text/plain; charset=utf-8'), (b'ETag', b'W/"952d527708041b5a7de2934b344d9025d5e2b02a08287dc72e96ce36478cf395"'), (b'Strict-Transport-Security', b'max-age=31536000'), (b'X-Content-Type-Options', b'nosniff'), (b'X-Frame-Options', b'deny'), (b'X-XSS-Protection', b'1; mode=block'), (b'X-GitHub-Request-Id', b'EF5C:150A:588C51:64CFE8:6A09221D'), (b'Content-Encoding', b'gzip'), (b'Accept-Ranges', b'bytes'), (b'Date', b'Mon, 18 May 2026 15:19:06 GMT'), (b'Via', b'1.1 varnish'), (b'X-Served-By', b'cache-mad2200117-MAD'), (b'X-Cache', b'HIT'), (b'X-Cache-Hits', b'5'), (b'X-Timer', b'S1779117547.518112,VS0,VE0'), (b'Vary', b'Authorization,Accept-Encoding'), (b'Access-Control-Allow-Origin', b'*'), (b'Cross-Origin-Resource-Policy', b'cross-origin'), (b'X-Fastly-Request-ID', b'4f7edd72758e1f973a256451d6f8e0507a38bc70'), (b'Expires', b'Mon, 18 May 2026 15:24:06 GMT'), (b'Source-Age', b'66')])
+DEBUG    httpcore.http11:_trace.py:47 receive_response_body.started request=<Request [b'GET']>
+DEBUG    httpcore.http11:_trace.py:47 receive_response_body.complete
+DEBUG    httpcore.http11:_trace.py:47 response_closed.started
+DEBUG    httpcore.http11:_trace.py:47 response_closed.complete
+DEBUG    httpcore.connection:_trace.py:47 close.started
+DEBUG    httpcore.connection:_trace.py:47 close.complete
+collected 27 items / 26 deselected / 1 selected
+
+tests/integration/test_mcp_registry.py::test_T06_post_server_api_key_fernet_roundtrip 
+-------------------------------- live log setup --------------------------------
+DEBUG    app.security._redis_client:_redis_client.py:69 security.redis_client.init url=redis://localhost:6379/0
+DEBUG    app.security._redis_client:_redis_client.py:81 security.redis_client.ready
+-------------------------------- live log call ---------------------------------
+DEBUG    asyncio:selector_events.py:54 Using selector: KqueueSelector
+DEBUG    app.db.session:session.py:88 db.session.open
+INFO     app.auth.routers.sign_in:sign_in.py:93 auth.sign_in.received email_domain=inditex-sandbox.com request_id=35af5ff1-9f9b-4014-b27f-8dac97ddf886
+DEBUG    app.auth.rate_limit:rate_limit.py:143 rate_limit.check.start prefix=SIGNIN ip=SIGNIN:testclient rate_per_min=20 burst=20
+DEBUG    app.auth.rate_limit:rate_limit.py:155 rate_limit.check.ok prefix=SIGNIN ip=SIGNIN:testclient new_window remaining=19
+INFO     app.auth.services.sign_in:sign_in.py:100 auth.sign_in.starting request_id=35af5ff1-9f9b-4014-b27f-8dac97ddf886 email_domain=inditex-sandbox.com
+DEBUG    app.auth.repository:repository.py:85 auth.repo.find_by_email.start email_domain=inditex-sandbox.com
+DEBUG    app.auth.repository:repository.py:92 auth.repo.find_by_email.done found=True
+INFO     app.auth.services.sign_in:sign_in.py:112 auth.sign_in.user_found user_id=98e95b3d-4c8b-4aef-b47e-7b261c0fdc71 request_id=35af5ff1-9f9b-4014-b27f-8dac97ddf886
+DEBUG    app.auth.repository:repository.py:241 auth.repo.count_signin_failures.start user_id=98e95b3d-4c8b-4aef-b47e-7b261c0fdc71 window=900s
+DEBUG    app.auth.repository:repository.py:257 auth.repo.count_signin_failures.done user_id=98e95b3d-4c8b-4aef-b47e-7b261c0fdc71 count=0
+DEBUG    app.auth.password:password.py:162 password.verify_with_dummy.start has_real_hash=True
+DEBUG    app.auth.password:password.py:165 password.verify_with_dummy.ok
+DEBUG    app.auth.tokens:tokens.py:198 tokens.encode_access.start sub=98e95b3d-4c8b-4aef-b47e-7b261c0fdc71 ttl=1800s
+DEBUG    app.auth.tokens:tokens.py:108 tokens.jwt_key.resolved bytes=45
+DEBUG    app.auth.tokens:tokens.py:200 tokens.encode_access.done sub=98e95b3d-4c8b-4aef-b47e-7b261c0fdc71 exp=2026-05-18T15:49:08.552720+00:00
+DEBUG    app.auth.repository:repository.py:285 auth.repo.insert_refresh_token.start user_id=98e95b3d-4c8b-4aef-b47e-7b261c0fdc71
+DEBUG    app.auth.repository:repository.py:296 auth.repo.insert_refresh_token.done user_id=98e95b3d-4c8b-4aef-b47e-7b261c0fdc71 rt_id=dd1ed477-1d2d-404d-a45c-414d9c8852d8
+DEBUG    app.auth.repository:repository.py:186 auth.repo.write_audit.start action=auth.sign_in actor_user_id=98e95b3d-4c8b-4aef-b47e-7b261c0fdc71
+DEBUG    app.auth.repository:repository.py:202 auth.repo.write_audit.done audit_id=88a5b640-07c6-4c8a-bef3-1ba5debd3106 action=auth.sign_in
+INFO     app.auth.services.sign_in:sign_in.py:237 auth.sign_in.success user_id=98e95b3d-4c8b-4aef-b47e-7b261c0fdc71 request_id=35af5ff1-9f9b-4014-b27f-8dac97ddf886
+INFO     app.auth.routers.sign_in:sign_in.py:166 auth.sign_in.success user_id=98e95b3d-4c8b-4aef-b47e-7b261c0fdc71 request_id=35af5ff1-9f9b-4014-b27f-8dac97ddf886
+DEBUG    app.db.session:session.py:94 db.session.closed
+DEBUG    asyncio:selector_events.py:54 Using selector: KqueueSelector
+DEBUG    app.db.session:session.py:88 db.session.open
+DEBUG    app.users.deps:deps.py:106 users.deps.get_current_user.start request_id=553a1331-1451-4655-a049-4e49630c0813 ip=testclient
+DEBUG    app.auth.tokens:tokens.py:270 tokens.decode.start
+DEBUG    app.auth.tokens:tokens.py:287 tokens.decode.ok sub=98e95b3d-4c8b-4aef-b47e-7b261c0fdc71
+DEBUG    app.users.repositories.user_profile:user_profile.py:70 user_profile.repository.find_by_id.start user_id=98e95b3d-4c8b-4aef-b47e-7b261c0fdc71
+DEBUG    app.users.repositories.user_profile:user_profile.py:84 user_profile.repository.find_by_id.done user_id=98e95b3d-4c8b-4aef-b47e-7b261c0fdc71 found=True
+DEBUG    app.users.deps:deps.py:183 users.deps.get_current_user.done user_id=98e95b3d-4c8b-4aef-b47e-7b261c0fdc71 request_id=553a1331-1451-4655-a049-4e49630c0813
+DEBUG    app.security.permissions:permissions.py:118 security.permissions.require_role.start role=people_admin user_id=98e95b3d-4c8b-4aef-b47e-7b261c0fdc71 request_id=6690260f-aa0b-4d07-b6b0-7d16375710e1
+DEBUG    app.security.permissions:permissions.py:134 security.permissions.require_role.ok role=people_admin user_id=98e95b3d-4c8b-4aef-b47e-7b261c0fdc71 request_id=6690260f-aa0b-4d07-b6b0-7d16375710e1
+DEBUG    app.security.rate_limit:rate_limit.py:154 security.rate_limit.check.start prefix=MCP_REGISTER ip=testclient per_minute=10 window=60s request_id=b7a53fad-a43c-4c21-b674-2cb31d122ebb
+DEBUG    app.security.rate_limit:rate_limit.py:221 security.rate_limit.check.ok prefix=MCP_REGISTER ip=testclient count=1 remaining=9 request_id=b7a53fad-a43c-4c21-b674-2cb31d122ebb
+DEBUG    app.mcp.router_servers:router_servers.py:134 mcp.router.create_server.start user_id=98e95b3d-4c8b-4aef-b47e-7b261c0fdc71 transport=http auth_type=api_key request_id=b2febe6a-b1ff-4827-92dc-8b77a3d4c3c5
+DEBUG    app.mcp.service_register:service_register.py:105 mcp.service.register_server.start name_len=17 transport=http auth_type=api_key request_id=b2febe6a-b1ff-4827-92dc-8b77a3d4c3c5
+DEBUG    app.security.encryption:encryption.py:124 security.encryption.encrypt.start length=26
+DEBUG    app.security.encryption:encryption.py:70 security.encryption.load_key key_env=ENCRYPTION_KEY present=True
+DEBUG    app.security.encryption:encryption.py:94 security.encryption.load_key.ok
+DEBUG    app.security.encryption:encryption.py:129 security.encryption.encrypt.ok
+DEBUG    app.mcp.repository_servers:repository_servers.py:88 mcp.repository.create_server.start name_len=17 transport=http
+DEBUG    app.mcp.repository_servers:repository_servers.py:101 mcp.repository.create_server.ok server_id=2c5de2da-7863-434c-9ff8-f09ddce1a62c
+DEBUG    app.mcp.repository_servers:repository_servers.py:163 mcp.repository.create_credential.start server_id=2c5de2da-7863-434c-9ff8-f09ddce1a62c auth_type=api_key
+DEBUG    app.mcp.repository_servers:repository_servers.py:177 mcp.repository.create_credential.ok server_id=2c5de2da-7863-434c-9ff8-f09ddce1a62c
+DEBUG    app.admin._audit:_audit.py:63 admin._audit.write.start actor=98e95b3d-4c8b-4aef-b47e-7b261c0fdc71 action=admin.ai.mcp.server.create entity_id=2c5de2da-7863-434c-9ff8-f09ddce1a62c
+DEBUG    app.db.session:session.py:115 db.session.audit_scope.open
+DEBUG    app.db.session:session.py:121 db.session.audit_scope.closed
+DEBUG    app.admin._audit:_audit.py:83 admin._audit.write.ok actor=98e95b3d-4c8b-4aef-b47e-7b261c0fdc71 action=admin.ai.mcp.server.create entity_id=2c5de2da-7863-434c-9ff8-f09ddce1a62c
+DEBUG    app.mcp.service_register:service_register.py:167 mcp.service.register_server.ok server_id=2c5de2da-7863-434c-9ff8-f09ddce1a62c request_id=b2febe6a-b1ff-4827-92dc-8b77a3d4c3c5
+DEBUG    app.mcp.router_servers:router_servers.py:176 mcp.router.create_server.ok user_id=98e95b3d-4c8b-4aef-b47e-7b261c0fdc71 server_id=2c5de2da-7863-434c-9ff8-f09ddce1a62c request_id=b2febe6a-b1ff-4827-92dc-8b77a3d4c3c5
+DEBUG    app.db.session:session.py:94 db.session.closed
+PASSED
+
+======================= 1 passed, 26 deselected in 2.88s =======================

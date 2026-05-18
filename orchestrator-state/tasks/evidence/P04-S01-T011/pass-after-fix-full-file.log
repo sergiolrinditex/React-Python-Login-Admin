@@ -1,0 +1,38 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.5, pytest-9.0.2, pluggy-1.6.0 -- /usr/local/bin/python3
+cachedir: .pytest_cache
+rootdir: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P04-S01-T011/backend
+configfile: pyproject.toml
+plugins: httpx-0.36.0, asyncio-1.3.0, langsmith-0.8.3, anyio-4.13.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 27 items
+
+tests/integration/test_mcp_registry.py::test_T01_get_servers_no_token_401 PASSED [  3%]
+tests/integration/test_mcp_registry.py::test_T02_get_servers_employee_403 PASSED [  7%]
+tests/integration/test_mcp_registry.py::test_T03_get_servers_admin_empty_200 PASSED [ 11%]
+tests/integration/test_mcp_registry.py::test_T04_get_servers_no_encrypted_secret_in_response PASSED [ 14%]
+tests/integration/test_mcp_registry.py::test_T05_post_server_auth_none_201 PASSED [ 18%]
+tests/integration/test_mcp_registry.py::test_T06_post_server_api_key_fernet_roundtrip PASSED [ 22%]
+tests/integration/test_mcp_registry.py::test_T07_post_server_stdio_422 PASSED [ 25%]
+tests/integration/test_mcp_registry.py::test_T08_post_server_allowlist_rejected_400 PASSED [ 29%]
+tests/integration/test_mcp_registry.py::test_T09_post_server_missing_name_422 PASSED [ 33%]
+tests/integration/test_mcp_registry.py::test_T10_post_server_encryption_error_500 PASSED [ 37%]
+tests/integration/test_mcp_registry.py::test_T11_post_server_rate_limit_429 PASSED [ 40%]
+tests/integration/test_mcp_registry.py::test_T12_sync_happy_path_tools_in_db PASSED [ 44%]
+tests/integration/test_mcp_registry.py::test_T13_sync_server_not_found_404 PASSED [ 48%]
+tests/integration/test_mcp_registry.py::test_T14_sync_unreachable_502 PASSED [ 51%]
+tests/integration/test_mcp_registry.py::test_T15_sync_idempotent_no_duplicates PASSED [ 55%]
+tests/integration/test_mcp_registry.py::test_T16_sync_preserves_enabled_true PASSED [ 59%]
+tests/integration/test_mcp_registry.py::test_T17_sync_zero_tools PASSED  [ 62%]
+tests/integration/test_mcp_registry.py::test_T18_patch_tool_enabled_200 PASSED [ 66%]
+tests/integration/test_mcp_registry.py::test_T19_patch_tool_invalid_risk_level_422 PASSED [ 70%]
+tests/integration/test_mcp_registry.py::test_T20_patch_tool_risk_critical_200 PASSED [ 74%]
+tests/integration/test_mcp_registry.py::test_T21_patch_tool_not_found_404 PASSED [ 77%]
+tests/integration/test_mcp_registry.py::test_T22_patch_tool_empty_body_400 PASSED [ 81%]
+tests/integration/test_mcp_registry.py::test_T23_no_pii_in_audit_metadata PASSED [ 85%]
+tests/integration/test_mcp_registry.py::test_T24_logging_verbose_modes PASSED [ 88%]
+tests/integration/test_mcp_registry.py::test_T25_end_to_end_flow PASSED  [ 92%]
+tests/integration/test_mcp_registry.py::test_T26_client_discover_sends_initialize_handshake_first PASSED [ 96%]
+tests/integration/test_mcp_registry.py::test_T27_client_discover_aborts_when_initialize_returns_bad_protocol_version PASSED [100%]
+
+============================== 27 passed in 6.10s ==============================
