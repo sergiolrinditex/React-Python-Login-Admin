@@ -1,0 +1,51 @@
+{
+  "id": "FU-20260518051018-replace-deprecated-starlette-http-422-unprocessa",
+  "schema_version": 1,
+  "status": "promoted",
+  "created_at": "2026-05-18T05:10:18+00:00",
+  "created_by": "sergiolr",
+  "origin_task_id": "P04-S01-T007",
+  "origin_phase_id": "P04",
+  "origin_step_id": "P04-S01",
+  "kind": "techdebt",
+  "product_increment": "current",
+  "build_state": "planned",
+  "severity": "low",
+  "title": "Replace deprecated Starlette HTTP_422_UNPROCESSABLE_ENTITY with HTTP_422_UNPROCESSABLE_CONTENT across backend",
+  "description": "pytest backend/tests/integration/test_admin_ai.py emits 3 DeprecationWarnings: 'HTTP_422_UNPROCESSABLE_ENTITY is deprecated. Use HTTP_422_UNPROCESSABLE_CONTENT instead.' Observed in both verbose-on and verbose-off runs (tester + slice-verifier). Pre-existing, non-blocking, but will become a real ImportError/AttributeError when Starlette removes the alias. Documented by validator as 'starlette deprecation noise, unrelated to this slice' and explicitly NOT classified as in-scope. Real fix is a transversal sweep of backend/app/** and backend/tests/** to replace the constant name (or bump starlette to the version where the alias is restored as a real status code if applicable). Includes verifying that no other deprecated Starlette/FastAPI aliases are in use (e.g. via pytest -W error::DeprecationWarning on a sandbox run).",
+  "journey_refs": [],
+  "screen_route": "—",
+  "endpoint": "—",
+  "tables": [],
+  "depends_on": [
+    "P04-S01-T007"
+  ],
+  "conflict_groups": [
+    "backend:starlette-version-uplift"
+  ],
+  "write_set": [
+    "backend/app/**/*.py",
+    "backend/tests/**/*.py",
+    "backend/pyproject.toml (only if version bump required)"
+  ],
+  "acceptance": [
+    "pytest backend/tests/integration/test_admin_ai.py reports 0 warnings (or warnings that do not mention HTTP_422_UNPROCESSABLE_ENTITY) in both ENABLE_VERBOSE_LOGGING=on and off modes. Same for any other integration suite using the constant."
+  ],
+  "verify": [
+    "grep -R 'HTTP_422_UNPROCESSABLE_ENTITY' backend/ returns 0 matches",
+    "pytest -W error::DeprecationWarning backend/tests/integration/test_admin_ai.py passes 26/26 (or any failures are unrelated to the Starlette alias)."
+  ],
+  "notes": [],
+  "triage": {
+    "scope_classification": "out_of_scope",
+    "why_not_debugger": "The warning is emitted by Starlette/FastAPI internals at status-code attribute lookup, and surfaces across multiple test modules (test_admin_ai.py + other integration suites). The fix requires sweeping backend/app/**/*.py and backend/tests/**/*.py to replace HTTP_422_UNPROCESSABLE_ENTITY with HTTP_422_UNPROCESSABLE_CONTENT (or bumping starlette + verifying no other deprecated aliases were used). This sweep is broader than any single slice's write_set (P04-S01-T007 owned only the admin_ai test file + admin AI app modules; the warnings are not unique to that file). Therefore not a debugger task on this slice.",
+    "decision": "followup_only_when_outside_current_slice",
+    "debugger_path": "in_scope_defects_use_validator_tester_debugger_retest",
+    "warnings": []
+  },
+  "possible_duplicates": [],
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260518051018-replace-deprecated-starlette-http-422-unprocessa.yaml",
+  "promoted_at": "2026-05-18T05:13:50+00:00",
+  "promoted_task_id": "P04-S01-T014",
+  "source_doc_updated": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md"
+}

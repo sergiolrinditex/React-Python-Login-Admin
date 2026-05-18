@@ -1,0 +1,66 @@
+id: P04-S01-T009
+phase_id: P04
+step_id: P04-S01
+title: "Restore stripped i18n keys (auth.forgot/twoFactor/reset_sent + history namespace) — regression from commit 4a75d15"
+status: ready
+kind: "bug"
+target: "Restore stripped i18n keys (auth.forgot/twoFactor/reset_sent + history namespace) — regression from commit 4a75d15"
+product_increment: "current"
+build_state: "planned"
+risk_level: "critical"
+verify_mode: "human"
+route: ""
+endpoint: ""
+journey_refs:
+  - "J100"
+  - "J102"
+tables:
+depends_on:
+  - P04-S01-T001
+acceptance:
+  - "frontend/src/i18n/index.ts restores the top-level 'history' namespace with row.openLabel ({{title}} interpolation) in ES/EN/FR byte-equivalent to baseline 21859a4 (and any other history.* keys present in baseline)."
+  - "frontend/src/i18n/index.ts restores 'auth.reset_sent.*' full sub-namespace in ES/EN/FR byte-equivalent to baseline 21859a4."
+  - "frontend/src/i18n/index.ts restores stripped keys in 'auth.forgot.*' (titleHint"
+  - "email"
+  - "emailPlaceholder"
+  - "submit"
+  - "status.submitting"
+  - "successFlash"
+  - "actions.signIn"
+  - "errors.{emailRequired"
+  - "emailFormat"
+  - "rateLimited"
+  - "network"
+  - "serverInternal}) in ES/EN/FR byte-equivalent to baseline 21859a4."
+  - "frontend/src/i18n/index.ts restores stripped keys in 'auth.twoFactor.*' (titleHint"
+  - "intro"
+  - "codePlaceholder"
+  - "cta"
+  - "errors.{codeRequired"
+  - "codeFormat"
+  - "invalidCode"
+  - "challengeExpired"
+  - "serverInternal"
+  - "missingChallenge}"
+  - "actions.backToSignIn) in ES/EN/FR byte-equivalent to baseline 21859a4."
+  - "Preserves untouched the namespaces added by P04 admin/rag/mcp slices: admin-ai"
+  - "rag"
+  - "mcp (any sub-block)."
+  - "tsc -b returns 0 errors."
+  - "vitest passes 499/499 (up from current 473/499)"
+  - "the 26 failures in auth/forgot+2fa+reset_sent+chat/history turn green."
+verification_commands:
+  - "Hard reset + dev-restart. Browser at /auth/sign-in → /auth/forgot (with any email) → /auth/reset-sent: see translated copy (no literal keys). At /auth/2fa (post-login MFA user) see titleHint='Área de empleados' / 'Employee area' / 'Espace employé'"
+  - "intro"
+  - "errors. At /history see row aria-labels translated with conversation title interpolated."
+  - "Toggle ES/EN/FR via AccountPage: each restored block must translate in all 3 languages."
+  - "vitest 499/499 PASS in both ENABLE_VERBOSE_LOGGING modes."
+allowed_paths:
+  - "frontend/src/i18n/index.ts"
+conflict_groups:
+  - "front:i18n"
+write_set:
+  - "frontend/src/i18n/index.ts"
+handoff_path: orchestrator-state/tasks/handoffs/P04-S01-T009.md
+evidence_dir: orchestrator-state/tasks/evidence/P04-S01-T009
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry"

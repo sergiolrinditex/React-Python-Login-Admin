@@ -1,0 +1,95 @@
+{
+  "id": "FU-20260517215025-restore-stripped-i18n-keys-auth-forgot-twofactor",
+  "schema_version": 1,
+  "status": "promoted",
+  "created_at": "2026-05-17T21:50:25+00:00",
+  "created_by": "sergiolr",
+  "origin_task_id": "P04-S01-T001",
+  "origin_phase_id": "P04",
+  "origin_step_id": "P04-S01",
+  "kind": "bug",
+  "product_increment": "current",
+  "build_state": "planned",
+  "severity": "critical",
+  "title": "Restore stripped i18n keys (auth.forgot/twoFactor/reset_sent + history namespace) — regression from commit 4a75d15",
+  "description": "Commit 4a75d15 (P04-S01-T001 AdminDashboardPage) stripped frontend/src/i18n/index.ts from 744 LOC (baseline 21859a4) to 696 LOC, losing critical i18n keys for auth flows AND removing the entire top-level 'history' namespace. Subsequent admin/rag/mcp slices (0c91c03, df1e932, 3006416, 6a8efd9, 183232b, 7fac335) grew the file to 1629 LOC by adding admin-ai/rag/mcp namespaces but never restored the stripped keys. Concrete losses per language (×3 langs ES/EN/FR): (1) auth.forgot.* truncated from 18 to 4 lines (lost: titleHint, email, emailPlaceholder, submit, status.submitting, successFlash, actions.signIn, errors.{emailRequired, emailFormat, rateLimited, network, serverInternal}); (2) auth.twoFactor.* truncated from 21 to 4 lines (lost: titleHint, intro, codePlaceholder, submit, cta, status.submitting, errors.{codeRequired, codeFormat, invalidCode, challengeExpired, rateLimited, network, serverInternal, missingChallenge}, actions.backToSignIn); (3) auth.reset_sent.* entire sub-namespace gone (10 lines per lang); (4) history.* entire top-level namespace gone (includes row.openLabel with {{title}} interpolation). Impact: 26 vitest failures (of 499) — 11 in ForgotPasswordPage, 8 in TwoFactorPage, 4 in ResetSentPage, 3 in HistoryPage; raw i18n keys (e.g. 'twoFactor.titleHint', 'twoFactor.intro', 'history:row.openLabel') visible in the rendered DOM. tsc -b remains clean (strings don't cause type errors). In real browser, users see literal keys instead of translated copy — broken in production. Pattern is identical to the AuthRepository.ts strip from the same commit; this is the SECOND regression caused by 4a75d15 and is unrelated to the (now waived) FU about AuthRepository types. Discovered during /next-slice gate for P04-S01-T006 (which was a duplicate FU and got waived 2026-05-17T21:43Z).",
+  "journey_refs": [
+    "J100",
+    "J102"
+  ],
+  "screen_route": "—",
+  "endpoint": "—",
+  "tables": [],
+  "depends_on": [
+    "P04-S01-T001"
+  ],
+  "conflict_groups": [
+    "front:i18n"
+  ],
+  "write_set": [
+    "frontend/src/i18n/index.ts"
+  ],
+  "acceptance": [
+    "frontend/src/i18n/index.ts restores the top-level 'history' namespace with row.openLabel ({{title}} interpolation) in ES/EN/FR byte-equivalent to baseline 21859a4 (and any other history.* keys present in baseline).",
+    "frontend/src/i18n/index.ts restores 'auth.reset_sent.*' full sub-namespace in ES/EN/FR byte-equivalent to baseline 21859a4.",
+    "frontend/src/i18n/index.ts restores stripped keys in 'auth.forgot.*' (titleHint",
+    "email",
+    "emailPlaceholder",
+    "submit",
+    "status.submitting",
+    "successFlash",
+    "actions.signIn",
+    "errors.{emailRequired",
+    "emailFormat",
+    "rateLimited",
+    "network",
+    "serverInternal}) in ES/EN/FR byte-equivalent to baseline 21859a4.",
+    "frontend/src/i18n/index.ts restores stripped keys in 'auth.twoFactor.*' (titleHint",
+    "intro",
+    "codePlaceholder",
+    "cta",
+    "errors.{codeRequired",
+    "codeFormat",
+    "invalidCode",
+    "challengeExpired",
+    "serverInternal",
+    "missingChallenge}",
+    "actions.backToSignIn) in ES/EN/FR byte-equivalent to baseline 21859a4.",
+    "Preserves untouched the namespaces added by P04 admin/rag/mcp slices: admin-ai",
+    "rag",
+    "mcp (any sub-block).",
+    "tsc -b returns 0 errors.",
+    "vitest passes 499/499 (up from current 473/499)",
+    "the 26 failures in auth/forgot+2fa+reset_sent+chat/history turn green."
+  ],
+  "verify": [
+    "Hard reset + dev-restart. Browser at /auth/sign-in → /auth/forgot (with any email) → /auth/reset-sent: see translated copy (no literal keys). At /auth/2fa (post-login MFA user) see titleHint='Área de empleados' / 'Employee area' / 'Espace employé'",
+    "intro",
+    "errors. At /history see row aria-labels translated with conversation title interpolated.",
+    "Toggle ES/EN/FR via AccountPage: each restored block must translate in all 3 languages.",
+    "vitest 499/499 PASS in both ENABLE_VERBOSE_LOGGING modes."
+  ],
+  "notes": [
+    "Discovered during /next-slice P04-S01-T006 gate (2026-05-17). The original FU about AuthRepository types (FU-20260517174657) was waived as duplicate_of_done:0c91c03 since AuthRepository.ts is byte-identical to baseline",
+    "the i18n strip is a separate",
+    "unaddressed regression from the same culprit commit.",
+    "Culprit: commit 4a75d15. Restore source-of-truth: commit 21859a4 (frontend/src/i18n/index.ts). The restore must be SURGICAL — re-add only the stripped sections",
+    "preserve all P04 additions intact.",
+    "Suggested split if file is too large for one slice: (a) restore history namespace + reset_sent (smaller",
+    "~40 lines × 3 langs)",
+    "(b) restore auth.forgot + auth.twoFactor (larger",
+    "~90 lines × 3 langs). Single slice is preferred since all changes are in one file and conflict_group=front:i18n forces serialization anyway."
+  ],
+  "triage": {
+    "scope_classification": "out_of_scope",
+    "why_not_debugger": "Defect lives in a shared cross-feature file (frontend/src/i18n/index.ts) whose write_set is not declared in any active DAG task. The origin commit 4a75d15 (P04-S01-T001 AdminDashboardPage) is already merged and the task is done — cannot be reopened as a debugger pass. The four subsequent slices that grew the file (P04-S01-T002 0c91c03, P04-S02-T003 df1e932, P04-S02-T001 3006416, P04-S02-T002 6a8efd9, P04-S01-T003 183232b, P04-S02-T004 7fac335) all had narrower write_sets that did not include i18n/index.ts (they added admin-ai/rag/mcp namespaces only). Restoring stripped keys via any active or queued slice's debugger would violate write_set/conflict_group invariants. A dedicated task with write_set=[frontend/src/i18n/index.ts] and conflict_group=front:i18n is required to do the surgical re-add safely.",
+    "decision": "followup_only_when_outside_current_slice",
+    "debugger_path": "in_scope_defects_use_validator_tester_debugger_retest",
+    "warnings": []
+  },
+  "possible_duplicates": [],
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260517215025-restore-stripped-i18n-keys-auth-forgot-twofactor.yaml",
+  "promoted_at": "2026-05-17T21:50:39+00:00",
+  "promoted_task_id": "P04-S01-T009",
+  "source_doc_updated": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md"
+}

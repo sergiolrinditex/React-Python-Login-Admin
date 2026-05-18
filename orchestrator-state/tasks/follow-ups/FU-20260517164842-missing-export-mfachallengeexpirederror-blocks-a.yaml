@@ -1,0 +1,58 @@
+{
+  "id": "FU-20260517164842-missing-export-mfachallengeexpirederror-blocks-a",
+  "schema_version": 1,
+  "status": "waived",
+  "created_at": "2026-05-17T16:48:42+00:00",
+  "created_by": "sergiolr",
+  "origin_task_id": "P04-S02-T005",
+  "origin_phase_id": "P03",
+  "origin_step_id": "P03-S01",
+  "kind": "bug",
+  "product_increment": "current",
+  "build_state": "planned",
+  "severity": "critical",
+  "title": "Missing export MfaChallengeExpiredError blocks app mount (origin P03-S01-T005)",
+  "description": "frontend/src/features/auth/data/errors.ts does not export class MfaChallengeExpiredError, but it is imported by TwoFactorPage.tsx, useVerifyMfa.ts, twoFactorHelpers.ts, useVerifyMfa.test.tsx. Because TwoFactorPage is eagerly imported by router.tsx, the Vite dev server throws SyntaxError on mount and the entire React app fails to render in browser, blocking visual /verify-slice for every frontend slice in flight. Discovered while running /verify-slice P04-S02-T005 (AgentsPage). T005's own API/code acceptance is verified (40/40 tests, GET 200, PATCH 400+200, POST 502 §D-T005-502-INTENT, 401 PASS, 403 PASS, logs PII-clean, code architecture clean per validator).",
+  "journey_refs": [
+    "J100"
+  ],
+  "screen_route": "—",
+  "endpoint": "—",
+  "tables": [],
+  "depends_on": [
+    "P04-S02-T005"
+  ],
+  "conflict_groups": [
+    "front:auth"
+  ],
+  "write_set": [
+    "frontend/src/features/auth/data/errors.ts"
+  ],
+  "acceptance": [
+    "MfaChallengeExpiredError is exported from frontend/src/features/auth/data/errors.ts with appropriate code/message",
+    "useVerifyMfa.test.tsx H03 passes",
+    "/verify-slice P03-S01-T005 succeeds",
+    "subsequent /verify-slice P04-S02-T005 can render the AgentsPage in browser."
+  ],
+  "verify": [
+    "Run vite dev server",
+    "navigate to /auth/2fa (or /admin/ai/agents through admin login) and confirm the React app mounts without SyntaxError",
+    "run useVerifyMfa.test.tsx and confirm H03 passes",
+    "re-run /verify-slice P04-S02-T005 with hard reset to confirm UI gate."
+  ],
+  "notes": [
+    "Discovered by slice-verifier of P04-S02-T005 at 2026-05-17. Recommended path: run /verify-slice P03-S01-T005 first so its debugger fixes the missing export as in-scope",
+    "then re-run /verify-slice P04-S02-T005."
+  ],
+  "triage": {
+    "scope_classification": "out_of_scope",
+    "why_not_debugger": "Missing export MfaChallengeExpiredError lives in frontend/src/features/auth/data/errors.ts, which is in P03-S01-T005's Write set, not in P04-S02-T005's (features/agents/**, pages/admin/agents/**, app/router.tsx, i18n/**). T005's debugger cannot legally edit auth files. The defect was introduced by P03-S01-T005 (TwoFactorPage developer done 2026-05-15, never validator/tester/verify-slice'd); it must be fixed by P03-S01-T005's own debugger as in-scope work.",
+    "decision": "followup_only_when_outside_current_slice",
+    "debugger_path": "in_scope_defects_use_validator_tester_debugger_retest",
+    "warnings": []
+  },
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260517164842-missing-export-mfachallengeexpirederror-blocks-a.yaml",
+  "waived_at": "2026-05-17T16:59:10+00:00",
+  "waived_by": "sergiolr",
+  "waiver_reason": "Misclassification by main-orchestrator. The missing export MfaChallengeExpiredError is an in-scope defect of P03-S01-T005 (TwoFactorPage, developer done 2026-05-15, pending validator/tester/verify-slice). The file frontend/src/features/auth/data/errors.ts is in P03-S01-T005's declared write-set. The fix will happen organically when /verify-slice P03-S01-T005 runs its debugger as in-scope work. No new DAG task, no source-of-truth amendment, no write-set expansion needed. Per .claude/rules/05 register-followup section: in_scope_defect must be waived. T005's slice-verifier finding (FINDING-1) remains documented in handoff as evidence of why T005 verify is paused; T005 will re-verify after P03-S01-T005 closes."
+}

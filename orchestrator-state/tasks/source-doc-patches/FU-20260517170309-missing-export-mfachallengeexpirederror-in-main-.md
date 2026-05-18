@@ -1,0 +1,7 @@
+# Source-of-truth amendment — FU-20260517170309-missing-export-mfachallengeexpirederror-in-main-
+
+Appended to `docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md`:
+
+```md
+| P03-S01-T008 | bug | Missing export MfaChallengeExpiredError in main (orphaned defect from closed P03-S01-T005) | Runtime follow-up P04-S02-T005 | current | planned | critical | human | P04-S02-T005 | front:auth | frontend/src/features/auth/data/errors.ts | J100 | — | — | — | runtime-followup#FU-20260517170309-missing-export-mfachallengeexpirederror-in-main- | runtime-followup#FU-20260517170309-missing-export-mfachallengeexpirederror-in-main- | frontend/src/features/auth/data/errors.ts exports class MfaChallengeExpiredError extends Error with code='AUTH_MFA_CHALLENGE_EXPIRED' (mirroring sibling MfaCodeInvalidError shape), npm run build succeeds without SyntaxError on auth module, useVerifyMfa.test.tsx H03 (challenge expired) passes, vite dev server starts and React app mounts without errors, subsequent /verify-slice on any frontend slice can render UI in browser. | Visual: npm run dev → navigate to /auth/2fa → confirm app mounts (no SyntaxError in console). Smoke: backend devuelve 410 MFA_CHALLENGE_EXPIRED → frontend renders i18n auth:mfa.errors.challengeExpired y redirect a /auth/sign-in. Test: vitest useVerifyMfa.test.tsx H03 pass. Build: tsc --noEmit en features/auth/data/errors.ts → 0 errors. |
+```

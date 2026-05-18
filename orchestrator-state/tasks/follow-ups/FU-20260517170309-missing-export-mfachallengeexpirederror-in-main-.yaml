@@ -1,0 +1,61 @@
+{
+  "id": "FU-20260517170309-missing-export-mfachallengeexpirederror-in-main-",
+  "schema_version": 1,
+  "status": "waived",
+  "created_at": "2026-05-17T17:03:09+00:00",
+  "created_by": "sergiolr",
+  "origin_task_id": "P04-S02-T005",
+  "origin_phase_id": "P03",
+  "origin_step_id": "P03-S01",
+  "kind": "bug",
+  "product_increment": "current",
+  "build_state": "planned",
+  "severity": "critical",
+  "title": "Missing export MfaChallengeExpiredError in main (orphaned defect from closed P03-S01-T005)",
+  "description": "frontend/src/features/auth/data/errors.ts (commit HEAD de main) NO exporta class MfaChallengeExpiredError, pero TwoFactorPage.tsx (line 54), useVerifyMfa.ts (line 31), twoFactorHelpers.ts (line 19) y useVerifyMfa.test.tsx (line 28) lo importan. Vite dev server lanza SyntaxError on app mount → toda la app React falla en bootstrap → bloquea visual /verify-slice de TODA slice frontend en curso (descubierto en P04-S02-T005). El código y los imports están en main (commit 21859a4 feat(auth): P03-S01-T005). El export simplemente no fue añadido cuando se mergeó P03-S01-T005. Esta task debe crear el export con code='AUTH_MFA_CHALLENGE_EXPIRED' (HTTP 410), mirroring sibling MfaCodeInvalidError shape (line 340).",
+  "journey_refs": [
+    "J100"
+  ],
+  "screen_route": "—",
+  "endpoint": "—",
+  "tables": [],
+  "depends_on": [
+    "P04-S02-T005"
+  ],
+  "conflict_groups": [
+    "front:auth"
+  ],
+  "write_set": [
+    "frontend/src/features/auth/data/errors.ts"
+  ],
+  "acceptance": [
+    "frontend/src/features/auth/data/errors.ts exports class MfaChallengeExpiredError extends Error with code='AUTH_MFA_CHALLENGE_EXPIRED' (mirroring sibling MfaCodeInvalidError shape)",
+    "npm run build succeeds without SyntaxError on auth module",
+    "useVerifyMfa.test.tsx H03 (challenge expired) passes",
+    "vite dev server starts and React app mounts without errors",
+    "subsequent /verify-slice on any frontend slice can render UI in browser."
+  ],
+  "verify": [
+    "Visual: npm run dev → navigate to /auth/2fa → confirm app mounts (no SyntaxError in console). Smoke: backend devuelve 410 MFA_CHALLENGE_EXPIRED → frontend renders i18n auth:mfa.errors.challengeExpired y redirect a /auth/sign-in. Test: vitest useVerifyMfa.test.tsx H03 pass. Build: tsc --noEmit en features/auth/data/errors.ts → 0 errors."
+  ],
+  "notes": [
+    "Discovered by slice-verifier of P04-S02-T005 (2026-05-17). Re-registered after waiver of FU-20260517164842 (initial classification erróneamente asumió P03-S01-T005 vivo en DAG). Reality check: P03-S01-T005 closed sin verify-slice",
+    "no figura en registry",
+    "worktree borrada",
+    "bug es deuda real en main."
+  ],
+  "triage": {
+    "scope_classification": "out_of_scope",
+    "why_not_debugger": "Defecto en main fuera de cualquier task DAG viva. P03-S01-T005 (commit 21859a4 en main) cerró sin /verify-slice real; su worktree fue limpiada por cleanup-worktrees.sh y la task ya no aparece en registry.json (87 tasks, ninguna P03-S01-T005). No hay flujo DAG existente que arregle el export como in-scope. T005 no puede tocar features/auth/** (fuera de su write-set declarado: features/agents/**, pages/admin/agents/**, app/router.tsx, i18n/**). Requiere una nueva task DAG mini con write-set explícito frontend/src/features/auth/data/errors.ts.",
+    "decision": "followup_only_when_outside_current_slice",
+    "debugger_path": "in_scope_defects_use_validator_tester_debugger_retest",
+    "warnings": []
+  },
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260517170309-missing-export-mfachallengeexpirederror-in-main-.yaml",
+  "promoted_at": "2026-05-17T17:21:37+00:00",
+  "promoted_task_id": "P03-S01-T008",
+  "source_doc_updated": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md",
+  "waived_at": "2026-05-17T17:23:43+00:00",
+  "waived_by": "sergiolr",
+  "waiver_reason": "Duplicate of P04-S01-T005 (already promoted, status=ready, depends_on=[], same write_set frontend/src/features/auth/data/errors.ts, same conflict_group front:auth). Root cause re-diagnosed: P03-S01-T005 commit 21859a4 DID add MfaChallengeExpiredError; P04-S01-T001 commit 4a75d15 (AdminDashboardPage) accidentally stripped 8 MFA+ForgotPassword classes from errors.ts when updating it. P04-S01-T005 was promoted earlier with title 'Restore stripped MFA + ForgotPassword error classes' to fix exactly this regression, and its worktree dev/P04-S01-T005 already exists. Therefore P03-S01-T008 is spam. Will remove the row from HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md and refresh DAG. User should run /next-slice P04-S01-T005 instead."
+}

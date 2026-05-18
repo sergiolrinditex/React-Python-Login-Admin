@@ -1,0 +1,57 @@
+{
+  "id": "FU-20260517220254-test-isolation-test-migrations-downgrade-pollute",
+  "schema_version": 1,
+  "status": "promoted",
+  "created_at": "2026-05-17T22:02:54+00:00",
+  "created_by": "sergiolr",
+  "origin_task_id": "P04-S01-T007",
+  "origin_phase_id": "P04",
+  "origin_step_id": "P04-S01",
+  "kind": "test",
+  "product_increment": "current",
+  "build_state": "planned",
+  "severity": "medium",
+  "title": "Test isolation: test_migrations downgrade pollutes RAG/MCP suite (~63 failures, 68 errors)",
+  "description": "Running pytest backend/tests/integration end-to-end triggers ~63 failures and 68 errors in test_rag_*.py and adjacent test files because test_migrations_0001_auth.py::test_downgrade_removes_all_tables executes alembic downgrade base alphabetically before RAG/MCP test files run, leaving hilo_dev schemaless for subsequent suites. Surfaced by P04-S01-T007 tester run on 2026-05-17; in-scope admin AI tests are unaffected because they run via targeted file invocation. Fix requires session-scoped autouse fixture in backend/tests/conftest.py (or a new backend/tests/integration/conftest.py) plus refactoring test_migrations to use an isolated DB or restore schema on teardown.",
+  "journey_refs": [],
+  "screen_route": "—",
+  "endpoint": "—",
+  "tables": [],
+  "depends_on": [
+    "P04-S01-T007"
+  ],
+  "conflict_groups": [
+    "back:admin-ai"
+  ],
+  "write_set": [
+    "backend/tests/conftest.py",
+    "backend/tests/integration/conftest.py",
+    "backend/tests/integration/test_migrations_0001_auth.py"
+  ],
+  "acceptance": [
+    "Full pytest backend/tests/integration -v runs with no failures attributable to dropped DB schema",
+    "RAG",
+    "MCP and admin-ai integration tests all pass in a single run after the migrations downgrade test."
+  ],
+  "verify": [
+    "pytest backend/tests/integration -v shows zero UndefinedTable / OperationalError failures caused by cross-test schema teardown",
+    "rerun stable across two consecutive invocations."
+  ],
+  "notes": [
+    "Surfaced by P04-S01-T007 tester run (2026-05-17). Pre-existing condition",
+    "not introduced by this slice. tester-secret-leak-grep.log and tester-verbose-on.log archived under orchestrator-state/tasks/evidence/P04-S01-T007/. No journey ref attached",
+    "this is test infra hardening."
+  ],
+  "triage": {
+    "scope_classification": "missing_coverage",
+    "why_not_debugger": "Requires writing to backend/tests/conftest.py and/or creating backend/tests/integration/conftest.py, both outside write_set of P04-S01-T007. Debugger for this TASK_ID cannot touch global test infrastructure outside allowed_paths.",
+    "decision": "followup_only_when_outside_current_slice",
+    "debugger_path": "in_scope_defects_use_validator_tester_debugger_retest",
+    "warnings": []
+  },
+  "possible_duplicates": [],
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260517220254-test-isolation-test-migrations-downgrade-pollute.yaml",
+  "promoted_at": "2026-05-18T05:13:33+00:00",
+  "promoted_task_id": "P04-S01-T010",
+  "source_doc_updated": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md"
+}

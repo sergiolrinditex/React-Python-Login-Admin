@@ -1,0 +1,31 @@
+id: P04-S01-T005
+phase_id: P04
+step_id: P04-S01
+title: "Restore stripped MFA + ForgotPassword error classes in features/auth/data/errors.ts (regression from P04-S01-T001 commit 4a75d15)"
+status: ready
+kind: "bug"
+target: "Restore stripped MFA + ForgotPassword error classes in features/auth/data/errors.ts (regression from P04-S01-T001 commit 4a75d15)"
+product_increment: "current"
+build_state: "planned"
+risk_level: "critical"
+verify_mode: "human"
+route: ""
+endpoint: ""
+journey_refs:
+  - "J100"
+tables:
+depends_on:
+acceptance:
+  - "frontend/src/features/auth/data/errors.ts re-exports the 8 deleted classes verbatim from 21859a4, useVerifyMfa, useForgotPassword, TwoFactorPage, ForgotPasswordPage, twoFactorHelpers compile, vite dev server boots without SyntaxError, /auth/sign-in mounts in browser, 49 baseline tsc errors and 40 pre-existing test failures resolve or shrink to a documented residual."
+verification_commands:
+  - "Hard reset + npm run -s typecheck (expect 0 errors in the previously failing auth/chat files) + npm run -s test (expect prior 40 failures to clear) + Chrome DevTools MCP navigation to /auth/sign-in and /admin/rag/collections — both must mount and render without console SyntaxError."
+allowed_paths:
+  - "frontend/src/features/auth/data/errors.ts"
+conflict_groups:
+  - "front:auth"
+write_set:
+  - "frontend/src/features/auth/data/errors.ts"
+handoff_path: orchestrator-state/tasks/handoffs/P04-S01-T005.md
+evidence_dir: orchestrator-state/tasks/evidence/P04-S01-T005
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime follow-up P04-S02-T002"
+source_fingerprint: "a1096a6dfbff4db234996416edaa97e749533785a87d5b0988ff60643e2bc85d"

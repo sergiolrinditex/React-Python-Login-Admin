@@ -1,0 +1,49 @@
+{
+  "id": "FU-20260518051003-fix-path-drift-in-checklist-row-32-providers-py-",
+  "schema_version": 1,
+  "status": "promoted",
+  "created_at": "2026-05-18T05:10:03+00:00",
+  "created_by": "sergiolr",
+  "origin_task_id": "P04-S01-T007",
+  "origin_phase_id": "P04",
+  "origin_step_id": "P04-S01",
+  "kind": "documentation",
+  "product_increment": "current",
+  "build_state": "planned",
+  "severity": "low",
+  "title": "Fix path drift in checklist row 32: providers.py/model_catalog.py are packages, not single files",
+  "description": "Coverage Registry row 32 (P04-S01-T007 admin-ai integration tests) references file paths backend/app/admin/providers.py and backend/app/admin/model_catalog.py. Real backend layout exposes them as Python packages under backend/app/admin/providers/** and backend/app/admin/model_catalog/** (the registry write_set globs are correct; only the human-readable file column is stale). Cosmetic but misleading for anyone consulting the source-of-truth directly. Documented by validator as DRIFT_PATH_STRINGS_IN_CHECKLIST: 'resolve in next source-of-truth maintenance pass'. Resolve by updating row 32 (and any neighbouring rows with the same drift) to reference the package paths or trailing /**. ",
+  "journey_refs": [],
+  "screen_route": "—",
+  "endpoint": "—",
+  "tables": [],
+  "depends_on": [
+    "P04-S01-T007"
+  ],
+  "conflict_groups": [
+    "source-of-truth:checklist-coverage-registry"
+  ],
+  "write_set": [
+    "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md"
+  ],
+  "acceptance": [
+    "Checklist row referencing P04-S01-T007 admin-ai integration tests cites the actual package paths (or globs) consistent with the registry write_set: backend/app/admin/providers/** and backend/app/admin/model_catalog/**."
+  ],
+  "verify": [
+    "Visual diff confirms row 32 paths match ls backend/app/admin/providers/ (directory exists",
+    "contains __init__.py and submodules)."
+  ],
+  "notes": [],
+  "triage": {
+    "scope_classification": "out_of_scope",
+    "why_not_debugger": "Source-of-truth checklist file paths are outside any task's write_set. The fix requires rewriting docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md row 32 and (potentially) regenerating the checklist coverage view. Neither registry write_set globs nor any active slice owns this path; a debugger on P04-S01-T007 (backend/app/admin/providers/**, backend/app/admin/model_catalog/**) cannot legitimately edit source-of-truth docs. This is a documentation maintenance pass per .claude/rules/00-source-of-truth.md.",
+    "decision": "followup_only_when_outside_current_slice",
+    "debugger_path": "in_scope_defects_use_validator_tester_debugger_retest",
+    "warnings": []
+  },
+  "possible_duplicates": [],
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260518051003-fix-path-drift-in-checklist-row-32-providers-py-.yaml",
+  "promoted_at": "2026-05-18T05:13:46+00:00",
+  "promoted_task_id": "P04-S01-T013",
+  "source_doc_updated": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md"
+}

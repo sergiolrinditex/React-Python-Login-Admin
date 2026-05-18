@@ -1,0 +1,33 @@
+id: P04-S01-T011
+phase_id: P04
+step_id: P04-S01
+title: "Fix test_mcp_registry.py::test_T06 failing with cryptography.fernet.InvalidToken (pre-existing, out-of-scope)"
+status: ready
+kind: "bug"
+target: "Fix test_mcp_registry.py::test_T06 failing with cryptography.fernet.InvalidToken (pre-existing, out-of-scope)"
+product_increment: "current"
+build_state: "planned"
+risk_level: "medium"
+verify_mode: "human"
+route: ""
+endpoint: ""
+journey_refs:
+tables:
+depends_on:
+  - P04-S01-T007
+acceptance:
+  - "pytest backend/tests/integration/test_mcp_registry.py -k test_T06 returns PASSED with current ENCRYPTION_KEY."
+verification_commands:
+  - "pytest backend/tests/integration/test_mcp_registry.py -v -k test_T06 confirms PASSED"
+  - "full-file run shows no fernet.InvalidToken."
+allowed_paths:
+  - "backend/tests/integration/test_mcp_registry.py"
+  - "backend/app/security/encryption.py"
+conflict_groups:
+  - "mcp:registry-tests"
+write_set:
+  - "backend/tests/integration/test_mcp_registry.py"
+  - "backend/app/security/encryption.py"
+handoff_path: orchestrator-state/tasks/handoffs/P04-S01-T011.md
+evidence_dir: orchestrator-state/tasks/evidence/P04-S01-T011
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry"

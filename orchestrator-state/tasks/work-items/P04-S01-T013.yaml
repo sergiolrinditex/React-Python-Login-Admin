@@ -1,0 +1,31 @@
+id: P04-S01-T013
+phase_id: P04
+step_id: P04-S01
+title: "Fix path drift in checklist row 32: providers.py/model_catalog.py are packages, not single files"
+status: ready
+kind: "documentation"
+target: "Fix path drift in checklist row 32: providers.py/model_catalog.py are packages, not single files"
+product_increment: "current"
+build_state: "planned"
+risk_level: "low"
+verify_mode: "auto"
+route: ""
+endpoint: ""
+journey_refs:
+tables:
+depends_on:
+  - P04-S01-T007
+acceptance:
+  - "Checklist row referencing P04-S01-T007 admin-ai integration tests cites the actual package paths (or globs) consistent with the registry write_set: backend/app/admin/providers/** and backend/app/admin/model_catalog/**."
+verification_commands:
+  - "Visual diff confirms row 32 paths match ls backend/app/admin/providers/ (directory exists"
+  - "contains __init__.py and submodules)."
+allowed_paths:
+  - "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md"
+conflict_groups:
+  - "source-of-truth:checklist-coverage-registry"
+write_set:
+  - "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md"
+handoff_path: orchestrator-state/tasks/handoffs/P04-S01-T013.md
+evidence_dir: orchestrator-state/tasks/evidence/P04-S01-T013
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry"

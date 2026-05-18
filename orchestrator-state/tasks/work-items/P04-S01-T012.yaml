@@ -1,0 +1,35 @@
+id: P04-S01-T012
+phase_id: P04
+step_id: P04-S01
+title: "Fix stale acceptance keyword in checklist + registry for P04-S01-T007 admin-ai integration tests"
+status: ready
+kind: "bug"
+target: "Fix stale acceptance keyword in checklist + registry for P04-S01-T007 admin-ai integration tests"
+product_increment: "current"
+build_state: "planned"
+risk_level: "medium"
+verify_mode: "human"
+route: ""
+endpoint: ""
+journey_refs:
+tables:
+depends_on:
+  - P04-S01-T007
+acceptance:
+  - "Coverage Registry row for P04-S01-T007 uses an acceptance string that"
+  - "executed verbatim"
+  - "runs the 26 in-scope tests of backend/tests/integration/test_admin_ai.py (file-path form"
+  - "or a -k keyword that actually matches the test names)."
+verification_commands:
+  - "Run the exact acceptance string from checklist line for P04-S01-T007: pytest collects >=26 items and reports 26 passed. registry.json acceptance field for P04-S01-T007 matches the checklist verbatim."
+allowed_paths:
+  - "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md"
+  - "orchestrator-state/tasks/registry.json"
+conflict_groups:
+  - "source-of-truth:checklist-coverage-registry"
+write_set:
+  - "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md"
+  - "orchestrator-state/tasks/registry.json"
+handoff_path: orchestrator-state/tasks/handoffs/P04-S01-T012.md
+evidence_dir: orchestrator-state/tasks/evidence/P04-S01-T012
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry"

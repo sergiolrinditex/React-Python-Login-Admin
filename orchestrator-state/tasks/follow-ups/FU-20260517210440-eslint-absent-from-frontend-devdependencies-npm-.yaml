@@ -1,0 +1,58 @@
+{
+  "id": "FU-20260517210440-eslint-absent-from-frontend-devdependencies-npm-",
+  "schema_version": 1,
+  "status": "promoted",
+  "created_at": "2026-05-17T21:04:40+00:00",
+  "created_by": "sergiolr",
+  "origin_task_id": "P04-S01-T003",
+  "origin_phase_id": "P04",
+  "origin_step_id": "P04-S01",
+  "kind": "security",
+  "product_increment": "current",
+  "build_state": "planned",
+  "severity": "medium",
+  "title": "eslint absent from frontend devDependencies — npm run lint always fails",
+  "description": "frontend/package.json declares lint script 'eslint src' but eslint is not listed in devDependencies nor present in node_modules. npm run lint returns 'sh: eslint: command not found'. The lint gate cannot run in any worktree. tsc serves as the only static-analysis gate currently available. Originally surfaced in P04-S01-T003 cycle-1 tester section (FU-B).",
+  "journey_refs": [],
+  "screen_route": "—",
+  "endpoint": "—",
+  "tables": [],
+  "depends_on": [
+    "P04-S01-T003"
+  ],
+  "conflict_groups": [
+    "front:tooling"
+  ],
+  "write_set": [
+    "frontend/package.json",
+    "frontend/package-lock.json",
+    "frontend/eslint.config.*",
+    "frontend/.eslintrc*",
+    "frontend/src/**/*.{ts",
+    "tsx}"
+  ],
+  "acceptance": [
+    "eslint (or chosen linter e.g. oxlint/biome) installed in devDependencies",
+    "npm run lint exits 0 with zero warnings on the existing codebase."
+  ],
+  "verify": [
+    "npm --prefix frontend run lint exits 0 in a clean worktree",
+    "pre-commit lint hook (if any) green."
+  ],
+  "notes": [
+    "Already proposed in handoff P04-S01-T003 § Tester run cycle-1 as FU-B",
+    "this is the formal registration. May be addressed alongside the .gitignore tweak required to keep agent-memory archives gitignored after worktree symlink fix."
+  ],
+  "triage": {
+    "scope_classification": "missing_coverage",
+    "why_not_debugger": "Installing eslint and configuring lint rules is infrastructure/dev-tooling that requires updating package.json devDependencies, adding eslint config (likely flat config or .eslintrc), and possibly fixing pre-existing lint violations across the whole frontend. This is outside the write_set of P04-S01-T003 (frontend ModelWizardPage only) and requires a dedicated tooling slice to avoid scope creep and untested side effects on unrelated files. tsc --noEmit serves as the authoritative static-analysis gate currently.",
+    "decision": "followup_only_when_outside_current_slice",
+    "debugger_path": "in_scope_defects_use_validator_tester_debugger_retest",
+    "warnings": []
+  },
+  "possible_duplicates": [],
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260517210440-eslint-absent-from-frontend-devdependencies-npm-.yaml",
+  "promoted_at": "2026-05-17T21:25:45+00:00",
+  "promoted_task_id": "P04-S01-T008",
+  "source_doc_updated": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md"
+}

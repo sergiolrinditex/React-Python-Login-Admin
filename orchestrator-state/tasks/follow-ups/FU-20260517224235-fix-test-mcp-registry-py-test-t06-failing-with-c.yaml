@@ -1,7 +1,7 @@
 {
   "id": "FU-20260517224235-fix-test-mcp-registry-py-test-t06-failing-with-c",
   "schema_version": 1,
-  "status": "proposed",
+  "status": "promoted",
   "created_at": "2026-05-17T22:42:35+00:00",
   "created_by": "sergiolr",
   "origin_task_id": "P04-S01-T007",
@@ -43,5 +43,8 @@
     "warnings": []
   },
   "possible_duplicates": [],
-  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260517224235-fix-test-mcp-registry-py-test-t06-failing-with-c.yaml"
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260517224235-fix-test-mcp-registry-py-test-t06-failing-with-c.yaml",
+  "promoted_at": "2026-05-18T05:13:37+00:00",
+  "promoted_task_id": "P04-S01-T011",
+  "source_doc_updated": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md"
 }

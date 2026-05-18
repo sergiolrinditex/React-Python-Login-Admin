@@ -1,0 +1,35 @@
+id: P03-S01-T008
+phase_id: P03
+step_id: P03-S01
+title: "Missing export MfaChallengeExpiredError in main (orphaned defect from closed P03-S01-T005)"
+status: blocked
+kind: "bug"
+target: "Missing export MfaChallengeExpiredError in main (orphaned defect from closed P03-S01-T005)"
+product_increment: "current"
+build_state: "planned"
+risk_level: "critical"
+verify_mode: "human"
+route: ""
+endpoint: ""
+journey_refs:
+  - "J100"
+tables:
+depends_on:
+  - P04-S02-T005
+acceptance:
+  - "frontend/src/features/auth/data/errors.ts exports class MfaChallengeExpiredError extends Error with code='AUTH_MFA_CHALLENGE_EXPIRED' (mirroring sibling MfaCodeInvalidError shape)"
+  - "npm run build succeeds without SyntaxError on auth module"
+  - "useVerifyMfa.test.tsx H03 (challenge expired) passes"
+  - "vite dev server starts and React app mounts without errors"
+  - "subsequent /verify-slice on any frontend slice can render UI in browser."
+verification_commands:
+  - "Visual: npm run dev → navigate to /auth/2fa → confirm app mounts (no SyntaxError in console). Smoke: backend devuelve 410 MFA_CHALLENGE_EXPIRED → frontend renders i18n auth:mfa.errors.challengeExpired y redirect a /auth/sign-in. Test: vitest useVerifyMfa.test.tsx H03 pass. Build: tsc --noEmit en features/auth/data/errors.ts → 0 errors."
+allowed_paths:
+  - "frontend/src/features/auth/data/errors.ts"
+conflict_groups:
+  - "front:auth"
+write_set:
+  - "frontend/src/features/auth/data/errors.ts"
+handoff_path: orchestrator-state/tasks/handoffs/P03-S01-T008.md
+evidence_dir: orchestrator-state/tasks/evidence/P03-S01-T008
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry"

@@ -1,0 +1,55 @@
+{
+  "id": "FU-20260517210429-backend-admin-ai-integration-tests-regressed-25-",
+  "schema_version": 1,
+  "status": "promoted",
+  "created_at": "2026-05-17T21:04:29+00:00",
+  "created_by": "sergiolr",
+  "origin_task_id": "P04-S01-T003",
+  "origin_phase_id": "P04",
+  "origin_step_id": "P04-S01",
+  "kind": "bug",
+  "product_increment": "current",
+  "build_state": "planned",
+  "severity": "high",
+  "title": "Backend admin AI integration tests regressed (25 failures in test_admin_ai.py)",
+  "description": "pytest backend/tests/integration -k admin_ai_models shows 25 failed / 1 passed. Tests cover providers list/post/auth/rate-limit, models list/filter/patch, audit, request-id propagation, verbose-logging no-secret. Full repro output in orchestrator-state/tasks/evidence/P04-S01-T003/backend-admin-ai.log. Origin task P02-S05-T001 is marked done; regression source needs investigation. Zero backend diff in P04-S01-T003 confirms this slice did not introduce the regression. Also surfaces on PR #46 CI as Unit tests py 3.11/3.12 partial failure (one assertion: test_agent_memory_archives_are_gitignored unrelated to this but in same job).",
+  "journey_refs": [
+    "J103"
+  ],
+  "screen_route": "—",
+  "endpoint": "—",
+  "tables": [],
+  "depends_on": [
+    "P04-S01-T003"
+  ],
+  "conflict_groups": [
+    "back:admin-ai"
+  ],
+  "write_set": [
+    "backend/app/admin/providers/**",
+    "backend/app/admin/model_catalog/**",
+    "backend/tests/integration/test_admin_ai.py"
+  ],
+  "acceptance": [
+    "pytest backend/tests/integration -k admin_ai_models passes 25/25 (or test scope updated with explicit rationale in source-of-truth)."
+  ],
+  "verify": [
+    "full backend admin-ai integration suite green AND a fresh /verify-slice for the J103 admin AI happy path still passes."
+  ],
+  "notes": [
+    "Already proposed in handoff P04-S01-T003 § Tester run cycle-1 as FU-A",
+    "this is the formal registration."
+  ],
+  "triage": {
+    "scope_classification": "missing_coverage",
+    "why_not_debugger": "P04-S01-T003 is frontend-only (zero backend diff vs origin/main per git diff --stat origin/main -- backend/). The 25 admin-ai backend integration test failures live in backend/tests/integration/test_admin_ai.py and the underlying routers under backend/app/admin/, outside the write_set/allowed_paths of this slice. Debugger of P04-S01-T003 cannot fix them inside this TASK_ID; needs its own backend slice scoped to P02-S05 surface.",
+    "decision": "followup_only_when_outside_current_slice",
+    "debugger_path": "in_scope_defects_use_validator_tester_debugger_retest",
+    "warnings": []
+  },
+  "possible_duplicates": [],
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260517210429-backend-admin-ai-integration-tests-regressed-25-.yaml",
+  "promoted_at": "2026-05-17T21:23:53+00:00",
+  "promoted_task_id": "P04-S01-T007",
+  "source_doc_updated": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md"
+}

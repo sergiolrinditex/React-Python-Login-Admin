@@ -1,6 +1,6 @@
 id: P03
 title: "Employee UX / Auth + Chat"
-status: done
+status: complete
 depends_on:
   - P02
 task_ids:

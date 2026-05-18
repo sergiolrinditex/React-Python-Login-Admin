@@ -1,0 +1,52 @@
+{
+  "id": "FU-20260518050950-fix-stale-acceptance-keyword-in-checklist-regist",
+  "schema_version": 1,
+  "status": "promoted",
+  "created_at": "2026-05-18T05:09:50+00:00",
+  "created_by": "sergiolr",
+  "origin_task_id": "P04-S01-T007",
+  "origin_phase_id": "P04",
+  "origin_step_id": "P04-S01",
+  "kind": "bug",
+  "product_increment": "current",
+  "build_state": "planned",
+  "severity": "medium",
+  "title": "Fix stale acceptance keyword in checklist + registry for P04-S01-T007 admin-ai integration tests",
+  "description": "Coverage Registry row for P04-S01-T007 (and the promoted-FU FU-20260517210429-...) records acceptance as 'pytest backend/tests/integration -k admin_ai_models passes 25/25'. Real invocation: pytest selects 0/374 tests with -k admin_ai_models because no test name in backend/tests/integration/test_admin_ai.py matches that substring (tests are named test_T01..test_T26). Tester P04-S01-T007 used file-path invocation pytest backend/tests/integration/test_admin_ai.py (collects 26 items) and validator approved via the 'test scope updated with explicit rationale' clause. The acceptance string in source-of-truth + registry remains broken and will mislead future re-runs, automation, or audits. Fix: rewrite the acceptance clause to use the file-path form (or update the -k keyword to match real test names) and regenerate registry via the documented bootstrap script under locks. Documented as drift by validator (DRIFT_PATH_STRINGS_IN_CHECKLIST) and tester (ACCEPTANCE_FILTER_KEYWORD) in handoff.",
+  "journey_refs": [],
+  "screen_route": "—",
+  "endpoint": "—",
+  "tables": [],
+  "depends_on": [
+    "P04-S01-T007"
+  ],
+  "conflict_groups": [
+    "source-of-truth:checklist-coverage-registry"
+  ],
+  "write_set": [
+    "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md",
+    "orchestrator-state/tasks/registry.json"
+  ],
+  "acceptance": [
+    "Coverage Registry row for P04-S01-T007 uses an acceptance string that",
+    "executed verbatim",
+    "runs the 26 in-scope tests of backend/tests/integration/test_admin_ai.py (file-path form",
+    "or a -k keyword that actually matches the test names)."
+  ],
+  "verify": [
+    "Run the exact acceptance string from checklist line for P04-S01-T007: pytest collects >=26 items and reports 26 passed. registry.json acceptance field for P04-S01-T007 matches the checklist verbatim."
+  ],
+  "notes": [],
+  "triage": {
+    "scope_classification": "out_of_scope",
+    "why_not_debugger": "Acceptance string lives in docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md (Coverage Registry) and is regenerated into orchestrator-state/tasks/registry.json by bootstrap. Neither path is in any single slice write_set; the debugger of P04-S01-T007 (write_set: backend/app/admin/providers/**, backend/app/admin/model_catalog/**, backend/tests/integration/test_admin_ai.py) cannot legitimately edit source-of-truth or regenerated registry. This is a source-of-truth amendment task per .claude/rules/00-source-of-truth.md, requires regenerating registry under locks, and is parallel work to current DAG progress (no conflict with active slices).",
+    "decision": "followup_only_when_outside_current_slice",
+    "debugger_path": "in_scope_defects_use_validator_tester_debugger_retest",
+    "warnings": []
+  },
+  "possible_duplicates": [],
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260518050950-fix-stale-acceptance-keyword-in-checklist-regist.yaml",
+  "promoted_at": "2026-05-18T05:13:40+00:00",
+  "promoted_task_id": "P04-S01-T012",
+  "source_doc_updated": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md"
+}
