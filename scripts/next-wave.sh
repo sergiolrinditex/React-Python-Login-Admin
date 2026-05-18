@@ -36,4 +36,18 @@ if [ -f "$ROOT/scripts/cleanup-closed-task-worktrees.sh" ]; then
     echo "WARN: closed task worktree cleanup incomplete; run: bash scripts/cleanup-closed-task-worktrees.sh --apply --verbose" >&2
   fi
 fi
+
+
+# Safe remote branch housekeeping for already-merged PRs. This only deletes
+# same-repo remote task branches when GitHub reports the PR as MERGED and the
+# remote branch SHA still equals that PR head SHA. Open, moved, forked, or
+# ambiguous branches are left untouched. Missing gh/auth is a quiet no-op.
+# Disable with CLAUDE_CLEAN_MERGED_PR_BRANCHES=0 or
+# CLAUDE_DISABLE_REMOTE_BRANCH_CLEANUP=1.
+if [ "${CLAUDE_CLEAN_MERGED_PR_BRANCHES:-1}" != "0" ] && [ "${CLAUDE_DISABLE_REMOTE_BRANCH_CLEANUP:-0}" != "1" ] && [ "${CLAUDE_DISABLE_REMOTE_PR_BRANCH_CLEANUP:-0}" != "1" ] && [ -f "$ROOT/scripts/cleanup-merged-pr-branches.sh" ]; then
+  if ! bash "$ROOT/scripts/cleanup-merged-pr-branches.sh" --apply --quiet; then
+    echo "WARN: merged PR remote branch cleanup incomplete; run: bash scripts/cleanup-merged-pr-branches.sh --apply --verbose" >&2
+  fi
+fi
+
 python3 -B -S "$ROOT/.claude/bin/next_wave.py" "$@"

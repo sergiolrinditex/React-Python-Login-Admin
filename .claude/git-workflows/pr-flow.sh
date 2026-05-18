@@ -42,6 +42,7 @@ cleanup_remote_head_branch() {
   esac
   if git ls-remote --exit-code --heads "$TARGET_REMOTE" "$BRANCH" >/dev/null 2>&1; then
     if git push "$TARGET_REMOTE" --delete "$BRANCH" >"$REMOTE_BRANCH_DELETE_LOG" 2>&1; then
+      git fetch "$TARGET_REMOTE" --prune >/dev/null 2>&1 || true
       echo "REMOTE_BRANCH_CLEANED: yes"
     else
       echo "REMOTE_BRANCH_CLEANED: no"
