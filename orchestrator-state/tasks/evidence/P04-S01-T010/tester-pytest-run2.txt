@@ -1,0 +1,593 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.5, pytest-9.0.2, pluggy-1.6.0 -- /usr/local/bin/python3
+cachedir: .pytest_cache
+rootdir: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P04-S01-T010/backend
+configfile: pyproject.toml
+plugins: httpx-0.36.0, asyncio-1.3.0, langsmith-0.8.3, anyio-4.13.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 374 items
+
+backend/tests/integration/test_admin_ai.py::test_T01_get_providers_admin_200 PASSED [  0%]
+backend/tests/integration/test_admin_ai.py::test_T02_get_providers_employee_403 PASSED [  0%]
+backend/tests/integration/test_admin_ai.py::test_T03_get_providers_no_bearer_401 PASSED [  0%]
+backend/tests/integration/test_admin_ai.py::test_T04_get_providers_has_credentials PASSED [  1%]
+backend/tests/integration/test_admin_ai.py::test_T05_post_provider_creates_encrypted_credential PASSED [  1%]
+backend/tests/integration/test_admin_ai.py::test_T06_post_provider_invalid_type_422 PASSED [  1%]
+backend/tests/integration/test_admin_ai.py::test_T07_post_provider_missing_credentials_422 PASSED [  1%]
+backend/tests/integration/test_admin_ai.py::test_T08_post_provider_auth_failures PASSED [  2%]
+backend/tests/integration/test_admin_ai.py::test_T09_post_provider_rate_limit_429 PASSED [  2%]
+backend/tests/integration/test_admin_ai.py::test_T10_post_provider_redis_down_503 PASSED [  2%]
+backend/tests/integration/test_admin_ai.py::test_T11_post_provider_encryption_error_500 PASSED [  2%]
+backend/tests/integration/test_admin_ai.py::test_T12_verbose_logging_no_secret_in_logs PASSED [  3%]
+backend/tests/integration/test_admin_ai.py::test_T13_get_models_admin_200 PASSED [  3%]
+backend/tests/integration/test_admin_ai.py::test_T14_get_models_provider_filter PASSED [  3%]
+backend/tests/integration/test_admin_ai.py::test_T15_get_models_invalid_provider_id_422 PASSED [  4%]
+backend/tests/integration/test_admin_ai.py::test_T16_get_models_auth_failures PASSED [  4%]
+backend/tests/integration/test_admin_ai.py::test_T17_patch_model_enabled PASSED [  4%]
+backend/tests/integration/test_admin_ai.py::test_T18_patch_model_is_default_clears_previous PASSED [  4%]
+backend/tests/integration/test_admin_ai.py::test_T19_patch_model_empty_payload_400 PASSED [  5%]
+backend/tests/integration/test_admin_ai.py::test_T20_patch_model_not_found_404 PASSED [  5%]
+backend/tests/integration/test_admin_ai.py::test_T21_patch_model_auth_failures PASSED [  5%]
+backend/tests/integration/test_admin_ai.py::test_T22_patch_model_remove_only_default PASSED [  5%]
+backend/tests/integration/test_admin_ai.py::test_T23_request_id_propagated PASSED [  6%]
+backend/tests/integration/test_admin_ai.py::test_T24_response_envelope_shape PASSED [  6%]
+backend/tests/integration/test_admin_ai.py::test_T25_no_test_residue PASSED [  6%]
+backend/tests/integration/test_admin_ai.py::test_T26_concurrent_patch_default_conflict PASSED [  6%]
+backend/tests/integration/test_audit_endpoint.py::test_T01_auditor_200_with_rows PASSED [  7%]
+backend/tests/integration/test_audit_endpoint.py::test_T02_super_admin_200 PASSED [  7%]
+backend/tests/integration/test_audit_endpoint.py::test_T03_people_admin_403 PASSED [  7%]
+backend/tests/integration/test_audit_endpoint.py::test_T04_employee_403 PASSED [  8%]
+backend/tests/integration/test_audit_endpoint.py::test_T05_no_bearer_401 PASSED [  8%]
+backend/tests/integration/test_audit_endpoint.py::test_T06_filter_actor PASSED [  8%]
+backend/tests/integration/test_audit_endpoint.py::test_T07_filter_action PASSED [  8%]
+backend/tests/integration/test_audit_endpoint.py::test_T08_filter_actor_and_action PASSED [  9%]
+backend/tests/integration/test_audit_endpoint.py::test_T09_invalid_from_422 PASSED [  9%]
+backend/tests/integration/test_audit_endpoint.py::test_T10_from_after_to_422 PASSED [  9%]
+backend/tests/integration/test_audit_endpoint.py::test_T11_window_too_wide_422 PASSED [  9%]
+backend/tests/integration/test_audit_endpoint.py::test_T12_empty_result_200 PASSED [ 10%]
+backend/tests/integration/test_audit_endpoint.py::test_T13_cursor_pagination PASSED [ 10%]
+backend/tests/integration/test_audit_endpoint.py::test_T14_verbose_logging_modes PASSED [ 10%]
+backend/tests/integration/test_audit_endpoint.py::test_T15_response_shape_contract PASSED [ 10%]
+backend/tests/integration/test_auth_logout.py::test_logout_success_revokes_token_and_clears_cookie PASSED [ 11%]
+backend/tests/integration/test_auth_logout.py::test_logout_no_bearer_returns_401 PASSED [ 11%]
+backend/tests/integration/test_auth_logout.py::test_logout_invalid_bearer_returns_401 PASSED [ 11%]
+backend/tests/integration/test_auth_logout.py::test_logout_expired_bearer_returns_401 PASSED [ 12%]
+backend/tests/integration/test_auth_logout.py::test_logout_no_cookie_returns_401 PASSED [ 12%]
+backend/tests/integration/test_auth_logout.py::test_logout_unknown_cookie_returns_401 PASSED [ 12%]
+backend/tests/integration/test_auth_logout.py::test_logout_expired_cookie_returns_401 PASSED [ 12%]
+backend/tests/integration/test_auth_logout.py::test_logout_revoked_cookie_returns_401 PASSED [ 13%]
+backend/tests/integration/test_auth_logout.py::test_logout_user_mismatch_returns_401 PASSED [ 13%]
+backend/tests/integration/test_auth_logout.py::test_logout_401_body_byte_identical_for_all_failure_reasons FAILED [ 13%]
+backend/tests/integration/test_auth_logout.py::test_logout_does_not_revoke_other_users_tokens PASSED [ 13%]
+backend/tests/integration/test_auth_logout.py::test_logout_request_id_propagated_in_response_header_and_audit FAILED [ 14%]
+backend/tests/integration/test_auth_logout.py::test_logout_no_pii_or_token_value_in_logs FAILED [ 14%]
+backend/tests/integration/test_auth_logout.py::test_logout_audit_row_persists_even_when_main_tx_rolls_back PASSED [ 14%]
+backend/tests/integration/test_auth_logout.py::test_logout_cookie_jar_roundtrip_no_manual_cookie_header PASSED [ 14%]
+backend/tests/integration/test_auth_refresh.py::test_refresh_success_rotates_and_returns_new_access_token PASSED [ 15%]
+backend/tests/integration/test_auth_refresh.py::test_refresh_no_cookie_returns_401_session_expired PASSED [ 15%]
+backend/tests/integration/test_auth_refresh.py::test_refresh_unknown_token_returns_401 PASSED [ 15%]
+backend/tests/integration/test_auth_refresh.py::test_refresh_expired_token_returns_401 PASSED [ 16%]
+backend/tests/integration/test_auth_refresh.py::test_refresh_revoked_token_returns_401 PASSED [ 16%]
+backend/tests/integration/test_auth_refresh.py::test_refresh_inactive_user_returns_401 PASSED [ 16%]
+backend/tests/integration/test_auth_refresh.py::test_refresh_replay_old_token_returns_401 PASSED [ 16%]
+backend/tests/integration/test_auth_refresh.py::test_refresh_concurrent_requests_only_one_wins PASSED [ 17%]
+backend/tests/integration/test_auth_refresh.py::test_refresh_rate_limit_returns_429 PASSED [ 17%]
+backend/tests/integration/test_auth_refresh.py::test_refresh_no_pii_or_token_value_in_logs PASSED [ 17%]
+backend/tests/integration/test_auth_refresh.py::test_refresh_request_id_in_response_header_and_meta PASSED [ 17%]
+backend/tests/integration/test_auth_refresh.py::test_refresh_body_has_no_refresh_token PASSED [ 18%]
+backend/tests/integration/test_auth_refresh.py::test_refresh_new_refresh_hashed_in_db PASSED [ 18%]
+backend/tests/integration/test_auth_refresh.py::test_refresh_401_body_byte_identical_for_all_failure_reasons PASSED [ 18%]
+backend/tests/integration/test_auth_signin.py::test_signin_success_no_mfa PASSED [ 18%]
+backend/tests/integration/test_auth_signin.py::test_signin_mfa_required_branch PASSED [ 19%]
+backend/tests/integration/test_auth_signin.py::test_signin_wrong_password_401_indistinguishable PASSED [ 19%]
+backend/tests/integration/test_auth_signin.py::test_signin_unknown_email_401_indistinguishable PASSED [ 19%]
+backend/tests/integration/test_auth_signin.py::test_signin_unknown_and_wrong_have_same_response_body PASSED [ 20%]
+backend/tests/integration/test_auth_signin.py::test_signin_user_inactive_returns_401 PASSED [ 20%]
+backend/tests/integration/test_auth_signin.py::test_signin_lockout_returns_423_after_threshold PASSED [ 20%]
+backend/tests/integration/test_auth_signin.py::test_signin_invalid_payload_empty_email_400 PASSED [ 20%]
+backend/tests/integration/test_auth_signin.py::test_signin_missing_field_returns_422 PASSED [ 21%]
+backend/tests/integration/test_auth_signin.py::test_signin_rate_limit_429 PASSED [ 21%]
+backend/tests/integration/test_auth_signin.py::test_signin_response_includes_request_id_meta PASSED [ 21%]
+backend/tests/integration/test_auth_signin.py::test_signin_no_pii_in_logs PASSED [ 21%]
+backend/tests/integration/test_auth_signin.py::test_signin_refresh_cookie_attributes PASSED [ 22%]
+backend/tests/integration/test_auth_signin.py::test_signin_refresh_token_hashed_in_db PASSED [ 22%]
+backend/tests/integration/test_auth_signin.py::test_signin_access_token_not_in_cookie PASSED [ 22%]
+backend/tests/integration/test_auth_signin.py::test_signin_response_timing_envelope PASSED [ 22%]
+backend/tests/integration/test_auth_signup.py::test_signup_happy_path_201 PASSED [ 23%]
+backend/tests/integration/test_auth_signup.py::test_signup_non_corporate_email_400 PASSED [ 23%]
+backend/tests/integration/test_auth_signup.py::test_signup_legal_not_accepted_400 PASSED [ 23%]
+backend/tests/integration/test_auth_signup.py::test_signup_missing_full_name_422 PASSED [ 24%]
+backend/tests/integration/test_auth_signup.py::test_signup_duplicate_email_409 PASSED [ 24%]
+backend/tests/integration/test_auth_signup.py::test_signup_password_too_short_400 PASSED [ 24%]
+backend/tests/integration/test_auth_signup.py::test_signup_password_hashed_argon2id PASSED [ 24%]
+backend/tests/integration/test_auth_signup.py::test_signup_logs_no_pii PASSED [ 25%]
+backend/tests/integration/test_auth_signup.py::test_signup_rate_limit_429 PASSED [ 25%]
+backend/tests/integration/test_chat_conversations.py::test_post_creates_conversation_success PASSED [ 25%]
+backend/tests/integration/test_chat_conversations.py::test_post_without_initial_message_creates_empty_conversation PASSED [ 25%]
+backend/tests/integration/test_chat_conversations.py::test_post_uses_user_preferred_language_when_omitted PASSED [ 26%]
+backend/tests/integration/test_chat_conversations.py::test_post_uses_explicit_language_override PASSED [ 26%]
+backend/tests/integration/test_chat_conversations.py::test_post_rejects_invalid_language PASSED [ 26%]
+backend/tests/integration/test_chat_conversations.py::test_post_unauthenticated_returns_401_anti_enum PASSED [ 27%]
+backend/tests/integration/test_chat_conversations.py::test_get_list_returns_only_own_conversations PASSED [ 27%]
+backend/tests/integration/test_chat_conversations.py::test_get_list_pagination_roundtrip PASSED [ 27%]
+backend/tests/integration/test_chat_conversations.py::test_get_list_pagination_orders_by_updated_at_desc PASSED [ 27%]
+backend/tests/integration/test_chat_conversations.py::test_get_list_empty_returns_empty_envelope PASSED [ 28%]
+backend/tests/integration/test_chat_conversations.py::test_get_list_invalid_cursor_returns_400 PASSED [ 28%]
+backend/tests/integration/test_chat_conversations.py::test_get_detail_returns_full_conversation_with_messages PASSED [ 28%]
+backend/tests/integration/test_chat_conversations.py::test_get_detail_404_when_uuid_not_exists PASSED [ 28%]
+backend/tests/integration/test_chat_conversations.py::test_get_detail_403_when_not_owner PASSED [ 29%]
+backend/tests/integration/test_chat_stream.py::TestT01HappyPath::test_stream_happy_path_es PASSED [ 29%]
+backend/tests/integration/test_chat_stream.py::TestT02NotFound::test_stream_ownership_404 PASSED [ 29%]
+backend/tests/integration/test_chat_stream.py::TestT03Forbidden::test_stream_ownership_403 PASSED [ 29%]
+backend/tests/integration/test_chat_stream.py::TestT04NoAuth::test_stream_no_auth_401 PASSED [ 30%]
+backend/tests/integration/test_chat_stream.py::TestT05EmptyBody::test_stream_empty_body_400 PASSED [ 30%]
+backend/tests/integration/test_chat_stream.py::TestT06OversizeBody::test_stream_oversize_body_400 PASSED [ 30%]
+backend/tests/integration/test_chat_stream.py::TestT07UserMsgBeforeLlm::test_stream_user_msg_persisted_before_llm PASSED [ 31%]
+backend/tests/integration/test_chat_stream.py::TestT08NoRagHits::test_stream_no_rag_hits_still_works PASSED [ 31%]
+backend/tests/integration/test_chat_stream.py::TestT09NoActiveChatModel::test_stream_no_active_chat_model_502 PASSED [ 31%]
+backend/tests/integration/test_chat_stream.py::TestT10MidStreamError::test_stream_litellm_fails_mid_stream PASSED [ 31%]
+backend/tests/integration/test_chat_stream.py::TestT11ClientDisconnect::test_stream_client_disconnect_persists_partial PASSED [ 32%]
+backend/tests/integration/test_chat_stream.py::TestT12UpdatedAtBumped::test_stream_conversation_updated_at_bumped PASSED [ 32%]
+backend/tests/integration/test_chat_stream.py::TestT13UsageLogColumns::test_stream_usage_log_columns PASSED [ 32%]
+backend/tests/integration/test_chat_stream.py::TestT14CitationsLinkAssistant::test_stream_citations_link_to_assistant_msg PASSED [ 32%]
+backend/tests/integration/test_chat_stream.py::TestT15LogsVerboseOff::test_stream_logs_verbose_off_silent PASSED [ 33%]
+backend/tests/integration/test_chat_stream.py::TestT16LogsVerboseOn::test_stream_logs_verbose_on_full_flow PASSED [ 33%]
+backend/tests/integration/test_chat_stream.py::TestT17LogsRedactSecrets::test_stream_logs_redact_secrets PASSED [ 33%]
+backend/tests/integration/test_chat_stream.py::TestT18RequestIdPropagated::test_stream_request_id_propagated PASSED [ 33%]
+backend/tests/integration/test_chat_stream.py::TestT19ContentType::test_stream_sse_content_type_header PASSED [ 34%]
+backend/tests/integration/test_chat_stream.py::TestT20NotBuffered::test_stream_sse_chunked_not_buffered PASSED [ 34%]
+backend/tests/integration/test_chat_stream_unit_sse.py::TestMakeSseBytes::test_framing_format PASSED [ 34%]
+backend/tests/integration/test_chat_stream_unit_sse.py::TestMakeSseBytes::test_double_newline_separator PASSED [ 35%]
+backend/tests/integration/test_chat_stream_unit_sse.py::TestMakeSseBytes::test_json_is_single_line PASSED [ 35%]
+backend/tests/integration/test_chat_stream_unit_sse.py::TestMakeSseBytes::test_utf8_spanish_preserved PASSED [ 35%]
+backend/tests/integration/test_chat_stream_unit_sse.py::TestMakeSseBytes::test_utf8_french_preserved PASSED [ 35%]
+backend/tests/integration/test_chat_stream_unit_sse.py::TestMakeSseBytes::test_returns_bytes PASSED [ 36%]
+backend/tests/integration/test_chat_stream_unit_sse.py::TestSseMeta::test_meta_event_name PASSED [ 36%]
+backend/tests/integration/test_chat_stream_unit_sse.py::TestSseMeta::test_meta_payload_fields PASSED [ 36%]
+backend/tests/integration/test_chat_stream_unit_sse.py::TestSseChunk::test_chunk_event_name PASSED [ 36%]
+backend/tests/integration/test_chat_stream_unit_sse.py::TestSseChunk::test_chunk_delta_present PASSED [ 37%]
+backend/tests/integration/test_chat_stream_unit_sse.py::TestSseChunk::test_empty_delta_wire_valid PASSED [ 37%]
+backend/tests/integration/test_chat_stream_unit_sse.py::TestSseChunk::test_multiline_delta_single_data_line PASSED [ 37%]
+backend/tests/integration/test_chat_stream_unit_sse.py::TestSseCitation::test_citation_event_name PASSED [ 37%]
+backend/tests/integration/test_chat_stream_unit_sse.py::TestSseCitation::test_citation_payload_fields PASSED [ 38%]
+backend/tests/integration/test_chat_stream_unit_sse.py::TestSseUsage::test_usage_event_name PASSED [ 38%]
+backend/tests/integration/test_chat_stream_unit_sse.py::TestSseUsage::test_usage_payload_fields PASSED [ 38%]
+backend/tests/integration/test_chat_stream_unit_sse.py::TestSseError::test_error_event_name PASSED [ 39%]
+backend/tests/integration/test_chat_stream_unit_sse.py::TestSseError::test_error_payload_fields PASSED [ 39%]
+backend/tests/integration/test_chat_stream_unit_sse.py::TestSseDone::test_done_event_name PASSED [ 39%]
+backend/tests/integration/test_chat_stream_unit_sse.py::TestSseDone::test_done_payload_fields PASSED [ 39%]
+backend/tests/integration/test_chat_stream_unit_sse.py::TestSseDone::test_done_ends_with_double_newline PASSED [ 40%]
+backend/tests/integration/test_chat_streaming_live.py::TestChatStreamingLive::test_stream_meta_chunk_usage_done_sequence SKIPPED [ 40%]
+backend/tests/integration/test_dev_restart_reset.py::test_db_reset_cycle_exits_zero PASSED [ 40%]
+backend/tests/integration/test_dev_restart_reset.py::test_reset_exits_zero_and_is_idempotent PASSED [ 40%]
+backend/tests/integration/test_health_ready.py::TestReadyRealDbHappyPath::test_returns_200_ok PASSED [ 41%]
+backend/tests/integration/test_health_ready.py::TestReadyRealDbHappyPath::test_envelope_has_data_key PASSED [ 41%]
+backend/tests/integration/test_health_ready.py::TestReadyRealDbHappyPath::test_envelope_data_has_required_keys PASSED [ 41%]
+backend/tests/integration/test_health_ready.py::TestReadyRealDbHappyPath::test_db_status_ok_with_real_postgres PASSED [ 41%]
+backend/tests/integration/test_health_ready.py::TestReadyRealDbHappyPath::test_redis_status_ok_with_real_redis PASSED [ 42%]
+backend/tests/integration/test_health_ready.py::TestReadyRealDbHappyPath::test_litellm_status_always_unknown PASSED [ 42%]
+backend/tests/integration/test_health_ready.py::TestReadyRealDriverDbDown::test_returns_503_when_db_unreachable PASSED [ 42%]
+backend/tests/integration/test_health_ready.py::TestReadyRealDriverDbDown::test_db_status_error_on_connection_failure PASSED [ 43%]
+backend/tests/integration/test_health_ready.py::TestReadyRealDriverDbDown::test_redis_status_still_ok_when_only_db_down PASSED [ 43%]
+backend/tests/integration/test_health_ready.py::TestReadyRealDriverDbDown::test_envelope_shape_preserved_on_503 PASSED [ 43%]
+backend/tests/integration/test_health_ready.py::TestGetDbEngineSentinel::test_get_db_engine_returns_sync_engine PASSED [ 43%]
+backend/tests/integration/test_health_ready.py::TestGetDbEngineSentinel::test_get_db_engine_is_not_async_engine PASSED [ 44%]
+backend/tests/integration/test_health_ready.py::TestGetDbEngineSentinel::test_engine_uses_psycopg_dialect PASSED [ 44%]
+backend/tests/integration/test_health_ready.py::TestReadyVerboseLoggingContract::test_verbose_mode_logs_ready_start_marker PASSED [ 44%]
+backend/tests/integration/test_health_ready.py::TestReadyVerboseLoggingContract::test_verbose_mode_logs_db_ping_start_marker PASSED [ 44%]
+backend/tests/integration/test_health_ready.py::TestReadyVerboseLoggingContract::test_verbose_mode_logs_db_ping_ok_marker PASSED [ 45%]
+backend/tests/integration/test_health_ready.py::TestReadyVerboseLoggingContract::test_verbose_mode_logs_ready_ok_marker PASSED [ 45%]
+backend/tests/integration/test_health_ready.py::TestReadyVerboseLoggingContract::test_quiet_mode_suppresses_info_logs PASSED [ 45%]
+backend/tests/integration/test_mcp_registry.py::test_T01_get_servers_no_token_401 PASSED [ 45%]
+backend/tests/integration/test_mcp_registry.py::test_T02_get_servers_employee_403 PASSED [ 46%]
+backend/tests/integration/test_mcp_registry.py::test_T03_get_servers_admin_empty_200 PASSED [ 46%]
+backend/tests/integration/test_mcp_registry.py::test_T04_get_servers_no_encrypted_secret_in_response PASSED [ 46%]
+backend/tests/integration/test_mcp_registry.py::test_T05_post_server_auth_none_201 PASSED [ 47%]
+backend/tests/integration/test_mcp_registry.py::test_T06_post_server_api_key_fernet_roundtrip FAILED [ 47%]
+backend/tests/integration/test_mcp_registry.py::test_T07_post_server_stdio_422 PASSED [ 47%]
+backend/tests/integration/test_mcp_registry.py::test_T08_post_server_allowlist_rejected_400 PASSED [ 47%]
+backend/tests/integration/test_mcp_registry.py::test_T09_post_server_missing_name_422 PASSED [ 48%]
+backend/tests/integration/test_mcp_registry.py::test_T10_post_server_encryption_error_500 PASSED [ 48%]
+backend/tests/integration/test_mcp_registry.py::test_T11_post_server_rate_limit_429 PASSED [ 48%]
+backend/tests/integration/test_mcp_registry.py::test_T12_sync_happy_path_tools_in_db PASSED [ 48%]
+backend/tests/integration/test_mcp_registry.py::test_T13_sync_server_not_found_404 PASSED [ 49%]
+backend/tests/integration/test_mcp_registry.py::test_T14_sync_unreachable_502 PASSED [ 49%]
+backend/tests/integration/test_mcp_registry.py::test_T15_sync_idempotent_no_duplicates PASSED [ 49%]
+backend/tests/integration/test_mcp_registry.py::test_T16_sync_preserves_enabled_true PASSED [ 50%]
+backend/tests/integration/test_mcp_registry.py::test_T17_sync_zero_tools PASSED [ 50%]
+backend/tests/integration/test_mcp_registry.py::test_T18_patch_tool_enabled_200 PASSED [ 50%]
+backend/tests/integration/test_mcp_registry.py::test_T19_patch_tool_invalid_risk_level_422 PASSED [ 50%]
+backend/tests/integration/test_mcp_registry.py::test_T20_patch_tool_risk_critical_200 PASSED [ 51%]
+backend/tests/integration/test_mcp_registry.py::test_T21_patch_tool_not_found_404 PASSED [ 51%]
+backend/tests/integration/test_mcp_registry.py::test_T22_patch_tool_empty_body_400 PASSED [ 51%]
+backend/tests/integration/test_mcp_registry.py::test_T23_no_pii_in_audit_metadata PASSED [ 51%]
+backend/tests/integration/test_mcp_registry.py::test_T24_logging_verbose_modes PASSED [ 52%]
+backend/tests/integration/test_mcp_registry.py::test_T25_end_to_end_flow PASSED [ 52%]
+backend/tests/integration/test_mcp_registry.py::test_T26_client_discover_sends_initialize_handshake_first PASSED [ 52%]
+backend/tests/integration/test_mcp_registry.py::test_T27_client_discover_aborts_when_initialize_returns_bad_protocol_version PASSED [ 52%]
+backend/tests/integration/test_mcp_sync_unreachable.py::test_TA_sync_closed_port_returns_502 PASSED [ 53%]
+backend/tests/integration/test_mcp_sync_unreachable.py::test_TB_sync_accept_and_close_returns_502 PASSED [ 53%]
+backend/tests/integration/test_mcp_sync_unreachable.py::test_TC_sync_happy_path_200_preserved PASSED [ 53%]
+backend/tests/integration/test_mcp_sync_unreachable.py::test_TD_sync_no_token_401_preserved PASSED [ 54%]
+backend/tests/integration/test_mcp_sync_unreachable.py::test_TE_sync_employee_403_preserved PASSED [ 54%]
+backend/tests/integration/test_mfa.py::test_mfa_verify_happy_path_returns_200_with_access_token_and_cookie PASSED [ 54%]
+backend/tests/integration/test_mfa.py::test_mfa_verify_includes_user_dto_in_data PASSED [ 54%]
+backend/tests/integration/test_mfa.py::test_mfa_verify_writes_refresh_token_row PASSED [ 55%]
+backend/tests/integration/test_mfa.py::test_mfa_verify_writes_success_audit PASSED [ 55%]
+backend/tests/integration/test_mfa.py::test_mfa_verify_expired_challenge_returns_410 PASSED [ 55%]
+backend/tests/integration/test_mfa.py::test_mfa_verify_invalid_signature_returns_401_aggregate PASSED [ 55%]
+backend/tests/integration/test_mfa.py::test_mfa_verify_purpose_mismatch_returns_401_aggregate PASSED [ 56%]
+backend/tests/integration/test_mfa.py::test_mfa_verify_wrong_code_returns_401_aggregate PASSED [ 56%]
+backend/tests/integration/test_mfa.py::test_mfa_verify_user_without_mfa_returns_401_aggregate_with_dummy_verify PASSED [ 56%]
+backend/tests/integration/test_mfa.py::test_mfa_verify_replay_returns_401_aggregate PASSED [ 56%]
+backend/tests/integration/test_mfa.py::test_mfa_verify_invalid_payload_returns_400 PASSED [ 57%]
+backend/tests/integration/test_mfa.py::test_mfa_verify_rate_limit_returns_429_with_retry_after PASSED [ 57%]
+backend/tests/integration/test_mfa.py::test_mfa_verify_user_inactive_returns_401_aggregate PASSED [ 57%]
+backend/tests/integration/test_mfa.py::test_mfa_verify_verbose_logging_silent_when_disabled PASSED [ 58%]
+backend/tests/integration/test_mfa.py::test_mfa_verify_set_cookie_attrs_byte_equal_to_sign_in PASSED [ 58%]
+backend/tests/integration/test_mfa.py::test_mfa_verify_valid_window_accepts_previous_step_code PASSED [ 58%]
+backend/tests/integration/test_migrations_0001_auth.py::test_upgrade_creates_all_9_tables FAILED [ 58%]
+backend/tests/integration/test_migrations_0001_auth.py::test_check_language_constraint_rejects_invalid PASSED [ 59%]
+backend/tests/integration/test_migrations_0001_auth.py::test_unique_email_constraint_rejects_duplicate PASSED [ 59%]
+backend/tests/integration/test_migrations_0001_auth.py::test_on_delete_cascade_removes_child_rows PASSED [ 59%]
+backend/tests/integration/test_migrations_0001_auth.py::test_audit_log_actor_set_null_on_user_delete PASSED [ 59%]
+backend/tests/integration/test_migrations_0001_auth.py::test_downgrade_removes_all_tables FAILED [ 60%]
+backend/tests/integration/test_model_test.py::TestModelTestEndpoint::test_T01_happy_path PASSED [ 60%]
+backend/tests/integration/test_model_test.py::TestModelTestEndpoint::test_T02_empty_prompt PASSED [ 60%]
+backend/tests/integration/test_model_test.py::TestModelTestEndpoint::test_T03_whitespace_only_prompt PASSED [ 60%]
+backend/tests/integration/test_model_test.py::TestModelTestEndpoint::test_T04_prompt_too_long PASSED [ 61%]
+backend/tests/integration/test_model_test.py::TestModelTestEndpoint::test_T05_model_not_found PASSED [ 61%]
+backend/tests/integration/test_model_test.py::TestModelTestEndpoint::test_T06_no_credential PASSED [ 61%]
+backend/tests/integration/test_model_test.py::TestModelTestEndpoint::test_T07_decrypt_fails PASSED [ 62%]
+backend/tests/integration/test_model_test.py::TestModelTestEndpoint::test_T08_litellm_rate_limit_error PASSED [ 62%]
+backend/tests/integration/test_model_test.py::TestModelTestEndpoint::test_T09_litellm_timeout PASSED [ 62%]
+backend/tests/integration/test_model_test.py::TestModelTestEndpoint::test_T10_employee_role PASSED [ 62%]
+backend/tests/integration/test_model_test.py::TestModelTestEndpoint::test_T11_no_auth_header PASSED [ 63%]
+backend/tests/integration/test_model_test.py::TestModelTestEndpoint::test_T12_rate_limit_exceeded PASSED [ 63%]
+backend/tests/integration/test_model_test.py::TestModelTestEndpoint::test_T13_api_key_not_in_logs PASSED [ 63%]
+backend/tests/integration/test_model_test.py::TestModelTestEndpoint::test_T14_prompt_not_in_logs PASSED [ 63%]
+backend/tests/integration/test_model_test.py::TestModelTestEndpoint::test_T14b_prompt_not_in_litellm_logger PASSED [ 64%]
+backend/tests/integration/test_model_test.py::TestModelTestEndpoint::test_T15_both_verbose_modes_pass[true] PASSED [ 64%]
+backend/tests/integration/test_model_test.py::TestModelTestEndpoint::test_T15_both_verbose_modes_pass[false] PASSED [ 64%]
+backend/tests/integration/test_model_test.py::TestModelTestEndpoint::test_T16_concurrent_calls_distinct_rows PASSED [ 64%]
+backend/tests/integration/test_model_test.py::TestUsageEndpoint::test_U01_group_by_model PASSED [ 65%]
+backend/tests/integration/test_model_test.py::TestUsageEndpoint::test_U02_group_by_day PASSED [ 65%]
+backend/tests/integration/test_model_test.py::TestUsageEndpoint::test_U03_group_by_model_day PASSED [ 65%]
+backend/tests/integration/test_model_test.py::TestUsageEndpoint::test_U04_from_greater_than_to PASSED [ 66%]
+backend/tests/integration/test_model_test.py::TestUsageEndpoint::test_U05_window_too_wide PASSED [ 66%]
+backend/tests/integration/test_model_test.py::TestUsageEndpoint::test_U06_empty_window PASSED [ 66%]
+backend/tests/integration/test_model_test.py::TestUsageEndpoint::test_U07_non_admin_user PASSED [ 66%]
+backend/tests/integration/test_model_test.py::TestUsageEndpoint::test_U08_missing_from_param PASSED [ 67%]
+backend/tests/integration/test_password_reset.py::test_t01_forgot_existing_user_200_outbox PASSED [ 67%]
+backend/tests/integration/test_password_reset.py::test_t02_forgot_unknown_email_200_no_outbox PASSED [ 67%]
+backend/tests/integration/test_password_reset.py::test_t03_forgot_disabled_user_200_no_outbox PASSED [ 67%]
+backend/tests/integration/test_password_reset.py::test_t04_forgot_malformed_email_400 PASSED [ 68%]
+backend/tests/integration/test_password_reset.py::test_t05_forgot_rate_limit_429 PASSED [ 68%]
+backend/tests/integration/test_password_reset.py::test_t06_forgot_antienum_timing PASSED [ 68%]
+backend/tests/integration/test_password_reset.py::test_t07_forgot_pii_safety PASSED [ 68%]
+backend/tests/integration/test_password_reset.py::test_t08_forgot_verbose_off_silent PASSED [ 69%]
+backend/tests/integration/test_password_reset.py::test_t09_forgot_locale_fallback PASSED [ 69%]
+backend/tests/integration/test_password_reset.py::test_t10_reset_ok PASSED [ 69%]
+backend/tests/integration/test_password_reset.py::test_t11_reset_unknown_token_410 PASSED [ 70%]
+backend/tests/integration/test_password_reset.py::test_t12_reset_expired_token_410 PASSED [ 70%]
+backend/tests/integration/test_password_reset.py::test_t13_reset_used_token_410_same_body_as_unknown PASSED [ 70%]
+backend/tests/integration/test_password_reset.py::test_t14_reset_weak_password_400 PASSED [ 70%]
+backend/tests/integration/test_password_reset.py::test_t15_reset_concurrency PASSED [ 71%]
+backend/tests/integration/test_password_reset.py::test_t16_reset_revokes_all_sessions PASSED [ 71%]
+backend/tests/integration/test_password_reset.py::test_t17_reset_idempotency PASSED [ 71%]
+backend/tests/integration/test_password_reset.py::test_t18_reset_rate_limit_429 PASSED [ 71%]
+backend/tests/integration/test_password_reset.py::test_t19_reset_pii_safety PASSED [ 72%]
+backend/tests/integration/test_password_reset.py::test_t20_reset_old_password_rejected_new_accepted PASSED [ 72%]
+backend/tests/integration/test_password_reset.py::test_t21_e2e_forgot_extract_reset_signin PASSED [ 72%]
+backend/tests/integration/test_rag_collections.py::test_T01_get_list_200_meta PASSED [ 72%]
+backend/tests/integration/test_rag_collections.py::test_T02_get_list_three_rows_asc PASSED [ 73%]
+backend/tests/integration/test_rag_collections.py::test_T03_get_employee_403 PASSED [ 73%]
+backend/tests/integration/test_rag_collections.py::test_T04_get_no_token_401 PASSED [ 73%]
+backend/tests/integration/test_rag_collections.py::test_T05_patch_toggle_enabled PASSED [ 74%]
+backend/tests/integration/test_rag_collections.py::test_T06_patch_vertical_and_language PASSED [ 74%]
+backend/tests/integration/test_rag_collections.py::test_T07_patch_empty_body_400 PASSED [ 74%]
+backend/tests/integration/test_rag_collections.py::test_T08_patch_invalid_language_422 PASSED [ 74%]
+backend/tests/integration/test_rag_collections.py::test_T09_patch_empty_name_after_trim_400 PASSED [ 75%]
+backend/tests/integration/test_rag_collections.py::test_T10_patch_not_found_404 PASSED [ 75%]
+backend/tests/integration/test_rag_collections.py::test_T11_patch_employee_403 PASSED [ 75%]
+backend/tests/integration/test_rag_collections.py::test_T12_patch_verbose_true_logs PASSED [ 75%]
+backend/tests/integration/test_rag_collections.py::test_T13_patch_verbose_false_no_debug PASSED [ 76%]
+backend/tests/integration/test_rag_documents_index.py::test_T22_index_happy_202 PASSED [ 76%]
+backend/tests/integration/test_rag_documents_index.py::test_T23_index_unknown_id_404 PASSED [ 76%]
+backend/tests/integration/test_rag_documents_index.py::test_T24_index_null_collection_422 PASSED [ 77%]
+backend/tests/integration/test_rag_documents_index.py::test_T25_index_inflight_job_409 PASSED [ 77%]
+backend/tests/integration/test_rag_documents_index.py::test_T26_index_previous_done_allows_reindex_202 PASSED [ 77%]
+backend/tests/integration/test_rag_documents_index.py::test_T27_index_broker_down_500_no_orphan PASSED [ 77%]
+backend/tests/integration/test_rag_documents_index.py::test_T28_index_employee_403 PASSED [ 78%]
+backend/tests/integration/test_rag_documents_index.py::test_T29_dual_logging_verbose_and_non_verbose PASSED [ 78%]
+backend/tests/integration/test_rag_documents_list.py::test_T16_list_empty_200 PASSED [ 78%]
+backend/tests/integration/test_rag_documents_list.py::test_T17_list_ordering_and_cursor_pagination PASSED [ 78%]
+backend/tests/integration/test_rag_documents_list.py::test_T18_list_filter_by_collection_id PASSED [ 79%]
+backend/tests/integration/test_rag_documents_list.py::test_T19_list_filter_by_status PASSED [ 79%]
+backend/tests/integration/test_rag_documents_list.py::test_T20_list_invalid_cursor_400 PASSED [ 79%]
+backend/tests/integration/test_rag_documents_list.py::test_T21_list_employee_403 PASSED [ 79%]
+backend/tests/integration/test_rag_documents_upload.py::test_T01_upload_no_token_401 PASSED [ 80%]
+backend/tests/integration/test_rag_documents_upload.py::test_T02_upload_employee_role_403 PASSED [ 80%]
+backend/tests/integration/test_rag_documents_upload.py::test_T03_upload_admin_happy_pdf_201 PASSED [ 80%]
+backend/tests/integration/test_rag_documents_upload.py::test_T04_upload_admin_happy_docx_201 PASSED [ 81%]
+backend/tests/integration/test_rag_documents_upload.py::test_T05_upload_dedup_same_bytes_same_collection_200 PASSED [ 81%]
+backend/tests/integration/test_rag_documents_upload.py::test_T06_upload_file_too_large_413 PASSED [ 81%]
+backend/tests/integration/test_rag_documents_upload.py::test_T07_upload_empty_file_422 PASSED [ 81%]
+backend/tests/integration/test_rag_documents_upload.py::test_T08_upload_bad_mime_422 PASSED [ 82%]
+backend/tests/integration/test_rag_documents_upload.py::test_T09_upload_missing_language_422 PASSED [ 82%]
+backend/tests/integration/test_rag_documents_upload.py::test_T10_upload_invalid_language_422 PASSED [ 82%]
+backend/tests/integration/test_rag_documents_upload.py::test_T11_upload_missing_collection_id_422 PASSED [ 82%]
+backend/tests/integration/test_rag_documents_upload.py::test_T12_upload_nonexistent_collection_422 PASSED [ 83%]
+backend/tests/integration/test_rag_documents_upload.py::test_T13_upload_rate_limit_429 PASSED [ 83%]
+backend/tests/integration/test_rag_documents_upload.py::test_T14_upload_minio_failure_500_no_orphan PASSED [ 83%]
+backend/tests/integration/test_rag_documents_upload.py::test_T15_x_request_id_propagated PASSED [ 83%]
+backend/tests/integration/test_users_me.py::TestGetMeHappyPath::test_get_me_happy_path_returns_full_profile PASSED [ 84%]
+backend/tests/integration/test_users_me.py::TestGetMeAdmin::test_get_me_admin_user_has_null_employee_profile SKIPPED [ 84%]
+backend/tests/integration/test_users_me.py::TestGetMeAuthFailures::test_get_me_without_authorization_returns_401_aggregate PASSED [ 84%]
+backend/tests/integration/test_users_me.py::TestGetMeAuthFailures::test_get_me_with_expired_access_token_returns_401_aggregate PASSED [ 85%]
+backend/tests/integration/test_users_me.py::TestGetMeAuthFailures::test_get_me_with_invalid_signature_returns_401_aggregate PASSED [ 85%]
+backend/tests/integration/test_users_me.py::TestGetMeAuthFailures::test_get_me_with_mfa_challenge_token_returns_401_aggregate PASSED [ 85%]
+backend/tests/integration/test_users_me.py::TestGetMeAuthFailures::test_get_me_with_unknown_sub_returns_401_aggregate PASSED [ 85%]
+backend/tests/integration/test_users_me.py::TestGetMeAuthFailures::test_get_me_with_inactive_user_returns_401_aggregate PASSED [ 86%]
+backend/tests/integration/test_users_me.py::TestGetMeByteEqualAntiEnum::test_get_me_byte_equal_401_across_5_failure_modes PASSED [ 86%]
+backend/tests/integration/test_users_me.py::TestGetMeNoAudit::test_get_me_does_not_write_audit_log_row PASSED [ 86%]
+backend/tests/integration/test_users_me.py::TestPatchLanguagePersists::test_patch_me_language_to_en_persists PASSED [ 86%]
+backend/tests/integration/test_users_me.py::TestPatchLanguagePersists::test_patch_me_language_to_fr_persists PASSED [ 87%]
+backend/tests/integration/test_users_me.py::TestPatchLanguagePersists::test_patch_me_language_to_es_persists PASSED [ 87%]
+backend/tests/integration/test_users_me.py::TestPatchLanguageAudit::test_patch_me_language_writes_audit_log PASSED [ 87%]
+backend/tests/integration/test_users_me.py::TestPatchLanguageIdempotent::test_patch_me_language_idempotent_no_op PASSED [ 87%]
+backend/tests/integration/test_users_me.py::TestPatchLanguageValidation::test_patch_me_language_invalid_value_returns_400_field_error PASSED [ 88%]
+backend/tests/integration/test_users_me.py::TestPatchLanguageValidation::test_patch_me_language_empty_string_returns_400 PASSED [ 88%]
+backend/tests/integration/test_users_me.py::TestPatchLanguageValidation::test_patch_me_language_null_returns_400 PASSED [ 88%]
+backend/tests/integration/test_users_me.py::TestPatchLanguageValidation::test_patch_me_language_missing_field_returns_400 PASSED [ 89%]
+backend/tests/integration/test_users_me.py::TestPatchLanguageValidation::test_patch_me_language_extra_field_returns_400 PASSED [ 89%]
+backend/tests/integration/test_users_me.py::TestPatchLanguageValidation::test_patch_me_language_uppercase_returns_400 PASSED [ 89%]
+backend/tests/integration/test_users_me.py::TestPatchLanguageAuthFailures::test_patch_me_language_without_authorization_returns_401 PASSED [ 89%]
+backend/tests/integration/test_users_me.py::TestPatchLanguageAuthFailures::test_patch_me_language_with_inactive_user_returns_401 PASSED [ 90%]
+backend/tests/integration/test_users_me.py::TestPatchLanguageNoPII::test_patch_me_language_audit_no_pii PASSED [ 90%]
+backend/tests/integration/test_users_me.py::TestPatchLanguageUpdatedAt::test_patch_me_language_updates_updated_at PASSED [ 90%]
+backend/tests/integration/test_users_me.py::TestLoggingSilent::test_get_me_silent_when_verbose_disabled PASSED [ 90%]
+backend/tests/integration/test_users_me.py::TestLoggingSilent::test_patch_me_language_silent_when_verbose_disabled PASSED [ 91%]
+backend/tests/integration/test_users_me.py::TestGetMeSecurityShape::test_get_me_response_excludes_password_hash PASSED [ 91%]
+backend/tests/integration/test_users_me.py::TestGetMeSecurityShape::test_get_me_response_excludes_extra_metadata PASSED [ 91%]
+backend/tests/integration/test_users_me.py::TestGetMeSecurityShape::test_get_me_uses_real_seeded_data SKIPPED [ 91%]
+backend/tests/integration/test_users_me.py::TestPatchLanguageAuditCount::test_patch_me_language_audit_count_doubles_on_repeat PASSED [ 92%]
+backend/tests/integration/test_vectorization_worker.py::test_pending_job_runs_to_done_happy_path SKIPPED [ 92%]
+backend/tests/integration/test_vectorization_worker.py::test_chunks_persisted_with_metadata SKIPPED [ 92%]
+backend/tests/integration/test_vectorization_worker.py::test_version_created_when_absent PASSED [ 93%]
+backend/tests/integration/test_vectorization_worker.py::test_version_reused_when_checksum_matches PASSED [ 93%]
+backend/tests/integration/test_vectorization_worker.py::test_version_bumped_when_checksum_changes PASSED [ 93%]
+backend/tests/integration/test_vectorization_worker.py::test_embeddings_persisted_with_correct_dim SKIPPED [ 93%]
+backend/tests/integration/test_vectorization_worker.py::test_progress_updates_visible_intermediate SKIPPED [ 94%]
+backend/tests/integration/test_vectorization_worker.py::test_failure_marks_status_failed_with_error PASSED [ 94%]
+backend/tests/integration/test_vectorization_worker.py::test_no_pii_in_logs SKIPPED [ 94%]
+backend/tests/integration/test_vectorization_worker.py::test_verbose_logging_modes PASSED [ 94%]
+backend/tests/integration/test_vectorization_worker.py::test_idempotent_reentry_on_done_job SKIPPED [ 95%]
+backend/tests/integration/test_vectorization_worker.py::test_unsupported_mimetype_fails_cleanly PASSED [ 95%]
+backend/tests/integration/test_vectorization_worker.py::test_no_default_embeddings_model_fails PASSED [ 95%]
+backend/tests/integration/test_vectorization_worker.py::test_litellm_5xx_retries_then_fails PASSED [ 95%]
+backend/tests/integration/test_vectorization_worker.py::test_docx_extraction PASSED [ 96%]
+backend/tests/integration/test_verification_data_admin_ai_bootstrap.py::test_admin_ai_bootstrap_seeds_all_tables PASSED [ 96%]
+backend/tests/integration/test_verification_data_admin_ai_bootstrap.py::test_credentials_encrypted_secret_round_trips PASSED [ 96%]
+backend/tests/integration/test_verification_data_admin_ai_bootstrap.py::test_exactly_one_default_chat_model PASSED [ 97%]
+backend/tests/integration/test_verification_data_admin_ai_bootstrap.py::test_no_plaintext_credentials_in_logs[verbose_true] PASSED [ 97%]
+backend/tests/integration/test_verification_data_admin_ai_bootstrap.py::test_no_plaintext_credentials_in_logs[verbose_false] PASSED [ 97%]
+backend/tests/integration/test_verification_data_bootstrap.py::test_idempotency_two_runs_same_state PASSED [ 97%]
+backend/tests/integration/test_verification_data_bootstrap.py::test_missing_dir_fails_with_clear_error PASSED [ 98%]
+backend/tests/integration/test_verification_data_bootstrap.py::test_missing_required_field_fails_with_field_name PASSED [ 98%]
+backend/tests/integration/test_verification_data_bootstrap.py::test_only_flag_filters_groups PASSED [ 98%]
+backend/tests/integration/test_verification_data_bootstrap.py::test_invalid_only_flag_lists_valid_choices PASSED [ 98%]
+backend/tests/integration/test_verification_data_bootstrap.py::test_dry_run_does_not_touch_db PASSED [ 99%]
+backend/tests/integration/test_verification_data_bootstrap.py::test_deferred_groups_log_warn_when_tables_missing PASSED [ 99%]
+backend/tests/integration/test_verification_data_bootstrap.py::test_redaction_in_logs_no_password_no_token PASSED [ 99%]
+backend/tests/integration/test_verification_data_bootstrap.py::test_verbose_off_no_info_logs PASSED [100%]
+
+=================================== FAILURES ===================================
+_________ test_logout_401_body_byte_identical_for_all_failure_reasons __________
+
+    def test_logout_401_body_byte_identical_for_all_failure_reasons():
+        """T10: T02..T09 bodies are byte-equal (aggregate anti-enum)."""
+        user_data, plain_pw = _create_user()
+        access_token, cookie_value = _sign_in_and_get_tokens(user_data.email, plain_pw)
+>       assert access_token and cookie_value
+E       assert (None)
+
+backend/tests/integration/test_auth_logout.py:548: AssertionError
+------------------------------ Captured log call -------------------------------
+WARNING  app.auth.rate_limit:rate_limit.py:166 rate_limit.check.exceeded prefix=SIGNIN ip=SIGNIN:testclient retry_after=58s
+WARNING  app.auth.routers.sign_in:sign_in.py:101 auth.sign_in.rejected reason=RATE_LIMITED ip=testclient request_id=77596dba-baf6-493c-954b-43871017d563
+________ test_logout_request_id_propagated_in_response_header_and_audit ________
+
+    def test_logout_request_id_propagated_in_response_header_and_audit():
+        """T12: response header X-Request-ID matches request header; audit metadata matches."""
+        user_data, plain_pw = _create_user()
+        access_token, cookie_value = _sign_in_and_get_tokens(user_data.email, plain_pw)
+>       assert access_token and cookie_value
+E       assert (None)
+
+backend/tests/integration/test_auth_logout.py:642: AssertionError
+------------------------------ Captured log call -------------------------------
+WARNING  app.auth.rate_limit:rate_limit.py:166 rate_limit.check.exceeded prefix=SIGNIN ip=SIGNIN:testclient retry_after=58s
+WARNING  app.auth.routers.sign_in:sign_in.py:101 auth.sign_in.rejected reason=RATE_LIMITED ip=testclient request_id=6c1cf8d9-8062-4232-a447-a9e527233873
+__________________ test_logout_no_pii_or_token_value_in_logs ___________________
+
+caplog = <_pytest.logging.LogCaptureFixture object at 0x130f6ae50>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x130f68850>
+
+    def test_logout_no_pii_or_token_value_in_logs(caplog, monkeypatch):
+        """T13: no Bearer value, no cookie value, no full SHA-256 hex in log lines."""
+        monkeypatch.setenv("ENABLE_VERBOSE_LOGGING", "true")
+    
+        # Re-configure the logout module logger to DEBUG for this test
+        import app.auth.services.logout as svc_mod
+        import app.auth.routers.logout as rtr_mod
+        import importlib
+        importlib.reload(svc_mod)
+        importlib.reload(rtr_mod)
+    
+        user_data, plain_pw = _create_user()
+        access_token, cookie_value = _sign_in_and_get_tokens(user_data.email, plain_pw)
+>       assert access_token and cookie_value
+E       assert (None)
+
+backend/tests/integration/test_auth_logout.py:679: AssertionError
+------------------------------ Captured log call -------------------------------
+WARNING  app.auth.rate_limit:rate_limit.py:166 rate_limit.check.exceeded prefix=SIGNIN ip=SIGNIN:testclient retry_after=58s
+WARNING  app.auth.routers.sign_in:sign_in.py:101 auth.sign_in.rejected reason=RATE_LIMITED ip=testclient request_id=64b8bd6f-4921-4d34-9474-2f8fbd576ca1
+________________ test_T06_post_server_api_key_fernet_roundtrip _________________
+
+self = <cryptography.fernet.Fernet object at 0x13121e2d0>
+data = b"\x80\x00\x00\x00\x00j\x0b-J\x9f\xe4c\xc4\x1ap\xd6\x1b7O\xcc7\x0b\xa1&\x93\x8c\x8e\x9b\x0c5I\xf5\x03AX&'\xdd\xca#\xc5...\x02\xf2\x9e\xb1\xf4\xa2\x94\xcd\x87\x98E\x9f\xd2\xbf\x91\x8d\xb1\x94\xd8\xe9\xf0\xf3\xbfG\xda\x1b\xe5\x9d\xeb\xb4\x03"
+
+    def _verify_signature(self, data: bytes) -> None:
+        h = HMAC(self._signing_key, hashes.SHA256())
+        h.update(data[:-32])
+        try:
+>           h.verify(data[-32:])
+E           cryptography.exceptions.InvalidSignature: Signature did not match digest.
+
+../../../../Library/Python/3.11/lib/python/site-packages/cryptography/fernet.py:131: InvalidSignature
+
+During handling of the above exception, another exception occurred:
+
+    def test_T06_post_server_api_key_fernet_roundtrip():
+        """T06: POST /servers with api_key → encrypted_secret ≠ plaintext + decrypt works."""
+        admin = _create_user_with_role(_admin_email(), "people_admin")
+        token = _sign_in(admin["email"])
+        secret_plain = "sk-test-secret-key-for-T06"
+    
+        resp = client.post(
+            "/api/v1/admin/ai/mcp/servers",
+            json={
+                "name": f"T06-server-{uuid.uuid4().hex[:6]}",
+                "transport": "http",
+                "endpoint": "http://localhost:8080/mcp",
+                "auth": {"type": "api_key", "secret": secret_plain},
+            },
+            headers={"Authorization": f"Bearer {token}"},
+        )
+        assert resp.status_code == 201, resp.text
+        server_id = resp.json()["data"]["id"]
+        _created_server_ids.append(server_id)
+    
+        # Verify DB: encrypted_secret ≠ plaintext
+        sess = _SetupSession()
+        try:
+            cred_row = sess.execute(
+                text("SELECT encrypted_secret FROM mcp_credentials WHERE server_id = :sid"),
+                {"sid": server_id},
+            ).fetchone()
+            assert cred_row is not None, "Credential row must be created"
+            enc = cred_row[0]
+            assert enc != secret_plain, "encrypted_secret must NOT be plaintext"
+            assert enc is not None
+    
+            # Verify Fernet roundtrip
+            f = Fernet(_TEST_FERNET_KEY.encode())
+>           decrypted = f.decrypt(enc.encode()).decode()
+                        ^^^^^^^^^^^^^^^^^^^^^^^
+
+backend/tests/integration/test_mcp_registry.py:406: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../../../Library/Python/3.11/lib/python/site-packages/cryptography/fernet.py:90: in decrypt
+    return self._decrypt_data(data, timestamp, time_info)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../../Library/Python/3.11/lib/python/site-packages/cryptography/fernet.py:149: in _decrypt_data
+    self._verify_signature(data)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <cryptography.fernet.Fernet object at 0x13121e2d0>
+data = b"\x80\x00\x00\x00\x00j\x0b-J\x9f\xe4c\xc4\x1ap\xd6\x1b7O\xcc7\x0b\xa1&\x93\x8c\x8e\x9b\x0c5I\xf5\x03AX&'\xdd\xca#\xc5...\x02\xf2\x9e\xb1\xf4\xa2\x94\xcd\x87\x98E\x9f\xd2\xbf\x91\x8d\xb1\x94\xd8\xe9\xf0\xf3\xbfG\xda\x1b\xe5\x9d\xeb\xb4\x03"
+
+    def _verify_signature(self, data: bytes) -> None:
+        h = HMAC(self._signing_key, hashes.SHA256())
+        h.update(data[:-32])
+        try:
+            h.verify(data[-32:])
+        except InvalidSignature:
+>           raise InvalidToken
+E           cryptography.fernet.InvalidToken
+
+../../../../Library/Python/3.11/lib/python/site-packages/cryptography/fernet.py:133: InvalidToken
+______________________ test_upgrade_creates_all_9_tables _______________________
+
+    @pytest.mark.integration
+    def test_upgrade_creates_all_9_tables():
+        """After upgrade head, exactly 9 auth tables + alembic_version must exist."""
+        result = _run_alembic("upgrade", "head")
+        assert result.returncode == 0, f"upgrade failed: {result.stderr}"
+    
+        engine = _get_sync_engine()
+        tables = _get_tables(engine)
+        engine.dispose()
+    
+        expected = {
+            "alembic_version",
+            "users",
+            "employee_profiles",
+            "roles",
+            "permissions",
+            "user_roles",
+            "refresh_tokens",
+            "mfa_totp_secrets",
+            "password_reset_tokens",
+            "audit_logs",
+        }
+>       assert set(tables) == expected, f"Expected {expected}, got {set(tables)}"
+E       AssertionError: Expected {'password_reset_tokens', 'roles', 'user_roles', 'refresh_tokens', 'mfa_totp_secrets', 'users', 'audit_logs', 'alembic_version', 'employee_profiles', 'permissions'}, got {'password_reset_tokens', 'document_versions', 'ai_models', 'document_chunks', 'rag_collections', 'vectorization_jobs', 'roles', 'mcp_credentials', 'mcp_approvals', 'mcp_tool_invocations', 'users', 'mcp_agent_bindings', 'ai_model_tests', 'alembic_version', 'employee_profiles', 'messages', 'permissions', 'message_citations', 'user_roles', 'refresh_tokens', 'mcp_resources', 'mcp_tools', 'document_embeddings', 'ai_provider_credentials', 'mcp_prompts', 'mcp_servers', 'mfa_totp_secrets', 'llm_usage_logs', 'agents', 'audit_logs', 'ai_providers', 'agent_runs', 'documents', 'conversations'}
+E       assert {'agent_runs'...oviders', ...} == {'alembic_ver...issions', ...}
+E         
+E         Extra items in the left set:
+E         'document_versions'
+E         'ai_models'
+E         'document_chunks'
+E         'rag_collections'
+E         'vectorization_jobs'...
+E         
+E         ...Full output truncated (57 lines hidden), use '-vv' to show
+
+backend/tests/integration/test_migrations_0001_auth.py:147: AssertionError
+______________________ test_downgrade_removes_all_tables _______________________
+
+    @pytest.mark.integration
+    def test_downgrade_removes_all_tables():
+        """Downgrade -1 must remove all 9 tables created by this migration."""
+        _run_alembic("upgrade", "head")
+        result = _run_alembic("downgrade", "-1")
+        assert result.returncode == 0, f"downgrade failed: {result.stderr}"
+    
+        engine = _get_sync_engine()
+        tables = _get_tables(engine)
+        engine.dispose()
+    
+        # Only alembic_version should remain after downgrade
+>       assert tables == ["alembic_version"], (
+            f"Expected only ['alembic_version'] after downgrade, got {tables}"
+        )
+E       AssertionError: Expected only ['alembic_version'] after downgrade, got ['agent_runs', 'agents', 'ai_model_tests', 'ai_models', 'ai_provider_credentials', 'ai_providers', 'alembic_version', 'audit_logs', 'conversations', 'document_chunks', 'document_embeddings', 'document_versions', 'documents', 'employee_profiles', 'llm_usage_logs', 'mcp_agent_bindings', 'mcp_approvals', 'mcp_credentials', 'mcp_prompts', 'mcp_resources', 'mcp_servers', 'mcp_tool_invocations', 'mcp_tools', 'message_citations', 'messages', 'mfa_totp_secrets', 'password_reset_tokens', 'permissions', 'rag_collections', 'refresh_tokens', 'roles', 'user_roles', 'users', 'vectorization_jobs']
+E       assert ['agent_runs'...oviders', ...] == ['alembic_version']
+E         
+E         At index 0 diff: 'agent_runs' != 'alembic_version'
+E         Left contains 33 more items, first extra item: 'agents'
+E         
+E         Full diff:
+E           [
+E         +     'agent_runs',...
+E         
+E         ...Full output truncated (34 lines hidden), use '-vv' to show
+
+backend/tests/integration/test_migrations_0001_auth.py:375: AssertionError
+=============================== warnings summary ===============================
+tests/integration/test_auth_refresh.py: 20 warnings
+  /Users/sergiolr/Library/Python/3.11/lib/python/site-packages/starlette/testclient.py:445: DeprecationWarning: Setting per-request cookies=<...> is being deprecated, because the expected behaviour on cookie persistence is ambiguous. Set cookies directly on the client instance instead.
+    return super().request(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED backend/tests/integration/test_auth_logout.py::test_logout_401_body_byte_identical_for_all_failure_reasons
+FAILED backend/tests/integration/test_auth_logout.py::test_logout_request_id_propagated_in_response_header_and_audit
+FAILED backend/tests/integration/test_auth_logout.py::test_logout_no_pii_or_token_value_in_logs
+FAILED backend/tests/integration/test_mcp_registry.py::test_T06_post_server_api_key_fernet_roundtrip
+FAILED backend/tests/integration/test_migrations_0001_auth.py::test_upgrade_creates_all_9_tables
+FAILED backend/tests/integration/test_migrations_0001_auth.py::test_downgrade_removes_all_tables
+======= 6 failed, 359 passed, 9 skipped, 20 warnings in 69.22s (0:01:09) =======
