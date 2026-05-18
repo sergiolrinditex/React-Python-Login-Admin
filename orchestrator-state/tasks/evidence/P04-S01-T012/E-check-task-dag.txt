@@ -1,0 +1,3 @@
+Task DAG: OK mode=explicit_dag nodes=96 edges=156 waves=17
+ADVISORY: P02: 23 tasks exceeds max 20; split by screen/module lane
+ADVISORY: P04: 23 tasks exceeds max 20; split by screen/module lane

@@ -1,0 +1,2 @@
+Wiring contract coherent — 20 routes, 35 endpoints, 96 registry rows, 6 journeys, data_contract=1
+EXIT: 0

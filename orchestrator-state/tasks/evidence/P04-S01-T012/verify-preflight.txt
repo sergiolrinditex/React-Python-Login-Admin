@@ -1,0 +1,55 @@
+=== git status --porcelain (worktree) ===
+ M docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md
+?? orchestrator-state/tasks/evidence/P04-S01-T012/
+?? orchestrator-state/tasks/handoffs/P04-S01-T012.md
+?? orchestrator-state/tasks/task-packs/P04-S01-T012.md
+
+=== git diff origin/main --name-only ===
+docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md
+
+=== git diff origin/main --stat ===
+ docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+=== /health ===
+{"data":{"status":"ok","version":"0.1.0","uptime":9481.77}}
+
+=== pg_isready ===
+localhost:5432 - aceptando conexiones
+
+=== psql SELECT 1 ===
+ ok 
+----
+  1
+(1 fila)
+
+
+=== canonical root git status (R3 drift check) ===
+ M orchestrator-state/memory/architecture-contract.md
+ M orchestrator-state/memory/project-brief.md
+ M orchestrator-state/tasks/api-contracts/CONTRACT_MANIFEST.json
+ M orchestrator-state/tasks/api-contracts/registry-endpoints.json
+ M orchestrator-state/tasks/phases/P00.yaml
+ M orchestrator-state/tasks/phases/P01.yaml
+ M orchestrator-state/tasks/phases/P02.yaml
+ M orchestrator-state/tasks/phases/P03.yaml
+ M orchestrator-state/tasks/phases/P04.yaml
+ M orchestrator-state/tasks/work-items/P02-S05-T001.yaml
+ M orchestrator-state/tasks/work-items/P02-S05-T003.yaml
+ M orchestrator-state/tasks/work-items/P04-S01-T003.yaml
+ M orchestrator-state/tasks/work-items/P04-S01-T004.yaml
+ M orchestrator-state/tasks/work-items/P04-S01-T005.yaml
+ M orchestrator-state/tasks/work-items/P04-S01-T006.yaml
+ M orchestrator-state/tasks/work-items/P04-S01-T007.yaml
+ M orchestrator-state/tasks/work-items/P04-S01-T008.yaml
+ M orchestrator-state/tasks/work-items/P04-S01-T009.yaml
+ M orchestrator-state/tasks/work-items/P04-S01-T010.yaml
+ M orchestrator-state/tasks/work-items/P04-S01-T011.yaml
+ M orchestrator-state/tasks/work-items/P04-S01-T012.yaml
+ M orchestrator-state/tasks/work-items/P04-S01-T013.yaml
+ M orchestrator-state/tasks/work-items/P04-S01-T014.yaml
+ M orchestrator-state/tasks/work-items/P04-S02-T002.yaml
+ M orchestrator-state/tasks/work-items/P04-S02-T004.yaml
+ M orchestrator-state/tasks/work-items/P04-S03-T003.yaml
+ M orchestrator-state/tasks/work-items/P05-S01-T004.yaml
+ M orchestrator-state/tasks/work-items/P05-S01-T005.yaml
