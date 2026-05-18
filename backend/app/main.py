@@ -182,7 +182,7 @@ async def _forgot_reset_validation_handler(
             "main.validation_error.passthrough path=%s", path
         )  # BEFORE
         return JSONResponse(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             content={"detail": exc.errors()},
         )
 

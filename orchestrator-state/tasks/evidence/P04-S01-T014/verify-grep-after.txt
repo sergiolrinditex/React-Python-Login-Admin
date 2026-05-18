@@ -1,0 +1,1 @@
+(0 matches — grep exit 1 means no deprecated constant found)

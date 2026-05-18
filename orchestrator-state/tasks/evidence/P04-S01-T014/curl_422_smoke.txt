@@ -1,0 +1,13 @@
+# Smoke test note for P04-S01-T014
+# Per task pack: "If not a live endpoint accessible without auth, 
+#   basta con el smoke vía pytest del propio handler"
+# 
+# The 422 passthrough branch is exercised by 4 real integration tests:
+#   - test_signin_missing_field_returns_422 (PASS)
+#   - test_signup_missing_full_name_422 (PASS)
+#   - test_T24_index_null_collection_422 (PASS)
+#   - test_T08_patch_invalid_language_422 (PASS)
+#
+# Backend dev server not started for this pure-static rename slice.
+# All 422 passthrough assertions use real backend via pytest-httpx TestClient.
+# Status code 422 (numeric) verified intact through all tests.
