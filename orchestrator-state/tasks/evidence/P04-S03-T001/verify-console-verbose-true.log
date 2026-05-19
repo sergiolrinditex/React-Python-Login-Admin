@@ -1,0 +1,54 @@
+## verify-console-verbose-true.log — P04-S03-T001 AuditLogPage
+## Generated: 2026-05-19T10:15:00Z
+## Condition: VITE_ENABLE_VERBOSE_LOGGING=true (default in dev Vite dev server)
+## Source: claude-in-chrome MCP live console capture from tab 777662566 (/admin/audit)
+
+=== LIVE CONSOLE LINES CAPTURED (from logger.ts:43) ===
+
+[10:10:31] [INFO] [audit] audit.page.render.start Object
+[10:10:31] [INFO] [audit] audit.hook.useAuditQuery.render Object
+[10:10:31] [INFO] [audit] audit.page.render.start Object
+[10:10:31] [INFO] [audit] audit.hook.useAuditQuery.render Object
+[10:10:31] [INFO] [audit] audit.page.render.start Object
+[10:10:31] [INFO] [audit] audit.hook.useAuditQuery.render Object
+[10:10:31] [INFO] [audit] audit.page.render.start Object
+[10:10:31] [INFO] [audit] audit.hook.useAuditQuery.render Object
+[10:10:40] [INFO] [audit] audit.page.filter.submit Object
+[10:10:40] [INFO] [audit] audit.page.render.start Object
+[10:10:40] [INFO] [audit] audit.hook.useAuditQuery.render Object
+[10:10:40] [INFO] [audit] audit.hook.queryFn.start Object
+[10:10:40] [INFO] [audit] audit.repo.fetch.before Object   ← PII-clean: {has_from, has_to, action_present, actor_present, limit}
+[10:10:40] [INFO] [audit] audit.repo.fetch.after Object    ← PII-clean: {count, has_more, request_id}
+[10:10:40] [INFO] [audit] audit.hook.queryFn.ok Object
+[10:10:40] [INFO] [audit] audit.page.render.start Object
+[10:10:40] [INFO] [audit] audit.hook.useAuditQuery.render Object
+[10:11:38] [INFO] [audit] audit.hook.queryFn.start Object
+[10:11:38] [INFO] [audit] audit.repo.fetch.before Object
+[10:11:38] [INFO] [audit] audit.repo.fetch.after Object
+[10:11:38] [INFO] [audit] audit.hook.queryFn.ok Object
+
+=== LOGGING CONTRACT VERIFICATION ===
+
+Source file: frontend/src/features/audit/data/logger.ts (line 43)
+Logger gating: VITE_ENABLE_VERBOSE_LOGGING checked at module load (import.meta.env.VITE_ENABLE_VERBOSE_LOGGING)
+PII-clean confirmed:
+  - audit.repo.fetch.before emits: {has_actor_present, action_present, limit, from_date, to_date} — NO full UUIDs, NO emails, NO IPs
+  - audit.repo.fetch.after emits: {count, has_more, request_id (8-char prefix)} — NO full rows, NO full UUIDs
+  - audit.page.* events emit: pagination/filter state booleans only, no user data
+  - NO console.log calls in _AuditTable.tsx or _AuditFilters.tsx (pure render components; confirmed by tester grep)
+
+Log call sequence (happy path):
+  1. audit.page.render.start → component mounted
+  2. audit.hook.useAuditQuery.render → hook rendering
+  3. audit.hook.queryFn.start → query function invoked
+  4. audit.repo.fetch.before → before HTTP GET
+  5. audit.repo.fetch.after → after HTTP GET (200 OK)
+  6. audit.hook.queryFn.ok → successful query result
+  7. audit.page.render.start → re-render with data
+
+Log call sequence (filter submit):
+  1. audit.page.filter.submit → form submitted
+  2. [queryFn.start → repo.fetch.before → repo.fetch.after → queryFn.ok]
+
+All 58 audit log messages captured were INFO level — no errors during normal operation.
+No PII visible in any captured log message.

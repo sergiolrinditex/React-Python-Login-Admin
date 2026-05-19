@@ -1,0 +1,8 @@
+       action        | count 
+---------------------+-------
+ auth.refresh        |    36
+ auth.sign_in        |    25
+ auth.mfa.verify     |     4
+ admin.ai.model.test |     2
+(4 filas)
+

@@ -3,10 +3,11 @@
  *
  * Slice/Phase: P00-S01-T005 — i18n resources ES/EN/FR / Phase 0 Scaffold.
  *
- * Responsibility: initialise the i18next singleton with all 9 namespaces loaded
+ * Responsibility: initialise the i18next singleton with all 11 namespaces loaded
  *   inline for 3 locales (ES, EN, FR) with fallback to Spanish. Replaces the
  *   resource-less stub created in T002.
  *   Updated P04-S03-T002: added "usage" namespace (§D-T002-I18N-BUNDLE).
+ *   Updated P04-S03-T001: added "audit" namespace (§D-T001-I18N-BUNDLE).
  *
  * Design decisions (from task pack §8.3 and instrucciones.md §3.3):
  *   - Detector OFF: i18next-browser-languagedetector crashes jsdom (inherited T002 R1).
@@ -816,6 +817,57 @@ const resources = {
       },
       nextAction: "Ver modelos",
     },
+    // §D-T001-I18N-BUNDLE: audit namespace ES — P04-S03-T001
+    audit: {
+      title: "Registro de auditoría",
+      subtitle: "Trazabilidad de eventos de seguridad y acciones de administración",
+      loading: "Cargando eventos de auditoría…",
+      empty: {
+        title: "Sin eventos de auditoría",
+        body: "No hay eventos de auditoría en el período seleccionado.",
+        cta: "Volver al panel",
+      },
+      errors: {
+        network: "Error de conexión al cargar los eventos de auditoría.",
+        "network.retry": "Reintentar",
+        forbidden: {
+          title: "Acceso denegado",
+          body: "No tienes el rol de auditor para ver estos registros.",
+        },
+        validation: {
+          range: "La fecha de inicio debe ser anterior a la fecha de fin.",
+          window: "El período máximo de consulta es 90 días.",
+          actor: "El ID de actor no es un UUID válido.",
+        },
+      },
+      filters: {
+        from: "Desde",
+        to: "Hasta",
+        actor: "Actor (UUID)",
+        "actor.placeholder": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+        action: "Acción",
+        "action.placeholder": "auth.sign_in",
+        submit: "Filtrar",
+        reset: "Restablecer",
+      },
+      table: {
+        caption: "Tabla de eventos de auditoría",
+        col: {
+          timestamp: "Fecha y hora",
+          actor: "Actor",
+          action: "Acción",
+          entityType: "Tipo de entidad",
+          entityId: "ID de entidad",
+          requestId: "ID de solicitud",
+          metadata: "Metadatos",
+        },
+      },
+      pagination: {
+        loadMore: "Cargar más",
+        noMore: "No hay más eventos",
+      },
+      nextAction: "Abrir detalle de evento (próximamente)",
+    },
   },
   en: {
     common: {
@@ -1570,6 +1622,57 @@ const resources = {
         },
       },
       nextAction: "View models",
+    },
+    // §D-T001-I18N-BUNDLE: audit namespace EN — P04-S03-T001
+    audit: {
+      title: "Audit Log",
+      subtitle: "Security events and admin action traceability",
+      loading: "Loading audit events…",
+      empty: {
+        title: "No audit events",
+        body: "No audit events found in the selected period.",
+        cta: "Back to dashboard",
+      },
+      errors: {
+        network: "Connection error while loading audit events.",
+        "network.retry": "Try again",
+        forbidden: {
+          title: "Access denied",
+          body: "You do not have the auditor role to view these records.",
+        },
+        validation: {
+          range: "Start date must be earlier than end date.",
+          window: "Maximum query window is 90 days.",
+          actor: "Actor ID is not a valid UUID.",
+        },
+      },
+      filters: {
+        from: "From",
+        to: "To",
+        actor: "Actor (UUID)",
+        "actor.placeholder": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+        action: "Action",
+        "action.placeholder": "auth.sign_in",
+        submit: "Filter",
+        reset: "Reset",
+      },
+      table: {
+        caption: "Audit events table",
+        col: {
+          timestamp: "Date & time",
+          actor: "Actor",
+          action: "Action",
+          entityType: "Entity type",
+          entityId: "Entity ID",
+          requestId: "Request ID",
+          metadata: "Metadata",
+        },
+      },
+      pagination: {
+        loadMore: "Load more",
+        noMore: "No more events",
+      },
+      nextAction: "Open event detail (coming soon)",
     },
   },
   fr: {
@@ -2326,6 +2429,57 @@ const resources = {
         },
       },
       nextAction: "Voir les modèles",
+    },
+    // §D-T001-I18N-BUNDLE: audit namespace FR — P04-S03-T001
+    audit: {
+      title: "Journal d'audit",
+      subtitle: "Traçabilité des événements de sécurité et des actions d'administration",
+      loading: "Chargement des événements d'audit…",
+      empty: {
+        title: "Aucun événement d'audit",
+        body: "Aucun événement d'audit trouvé pour la période sélectionnée.",
+        cta: "Retour au tableau de bord",
+      },
+      errors: {
+        network: "Erreur de connexion lors du chargement des événements d'audit.",
+        "network.retry": "Réessayer",
+        forbidden: {
+          title: "Accès refusé",
+          body: "Vous n'avez pas le rôle d'auditeur pour consulter ces enregistrements.",
+        },
+        validation: {
+          range: "La date de début doit être antérieure à la date de fin.",
+          window: "La fenêtre de requête maximale est de 90 jours.",
+          actor: "L'ID de l'acteur n'est pas un UUID valide.",
+        },
+      },
+      filters: {
+        from: "Du",
+        to: "Au",
+        actor: "Acteur (UUID)",
+        "actor.placeholder": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+        action: "Action",
+        "action.placeholder": "auth.sign_in",
+        submit: "Filtrer",
+        reset: "Réinitialiser",
+      },
+      table: {
+        caption: "Tableau des événements d'audit",
+        col: {
+          timestamp: "Date et heure",
+          actor: "Acteur",
+          action: "Action",
+          entityType: "Type d'entité",
+          entityId: "ID d'entité",
+          requestId: "ID de requête",
+          metadata: "Métadonnées",
+        },
+      },
+      pagination: {
+        loadMore: "Charger plus",
+        noMore: "Aucun autre événement",
+      },
+      nextAction: "Ouvrir le détail de l'événement (bientôt disponible)",
     },
   },
 } as const;

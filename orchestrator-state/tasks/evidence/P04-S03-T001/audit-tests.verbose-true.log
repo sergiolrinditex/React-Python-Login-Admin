@@ -1,0 +1,479 @@
+
+> hilo-people-frontend@0.1.0 test
+> vitest --run src/features/audit src/pages/admin/audit
+
+
+ RUN  v3.2.4 /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P04-S03-T001/frontend
+
+stdout | src/features/audit/data/__tests__/auditRepository.test.ts > auditRepository.getAuditPage > auditRepository: 200 returns Result.ok with AuditPage
+[audit] audit.repo.fetch.before {
+  has_from: [33mtrue[39m,
+  has_to: [33mtrue[39m,
+  action_present: [33mfalse[39m,
+  actor_present: [33mfalse[39m,
+  cursor_present: [33mfalse[39m,
+  limit: [33m50[39m,
+  request_id: [32m'faa96a90-1a6e-4ef1-9fbf-f195b297cec0'[39m
+}
+
+stdout | src/features/audit/data/__tests__/auditRepository.test.ts > auditRepository.getAuditPage > auditRepository: 200 returns Result.ok with AuditPage
+[audit] audit.repo.fetch.after { count: [33m1[39m, has_more: [33mfalse[39m, request_id: [32m'server-req-id-001'[39m }
+
+stdout | src/features/audit/data/__tests__/auditRepository.test.ts > auditRepository.getAuditPage > auditRepository: 200 with empty rows returns Result.ok with empty rows
+[audit] audit.repo.fetch.before {
+  has_from: [33mtrue[39m,
+  has_to: [33mtrue[39m,
+  action_present: [33mfalse[39m,
+  actor_present: [33mfalse[39m,
+  cursor_present: [33mfalse[39m,
+  limit: [33m50[39m,
+  request_id: [32m'b346c746-a888-4ce7-883b-7e685fd176b3'[39m
+}
+
+stdout | src/features/audit/data/__tests__/auditRepository.test.ts > auditRepository.getAuditPage > auditRepository: 200 with empty rows returns Result.ok with empty rows
+[audit] audit.repo.fetch.after { count: [33m0[39m, has_more: [33mfalse[39m, request_id: [32m'req-002'[39m }
+
+stdout | src/features/audit/data/__tests__/auditRepository.test.ts > auditRepository.getAuditPage > auditRepository: 401 returns AuditAuthExpiredError
+[audit] audit.repo.fetch.before {
+  has_from: [33mtrue[39m,
+  has_to: [33mtrue[39m,
+  action_present: [33mfalse[39m,
+  actor_present: [33mfalse[39m,
+  cursor_present: [33mfalse[39m,
+  limit: [33m50[39m,
+  request_id: [32m'052defb3-f041-4d10-a693-a952edcf485f'[39m
+}
+
+stderr | src/features/audit/data/__tests__/auditRepository.test.ts > auditRepository.getAuditPage > auditRepository: 401 returns AuditAuthExpiredError
+[audit] audit.repo.fetch.auth_expired { status: [33m401[39m, request_id: [32m'052defb3-f041-4d10-a693-a952edcf485f'[39m }
+
+stdout | src/features/audit/data/__tests__/auditRepository.test.ts > auditRepository.getAuditPage > auditRepository: 403 returns AuditForbiddenError
+[audit] audit.repo.fetch.before {
+  has_from: [33mtrue[39m,
+  has_to: [33mtrue[39m,
+  action_present: [33mfalse[39m,
+  actor_present: [33mfalse[39m,
+  cursor_present: [33mfalse[39m,
+  limit: [33m50[39m,
+  request_id: [32m'7efaabab-cecf-4231-911f-9abd24852a4d'[39m
+}
+
+stderr | src/features/audit/data/__tests__/auditRepository.test.ts > auditRepository.getAuditPage > auditRepository: 403 returns AuditForbiddenError
+[audit] audit.repo.fetch.forbidden { status: [33m403[39m, request_id: [32m'7efaabab-cecf-4231-911f-9abd24852a4d'[39m }
+
+stdout | src/features/audit/data/__tests__/auditRepository.test.ts > auditRepository.getAuditPage > auditRepository: 422 returns AuditValidationError
+[audit] audit.repo.fetch.before {
+  has_from: [33mtrue[39m,
+  has_to: [33mtrue[39m,
+  action_present: [33mfalse[39m,
+  actor_present: [33mfalse[39m,
+  cursor_present: [33mfalse[39m,
+  limit: [33m50[39m,
+  request_id: [32m'644663de-c3a9-4063-9974-90d17d0ec1e5'[39m
+}
+
+stderr | src/features/audit/data/__tests__/auditRepository.test.ts > auditRepository.getAuditPage > auditRepository: 422 returns AuditValidationError
+[audit] audit.repo.fetch.validation_error { status: [33m422[39m, request_id: [32m'644663de-c3a9-4063-9974-90d17d0ec1e5'[39m }
+
+stdout | src/features/audit/data/__tests__/auditRepository.test.ts > auditRepository.getAuditPage > auditRepository: 500 returns AuditServerError
+[audit] audit.repo.fetch.before {
+  has_from: [33mtrue[39m,
+  has_to: [33mtrue[39m,
+  action_present: [33mfalse[39m,
+  actor_present: [33mfalse[39m,
+  cursor_present: [33mfalse[39m,
+  limit: [33m50[39m,
+  request_id: [32m'5af41c2c-f097-4970-903e-e9cfe035212a'[39m
+}
+
+stderr | src/features/audit/data/__tests__/auditRepository.test.ts > auditRepository.getAuditPage > auditRepository: 500 returns AuditServerError
+[audit] audit.repo.fetch.server_error { status: [33m500[39m, request_id: [32m'5af41c2c-f097-4970-903e-e9cfe035212a'[39m }
+
+stdout | src/features/audit/data/__tests__/auditRepository.test.ts > auditRepository.getAuditPage > auditRepository: network error (fetch throws TypeError) returns AuditNetworkError
+[audit] audit.repo.fetch.before {
+  has_from: [33mtrue[39m,
+  has_to: [33mtrue[39m,
+  action_present: [33mfalse[39m,
+  actor_present: [33mfalse[39m,
+  cursor_present: [33mfalse[39m,
+  limit: [33m50[39m,
+  request_id: [32m'bf435e82-79f8-4d1a-b60d-d2cf7ddd59a3'[39m
+}
+
+stderr | src/features/audit/data/__tests__/auditRepository.test.ts > auditRepository.getAuditPage > auditRepository: network error (fetch throws TypeError) returns AuditNetworkError
+[audit] audit.repo.fetch.error {
+  error_class: [32m'AUDIT_NETWORK_ERROR'[39m,
+  message: [32m'Failed to fetch'[39m,
+  request_id: [32m'bf435e82-79f8-4d1a-b60d-d2cf7ddd59a3'[39m
+}
+
+stdout | src/features/audit/data/__tests__/auditRepository.test.ts > auditRepository.getAuditPage > auditRepository: AbortError returns AuditNetworkError (aborted)
+[audit] audit.repo.fetch.before {
+  has_from: [33mtrue[39m,
+  has_to: [33mtrue[39m,
+  action_present: [33mfalse[39m,
+  actor_present: [33mfalse[39m,
+  cursor_present: [33mfalse[39m,
+  limit: [33m50[39m,
+  request_id: [32m'bacc2788-3540-4847-9ad3-054763aeb379'[39m
+}
+
+stdout | src/features/audit/data/__tests__/auditRepository.test.ts > auditRepository.getAuditPage > auditRepository: AbortError returns AuditNetworkError (aborted)
+[audit] audit.repo.fetch.aborted { request_id: [32m'bacc2788-3540-4847-9ad3-054763aeb379'[39m }
+
+ ✓ src/features/audit/data/__tests__/auditRepository.test.ts (9 tests) 9ms
+stdout | src/pages/admin/audit/__tests__/AuditLogPage.test.tsx
+i18n.init.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T005'[39m,
+  lng: [32m'es'[39m,
+  fallbackLng: [32m'es'[39m,
+  ns: [
+    [32m'common'[39m,   [32m'auth'[39m,
+    [32m'chat'[39m,     [32m'account'[39m,
+    [32m'admin-ai'[39m, [32m'rag'[39m,
+    [32m'mcp'[39m,      [32m'agents'[39m,
+    [32m'errors'[39m,   [32m'usage'[39m,
+    [32m'audit'[39m
+  ],
+  defaultNS: [32m'common'[39m
+}
+i18n.init.ok {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T005'[39m,
+  isInitialized: [33mtrue[39m,
+  language: [32m'es'[39m,
+  namespaceCount: [33m11[39m,
+  localeCount: [33m3[39m
+}
+
+stdout | src/features/audit/presentation/__tests__/useAuditQuery.test.tsx > useAuditQuery > useAuditQuery: loading→success resolves data when getAuditPage returns ok
+[audit] audit.hook.useAuditQuery.render {
+  has_from: [33mtrue[39m,
+  has_to: [33mtrue[39m,
+  action_present: [33mfalse[39m,
+  actor_present: [33mfalse[39m,
+  range_valid: [33mtrue[39m,
+  actor_valid: [33mtrue[39m
+}
+[audit] audit.hook.queryFn.start {
+  has_from: [33mtrue[39m,
+  has_to: [33mtrue[39m,
+  action_present: [33mfalse[39m,
+  actor_present: [33mfalse[39m
+}
+
+stdout | src/features/audit/presentation/__tests__/useAuditQuery.test.tsx > useAuditQuery > useAuditQuery: loading→success resolves data when getAuditPage returns ok
+[audit] audit.hook.queryFn.ok { count: [33m1[39m, has_more: [33mfalse[39m }
+
+stdout | src/features/audit/presentation/__tests__/useAuditQuery.test.tsx > useAuditQuery > useAuditQuery: loading→success resolves data when getAuditPage returns ok
+[audit] audit.hook.useAuditQuery.render {
+  has_from: [33mtrue[39m,
+  has_to: [33mtrue[39m,
+  action_present: [33mfalse[39m,
+  actor_present: [33mfalse[39m,
+  range_valid: [33mtrue[39m,
+  actor_valid: [33mtrue[39m
+}
+
+stdout | src/features/audit/presentation/__tests__/useAuditQuery.test.tsx > useAuditQuery > useAuditQuery: invalid range → isRangeInvalid=true, no fetch triggered
+[audit] audit.hook.useAuditQuery.render {
+  has_from: [33mtrue[39m,
+  has_to: [33mtrue[39m,
+  action_present: [33mfalse[39m,
+  actor_present: [33mfalse[39m,
+  range_valid: [33mfalse[39m,
+  actor_valid: [33mtrue[39m
+}
+
+stdout | src/features/audit/presentation/__tests__/useAuditQuery.test.tsx > useAuditQuery > useAuditQuery: invalid actor UUID → isActorInvalid=true, no fetch triggered
+[audit] audit.hook.useAuditQuery.render {
+  has_from: [33mtrue[39m,
+  has_to: [33mtrue[39m,
+  action_present: [33mfalse[39m,
+  actor_present: [33mtrue[39m,
+  range_valid: [33mtrue[39m,
+  actor_valid: [33mfalse[39m
+}
+
+stdout | src/features/audit/presentation/__tests__/useAuditQuery.test.tsx > useAuditQuery > useAuditQuery: error propagation — forbidden error surfaces in result
+[audit] audit.hook.useAuditQuery.render {
+  has_from: [33mtrue[39m,
+  has_to: [33mtrue[39m,
+  action_present: [33mfalse[39m,
+  actor_present: [33mfalse[39m,
+  range_valid: [33mtrue[39m,
+  actor_valid: [33mtrue[39m
+}
+[audit] audit.hook.queryFn.start {
+  has_from: [33mtrue[39m,
+  has_to: [33mtrue[39m,
+  action_present: [33mfalse[39m,
+  actor_present: [33mfalse[39m
+}
+
+stderr | src/features/audit/presentation/__tests__/useAuditQuery.test.tsx > useAuditQuery > useAuditQuery: error propagation — forbidden error surfaces in result
+[audit] audit.hook.queryFn.error { error_code: [32m'AUDIT_FORBIDDEN'[39m }
+
+stdout | src/pages/admin/audit/__tests__/AuditLogPage.test.tsx > AuditLogPage > AuditLogPage: loading state renders skeleton with aria-busy
+[audit] audit.page.render.start {
+  has_from: [33mtrue[39m,
+  has_to: [33mtrue[39m,
+  action_present: [33mfalse[39m,
+  actor_present: [33mfalse[39m
+}
+
+stdout | src/pages/admin/audit/__tests__/AuditLogPage.test.tsx > AuditLogPage > AuditLogPage: success state renders table with rows
+[audit] audit.page.render.start {
+  has_from: [33mtrue[39m,
+  has_to: [33mtrue[39m,
+  action_present: [33mfalse[39m,
+  actor_present: [33mfalse[39m
+}
+[audit] audit.page.render.start {
+  has_from: [33mtrue[39m,
+  has_to: [33mtrue[39m,
+  action_present: [33mfalse[39m,
+  actor_present: [33mfalse[39m
+}
+
+stdout | src/pages/admin/audit/__tests__/AuditLogPage.test.tsx > AuditLogPage > AuditLogPage: empty state renders Wordmark Hilo + CTA
+[audit] audit.page.render.start {
+  has_from: [33mtrue[39m,
+  has_to: [33mtrue[39m,
+  action_present: [33mfalse[39m,
+  actor_present: [33mfalse[39m
+}
+[audit] audit.page.render.start {
+  has_from: [33mtrue[39m,
+  has_to: [33mtrue[39m,
+  action_present: [33mfalse[39m,
+  actor_present: [33mfalse[39m
+}
+
+stdout | src/pages/admin/audit/__tests__/AuditLogPage.test.tsx > AuditLogPage > AuditLogPage: error_network state renders retry CTA and clicking triggers refetch
+[audit] audit.page.render.start {
+  has_from: [33mtrue[39m,
+  has_to: [33mtrue[39m,
+  action_present: [33mfalse[39m,
+  actor_present: [33mfalse[39m
+}
+[audit] audit.page.retry.triggered
+
+stderr | src/pages/admin/audit/__tests__/AuditLogPage.test.tsx > AuditLogPage > AuditLogPage: error_network state renders retry CTA and clicking triggers refetch
+[audit] audit.page.error.state { error_code: [32m'AUDIT_NETWORK_ERROR'[39m }
+
+stdout | src/pages/admin/audit/__tests__/AuditLogPage.test.tsx > AuditLogPage > AuditLogPage: permission_denied state renders forbidden view with back button
+[audit] audit.page.render.start {
+  has_from: [33mtrue[39m,
+  has_to: [33mtrue[39m,
+  action_present: [33mfalse[39m,
+  actor_present: [33mfalse[39m
+}
+
+stderr | src/pages/admin/audit/__tests__/AuditLogPage.test.tsx > AuditLogPage > AuditLogPage: permission_denied state renders forbidden view with back button
+[audit] audit.page.error.state { error_code: [32m'AUDIT_FORBIDDEN'[39m }
+
+stdout | src/pages/admin/audit/__tests__/AuditLogPage.test.tsx > AuditLogPage > AuditLogPage: error_validation (isRangeInvalid) renders inline range error
+[audit] audit.page.render.start {
+  has_from: [33mtrue[39m,
+  has_to: [33mtrue[39m,
+  action_present: [33mfalse[39m,
+  actor_present: [33mfalse[39m
+}
+
+stdout | src/pages/admin/audit/__tests__/AuditLogPage.test.tsx > AuditLogPage > AuditLogPage: error_validation (isActorInvalid) renders inline actor error
+[audit] audit.page.render.start {
+  has_from: [33mtrue[39m,
+  has_to: [33mtrue[39m,
+  action_present: [33mfalse[39m,
+  actor_present: [33mfalse[39m
+}
+
+stdout | src/pages/admin/audit/__tests__/AuditLogPage.test.tsx > AuditLogPage > AuditLogPage: a11y — success table has sr-only caption and th scope=col
+[audit] audit.page.render.start {
+  has_from: [33mtrue[39m,
+  has_to: [33mtrue[39m,
+  action_present: [33mfalse[39m,
+  actor_present: [33mfalse[39m
+}
+[audit] audit.page.render.start {
+  has_from: [33mtrue[39m,
+  has_to: [33mtrue[39m,
+  action_present: [33mfalse[39m,
+  actor_present: [33mfalse[39m
+}
+
+stdout | src/pages/admin/audit/__tests__/AuditLogPage.test.tsx > AuditLogPage > AuditLogPage: i18n key — page title renders from audit namespace
+[audit] audit.page.render.start {
+  has_from: [33mtrue[39m,
+  has_to: [33mtrue[39m,
+  action_present: [33mfalse[39m,
+  actor_present: [33mfalse[39m
+}
+[audit] audit.page.render.start {
+  has_from: [33mtrue[39m,
+  has_to: [33mtrue[39m,
+  action_present: [33mfalse[39m,
+  actor_present: [33mfalse[39m
+}
+
+stdout | src/pages/admin/audit/__tests__/AuditLogPage.test.tsx > AuditLogPage > AuditLogPage: filter reset button is present and accessible
+[audit] audit.page.render.start {
+  has_from: [33mtrue[39m,
+  has_to: [33mtrue[39m,
+  action_present: [33mfalse[39m,
+  actor_present: [33mfalse[39m
+}
+
+ ✓ src/pages/admin/audit/__tests__/AuditLogPage.test.tsx (10 tests) 96ms
+stdout | src/features/audit/presentation/__tests__/useAuditQuery.test.tsx > useAuditQuery > useAuditQuery: error propagation — forbidden error surfaces in result
+[audit] audit.hook.queryFn.start {
+  has_from: [33mtrue[39m,
+  has_to: [33mtrue[39m,
+  action_present: [33mfalse[39m,
+  actor_present: [33mfalse[39m
+}
+
+stderr | src/features/audit/presentation/__tests__/useAuditQuery.test.tsx > useAuditQuery > useAuditQuery: error propagation — forbidden error surfaces in result
+[audit] audit.hook.queryFn.error { error_code: [32m'AUDIT_FORBIDDEN'[39m }
+
+stdout | src/features/audit/presentation/__tests__/useAuditQuery.test.tsx > useAuditQuery > useAuditQuery: error propagation — forbidden error surfaces in result
+[audit] audit.hook.useAuditQuery.render {
+  has_from: [33mtrue[39m,
+  has_to: [33mtrue[39m,
+  action_present: [33mfalse[39m,
+  actor_present: [33mfalse[39m,
+  range_valid: [33mtrue[39m,
+  actor_valid: [33mtrue[39m
+}
+
+stdout | src/features/audit/presentation/__tests__/useAuditQuery.test.tsx > useAuditQuery > useAuditQuery: network error surfaces correctly
+[audit] audit.hook.useAuditQuery.render {
+  has_from: [33mtrue[39m,
+  has_to: [33mtrue[39m,
+  action_present: [33mfalse[39m,
+  actor_present: [33mfalse[39m,
+  range_valid: [33mtrue[39m,
+  actor_valid: [33mtrue[39m
+}
+[audit] audit.hook.queryFn.start {
+  has_from: [33mtrue[39m,
+  has_to: [33mtrue[39m,
+  action_present: [33mfalse[39m,
+  actor_present: [33mfalse[39m
+}
+
+stderr | src/features/audit/presentation/__tests__/useAuditQuery.test.tsx > useAuditQuery > useAuditQuery: network error surfaces correctly
+[audit] audit.hook.queryFn.error { error_code: [32m'AUDIT_NETWORK_ERROR'[39m }
+
+stdout | src/features/audit/presentation/__tests__/useAuditQuery.test.tsx > useAuditQuery > useAuditQuery: network error surfaces correctly
+[audit] audit.hook.queryFn.start {
+  has_from: [33mtrue[39m,
+  has_to: [33mtrue[39m,
+  action_present: [33mfalse[39m,
+  actor_present: [33mfalse[39m
+}
+
+stderr | src/features/audit/presentation/__tests__/useAuditQuery.test.tsx > useAuditQuery > useAuditQuery: network error surfaces correctly
+[audit] audit.hook.queryFn.error { error_code: [32m'AUDIT_NETWORK_ERROR'[39m }
+
+stdout | src/features/audit/presentation/__tests__/useAuditQuery.test.tsx > useAuditQuery > useAuditQuery: network error surfaces correctly
+[audit] audit.hook.useAuditQuery.render {
+  has_from: [33mtrue[39m,
+  has_to: [33mtrue[39m,
+  action_present: [33mfalse[39m,
+  actor_present: [33mfalse[39m,
+  range_valid: [33mtrue[39m,
+  actor_valid: [33mtrue[39m
+}
+
+stdout | src/features/audit/presentation/__tests__/useAuditQuery.test.tsx > useAuditQuery > useAuditQuery: refetch function triggers an additional query call
+[audit] audit.hook.useAuditQuery.render {
+  has_from: [33mtrue[39m,
+  has_to: [33mtrue[39m,
+  action_present: [33mfalse[39m,
+  actor_present: [33mfalse[39m,
+  range_valid: [33mtrue[39m,
+  actor_valid: [33mtrue[39m
+}
+[audit] audit.hook.queryFn.start {
+  has_from: [33mtrue[39m,
+  has_to: [33mtrue[39m,
+  action_present: [33mfalse[39m,
+  actor_present: [33mfalse[39m
+}
+
+stdout | src/features/audit/presentation/__tests__/useAuditQuery.test.tsx > useAuditQuery > useAuditQuery: refetch function triggers an additional query call
+[audit] audit.hook.queryFn.ok { count: [33m1[39m, has_more: [33mfalse[39m }
+
+stdout | src/features/audit/presentation/__tests__/useAuditQuery.test.tsx > useAuditQuery > useAuditQuery: refetch function triggers an additional query call
+[audit] audit.hook.useAuditQuery.render {
+  has_from: [33mtrue[39m,
+  has_to: [33mtrue[39m,
+  action_present: [33mfalse[39m,
+  actor_present: [33mfalse[39m,
+  range_valid: [33mtrue[39m,
+  actor_valid: [33mtrue[39m
+}
+
+stdout | src/features/audit/presentation/__tests__/useAuditQuery.test.tsx > useAuditQuery > useAuditQuery: refetch function triggers an additional query call
+[audit] audit.hook.refetch.triggered
+[audit] audit.hook.queryFn.start {
+  has_from: [33mtrue[39m,
+  has_to: [33mtrue[39m,
+  action_present: [33mfalse[39m,
+  actor_present: [33mfalse[39m
+}
+
+stdout | src/features/audit/presentation/__tests__/useAuditQuery.test.tsx > useAuditQuery > useAuditQuery: refetch function triggers an additional query call
+[audit] audit.hook.queryFn.ok { count: [33m1[39m, has_more: [33mfalse[39m }
+
+stdout | src/features/audit/presentation/__tests__/useAuditQuery.test.tsx > useAuditQuery > useAuditQuery: refetch function triggers an additional query call
+[audit] audit.hook.useAuditQuery.render {
+  has_from: [33mtrue[39m,
+  has_to: [33mtrue[39m,
+  action_present: [33mfalse[39m,
+  actor_present: [33mfalse[39m,
+  range_valid: [33mtrue[39m,
+  actor_valid: [33mtrue[39m
+}
+
+stdout | src/features/audit/presentation/__tests__/useAuditQuery.test.tsx > useAuditQuery > useAuditQuery: valid actor UUID passes through to query
+[audit] audit.hook.useAuditQuery.render {
+  has_from: [33mtrue[39m,
+  has_to: [33mtrue[39m,
+  action_present: [33mfalse[39m,
+  actor_present: [33mtrue[39m,
+  range_valid: [33mtrue[39m,
+  actor_valid: [33mtrue[39m
+}
+[audit] audit.hook.queryFn.start {
+  has_from: [33mtrue[39m,
+  has_to: [33mtrue[39m,
+  action_present: [33mfalse[39m,
+  actor_present: [33mtrue[39m
+}
+
+stdout | src/features/audit/presentation/__tests__/useAuditQuery.test.tsx > useAuditQuery > useAuditQuery: valid actor UUID passes through to query
+[audit] audit.hook.queryFn.ok { count: [33m1[39m, has_more: [33mfalse[39m }
+
+stdout | src/features/audit/presentation/__tests__/useAuditQuery.test.tsx > useAuditQuery > useAuditQuery: valid actor UUID passes through to query
+[audit] audit.hook.useAuditQuery.render {
+  has_from: [33mtrue[39m,
+  has_to: [33mtrue[39m,
+  action_present: [33mfalse[39m,
+  actor_present: [33mtrue[39m,
+  range_valid: [33mtrue[39m,
+  actor_valid: [33mtrue[39m
+}
+
+ ✓ src/features/audit/presentation/__tests__/useAuditQuery.test.tsx (15 tests) 2269ms
+   ✓ useAuditQuery > useAuditQuery: error propagation — forbidden error surfaces in result  1044ms
+   ✓ useAuditQuery > useAuditQuery: network error surfaces correctly  1041ms
+
+ Test Files  3 passed (3)
+      Tests  34 passed (34)
+   Start at  08:59:48
+   Duration  3.47s (transform 210ms, setup 323ms, collect 497ms, tests 2.37s, environment 1.44s, prepare 335ms)
+
