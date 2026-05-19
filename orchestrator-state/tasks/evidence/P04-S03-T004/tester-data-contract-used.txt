@@ -1,0 +1,24 @@
+Data Contract Used — P04-S03-T004 Tester Run
+==============================================
+Verification Data Contract rows used (from TECHNICAL_GUIDE §6.5):
+
+Flow/Journey: J103 admin-ai
+Persona/Rol: admin (role=people_admin) — data/verification/users/admin_peopletech.json
+Email: admin.peopletech@inditex-sandbox.com (from verification JSON, not typed here)
+Real/Provided data: admin user seeded from data/verification/users/admin_peopletech.json
+
+Backend smoke steps:
+1. Login: POST /api/v1/auth/sign-in → 200 (access_token length=409, PII-clean)
+2. Usage GET 200: GET /api/v1/admin/usage?from=2026-05-01T00:00:00Z&to=2026-05-31T23:59:59Z&group_by=model_day
+   → 200, request_id=f393c386-7950-40cb-8dc6-db7c6633e564, rows=5, data.keys=[from,to,group_by,rows,totals]
+3. Usage GET 422: GET /api/v1/admin/usage?from=2026-05-31&to=2026-05-01&group_by=model_day
+   → 422, code=ADMIN_USAGE_INVALID_PAYLOAD
+
+Persisted data observed:
+- llm_usage_logs: 5 rows already present in DB (seeded from prior test model invocations)
+- No new data seeded in this tester run (backend smoke only, no POST to /admin/ai/models/{id}/test needed)
+
+Contract layer check:
+- Route /admin/usage → UsagePage (RequireRole ["people_admin","super_admin"]): confirmed via router.tsx:335
+- Endpoint GET /api/v1/admin/usage: confirmed 200 + correct shape {data:{from,to,group_by,rows,totals},meta:{request_id}}
+- DB table llm_usage_logs: 5 rows served (UNCHANGED since P02-S05-T002)

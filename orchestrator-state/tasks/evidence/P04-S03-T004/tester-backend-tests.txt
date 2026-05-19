@@ -1,0 +1,25 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.5, pytest-9.0.2, pluggy-1.6.0 -- /usr/local/bin/python3
+cachedir: .pytest_cache
+rootdir: /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P04-S03-T004/backend
+configfile: pyproject.toml
+plugins: httpx-0.36.0, asyncio-1.3.0, langsmith-0.8.3, anyio-4.13.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 507 items / 493 deselected / 14 selected
+
+backend/tests/integration/test_chat_stream.py::TestT13UsageLogColumns::test_stream_usage_log_columns PASSED [  7%]
+backend/tests/integration/test_chat_stream_unit_sse.py::TestSseUsage::test_usage_event_name PASSED [ 14%]
+backend/tests/integration/test_chat_stream_unit_sse.py::TestSseUsage::test_usage_payload_fields PASSED [ 21%]
+backend/tests/integration/test_chat_streaming_live.py::TestChatStreamingLive::test_stream_meta_chunk_usage_done_sequence SKIPPED [ 28%]
+backend/tests/integration/test_model_test.py::TestUsageEndpoint::test_U01_group_by_model PASSED [ 35%]
+backend/tests/integration/test_model_test.py::TestUsageEndpoint::test_U02_group_by_day PASSED [ 42%]
+backend/tests/integration/test_model_test.py::TestUsageEndpoint::test_U03_group_by_model_day PASSED [ 50%]
+backend/tests/integration/test_model_test.py::TestUsageEndpoint::test_U04_from_greater_than_to PASSED [ 57%]
+backend/tests/integration/test_model_test.py::TestUsageEndpoint::test_U05_window_too_wide PASSED [ 64%]
+backend/tests/integration/test_model_test.py::TestUsageEndpoint::test_U06_empty_window PASSED [ 71%]
+backend/tests/integration/test_model_test.py::TestUsageEndpoint::test_U07_non_admin_user PASSED [ 78%]
+backend/tests/integration/test_model_test.py::TestUsageEndpoint::test_U08_missing_from_param PASSED [ 85%]
+backend/tests/test_migrations_0002_ai_chat_rag_mcp.py::test_set_null_llm_usage_logs PASSED [ 92%]
+backend/tests/unit/test_llm_gateway_litellm_client.py::TestStreamChat::test_usage_event_yielded_last PASSED [100%]
+
+================ 13 passed, 1 skipped, 493 deselected in 10.43s ================

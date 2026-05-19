@@ -1,0 +1,4 @@
+=== USAGE GET 200 curl evidence ===
+{"data":null,"meta":{"request_id":"d954cb27-4114-4b7a-b89c-843d494d99ed"},"errors":[{"code":"AUTH_SESSION_EXPIRED","message":"Session expired or invalid credentials. Please sign in again.","field":null,"details":null}]}
+
+---HTTP STATUS: 401---

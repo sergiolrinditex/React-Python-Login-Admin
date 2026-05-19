@@ -1,0 +1,19 @@
+
+ RUN  v3.2.4 /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P04-S03-T004/frontend
+
+ ✓ src/features/admin/data/__tests__/usageRepository.test.ts (8 tests) 8ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts (38 tests) 12ms
+ ✓ src/features/admin-ai/__tests__/useModelTest.test.tsx (12 tests) 242ms
+ ✓ src/pages/admin/usage/__tests__/UsagePage.test.tsx (9 tests) 68ms
+ ✓ src/features/admin-ai/__tests__/useDashboardUsage.test.tsx (7 tests) 288ms
+ ✓ src/features/admin-ai/__tests__/useAdminAiModels.test.tsx (6 tests) 291ms
+ ✓ src/features/admin-ai/__tests__/useModelWizard.test.tsx (22 tests) 297ms
+ ✓ src/features/admin/presentation/__tests__/useUsage.test.tsx (9 tests) 2180ms
+   ✓ useUsage > useUsage: error propagation — forbidden error surfaces in result  1028ms
+   ✓ useUsage > useUsage: network error surfaces correctly  1027ms
+
+ Test Files  8 passed (8)
+      Tests  111 passed (111)
+   Start at  08:53:46
+   Duration  4.43s (transform 936ms, setup 1.74s, collect 2.74s, tests 3.39s, environment 7.37s, prepare 1.19s)
+

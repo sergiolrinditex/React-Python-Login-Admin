@@ -1,0 +1,9 @@
+16: *     ROUTE_ADMIN_AI_AGENTS, ROUTE_ADMIN_AUDIT, ROUTE_ADMIN_USAGE constants for nav.
+34: *   Updated in P04-S03-T002 — added /admin/usage route wired to UsagePage (§D-T002-ROUTER).
+57: *   /admin/usage       → UsagePage (RequireRole admin) — P04-S03-T002
+71: * P04-S03-T002 adds: /admin/usage real UsagePage (§D-T002-ROUTER).
+104:import UsagePage from "../pages/admin/usage/UsagePage";
+209:export const ROUTE_ADMIN_USAGE = "/admin/usage";
+263:      routes: [ROUTE_SHOWCASE, ROUTE_AUTH_SIGN_IN, ROUTE_AUTH_SIGN_UP, ROUTE_AUTH_RESET_SENT, ROUTE_AUTH_2FA, ROUTE_CHAT, ROUTE_HISTORY, ROUTE_ACCOUNT, ROUTE_ADMIN, ROUTE_ADMIN_AI_MCP, ROUTE_ADMIN_AI_MCP_NEW, ROUTE_ADMIN_RAG_DOCUMENTS, ROUTE_ADMIN_RAG_COLLECTIONS, ROUTE_ADMIN_AI_MODELS, ROUTE_ADMIN_AI_MODELS_NEW, ROUTE_ADMIN_AI_MODELS_TEST, ROUTE_ADMIN_AI_AGENTS, ROUTE_ADMIN_USAGE],
+334:            {/* P04-S03-T002: real UsagePage at /admin/usage — §D-T002-ROUTER */}
+335:            <Route path={ROUTE_ADMIN_USAGE} element={<UsagePage />} />
