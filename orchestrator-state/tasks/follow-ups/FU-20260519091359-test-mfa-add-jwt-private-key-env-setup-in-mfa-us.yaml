@@ -1,0 +1,51 @@
+{
+  "id": "FU-20260519091359-test-mfa-add-jwt-private-key-env-setup-in-mfa-us",
+  "schema_version": 1,
+  "status": "proposed",
+  "created_at": "2026-05-19T09:13:59+00:00",
+  "created_by": "sergiolr",
+  "origin_task_id": "P05-S01-T001",
+  "origin_phase_id": "P05",
+  "origin_step_id": "P05-S01",
+  "kind": "test",
+  "product_increment": "current",
+  "build_state": "planned",
+  "severity": "low",
+  "title": "test_mfa: add JWT_PRIVATE_KEY env setup in mfa_user fixture or module-level guard",
+  "description": "test_mfa_verify_invalid_signature_returns_401_aggregate fails when test_mfa.py is run in isolation (pytest tests/integration/test_mfa.py) because JWT_PRIVATE_KEY is not set at module level in test_mfa.py. It relies on test_auth_signin.py setting os.environ['JWT_PRIVATE_KEY'] at module import. Fix: self-contained env guard at top of test_mfa.py mirroring test_auth_signin.py lines 67-70. Pre-existing defect surfaced by P05-S01-T001 tester run; not a regression introduced by this slice.",
+  "journey_refs": [
+    "J100"
+  ],
+  "screen_route": "—",
+  "endpoint": "—",
+  "tables": [],
+  "depends_on": [
+    "P05-S01-T001"
+  ],
+  "conflict_groups": [
+    "journey:j100"
+  ],
+  "write_set": [
+    "backend/tests/integration/test_mfa.py"
+  ],
+  "acceptance": [
+    "pytest tests/integration/test_mfa.py runs 17/17 in isolation without requiring test_auth_signin.py to be collected first."
+  ],
+  "verify": [
+    "ENABLE_VERBOSE_LOGGING=true python3 -m pytest tests/integration/test_mfa.py -v in isolation",
+    "0 failures."
+  ],
+  "notes": [
+    "Surfaced by P05-S01-T001 tester reproduction run",
+    "live behavior is correct (tampered JWT returns 401 AUTH_MFA_CODE_INVALID via curl)."
+  ],
+  "triage": {
+    "scope_classification": "missing_coverage",
+    "why_not_debugger": "P05-S01-T001 write_set is strictly evidence/journeys/J100/**; test_mfa.py is outside write_set. The journey J100 passes and the live endpoint behavior is correct. This is a test isolation defect in test_mfa.py that requires a fixture fix — not a product bug that debugger can address within the current TASK_ID scope.",
+    "decision": "followup_only_when_outside_current_slice",
+    "debugger_path": "in_scope_defects_use_validator_tester_debugger_retest",
+    "warnings": []
+  },
+  "possible_duplicates": [],
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260519091359-test-mfa-add-jwt-private-key-env-setup-in-mfa-us.yaml"
+}

@@ -1,0 +1,32 @@
+id: P05-S01-T007
+phase_id: P05
+step_id: P05-S01
+title: "auth store: deduplicate concurrent refresh token calls on reload to prevent race-condition logout"
+status: ready
+kind: "bug"
+target: "auth store: deduplicate concurrent refresh token calls on reload to prevent race-condition logout"
+product_increment: "current"
+build_state: "planned"
+risk_level: "high"
+verify_mode: "human"
+route: ""
+endpoint: ""
+journey_refs:
+  - "J100"
+tables:
+depends_on:
+  - P05-S01-T001
+acceptance:
+  - "F5 on /chat with valid refresh cookie stays at /chat after exactly 1 successful POST /auth/refresh. Verified with Chrome DevTools network tab."
+verification_commands:
+  - "Navigate to /chat after full sign-in. Press F5. Confirm exactly 1 POST /auth/refresh call (HTTP 200"
+  - "rotated cookie). Page stays at /chat."
+allowed_paths:
+  - "frontend/src/**"
+conflict_groups:
+  - "journey:j100"
+write_set:
+  - "frontend/src/**"
+handoff_path: orchestrator-state/tasks/handoffs/P05-S01-T007.md
+evidence_dir: orchestrator-state/tasks/evidence/P05-S01-T007
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry"

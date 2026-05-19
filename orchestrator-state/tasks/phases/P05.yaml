@@ -5,6 +5,7 @@ depends_on:
   - P04
 task_ids:
   - P05-S01-T001
+  - P05-S01-T007
   - P05-S01-T002
   - P05-S01-T003
   - P05-S01-T004

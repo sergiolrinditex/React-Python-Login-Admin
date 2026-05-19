@@ -1,0 +1,51 @@
+{
+  "id": "FU-20260519121908-auth-store-deduplicate-concurrent-refresh-token-",
+  "schema_version": 1,
+  "status": "promoted",
+  "created_at": "2026-05-19T12:19:08+00:00",
+  "created_by": "sergiolr",
+  "origin_task_id": "P05-S01-T001",
+  "origin_phase_id": "P05",
+  "origin_step_id": "P05-S01",
+  "kind": "bug",
+  "product_increment": "current",
+  "build_state": "planned",
+  "severity": "high",
+  "title": "auth store: deduplicate concurrent refresh token calls on reload to prevent race-condition logout",
+  "description": "On /chat reload, the frontend fires two simultaneous POST /auth/refresh requests with the same refresh_token cookie. First call succeeds and rotates the cookie (200, new Set-Cookie). Second call still carries the old revoked cookie and gets 401 AUTH_SESSION_EXPIRED, causing redirect to sign-in. User is logged out on every F5. Fix: singleton/mutex pattern in token refresh interceptor to ensure only one in-flight refresh at a time.",
+  "journey_refs": [
+    "J100"
+  ],
+  "screen_route": "—",
+  "endpoint": "—",
+  "tables": [],
+  "depends_on": [
+    "P05-S01-T001"
+  ],
+  "conflict_groups": [
+    "journey:j100"
+  ],
+  "write_set": [
+    "frontend/src/**"
+  ],
+  "acceptance": [
+    "F5 on /chat with valid refresh cookie stays at /chat after exactly 1 successful POST /auth/refresh. Verified with Chrome DevTools network tab."
+  ],
+  "verify": [
+    "Navigate to /chat after full sign-in. Press F5. Confirm exactly 1 POST /auth/refresh call (HTTP 200",
+    "rotated cookie). Page stays at /chat."
+  ],
+  "notes": [],
+  "triage": {
+    "scope_classification": "out_of_scope",
+    "why_not_debugger": "P05-S01-T001 write_set is strictly evidence/journeys/J100/**. The defect is in the frontend auth store (TypeScript/React) which is outside this task's write_set. Debugger cannot write to frontend/ from within this task's scope.",
+    "decision": "followup_only_when_outside_current_slice",
+    "debugger_path": "in_scope_defects_use_validator_tester_debugger_retest",
+    "warnings": []
+  },
+  "possible_duplicates": [],
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260519121908-auth-store-deduplicate-concurrent-refresh-token-.yaml",
+  "promoted_at": "2026-05-19T12:41:20+00:00",
+  "promoted_task_id": "P05-S01-T007",
+  "source_doc_updated": "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md"
+}
