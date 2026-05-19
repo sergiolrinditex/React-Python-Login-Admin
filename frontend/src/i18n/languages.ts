@@ -45,8 +45,10 @@ export const DEFAULT_LANGUAGE: Language = "es";
  * Source: instrucciones.md §6 "Namespaces: common, auth, chat, account,
  *   admin-ai, rag, mcp, errors."
  *   Updated P04-S03-T002: added "usage" namespace (§D-T002-I18N-NSLIST).
+ *   Updated P04-S03-T001: added "audit" namespace (§D-T001-I18N-NSLIST).
  *
- * Used in tests to assert that all 9 namespaces are registered.
+ * Used in tests to assert that all 11 namespaces are registered.
+ *   Updated P04-S03-T001: added "audit" namespace (§D-T001-I18N-NSLIST).
  */
 export const I18N_NAMESPACES = [
   "common",
@@ -59,6 +61,7 @@ export const I18N_NAMESPACES = [
   "agents",
   "errors",
   "usage",
+  "audit",
 ] as const;
 
 /**

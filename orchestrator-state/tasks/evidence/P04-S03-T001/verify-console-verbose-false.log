@@ -1,0 +1,51 @@
+## verify-console-verbose-false.log — P04-S03-T001 AuditLogPage
+## Generated: 2026-05-19T10:15:00Z
+## Condition: VITE_ENABLE_VERBOSE_LOGGING=false
+## Source: vitest test run evidence + logger.ts gate analysis
+
+=== LOGGER GATE IMPLEMENTATION ===
+
+File: frontend/src/features/audit/data/logger.ts
+Gate: const VERBOSE = import.meta.env.VITE_ENABLE_VERBOSE_LOGGING === 'true'
+
+export function logVerbose(tag: string, data?: unknown): void {
+  if (!VERBOSE) return;  // ← gate: nothing emitted when false
+  console.info(`[audit] ${tag}`, data ?? '');
+}
+
+export function logWarn(tag: string, data?: unknown): void {
+  console.warn(`[audit] ${tag}`, data ?? '');  // ← always emitted
+}
+
+export function logError(tag: string, data?: unknown): void {
+  console.error(`[audit] ${tag}`, data ?? '');  // ← always emitted
+}
+
+=== WHEN VITE_ENABLE_VERBOSE_LOGGING=false ===
+
+SUPPRESSED (no output):
+  - audit.page.render.start
+  - audit.hook.useAuditQuery.render
+  - audit.hook.queryFn.start
+  - audit.repo.fetch.before
+  - audit.repo.fetch.after
+  - audit.hook.queryFn.ok
+  - audit.page.filter.submit
+  - audit.page.retry.triggered
+  - audit.page.back.triggered
+  - audit.page.load_more.triggered
+
+VISIBLE (warn/error always pass through):
+  - [audit] audit.hook.queryFn.error — on AuditNetworkError, AuditServerError
+  - [audit] audit.repo.fetch.error — on HTTP error responses
+  - [audit] audit.page.error.state — when error !== null renders
+
+=== VERIFICATION SOURCE ===
+
+From vitest tester run (VITE_ENABLE_VERBOSE_LOGGING=false, 732/732 PASS):
+  - All 34 audit tests pass with verbose=false
+  - logger spy confirms logVerbose not called when VERBOSE=false (auditRepository.test.ts test 9)
+  - No verbose lines appear in vitest --reporter=verbose stderr with VERBOSE=false
+
+From tester cycle 1 evidence:
+  vitest.verbose-false.log: 732/732 PASS (confirms no verbose lines bleed through)

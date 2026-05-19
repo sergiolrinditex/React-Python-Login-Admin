@@ -1,0 +1,21 @@
+# Data Contract Used — P04-S03-T001 AuditLogPage
+
+Verification Data Contract rows: n/a
+  — audit_logs is derived; no dedicated VDC row in TECHNICAL_GUIDE §6.5.
+  — Backend integration tests create auditor fixtures inline (test_audit_endpoint.py).
+  — Frontend vitest tests use mocked fetch (unit/integration scope).
+
+Real/provided data for unit/integration test level:
+  — Mock data includes AuditLog objects with realistic UUIDs (actor_user_id, entity_id)
+  — Envelope: {data: AuditLog[], meta: {request_id, next_cursor, has_more, count}, errors:[]}
+  — All 6 error paths (200/401/403/422/5xx/network) covered with mock fetch responses
+
+Data observed during test execution (verbose-true run):
+  — audit.repo.fetch.before: {has_actor_present, action_present, limit, from_date, to_date}
+  — audit.repo.fetch.after: {count, has_more, request_id}
+  — No actor UUIDs, no IPs, no metadata blobs in logs (PII-clean test passed)
+
+Note for /verify-slice:
+  — RISK_R7: No people_auditor seed user in data/verification/
+  — Workaround: use super_admin credentials from verification data bootstrap
+  — Backend backend/tests/integration/test_audit_endpoint.py creates auditors inline via fixtures

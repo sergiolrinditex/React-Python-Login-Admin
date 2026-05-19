@@ -1,0 +1,70 @@
+## verify-slice Backend Evidence — P04-S03-T001
+## Generated: 2026-05-19T07:34:00Z
+## Environment: localhost backend (FastAPI/uvicorn port 8000)
+
+=== CURL 1: GET /api/v1/admin/audit (super_admin JWT) → 200 ===
+
+REQUEST:
+  GET /api/v1/admin/audit?from=2026-05-01T00:00:00Z&to=2026-05-31T23:59:59Z&limit=5
+  Authorization: Bearer <super_admin JWT — roles:["super_admin"]>
+  X-Request-ID: verify-audit-001
+
+RESPONSE:
+  HTTP/1.1 200 OK
+  Body: {
+    "data": [
+      {"id":"6c7b07e9-b5fd-43c8-a3aa-5299fae06c31","actor_user_id":"b1a2c3d4-e5f6-7890-abcd-ef1234567890","action":"auth.sign_in","entity_type":"user","entity_id":"b1a2c3d4-e5f6-7890-abcd-ef1234567890","metadata":{"ip":"127.0.0.1","outcome":"success","request_id":"verify-superadmin-001","user_agent":"curl/8.7.1"},"created_at":"2026-05-19T07:34:42.899043Z"},
+      {"id":"cb7830ec-f404-40e0-8252-ef43d253c318","actor_user_id":"c6ca6bf1-fd75-44c9-a2d1-e3db703b5e62","action":"auth.sign_in","entity_type":"user","entity_id":"c6ca6bf1-fd75-44c9-a2d1-e3db703b5e62","metadata":{"ip":"127.0.0.1","outcome":"success","request_id":"verify-seed-001","user_agent":"curl/8.7.1"},"created_at":"2026-05-19T07:34:36.683753+00"},
+      {"id":"1fdfaf4f-041b-4e73-bccc-0e070727af99","actor_user_id":"c6ca6bf1-fd75-44c9-a2d1-e3db703b5e62","action":"auth.sign_in","entity_type":"user","entity_id":"c6ca6bf1-fd75-44c9-a2d1-e3db703b5e62","metadata":{"ip":"127.0.0.1","outcome":"success","request_id":"a39ac34f-5642-445e-8abb-53383f704863","user_agent":"curl/8.7.1"},"created_at":"2026-05-19T07:32:59.981218+00"}
+    ],
+    "meta": {"request_id":"verify-audit-001","next_cursor":null,"has_more":false,"count":3},
+    "errors": []
+  }
+  RESULT: PASS (200 OK, 3 rows, count=3, has_more=false, X-Request-ID returned)
+
+=== CURL 2: GET /api/v1/admin/audit (no auth) → 401 ===
+
+REQUEST:
+  GET /api/v1/admin/audit?from=2026-05-01T00:00:00Z&to=2026-05-31T23:59:59Z
+  (no Authorization header)
+
+RESPONSE:
+  HTTP/1.1 401 Unauthorized
+  Body: {"data":null,"meta":{},"errors":[{"code":"AUTH_SESSION_EXPIRED","message":"..."}]}
+  RESULT: PASS (401 as expected)
+
+=== CURL 3: GET /health → 200 ===
+
+REQUEST:
+  GET /health
+
+RESPONSE:
+  HTTP/1.1 200 OK
+  Body: {"data":{"status":"ok","version":"0.1.0","uptime":30798.3}}
+  RESULT: PASS
+
+=== DB QUERY: SELECT from audit_logs ===
+
+QUERY:
+  SELECT id, actor_user_id, action, entity_type, (metadata->>'request_id') as req_id, created_at
+  FROM audit_logs ORDER BY created_at DESC LIMIT 10;
+
+RESULT (4 rows):
+  d3b2c00d | c6ca6bf1 | auth.sign_in | user | 5dc21721... | 2026-05-19 07:34:55
+  6c7b07e9 | b1a2c3d4 | auth.sign_in | user | verify-superadmin-001 | 2026-05-19 07:34:42
+  cb7830ec | c6ca6bf1 | auth.sign_in | user | verify-seed-001 | 2026-05-19 07:34:36
+  1fdfaf4f | c6ca6bf1 | auth.sign_in | user | a39ac34f... | 2026-05-19 07:32:59
+
+  VERIFIED: audit_logs table has real rows; actor_user_id is UUID (not null);
+  action is auth.sign_in (real audit event from login flows executed).
+
+=== DATA SETUP ===
+- Verification data bootstrap: ran successfully (groups: auth, history, admin_ai, mcp_agents, rag_chat)
+- super_admin user created inline (RISK_R7 mitigation a):
+  email: superadmin.verify@inditex-sandbox.com
+  id: b1a2c3d4-e5f6-7890-abcd-ef1234567890
+  password: SuperVerify2024!
+  role: super_admin (assigned via SQL — role table: roles.id=3af31ba8)
+- Audit rows generated via real sign-in actions (curl to /api/v1/auth/sign-in):
+  3 rows for admin.peopletech@inditex-sandbox.com
+  1 row for superadmin.verify@inditex-sandbox.com

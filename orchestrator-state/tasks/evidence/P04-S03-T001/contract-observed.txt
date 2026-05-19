@@ -1,0 +1,40 @@
+# Front → Back → DB Contract Observed — P04-S03-T001
+
+Route: /admin/audit
+  Provider: RequireRole(["people_auditor","super_admin"]) — NEW block in router.tsx (not inside people_admin block)
+
+API Client: auditRepository.getAuditPage
+  Endpoint: GET /api/v1/admin/audit
+  Params: from, to, actor, action, cursor, limit
+  Response: {data: AuditLog[], meta: {request_id, next_cursor, has_more, count}, errors:[]}
+
+Auth Guard confirmed:
+  - No auth + no params → 422 (required params missing)
+  - No auth + params → 401 AUTH_SESSION_EXPIRED (backend endpoint confirmed alive)
+  - Endpoint mounted at: http://localhost:8000/api/v1/admin/audit
+
+Repository contract:
+  File: frontend/src/features/audit/data/auditRepository.ts
+  Method: getAuditPage(query: AuditQuery): Promise<Result<AuditPage, AuditError>>
+
+DTO:
+  AuditLog: {id, actor_user_id, action, entity_type, entity_id, metadata, created_at}
+
+Table:
+  audit_logs (existing, read-only from this slice)
+
+Logging:
+  - verbose=true: BEFORE/AFTER logs with has_from, has_to, count, has_more — no PII
+  - verbose=false: only warn/error logs (auth_expired, forbidden, validation_error, server_error)
+
+Tests:
+  auditRepository.test.ts: 9 tests — success envelope, 401, 403, 422, 5xx, network failure
+  useAuditQuery.test.tsx: 15 tests — hook integration with TanStack Query
+  AuditLogPage.test.tsx: 10 tests — 5 UI states + filter behavior + a11y
+  TOTAL: 34 audit-specific tests PASS
+
+Shared file edits (additive-only confirmed via git diff):
+  router.tsx: 1 import + 1 new RequireRole block + verbose-log array entry + docstring
+  i18n/index.ts: audit namespace appended in ES/EN/FR (no deletions)
+  i18n/languages.ts: "audit" appended to I18N_NAMESPACES (no deletions)
+  i18n/__tests__/i18n.test.ts: count assertion updated 9→11 (T002 had added usage but not updated test; this corrects it)

@@ -1,0 +1,50 @@
+stderr | src/features/audit/presentation/__tests__/useAuditQuery.test.tsx > useAuditQuery > useAuditQuery: error propagation — forbidden error surfaces in result
+[audit] audit.hook.queryFn.error { error_code: [32m'AUDIT_FORBIDDEN'[39m }
+
+--
+ ✓ src/features/audit/presentation/__tests__/useAuditQuery.test.tsx > isAuditRangeValid > useAuditQuery: returns true for valid 7-day range 1ms
+ ✓ src/features/audit/presentation/__tests__/useAuditQuery.test.tsx > isAuditRangeValid > useAuditQuery: returns false when from >= to 0ms
+ ✓ src/features/audit/presentation/__tests__/useAuditQuery.test.tsx > isAuditRangeValid > useAuditQuery: returns false when range > 90 days 0ms
+ ✓ src/features/audit/presentation/__tests__/useAuditQuery.test.tsx > isAuditRangeValid > useAuditQuery: returns true for exactly 90 days 0ms
+ ✓ src/features/audit/presentation/__tests__/useAuditQuery.test.tsx > isActorValid > isActorValid: returns true for empty string 0ms
+ ✓ src/features/audit/presentation/__tests__/useAuditQuery.test.tsx > isActorValid > isActorValid: returns true for valid UUID 0ms
+ ✓ src/features/audit/presentation/__tests__/useAuditQuery.test.tsx > isActorValid > isActorValid: returns false for non-UUID string 0ms
+ ✓ src/features/audit/presentation/__tests__/useAuditQuery.test.tsx > isActorValid > isActorValid: returns true for whitespace-only string 0ms
+ ✓ src/features/audit/presentation/__tests__/useAuditQuery.test.tsx > useAuditQuery > useAuditQuery: loading→success resolves data when getAuditPage returns ok 67ms
+ ✓ src/features/audit/presentation/__tests__/useAuditQuery.test.tsx > useAuditQuery > useAuditQuery: invalid range → isRangeInvalid=true, no fetch triggered 1ms
+ ✓ src/features/audit/presentation/__tests__/useAuditQuery.test.tsx > useAuditQuery > useAuditQuery: invalid actor UUID → isActorInvalid=true, no fetch triggered 1ms
+ ✓ src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: validators (pure) > W-validators-01 — validateProviderType: valid values return null 1ms
+ ✓ src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: validators (pure) > W-validators-02 — validateProviderType: empty/invalid returns i18n key 0ms
+--
+stderr | src/features/audit/presentation/__tests__/useAuditQuery.test.tsx > useAuditQuery > useAuditQuery: error propagation — forbidden error surfaces in result
+[audit] audit.hook.queryFn.error { error_code: [32m'AUDIT_FORBIDDEN'[39m }
+
+--
+stderr | src/features/audit/presentation/__tests__/useAuditQuery.test.tsx > useAuditQuery > useAuditQuery: network error surfaces correctly
+[audit] audit.hook.queryFn.error { error_code: [32m'AUDIT_NETWORK_ERROR'[39m }
+
+--
+ ✓ src/features/audit/presentation/__tests__/useAuditQuery.test.tsx > useAuditQuery > useAuditQuery: error propagation — forbidden error surfaces in result 1047ms
+stderr | src/features/rag/__tests__/useIndexDocument.test.tsx > useIndexDocument > I02 — 409 in-progress: throws RagIndexInProgressError
+[rag] rag.hook.useIndexDocument.error { doc_id: [32m'doc-001'[39m, error: [32m'RAG_INDEX_IN_PROGRESS'[39m }
+--
+stderr | src/features/audit/presentation/__tests__/useAuditQuery.test.tsx > useAuditQuery > useAuditQuery: network error surfaces correctly
+[audit] audit.hook.queryFn.error { error_code: [32m'AUDIT_NETWORK_ERROR'[39m }
+
+--
+ ✓ src/features/audit/presentation/__tests__/useAuditQuery.test.tsx > useAuditQuery > useAuditQuery: network error surfaces correctly 1038ms
+ ✓ src/features/audit/presentation/__tests__/useAuditQuery.test.tsx > useAuditQuery > useAuditQuery: refetch function triggers an additional query call 60ms
+ ✓ src/features/audit/presentation/__tests__/useAuditQuery.test.tsx > useAuditQuery > useAuditQuery: valid actor UUID passes through to query 55ms
+stderr | src/features/mcp/__tests__/useCreateMcpServer.test.tsx > useCreateMcpServer > C02 — mutate 422 → throws McpValidationError with fieldErrors
+[mcp] mcp.useCreateMcpServer.mutate.error { code: [32m'MCP_VALIDATION_ERROR'[39m }
+--
+stderr | src/pages/admin/audit/__tests__/AuditLogPage.test.tsx > AuditLogPage > AuditLogPage: error_network state renders retry CTA and clicking triggers refetch
+[audit] audit.page.error.state { error_code: [32m'AUDIT_NETWORK_ERROR'[39m }
+
+stderr | src/pages/admin/audit/__tests__/AuditLogPage.test.tsx > AuditLogPage > AuditLogPage: permission_denied state renders forbidden view with back button
+[audit] audit.page.error.state { error_code: [32m'AUDIT_FORBIDDEN'[39m }
+
+ ✓ src/pages/admin/audit/__tests__/AuditLogPage.test.tsx > AuditLogPage > AuditLogPage: loading state renders skeleton with aria-busy 33ms
+ ✓ src/pages/admin/audit/__tests__/AuditLogPage.test.tsx > AuditLogPage > AuditLogPage: success state renders table with rows 44ms
+ ✓ src/pages/admin/audit/__tests__/AuditLogPage.test.tsx > AuditLogPage > AuditLogPage: empty state renders Wordmark Hilo + CTA 8ms
+ ✓ src/pages/admin/audit/__tests__/AuditLogPage.test.tsx > AuditLogPage > AuditLogPage: error_network state renders retry CTA and clicking triggers refetch 9ms

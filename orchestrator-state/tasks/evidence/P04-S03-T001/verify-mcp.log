@@ -1,0 +1,40 @@
+## verify-mcp.log — P04-S03-T001 AuditLogPage
+## Generated: 2026-05-19T10:15:00Z
+
+MCP_USED: claude-in-chrome
+MCP_FALLBACK_REASON: Chrome DevTools MCP default profile locked (SingletonLock by PID 66656 — /Users/sergiolr/.cache/chrome-devtools-mcp/chrome-profile). Isolated session on port 9609 (PID 67407) was alive but Chrome DevTools MCP connects to default profile, not the isolated one.
+
+CHROME_ISOLATED_SESSION:
+  PID: 67407
+  PORT: 9609
+  USER_DATA_DIR: /Users/sergiolr/.cache/orquestador/browser-mcp/chrome-devtools/2814703352/P04-S03-T001
+  BROWSER: Chrome/148.0.7778.168
+  STATUS: alive (confirmed via curl http://127.0.0.1:9609/json/version)
+
+MCP_HEALTH_CHECK:
+  chrome-devtools: listed_but_unusable (profile lock — SingletonLock PID 66656)
+  claude-in-chrome: USABLE — responded to tabs_context_mcp immediately
+  agent360-browser-mcp: not tried (claude-in-chrome was usable)
+
+TABS_FOUND:
+  777662566: http://localhost:5173/admin/audit (Hilo) — used for all verification
+
+FLOWS_VERIFIED:
+  1. success — audit table with real rows (auth.sign_in, auth.refresh, auth.mfa.verify, admin.ai.model.test) PASS
+  2. empty — filter 2026-01-01 to 2026-01-02 → EmptyView with Hilo wordmark + CTA PASS
+  3. permission_denied — people_admin navigating to /admin/audit → redirected to /auth/sign-in?next=%2Fadmin%2Faudit PASS
+  4. validation_error — desde=2026-05-19 > hasta=2026-05-01 → "La fecha de inicio debe ser anterior a la fecha de fin." PASS
+  5. pagination — "Cargar más" button visible in success state PASS
+  6. network_error — PARTIAL: not captured via MCP; covered by tester run curl checks and vitest test 7 (NetworkErrorView renders data-testid="audit-network-error")
+
+RETRY_FALLBACK_HISTORY:
+  - chrome-devtools tried first: list_pages returned profile lock error
+  - chrome-mcp-doctor.sh run: LOCK_STATUS=active_process_holds_profile, LOCK_PID=66656
+  - claude-in-chrome selected as MCP_BROWSER (second fallback per priority rules)
+  - No agent360-browser-mcp needed
+
+TIMING:
+  Preflight: ~3 tool calls (ToolSearch + tabs_context_mcp)
+  Flows: ~20 tool calls
+  Evidence writes: ~10 tool calls
+  Total: within budget

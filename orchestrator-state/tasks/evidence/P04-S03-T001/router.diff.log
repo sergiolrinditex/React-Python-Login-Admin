@@ -1,0 +1,77 @@
+diff --git a/frontend/src/app/router.tsx b/frontend/src/app/router.tsx
+index d372591..6cff46e 100644
+--- a/frontend/src/app/router.tsx
++++ b/frontend/src/app/router.tsx
+@@ -32,6 +32,11 @@
+  *   Updated in P04-S02-T005 — added /admin/ai/agents route wired to AgentsPage (§D-T005-ROUTER).
+  *     WRITE_SET_DRIFT §D-T005-ROUTER: router.tsx declared in T005 Coverage Registry write_set.
+  *   Updated in P04-S03-T002 — added /admin/usage route wired to UsagePage (§D-T002-ROUTER).
++ *   Updated in P04-S03-T001 — added /admin/audit route wired to AuditLogPage (§D-T001-ROUTER).
++ *     WRITE_SET_DRIFT §D-T001-ROUTER: router.tsx not in registry write_set (1 file declared);
++ *     pre-authorized by task pack §6 §D-T001-ROUTER anchor (same precedent as P04-S03-T002).
++ *     Route placed in its OWN RequireRole(["people_auditor","super_admin"]) block — NOT inside
++ *     the existing admin block — per D-T001-RBAC-SCOPE decision.
+  *
+  * Responsibility: single mount point for the application's route tree.
+  *   Exports <AppRouter> which is consumed by main.tsx inside <Providers>.
+@@ -55,6 +60,7 @@
+  *   /admin/ai/agents   → AgentsPage (admin, RequireRole) — P04-S02-T005 §D-T005-ROUTER
+  *   /admin/ai/models   → AdminAiModelsPage (P04-S01-T002)
+  *   /admin/usage       → UsagePage (RequireRole admin) — P04-S03-T002
++ *   /admin/audit       → AuditLogPage (RequireRole people_auditor|super_admin) — P04-S03-T001
+  *   (other admin routes → catch-all → /)
+  *   /                  → RootRedirect: authenticated→/chat, unauthenticated→/auth/sign-in
+  *   *                  → redirects to / (catch-all; uses RootRedirect logic)
+@@ -69,6 +75,7 @@
+  * P04-S02-T001 adds: RagDocumentsPage at /admin/rag/documents (§D-RAGDOC-ROUTER).
+  * P04-S02-T005 adds: AgentsPage at /admin/ai/agents (§D-T005-ROUTER).
+  * P04-S03-T002 adds: /admin/usage real UsagePage (§D-T002-ROUTER).
++ * P04-S03-T001 adds: /admin/audit real AuditLogPage (§D-T001-ROUTER).
+  *
+  * AuthProvider composition (task pack §I):
+  *   INSIDE router.tsx: <AuthProvider> wraps <Routes>.
+@@ -102,6 +109,7 @@ import RagCollectionsPage from "../pages/admin/rag/RagCollectionsPage";
+ import AccountPage from "../pages/account/AccountPage";
+ import AgentsPage from "../pages/admin/agents/AgentsPage";
+ import UsagePage from "../pages/admin/usage/UsagePage";
++import AuditLogPage from "../pages/admin/audit/AuditLogPage";
+ import { AuthProvider } from "../features/auth/presentation/AuthProvider";
+ import { useAuth } from "../features/auth/presentation/AuthProvider";
+ import { RequireAuth } from "../features/auth/presentation/RequireAuth";
+@@ -260,7 +268,7 @@ export function AppRouter(): ReactNode {
+     console.info("AppRouter.render.start", {
+       phase: "P04",
+       slice: "P04-S03-T002",
+-      routes: [ROUTE_SHOWCASE, ROUTE_AUTH_SIGN_IN, ROUTE_AUTH_SIGN_UP, ROUTE_AUTH_RESET_SENT, ROUTE_AUTH_2FA, ROUTE_CHAT, ROUTE_HISTORY, ROUTE_ACCOUNT, ROUTE_ADMIN, ROUTE_ADMIN_AI_MCP, ROUTE_ADMIN_AI_MCP_NEW, ROUTE_ADMIN_RAG_DOCUMENTS, ROUTE_ADMIN_RAG_COLLECTIONS, ROUTE_ADMIN_AI_MODELS, ROUTE_ADMIN_AI_MODELS_NEW, ROUTE_ADMIN_AI_MODELS_TEST, ROUTE_ADMIN_AI_AGENTS, ROUTE_ADMIN_USAGE],
++      routes: [ROUTE_SHOWCASE, ROUTE_AUTH_SIGN_IN, ROUTE_AUTH_SIGN_UP, ROUTE_AUTH_RESET_SENT, ROUTE_AUTH_2FA, ROUTE_CHAT, ROUTE_HISTORY, ROUTE_ACCOUNT, ROUTE_ADMIN, ROUTE_ADMIN_AI_MCP, ROUTE_ADMIN_AI_MCP_NEW, ROUTE_ADMIN_RAG_DOCUMENTS, ROUTE_ADMIN_RAG_COLLECTIONS, ROUTE_ADMIN_AI_MODELS, ROUTE_ADMIN_AI_MODELS_NEW, ROUTE_ADMIN_AI_MODELS_TEST, ROUTE_ADMIN_AI_AGENTS, ROUTE_ADMIN_USAGE, ROUTE_ADMIN_AUDIT],
+     });
+   }
+ 
+@@ -333,10 +341,23 @@ export function AppRouter(): ReactNode {
+             <Route path={ROUTE_ADMIN_AI_AGENTS} element={<AgentsPage />} />
+             {/* P04-S03-T002: real UsagePage at /admin/usage — §D-T002-ROUTER */}
+             <Route path={ROUTE_ADMIN_USAGE} element={<UsagePage />} />
+-            {/*
+-             * Subsequent admin sub-routes wired in P04-S03+ slices.
+-             * Until then, catch-all handles them → / → /chat for admins.
+-             */}
++          </Route>
++
++          {/*
++           * Audit routes — people_auditor or super_admin only (D-T001-RBAC-SCOPE).
++           * Own RequireRole block: must NOT be inside the admin block above because
++           * people_auditor ≠ people_admin (separation of duties per backend require_auditor).
++           * §D-T001-ROUTER: WRITE_SET_DRIFT pre-authorized by task pack §6 §D-T001-ROUTER anchor.
++           */}
++          <Route
++            element={
++              <RequireRole roles={["people_auditor", "super_admin"]}>
++                <Outlet />
++              </RequireRole>
++            }
++          >
++            {/* P04-S03-T001: real AuditLogPage at /admin/audit — §D-T001-ROUTER */}
++            <Route path={ROUTE_ADMIN_AUDIT} element={<AuditLogPage />} />
+           </Route>
+ 
+           {/*
