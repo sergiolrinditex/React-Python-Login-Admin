@@ -1,0 +1,12 @@
+2026-05-19 10:44:02,299 app.auth.routers.sign_in INFO auth.sign_in.received email_domain=example.com request_id=90e6005f-2427-4d7b-a712-91b1716e08c6
+2026-05-19 10:44:02,299 app.auth.services.sign_in INFO auth.sign_in.starting request_id=90e6005f-2427-4d7b-a712-91b1716e08c6 email_domain=example.com
+2026-05-19 10:44:19,848 app.auth.routers.sign_in INFO auth.sign_in.received email_domain=inditex-sandbox.com request_id=8b380af0-c49f-44c8-98a9-404d0477be83
+2026-05-19 10:44:19,848 app.auth.services.sign_in INFO auth.sign_in.starting request_id=8b380af0-c49f-44c8-98a9-404d0477be83 email_domain=inditex-sandbox.com
+2026-05-19 10:52:25,901 app.auth.routers.sign_in INFO auth.sign_in.received email_domain=inditex-sandbox.com request_id=2d7d6cd4-2ada-4083-9abc-42e8f2338454
+2026-05-19 10:52:25,901 app.auth.services.sign_in INFO auth.sign_in.starting request_id=2d7d6cd4-2ada-4083-9abc-42e8f2338454 email_domain=inditex-sandbox.com
+2026-05-19 10:52:41,819 app.auth.routers.sign_in INFO auth.sign_in.received email_domain=inditex-sandbox.com request_id=3f584114-809c-41f0-9050-725c6d1a315f
+2026-05-19 10:52:41,819 app.auth.services.sign_in INFO auth.sign_in.starting request_id=3f584114-809c-41f0-9050-725c6d1a315f email_domain=inditex-sandbox.com
+2026-05-19 10:53:02,861 app.auth.services.mfa INFO auth.mfa.verify.received request_id=f5f81428-6cc5-4a13-95db-a312a9a5564f ip=127.0.0.1
+2026-05-19 10:53:53,255 app.auth.routers.sign_in INFO auth.sign_in.received email_domain=inditex-sandbox.com request_id=cb38891c-1b67-49c6-85b4-e44b2597f1ec
+2026-05-19 10:53:53,255 app.auth.services.sign_in INFO auth.sign_in.starting request_id=cb38891c-1b67-49c6-85b4-e44b2597f1ec email_domain=inditex-sandbox.com
+2026-05-19 10:53:53,430 app.auth.services.mfa INFO auth.mfa.verify.received request_id=ad1a2f7c-3ec7-4a15-a6e0-e9c302da7a78 ip=127.0.0.1

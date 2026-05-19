@@ -1,0 +1,79 @@
+{
+  "verification_date": "2026-05-19T12:15:00Z",
+  "task_id": "P05-S01-T001",
+  "mcp_browser": "chrome-devtools",
+  "isolated_context": "P05-S01-T001",
+  "network_requests": {
+    "sign_in": {
+      "method": "POST",
+      "url": "http://localhost:5173/api/v1/auth/sign-in",
+      "status": 200,
+      "x_request_id_sent": "2c4ae704-7aa6-4c88-a953-70a8c7229c67",
+      "x_request_id_echoed": "2c4ae704-7aa6-4c88-a953-70a8c7229c67",
+      "mfa_required": true,
+      "mfa_challenge_token_present": true,
+      "expires_in": 300
+    },
+    "mfa_verify": {
+      "method": "POST",
+      "url": "http://localhost:5173/api/v1/auth/2fa/verify",
+      "status": 200,
+      "x_request_id_sent": "94a767ed-491f-4884-a529-37ef8ece2e2b",
+      "x_request_id_echoed": "94a767ed-491f-4884-a529-37ef8ece2e2b",
+      "access_token_present": true,
+      "expires_in": 1800,
+      "roles": ["employee"],
+      "preferred_language": "es",
+      "set_cookie": "refresh_token=...; HttpOnly; Max-Age=2592000; Path=/api/v1/auth; SameSite=lax; Secure"
+    },
+    "users_me": {
+      "method": "GET",
+      "url": "http://localhost:5173/api/v1/users/me",
+      "status": 200,
+      "authorization_present": true,
+      "x_request_id_sent": "be935326-9521-4d17-907e-21e83b819cc3",
+      "full_name": "Elena Verificación",
+      "employee_id": "EMP-VERIFY-001",
+      "brand": "Zara",
+      "society": "ITX-ES",
+      "center": "Madrid-HQ",
+      "country": "ES",
+      "department": "People & Talent"
+    },
+    "mfa_verify_invalid": {
+      "method": "POST",
+      "url": "http://localhost:5173/api/v1/auth/2fa/verify",
+      "code": "000000",
+      "status": 401,
+      "ui_message": "Código incorrecto. Vuelve a intentarlo.",
+      "aria_live": "assertive",
+      "input_invalid": true,
+      "no_credentials_leaked": true
+    }
+  },
+  "cookie_validation": {
+    "name": "refresh_token",
+    "HttpOnly": true,
+    "Secure": true,
+    "SameSite": "lax",
+    "Path": "/api/v1/auth",
+    "Max-Age": 2592000,
+    "rotated_on_refresh": true
+  },
+  "marginal_states": {
+    "back_navigation": "navigated_back_to_signin_history_entry_user_remains_authenticated",
+    "reload": {
+      "outcome": "redirected_to_signin_with_next_param",
+      "root_cause": "double_refresh_race_condition_second_call_uses_old_rotated_cookie",
+      "first_refresh": 200,
+      "second_refresh": 401,
+      "assessment": "ISSUE_FOUND"
+    },
+    "empty_state": "chat_home_shows_suggested_prompts_disabled_input_pass",
+    "error_network": "app_remained_at_chat_using_cached_state_when_backend_paused",
+    "permission_denied": "redirect_to_chat_when_employee_navigates_to_admin_pass",
+    "deep_link": "signin_with_next_param_redirects_back_to_chat_after_mfa_pass"
+  },
+  "console_errors": "none_during_happy_path",
+  "pii_check": "clean_0_matches"
+}
