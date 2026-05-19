@@ -1,0 +1,26 @@
+Verbose Logging Modes — P04-S03-T004 Tester Run
+================================================
+
+Backend ENABLE_VERBOSE_LOGGING:
+- Running at port 8000 with current env (ENABLE_VERBOSE_LOGGING not checked in process env)
+- Backend code confirmed: _VERBOSE = os.getenv("ENABLE_VERBOSE_LOGGING","false").lower()=="true"
+- When _VERBOSE=true: debug-level BEFORE log (admin.usage.list.start) + AFTER log (admin.usage.list.ok)
+  with fields: user_id=<UUID>, from=<datetime>, to=<datetime>, group_by=<str>, rows=<int>, request_id=<UUID>
+- When _VERBOSE=false: only logger.info AFTER log (admin.usage.list.ok) with user_id, rows, invocations
+- ERROR log always fires: admin.usage.list.error with user_id, request_id, error type (no stack trace PII)
+- PII-CLEAN: no tokens, no passwords, no email addresses in any log output
+
+Frontend VITE_ENABLE_VERBOSE_LOGGING:
+- verbose=true: 697/698 PASS (1 pre-existing i18n failure)
+  - Frontend logs visible in vitest stdout — feature logs show BEFORE/AFTER for admin/usage ops
+- verbose=false: 697/698 PASS (same 1 pre-existing i18n failure)
+  - Only warning+error level visible in vitest output
+
+Verbose delta confirmed:
+- verbose_on run shows additional debug-level log stdout in vitest output for admin/usage tests
+- verbose_off run shows only warning/error in test output
+- Backend mode-toggle not reattempted (env-only, server running; frontend verbose covered via VITE flag in vitest runs)
+
+NOTE: Servers are running with current env settings; reinit to switch backend ENABLE_VERBOSE_LOGGING not 
+performed per conservative mode (D-T004-VERIFY-AND-CLOSE: NO reset). Backend logging pattern confirmed 
+by code inspection of usage.py. Frontend verbose modes confirmed by both vitest runs.

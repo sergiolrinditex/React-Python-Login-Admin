@@ -1,0 +1,781 @@
+
+ RUN  v3.2.4 /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P04-S03-T004/frontend
+
+stdout | src/features/admin/data/__tests__/usageRepository.test.ts > usageRepository.getUsage > usageRepository: 200 returns Result.ok with UsageSummary
+[admin] usage.repo.fetch.before {
+  from: [32m'2026-04-16T00:00:00.000Z'[39m,
+  to: [32m'2026-05-16T00:00:00.000Z'[39m,
+  group_by: [32m'model_day'[39m,
+  request_id: [32m'ca8ca1b8-f1ba-4ed4-aa49-2af0e391272f'[39m
+}
+
+stdout | src/features/admin/data/__tests__/usageRepository.test.ts > usageRepository.getUsage > usageRepository: 200 returns Result.ok with UsageSummary
+[admin] usage.repo.fetch.after { row_count: [33m1[39m, range_days: [33m30[39m, request_id: [32m'req-001'[39m }
+
+stdout | src/features/admin/data/__tests__/usageRepository.test.ts > usageRepository.getUsage > usageRepository: 200 with empty rows returns Result.ok with empty rows
+[admin] usage.repo.fetch.before {
+  from: [32m'2026-04-16T00:00:00.000Z'[39m,
+  to: [32m'2026-05-16T00:00:00.000Z'[39m,
+  group_by: [32m'model_day'[39m,
+  request_id: [32m'951277ab-fff8-4971-a618-b9db1f7de7b2'[39m
+}
+
+stdout | src/features/admin/data/__tests__/usageRepository.test.ts > usageRepository.getUsage > usageRepository: 200 with empty rows returns Result.ok with empty rows
+[admin] usage.repo.fetch.after {
+  row_count: [33m0[39m,
+  range_days: [33m30[39m,
+  request_id: [32m'951277ab-fff8-4971-a618-b9db1f7de7b2'[39m
+}
+
+stdout | src/features/admin/data/__tests__/usageRepository.test.ts > usageRepository.getUsage > usageRepository: 422 returns UsageValidationError
+[admin] usage.repo.fetch.before {
+  from: [32m'2026-04-16T00:00:00.000Z'[39m,
+  to: [32m'2026-05-16T00:00:00.000Z'[39m,
+  group_by: [32m'model_day'[39m,
+  request_id: [32m'4903e16f-1f66-408e-8057-72dd5ce15ea4'[39m
+}
+
+stdout | src/features/admin/data/__tests__/usageRepository.test.ts > usageRepository.getUsage > usageRepository: 403 returns UsageForbiddenError
+[admin] usage.repo.fetch.before {
+  from: [32m'2026-04-16T00:00:00.000Z'[39m,
+  to: [32m'2026-05-16T00:00:00.000Z'[39m,
+  group_by: [32m'model_day'[39m,
+  request_id: [32m'0096d555-088b-499c-afb7-dac7be71f715'[39m
+}
+
+stdout | src/features/admin/data/__tests__/usageRepository.test.ts > usageRepository.getUsage > usageRepository: 401 returns UsageAuthExpiredError
+[admin] usage.repo.fetch.before {
+  from: [32m'2026-04-16T00:00:00.000Z'[39m,
+  to: [32m'2026-05-16T00:00:00.000Z'[39m,
+  group_by: [32m'model_day'[39m,
+  request_id: [32m'cde3acd2-effc-47e6-bd3d-9b9c92479f87'[39m
+}
+
+stdout | src/features/admin/data/__tests__/usageRepository.test.ts > usageRepository.getUsage > usageRepository: 500 returns UsageServerError
+[admin] usage.repo.fetch.before {
+  from: [32m'2026-04-16T00:00:00.000Z'[39m,
+  to: [32m'2026-05-16T00:00:00.000Z'[39m,
+  group_by: [32m'model_day'[39m,
+  request_id: [32m'3db9920d-ca74-42bc-8885-9db08c5fc387'[39m
+}
+
+stdout | src/features/admin/data/__tests__/usageRepository.test.ts > usageRepository.getUsage > usageRepository: network error (fetch throws TypeError) returns UsageNetworkError
+[admin] usage.repo.fetch.before {
+  from: [32m'2026-04-16T00:00:00.000Z'[39m,
+  to: [32m'2026-05-16T00:00:00.000Z'[39m,
+  group_by: [32m'model_day'[39m,
+  request_id: [32m'beb8e810-9713-4eb6-9c77-0c0a78bf0c5c'[39m
+}
+
+stdout | src/features/admin/data/__tests__/usageRepository.test.ts > usageRepository.getUsage > usageRepository: AbortError returns UsageNetworkError (aborted)
+[admin] usage.repo.fetch.before {
+  from: [32m'2026-04-16T00:00:00.000Z'[39m,
+  to: [32m'2026-05-16T00:00:00.000Z'[39m,
+  group_by: [32m'model_day'[39m,
+  request_id: [32m'a59be746-d23d-4408-90a6-10fa448a60df'[39m
+}
+
+stdout | src/features/admin/data/__tests__/usageRepository.test.ts > usageRepository.getUsage > usageRepository: AbortError returns UsageNetworkError (aborted)
+[admin] usage.repo.fetch.aborted { request_id: [32m'a59be746-d23d-4408-90a6-10fa448a60df'[39m }
+
+ ✓ src/features/admin/data/__tests__/usageRepository.test.ts (8 tests) 14ms
+stdout | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T01 — 200 happy path → Result.ok with populated rows
+[admin-ai] admin-ai.repo.getUsage.start {
+  from: [32m'2026-04-16T00:00:00Z'[39m,
+  to: [32m'2026-05-16T00:00:00Z'[39m,
+  group_by: [32m'model'[39m
+}
+
+stdout | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T01 — 200 happy path → Result.ok with populated rows
+[admin-ai] admin-ai.repo.getUsage.ok { row_count: [33m1[39m, total_invocations: [33m12[39m, request_id: [32m'test-request-id'[39m }
+
+stdout | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T02 — 200 empty (rows=[], totals all zeros) → Result.ok with empty data
+[admin-ai] admin-ai.repo.getUsage.start {
+  from: [32m'2026-04-16T00:00:00Z'[39m,
+  to: [32m'2026-05-16T00:00:00Z'[39m,
+  group_by: [32m'model'[39m
+}
+
+stdout | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T02 — 200 empty (rows=[], totals all zeros) → Result.ok with empty data
+[admin-ai] admin-ai.repo.getUsage.ok { row_count: [33m0[39m, total_invocations: [33m0[39m, request_id: [32m'test-request-id'[39m }
+
+stdout | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T03 — 401 final → Result.err(AdminAiAuthExpiredError)
+[admin-ai] admin-ai.repo.getUsage.start {
+  from: [32m'2026-04-16T00:00:00Z'[39m,
+  to: [32m'2026-05-16T00:00:00Z'[39m,
+  group_by: [32m'model'[39m
+}
+
+stdout | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T03b — AuthSessionExpiredError thrown by authFetch → Result.err(AdminAiAuthExpiredError)
+[admin-ai] admin-ai.repo.getUsage.start {
+  from: [32m'2026-04-16T00:00:00Z'[39m,
+  to: [32m'2026-05-16T00:00:00Z'[39m,
+  group_by: [32m'model'[39m
+}
+
+stdout | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T04 — 403 forbidden → Result.err(AdminAiForbiddenError)
+[admin-ai] admin-ai.repo.getUsage.start {
+  from: [32m'2026-04-16T00:00:00Z'[39m,
+  to: [32m'2026-05-16T00:00:00Z'[39m,
+  group_by: [32m'model'[39m
+}
+
+stdout | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T05 — 422 validation error → Result.err(AdminAiValidationError) with server code
+[admin-ai] admin-ai.repo.getUsage.start {
+  from: [32m'2026-04-16T00:00:00Z'[39m,
+  to: [32m'2026-05-16T00:00:00Z'[39m,
+  group_by: [32m'model'[39m
+}
+
+stdout | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T06 — 500 server error → Result.err(AdminAiInternalError)
+[admin-ai] admin-ai.repo.getUsage.start {
+  from: [32m'2026-04-16T00:00:00Z'[39m,
+  to: [32m'2026-05-16T00:00:00Z'[39m,
+  group_by: [32m'model'[39m
+}
+
+stdout | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T07 — network rejection (TypeError) → Result.err(AdminAiNetworkError)
+[admin-ai] admin-ai.repo.getUsage.start {
+  from: [32m'2026-04-16T00:00:00Z'[39m,
+  to: [32m'2026-05-16T00:00:00Z'[39m,
+  group_by: [32m'model'[39m
+}
+
+stdout | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T08-url — URL is built correctly with all params
+[admin-ai] admin-ai.repo.getUsage.start {
+  from: [32m'2026-04-16T00:00:00Z'[39m,
+  to: [32m'2026-05-16T00:00:00Z'[39m,
+  group_by: [32m'day'[39m
+}
+
+stdout | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getUsage > T08-url — URL is built correctly with all params
+[admin-ai] admin-ai.repo.getUsage.ok { row_count: [33m1[39m, total_invocations: [33m12[39m, request_id: [32m'test-request-id'[39m }
+
+stdout | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getProviders > T08 — getProviders happy path → Result.ok([AiProvider])
+[admin-ai] admin-ai.repo.getProviders.start {}
+
+stdout | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getProviders > T08 — getProviders happy path → Result.ok([AiProvider])
+[admin-ai] admin-ai.repo.getProviders.ok { provider_count: [33m1[39m, request_id: [32m'test-request-id'[39m }
+
+stdout | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getProviders > T09 — getProviders 401 → AdminAiAuthExpiredError; onAuthFailure invoked via authFetch
+[admin-ai] admin-ai.repo.getProviders.start {}
+
+stdout | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getProviders > T10 — getProviders 403 → AdminAiForbiddenError
+[admin-ai] admin-ai.repo.getProviders.start {}
+
+stdout | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getProviders > T11 — getProviders 500 → AdminAiInternalError
+[admin-ai] admin-ai.repo.getProviders.start {}
+
+stdout | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getProviders > T12 — getProviders network reject → AdminAiNetworkError
+[admin-ai] admin-ai.repo.getProviders.start {}
+
+stdout | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getModels > T13 — getModels happy path (no provider_id) → Result.ok([AiModel])
+[admin-ai] admin-ai.repo.getModels.start { has_provider_filter: [33mfalse[39m }
+
+stdout | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getModels > T13 — getModels happy path (no provider_id) → Result.ok([AiModel])
+[admin-ai] admin-ai.repo.getModels.ok { model_count: [33m1[39m, request_id: [32m'test-request-id'[39m }
+
+stdout | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getModels > T14 — getModels 401 → AdminAiAuthExpiredError
+[admin-ai] admin-ai.repo.getModels.start { has_provider_filter: [33mfalse[39m }
+
+stdout | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getModels > T15 — getModels 403 → AdminAiForbiddenError
+[admin-ai] admin-ai.repo.getModels.start { has_provider_filter: [33mfalse[39m }
+
+stdout | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getModels > T16 — getModels 500 → AdminAiInternalError
+[admin-ai] admin-ai.repo.getModels.start { has_provider_filter: [33mfalse[39m }
+
+stdout | src/features/admin-ai/__tests__/adminAiRepository.test.ts > adminAiRepository.getModels > T17 — getModels network reject → AdminAiNetworkError
+[admin-ai] admin-ai.repo.getModels.start { has_provider_filter: [33mfalse[39m }
+
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts (38 tests) 29ms
+stdout | src/features/admin/presentation/__tests__/useUsage.test.tsx > useUsage > useUsage: loading→success resolves data when getUsage returns ok
+[admin] usage.hook.useUsage.render {
+  from: [32m'2026-04-16T00:00:00.000Z'[39m,
+  to: [32m'2026-05-16T00:00:00.000Z'[39m,
+  group_by: [32m'model_day'[39m,
+  range_valid: [33mtrue[39m
+}
+[admin] usage.hook.queryFn.start {
+  from: [32m'2026-04-16T00:00:00.000Z'[39m,
+  to: [32m'2026-05-16T00:00:00.000Z'[39m,
+  group_by: [32m'model_day'[39m
+}
+
+stdout | src/features/admin/presentation/__tests__/useUsage.test.tsx > useUsage > useUsage: loading→success resolves data when getUsage returns ok
+[admin] usage.hook.queryFn.ok { row_count: [33m1[39m }
+
+stdout | src/features/admin/presentation/__tests__/useUsage.test.tsx > useUsage > useUsage: loading→success resolves data when getUsage returns ok
+[admin] usage.hook.useUsage.render {
+  from: [32m'2026-04-16T00:00:00.000Z'[39m,
+  to: [32m'2026-05-16T00:00:00.000Z'[39m,
+  group_by: [32m'model_day'[39m,
+  range_valid: [33mtrue[39m
+}
+
+stdout | src/features/admin-ai/__tests__/useAdminAiModels.test.tsx > useAdminAiModels > H01 — loading state on mount: isLoading=true, data=undefined
+[admin-ai] admin-ai.hook.useAdminAiModels.render.start {}
+[admin-ai] admin-ai.hook.useAdminAiModels.queryFn.start {}
+
+stdout | src/features/admin-ai/__tests__/useModelTest.test.tsx > useModelTest > U03 — submit with empty prompt → error_validation + fieldErrors.prompt set
+[admin-ai] admin-ai.hook.useModelTest.submit.validation_frontend { prompt_len: [33m0[39m }
+
+stdout | src/features/admin-ai/__tests__/useAdminAiModels.test.tsx > useAdminAiModels > H02 — success: joins providers+models into rows with derived providerName+providerStatus
+[admin-ai] admin-ai.hook.useAdminAiModels.render.start {}
+[admin-ai] admin-ai.hook.useAdminAiModels.queryFn.start {}
+
+stdout | src/features/admin-ai/__tests__/useAdminAiModels.test.tsx > useAdminAiModels > H02 — success: joins providers+models into rows with derived providerName+providerStatus
+[admin-ai] admin-ai.hook.useAdminAiModels.queryFn.ok { provider_count: [33m1[39m, model_count: [33m1[39m }
+
+stdout | src/features/admin-ai/__tests__/useDashboardUsage.test.tsx > useDashboardUsage > H01 — query key includes admin/usage/dashboard with from/to/group_by shape
+[admin-ai] admin-ai.hook.useDashboardUsage.render {
+  from: [32m'2026-04-19T06:53:43.466Z'[39m,
+  to: [32m'2026-05-19T06:53:43.466Z'[39m,
+  group_by: [32m'model'[39m
+}
+[admin-ai] admin-ai.hook.useDashboardUsage.queryFn.start {
+  from: [32m'2026-04-19T06:53:43.466Z'[39m,
+  to: [32m'2026-05-19T06:53:43.466Z'[39m,
+  group_by: [32m'model'[39m
+}
+
+stdout | src/features/admin-ai/__tests__/useDashboardUsage.test.tsx > useDashboardUsage > H01 — query key includes admin/usage/dashboard with from/to/group_by shape
+[admin-ai] admin-ai.hook.useDashboardUsage.queryFn.ok { row_count: [33m1[39m, total_invocations: [33m12[39m }
+
+stdout | src/features/admin-ai/__tests__/useModelTest.test.tsx > useModelTest > U04 — submit with prompt >4000 chars → error_validation
+[admin-ai] admin-ai.hook.useModelTest.submit.validation_frontend { prompt_len: [33m4001[39m }
+
+stdout | src/features/admin-ai/__tests__/useAdminAiModels.test.tsx > useAdminAiModels > H02 — success: joins providers+models into rows with derived providerName+providerStatus
+[admin-ai] admin-ai.hook.useAdminAiModels.render.start {}
+
+stdout | src/features/admin-ai/__tests__/useDashboardUsage.test.tsx > useDashboardUsage > H01 — query key includes admin/usage/dashboard with from/to/group_by shape
+[admin-ai] admin-ai.hook.useDashboardUsage.render {
+  from: [32m'2026-04-19T06:53:43.466Z'[39m,
+  to: [32m'2026-05-19T06:53:43.466Z'[39m,
+  group_by: [32m'model'[39m
+}
+
+stdout | src/features/admin-ai/__tests__/useModelTest.test.tsx > useModelTest > U05 — submit success → submissionState=success, testResult populated
+[admin-ai] admin-ai.hook.useModelTest.submit.start { prompt_len: [33m30[39m }
+
+stdout | src/features/admin-ai/__tests__/useModelTest.test.tsx > useModelTest > U05 — submit success → submissionState=success, testResult populated
+[admin-ai] admin-ai.hook.useModelTest.submit.ok { latency_ms: [33m342[39m, cost: [33m0.000123[39m, output_length: [33m31[39m }
+
+stdout | src/features/admin/presentation/__tests__/useUsage.test.tsx > useUsage > useUsage: invalid range → isRangeInvalid=true, no fetch triggered
+[admin] usage.hook.useUsage.render {
+  from: [32m'2026-05-16T00:00:00.000Z'[39m,
+  to: [32m'2026-04-16T00:00:00.000Z'[39m,
+  group_by: [32m'model_day'[39m,
+  range_valid: [33mfalse[39m
+}
+
+stdout | src/features/admin/presentation/__tests__/useUsage.test.tsx > useUsage > useUsage: error propagation — forbidden error surfaces in result
+[admin] usage.hook.useUsage.render {
+  from: [32m'2026-04-16T00:00:00.000Z'[39m,
+  to: [32m'2026-05-16T00:00:00.000Z'[39m,
+  group_by: [32m'model_day'[39m,
+  range_valid: [33mtrue[39m
+}
+[admin] usage.hook.queryFn.start {
+  from: [32m'2026-04-16T00:00:00.000Z'[39m,
+  to: [32m'2026-05-16T00:00:00.000Z'[39m,
+  group_by: [32m'model_day'[39m
+}
+
+stdout | src/features/admin-ai/__tests__/useDashboardUsage.test.tsx > useDashboardUsage > H02 — loading → success with populated data
+[admin-ai] admin-ai.hook.useDashboardUsage.render {
+  from: [32m'2026-04-19T06:53:43.534Z'[39m,
+  to: [32m'2026-05-19T06:53:43.534Z'[39m,
+  group_by: [32m'model'[39m
+}
+[admin-ai] admin-ai.hook.useDashboardUsage.queryFn.start {
+  from: [32m'2026-04-19T06:53:43.534Z'[39m,
+  to: [32m'2026-05-19T06:53:43.534Z'[39m,
+  group_by: [32m'model'[39m
+}
+
+stdout | src/features/admin-ai/__tests__/useDashboardUsage.test.tsx > useDashboardUsage > H02 — loading → success with populated data
+[admin-ai] admin-ai.hook.useDashboardUsage.queryFn.ok { row_count: [33m1[39m, total_invocations: [33m12[39m }
+
+stdout | src/features/admin-ai/__tests__/useAdminAiModels.test.tsx > useAdminAiModels > H03 — empty: providers=[] → data.rows=[] (D-T002-EMPTY-STATE)
+[admin-ai] admin-ai.hook.useAdminAiModels.render.start {}
+[admin-ai] admin-ai.hook.useAdminAiModels.queryFn.start {}
+
+stdout | src/features/admin-ai/__tests__/useAdminAiModels.test.tsx > useAdminAiModels > H03 — empty: providers=[] → data.rows=[] (D-T002-EMPTY-STATE)
+[admin-ai] admin-ai.hook.useAdminAiModels.queryFn.ok { provider_count: [33m0[39m, model_count: [33m0[39m }
+
+stdout | src/features/admin-ai/__tests__/useDashboardUsage.test.tsx > useDashboardUsage > H02 — loading → success with populated data
+[admin-ai] admin-ai.hook.useDashboardUsage.render {
+  from: [32m'2026-04-19T06:53:43.534Z'[39m,
+  to: [32m'2026-05-19T06:53:43.534Z'[39m,
+  group_by: [32m'model'[39m
+}
+
+stdout | src/features/admin-ai/__tests__/useAdminAiModels.test.tsx > useAdminAiModels > H03 — empty: providers=[] → data.rows=[] (D-T002-EMPTY-STATE)
+[admin-ai] admin-ai.hook.useAdminAiModels.render.start {}
+
+stdout | src/features/admin-ai/__tests__/useModelTest.test.tsx > useModelTest > U06 — submit returns error_network → submissionState=error_network
+[admin-ai] admin-ai.hook.useModelTest.submit.start { prompt_len: [33m5[39m }
+
+stdout | src/pages/admin/usage/__tests__/UsagePage.test.tsx
+i18n.init.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T005'[39m,
+  lng: [32m'es'[39m,
+  fallbackLng: [32m'es'[39m,
+  ns: [
+    [32m'common'[39m,   [32m'auth'[39m,
+    [32m'chat'[39m,     [32m'account'[39m,
+    [32m'admin-ai'[39m, [32m'rag'[39m,
+    [32m'mcp'[39m,      [32m'agents'[39m,
+    [32m'errors'[39m,   [32m'usage'[39m
+  ],
+  defaultNS: [32m'common'[39m
+}
+i18n.init.ok {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T005'[39m,
+  isInitialized: [33mtrue[39m,
+  language: [32m'es'[39m,
+  namespaceCount: [33m10[39m,
+  localeCount: [33m3[39m
+}
+
+stdout | src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: hook integration > W01 — initial state: step=provider, form empty, no errors, submissionState=idle
+[admin-ai] admin-ai.hook.useModelWizard.render.start {}
+
+stdout | src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: hook integration > W01 — initial state: step=provider, form empty, no errors, submissionState=idle
+[admin-ai] admin-ai.hook.useModelWizard.unmount.secret_cleared {}
+
+stdout | src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: hook integration > W02 — goNext on provider step with valid data: advances to credentials
+[admin-ai] admin-ai.hook.useModelWizard.render.start {}
+[admin-ai] admin-ai.hook.useModelWizard.render.start {}
+[admin-ai] admin-ai.hook.useModelWizard.goNext { step: [32m'provider'[39m }
+[admin-ai] admin-ai.hook.useModelWizard.render.start {}
+
+stdout | src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: hook integration > W02 — goNext on provider step with valid data: advances to credentials
+[admin-ai] admin-ai.hook.useModelWizard.unmount.secret_cleared {}
+
+stdout | src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: hook integration > W03 — goNext with invalid provider step: stays on provider, fieldErrors populated
+[admin-ai] admin-ai.hook.useModelWizard.render.start {}
+[admin-ai] admin-ai.hook.useModelWizard.goNext { step: [32m'provider'[39m }
+[admin-ai] admin-ai.hook.useModelWizard.render.start {}
+
+stdout | src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: hook integration > W03 — goNext with invalid provider step: stays on provider, fieldErrors populated
+[admin-ai] admin-ai.hook.useModelWizard.unmount.secret_cleared {}
+
+stdout | src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: hook integration > W04 — setSecret updates hasSecret; maskedSecret shows last-4 mask
+[admin-ai] admin-ai.hook.useModelWizard.render.start {}
+[admin-ai] admin-ai.hook.useModelWizard.render.start {}
+
+stdout | src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: hook integration > W04 — setSecret updates hasSecret; maskedSecret shows last-4 mask
+[admin-ai] admin-ai.hook.useModelWizard.unmount.secret_cleared {}
+
+stdout | src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: hook integration > W05 — submit success: step advances to models, createdProvider set, secret cleared
+[admin-ai] admin-ai.hook.useModelWizard.render.start {}
+[admin-ai] admin-ai.hook.useModelWizard.render.start {}
+[admin-ai] admin-ai.hook.useModelWizard.goNext { step: [32m'provider'[39m }
+[admin-ai] admin-ai.hook.useModelWizard.render.start {}
+[admin-ai] admin-ai.hook.useModelWizard.render.start {}
+[admin-ai] admin-ai.hook.useModelWizard.submit.called { provider_type: [32m'litellm'[39m, auth_type: [32m'api_key'[39m, name_len: [33m12[39m }
+[admin-ai] admin-ai.hook.useModelWizard.render.start {}
+[admin-ai] admin-ai.hook.useModelWizard.submit.start { provider_type: [32m'litellm'[39m, auth_type: [32m'api_key'[39m, name_len: [33m12[39m }
+
+stdout | src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: hook integration > W05 — submit success: step advances to models, createdProvider set, secret cleared
+[admin-ai] admin-ai.hook.useModelWizard.submit.ok { provider_type: [32m'litellm'[39m, status: [32m'draft'[39m }
+
+stdout | src/features/admin-ai/__tests__/useDashboardUsage.test.tsx > useDashboardUsage > H03 — loading → empty: isSuccess with rows=[], invocations=0
+[admin-ai] admin-ai.hook.useDashboardUsage.render {
+  from: [32m'2026-04-19T06:53:43.588Z'[39m,
+  to: [32m'2026-05-19T06:53:43.588Z'[39m,
+  group_by: [32m'model'[39m
+}
+[admin-ai] admin-ai.hook.useDashboardUsage.queryFn.start {
+  from: [32m'2026-04-19T06:53:43.588Z'[39m,
+  to: [32m'2026-05-19T06:53:43.588Z'[39m,
+  group_by: [32m'model'[39m
+}
+
+stdout | src/features/admin-ai/__tests__/useDashboardUsage.test.tsx > useDashboardUsage > H03 — loading → empty: isSuccess with rows=[], invocations=0
+[admin-ai] admin-ai.hook.useDashboardUsage.queryFn.ok { row_count: [33m0[39m, total_invocations: [33m0[39m }
+
+stdout | src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: hook integration > W05 — submit success: step advances to models, createdProvider set, secret cleared
+[admin-ai] admin-ai.hook.useModelWizard.render.start {}
+
+stdout | src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: hook integration > W05 — submit success: step advances to models, createdProvider set, secret cleared
+[admin-ai] admin-ai.hook.useModelWizard.modelsQuery.start { has_provider: [33mtrue[39m }
+[admin-ai] admin-ai.hook.useModelWizard.render.start {}
+[admin-ai] admin-ai.hook.useModelWizard.modelsQuery.ok { model_count: [33m1[39m }
+
+stdout | src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: hook integration > W05 — submit success: step advances to models, createdProvider set, secret cleared
+[admin-ai] admin-ai.hook.useModelWizard.render.start {}
+
+stdout | src/features/admin-ai/__tests__/useDashboardUsage.test.tsx > useDashboardUsage > H03 — loading → empty: isSuccess with rows=[], invocations=0
+[admin-ai] admin-ai.hook.useDashboardUsage.render {
+  from: [32m'2026-04-19T06:53:43.588Z'[39m,
+  to: [32m'2026-05-19T06:53:43.588Z'[39m,
+  group_by: [32m'model'[39m
+}
+
+stdout | src/features/admin-ai/__tests__/useAdminAiModels.test.tsx > useAdminAiModels > H04 — error_network: getModels rejects → isError=true, error instanceof AdminAiNetworkError
+[admin-ai] admin-ai.hook.useAdminAiModels.render.start {}
+[admin-ai] admin-ai.hook.useAdminAiModels.queryFn.start {}
+
+stdout | src/features/admin-ai/__tests__/useAdminAiModels.test.tsx > useAdminAiModels > H04 — error_network: getModels rejects → isError=true, error instanceof AdminAiNetworkError
+[admin-ai] admin-ai.hook.useAdminAiModels.render.start {}
+
+stdout | src/features/admin-ai/__tests__/useModelTest.test.tsx > useModelTest > U07 — submit 403 → submissionState=permission_denied
+[admin-ai] admin-ai.hook.useModelTest.submit.start { prompt_len: [33m5[39m }
+
+stdout | src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: hook integration > W05 — submit success: step advances to models, createdProvider set, secret cleared
+[admin-ai] admin-ai.hook.useModelWizard.unmount.secret_cleared {}
+
+stdout | src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: hook integration > W06 — submit error_network: submissionState=error_network, stays on credentials
+[admin-ai] admin-ai.hook.useModelWizard.render.start {}
+[admin-ai] admin-ai.hook.useModelWizard.render.start {}
+[admin-ai] admin-ai.hook.useModelWizard.goNext { step: [32m'provider'[39m }
+[admin-ai] admin-ai.hook.useModelWizard.render.start {}
+[admin-ai] admin-ai.hook.useModelWizard.render.start {}
+[admin-ai] admin-ai.hook.useModelWizard.submit.called { provider_type: [32m'litellm'[39m, auth_type: [32m'api_key'[39m, name_len: [33m12[39m }
+[admin-ai] admin-ai.hook.useModelWizard.render.start {}
+[admin-ai] admin-ai.hook.useModelWizard.submit.start { provider_type: [32m'litellm'[39m, auth_type: [32m'api_key'[39m, name_len: [33m12[39m }
+
+stdout | src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: hook integration > W06 — submit error_network: submissionState=error_network, stays on credentials
+[admin-ai] admin-ai.hook.useModelWizard.render.start {}
+
+stdout | src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: hook integration > W06 — submit error_network: submissionState=error_network, stays on credentials
+[admin-ai] admin-ai.hook.useModelWizard.render.start {}
+
+stdout | src/features/admin-ai/__tests__/useDashboardUsage.test.tsx > useDashboardUsage > H04 — loading → error: isError with typed AdminAiError
+[admin-ai] admin-ai.hook.useDashboardUsage.render {
+  from: [32m'2026-04-19T06:53:43.643Z'[39m,
+  to: [32m'2026-05-19T06:53:43.643Z'[39m,
+  group_by: [32m'model'[39m
+}
+[admin-ai] admin-ai.hook.useDashboardUsage.queryFn.start {
+  from: [32m'2026-04-19T06:53:43.643Z'[39m,
+  to: [32m'2026-05-19T06:53:43.643Z'[39m,
+  group_by: [32m'model'[39m
+}
+
+stdout | src/features/admin-ai/__tests__/useDashboardUsage.test.tsx > useDashboardUsage > H04 — loading → error: isError with typed AdminAiError
+[admin-ai] admin-ai.hook.useDashboardUsage.render {
+  from: [32m'2026-04-19T06:53:43.643Z'[39m,
+  to: [32m'2026-05-19T06:53:43.643Z'[39m,
+  group_by: [32m'model'[39m
+}
+
+stdout | src/features/admin-ai/__tests__/useAdminAiModels.test.tsx > useAdminAiModels > H05 — permission_denied: getProviders returns 403 → AdminAiForbiddenError surfaces
+[admin-ai] admin-ai.hook.useAdminAiModels.render.start {}
+[admin-ai] admin-ai.hook.useAdminAiModels.queryFn.start {}
+
+stdout | src/features/admin-ai/__tests__/useModelTest.test.tsx > useModelTest > U08 — activate success → activateState=success
+[admin-ai] admin-ai.hook.useModelTest.activate.start {}
+
+stdout | src/features/admin-ai/__tests__/useModelTest.test.tsx > useModelTest > U08 — activate success → activateState=success
+[admin-ai] admin-ai.hook.useModelTest.activate.ok { enabled: [33mtrue[39m, is_default: [33mtrue[39m }
+
+stdout | src/features/admin-ai/__tests__/useAdminAiModels.test.tsx > useAdminAiModels > H05 — permission_denied: getProviders returns 403 → AdminAiForbiddenError surfaces
+[admin-ai] admin-ai.hook.useAdminAiModels.render.start {}
+
+stdout | src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: hook integration > W06 — submit error_network: submissionState=error_network, stays on credentials
+[admin-ai] admin-ai.hook.useModelWizard.unmount.secret_cleared {}
+
+stdout | src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: hook integration > W07 — submit 422 validation error: fieldErrors from server are surfaced
+[admin-ai] admin-ai.hook.useModelWizard.render.start {}
+[admin-ai] admin-ai.hook.useModelWizard.render.start {}
+[admin-ai] admin-ai.hook.useModelWizard.goNext { step: [32m'provider'[39m }
+[admin-ai] admin-ai.hook.useModelWizard.render.start {}
+[admin-ai] admin-ai.hook.useModelWizard.render.start {}
+[admin-ai] admin-ai.hook.useModelWizard.submit.called { provider_type: [32m'litellm'[39m, auth_type: [32m'api_key'[39m, name_len: [33m17[39m }
+[admin-ai] admin-ai.hook.useModelWizard.render.start {}
+[admin-ai] admin-ai.hook.useModelWizard.submit.start { provider_type: [32m'litellm'[39m, auth_type: [32m'api_key'[39m, name_len: [33m17[39m }
+
+stdout | src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: hook integration > W07 — submit 422 validation error: fieldErrors from server are surfaced
+[admin-ai] admin-ai.hook.useModelWizard.render.start {}
+
+stdout | src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: hook integration > W07 — submit 422 validation error: fieldErrors from server are surfaced
+[admin-ai] admin-ai.hook.useModelWizard.render.start {}
+
+stdout | src/features/admin-ai/__tests__/useDashboardUsage.test.tsx > useDashboardUsage > H05 — refetch: calls getUsage again
+[admin-ai] admin-ai.hook.useDashboardUsage.render {
+  from: [32m'2026-04-19T06:53:43.699Z'[39m,
+  to: [32m'2026-05-19T06:53:43.699Z'[39m,
+  group_by: [32m'model'[39m
+}
+[admin-ai] admin-ai.hook.useDashboardUsage.queryFn.start {
+  from: [32m'2026-04-19T06:53:43.699Z'[39m,
+  to: [32m'2026-05-19T06:53:43.699Z'[39m,
+  group_by: [32m'model'[39m
+}
+
+stdout | src/features/admin-ai/__tests__/useDashboardUsage.test.tsx > useDashboardUsage > H05 — refetch: calls getUsage again
+[admin-ai] admin-ai.hook.useDashboardUsage.queryFn.ok { row_count: [33m1[39m, total_invocations: [33m12[39m }
+
+stdout | src/features/admin-ai/__tests__/useAdminAiModels.test.tsx > useAdminAiModels > H06 — refetch invalidates query and re-runs both fetches
+[admin-ai] admin-ai.hook.useAdminAiModels.render.start {}
+[admin-ai] admin-ai.hook.useAdminAiModels.queryFn.start {}
+
+stdout | src/features/admin-ai/__tests__/useAdminAiModels.test.tsx > useAdminAiModels > H06 — refetch invalidates query and re-runs both fetches
+[admin-ai] admin-ai.hook.useAdminAiModels.queryFn.ok { provider_count: [33m1[39m, model_count: [33m1[39m }
+
+stdout | src/features/admin-ai/__tests__/useDashboardUsage.test.tsx > useDashboardUsage > H05 — refetch: calls getUsage again
+[admin-ai] admin-ai.hook.useDashboardUsage.render {
+  from: [32m'2026-04-19T06:53:43.699Z'[39m,
+  to: [32m'2026-05-19T06:53:43.699Z'[39m,
+  group_by: [32m'model'[39m
+}
+
+stdout | src/features/admin-ai/__tests__/useAdminAiModels.test.tsx > useAdminAiModels > H06 — refetch invalidates query and re-runs both fetches
+[admin-ai] admin-ai.hook.useAdminAiModels.render.start {}
+
+ ✓ src/features/admin-ai/__tests__/useModelTest.test.tsx (12 tests) 253ms
+stdout | src/pages/admin/usage/__tests__/UsagePage.test.tsx > UsagePage > UsagePage: loading state renders skeleton with aria-busy
+[admin] usage.page.render.start {
+  from: [32m'2026-04-19T06:53:43.721Z'[39m,
+  to: [32m'2026-05-19T06:53:43.721Z'[39m,
+  group_by: [32m'model_day'[39m
+}
+
+stdout | src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: hook integration > W07 — submit 422 validation error: fieldErrors from server are surfaced
+[admin-ai] admin-ai.hook.useModelWizard.unmount.secret_cleared {}
+
+stdout | src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: hook integration > W08 — submit permission_denied 403: submissionState=permission_denied
+[admin-ai] admin-ai.hook.useModelWizard.render.start {}
+[admin-ai] admin-ai.hook.useModelWizard.render.start {}
+[admin-ai] admin-ai.hook.useModelWizard.goNext { step: [32m'provider'[39m }
+[admin-ai] admin-ai.hook.useModelWizard.render.start {}
+[admin-ai] admin-ai.hook.useModelWizard.render.start {}
+[admin-ai] admin-ai.hook.useModelWizard.submit.called { provider_type: [32m'litellm'[39m, auth_type: [32m'api_key'[39m, name_len: [33m12[39m }
+[admin-ai] admin-ai.hook.useModelWizard.render.start {}
+[admin-ai] admin-ai.hook.useModelWizard.submit.start { provider_type: [32m'litellm'[39m, auth_type: [32m'api_key'[39m, name_len: [33m12[39m }
+
+stdout | src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: hook integration > W08 — submit permission_denied 403: submissionState=permission_denied
+[admin-ai] admin-ai.hook.useModelWizard.render.start {}
+
+stdout | src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: hook integration > W08 — submit permission_denied 403: submissionState=permission_denied
+[admin-ai] admin-ai.hook.useModelWizard.render.start {}
+
+stdout | src/features/admin-ai/__tests__/useDashboardUsage.test.tsx > useDashboardUsage > H05 — refetch: calls getUsage again
+[admin-ai] admin-ai.hook.useDashboardUsage.refetch
+[admin-ai] admin-ai.hook.useDashboardUsage.queryFn.start {
+  from: [32m'2026-04-19T06:53:43.699Z'[39m,
+  to: [32m'2026-05-19T06:53:43.699Z'[39m,
+  group_by: [32m'model'[39m
+}
+
+stdout | src/features/admin-ai/__tests__/useDashboardUsage.test.tsx > useDashboardUsage > H05 — refetch: calls getUsage again
+[admin-ai] admin-ai.hook.useDashboardUsage.queryFn.ok { row_count: [33m1[39m, total_invocations: [33m12[39m }
+
+stdout | src/features/admin-ai/__tests__/useAdminAiModels.test.tsx > useAdminAiModels > H06 — refetch invalidates query and re-runs both fetches
+[admin-ai] admin-ai.hook.useAdminAiModels.refetch
+[admin-ai] admin-ai.hook.useAdminAiModels.queryFn.start {}
+
+stdout | src/features/admin-ai/__tests__/useAdminAiModels.test.tsx > useAdminAiModels > H06 — refetch invalidates query and re-runs both fetches
+[admin-ai] admin-ai.hook.useAdminAiModels.queryFn.ok { provider_count: [33m1[39m, model_count: [33m1[39m }
+
+ ✓ src/features/admin-ai/__tests__/useAdminAiModels.test.tsx (6 tests) 295ms
+ ✓ src/features/admin-ai/__tests__/useDashboardUsage.test.tsx (7 tests) 295ms
+stdout | src/pages/admin/usage/__tests__/UsagePage.test.tsx > UsagePage > UsagePage: success state renders table with rows
+[admin] usage.page.render.start {
+  from: [32m'2026-04-19T06:53:43.741Z'[39m,
+  to: [32m'2026-05-19T06:53:43.741Z'[39m,
+  group_by: [32m'model_day'[39m
+}
+
+stdout | src/pages/admin/usage/__tests__/UsagePage.test.tsx > UsagePage > UsagePage: empty state renders Wordmark Hilo + CTA
+[admin] usage.page.render.start {
+  from: [32m'2026-04-19T06:53:43.764Z'[39m,
+  to: [32m'2026-05-19T06:53:43.764Z'[39m,
+  group_by: [32m'model_day'[39m
+}
+
+stdout | src/pages/admin/usage/__tests__/UsagePage.test.tsx > UsagePage > UsagePage: error_network state renders retry CTA and clicking triggers refetch
+[admin] usage.page.render.start {
+  from: [32m'2026-04-19T06:53:43.767Z'[39m,
+  to: [32m'2026-05-19T06:53:43.767Z'[39m,
+  group_by: [32m'model_day'[39m
+}
+[admin] usage.page.retry.triggered
+
+stdout | src/pages/admin/usage/__tests__/UsagePage.test.tsx > UsagePage > UsagePage: permission_denied state renders forbidden view with back button
+[admin] usage.page.render.start {
+  from: [32m'2026-04-19T06:53:43.773Z'[39m,
+  to: [32m'2026-05-19T06:53:43.773Z'[39m,
+  group_by: [32m'model_day'[39m
+}
+
+stdout | src/pages/admin/usage/__tests__/UsagePage.test.tsx > UsagePage > UsagePage: error_validation (isRangeInvalid) renders inline validation error
+[admin] usage.page.render.start {
+  from: [32m'2026-04-19T06:53:43.775Z'[39m,
+  to: [32m'2026-05-19T06:53:43.775Z'[39m,
+  group_by: [32m'model_day'[39m
+}
+
+stdout | src/pages/admin/usage/__tests__/UsagePage.test.tsx > UsagePage > UsagePage: a11y — success table has sr-only caption and th scope=col
+[admin] usage.page.render.start {
+  from: [32m'2026-04-19T06:53:43.776Z'[39m,
+  to: [32m'2026-05-19T06:53:43.776Z'[39m,
+  group_by: [32m'model_day'[39m
+}
+
+stdout | src/pages/admin/usage/__tests__/UsagePage.test.tsx > UsagePage > UsagePage: i18n key usage — page title renders from usage namespace
+[admin] usage.page.render.start {
+  from: [32m'2026-04-19T06:53:43.781Z'[39m,
+  to: [32m'2026-05-19T06:53:43.781Z'[39m,
+  group_by: [32m'model_day'[39m
+}
+
+stdout | src/pages/admin/usage/__tests__/UsagePage.test.tsx > UsagePage > UsagePage: Intl.NumberFormat formats cost as USD currency
+[admin] usage.page.render.start {
+  from: [32m'2026-04-19T06:53:43.786Z'[39m,
+  to: [32m'2026-05-19T06:53:43.786Z'[39m,
+  group_by: [32m'model_day'[39m
+}
+
+ ✓ src/pages/admin/usage/__tests__/UsagePage.test.tsx (9 tests) 75ms
+stdout | src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: hook integration > W08 — submit permission_denied 403: submissionState=permission_denied
+[admin-ai] admin-ai.hook.useModelWizard.unmount.secret_cleared {}
+
+stdout | src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: hook integration > W09 — goBack from credentials returns to provider step
+[admin-ai] admin-ai.hook.useModelWizard.render.start {}
+[admin-ai] admin-ai.hook.useModelWizard.render.start {}
+[admin-ai] admin-ai.hook.useModelWizard.goNext { step: [32m'provider'[39m }
+[admin-ai] admin-ai.hook.useModelWizard.render.start {}
+[admin-ai] admin-ai.hook.useModelWizard.goBack { step: [32m'credentials'[39m }
+[admin-ai] admin-ai.hook.useModelWizard.render.start {}
+
+stdout | src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: hook integration > W09 — goBack from credentials returns to provider step
+[admin-ai] admin-ai.hook.useModelWizard.unmount.secret_cleared {}
+
+stdout | src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: hook integration > W10 — reset clears all state including secret and errors
+[admin-ai] admin-ai.hook.useModelWizard.render.start {}
+[admin-ai] admin-ai.hook.useModelWizard.render.start {}
+[admin-ai] admin-ai.hook.useModelWizard.goNext { step: [32m'provider'[39m }
+[admin-ai] admin-ai.hook.useModelWizard.render.start {}
+[admin-ai] admin-ai.hook.useModelWizard.submit.called { provider_type: [32m'litellm'[39m, auth_type: [32m'api_key'[39m, name_len: [33m12[39m }
+[admin-ai] admin-ai.hook.useModelWizard.render.start {}
+[admin-ai] admin-ai.hook.useModelWizard.submit.start { provider_type: [32m'litellm'[39m, auth_type: [32m'api_key'[39m, name_len: [33m12[39m }
+
+stdout | src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: hook integration > W10 — reset clears all state including secret and errors
+[admin-ai] admin-ai.hook.useModelWizard.submit.ok { provider_type: [32m'litellm'[39m, status: [32m'draft'[39m }
+
+stdout | src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: hook integration > W10 — reset clears all state including secret and errors
+[admin-ai] admin-ai.hook.useModelWizard.render.start {}
+
+stdout | src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: hook integration > W10 — reset clears all state including secret and errors
+[admin-ai] admin-ai.hook.useModelWizard.modelsQuery.start { has_provider: [33mtrue[39m }
+
+stdout | src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: hook integration > W10 — reset clears all state including secret and errors
+[admin-ai] admin-ai.hook.useModelWizard.modelsQuery.ok { model_count: [33m0[39m }
+
+stdout | src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: hook integration > W10 — reset clears all state including secret and errors
+[admin-ai] admin-ai.hook.useModelWizard.render.start {}
+
+stdout | src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: hook integration > W10 — reset clears all state including secret and errors
+[admin-ai] admin-ai.hook.useModelWizard.reset
+[admin-ai] admin-ai.hook.useModelWizard.render.start {}
+
+stdout | src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: hook integration > W10 — reset clears all state including secret and errors
+[admin-ai] admin-ai.hook.useModelWizard.unmount.secret_cleared {}
+
+stdout | src/features/admin-ai/__tests__/useModelWizard.test.tsx > useModelWizard: hook integration > W11 — unmount: hook cleanup does not throw (secret clear guard)
+[admin-ai] admin-ai.hook.useModelWizard.render.start {}
+[admin-ai] admin-ai.hook.useModelWizard.render.start {}
+[admin-ai] admin-ai.hook.useModelWizard.unmount.secret_cleared {}
+
+ ✓ src/features/admin-ai/__tests__/useModelWizard.test.tsx (22 tests) 302ms
+stdout | src/features/admin/presentation/__tests__/useUsage.test.tsx > useUsage > useUsage: error propagation — forbidden error surfaces in result
+[admin] usage.hook.queryFn.start {
+  from: [32m'2026-04-16T00:00:00.000Z'[39m,
+  to: [32m'2026-05-16T00:00:00.000Z'[39m,
+  group_by: [32m'model_day'[39m
+}
+
+stdout | src/features/admin/presentation/__tests__/useUsage.test.tsx > useUsage > useUsage: error propagation — forbidden error surfaces in result
+[admin] usage.hook.useUsage.render {
+  from: [32m'2026-04-16T00:00:00.000Z'[39m,
+  to: [32m'2026-05-16T00:00:00.000Z'[39m,
+  group_by: [32m'model_day'[39m,
+  range_valid: [33mtrue[39m
+}
+
+stdout | src/features/admin/presentation/__tests__/useUsage.test.tsx > useUsage > useUsage: network error surfaces correctly
+[admin] usage.hook.useUsage.render {
+  from: [32m'2026-04-16T00:00:00.000Z'[39m,
+  to: [32m'2026-05-16T00:00:00.000Z'[39m,
+  group_by: [32m'model_day'[39m,
+  range_valid: [33mtrue[39m
+}
+[admin] usage.hook.queryFn.start {
+  from: [32m'2026-04-16T00:00:00.000Z'[39m,
+  to: [32m'2026-05-16T00:00:00.000Z'[39m,
+  group_by: [32m'model_day'[39m
+}
+
+stdout | src/features/admin/presentation/__tests__/useUsage.test.tsx > useUsage > useUsage: network error surfaces correctly
+[admin] usage.hook.queryFn.start {
+  from: [32m'2026-04-16T00:00:00.000Z'[39m,
+  to: [32m'2026-05-16T00:00:00.000Z'[39m,
+  group_by: [32m'model_day'[39m
+}
+
+stdout | src/features/admin/presentation/__tests__/useUsage.test.tsx > useUsage > useUsage: network error surfaces correctly
+[admin] usage.hook.useUsage.render {
+  from: [32m'2026-04-16T00:00:00.000Z'[39m,
+  to: [32m'2026-05-16T00:00:00.000Z'[39m,
+  group_by: [32m'model_day'[39m,
+  range_valid: [33mtrue[39m
+}
+
+stdout | src/features/admin/presentation/__tests__/useUsage.test.tsx > useUsage > useUsage: refetch function triggers an additional query call
+[admin] usage.hook.useUsage.render {
+  from: [32m'2026-04-16T00:00:00.000Z'[39m,
+  to: [32m'2026-05-16T00:00:00.000Z'[39m,
+  group_by: [32m'model_day'[39m,
+  range_valid: [33mtrue[39m
+}
+[admin] usage.hook.queryFn.start {
+  from: [32m'2026-04-16T00:00:00.000Z'[39m,
+  to: [32m'2026-05-16T00:00:00.000Z'[39m,
+  group_by: [32m'model_day'[39m
+}
+
+stdout | src/features/admin/presentation/__tests__/useUsage.test.tsx > useUsage > useUsage: refetch function triggers an additional query call
+[admin] usage.hook.queryFn.ok { row_count: [33m1[39m }
+
+stdout | src/features/admin/presentation/__tests__/useUsage.test.tsx > useUsage > useUsage: refetch function triggers an additional query call
+[admin] usage.hook.useUsage.render {
+  from: [32m'2026-04-16T00:00:00.000Z'[39m,
+  to: [32m'2026-05-16T00:00:00.000Z'[39m,
+  group_by: [32m'model_day'[39m,
+  range_valid: [33mtrue[39m
+}
+
+stdout | src/features/admin/presentation/__tests__/useUsage.test.tsx > useUsage > useUsage: refetch function triggers an additional query call
+[admin] usage.hook.refetch.triggered
+[admin] usage.hook.queryFn.start {
+  from: [32m'2026-04-16T00:00:00.000Z'[39m,
+  to: [32m'2026-05-16T00:00:00.000Z'[39m,
+  group_by: [32m'model_day'[39m
+}
+
+stdout | src/features/admin/presentation/__tests__/useUsage.test.tsx > useUsage > useUsage: refetch function triggers an additional query call
+[admin] usage.hook.queryFn.ok { row_count: [33m1[39m }
+
+stdout | src/features/admin/presentation/__tests__/useUsage.test.tsx > useUsage > useUsage: refetch function triggers an additional query call
+[admin] usage.hook.useUsage.render {
+  from: [32m'2026-04-16T00:00:00.000Z'[39m,
+  to: [32m'2026-05-16T00:00:00.000Z'[39m,
+  group_by: [32m'model_day'[39m,
+  range_valid: [33mtrue[39m
+}
+
+ ✓ src/features/admin/presentation/__tests__/useUsage.test.tsx (9 tests) 2181ms
+   ✓ useUsage > useUsage: error propagation — forbidden error surfaces in result  1026ms
+   ✓ useUsage > useUsage: network error surfaces correctly  1021ms
+
+ Test Files  8 passed (8)
+      Tests  111 passed (111)
+   Start at  08:53:40
+   Duration  4.84s (transform 1.06s, setup 2.19s, collect 3.31s, tests 3.44s, environment 10.00s, prepare 1.25s)
+

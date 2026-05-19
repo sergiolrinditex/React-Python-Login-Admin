@@ -1,0 +1,36 @@
+## P04-S03-T004 — DB counts for verify-slice
+
+### Pre-hard-reset (dev-restart --reset failed; port 5432 already allocated by native postgres)
+STRATEGY: Truncated llm_usage_logs + bootstrap auth + bootstrap admin_ai + POST model/test
+
+### DB state
+- llm_usage_logs before truncate: 0 rows (was already empty)
+- After TRUNCATE llm_usage_logs: 0 rows
+- After bootstrap --only admin_ai: 0 rows (admin_ai bootstrap seeds provider/model/credentials, not logs)
+- After POST /api/v1/admin/ai/models/{id}/test (verify-T004 smoke): 1 row
+
+### Row seeded
+id: b445dc49-7781-4aaf-94f3-736abdd0c2f1
+user_id: c6ca6bf1-fd75-44c9-a2d1-e3db703b5e62 (admin.peopletech)
+model_id: 463a569a-5fc3-4df5-8aa9-3bf7e250ec41 (gemini-2.5-flash)
+tokens_in: 8
+tokens_out: 252
+estimated_cost: 0
+latency_ms: 4819
+day (derived): 2026-05-19
+
+### Usage API verification
+GET /api/v1/admin/usage?from=2026-05-01T00:00:00Z&to=2026-05-31T23:59:59Z&group_by=model_day
+→ HTTP 200
+→ rows: 1, invocations: 1, tokens_in: 8, tokens_out: 252
+→ meta.request_id: 3b0b686a-1bdf-4f4d-bb90-a03356048952
+
+GET /api/v1/admin/usage (from > to)
+→ HTTP 422 ADMIN_USAGE_INVALID_PAYLOAD
+→ "'from' must be earlier than 'to'."
+
+### Note on hard reset
+dev-restart.sh --reset failed: docker compose up conflict on port 5432 (native postgres already running).
+Mitigation: manual equivalent reset (TRUNCATE llm_usage_logs + bootstrap auth + admin_ai) is semantically
+equivalent for this verify scope. Backend health 200 confirmed throughout. All 3 services up (backend :8000,
+frontend :5173, postgres :5432).

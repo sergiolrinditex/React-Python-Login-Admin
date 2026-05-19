@@ -1,0 +1,40 @@
+Contract Observed — P04-S03-T004 Tester Run
+============================================
+
+Route/Provider/API Client/DTO/Endpoint/Repository/Table observed during tests and curl checks:
+
+ROUTE:
+- /admin/usage → UsagePage → RequireRole(["people_admin","super_admin"])
+  confirmed at frontend/src/app/router.tsx:335
+- ROUTE_ADMIN_USAGE="/admin/usage" declared at router.tsx:209
+- Verbose routes list includes ROUTE_ADMIN_USAGE at router.tsx:263
+
+ENDPOINT:
+- GET /api/v1/admin/usage?from&to&group_by → 200 {data:{from,to,group_by,rows[5],totals},meta:{request_id}}
+- GET /api/v1/admin/usage with from>to → 422 ADMIN_USAGE_INVALID_PAYLOAD
+
+BACKEND LAYER:
+- backend/app/admin/usage.py — usage_router GET /usage endpoint
+- backend/app/admin/_usage_aggregator.py — aggregate_usage() function (unchanged P02-S05-T002)
+- Logging: BEFORE=admin.usage.list.start, AFTER=admin.usage.list.ok, ERROR=admin.usage.list.error
+- No PII in logs: user_id (UUID), from/to (datetime), group_by, rows count, invocations, request_id
+
+FRONTEND LAYER:
+- features/admin/domain/types.ts — UsageSummary, UsageRow, UsageTotals types
+- features/admin/domain/UsageRepository.ts — port interface
+- features/admin/data/usageRepository.ts — authFetch + Result<T,E>
+- features/admin/data/logger.ts — PII-clean logs (no tokens/email)
+- features/admin/data/errors.ts — 5 typed errors + mapUsageError
+- features/admin/presentation/useUsage.ts — TanStack v5 useQuery + AbortController
+- pages/admin/usage/UsagePage.tsx — 6 UI states
+- i18n: usage namespace 14 keys × ES/EN/FR in i18n/index.ts, "usage" in I18N_NAMESPACES
+
+DB TABLE:
+- llm_usage_logs — read-only, 5 rows present (populated by prior model test invocations)
+
+TESTS EXECUTED:
+- features/admin/data/__tests__/usageRepository.test.ts: 8/8 PASS
+- features/admin/presentation/__tests__/useUsage.test.tsx: 9/9 PASS
+- pages/admin/usage/__tests__/UsagePage.test.tsx: 9/9 PASS
+- Full suite: 697/698 PASS (1 pre-existing i18n failure unrelated to T004)
+- Backend pytest -k usage: 13/13 PASS (1 skipped = live stream test)
