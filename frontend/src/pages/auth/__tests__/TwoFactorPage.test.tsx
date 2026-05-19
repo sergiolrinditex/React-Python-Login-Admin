@@ -38,6 +38,7 @@ import TwoFactorPage from "../TwoFactorPage";
 import { AuthProvider } from "@/features/auth/presentation/AuthProvider";
 import { AuthRepository } from "@/features/auth/data/authRepository";
 import { clearAccessToken } from "@/features/auth/data/accessTokenStore";
+import { _resetSingleFlight } from "@/features/auth/data/refreshSingleFlight";
 import * as logger from "@/features/auth/data/logger";
 
 // ---------------------------------------------------------------------------
@@ -154,6 +155,10 @@ const SUCCESS_FETCH_SEQUENCE = [
 describe("TwoFactorPage", () => {
   beforeEach(() => {
     clearAccessToken();
+    // P05-S01-T007: reset shared single-flight state so tests that use a
+    // never-resolving fetch mock (e.g. T04) do not pollute subsequent tests
+    // by leaving _inflight non-null.
+    _resetSingleFlight();
     // Default: AuthProvider hydration → 401 (unauthenticated)
     vi.spyOn(global, "fetch").mockImplementation(() =>
       Promise.resolve(
@@ -167,6 +172,7 @@ describe("TwoFactorPage", () => {
 
   afterEach(() => {
     clearAccessToken();
+    _resetSingleFlight();
     vi.restoreAllMocks();
   });
 

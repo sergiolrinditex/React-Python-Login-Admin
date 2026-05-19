@@ -589,8 +589,14 @@ describe("auth T10 — RequireAuth: hydrating → renders neither children nor r
 // ---------------------------------------------------------------------------
 
 describe("auth T11 — RequireRole: employee role denied from admin", () => {
+  beforeEach(() => {
+    // P05-S01-T007: reset shared single-flight state that T10's never-resolving
+    // fetch mock leaves behind (_inflight is set but never cleared by finally).
+    _resetInflight();
+  });
   afterEach(() => {
     clearAccessToken();
+    _resetInflight();
     vi.restoreAllMocks();
   });
 
@@ -630,8 +636,13 @@ describe("auth T11 — RequireRole: employee role denied from admin", () => {
 // ---------------------------------------------------------------------------
 
 describe("auth T12 — RequireRole: people_admin allowed to admin route", () => {
+  beforeEach(() => {
+    // P05-S01-T007: same reset rationale as T11 — clear zombie _inflight from T10.
+    _resetInflight();
+  });
   afterEach(() => {
     clearAccessToken();
+    _resetInflight();
     vi.restoreAllMocks();
   });
 

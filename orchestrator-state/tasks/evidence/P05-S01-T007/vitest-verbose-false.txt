@@ -1,0 +1,99 @@
+
+> hilo-people-frontend@0.1.0 test
+> vitest --run
+
+
+ RUN  v3.2.4 /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P05-S01-T007/frontend
+
+ ✓ src/features/admin-ai/__tests__/useModelTest.test.tsx (12 tests) 247ms
+ ✓ src/features/admin-ai/__tests__/useAdminAiModels.test.tsx (6 tests) 281ms
+ ✓ src/features/admin-ai/__tests__/useDashboardUsage.test.tsx (7 tests) 285ms
+ ✓ src/features/chat/__tests__/useConversation.test.tsx (6 tests) 279ms
+ ✓ src/features/chat/presentation/__tests__/useHistory.test.tsx (5 tests) 284ms
+ ✓ src/features/agents/__tests__/useUpdateAgentTools.test.ts (6 tests) 283ms
+ ✓ src/features/admin-ai/__tests__/useModelWizard.test.tsx (22 tests) 291ms
+ ✓ src/features/agents/__tests__/useAgents.test.ts (6 tests) 331ms
+ ✓ src/features/rag/__tests__/useUploadDocument.test.tsx (6 tests) 330ms
+ ✓ src/features/mcp/__tests__/useMcpSync.test.tsx (3 tests) 173ms
+ ✓ src/features/rag/__tests__/useIndexDocument.test.tsx (4 tests) 222ms
+ ✓ src/features/chat/__tests__/useCreateConversation.test.tsx (4 tests) 222ms
+ ✓ src/pages/admin/mcp/__tests__/McpServersPage.test.tsx (9 tests) 120ms
+ ✓ src/features/rag/__tests__/useRagDocuments.test.tsx (5 tests) 227ms
+ ✓ src/features/mcp/__tests__/useMcpServers.test.tsx (3 tests) 222ms
+ ✓ src/pages/admin/rag/__tests__/RagDocumentsPage.test.tsx (18 tests) 158ms
+ ✓ src/pages/admin/agents/__tests__/AgentsPage.test.tsx (12 tests) 164ms
+ ✓ src/features/admin/presentation/__tests__/useUsage.test.tsx (9 tests) 2171ms
+   ✓ useUsage > useUsage: error propagation — forbidden error surfaces in result  1021ms
+   ✓ useUsage > useUsage: network error surfaces correctly  1026ms
+ ✓ src/features/audit/presentation/__tests__/useAuditQuery.test.tsx (15 tests) 2221ms
+   ✓ useAuditQuery > useAuditQuery: error propagation — forbidden error surfaces in result  1021ms
+   ✓ useAuditQuery > useAuditQuery: network error surfaces correctly  1022ms
+ ✓ src/features/mcp/__tests__/useCreateMcpServer.test.tsx (4 tests) 231ms
+ ✓ src/pages/admin/rag/__tests__/RagCollectionsPage.test.tsx (10 tests) 132ms
+ ✓ src/pages/admin/audit/__tests__/AuditLogPage.test.tsx (10 tests) 120ms
+ ✓ src/features/agents/__tests__/useStartAgentRun.test.ts (4 tests) 176ms
+ ✓ src/pages/auth/__tests__/SignInPage.test.tsx (10 tests) 166ms
+ ✓ src/pages/auth/__tests__/ForgotPasswordPage.test.tsx (11 tests) 170ms
+ ✓ src/pages/auth/__tests__/SignUpPage.test.tsx (10 tests) 199ms
+ ✓ src/pages/auth/__tests__/TwoFactorPage.test.tsx (12 tests) 204ms
+ ✓ src/pages/admin/mcp/__tests__/McpWizardPage.test.tsx (11 tests) 134ms
+ ✓ src/features/chat/__tests__/useChatStream.test.tsx (7 tests) 133ms
+ ✓ src/pages/showcase/__tests__/ShowcasePage.test.tsx (4 tests) 128ms
+ ✓ src/shared/design-system/__tests__/design-system.test.tsx (34 tests) 98ms
+ ✓ src/features/auth/__tests__/auth.test.tsx (33 tests) 109ms
+ ✓ src/features/chat/__tests__/ChatHomePage.test.tsx (10 tests) 144ms
+ ✓ src/pages/admin/__tests__/AdminAiModelsPage.test.tsx (22 tests) 177ms
+ ✓ src/pages/chat/__tests__/ConversationPage.test.tsx (16 tests) 155ms
+ ✓ src/pages/admin/__tests__/AdminDashboardPage.test.tsx (8 tests) 181ms
+stdout | src/pages/account/__tests__/AccountPage.test.tsx > AccountPage > AP13: no verbose logger call contains the full email value
+MobileFrame.render.start { phase: [32m'P00'[39m, slice: [32m'P00-S01-T004'[39m, fullHeight: [33mfalse[39m }
+SolidCTA.render.start {
+  phase: [32m'P00'[39m,
+  slice: [32m'P00-S01-T004'[39m,
+  loading: [33mfalse[39m,
+  disabled: [90mundefined[39m
+}
+[auth] account.page.mount { user_id: [32m'acc-user-uuid-001'[39m }
+
+ ✓ src/pages/admin/ai/__tests__/ModelWizardPage.test.tsx (9 tests) 196ms
+ ✓ src/pages/account/__tests__/AccountPage.test.tsx (16 tests) 200ms
+ ✓ src/pages/admin/ai/__tests__/ModelTestDrawer.test.tsx (8 tests) 116ms
+ ✓ src/pages/auth/__tests__/ResetSentPage.test.tsx (22 tests) 119ms
+ ✓ src/features/auth/__tests__/useSignIn.test.tsx (11 tests) 27ms
+ ✓ src/features/auth/__tests__/useSignUp.test.tsx (16 tests) 29ms
+ ✓ src/features/auth/presentation/useLanguagePicker.test.tsx (11 tests) 31ms
+ ✓ src/pages/admin/rag/__tests__/RagDocumentsPage.tap-target.test.tsx (2 tests) 43ms
+ ✓ src/features/rag/__tests__/useUpdateCollection.test.tsx (4 tests) 79ms
+ ✓ src/pages/admin/usage/__tests__/UsagePage.test.tsx (9 tests) 89ms
+ ✓ src/pages/chat/__tests__/HistoryPage.test.tsx (14 tests) 78ms
+ ✓ src/pages/chat/__tests__/ChatHomePage.test.tsx (3 tests) 62ms
+ ✓ src/pages/chat/__tests__/_ChatNavbar.test.tsx (7 tests) 68ms
+ ✓ src/features/chat/__tests__/chatRepository.test.ts (12 tests) 12ms
+ ✓ src/features/chat/__tests__/stream.test.ts (17 tests) 23ms
+ ✓ src/features/rag/__tests__/ragRepository.test.ts (15 tests) 10ms
+ ✓ src/features/admin-ai/__tests__/adminAiRepository.test.ts (38 tests) 14ms
+ ✓ src/i18n/__tests__/i18n.test.ts (44 tests) 10ms
+ ✓ src/features/auth/__tests__/useForgotPassword.test.tsx (10 tests) 27ms
+ ✓ src/features/auth/__tests__/useVerifyMfa.test.tsx (11 tests) 27ms
+ ✓ src/app/__tests__/providers.test.tsx (4 tests) 17ms
+stdout | src/features/auth/presentation/useLogout.test.tsx > useLogout > L5: emits auth.logout.start log under VITE_ENABLE_VERBOSE_LOGGING=true
+[auth] auth.logout.start
+
+stdout | src/features/auth/presentation/useLogout.test.tsx > useLogout > L5: emits auth.logout.start log under VITE_ENABLE_VERBOSE_LOGGING=true
+[auth] auth.logout.ok
+
+ ✓ src/features/auth/presentation/useLogout.test.tsx (6 tests) 19ms
+ ✓ src/features/auth/data/__tests__/refreshSingleFlight.test.ts (8 tests) 8ms
+ ✓ src/features/audit/data/__tests__/auditRepository.test.ts (9 tests) 9ms
+ ✓ src/features/chat/presentation/__tests__/historyGrouping.test.ts (10 tests) 5ms
+ ✓ src/features/auth/data/__tests__/httpClient.test.ts (4 tests) 6ms
+ ✓ src/features/agents/__tests__/agentsRepository.test.ts (12 tests) 7ms
+ ✓ src/features/admin/data/__tests__/usageRepository.test.ts (8 tests) 8ms
+ ✓ src/features/mcp/__tests__/mcpRepository.test.ts (18 tests) 7ms
+ ✓ src/features/rag/__tests__/updateCollection.test.ts (8 tests) 8ms
+
+ Test Files  66 passed (66)
+      Tests  740 passed (740)
+   Start at  15:17:29
+   Duration  9.77s (transform 3.25s, setup 8.64s, collect 16.67s, tests 12.52s, environment 40.93s, prepare 6.04s)
+

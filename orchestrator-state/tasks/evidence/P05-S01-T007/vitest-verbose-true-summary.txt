@@ -1,0 +1,15 @@
+[agents] agents.repo.updateAgentTools.not_found { agent_id: [32m'agent-uuid-1'[39m, request_id: [32m'test-req-id'[39m }
+
+stderr | src/features/agents/__tests__/agentsRepository.test.ts > agentsRepository.startAgentRun > R09 — 409 AGENT_DISABLED → AgentsAgentDisabledError
+[agents] agents.repo.startAgentRun.agent_disabled { agent_id: [32m'agent-uuid-1'[39m, request_id: [32m'test-req-id'[39m }
+
+stderr | src/features/agents/__tests__/agentsRepository.test.ts > agentsRepository.startAgentRun > R10 — 502 → AgentsRunUnreachableError (expected dev sandbox path)
+[agents] agents.repo.startAgentRun.unreachable { agent_id: [32m'agent-uuid-1'[39m, request_id: [32m'test-req-id'[39m }
+
+ ✓ src/features/agents/__tests__/agentsRepository.test.ts (12 tests) 6ms
+
+ Test Files  66 passed (66)
+      Tests  740 passed (740)
+   Start at  15:15:49
+   Duration  9.85s (transform 3.48s, setup 8.90s, collect 18.01s, tests 12.19s, environment 42.29s, prepare 5.56s)
+
