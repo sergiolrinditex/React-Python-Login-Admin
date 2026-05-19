@@ -1,0 +1,1 @@
+{"test":"C - invalid/bogus challenge token","expected_status":"400/401","actual_status":400,"body":{"data":null,"meta":{"request_id":""},"errors":[{"code":"AUTH_INVALID_PAYLOAD","message":"String should have at least 30 characters","field":"challenge_id","details":null}]},"result":"PASS"}

@@ -1,0 +1,19 @@
+                  id                  |     action      |                req_id                | outcome |          created_at           
+--------------------------------------+-----------------+--------------------------------------+---------+-------------------------------
+ 14c17e69-3524-42ac-8e50-f24a8546d754 | auth.mfa.verify | 95aff1e9-5671-4b99-bf10-5b0ba7fb419d | success | 2026-05-19 09:10:27.879188+00
+ 50834106-f801-453c-a7a3-21a2d54812ac | auth.mfa.verify | 003d4d89-467c-4a4f-886c-b7c3c89203c8 | success | 2026-05-19 09:10:27.820587+00
+ 2b8edaf5-47d7-4ef6-9875-bf251cf95565 | auth.sign_in    | 64b080cd-bd43-419f-85ef-fe9a6f504225 | success | 2026-05-19 09:10:27.698191+00
+ 0f24e77d-ead7-4d13-b4c7-2ca9b1f96392 | auth.mfa.verify | 5aa62a32-4a13-43ed-9d3c-3b8f625fe22c | success | 2026-05-19 09:10:27.610352+00
+ 010c5a86-b6e2-48a1-a5ca-61f297f06a9c | auth.mfa.verify | 109fe042-4367-455b-8ec4-9721707b7798 | failure | 2026-05-19 09:10:27.559452+00
+ 8e415440-5231-4b65-9d88-0c77eabfe153 | auth.mfa.verify | 8e2e6887-0f0c-4eb7-80b6-f336893549ad | failure | 2026-05-19 09:10:27.452849+00
+ 8ea849fd-43ae-4a4b-ade5-c4cc2f8cc7be | auth.mfa.verify | d359bd67-be16-489f-a82b-4151f19c91ca | failure | 2026-05-19 09:10:27.443828+00
+ d5906473-d4ef-4ca5-af53-3244ed238107 | auth.mfa.verify | 6a124e0f-e269-4312-9481-e136cb49f3f2 | failure | 2026-05-19 09:10:27.341176+00
+ a78ad791-95f6-4b6b-937d-4c4b6f6cea73 | auth.mfa.verify | efcfcb54-3852-4fd6-8c9d-18dd4454690f | success | 2026-05-19 09:10:27.324962+00
+ 83afa9ac-d17b-4095-b46f-c33e18fd3b27 | auth.mfa.verify | e96e10c4-7497-4da3-a45f-3343ac8529bd | failure | 2026-05-19 09:10:27.273444+00
+ 395633a0-2733-4739-9e50-1d3b1d488552 | auth.mfa.verify | 70f059da-d3f3-4f5c-a780-0bc1572ac2ee | failure | 2026-05-19 09:10:27.180709+00
+ 0e3304f5-a2f3-4597-8598-a3822393f773 | auth.mfa.verify | 2214bfe4-65f9-450e-8136-92b3e7456543 | failure | 2026-05-19 09:10:27.121026+00
+ 544792b9-1ee1-4f40-befd-806a0986e054 | auth.mfa.verify | 757b466a-1835-4715-877c-2a69925f53dd | failure | 2026-05-19 09:10:27.072897+00
+ 01d92bb8-7fda-49b1-b7c9-8ccd79cbb68f | auth.mfa.verify | bb21dc65-8fc3-4519-9d0b-0d347c2d2db6 | failure | 2026-05-19 09:10:27.029468+00
+ 46b77c50-4ab9-4922-89d5-4f70b91081ca | auth.mfa.verify | 44103182-1720-403c-aebe-a6bfe1084d52 | success | 2026-05-19 09:10:26.965898+00
+(15 filas)
+

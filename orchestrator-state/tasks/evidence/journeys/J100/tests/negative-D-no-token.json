@@ -1,0 +1,1 @@
+{"test":"D - GET /users/me without token","expected_status":401,"actual_status":401,"body":{"data":null,"meta":{},"errors":[{"code":"AUTH_SESSION_EXPIRED","message":"Session expired or invalid credentials. Please sign in again.","field":null,"details":null}]},"result":"PASS"}

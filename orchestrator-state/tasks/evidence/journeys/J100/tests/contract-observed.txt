@@ -1,0 +1,36 @@
+# Front → Back → DB Contract Observed — J100
+
+## Routes (frontend)
+- /auth/sign-in → SignInPage (verified: API responds correctly, mfa_required=true → redirect)
+- /auth/2fa → TwoFactorPage (inferred: challenge_id accepted, access_token issued)
+- /chat → ChatHomePage (verified: users/me returns full profile for chat render)
+
+## Endpoints observed (curl + integration tests)
+- POST /api/v1/auth/sign-in → 200, body: {data:{mfa_required, mfa_challenge_token, expires_in}, meta:{request_id}}
+- POST /api/v1/auth/2fa/verify → 200, body: {data:{access_token, token_type, expires_in, user}}, Set-Cookie: refresh_token=... HttpOnly;Max-Age=2592000;Path=/api/v1/auth;SameSite=lax;Secure
+- GET /api/v1/users/me → 200, body: {data:{id,email,full_name,status,preferred_language,roles,employee_profile,created_at,updated_at}}
+
+## DB tables observed (queried directly)
+- users: SELECT id, email, full_name, preferred_language, status FROM users WHERE email='...'
+- employee_profiles: SELECT user_id, employee_id, brand, society, center, country, department
+- mfa_totp_secrets: SELECT user_id, has_secret, enabled (via LENGTH check)
+- refresh_tokens: SELECT id, user_id, hashed, active, not_revoked (5 most recent)
+- audit_logs: SELECT id, action, metadata->>'request_id', metadata->>'outcome', created_at (10 min window)
+
+## Auth contract observed
+- JWT access_token: Bearer, exp=1800s, payload includes sub/email/roles/preferred_language/employee_profile_id/jti/iat/exp
+- Refresh cookie: HttpOnly + Secure + SameSite=lax + Path=/api/v1/auth + Max-Age=2592000 (30 days)
+- X-Request-ID: echoed in meta.request_id in all responses
+- Error format: {data:null, meta:{request_id}, errors:[{code,message,field,details}]}
+
+## Negative cases observed
+- A: wrong password → 401, code=AUTH_INVALID_CREDENTIALS (aggregate, no user enum)
+- B: wrong TOTP code → 401, code=AUTH_MFA_CODE_INVALID
+- C: invalid challenge_id → 400, code=AUTH_INVALID_PAYLOAD, field=challenge_id
+- D: no token on users/me → 401, code=AUTH_SESSION_EXPIRED
+- E: invalid token on users/me → 401, code=AUTH_SESSION_EXPIRED
+
+## Logging contract observed
+- Verbose mode: .start/.received/.starting/.done/.ok/.rejected patterns per operation, with request_id
+- Quiet mode: ONLY uvicorn HTTP access lines (no app-level INFO/DEBUG)
+- PII-clean: 0 matches for password, TOTP secret, plain email in all log files
