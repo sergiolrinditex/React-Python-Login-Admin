@@ -44,8 +44,9 @@ export const DEFAULT_LANGUAGE: Language = "es";
  * Declared i18n namespaces, in order of declaration in index.ts.
  * Source: instrucciones.md §6 "Namespaces: common, auth, chat, account,
  *   admin-ai, rag, mcp, errors."
+ *   Updated P04-S03-T002: added "usage" namespace (§D-T002-I18N-NSLIST).
  *
- * Used in tests to assert that all 8 namespaces are registered.
+ * Used in tests to assert that all 9 namespaces are registered.
  */
 export const I18N_NAMESPACES = [
   "common",
@@ -57,6 +58,7 @@ export const I18N_NAMESPACES = [
   "mcp",
   "agents",
   "errors",
+  "usage",
 ] as const;
 
 /**

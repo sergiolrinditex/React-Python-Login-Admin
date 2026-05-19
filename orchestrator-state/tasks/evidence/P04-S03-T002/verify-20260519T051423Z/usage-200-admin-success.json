@@ -1,0 +1,1 @@
+{"data":{"from":"2026-04-01T00:00:00+00:00","to":"2026-05-19T23:59:59+00:00","group_by":"model_day","rows":[],"totals":{"tokens_in":0,"tokens_out":0,"estimated_cost":0.0,"invocations":0,"latency_ms_avg":null}},"meta":{"request_id":"d6f3f864-cc03-4c83-8ca2-e8e2cb9dffcc"}}

@@ -3,9 +3,10 @@
  *
  * Slice/Phase: P00-S01-T005 — i18n resources ES/EN/FR / Phase 0 Scaffold.
  *
- * Responsibility: initialise the i18next singleton with all 8 namespaces loaded
+ * Responsibility: initialise the i18next singleton with all 9 namespaces loaded
  *   inline for 3 locales (ES, EN, FR) with fallback to Spanish. Replaces the
  *   resource-less stub created in T002.
+ *   Updated P04-S03-T002: added "usage" namespace (§D-T002-I18N-BUNDLE).
  *
  * Design decisions (from task pack §8.3 and instrucciones.md §3.3):
  *   - Detector OFF: i18next-browser-languagedetector crashes jsdom (inherited T002 R1).
@@ -782,6 +783,39 @@ const resources = {
       UNKNOWN: "Ha ocurrido un error inesperado",
       NETWORK: "Error de conexión. Comprueba tu red e inténtalo de nuevo",
     },
+    usage: {
+      title: "Uso de IA",
+      subtitle: "Coste, tokens y latencia — últimos 30 días",
+      loading: "Cargando datos de uso…",
+      empty: {
+        title: "Sin datos de uso",
+        body: "Aún no hay registros de uso. Prueba un modelo para generar datos.",
+        cta: "Ver modelos →",
+      },
+      errors: {
+        network: "Error de conexión al cargar los datos de uso.",
+        "network.retry": "Reintentar",
+        forbidden: {
+          title: "Acceso denegado",
+          body: "No tienes permiso para ver los datos de uso.",
+        },
+        validation: {
+          range: "El rango de fechas no es válido. El período máximo es 90 días.",
+        },
+      },
+      table: {
+        caption: "Tabla de uso de IA por modelo y día",
+        col: {
+          model: "Modelo",
+          day: "Día",
+          tokens: "Tokens",
+          cost: "Coste (USD)",
+          latency: "Latencia",
+          invocations: "Invocaciones",
+        },
+      },
+      nextAction: "Ver modelos",
+    },
   },
   en: {
     common: {
@@ -1503,6 +1537,39 @@ const resources = {
       AGENT_DISABLED: "This agent is disabled",
       UNKNOWN: "An unexpected error occurred",
       NETWORK: "Connection error. Check your network and try again",
+    },
+    usage: {
+      title: "AI Usage",
+      subtitle: "Cost, tokens and latency — last 30 days",
+      loading: "Loading usage data…",
+      empty: {
+        title: "No usage data",
+        body: "No usage records yet. Test a model to generate data.",
+        cta: "View models →",
+      },
+      errors: {
+        network: "Connection error while loading usage data.",
+        "network.retry": "Try again",
+        forbidden: {
+          title: "Access denied",
+          body: "You do not have permission to view usage data.",
+        },
+        validation: {
+          range: "Invalid date range. Maximum period is 90 days.",
+        },
+      },
+      table: {
+        caption: "AI usage table by model and day",
+        col: {
+          model: "Model",
+          day: "Day",
+          tokens: "Tokens",
+          cost: "Cost (USD)",
+          latency: "Latency",
+          invocations: "Invocations",
+        },
+      },
+      nextAction: "View models",
     },
   },
   fr: {
@@ -2226,6 +2293,39 @@ const resources = {
       AGENT_DISABLED: "Cet agent est désactivé",
       UNKNOWN: "Une erreur inattendue s'est produite",
       NETWORK: "Erreur de connexion. Vérifiez votre réseau et réessayez",
+    },
+    usage: {
+      title: "Utilisation IA",
+      subtitle: "Coût, tokens et latence — 30 derniers jours",
+      loading: "Chargement des données d'utilisation…",
+      empty: {
+        title: "Aucune donnée d'utilisation",
+        body: "Aucun enregistrement d'utilisation pour l'instant. Testez un modèle pour générer des données.",
+        cta: "Voir les modèles →",
+      },
+      errors: {
+        network: "Erreur de connexion lors du chargement des données d'utilisation.",
+        "network.retry": "Réessayer",
+        forbidden: {
+          title: "Accès refusé",
+          body: "Vous n'avez pas la permission de consulter les données d'utilisation.",
+        },
+        validation: {
+          range: "Plage de dates invalide. La période maximale est de 90 jours.",
+        },
+      },
+      table: {
+        caption: "Tableau d'utilisation IA par modèle et jour",
+        col: {
+          model: "Modèle",
+          day: "Jour",
+          tokens: "Tokens",
+          cost: "Coût (USD)",
+          latency: "Latence",
+          invocations: "Invocations",
+        },
+      },
+      nextAction: "Voir les modèles",
     },
   },
 } as const;

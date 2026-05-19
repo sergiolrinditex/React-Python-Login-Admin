@@ -1,0 +1,14 @@
+# Logs Verbose OFF — P04-S03-T002 Frontend Tests
+
+ENABLE_VERBOSE_LOGGING=false vitest run: 190/190 PASS
+
+## Info lines suppressed (correct):
+- usage.repo.fetch.before: 0 occurrences (confirmed)
+- usage.repo.fetch.after: 0 occurrences (confirmed)
+
+## Error lines still present (correct — errors always log):
+- 8 error/warn lines matching admin usage errors (same as verbose=true)
+- usage.repo.fetch.forbidden, usage.repo.fetch.auth_expired, usage.repo.fetch.server_error, 
+  usage.repo.fetch.error, usage.hook.queryFn.error — all 8 occurrences match verbose=true
+
+## Conclusion: LOG_DELTA verified — verbose flag correctly gates info/debug lines

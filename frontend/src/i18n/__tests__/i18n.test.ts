@@ -3,17 +3,18 @@
  *
  * Slice/Phase: P00-S01-T005 — i18n resources ES/EN/FR / Phase 0 Scaffold.
  *
- * Responsibility: verify that i18next is configured correctly with all 8 namespaces,
+ * Responsibility: verify that i18next is configured correctly with all 9 namespaces,
  *   3 locales, fallback behaviour, and error-code coverage.
  *   All tests use the literal string "i18n" in describe/it names so that the
  *   acceptance verification command `npm --prefix frontend run test -- --run -t i18n`
  *   includes them via Vitest's name filter.
+ *   Updated P04-S03-T002: 8→9 namespaces (added "usage") §D-T002-I18N-TEST.
  *
  * Tests are REAL: they use the actual i18n singleton loaded with real inline resources.
  * No mocks, no stubs of services we control.
  *
  * Key deps: i18next ^26.1.0, vitest ^3.0.0.
- * Source ref: task pack §8.4 (8 test assertions).
+ * Source ref: task pack §8.4 (9 test assertions).
  */
 
 import { describe, it, expect } from "vitest";
@@ -45,9 +46,9 @@ const ERROR_CODES = [
 // ---------------------------------------------------------------------------
 
 describe("i18n: configuration", () => {
-  it("i18n: registers all 8 namespaces", () => {
+  it("i18n: registers all 9 namespaces", () => {
     const registered = i18n.options.ns as string[];
-    expect(I18N_NAMESPACES).toHaveLength(8);
+    expect(I18N_NAMESPACES).toHaveLength(9);
     I18N_NAMESPACES.forEach((ns) => {
       expect(registered).toContain(ns);
     });
@@ -67,13 +68,25 @@ describe("i18n: configuration", () => {
 // Test 2 — i18n: 24 bundles present (8 namespaces × 3 languages)
 // ---------------------------------------------------------------------------
 
-describe("i18n: 24 bundles present", () => {
-  it("i18n: all 3 locales have all 8 namespaces loaded", () => {
+describe("i18n: 27 bundles present", () => {
+  it("i18n: all 3 locales have all 9 namespaces loaded", () => {
     SUPPORTED_LANGUAGES.forEach((lng) => {
       I18N_NAMESPACES.forEach((ns) => {
         const bundle = i18n.getResourceBundle(lng, ns);
         expect(bundle).toBeDefined();
         expect(typeof bundle).toBe("object");
+      });
+    });
+  });
+
+  it("i18n: usage namespace has required keys in es, en, fr", () => {
+    const USAGE_KEYS = ["title", "subtitle", "loading", "nextAction"];
+    SUPPORTED_LANGUAGES.forEach((lng) => {
+      const bundle = i18n.getResourceBundle(lng, "usage") as Record<string, unknown>;
+      expect(bundle).toBeDefined();
+      USAGE_KEYS.forEach((key) => {
+        expect(bundle[key]).toBeDefined();
+        expect(typeof bundle[key]).toBe("string");
       });
     });
   });

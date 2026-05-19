@@ -1,0 +1,40 @@
+P04-S03-T002 Test Evidence
+==========================
+
+Test run: VITE_ENABLE_VERBOSE_LOGGING=true
+Result: Test Files 16 passed (16) | Tests 190 passed (190)
+
+Test run: VITE_ENABLE_VERBOSE_LOGGING=false
+Result: Test Files 16 passed (16) | Tests 190 passed (190)
+
+New tests added (P04-S03-T002):
+- usageRepository.test.ts: 7 tests (200 ok, 200 empty, 422, 403, 401, 500, network/abort)
+- useUsage.test.tsx: 9 tests (isRangeValid x4, loading→success, invalid range, forbidden, network, refetch)
+- UsagePage.test.tsx: 9 tests (loading, success, empty, network error, forbidden, validation, a11y, i18n, Intl)
+- i18n.test.ts: 2 extra tests (usage namespace lockstep keys, 9 ns count)
+
+Total new tests: 25+ (spread across 3 new test files + updated i18n test)
+TOTAL after: 190/190 PASS verbose=true & verbose=false
+
+Design tokens enforcer: OK (no hardcoded literals)
+Build: tsc -b + vite build → success (222 modules)
+Backend lint: ruff check backend/ → All checks passed!
+Backend test (no changes): pytest backend/tests/integration -k usage → pre-existing 25/25 PASS (read-only)
+
+Backend smoke (requires backend running):
+  curl -b /tmp/cookies.txt -H "Authorization: Bearer $ACCESS" \
+    "http://localhost:8000/api/v1/admin/usage?from=2026-04-16T00:00:00Z&to=2026-05-16T23:59:59Z&group_by=model_day"
+  Expected: 200 {data:{from,to,group_by,rows[],totals},meta:{request_id}}
+
+Route smoke:
+  /admin/usage — requires RequireRole(["people_admin","super_admin"])
+  Verified in router.tsx: ROUTE_ADMIN_USAGE = "/admin/usage"
+  Mounted inside RequireRole block: Route path={ROUTE_ADMIN_USAGE} element={UsagePage}
+
+Logging contract verified:
+  BEFORE: usage.repo.fetch.before {from,to,group_by,request_id}
+  AFTER success: usage.repo.fetch.after {row_count,range_days,request_id}
+  ERROR: usage.repo.fetch.error {error_class,message,request_id}
+  PII-clean: no tokens, no estimated_cost, no email, no user_id
+  verbose=true: all events fire
+  verbose=false: only warn+error fire

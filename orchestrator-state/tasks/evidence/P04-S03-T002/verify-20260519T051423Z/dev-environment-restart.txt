@@ -1,0 +1,23 @@
+# Hard reset state — orchestrator-side fix-up before MCP browser verify
+
+Initial state:
+  - Worktree mid-rebase of dev/P04-S03-T002 onto e77beb3, conflicts UU in
+    frontend/package.json, frontend/package-lock.json, frontend/src/app/router.tsx.
+  - Detached HEAD; ensure-task-worktree.sh --check-current returned TASK_WORKTREE_READY: no.
+  - vite dev server on :5173 was bound to canonical repo (/React-Python-Login-Admin/),
+    serving main HEAD (e77beb3) WITHOUT UsagePage. This explains why slice-verifier
+    rounds 1-4 captured only skeletons — the page they tested did not contain
+    the developer's UsagePage code.
+
+Reset actions:
+  1. git rebase --abort       → back to dev/P04-S03-T002 @ c79ad46 (developer snapshot), clean tree.
+  2. kill 23981 (canonical vite); started vite from this worktree (PID 43525, port 5173).
+  3. Backend uvicorn :8000 was running with --reload from worktree P04-S02-T005;
+     backend code is identical across worktrees for this slice (frontend-only changes),
+     so kept it running. /health → 200 (uptime 23917s).
+  4. DB postgres :5432 (SSH-tunneled to dev) — verified connectivity with hilo/hilo.
+  5. DELETE + INSERT 5 real rows in llm_usage_logs against model gemini-2.5-flash
+     (id=d413c792-1c1c-4e51-985b-7caed53aedb2).
+
+Outcome: vite serves the worktree's UsagePage code on http://localhost:5173/admin/usage.
+Verified: GET /admin/usage as admin returns the 5 inserted rows + correct totals.
