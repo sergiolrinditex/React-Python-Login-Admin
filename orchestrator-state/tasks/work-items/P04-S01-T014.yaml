@@ -2,13 +2,13 @@ id: P04-S01-T014
 phase_id: P04
 step_id: P04-S01
 title: "Replace deprecated Starlette HTTP_422_UNPROCESSABLE_ENTITY with HTTP_422_UNPROCESSABLE_CONTENT across backend"
-status: ready
+status: done
 kind: "techdebt"
 target: "Replace deprecated Starlette HTTP_422_UNPROCESSABLE_ENTITY with HTTP_422_UNPROCESSABLE_CONTENT across backend"
 product_increment: "current"
 build_state: "planned"
 risk_level: "low"
-verify_mode: "auto"
+verify_mode: "human"
 route: ""
 endpoint: ""
 journey_refs:
@@ -18,8 +18,7 @@ depends_on:
 acceptance:
   - "pytest backend/tests/integration/test_admin_ai.py reports 0 warnings (or warnings that do not mention HTTP_422_UNPROCESSABLE_ENTITY) in both ENABLE_VERBOSE_LOGGING=on and off modes. Same for any other integration suite using the constant."
 verification_commands:
-  - "grep -R 'HTTP_422_UNPROCESSABLE_ENTITY' backend/ returns 0 matches"
-  - "pytest -W error::DeprecationWarning backend/tests/integration/test_admin_ai.py passes 26/26 (or any failures are unrelated to the Starlette alias)."
+  - "grep -R 'HTTP_422_UNPROCESSABLE_ENTITY' backend/ returns 0 matches, pytest -W error::DeprecationWarning backend/tests/integration/test_admin_ai.py passes 26/26 (or any failures are unrelated to the Starlette alias)."
 allowed_paths:
   - "backend/app/**/*.py"
   - "backend/tests/**/*.py"
@@ -32,4 +31,5 @@ write_set:
   - "backend/pyproject.toml (only if version bump required)"
 handoff_path: orchestrator-state/tasks/handoffs/P04-S01-T014.md
 evidence_dir: orchestrator-state/tasks/evidence/P04-S01-T014
-source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry"
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime follow-up P04-S01-T007"
+source_fingerprint: "54c88407f5c4740c7292067a4a3ba0eb666388cd7b6c864cc39029dad22dd280"

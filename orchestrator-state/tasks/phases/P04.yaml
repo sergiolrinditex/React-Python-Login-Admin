@@ -1,6 +1,6 @@
 id: P04
 title: "Admin UX"
-status: active
+status: ready
 depends_on:
   - P03
 task_ids:

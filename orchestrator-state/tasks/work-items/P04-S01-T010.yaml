@@ -2,7 +2,7 @@ id: P04-S01-T010
 phase_id: P04
 step_id: P04-S01
 title: "Test isolation: test_migrations downgrade pollutes RAG/MCP suite (~63 failures, 68 errors)"
-status: ready
+status: done
 kind: "test"
 target: "Test isolation: test_migrations downgrade pollutes RAG/MCP suite (~63 failures, 68 errors)"
 product_increment: "current"
@@ -16,12 +16,9 @@ tables:
 depends_on:
   - P04-S01-T007
 acceptance:
-  - "Full pytest backend/tests/integration -v runs with no failures attributable to dropped DB schema"
-  - "RAG"
-  - "MCP and admin-ai integration tests all pass in a single run after the migrations downgrade test."
+  - "Full pytest backend/tests/integration -v runs with no failures attributable to dropped DB schema, RAG, MCP and admin-ai integration tests all pass in a single run after the migrations downgrade test."
 verification_commands:
-  - "pytest backend/tests/integration -v shows zero UndefinedTable / OperationalError failures caused by cross-test schema teardown"
-  - "rerun stable across two consecutive invocations."
+  - "pytest backend/tests/integration -v shows zero UndefinedTable / OperationalError failures caused by cross-test schema teardown, rerun stable across two consecutive invocations."
 allowed_paths:
   - "backend/tests/conftest.py"
   - "backend/tests/integration/conftest.py"
@@ -34,4 +31,5 @@ write_set:
   - "backend/tests/integration/test_migrations_0001_auth.py"
 handoff_path: orchestrator-state/tasks/handoffs/P04-S01-T010.md
 evidence_dir: orchestrator-state/tasks/evidence/P04-S01-T010
-source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry"
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime follow-up P04-S01-T007"
+source_fingerprint: "b2a35663eb09ddb65aad0f499049953610d5db61c5dd12b9ea454c0a5a35f2dd"

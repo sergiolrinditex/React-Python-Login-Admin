@@ -2,7 +2,7 @@ id: P04-S01-T008
 phase_id: P04
 step_id: P04-S01
 title: "eslint absent from frontend devDependencies — npm run lint always fails"
-status: ready
+status: done
 kind: "security"
 target: "eslint absent from frontend devDependencies — npm run lint always fails"
 product_increment: "current"
@@ -16,11 +16,9 @@ tables:
 depends_on:
   - P04-S01-T003
 acceptance:
-  - "eslint (or chosen linter e.g. oxlint/biome) installed in devDependencies"
-  - "npm run lint exits 0 with zero warnings on the existing codebase."
+  - "eslint (or chosen linter e.g. oxlint/biome) installed in devDependencies, npm run lint exits 0 with zero warnings on the existing codebase."
 verification_commands:
-  - "npm --prefix frontend run lint exits 0 in a clean worktree"
-  - "pre-commit lint hook (if any) green."
+  - "npm --prefix frontend run lint exits 0 in a clean worktree, pre-commit lint hook (if any) green."
 allowed_paths:
   - "frontend/package.json"
   - "frontend/package-lock.json"
@@ -39,4 +37,5 @@ write_set:
   - "tsx}"
 handoff_path: orchestrator-state/tasks/handoffs/P04-S01-T008.md
 evidence_dir: orchestrator-state/tasks/evidence/P04-S01-T008
-source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry"
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime follow-up P04-S01-T003"
+source_fingerprint: "ca8c3aba642883bf6f5ffe3da8d7f032eaa6abb1244fa776ee22c3f6103734f5"

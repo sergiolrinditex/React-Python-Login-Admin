@@ -2,7 +2,7 @@ id: P04-S01-T004
 phase_id: P04
 step_id: P04-S01
 title: "ModelTestDrawer"
-status: blocked
+status: done
 kind: "frontend"
 target: "ModelTestDrawer"
 product_increment: "v1"

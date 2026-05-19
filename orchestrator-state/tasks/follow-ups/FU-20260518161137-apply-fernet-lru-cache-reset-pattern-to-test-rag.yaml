@@ -1,0 +1,47 @@
+{
+  "id": "FU-20260518161137-apply-fernet-lru-cache-reset-pattern-to-test-rag",
+  "schema_version": 1,
+  "status": "proposed",
+  "created_at": "2026-05-18T16:11:37+00:00",
+  "created_by": "sergiolr",
+  "origin_task_id": "P04-S01-T011",
+  "origin_phase_id": "P04",
+  "origin_step_id": "P04-S01",
+  "kind": "test",
+  "product_increment": "current",
+  "build_state": "planned",
+  "severity": "low",
+  "title": "Apply Fernet lru_cache reset pattern to test_rag_collections.py and audit other integration test modules overriding ENCRYPTION_KEY",
+  "description": "backend/tests/integration/test_rag_collections.py:53 unconditionally sets os.environ ENCRYPTION_KEY at module-import time without calling reset_fernet_cache() afterwards. Under full-suite pytest ordering this can exhibit the same cross-module lru_cache poisoning that P04-S01-T011 fixed for test_mcp_registry.py. The symptom was masked by PROGRESS.md H3 migration downgrade pollution until P04-S01-T010 (merged in commit 09c5685, PR #59) fixed it; the latent bug will likely surface in the next full-suite. Audit all integration test modules touching ENCRYPTION_KEY (test_chat_stream.py already defensive at L124; test_admin_ai.py has autouse fixture; verify test_audit_endpoint.py, test_mcp_sync_unreachable.py, etc.) and apply the proven pattern uniformly: reset_fernet_cache() immediately after the override + autouse function-scoped fixture if there is cross-module teardown.",
+  "journey_refs": [],
+  "screen_route": "—",
+  "endpoint": "—",
+  "tables": [],
+  "depends_on": [
+    "P04-S01-T011"
+  ],
+  "conflict_groups": [
+    "security:test-isolation"
+  ],
+  "write_set": [
+    "backend/tests/integration/test_rag_collections.py",
+    "backend/tests/integration/test_*.py"
+  ],
+  "acceptance": [
+    "All backend integration test modules that override ENCRYPTION_KEY at import time call reset_fernet_cache() immediately after the override. pytest backend/tests/integration -k 'rag or mcp_registry or admin_ai' passes in any collection order with no cryptography.fernet.InvalidToken."
+  ],
+  "verify": [
+    "pytest backend/tests/integration/test_admin_ai.py backend/tests/integration/test_rag_collections.py -vv (in that order",
+    "to reproduce alphabetical-prior poisoning). Expect 0 InvalidToken failures. Then pytest backend/tests/integration/test_admin_ai.py backend/tests/integration/test_mcp_registry.py backend/tests/integration/test_rag_collections.py -vv with all 3 in same session — all pass."
+  ],
+  "notes": [],
+  "triage": {
+    "scope_classification": "missing_coverage",
+    "why_not_debugger": "test_rag_collections.py:53 esta fuera del Write set/allowed_paths de P04-S01-T011 (restringido a test_mcp_registry.py + encryption.py). El debugger no puede legalmente editar test_rag_collections.py bajo este TASK_ID. Task pack 4.3 R3 declaro explicitamente esta deuda fuera de scope. Requiere un nuevo TASK_ID con Write set que incluya test_rag_collections.py.",
+    "decision": "followup_only_when_outside_current_slice",
+    "debugger_path": "in_scope_defects_use_validator_tester_debugger_retest",
+    "warnings": []
+  },
+  "possible_duplicates": [],
+  "proposal_path": "orchestrator-state/tasks/follow-ups/FU-20260518161137-apply-fernet-lru-cache-reset-pattern-to-test-rag.yaml"
+}

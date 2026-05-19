@@ -2,7 +2,7 @@ id: P03-S02-T009
 phase_id: P03
 step_id: P03-S02
 title: "Add /account link from chat shell (navbar entry point)"
-status: ready
+status: done
 kind: "ux"
 target: "Add /account link from chat shell (navbar entry point)"
 product_increment: "current"
@@ -17,10 +17,7 @@ tables:
 depends_on:
   - P03-S02-T007
 acceptance:
-  - "Visible avatar/account icon in chat shell linking to /account"
-  - "keyboard accessible"
-  - "passes design tokens"
-  - "existing chat tests stay green."
+  - "Visible avatar/account icon in chat shell linking to /account, keyboard accessible, passes design tokens, existing chat tests stay green."
 verification_commands:
   - "/verify-slice navigates from /chat → click navbar account icon → /account renders."
 allowed_paths:
@@ -31,4 +28,5 @@ write_set:
   - "frontend/src/pages/chat/**"
 handoff_path: orchestrator-state/tasks/handoffs/P03-S02-T009.md
 evidence_dir: orchestrator-state/tasks/evidence/P03-S02-T009
-source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry"
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime follow-up P03-S02-T007"
+source_fingerprint: "c6e06bb8d4fc4f13756c3e052ee69968c2b1df299419fe4956bdfac147188cb7"

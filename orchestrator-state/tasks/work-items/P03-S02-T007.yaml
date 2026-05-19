@@ -2,7 +2,7 @@ id: P03-S02-T007
 phase_id: P03
 step_id: P03-S02
 title: "Re-implement AccountPage /account from scratch (profile + language + logout)"
-status: ready
+status: done
 kind: "followup"
 target: "Re-implement AccountPage /account from scratch (profile + language + logout)"
 product_increment: "current"
@@ -19,11 +19,7 @@ depends_on:
 acceptance:
   - "Ruta /account renderiza AccountPage. Usuario auth ve su email + language actual. Cambio language → cookie/storage actualizado + UI re-renderiza. Click 'Logout' → cookies cleared + redirect /auth/sign-in. Tests vitest verdes."
 verification_commands:
-  - "Tras retoma DAG: login employee"
-  - "navegar a /account (link en navbar)"
-  - "ver perfil"
-  - "cambiar idioma ES→EN → texto cambia"
-  - "click Logout → vuelve a /auth/sign-in."
+  - "Tras retoma DAG: login employee, navegar a /account (link en navbar), ver perfil, cambiar idioma ES→EN → texto cambia, click Logout → vuelve a /auth/sign-in."
 allowed_paths:
   - "frontend/src/pages/account/**"
   - "frontend/src/features/auth/presentation/useLogout*"
@@ -38,4 +34,5 @@ write_set:
   - "frontend/src/app/router.tsx"
 handoff_path: orchestrator-state/tasks/handoffs/P03-S02-T007.md
 evidence_dir: orchestrator-state/tasks/evidence/P03-S02-T007
-source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry"
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime follow-up P03-S02-T004"
+source_fingerprint: "2b3cac47cf535e61d96c9eddf3be39acec9983029eed80f30821ff84f9dc4bd0"

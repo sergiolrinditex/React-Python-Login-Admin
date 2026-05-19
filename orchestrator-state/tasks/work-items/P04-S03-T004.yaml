@@ -2,7 +2,7 @@ id: P04-S03-T004
 phase_id: P04
 step_id: P04-S03
 title: "Re-launch P04-S03-T002 UsagePage from rescue branch (ready_for_close → closer)"
-status: blocked
+status: ready
 kind: "followup"
 target: "Re-launch P04-S03-T002 UsagePage from rescue branch (ready_for_close → closer)"
 product_increment: "current"
@@ -17,16 +17,9 @@ tables:
 depends_on:
   - P04-S03-T002
 acceptance:
-  - "UsagePage /admin/usage accesible en main"
-  - "ruta funcional con cards de uso real desde GET /api/v1/admin/usage"
-  - "handoff con ## verify-slice VERIFY_OUTCOME=verified"
-  - "branch dev/P04-S03-T002 mergeada a main vía pr-flow"
-  - "status=done en registry."
+  - "UsagePage /admin/usage accesible en main, ruta funcional con cards de uso real desde GET /api/v1/admin/usage, handoff con ## verify-slice VERIFY_OUTCOME=verified, branch dev/P04-S03-T002 mergeada a main vía pr-flow, status=done en registry."
 verification_commands:
-  - "Tras retoma: /verify-slice P04-S03-T002 con MCP browser"
-  - "login auditor → /admin/usage muestra tabla con datos reales"
-  - "smoke GET /api/v1/admin/usage?from=2026-05-01&to=2026-05-31 → 200"
-  - "vitest frontend verde."
+  - "Tras retoma: /verify-slice P04-S03-T002 con MCP browser, login auditor → /admin/usage muestra tabla con datos reales, smoke GET /api/v1/admin/usage?from=2026-05-01&to=2026-05-31 → 200, vitest frontend verde."
 allowed_paths:
   - "frontend/src/features/admin/**"
   - "frontend/src/pages/admin/usage/**"
@@ -45,4 +38,5 @@ write_set:
   - "frontend/package-lock.json"
 handoff_path: orchestrator-state/tasks/handoffs/P04-S03-T004.md
 evidence_dir: orchestrator-state/tasks/evidence/P04-S03-T004
-source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry"
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime follow-up P04-S03-T002"
+source_fingerprint: "1c33035502e923de8c0852b8e4cfa98aa7c79d91824547c1f081cf9c02c00c5a"

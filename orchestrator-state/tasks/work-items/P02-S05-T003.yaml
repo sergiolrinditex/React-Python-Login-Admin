@@ -20,16 +20,16 @@ acceptance:
 verification_commands:
   - "Run pytest backend/tests/integration -k admin_ai_models, try concurrent PATCHes setting is_default=true on two models of same type, verify DB raises unique_violation instead of silently allowing two defaults."
 allowed_paths:
-  - "backend/app/admin/providers.py"
-  - "backend/app/admin/model_catalog.py"
+  - "backend/app/admin/providers/**"
+  - "backend/app/admin/model_catalog/**"
   - "backend/tests/integration/test_admin_ai.py"
 conflict_groups:
   - "api:admin-ai"
 write_set:
-  - "backend/app/admin/providers.py"
-  - "backend/app/admin/model_catalog.py"
+  - "backend/app/admin/providers/**"
+  - "backend/app/admin/model_catalog/**"
   - "backend/tests/integration/test_admin_ai.py"
 handoff_path: orchestrator-state/tasks/handoffs/P02-S05-T003.md
 evidence_dir: orchestrator-state/tasks/evidence/P02-S05-T003
 source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime follow-up P02-S05-T001"
-source_fingerprint: "578dde4653ccf8063757f7da29e1bfb21ff5606f5963b219033ee0593b7ad793"
+source_fingerprint: "74654508ff15451a8c173ecbf9236beac2844536c7d510c913718ec6ae30e374"

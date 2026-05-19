@@ -2,7 +2,7 @@ id: P04-S03-T003
 phase_id: P04
 step_id: P04-S03
 title: "Add GET /api/v1/admin/audit endpoint (currently planned in P05-S02-T001) to unblock P04-S03-T001 AuditLogPage"
-status: ready
+status: done
 kind: "wiring"
 target: "Add GET /api/v1/admin/audit endpoint (currently planned in P05-S02-T001) to unblock P04-S03-T001 AuditLogPage"
 product_increment: "v1"

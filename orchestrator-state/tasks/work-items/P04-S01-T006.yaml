@@ -2,7 +2,7 @@ id: P04-S01-T006
 phase_id: P04
 step_id: P04-S01
 title: "Restore stripped ForgotPassword + MFA types and methods in AuthRepository.ts (regression from commit 4a75d15)"
-status: ready
+status: done
 kind: "bug"
 target: "Restore stripped ForgotPassword + MFA types and methods in AuthRepository.ts (regression from commit 4a75d15)"
 product_increment: "current"
@@ -17,16 +17,9 @@ tables:
 depends_on:
   - P04-S01-T005
 acceptance:
-  - "frontend/src/features/auth/domain/AuthRepository.ts restaura los tipos ForgotPasswordRequest"
-  - "ForgotPasswordOutcome"
-  - "VerifyMfaRequest"
-  - "VerifyMfaOutcome y los métodos forgotPassword()/verifyMfa() byte-identical a baseline 21859a4 (269 LOC objetivo)"
-  - "frontend/src/features/auth/data/authRepository.ts (clase concreta) implementa los métodos forgotPassword()/verifyMfa() byte-identical a 21859a4"
-  - "npx tsc --noEmit en frontend retorna 0 errores (o sólo errores no relacionados con auth/chat según el residual documentado tras inspección)"
-  - "vitest pasa 357/357 (o ≥330 + residual documentado para chat domain si éste tiene regresión separada)"
+  - "frontend/src/features/auth/domain/AuthRepository.ts restaura los tipos ForgotPasswordRequest, ForgotPasswordOutcome, VerifyMfaRequest, VerifyMfaOutcome y los métodos forgotPassword()/verifyMfa() byte-identical a baseline 21859a4 (269 LOC objetivo), frontend/src/features/auth/data/authRepository.ts (clase concreta) implementa los métodos forgotPassword()/verifyMfa() byte-identical a 21859a4, npx tsc --noEmit en frontend retorna 0 errores (o sólo errores no relacionados con auth/chat según el residual documentado tras inspección), vitest pasa 357/357 (o ≥330 + residual documentado para chat domain si éste tiene regresión separada)"
 verification_commands:
-  - "Hard reset + dev-restart. /auth/sign-in mounts. Login con employee.verification → /auth/2fa renderiza input 6 dígitos. Código inválido → MfaCodeInvalidError visible en UI (anti-enum copy). Forgot-password con email válido → success state. tsc=0"
-  - "vitest 357/357 PASS."
+  - "Hard reset + dev-restart. /auth/sign-in mounts. Login con employee.verification → /auth/2fa renderiza input 6 dígitos. Código inválido → MfaCodeInvalidError visible en UI (anti-enum copy). Forgot-password con email válido → success state. tsc=0, vitest 357/357 PASS."
 allowed_paths:
   - "frontend/src/features/auth/domain/AuthRepository.ts"
   - "frontend/src/features/auth/data/authRepository.ts"
@@ -37,4 +30,5 @@ write_set:
   - "frontend/src/features/auth/data/authRepository.ts"
 handoff_path: orchestrator-state/tasks/handoffs/P04-S01-T006.md
 evidence_dir: orchestrator-state/tasks/evidence/P04-S01-T006
-source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry"
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime follow-up P04-S01-T005"
+source_fingerprint: "14bfa88db58ad535ee638ef71b9a5478866bc7bee3d2570e55f4023d065748ce"

@@ -2,7 +2,7 @@ id: P04-S01-T007
 phase_id: P04
 step_id: P04-S01
 title: "Backend admin AI integration tests regressed (25 failures in test_admin_ai.py)"
-status: ready
+status: done
 kind: "bug"
 target: "Backend admin AI integration tests regressed (25 failures in test_admin_ai.py)"
 product_increment: "current"
@@ -17,7 +17,7 @@ tables:
 depends_on:
   - P04-S01-T003
 acceptance:
-  - "pytest backend/tests/integration -k admin_ai_models passes 25/25 (or test scope updated with explicit rationale in source-of-truth)."
+  - "pytest backend/tests/integration/test_admin_ai.py passes 26/26 (or test scope updated with explicit rationale in source-of-truth)."
 verification_commands:
   - "full backend admin-ai integration suite green AND a fresh /verify-slice for the J103 admin AI happy path still passes."
 allowed_paths:
@@ -32,4 +32,5 @@ write_set:
   - "backend/tests/integration/test_admin_ai.py"
 handoff_path: orchestrator-state/tasks/handoffs/P04-S01-T007.md
 evidence_dir: orchestrator-state/tasks/evidence/P04-S01-T007
-source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime Follow-up Coverage Registry"
+source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Runtime follow-up P04-S01-T003"
+source_fingerprint: "e1f830e8961a89003b4aace11b7104b708c29583c76e99cfa52561bfee358c32"

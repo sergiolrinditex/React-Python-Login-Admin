@@ -2,7 +2,7 @@ id: P04-S02-T005
 phase_id: P04
 step_id: P04-S02
 title: "AgentsPage"
-status: needs_debug
+status: done
 kind: "frontend"
 target: "AgentsPage"
 product_increment: "v1"

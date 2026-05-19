@@ -2,7 +2,7 @@ id: P04-S03-T001
 phase_id: P04
 step_id: P04-S03
 title: "AuditLogPage"
-status: blocked
+status: ready
 kind: "frontend"
 target: "AuditLogPage"
 product_increment: "v1"

@@ -2,7 +2,7 @@ id: P04-S03-T002
 phase_id: P04
 step_id: P04-S03
 title: "UsagePage"
-status: ready_for_close
+status: done
 kind: "frontend"
 target: "UsagePage"
 product_increment: "v1"

@@ -1,6 +1,6 @@
 id: P03
 title: "Employee UX / Auth + Chat"
-status: ready
+status: complete
 depends_on:
   - P02
 task_ids:
@@ -18,6 +18,6 @@ task_ids:
   - P03-S01-T007
   - P03-S02-T006
   - P03-S02-T007
-  - P03-S02-T009
   - P03-S02-T008
+  - P03-S02-T009
 source_ref: "docs/source-of-truth/HILO_PEOPLE_IMPLEMENTATION_CHECKLIST.md#Phase 3 — Employee UX / Auth + Chat"
