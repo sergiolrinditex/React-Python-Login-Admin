@@ -1,0 +1,9 @@
+# Console messages captured during error_network simulation (window.fetch monkey-patched)
+# Source: claude-in-chrome MCP read_console_messages
+
+[ERROR] [auth] auth.http.request.network_error Object   ← authFetch layer
+[ERROR] [admin] usage.repo.fetch.error Object           ← repo layer (Result.err mapped)
+[ERROR] [admin] usage.hook.queryFn.error Object         ← hook layer (re-thrown for RQ)
+
+Each line fired twice across the retry cycle (retry: 1 in useUsage = initial + 1 retry).
+Confirms 3-layer error propagation chain works end-to-end with real auth + real frontend code.
