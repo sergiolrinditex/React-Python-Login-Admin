@@ -1,0 +1,22 @@
+{
+  "f5_reload_1": {
+    "timestamp": "2026-05-19T15:49:39+00:00",
+    "requests": [
+      {"method": "POST", "url": "/api/v1/auth/refresh", "status": 200, "setCookie": true},
+      {"method": "GET", "url": "/api/v1/users/me", "status": 200, "setCookie": false}
+    ],
+    "auth_refresh_count": 1,
+    "url_after_reload": "http://localhost:5173/chat",
+    "redirected_to_signin": false
+  },
+  "f5_reload_2": {
+    "timestamp": "2026-05-19T15:50:14+00:00",
+    "requests": [
+      {"method": "POST", "url": "/api/v1/auth/refresh", "status": 200, "setCookie": true},
+      {"method": "GET", "url": "/api/v1/users/me", "status": 200, "setCookie": false}
+    ],
+    "auth_refresh_count": 1,
+    "url_after_reload": "http://localhost:5173/chat",
+    "redirected_to_signin": false
+  }
+}

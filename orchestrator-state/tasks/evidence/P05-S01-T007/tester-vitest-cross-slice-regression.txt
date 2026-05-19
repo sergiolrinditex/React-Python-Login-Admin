@@ -1,0 +1,14 @@
+
+> hilo-people-frontend@0.1.0 test
+> vitest --run features/auth/data/__tests__/httpClient.test.ts features/auth/data/__tests__/accessTokenStore.test.ts features/auth/__tests__/errors.test.ts
+
+
+ RUN  v3.2.4 /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P05-S01-T007/frontend
+
+ ✓ src/features/auth/data/__tests__/httpClient.test.ts (4 tests) 6ms
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  15:25:39
+   Duration  957ms (transform 68ms, setup 116ms, collect 86ms, tests 6ms, environment 381ms, prepare 78ms)
+

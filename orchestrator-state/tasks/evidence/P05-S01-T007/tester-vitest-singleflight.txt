@@ -1,0 +1,28 @@
+
+> hilo-people-frontend@0.1.0 test
+> vitest --run features/auth/data/__tests__/refreshSingleFlight.test.ts
+
+
+ RUN  v3.2.4 /Users/sergiolr/Desktop/Productos/React-Python-Login-Admin-worktrees/P05-S01-T007/frontend
+
+stderr | src/features/auth/data/__tests__/refreshSingleFlight.test.ts > SF-T3 — executor fails → both callers reject; onAuthFailure called exactly once > propagates AuthSessionExpiredError to both callers; onAuthFailure fires once
+[auth] auth.refresh.singleflight.failed {
+  status: [33m401[39m,
+  request_id: [32m'8ec25a7d-7202-421e-957f-d16e0ebbc5f5'[39m,
+  reason: [32m'hydrate'[39m
+}
+
+stderr | src/features/auth/data/__tests__/refreshSingleFlight.test.ts > SF-T6 — cross-layer: hydrate + interceptor fire concurrently → 1 fetch > F5 failure: both hydrate and interceptor receive AuthSessionExpiredError
+[auth] auth.refresh.singleflight.failed {
+  status: [33m401[39m,
+  request_id: [32m'12f7cbcb-04c9-4418-941c-2677bd72b892'[39m,
+  reason: [32m'hydrate'[39m
+}
+
+ ✓ src/features/auth/data/__tests__/refreshSingleFlight.test.ts (8 tests) 7ms
+
+ Test Files  1 passed (1)
+      Tests  8 passed (8)
+   Start at  15:23:59
+   Duration  928ms (transform 52ms, setup 88ms, collect 44ms, tests 7ms, environment 413ms, prepare 86ms)
+

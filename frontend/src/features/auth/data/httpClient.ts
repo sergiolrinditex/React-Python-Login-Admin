@@ -3,6 +3,10 @@
  *
  * Slice/Phase: P01-S03-T001 — Auth state provider and protected route guards / Phase 1.
  * Fixed: P03-S01-T007 — API_BASE fallback set to "" per ADR-002 same-origin contract.
+ * Fixed: P05-S01-T007 — Single-flight state moved to refreshSingleFlight.ts so that
+ *   AuthRepository.refresh() and httpClient._doRefresh() share the same in-flight gate,
+ *   preventing the F5 reload race where two concurrent requests carry the same HttpOnly
+ *   refresh cookie and the backend revokes the first before the second arrives.
  *
  * Responsibility: fetch wrapper that:
  *   1. Injects credentials:'include' on every request (for HttpOnly refresh cookie).
@@ -22,79 +26,44 @@
  *   - Access token injected ONLY for non-auth endpoints.
  *   - __authNoRetry flag prevents infinite refresh loop.
  *
- * Single-flight pattern (task pack §K T15–T17):
- *   A single Promise<string> (_inflight) serializes concurrent 401 retries.
- *   All requesters that hit 401 while refresh is in-flight await the same promise.
+ * Single-flight pattern (task pack §K T15–T17, P05-S01-T007):
+ *   The single-flight gate now lives in refreshSingleFlight.ts. _doRefresh() is a
+ *   thin wrapper that passes the onAuthFailure callback and the caller reason.
+ *   All concurrent 401 interceptors (and AuthProvider.hydrate()) share ONE Promise.
  *
  * Non-negotiables §logging: BEFORE+AFTER+ERROR on every public operation.
  */
 
 import { AuthSessionExpiredError, NetworkError, mapFetchError } from "./errors";
-import { getAccessToken, setAccessToken, clearAccessToken } from "./accessTokenStore";
+import { getAccessToken, clearAccessToken } from "./accessTokenStore";
 import { logVerbose, logWarn, logError } from "./logger";
+import { refreshAccessToken, _resetSingleFlight } from "./refreshSingleFlight";
 
 // ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "";
-const REFRESH_URL = `${API_BASE}/api/v1/auth/refresh`;
 
 /** Endpoints that must NOT receive an Authorization Bearer header. */
 const NO_AUTH_PREFIXES = ["/api/v1/auth/refresh", "/api/v1/auth/logout"];
 
 // ---------------------------------------------------------------------------
-// Internal: single-flight refresh promise
+// Internal: single-flight refresh (delegates to shared module)
 // ---------------------------------------------------------------------------
 
-let _inflight: Promise<string> | null = null;
-
 /**
- * Fires ONE refresh request. Concurrent callers receive the same Promise.
- * Resolves with the new access token string; rejects with AuthSessionExpiredError.
+ * Fires ONE refresh request via the shared single-flight module.
+ * Concurrent callers (including AuthRepository.refresh on hydrate) receive
+ * the same Promise — only ONE POST /api/v1/auth/refresh is made per burst.
+ * Resolves with the new access token string; throws AuthSessionExpiredError on failure.
  *
  * @param onAuthFailure - Called when refresh fails (clears store, triggers logout UI).
  * @returns Promise resolving to the new access token.
  */
-async function _doRefresh(onAuthFailure: () => void): Promise<string> {
-  if (_inflight !== null) {
-    logVerbose("auth.http.refresh_inflight");
-    return _inflight;
-  }
-
-  logVerbose("auth.http.refresh.start");
-  _inflight = (async (): Promise<string> => {
-    try {
-      const requestId = crypto.randomUUID();
-      const response = await fetch(REFRESH_URL, {
-        method: "POST",
-        credentials: "include",
-        headers: { "X-Request-ID": requestId },
-      });
-
-      if (!response.ok) {
-        logWarn("auth.http.refresh.failed", { status: response.status, request_id: requestId });
-        clearAccessToken();
-        onAuthFailure();
-        throw new AuthSessionExpiredError();
-      }
-
-      const body = (await response.json()) as {
-        data: { access_token: string };
-      };
-      const newToken = body.data.access_token;
-      setAccessToken(newToken);
-      logVerbose("auth.http.refresh.ok", {
-        request_id: requestId,
-        token_len: newToken.length,
-      });
-      return newToken;
-    } finally {
-      _inflight = null;
-    }
-  })();
-
-  return _inflight;
+function _doRefresh(onAuthFailure: () => void): Promise<string> {
+  logVerbose("auth.http.refresh.delegated");
+  return refreshAccessToken({ onAuthFailure, reason: "interceptor" });
 }
 
 // ---------------------------------------------------------------------------
@@ -221,7 +190,14 @@ export async function authFetch(
   return response;
 }
 
-/** Resets the in-flight refresh state. Test utility only. */
+/**
+ * Resets the in-flight refresh state in the shared single-flight module.
+ *
+ * @internal Testing only — back-compat alias for _resetSingleFlight().
+ *   Existing test files (auth.test.tsx, httpClient.test.ts) import this
+ *   symbol; they do not need to change. The underlying state is now owned
+ *   by refreshSingleFlight.ts.
+ */
 export function _resetInflight(): void {
-  _inflight = null;
+  _resetSingleFlight();
 }

@@ -1,0 +1,22 @@
+INFO:     127.0.0.1:54877 - "POST /api/v1/auth/2fa/verify HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54880 - "GET /api/v1/users/me HTTP/1.1" 200 OK
+2026-05-19 15:49:39,285 app.auth.routers.refresh DEBUG auth.refresh.received request_id=98b68b4b-8079-4759-8476-f3bb966d9591 ip=127.0.0.1
+2026-05-19 15:49:39,285 app.auth.services.refresh DEBUG auth.refresh.execute.start request_id=98b68b4b-8079-4759-8476-f3bb966d9591 ip=127.0.0.1
+2026-05-19 15:49:39,327 app.auth.services.refresh_audit DEBUG auth.refresh.success_audit.start user_id=a3af8dc9-605f-40dc-9e54-4850a1be42e7 request_id=98b68b4b-8079-4759-8476-f3bb966d9591
+2026-05-19 15:49:39,327 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.refresh actor_user_id=a3af8dc9-605f-40dc-9e54-4850a1be42e7
+2026-05-19 15:49:39,329 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=fe727f3f-6908-418f-b663-3a5db5e4eb0d action=auth.refresh
+2026-05-19 15:49:39,329 app.auth.services.refresh_audit DEBUG auth.refresh.success_audit.done user_id=a3af8dc9-605f-40dc-9e54-4850a1be42e7 request_id=98b68b4b-8079-4759-8476-f3bb966d9591
+2026-05-19 15:49:39,336 app.auth.services.refresh DEBUG auth.refresh.execute.done user_id=a3af8dc9-605f-40dc-9e54-4850a1be42e7 old_token_id=156c19bc-1032-4814-8292-30f56efa1740 new_token_id=4205da7b-d57b-4a61-93cf-419cbf484d54 request_id=98b68b4b-8079-4759-8476-f3bb966d9591
+2026-05-19 15:49:39,337 app.auth.routers.refresh DEBUG auth.refresh.success user_id=a3af8dc9-605f-40dc-9e54-4850a1be42e7 old_token_id=156c19bc-1032-4814-8292-30f56efa1740 new_token_id=4205da7b-d57b-4a61-93cf-419cbf484d54 request_id=98b68b4b-8079-4759-8476-f3bb966d9591
+INFO:     127.0.0.1:54915 - "POST /api/v1/auth/refresh HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54916 - "GET /api/v1/users/me HTTP/1.1" 200 OK
+2026-05-19 15:50:14,854 app.auth.routers.refresh DEBUG auth.refresh.received request_id=45e4015d-d8ec-4557-8292-1c940b30d1cc ip=127.0.0.1
+2026-05-19 15:50:14,855 app.auth.services.refresh DEBUG auth.refresh.execute.start request_id=45e4015d-d8ec-4557-8292-1c940b30d1cc ip=127.0.0.1
+2026-05-19 15:50:14,897 app.auth.services.refresh_audit DEBUG auth.refresh.success_audit.start user_id=a3af8dc9-605f-40dc-9e54-4850a1be42e7 request_id=45e4015d-d8ec-4557-8292-1c940b30d1cc
+2026-05-19 15:50:14,897 app.auth.repository DEBUG auth.repo.write_audit.start action=auth.refresh actor_user_id=a3af8dc9-605f-40dc-9e54-4850a1be42e7
+2026-05-19 15:50:14,899 app.auth.repository DEBUG auth.repo.write_audit.done audit_id=71447889-f8ab-4dc0-97ff-950e4bcb9dc1 action=auth.refresh
+2026-05-19 15:50:14,899 app.auth.services.refresh_audit DEBUG auth.refresh.success_audit.done user_id=a3af8dc9-605f-40dc-9e54-4850a1be42e7 request_id=45e4015d-d8ec-4557-8292-1c940b30d1cc
+2026-05-19 15:50:14,902 app.auth.services.refresh DEBUG auth.refresh.execute.done user_id=a3af8dc9-605f-40dc-9e54-4850a1be42e7 old_token_id=4205da7b-d57b-4a61-93cf-419cbf484d54 new_token_id=de8cfa41-2ed8-40ec-a4c7-f785ffab8df8 request_id=45e4015d-d8ec-4557-8292-1c940b30d1cc
+2026-05-19 15:50:14,903 app.auth.routers.refresh DEBUG auth.refresh.success user_id=a3af8dc9-605f-40dc-9e54-4850a1be42e7 old_token_id=4205da7b-d57b-4a61-93cf-419cbf484d54 new_token_id=de8cfa41-2ed8-40ec-a4c7-f785ffab8df8 request_id=45e4015d-d8ec-4557-8292-1c940b30d1cc
+INFO:     127.0.0.1:54993 - "POST /api/v1/auth/refresh HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54994 - "GET /api/v1/users/me HTTP/1.1" 200 OK

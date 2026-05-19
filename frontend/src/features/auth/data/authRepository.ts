@@ -9,6 +9,10 @@
  *   Extended in P03-S02-T007 — AccountPage: added updateLanguage() method
  *     (§D-T007-WRITE-SET-DRIFT-AUTHREPO: language endpoint is part of the auth/user contract,
  *      lives next to fetchMe and logout; moving to presentation/ would violate Clean Architecture).
+ *   Fixed in P05-S01-T007 — refresh() now delegates to refreshSingleFlight.refreshAccessToken()
+ *     so that AuthProvider.hydrate() and httpClient 401 interceptor share ONE in-flight Promise.
+ *     This eliminates the F5 reload race that sent two concurrent refresh requests with the same
+ *     HttpOnly cookie, causing the backend to revoke the first token before the second arrived.
  *
  * Responsibility: Concrete implementation of IAuthRepository (domain port).
  *   Calls the backend auth/user endpoints. All calls use authFetch (credentials:'include',
@@ -22,7 +26,7 @@
  *   - POST /api/v1/auth/sign-up  → email+password+full_name+legal_acceptance; returns SignUpOutcome.
  *   - POST /api/v1/auth/forgot-password → email only; anti-enum 200; returns {sent:true}.
  *   - POST /api/v1/auth/2fa/verify → challenge_id (JWT) + code; returns VerifyMfaOutcome.
- *   - POST /api/v1/auth/refresh  → cookie-only; returns new access_token.
+ *   - POST /api/v1/auth/refresh  → cookie-only; returns new access_token (via shared singleflight).
  *   - GET  /api/v1/users/me      → Bearer required; returns UserProfile.
  *   - POST /api/v1/auth/logout   → Bearer required; 204 on success.
  *   - PATCH /api/v1/users/me/language → Bearer required; returns UserProfile (§D-T007-WRITE-SET-DRIFT-AUTHREPO).
@@ -69,6 +73,7 @@ import {
 } from "./errors";
 import { setAccessToken } from "./accessTokenStore";
 import { logVerbose, logWarn, logError } from "./logger";
+import { refreshAccessToken } from "./refreshSingleFlight";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "";
 
@@ -702,39 +707,26 @@ export class AuthRepository implements IAuthRepository {
 
   /**
    * Calls POST /api/v1/auth/refresh (no body; refresh cookie auto-sent).
-   * Returns the new access token string on 200; error on 401 or network failure.
+   * Returns the new access token string on 200; Result error on 401 or network failure.
+   *
+   * P05-S01-T007: Delegates to refreshAccessToken() in refreshSingleFlight.ts so that
+   * concurrent callers (this method from hydrate AND httpClient._doRefresh from a 401
+   * interceptor) share a single in-flight Promise and make exactly ONE network request.
    */
   async refresh(): Promise<Result<string>> {
     logVerbose("auth.repo.refresh.start");
     try {
-      const requestId = crypto.randomUUID();
-      const response = await fetch(`${API_BASE}/api/v1/auth/refresh`, {
-        method: "POST",
-        credentials: "include",
-        headers: { "X-Request-ID": requestId },
+      const token = await refreshAccessToken({
+        onAuthFailure: this._onAuthFailure,
+        reason: "hydrate",
       });
-
-      if (response.status === 401) {
-        logWarn("auth.repo.refresh.session_expired", { request_id: requestId });
-        return { ok: false, error: new AuthSessionExpiredError() };
-      }
-
-      if (!response.ok) {
-        logError("auth.repo.refresh.unexpected_status", {
-          status: response.status,
-          request_id: requestId,
-        });
-        return { ok: false, error: new Error(`Refresh failed: ${response.status}`) };
-      }
-
-      const body = await _safeJson<{ data: { access_token: string } }>(response);
-      const token = body.data.access_token;
-      logVerbose("auth.repo.refresh.ok", {
-        request_id: requestId,
-        token_len: token.length,
-      });
+      logVerbose("auth.repo.refresh.ok", { token_len: token.length });
       return { ok: true, value: token };
     } catch (err: unknown) {
+      if (err instanceof AuthSessionExpiredError) {
+        logWarn("auth.repo.refresh.session_expired");
+        return { ok: false, error: err };
+      }
       const domainErr = mapFetchError(err);
       logError("auth.repo.refresh.error", { error: domainErr.message });
       return { ok: false, error: domainErr };
